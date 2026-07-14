@@ -459,6 +459,59 @@ what every Node.js cluster / worker deployment already imposes on developers.
 
 ## 9. Related issues
 
+### 9.1 Adjacent engine issues and how this design meets them
+
+**[#7821 main.js must execute before any other scripts](https://github.com/enonic/xp/issues/7821)**
+— a bootstrap-ordering problem, not an engine problem, but the pipeline changes its tractability
+twice over:
+
+- *Partially defused structurally.* The scariest observed symptom — an event firing on a
+  half-initialized module ("`TypeError: Cannot read property "Symbol(Symbol.iterator)"`" from
+  half-loaded polyfills) — is a cross-thread visibility race on the shared Nashorn global. On
+  the pooled pipeline it cannot happen: modules load inside their slot's lock+monitor
+  (single-threaded per context, run-to-completion), and each slot's `require` cache is confined
+  to that slot, so no thread can ever observe another thread's partially-initialized exports.
+- *The ordering half becomes a one-place fix.* Every script execution of an app now funnels
+  through its executor (`withSlot`/`withExports`/`withIsolatedExports`). A per-app bootstrap
+  gate — executions await a latch that the `main.js` run opens, with the nested-execution
+  bypass the slot resolution already provides (scope binding / held monitor) — would close
+  #7821 for both engines without touching call sites. Detached tasks submitted *by* `main.js`
+  would naturally queue behind bootstrap. Not implemented here; recorded as an enabled
+  follow-up.
+
+**[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
+registered by one bundle incarnation invoked for its replacement (rooted in #7966). The
+pipeline sharpens both the fix shape and the stakes:
+
+- Everything app-scoped now lives in one closeable executor instance: slots, the strong
+  `Source` registry, the disposer queues, the budgeted-slot count. The correct lifecycle is
+  *instance-owned teardown* — closing the old executor runs **its** disposers against **its**
+  contexts and releases **its** budget — never name-keyed lookup at dispose time, which is
+  exactly where #10844's cross-incarnation confusion comes from.
+- New urgency: an un-closed replaced executor no longer leaks only memory — it pins permits of
+  the **global** context budget (`max-contexts`, shared by all apps). Repeated local-app
+  replacement without deterministic executor close would drain cross-app capacity. #7966/#10844
+  should be scheduled together with (or before) the default-engine flip.
+
+**[#6775 Global namespace](https://github.com/enonic/xp/issues/6775)** — align XP's global
+namespace with browser/node. The pipeline moves in this issue's direction and GraalJS itself
+closes part of it:
+
+- The globals policy is now explicit: `app` is the only production global; custom injected
+  globals (`ScriptSettings.globalVariable`) are deprecated (kept solely for the `xp-testing`
+  harness until it migrates). Moving `app` into a lib, as the issue proposes, stays viable on
+  this pipeline.
+- GraalJS natively provides `globalThis` (ES2020) and a `console` built-in — the two probes
+  webpack'd node modules trip over on Nashorn ES6 — so node-module compatibility improves with
+  the engine flip without adding XP globals.
+- One pool-specific rule for any future global (Buffer/`setTimeout` shims, console bridges):
+  the global scope is **per context** on pooled engines, so a global must be immutable,
+  host-backed-shared, or idempotently initializable per context. Mutable singleton globals are
+  the one shape the pool cannot honor — which is the same conclusion #6775 reaches from the
+  compatibility side.
+
+### 9.2 Issue list
+
 - [#8714 GraalJS (epic)](https://github.com/enonic/xp/issues/8714)
 - [#8644 Graal Websocket data thread safety](https://github.com/enonic/xp/issues/8644) — open
 - [#9059 Multi threading issue after migration on Graal JS](https://github.com/enonic/xp/issues/9059)
@@ -469,3 +522,6 @@ what every Node.js cluster / worker deployment already imposes on developers.
 - [#9071 Do not use js.nashorn-compat](https://github.com/enonic/xp/issues/9071)
 - [#8916 GraalVM JS support for portal module](https://github.com/enonic/xp/issues/8916)
 - [#8053 Server-Sent Events support](https://github.com/enonic/xp/issues/8053)
+- [#7821 main.js must execute before any other scripts](https://github.com/enonic/xp/issues/7821) — §9.1
+- [#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844) — §9.1
+- [#6775 Global namespace](https://github.com/enonic/xp/issues/6775) — §9.1
