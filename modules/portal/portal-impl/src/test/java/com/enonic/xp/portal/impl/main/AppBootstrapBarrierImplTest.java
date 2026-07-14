@@ -10,7 +10,6 @@ import org.osgi.service.condition.Condition;
 
 import com.enonic.xp.app.ApplicationKey;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
