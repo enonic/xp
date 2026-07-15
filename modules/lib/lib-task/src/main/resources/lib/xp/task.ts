@@ -37,17 +37,20 @@ export interface ExecuteFunctionParams {
      * Data passed to the task function as its single argument. Converted eagerly at submit
      * time; must contain data only — functions are rejected.
      *
-     * The task function runs detached from the submitting scope, Web Worker style: it is
-     * re-materialized from source in a fresh script context, so variables captured from the
-     * surrounding scope are NOT available (referencing one throws) — pass everything it needs
-     * via `params`. `log`, `require` and `resolve` are provided; use absolute paths with
-     * `require`.
+     * On pooled script engines (GraalJS) the task function runs detached from the submitting
+     * scope, Web Worker style: it is re-materialized from source in a fresh script context,
+     * so variables captured from the surrounding scope are NOT available (referencing one
+     * throws) — pass everything it needs via `params`. `log`, `require` and `resolve` are
+     * provided; use absolute paths with `require`. Engines without pooling keep the
+     * historical closure behavior.
      */
     params?: Record<string, unknown>;
 }
 
 interface ExecuteFunctionHandler {
     setDescription(value: string | null): void;
+
+    setFunc(callbackFn?: CallbackFn | null): void;
 
     setSource(value: string): void;
 
@@ -84,10 +87,11 @@ interface ExecuteFunctionHandler {
  * @param {object} params JSON with the parameters.
  * @param {string} params.description Text describing the task to be executed.
  * @param {function} params.func Callback function to be executed asynchronously.
- * The function runs detached, Web Worker style: it is re-materialized from source in a fresh
- * script context and captured outer variables are not available — pass data via
- * `params.params`. `log`, `require` and `resolve` are provided; use absolute paths with
- * `require`.
+ * On pooled script engines (GraalJS) the function runs detached, Web Worker style: it is
+ * re-materialized from source in a fresh script context and captured outer variables are not
+ * available — pass data via `params.params`. `log`, `require` and `resolve` are provided;
+ * use absolute paths with `require`. Engines without pooling keep the historical closure
+ * behavior.
  * @param {object} [params.params] Data passed to the task function as its single argument.
  * Converted eagerly at submit time; functions are rejected.
  *
@@ -101,6 +105,9 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     const funcParams = params.params;
 
     bean.setDescription(description);
+    // the routed path calls the function on the submitting context, where closures are legal:
+    // bind params here instead of routing them through Java
+    bean.setFunc(funcParams === undefined ? func : () => func(funcParams));
     bean.setSource(String(func));
     bean.setParams(funcParams !== undefined ? __.toScriptValue(funcParams) : null);
 

@@ -176,34 +176,49 @@ final class JsFunctionHandle implements Function<Object[], Object> {
   they become safe by construction, at the cost of executing on the owner worker (serialized
   with that worker's other jobs, not with the whole app).
 
-### 4.3 `executeFunction` is a local task, detached like every task
+### 4.3 `executeFunction` — always detached on pooled engines
 
-A task — named (`submitTask`) or inline (`executeFunction`) — runs in its **own separated
-context**, Web Worker style: no state from the submitting scope crosses into it. `executeFunction`
-is therefore not special; it is a task that happens to be defined inline and run locally. Both
-paths route through `ScriptExports.isolated()`: on pooled engines each run gets a fresh ephemeral
-context; on Nashorn (no pool) `isolated()` is the single shared context, so a task runs there.
+The user-facing contract of `task.executeFunction` is the problem: it promises "run this
+closure on another thread", which JS cannot honor.
 
-Because a task never shares the submitter's scope, `executeFunction` is **always detached on every
-engine** — there is no attached-closure path and no engine probe. `func` travels as source
-(`Function.prototype.toString` at submit), `params` are eagerly converted to plain data (JSON-like
-deep copy via `GraalObjectConverter`, rejecting functions/host references), and the function is
-re-materialized in the task's context, evaluated with `params` as its only input. **Captured outer
-variables are not available** — referencing one throws `ReferenceError`. (This did change Nashorn's
-former closure-capture leniency, but the contract always documented capture as unsupported, and it
-brings the legacy engine in line with the pooled model.)
+*Decision:* **the engine decides — there is no user-facing flag.** On pooled engines tasks are
+always detached: JS developers have long been familiar with worker patterns, and a routed
+closure would only *appear* to work while silently serializing the task with the submitting
+context. Engines without pooling (Nashorn) always keep the historical attached-closure
+behavior. The engine is probed at submit via `ScriptExports.isolated()` (pooled engines return
+a distinct view); apps bundling an older compiled task lib (no source captured) keep the
+routed-handle fallback of §4.2, so nothing crashes. `params` are delivered on every path.
 
-A detached function must still talk to the world: `log`, `require`, `resolve` and `__` are
-module-wrapper *parameters* in this codebase, not globals, so a bare re-materialized function would
-see only `params`, `app` and engine built-ins. The runner (`/lib/xp/detached-task.js`) therefore
-evaluates the source inside a wrapper — `(function (log, require, resolve, __) { return (<source>); })`
-— and applies its own module environment, so detached functions can load libraries and log.
-`require` resolves relative to the runner's location (`/lib/xp/`): absolute paths are the documented
-convention. (An earlier `detached: true` opt-in flag existed briefly and was removed: the engine no
-longer varies the behavior, so there is nothing to flag.)
+A detached function must be able to talk to the world: `log`, `require`, `resolve` and `__`
+are module-wrapper *parameters* in this codebase, not globals, so a bare re-materialized
+function would see only `params`, `app` and engine built-ins. The runner therefore evaluates
+the source inside a wrapper — `(function (log, require, resolve, __) { return (<source>); })` —
+and applies its own module environment, so detached functions can load libraries and log.
+`require` resolves relative to the runner's location (`/lib/xp/`): absolute paths are the
+documented convention. (An earlier `detached: true` opt-in flag existed briefly and was
+removed: engine-dependent defaults plus a flag made three behavior combinations to document
+and test, for no real use case.)
 
-`task.submitTask` (named module + serializable config) remains the canonical primitive for heavier
-work; `executeFunction` is the inline, run-locally convenience over the same separated-context model.
+1. **Routed fallback — "run later on owner"**: the handle from §4.2 keeps closure-based calls
+   from old compiled libs correct: the task thread submits the closure invocation to the owning
+   worker. Semantics: *asynchronous, but not parallel with that worker* — exactly how
+   `setTimeout` behaves in a browser.
+2. **Detached mode — eager params, no closures (the pooled-engine default)**:
+   `task.executeFunction({ func, params })` where:
+   - `params` are **eagerly converted to plain data at submit time** (JSON-like deep copy via
+     `GraalObjectConverter`, rejecting functions/host references);
+   - `func` is re-materialized in the target pooled context from its source
+     (`Function.prototype.toString` / `Value.getSourceLocation()`), evaluated with `params` as
+     the only input; **captured outer variables are not available** and referencing them fails
+     fast with a clear error.
+   This is Web-Worker semantics, matching the suggestion "parameters provided eagerly, external
+   closures ignored". It should fail loudly, not silently, when a closure variable is touched:
+   evaluate the function source in a scope whose `with`-like proxy throws
+   `ReferenceError: <name> is not transferable to a detached task` for anything but `params`
+   and globals.
+3. Keep steering documentation toward `task.submitTask` (named module + serializable config)
+   as the canonical parallel primitive — it already has the right shape: the task worker
+   `require`s the module itself in its own context.
 
 ### 4.4 Websockets and SSE — connections keep the exact context of their request
 

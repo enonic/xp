@@ -119,15 +119,28 @@ public class ExecuteFunctionHandlerTest
     }
 
     @Test
-    void testClosureFunction_capturedVariableUnavailable()
+    void testClosureFunction_alwaysDetachedOnPooledEngines()
     {
         final MockTaskService mockTaskMan = new MockTaskService();
         mockTaskMan.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
         addService( TaskService.class, mockTaskMan );
 
-        // a task runs detached on every engine: a variable captured from the submitting scope is
-        // not available to the re-materialized function
-        assertThrows( RuntimeException.class, () -> runFunction( "/test/executeFunction-test.js", "executeClosureFunction" ) );
+        if ( isPooledEngine() )
+        {
+            // tasks are always detached: the captured variable is not available
+            assertThrows( RuntimeException.class, () -> runFunction( "/test/executeFunction-test.js", "executeClosureFunction" ) );
+        }
+        else
+        {
+            // engines without pooling keep the historical closure behavior
+            runFunction( "/test/executeFunction-test.js", "executeClosureFunction" );
+            assertEquals( "closure", this.recorded );
+        }
+    }
+
+    private static boolean isPooledEngine()
+    {
+        return "GraalJS".equalsIgnoreCase( System.getProperty( "xp.script-engine", "Nashorn" ) );
     }
 
     @Test
