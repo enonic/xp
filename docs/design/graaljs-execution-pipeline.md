@@ -500,11 +500,13 @@ twice over:
   the target app's bootstrap Condition (`AppBootstrapBarrier`, a thin registry-reading seam — a
   `ServiceTracker` on the per-app filter) before running *any* top-level script, so controllers,
   filters, error handlers, macros, response processors and named tasks are all gated by
-  construction — a new entry point inherits it rather than having to remember it. Two executions
-  are exempt: the app's own `/main.js` (it *is* the bootstrap), and anything re-entrant within a
-  bootstrap — `MainExecutor` runs `main.js` inside a `BootstrapScope` (a thread-scoped
-  `ScopedValue`), so a task or script `main.js` triggers synchronously does not wait for the
-  Condition that only publishes once `main.js` returns (which would self-deadlock). A broken
+  construction — a new entry point inherits it rather than having to remember it. Exempt is any
+  execution re-entrant within *the same application's* bootstrap — `MainExecutor` runs `main.js`
+  inside a `BootstrapScope` (a thread-scoped `ScopedValue` carrying the bootstrapping app's key),
+  so `main.js` itself and any task or script it triggers synchronously do not wait for the
+  Condition that only publishes once `main.js` returns (which would self-deadlock). Because the
+  scope is keyed on the application — the script engine already knows it from the `ResourceKey` —
+  a *different* app's script invoked mid-bootstrap is still gated, not swept up by a global flag. A broken
   `main.js` still publishes the Condition (surfaces in the log, never a permanently dammed app).
   Event callbacks and tasks that run on their own threads are gated normally (they wait if the app
   is mid-bootstrap — async, no deadlock). The wait is bounded (300 s, then fail-open with a

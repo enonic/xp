@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.portal.impl.main.BootstrapScope;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
@@ -69,15 +70,29 @@ class PortalScriptServiceImplTest
     }
 
     @Test
-    void execute_doesNotAwaitForMainJs()
+    void execute_doesNotAwaitWithinOwnBootstrapScope()
     {
         final List<ApplicationKey> awaited = new ArrayList<>();
         final PortalScriptServiceImpl service = new PortalScriptServiceImpl( scriptRuntimeFactory(), awaited::add );
         service.initialize();
 
-        service.execute( ResourceKey.from( ApplicationKey.from( "myapp" ), "/main.js" ) );
+        BootstrapScope.run( ApplicationKey.from( "myapp" ),
+                            () -> service.execute( ResourceKey.from( ApplicationKey.from( "myapp" ), "/main.js" ) ) );
 
         assertTrue( awaited.isEmpty() );
+    }
+
+    @Test
+    void execute_awaitsForAnotherAppWithinBootstrapScope()
+    {
+        final List<ApplicationKey> awaited = new ArrayList<>();
+        final PortalScriptServiceImpl service = new PortalScriptServiceImpl( scriptRuntimeFactory(), awaited::add );
+        service.initialize();
+
+        BootstrapScope.run( ApplicationKey.from( "myapp" ),
+                            () -> service.execute( ResourceKey.from( ApplicationKey.from( "otherapp" ), "/controllers/foo.js" ) ) );
+
+        assertEquals( List.of( ApplicationKey.from( "otherapp" ) ), awaited );
     }
 
     @Test

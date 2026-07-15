@@ -117,7 +117,8 @@ public final class MainExecutor
         {
             // run within a bootstrap scope so re-entrant executions main.js triggers (e.g. a task
             // it submits) don't wait for the bootstrap Condition that only publishes once it returns
-            CompletableFuture.runAsync( () -> BootstrapScope.run( () -> this.scriptService.execute( mainScript ) ), this.bootstrapExecutor )
+            CompletableFuture.runAsync( () -> BootstrapScope.run( applicationKey, () -> this.scriptService.execute( mainScript ) ),
+                                        this.bootstrapExecutor )
                 .whenComplete( ( result, e ) -> {
                     if ( e != null )
                     {

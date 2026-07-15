@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
@@ -86,15 +87,17 @@ public final class PortalScriptServiceImpl
     }
 
     /**
-     * A top-level script execution observes a fully bootstrapped application (#7821). {@code main.js}
-     * is the bootstrap itself, and executions re-entrant within a bootstrap already run inside it —
-     * neither waits.
+     * A top-level script execution observes a fully bootstrapped application (#7821). Executions
+     * re-entrant within the application's own bootstrap ({@code main.js} and everything it triggers
+     * synchronously) already run inside it and must not wait — a script of any other application is
+     * still gated.
      */
     private void awaitBootstrap( final ResourceKey script )
     {
-        if ( !BootstrapScope.isActive() && !"/main.js".equals( script.getPath() ) )
+        final ApplicationKey applicationKey = script.getApplicationKey();
+        if ( !applicationKey.equals( BootstrapScope.current() ) )
         {
-            this.bootstrapBarrier.await( script.getApplicationKey() );
+            this.bootstrapBarrier.await( applicationKey );
         }
     }
 
