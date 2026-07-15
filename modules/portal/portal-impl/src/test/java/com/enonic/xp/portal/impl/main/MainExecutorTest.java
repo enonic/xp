@@ -10,6 +10,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.condition.Condition;
 
@@ -20,10 +22,11 @@ import com.enonic.xp.resource.ResourceKey;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,31 +46,37 @@ class MainExecutorTest
     private ServiceRegistration<Condition> registration;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
     void setup()
+        throws Exception
     {
-        // eq( Condition.INSTANCE ) also disambiguates from the ServiceFactory registerService overload
+        // let the ServiceTracker construct and open against the mock registry (no initial services)
+        lenient().when( this.bundleContext.createFilter( anyString() ) )
+            .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
+        lenient().when( this.bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
         lenient().when( this.bundleContext.registerService( eq( Condition.class ), eq( Condition.INSTANCE ), any() ) )
             .thenReturn( this.registration );
+
         this.executor = new MainExecutor( this.scriptService, this.bundleContext );
     }
 
-    private static Application app()
+    @SuppressWarnings("unchecked")
+    private ServiceReference<Application> appReference( final String applicationKey )
     {
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
-        return app;
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( applicationKey ) );
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        when( this.bundleContext.getService( reference ) ).thenReturn( application );
+        return reference;
     }
 
     @Test
     void mainJsMissing_bootstrapsImmediately()
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( false );
+        when( this.scriptService.hasScript( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn( false );
 
-        this.executor.activated( app() );
+        this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService, never() ).executeAsync( any() );
+        verify( this.scriptService, times( 0 ) ).executeAsync( any() );
         final Dictionary<String, ?> props = captureRegisteredProps();
         assertEquals( AppBootstrapBarrierImpl.BOOTSTRAP_CONDITION_ID, props.get( Condition.CONDITION_ID ) );
         assertEquals( "foo.bar", props.get( AppBootstrapBarrierImpl.APPLICATION_PROPERTY ) );
@@ -76,11 +85,11 @@ class MainExecutorTest
     @Test
     void mainJsExecute_bootstrapsOnCompletion()
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.completedFuture( null ) );
+        when( this.scriptService.hasScript( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn( true );
+        when( this.scriptService.executeAsync( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn(
+            CompletableFuture.completedFuture( null ) );
 
-        this.executor.activated( app() );
+        this.executor.addingService( appReference( "foo.bar" ) );
 
         assertEquals( "foo.bar", captureRegisteredProps().get( AppBootstrapBarrierImpl.APPLICATION_PROPERTY ) );
     }
@@ -88,27 +97,34 @@ class MainExecutorTest
     @Test
     void mainJsError_stillBootstraps()
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.failedFuture( new RuntimeException() ) );
+        when( this.scriptService.hasScript( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn( true );
+        when( this.scriptService.executeAsync( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn(
+            CompletableFuture.failedFuture( new RuntimeException() ) );
 
-        this.executor.activated( app() );
+        this.executor.addingService( appReference( "foo.bar" ) );
 
         // a broken main.js must not leave the application un-bootstrapped
         verify( this.bundleContext ).registerService( eq( Condition.class ), eq( Condition.INSTANCE ), any() );
     }
 
     @Test
-    void deactivated_unregistersTheCondition()
+    void removedService_unregistersTheCondition()
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( false );
+        when( this.scriptService.hasScript( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn( false );
 
-        final Application app = app();
-        this.executor.activated( app );
-        this.executor.deactivated( app );
+        final ServiceReference<Application> reference = appReference( "foo.bar" );
+        final Application application = this.executor.addingService( reference );
+
+        this.executor.removedService( reference, application );
 
         verify( this.registration, times( 1 ) ).unregister();
+        verify( this.bundleContext ).ungetService( reference );
+    }
+
+    @Test
+    void deactivate_closesTracker()
+    {
+        this.executor.deactivate();
     }
 
     @SuppressWarnings("unchecked")

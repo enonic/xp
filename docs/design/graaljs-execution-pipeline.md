@@ -480,23 +480,30 @@ twice over:
   cannot wait on its own listeners — gating listeners would also be safe; they are left
   ungated because the dedicated context already serializes them with bootstrap (a listener
   handle waits on the main context's monitor until `main.js`'s evaluation completes).
-- *The ordering half is fixed on this branch* — at the portal choke point rather than inside
-  the engines, and modelled as a standard **OSGi R8 `Condition`** (a string-identified marker
-  service) rather than a bespoke bootstrap service: `MainExecutor` runs `main.js` on activation
-  and, when it completes (success, failure or — for apps without `main.js` — immediately),
-  registers a `Condition` service tagged `osgi.condition.id=com.enonic.xp.portal.app.bootstrapped`
-  with an `application` property; on deactivation it unregisters it. Bootstrap state therefore
-  lives in the service registry as a string, not in a service's memory. `ControllerScriptFactory`
-  / `IdProviderControllerScriptFactory` await that Condition (`AppBootstrapBarrier`, a thin
-  registry-reading consumer seam — a `ServiceTracker` on the per-app filter), so every
-  controller — webapp, service, mapping, API, error, id-provider — observes a fully bootstrapped
-  application on both engines. A broken `main.js` still publishes the Condition (surfaces in the
-  log, never a permanently dammed app). Tasks and event callbacks are deliberately *not* gated:
-  worker patterns spawned by `main.js` itself must run (a gated task that `main.js` polls would
-  deadlock). The wait is bounded (300 s, then fail-open with a warning) so a hanging `main.js`
-  degrades to today's behavior instead of a deadlock. Remaining window: requests in the instant
-  between bundle activation and the `ApplicationListener` round slip through ungated — strictly
-  better than today, not perfect.
+- *The ordering half is fixed on this branch*, entirely at the portal layer and modelled with
+  standard **OSGi R8 `Condition`** services (string-identified markers), no bespoke bootstrap
+  service. Applications are OSGi `Application` services — the registry publishes one while an app
+  is active and unregisters it on stop — so `MainExecutor` is **not an `ApplicationListener` but
+  a `ServiceTracker<Application>`**, DS-gated on the deploy-ready Condition
+  (`osgi.condition.id=com.enonic.xp.server.deploy.ready`). This sidesteps the late-listener bug
+  (#12200): a listener only receives events fired while it is bound, so gating a listener on a
+  Condition would drop every activation that happened before the Condition — whereas a
+  ServiceTracker's `open()` replays every already-registered `Application`, i.e. all active apps,
+  the moment the gate is satisfied, and delivers future ones via `addingService`. Its visibility
+  equals the script runtime's (both key off the `Application` service), so coverage is correct by
+  construction, system apps included. For each tracked app `MainExecutor` runs `main.js` and, on
+  completion (success, failure, or immediately when there is no `main.js`), registers a per-app
+  bootstrap `Condition` tagged `osgi.condition.id=com.enonic.xp.portal.app.bootstrapped` +
+  `application` property; `removedService` unregisters it. Bootstrap state thus lives in the
+  service registry as a string, not in a service's memory. `ControllerScriptFactory` /
+  `IdProviderControllerScriptFactory` await that Condition (`AppBootstrapBarrier`, a thin
+  registry-reading consumer seam — a `ServiceTracker` on the per-app filter), so every controller
+  — webapp, service, mapping, API, error, id-provider — observes a fully bootstrapped application
+  on both engines. A broken `main.js` still publishes the Condition (surfaces in the log, never a
+  permanently dammed app). Tasks and event callbacks are deliberately *not* gated: worker
+  patterns spawned by `main.js` itself must run (a gated task that `main.js` polls would
+  deadlock). The controller wait is bounded (300 s, then fail-open with a warning) so a hanging
+  `main.js` degrades to today's behavior instead of a deadlock.
 
 **[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
 registered by one bundle incarnation invoked for its replacement (rooted in #7966). The
