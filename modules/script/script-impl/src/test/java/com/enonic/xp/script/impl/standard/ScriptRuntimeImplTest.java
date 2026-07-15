@@ -108,6 +108,38 @@ class ScriptRuntimeImplTest
     }
 
     @Test
+    void bootstrap_mainScriptError_stillOpensGate()
+    {
+        mainScriptExists( true );
+        final ScriptRuntimeImpl runtime = runtime();
+        when( scriptExecutor.executeMain( MAIN ) ).thenThrow( new RuntimeException( "boom" ) );
+
+        runtime.bootstrap( APP );
+        // a broken main.js must not dam the application: the controller still runs
+        runtime.execute( CONTROLLER );
+
+        verify( scriptExecutor ).executeMain( CONTROLLER );
+    }
+
+    @Test
+    void execute_reentrantDuringBootstrap_skipsTheGate()
+    {
+        mainScriptExists( true );
+        final ScriptRuntimeImpl runtime = runtime();
+        // main.js synchronously invokes another of the app's scripts while bootstrapping: the
+        // re-entrant execution must run instead of waiting for the latch it is itself about to open
+        when( scriptExecutor.executeMain( MAIN ) ).thenAnswer( invocation -> {
+            runtime.execute( CONTROLLER );
+            return null;
+        } );
+
+        runtime.bootstrap( APP );
+
+        verify( scriptExecutor ).executeMain( MAIN );
+        verify( scriptExecutor ).executeMain( CONTROLLER );
+    }
+
+    @Test
     void executeAsync_bootstrapsFirst()
     {
         mainScriptExists( true );
