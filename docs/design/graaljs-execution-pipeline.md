@@ -498,7 +498,7 @@ twice over:
   self-deadlock); a *different* app's script invoked mid-bootstrap is still gated. `MainExecutor`
   shrinks to a trigger: it is a `ServiceTracker<Application>` (not an `ApplicationListener`),
   DS-gated on the deploy-ready Condition (`osgi.condition.id=com.enonic.xp.server.deploy.ready`),
-  and on each tracked `Application` it calls `PortalScriptService.bootstrap(key)` so a
+  and on each tracked `Application` it calls `PortalScriptService.bootstrap(app:/main.js)` so a
   side-effect-only app (listeners, tasks, no controllers) is initialized at deploy rather than on
   first request. A tracker's `open()` replays every already-registered `Application` the moment
   the gate is satisfied and delivers future ones via `addingService`, so coverage is correct by

@@ -12,6 +12,7 @@ import org.osgi.framework.ServiceReference;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
+import com.enonic.xp.resource.ResourceKey;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -61,17 +62,17 @@ class MainExecutorTest
     {
         this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService ).bootstrap( ApplicationKey.from( "foo.bar" ) );
+        verify( this.scriptService ).bootstrap( ResourceKey.from( "foo.bar:/main.js" ) );
     }
 
     @Test
     void bootstrapError_isSwallowed()
     {
-        doThrow( new RuntimeException() ).when( this.scriptService ).bootstrap( ApplicationKey.from( "foo.bar" ) );
+        doThrow( new RuntimeException() ).when( this.scriptService ).bootstrap( ResourceKey.from( "foo.bar:/main.js" ) );
 
         this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService, times( 1 ) ).bootstrap( ApplicationKey.from( "foo.bar" ) );
+        verify( this.scriptService, times( 1 ) ).bootstrap( ResourceKey.from( "foo.bar:/main.js" ) );
     }
 
     @Test

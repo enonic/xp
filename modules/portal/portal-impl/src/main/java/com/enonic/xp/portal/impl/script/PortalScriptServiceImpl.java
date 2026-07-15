@@ -7,7 +7,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
@@ -58,9 +57,9 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
-    public void bootstrap( final ApplicationKey key )
+    public void bootstrap( final ResourceKey mainScript )
     {
-        this.scriptRuntime.bootstrap( key );
+        this.scriptRuntime.bootstrap( mainScript );
     }
 
     @Override

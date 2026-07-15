@@ -63,8 +63,8 @@ class ScriptRuntimeImplTest
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( APP );
-        runtime.bootstrap( APP );
+        runtime.bootstrap( MAIN );
+        runtime.bootstrap( MAIN );
 
         verify( scriptExecutor, times( 1 ) ).executeMain( MAIN );
     }
@@ -75,7 +75,7 @@ class ScriptRuntimeImplTest
         mainScriptExists( false );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( APP );
+        runtime.bootstrap( MAIN );
 
         verify( scriptExecutor, never() ).executeMain( MAIN );
     }
@@ -99,7 +99,7 @@ class ScriptRuntimeImplTest
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( APP );
+        runtime.bootstrap( MAIN );
         runtime.execute( CONTROLLER );
         runtime.execute( CONTROLLER );
 
@@ -114,7 +114,7 @@ class ScriptRuntimeImplTest
         final ScriptRuntimeImpl runtime = runtime();
         when( scriptExecutor.executeMain( MAIN ) ).thenThrow( new RuntimeException( "boom" ) );
 
-        runtime.bootstrap( APP );
+        runtime.bootstrap( MAIN );
         // a broken main.js must not dam the application: the controller still runs
         runtime.execute( CONTROLLER );
 
@@ -133,7 +133,7 @@ class ScriptRuntimeImplTest
             return null;
         } );
 
-        runtime.bootstrap( APP );
+        runtime.bootstrap( MAIN );
 
         verify( scriptExecutor ).executeMain( MAIN );
         verify( scriptExecutor ).executeMain( CONTROLLER );
@@ -156,7 +156,7 @@ class ScriptRuntimeImplTest
     {
         mainScriptExists( false );
         final ScriptRuntimeImpl runtime = runtime();
-        runtime.bootstrap( APP );
+        runtime.bootstrap( MAIN );
 
         runtime.invalidate( APP );
         // idempotent: the executor is gone, nothing to dispose twice
@@ -178,7 +178,7 @@ class ScriptRuntimeImplTest
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( closeableExecutor );
 
         final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
-        runtime.bootstrap( APP );
+        runtime.bootstrap( MAIN );
 
         runtime.invalidate( APP );
 

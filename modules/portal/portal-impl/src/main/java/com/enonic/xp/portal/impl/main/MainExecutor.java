@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
+import com.enonic.xp.resource.ResourceKey;
 
 /**
  * Triggers each application's {@code main.js} bootstrap once it becomes active
@@ -102,7 +103,8 @@ public final class MainExecutor
 
     private void bootstrap( final ApplicationKey applicationKey )
     {
-        CompletableFuture.runAsync( () -> this.scriptService.bootstrap( applicationKey ), this.bootstrapExecutor )
+        final ResourceKey mainScript = ResourceKey.from( applicationKey, "/main.js" );
+        CompletableFuture.runAsync( () -> this.scriptService.bootstrap( mainScript ), this.bootstrapExecutor )
             .whenComplete( ( result, e ) -> {
                 if ( e != null )
                 {

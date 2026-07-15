@@ -56,8 +56,9 @@ class PortalScriptServiceImplTest
     @Test
     void bootstrap()
     {
-        portalScriptService.bootstrap( ApplicationKey.from( "myapp" ) );
-        verify( scriptRuntime ).bootstrap( eq( ApplicationKey.from( "myapp" ) ) );
+        final ResourceKey mainScript = ResourceKey.from( ApplicationKey.from( "myapp" ), "/main.js" );
+        portalScriptService.bootstrap( mainScript );
+        verify( scriptRuntime ).bootstrap( eq( mainScript ) );
     }
 
     @Test

@@ -63,27 +63,30 @@ public class ScriptRuntimeImpl
     }
 
     @Override
-    public void bootstrap( final ApplicationKey key )
+    public void bootstrap( final ResourceKey mainScript )
     {
-        ensureBootstrapped( key, getExecutor( key ) );
+        ensureBootstrapped( getExecutor( mainScript.getApplicationKey() ), mainScript );
     }
 
     @Override
     public ScriptExports execute( final ResourceKey script )
     {
-        final ApplicationKey key = script.getApplicationKey();
-        final AppExecutor app = getExecutor( key );
-        ensureBootstrapped( key, app );
+        final AppExecutor app = getExecutor( script.getApplicationKey() );
+        ensureBootstrapped( app, mainScript( script ) );
         return app.executor.executeMain( script );
     }
 
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
-        final ApplicationKey key = script.getApplicationKey();
-        final AppExecutor app = getExecutor( key );
-        ensureBootstrapped( key, app );
+        final AppExecutor app = getExecutor( script.getApplicationKey() );
+        ensureBootstrapped( app, mainScript( script ) );
         return app.executor.executeMainAsync( script );
+    }
+
+    private static ResourceKey mainScript( final ResourceKey script )
+    {
+        return ResourceKey.from( script.getApplicationKey(), MAIN_SCRIPT );
     }
 
     @Override
@@ -148,15 +151,16 @@ public class ScriptRuntimeImpl
      * {@link #invalidate}, so two installs of the same key can neither share nor race a gate — the
      * caller always waits on the exact executor it is about to run.
      */
-    private void ensureBootstrapped( final ApplicationKey key, final AppExecutor app )
+    private void ensureBootstrapped( final AppExecutor app, final ResourceKey mainScript )
     {
+        final ApplicationKey key = mainScript.getApplicationKey();
         if ( BOOTSTRAPPING.isBound() && BOOTSTRAPPING.get().equals( key ) )
         {
             return;
         }
         if ( app.bootstrapStarted.compareAndSet( false, true ) )
         {
-            runMainScript( key, app );
+            runMainScript( app, mainScript );
         }
         else
         {
@@ -164,20 +168,19 @@ public class ScriptRuntimeImpl
         }
     }
 
-    private void runMainScript( final ApplicationKey key, final AppExecutor app )
+    private void runMainScript( final AppExecutor app, final ResourceKey mainScript )
     {
         try
         {
-            final ResourceKey mainScript = ResourceKey.from( key, MAIN_SCRIPT );
             if ( app.executor.getResourceService().getResource( mainScript ).exists() )
             {
-                ScopedValue.where( BOOTSTRAPPING, key ).run( () -> app.executor.executeMain( mainScript ) );
+                ScopedValue.where( BOOTSTRAPPING, mainScript.getApplicationKey() ).run( () -> app.executor.executeMain( mainScript ) );
             }
         }
         catch ( Exception e )
         {
             // a broken main.js surfaces in the log, never as a permanently un-bootstrapped application
-            LOG.error( "Error while executing {} {}", key, MAIN_SCRIPT, e );
+            LOG.error( "Error while executing {}", mainScript, e );
         }
         finally
         {
