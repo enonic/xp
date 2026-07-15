@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -27,8 +26,6 @@ public final class ExecuteFunctionHandler
 
     private String description;
 
-    private Function<Object, Object> taskFunction;
-
     private String source;
 
     private Object params;
@@ -38,14 +35,9 @@ public final class ExecuteFunctionHandler
         this.description = description;
     }
 
-    public void setFunc( final Function<Object, Object> taskFunction )
-    {
-        this.taskFunction = taskFunction;
-    }
-
     /**
-     * Source of a detached function: re-materialized in the executing script context instead of
-     * being routed back to the submitting one, see {@link DetachedFunctionTaskWrapper}.
+     * Source of the task function, re-materialized in the executing script context — the function
+     * runs as a local task, detached from the submitting scope, see {@link DetachedFunctionTaskWrapper}.
      */
     public void setSource( final String source )
     {
@@ -53,8 +45,8 @@ public final class ExecuteFunctionHandler
     }
 
     /**
-     * Data for a detached function, delivered as its single argument. The routed path binds
-     * params to the function on the JS side instead — closures are legal there.
+     * Data delivered to the task function as its single argument. Data only — functions are
+     * rejected, since nothing from the submitting scope crosses into the task's context.
      */
     public void setParams( final ScriptValue value )
     {
@@ -64,44 +56,12 @@ public final class ExecuteFunctionHandler
     public String executeFunction()
     {
         final TaskService taskService = taskServiceSupplier.get();
-        final RunnableTask runnableTask = useDetached()
-            ? new DetachedFunctionTaskWrapper( scriptServiceSupplier, detachedRunner, source, params, description )
-            : new TaskWrapper( taskFunction, description );
+        final RunnableTask runnableTask =
+            new DetachedFunctionTaskWrapper( scriptServiceSupplier, detachedRunner, source, params, description );
         final TaskId taskId =
             taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnableTask ).description( description ).build() );
 
         return taskId.toString();
-    }
-
-    /**
-     * The engine decides how the task function runs. Pooled script engines (GraalJS) always run
-     * it detached — Web Worker semantics: re-materialized from source in a fresh context with
-     * {@code params}, {@code log} and {@code require} in scope, because a routed closure would
-     * serialize the task with the submitting context. Engines without pooling (Nashorn) always
-     * keep the historical attached-closure behavior. Probed via {@link ScriptExports#isolated()}:
-     * pooled engines return a distinct view.
-     */
-    private boolean useDetached()
-    {
-        if ( source == null )
-        {
-            return false;
-        }
-        try
-        {
-            final PortalScriptService scriptService = scriptServiceSupplier.get();
-            if ( scriptService == null )
-            {
-                return false;
-            }
-            final ScriptExports runnerExports = scriptService.execute( detachedRunner );
-            return runnerExports.isolated() != runnerExports;
-        }
-        catch ( RuntimeException e )
-        {
-            // no script service (minimal runtimes, tests): keep the attached behavior
-            return false;
-        }
     }
 
     @Override
