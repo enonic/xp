@@ -174,7 +174,7 @@ public class ScriptRuntimeImpl
         {
             if ( app.executor.getResourceService().getResource( mainScript ).exists() )
             {
-                ScopedValue.where( BOOTSTRAPPING, mainScript.getApplicationKey() ).run( () -> app.executor.executeMain( mainScript ) );
+                ScopedValue.where( BOOTSTRAPPING, mainScript.getApplicationKey() ).run( () -> app.executor.bootstrap( mainScript ) );
             }
         }
         catch ( Exception e )

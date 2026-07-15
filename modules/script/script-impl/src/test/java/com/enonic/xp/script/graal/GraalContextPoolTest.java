@@ -388,7 +388,7 @@ class GraalContextPoolTest
     void mainJsGetsADedicatedContext()
         throws Exception
     {
-        final ScriptExports main = scriptExecutor.executeMain( ResourceKey.from( "graaljs:/main.js" ) );
+        final ScriptExports main = scriptExecutor.bootstrap( ResourceKey.from( "graaljs:/main.js" ) );
         assertEquals( 1, intValue( main.executeMethod( "inc" ) ) );
 
         // request traffic executes on pool slots and never touches the main context

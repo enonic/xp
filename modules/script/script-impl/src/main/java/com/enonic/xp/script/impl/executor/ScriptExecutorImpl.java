@@ -99,6 +99,13 @@ public final class ScriptExecutorImpl
     }
 
     @Override
+    public ScriptExports bootstrap( final ResourceKey key )
+    {
+        // no context pool: the single shared context is both the request and the bootstrap context
+        return executeMain( key );
+    }
+
+    @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
         if ( RunMode.isDev() )
