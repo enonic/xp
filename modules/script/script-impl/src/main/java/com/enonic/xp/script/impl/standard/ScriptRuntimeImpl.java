@@ -76,6 +76,7 @@ public class ScriptRuntimeImpl
         return app.executor.executeMain( script );
     }
 
+    @Deprecated
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
