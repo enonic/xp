@@ -66,7 +66,7 @@ class ScriptRuntimeImplTest
         runtime.bootstrap( MAIN );
         runtime.bootstrap( MAIN );
 
-        verify( scriptExecutor, times( 1 ) ).executeMain( MAIN );
+        verify( scriptExecutor, times( 1 ) ).bootstrap( MAIN );
     }
 
     @Test
@@ -77,7 +77,7 @@ class ScriptRuntimeImplTest
 
         runtime.bootstrap( MAIN );
 
-        verify( scriptExecutor, never() ).executeMain( MAIN );
+        verify( scriptExecutor, never() ).bootstrap( MAIN );
     }
 
     @Test
@@ -89,7 +89,7 @@ class ScriptRuntimeImplTest
         runtime.execute( CONTROLLER );
 
         final InOrder inOrder = Mockito.inOrder( scriptExecutor );
-        inOrder.verify( scriptExecutor ).executeMain( MAIN );
+        inOrder.verify( scriptExecutor ).bootstrap( MAIN );
         inOrder.verify( scriptExecutor ).executeMain( CONTROLLER );
     }
 
@@ -103,7 +103,7 @@ class ScriptRuntimeImplTest
         runtime.execute( CONTROLLER );
         runtime.execute( CONTROLLER );
 
-        verify( scriptExecutor, times( 1 ) ).executeMain( MAIN );
+        verify( scriptExecutor, times( 1 ) ).bootstrap( MAIN );
         verify( scriptExecutor, times( 2 ) ).executeMain( CONTROLLER );
     }
 
@@ -112,7 +112,7 @@ class ScriptRuntimeImplTest
     {
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
-        when( scriptExecutor.executeMain( MAIN ) ).thenThrow( new RuntimeException( "boom" ) );
+        when( scriptExecutor.bootstrap( MAIN ) ).thenThrow( new RuntimeException( "boom" ) );
 
         runtime.bootstrap( MAIN );
         // a broken main.js must not dam the application: the controller still runs
@@ -128,14 +128,14 @@ class ScriptRuntimeImplTest
         final ScriptRuntimeImpl runtime = runtime();
         // main.js synchronously invokes another of the app's scripts while bootstrapping: the
         // re-entrant execution must run instead of waiting for the latch it is itself about to open
-        when( scriptExecutor.executeMain( MAIN ) ).thenAnswer( invocation -> {
+        when( scriptExecutor.bootstrap( MAIN ) ).thenAnswer( invocation -> {
             runtime.execute( CONTROLLER );
             return null;
         } );
 
         runtime.bootstrap( MAIN );
 
-        verify( scriptExecutor ).executeMain( MAIN );
+        verify( scriptExecutor ).bootstrap( MAIN );
         verify( scriptExecutor ).executeMain( CONTROLLER );
     }
 
@@ -147,7 +147,7 @@ class ScriptRuntimeImplTest
 
         runtime.executeAsync( CONTROLLER );
 
-        verify( scriptExecutor ).executeMain( MAIN );
+        verify( scriptExecutor ).bootstrap( MAIN );
         verify( scriptExecutor ).executeMainAsync( CONTROLLER );
     }
 
