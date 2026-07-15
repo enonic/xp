@@ -13,13 +13,10 @@ exports.run = function (source, params) {
     'use strict';
     var fn;
     try {
-        // eslint-disable-next-line no-eval -- re-materializing the submitted function from source is
-        // the feature; indirect eval runs in global scope, isolating it from the submitting scope,
-        // and the wrapper hands the function this module's environment (log, require, resolve, __)
+        // eslint-disable-next-line no-eval -- indirect eval in global scope isolates the function from the submitting scope
         fn = (0, eval)('(function (log, require, resolve, __) { return (' + source + '); })')(log, require, resolve, __);
     } catch (e) {
-        // shorthand method syntax (`func() {...}`) is not a valid expression on its own:
-        // evaluate it as an object-literal method instead
+        // shorthand method syntax (`func() {...}`) is not a valid expression: evaluate it as an object-literal method
         // eslint-disable-next-line no-eval
         var holder = (0, eval)('(function (log, require, resolve, __) { return ({' + source + '}); })')(log, require, resolve, __);
         for (var key in holder) {

@@ -101,7 +101,6 @@ public final class MainExecutor
     @Override
     public void modifiedService( final ServiceReference<Application> reference, final Application application )
     {
-        // properties only; nothing to do
     }
 
     @Override
@@ -135,7 +134,6 @@ public final class MainExecutor
         }
         else
         {
-            // no main.js: the application is trivially bootstrapped
             publishBootstrapped( applicationKey );
         }
     }
