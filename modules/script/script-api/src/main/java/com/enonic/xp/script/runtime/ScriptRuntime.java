@@ -11,6 +11,8 @@ public interface ScriptRuntime
 {
     boolean hasScript( ResourceKey script );
 
+    void bootstrap( ApplicationKey key );
+
     ScriptExports execute( ResourceKey script );
 
     CompletableFuture<ScriptExports> executeAsync( ResourceKey script );

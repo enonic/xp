@@ -12,8 +12,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
-import com.enonic.xp.portal.impl.main.AppBootstrapBarrier;
-import com.enonic.xp.portal.impl.main.BootstrapScope;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
@@ -28,25 +26,12 @@ public final class PortalScriptServiceImpl
 {
     private final ScriptRuntimeFactory scriptRuntimeFactory;
 
-    private final AppBootstrapBarrier bootstrapBarrier;
-
     private ScriptRuntime scriptRuntime;
 
-    /**
-     * Convenience for tests and minimal runtimes: no bootstrap gating.
-     */
-    public PortalScriptServiceImpl( final ScriptRuntimeFactory scriptRuntimeFactory )
-    {
-        this( scriptRuntimeFactory, applicationKey -> {
-        } );
-    }
-
     @Activate
-    public PortalScriptServiceImpl( @Reference final ScriptRuntimeFactory scriptRuntimeFactory,
-                                    @Reference final AppBootstrapBarrier bootstrapBarrier )
+    public PortalScriptServiceImpl( @Reference final ScriptRuntimeFactory scriptRuntimeFactory )
     {
         this.scriptRuntimeFactory = scriptRuntimeFactory;
-        this.bootstrapBarrier = bootstrapBarrier;
     }
 
     @Activate
@@ -73,32 +58,21 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
+    public void bootstrap( final ApplicationKey key )
+    {
+        this.scriptRuntime.bootstrap( key );
+    }
+
+    @Override
     public ScriptExports execute( final ResourceKey script )
     {
-        awaitBootstrap( script );
         return this.scriptRuntime.execute( script );
     }
 
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
-        awaitBootstrap( script );
         return this.scriptRuntime.executeAsync( script );
-    }
-
-    /**
-     * A top-level script execution observes a fully bootstrapped application (#7821). Executions
-     * re-entrant within the application's own bootstrap ({@code main.js} and everything it triggers
-     * synchronously) already run inside it and must not wait — a script of any other application is
-     * still gated.
-     */
-    private void awaitBootstrap( final ResourceKey script )
-    {
-        final ApplicationKey applicationKey = script.getApplicationKey();
-        if ( !applicationKey.equals( BootstrapScope.current() ) )
-        {
-            this.bootstrapBarrier.await( applicationKey );
-        }
     }
 
     @Override
