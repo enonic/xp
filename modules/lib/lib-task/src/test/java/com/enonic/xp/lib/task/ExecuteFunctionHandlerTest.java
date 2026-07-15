@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.MockTaskService;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -39,6 +40,11 @@ public class ExecuteFunctionHandlerTest
             public boolean hasScript( final ResourceKey script )
             {
                 return true;
+            }
+
+            @Override
+            public void bootstrap( final ApplicationKey key )
+            {
             }
 
             @Override
