@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.main;
 
 import java.util.Dictionary;
-import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +55,8 @@ class MainExecutorTest
         lenient().when( this.bundleContext.registerService( eq( Condition.class ), eq( Condition.INSTANCE ), any() ) )
             .thenReturn( this.registration );
 
-        this.executor = new MainExecutor( this.scriptService, this.bundleContext );
+        // run main.js synchronously on the caller thread so the test is deterministic
+        this.executor = new MainExecutor( this.scriptService, this.bundleContext, Runnable::run );
     }
 
     @SuppressWarnings("unchecked")
@@ -76,7 +76,7 @@ class MainExecutorTest
 
         this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService, times( 0 ) ).executeAsync( any() );
+        verify( this.scriptService, times( 0 ) ).execute( any() );
         final Dictionary<String, ?> props = captureRegisteredProps();
         assertEquals( AppBootstrapBarrierImpl.BOOTSTRAP_CONDITION_ID, props.get( Condition.CONDITION_ID ) );
         assertEquals( "foo.bar", props.get( AppBootstrapBarrierImpl.APPLICATION_PROPERTY ) );
@@ -86,11 +86,10 @@ class MainExecutorTest
     void mainJsExecute_bootstrapsOnCompletion()
     {
         when( this.scriptService.hasScript( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn(
-            CompletableFuture.completedFuture( null ) );
 
         this.executor.addingService( appReference( "foo.bar" ) );
 
+        verify( this.scriptService ).execute( ResourceKey.from( "foo.bar:/main.js" ) );
         assertEquals( "foo.bar", captureRegisteredProps().get( AppBootstrapBarrierImpl.APPLICATION_PROPERTY ) );
     }
 
@@ -98,8 +97,7 @@ class MainExecutorTest
     void mainJsError_stillBootstraps()
     {
         when( this.scriptService.hasScript( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenReturn(
-            CompletableFuture.failedFuture( new RuntimeException() ) );
+        when( this.scriptService.execute( ResourceKey.from( "foo.bar:/main.js" ) ) ).thenThrow( new RuntimeException() );
 
         this.executor.addingService( appReference( "foo.bar" ) );
 

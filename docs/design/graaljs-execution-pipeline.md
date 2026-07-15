@@ -495,15 +495,20 @@ twice over:
   completion (success, failure, or immediately when there is no `main.js`), registers a per-app
   bootstrap `Condition` tagged `osgi.condition.id=com.enonic.xp.portal.app.bootstrapped` +
   `application` property; `removedService` unregisters it. Bootstrap state thus lives in the
-  service registry as a string, not in a service's memory. `ControllerScriptFactory` /
-  `IdProviderControllerScriptFactory` await that Condition (`AppBootstrapBarrier`, a thin
-  registry-reading consumer seam — a `ServiceTracker` on the per-app filter), so every controller
-  — webapp, service, mapping, API, error, id-provider — observes a fully bootstrapped application
-  on both engines. A broken `main.js` still publishes the Condition (surfaces in the log, never a
-  permanently dammed app). Tasks and event callbacks are deliberately *not* gated: worker
-  patterns spawned by `main.js` itself must run (a gated task that `main.js` polls would
-  deadlock). The controller wait is bounded (300 s, then fail-open with a warning) so a hanging
-  `main.js` degrades to today's behavior instead of a deadlock.
+  service registry as a string, not in a service's memory. **The wait is centralized in the
+  script engine**, not repeated per controller entry point: `PortalScriptService.execute` awaits
+  the target app's bootstrap Condition (`AppBootstrapBarrier`, a thin registry-reading seam — a
+  `ServiceTracker` on the per-app filter) before running *any* top-level script, so controllers,
+  filters, error handlers, macros, response processors and named tasks are all gated by
+  construction — a new entry point inherits it rather than having to remember it. Two executions
+  are exempt: the app's own `/main.js` (it *is* the bootstrap), and anything re-entrant within a
+  bootstrap — `MainExecutor` runs `main.js` inside a `BootstrapScope` (a thread-scoped
+  `ScopedValue`), so a task or script `main.js` triggers synchronously does not wait for the
+  Condition that only publishes once `main.js` returns (which would self-deadlock). A broken
+  `main.js` still publishes the Condition (surfaces in the log, never a permanently dammed app).
+  Event callbacks and tasks that run on their own threads are gated normally (they wait if the app
+  is mid-bootstrap — async, no deadlock). The wait is bounded (300 s, then fail-open with a
+  warning) so a hanging `main.js` degrades to today's behavior instead of a deadlock.
 
 **[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
 registered by one bundle incarnation invoked for its replacement (rooted in #7966). The

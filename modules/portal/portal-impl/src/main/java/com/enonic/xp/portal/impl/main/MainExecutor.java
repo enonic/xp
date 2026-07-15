@@ -1,8 +1,12 @@
 package com.enonic.xp.portal.impl.main;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -53,6 +57,8 @@ public final class MainExecutor
 
     private final BundleContext bundleContext;
 
+    private final Executor bootstrapExecutor;
+
     private final ServiceTracker<Application, Application> tracker;
 
     private final ConcurrentMap<ApplicationKey, ServiceRegistration<Condition>> conditions = new ConcurrentHashMap<>();
@@ -60,8 +66,14 @@ public final class MainExecutor
     @Activate
     public MainExecutor( @Reference final PortalScriptService scriptService, final BundleContext bundleContext )
     {
+        this( scriptService, bundleContext, Executors.newVirtualThreadPerTaskExecutor() );
+    }
+
+    MainExecutor( final PortalScriptService scriptService, final BundleContext bundleContext, final Executor bootstrapExecutor )
+    {
         this.scriptService = scriptService;
         this.bundleContext = bundleContext;
+        this.bootstrapExecutor = bootstrapExecutor;
         this.tracker = new ServiceTracker<>( bundleContext, Application.class, this );
         this.tracker.open();
     }
@@ -70,6 +82,10 @@ public final class MainExecutor
     public void deactivate()
     {
         this.tracker.close();
+        if ( this.bootstrapExecutor instanceof ExecutorService executorService )
+        {
+            executorService.shutdown();
+        }
     }
 
     @Override
@@ -100,19 +116,22 @@ public final class MainExecutor
         final ResourceKey mainScript = ResourceKey.from( applicationKey, "/main.js" );
         if ( this.scriptService.hasScript( mainScript ) )
         {
-            this.scriptService.executeAsync( mainScript ).whenComplete( ( exports, e ) -> {
-                if ( e != null )
-                {
-                    LOG.error( "Error while executing {} Application controller", applicationKey, e );
-                }
-                else
-                {
-                    LOG.debug( "Completed execution of {} Application controller", applicationKey );
-                }
-                // publish on success AND failure: a broken main.js surfaces in the log, not as a
-                // permanently un-bootstrapped application
-                publishBootstrapped( applicationKey );
-            } );
+            // run within a bootstrap scope so re-entrant executions main.js triggers (e.g. a task
+            // it submits) don't wait for the bootstrap Condition that only publishes once it returns
+            CompletableFuture.runAsync( () -> BootstrapScope.run( () -> this.scriptService.execute( mainScript ) ), this.bootstrapExecutor )
+                .whenComplete( ( result, e ) -> {
+                    if ( e != null )
+                    {
+                        LOG.error( "Error while executing {} Application controller", applicationKey, e );
+                    }
+                    else
+                    {
+                        LOG.debug( "Completed execution of {} Application controller", applicationKey );
+                    }
+                    // publish on success AND failure: a broken main.js surfaces in the log, not as a
+                    // permanently un-bootstrapped application
+                    publishBootstrapped( applicationKey );
+                } );
         }
         else
         {

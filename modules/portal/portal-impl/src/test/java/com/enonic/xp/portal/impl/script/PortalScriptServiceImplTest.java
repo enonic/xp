@@ -1,6 +1,8 @@
 package com.enonic.xp.portal.impl.script;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,8 @@ import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -27,10 +31,9 @@ class PortalScriptServiceImplTest
 
     final ResourceKey resourceKey = ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" );
 
-    @BeforeEach
-    void setUp()
+    private ScriptRuntimeFactory scriptRuntimeFactory()
     {
-        portalScriptService = new PortalScriptServiceImpl( new ScriptRuntimeFactory()
+        return new ScriptRuntimeFactory()
         {
             @Override
             public ScriptRuntime create( final ScriptSettings settings )
@@ -43,8 +46,38 @@ class PortalScriptServiceImplTest
             {
 
             }
-        } );
+        };
+    }
+
+    @BeforeEach
+    void setUp()
+    {
+        portalScriptService = new PortalScriptServiceImpl( scriptRuntimeFactory() );
         portalScriptService.initialize();
+    }
+
+    @Test
+    void execute_awaitsBootstrapForController()
+    {
+        final List<ApplicationKey> awaited = new ArrayList<>();
+        final PortalScriptServiceImpl service = new PortalScriptServiceImpl( scriptRuntimeFactory(), awaited::add );
+        service.initialize();
+
+        service.execute( ResourceKey.from( ApplicationKey.from( "myapp" ), "/controllers/foo.js" ) );
+
+        assertEquals( List.of( ApplicationKey.from( "myapp" ) ), awaited );
+    }
+
+    @Test
+    void execute_doesNotAwaitForMainJs()
+    {
+        final List<ApplicationKey> awaited = new ArrayList<>();
+        final PortalScriptServiceImpl service = new PortalScriptServiceImpl( scriptRuntimeFactory(), awaited::add );
+        service.initialize();
+
+        service.execute( ResourceKey.from( ApplicationKey.from( "myapp" ), "/main.js" ) );
+
+        assertTrue( awaited.isEmpty() );
     }
 
     @Test

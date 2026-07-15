@@ -78,8 +78,7 @@ class IdProviderControllerServiceImplTest
 
         //Creates IdProviderControllerScriptFactoryImpl
         final IdProviderControllerScriptFactoryImpl idProviderControllerScriptFactory =
-            new IdProviderControllerScriptFactoryImpl( portalScriptService, key -> {
-            } );
+            new IdProviderControllerScriptFactoryImpl( portalScriptService );
 
         //Creates IdProviderControllerServiceImpl
         idProviderControllerService = new IdProviderControllerServiceImpl();
