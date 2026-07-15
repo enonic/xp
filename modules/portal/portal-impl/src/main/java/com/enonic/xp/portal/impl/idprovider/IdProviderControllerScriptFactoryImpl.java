@@ -23,7 +23,6 @@ public final class IdProviderControllerScriptFactoryImpl
     @Override
     public IdProviderControllerScript fromScript( final ResourceKey script )
     {
-        // PortalScriptService gates the execution on the application's bootstrap (#7821)
         final ScriptExports exports = this.scriptService.execute( script );
         return new IdProviderControllerScriptImpl( exports );
     }
