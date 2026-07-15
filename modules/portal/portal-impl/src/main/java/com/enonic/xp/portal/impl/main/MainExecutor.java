@@ -2,8 +2,6 @@ package com.enonic.xp.portal.impl.main;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -60,7 +58,9 @@ public final class MainExecutor
     @Activate
     public MainExecutor( @Reference final PortalScriptService scriptService, final BundleContext bundleContext )
     {
-        this( scriptService, bundleContext, Executors.newVirtualThreadPerTaskExecutor() );
+        // a virtual thread per bootstrap: main.js may block or run long, and it must not hold up the
+        // ServiceTracker callback thread (bundle activation) - no pool to size or shut down
+        this( scriptService, bundleContext, Thread.ofVirtual().name( "main-bootstrap-", 0 )::start );
     }
 
     MainExecutor( final PortalScriptService scriptService, final BundleContext bundleContext, final Executor bootstrapExecutor )
@@ -76,10 +76,6 @@ public final class MainExecutor
     public void deactivate()
     {
         this.tracker.close();
-        if ( this.bootstrapExecutor instanceof ExecutorService executorService )
-        {
-            executorService.shutdown();
-        }
     }
 
     @Override
