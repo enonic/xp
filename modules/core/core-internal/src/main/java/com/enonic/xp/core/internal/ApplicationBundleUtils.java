@@ -20,7 +20,7 @@ public final class ApplicationBundleUtils
 
     private static final String ENONIC_APPLICATION_YAML = "enonic.yaml";
 
-    private static final List<String> DESCRIPTOR_PATHS =
+    public static final List<String> DESCRIPTOR_PATHS =
         List.of( ENONIC_APPLICATION_YAML, ENONIC_APPLICATION_YML, APPLICATION_YAML, APPLICATION_YML );
 
     private ApplicationBundleUtils()
