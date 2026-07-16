@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -24,6 +25,7 @@ import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateNamespaceParams;
+import com.enonic.xp.app.Namespace;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
@@ -227,9 +229,15 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public boolean deleteVirtualApplication( final ApplicationKey key )
+    public boolean deleteNamespace( final ApplicationKey key )
     {
         return this.virtualAppService.delete( key );
+    }
+
+    @Override
+    public List<Namespace> listNamespaces()
+    {
+        return this.virtualAppService.listNamespaces();
     }
 
     @Override

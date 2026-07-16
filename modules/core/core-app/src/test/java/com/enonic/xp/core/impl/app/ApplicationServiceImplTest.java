@@ -26,6 +26,7 @@ import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateNamespaceParams;
+import com.enonic.xp.app.Namespace;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
@@ -182,7 +183,7 @@ class ApplicationServiceImplTest
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
-        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteVirtualApplication( appKey ) ) );
+        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteNamespace( appKey ) ) );
     }
 
     @Test
@@ -195,7 +196,30 @@ class ApplicationServiceImplTest
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
-        assertThrows( ForbiddenAccessException.class, () -> this.service.deleteVirtualApplication( appKey ) );
+        assertThrows( ForbiddenAccessException.class, () -> this.service.deleteNamespace( appKey ) );
+    }
+
+    @Test
+    void list_namespaces()
+    {
+        final NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
+
+        final NodeIds ids = NodeIds.from( virtualAppNodeId );
+
+        when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
+            FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "description", "my namespace" );
+
+        when( nodeService.getByIds( ids ) ).thenReturn(
+            Nodes.from( Node.create().id( new NodeId() ).name( "app1" ).parentPath( NodePath.ROOT ).data( data ).build() ) );
+
+        final List<Namespace> result = this.service.listNamespaces();
+        assertNotNull( result );
+        assertEquals( 1, result.size() );
+        assertEquals( "app1", result.get( 0 ).getKey().toString() );
+        assertEquals( "my namespace", result.get( 0 ).getDescription() );
     }
 
     @Test

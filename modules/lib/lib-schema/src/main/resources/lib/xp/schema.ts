@@ -866,3 +866,43 @@ export function createNamespace(params: CreateNamespaceParams): Namespace {
     }
     return __.toNativeObject(bean.execute());
 }
+
+export interface DeleteNamespaceParams {
+    key: string;
+}
+
+interface DeleteNamespaceHandler {
+    setKey(value: string): void;
+
+    execute(): boolean;
+}
+
+/**
+ * Deletes a namespace (virtual application).
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Namespace (application) key.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deleteNamespace(params: DeleteNamespaceParams): boolean {
+    const key = checkRequired(params, 'key');
+
+    const bean: DeleteNamespaceHandler = __.newBean<DeleteNamespaceHandler>('com.enonic.xp.lib.schema.DeleteNamespaceHandler');
+    bean.setKey(key);
+    return __.toNativeObject(bean.execute());
+}
+
+interface ListNamespacesHandler {
+    execute(): Namespace[];
+}
+
+/**
+ * Fetches all available namespaces (virtual applications).
+ *
+ * @returns {Namespace[]} namespaces list.
+ */
+export function listNamespaces(): Namespace[] {
+    const bean: ListNamespacesHandler = __.newBean<ListNamespacesHandler>('com.enonic.xp.lib.schema.ListNamespacesHandler');
+    return __.toNativeObject(bean.execute());
+}

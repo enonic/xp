@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateNamespaceParams;
+import com.enonic.xp.app.Namespace;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -44,6 +45,23 @@ public class VirtualAppService
             return nodes.stream()
                 .map( node -> DynamicResourceManager.appKeyFromNodePath( node.path() ) )
                 .map( key -> VirtualAppFactory.create( key, nodeService ) )
+                .collect( Collectors.toList() );
+        } );
+    }
+
+    public List<Namespace> listNamespaces()
+    {
+        return VirtualAppContext.createContext().callWith( () -> {
+            final FindNodesByParentResult result =
+                this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
+
+            final Nodes nodes = nodeService.getByIds( result.getNodeIds() );
+
+            return nodes.stream()
+                .map( node -> Namespace.create()
+                    .key( DynamicResourceManager.appKeyFromNodePath( node.path() ) )
+                    .description( node.data().getString( "description" ) )
+                    .build() )
                 .collect( Collectors.toList() );
         } );
     }

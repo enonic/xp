@@ -38,32 +38,6 @@ export interface Application {
     system: boolean;
 }
 
-export interface DeleteVirtualApplicationParams {
-    key: string;
-}
-
-interface DeleteVirtualApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): boolean;
-}
-
-/**
- * Deletes virtual application.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {boolean} deletion result.
- */
-export function deleteVirtualApplication(params: DeleteVirtualApplicationParams): boolean {
-    const key = checkRequired(params, 'key');
-
-    const bean: DeleteVirtualApplicationHandler = __.newBean<DeleteVirtualApplicationHandler>('com.enonic.xp.lib.app.DeleteVirtualApplicationHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
-}
-
 export interface GetApplicationParams {
     key: string;
 }

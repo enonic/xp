@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.app;
+package com.enonic.xp.lib.schema;
 
 import java.util.function.Supplier;
 
@@ -7,7 +7,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public final class DeleteVirtualApplicationHandler
+public final class DeleteNamespaceHandler
     implements ScriptBean
 {
     private String key;
@@ -21,7 +21,7 @@ public final class DeleteVirtualApplicationHandler
 
     public Boolean execute()
     {
-        return applicationServiceSupplier.get().deleteVirtualApplication( ApplicationKey.from( key ) );
+        return applicationServiceSupplier.get().deleteNamespace( ApplicationKey.from( key ) );
     }
 
     @Override

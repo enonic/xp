@@ -1,5 +1,7 @@
 package com.enonic.xp.app;
 
+import java.util.List;
+
 import com.google.common.io.ByteSource;
 
 
@@ -31,7 +33,9 @@ public interface ApplicationService
 
     Application createNamespace( CreateNamespaceParams params );
 
-    boolean deleteVirtualApplication( ApplicationKey key );
+    boolean deleteNamespace( ApplicationKey key );
+
+    List<Namespace> listNamespaces();
 
     ApplicationMode getApplicationMode( ApplicationKey applicationKey );
 }

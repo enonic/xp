@@ -45,6 +45,7 @@ const {
     deleteComponent,
     deleteStyles, 
     deleteMacro,
+    deleteNamespace,
     updateSchema,
     updateComponent,
     updateCms,
@@ -52,7 +53,8 @@ const {
     updateMacro,
     listComponents, 
     listSchemas,
-    listMacros
+    listMacros,
+    listNamespaces
 } = require('/lib/xp/schema');
 ```
 
@@ -96,6 +98,7 @@ import {
     deleteComponent,
     deleteStyles,
     deleteMacro,
+    deleteNamespace,
     updateSchema,
     updateComponent,
     updateCms,
@@ -103,7 +106,8 @@ import {
     updateMacro,
     listComponents,
     listSchemas,
-    listMacros
+    listMacros,
+    listNamespaces
 } from '/lib/xp/schema';
 ```
 
