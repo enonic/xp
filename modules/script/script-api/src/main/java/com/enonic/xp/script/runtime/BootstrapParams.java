@@ -33,27 +33,6 @@ public final class BootstrapParams
         return Optional.ofNullable( this.mainScript );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        if ( this == o )
-        {
-            return true;
-        }
-        if ( !( o instanceof BootstrapParams ) )
-        {
-            return false;
-        }
-        final BootstrapParams that = (BootstrapParams) o;
-        return application.equals( that.application ) && Objects.equals( mainScript, that.mainScript );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( application, mainScript );
-    }
-
     public static Builder create()
     {
         return new Builder();

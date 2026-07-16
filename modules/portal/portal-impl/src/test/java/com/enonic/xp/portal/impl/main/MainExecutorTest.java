@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.main;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
@@ -15,6 +16,8 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.runtime.BootstrapParams;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doThrow;
@@ -58,30 +61,25 @@ class MainExecutorTest
         return reference;
     }
 
-    private static BootstrapParams params( final String applicationKey )
-    {
-        return BootstrapParams.create()
-            .application( ApplicationKey.from( applicationKey ) )
-            .mainScript( ResourceKey.from( applicationKey + ":/main.js" ) )
-            .build();
-    }
-
     @Test
     void addingService_triggersBootstrap()
     {
         this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService ).bootstrap( params( "foo.bar" ) );
+        final ArgumentCaptor<BootstrapParams> captor = ArgumentCaptor.forClass( BootstrapParams.class );
+        verify( this.scriptService ).bootstrap( captor.capture() );
+        assertEquals( ApplicationKey.from( "foo.bar" ), captor.getValue().getApplication() );
+        assertEquals( ResourceKey.from( "foo.bar:/main.js" ), captor.getValue().getMainScript().orElseThrow() );
     }
 
     @Test
     void bootstrapError_isSwallowed()
     {
-        doThrow( new RuntimeException() ).when( this.scriptService ).bootstrap( params( "foo.bar" ) );
+        doThrow( new RuntimeException() ).when( this.scriptService ).bootstrap( any() );
 
         this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService, times( 1 ) ).bootstrap( params( "foo.bar" ) );
+        verify( this.scriptService, times( 1 ) ).bootstrap( any() );
     }
 
     @Test
