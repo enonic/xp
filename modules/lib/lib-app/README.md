@@ -47,8 +47,7 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 const {
     get,
     list,
-    getDescriptor,
-    getApplicationMode
+    getDescriptor
 } = require('/lib/xp/app');
 ```
 
@@ -79,8 +78,7 @@ types mapping to your configuration.
 import {
     get,
     list,
-    getDescriptor,
-    getApplicationMode
+    getDescriptor
 } from '/lib/xp/app';
 ```
 

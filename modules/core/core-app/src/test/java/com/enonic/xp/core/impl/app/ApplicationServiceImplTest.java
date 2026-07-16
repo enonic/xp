@@ -22,7 +22,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateNamespaceParams;
@@ -39,13 +38,11 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
@@ -837,75 +834,6 @@ class ApplicationServiceImplTest
         applicationRegistry.configure( bundle, ConfigBuilder.create().add( "c", "d" ).build() );
 
         verify( mock, times( 1 ) ).invalidate( eq( key ), eq( ApplicationInvalidationLevel.FULL ) );
-    }
-
-
-    @Test
-    void get_application_mode()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        final List<String> appNodeNames =
-            List.of( "cms", "content-types", "form-fragments", "mixins", "parts", "layouts", "pages", "styles", "macros" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
-            final CreateNodeParams createNodeParams = params.getArgument( 0 );
-
-            if ( applicationKey.toString().equals( createNodeParams.getName().toString() ) )
-            {
-
-                when( nodeService.nodeExists(
-                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn(
-                    true );
-
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( NodePath.ROOT )
-                    .build();
-
-            }
-            if ( appNodeNames.contains( createNodeParams.getName().toString() ) )
-            {
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( new NodePath( "/app1" ) )
-                    .build();
-            }
-
-            return null;
-        } );
-
-        VirtualAppContext.createAdminContext()
-            .runWith( () -> virtualAppService.create( CreateNamespaceParams.create().key( applicationKey ).build() ) );
-
-        assertThrows( ForbiddenAccessException.class, () -> service.getApplicationMode( applicationKey ) );
-        assertEquals( ApplicationMode.VIRTUAL,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.BUNDLED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-    }
-
-    @Test
-    void get_application_mode_bundled()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create().build() );
-
-        assertNull( VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.BUNDLED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
     }
 
     private void verifyInstalledEvents( final ApplicationKey applicationKey, final NodeId nodeId, final VerificationMode times )

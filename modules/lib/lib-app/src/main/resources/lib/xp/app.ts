@@ -121,29 +121,3 @@ export function getDescriptor(params: GetApplicationDescriptorParams): Applicati
     bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
-
-export interface GetApplicationModeParams {
-    key: string;
-}
-
-interface GetApplicationModeHandler {
-    setKey(value: string): void;
-
-    execute(): string | null;
-}
-
-/**
- * Fetches a mode of the app with the app key.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {string | null} application mode, or null if the application is not installed.
- */
-export function getApplicationMode(params: GetApplicationModeParams): string | null {
-    const key = checkRequired(params, 'key');
-
-    const bean: GetApplicationModeHandler = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
-}

@@ -20,23 +20,18 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component
 public final class ApplicationServiceImpl
@@ -238,22 +233,6 @@ public final class ApplicationServiceImpl
     public List<Namespace> listNamespaces()
     {
         return this.virtualAppService.listNamespaces();
-    }
-
-    @Override
-    public ApplicationMode getApplicationMode( final ApplicationKey applicationKey )
-    {
-        requireSchemaAdminRole();
-
-        final boolean hasReal = this.registry.get( applicationKey ) != null;
-        if ( hasReal )
-        {
-            return ApplicationMode.BUNDLED;
-        }
-
-        final boolean hasVirtual =
-            VirtualAppContext.createAdminContext().callWith( () -> this.virtualAppService.get( applicationKey ) ) != null;
-        return hasVirtual ? ApplicationMode.VIRTUAL : null;
     }
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )
@@ -465,16 +444,6 @@ public final class ApplicationServiceImpl
         catch ( Exception e )
         {
             throw new ApplicationBundleException( "Cannot install application", e );
-        }
-    }
-
-    private void requireSchemaAdminRole()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
-        if ( !hasAdminRole )
-        {
-            throw new ForbiddenAccessException( authInfo.getUser() );
         }
     }
 

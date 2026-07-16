@@ -36,6 +36,4 @@ public interface ApplicationService
     boolean deleteNamespace( ApplicationKey key );
 
     List<Namespace> listNamespaces();
-
-    ApplicationMode getApplicationMode( ApplicationKey applicationKey );
 }
