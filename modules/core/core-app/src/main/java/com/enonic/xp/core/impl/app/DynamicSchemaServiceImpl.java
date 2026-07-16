@@ -18,6 +18,8 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.project.ProjectConstants;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
@@ -54,6 +56,7 @@ import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
@@ -63,6 +66,8 @@ import com.enonic.xp.style.StyleDescriptor;
 public class DynamicSchemaServiceImpl
     implements DynamicSchemaService, DynamicSchemaServiceInternal
 {
+    private static final String PROJECT_OWNER_ROLE_SUFFIX = "." + ProjectRole.OWNER.name().toLowerCase();
+
     private final DynamicResourceManager dynamicResourceManager;
 
     private final DynamicResourceParser dynamicResourceParser;
@@ -200,26 +205,29 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends ComponentDescriptor> DynamicSchemaResult<T> getComponent( final GetDynamicComponentParams params )
     {
-        requireAdminRole();
+        requireReadAccess();
 
-        final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
+        return VirtualAppContext.createAdminContext().callWith( () -> {
+            final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
+            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
 
-        if ( resource.exists() && resource.getSize() > 0 )
-        {
-            final ComponentDescriptor descriptor =
-                dynamicResourceParser.parseComponent( params.getKey(), params.getType(), resource.readString() );
-            return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
-        }
-        return null;
+            if ( resource.exists() && resource.getSize() > 0 )
+            {
+                final ComponentDescriptor descriptor =
+                    dynamicResourceParser.parseComponent( params.getKey(), params.getType(), resource.readString() );
+                return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+            }
+            return null;
+        } );
     }
 
     @Override
     public <T extends ComponentDescriptor> List<DynamicSchemaResult<T>> listComponents( final ListDynamicComponentsParams params )
     {
-        requireAdminRole();
+        requireListAccess();
 
-        return dynamicResourceManager.listResources( createComponentRootPath( params.getKey(), params.getType() ) )
+        return VirtualAppContext.createAdminContext().callWith( () -> dynamicResourceManager.listResources(
+                createComponentRootPath( params.getKey(), params.getType() ) )
             .stream()
             .map( resource -> {
                 final ComponentDescriptor descriptor =
@@ -228,61 +236,70 @@ public class DynamicSchemaServiceImpl
 
                 return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
             } )
-            .collect( Collectors.<DynamicSchemaResult<T>>toList() );
+            .collect( Collectors.<DynamicSchemaResult<T>>toList() ) );
     }
 
 
     @Override
     public <T extends BaseSchema<?>> DynamicSchemaResult<T> getContentSchema( final GetDynamicContentSchemaParams params )
     {
-        requireAdminRole();
+        requireReadAccess();
 
-        final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName() );
+        return VirtualAppContext.createAdminContext().callWith( () -> {
+            final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
+            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName() );
 
-        if ( resource.exists() && resource.getSize() > 0 )
-        {
-            final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), resource.readString() );
-            return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
-        }
+            if ( resource.exists() && resource.getSize() > 0 )
+            {
+                final BaseSchema<?> schema =
+                    dynamicResourceParser.parseSchema( params.getName(), params.getType(), resource.readString() );
+                return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+            }
 
-        return null;
+            return null;
+        } );
     }
 
     @Override
     public DynamicSchemaResult<CmsDescriptor> getCmsDescriptor( final ApplicationKey key )
     {
-        requireAdminRole();
+        requireReadAccess();
 
-        final NodePath resourceFolderPath = createCmsFolderPath( key );
+        return VirtualAppContext.createAdminContext().callWith( () -> {
+            final NodePath resourceFolderPath = createCmsFolderPath( key );
 
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME );
+            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME );
 
-        if ( resource.exists() && resource.getSize() > 0 )
-        {
-            final CmsDescriptor siteDescriptor = dynamicResourceParser.parseCms( key, resource.readString() );
-            return new DynamicSchemaResult<>(
-                CmsDescriptor.copyOf( siteDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
-        }
-        return null;
+            if ( resource.exists() && resource.getSize() > 0 )
+            {
+                final CmsDescriptor siteDescriptor = dynamicResourceParser.parseCms( key, resource.readString() );
+                return new DynamicSchemaResult<>(
+                    CmsDescriptor.copyOf( siteDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(),
+                    resource );
+            }
+            return null;
+        } );
     }
 
     @Override
     public DynamicSchemaResult<StyleDescriptor> getStyles( final ApplicationKey key )
     {
-        requireAdminRole();
+        requireReadAccess();
 
-        final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME );
+        return VirtualAppContext.createAdminContext().callWith( () -> {
+            final NodePath resourceFolderPath =
+                NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
+            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME );
 
-        if ( resource.exists() && resource.getSize() > 0 )
-        {
-            final StyleDescriptor descriptor = dynamicResourceParser.parseStyles( key, resource.readString() );
-            return new DynamicSchemaResult<>(
-                StyleDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
-        }
-        return null;
+            if ( resource.exists() && resource.getSize() > 0 )
+            {
+                final StyleDescriptor descriptor = dynamicResourceParser.parseStyles( key, resource.readString() );
+                return new DynamicSchemaResult<>(
+                    StyleDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(),
+                    resource );
+            }
+            return null;
+        } );
     }
 
     @Override
@@ -306,18 +323,19 @@ public class DynamicSchemaServiceImpl
     @Override
     public <T extends BaseSchema<?>> List<DynamicSchemaResult<T>> listContentSchemas( final ListDynamicContentSchemasParams params )
     {
-        requireAdminRole();
+        requireListAccess();
 
         final NodePath componentRootPath = createSchemaRootPath( params.getKey(), params.getType() );
 
-        return dynamicResourceManager.listResources( componentRootPath ).stream().map( resource -> {
+        return VirtualAppContext.createAdminContext()
+            .callWith( () -> dynamicResourceManager.listResources( componentRootPath ).stream().map( resource -> {
 
-            final BaseSchema<?> schema =
-                dynamicResourceParser.parseSchema( getSchemaName( params.getKey(), params.getType(), getResourceName( resource.getKey() ) ),
-                                                   params.getType(), resource.readString() );
+                final BaseSchema<?> schema = dynamicResourceParser.parseSchema(
+                    getSchemaName( params.getKey(), params.getType(), getResourceName( resource.getKey() ) ), params.getType(),
+                    resource.readString() );
 
-            return new DynamicSchemaResult<T>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
-        } ).collect( Collectors.<DynamicSchemaResult<T>>toList() );
+                return new DynamicSchemaResult<T>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+            } ).collect( Collectors.<DynamicSchemaResult<T>>toList() ) );
     }
 
     @Override
@@ -372,26 +390,30 @@ public class DynamicSchemaServiceImpl
     @Override
     public DynamicSchemaResult<MacroDescriptor> getMacro( final GetDynamicMacroParams params )
     {
-        requireAdminRole();
+        requireReadAccess();
 
-        final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
+        return VirtualAppContext.createAdminContext().callWith( () -> {
+            final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
+            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
 
-        if ( resource.exists() && resource.getSize() > 0 )
-        {
-            final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), resource.readString() );
-            return new DynamicSchemaResult<>(
-                MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
-        }
-        return null;
+            if ( resource.exists() && resource.getSize() > 0 )
+            {
+                final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), resource.readString() );
+                return new DynamicSchemaResult<>(
+                    MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(),
+                    resource );
+            }
+            return null;
+        } );
     }
 
     @Override
     public List<DynamicSchemaResult<MacroDescriptor>> listMacros( final ListDynamicMacrosParams params )
     {
-        requireAdminRole();
+        requireListAccess();
 
-        return dynamicResourceManager.listResources( createMacroRootPath( params.getKey() ) )
+        return VirtualAppContext.createAdminContext().callWith( () -> dynamicResourceManager.listResources(
+                createMacroRootPath( params.getKey() ) )
             .stream()
             .map( resource -> {
                 final MacroDescriptor descriptor =
@@ -402,7 +424,7 @@ public class DynamicSchemaServiceImpl
                     MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(),
                     resource );
             } )
-            .collect( Collectors.toList() );
+            .collect( Collectors.toList() ) );
     }
 
     @Override
@@ -527,6 +549,40 @@ public class DynamicSchemaServiceImpl
         {
             throw new ForbiddenAccessException( authInfo.getUser() );
         }
+    }
+
+    private void requireListAccess()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final boolean hasListAccess = hasAdminAccess( authInfo ) || authInfo.getPrincipals()
+            .stream()
+            .anyMatch( principal -> isProjectRole( principal ) && principal.getId().endsWith( PROJECT_OWNER_ROLE_SUFFIX ) );
+        if ( !hasListAccess )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
+    private void requireReadAccess()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final boolean hasReadAccess =
+            hasAdminAccess( authInfo ) || authInfo.getPrincipals().stream().anyMatch( DynamicSchemaServiceImpl::isProjectRole );
+        if ( !hasReadAccess )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
+    private static boolean hasAdminAccess( final AuthenticationInfo authInfo )
+    {
+        return authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN ) ||
+            authInfo.hasRole( RoleKeys.CONTENT_MANAGER_ADMIN );
+    }
+
+    private static boolean isProjectRole( final PrincipalKey principal )
+    {
+        return principal.isRole() && principal.getId().startsWith( ProjectConstants.PROJECT_NAME_PREFIX );
     }
 
     private ComponentDescriptor wrapDescriptor( final ComponentDescriptor componentDescriptor, final long modifiedTime )

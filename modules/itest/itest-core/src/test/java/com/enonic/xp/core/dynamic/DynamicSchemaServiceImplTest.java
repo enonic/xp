@@ -67,7 +67,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.CreateProjectParams;
+import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
@@ -117,6 +119,7 @@ import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -164,6 +167,26 @@ class DynamicSchemaServiceImplTest
         return ContextBuilder.copyOf( ctxDefault() )
             .authInfo(
                 AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.SCHEMA_ADMIN ).user( User.anonymous() ).build() )
+            .build();
+    }
+
+    private static Context createContentManagerAdminContext()
+    {
+        return ContextBuilder.copyOf( ctxDefault() )
+            .authInfo( AuthenticationInfo.create()
+                           .principals( RoleKeys.AUTHENTICATED, RoleKeys.CONTENT_MANAGER_ADMIN )
+                           .user( User.anonymous() )
+                           .build() )
+            .build();
+    }
+
+    private static Context createProjectRoleContext( final ProjectRole projectRole )
+    {
+        final PrincipalKey projectRoleKey = PrincipalKey.ofRole(
+            ProjectConstants.PROJECT_NAME_PREFIX + "my-project" + "." + projectRole.name().toLowerCase() );
+        return ContextBuilder.copyOf( ctxDefault() )
+            .authInfo(
+                AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, projectRoleKey ).user( User.anonymous() ).build() )
             .build();
     }
 
@@ -1412,6 +1435,79 @@ class DynamicSchemaServiceImplTest
                                                                           .applicationKey( applicationKey )
                                                                           .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                           .build() ) ) );
+    }
+
+    @Test
+    void listFormFragmentsWithSiteConfigAccess()
+    {
+        final DynamicSchemaResult<FormFragmentDescriptor> fragment = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "myapp:mytype1" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
+
+        final ListDynamicContentSchemasParams params = ListDynamicContentSchemasParams.create()
+            .applicationKey( ApplicationKey.from( "myapp" ) )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
+            .build();
+
+        List<DynamicSchemaResult<BaseSchema<?>>> results =
+            createContentManagerAdminContext().callWith( () -> dynamicSchemaService.listContentSchemas( params ) );
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( fragment ) );
+
+        results = createProjectRoleContext( ProjectRole.OWNER ).callWith( () -> dynamicSchemaService.listContentSchemas( params ) );
+        assertThat( results ).usingRecursiveComparison().isEqualTo( List.of( fragment ) );
+    }
+
+    @Test
+    void listFormFragmentsAsNonOwnerProjectRole()
+    {
+        createAdminContext().callWith( () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                                           .name( FormFragmentName.from( "myapp:mytype1" ) )
+                                                                                           .resource( readResource( "_formFragment.yaml" ) )
+                                                                                           .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                                           .build() ) );
+
+        final ListDynamicContentSchemasParams params = ListDynamicContentSchemasParams.create()
+            .applicationKey( ApplicationKey.from( "myapp" ) )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
+            .build();
+
+        assertThrows( ForbiddenAccessException.class, () -> createProjectRoleContext( ProjectRole.VIEWER ).callWith(
+            () -> dynamicSchemaService.listContentSchemas( params ) ) );
+        assertThrows( ForbiddenAccessException.class, () -> createProjectRoleContext( ProjectRole.EDITOR ).callWith(
+            () -> dynamicSchemaService.listContentSchemas( params ) ) );
+    }
+
+    @Test
+    void getFormFragmentWithProjectRole()
+    {
+        final DynamicSchemaResult<FormFragmentDescriptor> fragment = createAdminContext().callWith(
+            () -> dynamicSchemaService.createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                .name( FormFragmentName.from( "myapp:mytype1" ) )
+                                                                .resource( readResource( "_formFragment.yaml" ) )
+                                                                .type( DynamicContentSchemaType.FORM_FRAGMENT )
+                                                                .build() ) );
+
+        final GetDynamicContentSchemaParams params = GetDynamicContentSchemaParams.create()
+            .name( FormFragmentName.from( "myapp:mytype1" ) )
+            .type( DynamicContentSchemaType.FORM_FRAGMENT )
+            .build();
+
+        for ( final ProjectRole projectRole : ProjectRole.values() )
+        {
+            final DynamicSchemaResult<BaseSchema<?>> result =
+                createProjectRoleContext( projectRole ).callWith( () -> dynamicSchemaService.getContentSchema( params ) );
+            assertThat( result ).usingRecursiveComparison().isEqualTo( fragment );
+        }
+
+        final DynamicSchemaResult<BaseSchema<?>> result =
+            createContentManagerAdminContext().callWith( () -> dynamicSchemaService.getContentSchema( params ) );
+        assertThat( result ).usingRecursiveComparison().isEqualTo( fragment );
+
+        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+            .callWith( () -> dynamicSchemaService.getContentSchema( params ) ) );
     }
 
     @Test
