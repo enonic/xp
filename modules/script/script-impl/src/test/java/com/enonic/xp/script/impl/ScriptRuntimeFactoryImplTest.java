@@ -1,10 +1,13 @@
 package com.enonic.xp.script.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
@@ -15,7 +18,10 @@ import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -24,7 +30,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ScriptRuntimeFactoryImplTest
 {
-    @Mock(stubOnly = true)
+    @Mock
     BundleContext bundleContext;
 
     @Mock(stubOnly = true)
@@ -32,6 +38,16 @@ class ScriptRuntimeFactoryImplTest
 
     @Mock(stubOnly = true)
     ScriptAsyncService scriptAsyncService;
+
+    @BeforeEach
+    void setup()
+        throws Exception
+    {
+        // let the ServiceTracker construct and open against the mock registry (no initial services)
+        lenient().when( this.bundleContext.createFilter( anyString() ) )
+            .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
+        lenient().when( this.bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
+    }
 
     @Test
     void invalidate()
@@ -50,7 +66,8 @@ class ScriptRuntimeFactoryImplTest
     }
 
     @Test
-    void deactivate()
+    @SuppressWarnings("unchecked")
+    void removedService_invalidatesRuntimes()
     {
         final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
             spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
@@ -64,9 +81,9 @@ class ScriptRuntimeFactoryImplTest
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( applicationKey );
-        scriptRuntimeFactory.deactivated( application );
+        scriptRuntimeFactory.removedService( mock( ServiceReference.class ), application );
 
-        // deactivation is a full instance teardown, not a name-keyed disposer lookup (#10844)
+        // app stop is a full instance teardown, not a name-keyed disposer lookup (#10844)
         verify( scriptRuntime ).invalidate( eq( applicationKey ) );
     }
 

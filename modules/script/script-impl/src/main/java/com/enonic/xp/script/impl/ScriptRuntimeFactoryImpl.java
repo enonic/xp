@@ -14,6 +14,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +23,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationListener;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
 import com.enonic.xp.script.graal.executor.GraalContextBudget;
@@ -41,7 +42,7 @@ import static java.util.Objects.requireNonNullElseGet;
 
 @Component
 public class ScriptRuntimeFactoryImpl
-    implements ScriptRuntimeFactory, ApplicationInvalidator, ApplicationListener
+    implements ScriptRuntimeFactory, ApplicationInvalidator, ServiceTrackerCustomizer<Application, Application>
 {
     private static final Logger LOG = LoggerFactory.getLogger( ScriptRuntimeFactoryImpl.class );
 
@@ -61,6 +62,8 @@ public class ScriptRuntimeFactoryImpl
 
     private final BundleContext context;
 
+    private final ServiceTracker<Application, Application> tracker;
+
     @Activate
     public ScriptRuntimeFactoryImpl( final BundleContext context, @Reference final ResourceService resourceService,
                                      @Reference final ScriptAsyncService scriptAsyncService )
@@ -68,11 +71,16 @@ public class ScriptRuntimeFactoryImpl
         this.context = context;
         this.resourceService = resourceService;
         this.scriptAsyncService = scriptAsyncService;
+        // track Application services the same way MainExecutor does: opening replays active apps and
+        // delivers future ones, and removedService fires on stop — no ApplicationListener whiteboard
+        this.tracker = new ServiceTracker<>( context, Application.class, this );
+        this.tracker.open();
     }
 
     @Deactivate
     public void destroy()
     {
+        this.tracker.close();
         synchronized ( this )
         {
             if ( this.engine != null )
@@ -89,17 +97,23 @@ public class ScriptRuntimeFactoryImpl
     }
 
     @Override
-    public void activated( final Application app )
+    public Application addingService( final ServiceReference<Application> reference )
+    {
+        return this.context.getService( reference );
+    }
+
+    @Override
+    public void modifiedService( final ServiceReference<Application> reference, final Application application )
     {
     }
 
     @Override
-    public void deactivated( final Application app )
+    public void removedService( final ServiceReference<Application> reference, final Application application )
     {
-        // full instance teardown, not a name-keyed disposer lookup (#10844): the executor of
-        // the deactivated incarnation runs its disposers, closes its contexts and returns its
-        // budget; a replacement incarnation gets a fresh executor lazily
-        this.list.forEach( runtime -> runtime.invalidate( app.getKey() ) );
+        // instance teardown on app stop (#10844): the removed executor runs its own disposers, closes
+        // its contexts and returns its budget; a replacement incarnation gets a fresh executor lazily
+        this.list.forEach( runtime -> runtime.invalidate( application.getKey() ) );
+        this.context.ungetService( reference );
     }
 
     @Override

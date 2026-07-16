@@ -521,14 +521,23 @@ pipeline sharpens both the fix shape and the stakes:
 
 - Everything app-scoped now lives in one closeable executor instance: slots, the strong
   `Source` registry, the disposer queues, the budgeted-slot count. *Fixed on this branch as
-  instance-owned teardown*: app deactivation performs a full `invalidate` — atomically remove
+  instance-owned teardown*: app stop performs a full `invalidate` — atomically remove
   the executor instance, run **its** disposers against **its** still-open contexts, close them
   and return **its** budget permits. The name-keyed `runDisposers(key)` lookup (which under
   replacement resolves to the successor incarnation — the #10844 confusion) is gone; runtime
-  disposal tears down all owned executors the same way. The remaining exposure is the #7966
-  event-ordering root: a late `deactivated` event can still tear down a *healthy successor*
-  executor — but that now self-heals (it is lazily recreated on next use) instead of running
-  the wrong incarnation's disposers or leaking budget.
+  disposal tears down all owned executors the same way. The stop signal is now uniform with the
+  portal layer: `ScriptRuntimeFactoryImpl` is a `ServiceTracker<Application>` (like
+  `MainExecutor`, not an `ApplicationListener` whiteboard), so `removedService` drives the
+  teardown. The remaining exposure is the #7966 event-ordering root: a late stop event can still
+  tear down a *healthy successor* executor — but that now self-heals (it is lazily recreated on
+  next use) instead of running the wrong incarnation's disposers or leaking budget.
+- On pooled engines a disposer only outlives its registration meaningfully on the **main
+  context**: bootstrap's disposer is stable and torn down with the app, whereas a pool slot's is
+  per-context (one per slot the module loads into) and a task's ephemeral context is already
+  closed by the time teardown runs. So `__.disposer` is honored only when called during
+  `bootstrap` (`main.js`); a registration from a request or task slot is logged as a warning and
+  ignored rather than silently dropped at teardown. (Nashorn keeps its single-context semantics
+  unchanged.)
 - The urgency note stands for #7966 itself: executor teardown is only as reliable as the app
   lifecycle events that trigger it.
 

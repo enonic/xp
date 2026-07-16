@@ -372,19 +372,6 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
-    void disposersRunAtMostOnce()
-    {
-        final AtomicInteger runs = new AtomicInteger();
-        scriptExecutor.registerDisposer( ResourceKey.from( "graaljs:pool-test.js" ), runs::incrementAndGet );
-
-        scriptExecutor.runDisposers();
-        scriptExecutor.runDisposers();
-
-        assertEquals( 1, runs.get() );
-    }
-
-    @Test
-    @Timeout(60)
     void mainJsGetsADedicatedContext()
         throws Exception
     {
@@ -413,14 +400,34 @@ class GraalContextPoolTest
     {
         final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
         final AtomicInteger runs = new AtomicInteger();
-        local.registerDisposer( ResourceKey.from( "graaljs:pool-test.js" ), runs::incrementAndGet );
+        local.registerMock( "/test/recorder", runs );
 
-        // instance-owned teardown: closing the executor runs its own disposers, exactly once
+        // __.disposer is honored from the main context (bootstrap)
+        local.bootstrap( ResourceKey.from( "graaljs:/disposer-test.js" ) );
+        assertEquals( 0, runs.get() );
+
+        // instance-owned teardown: closing the executor runs its disposers, exactly once
         ( (Closeable) local ).close();
         assertEquals( 1, runs.get() );
 
         ( (Closeable) local ).close();
         assertEquals( 1, runs.get() );
+    }
+
+    @Test
+    @Timeout(60)
+    void disposerOutsideMainContextIsIgnored()
+        throws Exception
+    {
+        final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
+        final AtomicInteger runs = new AtomicInteger();
+        local.registerMock( "/test/recorder", runs );
+
+        // executeMain runs on a pool slot, not the main context: __.disposer is ignored
+        local.executeMain( ResourceKey.from( "graaljs:/disposer-test.js" ) );
+        ( (Closeable) local ).close();
+
+        assertEquals( 0, runs.get() );
     }
 
     private static int intValue( final ScriptValue value )

@@ -26,6 +26,8 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.proxy.ProxyObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
@@ -52,6 +54,8 @@ import com.enonic.xp.server.RunMode;
 public class GraalScriptExecutor
     implements ScriptExecutor, Closeable
 {
+    private static final Logger LOG = LoggerFactory.getLogger( GraalScriptExecutor.class );
+
     private static final String PRE_SCRIPT = "(function( log, require, resolve, __, exports, module) { ";
 
     private static final String POST_SCRIPT = "\n});";
@@ -257,6 +261,15 @@ public class GraalScriptExecutor
     @Override
     public void registerDisposer( final ResourceKey key, final Runnable callback )
     {
+        // a disposer only outlives its registration meaningfully on the main context: bootstrap's is
+        // stable and torn down with the app. A pool slot's is per-context (one per slot the module
+        // loads into) and a task's ephemeral context is already closed by teardown — so ignore both.
+        final ContextSlot main = this.mainSlot;
+        if ( main == null || heldSlot() != main )
+        {
+            LOG.warn( "__.disposer is only supported during bootstrap (main.js); ignoring registration from {}", key );
+            return;
+        }
         this.disposers.computeIfAbsent( key, k -> new ConcurrentLinkedQueue<>() ).add( callback );
     }
 
