@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -56,9 +57,9 @@ class PortalScriptServiceImplTest
     @Test
     void bootstrap()
     {
-        final ResourceKey mainScript = ResourceKey.from( ApplicationKey.from( "myapp" ), "/main.js" );
-        portalScriptService.bootstrap( mainScript );
-        verify( scriptRuntime ).bootstrap( eq( mainScript ) );
+        final BootstrapParams params = BootstrapParams.create().application( ApplicationKey.from( "myapp" ) ).build();
+        portalScriptService.bootstrap( params );
+        verify( scriptRuntime ).bootstrap( eq( params ) );
     }
 
     @Test

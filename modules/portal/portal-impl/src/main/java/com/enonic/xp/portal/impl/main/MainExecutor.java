@@ -19,6 +19,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.runtime.BootstrapParams;
 
 /**
  * Triggers each application's {@code main.js} bootstrap once it becomes active
@@ -99,8 +100,11 @@ public final class MainExecutor
 
     private void bootstrap( final ApplicationKey applicationKey )
     {
-        final ResourceKey mainScript = ResourceKey.from( applicationKey, "/main.js" );
-        CompletableFuture.runAsync( () -> this.scriptService.bootstrap( mainScript ), this.bootstrapExecutor )
+        final BootstrapParams params = BootstrapParams.create()
+            .application( applicationKey )
+            .mainScript( ResourceKey.from( applicationKey, "/main.js" ) )
+            .build();
+        CompletableFuture.runAsync( () -> this.scriptService.bootstrap( params ), this.bootstrapExecutor )
             .whenComplete( ( result, e ) -> {
                 if ( e != null )
                 {

@@ -15,6 +15,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -57,9 +58,9 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
-    public void bootstrap( final ResourceKey mainScript )
+    public void bootstrap( final BootstrapParams params )
     {
-        this.scriptRuntime.bootstrap( mainScript );
+        this.scriptRuntime.bootstrap( params );
     }
 
     @Override

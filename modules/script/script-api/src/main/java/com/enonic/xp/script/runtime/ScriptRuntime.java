@@ -11,7 +11,7 @@ public interface ScriptRuntime
 {
     boolean hasScript( ResourceKey script );
 
-    void bootstrap( ResourceKey mainScript );
+    void bootstrap( BootstrapParams params );
 
     ScriptExports execute( ResourceKey script );
 

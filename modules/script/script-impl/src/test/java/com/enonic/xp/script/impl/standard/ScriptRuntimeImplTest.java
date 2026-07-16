@@ -17,6 +17,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.AppNotRegisteredException;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
+import com.enonic.xp.script.runtime.BootstrapParams;
 
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -43,6 +44,16 @@ class ScriptRuntimeImplTest
     @Mock
     ResourceService resourceService;
 
+    private static BootstrapParams params()
+    {
+        return BootstrapParams.create().application( APP ).mainScript( MAIN ).build();
+    }
+
+    private static BootstrapParams paramsWithoutScript()
+    {
+        return BootstrapParams.create().application( APP ).build();
+    }
+
     private void mainScriptExists( final boolean exists )
     {
         final Resource resource = mock( Resource.class );
@@ -63,21 +74,23 @@ class ScriptRuntimeImplTest
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( MAIN );
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( params() );
+        runtime.bootstrap( params() );
 
         verify( scriptExecutor, times( 1 ) ).bootstrap( MAIN );
     }
 
     @Test
-    void bootstrap_noMainScript_doesNotExecute()
+    void bootstrap_withoutMainScript_opensGateWithoutExecuting()
     {
-        mainScriptExists( false );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( paramsWithoutScript() );
+        // gate is open: a controller runs without waiting, and no bootstrap script was executed
+        runtime.execute( CONTROLLER );
 
         verify( scriptExecutor, never() ).bootstrap( MAIN );
+        verify( scriptExecutor ).executeMain( CONTROLLER );
     }
 
     @Test
@@ -86,7 +99,7 @@ class ScriptRuntimeImplTest
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( params() );
         runtime.execute( CONTROLLER );
 
         final InOrder inOrder = Mockito.inOrder( scriptExecutor );
@@ -95,24 +108,12 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void execute_withoutBootstrap_proceedsWithoutRunningIt()
-    {
-        mainScriptExists( true );
-        final ScriptRuntimeImpl runtime = runtime();
-
-        runtime.execute( CONTROLLER );
-
-        verify( scriptExecutor ).executeMain( CONTROLLER );
-        verify( scriptExecutor, never() ).bootstrap( MAIN );
-    }
-
-    @Test
     void execute_bootstrapsOnlyOnceAcrossControllers()
     {
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( params() );
         runtime.execute( CONTROLLER );
         runtime.execute( CONTROLLER );
 
@@ -127,8 +128,8 @@ class ScriptRuntimeImplTest
         final ScriptRuntimeImpl runtime = runtime();
         when( scriptExecutor.bootstrap( MAIN ) ).thenThrow( new RuntimeException( "boom" ) );
 
-        runtime.bootstrap( MAIN );
-        // a broken main.js must not dam the application: the controller still runs
+        runtime.bootstrap( params() );
+        // a broken bootstrap script must not dam the application: the controller still runs
         runtime.execute( CONTROLLER );
 
         verify( scriptExecutor ).executeMain( CONTROLLER );
@@ -139,14 +140,14 @@ class ScriptRuntimeImplTest
     {
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
-        // main.js synchronously invokes another of the app's scripts while bootstrapping: the
-        // re-entrant execution must run instead of waiting for the latch it is itself about to open
+        // the bootstrap script synchronously invokes another of the app's scripts: the re-entrant
+        // execution must run instead of waiting for the gate it is itself about to open
         when( scriptExecutor.bootstrap( MAIN ) ).thenAnswer( invocation -> {
             runtime.execute( CONTROLLER );
             return null;
         } );
 
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( params() );
 
         verify( scriptExecutor ).bootstrap( MAIN );
         verify( scriptExecutor ).executeMain( CONTROLLER );
@@ -158,7 +159,7 @@ class ScriptRuntimeImplTest
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( params() );
         runtime.executeAsync( CONTROLLER );
 
         final InOrder inOrder = Mockito.inOrder( scriptExecutor );
@@ -169,9 +170,8 @@ class ScriptRuntimeImplTest
     @Test
     void invalidate_runsDisposersOfTheRemovedExecutor()
     {
-        mainScriptExists( false );
         final ScriptRuntimeImpl runtime = runtime();
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( paramsWithoutScript() );
 
         runtime.invalidate( APP );
         // idempotent: the executor is gone, nothing to dispose twice
@@ -186,14 +186,10 @@ class ScriptRuntimeImplTest
     {
         final ScriptExecutor closeableExecutor =
             mock( ScriptExecutor.class, Mockito.withSettings().extraInterfaces( Closeable.class ) );
-        final Resource resource = mock( Resource.class );
-        lenient().when( resource.exists() ).thenReturn( false );
-        lenient().when( closeableExecutor.getResourceService() ).thenReturn( resourceService );
-        lenient().when( resourceService.getResource( MAIN ) ).thenReturn( resource );
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( closeableExecutor );
 
         final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
-        runtime.bootstrap( MAIN );
+        runtime.bootstrap( paramsWithoutScript() );
 
         runtime.invalidate( APP );
 

@@ -13,6 +13,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.runtime.BootstrapParams;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -57,22 +58,30 @@ class MainExecutorTest
         return reference;
     }
 
+    private static BootstrapParams params( final String applicationKey )
+    {
+        return BootstrapParams.create()
+            .application( ApplicationKey.from( applicationKey ) )
+            .mainScript( ResourceKey.from( applicationKey + ":/main.js" ) )
+            .build();
+    }
+
     @Test
     void addingService_triggersBootstrap()
     {
         this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService ).bootstrap( ResourceKey.from( "foo.bar:/main.js" ) );
+        verify( this.scriptService ).bootstrap( params( "foo.bar" ) );
     }
 
     @Test
     void bootstrapError_isSwallowed()
     {
-        doThrow( new RuntimeException() ).when( this.scriptService ).bootstrap( ResourceKey.from( "foo.bar:/main.js" ) );
+        doThrow( new RuntimeException() ).when( this.scriptService ).bootstrap( params( "foo.bar" ) );
 
         this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService, times( 1 ) ).bootstrap( ResourceKey.from( "foo.bar:/main.js" ) );
+        verify( this.scriptService, times( 1 ) ).bootstrap( params( "foo.bar" ) );
     }
 
     @Test

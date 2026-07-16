@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.AppNotRegisteredException;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 
 public class ScriptRuntimeImpl
@@ -62,14 +63,13 @@ public class ScriptRuntimeImpl
     }
 
     @Override
-    public void bootstrap( final ResourceKey mainScript )
+    public void bootstrap( final BootstrapParams params )
     {
-        final ApplicationKey key = mainScript.getApplicationKey();
+        final ApplicationKey key = params.getApplication();
         final AppExecutor app = getExecutor( key );
-        final CompletableFuture<Void> gate = new CompletableFuture<>();
-        if ( app.bootstrap.compareAndSet( null, gate ) )
+        if ( app.bootstrapStarted.compareAndSet( false, true ) )
         {
-            runBootstrap( key, app, mainScript, gate );
+            runBootstrap( key, app, params.getMainScript().orElse( null ) );
         }
         else
         {
@@ -104,11 +104,7 @@ public class ScriptRuntimeImpl
             return;
         }
         // release any waiters: the app is gone, so its bootstrap will never complete on its own
-        final CompletableFuture<Void> gate = removed.bootstrap.get();
-        if ( gate != null )
-        {
-            gate.complete( null );
-        }
+        removed.bootstrapped.complete( null );
         // instance-owned teardown (#10844): the removed executor's own disposers run against its
         // own (still open) contexts — never a name-keyed lookup, which under application replacement
         // can resolve to the successor instance
@@ -154,19 +150,19 @@ public class ScriptRuntimeImpl
     }
 
     /**
-     * Runs the application's bootstrap script exactly once, on the dedicated main context, and opens
-     * the gate that {@link #execute} waits on (<a href="https://github.com/enonic/xp/issues/7821">
+     * Runs the application's optional bootstrap script once, on the dedicated main context, then
+     * opens the gate that {@link #execute} waits on (<a href="https://github.com/enonic/xp/issues/7821">
      * #7821</a>). The gate lives on the per-application executor, created fresh for each application
      * incarnation and discarded on {@link #invalidate}, so two installs of the same key can neither
-     * share nor race a gate. A broken bootstrap script still opens the gate (logged, never a
-     * permanently un-bootstrapped application).
+     * share nor race a gate. When no bootstrap script is given (or it is missing) the gate simply
+     * opens; a broken bootstrap script also still opens it (logged, never a permanently
+     * un-bootstrapped application).
      */
-    private void runBootstrap( final ApplicationKey key, final AppExecutor app, final ResourceKey mainScript,
-                               final CompletableFuture<Void> gate )
+    private void runBootstrap( final ApplicationKey key, final AppExecutor app, final ResourceKey mainScript )
     {
         try
         {
-            if ( app.executor.getResourceService().getResource( mainScript ).exists() )
+            if ( mainScript != null && app.executor.getResourceService().getResource( mainScript ).exists() )
             {
                 ScopedValue.where( BOOTSTRAPPING, key ).run( () -> app.executor.bootstrap( mainScript ) );
             }
@@ -177,15 +173,14 @@ public class ScriptRuntimeImpl
         }
         finally
         {
-            gate.complete( null );
+            app.bootstrapped.complete( null );
         }
     }
 
     /**
      * Waits for the application's bootstrap to complete, so a top-level execution observes a fully
      * bootstrapped application. Executions re-entrant within the application's own bootstrap do not
-     * wait (they are performing it), and an application that was never armed for bootstrap proceeds
-     * without waiting.
+     * wait — they are performing it.
      */
     private void await( final ApplicationKey key, final AppExecutor app )
     {
@@ -193,18 +188,13 @@ public class ScriptRuntimeImpl
         {
             return;
         }
-        final CompletableFuture<Void> gate = app.bootstrap.get();
-        if ( gate == null )
-        {
-            return;
-        }
         try
         {
-            gate.get( BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS );
+            app.bootstrapped.get( BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS );
         }
         catch ( TimeoutException e )
         {
-            // fail open: a hanging bootstrap must not dam the application forever
+            // fail open: a hanging or never-armed bootstrap must not dam the application forever
             LOG.warn( "Application {} has not bootstrapped within {}s - proceeding", key, BOOTSTRAP_TIMEOUT_SECONDS );
         }
         catch ( ExecutionException e )
@@ -228,7 +218,9 @@ public class ScriptRuntimeImpl
     {
         final ScriptExecutor executor;
 
-        final AtomicReference<CompletableFuture<Void>> bootstrap = new AtomicReference<>();
+        final AtomicBoolean bootstrapStarted = new AtomicBoolean();
+
+        final CompletableFuture<Void> bootstrapped = new CompletableFuture<>();
 
         AppExecutor( final ScriptExecutor executor )
         {

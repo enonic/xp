@@ -11,6 +11,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.ScriptTestSupport;
@@ -42,7 +43,7 @@ public class ExecuteFunctionHandlerTest
             }
 
             @Override
-            public void bootstrap( final ResourceKey mainScript )
+            public void bootstrap( final BootstrapParams params )
             {
             }
 
