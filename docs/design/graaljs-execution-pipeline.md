@@ -454,7 +454,10 @@ what every Node.js cluster / worker deployment already imposes on developers.
   global cross-app budget in the order of the Jetty thread pool, grown lazily on demand.
 - ES modules (`import`) support could ride on the new pipeline (`Source.mimeType
   ("application/javascript+module")`) — worth deciding before freezing the wrapper design.
-- Should the "main" worker also serve requests, or stay reserved for listeners/timers?
+- ~~Should the "main" worker also serve requests, or stay reserved for listeners/timers?~~
+  Decided (§9.1): the bootstrap runs on a **dedicated main context** that request traffic never
+  touches (`bootstrap` pins to it; `executeMain` uses the pool), so `main.js` state and its
+  listeners/disposers stay isolated from requests.
 - `Value`-leak detection: debug mode that records stack traces when a context-bound `Value`
   escapes without a handle, to catch library regressions early.
 - Interaction with `ApplicationInvalidationLevel` / dev-mode reload: invalidation must fan out

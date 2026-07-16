@@ -22,11 +22,11 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.runtime.BootstrapParams;
 
 /**
- * Triggers each application's {@code main.js} bootstrap once it becomes active
- * (<a href="https://github.com/enonic/xp/issues/7821">#7821</a>). The script engine runs
- * {@code main.js} before serving any controller and gates concurrent executions on it; this
- * component only makes the bootstrap eager, so a side-effect-only application (listeners, tasks) is
- * initialized at deploy rather than waiting for a first request.
+ * Bootstraps each application once it becomes active, by calling
+ * {@code PortalScriptService.bootstrap} (<a href="https://github.com/enonic/xp/issues/7821">#7821</a>).
+ * The script engine gates every top-level execution on that call, so a controller never runs before
+ * its application's {@code main.js} has — this component is what makes the call, for every active
+ * application, including side-effect-only ones (listeners, tasks) that no request would reach.
  * <p>
  * Applications are OSGi {@link Application} services, registered while active and unregistered on
  * stop, so this component simply tracks them: DS activation is gated on the deploy-ready Condition
