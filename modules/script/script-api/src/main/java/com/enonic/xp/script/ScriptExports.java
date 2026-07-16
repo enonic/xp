@@ -50,13 +50,15 @@ public interface ScriptExports
     }
 
     /**
-     * Returns a view of these exports whose every execution runs in a fresh, private script
-     * context that lives for that invocation only — full isolation from all other executions,
-     * intended for background tasks so they never compete with request-serving contexts.
-     * Module state does not survive between invocations, and function values must not escape
-     * the invocation. Engines without context pooling return {@code this}.
+     * Returns a view of these exports intended for background/task execution, away from the
+     * request-serving contexts. On pooled script engines each invocation runs in a fresh, private
+     * context that lives only for that call: it is isolated from other executions, module state
+     * does not survive between invocations, and function values must not escape the call. Engines
+     * without a context pool have a single shared context and return {@code this} — there is no
+     * isolation there, so callers must treat isolation as best effort, provided only where the
+     * engine pools contexts.
      */
-    default ScriptExports isolated()
+    default ScriptExports background()
     {
         return this;
     }

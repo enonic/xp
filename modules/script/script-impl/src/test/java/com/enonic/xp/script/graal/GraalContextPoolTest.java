@@ -277,11 +277,11 @@ class GraalContextPoolTest
     {
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
 
-        // every isolated invocation runs in a fresh, private context
-        assertEquals( 1, intValue( exports.isolated().executeMethod( "inc" ) ) );
-        assertEquals( 1, intValue( exports.isolated().executeMethod( "inc" ) ) );
+        // every background invocation runs in a fresh, private context
+        assertEquals( 1, intValue( exports.background().executeMethod( "inc" ) ) );
+        assertEquals( 1, intValue( exports.background().executeMethod( "inc" ) ) );
 
-        // the pooled contexts are untouched by isolated runs
+        // the pooled contexts are untouched by background runs
         assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
     }
 
@@ -295,11 +295,11 @@ class GraalContextPoolTest
         exports.retain();
         exports.release();
 
-        // an isolated view has no slot to capture: bound scopes receive the view itself
-        final ScriptExports isolated = exports.isolated();
-        assertSame( isolated, isolated.executeBound( view -> view ) );
-        isolated.retain();
-        isolated.release();
+        // a background view has no slot to capture: bound scopes receive the view itself
+        final ScriptExports background = exports.background();
+        assertSame( background, background.executeBound( view -> view ) );
+        background.retain();
+        background.release();
     }
 
     @Test
@@ -366,7 +366,7 @@ class GraalContextPoolTest
         try (ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor())
         {
             assertEquals( 1, virtualThreads.submit( () -> intValue( exports.executeMethod( "inc" ) ) ).get() );
-            assertEquals( 1, virtualThreads.submit( () -> intValue( exports.isolated().executeMethod( "inc" ) ) ).get() );
+            assertEquals( 1, virtualThreads.submit( () -> intValue( exports.background().executeMethod( "inc" ) ) ).get() );
         }
     }
 

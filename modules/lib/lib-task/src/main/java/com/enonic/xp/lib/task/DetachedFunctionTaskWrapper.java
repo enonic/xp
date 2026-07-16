@@ -60,9 +60,9 @@ final class DetachedFunctionTaskWrapper
             {
                 throw new IllegalStateException( "Cannot run detached task: PortalScriptService is not available" );
             }
-            // isolated: a fresh context per run — detached tasks ride virtual threads and may
-            // IO-wait for long; they must not occupy request-serving contexts
-            service.execute( runner ).isolated().executeMethod( "run", source, params );
+            // background: a fresh context per run on pooled engines — detached tasks ride virtual
+            // threads and may IO-wait for long; they must not occupy request-serving contexts
+            service.execute( runner ).background().executeMethod( "run", source, params );
         }
         catch ( Throwable t )
         {

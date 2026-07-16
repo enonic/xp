@@ -82,7 +82,7 @@ final class GraalScriptExports
     }
 
     @Override
-    public ScriptExports isolated()
+    public ScriptExports background()
     {
         return isolated ? this : new GraalScriptExports( executor, script, null, true );
     }

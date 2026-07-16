@@ -78,7 +78,7 @@ public final class ExecuteFunctionHandler
      * it detached — Web Worker semantics: re-materialized from source in a fresh context with
      * {@code params}, {@code log} and {@code require} in scope, because a routed closure would
      * serialize the task with the submitting context. Engines without pooling (Nashorn) always
-     * keep the historical attached-closure behavior. Probed via {@link ScriptExports#isolated()}:
+     * keep the historical attached-closure behavior. Probed via {@link ScriptExports#background()}:
      * pooled engines return a distinct view.
      */
     private boolean useDetached()
@@ -95,7 +95,7 @@ public final class ExecuteFunctionHandler
                 return false;
             }
             final ScriptExports runnerExports = scriptService.execute( detachedRunner );
-            return runnerExports.isolated() != runnerExports;
+            return runnerExports.background() != runnerExports;
         }
         catch ( RuntimeException e )
         {

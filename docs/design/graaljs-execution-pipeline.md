@@ -185,7 +185,7 @@ closure on another thread", which JS cannot honor.
 always detached: JS developers have long been familiar with worker patterns, and a routed
 closure would only *appear* to work while silently serializing the task with the submitting
 context. Engines without pooling (Nashorn) always keep the historical attached-closure
-behavior. The engine is probed at submit via `ScriptExports.isolated()` (pooled engines return
+behavior. The engine is probed at submit via `ScriptExports.background()` (pooled engines return
 a distinct view); apps bundling an older compiled task lib (no source captured) keep the
 routed-handle fallback of §4.2, so nothing crashes. `params` are delivered on every path.
 
@@ -430,7 +430,7 @@ what every Node.js cluster / worker deployment already imposes on developers.
    detached — the function travels as source (captured via `Function.prototype.toString` at
    submit) plus eagerly converted data params (functions rejected at submit), and is
    re-materialized by an internal runner module (`/lib/xp/detached-task.js`, executed through
-   `PortalScriptService` → `ScriptExports.isolated()`) in a fresh context — true parallelism
+   `PortalScriptService` → `ScriptExports.background()`) in a fresh context — true parallelism
    on GraalJS. The runner applies its module environment (`log`, `require`, `resolve`, `__`)
    to the re-materialized function, so detached functions can load libraries and log; captured
    outer variables throw `ReferenceError`, matching Web-Worker expectations. Nashorn always
@@ -440,7 +440,7 @@ what every Node.js cluster / worker deployment already imposes on developers.
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (retention-aware growth), the global cross-app context budget
    (`xp.script-engine.graal.max-contexts`, default 200; first slot per app always allowed),
-   ephemeral task contexts behind `ScriptExports.isolated()` bounded by
+   ephemeral task contexts behind `ScriptExports.background()` bounded by
    `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, bounded
    pinned waits, and the experimental Jetty virtual-threads option (default off). Remaining:
    slot-count/footprint metrics and the host-backed `lib-cache` registry (per-context caches

@@ -55,8 +55,8 @@ public class NamedTaskScriptFactoryImpl
                                              "Missing exported function '" + NamedTaskScript.SCRIPT_METHOD_NAME + "' in task script" );
         }
 
-        // a task runs in its own separated context, not on a request-serving slot: isolated() gives
-        // a fresh context per run on pooled engines (a no-op on engines without pooling)
-        return new NamedTaskScript( exports.isolated(), descriptor, data );
+        // a task runs in its own separated context, not on a request-serving slot: background()
+        // gives a fresh context per run on pooled engines (a no-op on engines without pooling)
+        return new NamedTaskScript( exports.background(), descriptor, data );
     }
 }
