@@ -81,16 +81,29 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void execute_bootstrapsBeforeTheController()
+    void execute_waitsForBootstrapThenRunsController()
+    {
+        mainScriptExists( true );
+        final ScriptRuntimeImpl runtime = runtime();
+
+        runtime.bootstrap( MAIN );
+        runtime.execute( CONTROLLER );
+
+        final InOrder inOrder = Mockito.inOrder( scriptExecutor );
+        inOrder.verify( scriptExecutor ).bootstrap( MAIN );
+        inOrder.verify( scriptExecutor ).executeMain( CONTROLLER );
+    }
+
+    @Test
+    void execute_withoutBootstrap_proceedsWithoutRunningIt()
     {
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
         runtime.execute( CONTROLLER );
 
-        final InOrder inOrder = Mockito.inOrder( scriptExecutor );
-        inOrder.verify( scriptExecutor ).bootstrap( MAIN );
-        inOrder.verify( scriptExecutor ).executeMain( CONTROLLER );
+        verify( scriptExecutor ).executeMain( CONTROLLER );
+        verify( scriptExecutor, never() ).bootstrap( MAIN );
     }
 
     @Test
@@ -140,15 +153,17 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void executeAsync_bootstrapsFirst()
+    void executeAsync_waitsForBootstrap()
     {
         mainScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
+        runtime.bootstrap( MAIN );
         runtime.executeAsync( CONTROLLER );
 
-        verify( scriptExecutor ).bootstrap( MAIN );
-        verify( scriptExecutor ).executeMainAsync( CONTROLLER );
+        final InOrder inOrder = Mockito.inOrder( scriptExecutor );
+        inOrder.verify( scriptExecutor ).bootstrap( MAIN );
+        inOrder.verify( scriptExecutor ).executeMainAsync( CONTROLLER );
     }
 
     @Test

@@ -483,30 +483,34 @@ twice over:
 - *The ordering half is fixed on this branch*, and the gate lives **on the per-application
   executor** rather than in the OSGi service registry. The script runtime already owns one
   `ScriptExecutor` per application, created lazily on first use and discarded on `invalidate`
-  (the #10844 teardown) — i.e. a fresh instance per application *incarnation*. `ScriptRuntime`
-  runs an app's `main.js` exactly once before serving any of its top-level scripts and blocks the
-  others on a latch held by that executor. Because the latch is a field of the per-incarnation
-  executor, "which incarnation bootstrapped?" is never a question a string has to answer: a
-  caller always waits on the exact executor it is about to run, so two installs of the same key
-  can neither share nor race a gate (the flaw of a registry marker keyed on the app-key string,
-  where a stopping incarnation's marker can satisfy a starting one's wait). The wait is
-  **centralized in the runtime**, so controllers, filters, error handlers, macros, response
-  processors and named tasks are gated by construction — a new entry point inherits it. Exempt is
-  any execution re-entrant within the same application's bootstrap: `main.js` runs inside a
-  thread-scoped `ScopedValue` carrying the bootstrapping app's key, so `main.js` and anything it
-  triggers synchronously do not wait for the latch they are themselves about to open (which would
-  self-deadlock); a *different* app's script invoked mid-bootstrap is still gated. `MainExecutor`
-  shrinks to a trigger: it is a `ServiceTracker<Application>` (not an `ApplicationListener`),
-  DS-gated on the deploy-ready Condition (`osgi.condition.id=com.enonic.xp.server.deploy.ready`),
-  and on each tracked `Application` it calls `PortalScriptService.bootstrap(app:/main.js)` so a
-  side-effect-only app (listeners, tasks, no controllers) is initialized at deploy rather than on
-  first request. A tracker's `open()` replays every already-registered `Application` the moment
-  the gate is satisfied and delivers future ones via `addingService`, so coverage is correct by
-  construction regardless of boot order, system apps included. A broken `main.js` still opens the
-  latch (surfaces in the log, never a permanently dammed app); event callbacks and tasks on their
-  own threads are gated normally (they wait if the app is mid-bootstrap — async, no deadlock); and
-  the wait is bounded (300 s, then fail-open with a warning) so a hanging `main.js` degrades to
-  today's behavior instead of a deadlock.
+  (the #10844 teardown) — i.e. a fresh instance per application *incarnation*. Bootstrap is
+  **armed by one explicit trigger and only awaited elsewhere**: `MainExecutor` calls
+  `PortalScriptService.bootstrap(app:/main.js)` for each app, which runs the entrypoint once on the
+  dedicated main context and completes a gate held by that app's executor; every other top-level
+  execution (`ScriptRuntime.execute`) only *awaits* that gate. The gate is a field of the
+  per-incarnation executor, so "which incarnation bootstrapped?" is never a question a string has
+  to answer: a caller always waits on the exact executor it is about to run, and two installs of
+  the same key can neither share nor race a gate (the flaw of a registry marker keyed on the
+  app-key string, where a stopping incarnation's marker can satisfy a starting one's wait). Only
+  `MainExecutor` (the portal layer) knows the `/main.js` convention — the generic runtime never
+  names it. The wait is **centralized in the runtime**, so controllers, filters, error handlers,
+  macros, response processors and named tasks are gated by construction — a new entry point
+  inherits it. Exempt is any execution re-entrant within the same application's bootstrap:
+  the entrypoint runs inside a thread-scoped `ScopedValue` carrying the bootstrapping app's key,
+  so it and anything it triggers synchronously do not wait for the gate they are themselves about
+  to open (which would self-deadlock); a *different* app's script invoked mid-bootstrap is still
+  gated. `MainExecutor` is a `ServiceTracker<Application>` (not an `ApplicationListener`), DS-gated
+  on the deploy-ready Condition (`osgi.condition.id=com.enonic.xp.server.deploy.ready`); its
+  `open()` replays every already-registered `Application` the moment the gate is satisfied and
+  delivers future ones via `addingService`, so a side-effect-only app (listeners, tasks, no
+  controllers) is initialized at deploy, regardless of boot order, system apps included. A broken
+  `main.js` still opens the gate (surfaces in the log, never a permanently dammed app); event
+  callbacks and tasks on their own threads are gated normally (async, no deadlock); the wait is
+  bounded (300 s, then fail-open). Ordering is **best-effort at cold activation**: an app whose
+  bootstrap was never armed proceeds ungated (so a request in the brief window between an app
+  becoming routable and `MainExecutor` arming its gate may run before `main.js`) — the same
+  fail-open spirit as the timeout, and the price of keeping the entrypoint name out of the generic
+  runtime.
 
 **[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
 registered by one bundle incarnation invoked for its replacement (rooted in #7966). The

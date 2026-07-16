@@ -5,9 +5,10 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -26,12 +27,10 @@ public class ScriptRuntimeImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( ScriptRuntimeImpl.class );
 
-    private static final String MAIN_SCRIPT = "/main.js";
-
     private static final long BOOTSTRAP_TIMEOUT_SECONDS = 300;
 
     /**
-     * The application whose {@code main.js} is running on the current thread, if any. {@code main.js}
+     * The application whose bootstrap is running on the current thread, if any. The bootstrap script
      * and everything it triggers synchronously must run before the application is bootstrapped, so a
      * re-entrant execution on the bootstrap thread must not wait for the bootstrap it is performing.
      */
@@ -65,14 +64,24 @@ public class ScriptRuntimeImpl
     @Override
     public void bootstrap( final ResourceKey mainScript )
     {
-        ensureBootstrapped( getExecutor( mainScript.getApplicationKey() ), mainScript );
+        final ApplicationKey key = mainScript.getApplicationKey();
+        final AppExecutor app = getExecutor( key );
+        final CompletableFuture<Void> gate = new CompletableFuture<>();
+        if ( app.bootstrap.compareAndSet( null, gate ) )
+        {
+            runBootstrap( key, app, mainScript, gate );
+        }
+        else
+        {
+            await( key, app );
+        }
     }
 
     @Override
     public ScriptExports execute( final ResourceKey script )
     {
         final AppExecutor app = getExecutor( script.getApplicationKey() );
-        ensureBootstrapped( app, mainScript( script ) );
+        await( script.getApplicationKey(), app );
         return app.executor.executeMain( script );
     }
 
@@ -81,13 +90,8 @@ public class ScriptRuntimeImpl
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
         final AppExecutor app = getExecutor( script.getApplicationKey() );
-        ensureBootstrapped( app, mainScript( script ) );
+        await( script.getApplicationKey(), app );
         return app.executor.executeMainAsync( script );
-    }
-
-    private static ResourceKey mainScript( final ResourceKey script )
-    {
-        return ResourceKey.from( script.getApplicationKey(), MAIN_SCRIPT );
     }
 
     @Override
@@ -100,7 +104,11 @@ public class ScriptRuntimeImpl
             return;
         }
         // release any waiters: the app is gone, so its bootstrap will never complete on its own
-        removed.bootstrapped.countDown();
+        final CompletableFuture<Void> gate = removed.bootstrap.get();
+        if ( gate != null )
+        {
+            gate.complete( null );
+        }
         // instance-owned teardown (#10844): the removed executor's own disposers run against its
         // own (still open) contexts — never a name-keyed lookup, which under application replacement
         // can resolve to the successor instance
@@ -146,58 +154,63 @@ public class ScriptRuntimeImpl
     }
 
     /**
-     * Runs the application's {@code main.js} exactly once before any of its controllers and blocks
-     * until it has (<a href="https://github.com/enonic/xp/issues/7821">#7821</a>). The gate lives on
-     * the per-application executor, created fresh for each application incarnation and discarded on
-     * {@link #invalidate}, so two installs of the same key can neither share nor race a gate — the
-     * caller always waits on the exact executor it is about to run.
+     * Runs the application's bootstrap script exactly once, on the dedicated main context, and opens
+     * the gate that {@link #execute} waits on (<a href="https://github.com/enonic/xp/issues/7821">
+     * #7821</a>). The gate lives on the per-application executor, created fresh for each application
+     * incarnation and discarded on {@link #invalidate}, so two installs of the same key can neither
+     * share nor race a gate. A broken bootstrap script still opens the gate (logged, never a
+     * permanently un-bootstrapped application).
      */
-    private void ensureBootstrapped( final AppExecutor app, final ResourceKey mainScript )
-    {
-        final ApplicationKey key = mainScript.getApplicationKey();
-        if ( BOOTSTRAPPING.isBound() && BOOTSTRAPPING.get().equals( key ) )
-        {
-            return;
-        }
-        if ( app.bootstrapStarted.compareAndSet( false, true ) )
-        {
-            runMainScript( app, mainScript );
-        }
-        else
-        {
-            awaitBootstrapped( key, app );
-        }
-    }
-
-    private void runMainScript( final AppExecutor app, final ResourceKey mainScript )
+    private void runBootstrap( final ApplicationKey key, final AppExecutor app, final ResourceKey mainScript,
+                               final CompletableFuture<Void> gate )
     {
         try
         {
             if ( app.executor.getResourceService().getResource( mainScript ).exists() )
             {
-                ScopedValue.where( BOOTSTRAPPING, mainScript.getApplicationKey() ).run( () -> app.executor.bootstrap( mainScript ) );
+                ScopedValue.where( BOOTSTRAPPING, key ).run( () -> app.executor.bootstrap( mainScript ) );
             }
         }
         catch ( Exception e )
         {
-            // a broken main.js surfaces in the log, never as a permanently un-bootstrapped application
             LOG.error( "Error while executing {}", mainScript, e );
         }
         finally
         {
-            app.bootstrapped.countDown();
+            gate.complete( null );
         }
     }
 
-    private void awaitBootstrapped( final ApplicationKey key, final AppExecutor app )
+    /**
+     * Waits for the application's bootstrap to complete, so a top-level execution observes a fully
+     * bootstrapped application. Executions re-entrant within the application's own bootstrap do not
+     * wait (they are performing it), and an application that was never armed for bootstrap proceeds
+     * without waiting.
+     */
+    private void await( final ApplicationKey key, final AppExecutor app )
     {
+        if ( BOOTSTRAPPING.isBound() && BOOTSTRAPPING.get().equals( key ) )
+        {
+            return;
+        }
+        final CompletableFuture<Void> gate = app.bootstrap.get();
+        if ( gate == null )
+        {
+            return;
+        }
         try
         {
-            if ( !app.bootstrapped.await( BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS ) )
-            {
-                // fail open: a hanging main.js must not dam the application forever
-                LOG.warn( "Application {} has not bootstrapped within {}s - proceeding", key, BOOTSTRAP_TIMEOUT_SECONDS );
-            }
+            gate.get( BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS );
+        }
+        catch ( TimeoutException e )
+        {
+            // fail open: a hanging bootstrap must not dam the application forever
+            LOG.warn( "Application {} has not bootstrapped within {}s - proceeding", key, BOOTSTRAP_TIMEOUT_SECONDS );
+        }
+        catch ( ExecutionException e )
+        {
+            // bootstrap completes even on failure; this is not expected, but must not block the caller
+            LOG.warn( "Application {} bootstrap failed", key, e );
         }
         catch ( InterruptedException e )
         {
@@ -215,9 +228,7 @@ public class ScriptRuntimeImpl
     {
         final ScriptExecutor executor;
 
-        final CountDownLatch bootstrapped = new CountDownLatch( 1 );
-
-        final AtomicBoolean bootstrapStarted = new AtomicBoolean();
+        final AtomicReference<CompletableFuture<Void>> bootstrap = new AtomicReference<>();
 
         AppExecutor( final ScriptExecutor executor )
         {
