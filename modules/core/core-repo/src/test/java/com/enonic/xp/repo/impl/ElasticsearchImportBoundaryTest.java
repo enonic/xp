@@ -1,0 +1,97 @@
+package com.enonic.xp.repo.impl;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Architectural boundary test: {@code org.elasticsearch} types must not leak out of the
+ * {@code com.enonic.xp.repo.impl.elasticsearch} package. This confines the storage seam
+ * ahead of typing it behind a storage SPI (see the storage-spi-phase0 branch).
+ * <p>
+ * {@link #ALLOWED_LEAKS} is the known, pre-existing set of leaks (exception types only,
+ * not yet translated at the boundary). It must shrink over time and never grow: new code
+ * must not add to it, it must confine ES types to the elasticsearch package instead.
+ */
+class ElasticsearchImportBoundaryTest
+{
+    private static final Path SOURCE_ROOT = Path.of( "src", "main", "java" );
+
+    private static final String CONFINED_PACKAGE = "com/enonic/xp/repo/impl/elasticsearch/";
+
+    private static final Pattern ES_IMPORT = Pattern.compile( "^import org\\.elasticsearch\\..*;$" );
+
+    // Known leaks as of Phase 0 Gate 0. Emptied in Gate A once the boundary is fixed.
+    private static final Set<String> ALLOWED_LEAKS = Set.of( "com/enonic/xp/repo/impl/repository/RepositoryCreator.java",
+                                                              "com/enonic/xp/repo/impl/node/RefreshCommand.java",
+                                                              "com/enonic/xp/repo/impl/node/NodeServiceImpl.java" );
+
+    @Test
+    void noElasticsearchImportsOutsideElasticsearchPackage()
+        throws IOException
+    {
+        final List<String> violations;
+        try (Stream<Path> files = Files.walk( SOURCE_ROOT ))
+        {
+            violations = files.filter( path -> path.toString().endsWith( ".java" ) )
+                .filter( path -> !normalize( path ).contains( CONFINED_PACKAGE ) )
+                .filter( ElasticsearchImportBoundaryTest::importsElasticsearch )
+                .map( path -> SOURCE_ROOT.relativize( path ) )
+                .map( ElasticsearchImportBoundaryTest::normalize )
+                .filter( relativePath -> !ALLOWED_LEAKS.contains( relativePath ) )
+                .toList();
+        }
+
+        assertTrue( violations.isEmpty(),
+                    () -> "New org.elasticsearch imports found outside com.enonic.xp.repo.impl.elasticsearch " +
+                        "(and not in the ALLOWED_LEAKS allowlist): " + violations );
+    }
+
+    @Test
+    void allowedLeaksAreStillAccurate()
+        throws IOException
+    {
+        final List<String> staleEntries;
+        try (Stream<Path> files = Files.walk( SOURCE_ROOT ))
+        {
+            final Set<String> actualLeaks = files.filter( path -> path.toString().endsWith( ".java" ) )
+                .filter( path -> !normalize( path ).contains( CONFINED_PACKAGE ) )
+                .filter( ElasticsearchImportBoundaryTest::importsElasticsearch )
+                .map( path -> SOURCE_ROOT.relativize( path ) )
+                .map( ElasticsearchImportBoundaryTest::normalize )
+                .collect( Collectors.toSet() );
+
+            staleEntries = ALLOWED_LEAKS.stream().filter( allowed -> !actualLeaks.contains( allowed ) ).toList();
+        }
+
+        assertTrue( staleEntries.isEmpty(), () -> "Stale ALLOWED_LEAKS entries no longer importing org.elasticsearch " +
+            "(shrink the allowlist): " + staleEntries );
+    }
+
+    private static String normalize( final Path path )
+    {
+        return path.toString().replace( '\\', '/' );
+    }
+
+    private static boolean importsElasticsearch( final Path path )
+    {
+        try (Stream<String> lines = Files.lines( path ))
+        {
+            return lines.anyMatch( line -> ES_IMPORT.matcher( line.strip() ).matches() );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+}
