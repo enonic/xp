@@ -6,8 +6,8 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.IndexConstants;
-import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
+import com.enonic.xp.repo.impl.index.document.IndexDocument;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 
 import static com.google.common.base.Strings.isNullOrEmpty;

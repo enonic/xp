@@ -2,8 +2,6 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Set;
 
-import org.elasticsearch.index.IndexNotFoundException;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
@@ -11,6 +9,7 @@ import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -42,7 +41,7 @@ public class RefreshCommand
         {
             this.indexServiceInternal.refresh( indices.toArray( String[]::new ) );
         }
-        catch ( IndexNotFoundException e )
+        catch ( StorageIndexNotFoundException e )
         {
             throw new IndexException( "Cannot refresh index, index for repository [" + repositoryId + "] does not exist", e );
         }

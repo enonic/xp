@@ -28,6 +28,7 @@ import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,6 +45,8 @@ import com.enonic.xp.repo.impl.index.UpdateIndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.storage.spi.StorageIndexExistsException;
+import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 
 
 @Component
@@ -79,7 +82,14 @@ public class IndexServiceInternalImpl
     @Override
     public void refresh( final String... indexNames )
     {
-        client.admin().indices().prepareRefresh( indexNames ).execute().actionGet();
+        try
+        {
+            client.admin().indices().prepareRefresh( indexNames ).execute().actionGet();
+        }
+        catch ( IndexNotFoundException e )
+        {
+            throw new StorageIndexNotFoundException( "Index not found: " + String.join( ", ", indexNames ), e );
+        }
     }
 
     @Override
@@ -124,6 +134,11 @@ public class IndexServiceInternalImpl
                 client.admin().indices().create( createIndexRequest ).actionGet( CREATE_INDEX_TIMEOUT );
 
             LOG.info( "Index {} created with status {}", indexName, createIndexResponse.isAcknowledged() );
+        }
+        catch ( IndexAlreadyExistsException e )
+        {
+            throw new IndexException( "Failed to create index: " + indexName,
+                                       new StorageIndexExistsException( "Index already exists: " + indexName, e ) );
         }
         catch ( ElasticsearchException e )
         {

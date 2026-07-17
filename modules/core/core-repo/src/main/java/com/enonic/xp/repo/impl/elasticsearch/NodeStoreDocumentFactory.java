@@ -17,9 +17,9 @@ import com.enonic.xp.node.NodeType;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
-import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItemFactory;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
+import com.enonic.xp.repo.impl.index.document.IndexDocument;
+import com.enonic.xp.repo.impl.index.document.indexitem.IndexItemFactory;
+import com.enonic.xp.repo.impl.index.document.indexitem.IndexItems;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static com.google.common.base.Strings.isNullOrEmpty;

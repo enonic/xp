@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.repository;
 
-import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +17,7 @@ import com.enonic.xp.repository.RepositoryAlreadyExistsException;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.storage.spi.StorageIndexExistsException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -59,7 +59,7 @@ public class RepositoryCreator
         }
         catch ( IndexException e )
         {
-            if ( e.getCause() instanceof IndexAlreadyExistsException )
+            if ( e.getCause() instanceof StorageIndexExistsException )
             {
                 throw new RepositoryAlreadyExistsException( SystemConstants.SYSTEM_REPO_ID );
             }
@@ -104,7 +104,7 @@ public class RepositoryCreator
         }
         catch ( IndexException e )
         {
-            if ( e.getCause() instanceof IndexAlreadyExistsException )
+            if ( e.getCause() instanceof StorageIndexExistsException )
             {
                 if ( graceful )
                 {

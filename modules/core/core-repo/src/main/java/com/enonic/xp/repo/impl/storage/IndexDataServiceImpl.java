@@ -12,7 +12,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.StorageSource;
-import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
+import com.enonic.xp.repo.impl.index.document.IndexDocument;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.search.SearchStorageName;
 import com.enonic.xp.repo.impl.search.SearchStorageType;

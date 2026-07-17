@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItem;
 import com.enonic.xp.repo.impl.index.StaticIndexValueType;
+import com.enonic.xp.repo.impl.index.document.indexitem.IndexItem;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;

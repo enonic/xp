@@ -17,11 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Architectural boundary test: {@code org.elasticsearch} types must not leak out of the
  * {@code com.enonic.xp.repo.impl.elasticsearch} package. This confines the storage seam
- * ahead of typing it behind a storage SPI (see the storage-spi-phase0 branch).
+ * behind the storage SPI (see the storage-spi-phase0 branch).
  * <p>
- * {@link #ALLOWED_LEAKS} is the known, pre-existing set of leaks (exception types only,
- * not yet translated at the boundary). It must shrink over time and never grow: new code
- * must not add to it, it must confine ES types to the elasticsearch package instead.
+ * {@link #ALLOWED_LEAKS} is empty as of Gate A: the three pre-existing exception-type
+ * leaks (RepositoryCreator, RefreshCommand, NodeServiceImpl) are now translated at the
+ * ES-backend boundary (StorageDaoImpl / IndexServiceInternalImpl) into
+ * {@code com.enonic.xp.storage.spi} exception types. New code must not add to this set —
+ * it must confine ES types to the elasticsearch package instead.
  */
 class ElasticsearchImportBoundaryTest
 {
@@ -31,10 +33,7 @@ class ElasticsearchImportBoundaryTest
 
     private static final Pattern ES_IMPORT = Pattern.compile( "^import org\\.elasticsearch\\..*;$" );
 
-    // Known leaks as of Phase 0 Gate 0. Emptied in Gate A once the boundary is fixed.
-    private static final Set<String> ALLOWED_LEAKS = Set.of( "com/enonic/xp/repo/impl/repository/RepositoryCreator.java",
-                                                              "com/enonic/xp/repo/impl/node/RefreshCommand.java",
-                                                              "com/enonic/xp/repo/impl/node/NodeServiceImpl.java" );
+    private static final Set<String> ALLOWED_LEAKS = Set.of();
 
     @Test
     void noElasticsearchImportsOutsideElasticsearchPackage()

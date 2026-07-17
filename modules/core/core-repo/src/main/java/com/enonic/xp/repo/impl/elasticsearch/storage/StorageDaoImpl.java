@@ -16,6 +16,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.cluster.block.ClusterBlockException;
+import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.search.fetch.source.FetchSourceContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -35,6 +36,7 @@ import com.enonic.xp.repo.impl.storage.RoutableId;
 import com.enonic.xp.repo.impl.storage.StorageDao;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.IndexException;
+import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -151,7 +153,15 @@ public class StorageDaoImpl
                 .id( request.getId() )
                 .routing( request.getRouting() );
 
-        final GetResponse getResponse = client.get( getRequest ).actionGet( request.getTimeout(), TimeUnit.SECONDS );
+        final GetResponse getResponse;
+        try
+        {
+            getResponse = client.get( getRequest ).actionGet( request.getTimeout(), TimeUnit.SECONDS );
+        }
+        catch ( IndexNotFoundException e )
+        {
+            throw new StorageIndexNotFoundException( "Index not found: " + storageSource.getStorageName().getName(), e );
+        }
 
         return GetResultFactory.create( getResponse, request.getReturnFields() );
     }
@@ -179,8 +189,15 @@ public class StorageDaoImpl
             multiGetRequestBuilder.add( item );
         }
 
-        final MultiGetItemResponse[] multiGetItemResponses =
-            this.client.multiGet( multiGetRequestBuilder.request() ).actionGet().getResponses();
+        final MultiGetItemResponse[] multiGetItemResponses;
+        try
+        {
+            multiGetItemResponses = this.client.multiGet( multiGetRequestBuilder.request() ).actionGet().getResponses();
+        }
+        catch ( IndexNotFoundException e )
+        {
+            throw new StorageIndexNotFoundException( "Index not found", e );
+        }
 
         final List<GetResult> result = new ArrayList<>();
         for ( int i = 0; i < multiGetItemResponses.length; i++ )
@@ -194,7 +211,14 @@ public class StorageDaoImpl
     @Override
     public void refresh( final StorageName storageName )
     {
-        client.admin().indices().prepareRefresh( storageName.getName() ).execute().actionGet();
+        try
+        {
+            client.admin().indices().prepareRefresh( storageName.getName() ).execute().actionGet();
+        }
+        catch ( IndexNotFoundException e )
+        {
+            throw new StorageIndexNotFoundException( "Index not found: " + storageName.getName(), e );
+        }
     }
 
     @Reference

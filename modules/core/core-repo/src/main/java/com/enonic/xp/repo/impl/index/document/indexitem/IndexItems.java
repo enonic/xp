@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
+package com.enonic.xp.repo.impl.index.document.indexitem;
 
 import java.util.Collection;
 import java.util.List;

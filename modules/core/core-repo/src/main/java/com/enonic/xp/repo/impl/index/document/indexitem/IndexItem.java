@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.elasticsearch.document.indexitem;
+package com.enonic.xp.repo.impl.index.document.indexitem;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.repo.impl.index.IndexValueType;

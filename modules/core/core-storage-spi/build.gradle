@@ -1,0 +1,10 @@
+dependencies {
+    implementation project( ':core:core-api' )
+}
+
+jar {
+    bundle {
+        bnd( 'Bundle-Name': 'Enonic XP Core - Storage SPI',
+             'Export-Package': 'com.enonic.xp.storage.spi' )
+    }
+}

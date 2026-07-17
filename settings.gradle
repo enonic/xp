@@ -57,6 +57,7 @@ include 'core:core-project'
 include 'core:core-scheduler'
 include 'core:core-shared'
 include 'core:core-jsonschema'
+include 'core:core-storage-spi'
 
 include 'server:server-config'
 include 'server:server-deploy'

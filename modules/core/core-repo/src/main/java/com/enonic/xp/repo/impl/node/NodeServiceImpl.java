@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.elasticsearch.index.IndexNotFoundException;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
@@ -88,6 +87,7 @@ import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 
@@ -902,7 +902,7 @@ public class NodeServiceImpl
         {
             return action.get();
         }
-        catch ( IndexNotFoundException e )
+        catch ( StorageIndexNotFoundException e )
         {
             throw new RepositoryNotFoundException( ContextAccessor.current().getRepositoryId() );
         }
@@ -918,7 +918,7 @@ public class NodeServiceImpl
                 .branch( branch )
                 .build() );
         }
-        catch ( IndexNotFoundException e )
+        catch ( StorageIndexNotFoundException e )
         {
             throw new RepositoryNotFoundException( repositoryId );
         }

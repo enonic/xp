@@ -12,8 +12,8 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
-import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
+import com.enonic.xp.repo.impl.index.document.IndexDocument;
+import com.enonic.xp.repo.impl.index.document.indexitem.IndexItems;
 import com.enonic.xp.util.Reference;
 
 import static org.assertj.core.api.Assertions.assertThat;

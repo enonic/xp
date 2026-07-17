@@ -9,9 +9,9 @@ import com.enonic.xp.index.IndexConfigDocument;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.repo.impl.elasticsearch.document.IndexDocument;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItemFactory;
-import com.enonic.xp.repo.impl.elasticsearch.document.indexitem.IndexItems;
+import com.enonic.xp.repo.impl.index.document.IndexDocument;
+import com.enonic.xp.repo.impl.index.document.indexitem.IndexItemFactory;
+import com.enonic.xp.repo.impl.index.document.indexitem.IndexItems;
 
 class StoreDocumentXContentBuilderFactoryTest
 {
