@@ -40,12 +40,24 @@ public final class ApplicationFactory
             return createUrlResolverBySource( bundle, source );
         }
 
-        final BundleApplicationUrlResolver bundleUrlResolver = new BundleApplicationUrlResolver( bundle );
+        final List<ApplicationUrlResolver> resolvers = new ArrayList<>();
+
+        if ( appConfig.virtual_enabled() )
+        {
+            resolvers.add( new NodeResourceApplicationUrlResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService ) );
+        }
+
         final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
+        if ( RunMode.isDev() && classLoaderUrlResolver != null )
+        {
+            resolvers.add( classLoaderUrlResolver );
+        }
 
-        final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
+        resolvers.add( new BundleApplicationUrlResolver( bundle ) );
 
-        return addCLR ? new MultiApplicationUrlResolver( classLoaderUrlResolver, bundleUrlResolver ) : bundleUrlResolver;
+        return resolvers.size() == 1
+            ? resolvers.get( 0 )
+            : new MultiApplicationUrlResolver( resolvers.toArray( ApplicationUrlResolver[]::new ) );
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )

@@ -42,7 +42,7 @@ public final class NodeResourceApplicationUrlResolver
         final QueryExpr query = QueryExpr.from( CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
             "/" + applicationKey + "/" + VirtualAppConstants.CMS_ROOT_NAME + "/*/*/*" ) ) );
 
-        return VirtualAppContext.createContext().callWith( () -> {
+        return VirtualAppContext.createAdminContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery( NodeQuery.create().query( query ).withPath( true ).build() );
 
             return nodes.getNodeHits()
@@ -67,7 +67,7 @@ public final class NodeResourceApplicationUrlResolver
 
         Arrays.stream( path.split( "/" ) ).forEach( builder::addElement );
 
-        final Node resourceNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( builder.build() ) );
+        final Node resourceNode = VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( builder.build() ) );
 
         if ( resourceNode == null )
         {

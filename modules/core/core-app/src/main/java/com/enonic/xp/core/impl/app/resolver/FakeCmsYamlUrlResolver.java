@@ -45,7 +45,7 @@ public class FakeCmsYamlUrlResolver
         {
             final NodePath appPath =
                 new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
-            final Node applicationNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( appPath ) );
+            final Node applicationNode = VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( appPath ) );
             if ( applicationNode != null )
             {
                 return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_CMS_RESOURCE_VALUE,

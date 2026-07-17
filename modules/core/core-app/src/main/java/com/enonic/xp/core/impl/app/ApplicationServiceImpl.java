@@ -263,6 +263,8 @@ public final class ApplicationServiceImpl
 
         final Application application = doInstallApplication( byteSource, applicationKey );
 
+        this.virtualAppService.persistApplicationSchema( applicationKey, AppSchemaResolver.resolve( byteSource ) );
+
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 
         this.eventPublisher.publish( ApplicationClusterEvents.installed( applicationKey ) );

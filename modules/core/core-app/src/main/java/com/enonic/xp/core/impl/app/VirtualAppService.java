@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.app.Application;
@@ -22,6 +23,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -95,6 +97,63 @@ public class VirtualAppService
         requireAdminRole();
 
         return VirtualAppContext.createContext().callWith( () -> deleteVirtualAppNode( key ) );
+    }
+
+    public void persistApplicationSchema( final ApplicationKey key, final Map<String, String> resources )
+    {
+        VirtualAppContext.createAdminContext().runWith( () -> {
+            final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
+
+            if ( nodeService.nodeExists( appPath ) )
+            {
+                nodeService.delete( DeleteNodeParams.create()
+                                        .nodePath( new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) ) )
+                                        .refresh( RefreshMode.ALL )
+                                        .build() );
+                initSiteNodes( appPath );
+            }
+            else
+            {
+                initVirtualAppNode( CreateNamespaceParams.create().key( key ).build() );
+            }
+
+            final NodePath cmsPath = new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
+            resources.forEach( ( path, content ) -> createResourceNode( cmsPath, path, content ) );
+
+            nodeService.refresh( RefreshMode.ALL );
+        } );
+    }
+
+    private void createResourceNode( final NodePath cmsPath, final String resourcePath, final String content )
+    {
+        final String[] elements = resourcePath.split( "/" );
+
+        NodePath parent = cmsPath;
+        for ( int i = 0; i < elements.length - 1; i++ )
+        {
+            final NodePath folderPath = new NodePath( parent, NodeName.from( elements[i] ) );
+            if ( !nodeService.nodeExists( folderPath ) )
+            {
+                nodeService.create( CreateNodeParams.create()
+                                        .name( elements[i] )
+                                        .parent( parent )
+                                        .inheritPermissions( true )
+                                        .refresh( RefreshMode.ALL )
+                                        .build() );
+            }
+            parent = folderPath;
+        }
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( SchemaNodePropertyNames.RESOURCE, content );
+
+        nodeService.create( CreateNodeParams.create()
+                                .name( elements[elements.length - 1] )
+                                .parent( parent )
+                                .data( data )
+                                .inheritPermissions( true )
+                                .refresh( RefreshMode.ALL )
+                                .build() );
     }
 
     private Node initVirtualAppNode( final CreateNamespaceParams params )

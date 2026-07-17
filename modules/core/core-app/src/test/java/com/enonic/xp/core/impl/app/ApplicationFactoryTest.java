@@ -59,6 +59,20 @@ class ApplicationFactoryTest
     }
 
     @Test
+    void createUrlResolver_virtual_enabled()
+    {
+        final Bundle bundle = deploy( "app1", true, false );
+
+        final AppConfig appConfig = mock( AppConfig.class );
+        when( appConfig.virtual_enabled() ).thenReturn( true );
+        RunModeSupport.set( RunMode.PROD );
+
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        assertNotNull( resolver );
+        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
+    }
+
+    @Test
     void createUrlResolver_dev_with_source_path()
     {
         final Bundle bundle = deploy( "app1", true, true );

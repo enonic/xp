@@ -1,8 +1,10 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
 
@@ -102,6 +104,11 @@ class ApplicationServiceImplTest
         auditLogSupport.activate( appConfig );
 
         nodeService = mock( NodeService.class );
+
+        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( invocation -> {
+            final CreateNodeParams params = invocation.getArgument( 0 );
+            return Node.create().id( NodeId.from( params.getName() ) ).name( params.getName() ).parentPath( params.getParent() ).build();
+        } );
 
         virtualAppService = new VirtualAppService( nodeService );
 
@@ -421,6 +428,47 @@ class ApplicationServiceImplTest
         verifyInstallEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyInstalledEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyStartedEvent( application.getKey(), times( 1 ) );
+    }
+
+    @Test
+    void install_global_persists_schema()
+        throws Exception
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+
+        final String bundleName = "my.bundle";
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        final String contentTypeResource = "kind: \"ContentType\"\nform: [ ]\n";
+
+        final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true )
+                                                                                    .addResource(
+                                                                                        "cms/content-types/mytype/mytype.yaml",
+                                                                                        new ByteArrayInputStream(
+                                                                                            contentTypeResource.getBytes(
+                                                                                                StandardCharsets.UTF_8 ) ) )
+                                                                                    .build() ) );
+
+        this.service.installGlobalApplication( byteSource );
+
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> bundleName.equals( params.getName().toString() ) &&
+            VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT.equals( params.getParent() ) ) );
+
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "mytype.yaml".equals( params.getName().toString() ) &&
+            contentTypeResource.equals( params.getData().getString( "resource" ) ) ) );
+    }
+
+    @Test
+    void install_local_does_not_persist_schema()
+        throws Exception
+    {
+        final ByteSource byteSource = createBundleSource( "my.bundle" );
+
+        this.service.installLocalApplication( byteSource );
+
+        verify( nodeService, never() ).create( any( CreateNodeParams.class ) );
     }
 
     @Test

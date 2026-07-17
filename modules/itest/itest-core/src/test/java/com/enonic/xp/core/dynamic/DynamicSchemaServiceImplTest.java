@@ -1,6 +1,11 @@
 package com.enonic.xp.core.dynamic;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,6 +19,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.felix.framework.Felix;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +29,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
@@ -130,6 +138,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -145,7 +154,11 @@ class DynamicSchemaServiceImplTest
 
     private DynamicSchemaServiceImpl dynamicSchemaService;
 
+    private ApplicationService applicationService;
+
     private ProjectServiceImpl projectService;
+
+    private Felix felix;
 
     @TempDir
     private Path felixTempFolder;
@@ -248,7 +261,7 @@ class DynamicSchemaServiceImplTest
 
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
-        Felix felix = createFelixInstance( cacheDir );
+        felix = createFelixInstance( cacheDir );
         felix.start();
 
         ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
@@ -292,9 +305,9 @@ class DynamicSchemaServiceImplTest
         final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
         VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        ApplicationService applicationService =
-            new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
-                                        new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
+        applicationService = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
+                                                         virtualAppService,
+                                                         new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
         createSchemaAdminContext().runWith( () -> applicationService.createNamespace(
             CreateNamespaceParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
@@ -310,6 +323,17 @@ class DynamicSchemaServiceImplTest
         createAdminContext().runWith( () -> projectService.create(
             CreateProjectParams.create().name( ProjectName.from( "my-project" ) ).displayName( "test" ).build() ) );
 
+    }
+
+    @AfterEach
+    void stopFelix()
+        throws Exception
+    {
+        if ( felix != null )
+        {
+            felix.stop();
+            felix.waitForStop( 10000 );
+        }
     }
 
     @Test
@@ -1508,6 +1532,92 @@ class DynamicSchemaServiceImplTest
 
         assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
             .callWith( () -> dynamicSchemaService.getContentSchema( params ) ) );
+    }
+
+    @Test
+    void installGlobalApplicationPersistsSchema()
+        throws Exception
+    {
+        final String contentTypeResource = readResource( "_contentType.yaml" );
+
+        final ByteSource app =
+            createAppSource( "myglobalapp", "1.0.0", Map.of( "cms/content-types/mytype/mytype.yml", contentTypeResource ) );
+
+        createAdminContext().runWith( () -> applicationService.installGlobalApplication( app ) );
+
+        assertTrue( createAdminContext().callWith( () -> applicationService.listNamespaces() )
+                        .stream()
+                        .anyMatch( namespace -> "myglobalapp".equals( namespace.getKey().toString() ) ) );
+
+        final Node resourceNode = VirtualAppContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myglobalapp/cms/content-types/mytype/mytype.yaml" ) ) );
+
+        assertNotNull( resourceNode );
+        assertEquals( contentTypeResource, resourceNode.data().getString( "resource" ) );
+
+        final DynamicSchemaResult<BaseSchema<?>> schema = createAdminContext().callWith( () -> dynamicSchemaService.getContentSchema(
+            GetDynamicContentSchemaParams.create()
+                .name( ContentTypeName.from( "myglobalapp:mytype" ) )
+                .type( DynamicContentSchemaType.CONTENT_TYPE )
+                .build() ) );
+
+        assertNotNull( schema );
+        assertEquals( "node", schema.getResource().getResolverName() );
+        assertEquals( contentTypeResource, schema.getResource().readString() );
+
+        final ByteSource updatedApp =
+            createAppSource( "myglobalapp", "1.0.1", Map.of( "cms/content-types/newtype/newtype.yaml", contentTypeResource ) );
+
+        createAdminContext().runWith( () -> applicationService.installGlobalApplication( updatedApp ) );
+
+        assertFalse( VirtualAppContext.createAdminContext()
+                         .callWith(
+                             () -> nodeService.nodeExists( new NodePath( "/myglobalapp/cms/content-types/mytype/mytype.yaml" ) ) ) );
+
+        assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getContentSchema( GetDynamicContentSchemaParams.create()
+                                                                                                    .name( ContentTypeName.from(
+                                                                                                        "myglobalapp:mytype" ) )
+                                                                                                    .type(
+                                                                                                        DynamicContentSchemaType.CONTENT_TYPE )
+                                                                                                    .build() ) ) );
+
+        final DynamicSchemaResult<BaseSchema<?>> newSchema = createAdminContext().callWith( () -> dynamicSchemaService.getContentSchema(
+            GetDynamicContentSchemaParams.create()
+                .name( ContentTypeName.from( "myglobalapp:newtype" ) )
+                .type( DynamicContentSchemaType.CONTENT_TYPE )
+                .build() ) );
+
+        assertNotNull( newSchema );
+        assertEquals( "node", newSchema.getResource().getResolverName() );
+    }
+
+    private static ByteSource createAppSource( final String name, final String version, final Map<String, String> resources )
+    {
+        try
+        {
+            final Manifest manifest = new Manifest();
+            manifest.getMainAttributes().putValue( "Manifest-Version", "1.0" );
+            manifest.getMainAttributes().putValue( Constants.BUNDLE_MANIFESTVERSION, "2" );
+            manifest.getMainAttributes().putValue( Constants.BUNDLE_SYMBOLICNAME, name );
+            manifest.getMainAttributes().putValue( Constants.BUNDLE_VERSION, version );
+            manifest.getMainAttributes().putValue( "X-Bundle-Type", "application" );
+
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try (JarOutputStream jar = new JarOutputStream( out, manifest ))
+            {
+                for ( final Map.Entry<String, String> entry : resources.entrySet() )
+                {
+                    jar.putNextEntry( new ZipEntry( entry.getKey() ) );
+                    jar.write( entry.getValue().getBytes( StandardCharsets.UTF_8 ) );
+                    jar.closeEntry();
+                }
+            }
+            return ByteSource.wrap( out.toByteArray() );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     @Test
