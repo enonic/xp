@@ -504,6 +504,11 @@ Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
 2. **Latency chattiness**: in-JVM sub-ms → 0.5–2ms/hop; XP storage calls are chatty.
    Client cache + feed invalidation is Phase 1 ARCHITECTURE; add perf gates (p95 get/
    save, page-render vs embedded-ES baseline) to Phases 1–2. Biggest adoption risk.
+   **Baseline established (slice 1) 2026-07-17**: `bench/RESULTS.md` — over real loopback
+   gRPC + containerized PG on a dev laptop, point reads p50 ~1ms (getBranchEntry by
+   path 982µs / by id 1085µs), single-node writeBatch p50 1440µs, getChildren/getVersion
+   ~3.5–3.9ms; seed ~1700 nodes/s. A floor for relative comparison, not an SLO; the
+   embedded-ES comparison and per-op perf gates remain to be added in Phase 1–2.
 3. **Query AST wire format** (open q. #1) — Phase 2 stands on it; includes per-query
    principal/ACL propagation (size, caching, trust statement). Spike before the port.
 4. **Binary UPLOAD path undefined**: staged upload (presign→upload→confirm→reference)

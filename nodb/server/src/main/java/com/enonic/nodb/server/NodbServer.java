@@ -62,8 +62,16 @@ public final class NodbServer
             .build()
             .start();
 
-        LOG.info( "NoDB server listening on port {}", port );
+        // Log the actual bound port, not the requested one: callers may pass 0 (OS-assigned
+        // ephemeral port, e.g. the bench harness), in which case `port` itself is useless.
+        LOG.info( "NoDB server listening on port {}", server.getPort() );
         return new NodbServer( server, dataSource );
+    }
+
+    /** The bound TCP port — useful when {@link #create} was called with port 0 (OS-assigned ephemeral port), e.g. in tests/bench. */
+    public int getPort()
+    {
+        return server.getPort();
     }
 
     public void awaitTermination()
