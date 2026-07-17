@@ -1,0 +1,22 @@
+[versions]
+postgresql = "42.7.4"
+hikaricp = "6.2.1"
+slf4j = "2.0.16"
+junit = "5.11.3"
+junit-platform = "1.11.3"
+testcontainers = "1.20.4"
+
+[libraries]
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
+
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+
+[bundles]
+testcontainers = ["testcontainers-postgresql", "testcontainers-junit-jupiter"]
