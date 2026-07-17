@@ -9,6 +9,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.storage.spi.BranchEntryRecord;
 
 public class NodeBranchVersionFactory
 {
@@ -33,6 +34,31 @@ public class NodeBranchVersionFactory
                                  .build() )
             .timestamp( timestamp )
             .nodeId( nodeId )
+            .build();
+    }
+
+    /** Adapts a domain {@link NodeBranchEntry} onto the SPI {@link BranchEntryRecord}, for {@code NodeStore} store/get results. */
+    public static BranchEntryRecord toRecord( final NodeBranchEntry entry )
+    {
+        return new BranchEntryRecord( entry.getNodeId().toString(), entry.getNodePath().toString(), entry.getVersionId().toString(),
+                                       entry.getNodeVersionKey().getNodeBlobKey().toString(),
+                                       entry.getNodeVersionKey().getIndexConfigBlobKey().toString(),
+                                       entry.getNodeVersionKey().getAccessControlBlobKey().toString(), entry.getTimestamp() );
+    }
+
+    /** Inverse of {@link #toRecord}, for consumers of {@code NodeStore} rebuilding the domain object. */
+    public static NodeBranchEntry fromRecord( final BranchEntryRecord record )
+    {
+        return NodeBranchEntry.create()
+            .nodeId( NodeId.from( record.nodeId() ) )
+            .nodePath( new NodePath( record.nodePath() ) )
+            .nodeVersionId( NodeVersionId.from( record.versionId() ) )
+            .nodeVersionKey( NodeVersionKey.create()
+                                 .nodeBlobKey( BlobKey.from( record.nodeDataHash() ) )
+                                 .indexConfigBlobKey( BlobKey.from( record.indexConfigHash() ) )
+                                 .accessControlBlobKey( BlobKey.from( record.aclHash() ) )
+                                 .build() )
+            .timestamp( record.timestamp() )
             .build();
     }
 }

@@ -91,6 +91,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
@@ -115,6 +116,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
@@ -238,11 +240,13 @@ public abstract class AbstractContentServiceTest
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
-        BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
+        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
 
-        VersionServiceImpl versionService = new VersionServiceImpl( storageDao );
+        BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 
-        CommitServiceImpl commitService = new CommitServiceImpl( storageDao );
+        VersionServiceImpl versionService = new VersionServiceImpl( nodeStore );
+
+        CommitServiceImpl commitService = new CommitServiceImpl( nodeStore );
 
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 

@@ -61,6 +61,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
@@ -81,6 +82,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.storage.spi.NodeStore;
 
 /**
  * Wires the minimal XP service graph needed to call ContentService.create.
@@ -148,9 +150,11 @@ public final class Bootstrap
 
         final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
-        final BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
-        final VersionServiceImpl versionService = new VersionServiceImpl( storageDao );
-        final CommitServiceImpl commitService = new CommitServiceImpl( storageDao );
+        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
+
+        final BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
+        final VersionServiceImpl versionService = new VersionServiceImpl( nodeStore );
+        final CommitServiceImpl commitService = new CommitServiceImpl( nodeStore );
 
         final IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
         final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );

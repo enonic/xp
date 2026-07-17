@@ -25,6 +25,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
@@ -69,6 +70,7 @@ import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+import com.enonic.xp.storage.spi.NodeStore;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
@@ -106,11 +108,13 @@ class SecurityServiceImplTest
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
-        final BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
+        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
 
-        final VersionServiceImpl versionService = new VersionServiceImpl( storageDao );
+        final BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 
-        final CommitServiceImpl commitService = new CommitServiceImpl( storageDao );
+        final VersionServiceImpl versionService = new VersionServiceImpl( nodeStore );
+
+        final CommitServiceImpl commitService = new CommitServiceImpl( nodeStore );
 
         final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
 

@@ -14,18 +14,11 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
-import com.enonic.xp.repo.impl.ReturnValues;
-import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
-import com.enonic.xp.repo.impl.search.SearchDao;
-import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
-import com.enonic.xp.repo.impl.storage.GetByIdRequest;
-import com.enonic.xp.repo.impl.storage.GetResult;
-import com.enonic.xp.repo.impl.storage.StorageDao;
-import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.storage.spi.BranchEntryRecord;
+import com.enonic.xp.storage.spi.NodeStore;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -33,17 +26,14 @@ class BranchServiceImplTest
 {
     private BranchServiceImpl branchService;
 
-    private StorageDao storageDao;
-
-    private SearchDao searchDao;
+    private NodeStore nodeStore;
 
     @BeforeEach
     void setup()
     {
-        this.storageDao = Mockito.mock( StorageDao.class );
-        this.searchDao = Mockito.mock( SearchDao.class );
+        this.nodeStore = Mockito.mock( NodeStore.class );
 
-        this.branchService = new BranchServiceImpl( storageDao, searchDao );
+        this.branchService = new BranchServiceImpl( nodeStore );
     }
 
     @Test
@@ -57,8 +47,6 @@ class BranchServiceImplTest
 
         final NodePath path = new NodePath( "/fisk" );
 
-        Mockito.when( this.storageDao.store( Mockito.isA( StoreRequest.class ) ) ).thenReturn( "123_my-branch" );
-
         this.branchService.store( NodeBranchEntry.create()
                                       .nodeId( NodeId.from( "123" ) )
                                       .nodePath( path )
@@ -71,22 +59,13 @@ class BranchServiceImplTest
                                       .timestamp( Instant.now() )
                                       .build(), context );
 
-        Mockito.when( this.storageDao.getById( Mockito.isA( GetByIdRequest.class ) ) )
-            .thenReturn( GetResult.create()
-                             .id( "123_my-branch" )
-                             .resultFieldValues( ReturnValues.create()
-                                                     .add( BranchIndexPath.PATH.getPath(), "/fisk" )
-                                                     .add( BranchIndexPath.STATE.getPath(), "default" )
-                                                     .add( BranchIndexPath.VERSION_ID.getPath(), "nodeversionid" )
-                                                     .add( BranchIndexPath.NODE_BLOB_KEY.getPath(), "nodeBlobKey" )
-                                                     .add( BranchIndexPath.INDEX_CONFIG_BLOB_KEY.getPath(), "indexConfigBlobKey" )
-                                                     .add( BranchIndexPath.ACCESS_CONTROL_BLOB_KEY.getPath(), "accessControlBlobKey" )
-                                                     .add( BranchIndexPath.NODE_ID.getPath(), "123" )
-                                                     .add( BranchIndexPath.TIMESTAMP.getPath(), Instant.now().toString() )
-                                                     .build() )
-                             .build() );
+        Mockito.when( this.nodeStore.getBranchEntry( Mockito.eq( context.getRepositoryId() ), Mockito.eq( context.getBranch() ),
+                                                       Mockito.eq( "123" ), Mockito.any() ) )
+            .thenReturn( new BranchEntryRecord( "123", "/fisk", "nodeversionid", "nodeBlobKey", "indexConfigBlobKey",
+                                                 "accessControlBlobKey", Instant.now() ) );
 
-        Mockito.when( this.searchDao.search( Mockito.isA( SearchRequest.class ) ) ).thenReturn( SearchResult.create().build() );
+        Mockito.when( this.nodeStore.getBranchEntryByPath( Mockito.eq( context.getRepositoryId() ), Mockito.eq( context.getBranch() ),
+                                                            Mockito.eq( path.toString() ), Mockito.any() ) ).thenReturn( null );
 
         final NodeBranchEntry fetchEntry = this.branchService.get( path, context );
 

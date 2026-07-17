@@ -2,6 +2,7 @@ dependencies {
     testImplementation project( ':core:core-content' )
     testImplementation project( ':core:core-audit' )
     testImplementation project( ':core:core-repo' )
+    testImplementation project( ':core:core-storage-spi' )
     testImplementation project( ':core:core-schema' )
     testImplementation project( ':core:core-event' )
     testImplementation project( ':core:core-media' )

@@ -10,7 +10,12 @@ import com.enonic.xp.repo.impl.storage.StoreRequest;
 import com.enonic.xp.repo.impl.storage.StoreStorageName;
 import com.enonic.xp.repository.RepositoryId;
 
-class BranchStorageRequestFactory
+/**
+ * Public (rather than package-private) solely so {@code ElasticsearchNodeStore}, the SPI
+ * {@code NodeStore} implementation, can call it from the {@code elasticsearch} package —
+ * see the storage-spi-phase0 Gate B note on this class staying byte-identical.
+ */
+public class BranchStorageRequestFactory
 {
     public static StoreRequest create( final NodeBranchEntry nodeBranchEntry, final RepositoryId repositoryId, final Branch branch )
     {

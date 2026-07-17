@@ -1,7 +1,5 @@
 package com.enonic.xp.repo.impl.version;
 
-import java.util.List;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -9,74 +7,40 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.StorageSource;
-import com.enonic.xp.repo.impl.storage.DeleteRequests;
-import com.enonic.xp.repo.impl.storage.GetByIdRequest;
-import com.enonic.xp.repo.impl.storage.GetResult;
-import com.enonic.xp.repo.impl.storage.RoutableId;
-import com.enonic.xp.repo.impl.storage.StaticStorageType;
-import com.enonic.xp.repo.impl.storage.StorageDao;
-import com.enonic.xp.repo.impl.storage.StoreRequest;
-import com.enonic.xp.repo.impl.storage.StoreStorageName;
-import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repo.impl.storage.SearchPreferences;
+import com.enonic.xp.storage.spi.NodeStore;
+import com.enonic.xp.storage.spi.VersionRecord;
 
 @Component
 public class VersionServiceImpl
     implements VersionService
 {
-    private static final ReturnFields VERSION_RETURN_FIELDS = ReturnFields.from( VersionIndexPath.entryFields() );
-
-    private final StorageDao storageDao;
+    private final NodeStore nodeStore;
 
     @Activate
-    public VersionServiceImpl( @Reference final StorageDao storageDao )
+    public VersionServiceImpl( @Reference final NodeStore nodeStore )
     {
-        this.storageDao = storageDao;
+        this.nodeStore = nodeStore;
     }
 
     @Override
     public void store( final NodeVersion nodeVersion, final InternalContext context )
     {
-        final StoreRequest storeRequest = VersionStorageDocFactory.create( nodeVersion, context.getRepositoryId() );
-
-        this.storageDao.store( storeRequest );
+        this.nodeStore.storeVersion( context.getRepositoryId(), NodeVersionFactory.toRecord( nodeVersion ) );
     }
 
     @Override
     public void delete( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        storageDao.delete( DeleteRequests.create()
-                               .ids( List.of( new RoutableId( nodeVersionId.toString() ) ) )
-                               .settings( createStorageSettings( context.getRepositoryId() ) )
-                               .build() );
+        this.nodeStore.deleteVersion( context.getRepositoryId(), nodeVersionId.toString() );
     }
 
     @Override
     public NodeVersion getVersion( final NodeVersionId nodeVersionId, final InternalContext context )
     {
-        final GetByIdRequest getByIdRequest = GetByIdRequest.create()
-            .id( nodeVersionId.toString() )
-            .returnFields( VERSION_RETURN_FIELDS )
-            .storageSettings( createStorageSettings( context.getRepositoryId() ) )
-            .searchPreference( context.getSearchPreference() )
-            .build();
+        final VersionRecord record = this.nodeStore.getVersion( context.getRepositoryId(), nodeVersionId.toString(),
+                                                                 SearchPreferences.toSpi( context.getSearchPreference() ) );
 
-        final GetResult getResult = this.storageDao.getById( getByIdRequest );
-
-        if ( getResult.isEmpty() )
-        {
-            return null;
-        }
-
-        return NodeVersionFactory.create( getResult.getReturnValues() );
-    }
-
-    private StorageSource createStorageSettings( final RepositoryId repositoryId )
-    {
-        return StorageSource.create().
-            storageName( StoreStorageName.from( repositoryId ) ).
-            storageType( StaticStorageType.VERSION ).
-            build();
+        return record == null ? null : NodeVersionFactory.fromRecord( record );
     }
 }

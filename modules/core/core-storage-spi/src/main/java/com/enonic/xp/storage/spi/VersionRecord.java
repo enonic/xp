@@ -13,11 +13,17 @@ import static java.util.Objects.requireNonNull;
  * VERSION document equivalent: immutable version metadata; payloads referenced by
  * content hash. Field set mirrors {@code VersionIndexPath} 1:1 so the mapping from
  * {@code VersionStorageDocFactory} is mechanical.
+ * <p>
+ * {@code attributes} holds raw Java values (String/Long/Integer/Double/Boolean/List/Map,
+ * see {@code GenericValue.toRawJava()}), not just strings, since node version attributes
+ * are not string-only. A {@code null} map is distinct from an empty one: {@code null}
+ * means no attributes were ever stored for this version (the underlying field is absent),
+ * matching today's storage-doc behavior.
  */
 @NullMarked
 public record VersionRecord(String versionId, String nodeId, String nodePath, Instant timestamp, String nodeDataHash,
                              @Nullable String indexConfigHash, @Nullable String aclHash, List<String> binaryKeys,
-                             @Nullable String commitId, Map<String, String> attributes)
+                             @Nullable String commitId, @Nullable Map<String, Object> attributes)
 {
     public VersionRecord
     {
@@ -27,6 +33,6 @@ public record VersionRecord(String versionId, String nodeId, String nodePath, In
         requireNonNull( timestamp );
         requireNonNull( nodeDataHash );
         binaryKeys = List.copyOf( binaryKeys );
-        attributes = Map.copyOf( attributes );
+        attributes = attributes == null ? null : Map.copyOf( attributes );
     }
 }

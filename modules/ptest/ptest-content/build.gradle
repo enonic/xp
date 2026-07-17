@@ -11,6 +11,7 @@ dependencies {
     implementation project( ':core:core-content' )
     implementation project( ':core:core-audit' )
     implementation project( ':core:core-repo' )
+    implementation project( ':core:core-storage-spi' )
     implementation project( ':core:core-schema' )
     implementation project( ':core:core-event' )
     implementation project( ':core:core-media' )

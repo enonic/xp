@@ -52,6 +52,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.CreateNodeCommand;
@@ -88,6 +89,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.util.Reference;
 
 import static java.util.Objects.requireNonNullElse;
@@ -232,11 +234,13 @@ public abstract class AbstractNodeTest
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
-        this.branchService = new BranchServiceImpl( storageDao, searchDao );
+        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
 
-        this.versionService = new VersionServiceImpl( storageDao );
+        this.branchService = new BranchServiceImpl( nodeStore );
 
-        this.commitService = new CommitServiceImpl( storageDao );
+        this.versionService = new VersionServiceImpl( nodeStore );
+
+        this.commitService = new CommitServiceImpl( nodeStore );
 
         this.indexedDataService = new IndexDataServiceImpl( storageDao );
 
