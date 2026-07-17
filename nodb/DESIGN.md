@@ -496,7 +496,11 @@ Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
    nothing persisted, with no separate rollback step needed. Proven by
    `engine/src/test/java/com/enonic/nodb/engine/store/WriteBatchTest.java` (atomicity via
    forced duplicate-key failure, NEED_PAYLOAD + retry, branch fork, repo drop, outbox
-   monotonicity). Still open: the gRPC `WriteBatch` RPC itself (slice-1 step 5).
+   monotonicity). **Resolved (gRPC layer) 2026-07-17**: the wire-level `WriteBatch` RPC
+   (slice-1 step 5) is implemented in `server/.../service/NodeStoreService`, delegating to
+   the same `WriteService.write` inside `Tx.inTenantTx` — no separate atomicity logic at
+   the gRPC boundary. Proven end-to-end by
+   `server/src/test/java/com/enonic/nodb/server/NodbServerIntegrationTest.java`.
 2. **Latency chattiness**: in-JVM sub-ms → 0.5–2ms/hop; XP storage calls are chatty.
    Client cache + feed invalidation is Phase 1 ARCHITECTURE; add perf gates (p95 get/
    save, page-render vs embedded-ES baseline) to Phases 1–2. Biggest adoption risk.

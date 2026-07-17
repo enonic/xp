@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.enonic.nodb.engine.model.BranchEntryRecord;
 import com.enonic.nodb.engine.model.Page;
+import com.enonic.nodb.engine.model.RepoRef;
 
 /**
  * BRANCH document equivalent (schema.sql {@code branch_entry}). LIST-partitioned by
@@ -44,6 +45,18 @@ public final class BranchStore
         }
     }
 
+    /**
+     * Same as {@link #getByNodeId(Connection, long, String, String)}, addressed by the
+     * external {@link RepoRef} instead of the surrogate repo_key — the shape callers
+     * outside this package (e.g. the gRPC server, which only ever sees repo ids off the
+     * wire) actually have. Resolves via {@link RepoKeys}, same as {@link WriteService}.
+     */
+    public static BranchEntryRecord getByNodeId( Connection connection, RepoRef repo, String branch, String nodeId )
+        throws SQLException
+    {
+        return getByNodeId( connection, RepoKeys.resolve( connection, repo ), branch, nodeId );
+    }
+
     public static BranchEntryRecord getByNodeId( Connection connection, long repoKey, String branch, String nodeId )
         throws SQLException
     {
@@ -60,6 +73,13 @@ public final class BranchStore
                 return resultSet.next() ? map( resultSet ) : null;
             }
         }
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static BranchEntryRecord getByPath( Connection connection, RepoRef repo, String branch, String nodePath )
+        throws SQLException
+    {
+        return getByPath( connection, RepoKeys.resolve( connection, repo ), branch, nodePath );
     }
 
     public static BranchEntryRecord getByPath( Connection connection, long repoKey, String branch, String nodePath )
@@ -87,6 +107,13 @@ public final class BranchStore
      * "/child" leaves ""), so the conventional root path "/" is translated to "" here to
      * match that generated-column convention.
      */
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static List<BranchEntryRecord> getChildren( Connection connection, RepoRef repo, String branch, String parentPath, Page page )
+        throws SQLException
+    {
+        return getChildren( connection, RepoKeys.resolve( connection, repo ), branch, parentPath, page );
+    }
+
     public static List<BranchEntryRecord> getChildren( Connection connection, long repoKey, String branch, String parentPath, Page page )
         throws SQLException
     {

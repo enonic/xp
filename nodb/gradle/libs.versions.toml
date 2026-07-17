@@ -5,6 +5,10 @@ slf4j = "2.0.16"
 junit = "5.11.3"
 junit-platform = "1.11.3"
 testcontainers = "1.20.4"
+grpc = "1.82.2"
+protobuf = "4.35.1"
+javax-annotation = "1.3.2"
+java-jwt = "4.6.0"
 
 [libraries]
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
@@ -18,5 +22,15 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 
+grpc-netty-shaded = { module = "io.grpc:grpc-netty-shaded", version.ref = "grpc" }
+grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
+grpc-inprocess = { module = "io.grpc:grpc-inprocess", version.ref = "grpc" }
+grpc-util = { module = "io.grpc:grpc-util", version.ref = "grpc" }
+protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
+javax-annotation-api = { module = "javax.annotation:javax.annotation-api", version.ref = "javax-annotation" }
+java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }
+
 [bundles]
 testcontainers = ["testcontainers-postgresql", "testcontainers-junit-jupiter"]
+grpc-server = ["grpc-netty-shaded", "grpc-protobuf", "grpc-stub", "grpc-util"]

@@ -1,3 +1,7 @@
+// COPY of nodb/proto/nodb.proto (the canonical source of truth for the wire protocol).
+// Duplicated here only because the protobuf Gradle plugin requires .proto sources under
+// <module>/src/main/proto/. Keep this file in sync with nodb/proto/nodb.proto by hand;
+// do not edit the two independently.
 // NoDB wire protocol, v0.1 draft — mirrors the storage SPI 1:1.
 // This is XP's ONLY path to NoDB in every topology (dev, self-hosted, cloud).
 // Tenant identity comes from the auth channel (mTLS / bearer token), never from the payload.
