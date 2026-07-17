@@ -489,6 +489,14 @@ Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
 
 1. **Protocol atomicity (BUG)**: SPI promises atomic version+branch+outbox writes; proto
    has only per-record RPCs. Add a `WriteBatch` RPC (one transaction, one Ack/seq).
+   **Resolved (engine layer) 2026-07-17**: `com.enonic.nodb.engine.store.WriteService.write`
+   commits versions+branch entries+commit+outbox as one JDBC transaction (caller-supplied
+   connection from `Tx.inTenantTx`); hash-only payload references are validated before any
+   row is written, so an unresolvable hash returns `WriteBatchResponse.needPayload` with
+   nothing persisted, with no separate rollback step needed. Proven by
+   `engine/src/test/java/com/enonic/nodb/engine/store/WriteBatchTest.java` (atomicity via
+   forced duplicate-key failure, NEED_PAYLOAD + retry, branch fork, repo drop, outbox
+   monotonicity). Still open: the gRPC `WriteBatch` RPC itself (slice-1 step 5).
 2. **Latency chattiness**: in-JVM sub-ms → 0.5–2ms/hop; XP storage calls are chatty.
    Client cache + feed invalidation is Phase 1 ARCHITECTURE; add perf gates (p95 get/
    save, page-render vs embedded-ES baseline) to Phases 1–2. Biggest adoption risk.
