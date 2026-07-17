@@ -1,0 +1,130 @@
+// NoDB wire protocol, v0.1 draft — mirrors the storage SPI 1:1.
+// This is XP's ONLY path to NoDB in every topology (dev, self-hosted, cloud).
+// Tenant identity comes from the auth channel (mTLS / bearer token), never from the payload.
+syntax = "proto3";
+
+package enonic.nodb.v1;
+option java_package = "com.enonic.nodb.proto.v1";
+
+service NodeStore {
+  // THE write path: version(s) + branch entrie(s) + commit + payloads, ONE transaction,
+  // one Ack/seq (risk register #1). Unchanged segments referenced by hash only —
+  // NEED_PAYLOAD lists unknown hashes for the client to inline and retry.
+  rpc WriteBatch (WriteBatchRequest) returns (WriteBatchResponse);
+  rpc StoreBranchEntry (StoreBranchEntryRequest) returns (Ack);
+  rpc DeleteBranchEntries (DeleteBranchEntriesRequest) returns (Ack);
+  rpc GetBranchEntry (GetBranchEntryRequest) returns (BranchEntry);
+  rpc GetBranchEntries (GetBranchEntriesRequest) returns (stream BranchEntry);
+  rpc GetChildren (GetChildrenRequest) returns (stream BranchEntry);
+  rpc StoreVersion (StoreVersionRequest) returns (Ack);
+  rpc GetVersion (GetVersionRequest) returns (Version);
+  rpc FindVersions (FindVersionsRequest) returns (stream Version);
+  rpc StoreCommit (StoreCommitRequest) returns (Ack);
+  rpc GetCommit (GetCommitRequest) returns (Commit);
+  rpc PutPayload (PutPayloadRequest) returns (PutPayloadResponse); // returns content hash
+  rpc GetPayload (GetPayloadRequest) returns (Payload);
+}
+
+service NodeSearch {
+  // Carries the serialized XP query AST; translation to the engine DSL is server-side
+  // (open question #1 in DESIGN.md — this is the preferred resolution).
+  rpc Search (SearchRequest) returns (SearchResult);
+  rpc AwaitRefresh (AwaitRefreshRequest) returns (Ack); // RefreshMode.SEARCH
+  rpc Reindex (ReindexRequest) returns (TaskHandle);
+}
+
+service RepositoryAdmin {
+  rpc CreateRepository (CreateRepositoryRequest) returns (Ack);
+  rpc DeleteRepository (DeleteRepositoryRequest) returns (Ack);
+  rpc ListRepositories (ListRepositoriesRequest) returns (stream RepositoryInfo);
+  rpc Stats (StatsRequest) returns (RepositoryStats);
+}
+
+// Committed-change stream per tenant (fed by the outbox). Runtimes subscribe for
+// cache invalidation (replaces the Hazelcast event bus for storage events); also what
+// makes external writers (CLI, console) safe while runtimes are live.
+service ChangeFeed {
+  rpc Watch (WatchRequest) returns (stream ChangeEvent);
+}
+
+// Management plane (operator scope required; runtime credentials are rejected):
+// RepositoryAdmin, Snapshots, and bulk transfer. Data-plane services above accept
+// runtime scope. Scope is a JWT claim; enforced by the auth interceptor per service.
+service BulkTransfer {
+  rpc DumpTenant (DumpRequest) returns (stream DumpChunk);
+  rpc LoadTenant (stream DumpChunk) returns (Ack);
+  rpc ExportBranch (ExportRequest) returns (stream ExportChunk);
+  rpc ImportBranch (stream ExportChunk) returns (Ack);
+}
+
+service Snapshots {
+  rpc Snapshot (SnapshotRequest) returns (SnapshotInfo);
+  rpc Restore (RestoreRequest) returns (Ack);
+  rpc List (ListSnapshotsRequest) returns (stream SnapshotInfo);
+  rpc Delete (DeleteSnapshotsRequest) returns (Ack);
+}
+
+// --- messages: field sets mirror nodb/spi Records.java; elided in this draft ---
+message Ack { uint64 outbox_seq = 1; } // callers pass this to AwaitRefresh for read-your-writes
+message BranchEntry {}
+message Version {}
+message Commit {}
+message Payload {}
+message SearchRequest {}
+message SearchResult {}
+message StoreBranchEntryRequest {}
+message DeleteBranchEntriesRequest {}
+message GetBranchEntryRequest {}
+message GetBranchEntriesRequest {}
+message GetChildrenRequest {}
+message StoreVersionRequest {}
+message GetVersionRequest {}
+message FindVersionsRequest {}
+message StoreCommitRequest {}
+message GetCommitRequest {}
+message PutPayloadRequest {}
+message PutPayloadResponse {}
+message GetPayloadRequest {}
+message AwaitRefreshRequest {}
+message ReindexRequest {}
+message TaskHandle {}
+message CreateRepositoryRequest {}
+message DeleteRepositoryRequest {}
+message ListRepositoriesRequest {}
+message RepositoryInfo {}
+message StatsRequest {}
+message RepositoryStats {}
+// Thin events: identity + metadata, never payloads or diffs (notify-then-fetch).
+// At-least-once, seq-ordered; consumers dedup by seq and resume via cursor.
+message WatchRequest {
+  uint64 cursor = 1;            // resume after this outbox seq; 0 = from now
+  string consumer_id = 2;       // registered cursor (trim protection, resync detection)
+  repeated Scope scopes = 3;    // optional repo/branch/path-prefix filters
+}
+message Scope { string repo = 1; string branch = 2; string path_prefix = 3; }
+message ChangeEvent {
+  uint64 seq = 1;
+  string repo = 2;
+  string branch = 3;
+  string node_id = 4;
+  string version_id = 5;        // enough for conflict detection + lazy fetch
+  string node_path = 6;
+  string prev_path = 7;         // set on moves
+  string op = 8;                // CREATED | UPDATED | DELETED | MOVED | PUSHED | ...
+  int64  ts_millis = 9;
+}
+message WriteBatchRequest {}    // versions + branch entries + commit + payloads
+                                // (inline bytes for new hashes, hash-only for known)
+message WriteBatchResponse {
+  uint64 outbox_seq = 1;                // for awaitRefresh (read-your-writes)
+  repeated string need_payload = 2;     // unknown hashes — inline and retry
+}
+message DumpRequest {}
+message DumpChunk {}
+message ExportRequest {}
+message ExportChunk {}
+message SnapshotRequest {}
+message RestoreRequest {}
+message ListSnapshotsRequest {}
+message SnapshotInfo {}
+message DeleteSnapshotsRequest {}
