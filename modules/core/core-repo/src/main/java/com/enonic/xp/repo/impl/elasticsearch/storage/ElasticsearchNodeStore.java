@@ -55,8 +55,13 @@ import com.enonic.xp.storage.spi.VersionRecord;
  * request factories to this package: the ES-free service layer
  * ({@code BranchServiceImpl}/{@code VersionServiceImpl}/{@code CommitServiceImpl}) only
  * ever sees {@link NodeStore}.
+ * <p>
+ * Registered with the {@code storage.backend=elasticsearch} service property (Phase 0,
+ * Gate D). Only one backend exists yet, so consumers still plain-{@code @Reference} this
+ * service; Phase 1 backend selection becomes a {@code @Reference(target = "(storage.backend=...)")}
+ * filter on this same property, not a rewrite.
  */
-@Component(service = NodeStore.class)
+@Component(service = NodeStore.class, property = "storage.backend=elasticsearch")
 public class ElasticsearchNodeStore
     implements NodeStore
 {

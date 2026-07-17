@@ -63,8 +63,13 @@ import com.enonic.xp.storage.spi.UpdateIndexSettings;
  * identically-named/-shaped lifecycle methods (createIndex/deleteIndex/indexExists/refresh/
  * updateSettings) for two different physical indices, which a single class cannot implement
  * with two different bodies.
+ * <p>
+ * Registered with the {@code storage.backend=elasticsearch} service property (Phase 0,
+ * Gate D). Only one backend exists yet, so consumers still plain-{@code @Reference} this
+ * service; Phase 1 backend selection becomes a {@code @Reference(target = "(storage.backend=...)")}
+ * filter on this same property, not a rewrite.
  */
-@Component(service = NodeSearchIndex.class)
+@Component(service = NodeSearchIndex.class, property = "storage.backend=elasticsearch")
 public class NodeSearchIndexImpl
     implements NodeSearchIndex
 {

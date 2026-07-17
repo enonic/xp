@@ -56,8 +56,16 @@ import com.enonic.xp.storage.spi.UpdateIndexSettings;
  * its javadoc) and the storage-<repo> index half of the storage SPI,
  * {@link RepositoryStorageAdmin} (Phase 0, Gate C). Kept as one class since both interfaces
  * are thin wrappers around the same raw Elasticsearch admin-client calls.
+ * <p>
+ * This single component registration carries the {@code storage.backend=elasticsearch} service
+ * property (Phase 0, Gate D), so it is present under both service interfaces; only the storage-SPI
+ * one, {@link RepositoryStorageAdmin}, is meant to be backend-selected on it — {@link IndexServiceInternal}
+ * is a narrow ES-backend-internal interface (see its javadoc), not part of the storage SPI, with only
+ * one implementation ever. Only one backend exists yet, so consumers still plain-{@code @Reference}
+ * {@link RepositoryStorageAdmin}; Phase 1 backend selection becomes a
+ * {@code @Reference(target = "(storage.backend=...)")} filter on this same property, not a rewrite.
  */
-@Component(service = { IndexServiceInternal.class, RepositoryStorageAdmin.class })
+@Component(service = { IndexServiceInternal.class, RepositoryStorageAdmin.class }, property = "storage.backend=elasticsearch")
 public class IndexServiceInternalImpl
     implements IndexServiceInternal, RepositoryStorageAdmin
 {
