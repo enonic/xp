@@ -142,3 +142,30 @@ directory is unrelated to the XP build; cherry-pick nothing from it).
 Full XP test suite green with zero test modifications; arch test enforcing ES
 confinement; SPI module documented (package-info) as internal/provisional; DESIGN.md
 phase table + risk register updated; everything committed on `storage-spi-phase0`.
+
+---
+
+## Completion record (2026-07-18)
+
+Executed on branch `storage-spi-phase0` (pushed). Commits: gate 0 `3d993238b0`,
+gate A `2cd75ded3e`, gate B `6153426db3`, gate C `83e26c2869`, gate D `88d0ee65cb`.
+All gates verified independently by the orchestrator (forced test reruns, grep
+proofs, line-level diff review of exception boundaries and test adaptations).
+
+Actuals vs plan:
+- Full XP build green (729 tasks); itest-core 663/4 + itest-core-content 385/0 —
+  the 4 failures are FindNodesByQueryCommandTest_icuSort, reproduced byte-identical
+  on the pre-phase baseline (environmental ICU collation; not regressions).
+- Notable justified deviations (details in commit messages): IndexDocument family
+  stayed backend-side with IndexDocumentRecord widened as the permanent boundary
+  shape; deleteIndices stayed on the narrow internal interface (snapshot restore's
+  atomic close->delete->restore->open over raw multi-repo names); physical index
+  names never cross the SPI (IndexNameResolver internal).
+- Gate E (extracting the elasticsearch package to its own module) deferred.
+- Agent-token spend: ~1.65M subagent output tokens across four Sonnet agents +
+  orchestrator verification. Persistent agent anti-pattern: ending turns while
+  their own gradle runs were in flight (mitigate with orchestrator-side process
+  monitors, as done here).
+
+Phase 1 pickup: consumers @Reference SPI types without filters; add
+target="(storage.backend=...)" selection + config when nodb-client lands.
