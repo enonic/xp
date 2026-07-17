@@ -8,7 +8,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
-import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.storage.spi.ReturnValues;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 
 public class NodeBranchVersionFactory

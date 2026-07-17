@@ -5,8 +5,8 @@ import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchHit;
+import com.enonic.xp.storage.spi.SearchResult;
 
 class FindNodesByQueryResultFactory
 {

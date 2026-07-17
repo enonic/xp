@@ -41,7 +41,8 @@ class GetNodesByPathsCommandTest
                 addNodePath( createdNode1.path() ).
                 addNodePath( createdNode2.path() ).
                 build() ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -55,7 +56,8 @@ class GetNodesByPathsCommandTest
     {
         final Nodes result = GetNodesByPathsCommand.create().
             paths( NodePaths.from( "/dummy1", "dummy2" ) ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.search.result;
+package com.enonic.xp.storage.spi;
 
 import java.util.Collection;
 import java.util.List;

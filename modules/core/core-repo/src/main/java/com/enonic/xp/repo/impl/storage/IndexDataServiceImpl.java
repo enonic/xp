@@ -9,65 +9,53 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.ReturnValues;
-import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.index.document.IndexDocument;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
-import com.enonic.xp.repo.impl.search.SearchStorageName;
-import com.enonic.xp.repo.impl.search.SearchStorageType;
+import com.enonic.xp.storage.spi.IndexDocumentRecord;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnValues;
 
+/**
+ * Thin adapter from the ES-free {@link IndexDataService} contract onto the
+ * {@link NodeSearchIndex} storage SPI (Phase 0, Gate C — see {@code nodb/BUILD-PHASE-0.md}).
+ * The only translation needed is flattening core-repo's {@link IndexDocument} (the real,
+ * ES-multi-field-shaped document — see {@link IndexDocumentRecord}'s javadoc for why it does
+ * NOT move into the SPI as-is) into the SPI's opaque {@link IndexDocumentRecord}.
+ */
 @Component
 public class IndexDataServiceImpl
     implements IndexDataService
 {
-    private final StorageDao storageDao;
+    private final NodeSearchIndex nodeSearchIndex;
 
     @Activate
-    public IndexDataServiceImpl( @Reference final StorageDao storageDao )
+    public IndexDataServiceImpl( @Reference final NodeSearchIndex nodeSearchIndex )
     {
-        this.storageDao = storageDao;
+        this.nodeSearchIndex = nodeSearchIndex;
     }
 
     @Override
     public ReturnValues get( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
     {
-        final GetResult result = storageDao.getById( createGetByIdRequest( nodeId, returnFields, context ) );
-
-        return result.getReturnValues();
-    }
-
-    private GetByIdRequest createGetByIdRequest( final NodeId nodeId, final ReturnFields returnFields, final InternalContext context )
-    {
-        return GetByIdRequest.create()
-            .storageSettings( StorageSource.create()
-                                  .storageType( SearchStorageType.from( context.getBranch() ) )
-                                  .storageName( SearchStorageName.from( context.getRepositoryId() ) )
-                                  .build() )
-            .searchPreference( context.getSearchPreference() )
-            .returnFields( returnFields )
-            .id( nodeId.toString() )
-            .build();
+        return nodeSearchIndex.get( context.getRepositoryId(), context.getBranch(), nodeId.toString(), returnFields,
+                                     SearchPreferences.toSpi( context.getSearchPreference() ) );
     }
 
     @Override
     public void delete( final Collection<NodeId> nodeIds, final InternalContext context )
     {
-        this.storageDao.delete( DeleteRequests.create()
-                                    .settings( StorageSource.create()
-                                                   .storageType( SearchStorageType.from( context.getBranch() ) )
-                                                   .storageName( SearchStorageName.from( context.getRepositoryId() ) )
-                                                   .build() )
-                                    .ids( nodeIds.stream().map( NodeId::toString ).map( RoutableId::new ).collect( Collectors.toList() ) )
-                                    .build() );
+        nodeSearchIndex.delete( context.getRepositoryId(), context.getBranch(),
+                                 nodeIds.stream().map( NodeId::toString ).collect( Collectors.toList() ) );
     }
-
 
     @Override
     public void store( final IndexDocument indexDocument, final InternalContext context )
     {
-        this.storageDao.store( new IndexStoreRequest( indexDocument, context.getBranch().getValue(),
-                                                      IndexNameResolver.resolveSearchIndexName( context.getRepositoryId() ) ) );
+        nodeSearchIndex.index( context.getRepositoryId(), context.getBranch(), toRecord( indexDocument ) );
     }
 
+    private static IndexDocumentRecord toRecord( final IndexDocument indexDocument )
+    {
+        return new IndexDocumentRecord( indexDocument.id(), indexDocument.analyzer(), indexDocument.data().asValuesMap() );
+    }
 }

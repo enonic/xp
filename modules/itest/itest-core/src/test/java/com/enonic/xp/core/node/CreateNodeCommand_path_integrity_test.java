@@ -39,7 +39,8 @@ class CreateNodeCommand_path_integrity_test
         final Context context = ContextAccessor.current();
 
         final CreateNodeCommand command = CreateNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .binaryService( this.binaryService )

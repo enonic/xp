@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.repo.impl.ReturnValue;
+import com.enonic.xp.storage.spi.ReturnValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

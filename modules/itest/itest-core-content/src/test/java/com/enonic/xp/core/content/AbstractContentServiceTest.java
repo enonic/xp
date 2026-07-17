@@ -91,6 +91,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -116,6 +117,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
@@ -240,6 +242,8 @@ public abstract class AbstractContentServiceTest
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
+        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+
         final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
 
         BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
@@ -252,18 +256,18 @@ public abstract class AbstractContentServiceTest
 
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of() ) );
 
-        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( storageDao );
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
         final NodeStorageServiceImpl storageService =
             new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( searchDao );
+        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
-        indexService = new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        indexService = new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
 
         RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
@@ -276,7 +280,7 @@ public abstract class AbstractContentServiceTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );

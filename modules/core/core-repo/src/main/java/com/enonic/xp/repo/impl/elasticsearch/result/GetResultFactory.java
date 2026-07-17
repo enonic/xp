@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.elasticsearch.action.get.GetResponse;
 
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnValues;
 import com.enonic.xp.repo.impl.storage.GetResult;
 
 public class GetResultFactory

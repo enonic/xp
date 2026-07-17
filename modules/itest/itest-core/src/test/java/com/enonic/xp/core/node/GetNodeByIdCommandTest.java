@@ -33,7 +33,8 @@ class GetNodeByIdCommandTest
     {
         final Node rootNode = GetNodeByIdCommand.create()
             .id( NodeId.ROOT )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -51,7 +52,8 @@ class GetNodeByIdCommandTest
         final Node createdNode = createNode( createNodeParams );
 
         final Node fetchedNode = GetNodeByIdCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .id( createdNode.id() )
@@ -79,7 +81,8 @@ class GetNodeByIdCommandTest
         final Node createdNode = createNode( createNodeParams );
 
         final Node fetchedNode = GetNodeByIdCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .id( createdNode.id() )

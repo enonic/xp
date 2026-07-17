@@ -5,6 +5,8 @@ import java.util.Map;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.index.IndexType;
+import com.enonic.xp.storage.spi.IndexMapping;
+import com.enonic.xp.storage.spi.IndexSettings;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 

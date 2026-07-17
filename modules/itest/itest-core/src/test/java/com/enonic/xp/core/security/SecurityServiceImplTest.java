@@ -25,6 +25,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -70,6 +71,7 @@ import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
@@ -108,6 +110,8 @@ class SecurityServiceImplTest
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
+        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+
         final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
 
         final BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
@@ -120,19 +124,19 @@ class SecurityServiceImplTest
 
         IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 
-        final NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( searchDao );
+        final NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
-        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( storageDao );
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
         final NodeStorageServiceImpl storageService =
             new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
 
         this.eventPublisher = mock( EventPublisher.class );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
@@ -145,10 +149,10 @@ class SecurityServiceImplTest
             .build()
             .initialize();
 
-        this.nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        this.nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
         AuditLogConfig auditLogConfig = mock( AuditLogConfig.class );
         Mockito.when( auditLogConfig.isEnabled() ).thenReturn( true );

@@ -34,7 +34,8 @@ class ResolveSyncWorkPerformanceTest
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        final ResolveSyncWorkResult resolvedNodes = ResolveSyncWorkCommand.create().nodeId( rootNode.id() ).target( WS_OTHER ).indexServiceInternal( this.indexServiceInternal ).storageService( this.storageService ).searchService( this.searchService ).build().execute();
+        final ResolveSyncWorkResult resolvedNodes = ResolveSyncWorkCommand.create().nodeId( rootNode.id() ).target( WS_OTHER ).repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex ).storageService( this.storageService ).searchService( this.searchService ).build().execute();
 
         started.stop();
 

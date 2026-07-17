@@ -9,13 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repo.impl.index.CreateIndexRequest;
-import com.enonic.xp.repo.impl.index.IndexMapping;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.index.IndexSettings;
-import com.enonic.xp.repo.impl.index.IndexSettingsMerger;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.storage.spi.IndexMapping;
+import com.enonic.xp.storage.spi.IndexSettings;
+import com.enonic.xp.storage.spi.IndexSettingsMerger;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 
 @Component
 public class NodeRepositoryServiceImpl
@@ -27,22 +28,34 @@ public class NodeRepositoryServiceImpl
 
     private final IndexServiceInternal indexServiceInternal;
 
+    private final RepositoryStorageAdmin repositoryStorageAdmin;
+
+    private final NodeSearchIndex nodeSearchIndex;
+
     @Activate
-    public NodeRepositoryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal )
+    public NodeRepositoryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
+                                      @Reference final RepositoryStorageAdmin repositoryStorageAdmin,
+                                      @Reference final NodeSearchIndex nodeSearchIndex )
     {
         this.indexServiceInternal = indexServiceInternal;
+        this.repositoryStorageAdmin = repositoryStorageAdmin;
+        this.nodeSearchIndex = nodeSearchIndex;
     }
 
     @Override
     public void create( final RepositoryId repositoryId, final RepositorySettings repositorySettings )
     {
-        createIndex( repositoryId, repositorySettings, IndexType.VERSION,
-                     Map.of( IndexType.VERSION, DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.VERSION ), IndexType.BRANCH,
-                             DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.BRANCH ), IndexType.COMMIT,
-                             DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.COMMIT ) ) );
+        final IndexSettings storageSettings = mergeWithDefaultSettings( repositoryId, repositorySettings.getIndexSettings( IndexType.VERSION ), IndexType.VERSION );
+        final Map<IndexType, IndexMapping> storageMappings =
+            Map.of( IndexType.VERSION, DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.VERSION ), IndexType.BRANCH,
+                    DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.BRANCH ), IndexType.COMMIT,
+                    DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.COMMIT ) );
+        repositoryStorageAdmin.createIndex( repositoryId, storageSettings, storageMappings );
 
-        createIndex( repositoryId, repositorySettings, IndexType.SEARCH, Map.of( IndexType.SEARCH, IndexSettingsMerger.merge(
-            DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ), repositorySettings.getIndexMappings( IndexType.SEARCH ) ) ) );
+        final IndexSettings searchSettings = mergeWithDefaultSettings( repositoryId, repositorySettings.getIndexSettings( IndexType.SEARCH ), IndexType.SEARCH );
+        final IndexMapping searchMapping = IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ),
+                                                                      repositorySettings.getIndexMappings( IndexType.SEARCH ) );
+        nodeSearchIndex.createIndex( repositoryId, searchSettings, searchMapping );
 
         indexServiceInternal.waitForYellowStatus( resolveIndexNames( repositoryId ) );
     }
@@ -64,39 +77,28 @@ public class NodeRepositoryServiceImpl
     @Override
     public void delete( final RepositoryId repositoryId )
     {
-        indexServiceInternal.deleteIndices( resolveIndexNames( repositoryId ) );
+        repositoryStorageAdmin.deleteIndex( repositoryId );
+        nodeSearchIndex.deleteIndex( repositoryId );
     }
 
     @Override
     public boolean isInitialized( final RepositoryId repositoryId )
     {
-        return indexServiceInternal.indicesExists( resolveIndexNames( repositoryId ) );
+        return repositoryStorageAdmin.indexExists( repositoryId ) && nodeSearchIndex.indexExists( repositoryId );
     }
 
     @Override
     public void refresh( final RepositoryId repositoryId )
     {
-        indexServiceInternal.refresh( resolveIndexNames( repositoryId ) );
+        repositoryStorageAdmin.refresh( repositoryId );
+        nodeSearchIndex.refresh( repositoryId );
     }
-
-    private void createIndex( final RepositoryId repositoryId, final RepositorySettings settings, final IndexType indexType,
-                              final Map<IndexType, IndexMapping> mappings )
-    {
-        final IndexSettings mergedSettings = mergeWithDefaultSettings( repositoryId, settings.getIndexSettings( indexType ), indexType );
-
-        indexServiceInternal.createIndex( CreateIndexRequest.create()
-                                              .indexName( resolveIndexName( repositoryId, indexType ) )
-                                              .mappings( mappings )
-                                              .indexSettings( mergedSettings )
-                                              .build() );
-    }
-
 
     private void updateIndexMappings( final RepositoryId repositoryId, final Map<IndexType, IndexMapping> mappings )
     {
         for ( Map.Entry<IndexType, IndexMapping> entry : mappings.entrySet() )
         {
-            indexServiceInternal.putIndexMapping( repositoryId, entry.getKey(), entry.getValue().getData() );
+            repositoryStorageAdmin.putIndexMapping( repositoryId, entry.getKey(), entry.getValue().getData() );
         }
     }
 
@@ -117,7 +119,7 @@ public class NodeRepositoryServiceImpl
     {
         try
         {
-            final String numberOfReplicas = indexServiceInternal.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION )
+            final String numberOfReplicas = repositoryStorageAdmin.getIndexSettings( SystemConstants.SYSTEM_REPO_ID, IndexType.VERSION )
                 .get( "index.number_of_replicas" );
 
             return IndexSettingsMerger.merge( defaultSettings,
@@ -135,14 +137,5 @@ public class NodeRepositoryServiceImpl
     private static String[] resolveIndexNames( final RepositoryId repositoryId )
     {
         return IndexNameResolver.resolveIndexNames( repositoryId ).toArray( String[]::new );
-    }
-
-    private static String resolveIndexName( final RepositoryId repositoryId, final IndexType indexType )
-    {
-        return switch ( indexType )
-        {
-            case SEARCH -> IndexNameResolver.resolveSearchIndexName( repositoryId );
-            case VERSION, BRANCH, COMMIT -> IndexNameResolver.resolveStorageIndexName( repositoryId );
-        };
     }
 }

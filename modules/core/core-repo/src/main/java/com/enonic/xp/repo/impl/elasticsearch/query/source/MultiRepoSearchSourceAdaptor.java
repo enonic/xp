@@ -8,7 +8,7 @@ import com.enonic.xp.query.filter.BooleanFilter;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.query.filter.IndicesFilter;
-import com.enonic.xp.repo.impl.MultiRepoSearchSource;
+import com.enonic.xp.storage.spi.MultiRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
 import com.enonic.xp.repository.RepositoryId;
 

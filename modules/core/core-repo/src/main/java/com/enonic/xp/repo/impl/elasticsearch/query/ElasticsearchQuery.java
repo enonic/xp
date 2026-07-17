@@ -16,7 +16,7 @@ import org.elasticsearch.search.suggest.SuggestBuilder;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.node.SearchOptimizer;
-import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnFields;
 import com.enonic.xp.repo.impl.SearchPreference;
 
 import static java.util.Objects.requireNonNullElse;

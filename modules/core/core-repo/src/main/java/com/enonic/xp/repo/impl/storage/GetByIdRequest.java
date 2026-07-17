@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnFields;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.StorageSource;
 

@@ -1,8 +1,7 @@
-package com.enonic.xp.repo.impl.search.result;
+package com.enonic.xp.storage.spi;
 
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.query.QueryExplanation;
-import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
 public class SearchHit

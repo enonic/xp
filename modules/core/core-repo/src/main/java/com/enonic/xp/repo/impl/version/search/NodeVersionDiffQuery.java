@@ -4,7 +4,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.node.AbstractQuery;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnFields;
 
 public class NodeVersionDiffQuery
     extends AbstractQuery

@@ -1,6 +1,5 @@
-package com.enonic.xp.repo.impl;
+package com.enonic.xp.storage.spi;
 
-import com.enonic.xp.repo.impl.storage.StaticStorageType;
 import com.enonic.xp.repository.RepositoryId;
 
 public class SingleRepoStorageSource
@@ -8,15 +7,15 @@ public class SingleRepoStorageSource
 {
     private final RepositoryId repositoryId;
 
-    private final StaticStorageType type;
+    private final StaticStoreType type;
 
-    private SingleRepoStorageSource( final RepositoryId repositoryId, final StaticStorageType type )
+    private SingleRepoStorageSource( final RepositoryId repositoryId, final StaticStoreType type )
     {
         this.repositoryId = repositoryId;
         this.type = type;
     }
 
-    public static SingleRepoStorageSource create( final RepositoryId repositoryId, final StaticStorageType type )
+    public static SingleRepoStorageSource create( final RepositoryId repositoryId, final StaticStoreType type )
     {
         return new SingleRepoStorageSource( repositoryId, type );
     }
@@ -26,7 +25,7 @@ public class SingleRepoStorageSource
         return repositoryId;
     }
 
-    public StaticStorageType getType()
+    public StaticStoreType getType()
     {
         return type;
     }

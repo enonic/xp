@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
-import com.enonic.xp.repo.impl.index.IndexMapping;
-import com.enonic.xp.repo.impl.index.IndexSettings;
+import com.enonic.xp.storage.spi.IndexMapping;
+import com.enonic.xp.storage.spi.IndexSettings;
 
 public final class IndexDefinition
 {

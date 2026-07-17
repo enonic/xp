@@ -12,11 +12,12 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.filter.IdFilter;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.ReturnValue;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.SearchSources;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnValue;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SearchHit;
+import com.enonic.xp.storage.spi.SearchResult;
 
 public class FindNodesDependenciesCommand
     extends AbstractNodeCommand
@@ -94,7 +95,7 @@ public class FindNodesDependenciesCommand
                 build() ).
             from( 0 ).
             size( nonProcessedNodes.getSize() ).
-            build(), ReturnFields.from( NodeIndexPath.REFERENCE ), SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
+            build(), ReturnFields.from( NodeIndexPath.REFERENCE ), SearchSources.from( InternalContext.from( ContextAccessor.current() ) ) );
 
     }
 

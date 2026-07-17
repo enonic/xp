@@ -7,7 +7,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.repo.impl.MultiRepoSearchSource;
+import com.enonic.xp.storage.spi.MultiRepoSearchSource;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKeys;
 

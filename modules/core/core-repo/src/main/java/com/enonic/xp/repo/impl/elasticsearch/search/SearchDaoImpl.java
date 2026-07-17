@@ -7,8 +7,8 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.repo.impl.elasticsearch.executor.SearchExecutor;
 import com.enonic.xp.repo.impl.search.SearchDao;
-import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchRequest;
+import com.enonic.xp.storage.spi.SearchResult;
 
 @Component
 public class SearchDaoImpl

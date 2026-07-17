@@ -12,6 +12,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.index.document.IndexDocument;
 import com.enonic.xp.repo.impl.index.document.indexitem.IndexItemFactory;
 import com.enonic.xp.repo.impl.index.document.indexitem.IndexItems;
+import com.enonic.xp.storage.spi.IndexDocumentRecord;
 
 class StoreDocumentXContentBuilderFactoryTest
 {
@@ -26,8 +27,10 @@ class StoreDocumentXContentBuilderFactoryTest
             .build();
 
         final IndexDocument indexDocument = new IndexDocument( NodeId.from( "mynodeid" ).toString(), indexItems, "myAnalyzer" );
+        final IndexDocumentRecord indexDocumentRecord =
+            new IndexDocumentRecord( indexDocument.id(), indexDocument.analyzer(), indexDocument.data().asValuesMap() );
 
-        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocument );
+        final XContentBuilder xContentBuilder = XContentBuilderFactory.create( indexDocumentRecord );
 
         System.out.println( xContentBuilder.string() );
 

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
 
-import com.enonic.xp.repo.impl.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnFields;
 import com.enonic.xp.repo.impl.elasticsearch.SearchRequestBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.aggregation.AggregationsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.ElasticsearchQuery;
@@ -21,9 +21,9 @@ import com.enonic.xp.repo.impl.elasticsearch.query.translator.ESQueryTranslator;
 import com.enonic.xp.repo.impl.elasticsearch.result.SearchHitsFactory;
 import com.enonic.xp.repo.impl.elasticsearch.suggistion.SuggestionsFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchRequest;
+import com.enonic.xp.storage.spi.SearchHit;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repository.IndexException;
 
 public class SearchExecutor

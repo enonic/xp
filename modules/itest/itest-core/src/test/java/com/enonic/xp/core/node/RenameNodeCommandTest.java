@@ -34,7 +34,8 @@ class RenameNodeCommandTest
 
         MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build()
@@ -52,7 +53,8 @@ class RenameNodeCommandTest
 
         final MoveNodeCommand command = MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node" ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build();
@@ -69,7 +71,8 @@ class RenameNodeCommandTest
 
         final MoveNodeCommand command = MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-existing" ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build();
@@ -86,7 +89,8 @@ class RenameNodeCommandTest
 
         MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build()
@@ -115,7 +119,8 @@ class RenameNodeCommandTest
 
         MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build()
@@ -149,7 +154,8 @@ class RenameNodeCommandTest
 
         MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( createdNode.id() ).newName( NodeName.from( "my-node-edited" ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build()
@@ -163,7 +169,8 @@ class RenameNodeCommandTest
     {
         assertThrows( OperationNotPermittedException.class, () -> MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( NodeId.ROOT ).newName( NodeName.from( "my-node-edited" ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build()

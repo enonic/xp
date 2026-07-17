@@ -7,8 +7,8 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.enonic.xp.repo.impl.elasticsearch.IndexConstants;
 import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
-import com.enonic.xp.repo.impl.index.document.IndexDocument;
 import com.enonic.xp.repo.impl.storage.StoreRequest;
+import com.enonic.xp.storage.spi.IndexDocumentRecord;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -25,7 +25,7 @@ class XContentBuilderFactory
         return builder.endObject();
     }
 
-    static XContentBuilder create( final IndexDocument doc )
+    static XContentBuilder create( final IndexDocumentRecord doc )
         throws IOException
     {
         final XContentBuilder builder = XContentFactory.jsonBuilder().startObject();
@@ -35,7 +35,7 @@ class XContentBuilderFactory
             addField( builder, IndexConstants.ANALYZER_VALUE_FIELD, analyzer );
         }
 
-        for ( final var entry : doc.data().asValuesMap().entrySet() )
+        for ( final var entry : doc.fields().entrySet() )
         {
             addField( builder, entry.getKey(), entry.getValue() );
         }

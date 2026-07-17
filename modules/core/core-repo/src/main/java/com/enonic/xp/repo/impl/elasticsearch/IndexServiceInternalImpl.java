@@ -38,20 +38,28 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 
 import com.enonic.xp.index.IndexType;
-import com.enonic.xp.repo.impl.index.IndexMapping;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.index.IndexSettings;
-import com.enonic.xp.repo.impl.index.UpdateIndexSettings;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.storage.spi.IndexMapping;
+import com.enonic.xp.storage.spi.IndexSettings;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.storage.spi.StorageIndexExistsException;
 import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
+import com.enonic.xp.storage.spi.UpdateIndexSettings;
 
 
-@Component
+/**
+ * Elasticsearch-backed implementation of both the narrow, backend-internal
+ * {@link IndexServiceInternal} (cluster health/master, close/open/bulk-delete-by-name — see
+ * its javadoc) and the storage-<repo> index half of the storage SPI,
+ * {@link RepositoryStorageAdmin} (Phase 0, Gate C). Kept as one class since both interfaces
+ * are thin wrappers around the same raw Elasticsearch admin-client calls.
+ */
+@Component(service = { IndexServiceInternal.class, RepositoryStorageAdmin.class })
 public class IndexServiceInternalImpl
-    implements IndexServiceInternal
+    implements IndexServiceInternal, RepositoryStorageAdmin
 {
     private static final Logger LOG = LoggerFactory.getLogger( IndexServiceInternalImpl.class );
 
@@ -79,8 +87,7 @@ public class IndexServiceInternalImpl
         this.client = client;
     }
 
-    @Override
-    public void refresh( final String... indexNames )
+    private void doRefresh( final String... indexNames )
     {
         try
         {
@@ -90,6 +97,12 @@ public class IndexServiceInternalImpl
         {
             throw new StorageIndexNotFoundException( "Index not found: " + String.join( ", ", indexNames ), e );
         }
+    }
+
+    @Override
+    public void refresh( final RepositoryId repositoryId )
+    {
+        doRefresh( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
     }
 
     @Override
@@ -109,18 +122,15 @@ public class IndexServiceInternalImpl
         return clusterStateResponse.getState().nodes().localNodeMaster();
     }
 
-    @Override
-    public void createIndex( final com.enonic.xp.repo.impl.index.CreateIndexRequest request )
+    private void doCreateIndex( final String indexName, final IndexSettings indexSettings, final Map<IndexType, IndexMapping> mappings )
     {
-        final String indexName = request.getIndexName();
-        final IndexSettings indexSettings = request.getIndexSettings();
         LOG.info( "creating index {}", indexName );
 
         CreateIndexRequest createIndexRequest = new CreateIndexRequest( indexName );
         createIndexRequest.settings( indexSettings.getData() );
-        if ( request.getMappings() != null )
+        if ( mappings != null )
         {
-            for ( Map.Entry<IndexType, IndexMapping> mappingEntry : request.getMappings().entrySet() )
+            for ( Map.Entry<IndexType, IndexMapping> mappingEntry : mappings.entrySet() )
             {
                 createIndexRequest.mapping(
                     mappingEntry.getKey().isDynamicTypes() ? ES_DEFAULT_INDEX_TYPE_NAME : mappingEntry.getKey().getName(),
@@ -146,7 +156,14 @@ public class IndexServiceInternalImpl
         }
     }
 
-    public void putIndexMapping( RepositoryId repositoryId, IndexType indexType, Map<String, Object> mapping )
+    @Override
+    public void createIndex( final RepositoryId repositoryId, final IndexSettings settings, final Map<IndexType, IndexMapping> mappings )
+    {
+        doCreateIndex( IndexNameResolver.resolveStorageIndexName( repositoryId ), settings, mappings );
+    }
+
+    @Override
+    public void putIndexMapping( final RepositoryId repositoryId, final IndexType indexType, final Map<String, Object> mapping )
     {
         final String indexName = IndexType.SEARCH == indexType
             ? IndexNameResolver.resolveSearchIndexName( repositoryId )
@@ -165,8 +182,7 @@ public class IndexServiceInternalImpl
         }
     }
 
-    @Override
-    public void updateIndex( final String indexName, final UpdateIndexSettings settings )
+    private void doUpdateSettings( final String indexName, final UpdateIndexSettings settings )
     {
         LOG.info( "updating index {}", indexName );
 
@@ -183,6 +199,12 @@ public class IndexServiceInternalImpl
         {
             throw new IndexException( "Failed to update index: " + indexName, e );
         }
+    }
+
+    @Override
+    public void updateSettings( final RepositoryId repositoryId, final UpdateIndexSettings settings )
+    {
+        doUpdateSettings( IndexNameResolver.resolveStorageIndexName( repositoryId ), settings );
     }
 
     @Override
@@ -216,7 +238,12 @@ public class IndexServiceInternalImpl
     }
 
     @Override
-    public boolean indicesExists( final String... indices )
+    public void deleteIndex( final RepositoryId repositoryId )
+    {
+        doDeleteIndex( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
+    }
+
+    private boolean doIndicesExists( final String... indices )
     {
         IndicesExistsRequest request =
             new IndicesExistsRequestBuilder( this.client.admin().indices(), IndicesExistsAction.INSTANCE ).setIndices( indices ).request();
@@ -224,6 +251,12 @@ public class IndexServiceInternalImpl
         final IndicesExistsResponse response = client.admin().indices().exists( request ).actionGet( INDEX_EXISTS_TIMEOUT );
 
         return response.isExists();
+    }
+
+    @Override
+    public boolean indexExists( final RepositoryId repositoryId )
+    {
+        return doIndicesExists( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
     }
 
     @Override

@@ -23,6 +23,12 @@ import com.enonic.xp.repo.impl.repository.RepositorySettings;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.IndexDataService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.storage.spi.IndexMapping;
+import com.enonic.xp.storage.spi.IndexSettings;
+import com.enonic.xp.storage.spi.IndexSettingsMerger;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
+import com.enonic.xp.storage.spi.UpdateIndexSettings;
 
 @Component
 public class IndexServiceImpl
@@ -34,6 +40,10 @@ public class IndexServiceImpl
 
     private IndexServiceInternal indexServiceInternal;
 
+    private final RepositoryStorageAdmin repositoryStorageAdmin;
+
+    private final NodeSearchIndex nodeSearchIndex;
+
     private final IndexDataService indexDataService;
 
     private final NodeSearchService nodeSearchService;
@@ -43,11 +53,15 @@ public class IndexServiceImpl
     private final RepositoryEntryService repositoryEntryService;
 
     @Activate
-    public IndexServiceImpl( @Reference final IndexServiceInternal indexServiceInternal, @Reference final IndexDataService indexDataService,
+    public IndexServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
+                             @Reference final RepositoryStorageAdmin repositoryStorageAdmin, @Reference final NodeSearchIndex nodeSearchIndex,
+                             @Reference final IndexDataService indexDataService,
                              @Reference final NodeSearchService nodeSearchService, @Reference final NodeVersionService nodeVersionService,
                              @Reference final RepositoryEntryService repositoryEntryService )
     {
         this.indexServiceInternal = indexServiceInternal;
+        this.repositoryStorageAdmin = repositoryStorageAdmin;
+        this.nodeSearchIndex = nodeSearchIndex;
         this.indexDataService = indexDataService;
         this.nodeSearchService = nodeSearchService;
         this.nodeVersionService = nodeVersionService;
@@ -94,37 +108,46 @@ public class IndexServiceImpl
     {
         final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
         final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        updateIndexSettings( searchIndexName, updateIndexSettings, result, closeIndex );
-        updateIndexSettings( storageIndexName, updateIndexSettings, result, closeIndex );
-    }
 
-    private void updateIndexSettings( final String indexName, final UpdateIndexSettings settings,
-                                      final UpdateIndexSettingsResult.Builder result, final boolean closeIndex )
-    {
         if ( closeIndex )
         {
-            this.indexServiceInternal.closeIndices( indexName );
+            this.indexServiceInternal.closeIndices( searchIndexName );
         }
-
         try
         {
-            indexServiceInternal.updateIndex( indexName, settings );
+            nodeSearchIndex.updateSettings( repositoryId, updateIndexSettings );
         }
         finally
         {
             if ( closeIndex )
             {
-                indexServiceInternal.openIndices( indexName );
+                indexServiceInternal.openIndices( searchIndexName );
             }
         }
+        result.addUpdatedIndex( searchIndexName );
 
-        result.addUpdatedIndex( indexName );
+        if ( closeIndex )
+        {
+            this.indexServiceInternal.closeIndices( storageIndexName );
+        }
+        try
+        {
+            repositoryStorageAdmin.updateSettings( repositoryId, updateIndexSettings );
+        }
+        finally
+        {
+            if ( closeIndex )
+            {
+                indexServiceInternal.openIndices( storageIndexName );
+            }
+        }
+        result.addUpdatedIndex( storageIndexName );
     }
 
     @Override
     public Map<String, String> getIndexSettings( final RepositoryId repositoryId, final IndexType indexType )
     {
-        return this.indexServiceInternal.getIndexSettings( repositoryId, indexType );
+        return this.repositoryStorageAdmin.getIndexSettings( repositoryId, indexType );
     }
 
     @Override
@@ -146,18 +169,14 @@ public class IndexServiceImpl
 
         final RepositorySettings repositorySettings = repositoryEntryService.getRepositoryEntry( repositoryId ).getSettings();
 
-        indexServiceInternal.deleteIndices( searchIndexName );
+        nodeSearchIndex.deleteIndex( repositoryId );
 
         final IndexSettings indexSettings = IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getSettings( IndexType.SEARCH ),
                                                                        repositorySettings.getIndexSettings( IndexType.SEARCH ) );
         final IndexMapping indexMapping = IndexSettingsMerger.merge( DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( IndexType.SEARCH ),
                                                                      repositorySettings.getIndexMappings( IndexType.SEARCH ) );
 
-        indexServiceInternal.createIndex( CreateIndexRequest.create()
-                                              .indexName( searchIndexName )
-                                              .indexSettings( indexSettings )
-                                              .mappings( Map.of( IndexType.SEARCH, indexMapping ) )
-                                              .build() );
+        nodeSearchIndex.createIndex( repositoryId, indexSettings, indexMapping );
 
         indexServiceInternal.waitForYellowStatus( searchIndexName );
     }

@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.index;
+package com.enonic.xp.storage.spi;
 
 import java.util.Map;
 
@@ -6,6 +6,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.enonic.xp.core.internal.json.JsonHelper;
 
+/**
+ * Opaque, engine-shaped index mapping (today: verbatim Elasticsearch type mapping JSON,
+ * keyed by index type name). Backend-internal semantics — the SPI only carries the JSON
+ * blob through.
+ */
 public final class IndexMapping
 {
     private final JsonNode jsonNode;

@@ -1,14 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.Set;
-
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repository.IndexException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 
 import static java.util.Objects.requireNonNullElse;
@@ -17,12 +15,15 @@ public class RefreshCommand
 {
     private final RefreshMode refreshMode;
 
-    private final IndexServiceInternal indexServiceInternal;
+    private final RepositoryStorageAdmin repositoryStorageAdmin;
+
+    private final NodeSearchIndex nodeSearchIndex;
 
     private RefreshCommand( Builder builder )
     {
         refreshMode = builder.refreshMode;
-        indexServiceInternal = builder.indexServiceInternal;
+        repositoryStorageAdmin = builder.repositoryStorageAdmin;
+        nodeSearchIndex = builder.nodeSearchIndex;
     }
 
     public void execute()
@@ -30,16 +31,21 @@ public class RefreshCommand
         final RepositoryId repositoryId =
             requireNonNullElse( ContextAccessor.current().getRepositoryId(), SystemConstants.SYSTEM_REPO_ID );
 
-        final Set<String> indices = switch ( refreshMode )
-        {
-            case ALL -> IndexNameResolver.resolveIndexNames( repositoryId );
-            case SEARCH -> Set.of( IndexNameResolver.resolveSearchIndexName( repositoryId ) );
-            case STORAGE -> Set.of( IndexNameResolver.resolveStorageIndexName( repositoryId ) );
-        };
-
         try
         {
-            this.indexServiceInternal.refresh( indices.toArray( String[]::new ) );
+            switch ( refreshMode )
+            {
+                case ALL:
+                    repositoryStorageAdmin.refresh( repositoryId );
+                    nodeSearchIndex.refresh( repositoryId );
+                    break;
+                case SEARCH:
+                    nodeSearchIndex.refresh( repositoryId );
+                    break;
+                case STORAGE:
+                    repositoryStorageAdmin.refresh( repositoryId );
+                    break;
+            }
         }
         catch ( StorageIndexNotFoundException e )
         {
@@ -56,7 +62,9 @@ public class RefreshCommand
     {
         private RefreshMode refreshMode;
 
-        private IndexServiceInternal indexServiceInternal;
+        private RepositoryStorageAdmin repositoryStorageAdmin;
+
+        private NodeSearchIndex nodeSearchIndex;
 
         private Builder()
         {
@@ -68,9 +76,15 @@ public class RefreshCommand
             return this;
         }
 
-        public Builder indexServiceInternal( IndexServiceInternal indexServiceInternal )
+        public Builder repositoryStorageAdmin( RepositoryStorageAdmin repositoryStorageAdmin )
         {
-            this.indexServiceInternal = indexServiceInternal;
+            this.repositoryStorageAdmin = repositoryStorageAdmin;
+            return this;
+        }
+
+        public Builder nodeSearchIndex( NodeSearchIndex nodeSearchIndex )
+        {
+            this.nodeSearchIndex = nodeSearchIndex;
             return this;
         }
 

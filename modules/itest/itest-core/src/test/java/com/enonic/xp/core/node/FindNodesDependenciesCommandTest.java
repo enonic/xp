@@ -42,7 +42,8 @@ class FindNodesDependenciesCommandTest
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).
             build().
@@ -62,7 +63,8 @@ class FindNodesDependenciesCommandTest
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
-            indexServiceInternal( this.indexServiceInternal ).searchService( this.searchService )
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).searchService( this.searchService )
             .storageService( this.storageService )
             .filter( nodeIds -> {
                 final NodeIds.Builder filteredNodeIds = NodeIds.create();
@@ -94,7 +96,8 @@ class FindNodesDependenciesCommandTest
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).
             build().
@@ -117,7 +120,8 @@ class FindNodesDependenciesCommandTest
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
             excludedIds( NodeIds.from( node1_1.id() ) ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).
             build().

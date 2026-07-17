@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.source;
 
-import com.enonic.xp.repo.impl.SingleRepoStorageSource;
+import com.enonic.xp.storage.spi.SingleRepoStorageSource;
 
 class SingleRepoStorageSourceAdaptor
     extends AbstractSourceAdapter

@@ -80,13 +80,14 @@ import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.SearchPreference;
 import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -96,7 +97,9 @@ import com.enonic.xp.util.BinaryReference;
 public class NodeServiceImpl
     implements NodeService
 {
-    private final IndexServiceInternal indexServiceInternal;
+    private final RepositoryStorageAdmin repositoryStorageAdmin;
+
+    private final NodeSearchIndex nodeSearchIndex;
 
     private final NodeStorageService nodeStorageService;
 
@@ -111,11 +114,12 @@ public class NodeServiceImpl
     private @Nullable RepositoryService repositoryService;
 
     @Activate
-    public NodeServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
+    public NodeServiceImpl( @Reference final RepositoryStorageAdmin repositoryStorageAdmin, @Reference final NodeSearchIndex nodeSearchIndex,
                             @Reference final NodeStorageService nodeStorageService, @Reference final NodeSearchService nodeSearchService,
                             @Reference final EventPublisher eventPublisher, @Reference final BinaryService binaryService )
     {
-        this.indexServiceInternal = indexServiceInternal;
+        this.repositoryStorageAdmin = repositoryStorageAdmin;
+        this.nodeSearchIndex = nodeSearchIndex;
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
         this.eventPublisher = eventPublisher;
@@ -161,7 +165,8 @@ public class NodeServiceImpl
         final Node node = GetNodeByIdAndVersionIdCommand.create()
             .nodeId( id )
             .versionId( versionId )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -193,7 +198,8 @@ public class NodeServiceImpl
     {
         return GetNodeByIdCommand.create()
             .id( id )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -230,7 +236,8 @@ public class NodeServiceImpl
     {
         return GetNodeByPathCommand.create()
             .nodePath( path )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -253,7 +260,8 @@ public class NodeServiceImpl
     {
         return GetNodesByIdsCommand.create()
             .ids( ids )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -276,7 +284,8 @@ public class NodeServiceImpl
     {
         return GetNodesByPathsCommand.create()
             .paths( paths )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -307,7 +316,8 @@ public class NodeServiceImpl
             .size( params.getSize() )
             .countOnly( params.isCountOnly() )
             .childOrder( params.getChildOrder() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.nodeSearchService )
             .storageService( this.nodeStorageService )
             .build()
@@ -332,7 +342,8 @@ public class NodeServiceImpl
     {
         return FindNodesByQueryCommand.create()
             .query( nodeQuery )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -370,7 +381,8 @@ public class NodeServiceImpl
     {
         return FindNodesByMultiRepoQueryCommand.create()
             .query( nodeQuery )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -388,7 +400,8 @@ public class NodeServiceImpl
     {
         final Node createdNode = CreateNodeCommand.create()
             .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -407,7 +420,8 @@ public class NodeServiceImpl
         final PatchNodeResult result = PatchNodeCommand.create()
             .params( convertUpdateParams( params ) )
             .binaryService( this.binaryService )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -433,7 +447,8 @@ public class NodeServiceImpl
 
         final PatchNodeResult result = PatchNodeCommand.create()
             .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -473,7 +488,8 @@ public class NodeServiceImpl
         verifyContext();
         final MoveNodeResult moveNodeResult = MoveNodeCommand.create()
             .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -495,7 +511,8 @@ public class NodeServiceImpl
             .nodePath( deleteNodeParams.getNodePath() )
             .deleteNodeListener( deleteNodeParams.getDeleteNodeListener() )
             .refresh( deleteNodeParams.getRefresh() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -520,7 +537,8 @@ public class NodeServiceImpl
         verifyBranches( ContextAccessor.current().getBranch(), params.getTarget() );
 
         final PushNodesResult pushNodesResult = PushNodesCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .params( params )
@@ -544,7 +562,8 @@ public class NodeServiceImpl
         verifyContext();
         final DuplicateNodeResult result = DuplicateNodeCommand.create()
             .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -601,7 +620,8 @@ public class NodeServiceImpl
         return GetActiveNodeVersionsCommand.create()
             .nodeId( params.getNodeId() )
             .branches( params.getBranches() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -620,7 +640,8 @@ public class NodeServiceImpl
             .includeDependencies( params.isIncludeDependencies() )
             .filter( params.getFilter() )
             .statusesToStopDependenciesSearch( params.getStatusesToStopDependenciesSearch() )
-            .indexServiceInternal( indexServiceInternal )
+            .repositoryStorageAdmin( repositoryStorageAdmin )
+            .nodeSearchIndex( nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -632,7 +653,8 @@ public class NodeServiceImpl
     {
         verifyContext();
         final SortNodeResult result = SortNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .params( params )
@@ -662,7 +684,12 @@ public class NodeServiceImpl
 
     private Void executeRefresh( final RefreshMode refreshMode )
     {
-        RefreshCommand.create().indexServiceInternal( this.indexServiceInternal ).refreshMode( refreshMode ).build().execute();
+        RefreshCommand.create()
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
+            .refreshMode( refreshMode )
+            .build()
+            .execute();
         return null;
     }
 
@@ -672,7 +699,8 @@ public class NodeServiceImpl
         verifyContext();
         final ApplyPermissionsResult internalResult = ApplyNodePermissionsCommand.create()
             .params( params )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.nodeSearchService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -717,7 +745,8 @@ public class NodeServiceImpl
         return GetBinaryCommand.create()
             .binaryReference( reference )
             .nodeId( nodeId )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -745,7 +774,8 @@ public class NodeServiceImpl
             .binaryReference( reference )
             .nodeId( nodeId )
             .nodeVersionId( nodeVersionId )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
@@ -766,7 +796,8 @@ public class NodeServiceImpl
             .importPermissionsOnCreate( params.isImportPermissionsOnCreate() )
             .versionAttributesResolver( params.getVersionAttributesResolver() )
             .binaryBlobStore( this.binaryService )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
@@ -815,7 +846,8 @@ public class NodeServiceImpl
         return HasUnpublishedChildrenCommand.create()
             .parent( parent )
             .target( target )
-            .indexServiceInternal( indexServiceInternal )
+            .repositoryStorageAdmin( repositoryStorageAdmin )
+            .nodeSearchIndex( nodeSearchIndex )
             .storageService( nodeStorageService )
             .searchService( nodeSearchService )
             .build()

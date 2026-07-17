@@ -1,9 +1,9 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.source;
 
-import com.enonic.xp.repo.impl.MultiRepoSearchSource;
-import com.enonic.xp.repo.impl.SearchSource;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.SingleRepoStorageSource;
+import com.enonic.xp.storage.spi.MultiRepoSearchSource;
+import com.enonic.xp.storage.spi.SearchSource;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SingleRepoStorageSource;
 
 public class ESSourceFactory
 {

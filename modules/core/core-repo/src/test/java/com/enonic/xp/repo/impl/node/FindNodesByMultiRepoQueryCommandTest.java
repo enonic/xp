@@ -12,11 +12,12 @@ import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SearchTargets;
-import com.enonic.xp.repo.impl.MultiRepoSearchSource;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
+import com.enonic.xp.storage.spi.MultiRepoSearchSource;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.IdProviderKey;
@@ -103,7 +104,8 @@ class FindNodesByMultiRepoQueryCommandTest
 
         FindNodesByMultiRepoQueryCommand.create()
             .query( query )
-            .indexServiceInternal( mock( IndexServiceInternal.class ) )
+            .repositoryStorageAdmin( mock( RepositoryStorageAdmin.class ) )
+            .nodeSearchIndex( mock( NodeSearchIndex.class ) )
             .storageService( mock( NodeStorageService.class ) )
             .searchService( nodeSearchService )
             .build()

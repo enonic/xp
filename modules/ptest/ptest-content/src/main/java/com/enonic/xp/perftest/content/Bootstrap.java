@@ -61,6 +61,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -82,6 +83,7 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 
 /**
@@ -148,6 +150,8 @@ public final class Bootstrap
         final StorageDaoImpl storageDao = new StorageDaoImpl( client );
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
+        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+
         final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
         final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
@@ -158,20 +162,20 @@ public final class Bootstrap
 
         final IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
         final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
-        final IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( storageDao );
+        final IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
         final NodeStorageServiceImpl storageService =
             new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        final NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( searchDao );
+        final NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         final IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
 
         final RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
@@ -185,7 +189,7 @@ public final class Bootstrap
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         final CmsFormFragmentService formFragmentService = noOp( CmsFormFragmentService.class,
             ( method, args ) -> "inlineFormItems".equals( method.getName() ) && args.length == 1 && args[0] instanceof Form

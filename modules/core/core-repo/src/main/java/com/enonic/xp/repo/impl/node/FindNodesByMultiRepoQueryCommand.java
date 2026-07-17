@@ -5,9 +5,9 @@ import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
 import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SearchTargets;
-import com.enonic.xp.repo.impl.MultiRepoSearchSource;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.MultiRepoSearchSource;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.security.PrincipalKeys;
 
 import static java.util.Objects.requireNonNull;

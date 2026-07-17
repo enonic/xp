@@ -5,7 +5,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePaths;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
 public class HasUnpublishedChildrenCommand

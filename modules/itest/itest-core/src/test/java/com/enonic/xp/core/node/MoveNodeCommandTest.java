@@ -49,7 +49,8 @@ class MoveNodeCommandTest
         final Node beforeMove = getNodeById( node.id() );
 
         MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create()
@@ -72,7 +73,8 @@ class MoveNodeCommandTest
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
 
         MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create()
@@ -96,7 +98,8 @@ class MoveNodeCommandTest
             createNode( CreateNodeParams.create().name( "mynode" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "mynode" ) ).build() );
 
         assertThrows( MoveNodeException.class, () -> MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params(
@@ -115,7 +118,8 @@ class MoveNodeCommandTest
             createNode( CreateNodeParams.create().name( "child" ).parent( node.path() ).setNodeId( NodeId.from( "child" ) ).build() );
 
         assertThrows( MoveNodeException.class, () -> MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params(
@@ -136,7 +140,8 @@ class MoveNodeCommandTest
         createNode( CreateNodeParams.create().name( "mynode" ).parent( newParent.path() ).build() );
 
         assertThrows( NodeAlreadyExistAtPathException.class, () -> MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params(
@@ -155,7 +160,8 @@ class MoveNodeCommandTest
             CreateNodeParams.create().name( "new-parent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "newparent" ) ).build() );
 
         MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create().nodeId( node.id() ).newParentPath( newParent.path() ).build() )
@@ -195,7 +201,8 @@ class MoveNodeCommandTest
             CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "new-parent" ) ).build() );
 
         final Node movedNode = MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create().nodeId( child1.id() ).newParentPath( newParent.path() ).refresh( RefreshMode.ALL ).build() )
@@ -251,7 +258,8 @@ class MoveNodeCommandTest
             CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "new-parent" ) ).build() );
 
         final Node movedNode = MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create()
@@ -334,7 +342,8 @@ class MoveNodeCommandTest
 
         // Tests the check of the MODIFY right on the moved node
         assertThrows( NodeAccessException.class, MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create().nodeId( cannotMoveNode.id() ).newParentPath( canMoveIntoNode.path() ).build() )
@@ -342,7 +351,8 @@ class MoveNodeCommandTest
 
         // Tests the check of the CREATE right on the new parent
         assertThrows( NodeAccessException.class, MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create().nodeId( canMoveNode.id() ).newParentPath( cannotMoveIntoNode.path() ).build() )
@@ -382,7 +392,8 @@ class MoveNodeCommandTest
                                                .build() );
 
         MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create().nodeId( nodeToMove.id() ).newParentPath( newParent.path() ).build() )
@@ -428,7 +439,8 @@ class MoveNodeCommandTest
     private void doMoveNode( final NodePath newParent, final NodeId nodeId )
     {
         MoveNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .params( MoveNodeParams.create().nodeId( nodeId ).newParentPath( newParent ).build() )

@@ -12,17 +12,20 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.VersionAttributesResolver;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 
 import static java.util.Objects.requireNonNull;
 
 abstract class AbstractNodeCommand
 {
-    final IndexServiceInternal indexServiceInternal;
+    final RepositoryStorageAdmin repositoryStorageAdmin;
+
+    final NodeSearchIndex nodeSearchIndex;
 
     final NodeStorageService nodeStorageService;
 
@@ -30,7 +33,8 @@ abstract class AbstractNodeCommand
 
     AbstractNodeCommand( final Builder builder )
     {
-        this.indexServiceInternal = builder.indexServiceInternal;
+        this.repositoryStorageAdmin = builder.repositoryStorageAdmin;
+        this.nodeSearchIndex = builder.nodeSearchIndex;
         this.nodeStorageService = builder.nodeStorageService;
         this.nodeSearchService = builder.nodeSearchService;
     }
@@ -54,7 +58,12 @@ abstract class AbstractNodeCommand
     {
         if ( refreshMode != null )
         {
-            RefreshCommand.create().refreshMode( refreshMode ).indexServiceInternal( this.indexServiceInternal ).build().execute();
+            RefreshCommand.create()
+                .refreshMode( refreshMode )
+                .repositoryStorageAdmin( this.repositoryStorageAdmin )
+                .nodeSearchIndex( this.nodeSearchIndex )
+                .build()
+                .execute();
         }
     }
 
@@ -75,7 +84,9 @@ abstract class AbstractNodeCommand
 
     public abstract static class Builder<B extends Builder>
     {
-        IndexServiceInternal indexServiceInternal;
+        RepositoryStorageAdmin repositoryStorageAdmin;
+
+        NodeSearchIndex nodeSearchIndex;
 
         NodeStorageService nodeStorageService;
 
@@ -87,15 +98,23 @@ abstract class AbstractNodeCommand
 
         Builder( final AbstractNodeCommand source )
         {
-            this.indexServiceInternal = source.indexServiceInternal;
+            this.repositoryStorageAdmin = source.repositoryStorageAdmin;
+            this.nodeSearchIndex = source.nodeSearchIndex;
             this.nodeStorageService = source.nodeStorageService;
             this.nodeSearchService = source.nodeSearchService;
         }
 
         @SuppressWarnings("unchecked")
-        public B indexServiceInternal( final IndexServiceInternal indexServiceInternal )
+        public B repositoryStorageAdmin( final RepositoryStorageAdmin repositoryStorageAdmin )
         {
-            this.indexServiceInternal = indexServiceInternal;
+            this.repositoryStorageAdmin = repositoryStorageAdmin;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B nodeSearchIndex( final NodeSearchIndex nodeSearchIndex )
+        {
+            this.nodeSearchIndex = nodeSearchIndex;
             return (B) this;
         }
 
@@ -115,7 +134,8 @@ abstract class AbstractNodeCommand
 
         void validate()
         {
-            requireNonNull( indexServiceInternal );
+            requireNonNull( repositoryStorageAdmin );
+            requireNonNull( nodeSearchIndex );
             requireNonNull( nodeStorageService );
             requireNonNull( nodeSearchService );
         }

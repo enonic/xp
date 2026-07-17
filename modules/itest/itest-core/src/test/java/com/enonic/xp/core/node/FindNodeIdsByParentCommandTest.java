@@ -54,7 +54,8 @@ class FindNodeIdsByParentCommandTest
             .recursive( true )
             .searchService( this.searchService )
             .storageService( this.storageService )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .build()
             .execute();
 
@@ -86,7 +87,8 @@ class FindNodeIdsByParentCommandTest
             .recursive( true )
             .searchService( this.searchService )
             .storageService( this.storageService )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .build()
             .execute();
 
@@ -287,7 +289,8 @@ class FindNodeIdsByParentCommandTest
                          .permissions( AccessControlList.of(
                              AccessControlEntry.create().allowAll().principal( TEST_DEFAULT_USER.getKey() ).build() ) )
                          .build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -331,7 +334,8 @@ class FindNodeIdsByParentCommandTest
             .size( params.getSize() )
             .countOnly( params.isCountOnly() )
             .childOrder( params.getChildOrder() )
-            .indexServiceInternal( indexServiceInternal )
+            .repositoryStorageAdmin( indexServiceInternal )
+            .nodeSearchIndex( nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -345,7 +349,8 @@ class FindNodeIdsByParentCommandTest
             .recursive( true )
             .searchService( this.searchService )
             .storageService( this.storageService )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .build()
             .execute();
     }

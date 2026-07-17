@@ -27,8 +27,8 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.SearchSources;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.util.GeoPoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,7 +58,7 @@ class NodeOrderTest
                 OrderExpr.Direction.ASC ) ) ).
             build();
 
-        final SearchResult result = searchService.query( distanceQuery, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
+        final SearchResult result = searchService.query( distanceQuery, SearchSources.from( InternalContext.from( ContextAccessor.current() ) ) );
 
         final Iterator<String> iterator = result.getIds().iterator();
         assertEquals( node4.id(), NodeId.from( iterator.next() ) );
@@ -89,7 +89,7 @@ class NodeOrderTest
 
         printContentRepoIndex();
 
-        final SearchResult result = searchService.query( fulltextQuery, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
+        final SearchResult result = searchService.query( fulltextQuery, SearchSources.from( InternalContext.from( ContextAccessor.current() ) ) );
 
         assertEquals( 4, result.getHits().size() );
 

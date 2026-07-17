@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl;
+package com.enonic.xp.storage.spi;
 
 public interface SearchSource
 {

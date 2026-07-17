@@ -57,7 +57,8 @@ class HasUnpublishedChildrenCommandTest
             parent( node1.id() ).
             target( WS_OTHER ).
             storageService( this.storageService ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             build().
             execute();

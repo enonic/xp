@@ -14,8 +14,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
 import com.enonic.xp.node.NodeVersion;
-import com.enonic.xp.repo.impl.ReturnValue;
-import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.storage.spi.ReturnValue;
+import com.enonic.xp.storage.spi.ReturnValues;
 import com.enonic.xp.storage.spi.VersionRecord;
 import com.enonic.xp.util.GenericValue;
 

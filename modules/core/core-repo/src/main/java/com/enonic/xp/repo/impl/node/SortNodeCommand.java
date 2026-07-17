@@ -24,7 +24,8 @@ import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.SearchSources;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
@@ -114,7 +115,7 @@ public class SortNodeCommand
             .build();
 
         final List<NodeId> childNodeIds =
-            nodeSearchService.query( query, SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) )
+            nodeSearchService.query( query, SearchSources.from( InternalContext.from( ContextAccessor.current() ) ) )
                 .getIds()
                 .stream()
                 .distinct()

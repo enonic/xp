@@ -5,8 +5,8 @@ import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.search.SearchStorageName;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchHit;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repository.RepositoryId;
 
 class FindNodesByMultiRepoQueryResultFactory

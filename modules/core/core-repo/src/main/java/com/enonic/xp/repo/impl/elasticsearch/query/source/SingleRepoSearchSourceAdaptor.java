@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.source;
 
 import com.enonic.xp.query.filter.Filter;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AclFilterBuilderFactory;
 import com.enonic.xp.security.PrincipalKeys;
 

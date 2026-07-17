@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl.index;
+package com.enonic.xp.storage.spi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

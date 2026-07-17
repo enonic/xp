@@ -19,16 +19,18 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SearchSources;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SearchPreference;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -40,7 +42,9 @@ import com.enonic.xp.security.SystemConstants;
 public class RepositoryEntryServiceImpl
     implements RepositoryEntryService
 {
-    private final IndexServiceInternal indexServiceInternal;
+    private final RepositoryStorageAdmin repositoryStorageAdmin;
+
+    private final NodeSearchIndex nodeSearchIndex;
 
     private final NodeStorageService nodeStorageService;
 
@@ -51,12 +55,14 @@ public class RepositoryEntryServiceImpl
     private final BinaryService binaryService;
 
     @Activate
-    public RepositoryEntryServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
+    public RepositoryEntryServiceImpl( @Reference final RepositoryStorageAdmin repositoryStorageAdmin,
+                                       @Reference final NodeSearchIndex nodeSearchIndex,
                                        @Reference final NodeStorageService nodeStorageService,
                                        @Reference final NodeSearchService nodeSearchService, @Reference final EventPublisher eventPublisher,
                                        @Reference final BinaryService binaryService )
     {
-        this.indexServiceInternal = indexServiceInternal;
+        this.repositoryStorageAdmin = repositoryStorageAdmin;
+        this.nodeSearchIndex = nodeSearchIndex;
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
         this.eventPublisher = eventPublisher;
@@ -102,7 +108,8 @@ public class RepositoryEntryServiceImpl
         final InternalContext internalContext = createInternalContext();
 
         final Node storedNode = nodeStorageService.store( StoreNodeParams.newVersion( node ), internalContext ).node();
-        this.indexServiceInternal.refresh( IndexNameResolver.resolveIndexNames( SystemConstants.SYSTEM_REPO_ID ).toArray( String[]::new ) );
+        this.repositoryStorageAdmin.refresh( SystemConstants.SYSTEM_REPO_ID );
+        this.nodeSearchIndex.refresh( SystemConstants.SYSTEM_REPO_ID );
 
         if ( isNew )
         {
@@ -127,7 +134,7 @@ public class RepositoryEntryServiceImpl
                                                                             .setOrderExpressions(
                                                                                 ChildOrder.defaultOrder().getOrderExpressions() )
                                                                             .build(),
-                                                                        SingleRepoSearchSource.from( createInternalContext() ) );
+                                                                        SearchSources.from( createInternalContext() ) );
 
         return searchResult.getHits().stream().map( hit -> RepositoryId.from( hit.getId() ) ).collect( RepositoryIds.collector() );
     }
@@ -145,7 +152,8 @@ public class RepositoryEntryServiceImpl
     {
         final NodeBranchEntries deletedNodes = createContext().callWith( () -> DeleteNodeCommand.create()
             .nodeId( NodeId.from( repositoryId ) )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()

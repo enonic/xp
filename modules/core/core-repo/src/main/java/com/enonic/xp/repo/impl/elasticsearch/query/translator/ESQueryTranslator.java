@@ -22,8 +22,9 @@ import com.enonic.xp.repo.impl.elasticsearch.query.source.ESSourceFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.FilterBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.SortQueryBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.suggistion.query.SuggestionQueryBuilderFactory;
-import com.enonic.xp.repo.impl.search.SearchRequest;
+import com.enonic.xp.repo.impl.storage.SearchPreferences;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
+import com.enonic.xp.storage.spi.SearchRequest;
 
 public class ESQueryTranslator
 {
@@ -95,7 +96,7 @@ public class ESQueryTranslator
             .filter( filterBuilder )
             .batchSize( queryTypeTranslator.getBatchSize() )
             .searchOptimizer( queryTypeTranslator.getSearchOptimizer() )
-            .searchPreference( request.getSearchPreference() )
+            .searchPreference( SearchPreferences.fromSpi( request.getSearchPreference() ) )
             .build();
     }
 

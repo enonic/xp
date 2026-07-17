@@ -4,7 +4,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.node.NodeVersionQueryResult;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.version.search.NodeVersionQueryResultFactory;
 
 import static java.util.Objects.requireNonNull;

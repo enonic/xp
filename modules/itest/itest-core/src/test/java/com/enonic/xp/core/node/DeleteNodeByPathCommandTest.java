@@ -50,7 +50,8 @@ class DeleteNodeByPathCommandTest
 
         DeleteNodeCommand.create().
             nodePath( node.path() ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().

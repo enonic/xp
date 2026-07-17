@@ -24,7 +24,8 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.SearchSources;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repository.RepositoryId;
@@ -178,7 +179,7 @@ public final class DuplicateNodeCommand
                                                                       .parent( originalParent.path() )
                                                                       .setOrderExpressions(
                                                                           originalParent.getChildOrder().getOrderExpressions() )
-                                                                      .build(), SingleRepoSearchSource.from( internalContext ) )
+                                                                      .build(), SearchSources.from( internalContext ) )
             .getIds()
             .stream()
             .map( NodeId::from )
@@ -234,7 +235,7 @@ public final class DuplicateNodeCommand
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         final NodeIds childrenIds = this.nodeSearchService.query(
             NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( duplicatedParent.path() ).build(),
-            SingleRepoSearchSource.from( internalContext ) ).getIds().stream().map( NodeId::from ).collect( NodeIds.collector() );
+            SearchSources.from( internalContext ) ).getIds().stream().map( NodeId::from ).collect( NodeIds.collector() );
 
         final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
 
@@ -266,7 +267,8 @@ public final class DuplicateNodeCommand
             PatchNodeCommand.create()
                 .params( PatchNodeParams.create().id( node.id() ).editor( toBeEdited -> toBeEdited.data = data ).build() )
                 .binaryService( this.binaryService )
-                .indexServiceInternal( this.indexServiceInternal )
+                .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
                 .storageService( this.nodeStorageService )
                 .searchService( this.nodeSearchService )
                 .build()

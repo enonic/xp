@@ -5,7 +5,7 @@ import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.repo.impl.commit.search.NodeCommitQueryResultFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchResult;
 
 import static java.util.Objects.requireNonNull;
 

@@ -13,10 +13,11 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.repo.impl.SearchSources;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SearchHit;
+import com.enonic.xp.storage.spi.SearchResult;
 
 public class ResolveInsertOrderValueCommand
     extends AbstractNodeCommand
@@ -74,7 +75,7 @@ public class ResolveInsertOrderValueCommand
         refresh( RefreshMode.SEARCH );
         final SearchResult searchResult =
             this.nodeSearchService.query( query.build(), ReturnFields.from( NodeIndexPath.MANUAL_ORDER_VALUE ),
-                                          SingleRepoSearchSource.from( InternalContext.from( ContextAccessor.current() ) ) );
+                                          SearchSources.from( InternalContext.from( ContextAccessor.current() ) ) );
         if ( searchResult.isEmpty() )
         {
             return null;

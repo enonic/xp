@@ -18,7 +18,6 @@ import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotException;
 import com.enonic.xp.repo.impl.elasticsearch.snapshot.SnapshotServiceImpl;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.repo.impl.repository.IndexNameResolver;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
 import com.enonic.xp.repo.impl.repository.RepositoryServiceImpl;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -74,7 +73,8 @@ class SnapshotServiceImplTest
             client.admin().cluster().prepareDeleteRepository( repository ).execute().actionGet();
         }
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( this.indexServiceInternal );
+        final NodeRepositoryServiceImpl nodeRepositoryService =
+            new NodeRepositoryServiceImpl( this.indexServiceInternal, this.indexServiceInternal, this.nodeSearchIndex );
 
         this.repositoryService =
             new RepositoryServiceImpl( this.repositoryEntryService, nodeRepositoryService, this.storageService, this.searchService,
@@ -224,8 +224,8 @@ class SnapshotServiceImplTest
             this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
 
             assertAll( () -> assertFalse( this.repositoryService.isInitialized( newRepoId ) ),
-                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( newRepoId ) ) ),
-                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( newRepoId ) ) ) );
+                       () -> assertFalse( indexServiceInternal.indexExists( newRepoId ) ),
+                       () -> assertFalse( nodeSearchIndex.indexExists( newRepoId ) ) );
         } );
     }
 
@@ -250,12 +250,12 @@ class SnapshotServiceImplTest
             this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
 
             assertAll( () -> assertNull( this.repositoryEntryService.getRepositoryEntry( newRepoId ) ),
-                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( newRepoId ) ) ),
-                       () -> assertFalse( indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( newRepoId ) ) ) );
+                       () -> assertFalse( indexServiceInternal.indexExists( newRepoId ) ),
+                       () -> assertFalse( nodeSearchIndex.indexExists( newRepoId ) ) );
             assertAll( () -> assertFalse( this.repositoryService.isInitialized( newRepoAfterSnapshotId ) ), () -> assertFalse(
-                           indexServiceInternal.indicesExists( IndexNameResolver.resolveStorageIndexName( newRepoAfterSnapshotId ) ) ),
+                           indexServiceInternal.indexExists( newRepoAfterSnapshotId ) ),
                        () -> assertFalse(
-                           indexServiceInternal.indicesExists( IndexNameResolver.resolveSearchIndexName( newRepoAfterSnapshotId ) ) ) );
+                           nodeSearchIndex.indexExists( newRepoAfterSnapshotId ) ) );
         } );
     }
 

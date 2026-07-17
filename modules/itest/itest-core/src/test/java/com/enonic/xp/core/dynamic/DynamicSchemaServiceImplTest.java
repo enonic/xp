@@ -75,6 +75,7 @@ import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
@@ -115,6 +116,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -180,6 +182,8 @@ class DynamicSchemaServiceImplTest
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
+        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+
         final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
 
         BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
@@ -192,20 +196,20 @@ class DynamicSchemaServiceImplTest
 
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
 
-        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( storageDao );
+        IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
-        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( searchDao );
+        NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
         NodeStorageServiceImpl storageService =
             new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
 
         RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
@@ -218,7 +222,7 @@ class DynamicSchemaServiceImplTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 

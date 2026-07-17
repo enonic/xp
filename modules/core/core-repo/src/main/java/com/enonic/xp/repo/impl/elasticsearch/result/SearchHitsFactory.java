@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.ReturnValues;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnValues;
+import com.enonic.xp.storage.spi.SearchHit;
 
 public class SearchHitsFactory
 {

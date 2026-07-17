@@ -25,10 +25,11 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SearchSources;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -127,7 +128,7 @@ public class ApplyNodePermissionsCommand
 
         final SearchResult queryResult = this.nodeSearchService.query(
             NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).withPath( true ).parent( node ).build(),
-            SingleRepoSearchSource.from( internalContext ) );
+            SearchSources.from( internalContext ) );
 
         queryResult.getIds().stream().map( NodeId::from ).map( this::getActiveNodes ).forEach( result::add );
 
@@ -195,7 +196,8 @@ public class ApplyNodePermissionsCommand
         return GetActiveNodeVersionsCommand.create()
             .nodeId( nodeId )
             .branches( this.branches )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()

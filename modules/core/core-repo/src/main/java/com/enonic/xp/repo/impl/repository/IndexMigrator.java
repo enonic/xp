@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.repo.impl.Model;
-import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 
 import static java.util.Objects.requireNonNull;
 
@@ -27,14 +27,14 @@ public class IndexMigrator
 
     final NodeRepositoryService nodeRepositoryService;
 
-    final IndexServiceInternal indexServiceInternal;
+    final RepositoryStorageAdmin repositoryStorageAdmin;
 
     public IndexMigrator( final RepositoryEntryService repositoryEntryService, final NodeRepositoryService nodeRepositoryService,
-                          final IndexServiceInternal indexServiceInternal )
+                          final RepositoryStorageAdmin repositoryStorageAdmin )
     {
         this.repositoryEntryService = requireNonNull( repositoryEntryService );
         this.nodeRepositoryService = requireNonNull( nodeRepositoryService );
-        this.indexServiceInternal = requireNonNull( indexServiceInternal );
+        this.repositoryStorageAdmin = requireNonNull( repositoryStorageAdmin );
     }
 
     public void upgradeRepository( final RepositoryId repositoryId )
@@ -58,10 +58,10 @@ public class IndexMigrator
     {
         try
         {
-            indexServiceInternal.putIndexMapping( repository, indexType,
-                                                  (Map<String, Object>) DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( indexType )
-                                                      .getData()
-                                                      .get( indexType.getName() ) );
+            repositoryStorageAdmin.putIndexMapping( repository, indexType,
+                                                    (Map<String, Object>) DEFAULT_INDEX_RESOURCE_PROVIDER.getMapping( indexType )
+                                                        .getData()
+                                                        .get( indexType.getName() ) );
         }
         catch ( Exception e )
         {

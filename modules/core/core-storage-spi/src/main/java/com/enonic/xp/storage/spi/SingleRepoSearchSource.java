@@ -1,4 +1,4 @@
-package com.enonic.xp.repo.impl;
+package com.enonic.xp.storage.spi;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -39,11 +39,6 @@ public class SingleRepoSearchSource
         repositoryId = requireNonNull( builder.repositoryId, "repositoryId is required in search-source" );
         branch = requireNonNull( builder.branch, "branch is required in search-source" );
         acl = requireNonNull( builder.acl, "acl is required in search-source" );
-    }
-
-    public static SingleRepoSearchSource from( final InternalContext context )
-    {
-        return create().repositoryId( context.getRepositoryId() ).branch( context.getBranch() ).acl( context.getPrincipalKeys() ).build();
     }
 
     public static Builder create()

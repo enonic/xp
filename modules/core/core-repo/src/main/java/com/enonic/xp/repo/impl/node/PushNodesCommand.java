@@ -32,11 +32,12 @@ import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.SearchSources;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.SearchPreference;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
@@ -80,7 +81,7 @@ public class PushNodesCommand
 
         final NodeComparisons comparisons = getNodeComparisons( params.getIds() );
 
-        final SingleRepoSearchSource targetSearchSource = SingleRepoSearchSource.from( InternalContext.from( targetContext() ) );
+        final SingleRepoSearchSource targetSearchSource = SearchSources.from( InternalContext.from( targetContext() ) );
         for ( NodeComparison comparison : comparisons )
         {
             if ( comparison.getCompareStatus() == NodeCompareStatus.MOVED )

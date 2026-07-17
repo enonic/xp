@@ -1,7 +1,7 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.enonic.xp.repo.impl.index.document.IndexDocument;
+import com.enonic.xp.storage.spi.IndexDocumentRecord;
 
-public record IndexStoreRequest(IndexDocument doc, String indexTypeName, String indexName)
+public record IndexStoreRequest(IndexDocumentRecord doc, String indexTypeName, String indexName)
 {
 }

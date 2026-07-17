@@ -119,7 +119,8 @@ class IndexServiceImplTest
             build() );
 
         PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( node.id() ) ).target( WS_OTHER ).build() ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             build().
@@ -209,7 +210,8 @@ class IndexServiceImplTest
     {
         return FindNodesByQueryCommand.create().
             query( NodeQuery.create().build() ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).
             build().
@@ -219,7 +221,8 @@ class IndexServiceImplTest
     private Node queryForNode( final NodeId nodeId )
     {
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
             query( NodeQuery.create().query( QueryParser.parse( "_id = '" + nodeId.toString() + "'" ) ).build() ).

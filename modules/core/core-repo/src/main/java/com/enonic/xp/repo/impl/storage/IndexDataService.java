@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.ReturnValues;
 import com.enonic.xp.repo.impl.index.document.IndexDocument;
 
 public interface IndexDataService

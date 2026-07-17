@@ -1,9 +1,8 @@
-package com.enonic.xp.repo.impl.search;
+package com.enonic.xp.storage.spi;
+
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.query.Query;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SearchPreference;
-import com.enonic.xp.repo.impl.SearchSource;
 
 public class SearchRequest
 {
@@ -13,7 +12,7 @@ public class SearchRequest
 
     private final SearchSource searchSource;
 
-    private final SearchPreference searchPreference;
+    private final @Nullable SearchPreference searchPreference;
 
     private SearchRequest( Builder builder )
     {
@@ -43,7 +42,7 @@ public class SearchRequest
         return returnFields;
     }
 
-    public SearchPreference getSearchPreference()
+    public @Nullable SearchPreference getSearchPreference()
     {
         return searchPreference;
     }
@@ -56,7 +55,7 @@ public class SearchRequest
 
         private SearchSource searchSource;
 
-        private SearchPreference searchPreference;
+        private @Nullable SearchPreference searchPreference;
 
         private Builder()
         {
@@ -80,7 +79,7 @@ public class SearchRequest
             return this;
         }
 
-        public Builder searchPreference( final SearchPreference searchPreference )
+        public Builder searchPreference( final @Nullable SearchPreference searchPreference )
         {
             this.searchPreference = searchPreference;
             return this;

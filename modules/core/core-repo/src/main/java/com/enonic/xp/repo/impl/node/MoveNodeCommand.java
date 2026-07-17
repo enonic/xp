@@ -20,11 +20,12 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.SearchSources;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchHit;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
@@ -181,7 +182,7 @@ public class MoveNodeCommand
 
         final SearchResult children = this.nodeSearchService.query(
             NodeQuery.create().parent( persistedNode.path() ).size( NodeSearchService.GET_ALL_SIZE_FLAG ).build(),
-            ReturnFields.from( NodeIndexPath.NAME ), SingleRepoSearchSource.from( internalContext ) );
+            ReturnFields.from( NodeIndexPath.NAME ), SearchSources.from( internalContext ) );
 
         for ( final SearchHit nodeBranchEntry : children.getHits() )
         {

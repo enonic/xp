@@ -13,8 +13,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.query.filter.ValueFilter;
-import com.enonic.xp.repo.impl.ReturnFields;
-import com.enonic.xp.repo.impl.SingleRepoStorageSource;
+import com.enonic.xp.storage.spi.ReturnFields;
+import com.enonic.xp.storage.spi.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.StorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.storage.BranchDocumentId;
@@ -25,8 +25,8 @@ import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;
 import com.enonic.xp.repo.impl.commit.storage.CommitStorageRequestFactory;
 import com.enonic.xp.repo.impl.commit.storage.NodeCommitEntryFactory;
 import com.enonic.xp.repo.impl.search.SearchDao;
-import com.enonic.xp.repo.impl.search.SearchRequest;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchRequest;
+import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.storage.DeleteRequests;
 import com.enonic.xp.repo.impl.storage.GetByIdRequest;
 import com.enonic.xp.repo.impl.storage.GetByIdsRequest;
@@ -44,6 +44,7 @@ import com.enonic.xp.storage.spi.BranchEntryRecord;
 import com.enonic.xp.storage.spi.CommitRecord;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.SearchPreference;
+import com.enonic.xp.storage.spi.StaticStoreType;
 import com.enonic.xp.storage.spi.VersionRecord;
 
 /**
@@ -173,10 +174,10 @@ public class ElasticsearchNodeStore
 
         final SearchResult result = searchDao.search( SearchRequest.create()
                                                            .searchSource(
-                                                               SingleRepoStorageSource.create( repositoryId, StaticStorageType.BRANCH ) )
+                                                               SingleRepoStorageSource.create( repositoryId, StaticStoreType.BRANCH ) )
                                                            .returnFields( BRANCH_RETURN_FIELDS )
                                                            .query( query )
-                                                           .searchPreference( SearchPreferences.fromSpi( searchPreference ) )
+                                                           .searchPreference( searchPreference )
                                                            .build() );
 
         return result.isEmpty()
@@ -194,7 +195,7 @@ public class ElasticsearchNodeStore
 
         final SearchResult searchResult = searchDao.search( SearchRequest.create()
                                                                  .searchSource( SingleRepoStorageSource.create( repositoryId,
-                                                                                                                 StaticStorageType.BRANCH ) )
+                                                                                                                 StaticStoreType.BRANCH ) )
                                                                  .query( query )
                                                                  .build() );
 

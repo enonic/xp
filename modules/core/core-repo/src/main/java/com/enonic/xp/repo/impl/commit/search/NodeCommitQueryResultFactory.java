@@ -3,8 +3,8 @@ package com.enonic.xp.repo.impl.commit.search;
 import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.repo.impl.commit.storage.NodeCommitEntryFactory;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
+import com.enonic.xp.storage.spi.SearchHit;
+import com.enonic.xp.storage.spi.SearchResult;
 
 public class NodeCommitQueryResultFactory
 {

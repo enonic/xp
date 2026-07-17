@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.repo.impl.index.IndexMapping;
-import com.enonic.xp.repo.impl.index.IndexSettings;
+import com.enonic.xp.storage.spi.IndexMapping;
+import com.enonic.xp.storage.spi.IndexSettings;
 import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

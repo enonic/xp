@@ -32,7 +32,8 @@ class RefreshCommandTest
             .repositoryId( nonExistingRepoId )
             .build()
             .runWith( () -> assertThrows( IndexException.class, () -> RefreshCommand.create()
-                .indexServiceInternal( indexServiceInternal )
+                .repositoryStorageAdmin( indexServiceInternal )
+                .nodeSearchIndex( nodeSearchIndex )
                 .refreshMode( RefreshMode.ALL )
                 .build()
                 .execute() ) );
@@ -42,6 +43,7 @@ class RefreshCommandTest
     void refresh_existing_repository()
     {
         assertDoesNotThrow(
-            () -> RefreshCommand.create().indexServiceInternal( indexServiceInternal ).refreshMode( RefreshMode.ALL ).build().execute() );
+            () -> RefreshCommand.create().repositoryStorageAdmin( indexServiceInternal )
+                .nodeSearchIndex( nodeSearchIndex ).refreshMode( RefreshMode.ALL ).build().execute() );
     }
 }

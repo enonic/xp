@@ -51,6 +51,7 @@ import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
+import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
 import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
@@ -89,6 +90,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.util.Reference;
 
@@ -143,6 +145,8 @@ public abstract class AbstractNodeTest
     protected CommitServiceImpl commitService;
 
     protected IndexServiceInternalImpl indexServiceInternal;
+
+    protected NodeSearchIndexImpl nodeSearchIndex;
 
     protected NodeStorageServiceImpl storageService;
 
@@ -242,27 +246,32 @@ public abstract class AbstractNodeTest
 
         this.commitService = new CommitServiceImpl( nodeStore );
 
-        this.indexedDataService = new IndexDataServiceImpl( storageDao );
+        this.nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+
+        this.indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
         this.storageService = new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        this.searchService = new NodeSearchServiceImpl( searchDao );
+        this.searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
         this.indexServiceInternal = new IndexServiceInternalImpl( client );
 
-        this.nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal );
+        this.nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
 
         this.repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher,
+                                            binaryService );
 
         this.repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
                                        () -> null );
 
-        this.nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+        this.nodeService =
+            new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         this.indexService =
-            new IndexServiceImpl( indexServiceInternal, indexedDataService, searchService, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao,
+                                  repositoryEntryService );
 
         bootstrap();
 
@@ -320,7 +329,8 @@ public abstract class AbstractNodeTest
 
         return CreateRootNodeCommand.create()
             .params( createRootParams )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -332,7 +342,8 @@ public abstract class AbstractNodeTest
         return PatchNodeCommand.create()
             .params( convertUpdateParams( updateNodeParams ) )
             .binaryService( this.binaryService )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -369,7 +380,8 @@ public abstract class AbstractNodeTest
     protected Node createNodeSkipVerification( final CreateNodeParams createNodeParams )
     {
         return CreateNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -382,7 +394,8 @@ public abstract class AbstractNodeTest
     protected Node createNode( final CreateNodeParams createNodeParams )
     {
         return CreateNodeCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -394,7 +407,8 @@ public abstract class AbstractNodeTest
     protected Node getNodeById( final NodeId nodeId )
     {
         return GetNodeByIdCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .id( nodeId )
@@ -405,7 +419,8 @@ public abstract class AbstractNodeTest
     protected Node getNodeByPath( final NodePath nodePath )
     {
         return GetNodeByPathCommand.create()
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .nodePath( nodePath )
@@ -417,7 +432,8 @@ public abstract class AbstractNodeTest
     {
         return FindNodeIdsByParentCommand.create()
             .parentPath( parentPath )
-            .indexServiceInternal( indexServiceInternal )
+            .repositoryStorageAdmin( indexServiceInternal )
+            .nodeSearchIndex( nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -428,7 +444,8 @@ public abstract class AbstractNodeTest
     {
         return FindNodesByQueryCommand.create()
             .query( query )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -444,7 +461,8 @@ public abstract class AbstractNodeTest
     {
         return PushNodesCommand.create()
             .params( PushNodeParams.create().ids( NodeIds.from( nodeIds ) ).target( target ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -455,7 +473,8 @@ public abstract class AbstractNodeTest
     {
         final NodeBranchEntries result = DeleteNodeCommand.create()
             .nodeId( nodeId )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -468,7 +487,8 @@ public abstract class AbstractNodeTest
     {
         MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( nodeId ).newName( NodeName.from( newName ) ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
             .build()
@@ -479,7 +499,8 @@ public abstract class AbstractNodeTest
     {
         return MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( nodeId ).newParentPath( newParent ).build() )
-            .indexServiceInternal( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
             .build()
@@ -534,7 +555,8 @@ public abstract class AbstractNodeTest
     {
         return GetNodeByIdCommand.create()
             .id( nodeId )
-            .indexServiceInternal( indexServiceInternal )
+            .repositoryStorageAdmin( indexServiceInternal )
+            .nodeSearchIndex( nodeSearchIndex )
             .storageService( storageService )
             .searchService( searchService )
             .build()
@@ -546,7 +568,8 @@ public abstract class AbstractNodeTest
     {
         return GetNodesByIdsCommand.create()
             .ids( nodeIds )
-            .indexServiceInternal( indexServiceInternal )
+            .repositoryStorageAdmin( indexServiceInternal )
+            .nodeSearchIndex( nodeSearchIndex )
             .storageService( storageService )
             .searchService( searchService )
             .build()

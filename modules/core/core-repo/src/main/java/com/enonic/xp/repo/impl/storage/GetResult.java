@@ -1,6 +1,6 @@
 package com.enonic.xp.repo.impl.storage;
 
-import com.enonic.xp.repo.impl.ReturnValues;
+import com.enonic.xp.storage.spi.ReturnValues;
 
 public class GetResult
 {

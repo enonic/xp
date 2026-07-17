@@ -254,7 +254,8 @@ class CreateNodeCommandTest
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
             storageService( this.storageService ).
             searchService( this.searchService ).
-            indexServiceInternal( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.indexServiceInternal ).
+            nodeSearchIndex( this.nodeSearchIndex ).
             query( NodeQuery.create().
                 addQueryFilter( ValueFilter.create().
                     fieldName( NodeIndexPath.REFERENCE.getPath() ).
