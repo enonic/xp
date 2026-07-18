@@ -110,6 +110,7 @@ addBundle( project( ':core:core-internal' ), 9 )
 
 // API bundles
 addBundle( project( ':core:core-api' ), 10 )
+addBundle( project( ':core:core-storage-spi' ), 10 )
 addBundle( project( ':script:script-api' ), 10 )
 addBundle( project( ':portal:portal-api' ), 10 )
 addBundle( project( ':web:web-api' ), 10 )

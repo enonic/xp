@@ -119,3 +119,296 @@ in Phase 1.
 Curated storage itests green against NoDB (dual-tenant spot-checked); full suites
 unchanged in default mode; distro boots in both modes; default config byte-identical
 to today; docs updated; `nodb-phase1` pushed.
+
+---
+
+## Gate 0 results (2026-07-18)
+
+Executed on branch `nodb-phase1` (off `storage-spi-phase0`, HEAD at start `88d0ee65cb`).
+`nodb/` copied wholesale from the main checkout (commit "Phase 1 gate 0: bring nodb/
+design+build docs and NoDB sources onto nodb-phase1"); confirmed not part of the XP
+Gradle build (`./gradlew projects` output unaffected, `settings.gradle` untouched, only
+`core:core-storage-spi` — the Phase 0 module — appears where "storage" is grepped).
+
+### a-d. Boot verification
+
+**Finding (bug, fixed): `core-storage-spi` was never added to the runtime distro.**
+Phase 0 created the `core-storage-spi` bundle and wired `core-repo` to
+`Import-Package: com.enonic.xp.storage.spi` (confirmed in the built jar's manifest),
+but `modules/runtime/build.gradle`'s `addBundle(...)` list — which enumerates every
+bundle actually copied into the distro's `system/<level>/` tree — never included it.
+Phase 0's test suites (unit + itest, all classpath-based) could not catch this: OSGi
+bundle resolution only happens in a real Felix container. This is exactly the gap Gate
+0's boot check exists to close.
+
+Reproduced with a real boot before fixing: built `:runtime:installDist`, copied
+`modules/runtime/build/install/home/` to a fresh temp `XP_HOME` (default config, no
+`storage.cfg` — i.e. default `elasticsearch` backend), booted with
+`./bin/server.sh` under JDK 25 (Homebrew OpenJDK 25.0.1 — GraalVM 25 unavailable in this
+environment; boot behaves identically for framework/OSGi purposes since the JS engine
+isn't exercised by this check). Result: Felix logged
+
+```
+ERROR E.Framework.com.enonic.xp.core.repo - FrameworkEvent ERROR
+org.apache.felix.log.LogException: org.osgi.framework.BundleException: Unable to
+resolve com.enonic.xp.core.repo [91](R 91.0): missing requirement
+[com.enonic.xp.core.repo [91](R 91.0)] osgi.wiring.package;
+(&(osgi.wiring.package=com.enonic.xp.storage.spi)(version>=8.1.0)(!(version>=9.0.0)))
+```
+
+`core-repo` never started; the framework itself reported "Started" (112 bundles) but
+the entire node/repo layer was dark — no repo init, no node CRUD possible. This is the
+"small OSGi metadata/wiring issue" the work order anticipated (fix attempt 1 of 3
+allowed; resolved on the first attempt).
+
+**Fix**: added one line to `modules/runtime/build.gradle`, alongside the other API-level
+bundles (level 10, next to `core-api`):
+```groovy
+addBundle( project( ':core:core-storage-spi' ), 10 )
+```
+Rebuilt `:runtime:installDist`, rebooted with a fresh `XP_HOME` copied from the rebuilt
+install's default `home/` (still zero storage config). Result, clean:
+
+- **(a) No wiring errors.** Zero `ERROR`/`Exception`/`BundleException`/`Unresolved`
+  lines in the full boot log. `FrameworkService` logs `Started Enonic XP in 2019 ms`
+  (112→113 bundles once `core-storage-spi` is counted). No SCR resolution failures for
+  `core-storage-spi`, `NodeStore`/`NodeSearchIndex`/`RepositoryStorageAdmin`, or
+  `core-repo` activation.
+- **(b) System repo init completed**, exercising `RepositoryStorageAdmin.createIndex` +
+  `NodeStore` writes end-to-end through the new SPI wiring (log evidence, all with
+  `successfully initialized`): `System-repo`, `System-repo [applications] layout`,
+  `system.app`, `system.auditlog`, `System-repo [security] layout` (roles/users/keys
+  created under it), `system.scheduler`. Each repo's `storage-<repo>` and
+  `search-<repo>` ES indices were created and its root node written before the
+  "successfully initialized" line — i.e. `RepositoryStorageAdmin.createIndex` →
+  `NodeStore.storeBranchEntry/storeVersion` ran through
+  `ElasticsearchNodeStore`/`IndexServiceInternalImpl` via the SPI, not a bypass.
+- **(c) Bundle state confirmed via the live management endpoint** (no auth needed):
+  `status` port 2609 exposes an `osgi.bundle` reporter
+  (`curl localhost:2609/osgi.bundle`). Queried while the server was up:
+  `com.enonic.xp.core.storage.spi` → id 65, **ACTIVE**; `com.enonic.xp.core.repo` → id
+  92, **ACTIVE**. Of 114 total bundles, the only non-`ACTIVE` ones are 22 Tika
+  parser-module fragments (state `RESOLVED`, expected — OSGi fragments never reach
+  `ACTIVE`, they attach to their host). No other bundle is unresolved.
+- **(d) HTTP responds** on all three configured listeners: portal `:8080` → `307`,
+  management `:4848` → `401` (auth required, expected), status `:2609` → `200`.
+
+Server stopped cleanly (`kill`, then observed the ES node stop + "Server has been
+stopped" in the log — no forced kill needed).
+
+**Verified the fix doesn't regress anything Gate 0-visible**: `runtime/build.gradle` is
+the only file touched (`modules/runtime/build.gradle`, `+1` line, `git diff --stat`
+confirms nothing else changed); the change is purely additive (one more bundle in the
+distro), no test asserts an exact bundle count. Full-suite reverification is Gate B/D's
+job (this is a runtime-packaging fix, not a source change to core-repo); flagging here
+so it isn't silently lost — **the fix is committed as part of this gate**, not deferred.
+
+### SPI ↔ proto reconciliation inventory
+
+Scope: `NodeStore` + `RepositoryStorageAdmin` (post-Phase-0 XP SPI,
+`modules/core/core-storage-spi`) against `nodb/proto/nodb.proto` (`NodeStore`/
+`RepositoryAdmin` services), `nodb/engine/.../store/*.java`, `nodb/server/.../service/*.java`.
+`NodeSearchIndex` is explicitly out of scope per this work order's scope constraint #1
+(hybrid mode — search stays on ES through Phase 1); not reconciled here.
+
+Legend: RPC match — **exact** (wire shape ready), **partial** (RPC/message declared but
+empty placeholder per the slice-1 convention, or shape mismatch), **none** (nothing on
+the wire). Engine — **yes** (store method exists), **no**.
+
+#### `NodeStore`
+
+| SPI method | RPC | Engine | Work needed |
+|---|---|---|---|
+| `storeBranchEntry` | partial — `StoreBranchEntryRequest` is an empty placeholder message; method unoverridden (UNIMPLEMENTED) | yes — `BranchStore.store` | Flesh `StoreBranchEntryRequest` (repo_id, branch, entry fields); override `NodeStoreService.storeBranchEntry` → `Tx.inTenantTx` → `BranchStore.store`. |
+| `deleteBranchEntries` | partial — `DeleteBranchEntriesRequest` empty | yes — `BranchStore.delete` | Flesh message (repo_id, branch, repeated node_ids); server method. |
+| `existsBranchEntry` | none — no RPC at all | no — no exists-only query (`getByNodeId` fetches the full row) | New RPC (`ExistsBranchEntry`) + new lightweight engine method (`SELECT 1 ... LIMIT 1`, not a full row fetch). Semantic note: `searchPreference` is a documented no-op — Postgres reads are always consistent. |
+| `getBranchEntry` | exact — `GetBranchEntry` (`oneof by { node_id }`) | yes — `BranchStore.getByNodeId` | None. Semantic note: `searchPreference` param accepted but ignored/no-op — never sent over the wire. |
+| `getBranchEntryByPath` | exact — `GetBranchEntry` (`oneof by { node_path }`) — same RPC, already covers both lookups | yes — `BranchStore.getByPath` | None. Semantic note: SPI javadoc requires a forced refresh before path lookup (today: rebuildable ES index); for NoDB `branch_entry` is the row of record — the refresh requirement is moot/no-op, a *strictly stronger* guarantee than today, not a gap. Document, don't fake a refresh call. |
+| `getBranchEntries` (multi-get) | partial — `GetBranchEntriesRequest` empty; `stream BranchEntry` return declared | no — no multi-get-by-ids method | Flesh message (repo_id, branch, repeated node_ids); new engine method (`WHERE node_id = ANY(?)`); server method streaming results. |
+| `getBranchesWithNode` | none — no RPC/message target | no | New RPC (`GetBranchesWithNode`) + new engine method (`SELECT DISTINCT branch FROM branch_entry WHERE repo_key=? AND node_id=?`). |
+| `storeVersion` | partial — `StoreVersionRequest` empty | yes — `VersionStore.store` (used only inside `WriteBatch` today) | Flesh message (mirrors `Version` fields); server method for the **standalone** op — needed because scope constraint #2 requires per-op RPCs mirroring SPI 1:1, not routing XP's calls through `WriteBatch`. |
+| `deleteVersion` | none — no RPC/message | no — `VersionStore` has no delete | New RPC + new engine method (`DELETE FROM node_version WHERE version_id=?`). Semantic note: primarily a Phase 3 vacuum/retention op (DESIGN §6); must still exist behind the SPI in Phase 1 for interface conformance even if itests rarely exercise it directly. |
+| `getVersion` | exact — `GetVersionRequest{version_id}` | yes — `VersionStore.get` | None. Note: `repositoryId` param is accepted by the SPI but unused server-side — version ids are tenant-global, not repo-scoped (documented in the engine already); intentional, not a bug. |
+| `storeCommit` | partial — `StoreCommitRequest` empty | yes — `CommitStore.store` (used only inside `WriteBatch` today) | Flesh message; server method for the standalone op (same reasoning as `storeVersion`). |
+| `getCommit` | partial — `GetCommitRequest` empty | yes — `CommitStore.get` | Flesh message (`commit_id` field); server method. |
+| *(no SPI equivalent today)* `getChildren` | **already exact & implemented** — `GetChildren` RPC, real message, real server method | yes — `BranchStore.getChildren` (parent_path generated column, exactly as DESIGN §4 describes) | **Gap is on the XP side, not NoDB's.** `NodeStore` has no children-listing method because in the ES-backed world, children listing has *never* gone through storage — see itest subset finding below: `FindNodeIdsByParentCommand` always queries `NodeSearchIndex`, for every backend, today. NoDB's engine/proto/server are *ahead* of the XP SPI here. Recommend as a Gate A/B open question: add `NodeStore.getChildren(repositoryId, branch, parentPath, from, size)` to the SPI and give `FindNodeIdsByParentCommand` a storage-side path for the `nodb` backend — this is the single highest-leverage addition for broadening the Gate C curated subset, since children-listing dependency is what currently pulls delete/move/duplicate/sort into "search-dependent" (see below). |
+
+#### `RepositoryStorageAdmin`
+
+| SPI method | RPC | Engine | Work needed |
+|---|---|---|---|
+| `createIndex(repo, settings, mappings)` | partial — `CreateRepositoryRequest{repo_id, settings_json}`; no `mappings` field | yes — `RepositoryLifecycle.createRepository`, creates one branch ("master") | `mappings` (`Map<IndexType,IndexMapping>`) is a genuine ES-only concept — Postgres's `node_version`/`branch_entry` columns are static DDL, not per-repo mappings; semantic note: permanently N/A for nodb, client drops the parameter, no translation needed, not a to-do. Verified `RepositoryCreator` only ever pushes the root node into ONE branch at repo-creation time (matches ES — branches beyond the first are created later, on demand, see the `createBranch` finding below), so slice-1's single hardcoded branch at `CreateRepository` time is *not* itself a gap. |
+| `deleteIndex` | exact — `DeleteRepository` | yes — `RepositoryLifecycle.deleteRepository` (detach+drop, FK-ordering handled) | None. |
+| `indexExists` | none | no — existence only discoverable today via `RepoKeys.resolve` throwing "Unknown repo id" | New RPC (`RepositoryExists`) + new engine method (`SELECT 1 FROM repository WHERE repo_id=?`) returning a boolean rather than throwing. |
+| `refresh` | none needed | n/a | Semantic note (DESIGN §3.3): **documented no-op** for nodb — Postgres transactional visibility is strictly stronger than an ES refresh. Recommend implementing as a client-side no-op in `nodb-client` (return immediately, no wire call at all) rather than a trivial round-trip RPC, given the chattiness risk (DESIGN §10 risk #2). |
+| `updateSettings` (raw ES settings JSON) | none | none | Semantic note: ES-index-settings concept (replica count, refresh_interval) has no NoDB equivalent — Postgres partitions aren't tunable this way. `nodb-client` no-ops this method; document as permanently N/A, not missing. |
+| `putIndexMapping` | none | none | Semantic note: ES dynamic-mapping concept, no NoDB equivalent (static DDL schema). Same treatment as `updateSettings` — no-op, logged at debug so the no-op is discoverable, not silent-silent. |
+| `getIndexSettings` → `Map<String,String>` | none | none | Semantic note: today used to seed defaults (e.g. replica count) for a new repo from an existing one's settings — no NoDB equivalent. `nodb-client` returns an empty map. **Gate B must verify** `RepositoryCreator`'s actual use of this return value tolerates empty/default results before relying on the no-op. |
+
+#### Exceptions ↔ gRPC status (cross-cutting)
+
+- **`StorageIndexNotFoundException`**: engine's `mapSqlException` already maps a
+  `SQLException` whose message contains `"Unknown repo id"` → `Status.NOT_FOUND`. Works
+  today for reads/writes against an unknown repo, but is a fragile substring match on an
+  exception message, not a structured signal. **Work**: introduce a dedicated engine
+  exception type (e.g. `UnknownRepoException`) thrown by `RepoKeys.resolve`, map *that
+  type* → `NOT_FOUND` (not the message text); client translates `NOT_FOUND` →
+  `StorageIndexNotFoundException`.
+- **`StorageIndexExistsException`**: **no mapping exists at all today** — calling
+  `CreateRepository` twice hits a Postgres unique-constraint violation (`repo_id`),
+  surfaces as a generic `SQLException`, and falls through `mapSqlException`'s current
+  logic straight to `Status.INTERNAL` (wrong). **Work (flag as a bug, not just a gap)**:
+  detect the unique-violation SQLSTATE (`23505`) on the `repo_id` insert →
+  `Status.ALREADY_EXISTS`; client translates `ALREADY_EXISTS` →
+  `StorageIndexExistsException`. Recommend this be Gate A's first fix, since it's a
+  correctness gap in already-shipped slice-1 code, not new surface.
+- **`SearchPreference`** (`LOCAL`/`PRIMARY`): semantic note for `nodb-client` javadoc —
+  **no-op for NoDB**. Every read is a direct Postgres row read with no replica lag in
+  scope for Phase 1 (single-primary Postgres); accept the parameter for interface
+  conformance, never let it affect routing or appear on the wire.
+- **`IndexSettings`/`IndexMapping`/`UpdateIndexSettings`** (opaque ES-JSON carriers):
+  none of `createIndex`/`updateSettings`/`putIndexMapping` have a real NoDB translation
+  (see per-method notes above). `nodb-client`'s `RepositoryStorageAdmin` impl accepts
+  these types for interface conformance and ignores their contents; state this
+  explicitly in a package/class javadoc so it reads as an intentional decision, not an
+  oversight.
+
+**Design note surfaced by this inventory**: `WriteBatch` (fully implemented,
+transactionally correct, proven by `WriteBatchTest`/`NodbServerIntegrationTest`) is
+**not** the Phase 1 XP integration point — scope constraint #2 requires XP's per-op SPI
+calls to map onto per-op RPCs (fleshed out above), not be forced through `WriteBatch`.
+`WriteBatch` remains the native/bench-harness optimization path. Worth stating plainly
+so Gate B doesn't default to the path of least resistance (routing everything through
+the one RPC that already works end-to-end).
+
+Out of reconciliation scope, confirmed consistent with the work order: `NodeSearchIndex`
+(hybrid mode, scope constraint #1), `SnapshotStore`/`Snapshots` RPC (scope constraint
+#5, Phase 3), `ChangeFeed`/`BulkTransfer` (no XP SPI surface yet, not needed for Phase 1).
+
+### Curated itest subset
+
+Every test class under `modules/itest/itest-core/src/test/java/com/enonic/xp/core/`
+(89 test classes; `TestDumpWriter.java` and `ClientProxy.java` are non-test helpers,
+excluded) was read — not just named — to check what it actually calls, per the work
+order's honesty requirement.
+
+**Headline finding**: the naive "storage vs. search" split assumed by the work order
+undercounts how much of core-repo's *write* surface already depends on search, even
+under today's ES backend. `FindNodeIdsByParentCommand` (children listing) always
+queries `NodeSearchIndex`, for every backend — ES's storage index doesn't support a
+path-prefix children query the way NoDB's `branch_entry.parent_path` generated column
+does (see `getChildren` gap above). Because of that, `DeleteNodeCommand`,
+`MoveNodeCommand`, `DuplicateNodeCommandTest`, `SortNodeCommand`, and
+`ApplyNodePermissionsCommand` (subtree/tree scope) all query search internally to
+enumerate children/descendants before acting — so tests that look like plain CRUD
+(delete-by-id, move, duplicate, sort) are actually search-dependent **today**, before
+NoDB enters the picture at all.
+
+**STORAGE-ONLY (16 of 89)** — no call, direct or via a helper the test visibly relies
+on, into `NodeSearchService`/`findByQuery`/aggregations/version-history queries:
+
+| Class | Why it's storage-only |
+|---|---|
+| `app/ApplicationServiceTest` | install/get/update via `getByPath`/create/update only |
+| `node/AccessControlTest` | create/get/update by id only |
+| `node/CheckNodeExistsCommandTest` | `CheckNodeExistsCommand` uses `getNodeBranchEntry` only |
+| `node/CreateRootNodeCommandTest` | pure storage write |
+| `node/GetActiveNodeVersionsCommandTest` | `getNodeBranchEntry`/`getVersion` only |
+| `node/GetBinaryByVersionCommandTest` | blob read via storage only |
+| `node/GetBinaryCommandTest` | blob read via storage only |
+| `node/GetNodeByIdAndVersionIdCommandTest` | direct version fetch by id |
+| `node/GetNodeByIdCommandTest` | storage only |
+| `node/GetNodeByPathCommandTest` | storage only |
+| `node/GetNodesByIsCommandTest` | batch get-by-id, storage only |
+| `node/GetNodesByPathsCommandTest` | storage only |
+| `node/ImportNodeCommandTest` | create/update only; permission-apply uses default SINGLE scope (no recursive search) |
+| `node/PatchNodeCommandTest` | storage only, no MOVED comparisons exercised |
+| `node/RefreshCommandTest` | flushes indices, issues no query itself |
+| `node/UpdateNodeCommandTest` | wraps `PatchNodeCommand`, storage only |
+
+**SEARCH-DEPENDENT (73 of 89)**, grouped by why:
+- Aggregations (8): all 8 `*AggregationTest`/`*AggregationsTest` classes.
+- `FindNodesByQueryCommandTest*` family + `FindNodePathsByQueryTest` +
+  `FindNodesByMultiRepoQueryCommandTest` (20): direct query/fulltext/ngram/sort/geo tests.
+- Version-history queries (5): `FindNodeVersionsCommandTest`, `GetNodeVersionsCommandTest`
+  (delegates to it), `FindNodesWithVersionDifferenceCommandTest`,
+  `HasUnpublishedChildrenCommandTest` (NodeVersionDiffQuery), `VersionTableVacuumTaskTest`
+  (`getVersions()`) — matches this work order's scope constraint #1 explicitly.
+- Hidden children/cascade dependency (12): `DeleteNodeByIdCommandTest(+_error_handling)`,
+  `DeleteNodeByPathCommandTest`, `CompareNodeCommandTest`/`CompareNodesCommandTest` (use
+  delete as setup), `MoveNodeCommandTest`, `RenameNodeCommandTest` (wraps move),
+  `DuplicateNodeCommandTest`, `SortNodeCommandTest(+_manualOrder)`,
+  `FindNodeIdsByParentCommandTest`, `NodeOrderTest` — the `getChildren` gap above.
+- Buried query-based assertions in otherwise-CRUD tests (3): `CreateNodeCommandTest`,
+  `CreateNodeCommand_path_integrity_test`, `PushNodesCommandTest`.
+- Commands with unconditional search internals (4): `ApplyNodePermissionsCommandTest`
+  (subtree/tree scope), `FindNodesDependenciesCommandTest`, `ResolveSyncWorkCommandTest`,
+  `NodeServiceImplTest`.
+- Dump/export/index/audit/security/project/repo/scheduler/snapshot (14):
+  `DumpUpgradeIntegrationTest`, `RepoDumperTest`, `DumpServiceImplTest`,
+  `DynamicSchemaServiceImplTest` (delete path), `NodeExportIntegrationTest`,
+  `CompressedExportImportIntegrationTest`, `NodeImporterIntegrationTest`,
+  `IndexServiceImplTest`, `AuditLogServiceImplTest`, `SecurityServiceImplTest`,
+  `ProjectServiceImplTest`, `RepositoryServiceImplTest` (branch-delete queries ES),
+  `SchedulerServiceImplTest` (delete path), `SnapshotServiceImplTest` (raw ES-cluster
+  snapshot admin — inherently ES-infra-bound regardless of NoDB).
+- Performance/Load tests (6, all turned out search-dependent — flagged separately since
+  they're unsuitable for a curated functional-correctness gate regardless):
+  `RepoDumperLoadTest`, `ReindexLoadTest`, `DeleteNodeByIdsCommandPerformanceTest`,
+  `DuplicateNodeCommandPerformanceTest`, `PushNodesCommandPerformanceTest` (also
+  `@Disabled`), `ResolveSyncWorkPerformanceTest`.
+
+**Count: 16 STORAGE-ONLY / 73 SEARCH-DEPENDENT / 89 total.** 16 is under the work
+order's own "if the subset is tiny, say so" bar in spirit (it's ~18% of the suite, and
+several of the 16 are narrow single-command tests) — saying so explicitly here, and
+widening with new storage-only itests rather than treating 16 as sufficient for Gate C.
+
+**Proposed new storage-only itests for Gate C** (all exercising only `NodeStore`/
+`RepositoryStorageAdmin` paths once the `getChildren` SPI gap above is closed — without
+it, #1-#2 below can't be written storage-only):
+1. **`GetChildrenByPathTest`** — children listing via the new storage-side
+   `NodeStore.getChildren` (once added), paginated (from/size), asserting order and
+   count without touching `NodeQuery`. Directly exercises the SPI method this inventory
+   flags as missing.
+2. **`FindNodeIdsByParentStorageTest`** (or a `nodb`-mode variant of the existing test)
+   — same intent as #1 at the command layer, once `FindNodeIdsByParentCommand` gets a
+   storage-side path for the `nodb` backend.
+3. **`CreateBranchStorageTest`** — exercises XP's actual branch-creation path
+   (`RepositoryServiceImpl.createBranch` → `NodeStorageService.push` → one
+   `storeBranchEntry` call for the root node into a brand-new branch value — verified by
+   reading `NodeStorageServiceImpl.push`/`RepositoryServiceImpl.doCreateBranch`; XP has
+   no bulk branch-copy operation, "creating" a branch is just writing its first entry).
+   This is where NoDB's relational schema adds a constraint ES never had: `branch_entry`
+   has an FK to a `branch` row, so a `storeBranchEntry`/`WriteBatch` write into a branch
+   with no existing rows will fail unless the engine auto-creates the `branch` row on
+   first write — exactly what `WriteService.forkBranch` already does for its own target
+   branch (`INSERT INTO branch ... ON CONFLICT DO NOTHING`) but `BranchStore.store` does
+   not (currently assumes the branch row pre-exists). **Work needed for Gate A**: make
+   `BranchStore.store`/`WriteService.write` auto-vivify the `branch` row the same way
+   `forkBranch` does — no new SPI method or RPC required, this is purely an engine-side
+   fix once identified. Test should assert: first write to a never-seen branch succeeds
+   without a separate create-branch call, matching ES's implicit-branch semantics.
+4. **`ExistsBranchEntryTest`** — exercises the `existsBranchEntry` SPI method
+   end-to-end once its RPC/engine method exist (table above); asserts true/false without
+   any full-row fetch, i.e. a real behavioral difference from `getBranchEntry != null`,
+   not just a duplicate assertion.
+5. **`RepositoryLifecycleStorageTest`** — `createIndex`/`indexExists`/`deleteIndex`
+   round-trip via `RepositoryStorageAdmin` only (no node writes at all), including the
+   `StorageIndexExistsException` double-create case flagged as a bug above and the
+   `StorageIndexNotFoundException` case for delete-of-unknown-repo.
+
+**Additional finding, corrected after checking XP's actual branch-creation code** (this
+work order's goal text says "branch ops (store/get/fork/delete)" — verified what "fork"
+actually means in XP today rather than assuming it maps to NoDB's `WriteService.forkBranch`):
+`RepositoryServiceImpl.createBranch()` → `NodeStorageServiceImpl.push()` is a **single**
+`storeBranchEntry`-equivalent write of the root node into a new branch value — XP has no
+bulk branch-copy operation; ES never needed one because a "branch" isn't a first-class
+entity there, just a field value on documents. NoDB's schema makes `branch` a real row
+with an FK from `branch_entry`, so the true gap is narrower than "missing SPI method":
+`BranchStore.store` needs to auto-create the `branch` row on first write to an unseen
+branch, the same way `WriteService.forkBranch` already does for its own target branch.
+**No new SPI method or RPC is required** — this is a self-contained engine fix (Gate A),
+not a protocol gap like `getChildren`. `WriteService.forkBranch` (bulk copy) remains a
+NoDB-native capability with no current XP caller; it may become useful later for
+DESIGN.md §5's roadmap "ephemeral branches" feature, but nothing in Phase 1's scope
+needs it exposed over the wire.
