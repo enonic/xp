@@ -16,12 +16,25 @@ service NodeStore {
   // one Ack/seq (risk register #1). Unchanged segments referenced by hash only —
   // NEED_PAYLOAD lists unknown hashes for the client to inline and retry.
   rpc WriteBatch (WriteBatchRequest) returns (WriteBatchResponse);
+  // Per-op mirror of spi.NodeStore#storeBranchEntry (Phase 1 Gate A, BUILD-PHASE-1.md
+  // scope constraint #2): WriteBatch remains the native/bench-optimized batched path;
+  // this is the standalone single-entry equivalent XP's per-op SPI calls map onto.
   rpc StoreBranchEntry (StoreBranchEntryRequest) returns (Ack);
   rpc DeleteBranchEntries (DeleteBranchEntriesRequest) returns (Ack);
+  // Existence-only check — no row fetch. searchPreference is accepted by the SPI method
+  // this mirrors but deliberately has NO field here: see the "never over the wire" note below.
+  rpc ExistsBranchEntry (ExistsBranchEntryRequest) returns (ExistsResponse);
   rpc GetBranchEntry (GetBranchEntryRequest) returns (BranchEntry);
+  // Multi-get by node_id: missing ids are simply absent from the stream, not an error.
   rpc GetBranchEntries (GetBranchEntriesRequest) returns (stream BranchEntry);
+  // Branches containing the given node — replaces the cross-branch storage-index query
+  // spi.NodeStore#getBranchesWithNode used to need ES for.
+  rpc GetBranchesWithNode (GetBranchesWithNodeRequest) returns (stream BranchRef);
   rpc GetChildren (GetChildrenRequest) returns (stream BranchEntry);
   rpc StoreVersion (StoreVersionRequest) returns (Ack);
+  // Vacuum/retention op (DESIGN.md §6) — exists behind the SPI for interface conformance
+  // even though Phase 1 itests rarely exercise it directly.
+  rpc DeleteVersion (DeleteVersionRequest) returns (Ack);
   rpc GetVersion (GetVersionRequest) returns (Version);
   rpc FindVersions (FindVersionsRequest) returns (stream Version);
   rpc StoreCommit (StoreCommitRequest) returns (Ack);
@@ -41,6 +54,10 @@ service NodeSearch {
 service RepositoryAdmin {
   rpc CreateRepository (CreateRepositoryRequest) returns (Ack);
   rpc DeleteRepository (DeleteRepositoryRequest) returns (Ack);
+  // Existence check for spi.RepositoryStorageAdmin#indexExists — returns a boolean rather
+  // than throwing (unlike CreateRepository/DeleteRepository, which resolve an unknown repo
+  // id via the same RepoKeys lookup that throws UnknownRepoException -> NOT_FOUND).
+  rpc RepositoryExists (RepositoryExistsRequest) returns (ExistsResponse);
   rpc ListRepositories (ListRepositoriesRequest) returns (stream RepositoryInfo);
   rpc Stats (StatsRequest) returns (RepositoryStats);
 }
@@ -70,17 +87,64 @@ service Snapshots {
 }
 
 // --- messages: field sets mirror nodb/spi Records.java / engine model records ---
-// Slice-1 step 5 implements: NodeStore.WriteBatch/GetBranchEntry/GetChildren/GetVersion/
-// PutPayload/GetPayload and RepositoryAdmin.CreateRepository/DeleteRepository. Their
-// request/response messages below are fully fleshed out. Every other message in this file
-// (NodeSearch, ChangeFeed, BulkTransfer, Snapshots, and the remaining NodeStore/
-// RepositoryAdmin RPCs such as StoreVersion/GetCommit/ListRepositories/Stats) is left as an
-// empty placeholder — those RPCs are not implemented this slice; grpc-java's generated
+// Slice-1 step 5 implemented: NodeStore.WriteBatch/GetBranchEntry/GetChildren/GetVersion/
+// PutPayload/GetPayload and RepositoryAdmin.CreateRepository/DeleteRepository.
+// Phase 1 Gate A (BUILD-PHASE-1.md's SPI<->proto reconciliation table) additionally
+// implements: NodeStore.StoreBranchEntry/DeleteBranchEntries/ExistsBranchEntry/
+// GetBranchEntries/GetBranchesWithNode/StoreVersion/DeleteVersion/StoreCommit/GetCommit
+// and RepositoryAdmin.RepositoryExists — every NodeStore + RepositoryStorageAdmin method
+// that has a real NoDB translation now has a 1:1 RPC. Still left as empty placeholders
+// (out of Phase 1 scope entirely, not merely deferred): NodeSearch, ChangeFeed,
+// BulkTransfer, Snapshots, RepositoryAdmin.ListRepositories/Stats — grpc-java's generated
 // *ImplBase returns UNIMPLEMENTED for any method the server class does not override, so
-// leaving the messages empty and simply not overriding the method is sufficient (no need to
-// mark them explicitly). Tenant id is NEVER a field on any request message (DESIGN.md
-// §7.2): it comes only from the authenticated JWT, resolved server-side to a TenantContext.
-message Ack { uint64 outbox_seq = 1; } // callers pass this to AwaitRefresh for read-your-writes
+// leaving those messages empty and simply not overriding the method is sufficient. Tenant
+// id is NEVER a field on any request message (DESIGN.md §7.2): it comes only from the
+// authenticated JWT, resolved server-side to a TenantContext.
+//
+// --- gRPC status contract (Phase 1 Gate A) -------------------------------------------
+// Engine outcome                                            gRPC status       XP SPI boundary
+// ---------------------------------------------------------------------------------------
+// Unknown repo id (engine.store.UnknownRepoException,       NOT_FOUND         StorageIndexNotFoundException
+//   thrown by RepoKeys#resolve for ANY op addressing a repo
+//   id absent from the caller's own tenant schema — reads,
+//   writes, and DeleteRepository/RepositoryExists alike)
+// Duplicate repo id on CreateRepository (Postgres unique     ALREADY_EXISTS   StorageIndexExistsException
+//   violation, SQLSTATE 23505 on repository.repo_id —
+//   detected by column/constraint, never by message text)
+// No matching row for a point lookup (GetBranchEntry/         NOT_FOUND        null (these SPI methods
+//   GetVersion/GetCommit/GetPayload)                                            return @Nullable, not throw)
+// Missing/invalid/expired/wrong-audience bearer token          UNAUTHENTICATED  connection-level failure
+//   (TenantAuthInterceptor)                                                     (Gate B: fail fast, no retry)
+// Runtime-scope token calling an operator-only management      PERMISSION_DENIED connection-level failure
+//   RPC (CreateRepository/DeleteRepository today)
+// Any other SQLException (constraint violation, etc.)          INTERNAL         generic wrapped exception
+// ---------------------------------------------------------------------------------------
+// Never sent over the wire (semantic no-ops / accepted-and-ignored — documented, not
+// silently dropped; see BUILD-PHASE-1.md's reconciliation table for the full reasoning):
+//   * SearchPreference (LOCAL/PRIMARY): no request message below carries it. Every NoDB
+//     read is a direct, transactionally-consistent Postgres read (DESIGN.md §3.3) — there
+//     is no replica lag in scope for Phase 1, so the parameter has nothing to select
+//     between. The XP-side nodb-client (Gate B) accepts the parameter for interface
+//     conformance and never forwards it.
+//   * RepositoryStorageAdmin#refresh: client-side no-op (no RPC at all) — Postgres
+//     transactional visibility is a strictly STRONGER guarantee than an ES refresh, so
+//     there is nothing to force. Same reasoning covers getBranchEntryByPath's SPI-mandated
+//     "refresh before path lookup": branch_entry is the row of record, so the requirement
+//     is trivially already satisfied.
+//   * RepositoryStorageAdmin#updateSettings / #putIndexMapping / #getIndexSettings /
+//     #createIndex's `mappings` param: ES-index-settings/mapping concepts with no NoDB
+//     equivalent (Postgres partitions/columns are static DDL, not tunable settings or
+//     dynamic mappings) — permanently N/A, client-side no-ops, not missing surface.
+message Ack {
+  // Max outbox seq written by this call, for AwaitRefresh (read-your-writes). Only
+  // WriteBatch populates this meaningfully today (branch-entry mutations feed the
+  // outbox) — the standalone per-op RPCs added in Phase 1 Gate A (StoreBranchEntry,
+  // DeleteBranchEntries, StoreVersion, DeleteVersion, StoreCommit) leave it at the
+  // proto3 default (0): the changefeed/outbox story for per-op calls is deferred
+  // (BUILD-PHASE-1.md scope constraint #4), not silently broken — Gate A's reconciliation
+  // table prescribes exactly Tx.inTenantTx -> the relevant store method for these, no more.
+  uint64 outbox_seq = 1;
+}
 
 // BRANCH document equivalent — mirrors engine.model.BranchEntryRecord 1:1.
 message BranchEntry {
@@ -120,8 +184,27 @@ message Payload {
 
 message SearchRequest {}
 message SearchResult {}
-message StoreBranchEntryRequest {}
-message DeleteBranchEntriesRequest {}
+
+// repo_id + the full entry to upsert (branch is a field on `entry`, same shape as
+// WriteBatchRequest.branch_entries — no separate branch field needed).
+message StoreBranchEntryRequest {
+  string repo_id = 1;
+  BranchEntry entry = 2;
+}
+message DeleteBranchEntriesRequest {
+  string repo_id = 1;
+  string branch = 2;
+  repeated string node_ids = 3;
+}
+message ExistsResponse {
+  bool exists = 1;
+}
+// searchPreference intentionally NOT a field here — see the "never sent over the wire" note above.
+message ExistsBranchEntryRequest {
+  string repo_id = 1;
+  string branch = 2;
+  string node_id = 3;
+}
 
 // Lookup by node_id XOR node_path within (repo_id, branch); repo_id/branch always
 // required, exactly one of the oneof fields set.
@@ -134,7 +217,21 @@ message GetBranchEntryRequest {
   }
 }
 
-message GetBranchEntriesRequest {}
+// Multi-get by node_id within (repo_id, branch); missing ids are simply absent from
+// the returned stream, in no particular order (mirrors spi.NodeStore#getBranchEntries).
+message GetBranchEntriesRequest {
+  string repo_id = 1;
+  string branch = 2;
+  repeated string node_ids = 3;
+}
+
+message GetBranchesWithNodeRequest {
+  string repo_id = 1;
+  string node_id = 2;
+}
+message BranchRef {
+  string branch = 1;
+}
 
 // Children of parent_path, page-windowed (from/size — OFFSET/LIMIT, mirrors
 // engine.model.Page). size <= 0 is treated server-side as "use the default page size".
@@ -146,7 +243,16 @@ message GetChildrenRequest {
   int32 size = 5;
 }
 
-message StoreVersionRequest {}
+message StoreVersionRequest {
+  string repo_id = 1;
+  Version version = 2;
+}
+// version_id alone: version ids are globally unique within a tenant (see
+// engine.store.VersionStore#get), so no repo/branch scoping is needed for the lookup —
+// same reasoning applies to delete, so DeleteVersionRequest mirrors this shape exactly.
+message DeleteVersionRequest {
+  string version_id = 1;
+}
 
 // version_id alone: version ids are globally unique within a tenant (see
 // engine.store.VersionStore#get), so no repo/branch scoping is needed for the lookup.
@@ -155,8 +261,16 @@ message GetVersionRequest {
 }
 
 message FindVersionsRequest {}
-message StoreCommitRequest {}
-message GetCommitRequest {}
+
+message StoreCommitRequest {
+  string repo_id = 1;
+  Commit commit = 2;
+}
+// commit_id alone: node_commit's PK is commit_id (schema.sql — unpartitioned, row-scoped),
+// so no repo scoping is needed for the lookup (mirrors GetVersionRequest's reasoning).
+message GetCommitRequest {
+  string commit_id = 1;
+}
 
 message PutPayloadRequest {
   bytes bytes = 1;
@@ -183,8 +297,15 @@ message PayloadRef {
 message CreateRepositoryRequest {
   string repo_id = 1;
   string settings_json = 2; // optional; empty/absent -> engine default '{}'
+  // No `mappings` field: spi.RepositoryStorageAdmin#createIndex's Map<IndexType,
+  // IndexMapping> parameter is a genuine ES-only concept (Postgres's node_version/
+  // branch_entry columns are static DDL, not per-repo mappings) — permanently N/A for
+  // NoDB, the XP-side client drops it, never a to-do.
 }
 message DeleteRepositoryRequest {
+  string repo_id = 1;
+}
+message RepositoryExistsRequest {
   string repo_id = 1;
 }
 message ListRepositoriesRequest {}

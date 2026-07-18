@@ -12,7 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 
 import com.auth0.jwt.JWT;
@@ -47,9 +49,18 @@ import com.enonic.nodb.engine.TenantContext;
 import com.enonic.nodb.engine.TenantProvisioner;
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.BranchEntry;
+import com.enonic.nodb.proto.v1.BranchRef;
+import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.CreateRepositoryRequest;
+import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
+import com.enonic.nodb.proto.v1.DeleteRepositoryRequest;
+import com.enonic.nodb.proto.v1.DeleteVersionRequest;
+import com.enonic.nodb.proto.v1.ExistsBranchEntryRequest;
+import com.enonic.nodb.proto.v1.GetBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
+import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
 import com.enonic.nodb.proto.v1.GetChildrenRequest;
+import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetPayloadRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
@@ -58,6 +69,10 @@ import com.enonic.nodb.proto.v1.PayloadRef;
 import com.enonic.nodb.proto.v1.PutPayloadRequest;
 import com.enonic.nodb.proto.v1.PutPayloadResponse;
 import com.enonic.nodb.proto.v1.RepositoryAdminGrpc;
+import com.enonic.nodb.proto.v1.RepositoryExistsRequest;
+import com.enonic.nodb.proto.v1.StoreBranchEntryRequest;
+import com.enonic.nodb.proto.v1.StoreCommitRequest;
+import com.enonic.nodb.proto.v1.StoreVersionRequest;
 import com.enonic.nodb.proto.v1.Version;
 import com.enonic.nodb.proto.v1.WriteBatchRequest;
 import com.enonic.nodb.proto.v1.WriteBatchResponse;
@@ -70,6 +85,7 @@ import com.enonic.nodb.server.service.NodeStoreService;
 import com.enonic.nodb.server.service.RepositoryAdminService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -226,6 +242,72 @@ class NodbServerIntegrationTest
                                                                                   .setRepoId( repoId )
                                                                                   .build() );
         return repoId;
+    }
+
+    private record WrittenNode(String nodeId, String versionId)
+    {
+    }
+
+    /** Writes a version + branch entry via WriteBatch (the already-proven path) — a fixture helper, not itself under test. */
+    private static WrittenNode writeNode( NodeStoreGrpc.NodeStoreBlockingStub stub, String repoId, String branch, String nodePath )
+    {
+        byte[] dataBytes = randomBytes();
+        byte[] indexBytes = randomBytes();
+        byte[] aclBytes = randomBytes();
+        String nodeId = UUID.randomUUID().toString();
+        String versionId = UUID.randomUUID().toString();
+        long nowMillis = System.currentTimeMillis();
+
+        Version version = Version.newBuilder()
+            .setVersionId( versionId )
+            .setNodeId( nodeId )
+            .setNodePath( nodePath )
+            .setTimestampMillis( nowMillis )
+            .setNodeDataHash( sha256Key( dataBytes ) )
+            .setIndexConfigHash( sha256Key( indexBytes ) )
+            .setAclHash( sha256Key( aclBytes ) )
+            .build();
+        BranchEntry entry = BranchEntry.newBuilder()
+            .setBranch( branch )
+            .setNodeId( nodeId )
+            .setVersionId( versionId )
+            .setNodePath( nodePath )
+            .setTimestampMillis( nowMillis )
+            .build();
+        stub.writeBatch( WriteBatchRequest.newBuilder()
+                              .setRepoId( repoId )
+                              .addPayloads( PayloadRef.newBuilder().setInline( com.google.protobuf.ByteString.copyFrom( dataBytes ) ) )
+                              .addPayloads( PayloadRef.newBuilder().setInline( com.google.protobuf.ByteString.copyFrom( indexBytes ) ) )
+                              .addPayloads( PayloadRef.newBuilder().setInline( com.google.protobuf.ByteString.copyFrom( aclBytes ) ) )
+                              .addVersions( version )
+                              .addBranchEntries( entry )
+                              .build() );
+        return new WrittenNode( nodeId, versionId );
+    }
+
+    /** Version only (no branch entry) via the standalone StoreVersion RPC under test — used both as a direct StoreVersion test and as setup for StoreBranchEntry/DeleteVersion tests that need a version to reference without an accompanying branch pointer. */
+    private static WrittenNode storeVersionOnly( NodeStoreGrpc.NodeStoreBlockingStub stub, String repoId, String versionId,
+                                                  String nodePath )
+    {
+        byte[] dataBytes = randomBytes();
+        byte[] indexBytes = randomBytes();
+        byte[] aclBytes = randomBytes();
+        stub.putPayload( PutPayloadRequest.newBuilder().setBytes( com.google.protobuf.ByteString.copyFrom( dataBytes ) ).build() );
+        stub.putPayload( PutPayloadRequest.newBuilder().setBytes( com.google.protobuf.ByteString.copyFrom( indexBytes ) ).build() );
+        stub.putPayload( PutPayloadRequest.newBuilder().setBytes( com.google.protobuf.ByteString.copyFrom( aclBytes ) ).build() );
+
+        String nodeId = UUID.randomUUID().toString();
+        Version version = Version.newBuilder()
+            .setVersionId( versionId )
+            .setNodeId( nodeId )
+            .setNodePath( nodePath )
+            .setTimestampMillis( System.currentTimeMillis() )
+            .setNodeDataHash( sha256Key( dataBytes ) )
+            .setIndexConfigHash( sha256Key( indexBytes ) )
+            .setAclHash( sha256Key( aclBytes ) )
+            .build();
+        stub.storeVersion( StoreVersionRequest.newBuilder().setRepoId( repoId ).setVersion( version ).build() );
+        return new WrittenNode( nodeId, versionId );
     }
 
     private static long countInSchema( String schema, String table, String whereClause )
@@ -481,5 +563,386 @@ class NodbServerIntegrationTest
         repositoryAdmin( token( "acme", Scope.OPERATOR ) ).deleteRepository( com.enonic.nodb.proto.v1.DeleteRepositoryRequest.newBuilder()
                                                                                   .setRepoId( repoId )
                                                                                   .build() );
+    }
+
+    // ---- 6. Phase 1 Gate A: standalone per-op NodeStore RPCs -----------------------------
+
+    @Test
+    void storeBranchEntryStandaloneAutoVivifiesUnseenBranchAndIsTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        WrittenNode written = storeVersionOnly( acme, acmeRepoId, UUID.randomUUID().toString(), "/standalone-branch-entry" );
+        BranchEntry entry = BranchEntry.newBuilder()
+            .setBranch( "never-seen-branch" ) // no prior branch-create call: auto-vivification is under test
+            .setNodeId( written.nodeId() )
+            .setVersionId( written.versionId() )
+            .setNodePath( "/standalone-branch-entry" )
+            .setTimestampMillis( System.currentTimeMillis() )
+            .build();
+
+        Ack ack = acme.storeBranchEntry( StoreBranchEntryRequest.newBuilder().setRepoId( acmeRepoId ).setEntry( entry ).build() );
+        assertNotNull( ack );
+
+        BranchEntry fetched = acme.getBranchEntry( GetBranchEntryRequest.newBuilder()
+                                                         .setRepoId( acmeRepoId )
+                                                         .setBranch( "never-seen-branch" )
+                                                         .setNodeId( written.nodeId() )
+                                                         .build() );
+        assertEquals( "/standalone-branch-entry", fetched.getNodePath() );
+
+        // cross-tenant: fisk's own (separate) repo never sees it.
+        StatusRuntimeException fiskLookup = assertThrows( StatusRuntimeException.class,
+                                                            () -> fisk.getBranchEntry( GetBranchEntryRequest.newBuilder()
+                                                                                            .setRepoId( fiskRepoId )
+                                                                                            .setBranch( "never-seen-branch" )
+                                                                                            .setNodeId( written.nodeId() )
+                                                                                            .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, fiskLookup.getStatus().getCode() );
+
+        // NOT_FOUND for an unknown repo id.
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.storeBranchEntry( StoreBranchEntryRequest.newBuilder()
+                                                                                               .setRepoId(
+                                                                                                   "no-such-repo-" + UUID.randomUUID() )
+                                                                                               .setEntry( entry )
+                                                                                               .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    @Test
+    void deleteBranchEntriesStandaloneRemovesEntryAndIsTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        WrittenNode node = writeNode( acme, acmeRepoId, "master", "/to-delete-standalone" );
+
+        acme.deleteBranchEntries(
+            DeleteBranchEntriesRequest.newBuilder().setRepoId( acmeRepoId ).setBranch( "master" ).addNodeIds( node.nodeId() ).build() );
+
+        StatusRuntimeException notFound = assertThrows( StatusRuntimeException.class,
+                                                           () -> acme.getBranchEntry( GetBranchEntryRequest.newBuilder()
+                                                                                           .setRepoId( acmeRepoId )
+                                                                                           .setBranch( "master" )
+                                                                                           .setNodeId( node.nodeId() )
+                                                                                           .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, notFound.getStatus().getCode() );
+
+        // deleting an already-gone id is a no-op, not an error.
+        acme.deleteBranchEntries(
+            DeleteBranchEntriesRequest.newBuilder().setRepoId( acmeRepoId ).setBranch( "master" ).addNodeIds( node.nodeId() ).build() );
+
+        // NOT_FOUND for an unknown repo id.
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.deleteBranchEntries( DeleteBranchEntriesRequest.newBuilder()
+                                                                                                  .setRepoId( "no-such-repo-" +
+                                                                                                                  UUID.randomUUID() )
+                                                                                                  .setBranch( "master" )
+                                                                                                  .addNodeIds( node.nodeId() )
+                                                                                                  .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    @Test
+    void existsBranchEntryIsTrueAfterWriteFalseOtherwiseAndTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        WrittenNode node = writeNode( acme, acmeRepoId, "master", "/exists-check" );
+
+        boolean exists = acme.existsBranchEntry( ExistsBranchEntryRequest.newBuilder()
+                                                      .setRepoId( acmeRepoId )
+                                                      .setBranch( "master" )
+                                                      .setNodeId( node.nodeId() )
+                                                      .build() ).getExists();
+        assertTrue( exists );
+
+        boolean missing = acme.existsBranchEntry( ExistsBranchEntryRequest.newBuilder()
+                                                       .setRepoId( acmeRepoId )
+                                                       .setBranch( "master" )
+                                                       .setNodeId( UUID.randomUUID().toString() )
+                                                       .build() ).getExists();
+        assertFalse( missing );
+
+        // cross-tenant: fisk's own repo never has acme's node_id.
+        boolean fiskSees = fisk.existsBranchEntry( ExistsBranchEntryRequest.newBuilder()
+                                                        .setRepoId( fiskRepoId )
+                                                        .setBranch( "master" )
+                                                        .setNodeId( node.nodeId() )
+                                                        .build() ).getExists();
+        assertFalse( fiskSees );
+
+        // NOT_FOUND for an unknown repo id.
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.existsBranchEntry( ExistsBranchEntryRequest.newBuilder()
+                                                                                                .setRepoId( "no-such-repo-" +
+                                                                                                                UUID.randomUUID() )
+                                                                                                .setBranch( "master" )
+                                                                                                .setNodeId( node.nodeId() )
+                                                                                                .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    @Test
+    void getBranchEntriesMultiGetReturnsOnlyFoundAndIsTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        WrittenNode node1 = writeNode( acme, acmeRepoId, "master", "/mg1" );
+        WrittenNode node2 = writeNode( acme, acmeRepoId, "master", "/mg2" );
+        String missingNodeId = UUID.randomUUID().toString();
+
+        Iterator<BranchEntry> found = acme.getBranchEntries( GetBranchEntriesRequest.newBuilder()
+                                                                  .setRepoId( acmeRepoId )
+                                                                  .setBranch( "master" )
+                                                                  .addNodeIds( node1.nodeId() )
+                                                                  .addNodeIds( node2.nodeId() )
+                                                                  .addNodeIds( missingNodeId )
+                                                                  .build() );
+        Set<String> foundNodeIds = new HashSet<>();
+        found.forEachRemaining( e -> foundNodeIds.add( e.getNodeId() ) );
+        assertEquals( Set.of( node1.nodeId(), node2.nodeId() ), foundNodeIds, "the missing id must simply be absent, not an error" );
+
+        // cross-tenant: fisk's own repo has neither.
+        Iterator<BranchEntry> fiskFound = fisk.getBranchEntries( GetBranchEntriesRequest.newBuilder()
+                                                                      .setRepoId( fiskRepoId )
+                                                                      .setBranch( "master" )
+                                                                      .addNodeIds( node1.nodeId() )
+                                                                      .addNodeIds( node2.nodeId() )
+                                                                      .build() );
+        assertFalse( fiskFound.hasNext() );
+
+        // NOT_FOUND for an unknown repo id.
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.getBranchEntries( GetBranchEntriesRequest.newBuilder()
+                                                                                               .setRepoId( "no-such-repo-" +
+                                                                                                               UUID.randomUUID() )
+                                                                                               .setBranch( "master" )
+                                                                                               .addNodeIds( node1.nodeId() )
+                                                                                               .build() ).hasNext() );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    @Test
+    void getBranchesWithNodeReturnsAllBranchesAndIsTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        WrittenNode node = writeNode( acme, acmeRepoId, "master", "/bwn" );
+        // Same node_id/version_id copied into a second, never-explicitly-created branch —
+        // exercises StoreBranchEntry's auto-vivification again, incidentally.
+        BranchEntry secondBranchEntry = BranchEntry.newBuilder()
+            .setBranch( "second" )
+            .setNodeId( node.nodeId() )
+            .setVersionId( node.versionId() )
+            .setNodePath( "/bwn" )
+            .setTimestampMillis( System.currentTimeMillis() )
+            .build();
+        acme.storeBranchEntry( StoreBranchEntryRequest.newBuilder().setRepoId( acmeRepoId ).setEntry( secondBranchEntry ).build() );
+
+        Iterator<BranchRef> branches = acme.getBranchesWithNode(
+            GetBranchesWithNodeRequest.newBuilder().setRepoId( acmeRepoId ).setNodeId( node.nodeId() ).build() );
+        Set<String> branchNames = new HashSet<>();
+        branches.forEachRemaining( b -> branchNames.add( b.getBranch() ) );
+        assertEquals( Set.of( "master", "second" ), branchNames );
+
+        // cross-tenant: fisk's own repo has no branches at all for acme's node_id.
+        Iterator<BranchRef> fiskBranches = fisk.getBranchesWithNode(
+            GetBranchesWithNodeRequest.newBuilder().setRepoId( fiskRepoId ).setNodeId( node.nodeId() ).build() );
+        assertFalse( fiskBranches.hasNext() );
+
+        // NOT_FOUND for an unknown repo id.
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.getBranchesWithNode( GetBranchesWithNodeRequest.newBuilder()
+                                                                                                  .setRepoId( "no-such-repo-" +
+                                                                                                                  UUID.randomUUID() )
+                                                                                                  .setNodeId( node.nodeId() )
+                                                                                                  .build() ).hasNext() );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    @Test
+    void storeVersionStandaloneRoundTripsAndIsTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        WrittenNode written = storeVersionOnly( acme, acmeRepoId, UUID.randomUUID().toString(), "/standalone-version" );
+
+        Version fetched = acme.getVersion( GetVersionRequest.newBuilder().setVersionId( written.versionId() ).build() );
+        assertEquals( "/standalone-version", fetched.getNodePath() );
+
+        // cross-tenant: this exact version id was never written under fisk.
+        StatusRuntimeException fiskLookup = assertThrows( StatusRuntimeException.class,
+                                                            () -> fisk.getVersion(
+                                                                GetVersionRequest.newBuilder().setVersionId( written.versionId() ).build() ) );
+        assertEquals( Status.Code.NOT_FOUND, fiskLookup.getStatus().getCode() );
+
+        // NOT_FOUND for an unknown repo id on StoreVersion itself.
+        byte[] moreBytes = randomBytes();
+        Version anotherVersion = Version.newBuilder()
+            .setVersionId( UUID.randomUUID().toString() )
+            .setNodeId( UUID.randomUUID().toString() )
+            .setNodePath( "/x" )
+            .setTimestampMillis( System.currentTimeMillis() )
+            .setNodeDataHash( sha256Key( moreBytes ) )
+            .setIndexConfigHash( sha256Key( moreBytes ) )
+            .setAclHash( sha256Key( moreBytes ) )
+            .build();
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.storeVersion( StoreVersionRequest.newBuilder()
+                                                                                          .setRepoId(
+                                                                                              "no-such-repo-" + UUID.randomUUID() )
+                                                                                          .setVersion( anotherVersion )
+                                                                                          .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    @Test
+    void deleteVersionRemovesOnlyTheCallersRowAndIsTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        // Same version_id string under both tenants (PK is (repo_key, version_id), and
+        // repo_key differs per-tenant-schema, so this is legal and proves schema isolation).
+        String sharedVersionId = UUID.randomUUID().toString();
+        storeVersionOnly( acme, acmeRepoId, sharedVersionId, "/dv-acme" );
+        storeVersionOnly( fisk, fiskRepoId, sharedVersionId, "/dv-fisk" );
+
+        acme.deleteVersion( DeleteVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() );
+
+        StatusRuntimeException goneForAcme = assertThrows( StatusRuntimeException.class,
+                                                              () -> acme.getVersion(
+                                                                  GetVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() ) );
+        assertEquals( Status.Code.NOT_FOUND, goneForAcme.getStatus().getCode() );
+
+        Version stillThereForFisk = fisk.getVersion( GetVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() );
+        assertEquals( "/dv-fisk", stillThereForFisk.getNodePath(), "acme's delete must not remove fisk's row with the same version_id" );
+
+        // deleting an already-gone id is a no-op, not an error.
+        acme.deleteVersion( DeleteVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() );
+    }
+
+    @Test
+    void storeCommitStandaloneRoundTripsAndGetCommitIsTenantIsolatedAndNotFoundWhenMissing()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        String commitId = UUID.randomUUID().toString();
+        Commit commit = Commit.newBuilder()
+            .setCommitId( commitId )
+            .setMessage( "a message" )
+            .setCommitter( "user:system:admin" )
+            .setTimestampMillis( System.currentTimeMillis() )
+            .build();
+
+        acme.storeCommit( StoreCommitRequest.newBuilder().setRepoId( acmeRepoId ).setCommit( commit ).build() );
+
+        Commit fetched = acme.getCommit( GetCommitRequest.newBuilder().setCommitId( commitId ).build() );
+        assertEquals( "a message", fetched.getMessage() );
+        assertEquals( "user:system:admin", fetched.getCommitter() );
+
+        // cross-tenant: fisk never wrote this commit id.
+        StatusRuntimeException fiskLookup = assertThrows( StatusRuntimeException.class,
+                                                            () -> fisk.getCommit(
+                                                                GetCommitRequest.newBuilder().setCommitId( commitId ).build() ) );
+        assertEquals( Status.Code.NOT_FOUND, fiskLookup.getStatus().getCode() );
+
+        // NOT_FOUND for a commit id that was simply never written.
+        StatusRuntimeException missing = assertThrows( StatusRuntimeException.class,
+                                                          () -> acme.getCommit( GetCommitRequest.newBuilder()
+                                                                                     .setCommitId( UUID.randomUUID().toString() )
+                                                                                     .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, missing.getStatus().getCode() );
+
+        // NOT_FOUND for an unknown repo id on StoreCommit itself.
+        Commit anotherCommit = commit.toBuilder().setCommitId( UUID.randomUUID().toString() ).build();
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.storeCommit( StoreCommitRequest.newBuilder()
+                                                                                          .setRepoId(
+                                                                                              "no-such-repo-" + UUID.randomUUID() )
+                                                                                          .setCommit( anotherCommit )
+                                                                                          .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    // ---- 7. Phase 1 Gate A: RepositoryExists + the ALREADY_EXISTS bug fix ----------------
+
+    @Test
+    void repositoryExistsReflectsLifecycleAndIsPerTenant()
+    {
+        String repoId = "repo-exists-" + UUID.randomUUID();
+
+        boolean beforeCreate = repositoryAdmin( token( "acme", Scope.RUNTIME ) ).repositoryExists(
+            RepositoryExistsRequest.newBuilder().setRepoId( repoId ).build() ).getExists();
+        assertFalse( beforeCreate );
+
+        repositoryAdmin( token( "acme", Scope.OPERATOR ) ).createRepository(
+            CreateRepositoryRequest.newBuilder().setRepoId( repoId ).build() );
+
+        boolean afterCreateForAcme = repositoryAdmin( token( "acme", Scope.RUNTIME ) ).repositoryExists(
+            RepositoryExistsRequest.newBuilder().setRepoId( repoId ).build() ).getExists();
+        assertTrue( afterCreateForAcme );
+
+        // cross-tenant: fisk's own `repository` table has no row with this id.
+        boolean sameIdForFisk = repositoryAdmin( token( "fisk", Scope.RUNTIME ) ).repositoryExists(
+            RepositoryExistsRequest.newBuilder().setRepoId( repoId ).build() ).getExists();
+        assertFalse( sameIdForFisk );
+
+        repositoryAdmin( token( "acme", Scope.OPERATOR ) ).deleteRepository(
+            DeleteRepositoryRequest.newBuilder().setRepoId( repoId ).build() );
+
+        boolean afterDelete = repositoryAdmin( token( "acme", Scope.RUNTIME ) ).repositoryExists(
+            RepositoryExistsRequest.newBuilder().setRepoId( repoId ).build() ).getExists();
+        assertFalse( afterDelete );
+    }
+
+    @Test
+    void createRepositoryTwiceFailsAlreadyExistsAndDeletingUnknownRepoFailsNotFound()
+    {
+        String repoId = "repo-already-exists-" + UUID.randomUUID();
+        repositoryAdmin( token( "acme", Scope.OPERATOR ) ).createRepository(
+            CreateRepositoryRequest.newBuilder().setRepoId( repoId ).build() );
+
+        StatusRuntimeException alreadyExists = assertThrows( StatusRuntimeException.class,
+                                                                () -> repositoryAdmin( token( "acme", Scope.OPERATOR ) ).createRepository(
+                                                                    CreateRepositoryRequest.newBuilder().setRepoId( repoId ).build() ) );
+        assertEquals( Status.Code.ALREADY_EXISTS, alreadyExists.getStatus().getCode() );
+
+        // A different tenant creating a repo with the SAME id must succeed (separate schema)
+        // — ALREADY_EXISTS is per-tenant, not a global uniqueness constraint.
+        Ack fiskCreate = repositoryAdmin( token( "fisk", Scope.OPERATOR ) ).createRepository(
+            CreateRepositoryRequest.newBuilder().setRepoId( repoId ).build() );
+        assertNotNull( fiskCreate );
+        repositoryAdmin( token( "fisk", Scope.OPERATOR ) ).deleteRepository(
+            DeleteRepositoryRequest.newBuilder().setRepoId( repoId ).build() );
+
+        StatusRuntimeException deleteUnknown = assertThrows( StatusRuntimeException.class,
+                                                                () -> repositoryAdmin( token( "acme", Scope.OPERATOR ) ).deleteRepository(
+                                                                    DeleteRepositoryRequest.newBuilder()
+                                                                        .setRepoId( "no-such-repo-" + UUID.randomUUID() )
+                                                                        .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, deleteUnknown.getStatus().getCode() );
+
+        repositoryAdmin( token( "acme", Scope.OPERATOR ) ).deleteRepository(
+            DeleteRepositoryRequest.newBuilder().setRepoId( repoId ).build() );
     }
 }

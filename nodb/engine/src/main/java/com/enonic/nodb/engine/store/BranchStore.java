@@ -24,10 +24,29 @@ public final class BranchStore
     {
     }
 
-    /** Upsert: {@code (repo_key, branch, node_id)} is the PK. */
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static void store( Connection connection, RepoRef repo, BranchEntryRecord entry )
+        throws SQLException
+    {
+        store( connection, RepoKeys.resolve( connection, repo ), entry );
+    }
+
+    /**
+     * Upsert: {@code (repo_key, branch, node_id)} is the PK. {@code branch_entry} has an FK
+     * to an existing {@code branch} row (schema.sql), so the first write into a branch value
+     * NoDB has never seen before is auto-vivified here — the same way {@link
+     * WriteService#forkBranch} already auto-creates its own target branch row — rather than
+     * requiring a separate branch-create call first. XP has no bulk branch-copy operation of
+     * its own (see BUILD-PHASE-1.md's Gate 0 finding): {@code RepositoryServiceImpl.createBranch()}
+     * is just a single {@code storeBranchEntry}-equivalent write of the root node into a new
+     * branch value, so this is the one place that write needs to succeed without a prior
+     * explicit branch-create RPC, matching ES's implicit-branch semantics (a "branch" was
+     * never a first-class entity there, just a field value on documents).
+     */
     public static void store( Connection connection, long repoKey, BranchEntryRecord entry )
         throws SQLException
     {
+        ensureBranch( connection, repoKey, entry.branch() );
         try (PreparedStatement statement = connection.prepareStatement( """
             INSERT INTO branch_entry (repo_key, branch, node_id, version_id, node_path, ts)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -41,6 +60,23 @@ public final class BranchStore
             statement.setString( 4, entry.versionId() );
             statement.setString( 5, entry.nodePath() );
             statement.setTimestamp( 6, Timestamp.from( entry.timestamp() ) );
+            statement.executeUpdate();
+        }
+    }
+
+    /**
+     * {@code branch} is a plain DML row (not DDL), so this is safe to run under a tenant
+     * role's INSERT grant ({@link com.enonic.nodb.engine.Tx#inTenantTx}) — same posture as
+     * {@link WriteService#forkBranch}'s own identical statement for its target branch.
+     */
+    private static void ensureBranch( Connection connection, long repoKey, String branch )
+        throws SQLException
+    {
+        try (PreparedStatement statement =
+                 connection.prepareStatement( "INSERT INTO branch (repo_key, branch) VALUES (?, ?) ON CONFLICT DO NOTHING" ))
+        {
+            statement.setLong( 1, repoKey );
+            statement.setString( 2, branch );
             statement.executeUpdate();
         }
     }
@@ -71,6 +107,104 @@ public final class BranchStore
             try (ResultSet resultSet = statement.executeQuery())
             {
                 return resultSet.next() ? map( resultSet ) : null;
+            }
+        }
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static boolean existsByNodeId( Connection connection, RepoRef repo, String branch, String nodeId )
+        throws SQLException
+    {
+        return existsByNodeId( connection, RepoKeys.resolve( connection, repo ), branch, nodeId );
+    }
+
+    /**
+     * Existence check without fetching the entry's fields (mirrors spi.NodeStore#existsBranchEntry:
+     * "no ES {@code _source} fetch"). {@code LIMIT 1} makes this a plain index probe rather
+     * than a full row materialization — a genuine behavioral difference from {@link
+     * #getByNodeId(Connection, long, String, String)}{@code  != null}, not just a duplicate query.
+     */
+    public static boolean existsByNodeId( Connection connection, long repoKey, String branch, String nodeId )
+        throws SQLException
+    {
+        try (PreparedStatement statement = connection.prepareStatement(
+            "SELECT 1 FROM branch_entry WHERE repo_key = ? AND branch = ? AND node_id = ? LIMIT 1" ))
+        {
+            statement.setLong( 1, repoKey );
+            statement.setString( 2, branch );
+            statement.setString( 3, nodeId );
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                return resultSet.next();
+            }
+        }
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static List<BranchEntryRecord> getByNodeIds( Connection connection, RepoRef repo, String branch, Collection<String> nodeIds )
+        throws SQLException
+    {
+        return getByNodeIds( connection, RepoKeys.resolve( connection, repo ), branch, nodeIds );
+    }
+
+    /**
+     * Multi-get by node_id (mirrors spi.NodeStore#getBranchEntries): returns only the
+     * entries found — missing ids are simply absent, in no particular order.
+     */
+    public static List<BranchEntryRecord> getByNodeIds( Connection connection, long repoKey, String branch, Collection<String> nodeIds )
+        throws SQLException
+    {
+        if ( nodeIds.isEmpty() )
+        {
+            return List.of();
+        }
+        try (PreparedStatement statement = connection.prepareStatement( """
+            SELECT branch, node_id, version_id, node_path, ts FROM branch_entry
+            WHERE repo_key = ? AND branch = ? AND node_id = ANY(?)
+            """ ))
+        {
+            statement.setLong( 1, repoKey );
+            statement.setString( 2, branch );
+            statement.setArray( 3, connection.createArrayOf( "text", nodeIds.toArray( new String[0] ) ) );
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                List<BranchEntryRecord> result = new ArrayList<>();
+                while ( resultSet.next() )
+                {
+                    result.add( map( resultSet ) );
+                }
+                return List.copyOf( result );
+            }
+        }
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static List<String> getBranchesWithNode( Connection connection, RepoRef repo, String nodeId )
+        throws SQLException
+    {
+        return getBranchesWithNode( connection, RepoKeys.resolve( connection, repo ), nodeId );
+    }
+
+    /**
+     * Branches containing the given node — replaces the cross-branch storage-index query
+     * spi.NodeStore#getBranchesWithNode used to need ES for.
+     */
+    public static List<String> getBranchesWithNode( Connection connection, long repoKey, String nodeId )
+        throws SQLException
+    {
+        try (PreparedStatement statement =
+                 connection.prepareStatement( "SELECT DISTINCT branch FROM branch_entry WHERE repo_key = ? AND node_id = ?" ))
+        {
+            statement.setLong( 1, repoKey );
+            statement.setString( 2, nodeId );
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                List<String> result = new ArrayList<>();
+                while ( resultSet.next() )
+                {
+                    result.add( resultSet.getString( 1 ) );
+                }
+                return List.copyOf( result );
             }
         }
     }
@@ -140,6 +274,13 @@ public final class BranchStore
                 return List.copyOf( result );
             }
         }
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static void delete( Connection connection, RepoRef repo, String branch, Collection<String> nodeIds )
+        throws SQLException
+    {
+        delete( connection, RepoKeys.resolve( connection, repo ), branch, nodeIds );
     }
 
     public static void delete( Connection connection, long repoKey, String branch, Collection<String> nodeIds )

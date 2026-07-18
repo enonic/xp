@@ -28,7 +28,7 @@ final class RepoKeys
             {
                 if ( !resultSet.next() )
                 {
-                    throw new SQLException( "Unknown repo id: " + repo.repoId() );
+                    throw new UnknownRepoException( repo.repoId() );
                 }
                 return resultSet.getLong( 1 );
             }

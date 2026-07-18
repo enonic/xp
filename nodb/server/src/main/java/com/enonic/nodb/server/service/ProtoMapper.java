@@ -75,6 +75,20 @@ final class ProtoMapper
                                                                 Instant.ofEpochMilli( c.getTimestampMillis() ) );
     }
 
+    static Commit fromEngineCommit( com.enonic.nodb.engine.model.CommitRecord r )
+    {
+        Commit.Builder builder = Commit.newBuilder().setCommitId( r.commitId() ).setTimestampMillis( r.timestamp().toEpochMilli() );
+        if ( r.message() != null )
+        {
+            builder.setMessage( r.message() );
+        }
+        if ( r.committer() != null )
+        {
+            builder.setCommitter( r.committer() );
+        }
+        return builder.build();
+    }
+
     static com.enonic.nodb.engine.store.PayloadRef toEnginePayloadRef( com.enonic.nodb.proto.v1.PayloadRef ref )
     {
         return switch ( ref.getRefCase() )

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.enonic.nodb.engine.model.RepoRef;
 import com.enonic.nodb.engine.model.VersionRecord;
 
 /**
@@ -21,6 +22,13 @@ public final class VersionStore
 {
     private VersionStore()
     {
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link BranchStore#getByNodeId(Connection, RepoRef, String, String)}. */
+    public static void store( Connection connection, RepoRef repo, VersionRecord version )
+        throws SQLException
+    {
+        store( connection, RepoKeys.resolve( connection, repo ), version );
     }
 
     public static void store( Connection connection, long repoKey, VersionRecord version )
@@ -67,6 +75,25 @@ public final class VersionStore
             {
                 return resultSet.next() ? map( resultSet ) : null;
             }
+        }
+    }
+
+    /**
+     * Vacuum/retention op (DESIGN.md §6, mirrors spi.NodeStore#deleteVersion) — no repo_key
+     * scoping, same reasoning as {@link #get}: version ids are globally unique within a
+     * tenant. {@code branch_entry} has an FK to {@code node_version}, so deleting a version
+     * still referenced by a live branch entry fails with a foreign-key-violation
+     * {@link SQLException} (left to the caller to avoid — a Phase 1 itest rarely exercises
+     * this directly per BUILD-PHASE-1.md's reconciliation table). A no-op (0 rows affected)
+     * for an already-absent version id, matching plain {@code DELETE} semantics.
+     */
+    public static void delete( Connection connection, String versionId )
+        throws SQLException
+    {
+        try (PreparedStatement statement = connection.prepareStatement( "DELETE FROM node_version WHERE version_id = ?" ))
+        {
+            statement.setString( 1, versionId );
+            statement.executeUpdate();
         }
     }
 

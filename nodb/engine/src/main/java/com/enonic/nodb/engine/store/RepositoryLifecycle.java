@@ -58,6 +58,27 @@ public final class RepositoryLifecycle
         return repoKey;
     }
 
+    /**
+     * Existence check for spi.RepositoryStorageAdmin#indexExists — returns a boolean rather
+     * than throwing, unlike every DML/DDL operation above that addresses a repo via {@link
+     * RepoRef} (those go through {@link RepoKeys#resolve}, which throws {@link
+     * UnknownRepoException} for a missing repo — the right behavior for an operation that
+     * NEEDS the repo to exist, but not for a method whose entire purpose is answering
+     * "does it exist").
+     */
+    public static boolean repositoryExists( Connection connection, String repoId )
+        throws SQLException
+    {
+        try (PreparedStatement statement = connection.prepareStatement( "SELECT 1 FROM repository WHERE repo_id = ?" ))
+        {
+            statement.setString( 1, repoId );
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                return resultSet.next();
+            }
+        }
+    }
+
     public static void createBranch( Connection connection, long repoKey, String branch )
         throws SQLException
     {

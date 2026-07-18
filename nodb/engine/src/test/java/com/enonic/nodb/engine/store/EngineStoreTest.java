@@ -8,7 +8,9 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -31,7 +33,11 @@ import com.enonic.nodb.engine.model.VersionRecord;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -221,6 +227,181 @@ class EngineStoreTest
     }
 
     @Test
+    void existsByNodeIdIsTrueAfterStoreAndFalseOtherwise()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKey = createRepo( acme, "exists-repo-" + UUID.randomUUID() );
+
+        String versionId = writeMinimalVersion( acme, repoKey, "/exists" );
+        String nodeId = UUID.randomUUID().toString();
+
+        boolean beforeStore =
+            Tx.inTenantTx( dataSource, acme, connection -> BranchStore.existsByNodeId( connection, repoKey, "master", nodeId ) );
+        assertFalse( beforeStore, "must not exist before it is ever stored" );
+
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            BranchStore.store( connection, repoKey, new BranchEntryRecord( "master", nodeId, versionId, "/exists", Instant.now() ) );
+            return null;
+        } );
+
+        boolean afterStore =
+            Tx.inTenantTx( dataSource, acme, connection -> BranchStore.existsByNodeId( connection, repoKey, "master", nodeId ) );
+        assertTrue( afterStore, "must exist once stored — a real check, not just getByNodeId() != null" );
+
+        boolean wrongBranch =
+            Tx.inTenantTx( dataSource, acme, connection -> BranchStore.existsByNodeId( connection, repoKey, "draft", nodeId ) );
+        assertFalse( wrongBranch, "must not exist under a branch it was never stored into" );
+    }
+
+    @Test
+    void getByNodeIdsReturnsOnlyFoundEntriesInNoParticularOrder()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKey = createRepo( acme, "multiget-repo-" + UUID.randomUUID() );
+
+        String versionId1 = writeMinimalVersion( acme, repoKey, "/m1" );
+        String versionId2 = writeMinimalVersion( acme, repoKey, "/m2" );
+        String nodeId1 = UUID.randomUUID().toString();
+        String nodeId2 = UUID.randomUUID().toString();
+        String missingNodeId = UUID.randomUUID().toString();
+
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            BranchStore.store( connection, repoKey, new BranchEntryRecord( "master", nodeId1, versionId1, "/m1", Instant.now() ) );
+            BranchStore.store( connection, repoKey, new BranchEntryRecord( "master", nodeId2, versionId2, "/m2", Instant.now() ) );
+            return null;
+        } );
+
+        List<BranchEntryRecord> found = Tx.inTenantTx( dataSource, acme,
+                                                         connection -> BranchStore.getByNodeIds( connection, repoKey, "master",
+                                                                                                  List.of( nodeId1, nodeId2,
+                                                                                                           missingNodeId ) ) );
+        assertEquals( 2, found.size(), "the missing id must simply be absent, not an error" );
+        assertEquals( Set.of( nodeId1, nodeId2 ), found.stream().map( BranchEntryRecord::nodeId ).collect( Collectors.toSet() ) );
+
+        List<BranchEntryRecord> empty =
+            Tx.inTenantTx( dataSource, acme, connection -> BranchStore.getByNodeIds( connection, repoKey, "master", List.of() ) );
+        assertTrue( empty.isEmpty() );
+    }
+
+    @Test
+    void getBranchesWithNodeReturnsAllBranchesContainingIt()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKey = createRepo( acme, "branches-with-node-repo-" + UUID.randomUUID() );
+        String versionId = writeMinimalVersion( acme, repoKey, "/shared" );
+        String nodeId = UUID.randomUUID().toString();
+
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            RepositoryLifecycle.createBranch( connection, repoKey, "draft" );
+            return null;
+        } );
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            // "review" is never explicitly created — BranchStore.store auto-vivifies it.
+            BranchStore.store( connection, repoKey, new BranchEntryRecord( "draft", nodeId, versionId, "/shared", Instant.now() ) );
+            BranchStore.store( connection, repoKey, new BranchEntryRecord( "review", nodeId, versionId, "/shared", Instant.now() ) );
+            return null;
+        } );
+
+        List<String> branches =
+            Tx.inTenantTx( dataSource, acme, connection -> BranchStore.getBranchesWithNode( connection, repoKey, nodeId ) );
+        assertEquals( Set.of( "draft", "review" ), Set.copyOf( branches ) );
+
+        List<String> noneForUnknownNode = Tx.inTenantTx( dataSource, acme,
+                                                           connection -> BranchStore.getBranchesWithNode( connection, repoKey,
+                                                                                                           UUID.randomUUID().toString() ) );
+        assertTrue( noneForUnknownNode.isEmpty() );
+    }
+
+    @Test
+    void storeIntoNeverSeenBranchAutoVivifiesTheBranchRow()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKey = createRepo( acme, "auto-vivify-repo-" + UUID.randomUUID() );
+        String versionId = writeMinimalVersion( acme, repoKey, "/x" );
+        String nodeId = UUID.randomUUID().toString();
+
+        // No RepositoryLifecycle.createBranch call for "never-seen" — branch_entry's FK to
+        // `branch` would otherwise reject this write (BUILD-PHASE-1.md's Gate 0 finding).
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            BranchStore.store( connection, repoKey, new BranchEntryRecord( "never-seen", nodeId, versionId, "/x", Instant.now() ) );
+            return null;
+        } );
+
+        BranchEntryRecord fetched =
+            Tx.inTenantTx( dataSource, acme, connection -> BranchStore.getByNodeId( connection, repoKey, "never-seen", nodeId ) );
+        assertNotNull( fetched, "first write to an unseen branch must succeed without a prior explicit branch-create call" );
+        assertEquals( "never-seen", fetched.branch() );
+    }
+
+    @Test
+    void versionDeleteRemovesTheRow()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKey = createRepo( acme, "version-delete-repo-" + UUID.randomUUID() );
+        String versionId = writeMinimalVersion( acme, repoKey, "/to-delete" );
+
+        assertNotNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, versionId ) ) );
+
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            VersionStore.delete( connection, versionId );
+            return null;
+        } );
+
+        assertNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, versionId ) ),
+                    "version must be gone after delete" );
+
+        // deleting an already-absent version id is a no-op, not an error.
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            VersionStore.delete( connection, versionId );
+            return null;
+        } );
+    }
+
+    @Test
+    void repositoryExistsReflectsCreateAndDeleteLifecycle()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        String repoId = "exists-lifecycle-repo-" + UUID.randomUUID();
+
+        boolean beforeCreate =
+            Tx.inTenantTx( dataSource, acme, connection -> RepositoryLifecycle.repositoryExists( connection, repoId ) );
+        assertFalse( beforeCreate );
+
+        createRepo( acme, repoId );
+        boolean afterCreate =
+            Tx.inTenantTx( dataSource, acme, connection -> RepositoryLifecycle.repositoryExists( connection, repoId ) );
+        assertTrue( afterCreate );
+
+        Tx.inTenantSchema( dataSource, acme, connection -> {
+            RepositoryLifecycle.deleteRepository( connection, new RepoRef( repoId ) );
+            return null;
+        } );
+        boolean afterDelete =
+            Tx.inTenantTx( dataSource, acme, connection -> RepositoryLifecycle.repositoryExists( connection, repoId ) );
+        assertFalse( afterDelete );
+    }
+
+    @Test
+    void resolvingAnUnknownRepoIdThrowsUnknownRepoExceptionNotAGenericSqlException()
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        RepoRef unknownRepo = new RepoRef( "never-created-" + UUID.randomUUID() );
+
+        SQLException thrown = assertThrows( SQLException.class,
+                                             () -> Tx.inTenantTx( dataSource, acme,
+                                                                   connection -> BranchStore.getByNodeId( connection, unknownRepo,
+                                                                                                           "master", "whatever" ) ) );
+        assertInstanceOf( UnknownRepoException.class, thrown,
+                           "must be the dedicated type, not a message-text-matched generic SQLException" );
+    }
+
+    @Test
     void dualTenantIsolation()
         throws SQLException
     {
@@ -254,6 +435,18 @@ class EngineStoreTest
 
         VersionRecord versionSeenFromFisk = Tx.inTenantTx( dataSource, fisk, connection -> VersionStore.get( connection, versionId ) );
         assertNull( versionSeenFromFisk, "tenant fisk must not see a version written under tenant acme" );
+
+        boolean existsSeenFromFisk =
+            Tx.inTenantTx( dataSource, fisk, connection -> BranchStore.existsByNodeId( connection, fiskRepoKey, "master", nodeId ) );
+        assertFalse( existsSeenFromFisk, "tenant fisk must not see acme's node_id exist under its own (differently-keyed) repo" );
+
+        List<String> branchesSeenFromFisk =
+            Tx.inTenantTx( dataSource, fisk, connection -> BranchStore.getBranchesWithNode( connection, fiskRepoKey, nodeId ) );
+        assertTrue( branchesSeenFromFisk.isEmpty(), "tenant fisk must see no branches for acme's node_id" );
+
+        boolean repoExistsIsPerTenantSchemaNotGlobal =
+            Tx.inTenantTx( dataSource, fisk, connection -> RepositoryLifecycle.repositoryExists( connection, repoId ) );
+        assertTrue( repoExistsIsPerTenantSchemaNotGlobal, "fisk has its OWN repo row with this repo_id — existence is per-tenant-schema" );
     }
 
     private static String writeMinimalVersion( TenantContext tenant, long repoKey, String nodePath )

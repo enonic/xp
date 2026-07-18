@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import com.enonic.nodb.engine.model.CommitRecord;
+import com.enonic.nodb.engine.model.RepoRef;
 
 /**
  * COMMIT document equivalent (schema.sql {@code node_commit}). Unpartitioned, low volume
@@ -16,6 +17,13 @@ public final class CommitStore
 {
     private CommitStore()
     {
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link BranchStore#getByNodeId(Connection, RepoRef, String, String)}. */
+    public static void store( Connection connection, RepoRef repo, CommitRecord commit )
+        throws SQLException
+    {
+        store( connection, RepoKeys.resolve( connection, repo ), commit );
     }
 
     public static void store( Connection connection, long repoKey, CommitRecord commit )

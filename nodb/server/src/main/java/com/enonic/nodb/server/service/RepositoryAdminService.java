@@ -12,16 +12,23 @@ import com.enonic.nodb.engine.store.RepositoryLifecycle;
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.CreateRepositoryRequest;
 import com.enonic.nodb.proto.v1.DeleteRepositoryRequest;
+import com.enonic.nodb.proto.v1.ExistsResponse;
 import com.enonic.nodb.proto.v1.RepositoryAdminGrpc;
+import com.enonic.nodb.proto.v1.RepositoryExistsRequest;
 import com.enonic.nodb.server.auth.TenantAuthInterceptor;
 import com.enonic.nodb.server.auth.TenantPrincipal;
 
 /**
  * Management-plane {@code RepositoryAdmin} RPCs implemented this slice: CreateRepository,
- * DeleteRepository. Operator scope is required — enforced by {@link
- * TenantAuthInterceptor}, not re-checked here. {@code ListRepositories`/`Stats} are left
- * un-overridden (UNIMPLEMENTED via the generated base class), same convention as {@link
- * NodeStoreService}.
+ * DeleteRepository. Operator scope is required for those two — enforced by {@link
+ * TenantAuthInterceptor}, not re-checked here. Phase 1 Gate A adds {@code
+ * RepositoryExists} (spi.RepositoryStorageAdmin#indexExists): deliberately NOT added to
+ * {@link TenantAuthInterceptor}'s operator-only method set — it is a read-only existence
+ * probe scoped to the caller's own tenant schema regardless of scope (same "read/exists =
+ * data-plane-safe, create/delete = operator-only" split {@link NodeStoreService} already
+ * draws between its point-lookup RPCs and none of which are mutating admin ops). {@code
+ * ListRepositories`/`Stats} are left un-overridden (UNIMPLEMENTED via the generated base
+ * class), same convention as {@link NodeStoreService}.
  *
  * <p>Repo lifecycle is DDL (partition create/drop): tenant roles deliberately hold DML-only
  * grants (see {@link com.enonic.nodb.engine.TenantProvisioner}), so these run under {@link
@@ -81,6 +88,23 @@ public final class RepositoryAdminService
                 return null;
             } );
             responseObserver.onNext( Ack.newBuilder().build() );
+            responseObserver.onCompleted();
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( NodeStoreService.mapSqlException( e ) );
+        }
+    }
+
+    @Override
+    public void repositoryExists( RepositoryExistsRequest request, StreamObserver<ExistsResponse> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        try
+        {
+            boolean exists = Tx.inTenantTx( dataSource, principal.tenantContext(),
+                                             connection -> RepositoryLifecycle.repositoryExists( connection, request.getRepoId() ) );
+            responseObserver.onNext( ExistsResponse.newBuilder().setExists( exists ).build() );
             responseObserver.onCompleted();
         }
         catch ( SQLException e )
