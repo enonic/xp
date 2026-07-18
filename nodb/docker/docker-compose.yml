@@ -1,0 +1,44 @@
+# NoDB data plane — self-hosted / development topology (draft).
+# Production cloud topology: same images, cells managed by the control plane.
+services:
+  nodb:
+    image: enonic/nodb:latest
+    ports: ["7700:7700"]
+    environment:
+      NODB_PG_URL: jdbc:postgresql://postgres:5432/nodb
+      NODB_PG_USER: nodb
+      NODB_PG_PASSWORD: nodb
+      NODB_OPENSEARCH_URL: http://opensearch:9200
+      NODB_S3_ENDPOINT: http://minio:9000
+      NODB_S3_BUCKET: nodb-binaries
+    depends_on: [postgres, opensearch, minio]
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: nodb
+      POSTGRES_USER: nodb
+      POSTGRES_PASSWORD: nodb
+    command: postgres -c default_toast_compression=lz4
+    volumes: [pgdata:/var/lib/postgresql/data]
+
+  opensearch:
+    image: opensearchproject/opensearch:3
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+    volumes: [osdata:/usr/share/opensearch/data]
+
+  minio:
+    image: minio/minio:latest
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: nodb
+      MINIO_ROOT_PASSWORD: nodb-secret
+    volumes: [miniodata:/data]
+
+volumes:
+  pgdata:
+  osdata:
+  miniodata:

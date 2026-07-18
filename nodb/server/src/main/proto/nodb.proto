@@ -1,0 +1,235 @@
+// COPY of nodb/proto/nodb.proto (the canonical source of truth for the wire protocol).
+// Duplicated here only because the protobuf Gradle plugin requires .proto sources under
+// <module>/src/main/proto/. Keep this file in sync with nodb/proto/nodb.proto by hand;
+// do not edit the two independently.
+// NoDB wire protocol, v0.1 draft — mirrors the storage SPI 1:1.
+// This is XP's ONLY path to NoDB in every topology (dev, self-hosted, cloud).
+// Tenant identity comes from the auth channel (mTLS / bearer token), never from the payload.
+syntax = "proto3";
+
+package enonic.nodb.v1;
+option java_package = "com.enonic.nodb.proto.v1";
+option java_multiple_files = true;
+
+service NodeStore {
+  // THE write path: version(s) + branch entrie(s) + commit + payloads, ONE transaction,
+  // one Ack/seq (risk register #1). Unchanged segments referenced by hash only —
+  // NEED_PAYLOAD lists unknown hashes for the client to inline and retry.
+  rpc WriteBatch (WriteBatchRequest) returns (WriteBatchResponse);
+  rpc StoreBranchEntry (StoreBranchEntryRequest) returns (Ack);
+  rpc DeleteBranchEntries (DeleteBranchEntriesRequest) returns (Ack);
+  rpc GetBranchEntry (GetBranchEntryRequest) returns (BranchEntry);
+  rpc GetBranchEntries (GetBranchEntriesRequest) returns (stream BranchEntry);
+  rpc GetChildren (GetChildrenRequest) returns (stream BranchEntry);
+  rpc StoreVersion (StoreVersionRequest) returns (Ack);
+  rpc GetVersion (GetVersionRequest) returns (Version);
+  rpc FindVersions (FindVersionsRequest) returns (stream Version);
+  rpc StoreCommit (StoreCommitRequest) returns (Ack);
+  rpc GetCommit (GetCommitRequest) returns (Commit);
+  rpc PutPayload (PutPayloadRequest) returns (PutPayloadResponse); // returns content hash
+  rpc GetPayload (GetPayloadRequest) returns (Payload);
+}
+
+service NodeSearch {
+  // Carries the serialized XP query AST; translation to the engine DSL is server-side
+  // (open question #1 in DESIGN.md — this is the preferred resolution).
+  rpc Search (SearchRequest) returns (SearchResult);
+  rpc AwaitRefresh (AwaitRefreshRequest) returns (Ack); // RefreshMode.SEARCH
+  rpc Reindex (ReindexRequest) returns (TaskHandle);
+}
+
+service RepositoryAdmin {
+  rpc CreateRepository (CreateRepositoryRequest) returns (Ack);
+  rpc DeleteRepository (DeleteRepositoryRequest) returns (Ack);
+  rpc ListRepositories (ListRepositoriesRequest) returns (stream RepositoryInfo);
+  rpc Stats (StatsRequest) returns (RepositoryStats);
+}
+
+// Committed-change stream per tenant (fed by the outbox). Runtimes subscribe for
+// cache invalidation (replaces the Hazelcast event bus for storage events); also what
+// makes external writers (CLI, console) safe while runtimes are live.
+service ChangeFeed {
+  rpc Watch (WatchRequest) returns (stream ChangeEvent);
+}
+
+// Management plane (operator scope required; runtime credentials are rejected):
+// RepositoryAdmin, Snapshots, and bulk transfer. Data-plane services above accept
+// runtime scope. Scope is a JWT claim; enforced by the auth interceptor per service.
+service BulkTransfer {
+  rpc DumpTenant (DumpRequest) returns (stream DumpChunk);
+  rpc LoadTenant (stream DumpChunk) returns (Ack);
+  rpc ExportBranch (ExportRequest) returns (stream ExportChunk);
+  rpc ImportBranch (stream ExportChunk) returns (Ack);
+}
+
+service Snapshots {
+  rpc Snapshot (SnapshotRequest) returns (SnapshotInfo);
+  rpc Restore (RestoreRequest) returns (Ack);
+  rpc List (ListSnapshotsRequest) returns (stream SnapshotInfo);
+  rpc Delete (DeleteSnapshotsRequest) returns (Ack);
+}
+
+// --- messages: field sets mirror nodb/spi Records.java / engine model records ---
+// Slice-1 step 5 implements: NodeStore.WriteBatch/GetBranchEntry/GetChildren/GetVersion/
+// PutPayload/GetPayload and RepositoryAdmin.CreateRepository/DeleteRepository. Their
+// request/response messages below are fully fleshed out. Every other message in this file
+// (NodeSearch, ChangeFeed, BulkTransfer, Snapshots, and the remaining NodeStore/
+// RepositoryAdmin RPCs such as StoreVersion/GetCommit/ListRepositories/Stats) is left as an
+// empty placeholder — those RPCs are not implemented this slice; grpc-java's generated
+// *ImplBase returns UNIMPLEMENTED for any method the server class does not override, so
+// leaving the messages empty and simply not overriding the method is sufficient (no need to
+// mark them explicitly). Tenant id is NEVER a field on any request message (DESIGN.md
+// §7.2): it comes only from the authenticated JWT, resolved server-side to a TenantContext.
+message Ack { uint64 outbox_seq = 1; } // callers pass this to AwaitRefresh for read-your-writes
+
+// BRANCH document equivalent — mirrors engine.model.BranchEntryRecord 1:1.
+message BranchEntry {
+  string branch = 1;
+  string node_id = 2;
+  string version_id = 3;
+  string node_path = 4;
+  int64 timestamp_millis = 5;
+}
+
+// VERSION document equivalent — mirrors engine.model.VersionRecord 1:1.
+message Version {
+  string version_id = 1;
+  string node_id = 2;
+  string node_path = 3;
+  int64 timestamp_millis = 4;
+  string node_data_hash = 5;
+  string index_config_hash = 6;
+  string acl_hash = 7;
+  repeated string binary_keys = 8;
+  string commit_id = 9;
+  map<string, string> attributes = 10;
+}
+
+// COMMIT document equivalent — mirrors engine.model.CommitRecord 1:1.
+message Commit {
+  string commit_id = 1;
+  string message = 2;
+  string committer = 3;
+  int64 timestamp_millis = 4;
+}
+
+message Payload {
+  string hash = 1;
+  bytes bytes = 2;
+}
+
+message SearchRequest {}
+message SearchResult {}
+message StoreBranchEntryRequest {}
+message DeleteBranchEntriesRequest {}
+
+// Lookup by node_id XOR node_path within (repo_id, branch); repo_id/branch always
+// required, exactly one of the oneof fields set.
+message GetBranchEntryRequest {
+  string repo_id = 1;
+  string branch = 2;
+  oneof by {
+    string node_id = 3;
+    string node_path = 4;
+  }
+}
+
+message GetBranchEntriesRequest {}
+
+// Children of parent_path, page-windowed (from/size — OFFSET/LIMIT, mirrors
+// engine.model.Page). size <= 0 is treated server-side as "use the default page size".
+message GetChildrenRequest {
+  string repo_id = 1;
+  string branch = 2;
+  string parent_path = 3;
+  int32 from = 4;
+  int32 size = 5;
+}
+
+message StoreVersionRequest {}
+
+// version_id alone: version ids are globally unique within a tenant (see
+// engine.store.VersionStore#get), so no repo/branch scoping is needed for the lookup.
+message GetVersionRequest {
+  string version_id = 1;
+}
+
+message FindVersionsRequest {}
+message StoreCommitRequest {}
+message GetCommitRequest {}
+
+message PutPayloadRequest {
+  bytes bytes = 1;
+}
+message PutPayloadResponse {
+  string hash = 1; // content hash of the stored (or already-deduped) payload
+}
+message GetPayloadRequest {
+  string hash = 1;
+}
+message AwaitRefreshRequest {}
+message ReindexRequest {}
+message TaskHandle {}
+
+// Either an inline byte payload (new content) or a bare hash the caller believes NoDB
+// already has (dedup — avoids re-sending bytes for content stored by an earlier write).
+message PayloadRef {
+  oneof ref {
+    bytes inline = 1;
+    string hash = 2;
+  }
+}
+
+message CreateRepositoryRequest {
+  string repo_id = 1;
+  string settings_json = 2; // optional; empty/absent -> engine default '{}'
+}
+message DeleteRepositoryRequest {
+  string repo_id = 1;
+}
+message ListRepositoriesRequest {}
+message RepositoryInfo {}
+message StatsRequest {}
+message RepositoryStats {}
+// Thin events: identity + metadata, never payloads or diffs (notify-then-fetch).
+// At-least-once, seq-ordered; consumers dedup by seq and resume via cursor.
+message WatchRequest {
+  uint64 cursor = 1;            // resume after this outbox seq; 0 = from now
+  string consumer_id = 2;       // registered cursor (trim protection, resync detection)
+  repeated Scope scopes = 3;    // optional repo/branch/path-prefix filters
+}
+message Scope { string repo = 1; string branch = 2; string path_prefix = 3; }
+message ChangeEvent {
+  uint64 seq = 1;
+  string repo = 2;
+  string branch = 3;
+  string node_id = 4;
+  string version_id = 5;        // enough for conflict detection + lazy fetch
+  string node_path = 6;
+  string prev_path = 7;         // set on moves
+  string op = 8;                // CREATED | UPDATED | DELETED | MOVED | PUSHED | ...
+  int64  ts_millis = 9;
+}
+// versions + branch entries + optional commit + payloads (inline bytes for new hashes,
+// hash-only for known content). repo_id is the only addressing field a caller supplies —
+// tenant comes from the token, never from this message.
+message WriteBatchRequest {
+  string repo_id = 1;
+  repeated PayloadRef payloads = 2;
+  repeated Version versions = 3;
+  repeated BranchEntry branch_entries = 4;
+  Commit commit = 5; // optional (proto3 message-field presence; absent -> no commit row)
+}
+message WriteBatchResponse {
+  uint64 outbox_seq = 1;                // for awaitRefresh (read-your-writes)
+  repeated string need_payload = 2;     // unknown hashes — inline and retry
+}
+message DumpRequest {}
+message DumpChunk {}
+message ExportRequest {}
+message ExportChunk {}
+message SnapshotRequest {}
+message RestoreRequest {}
+message ListSnapshotsRequest {}
+message SnapshotInfo {}
+message DeleteSnapshotsRequest {}
