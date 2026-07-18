@@ -539,30 +539,28 @@ class NodbServerIntegrationTest
     // ---- 5. scope enforcement -------------------------------------------------------------
 
     @Test
-    void createRepositoryRequiresOperatorScope()
+    void repositoryLifecycleIsRuntimeScoped()
     {
+        // Design correction (Phase 1 gate B): repo lifecycle within a tenant is an
+        // ordinary RUNTIME operation in XP (content projects create repos from app
+        // code) — intra-tenant authz is the runtime's job (two-layer model). Operator
+        // scope guards TENANT-level ops (dumps/snapshots/bulk), none of which exist yet.
         String repoId = "repo-" + UUID.randomUUID();
 
-        StatusRuntimeException deniedForRuntime = assertThrows( StatusRuntimeException.class,
-                                                                  () -> repositoryAdmin( token( "acme", Scope.RUNTIME ) ).createRepository(
-                                                                      CreateRepositoryRequest.newBuilder().setRepoId( repoId ).build() ) );
-        assertEquals( Status.Code.PERMISSION_DENIED, deniedForRuntime.getStatus().getCode() );
-
-        Ack ack = repositoryAdmin( token( "acme", Scope.OPERATOR ) ).createRepository( CreateRepositoryRequest.newBuilder()
-                                                                                            .setRepoId( repoId )
-                                                                                            .build() );
+        Ack ack = repositoryAdmin( token( "acme", Scope.RUNTIME ) ).createRepository( CreateRepositoryRequest.newBuilder()
+                                                                                           .setRepoId( repoId )
+                                                                                           .build() );
         assertNotNull( ack );
 
-        StatusRuntimeException deniedDeleteForRuntime = assertThrows( StatusRuntimeException.class,
-                                                                        () -> repositoryAdmin( token( "acme", Scope.RUNTIME ) ).deleteRepository(
-                                                                            com.enonic.nodb.proto.v1.DeleteRepositoryRequest.newBuilder()
-                                                                                .setRepoId( repoId )
-                                                                                .build() ) );
-        assertEquals( Status.Code.PERMISSION_DENIED, deniedDeleteForRuntime.getStatus().getCode() );
+        // Operator scope remains equally valid on data/lifecycle RPCs.
+        StatusRuntimeException alreadyExists = assertThrows( StatusRuntimeException.class,
+                                                              () -> repositoryAdmin( token( "acme", Scope.OPERATOR ) ).createRepository(
+                                                                  CreateRepositoryRequest.newBuilder().setRepoId( repoId ).build() ) );
+        assertEquals( Status.Code.ALREADY_EXISTS, alreadyExists.getStatus().getCode() );
 
-        repositoryAdmin( token( "acme", Scope.OPERATOR ) ).deleteRepository( com.enonic.nodb.proto.v1.DeleteRepositoryRequest.newBuilder()
-                                                                                  .setRepoId( repoId )
-                                                                                  .build() );
+        repositoryAdmin( token( "acme", Scope.RUNTIME ) ).deleteRepository( com.enonic.nodb.proto.v1.DeleteRepositoryRequest.newBuilder()
+                                                                                 .setRepoId( repoId )
+                                                                                 .build() );
     }
 
     // ---- 6. Phase 1 Gate A: standalone per-op NodeStore RPCs -----------------------------

@@ -38,8 +38,15 @@ public final class TenantAuthInterceptor
      * Full gRPC method names ({@code <service>/<method>}) that require operator scope.
      * Everything else on a registered service accepts runtime or operator.
      */
-    private static final Set<String> MANAGEMENT_METHODS =
-        Set.of( "enonic.nodb.v1.RepositoryAdmin/CreateRepository", "enonic.nodb.v1.RepositoryAdmin/DeleteRepository" );
+    /**
+     * Design correction (Phase 1 gate B finding): repo create/delete are NOT here.
+     * In XP, repository lifecycle within a tenant is an ordinary RUNTIME operation
+     * (content projects create repos from app code); per the two-layer authz model the
+     * runtime governs intra-tenant concerns, and NoDB's operator scope guards
+     * TENANT-level operations only (provisioning, dumps, snapshots, bulk transfer —
+     * which populate this set when implemented).
+     */
+    private static final Set<String> MANAGEMENT_METHODS = Set.of();
 
     private final JwtVerifier jwtVerifier;
 

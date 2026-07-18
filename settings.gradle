@@ -58,6 +58,7 @@ include 'core:core-scheduler'
 include 'core:core-shared'
 include 'core:core-jsonschema'
 include 'core:core-storage-spi'
+include 'core:core-storage-nodb-client'
 
 include 'server:server-config'
 include 'server:server-deploy'

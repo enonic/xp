@@ -1,0 +1,93 @@
+// NoDB client (Phase 1 Gate B, nodb/BUILD-PHASE-1.md): implements the storage SPI
+// (core:core-storage-spi) over gRPC against a NoDB server. Vendors nodb/proto/nodb.proto
+// (src/main/proto/nodb.proto — kept in sync manually, see the header comment in that
+// file) and generates its own client stubs; no cross-build artifact dependency on the
+// separate nodb/ Gradle build in Phase 1.
+plugins {
+    id 'com.google.protobuf' version '0.10.0'
+}
+
+dependencies {
+    implementation project( ':core:core-api' )
+    implementation project( ':core:core-internal' )
+    implementation project( ':core:core-storage-spi' )
+
+    implementation libs.bundles.grpc.client
+    implementation libs.protobuf.java
+    compileOnly libs.javax.annotation.api
+    testCompileOnly libs.javax.annotation.api
+
+    testImplementation libs.grpc.inprocess
+}
+
+def protobufVersion = libs.versions.protobuf.get()
+def grpcVersion = libs.versions.grpc.get()
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
+}
+
+// gRPC/protobuf are notoriously OSGi-hostile (grpc-netty-shaded bundles a shaded Netty
+// under io.grpc.netty.shaded.*, protobuf-java ships as a plain non-OSGi jar). Rather than
+// fight Bundle-ClassPath wiring, this bundle uses the same "repackage as private packages"
+// technique as repack-elasticsearch/core-elasticsearch: the dependencies are on the
+// (runtime) buildpath bnd scans, and Private-Package copies their actual classes into this
+// bundle's jar. Every auto-detected import outside com.enonic.xp.* is optional rather than
+// hand-pinning version ranges for each transitive package (same idiom as
+// repack-elasticsearch) -- this is a self-contained bundle, not one that re-exports gRPC to
+// the rest of the framework. See the inline comments below for the one deliberate carve-out
+// (com.enonic.xp.* stays mandatory) and a known bnd wrinkle (a few harmless netty-shaded
+// jctools packages get auto-exported regardless of the Export-Package instruction below).
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    bundle {
+        bnd(
+            'Bundle-Name': 'Enonic XP Core - Storage NoDB Client',
+            '-nouses': 'true',
+            // This bundle exports nothing (it only registers SCR services -- see
+            // Provide-Capability). A handful of embedded netty-shaded/jctools
+            // package-info.class files carry their own baked-in
+            // org.osgi.annotation.bundle.Export bytecode annotation (carried over
+            // unchanged by netty's shading process) -- bnd honors that unconditionally
+            // and an all-negative Export-Package value (e.g. '!*') is treated as "no
+            // instruction given", NOT "export nothing", so it has no effect. A bogus
+            // placeholder package name is bnd's documented way to fully replace the
+            // default/annotation-driven export detection with an explicit (empty) list.
+            'Export-Package': 'com.enonic.xp.storage.nodb.internal.no_exports',
+            // com.enonic.xp.* is a hard, mandatory dependency (this bundle implements
+            // core-storage-spi's NodeStore/RepositoryStorageAdmin using core-api's
+            // Branch/RepositoryId/IndexType/Configuration types) -- listed first, WITHOUT
+            // resolution:=optional, so it isn't swept into the blanket optional catch-all
+            // below, which exists only for gRPC/Netty's own long tail of optional codec
+            // dependencies (brotli4j, zstd, lz4, bouncycastle, conscrypt, jboss-marshalling,
+            // etc. -- real for Netty in general, never exercised by this client) that this
+            // bundle deliberately does not embed (same idiom as repack-elasticsearch).
+            'Import-Package': 'com.enonic.xp.*,*;resolution:=optional',
+            // com.enonic.nodb.proto.v1.* (the generated stub classes) is NOT listed here:
+            // it's this project's own compiled output (src/main/proto -> generateProto),
+            // already included in the jar like any other project class -- listing it as a
+            // Private-Package instruction only produces a bnd "no such package on the
+            // classpath" warning, since that instruction is for embedding classes found on
+            // the *dependency* buildpath, not the project's own sourceSet output.
+            'Private-Package':
+                'io.grpc.*' + ',' +
+                'com.google.protobuf.*' + ',' +
+                'META-INF.services.*;-split-package:=merge-first'
+        )
+    }
+}

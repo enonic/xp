@@ -1,3 +1,8 @@
+// VENDORED COPY — synced from nodb/proto/nodb.proto (NoDB wire protocol v0.1 draft).
+// Do not edit independently: any change must originate in nodb/proto/nodb.proto and be
+// re-copied here (Phase 1 Gate B, BUILD-PHASE-1.md — no cross-build artifact publishing
+// in Phase 1, so this module vendors the .proto source and generates its own stubs).
+
 // NoDB wire protocol, v0.1 draft — mirrors the storage SPI 1:1.
 // This is XP's ONLY path to NoDB in every topology (dev, self-hosted, cloud).
 // Tenant identity comes from the auth channel (mTLS / bearer token), never from the payload.
@@ -65,10 +70,7 @@ service ChangeFeed {
   rpc Watch (WatchRequest) returns (stream ChangeEvent);
 }
 
-// Scope model (corrected, Phase 1 gate B): repository lifecycle (RepositoryAdmin) is
-// RUNTIME-scoped — in XP, repo create/delete are ordinary runtime operations (content
-// projects create repos from app code); intra-tenant authz is the runtime's job.
-// Operator scope guards TENANT-level operations (dump/load, snapshots) when implemented:
+// Management plane (operator scope required; runtime credentials are rejected):
 // RepositoryAdmin, Snapshots, and bulk transfer. Data-plane services above accept
 // runtime scope. Scope is a JWT claim; enforced by the auth interceptor per service.
 service BulkTransfer {
@@ -114,7 +116,7 @@ service Snapshots {
 //   GetVersion/GetCommit/GetPayload)                                            return @Nullable, not throw)
 // Missing/invalid/expired/wrong-audience bearer token          UNAUTHENTICATED  connection-level failure
 //   (TenantAuthInterceptor)                                                     (Gate B: fail fast, no retry)
-// Runtime-scope token calling a tenant-level (operator) RPC     PERMISSION_DENIED connection-level failure
+// Runtime-scope token calling an operator-only management      PERMISSION_DENIED connection-level failure
 //   RPC (CreateRepository/DeleteRepository today)
 // Any other SQLException (constraint violation, etc.)          INTERNAL         generic wrapped exception
 // ---------------------------------------------------------------------------------------

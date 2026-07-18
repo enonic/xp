@@ -23,9 +23,9 @@ import com.enonic.nodb.server.auth.TenantPrincipal;
  * DeleteRepository. Operator scope is required for those two — enforced by {@link
  * TenantAuthInterceptor}, not re-checked here. Phase 1 Gate A adds {@code
  * RepositoryExists} (spi.RepositoryStorageAdmin#indexExists): deliberately NOT added to
- * {@link TenantAuthInterceptor}'s operator-only method set — it is a read-only existence
+ * {@link TenantAuthInterceptor}'s scope rules — it is a read-only existence
  * probe scoped to the caller's own tenant schema regardless of scope (same "read/exists =
- * data-plane-safe, create/delete = operator-only" split {@link NodeStoreService} already
+ * data-plane" reasoning {@link NodeStoreService} already
  * draws between its point-lookup RPCs and none of which are mutating admin ops). {@code
  * ListRepositories`/`Stats} are left un-overridden (UNIMPLEMENTED via the generated base
  * class), same convention as {@link NodeStoreService}.
