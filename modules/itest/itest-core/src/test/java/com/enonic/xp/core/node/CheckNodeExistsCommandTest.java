@@ -28,7 +28,7 @@ class CheckNodeExistsCommandTest
     void exists()
     {
         final Node node = CreateNodeCommand.create()
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -37,7 +37,7 @@ class CheckNodeExistsCommandTest
             .execute();
 
         Assertions.assertTrue( CheckNodeExistsCommand.create()
-                                   .repositoryStorageAdmin( this.indexServiceInternal )
+                                   .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
                                    .searchService( this.searchService )
                                    .storageService( this.storageService )
@@ -51,7 +51,7 @@ class CheckNodeExistsCommandTest
     void not_exists()
     {
         assertFalse( CheckNodeExistsCommand.create()
-                         .repositoryStorageAdmin( this.indexServiceInternal )
+                         .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
                          .searchService( this.searchService )
                          .storageService( this.storageService )

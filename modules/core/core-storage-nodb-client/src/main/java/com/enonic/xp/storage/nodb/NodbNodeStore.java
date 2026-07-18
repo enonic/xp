@@ -19,6 +19,7 @@ import com.enonic.nodb.proto.v1.ExistsResponse;
 import com.enonic.nodb.proto.v1.GetBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
+import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
 import com.enonic.nodb.proto.v1.StoreBranchEntryRequest;
@@ -109,7 +110,7 @@ public class NodbNodeStore
             .setBranch( branch.getValue() )
             .setNodeId( nodeId )
             .build();
-        return joinBranchEntry( NodbStatusMapper.pointGet( () -> client.nodeStore().getBranchEntry( request ) ) );
+        return toSpiBranchEntryOrNull( NodbStatusMapper.pointGet( () -> client.nodeStore().getBranchEntry( request ) ) );
     }
 
     @Override
@@ -126,7 +127,7 @@ public class NodbNodeStore
             .setBranch( branch.getValue() )
             .setNodePath( nodePath )
             .build();
-        return joinBranchEntry( NodbStatusMapper.pointGet( () -> client.nodeStore().getBranchEntry( request ) ) );
+        return toSpiBranchEntryOrNull( NodbStatusMapper.pointGet( () -> client.nodeStore().getBranchEntry( request ) ) );
     }
 
     @Override
@@ -140,14 +141,14 @@ public class NodbNodeStore
             .addAllNodeIds( nodeIds )
             .build();
         final List<BranchEntryRecord> result = new ArrayList<>();
-        // No batched multi-get for the joined Version rows (FindVersions was not built in
-        // Gate A -- see nodb.proto's Phase 1 method list): one GetVersion call per entry.
-        // Known Phase 1 perf cost (N+1), documented rather than silently eaten.
-        // Streaming RPCs surface StatusRuntimeException while iterating, not on the initial
-        // call, so the whole consumption (call + iteration) is wrapped as one unit.
+        // Server-side JOIN (BranchStore.JOINED_SELECT) already fetches node_version's hash
+        // columns in the same query -- no follow-up GetVersion per entry (Phase 1 Gate C
+        // N+1 fix, BUILD-PHASE-1.md). Streaming RPCs surface StatusRuntimeException while
+        // iterating, not on the initial call, so the whole consumption (call + iteration)
+        // is wrapped as one unit.
         NodbStatusMapper.repoScopedVoid( () -> {
             final Iterator<com.enonic.nodb.proto.v1.BranchEntry> entries = client.nodeStore().getBranchEntries( request );
-            entries.forEachRemaining( entry -> result.add( joinBranchEntry( entry ) ) );
+            entries.forEachRemaining( entry -> result.add( RecordMapper.toSpiBranchEntry( entry ) ) );
         } );
         return result;
     }
@@ -162,6 +163,32 @@ public class NodbNodeStore
         NodbStatusMapper.repoScopedVoid( () -> {
             final Iterator<BranchRef> refs = client.nodeStore().getBranchesWithNode( request );
             refs.forEachRemaining( ref -> result.add( Branch.from( ref.getBranch() ) ) );
+        } );
+        return result;
+    }
+
+    /**
+     * Overrides the SPI default (see {@link NodeStore#getChildren}'s javadoc): NoDB's
+     * {@code branch_entry.parent_path} generated column serves this directly (server-side
+     * {@code BranchStore.getChildren}), the storage-side capability the ES backend does not
+     * have -- Phase 1 Gate C's SPI addition.
+     */
+    @Override
+    public List<BranchEntryRecord> getChildren( final RepositoryId repositoryId, final Branch branch, final String parentPath,
+                                                 final int from, final int size, final @Nullable SearchPreference searchPreference )
+    {
+        final GetChildrenRequest request = GetChildrenRequest.newBuilder()
+            .setRepoId( repositoryId.toString() )
+            .setBranch( branch.getValue() )
+            .setParentPath( parentPath )
+            .setFrom( from )
+            .setSize( size )
+            .build();
+        final List<BranchEntryRecord> result = new ArrayList<>();
+        // See getBranchEntries above: streaming RPC, wrap call + iteration together.
+        NodbStatusMapper.repoScopedVoid( () -> {
+            final Iterator<com.enonic.nodb.proto.v1.BranchEntry> entries = client.nodeStore().getChildren( request );
+            entries.forEachRemaining( entry -> result.add( RecordMapper.toSpiBranchEntry( entry ) ) );
         } );
         return result;
     }
@@ -218,26 +245,14 @@ public class NodbNodeStore
     }
 
     /**
-     * {@code proto.BranchEntry} doesn't carry {@code nodeDataHash}/{@code indexConfigHash}/
-     * {@code aclHash} (see {@link RecordMapper}'s class javadoc) -- this joins in the
-     * {@code node_version} row via a follow-up {@code GetVersion} call to recover them. A
-     * documented extra round trip per branch-entry read, not an oversight.
+     * {@code proto.BranchEntry} now carries the joined {@code node_data_hash}/
+     * {@code index_config_hash}/{@code acl_hash} fields directly (server-side JOIN against
+     * {@code node_version} -- Phase 1 Gate C N+1 fix, BUILD-PHASE-1.md), so this is a plain
+     * null-safe mapping, not a follow-up round trip.
      */
     @Nullable
-    private BranchEntryRecord joinBranchEntry( final com.enonic.nodb.proto.v1.@Nullable BranchEntry entry )
+    private static BranchEntryRecord toSpiBranchEntryOrNull( final com.enonic.nodb.proto.v1.@Nullable BranchEntry entry )
     {
-        if ( entry == null )
-        {
-            return null;
-        }
-        final GetVersionRequest versionRequest = GetVersionRequest.newBuilder().setVersionId( entry.getVersionId() ).build();
-        final Version version = NodbStatusMapper.pointGet( () -> client.nodeStore().getVersion( versionRequest ) );
-        if ( version == null )
-        {
-            throw new NodbClientException(
-                "branch_entry for node [" + entry.getNodeId() + "] references version [" + entry.getVersionId() +
-                    "] which no longer exists" );
-        }
-        return RecordMapper.toSpiBranchEntry( entry, version );
+        return entry == null ? null : RecordMapper.toSpiBranchEntry( entry );
     }
 }

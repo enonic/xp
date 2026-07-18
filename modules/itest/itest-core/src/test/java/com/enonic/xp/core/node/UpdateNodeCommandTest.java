@@ -97,7 +97,7 @@ class UpdateNodeCommandTest
         final ByteSource binary = GetBinaryCommand.create().
             nodeId( updatedNode.id() ).
             binaryReference( binaryRef ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).

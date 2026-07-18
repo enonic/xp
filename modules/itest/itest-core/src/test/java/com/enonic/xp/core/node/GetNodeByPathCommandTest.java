@@ -111,7 +111,7 @@ class GetNodeByPathCommandTest
     {
         return GetNodeByPathCommand.create().
             nodePath( nodePath ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).

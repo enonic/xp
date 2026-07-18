@@ -36,7 +36,7 @@ class GetNodesByIsCommandTest
 
         final Nodes nodes = GetNodesByIdsCommand.create().
             ids( NodeIds.from( "1", "2" ) ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -55,7 +55,7 @@ class GetNodesByIsCommandTest
 
         final Nodes nodes = GetNodesByIdsCommand.create().
             ids( NodeIds.from( "1", "2", "3" ) ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -88,7 +88,7 @@ class GetNodesByIsCommandTest
 
         return CreateNodeCommand.create().
             params( params.build() ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).

@@ -177,7 +177,8 @@ class EngineStoreTest
         } );
 
         // upsert: re-store child1 with a new version id, same PK (repo_key, branch, node_id)
-        String updatedVersionId = writeMinimalVersion( acme, repoKey, "/child-a" );
+        VersionRecord updatedVersion = writeMinimalVersionRecord( acme, repoKey, "/child-a" );
+        String updatedVersionId = updatedVersion.versionId();
         Tx.inTenantTx( dataSource, acme, connection -> {
             BranchStore.store( connection, repoKey,
                                 new BranchEntryRecord( "draft", child1NodeId, updatedVersionId, "/child-a", Instant.now() ) );
@@ -188,6 +189,11 @@ class EngineStoreTest
             Tx.inTenantTx( dataSource, acme, connection -> BranchStore.getByPath( connection, repoKey, "draft", "/child-a" ) );
         assertEquals( updatedVersionId, byPath.versionId() );
         assertEquals( child1NodeId, byPath.nodeId() );
+        // Phase 1 Gate C N+1 fix: getByPath's JOINED_SELECT must recover the node_version
+        // hash columns in the same query -- no separate GetVersion call needed by callers.
+        assertEquals( updatedVersion.nodeDataHash(), byPath.nodeDataHash() );
+        assertEquals( updatedVersion.indexConfigHash(), byPath.indexConfigHash() );
+        assertEquals( updatedVersion.aclHash(), byPath.aclHash() );
 
         List<BranchEntryRecord> children = Tx.inTenantTx( dataSource, acme,
                                                            connection -> BranchStore.getChildren( connection, repoKey, "draft", "/",
@@ -195,6 +201,10 @@ class EngineStoreTest
         assertEquals( 2, children.size() );
         assertEquals( "/child-a", children.get( 0 ).nodePath() );
         assertEquals( "/child-b", children.get( 1 ).nodePath() );
+        // Same JOIN applies to getChildren.
+        assertEquals( updatedVersion.nodeDataHash(), children.get( 0 ).nodeDataHash() );
+        assertEquals( updatedVersion.indexConfigHash(), children.get( 0 ).indexConfigHash() );
+        assertEquals( updatedVersion.aclHash(), children.get( 0 ).aclHash() );
 
         Tx.inTenantTx( dataSource, acme, connection -> {
             BranchStore.delete( connection, repoKey, "draft", List.of( child2NodeId ) );
@@ -261,7 +271,8 @@ class EngineStoreTest
         TenantContext acme = new TenantContext( "acme" );
         long repoKey = createRepo( acme, "multiget-repo-" + UUID.randomUUID() );
 
-        String versionId1 = writeMinimalVersion( acme, repoKey, "/m1" );
+        VersionRecord version1 = writeMinimalVersionRecord( acme, repoKey, "/m1" );
+        String versionId1 = version1.versionId();
         String versionId2 = writeMinimalVersion( acme, repoKey, "/m2" );
         String nodeId1 = UUID.randomUUID().toString();
         String nodeId2 = UUID.randomUUID().toString();
@@ -279,6 +290,13 @@ class EngineStoreTest
                                                                                                            missingNodeId ) ) );
         assertEquals( 2, found.size(), "the missing id must simply be absent, not an error" );
         assertEquals( Set.of( nodeId1, nodeId2 ), found.stream().map( BranchEntryRecord::nodeId ).collect( Collectors.toSet() ) );
+        // Phase 1 Gate C N+1 fix: getByNodeIds' JOINED_SELECT must recover each entry's
+        // node_version hash columns in the same query, per entry -- not just for a single get.
+        BranchEntryRecord entry1 =
+            found.stream().filter( e -> e.nodeId().equals( nodeId1 ) ).findFirst().orElseThrow();
+        assertEquals( version1.nodeDataHash(), entry1.nodeDataHash() );
+        assertEquals( version1.indexConfigHash(), entry1.indexConfigHash() );
+        assertEquals( version1.aclHash(), entry1.aclHash() );
 
         List<BranchEntryRecord> empty =
             Tx.inTenantTx( dataSource, acme, connection -> BranchStore.getByNodeIds( connection, repoKey, "master", List.of() ) );
@@ -321,7 +339,8 @@ class EngineStoreTest
     {
         TenantContext acme = new TenantContext( "acme" );
         long repoKey = createRepo( acme, "auto-vivify-repo-" + UUID.randomUUID() );
-        String versionId = writeMinimalVersion( acme, repoKey, "/x" );
+        VersionRecord version = writeMinimalVersionRecord( acme, repoKey, "/x" );
+        String versionId = version.versionId();
         String nodeId = UUID.randomUUID().toString();
 
         // No RepositoryLifecycle.createBranch call for "never-seen" — branch_entry's FK to
@@ -335,6 +354,11 @@ class EngineStoreTest
             Tx.inTenantTx( dataSource, acme, connection -> BranchStore.getByNodeId( connection, repoKey, "never-seen", nodeId ) );
         assertNotNull( fetched, "first write to an unseen branch must succeed without a prior explicit branch-create call" );
         assertEquals( "never-seen", fetched.branch() );
+        // Phase 1 Gate C N+1 fix: getByNodeId's JOINED_SELECT must recover the node_version
+        // hash columns in the same query.
+        assertEquals( version.nodeDataHash(), fetched.nodeDataHash() );
+        assertEquals( version.indexConfigHash(), fetched.indexConfigHash() );
+        assertEquals( version.aclHash(), fetched.aclHash() );
     }
 
     @Test
@@ -452,6 +476,17 @@ class EngineStoreTest
     private static String writeMinimalVersion( TenantContext tenant, long repoKey, String nodePath )
         throws SQLException
     {
+        return writeMinimalVersionRecord( tenant, repoKey, nodePath ).versionId();
+    }
+
+    /**
+     * Same as {@link #writeMinimalVersion} but returns the full {@link VersionRecord} so
+     * callers can assert the branch-entry read-side JOIN (BranchStore.JOINED_SELECT, Phase 1
+     * Gate C N+1 fix) actually recovers the same hash values that were stored.
+     */
+    private static VersionRecord writeMinimalVersionRecord( TenantContext tenant, long repoKey, String nodePath )
+        throws SQLException
+    {
         return Tx.inTenantTx( dataSource, tenant, connection -> {
             String dataHash = PayloadStore.putPayload( connection, ( "data-" + UUID.randomUUID() ).getBytes( StandardCharsets.UTF_8 ) );
             String indexHash =
@@ -461,7 +496,7 @@ class EngineStoreTest
             VersionRecord version = new VersionRecord( UUID.randomUUID().toString(), UUID.randomUUID().toString(), nodePath,
                                                         Instant.now(), dataHash, indexHash, aclHash, List.of(), null, Map.of() );
             VersionStore.store( connection, repoKey, version );
-            return version.versionId();
+            return version;
         } );
     }
 }

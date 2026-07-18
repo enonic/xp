@@ -15,6 +15,10 @@ guava = "33.6.0-jre"
 grpc = "1.82.2"
 protobuf = "4.35.1"
 javax-annotation = "1.3.2"
+postgresql = "42.7.4"
+hikaricp = "6.2.1"
+testcontainers = "1.20.4"
+nodb-java-jwt = "4.6.0"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
@@ -179,7 +183,21 @@ grpc-util = { module = "io.grpc:grpc-util", version.ref = "grpc" }
 protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
 javax-annotation-api = { module = "javax.annotation:javax.annotation-api", version.ref = "javax-annotation" }
 
+# Phase 1 Gate C (nodb/BUILD-PHASE-1.md): itest-core's testFixtures boots the REAL NoDB
+# server+engine (files() dependency on nodb/{engine,server}/build/libs/*.jar -- no
+# cross-build project dependency, matching nodb's own "no cross-build artifact
+# publishing in Phase 1" posture) to run the curated itest subset against it. These are
+# that server's runtime dependencies (versions kept in sync with
+# nodb/gradle/libs.versions.toml), needed on itest-core's testFixtures/test classpath
+# alongside the jars themselves.
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+nodb-java-jwt = { module = "com.auth0:java-jwt", version.ref = "nodb-java-jwt" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+
 [bundles]
 grpc-client = ["grpc-netty-shaded", "grpc-protobuf", "grpc-stub", "grpc-util"]
+nodb-testcontainers = ["testcontainers-postgresql", "testcontainers-junit-jupiter"]
 
 [plugins]

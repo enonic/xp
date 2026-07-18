@@ -64,6 +64,23 @@ public interface NodeStore
     /** Branches containing the given node — replaces the cross-branch storage-index query. */
     List<Branch> getBranchesWithNode( RepositoryId repositoryId, String nodeId );
 
+    /**
+     * Storage-side children listing, ordered by node path (Phase 1 Gate C,
+     * nodb/BUILD-PHASE-1.md's SPI&lt;-&gt;proto reconciliation table): NoDB's
+     * {@code branch_entry.parent_path} generated column serves this directly, unlike ES's
+     * storage index, which has never supported a path-prefix query (children listing has
+     * always gone through {@link NodeSearchIndex}/{@code FindNodeIdsByParentCommand} for
+     * every backend, ES included). Default method throws: only a backend whose storage
+     * layer can actually answer this (nodb) overrides it. {@code parentPath} of {@code "/"}
+     * denotes children of the root node.
+     */
+    default List<BranchEntryRecord> getChildren( RepositoryId repositoryId, Branch branch, String parentPath, int from, int size,
+                                                   @Nullable SearchPreference searchPreference )
+    {
+        throw new UnsupportedOperationException(
+            "getChildren is not supported by this NodeStore implementation; children listing goes through NodeSearchIndex instead (see this method's javadoc)" );
+    }
+
     // --- versions (VERSION document equivalent) ---
 
     void storeVersion( RepositoryId repositoryId, VersionRecord version );

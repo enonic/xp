@@ -42,7 +42,7 @@ class GetBinaryCommandTest
         final ByteSource myImage = GetBinaryCommand.create().
             nodeId( node.id() ).
             binaryReference( imageRef ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).

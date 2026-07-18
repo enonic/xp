@@ -20,6 +20,24 @@ import com.enonic.nodb.engine.model.RepoRef;
  */
 public final class BranchStore
 {
+    /**
+     * Shared read-side projection: every {@code branch_entry} read joins {@code node_version}
+     * ON {@code (repo_key, version_id)} (the FK already declared in schema.sql) to recover
+     * {@code node_data_hash}/{@code index_config_hash}/{@code acl_hash} in the same query --
+     * the Phase 1 Gate C N+1 fix (BUILD-PHASE-1.md): these three columns live only in
+     * {@code node_version}, not {@code branch_entry}, but the XP SPI's BranchEntryRecord (and
+     * now proto.BranchEntry) carry them, so a single JOIN replaces what used to be a
+     * follow-up {@code GetVersion} call per branch-entry read. The join is a plain inner
+     * join, not a LEFT JOIN: the FK guarantees exactly one matching {@code node_version} row
+     * for every {@code branch_entry} row, and all three hash columns are NOT NULL there.
+     */
+    private static final String JOINED_SELECT = """
+        SELECT be.branch, be.node_id, be.version_id, be.node_path, be.ts,
+               nv.node_data_hash, nv.index_config_hash, nv.acl_hash
+        FROM branch_entry be
+        JOIN node_version nv ON nv.repo_key = be.repo_key AND nv.version_id = be.version_id
+        """;
+
     private BranchStore()
     {
     }
@@ -96,9 +114,8 @@ public final class BranchStore
     public static BranchEntryRecord getByNodeId( Connection connection, long repoKey, String branch, String nodeId )
         throws SQLException
     {
-        try (PreparedStatement statement = connection.prepareStatement( """
-            SELECT branch, node_id, version_id, node_path, ts FROM branch_entry
-            WHERE repo_key = ? AND branch = ? AND node_id = ?
+        try (PreparedStatement statement = connection.prepareStatement( JOINED_SELECT + """
+            WHERE be.repo_key = ? AND be.branch = ? AND be.node_id = ?
             """ ))
         {
             statement.setLong( 1, repoKey );
@@ -158,9 +175,8 @@ public final class BranchStore
         {
             return List.of();
         }
-        try (PreparedStatement statement = connection.prepareStatement( """
-            SELECT branch, node_id, version_id, node_path, ts FROM branch_entry
-            WHERE repo_key = ? AND branch = ? AND node_id = ANY(?)
+        try (PreparedStatement statement = connection.prepareStatement( JOINED_SELECT + """
+            WHERE be.repo_key = ? AND be.branch = ? AND be.node_id = ANY(?)
             """ ))
         {
             statement.setLong( 1, repoKey );
@@ -219,9 +235,8 @@ public final class BranchStore
     public static BranchEntryRecord getByPath( Connection connection, long repoKey, String branch, String nodePath )
         throws SQLException
     {
-        try (PreparedStatement statement = connection.prepareStatement( """
-            SELECT branch, node_id, version_id, node_path, ts FROM branch_entry
-            WHERE repo_key = ? AND branch = ? AND node_path = ?
+        try (PreparedStatement statement = connection.prepareStatement( JOINED_SELECT + """
+            WHERE be.repo_key = ? AND be.branch = ? AND be.node_path = ?
             """ ))
         {
             statement.setLong( 1, repoKey );
@@ -252,10 +267,9 @@ public final class BranchStore
         throws SQLException
     {
         String parentPathKey = "/".equals( parentPath ) ? "" : parentPath;
-        try (PreparedStatement statement = connection.prepareStatement( """
-            SELECT branch, node_id, version_id, node_path, ts FROM branch_entry
-            WHERE repo_key = ? AND branch = ? AND parent_path = ?
-            ORDER BY node_path
+        try (PreparedStatement statement = connection.prepareStatement( JOINED_SELECT + """
+            WHERE be.repo_key = ? AND be.branch = ? AND be.parent_path = ?
+            ORDER BY be.node_path
             OFFSET ? LIMIT ?
             """ ))
         {
@@ -300,11 +314,13 @@ public final class BranchStore
         }
     }
 
+    /** Maps a row from {@link #JOINED_SELECT} -- includes the joined node_version hash columns. */
     private static BranchEntryRecord map( ResultSet resultSet )
         throws SQLException
     {
         return new BranchEntryRecord( resultSet.getString( "branch" ), resultSet.getString( "node_id" ),
                                        resultSet.getString( "version_id" ), resultSet.getString( "node_path" ),
-                                       resultSet.getTimestamp( "ts" ).toInstant() );
+                                       resultSet.getTimestamp( "ts" ).toInstant(), resultSet.getString( "node_data_hash" ),
+                                       resultSet.getString( "index_config_hash" ), resultSet.getString( "acl_hash" ) );
     }
 }

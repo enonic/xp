@@ -44,9 +44,16 @@ CREATE TABLE node_version (
     node_id           text NOT NULL,
     node_path         text NOT NULL,
     ts                timestamptz NOT NULL,
-    node_data_hash    text NOT NULL REFERENCES payload (hash),
-    index_config_hash text NOT NULL REFERENCES payload (hash),
-    acl_hash          text NOT NULL REFERENCES payload (hash),
+    -- NOT FK-enforced against payload(hash) (Phase 1 correction, BUILD-PHASE-1.md Gate C):
+    -- these three columns are content-hash REFERENCES, not necessarily rows in THIS
+    -- tenant's payload table -- nodb's own writers (WriteBatch/bench) do populate payload
+    -- via PutPayload first, but the Phase 1 XP integration keeps node data/index-config/ACL
+    -- payloads on XP's existing BlobStore (file/S3) per design (a NoDB-backed BlobStore
+    -- provider is the stretch gate), so hybrid-mode version writes carry hash values that
+    -- were never inserted into this table. An FK here would reject every such write.
+    node_data_hash    text NOT NULL,
+    index_config_hash text NOT NULL,
+    acl_hash          text NOT NULL,
     binary_keys       text[] NOT NULL DEFAULT '{}',  -- S3 blob keys (binaries stay in object store)
     commit_id         text,
     attributes        jsonb,                          -- {k,v} attribute list

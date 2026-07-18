@@ -1,5 +1,8 @@
 package com.enonic.xp.storage.nodb;
 
+import java.util.Comparator;
+import java.util.Map;
+
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
@@ -14,6 +17,7 @@ import com.enonic.nodb.proto.v1.ExistsResponse;
 import com.enonic.nodb.proto.v1.GetBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
+import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
@@ -27,6 +31,14 @@ import com.enonic.nodb.proto.v1.Version;
  * enough of nodb.proto's documented status contract (repo-scoped NOT_FOUND, point-get
  * NOT_FOUND) to exercise {@link NodbNodeStore}'s status mapping -- see
  * {@link FakeNodbState}'s javadoc for why this is a stand-in rather than the real engine.
+ * <p>
+ * Read methods ({@link #getBranchEntry}/{@link #getBranchEntries}) reproduce
+ * {@code BranchStore}'s server-side JOIN against {@code node_version} (Phase 1 Gate C N+1
+ * fix, BUILD-PHASE-1.md) by looking up the entry's version in {@link FakeNodbState#versions}
+ * at read time and stamping the hash fields onto the returned {@code BranchEntry} -- the
+ * real server never trusts whatever hash fields happen to be on the stored row, and neither
+ * does this stub, so a test that only ever calls {@code storeBranchEntry} still gets the
+ * same joined-hash behavior on read.
  */
 final class StubNodeStoreService
     extends NodeStoreGrpc.NodeStoreImplBase
@@ -96,7 +108,7 @@ final class StubNodeStoreService
             responseObserver.onError( Status.NOT_FOUND.withDescription( "No such branch entry" ).asRuntimeException() );
             return;
         }
-        responseObserver.onNext( entry );
+        responseObserver.onNext( joinHashes( entry ) );
         responseObserver.onCompleted();
     }
 
@@ -112,10 +124,68 @@ final class StubNodeStoreService
             final BranchEntry entry = state.branchEntriesById.get( FakeNodbState.entryKey( request.getRepoId(), request.getBranch(), nodeId ) );
             if ( entry != null )
             {
-                responseObserver.onNext( entry );
+                responseObserver.onNext( joinHashes( entry ) );
             }
         }
         responseObserver.onCompleted();
+    }
+
+    /** See class javadoc: reproduces BranchStore's read-side JOIN against node_version. */
+    private BranchEntry joinHashes( final BranchEntry entry )
+    {
+        final Version version = state.versions.get( entry.getVersionId() );
+        if ( version == null )
+        {
+            // Mirrors the real engine's FK guarantee not holding here only if a test builds
+            // an inconsistent fixture directly; fail loudly rather than silently return a
+            // BranchEntry with empty hash fields.
+            throw new IllegalStateException( "branch_entry references version [" + entry.getVersionId() + "] not present in fake state" );
+        }
+        final BranchEntry.Builder builder = entry.toBuilder().setNodeDataHash( version.getNodeDataHash() );
+        if ( !version.getIndexConfigHash().isEmpty() )
+        {
+            builder.setIndexConfigHash( version.getIndexConfigHash() );
+        }
+        if ( !version.getAclHash().isEmpty() )
+        {
+            builder.setAclHash( version.getAclHash() );
+        }
+        return builder.build();
+    }
+
+    @Override
+    public void getChildren( final GetChildrenRequest request, final StreamObserver<BranchEntry> responseObserver )
+    {
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        // Mirrors the real engine's parent_path generated column: "/" itself has no
+        // parent-path key (never matches, root is never its own child); direct children of
+        // root key on "" (regexp-stripping "/child" from "/child" leaves "").
+        final String parentPathKey = "/".equals( request.getParentPath() ) ? "" : request.getParentPath();
+        final int size = request.getSize() > 0 ? request.getSize() : Integer.MAX_VALUE;
+        state.branchEntriesById.entrySet()
+            .stream()
+            .filter( e -> e.getKey().startsWith( request.getRepoId() + "|" + request.getBranch() + "|" ) )
+            .map( Map.Entry::getValue )
+            .filter( entry -> parentPathKey.equals( parentPath( entry.getNodePath() ) ) )
+            .sorted( Comparator.comparing( BranchEntry::getNodePath ) )
+            .skip( request.getFrom() )
+            .limit( size )
+            .forEach( entry -> responseObserver.onNext( joinHashes( entry ) ) );
+        responseObserver.onCompleted();
+    }
+
+    /** Same convention as schema.sql's generated column: null for root itself, "" for root's direct children. */
+    private static String parentPath( final String nodePath )
+    {
+        if ( "/".equals( nodePath ) )
+        {
+            return null;
+        }
+        final int lastSlash = nodePath.lastIndexOf( '/' );
+        return nodePath.substring( 0, lastSlash );
     }
 
     @Override

@@ -412,3 +412,160 @@ not a protocol gap like `getChildren`. `WriteService.forkBranch` (bulk copy) rem
 NoDB-native capability with no current XP caller; it may become useful later for
 DESIGN.md §5's roadmap "ephemeral branches" feature, but nothing in Phase 1's scope
 needs it exposed over the wire.
+
+---
+
+## Gate C results (2026-07-18)
+
+### Prerequisite: branch-entry N+1 fix
+
+`proto.BranchEntry` gained `node_data_hash`/`index_config_hash`/`acl_hash` (fields 6-8,
+all three proto copies: `nodb/proto/nodb.proto`, `nodb/server/src/main/proto/nodb.proto`,
+`modules/core/core-storage-nodb-client/src/main/proto/nodb.proto`). Server:
+`BranchStore.JOINED_SELECT` (new shared constant) joins `node_version` ON
+`(repo_key, version_id)` in every read method (`getByNodeId`/`getByPath`/`getByNodeIds`/
+`getChildren`) — one SQL statement, no extra RPC. `BranchEntryRecord` (engine model)
+gained the three fields with a 5-arg write-path constructor kept for backward compatibility
+(hash fields stay `null`, irrelevant to `store()`/`delete()`). Client:
+`NodbNodeStore.joinBranchEntry`'s follow-up `GetVersion` call is gone; `RecordMapper.toSpiBranchEntry`
+now maps the wire message directly. Tests: `EngineStoreTest` extended (4 tests now assert
+the joined hashes); `StubNodeStoreService`/`NodbNodeStoreTest` (client-side) updated to
+reproduce the same JOIN semantics in the fake.
+
+### Genuine schema gap found and fixed: `node_version`'s payload FK
+
+While running real node writes through nodb in hybrid mode, every write failed with a
+foreign-key violation: `node_version.node_data_hash/index_config_hash/acl_hash` were
+declared `REFERENCES payload (hash)`, but Phase 1 scope constraint #3 keeps those payloads
+on XP's existing BlobStore, never nodb's own `payload` table — nodb's own writers
+(WriteBatch/bench) populate `payload` first, but the XP integration never does. Fixed by
+dropping the FK (kept `NOT NULL`, columns remain plain content-hash references) in both
+`nodb/schema/schema.sql` and the one applied migration,
+`nodb/engine/src/main/resources/nodb/migrations/tenant/001_init.sql` (edited directly, not
+a new migration file — pre-release, no tenants provisioned anywhere yet). Verified
+`cd nodb && ../gradlew build` still green after the relaxation (WriteBatchTest/EngineStoreTest
+still populate real payload rows correctly; the FK was never load-bearing for them, only a
+now-removed extra guarantee).
+
+### Fixture mechanism
+
+`modules/itest/itest-core/src/testFixtures/java/com/enonic/xp/core/nodb/`:
+`NodbTestCluster` (JVM-wide singleton, lazy-started only when `-Dxp.itest.storage=nodb`
+is set: `postgres:17` testcontainer + real `NodbServer` on a loopback ephemeral port,
+mirroring `nodb/bench`'s `BenchEnvironment` minus its native client) and `NodbTenant`
+(one provisioned tenant's `NodeStore`/`RepositoryStorageAdmin`, backed by the real gate-B
+client classes constructed directly — `new NodbStorageClient(); client.activate(Map.of(...))`
+— no test-only client subclass needed). `AbstractNodeTest` branches on
+`NodbTestCluster.isEnabled()`: default path untouched; nodb path swaps `nodeStore` and a
+new `repositoryStorageAdmin` field (previously every command builder used
+`this.indexServiceInternal` directly for this role — retrofitted 13 existing itest-core
+test files plus `AbstractNodeTest` itself to go through the new field so nodb mode actually
+takes effect for them). `NodeSearchIndexImpl`/ES stays completely untouched (hybrid mode).
+
+**Dependency approach**: `itest-core/build.gradle` `testFixturesImplementation
+fileTree(...)` on `nodb/{engine,server}/build/libs/*.jar` (files() on already-built jars,
+no cross-build project dependency — worked on the first attempt, no dependency hell) plus
+`postgresql`/`hikaricp`/`nodb-java-jwt`/testcontainers entries added to
+`gradle/libs.versions.toml` (grpc/protobuf already matched between the two builds, reused
+as-is). A `checkNodbJarsPresent` task fails fast with a clear message if nodb wasn't built
+first.
+
+**Isolation choice**: one tenant (Postgres schema) PER TEST CLASS, memoized
+(`NodbTestCluster#tenantForClass`), not per JVM or per method. Per-method was tried first
+and found to violate an invariant `SystemRepoInitializer#isInitialized` depends on: it
+checks BOTH the storage side (would be fresh every method) AND the search side (ES, which
+correctly stays shared/persistent across nodb-tenant methods per hybrid-mode scope) — with
+per-method storage resets outpacing ES's own per-class-only reset, the second method's
+`bootstrap()` saw "search says system-repo exists, storage says it doesn't", attempted to
+recreate it, and failed with `RepositoryAlreadyExistsException` from the search-index half
+of `NodeRepositoryServiceImpl#create`. Per-class reuse keeps storage and search evolving at
+the same granularity, exactly like default (ES) mode. `freshTenant()` (always-fresh,
+unmemoized) remains available and is used by the cross-tenant test and by
+`RepositoryLifecycleStorageTest`'s round-trip test, both of which want tenants beyond the
+fixture's own.
+
+### SPI addition: `NodeStore#getChildren`
+
+Gate 0 flagged this as the single highest-leverage SPI gap (children listing had no
+storage-side path on any backend). Added as a **default method** (throws
+`UnsupportedOperationException`, documented as nodb-only by design — ES's storage index
+has never supported a path-prefix query) so `ElasticsearchNodeStore` needs no change;
+`NodbNodeStore.getChildren` overrides it, wrapping the `GetChildren` RPC that was already
+fully implemented server-side since slice 1. Deliberately did NOT give
+`FindNodeIdsByParentCommand` a storage-side path for nodb (that would be new Gate A/B-scale
+production surface, out of this gate's risk budget) — see the new-tests section below for
+how the two originally-proposed tests were adapted around that decision.
+
+### The 5 new storage-only itest classes (`itest-core/src/test/java/com/enonic/xp/core/node/`)
+
+1. **`GetChildrenByPathTest`** — direct `NodeStore#getChildren` exercise (ordering,
+   pagination, nested-parent scoping). nodb-only by design (`Assumptions.assumeTrue`, not a
+   failure, in default mode) — the SPI method has no ES implementation to fall back to.
+2. **`FindNodeIdsByParentStorageTest`** — adapted from Gate 0's proposal (which assumed a
+   command-layer storage path that was deliberately not built, see above): asserts
+   `findByParent()` (search-based, unchanged, works in both modes) and, in nodb mode only,
+   additionally cross-checks that `NodeStore#getChildren` (storage-side) returns the SAME
+   node set as the search-side listing — a genuine hybrid-mode consistency check, not
+   strictly "storage-only" by Gate 0's own rubric since it also exercises search, but the
+   most valuable substitute for the scope decision above.
+3. **`CreateBranchStorageTest`** — first write into a never-seen branch via the real
+   `RepositoryServiceImpl#createBranch` → `NodeStorageServiceImpl#push` path (not the
+   engine directly, which `EngineStoreTest` already covers) succeeds without a prior
+   explicit branch-create call. Both modes.
+4. **`ExistsBranchEntryTest`** — `BranchServiceImpl#exists` (the one production caller of
+   `NodeStore#existsBranchEntry`) true/false round-trip; deletes via `NodeStore.deleteBranchEntries`
+   directly (not `DeleteNodeCommand`, which is search-dependent) to stay genuinely
+   storage-only. Both modes.
+5. **`RepositoryLifecycleStorageTest`** — `createIndex`/`indexExists`/`deleteIndex`
+   round-trip via `RepositoryStorageAdmin` only. Surfaced two pre-existing backend
+   asymmetries (documented in the class javadoc, asserted per-mode rather than papered
+   over): double-create throws `IndexException`-wrapping-`StorageIndexExistsException` on
+   ES vs. bare `StorageIndexExistsException` on nodb (both honor the SPI contract, checked
+   via a cause-chain-search helper); delete-of-unknown-repo is a silent no-op on ES
+   (`IndexServiceInternalImpl#doDeleteIndex` catches and logs) vs. a real
+   `StorageIndexNotFoundException` on nodb. Also hosts the cross-tenant spot check
+   (task 4.3): two independent tenants via `freshTenant()`, same external repo id created
+   in both, asserted mutually invisible — nodb mode only (`Assumptions.assumeTrue`; "tenant"
+   has no ES equivalent in this SPI).
+
+### Gate runs
+
+**Default mode, full suites** (`./gradlew :itest:itest-core:integrationTest
+:itest:itest-core-content:integrationTest`, run twice — once before and once after the
+tenant-isolation-granularity fix below, identical both times):
+- `itest-core`: **673 tests, 4 failed (all `FindNodesByQueryCommandTest_icuSort`, the known
+  pre-existing profile), 0 errors, 8 skipped** — matches "663 + the 10 new-test-class
+  methods, exactly 4 pre-existing icuSort failures" exactly.
+- `itest-core-content`: **385 tests, 0 failed, 0 errors, 4 skipped** — matches the known
+  all-green profile exactly.
+
+**nodb mode, curated subset** (16 curated + 5 new = 21 classes, 65 test methods total,
+`-Dxp.itest.storage=nodb` plus one `--tests` per class): **65 tests, 0 failed, 0 errors, 1
+skipped** (`RefreshCommandTest#refresh_non_existing_repository`, documented no-op-can't-throw
+asymmetry). All 21 classes green; cross-tenant isolation test passes.
+
+Property plumbing: `-Dxp.itest.storage=nodb` on the `gradlew` invocation is a Gradle-JVM
+system property, not automatically visible to the forked `Test` task JVM — `itest-core`'s
+`integrationTest` task now forwards it explicitly when present (same pattern
+`nodb/bench`/`nodb/engine`/`nodb/server` use for their own Docker-socket env vars), plus
+carries the identical testcontainers Docker-socket-detection + `api.version=1.44` block
+those builds already have (itest-core's forked JVM needed the same fix — docker-java
+defaults to a Docker API version modern engines reject).
+
+### Deviations from the work order
+
+- `FindNodeIdsByParentCommand` was NOT given an nodb storage-side path (Gate 0's proposal
+  for new test #2 assumed one); see the SPI-addition section above for the reasoning
+  (production command-routing change judged out of this gate's risk budget). Test #2 was
+  adapted to still be valuable and dual-mode without it.
+- The `node_version` payload-FK schema fix (see above) was not anticipated by any prior
+  gate and required an nodb-side schema change beyond the branch-entry N+1 fix Task 1
+  scoped; flagged here rather than silently folded into "the N+1 fix."
+- Tenant isolation granularity changed from an initial per-method design to per-class
+  during this gate (see the fixture section) after the per-method version was empirically
+  found to break `SystemRepoInitializer`'s bootstrap idempotency check in nodb mode.
+
+### Blockers
+
+None outstanding. All gate-C acceptance criteria (subset green vs NoDB, full suites
+unchanged vs ES, both recorded here) are met.

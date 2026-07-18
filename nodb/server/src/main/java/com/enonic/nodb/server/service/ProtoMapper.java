@@ -60,13 +60,28 @@ final class ProtoMapper
 
     static BranchEntry fromEngineBranchEntry( com.enonic.nodb.engine.model.BranchEntryRecord r )
     {
-        return BranchEntry.newBuilder()
+        BranchEntry.Builder builder = BranchEntry.newBuilder()
             .setBranch( r.branch() )
             .setNodeId( r.nodeId() )
             .setVersionId( r.versionId() )
             .setNodePath( r.nodePath() )
-            .setTimestampMillis( r.timestamp().toEpochMilli() )
-            .build();
+            .setTimestampMillis( r.timestamp().toEpochMilli() );
+        // Populated on every read (BranchStore's JOINED_SELECT always fetches them -- the
+        // FK guarantees a matching node_version row); null only for records built via the
+        // write-side 5-arg BranchEntryRecord constructor, which never reaches this method.
+        if ( r.nodeDataHash() != null )
+        {
+            builder.setNodeDataHash( r.nodeDataHash() );
+        }
+        if ( r.indexConfigHash() != null )
+        {
+            builder.setIndexConfigHash( r.indexConfigHash() );
+        }
+        if ( r.aclHash() != null )
+        {
+            builder.setAclHash( r.aclHash() );
+        }
+        return builder.build();
     }
 
     static com.enonic.nodb.engine.model.CommitRecord toEngineCommit( Commit c )

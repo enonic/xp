@@ -148,12 +148,25 @@ message Ack {
 }
 
 // BRANCH document equivalent — mirrors engine.model.BranchEntryRecord 1:1.
+// node_data_hash/index_config_hash/acl_hash mirror the joined node_version row (Phase 1
+// Gate C N+1 fix, BUILD-PHASE-1.md): the branch_entry table itself does not store these
+// (only node_version does), but the XP SPI's BranchEntryRecord carries them (inherited
+// from the ES-era BRANCH document, which duplicated the fields) -- rather than requiring
+// clients to issue a follow-up GetVersion per read, the server joins node_version ON
+// (repo_key, version_id) and populates them here in the same query. node_data_hash is
+// always present on reads (NOT NULL in node_version); index_config_hash/acl_hash follow
+// the same nullable-at-the-SPI-boundary convention as Version's own fields (empty wire
+// string <-> SPI null). Unset/empty on write-direction messages (StoreBranchEntryRequest)
+// -- the store path never reads these fields, only the read paths populate them.
 message BranchEntry {
   string branch = 1;
   string node_id = 2;
   string version_id = 3;
   string node_path = 4;
   int64 timestamp_millis = 5;
+  string node_data_hash = 6;
+  string index_config_hash = 7;
+  string acl_hash = 8;
 }
 
 // VERSION document equivalent — mirrors engine.model.VersionRecord 1:1.

@@ -18,6 +18,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
+import com.enonic.xp.core.nodb.NodbTenant;
+import com.enonic.xp.core.nodb.NodbTestCluster;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.home.HomeDirSupport;
@@ -92,6 +94,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.util.Reference;
 
 import static java.util.Objects.requireNonNullElse;
@@ -159,6 +162,35 @@ public abstract class AbstractNodeTest
     protected RepositoryEntryServiceImpl repositoryEntryService;
 
     protected RepositoryServiceImpl repositoryService;
+
+    /**
+     * Storage-side {@link RepositoryStorageAdmin}: {@code this.indexServiceInternal} in
+     * default (elasticsearch) mode, the gate-B nodb client in nodb mode -- see
+     * {@link NodbTestCluster}'s javadoc. Every command builder in this class uses this
+     * field, never {@code indexServiceInternal} directly, for the {@code RepositoryStorageAdmin}
+     * role.
+     */
+    protected RepositoryStorageAdmin repositoryStorageAdmin;
+
+    /**
+     * Non-null only in nodb mode -- one per concrete test CLASS, memoized and shared across
+     * that class's test methods by {@link NodbTestCluster#tenantForClass} (see its javadoc
+     * for why this is class-scoped rather than per-method), so it is deliberately NOT closed
+     * in {@link #tearDownAbstractNodeTest()}: closing it after the first method would break
+     * every subsequent method in the same class that reuses it. The underlying gRPC channel
+     * lives until the JVM exits (bounded by the test run itself).
+     */
+    private NodbTenant nodbTenant;
+
+    /**
+     * The raw storage-side {@link NodeStore} backing {@link #branchService}/
+     * {@link #versionService}/{@link #commitService} -- {@code ElasticsearchNodeStore} or
+     * the nodb gate-B client depending on mode. Exposed directly (rather than only via the
+     * three wrapper services above) for storage-only itests that need to call
+     * SPI methods with no default-mode equivalent, e.g. {@code NodeStore#getChildren}
+     * (Phase 1 Gate C).
+     */
+    protected NodeStore nodeStore;
 
     protected static final MemoryBlobStore BLOB_STORE = new MemoryBlobStore();
 
@@ -238,7 +270,26 @@ public abstract class AbstractNodeTest
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
+        this.indexServiceInternal = new IndexServiceInternalImpl( client );
+
+        // Phase 1 Gate C (nodb/BUILD-PHASE-1.md): xp.itest.storage=nodb swaps the STORAGE
+        // side (NodeStore + RepositoryStorageAdmin) for the gate-B gRPC client against a
+        // real NoDB server; the SEARCH side (nodeSearchIndex below) stays on embedded ES
+        // unconditionally -- hybrid mode is the Phase 1 scope, not a full nodb backend.
+        // this.indexServiceInternal remains the concrete ES admin regardless of mode: it is
+        // also used for IndexServiceInternal-typed params below (search-<repo> index
+        // lifecycle/health), which never move to nodb.
+        if ( NodbTestCluster.isEnabled() )
+        {
+            this.nodbTenant = NodbTestCluster.get().tenantForClass( this.getClass() );
+            this.nodeStore = nodbTenant.nodeStore();
+            this.repositoryStorageAdmin = nodbTenant.repositoryStorageAdmin();
+        }
+        else
+        {
+            this.nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
+            this.repositoryStorageAdmin = this.indexServiceInternal;
+        }
 
         this.branchService = new BranchServiceImpl( nodeStore );
 
@@ -254,12 +305,10 @@ public abstract class AbstractNodeTest
 
         this.searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
-        this.indexServiceInternal = new IndexServiceInternalImpl( client );
-
-        this.nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
+        this.nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex );
 
         this.repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher,
+            new RepositoryEntryServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, eventPublisher,
                                             binaryService );
 
         this.repositoryService =
@@ -267,11 +316,12 @@ public abstract class AbstractNodeTest
                                        () -> null );
 
         this.nodeService =
-            new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+            new NodeServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, eventPublisher,
+                                binaryService );
 
         this.indexService =
-            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao,
-                                  repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService,
+                                  nodeDao, repositoryEntryService );
 
         bootstrap();
 
@@ -282,6 +332,9 @@ public abstract class AbstractNodeTest
     void tearDownAbstractNodeTest()
     {
         ContextAccessorSupport.getInstance().set( initialContext );
+        // nodbTenant (nodb mode only) is intentionally NOT closed here -- it is shared
+        // across this class's test methods (NodbTestCluster#tenantForClass); see its
+        // field javadoc.
     }
 
     protected void bootstrap()
@@ -329,7 +382,7 @@ public abstract class AbstractNodeTest
 
         return CreateRootNodeCommand.create()
             .params( createRootParams )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -342,7 +395,7 @@ public abstract class AbstractNodeTest
         return PatchNodeCommand.create()
             .params( convertUpdateParams( updateNodeParams ) )
             .binaryService( this.binaryService )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -380,7 +433,7 @@ public abstract class AbstractNodeTest
     protected Node createNodeSkipVerification( final CreateNodeParams createNodeParams )
     {
         return CreateNodeCommand.create()
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.storageService )
@@ -394,7 +447,7 @@ public abstract class AbstractNodeTest
     protected Node createNode( final CreateNodeParams createNodeParams )
     {
         return CreateNodeCommand.create()
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.storageService )
@@ -407,7 +460,7 @@ public abstract class AbstractNodeTest
     protected Node getNodeById( final NodeId nodeId )
     {
         return GetNodeByIdCommand.create()
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -419,7 +472,7 @@ public abstract class AbstractNodeTest
     protected Node getNodeByPath( final NodePath nodePath )
     {
         return GetNodeByPathCommand.create()
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -432,7 +485,7 @@ public abstract class AbstractNodeTest
     {
         return FindNodeIdsByParentCommand.create()
             .parentPath( parentPath )
-            .repositoryStorageAdmin( indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -444,7 +497,7 @@ public abstract class AbstractNodeTest
     {
         return FindNodesByQueryCommand.create()
             .query( query )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -461,7 +514,7 @@ public abstract class AbstractNodeTest
     {
         return PushNodesCommand.create()
             .params( PushNodeParams.create().ids( NodeIds.from( nodeIds ) ).target( target ).build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -473,7 +526,7 @@ public abstract class AbstractNodeTest
     {
         final NodeBranchEntries result = DeleteNodeCommand.create()
             .nodeId( nodeId )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -487,7 +540,7 @@ public abstract class AbstractNodeTest
     {
         MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( nodeId ).newName( NodeName.from( newName ) ).build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -499,7 +552,7 @@ public abstract class AbstractNodeTest
     {
         return MoveNodeCommand.create()
             .params( MoveNodeParams.create().nodeId( nodeId ).newParentPath( newParent ).build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -555,7 +608,7 @@ public abstract class AbstractNodeTest
     {
         return GetNodeByIdCommand.create()
             .id( nodeId )
-            .repositoryStorageAdmin( indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( nodeSearchIndex )
             .storageService( storageService )
             .searchService( searchService )
@@ -568,7 +621,7 @@ public abstract class AbstractNodeTest
     {
         return GetNodesByIdsCommand.create()
             .ids( nodeIds )
-            .repositoryStorageAdmin( indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( nodeSearchIndex )
             .storageService( storageService )
             .searchService( searchService )

@@ -12,22 +12,22 @@ import com.enonic.xp.storage.spi.CommitRecord;
 import com.enonic.xp.storage.spi.VersionRecord;
 
 /**
- * Proto &lt;-&gt; storage-SPI record conversions. Two shapes need translation notes beyond
- * a mechanical field copy:
+ * Proto &lt;-&gt; storage-SPI record conversions. Shapes needing translation notes beyond a
+ * mechanical field copy:
  * <ul>
- *   <li>{@code proto.BranchEntry} mirrors {@code engine.model.BranchEntryRecord}, which is
- *   deliberately narrower than {@code spi.BranchEntryRecord}: it carries no
- *   {@code nodeDataHash}/{@code indexConfigHash}/{@code aclHash} (only {@code node_version}
- *   stores those). {@link #toSpiBranchEntry} therefore takes the joined {@code Version} as
- *   a second argument -- callers ({@link NodbNodeStore}) fetch it via a follow-up
- *   {@code GetVersion(version_id)} call. This is a real extra round trip per branch-entry
- *   read in Phase 1 (no batched join), a known and documented cost, not an oversight -- see
- *   {@code nodb/engine/.../model/BranchEntryRecord.java}'s own javadoc, which anticipated
- *   exactly this client-side join.</li>
+ *   <li>{@code proto.BranchEntry} now carries {@code node_data_hash}/{@code index_config_hash}/
+ *   {@code acl_hash} directly (Phase 1 Gate C N+1 fix, BUILD-PHASE-1.md): the server joins
+ *   {@code node_version} ON {@code (repo_key, version_id)} in the same query that reads
+ *   {@code branch_entry}, so {@link #toSpiBranchEntry} maps the wire message straight across
+ *   with no follow-up {@code GetVersion} call -- the extra round trip the Phase 1 Gate B
+ *   client used to need per branch-entry read is gone.</li>
  *   <li>{@code proto.Version.attributes} is string-only; see {@link AttributeCodec}.</li>
  *   <li>{@code proto.Commit}'s {@code message}/{@code committer} are plain proto3 strings
  *   (no field-presence tracking in this schema -- no {@code optional} keyword used), so an
- *   empty wire string is treated as the SPI's {@code null} and vice versa.</li>
+ *   empty wire string is treated as the SPI's {@code null} and vice versa. The same
+ *   empty-string/null convention applies to {@code BranchEntry.index_config_hash}/
+ *   {@code acl_hash} (nullable at the SPI boundary, same as {@code Version}'s own fields),
+ *   while {@code node_data_hash} is always non-empty on reads (NOT NULL in node_version).</li>
  * </ul>
  */
 final class RecordMapper
@@ -38,24 +38,30 @@ final class RecordMapper
 
     static com.enonic.nodb.proto.v1.BranchEntry toProtoBranchEntry( final Branch branch, final BranchEntryRecord record )
     {
-        return com.enonic.nodb.proto.v1.BranchEntry.newBuilder()
+        final com.enonic.nodb.proto.v1.BranchEntry.Builder builder = com.enonic.nodb.proto.v1.BranchEntry.newBuilder()
             .setBranch( branch.getValue() )
             .setNodeId( record.nodeId() )
             .setVersionId( record.versionId() )
             .setNodePath( record.nodePath() )
             .setTimestampMillis( record.timestamp().toEpochMilli() )
-            .build();
+            .setNodeDataHash( record.nodeDataHash() );
+        // Carried for fidelity with the SPI record (the server ignores these on the write
+        // path -- BranchStore.store()'s INSERT never touches them, only reads join them in).
+        if ( record.indexConfigHash() != null )
+        {
+            builder.setIndexConfigHash( record.indexConfigHash() );
+        }
+        if ( record.aclHash() != null )
+        {
+            builder.setAclHash( record.aclHash() );
+        }
+        return builder.build();
     }
 
-    /**
-     * @param version the {@code node_version} row for {@code entry.getVersionId()},
-     *                already fetched by the caller -- see class javadoc.
-     */
-    static BranchEntryRecord toSpiBranchEntry( final com.enonic.nodb.proto.v1.BranchEntry entry,
-                                                final com.enonic.nodb.proto.v1.Version version )
+    static BranchEntryRecord toSpiBranchEntry( final com.enonic.nodb.proto.v1.BranchEntry entry )
     {
-        return new BranchEntryRecord( entry.getNodeId(), entry.getNodePath(), entry.getVersionId(), version.getNodeDataHash(),
-                                       emptyToNull( version.getIndexConfigHash() ), emptyToNull( version.getAclHash() ),
+        return new BranchEntryRecord( entry.getNodeId(), entry.getNodePath(), entry.getVersionId(), entry.getNodeDataHash(),
+                                       emptyToNull( entry.getIndexConfigHash() ), emptyToNull( entry.getAclHash() ),
                                        Instant.ofEpochMilli( entry.getTimestampMillis() ) );
     }
 

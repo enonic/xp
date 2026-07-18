@@ -26,6 +26,7 @@ dependencies {
     testFixturesImplementation( testFixtures( project( ":core:core-api" ) ) )
     testFixturesImplementation( project( ":core:core-repo" ) )
     testFixturesImplementation( project( ":core:core-storage-spi" ) )
+    testFixturesImplementation( project( ":core:core-storage-nodb-client" ) )
     testFixturesImplementation( project( ":core:core-audit" ) )
     testFixturesImplementation( project( ":core:core-scheduler" ) )
     testFixturesImplementation( project( ":core:core-app" ) )
@@ -40,7 +41,46 @@ dependencies {
         exclude group: 'org.yaml', module: 'snakeyaml'
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
+
+    // Phase 1 Gate C (nodb/BUILD-PHASE-1.md): xp.itest.storage=nodb bootstraps the REAL
+    // nodb/server + nodb/engine (not a stub) so the curated storage-only itest subset runs
+    // against the actual NoDB wire protocol, not a fake. nodb/ is a standalone Gradle build
+    // (see nodb/settings.gradle.kts) with no cross-build project dependency in Phase 1, so
+    // this is a files() dependency on its already-built jars -- run `cd nodb && ../gradlew
+    // build` (or at least `../gradlew :engine:jar :server:jar`) before building this module
+    // in nodb mode; nodbJarsPresent below fails fast with a clear message if that step was
+    // skipped, rather than a confusing "class not found" deep in a test run.
+    testFixturesImplementation fileTree( dir: "$rootDir/nodb/engine/build/libs", include: '*.jar' )
+    testFixturesImplementation fileTree( dir: "$rootDir/nodb/server/build/libs", include: '*.jar' )
+    // Transitive runtime deps those two jars need on the classpath (versions kept in sync
+    // with nodb/gradle/libs.versions.toml -- see gradle/libs.versions.toml's own comment).
+    // grpc/protobuf are NOT re-added here: core-storage-nodb-client (already a testFixtures
+    // dependency above) already brings io.grpc/com.google.protobuf at the same versions
+    // nodb/server was built against.
+    testFixturesImplementation libs.postgresql
+    testFixturesImplementation libs.hikaricp
+    testFixturesImplementation libs.nodb.java.jwt
+    testFixturesImplementation libs.bundles.nodb.testcontainers
 }
+
+// See the testFixturesImplementation fileTree(...) comment above: this is a build-order
+// dependency across two independent Gradle builds (XP's root build here, nodb's standalone
+// build under nodb/), not something Gradle's task graph can express as a normal task
+// dependency -- fail with a clear instruction rather than let a missing jar surface as a
+// confusing compile/runtime "class not found" far from the actual cause.
+tasks.register( 'checkNodbJarsPresent' ) {
+    doFirst {
+        def engineJars = fileTree( dir: "$rootDir/nodb/engine/build/libs", include: '*.jar' )
+        def serverJars = fileTree( dir: "$rootDir/nodb/server/build/libs", include: '*.jar' )
+        if ( engineJars.isEmpty() || serverJars.isEmpty() )
+        {
+            throw new GradleException(
+                "nodb mode itests require nodb/engine and nodb/server to be built first: run `cd nodb && ../gradlew build` " +
+                    "(or `../gradlew :engine:jar :server:jar`) from the repository root, then re-run this task." )
+        }
+    }
+}
+compileTestFixturesJava.dependsOn( 'checkNodbJarsPresent' )
 
 tasks.register( 'integrationTest', Test ) {
     usesService( gradle.sharedServices.registrations.named( "integration" ).get().service )
@@ -56,6 +96,31 @@ tasks.register( 'integrationTest', Test ) {
 
     systemProperty 'java.awt.headless', 'true'
     maxHeapSize = '2G'
+
+    // Phase 1 Gate C (nodb/BUILD-PHASE-1.md): -Dxp.itest.storage=nodb on the gradlew
+    // invocation is a system property of the GRADLE JVM, not automatically visible to the
+    // forked test JVM this Test task spawns -- same forwarding pattern nodb/bench uses for
+    // its own system properties. Only set on the forked JVM when actually passed through,
+    // so a plain `integrationTest` run (no property) is byte-identical to before this gate.
+    if ( System.getProperty( 'xp.itest.storage' ) != null )
+    {
+        systemProperty 'xp.itest.storage', System.getProperty( 'xp.itest.storage' )
+    }
+
+    // Testcontainers Docker socket detection (nodb mode only -- NodbTestCluster's Postgres
+    // container). Identical to nodb/engine and nodb/server's own build.gradle.kts blocks:
+    // the Gradle daemon's environment is frozen at startup, so DOCKER_HOST on the gradlew
+    // invocation never reaches the forked test JVM; Docker Desktop on macOS puts the socket
+    // under the user home. docker-java 3.4.0 (via testcontainers 1.20.4) also defaults to
+    // Docker API 1.24, which modern engines (>=29, min API 1.40) reject with HTTP 400
+    // (BadRequestException) -- pin a supported version.
+    def dockerDesktopSock = file( "${System.getProperty( 'user.home' )}/.docker/run/docker.sock" )
+    if ( System.getenv( 'DOCKER_HOST' ) == null && dockerDesktopSock.exists() )
+    {
+        environment 'DOCKER_HOST', "unix://${dockerDesktopSock.absolutePath}"
+        environment 'TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE', '/var/run/docker.sock'
+    }
+    systemProperty 'api.version', '1.44'
 
     shouldRunAfter test
 }

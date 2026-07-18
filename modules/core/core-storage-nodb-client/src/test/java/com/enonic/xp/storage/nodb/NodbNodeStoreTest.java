@@ -167,6 +167,28 @@ class NodbNodeStoreTest
     }
 
     @Test
+    void getChildren_ordersByPathAndPaginates()
+    {
+        // Phase 1 Gate C SPI addition (NodeStore#getChildren, nodb-only): storage-side
+        // children listing via the server's parent_path JOIN, no NodeSearchIndex involved.
+        for ( final String name : List.of( "b", "a", "c" ) )
+        {
+            final VersionRecord v =
+                new VersionRecord( "v-" + name, "n-" + name, "/" + name, Instant.now(), "sha256:" + name, null, null, List.of(), null,
+                                    null );
+            nodeStore.storeVersion( REPO, v );
+            nodeStore.storeBranchEntry( REPO, BRANCH, new BranchEntryRecord( "n-" + name, "/" + name, "v-" + name, "sha256:" + name, null,
+                                                                              null, Instant.now() ) );
+        }
+
+        final List<BranchEntryRecord> children = nodeStore.getChildren( REPO, BRANCH, "/", 0, 10, null );
+        assertEquals( List.of( "/a", "/b", "/c" ), children.stream().map( BranchEntryRecord::nodePath ).toList() );
+
+        final List<BranchEntryRecord> page = nodeStore.getChildren( REPO, BRANCH, "/", 1, 1, null );
+        assertEquals( List.of( "/b" ), page.stream().map( BranchEntryRecord::nodePath ).toList() );
+    }
+
+    @Test
     void getBranchesWithNode_returnsAllBranchesContainingNode()
     {
         final VersionRecord v = new VersionRecord( "v5", "n5", "/e", Instant.now(), "sha256:e", null, null, List.of(), null, null );

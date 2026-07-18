@@ -43,7 +43,7 @@ class GetBinaryByVersionCommandTest
             nodeId( node.id() ).
             nodeVersionId( node.getNodeVersionId() ).
             binaryReference( imageRef ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             binaryService( this.binaryService ).
             storageService( this.storageService ).
