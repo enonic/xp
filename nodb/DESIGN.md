@@ -331,6 +331,12 @@ runtime-class traffic is prioritized, tooling-class traffic rate-limited per sub
 direct dev access can never move production latency. Attribution is end-to-end:
 issuance logged (who/when/scope), every operation stamped with subject + token id.
 
+**Scope-model correction (Phase 1, applied):** repository lifecycle (repo create/
+delete) is RUNTIME-scoped, not management-plane — in XP, repos are created/deleted by
+ordinary runtime operation (content projects from app code), and intra-tenant authz is
+the runtime's job under the two-layer model below. Operator scope guards TENANT-level
+operations only: provisioning, dump/load, snapshots, bulk transfer.
+
 **Two-layer authorization.** NoDB enforces the TENANT boundary only; intra-tenant
 authorization decomposes into four steps in three places: XP RESOLVES user→principal
 keys (id providers) and ASSERTS them on the request; NoDB mechanically APPLIES the ACL
@@ -476,7 +482,7 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 | Phase | Deliverable | Gate |
 |---|---|---|
 | **0** | SPI module in XP; current embedded-ES code refactored to implement it | Full XP test suite green, no behavior change; ships in an 8.x | **DONE 2026-07-18** — branch `storage-spi-phase0`, gates 0/A–D green (full build 729 tasks + both itest suites; only pre-existing icuSort failures). `core-storage-spi` created; StorageDao/SearchDao zero consumers outside the ES package; `storage.backend=elasticsearch` selection property in place; arch test enforces both boundary directions. Gate E (module extraction) deliberately deferred. |
-| **1** | NoDB engine + gRPC server + `nodb-client`; `NodeStore` on Postgres, binaries on S3; tenant model END-TO-END (token→TenantContext as the only entry, trivial dev issuer; schema-per-tenant + SET LOCAL ROLE) | Storage-level itests green against NoDB, run DUAL-TENANT with cross-tenant isolation assertions |
+| **1** | NoDB engine + gRPC server + `nodb-client`; `NodeStore` on Postgres, binaries on S3; tenant model END-TO-END (token→TenantContext as the only entry, trivial dev issuer; schema-per-tenant + SET LOCAL ROLE) | Storage-level itests green against NoDB, run DUAL-TENANT with cross-tenant isolation assertions | **DONE 2026-07-18** — branch `nodb-phase1` (on top of `storage-spi-phase0`): per-op RPC parity with the post-Phase-0 SPI; `core-storage-nodb-client` OSGi bundle (embedded gRPC) with config-selected backend, default boot byte-identical; XP storage itests green vs NoDB in hybrid mode (21 classes/65 tests; search stays on ES until Phase 2); live-stack boot smoke with restart-persistence proof (psql-verified). Payloads still on BlobStore (stretch deferred); S3 binary path deferred with it. |
 | **2** | OpenSearch index + translator port; outbox/indexer; refresh checkpoint | Full core-repo + itest suites green; golden-query corpus diffed against ES backend |
 | **3** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
 | **4** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
@@ -524,7 +530,14 @@ Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
 8. Subtree move: O(descendants) path rewrite in one tx; needs DEFERRABLE unique(path)
    and stated semantics.
 9. Referential backups expire with GC retention — enforce an explicit validity horizon.
-10. Loose ends: node_commit/audit not partition-scoped (repo drop not purely DDL);
+10. **Phase 2 pickups from Phase 1** (all deliberate, recorded in commits/BUILD-PHASE-1):
+    (a) per-op write RPCs emit NO outbox rows — the indexer must add emission or route
+    XP through batch entry points; (b) node_version's payload FK dropped for hybrid
+    mode — re-add enforcement (or write-time validation) when NoDB-native payload mode
+    lands; (c) bnd-embedded gRPC is fragile (services-file merging, runtime-scope
+    transitives) — add a CI boot-smoke test; (d) TenantBootstrapTool has no
+    control-plane equivalent (Phase 4).
+11. Loose ends: node_commit/audit not partition-scoped (repo drop not purely DDL);
     custom repo index definitions / putIndexMapping path dropped without replacement;
     INDEXING-vs-awaitRefresh semantics; schema-migration orchestration across N tenant
     schemas during rolling upgrades.
