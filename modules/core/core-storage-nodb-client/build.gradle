@@ -86,7 +86,27 @@ jar {
             // the *dependency* buildpath, not the project's own sourceSet output.
             'Private-Package':
                 'io.grpc.*' + ',' +
-                'com.google.protobuf.*' + ',' +
+                // grpc-core's ManagedChannelImpl calls io.perfmark.PerfMark directly (not
+                // an optional hook, despite perfmark-api being a <scope>runtime</scope>
+                // dependency in grpc-core's own POM -- Phase 1 Gate D finding:
+                // "ClassNotFoundException: io.perfmark.PerfMark", surfaced only once a real
+                // gRPC call executes, i.e. never at OSGi activation time).
+                'io.perfmark.*' + ',' +
+                // grpc-protobuf-lite (needed so io.grpc.protobuf.ProtoUtils's marshaller,
+                // which delegates to io.grpc.protobuf.lite.ProtoLiteUtils at the bytecode
+                // level, actually resolves -- Phase 1 Gate D finding, see the
+                // grpc-protobuf-lite entry in gradle/libs.versions.toml) transitively pulls
+                // in protobuf-javalite, which declares the same com.google.protobuf
+                // package as our own explicit full protobuf-java dependency (same class
+                // names throughout, since javalite is a subset API of the full runtime).
+                // Pin the split-package resolution explicitly rather than leave it to bnd's
+                // default (a warning-only, classpath-order-dependent choice) -- this bundle
+                // needs the FULL protobuf-java classes (Descriptors/reflection, used by the
+                // generated non-lite proto message classes), and protobuf-java is listed
+                // ahead of protobuf-javalite on this module's own dependency-declared
+                // classpath order, so merge-first keeps the full runtime's copy of every
+                // colliding class name.
+                'com.google.protobuf.*;-split-package:=merge-first' + ',' +
                 'META-INF.services.*;-split-package:=merge-first'
         )
     }

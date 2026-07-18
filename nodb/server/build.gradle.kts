@@ -3,6 +3,20 @@
 
 plugins {
     id("com.google.protobuf") version "0.10.0"
+    application
+}
+
+// `application` plugin so `../gradlew :server:installDist` produces a plain launcher
+// script (build/install/server/bin/server) with a fully-assembled lib/*.jar classpath --
+// same rationale as nodb/bench's own `application` usage. Added in Phase 1 Gate D
+// (nodb/BUILD-PHASE-1.md) to boot a real standalone NodbServer for the XP smoke test
+// without hand-assembling a classpath or fighting the Gradle daemon's frozen-env
+// behavior (see nodb/bench/build.gradle.kts's comment on that) -- the installed script
+// is a plain shell process, env vars just work. The same lib/ directory doubles as the
+// classpath for the other small mains in this module (NodbTokenTool, TenantBootstrapTool):
+// `java -cp build/install/server/lib/* <FQCN> ...`.
+application {
+    mainClass.set("com.enonic.nodb.server.NodbServer")
 }
 
 dependencies {

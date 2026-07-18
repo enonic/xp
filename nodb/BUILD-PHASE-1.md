@@ -569,3 +569,243 @@ defaults to a Docker API version modern engines reject).
 
 None outstanding. All gate-C acceptance criteria (subset green vs NoDB, full suites
 unchanged vs ES, both recorded here) are met.
+
+---
+
+## Gate D results (2026-07-18)
+
+Booted the real distro (`:runtime:installDist`) with `backend=nodb` against a live,
+from-scratch NoDB stack (postgres:17 container + a real standalone `NodbServer`) — no
+itest fixtures, no testcontainers-in-JUnit; every process is a plain OS process this gate
+started, watched, and stopped by hand. Three real bugs were found and fixed (client-bundle
+packaging, twice, and an OSGi bundle-stop-ordering bug); after all three, a full
+boot → CRUD-evidence → clean-shutdown → restart → identical-data cycle went green.
+
+### Stack recipe
+
+```bash
+# 1. Distro + nodb server, both plain `../gradlew` builds
+./gradlew :runtime:installDist                              # from repo root
+cd nodb && ../gradlew :server:installDist -x test            # produces build/install/server/{bin,lib}
+
+# 2. Postgres (fixed port so the recipe is copy-pasteable)
+docker run -d --name nodb-pg-gated -e POSTGRES_DB=nodb -e POSTGRES_USER=nodb \
+  -e POSTGRES_PASSWORD=nodb -p 55432:5432 postgres:17
+
+# 3. NodbServer (plain `java`, no gradle daemon in the loop -- see rough edges)
+cd nodb/server/build/install/server
+NODB_PG_URL="jdbc:postgresql://localhost:55432/nodb" NODB_PG_USER=nodb NODB_PG_PASSWORD=nodb \
+  NODB_PORT=7700 NODB_KEYS_DIR=<keys-dir> ./bin/server &
+
+# 4. Provision a tenant (NodbServer itself never does this -- see new tool below)
+java -cp lib/* com.enonic.nodb.server.tools.TenantBootstrapTool \
+  --tenant xpsmoke2 --pg-url jdbc:postgresql://localhost:55432/nodb --pg-user nodb --pg-password nodb
+
+# 5. Mint a RUNTIME-scope token (gate-B correction: repo lifecycle is a runtime op, see
+#    TenantAuthInterceptor's MANAGEMENT_METHODS = Set.of())
+NODB_KEYS_DIR=<keys-dir> java -cp lib/* com.enonic.nodb.server.auth.NodbTokenTool \
+  --tenant xpsmoke2 --scope runtime --subject xp-server --ttl-minutes 240 > token.txt
+
+# 6. XP_HOME config (com.enonic.xp.storage.nodb.cfg, uncommented from the shipped template)
+backend=nodb
+nodbEndpoint=localhost:7700
+nodbToken=<contents of token.txt>
+
+# 7. Boot (same JAVA_HOME=25 / server.sh pattern as gate 0)
+XP_HOME=<fresh home> JAVA_HOME=/opt/homebrew/opt/openjdk ./bin/server.sh
+```
+
+Added `nodb/server/src/main/java/com/enonic/nodb/server/tools/TenantBootstrapTool.java`: a
+one-off CLI wrapping `TenantProvisioner.provision` (schema/role/grants/migrations) against
+a running Postgres, since `NodbServer`/`RepositoryAdminService` never provision tenants
+themselves (`Tx.inTenantSchema` assumes the schema/role already exist — confirmed by
+reading `RepositoryAdminService.createRepository` and `Tx`). Previously only exercised
+in-process by `nodb/bench`'s `BenchEnvironment` and the itest fixture `NodbTestCluster`;
+this gate needed the equivalent against a real, separately-running `NodbServer`. Also
+added the `application` plugin to `nodb/server/build.gradle.kts` so
+`../gradlew :server:installDist` produces a plain launcher + classpath (`bin/server`,
+`lib/*.jar`) for both `NodbServer` and the small auxiliary mains (`NodbTokenTool`,
+`TenantBootstrapTool`) without hand-assembling a classpath or fighting the Gradle
+daemon's frozen-env behavior noted in `nodb/bench/build.gradle.kts`.
+
+### Bugs found and fixed (in the order hit)
+
+**1. Missing gRPC `NameResolverProvider`/`LoadBalancerProvider` ServiceLoader entries
+(client bundle packaging).** First boot attempt failed immediately on first RPC:
+`IllegalArgumentException: Address types of NameResolver 'unix' for 'unix:///localhost:7700'
+not supported by transport`. Root cause: `core-storage-nodb-client`'s bnd `Private-Package:
+META-INF.services.*;-split-package:=merge-first` instruction does not concatenate
+same-named `META-INF/services` resources contributed by more than one embedded dependency
+jar — it silently keeps only one jar's copy. `grpc-core` and `grpc-netty-shaded` both
+declare `io.grpc.NameResolverProvider`; the packaged bundle ended up with only
+netty-shaded's Unix-domain-socket resolver, dropping grpc-core's DNS resolver that
+`ManagedChannelBuilder#forAddress` needs. The same bug also silently dropped grpc-core's
+`PickFirstLoadBalancerProvider` from `io.grpc.LoadBalancerProvider` (grpc's own default
+load-balancing policy). Neither gap is reachable from unit/itest, which construct gRPC
+channels in-process and never touch `NameResolverRegistry`/OSGi classloading.
+  - **Fix**: added two hand-merged project resources —
+    `modules/core/core-storage-nodb-client/src/main/resources/META-INF/services/io.grpc.NameResolverProvider`
+    and `.../io.grpc.LoadBalancerProvider` — listing every provider FQCN from every
+    contributing jar. Confirmed the project's own `src/main/resources` copy wins over
+    bnd's lossy merge (inspected the packaged jar's `META-INF/services/*` after rebuild).
+
+**2. Missing `io.grpc.protobuf.lite`/`io.perfmark` classes (bnd buildpath vs. Gradle
+runtimeClasspath gap).** Second attempt failed with
+`NoClassDefFoundError: io/grpc/protobuf/lite/ProtoLiteUtils` (io.grpc.protobuf.ProtoUtils's
+marshaller delegates to it at the bytecode level); third attempt (after fixing #1's
+sibling) failed with `ClassNotFoundException: io.perfmark.PerfMark` (grpc-core's
+`ManagedChannelImpl` calls it directly on the first real RPC). Root cause: both
+`grpc-protobuf-lite` and `perfmark-api` are `<scope>runtime</scope>` transitive
+dependencies in their parents' POMs (`grpc-protobuf`, `grpc-core` respectively) — present
+on Gradle's `runtimeClasspath` but never on `compileClasspath`, and the `biz.aQute.bnd.builder`
+Gradle plugin's default buildpath (what `Private-Package: io.grpc.*` scans to decide what
+to embed) is `compileClasspath`. Classes that exist only at runtime are invisible to bnd
+and silently excluded from the self-contained bundle — a gap that, again, only a real OSGi
+boot exercising a real RPC call surfaces.
+  - **Fix**: declared both as explicit first-class dependencies (not just transitive) —
+    `gradle/libs.versions.toml` (`grpc-protobuf-lite`, `perfmark-api` catalog entries,
+    `grpc-client` bundle updated) and
+    `modules/core/core-storage-nodb-client/build.gradle` (added `io.perfmark.*` to
+    `Private-Package`; explicitly pinned `com.google.protobuf.*;-split-package:=merge-first`
+    once `grpc-protobuf-lite` pulled in `protobuf-javalite`, which declares the same
+    `com.google.protobuf` package as the full `protobuf-java` runtime this bundle actually
+    needs — confirmed post-fix build has zero bnd split-package warnings and the packaged
+    jar still contains `com.google.protobuf.Descriptors` (a full-runtime-only class)).
+
+With both fixed, `com.enonic.xp.core.storage.nodb.client` (bundle id 97 initially, id 65
+after fix #3 below) activated cleanly; all 4 system repos (`system-repo`, `system.app`,
+`system.auditlog`, `system.scheduler`) initialized end-to-end through the nodb client —
+storage side (repo/branch creation, root-node writes) went through NoDB/Postgres; search
+side (ES indices) stayed on embedded ES per hybrid mode.
+
+**3. Shutdown-order OSGi rebind spuriously re-runs `SystemRepoInitializer` against
+ElasticSearch, corrupting the *next* boot.** Discovered only by doing the actual
+restart-persistence check this gate requires. Symptom: on `SIGTERM`, the shutdown log
+showed `Initializing System-repo` and `creating index storage-system-repo` (an
+ElasticSearch-native index) seconds before the process exited — never seen during gate 0's
+default-mode boot. On the *next* boot with the same `XP_HOME`, the embedded ES cluster
+health got stuck permanently `RED` (`Cluster not healthy: timed out: true, state: RED` /
+`Waiting [1000ms] for System-repo to be initialized`, repeating forever) — a hard hang,
+not a cosmetic warning.
+  - **Root cause**: `core-storage-nodb-client` and `core-repo` were both registered at
+    runtime level 22 (`modules/runtime/build.gradle`). Felix stops same-level bundles in
+    decreasing bundle-id order; the client bundle (installed after core-repo, higher id)
+    stopped *first*. `RepositoryServiceActivator` (`core-repo`) holds **static**
+    `@Reference` bindings to `NodeStorageService`/`IndexServiceInternal` — when the
+    higher-ranked nodb-backed providers disappeared mid-shutdown, SCR tore the whole
+    activator down and reactivated it to rebind to the remaining (lower-ranked,
+    ES-backed) providers. Reactivation re-ran `SystemRepoInitializer`, which found the
+    ES-backed storage side never initialized (nodb mode never wrote to it) and created a
+    fresh `storage-system-repo` ES index + root node — whose shard never reached `STARTED`
+    before the process closed 130ms later, leaving the ES data directory with a shard the
+    *next* boot's recovery could never allocate, blocking cluster health forever.
+  - **Fix**: `modules/runtime/build.gradle` — moved `core-storage-nodb-client` from level
+    22 to level 10 (alongside its API-tier counterpart `core-storage-spi`). Bundles at a
+    lower level stop *later* during shutdown (framework level only descends to 10 after
+    everything at 22, including core-repo, has already stopped), so core-repo's static
+    references never see the nodb client disappear out from under them.
+  - **Verified the fix, not just the theory**: rebuilt, fresh `XP_HOME` + fresh tenant,
+    full boot → `SIGTERM` → grepped the shutdown-phase log for any `Initializing`/`creating
+    index`/`ERROR` line (none) → restarted with the *same* `XP_HOME` → clean, ~1.5s restart
+    (`Started Enonic XP` → `Listening on` ports, no re-init, no errors) vs. the ~45s+ (and
+    ultimately infinite) first-boot-shaped restart before the fix.
+
+### Verification evidence
+
+**Bundle/HTTP state** (`curl localhost:2609/osgi.bundle`, no auth): 115/115 bundles
+`ACTIVE` or `RESOLVED` (Tika fragments only) after the fix — zero non-conforming states.
+`com.enonic.xp.core.storage.nodb.client` `ACTIVE`. HTTP: portal `:8080` → `307`, management
+`:4848` → `401` (auth required, expected), status `:2609` → `200`.
+
+**Postgres is the real system of record** (`docker exec nodb-pg-gated psql -U nodb -d nodb`,
+tenant schema `xpsmoke2`), before vs. after the full boot:
+
+| | before boot | after boot |
+|---|---|---|
+| `repository` rows | 0 | 4 (`system-repo`, `system.app`, `system.auditlog`, `system.scheduler`) |
+| `branch` rows | 0 | 4 (`master` each) |
+| `branch_entry` rows (by repo_key 1-4) | 0,0,0,0 | 26, 1, 17, 3 |
+| `node_version` rows | 0 | 48 |
+
+Confirms XP's boot-time writes (repo/branch creation, root nodes, `/applications` and
+`/identity` folders, security roles) went through the `NodeStore`/`RepositoryStorageAdmin`
+SPI into NoDB/Postgres, not ES — ES's own indices (`search-*`, confirmed via
+`curl localhost:2609/index`) hold the mirrored search-side hybrid-mode state, never a
+`storage-*` ES index (except the one spurious one bug #3 created and fixed).
+
+**CRUD/API evidence**: full authenticated node CRUD via the management API was not
+exercised (no `xp.suPassword` bootstrap done this gate — flagged as WARN at boot,
+harmless) — per the work order's own allowance, boot-time writes (proven via psql above,
+the strongest possible evidence since it bypasses XP entirely) plus unauthenticated
+listing (`/osgi.bundle`, `/index` showing all 4 repos' search-side indices) are treated as
+sufficient for this gate's storage-path-correctness scope. Full authenticated CRUD is a
+reasonable Phase 2 follow-up if a deeper functional smoke is ever wanted.
+
+**Restart-persistence check** (same `XP_HOME`, same NoDB stack, `SIGTERM` then reboot):
+clean shutdown (no errors, no spurious reinitialization after fix #3), fast clean restart
+(no re-init, no errors, all 115 bundles healthy), and identical Postgres row counts
+before/after restart (4 / 4·4 / 26,1,17,3 / 48 / 48 — no drift, no duplication, no data
+loss). This is the proof that NoDB is the actual system of record for the storage side,
+not merely written-to-but-ignored.
+
+### Rough edges for Phase 2
+
+- **`Cluster not healthy: timed out: true, state: RED` ERROR-level log line, once per
+  repo, on every cold boot** (both default and nodb mode — confirmed this is not
+  nodb-specific, matches gate 0's default-mode boot log too). Self-resolves within the same
+  second and initialization proceeds; cosmetic but noisy at `ERROR` level for something
+  that isn't actually an error. Not introduced by this gate, just newly visible because
+  gate D's log-grepping is stricter than earlier gates'.
+- **`Failed to retrieve number of replicas from [storage-system-repo]` WARN, once per
+  repo, nodb mode only.** Expected and harmless (`RepositoryStorageAdmin#getIndexSettings`
+  is a documented no-op for nodb per the Gate 0 reconciliation inventory — `RepositoryCreator`
+  tolerates the empty/missing result gracefully, exactly as flagged as a thing "Gate B must
+  verify" back in Gate 0). Confirmed here with a real boot; worth silencing to `DEBUG` in
+  the nodb-mode path in a later phase so operators don't mistake it for a real problem.
+- **`TenantBootstrapTool` is a manual step with no server-side equivalent.** A production
+  nodb deployment needs *some* control-plane action to provision a tenant before XP's first
+  boot against it; this gate's tool is a reasonable dev/ops stand-in but isn't wired into
+  any bootstrap/onboarding flow. Worth a real decision in Phase 2/3 (DESIGN.md's "control
+  plane" section already anticipates this).
+- **The nodb client bundle's `Import-Package`/`Private-Package` third-party surface is
+  fragile to dependency graph changes.** Two of this gate's three bugs (NameResolverProvider
+  merge loss, protobuf-lite/perfmark compileClasspath gap) are the same underlying class of
+  problem — bnd's automatic embedding silently drops classes that are real, load-bearing,
+  runtime dependencies but aren't visible on whatever buildpath bnd scans. There is no
+  automated check that would catch a *third* occurrence of this pattern (e.g. a future grpc
+  version bump pulling in a new runtime-scope transitive dependency). Worth a lightweight
+  smoke test in CI that boots the nodb-mode distro and exercises one real RPC, rather than
+  relying on manual boots to catch this class of bug.
+- **`NodbStorageClient`'s class javadoc and `com.enonic.xp.storage.nodb.cfg`'s template
+  comment both still say the bearer token needs `operator` scope** for
+  `RepositoryAdmin.CreateRepository`/`DeleteRepository`. This is stale relative to gate B's
+  own scope-model correction (applied server-side in `TenantAuthInterceptor`:
+  `MANAGEMENT_METHODS = Set.of()`, repo lifecycle is RUNTIME-scoped) — this gate used a
+  RUNTIME-scope token successfully end-to-end, confirming the doc, not the code, is wrong.
+  Left as-is (out of this gate's scope to touch client documentation beyond what blocked
+  the smoke), but flagged here explicitly so Phase 2 doesn't propagate the stale guidance.
+
+### Deviations from the work order
+
+- Provisioning a tenant against a standalone `NodbServer` needed a new tool
+  (`TenantBootstrapTool`) not anticipated by the work order's "a small one-off Java class
+  ... is acceptable" allowance being exercised literally, rather than reusing
+  `NodbTokenTool` or an existing RPC (there is no RPC for this — confirmed by reading
+  `RepositoryAdminService`, which assumes the tenant schema already exists).
+- Bug #3 (bundle stop-ordering) was not anticipated by any prior gate's scope and required
+  a `modules/runtime/build.gradle` change beyond client/config territory the work order's
+  gate D bullet describes — flagged as its own fix rather than folded into "boot smoke",
+  since it's a genuine production-relevant correctness bug (data-directory-corrupting
+  restart hang), not a smoke-test artifact.
+- DESIGN.md §9/§10 updates mentioned in the original gate D bullet were not made in this
+  pass (time went to the three real bugs above instead, which the work order's own
+  "diagnose from the log, fix within 3 attempts, re-verify by full re-boot" allowance
+  covers); the actuals here in BUILD-PHASE-1.md are the authoritative record for Phase 2
+  to fold into DESIGN.md.
+
+### Stack fully stopped
+
+XP (`SIGTERM`, clean shutdown confirmed in log), `NodbServer` (`SIGTERM`), and the
+`nodb-pg-gated` postgres:17 container (`docker stop && docker rm`) were all stopped and
+removed at the end of this gate. Confirmed no residual listeners on 7700/8080/4848/2609/55432
+and no containers (`docker ps -a` empty).

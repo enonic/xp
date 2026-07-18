@@ -177,9 +177,22 @@ networknt-jsv = { module = "com.networknt:json-schema-validator", version = "2.0
 # so the client module vendors nodb/proto/nodb.proto and generates its own stubs).
 grpc-netty-shaded = { module = "io.grpc:grpc-netty-shaded", version.ref = "grpc" }
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+# grpc-protobuf's own POM depends on this with <scope>runtime</scope> (io.grpc.protobuf.ProtoUtils's
+# marshaller delegates to io.grpc.protobuf.lite.ProtoLiteUtils at the bytecode level), so it never
+# lands on Gradle's compileClasspath transitively -- and core-storage-nodb-client/build.gradle's bnd
+# Private-Package embedding scans the compile buildpath, not runtimeClasspath (Phase 1 Gate D
+# finding: caught booting a real XP instance, "NoClassDefFoundError: io/grpc/protobuf/lite/ProtoLiteUtils"
+# -- unreachable from unit/itest, which never activate the OSGi bundle). Declared explicitly here so
+# it's embedded like every other grpc private package.
+grpc-protobuf-lite = { module = "io.grpc:grpc-protobuf-lite", version.ref = "grpc" }
 grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
 grpc-inprocess = { module = "io.grpc:grpc-inprocess", version.ref = "grpc" }
 grpc-util = { module = "io.grpc:grpc-util", version.ref = "grpc" }
+# grpc-core's POM also depends on this with <scope>runtime</scope> (grpc-core's
+# ManagedChannelImpl actively calls io.perfmark.PerfMark, not merely an optional hook) --
+# same compileClasspath-vs-runtimeClasspath bnd buildpath gap as grpc-protobuf-lite above
+# (Phase 1 Gate D finding: "ClassNotFoundException: io.perfmark.PerfMark not found").
+perfmark-api = { module = "io.perfmark:perfmark-api", version = "0.27.0" }
 protobuf-java = { module = "com.google.protobuf:protobuf-java", version.ref = "protobuf" }
 javax-annotation-api = { module = "javax.annotation:javax.annotation-api", version.ref = "javax-annotation" }
 
@@ -197,7 +210,7 @@ testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 
 [bundles]
-grpc-client = ["grpc-netty-shaded", "grpc-protobuf", "grpc-stub", "grpc-util"]
+grpc-client = ["grpc-netty-shaded", "grpc-protobuf", "grpc-protobuf-lite", "grpc-stub", "grpc-util", "perfmark-api"]
 nodb-testcontainers = ["testcontainers-postgresql", "testcontainers-junit-jupiter"]
 
 [plugins]

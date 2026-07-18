@@ -111,6 +111,26 @@ addBundle( project( ':core:core-internal' ), 9 )
 // API bundles
 addBundle( project( ':core:core-api' ), 10 )
 addBundle( project( ':core:core-storage-spi' ), 10 )
+// Phase 1 Gate D finding (nodb/BUILD-PHASE-1.md): this bundle was originally registered
+// at level 22 (alongside core-repo, gate B). Both core-storage-nodb-client and core-repo
+// stop when the framework's start level descends past 22, and Felix stops same-level
+// bundles in decreasing bundle-id order -- since this bundle is installed after core-repo,
+// it has a higher id and so stops FIRST. When NodbStorageClient (and the NodbNodeStore/
+// NodbRepositoryStorageAdmin services depending on it) deactivate, core-repo's
+// RepositoryServiceActivator -- which holds STATIC @Reference bindings to NodeStorageService/
+// IndexServiceInternal -- gets torn down and reactivated to rebind to the remaining
+// (elasticsearch-backed, lower-ranked) providers, mid-shutdown. Reactivation re-runs
+// SystemRepoInitializer, which finds the ES-backed storage side never initialized (nodb mode
+// never wrote to it) and creates a brand-new "storage-system-repo" ES index + root node,
+// seconds before the process exits -- and on the NEXT boot, that shard (recovered but never
+// reached STARTED before the prior process closed) left the embedded ES cluster stuck RED
+// forever, hanging the restart indefinitely (observed booting a real instance in Gate D).
+// Fix: register this bundle at the same level as its API-tier counterpart
+// core-storage-spi (10, an "API bundles" level bundle stops LAST during shutdown, framework
+// level 10 only descends after every level-22 bundle -- including core-repo -- has already
+// stopped), so core-repo's static references never see this bundle disappear out from under
+// them during shutdown.
+addBundle( project( ':core:core-storage-nodb-client' ), 10 )
 addBundle( project( ':script:script-api' ), 10 )
 addBundle( project( ':portal:portal-api' ), 10 )
 addBundle( project( ':web:web-api' ), 10 )
@@ -126,7 +146,6 @@ addBundle( project( ':core:core-image' ), 22 )
 addBundle( project( ':core:core-export' ), 22 )
 addBundle( project( ':core:core-mail' ), 22 )
 addBundle( project( ':core:core-elasticsearch' ), 22 )
-addBundle( project( ':core:core-storage-nodb-client' ), 22 )
 addBundle( project( ':core:core-hazelcast' ), 22 )
 addBundle( project( ':core:core-content' ), 22 )
 addBundle( project( ':core:core-i18n' ), 22 )

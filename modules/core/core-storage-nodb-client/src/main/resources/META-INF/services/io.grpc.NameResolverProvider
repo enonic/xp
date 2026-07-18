@@ -1,0 +1,17 @@
+# Hand-merged ServiceLoader registration (Phase 1 Gate D finding, nodb/BUILD-PHASE-1.md):
+# bnd's Private-Package embedding of io.grpc.* (see this module's build.gradle,
+# '-split-package:=merge-first') does NOT concatenate same-named META-INF/services
+# resources contributed by more than one embedded dependency jar -- it silently keeps only
+# one jar's copy. grpc-core's grpc-core-*.jar and grpc-netty-shaded's
+# grpc-netty-shaded-*.jar both declare io.grpc.NameResolverProvider; without this explicit
+# merge, the packaged bundle ends up with ONLY the netty-shaded Unix Domain Socket
+# resolver, dropping grpc-core's DNS resolver entirely. Since
+# ManagedChannelBuilder#forAddress(host, port) resolves through the "dns" scheme by
+# default, that omission made every NodbStorageClient activation fail at runtime with
+# "Address types of NameResolver 'unix' for 'unix:///host:port' not supported by
+# transport" -- caught booting a real XP instance against nodb in Gate D (unreachable from
+# any unit/itest, which use in-process gRPC channels that never touch NameResolverRegistry).
+# This project resource is honored ahead of/instead of the lossy dependency-jar merge (see
+# jar{} in build.gradle for why the local sourceSet copy wins).
+io.grpc.internal.DnsNameResolverProvider
+io.grpc.netty.shaded.io.grpc.netty.UdsNameResolverProvider

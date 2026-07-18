@@ -1,0 +1,12 @@
+# Hand-merged ServiceLoader registration (Phase 1 Gate D finding) -- see the sibling
+# io.grpc.NameResolverProvider file in this directory for the full explanation of why this
+# is necessary: bnd's Private-Package embedding drops all but one embedded jar's copy of a
+# same-named META-INF/services resource. grpc-core and grpc-util both declare
+# io.grpc.LoadBalancerProvider; without this explicit merge the packaged bundle was missing
+# grpc-core's pick_first provider (io.grpc.internal.PickFirstLoadBalancerProvider) --
+# grpc's own default load-balancing policy when a channel has no service config, needed by
+# every NodbStorageClient channel.
+io.grpc.internal.PickFirstLoadBalancerProvider
+io.grpc.util.SecretRoundRobinLoadBalancerProvider$Provider
+io.grpc.util.OutlierDetectionLoadBalancerProvider
+io.grpc.util.RandomSubsettingLoadBalancerProvider

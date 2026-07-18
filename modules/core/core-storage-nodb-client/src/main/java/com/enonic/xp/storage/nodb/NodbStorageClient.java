@@ -56,16 +56,13 @@ import com.enonic.nodb.proto.v1.RepositoryAdminGrpc;
  * boot at nodb therefore need the endpoint reachable before first repo access (e.g. system
  * repo init at boot), or boot itself fails loudly rather than silently degrading.
  * <p>
- * <b>Token scope note:</b> {@code nodb/server/.../auth/TenantAuthInterceptor} requires
- * {@code operator} scope for {@code RepositoryAdmin.CreateRepository}/{@code
- * DeleteRepository} -- which is exactly what {@link NodbRepositoryStorageAdmin#createIndex}/
- * {@link NodbRepositoryStorageAdmin#deleteIndex} map onto. XP's own runtime calls those as
- * part of ordinary operation (e.g. project/repository creation), not only human/CI-driven
- * management -- so {@code nodbToken} MUST be minted with {@code operator} scope (see
- * {@code NodbTokenTool --scope operator}), not {@code runtime}, or repo lifecycle
- * operations fail with {@code PERMISSION_DENIED}. Flagged here since it is a real tension
- * with the two-scope model's original runtime-vs-operator intent, not merely a config
- * detail.
+ * <b>Token scope:</b> {@code nodbToken} is minted with {@code runtime} scope (see
+ * {@code NodbTokenTool --scope runtime}). Repository lifecycle (create/delete) is
+ * RUNTIME-scoped server-side per the Phase 1 gate-B scope-model correction: in XP,
+ * repo lifecycle within a tenant is an ordinary runtime operation (content projects
+ * create repos from app code), and intra-tenant authorization is the runtime's job
+ * under the two-layer model. Operator scope guards TENANT-level operations only
+ * (dump/load, snapshots, bulk transfer — when implemented).
  */
 @Component(configurationPid = "com.enonic.xp.storage.nodb", configurationPolicy = ConfigurationPolicy.REQUIRE,
     service = NodbStorageClient.class)
