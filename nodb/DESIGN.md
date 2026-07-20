@@ -501,12 +501,13 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 |---|---|---|
 | **0** | SPI module in XP; current embedded-ES code refactored to implement it | Full XP test suite green, no behavior change; ships in an 8.x | **DONE 2026-07-18** — branch `storage-spi-phase0`, gates 0/A–D green (full build 729 tasks + both itest suites; only pre-existing icuSort failures). `core-storage-spi` created; StorageDao/SearchDao zero consumers outside the ES package; `storage.backend=elasticsearch` selection property in place; arch test enforces both boundary directions. Gate E (module extraction) deliberately deferred. |
 | **1** | NoDB engine + gRPC server + `nodb-client`; `NodeStore` on Postgres, binaries on S3; tenant model END-TO-END (token→TenantContext as the only entry, trivial dev issuer; schema-per-tenant + SET LOCAL ROLE) | Storage-level itests green against NoDB, run DUAL-TENANT with cross-tenant isolation assertions | **DONE 2026-07-18** — branch `nodb-phase1` (on top of `storage-spi-phase0`): per-op RPC parity with the post-Phase-0 SPI; `core-storage-nodb-client` OSGi bundle (embedded gRPC) with config-selected backend, default boot byte-identical; XP storage itests green vs NoDB in hybrid mode (21 classes/65 tests; search stays on ES until Phase 2); live-stack boot smoke with restart-persistence proof (psql-verified). Payloads still on BlobStore (stretch deferred); S3 binary path deferred with it. |
-| **2** | **Payload storage in NoDB — storage-only** (all structural-query de-search deferred to Phase 7). Store node payloads — the node-data, index-config, and ACL segments — IN NoDB's `payload` table (the split §2 always specified; Phase 1 ran hybrid with payloads on BlobStore — re-add the FK Gate C dropped), behind a stable, versioned, **XP-independent payload format** NoDB can parse as its own bytes (the foundation Phase 7's server-side derivation needs). Optionally binaries behind NoDB→S3 so XP holds no object-store creds (§7.2). Search stays on ES; no command/query changes. | Payload round-trip green vs NoDB (three segments, dedup preserved); FK re-enforced; format spec documented; default ES mode unchanged; both-backend itests green. |
-| **3** | OpenSearch index + query-translator port — the **content/full-text/aggregation surface that Phase 2 did NOT de-search** (smaller than before); outbox/indexer deriving search docs from stored payloads (server-side — same payload-parsing capability Phase 2 establishes for `_references`); refresh checkpoint for read-your-writes. | Full core-repo + itest suites green vs NoDB; golden-query corpus diffed against the ES backend. |
-| **4** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
-| **5** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
-| **6** | Migration tooling, dual-run validation, embedded-ES deprecation | Pilot tenant migrated |
-| **7** | **SQL structural-query optimizations** (post-OpenSearch; schedulable any time after Phase 3, listed last as lowest-priority — pure speedup, not a migration necessity). Replace OpenSearch with SQL for structure-only queries, as SPI methods both backends implement: `getByParent` (children/descendants — swaps only the id-resolution phase, get-by-ids already storage), branch-diff / sync-work (full-outer-join on `branch_entry` — the publish speedup), inbound reference lookups (**server-derived `_references`** materialized into `node_version.references` + GIN, parsed from the payload via Phase 2's format), version-history, and manual order (materialize `manual_order_value` into `branch_entry`). | Each op returns identical results to the OpenSearch path (both-backend diff) + measurable speedup vs baseline (esp. publish/sync-work). |
+| **2** | **Payload storage in NoDB — storage-only** (all structural-query de-search deferred to Phase 8). Store node payloads — the node-data, index-config, and ACL segments — IN NoDB's `payload` table (the split §2 always specified; Phase 1 ran hybrid with payloads on BlobStore — re-add the FK Gate C dropped), behind a stable, versioned, **XP-independent payload format** NoDB can parse as its own bytes (the foundation Phase 8's server-side derivation needs). Search stays on ES; no command/query changes. Binaries stay on the existing BlobStore SPI (moved to NoDB in Phase 3). | Payload round-trip green vs NoDB (three segments, dedup preserved); FK re-enforced; format spec documented; default ES mode unchanged; both-backend itests green. |
+| **3** | **Binaries — NoDB-fronted object storage.** Route binaries (media, attachments) XP → NoDB → S3 so XP holds no object-store credentials (§7.2): a streaming/chunked up/download API through NoDB plus presigned-URL issuance with STS session policies scoped to the tenant prefix (large bytes bypass NoDB's bandwidth via the presigned URL). Binaries stay content-addressed on **S3, never Postgres**; per-tenant dedup (hash under the tenant prefix). Replaces XP's direct BlobStore→S3 for binaries in nodb mode; self-hosted may keep the file/S3 BlobStore provider. | Binary up/download round-trip vs NoDB (streamed, dedup preserved); presigned fetch tenant-scoped (cross-tenant denied); XP holds no S3 creds in nodb mode; default (BlobStore) mode unchanged. |
+| **4** | OpenSearch index + query-translator port — the **content/full-text/aggregation surface that Phase 2 did NOT de-search** (smaller than before); outbox/indexer deriving search docs from stored payloads (server-side — the same payload-parsing that Phase 2's format spec enables, and that Phase 8 uses for `_references`); refresh checkpoint for read-your-writes. | Full core-repo + itest suites green vs NoDB; golden-query corpus diffed against the ES backend. |
+| **5** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
+| **6** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
+| **7** | Migration tooling, dual-run validation, embedded-ES deprecation | Pilot tenant migrated |
+| **8** | **SQL structural-query optimizations** (post-OpenSearch; schedulable any time after Phase 4, listed last as lowest-priority — pure speedup, not a migration necessity). Replace OpenSearch with SQL for structure-only queries, as SPI methods both backends implement: `getByParent` (children/descendants — swaps only the id-resolution phase, get-by-ids already storage), branch-diff / sync-work (full-outer-join on `branch_entry` — the publish speedup), inbound reference lookups (**server-derived `_references`** materialized into `node_version.references` + GIN, parsed from the payload via Phase 2's format), version-history, and manual order (materialize `manual_order_value` into `branch_entry`). | Each op returns identical results to the OpenSearch path (both-backend diff) + measurable speedup vs baseline (esp. publish/sync-work). |
 
 ### 9.1 Decision (2026-07-20): children/hierarchy de-search is DEFERRED
 
@@ -514,7 +515,7 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 method (queryFilters, arbitrary childOrder) and belongs on search; keeping it untouched
 means zero regression on the most-used read path. The SQL-native structural children
 method (working name **`getByParent`**) is **pushed to a later optimization phase, after
-OpenSearch (Phase 3) is working**. Rationale: once search runs on NoDB, children
+OpenSearch (Phase 4) is working**. Rationale: once search runs on NoDB, children
 resolution already works via OpenSearch — moving it to SQL is a *performance
 optimization on a working system*, not a load-bearing migration step, so it is cleaner
 and lower-risk done then. The seam is already known (replace only the id-resolution
@@ -526,17 +527,29 @@ manual/content-field order stays on search regardless.
 
 **Resolved (2026-07-20): Phase 2 is storage-only.** ALL structural-query de-search —
 `getByParent`/children, branch-diff/sync-work, inbound references, version-history,
-manual order — is deferred to the new **Phase 7** (post-OpenSearch SQL optimizations),
+manual order — is deferred to the new **Phase 8** (post-OpenSearch SQL optimizations),
 by the same reasoning: they work on search today, so moving them to SQL is a speedup on
 a working NoDB+OpenSearch system, not a migration step. **Phase 2 = payloads (and
 optionally binaries) into NoDB + the XP-independent payload-format spec** — the storage
-foundation everything else builds on. Server-derived `_references` moves to Phase 7 with
+foundation everything else builds on. Server-derived `_references` moves to Phase 8 with
 the reference-lookup query it feeds (no consumer until then); Phase 2 only delivers the
 parseable payload format that later makes that derivation possible.
 
-**Phase 3 (the translator port) is now the long pole.** Phase 2 was deliberately
+### 9.2 Decision (2026-07-20): binaries are their own phase (Phase 3)
+
+Binaries are dropped from Phase 2 (which is now strictly node-payloads-into-Postgres)
+and get a dedicated **Phase 3**. Reason: "binaries into NoDB" is a *different mechanism*
+— NOT bytes into Postgres (rejected: WAL/TOAST) but NoDB *fronting* S3 (streaming +
+presigned/STS) so XP holds no object-store creds — with no shared work with the payload
+table and no downstream dependency (unlike node payloads, which unlock Phase 8). Kept as
+its own phase rather than folded into the control-plane phase (its natural credential
+home) so the "XP holds zero infra creds" posture can land right after the payload work,
+independent of the full cloud build-out. Intermediate state is coherent: after Phase 2,
+node payloads in NoDB + binaries still on the BlobStore SPI (XP-fronted).
+
+**Phase 4 (the translator port) is now the long pole.** Phase 2 was deliberately
 inserted ahead of it: it front-loads the high-certainty SQL wins (the publish/sync-work
-speedup, strong-consistency delete/move) and shrinks Phase 3's parity surface by moving
+speedup, strong-consistency delete/move) and shrinks Phase 4's parity surface by moving
 every structure-only operation off search first. Phases 0–1 are done; Phase 2 finally
 delivers the payload-in-Postgres storage §2 always specified (Phase 1 ran hybrid, with
 payloads on BlobStore, as a stepping stone).
@@ -582,13 +595,13 @@ payloads on BlobStore, as a stepping stone).
 9. Referential backups expire with GC retention — enforce an explicit validity horizon.
 10. **Pickups from Phase 1** (all deliberate, recorded in commits/BUILD-PHASE-1),
     now mapped to the renumbered phases: (a) per-op write RPCs emit NO outbox rows —
-    the indexer (**Phase 3**) must add emission or route XP through batch entry points;
+    the indexer (**Phase 4**) must add emission or route XP through batch entry points;
     (b) node_version's payload FK dropped for hybrid mode — re-add enforcement when
     payloads move into NoDB (**Phase 2**); server-derived `_references` that the FK'd
-    payloads enable is **Phase 7**;
+    payloads enable is **Phase 8**;
     (c) bnd-embedded gRPC is fragile (services-file merging, runtime-scope transitives)
     — add a CI boot-smoke test (any phase); (d) TenantBootstrapTool has no control-plane
-    equivalent (**Phase 5**). New from the Phase 2 design discussion: (e) the
+    equivalent (**Phase 6**). New from the Phase 2 design discussion: (e) the
     **XP-independent payload format spec** NoDB parses server-side is a Phase 2
     deliverable — without it, server-side derivation couples NoDB to XP's serializer.
 11. Loose ends: node_commit/audit not partition-scoped (repo drop not purely DDL);
@@ -611,4 +624,4 @@ payloads on BlobStore, as a stepping stone).
    PG/OS/S3; (c) shared/multi-tenant cloud = NoDB server fleet per cell.
 3. `IndexDataService.IndexDocument` currently lives under the `elasticsearch` package —
    relocate as part of Phase 0.
-4. Shared-index density mode for OpenSearch: ship in Phase 3 (the OpenSearch phase) or defer.
+4. Shared-index density mode for OpenSearch: ship in Phase 4 (the OpenSearch phase) or defer.
