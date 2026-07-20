@@ -5,14 +5,22 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.osgi.framework.Bundle;
 
+import com.google.common.base.Suppliers;
+
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -20,12 +28,9 @@ public final class ApplicationFactory
 {
     private final NodeService nodeService;
 
-    private final AppConfig appConfig;
-
-    ApplicationFactory( final NodeService nodeService, final AppConfig appConfig )
+    ApplicationFactory( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.appConfig = appConfig;
     }
 
     public ApplicationImpl create( final Bundle bundle )
@@ -40,12 +45,29 @@ public final class ApplicationFactory
             return createUrlResolverBySource( bundle, source );
         }
 
-        final List<ApplicationUrlResolver> resolvers = new ArrayList<>();
+        final ApplicationKey applicationKey = ApplicationHelper.getApplicationKey( bundle );
 
-        if ( appConfig.virtual_enabled() )
+        return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
+                                                new FilteredApplicationUrlResolver( createBundleUrlResolver( bundle ),
+                                                                                    () -> schemaDescriptorFilter( applicationKey ) ) );
+    }
+
+    ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
+    {
+        switch ( source )
         {
-            resolvers.add( new NodeResourceApplicationUrlResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService ) );
+            case "bundle":
+                return createBundleUrlResolver( bundle );
+            case "virtual":
+                return new NodeResourceApplicationUrlResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService );
+            default:
+                throw new IllegalArgumentException( "invalid application resolver source: " + source );
         }
+    }
+
+    private ApplicationUrlResolver createBundleUrlResolver( final Bundle bundle )
+    {
+        final List<ApplicationUrlResolver> resolvers = new ArrayList<>();
 
         final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
         if ( RunMode.isDev() && classLoaderUrlResolver != null )
@@ -55,31 +77,20 @@ public final class ApplicationFactory
 
         resolvers.add( new BundleApplicationUrlResolver( bundle ) );
 
-        return resolvers.size() == 1
-            ? resolvers.get( 0 )
-            : new MultiApplicationUrlResolver( resolvers.toArray( ApplicationUrlResolver[]::new ) );
+        return resolvers.size() == 1 ? resolvers.get( 0 ) : new MultiApplicationUrlResolver( resolvers.toArray( ApplicationUrlResolver[]::new ) );
     }
 
-    ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
+    // Schema descriptors must not be contributed by the bundle when the application node exists in the virtual app repo
+    private Predicate<String> schemaDescriptorFilter( final ApplicationKey applicationKey )
     {
-        switch ( source )
-        {
-            case "bundle":
-                final ClassLoaderApplicationUrlResolver classLoaderUrlResolver = createClassLoaderUrlResolver( bundle );
-                final boolean addCLR = RunMode.isDev() && classLoaderUrlResolver != null;
+        final Supplier<Boolean> appNodeExists = Suppliers.memoize( () -> appNodeExists( applicationKey ) );
+        return path -> !( SchemaResourcePaths.isSchemaDescriptorPath( path ) && appNodeExists.get() );
+    }
 
-                return addCLR
-                    ? new MultiApplicationUrlResolver( classLoaderUrlResolver, new BundleApplicationUrlResolver( bundle ) )
-                    : new BundleApplicationUrlResolver( bundle );
-            case "virtual":
-                if ( !appConfig.virtual_enabled() )
-                {
-                    throw new IllegalStateException( "virtual apps are disabled" );
-                }
-                return new NodeResourceApplicationUrlResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService );
-            default:
-                throw new IllegalArgumentException( "invalid application resolver source: " + source );
-        }
+    private boolean appNodeExists( final ApplicationKey applicationKey )
+    {
+        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        return VirtualAppContext.createAdminContext().callWith( () -> nodeService.nodeExists( appPath ) );
     }
 
     private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )

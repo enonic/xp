@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -26,9 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,21 +36,12 @@ class ApplicationFactoryServiceImplTest
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private AppConfig appConfig;
-
-    @BeforeEach
-    void init()
-    {
-        appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-    }
-
     @Test
     void lifecycle()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -77,11 +65,9 @@ class ApplicationFactoryServiceImplTest
     void findActiveApplication()
         throws Exception
     {
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -104,7 +90,7 @@ class ApplicationFactoryServiceImplTest
     {
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -128,23 +114,6 @@ class ApplicationFactoryServiceImplTest
     }
 
     @Test
-    void findDisabledVirtualApplication()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-        final BundleContext bundleContext = getBundleContext();
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        when( appConfig.virtual_enabled() ).thenReturn( false );
-
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
-        service.activate();
-
-
-        assertTrue( service.findActiveApplication( applicationKey ).isEmpty() );
-    }
-
-    @Test
     void findVirtualApplication()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
@@ -152,9 +121,7 @@ class ApplicationFactoryServiceImplTest
         when( nodeService.nodeExists(
             new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
 
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         assertEquals( applicationKey, service.findActiveApplication( applicationKey ).get().getKey() );

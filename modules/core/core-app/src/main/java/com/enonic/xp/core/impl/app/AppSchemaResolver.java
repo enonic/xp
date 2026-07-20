@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -14,19 +13,6 @@ import com.google.common.io.ByteSource;
 
 class AppSchemaResolver
 {
-    private static final Pattern SCHEMA_RESOURCE_PATTERN = Pattern.compile( "^" + VirtualAppConstants.CMS_ROOT_NAME + "/((?:" +
-                                                                                String.join( "|",
-                                                                                             VirtualAppConstants.CONTENT_TYPE_ROOT_NAME,
-                                                                                             VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME,
-                                                                                             VirtualAppConstants.MIXINS_ROOT_NAME,
-                                                                                             VirtualAppConstants.PART_ROOT_NAME,
-                                                                                             VirtualAppConstants.LAYOUT_ROOT_NAME,
-                                                                                             VirtualAppConstants.PAGE_ROOT_NAME,
-                                                                                             VirtualAppConstants.MACROS_ROOT_NAME ) +
-                                                                                ")/([^/]+)/\\2|" + VirtualAppConstants.CMS_ROOT_NAME +
-                                                                                "|" + VirtualAppConstants.STYLE_ROOT_NAME + "/" +
-                                                                                VirtualAppConstants.STYLE_NAME + ")\\.(yaml|yml)$" );
-
     private AppSchemaResolver()
     {
     }
@@ -44,7 +30,7 @@ class AppSchemaResolver
                     continue;
                 }
 
-                final Matcher matcher = SCHEMA_RESOURCE_PATTERN.matcher( entry.getName() );
+                final Matcher matcher = SchemaResourcePaths.SCHEMA_RESOURCE_PATTERN.matcher( entry.getName() );
                 if ( !matcher.matches() )
                 {
                     continue;

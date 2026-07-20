@@ -270,10 +270,8 @@ class DynamicSchemaServiceImplTest
         BundleContext bundleContext = felix.getBundleContext();
 
         AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
 
-        ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         ResourceServiceImpl resourceService = new ResourceServiceImpl( applicationFactoryService );

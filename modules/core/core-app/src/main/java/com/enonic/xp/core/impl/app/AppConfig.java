@@ -6,6 +6,4 @@ public @interface AppConfig
 
     boolean auditlog_enabled() default true;
 
-    boolean virtual_enabled() default false;
-
 }
