@@ -15,14 +15,15 @@ import io.grpc.ManagedChannelBuilder;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
+import com.enonic.nodb.proto.v1.BinariesGrpc;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.RepositoryAdminGrpc;
 
 /**
- * Channel/stub lifecycle for the NoDB gRPC endpoint -- the one thing {@link NodbNodeStore}
- * and {@link NodbRepositoryStorageAdmin} both depend on. Configured via the
- * {@code com.enonic.xp.storage.nodb} PID (file {@code com.enonic.xp.storage.nodb.cfg}
- * under XP_HOME/config):
+ * Channel/stub lifecycle for the NoDB gRPC endpoint -- the one thing {@link NodbNodeStore},
+ * {@link NodbRepositoryStorageAdmin}, and (Phase 2 Gate B) {@link NodbBinaryBlobStore} all
+ * depend on. Configured via the {@code com.enonic.xp.storage.nodb} PID (file
+ * {@code com.enonic.xp.storage.nodb.cfg} under XP_HOME/config):
  * <pre>
  *   backend       elasticsearch|nodb, default elasticsearch (safety default: even if this
  *                 PID is provisioned, an explicit non-"nodb" value keeps the client dark)
@@ -36,13 +37,15 @@ import com.enonic.nodb.proto.v1.RepositoryAdminGrpc;
  * REQUIRE} means this component is never even instantiated unless the PID has been
  * explicitly provisioned -- a default boot with no {@code com.enonic.xp.storage.nodb.cfg}
  * file present never activates it, so {@link NodbNodeStore}/{@link
- * NodbRepositoryStorageAdmin} (which {@code @Reference} this class) never activate either,
- * and the elasticsearch-backed {@code NodeStore}/{@code RepositoryStorageAdmin} components
+ * NodbRepositoryStorageAdmin}/{@link NodbBinaryBlobStore} (which all {@code @Reference} this
+ * class) never activate either, and the elasticsearch-backed {@code NodeStore}/
+ * {@code RepositoryStorageAdmin} components plus the plain file/S3 {@code BlobStore}
  * (Phase 0, {@code storage.backend=elasticsearch}) remain the only registered providers --
  * a config-less boot is byte-identical to today. When the PID IS provisioned with
- * {@code backend=nodb}, {@link NodbNodeStore}/{@link NodbRepositoryStorageAdmin} register
- * with a higher {@code service.ranking} than their elasticsearch counterparts, so existing
- * plain {@code @Reference NodeStore}/{@code @Reference RepositoryStorageAdmin} consumers in
+ * {@code backend=nodb}, {@link NodbNodeStore}/{@link NodbRepositoryStorageAdmin}/
+ * {@link NodbBinaryBlobStore} register with a higher {@code service.ranking} than their
+ * defaults, so existing plain {@code @Reference NodeStore}/
+ * {@code @Reference RepositoryStorageAdmin}/{@code @Reference BlobStore} consumers in
  * core-repo (unmodified by this module) rebind to the nodb-backed services automatically --
  * standard Declarative Services behavior for a static reference when a higher-ranked target
  * appears, no core-repo edits required.
@@ -75,6 +78,17 @@ public class NodbStorageClient
     private NodeStoreGrpc.NodeStoreBlockingStub nodeStoreStub;
 
     private RepositoryAdminGrpc.RepositoryAdminBlockingStub repositoryAdminStub;
+
+    // Two stub flavors for the Binaries service (Phase 2 Gate B): GetBinary/BinaryExists/
+    // DeleteBinary are unary/server-streaming, served fine by a blocking stub (same as
+    // NodeStore's streaming methods, e.g. getBranchEntries). PutBinary is CLIENT-streaming
+    // though -- grpc-java's blocking stub flavor does not support that call shape at all
+    // (only unary + server-streaming); it requires the async stub, driven via a
+    // StreamObserver<PutBinaryChunk> (see NodbBinaryBlobStore, which bridges that back to a
+    // blocking call from XP's perspective to preserve the binaries-before-commit invariant).
+    private BinariesGrpc.BinariesBlockingStub binariesBlockingStub;
+
+    private BinariesGrpc.BinariesStub binariesAsyncStub;
 
     @Activate
     public void activate( final Map<String, String> properties )
@@ -124,17 +138,23 @@ public class NodbStorageClient
 
         final NodeStoreGrpc.NodeStoreBlockingStub baseNodeStore = NodeStoreGrpc.newBlockingStub( channel );
         final RepositoryAdminGrpc.RepositoryAdminBlockingStub baseAdmin = RepositoryAdminGrpc.newBlockingStub( channel );
+        final BinariesGrpc.BinariesBlockingStub baseBinariesBlocking = BinariesGrpc.newBlockingStub( channel );
+        final BinariesGrpc.BinariesStub baseBinariesAsync = BinariesGrpc.newStub( channel );
 
         if ( token == null || token.isBlank() )
         {
             this.nodeStoreStub = baseNodeStore;
             this.repositoryAdminStub = baseAdmin;
+            this.binariesBlockingStub = baseBinariesBlocking;
+            this.binariesAsyncStub = baseBinariesAsync;
         }
         else
         {
             final CallCredentials credentials = new BearerTokenCallCredentials( token );
             this.nodeStoreStub = baseNodeStore.withCallCredentials( credentials );
             this.repositoryAdminStub = baseAdmin.withCallCredentials( credentials );
+            this.binariesBlockingStub = baseBinariesBlocking.withCallCredentials( credentials );
+            this.binariesAsyncStub = baseBinariesAsync.withCallCredentials( credentials );
         }
     }
 
@@ -168,5 +188,15 @@ public class NodbStorageClient
     RepositoryAdminGrpc.RepositoryAdminBlockingStub repositoryAdmin()
     {
         return repositoryAdminStub;
+    }
+
+    BinariesGrpc.BinariesBlockingStub binaries()
+    {
+        return binariesBlockingStub;
+    }
+
+    BinariesGrpc.BinariesStub binariesAsync()
+    {
+        return binariesAsyncStub;
     }
 }

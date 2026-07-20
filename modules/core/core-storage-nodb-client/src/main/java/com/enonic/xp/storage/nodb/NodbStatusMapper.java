@@ -100,6 +100,27 @@ final class NodbStatusMapper
         }
     }
 
+    /**
+     * Same mapping as {@link #translate(StatusRuntimeException)}, for callers that only have
+     * a bare {@link Throwable} to work with -- {@link NodbBinaryBlobStore}'s {@code PutBinary}
+     * client-streaming call delivers its outcome via a {@code StreamObserver} callback
+     * ({@code onError(Throwable)}), not a caught exception from a synchronous call, so the
+     * {@code StatusRuntimeException} (if any) has to be recovered by type rather than caught
+     * directly.
+     */
+    static RuntimeException translateThrowable( final Throwable t )
+    {
+        if ( t instanceof StatusRuntimeException statusRuntimeException )
+        {
+            return translate( statusRuntimeException );
+        }
+        if ( t instanceof RuntimeException runtimeException )
+        {
+            return runtimeException;
+        }
+        return new NodbClientException( "NoDB binary call failed: " + t.getMessage(), t );
+    }
+
     private static RuntimeException translate( final StatusRuntimeException e )
     {
         final Status status = e.getStatus();
