@@ -611,4 +611,4 @@ payloads on BlobStore, as a stepping stone).
    PG/OS/S3; (c) shared/multi-tenant cloud = NoDB server fleet per cell.
 3. `IndexDataService.IndexDocument` currently lives under the `elasticsearch` package —
    relocate as part of Phase 0.
-4. Shared-index density mode for OpenSearch: ship in Phase 4 or defer.
+4. Shared-index density mode for OpenSearch: ship in Phase 3 (the OpenSearch phase) or defer.
