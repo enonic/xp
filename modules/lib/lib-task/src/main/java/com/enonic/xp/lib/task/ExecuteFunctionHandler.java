@@ -64,9 +64,16 @@ public final class ExecuteFunctionHandler
     public String executeFunction()
     {
         final TaskService taskService = taskServiceSupplier.get();
-        final RunnableTask runnableTask = useDetached()
-            ? new DetachedFunctionTaskWrapper( scriptServiceSupplier, detachedRunner, source, params, description )
-            : new TaskWrapper( taskFunction, description );
+        final RunnableTask runnableTask;
+        if ( useDetached() )
+        {
+            requireTransferableSource();
+            runnableTask = new DetachedFunctionTaskWrapper( scriptServiceSupplier, detachedRunner, source, params, description );
+        }
+        else
+        {
+            runnableTask = new TaskWrapper( taskFunction, description );
+        }
         final TaskId taskId =
             taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( runnableTask ).description( description ).build() );
 
@@ -87,20 +94,37 @@ public final class ExecuteFunctionHandler
         {
             return false;
         }
+        final PortalScriptService scriptService;
         try
         {
-            final PortalScriptService scriptService = scriptServiceSupplier.get();
-            if ( scriptService == null )
-            {
-                return false;
-            }
-            final ScriptExports runnerExports = scriptService.execute( detachedRunner );
-            return runnerExports.background() != runnerExports;
+            scriptService = scriptServiceSupplier.get();
         }
         catch ( RuntimeException e )
         {
-            // no script service (minimal runtimes, tests): keep the attached behavior
+            // no script service registered (minimal runtimes, tests): keep the attached behavior.
+            // Only the lookup is shielded — a probe failure on a real service must fail the submit
+            // loudly, not silently flip this submission's execution semantics.
             return false;
+        }
+        if ( scriptService == null )
+        {
+            return false;
+        }
+        final ScriptExports runnerExports = scriptService.execute( detachedRunner );
+        return runnerExports.background() != runnerExports;
+    }
+
+    /**
+     * {@code Function.prototype.toString} of a bound or native(-wrapped) function is the
+     * unparseable {@code function () { [native code] }} form — fail at submit with a clear
+     * message, not on the task thread with a cryptic eval error.
+     */
+    private void requireTransferableSource()
+    {
+        if ( source.trim().endsWith( "{ [native code] }" ) )
+        {
+            throw new IllegalArgumentException(
+                "Detached task func must be a plain JavaScript function - a bound or native function has no transferable source" );
         }
     }
 

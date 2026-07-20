@@ -1,7 +1,6 @@
 package com.enonic.xp.script.impl.standard;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,6 +38,14 @@ public class ScriptRuntimeImpl
 
     private final ConcurrentMap<ApplicationKey, AppExecutor> executors = new ConcurrentHashMap<>();
 
+    /**
+     * Last bootstrap request per application. An executor discarded by a racing {@link #invalidate}
+     * (application reconfigure re-registers the service before it calls invalidators) would leave
+     * its lazily recreated successor's gate armed by no one — remembering the params lets the
+     * successor re-arm itself on first use instead of every caller waiting out the gate timeout.
+     */
+    private final ConcurrentMap<ApplicationKey, BootstrapParams> bootstrapParams = new ConcurrentHashMap<>();
+
     private final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory;
 
     public ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory )
@@ -66,6 +73,7 @@ public class ScriptRuntimeImpl
     public void bootstrap( final BootstrapParams params )
     {
         final ApplicationKey key = params.getApplication();
+        bootstrapParams.put( key, params );
         final AppExecutor app = getExecutor( key );
         if ( app.bootstrapStarted.compareAndSet( false, true ) )
         {
@@ -80,8 +88,7 @@ public class ScriptRuntimeImpl
     @Override
     public ScriptExports execute( final ResourceKey script )
     {
-        final AppExecutor app = getExecutor( script.getApplicationKey() );
-        await( script.getApplicationKey(), app );
+        final AppExecutor app = executorFor( script.getApplicationKey() );
         return app.executor.executeMain( script );
     }
 
@@ -89,9 +96,44 @@ public class ScriptRuntimeImpl
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
-        final AppExecutor app = getExecutor( script.getApplicationKey() );
-        await( script.getApplicationKey(), app );
+        final AppExecutor app = executorFor( script.getApplicationKey() );
         return app.executor.executeMainAsync( script );
+    }
+
+    @Override
+    public ScriptExports executeBackground( final ResourceKey script )
+    {
+        final AppExecutor app = executorFor( script.getApplicationKey() );
+        return app.executor.backgroundExports( script );
+    }
+
+    /**
+     * The bootstrapped executor for a top-level execution: re-arms the bootstrap gate if this
+     * executor incarnation was created after its bootstrap call (see {@link #bootstrapParams}),
+     * then waits for the gate.
+     */
+    private AppExecutor executorFor( final ApplicationKey key )
+    {
+        final AppExecutor app = getExecutor( key );
+        rearmIfNeeded( key, app );
+        await( key, app );
+        return app;
+    }
+
+    private void rearmIfNeeded( final ApplicationKey key, final AppExecutor app )
+    {
+        if ( !app.bootstrapStarted.get() )
+        {
+            final BootstrapParams params = bootstrapParams.get( key );
+            if ( params != null && app.bootstrapStarted.compareAndSet( false, true ) )
+            {
+                // a detached thread, like MainExecutor's bootstrap: the triggering caller then waits
+                // on the gate with the bounded timeout instead of running main.js unboundedly itself
+                Thread.ofVirtual()
+                    .name( "re-bootstrap-" + key )
+                    .start( () -> runBootstrap( key, app, params.getMainScript().orElse( null ) ) );
+            }
+        }
     }
 
     @Override
@@ -122,8 +164,10 @@ public class ScriptRuntimeImpl
             {
                 ( (Closeable) removed.executor ).close();
             }
-            catch ( IOException e )
+            catch ( Exception e )
             {
+                // teardown must finish even if a context refuses to close — an escaping exception
+                // here would abort the OSGi service-tracker callback that drives app stop
                 LOG.warn( "Could not close Script Executor for {}", key, e );
             }
         }
@@ -194,7 +238,9 @@ public class ScriptRuntimeImpl
         }
         catch ( TimeoutException e )
         {
-            // fail open: a hanging or never-armed bootstrap must not dam the application forever
+            // fail open, and latch it: a hanging or never-armed bootstrap must not dam the
+            // application forever — nor make every subsequent caller wait the timeout out again
+            app.bootstrapped.complete( null );
             LOG.warn( "Application {} has not bootstrapped within {}s - proceeding", key, BOOTSTRAP_TIMEOUT_SECONDS );
         }
         catch ( ExecutionException e )

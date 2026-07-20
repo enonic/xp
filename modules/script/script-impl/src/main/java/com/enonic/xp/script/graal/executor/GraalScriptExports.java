@@ -42,6 +42,16 @@ final class GraalScriptExports
         return new GraalScriptExports( executor, script, slot, false );
     }
 
+    /**
+     * An isolated view bound to no context: each invocation runs in a fresh private context where
+     * the script's top level executes lazily — what {@link #background()} returns, obtainable
+     * without executing the script on a pooled slot first.
+     */
+    static GraalScriptExports isolated( final GraalScriptExecutor executor, final ResourceKey script )
+    {
+        return new GraalScriptExports( executor, script, null, true );
+    }
+
     private GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script,
                                 final GraalScriptExecutor.ContextSlot pinnedSlot, final boolean isolated )
     {

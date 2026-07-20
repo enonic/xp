@@ -154,6 +154,37 @@ class ScriptRuntimeImplTest
     }
 
     @Test
+    void execute_rearmsBootstrapAfterInvalidate()
+    {
+        mainScriptExists( true );
+        final ScriptRuntimeImpl runtime = runtime();
+
+        runtime.bootstrap( params() );
+        runtime.invalidate( APP );
+        // the executor incarnation the bootstrap armed is gone (app reconfigure): a top-level
+        // execution re-arms the lazily recreated one instead of waiting out the gate timeout
+        runtime.execute( CONTROLLER );
+
+        verify( scriptExecutor, times( 2 ) ).bootstrap( MAIN );
+        verify( scriptExecutor ).executeMain( CONTROLLER );
+    }
+
+    @Test
+    void executeBackground_waitsForBootstrapAndSkipsPooledExecution()
+    {
+        mainScriptExists( true );
+        final ScriptRuntimeImpl runtime = runtime();
+
+        runtime.bootstrap( params() );
+        runtime.executeBackground( CONTROLLER );
+
+        final InOrder inOrder = Mockito.inOrder( scriptExecutor );
+        inOrder.verify( scriptExecutor ).bootstrap( MAIN );
+        inOrder.verify( scriptExecutor ).backgroundExports( CONTROLLER );
+        verify( scriptExecutor, never() ).executeMain( CONTROLLER );
+    }
+
+    @Test
     void executeAsync_waitsForBootstrap()
     {
         mainScriptExists( true );

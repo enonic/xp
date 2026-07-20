@@ -106,6 +106,13 @@ public final class ScriptExecutorImpl
     }
 
     @Override
+    public ScriptExports backgroundExports( final ResourceKey key )
+    {
+        // no context pool: background execution shares the single context, like everything else
+        return executeMain( key );
+    }
+
+    @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
         if ( RunMode.isDev() )

@@ -23,6 +23,14 @@ public interface ScriptExecutor
 
     CompletableFuture<ScriptExports> executeMainAsync( ResourceKey key );
 
+    /**
+     * Exports view for background execution. On pooled engines the view is bound to no context —
+     * each invocation runs in a fresh private context where the script's top level executes lazily,
+     * and no request-serving slot is touched to obtain it. Engines without pooling return the same
+     * view as {@link #executeMain}.
+     */
+    ScriptExports backgroundExports( ResourceKey key );
+
     Object executeRequire( ResourceKey key );
 
     ScriptValue newScriptValue( Object value );

@@ -17,6 +17,15 @@ public interface PortalScriptService
     ScriptExports execute( ResourceKey script );
 
     /**
+     * Resolves a script's exports for background execution. On pooled script engines the returned
+     * view is bound to no context: each method invocation runs in a fresh private context, where
+     * the script's top level executes (lazily — script errors surface on first invocation, not
+     * here), and no request-serving context is used to obtain the view. On engines without
+     * pooling this is equivalent to {@link #execute}.
+     */
+    ScriptExports executeBackground( ResourceKey script );
+
+    /**
      * @deprecated Only {@code main.js} bootstrap used this, and it now runs synchronously through
      * {@link #bootstrap(BootstrapParams)}; no caller remains. Scheduled for removal.
      */

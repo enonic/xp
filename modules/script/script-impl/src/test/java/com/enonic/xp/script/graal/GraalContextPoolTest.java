@@ -36,6 +36,7 @@ import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -283,6 +284,32 @@ class GraalContextPoolTest
 
         // the pooled contexts are untouched by background runs
         assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void backgroundExportsSkipThePool()
+    {
+        // resolving the view touches no pooled slot, and every invocation gets a fresh, private
+        // context — the path detached tasks use, so they never compete with request traffic
+        assertEquals( 1, intValue(
+            scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "inc" ) ) );
+        assertEquals( 1, intValue(
+            scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void closedExecutorRejectsNewContexts()
+        throws Exception
+    {
+        final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
+        ( (Closeable) local ).close();
+
+        // a bootstrap racing application stop must fail loudly, not resurrect contexts that no
+        // teardown path can ever reach
+        assertThrows( IllegalStateException.class, () -> local.bootstrap( ResourceKey.from( "graaljs:/main.js" ) ) );
+        assertThrows( IllegalStateException.class, () -> local.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) ) );
     }
 
     @Test

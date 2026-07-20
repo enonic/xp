@@ -11,6 +11,9 @@ import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseEventType;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -51,6 +54,23 @@ class SseEndpointImplTest
         endpoint.onEvent( event( SseEventType.CLOSE ) );
 
         verify( script, times( 1 ) ).retain();
+        verify( script, times( 1 ) ).release();
+    }
+
+    @Test
+    void failedOpen_releasesThePin()
+    {
+        final ControllerScript script = mock( ControllerScript.class );
+        doThrow( new RuntimeException( "open handler failed" ) ).when( script ).onSseEvent( any() );
+        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), script );
+
+        // a failed open gets no terminal event: the pin must not leak the slot out of the pool
+        assertThrows( RuntimeException.class, () -> endpoint.onEvent( event( SseEventType.OPEN ) ) );
+        verify( script ).retain();
+        verify( script, times( 1 ) ).release();
+
+        // a late CLOSE (the manager completing the failed connection) must not double-release
+        assertThrows( RuntimeException.class, () -> endpoint.onEvent( event( SseEventType.CLOSE ) ) );
         verify( script, times( 1 ) ).release();
     }
 

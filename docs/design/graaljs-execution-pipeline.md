@@ -442,14 +442,18 @@ what every Node.js cluster / worker deployment already imposes on developers.
 4. **Detached `executeFunction`** *(started on this branch)* — the engine decides, no
    user-facing flag: on pooled engines `task.executeFunction({ params, func })` always runs
    detached — the function travels as source (captured via `Function.prototype.toString` at
-   submit) plus eagerly converted data params (functions rejected at submit), and is
-   re-materialized by an internal runner module (`/lib/xp/detached-task.js`, executed through
-   `PortalScriptService` → `ScriptExports.background()`) in a fresh context — true parallelism
-   on GraalJS. The runner applies its module environment (`log`, `require`, `resolve`, `__`)
-   to the re-materialized function, so detached functions can load libraries and log; captured
-   outer variables throw `ReferenceError`, matching Web-Worker expectations. Nashorn always
-   keeps the historical attached-closure behavior. Still to do: the §5 migration guide for
-   docs.
+   submit; a bound or native function has no transferable source and is **rejected at submit**,
+   not with a cryptic eval error on the task thread) plus eagerly converted data params
+   (functions rejected at submit), and is re-materialized by an internal runner module
+   (`/lib/xp/detached-task.js`, resolved through `PortalScriptService.executeBackground` — a
+   view bound to no context, so a task run never checks out a request-serving slot) in a fresh
+   context — true parallelism on GraalJS. The runner applies its module environment (`log`,
+   `require`, `resolve`, `__`) to the re-materialized function, so detached functions can load
+   libraries and log; captured outer variables throw `ReferenceError`, matching Web-Worker
+   expectations. Nashorn always keeps the historical attached-closure behavior; the
+   engine-probe's fallback to attached mode is reserved for runtimes without a script service —
+   a probe failure on a real service fails the submit loudly instead of silently flipping the
+   submission's semantics. Still to do: the §5 migration guide for docs.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (retention-aware growth), the global cross-app context budget
@@ -527,7 +531,13 @@ twice over:
   until `main.js` completes (no cold-activation window). A broken `main.js` still opens the gate
   (surfaces in the log, never a permanently dammed app); event callbacks and tasks on their own
   threads are gated normally (async, no deadlock); the wait is bounded (300 s, then fail-open with a
-  warning) so a hanging or never-armed bootstrap degrades to proceeding rather than a deadlock.
+  warning, **latched** so the timeout is paid once — not by every subsequent caller) so a hanging or
+  never-armed bootstrap degrades to proceeding rather than a deadlock. The runtime also **remembers
+  each application's last `BootstrapParams`**: application reconfigure re-registers the service
+  *before* running invalidators, so the executor incarnation that `MainExecutor`'s bootstrap armed
+  can be discarded by the trailing invalidate — a lazily recreated successor re-arms itself from the
+  remembered params on first use (on a detached virtual thread; the triggering caller just waits on
+  the gate) instead of stranding the app behind a gate nobody will ever arm.
 
 **[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
 registered by one bundle incarnation invoked for its replacement (rooted in #7966). The
@@ -545,13 +555,24 @@ pipeline sharpens both the fix shape and the stakes:
   teardown. The remaining exposure is the #7966 event-ordering root: a late stop event can still
   tear down a *healthy successor* executor — but that now self-heals (it is lazily recreated on
   next use) instead of running the wrong incarnation's disposers or leaking budget.
+- Teardown is **non-negotiable and race-hardened**: contexts close with *cancel* (a context still
+  executing an in-flight request or connection dispatch must not veto app stop — its execution
+  fails on its own thread, and a stale pinned websocket dispatch failing makes the container close
+  the connection so clients reconnect), the shared budget permits are returned in a `finally`
+  (a leaked permit would shrink the global pool for every application, forever), and a `closed`
+  flag stops a bootstrap or task racing app stop from lazily resurrecting contexts no teardown
+  path could ever reach. One consequence is documented deliberately: **SSE connections pinned to a
+  redeployed app linger silently** (nothing inbound ever dispatches on them) until their timeout —
+  proactive per-app connection teardown is a follow-up.
 - On pooled engines a disposer only outlives its registration meaningfully on the **main
   context**: bootstrap's disposer is stable and torn down with the app, whereas a pool slot's is
   per-context (one per slot the module loads into) and a task's ephemeral context is already
   closed by the time teardown runs. So `__.disposer` is honored only when called during
   `bootstrap` (`main.js`); a registration from a request or task slot is logged as a warning and
   ignored rather than silently dropped at teardown. (Nashorn keeps its single-context semantics
-  unchanged.)
+  unchanged.) Dev-mode cache expiry does **not** drain the disposer queues: only bootstrap can
+  register, and a reload re-executes controllers, never `main.js` — draining would run the app's
+  teardown mid-life and leave nothing for the actual stop.
 - The urgency note stands for #7966 itself: executor teardown is only as reliable as the app
   lifecycle events that trigger it.
 

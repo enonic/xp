@@ -26,7 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -69,6 +71,31 @@ class SseManagerImplTest
             verify( res ).setHeader( "Cache-Control", "no-store" );
 
             verify( endpoint ).onEvent( any( SseEvent.class ) );
+        } );
+    }
+
+    @Test
+    void setupSse_failedOpen_closesTheConnection()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final WebRequest webReq = new WebRequest();
+        webReq.setRawRequest( req );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final AsyncContext asyncContext = mock( AsyncContext.class );
+        when( req.startAsync() ).thenReturn( asyncContext );
+        when( asyncContext.getResponse() ).thenReturn( res );
+        when( res.getWriter() ).thenReturn( new PrintWriter( new StringWriter() ) );
+
+        final SseEndpoint endpoint = mock( SseEndpoint.class );
+        when( endpoint.getConfig() ).thenReturn( SseConfig.empty() );
+        doThrow( new RuntimeException( "open failed" ) ).when( endpoint ).onEvent( any( SseEvent.class ) );
+
+        ContextBuilder.create().build().runWith( () -> {
+            assertThrows( RuntimeException.class, () -> manager.setupSse( webReq, endpoint ) );
+            // a failed open must not leave a zombie connection idling on the infinite default
+            // timeout: completing it is the only way the client ever learns
+            verify( asyncContext ).complete();
         } );
     }
 

@@ -17,11 +17,18 @@ exports.run = function (source, params) {
         fn = (0, eval)('(function (log, require, resolve, __) { return (' + source + '); })')(log, require, resolve, __);
     } catch (e) {
         // shorthand method syntax (`func() {...}`) is not a valid expression: evaluate it as an object-literal method
-        // eslint-disable-next-line no-eval
-        var holder = (0, eval)('(function (log, require, resolve, __) { return ({' + source + '}); })')(log, require, resolve, __);
-        for (var key in holder) {
-            fn = holder[key];
-            break;
+        try {
+            // eslint-disable-next-line no-eval
+            var holder = (0, eval)('(function (log, require, resolve, __) { return ({' + source + '}); })')(log, require, resolve, __);
+            for (var key in holder) {
+                fn = holder[key];
+                break;
+            }
+        } catch (ignored) {
+            // the fallback is only a guess — its own failure would mask the error that explains the source
+        }
+        if (typeof fn !== 'function') {
+            throw e;
         }
     }
     return params === undefined || params === null ? fn() : fn(params);

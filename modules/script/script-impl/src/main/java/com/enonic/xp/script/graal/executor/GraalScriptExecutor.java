@@ -109,6 +109,13 @@ public class GraalScriptExecutor
     private boolean hasSlots;
 
     /**
+     * Written under {@link #slotCreationLock}, read anywhere (volatile). An execution racing
+     * application stop must not resurrect contexts on an executor whose teardown already ran —
+     * they would be unreachable from any teardown path and leak.
+     */
+    private volatile boolean closed;
+
+    /**
      * The dedicated {@code main.js} context — the "main worker rule": the app's bootstrap
      * script, the event listeners it registers and the disposers it leaves behind all share
      * this one context (handles bind to their creating context), and it lives outside the
@@ -185,6 +192,7 @@ public class GraalScriptExecutor
         }
         synchronized ( slotCreationLock )
         {
+            requireOpen();
             if ( this.mainSlot == null )
             {
                 this.mainSlot = new ContextSlot( contextFactory, application );
@@ -193,10 +201,28 @@ public class GraalScriptExecutor
         }
     }
 
+    private void requireOpen()
+    {
+        if ( closed )
+        {
+            throw new IllegalStateException( "Script executor is closed" );
+        }
+    }
+
     @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
         return CompletableFuture.completedFuture( key ).thenApplyAsync( this::executeMain, asyncExecutor );
+    }
+
+    @Override
+    public ScriptExports backgroundExports( final ResourceKey key )
+    {
+        // no slot is touched: the view is not bound to any context, and each of its invocations
+        // runs in a fresh private context (withIsolatedExports), where the script's top level
+        // executes lazily. Detached tasks resolve their runner this way — a pooled checkout here
+        // would make every task run compete with live requests for request-serving slots.
+        return GraalScriptExports.isolated( this, key );
     }
 
     @Override
@@ -276,8 +302,8 @@ public class GraalScriptExecutor
     @Override
     public void runDisposers()
     {
-        // drain, so each registered disposer runs at most once — a script reload (dev-mode cache
-        // expiry) re-registers its disposer, and leftovers must not run again on the next expiry
+        // drain, so each registered disposer runs at most once — teardown calls this twice
+        // (invalidate's explicit run, then close())
         this.disposers.values().forEach( queue -> {
             Runnable disposer;
             while ( ( disposer = queue.poll() ) != null )
@@ -295,21 +321,45 @@ public class GraalScriptExecutor
         runDisposers();
         synchronized ( slotCreationLock )
         {
-            if ( mainSlot != null )
+            closed = true;
+            try
             {
-                mainSlot.context.close();
-                mainSlot = null;
-            }
-            for ( int i = 0; i < slots.length(); i++ )
-            {
-                final ContextSlot slot = slots.get( i );
-                if ( slot != null )
+                if ( mainSlot != null )
                 {
-                    slot.context.close();
+                    closeContext( mainSlot );
+                    mainSlot = null;
+                }
+                for ( int i = 0; i < slots.length(); i++ )
+                {
+                    final ContextSlot slot = slots.get( i );
+                    if ( slot != null )
+                    {
+                        closeContext( slot );
+                    }
                 }
             }
-            budget.releaseContexts( budgetedSlots );
-            budgetedSlots = 0;
+            finally
+            {
+                // the shared budget must get its permits back even if a context refuses to close —
+                // a leaked permit shrinks the global pool for every application, forever
+                budget.releaseContexts( budgetedSlots );
+                budgetedSlots = 0;
+            }
+        }
+    }
+
+    private static void closeContext( final ContextSlot slot )
+    {
+        try
+        {
+            // cancel: a context still executing on another thread (in-flight request, live
+            // connection dispatch) must not veto app teardown — the plain close() throws for it.
+            // The cancelled execution fails on its own thread; the app is going away regardless.
+            slot.context.close( true );
+        }
+        catch ( RuntimeException e )
+        {
+            LOG.warn( "Could not close script context", e );
         }
     }
 
@@ -456,6 +506,7 @@ public class GraalScriptExecutor
      */
     <T> T withIsolatedExports( final ResourceKey key, final BiFunction<ContextSlot, Value, T> work )
     {
+        requireOpen();
         budget.acquireTaskContext();
         try
         {
@@ -487,6 +538,7 @@ public class GraalScriptExecutor
         }
         synchronized ( slotCreationLock )
         {
+            requireOpen();
             ContextSlot slot = slots.get( index );
             if ( slot != null )
             {
@@ -661,7 +713,9 @@ public class GraalScriptExecutor
 
     private void onCacheExpired()
     {
-        runDisposers();
+        // disposers are NOT drained here: only bootstrap (main context) can register them, and a
+        // dev-mode reload re-executes controllers, never main.js — draining would run the app's
+        // teardown mid-life and leave nothing for the actual stop
         // stale sources must not outlive the exports cache — dev-mode reloads re-parse
         this.sources.clear();
     }

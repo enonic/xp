@@ -77,7 +77,18 @@ public final class SseManagerImpl
             .attributes( endpoint.getConfig().attributes() )
             .build();
 
-        endpoint.onEvent( connectEvent );
+        try
+        {
+            endpoint.onEvent( connectEvent );
+        }
+        catch ( RuntimeException e )
+        {
+            // the response is already committed, so nothing meaningful can be rendered and the
+            // exception ends up swallowed upstream — without this the connection would idle as a
+            // zombie forever (the default SSE timeout is infinite). Close it so the client learns.
+            entry.close();
+            throw e;
+        }
 
         return clientId;
     }

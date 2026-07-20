@@ -39,6 +39,23 @@ public final class SseEndpointImpl
             // the connection now references the subscribing context: keep it out of the request
             // pool until the connection ends
             this.script.retain();
+            boolean opened = false;
+            try
+            {
+                this.script.onSseEvent( event );
+                opened = true;
+            }
+            finally
+            {
+                // a failed open gets no terminal event (the servlet layer swallows the failure,
+                // and the default SSE timeout is infinite): release here or the pin leaks the
+                // slot out of the request pool for good
+                if ( !opened && this.released.compareAndSet( false, true ) )
+                {
+                    this.script.release();
+                }
+            }
+            return;
         }
         try
         {
@@ -48,7 +65,7 @@ public final class SseEndpointImpl
         {
             // TIMEOUT/ERROR may or may not be followed by CLOSE: release exactly once on the
             // first terminal event
-            if ( type != SseEventType.OPEN && this.released.compareAndSet( false, true ) )
+            if ( this.released.compareAndSet( false, true ) )
             {
                 this.script.release();
             }

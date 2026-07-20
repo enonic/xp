@@ -54,6 +54,13 @@ public class ExecuteFunctionHandlerTest
             }
 
             @Override
+            public ScriptExports executeBackground( final ResourceKey script )
+            {
+                // mirror the production contract: the background view of the script's exports
+                return runScript( script ).background();
+            }
+
+            @Override
             public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
             {
                 throw new UnsupportedOperationException();

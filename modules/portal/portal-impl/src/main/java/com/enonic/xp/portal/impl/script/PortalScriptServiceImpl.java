@@ -69,6 +69,12 @@ public final class PortalScriptServiceImpl
         return this.scriptRuntime.execute( script );
     }
 
+    @Override
+    public ScriptExports executeBackground( final ResourceKey script )
+    {
+        return this.scriptRuntime.executeBackground( script );
+    }
+
     @Deprecated
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
