@@ -622,6 +622,13 @@ payloads on BlobStore, as a stepping stone).
     metering/QoS/control-plane work in **Phase 6**; today's server has a plain HikariCP
     pool with no per-tenant fairness. Escape hatch for chronic heavy tenants: promotion
     to a dedicated cell. Watch `pool-checkout-wait` per tenant (§7.1) as the early signal.
+13. **STS-scoped presign untested (Phase 2 residual).** The binary presign path (Gate A)
+    ships production STS `AssumeRole` with an inline policy scoped to the tenant prefix,
+    but tests exercise only the base-credential fallback (MinIO `AssumeRole` not run) plus
+    a SigV4-tamper-evidence check. The URL's unforgeability is proven; the inline-policy
+    blast-radius scoping (a leaked presigned URL cannot reach another tenant's prefix) is
+    NOT — needs a real-AWS-STS integration test before relying on presigned URLs in cloud.
+    Until then, stream-through-NoDB (the Phase 2 default) carries no such gap.
 
 ## 11. Open questions
 
