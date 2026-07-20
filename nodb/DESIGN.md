@@ -483,13 +483,18 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 |---|---|---|
 | **0** | SPI module in XP; current embedded-ES code refactored to implement it | Full XP test suite green, no behavior change; ships in an 8.x | **DONE 2026-07-18** — branch `storage-spi-phase0`, gates 0/A–D green (full build 729 tasks + both itest suites; only pre-existing icuSort failures). `core-storage-spi` created; StorageDao/SearchDao zero consumers outside the ES package; `storage.backend=elasticsearch` selection property in place; arch test enforces both boundary directions. Gate E (module extraction) deliberately deferred. |
 | **1** | NoDB engine + gRPC server + `nodb-client`; `NodeStore` on Postgres, binaries on S3; tenant model END-TO-END (token→TenantContext as the only entry, trivial dev issuer; schema-per-tenant + SET LOCAL ROLE) | Storage-level itests green against NoDB, run DUAL-TENANT with cross-tenant isolation assertions | **DONE 2026-07-18** — branch `nodb-phase1` (on top of `storage-spi-phase0`): per-op RPC parity with the post-Phase-0 SPI; `core-storage-nodb-client` OSGi bundle (embedded gRPC) with config-selected backend, default boot byte-identical; XP storage itests green vs NoDB in hybrid mode (21 classes/65 tests; search stays on ES until Phase 2); live-stack boot smoke with restart-persistence proof (psql-verified). Payloads still on BlobStore (stretch deferred); S3 binary path deferred with it. |
-| **2** | OpenSearch index + translator port; outbox/indexer; refresh checkpoint | Full core-repo + itest suites green; golden-query corpus diffed against ES backend |
-| **3** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
-| **4** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
-| **5** | Migration tooling, dual-run validation, embedded-ES deprecation | Pilot tenant migrated |
+| **2** | **De-search the structural operations + realize payload storage in NoDB.** (a) Move the operations that only use the search index for STRUCTURE — branch-diff / sync-work (a SQL full-outer-join on `branch_entry`, vs today's scroll-both-branches), inbound reference lookups, hierarchy (children/descendants for delete/move/duplicate), and version-history — off search onto SQL, as SPI methods BOTH backends implement (SQL in NoDB; the existing search path in ES, zero ES behaviour change). (b) Store node payloads IN NoDB (the `payload` table §2 always specified; Phase 1 deferred it to hybrid — re-add the FK Gate C dropped) behind a stable, versioned, **XP-independent payload format** NoDB can parse as its own bytes; optionally binaries behind NoDB→S3 so XP holds no object-store creds (§7.2). (c) `_references` becomes a **server-derived, payload-authoritative virtual field**, materialized into `node_version.references` + GIN (mirrors `binary_keys`). Prereqs (b) unlock (c). | Structural itest classes green vs NoDB in BOTH backends (open with source-verification of the real command→search call sites, à la Phase 0 Gate 0); branch-diff/sync-work speedup shown vs the ES baseline; payload round-trip + FK re-enforced; default ES mode unchanged. |
+| **3** | OpenSearch index + query-translator port — the **content/full-text/aggregation surface that Phase 2 did NOT de-search** (smaller than before); outbox/indexer deriving search docs from stored payloads (server-side — same payload-parsing capability Phase 2 establishes for `_references`); refresh checkpoint for read-your-writes. | Full core-repo + itest suites green vs NoDB; golden-query corpus diffed against the ES backend. |
+| **4** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
+| **5** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
+| **6** | Migration tooling, dual-run validation, embedded-ES deprecation | Pilot tenant migrated |
 
-Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
-(Phase 0 alone removes the last three ES imports from core-repo's public layer).
+**Phase 3 (the translator port) is now the long pole.** Phase 2 was deliberately
+inserted ahead of it: it front-loads the high-certainty SQL wins (the publish/sync-work
+speedup, strong-consistency delete/move) and shrinks Phase 3's parity surface by moving
+every structure-only operation off search first. Phases 0–1 are done; Phase 2 finally
+delivers the payload-in-Postgres storage §2 always specified (Phase 1 ran hybrid, with
+payloads on BlobStore, as a stepping stone).
 
 ## 10. Risk register (self-review 2026-07-17)
 
@@ -530,13 +535,16 @@ Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
 8. Subtree move: O(descendants) path rewrite in one tx; needs DEFERRABLE unique(path)
    and stated semantics.
 9. Referential backups expire with GC retention — enforce an explicit validity horizon.
-10. **Phase 2 pickups from Phase 1** (all deliberate, recorded in commits/BUILD-PHASE-1):
-    (a) per-op write RPCs emit NO outbox rows — the indexer must add emission or route
-    XP through batch entry points; (b) node_version's payload FK dropped for hybrid
-    mode — re-add enforcement (or write-time validation) when NoDB-native payload mode
-    lands; (c) bnd-embedded gRPC is fragile (services-file merging, runtime-scope
-    transitives) — add a CI boot-smoke test; (d) TenantBootstrapTool has no
-    control-plane equivalent (Phase 4).
+10. **Pickups from Phase 1** (all deliberate, recorded in commits/BUILD-PHASE-1),
+    now mapped to the renumbered phases: (a) per-op write RPCs emit NO outbox rows —
+    the indexer (**Phase 3**) must add emission or route XP through batch entry points;
+    (b) node_version's payload FK dropped for hybrid mode — re-add enforcement when
+    payloads move into NoDB (**Phase 2**, prereq for server-derived `_references`);
+    (c) bnd-embedded gRPC is fragile (services-file merging, runtime-scope transitives)
+    — add a CI boot-smoke test (any phase); (d) TenantBootstrapTool has no control-plane
+    equivalent (**Phase 5**). New from the Phase 2 design discussion: (e) the
+    **XP-independent payload format spec** NoDB parses server-side is a Phase 2
+    deliverable — without it, server-side derivation couples NoDB to XP's serializer.
 11. Loose ends: node_commit/audit not partition-scoped (repo drop not purely DDL);
     custom repo index definitions / putIndexMapping path dropped without replacement;
     INDEXING-vs-awaitRefresh semantics; schema-migration orchestration across N tenant
