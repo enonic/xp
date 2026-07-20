@@ -611,6 +611,17 @@ payloads on BlobStore, as a stepping stone).
     custom repo index definitions / putIndexMapping path dropped without replacement;
     INDEXING-vs-awaitRefresh semantics; schema-migration orchestration across N tenant
     schemas during rolling upgrades.
+12. **Shared-pool fairness / noisy neighbor (Phase 6).** NoDB fronts one shared Postgres
+    pool per cell (SET LOCAL ROLE per checkout, not a pool per tenant), so outright
+    connection *exhaustion* is designed out (XP holds no DB connections; a pooler —
+    pgbouncer/pgcat, txn mode — caps server backends; per-tenant `statement_timeout`
+    caps checkout duration). But nothing yet stops one tenant's request burst from
+    *starving the shared pool* of the others. The fix — per-tenant concurrency caps
+    (semaphore on checkouts), fair queuing, per-tenant rate limits (scope-aware QoS,
+    §7.2), and plan quotas (metering→quota at the NoDB boundary) — lands with the
+    metering/QoS/control-plane work in **Phase 6**; today's server has a plain HikariCP
+    pool with no per-tenant fairness. Escape hatch for chronic heavy tenants: promotion
+    to a dedicated cell. Watch `pool-checkout-wait` per tenant (§7.1) as the early signal.
 
 ## 11. Open questions
 
