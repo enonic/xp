@@ -501,7 +501,7 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 |---|---|---|
 | **0** | SPI module in XP; current embedded-ES code refactored to implement it | Full XP test suite green, no behavior change; ships in an 8.x | **DONE 2026-07-18** — branch `storage-spi-phase0`, gates 0/A–D green (full build 729 tasks + both itest suites; only pre-existing icuSort failures). `core-storage-spi` created; StorageDao/SearchDao zero consumers outside the ES package; `storage.backend=elasticsearch` selection property in place; arch test enforces both boundary directions. Gate E (module extraction) deliberately deferred. |
 | **1** | NoDB engine + gRPC server + `nodb-client`; `NodeStore` on Postgres, binaries on S3; tenant model END-TO-END (token→TenantContext as the only entry, trivial dev issuer; schema-per-tenant + SET LOCAL ROLE) | Storage-level itests green against NoDB, run DUAL-TENANT with cross-tenant isolation assertions | **DONE 2026-07-18** — branch `nodb-phase1` (on top of `storage-spi-phase0`): per-op RPC parity with the post-Phase-0 SPI; `core-storage-nodb-client` OSGi bundle (embedded gRPC) with config-selected backend, default boot byte-identical; XP storage itests green vs NoDB in hybrid mode (21 classes/65 tests; search stays on ES until Phase 4); live-stack boot smoke with restart-persistence proof (psql-verified). Payloads still on BlobStore (stretch deferred); S3 binary path deferred with it. |
-| **2** | **Binaries — NoDB-fronted object storage.** Route binaries (media, attachments) XP → NoDB → S3 so XP holds no object-store credentials (§7.2): a streaming/chunked up/download API through NoDB plus presigned-URL issuance with STS session policies scoped to the tenant prefix (large bytes bypass NoDB's bandwidth via the presigned URL). Binaries stay content-addressed on **S3, never Postgres**; per-tenant dedup (hash under the tenant prefix). Replaces XP's direct BlobStore→S3 for binaries in nodb mode; self-hosted may keep the file/S3 BlobStore provider. | Binary up/download round-trip vs NoDB (streamed, dedup preserved); presigned fetch tenant-scoped (cross-tenant denied); XP holds no S3 creds in nodb mode; default (BlobStore) mode unchanged. |
+| **2** | **Binaries — NoDB-fronted object storage.** Route binaries (media, attachments) XP → NoDB → S3 so XP holds no object-store credentials (§7.2): a streaming/chunked up/download API through NoDB plus presigned-URL issuance with STS session policies scoped to the tenant prefix (large bytes bypass NoDB's bandwidth via the presigned URL). Binaries stay content-addressed on **S3, never Postgres**; per-tenant dedup (hash under the tenant prefix). Replaces XP's direct BlobStore→S3 for binaries in nodb mode; self-hosted may keep the file/S3 BlobStore provider. | Binary up/download round-trip vs NoDB (streamed, dedup preserved); presigned fetch tenant-scoped (cross-tenant denied); XP holds no S3 creds in nodb mode; default (BlobStore) mode unchanged. | **DONE 2026-07-20** — branch `nodb-phase2-binaries`, gates 0/A–D. NoDB BinaryStore over S3 (content-addressed, per-tenant prefix, streaming PutBinary/GetBinary, blocking-until-durable); XP-side `NodbBinaryBlobStore` decorator (segment-scoped, rebind-by-ranking, zero core-repo edits; a review-caught self-reference DS bug fixed with `target="(!(storage.backend=nodb))"`, confirmed ACTIVE at real boot). Itests green vs NoDB (invariant + cross-tenant isolation to S3 ground truth); boot+serve+restart smoke green. **Binary GC deferred**: both GC paths need version-history (`findVersions`) which nodb mode lacks until Phase 4/8 — store/serve/persist work, orphan cleanup does not yet (risk #14). STS-scoped presign ships but untested (risk #13). |
 | **3** | **Payload storage in NoDB — storage-only** (all structural-query de-search deferred to Phase 8). Store node payloads — the node-data, index-config, and ACL segments — IN NoDB's `payload` table (the split §2 always specified; Phase 1 ran hybrid with payloads on BlobStore — re-add the FK Gate C dropped), behind a stable, versioned, **XP-independent payload format** NoDB can parse as its own bytes (the foundation Phase 8's server-side derivation needs). Search stays on ES; no command/query changes. Binaries already NoDB-fronted (Phase 2). | Payload round-trip green vs NoDB (three segments, dedup preserved); FK re-enforced; format spec documented; default ES mode unchanged; both-backend itests green. |
 | **4** | OpenSearch index + query-translator port — the **full content/full-text/aggregation search surface** (structural-query de-search is Phase 8, so Phase 4 ports the complete surface); outbox/indexer deriving search docs from stored payloads (server-side — the same payload-parsing that Phase 3's format spec enables, and that Phase 8 uses for `_references`); refresh checkpoint for read-your-writes. | Full core-repo + itest suites green vs NoDB; golden-query corpus diffed against the ES backend. |
 | **5** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
@@ -583,9 +583,10 @@ payloads on BlobStore, as a stepping stone).
    embedded-ES comparison and per-op perf gates remain to be added in Phases 3–4.
 3. **Query AST wire format** (open q. #1) — Phase 4 stands on it; includes per-query
    principal/ACL propagation (size, caching, trust statement). Spike before the port.
-4. **Binary UPLOAD path undefined**: staged upload (presign→upload→confirm→reference)
-   or writes-through-NoDB; otherwise the binaries-before-commit invariant (four backup
-   mechanisms depend on it) is unenforceable.
+4. ~~**Binary UPLOAD path undefined**~~ **RESOLVED (Phase 2)**: stream-through-NoDB
+   (`PutBinary`, blocking-until-durable) — `BinaryServiceImpl.store` already blocks
+   before the version write, so the binaries-before-commit invariant holds with no new
+   primitive; proven by itest. Presigned-PUT remains a future large-upload optimization.
 5. **Outbox trim vs many consumers**: cursor registry + TTL + bounded retention +
    defined resync ("cursor too old → flush and re-subscribe").
 6. **Catalog pressure**: tenants × repos × branch sub-partitions = 10k+ relations/cell
@@ -629,6 +630,16 @@ payloads on BlobStore, as a stepping stone).
     blast-radius scoping (a leaked presigned URL cannot reach another tenant's prefix) is
     NOT — needs a real-AWS-STS integration test before relying on presigned URLs in cloud.
     Until then, stream-through-NoDB (the Phase 2 default) carries no such gap.
+14. **Binary GC does not run in nodb mode (Phase 2 residual).** Both binary-GC paths
+    (`BinaryBlobVacuumCommand` and `VersionTableVacuumCommand`) route through
+    `IsBlobUsedByVersionCommand.findVersions()` — a version-history query served by the
+    ES storage index, which nodb mode does not create (version-history was scoped out of
+    Phase 1). So in nodb mode binaries store/serve/persist correctly but **orphaned
+    binaries are never reclaimed** — they accumulate on S3 until version enumeration is
+    available (OpenSearch Phase 4, or SQL version-history Phase 8, or a dedicated NoDB
+    "stale versions" RPC). Not a Gate B/decorator bug; a genuine cross-phase dependency.
+    Also noted (pre-existing, backend-agnostic): `/system/vacuum` `tasks`-array param
+    throws ClassCastException; `xp.suPassword` needs `{sha256}<hex>` (template gotcha).
 
 ## 11. Open questions
 
