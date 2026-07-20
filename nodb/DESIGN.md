@@ -43,6 +43,24 @@ Rationale: version JSON is small, hot, latency-sensitive → belongs with the br
 rows it is read with (one round trip, one transaction, PITR-coherent backups, retention =
 `DELETE`). Binaries are large and streamed → object store. Search is a cache, never truth.
 
+### 2.1 Payload read model (per-segment, lazy)
+
+A version's three payload segments (node-data, index-config, ACL) are fetched
+INDEPENDENTLY by hash and cached independently — the model XP already has
+(`NodeVersionServiceImpl`'s three BlobKey caches). The nodb-client preserves it:
+per-segment `GetPayload(hash)`, on demand. A read pulls only what the operation needs —
+node-data for content, ACL for permission checks, index-config essentially only at
+index/write time. Two consequences:
+1. **Segment caches never need invalidation** — immutable + content-addressed, so a
+   cached hash is correct forever; only the branch *head pointer* (which version is
+   current) is invalidated, via the change feed. Shared ACL/index-config hashes (a few
+   distinct values across thousands of nodes) stay effectively permanently cached.
+2. **Structural ops are payload-free** — the narrow `branch_entry`/`node_version` rows
+   carry get/getByPath/children/diff/reference-queries with ZERO segment loading;
+   payload bytes load lazily only on content access.
+Add a **batched multi-hash `GetPayload`** for bulk paths (dump/export/reindex) so
+lazy-per-segment doesn't become N round trips there.
+
 ## 3. The SPI
 
 ### 3.1 What the code says the seam is
