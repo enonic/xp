@@ -19,6 +19,12 @@ postgresql = "42.7.4"
 hikaricp = "6.2.1"
 testcontainers = "1.20.4"
 nodb-java-jwt = "4.6.0"
+# Phase 2 Gate C (nodb/BUILD-PHASE-2.md): kept in sync with nodb/gradle/libs.versions.toml's
+# own awssdk version ref -- itest-core's testFixtures needs the S3 SDK to stand up a MinIO
+# testcontainer + BinaryStore for the in-process NodbServer, and to make ground-truth S3
+# assertions (object exists under the tenant prefix) directly, independent of NoDB's own
+# reported success.
+awssdk = "2.29.15"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
@@ -208,9 +214,22 @@ hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
 nodb-java-jwt = { module = "com.auth0:java-jwt", version.ref = "nodb-java-jwt" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+# Phase 2 Gate C: MinIO testcontainer + AWS SDK v2 S3 client, mirroring
+# nodb/gradle/libs.versions.toml's own entries (nodb/engine and nodb/server's Gate A/server
+# tests already use these exact modules/versions) so NodbTestCluster can stand up a real
+# BinaryStore-over-MinIO for the in-process NodbServer, same as nodb's own
+# BinariesServiceIntegrationTest.
+testcontainers-minio = { module = "org.testcontainers:minio", version.ref = "testcontainers" }
+awssdk-bom = { module = "software.amazon.awssdk:bom", version.ref = "awssdk" }
+awssdk-s3 = { module = "software.amazon.awssdk:s3" }
+# BinaryStore's constructor signature references StsClient (nodb/engine's presignGet STS
+# path) even when the itest fixture passes null for it -- needed on the compile classpath
+# purely so that type resolves, not because the fixture actually exercises the STS branch
+# (same documented test-limitation posture as nodb/server's own BinariesServiceIntegrationTest).
+awssdk-sts = { module = "software.amazon.awssdk:sts" }
 
 [bundles]
 grpc-client = ["grpc-netty-shaded", "grpc-protobuf", "grpc-protobuf-lite", "grpc-stub", "grpc-util", "perfmark-api"]
-nodb-testcontainers = ["testcontainers-postgresql", "testcontainers-junit-jupiter"]
+nodb-testcontainers = ["testcontainers-postgresql", "testcontainers-junit-jupiter", "testcontainers-minio"]
 
 [plugins]

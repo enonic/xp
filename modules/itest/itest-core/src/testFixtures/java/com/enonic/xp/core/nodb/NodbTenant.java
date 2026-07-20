@@ -14,6 +14,13 @@ import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
  * {@code xp.itest.storage=nodb}. {@link #close()} releases the gRPC channel (the
  * Postgres schema itself is left in place -- dropping it isn't worth the round trip since
  * the whole container is torn down at JVM exit anyway, see {@link NodbTestCluster}).
+ *
+ * <p><b>Phase 2 Gate C addition:</b> {@link #client()} exposes the same {@link
+ * NodbStorageClient} {@link #nodeStore}/{@link #repositoryStorageAdmin} are built on, so a
+ * caller (namely {@code AbstractNodeTest}) can also construct a {@code NodbBinaryBlobStore}
+ * against this exact tenant's gRPC channel/token -- the binary path needs the raw client
+ * directly (it talks to the {@code Binaries} service, not {@link NodeStore}/
+ * {@link RepositoryStorageAdmin}), not a third SPI wrapper.
  */
 public final class NodbTenant
     implements AutoCloseable
@@ -38,6 +45,12 @@ public final class NodbTenant
     public String tenantId()
     {
         return tenantId;
+    }
+
+    /** See the class javadoc's Phase 2 Gate C note. */
+    public NodbStorageClient client()
+    {
+        return client;
     }
 
     public NodeStore nodeStore()

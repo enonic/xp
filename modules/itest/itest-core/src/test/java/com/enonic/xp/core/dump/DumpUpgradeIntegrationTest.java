@@ -55,8 +55,12 @@ class DumpUpgradeIntegrationTest
         final RepoConfigurationDynamic repoConfiguration = new RepoConfigurationDynamic();
         repoConfiguration.activate( Map.of( "dumps.dir", temporaryFolder.toString() ) );
 
+        // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): see DumpServiceImplTest's setUp for why
+        // this must be this.blobStore, not the raw BLOB_STORE -- the legacy dump-7.zip
+        // fixture's binaries are imported through this exact store, which routes the binary
+        // segment to NoDB in nodb mode, same as production's storage.backend=nodb wiring.
         this.dumpService =
-            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService,
+            new DumpServiceImpl( eventPublisher, this.blobStore, this.nodeService, this.repositoryEntryService,
                                  this.nodeRepositoryService, this.storageService, this.branchService, repoConfiguration );
 
         copyClasspathResource( "dump-7.zip", temporaryFolder );

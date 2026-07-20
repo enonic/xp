@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.Context;
@@ -92,6 +93,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.storage.nodb.NodbBinaryBlobStore;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
@@ -194,6 +196,18 @@ public abstract class AbstractNodeTest
 
     protected static final MemoryBlobStore BLOB_STORE = new MemoryBlobStore();
 
+    /**
+     * The {@link BlobStore} {@link #binaryService}/the version dao are actually built on
+     * for THIS test instance: {@link #BLOB_STORE} directly in default (elasticsearch) mode,
+     * or a {@link NodbBinaryBlobStore} wrapping it in nodb mode (Phase 2 Gate C,
+     * nodb/BUILD-PHASE-2.md) -- the decorator diverts only the binary segment to the shared
+     * {@link NodbTestCluster}'s NoDB server (backed by its MinIO container), delegating
+     * every other segment (node/index/ACL blobs) through to {@link #BLOB_STORE} unchanged,
+     * exactly like production's {@code storage.backend=nodb} wiring (Gate B). Set in
+     * {@link #setUpAbstractNodeTest()}, after {@link #nodbTenant} is resolved.
+     */
+    protected BlobStore blobStore;
+
     protected NodeServiceImpl nodeService;
 
     protected StorageDaoImpl storageDao;
@@ -262,10 +276,6 @@ public abstract class AbstractNodeTest
 
         HomeDirSupport.set( temporaryFolder.toFile().toPath() );
 
-        this.binaryService = new BinaryServiceImpl( BLOB_STORE );
-
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of() ) );
-
         this.storageDao = new StorageDaoImpl( client );
 
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
@@ -279,17 +289,28 @@ public abstract class AbstractNodeTest
         // this.indexServiceInternal remains the concrete ES admin regardless of mode: it is
         // also used for IndexServiceInternal-typed params below (search-<repo> index
         // lifecycle/health), which never move to nodb.
+        //
+        // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): nodb mode also resolves nodbTenant here,
+        // BEFORE binaryService/nodeDao are built below, so this.blobStore can wrap BLOB_STORE
+        // with a NodbBinaryBlobStore against this exact tenant's gRPC client -- the binary
+        // segment routes to NoDB/MinIO, every other segment still goes straight to BLOB_STORE.
         if ( NodbTestCluster.isEnabled() )
         {
             this.nodbTenant = NodbTestCluster.get().tenantForClass( this.getClass() );
             this.nodeStore = nodbTenant.nodeStore();
             this.repositoryStorageAdmin = nodbTenant.repositoryStorageAdmin();
+            this.blobStore = new NodbBinaryBlobStore( BLOB_STORE, nodbTenant.client() );
         }
         else
         {
             this.nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
             this.repositoryStorageAdmin = this.indexServiceInternal;
+            this.blobStore = BLOB_STORE;
         }
+
+        this.binaryService = new BinaryServiceImpl( blobStore );
+
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
 
         this.branchService = new BranchServiceImpl( nodeStore );
 

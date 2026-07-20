@@ -10,8 +10,19 @@ dependencies {
     testImplementation project( ':core:core-scheduler' )
     testImplementation project( ':core:core-app' )
     testImplementation project( ':core:core-export' )
+    // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): the cross-tenant binary isolation itest
+    // constructs NodbBinaryBlobStore instances directly against two independently
+    // provisioned tenants (NodbTestCluster#freshTenant), so this test-only class needs the
+    // decorator on the plain `test` classpath too, not only testFixtures.
+    testImplementation project( ':core:core-storage-nodb-client' )
 
     testImplementation libs.hazelcast.hazelcast
+
+    // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): binary itests assert ground truth directly
+    // against the shared MinIO container (NodbTestCluster#s3Client/#s3Bucket) -- same
+    // artifact set as the testFixtures block below.
+    testImplementation platform( libs.awssdk.bom )
+    testImplementation libs.awssdk.s3
 
     testImplementation( testFixtures( project( ":core:core-api" ) ) )
     testImplementation( testFixtures( project( ":core:core-blobstore" ) ) )
@@ -61,6 +72,16 @@ dependencies {
     testFixturesImplementation libs.hikaricp
     testFixturesImplementation libs.nodb.java.jwt
     testFixturesImplementation libs.bundles.nodb.testcontainers
+
+    // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): NodbTestCluster additionally stands up a MinIO
+    // testcontainer + a real BinaryStore (nodb/engine) so the in-process NodbServer can serve
+    // the Binaries RPCs against real S3-compatible storage, and so binary itests can assert
+    // ground truth directly at the S3 level (object exists under the tenant prefix),
+    // independent of NoDB's own reported success. testcontainers-minio is already pulled in
+    // via libs.bundles.nodb.testcontainers above.
+    testFixturesImplementation platform( libs.awssdk.bom )
+    testFixturesImplementation libs.awssdk.s3
+    testFixturesImplementation libs.awssdk.sts
 }
 
 // See the testFixturesImplementation fileTree(...) comment above: this is a build-order

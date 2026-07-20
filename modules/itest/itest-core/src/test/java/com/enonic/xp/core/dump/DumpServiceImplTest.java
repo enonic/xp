@@ -104,9 +104,17 @@ class DumpServiceImplTest
     {
         final RepoConfigurationDynamic repoConfiguration = new RepoConfigurationDynamic();
         repoConfiguration.activate( Map.of( "dumps.dir", temporaryFolder.toString() ) );
+        // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): DumpServiceImpl reads/writes binary bytes
+        // through the BlobStore it's given (ZipDumpBlobStore wraps it as the "source" store
+        // for writeBinaryBlob's later flush) -- this must be this.blobStore (the
+        // NodbBinaryBlobStore-wrapped store in nodb mode), not the raw BLOB_STORE, or a
+        // binary attached via binaryService (routed to NoDB) would be invisible to the dump
+        // writer/reader (mirrors production: DumpServiceImpl's real @Reference BlobStore
+        // binds to whichever BlobStore has the highest service.ranking, the nodb decorator
+        // when storage.backend=nodb).
         this.dumpService =
-            new DumpServiceImpl( eventPublisher, BLOB_STORE, this.nodeService, this.repositoryEntryService, this.nodeRepositoryService,
-                                 this.storageService, this.branchService, repoConfiguration );
+            new DumpServiceImpl( eventPublisher, this.blobStore, this.nodeService, this.repositoryEntryService,
+                                 this.nodeRepositoryService, this.storageService, this.branchService, repoConfiguration );
     }
 
     @Test

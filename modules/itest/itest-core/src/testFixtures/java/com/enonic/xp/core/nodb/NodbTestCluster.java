@@ -1,5 +1,6 @@
 package com.enonic.xp.core.nodb;
 
+import java.net.URI;
 import java.nio.file.Files;
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
@@ -13,10 +14,20 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+
+import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import com.enonic.nodb.engine.TenantContext;
 import com.enonic.nodb.engine.TenantProvisioner;
+import com.enonic.nodb.engine.binary.BinaryStore;
 import com.enonic.nodb.server.NodbServer;
 import com.enonic.nodb.server.auth.DevKeys;
 import com.enonic.nodb.server.auth.JwtIssuer;
@@ -36,6 +47,21 @@ import com.enonic.xp.storage.nodb.NodbStorageClient;
  * with XP's OWN Gate B client ({@link NodbNodeStore}/{@link NodbRepositoryStorageAdmin}
  * over {@link NodbStorageClient}) instead, since exercising that client end-to-end against
  * the real server is the whole point of this gate.
+ *
+ * <p><b>Phase 2 Gate C addition (nodb/BUILD-PHASE-2.md):</b> also starts a {@code minio/minio}
+ * testcontainer and a real {@link BinaryStore} (the same nodb/engine class production uses,
+ * constructed the same way {@code BinariesServiceIntegrationTest} in nodb/server does --
+ * MinIO's S3-compatible endpoint, path-style addressing, no STS client so {@code presignGet}
+ * exercises its base-credential fallback branch, same documented test limitation as that
+ * gate) wired into the shared {@link NodbServer} via its 4-arg {@code create} overload, so
+ * every binary write/read RPC ({@code PutBinary}/{@code GetBinary}/{@code BinaryExists}/
+ * {@code DeleteBinary}/{@code PresignGet}) the server handles for this JVM's itests actually
+ * lands on real S3-compatible storage, not {@link BinaryStore#fromEnv()}'s environment-
+ * dependent fallback. {@link #s3Client()}/{@link #s3Bucket()} expose the same raw S3 client
+ * for itests that need ground truth independent of NoDB's own reported success (e.g. "the
+ * object physically exists under the tenant prefix"), mirroring
+ * {@code BinariesServiceIntegrationTest}'s own assertions one layer up, through XP's
+ * {@code BlobStore} SPI instead of raw gRPC stubs.
  *
  * <p><b>Isolation:</b> ONE Postgres container + ONE NodbServer per JVM (starting either is
  * the expensive part -- container startup, migrations); one tenant (Postgres schema) PER
@@ -75,9 +101,19 @@ public final class NodbTestCluster
 
     private static final Object LOCK = new Object();
 
+    private static final String MINIO_BUCKET = "xp-itest-nodb-binaries";
+
     private final PostgreSQLContainer<?> postgres;
 
     private final HikariDataSource dataSource;
+
+    private final MinIOContainer minio;
+
+    private final S3Client s3Client;
+
+    private final S3Presigner s3Presigner;
+
+    private final BinaryStore binaryStore;
 
     private final NodbServer server;
 
@@ -90,10 +126,15 @@ public final class NodbTestCluster
     /** Memoized per concrete test class -- see class javadoc's isolation section. */
     private final Map<Class<?>, NodbTenant> tenantsByClass = new ConcurrentHashMap<>();
 
-    private NodbTestCluster( PostgreSQLContainer<?> postgres, HikariDataSource dataSource, NodbServer server, KeyPair issuerKeyPair )
+    private NodbTestCluster( PostgreSQLContainer<?> postgres, HikariDataSource dataSource, MinIOContainer minio, S3Client s3Client,
+                              S3Presigner s3Presigner, BinaryStore binaryStore, NodbServer server, KeyPair issuerKeyPair )
     {
         this.postgres = postgres;
         this.dataSource = dataSource;
+        this.minio = minio;
+        this.s3Client = s3Client;
+        this.s3Presigner = s3Presigner;
+        this.binaryStore = binaryStore;
         this.server = server;
         this.issuerPrivateKey = (RSAPrivateKey) issuerKeyPair.getPrivate();
         this.issuerPublicKey = (RSAPublicKey) issuerKeyPair.getPublic();
@@ -138,15 +179,66 @@ public final class NodbTestCluster
             hikariConfig.setMaximumPoolSize( 16 );
             HikariDataSource dataSource = new HikariDataSource( hikariConfig );
 
-            KeyPair issuerKeyPair = DevKeys.loadOrGenerate( Files.createTempDirectory( "nodb-itest-dev-keys" ) );
-            NodbServer server = NodbServer.create( 0, dataSource, (RSAPublicKey) issuerKeyPair.getPublic() );
+            // Phase 2 Gate C: same MinIO image / construction shape as nodb/server's own
+            // BinariesServiceIntegrationTest -- a real S3-compatible object store, not a
+            // stub, backing every binary itest run in this JVM.
+            MinIOContainer minio = new MinIOContainer( "minio/minio:RELEASE.2024-11-07T00-52-20Z" );
+            minio.start();
 
-            return new NodbTestCluster( postgres, dataSource, server, issuerKeyPair );
+            Region region = Region.US_EAST_1;
+            URI endpoint = URI.create( minio.getS3URL() );
+            StaticCredentialsProvider credentials =
+                StaticCredentialsProvider.create( AwsBasicCredentials.create( minio.getUserName(), minio.getPassword() ) );
+            S3Configuration serviceConfiguration = S3Configuration.builder().pathStyleAccessEnabled( true ).build();
+
+            S3Client s3Client = S3Client.builder()
+                .region( region )
+                .endpointOverride( endpoint )
+                .credentialsProvider( credentials )
+                .serviceConfiguration( serviceConfiguration )
+                .build();
+            s3Client.createBucket( CreateBucketRequest.builder().bucket( MINIO_BUCKET ).build() );
+
+            S3Presigner s3Presigner = S3Presigner.builder()
+                .region( region )
+                .endpointOverride( endpoint )
+                .credentialsProvider( credentials )
+                .serviceConfiguration( serviceConfiguration )
+                .build();
+
+            // No STS client/role ARN, same documented Gate A test limitation as
+            // BinariesServiceIntegrationTest: presignGet exercises its base-credential
+            // fallback branch here, not the STS-scoped production path.
+            BinaryStore binaryStore =
+                new BinaryStore( s3Client, s3Presigner, null, null, MINIO_BUCKET, region, endpoint, serviceConfiguration );
+
+            KeyPair issuerKeyPair = DevKeys.loadOrGenerate( Files.createTempDirectory( "nodb-itest-dev-keys" ) );
+            NodbServer server = NodbServer.create( 0, dataSource, (RSAPublicKey) issuerKeyPair.getPublic(), binaryStore );
+
+            return new NodbTestCluster( postgres, dataSource, minio, s3Client, s3Presigner, binaryStore, server, issuerKeyPair );
         }
         catch ( Exception e )
         {
             throw new IllegalStateException( "Failed to start the shared NoDB itest cluster", e );
         }
+    }
+
+    /**
+     * Raw S3 client against the shared MinIO container -- for itests that need ground truth
+     * independent of what NoDB itself reports (Gate C's invariant/isolation itests): e.g.
+     * confirming an object physically exists (or does not) under a given key/prefix, the
+     * same style of assertion {@code BinariesServiceIntegrationTest} (nodb/server) makes
+     * directly against S3 rather than only through the RPC surface under test.
+     */
+    public S3Client s3Client()
+    {
+        return s3Client;
+    }
+
+    /** The bucket every tenant's binaries share (isolated from one another by key prefix, {@code <tenantId>/binary/<hash>}). */
+    public String s3Bucket()
+    {
+        return MINIO_BUCKET;
     }
 
     /**
@@ -200,6 +292,10 @@ public final class NodbTestCluster
         // NodbServer#shutdown() already closes the HikariDataSource it was constructed
         // with (same instance as this.dataSource) -- do not close it a second time here.
         server.shutdown();
+        // BinaryStore#close() closes s3Client/s3Presigner (the same instances this.s3Client
+        // exposes for test assertions) -- do not close them a second time here either.
+        binaryStore.close();
+        minio.stop();
         postgres.stop();
     }
 }
