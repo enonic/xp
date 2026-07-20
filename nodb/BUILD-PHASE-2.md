@@ -416,3 +416,273 @@ None found. All Gate 0 decisions have direct code-level support for the work ord
 stated recommendations; the two "surprises" (per-repo vs per-tenant dedup scope widening,
 and the second binary-GC path in `VersionTableVacuumCommand`) are both informational and
 should be picked up as explicit acknowledgements/wiring points in Gates A/B, not blockers.
+
+## Gate D results
+
+Booted the real distro (`:runtime:installDist`, already carrying `core-storage-nodb-client`
+at bundle level 10 from Phase-1 Gate D / Gate B) in `backend=nodb` mode against a from-
+scratch, real stack: postgres:17 + MinIO (both plain Docker containers) + a standalone
+`NodbServer` process with real S3 env wired to MinIO. Every process was started, polled,
+and stopped by hand — no itest fixtures. Boot, decorator-wiring, create+serve, S3 ground
+truth, and restart-persistence all went green on the first real attempt after fixing one
+config-format issue (below). Binary GC did **not** go green — a genuine, pre-existing,
+architectural gap (root-caused below), not a Gate B regression and not fixable within this
+gate's remit.
+
+### Stack recipe
+
+```bash
+# 1. Distro + nodb server (both already built from prior gates in this worktree; rebuilt
+#    to confirm freshness)
+./gradlew :runtime:installDist
+cd nodb && ../gradlew :server:installDist -x test
+
+# 2. Postgres + MinIO, fixed ports
+docker run -d --name nodb-pg-gated-d -e POSTGRES_DB=nodb -e POSTGRES_USER=nodb \
+  -e POSTGRES_PASSWORD=nodb -p 55432:5432 postgres:17
+docker run -d --name nodb-minio-gated-d -e MINIO_ROOT_USER=nodbminio \
+  -e MINIO_ROOT_PASSWORD=nodbminiosecret -p 19000:9000 -p 19001:9001 \
+  minio/minio:RELEASE.2024-11-07T00-52-20Z server /data --console-address ":9001"
+
+# 3. Bucket must be created by hand -- BinaryStore.fromEnv/NodbServer never auto-creates it
+#    (confirmed: BinariesServiceIntegrationTest's @BeforeAll does this too, not just prod)
+AWS_ACCESS_KEY_ID=nodbminio AWS_SECRET_ACCESS_KEY=nodbminiosecret AWS_DEFAULT_REGION=us-east-1 \
+  aws --endpoint-url http://localhost:19000 s3 mb s3://nodb
+
+# 4. NodbServer with NODB_S3_* env pointing at MinIO (BinaryStore.fromEnv, engine/binary/BinaryStore.java)
+cd nodb/server/build/install/server
+NODB_PG_URL="jdbc:postgresql://localhost:55432/nodb" NODB_PG_USER=nodb NODB_PG_PASSWORD=nodb \
+NODB_PORT=7700 NODB_KEYS_DIR=<keys-dir> \
+NODB_S3_ENDPOINT=http://localhost:19000 NODB_S3_BUCKET=nodb NODB_S3_REGION=us-east-1 \
+NODB_S3_ACCESS_KEY=nodbminio NODB_S3_SECRET_KEY=nodbminiosecret \
+  ./bin/server &
+
+# 5. Tenant + token (same TenantBootstrapTool / NodbTokenTool as Phase-1 Gate D)
+java -cp lib/* com.enonic.nodb.server.tools.TenantBootstrapTool \
+  --tenant xpgated --pg-url jdbc:postgresql://localhost:55432/nodb --pg-user nodb --pg-password nodb
+NODB_KEYS_DIR=<keys-dir> java -cp lib/* com.enonic.nodb.server.auth.NodbTokenTool \
+  --tenant xpgated --scope runtime --subject xp-server --ttl-minutes 480 > token.txt
+
+# 6. XP_HOME config (com.enonic.xp.storage.nodb.cfg, same 3 properties as Phase-1 Gate D)
+backend=nodb
+nodbEndpoint=localhost:7700
+nodbToken=${env.NODB_TOKEN}
+
+# 7. Boot (same JAVA_HOME=25 / server.sh pattern as Phase-1 Gate D)
+XP_HOME=<fresh home> NODB_TOKEN=$(cat token.txt) JAVA_HOME=/opt/homebrew/opt/openjdk \
+  ./bin/server.sh
+```
+
+**One new config-format gotcha found**: `xp.suPassword` (`system.properties`, used to get an
+authenticated admin session for the REST calls below) is **not** a plaintext password --
+`SuPasswordVerifier` (`core-security`) requires the exact form `{sha256}<hex>` or
+`{sha512}<hex>`; a plaintext value is silently treated as invalid (`WARN: Invalid
+xp.suPassword format`) and `su` basic-auth 401s with no other clue. Cost one boot/restart
+cycle to discover; not a nodb-specific bug (same in default mode), just undocumented in the
+shipped `system.properties` template comment (`# xp.suPassword = <password>` reads as
+plaintext). Worth a template-comment fix in a later pass; not touched here (out of this
+gate's scope).
+
+### Boot evidence (decorator DS-wiring confirmation)
+
+Clean boot, zero `ERROR`/`Exception`/`Unresolved`/`Unsatisfied` lines in the full log
+(besides the pre-existing, Phase-1-documented, cosmetic `Cluster not healthy: RED→YELLOW`
+transition and the benign `getIndexSettings` no-op WARN). `curl localhost:2609/osgi.bundle`
+(no auth): **115/115 bundles ACTIVE or RESOLVED** (Tika fragments only) --
+
+```
+{"id":65,"name":"com.enonic.xp.core.storage.nodb.client","state":"ACTIVE"}
+{"id":78,"name":"com.enonic.xp.core.blobstore","state":"ACTIVE"}
+{"id":93,"name":"com.enonic.xp.core.repo","state":"ACTIVE"}
+{"id":99,"name":"com.enonic.xp.blobstore.file","state":"ACTIVE"}
+```
+
+`com.enonic.xp.core.storage.nodb.client` (bundle 65, containing `NodbBinaryBlobStore`) is
+**ACTIVE**, and critically so is `com.enonic.xp.blobstore.file` (bundle 99, the plain file
+`BlobStore` provider) -- this is the real-boot proof that Gate B's fix
+(`@Reference(target="(!(storage.backend=nodb))")` on `NodbBinaryBlobStore`'s delegate) works
+as intended: the decorator activated and bound the FILE blobstore as its delegate rather
+than deadlocking on itself (ranking 100 vs the file store's unranked registration). Verified
+across **two independent boots** (first boot, and the restart in the persistence check
+below) with identical results both times -- not a one-off. `core-repo` (bundle 93, which
+holds the `@Reference BlobStore` consumers -- `BinaryServiceImpl`,
+`AbstractBlobVacuumCommand`, `VersionTableVacuumCommand`, dump reader/writer) is also ACTIVE
+throughout, confirming those consumers rebound to the decorator without any SCR
+resolution failure -- the level-10 placement from Phase-1 Gate D's bug #3 fix (moved off
+level 22 to avoid the shutdown-order rebind hang) carried over correctly to Gate B's
+addition and needed no further change.
+
+### Create + retrieve evidence
+
+**No content-management app is bundled in this repo** (Content Studio, which normally
+provides the attachment-create/media-serve admin API, is a separate application outside
+this repository) -- confirmed by inventory: `server-rest`'s `RepositoryResource` (`/repo`)
+exposes `export`/`import`/`list` only, no create/delete-node endpoint exists anywhere in
+`server-rest`/`admin-impl` (`grep -rln "@DELETE" modules` across the whole repo returns
+nothing), and `ProjectResource` (`/content/projects`) is list-only. Per the work order's own
+allowance ("if node-level attachment via API is hard without an app, use the import/dump
+path... document what you used"), used **`/repo/import`** (`RepositoryResource.importNodes`,
+a real, production admin REST endpoint, `@RolesAllowed(RoleKeys.ADMIN_ID)`, authenticated as
+`su`): hand-built a node-export zip (`NodeExportPathResolver`'s layout,
+`<exportName>/<nodeName>/_/node.xml` + `_/bin/<binaryReference>`, matching
+`ZipExportWriter`'s entry-prefixing and `ZipVirtualFile`'s `export.properties`-anchored
+base-path resolution) containing one node (`nodeType=default`, not `content` -- deliberately
+generic since the binary path is exercised identically regardless of node type: `CreateNode`/
+`PatchNode` attach binaries via the same `BINARY_REFERENCE` property + `BlobStore.addRecord`
+call for any node, `Content` is just one node type layered on top) with a 70-byte real PNG
+(`gate-d.png`, sha256 `6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0`)
+attached via a `<binaryReference name="myImage">gate-d.png</binaryReference>` data property,
+and imported it via `POST /repo/import {"exportName":"gate-d-binary","targetRepoPath":
+"system-repo:master:/",...}`. Result (`GET /task/<id>`): `state=FINISHED`,
+`addedNodes:["/xp-gate-d-smoke-binary"]`, `importedBinaries:["...gate-d.png [gate-d.png]"]`,
+`importErrors:[]` -- the import path runs `NodeImporter` -> `ImportNodeCommand` ->
+`BinaryServiceImpl.store` -> `BlobStore.addRecord` for the binary segment -> (nodb mode)
+`NodbBinaryBlobStore.addRecord` -> blocking `PutBinary` RPC, i.e. the exact production
+write path Gate B built, exercised at real boot for the first time.
+
+**Retrieve**: used `POST /repo/export {"sourceRepoPath":"system-repo:master:/xp-gate-d-
+smoke-binary",...}` (same REST resource, the read-side counterpart) to re-export the node;
+`NodeExporter.exportNodeBinaries` calls `nodeService.getBinary(...)` ->
+`BlobStore.getRecord` -> (nodb mode) `NodbBinaryBlobStore.getRecord` -> `GetBinary` RPC.
+Extracted the re-exported zip's `bin/gate-d.png` and diffed byte-for-byte against the
+original: **identical** (`diff` exit 0), sha256 re-verified as the same
+`6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0`. This is a genuine XP
+admin-API round trip through the real write and read RPCs, not a synthetic check -- the one
+honest caveat (documented per the work order's own "document what you used" allowance) is
+that this proves the `BinaryService`/`BlobStore` read-write path, not the portal HTTP
+media-serving handlers (`AttachmentHandler`/`ImageMediaHandler`) specifically, since those
+require an actual `Content` (not a bare `Node`) resolved through a project/site context that
+Content Studio would normally set up; per Gate 0's own call-site inventory those handlers
+call the identical `contentService.getBinary(...)` -> `BlobStore.getRecord` chain proven
+here, so the binary-path proof transfers, but the HTTP-response-shaping code in those
+handlers (CSP headers, range requests, image transforms) was not itself exercised.
+
+### S3 ground truth
+
+```
+$ aws --endpoint-url http://localhost:19000 s3 ls --recursive s3://nodb
+2026-07-20 17:23:09         70 xpgated/binary/6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0
+```
+
+Object present under `<bucket>/<tenant>/binary/<sha256>` exactly as documented in
+`BinaryStore`'s class javadoc; hash matches the uploaded bytes exactly; size (70 bytes)
+matches the source PNG exactly.
+
+### Restart-persistence check
+
+`SIGTERM` (clean shutdown -- log shows normal Jetty/ES/OSGi teardown, zero errors, and
+critically **no spurious `SystemRepoInitializer` re-run** against Elasticsearch, confirming
+Phase-1 Gate D's bug #3 fix -- level-10 placement of `core-storage-nodb-client` -- still
+holds for Gate B's larger version of that bundle), then reboot with the **same** `XP_HOME` +
+the **same**, still-running NoDB/Postgres/MinIO stack. Result: clean restart (no re-init, no
+errors), all 115 bundles ACTIVE/RESOLVED again including the nodb client, and re-running the
+same `/repo/export` + diff check produced the **same** bytes / same sha256 -- confirmed the
+binary is still retrievable after restart, and a fresh `aws s3 ls` showed the MinIO object
+still present at the identical key. NoDB + S3 are the real system of record across a restart,
+not merely written-to-but-ignored.
+
+### Binary GC -- did not go green (root-caused, not a Gate B regression)
+
+Updated the node in place (`POST /repo/import` again at the same path with a node.xml that
+omits the `binaryReference` property -- confirmed via the task result,
+`updateNodes:["/xp-gate-d-smoke-binary"]`, i.e. a real new version was created with the
+binary no longer referenced, simulating "delete the content"/detach the attachment) to
+produce an orphan candidate, then attempted to run the binary-GC path via the real admin
+API (`POST /system/vacuum`, which the running server ships as a Java `ScriptBean`
+(`VacuumTaskHandler`, `app-system`) wired to `VacuumService` -- no script engine/app
+deployment needed, a legitimate production admin op). **Both of XP's binary-GC code paths
+are structurally unable to run under `backend=nodb` today**, for two independent reasons
+that both trace back to the same root cause:
+
+1. **`BinaryBlobVacuumTask`** (`order=200`, the "normal" scheduled GC command) starts from
+   `blobStore.listSegments()` filtered to the binary blob type. `NodbBinaryBlobStore.list`/
+   `listSegments` (by design, per Gate B's own class javadoc) always delegate to the
+   **file** `BlobStore` -- and in nodb mode no binary bytes are ever written to the file
+   store any more (every binary write is diverted to NoDB). So `listSegments()` never
+   returns a binary-type segment in nodb mode, and `BinaryBlobVacuumTask` silently finds
+   zero candidates, every run, for every repository -- a guaranteed no-op. This was already
+   flagged, correctly, in Gate B's own class javadoc ("Binary GC candidates in nodb mode are
+   only ever discovered the OTHER way") as an intentional consequence of the decorator
+   design, not a bug -- Gate B's own analysis says the *other* path is supposed to be the
+   real nodb-mode GC mechanism.
+2. **`VersionTableVacuumCommand`** (the "other way" -- inline binary delete while pruning
+   old version-table rows) turns out to depend, transitively, on
+   `NodeService.findVersions(NodeVersionQuery)` to enumerate old versions in the first place
+   (`doProcessRepository`'s `nodeService.findVersions(query)` loop), **and**
+   `IsBlobUsedByVersionCommand` (the "is this blob still referenced by any version" check
+   both GC paths use) calls the *same* `findVersions` method. Both hit
+   `com.enonic.xp.repository.IndexException: ... IndexNotFoundException[no such index]`
+   for `storage-<repo>` at real-boot time (confirmed in the XP log at the exact vacuum-task
+   timestamp) -- `findVersions` is served by an **Elasticsearch storage-side index**
+   (`storage-<repo>`, distinct from the hybrid-mode `search-<repo>` index that XP does
+   maintain in nodb mode) that is **never created under `backend=nodb`**, because
+   version-history queries were explicitly scoped **out** of Phase 1 (`nodb/BUILD-PHASE-1.md`
+   Gate 0's curated itest inventory lists `VersionTableVacuumTaskTest` itself, plus
+   `FindNodeVersionsCommandTest`/`GetNodeVersionsCommandTest`, under "SEARCH-DEPENDENT...
+   Version-history queries... matches this work order's scope constraint #1 explicitly").
+   NoDB's own proto/engine has no RPC to enumerate stale versions by age either (confirmed:
+   not in Phase-1's SPI<->proto reconciliation table, which only covers single-version
+   `getVersion`/`storeVersion`, never a list/query-by-age operation) -- so even fixing the
+   *XP* side here would require first inventing a wholly new NoDB RPC surface, squarely
+   Phase-3-shaped work, not a client/config/nodb-side patch within this gate's remit.
+
+**This is not a Gate B regression and not a decorator-wiring problem** -- both `addRecord`/
+`getRecord`/`removeRecord` (write, read, and the delete RPC itself) are proven correct by
+Gate A/B/C's own test suites (`BinaryStoreTest`, `BinariesServiceIntegrationTest`,
+`NodbBinaryBlobStoreTest`) and by this gate's own create/retrieve/restart evidence above. The
+gap is specifically in the two GC **commands'** shared dependency on a version-history query
+capability that Phase 1 knowingly deferred for the whole hybrid-mode design, not something
+Gate B introduced or could have caught without a real-boot GC attempt -- which is exactly
+what this gate is for, and exactly why neither Gate B's unit tests (stub-based, no real
+`findVersions`) nor Gate C's itests (only ran the invariant + cross-tenant-isolation tests
+in nodb mode, no vacuum/GC test) surfaced it earlier. XP stayed fully healthy through the
+failed vacuum attempts (verified: portal/management/status ports and all 115 bundles still
+green immediately after) -- the failure is a clean task-level error, not a server-level one.
+
+One smaller, independent bug surfaced along the way and is worth flagging separately: the
+`/system/vacuum` REST endpoint's `tasks` (a `List<String>` in `VacuumRequestJson`) throws
+`ClassCastException: Cannot cast java.lang.String to java.util.List` when supplied --
+appears to be a pre-existing `PropertyTree`/`ScriptBean` binding bug in `VacuumTaskHandler`/
+`TaskUtils`, backend-agnostic (would reproduce in default mode too), unrelated to nodb.
+Omitting `tasks` (running all vacuum tasks) avoids it; not investigated further since it
+doesn't change the outcome above (every repository is nodb-backed in this stack, so
+`VersionTableVacuumTask` alone would still hit the same `findVersions` `IndexNotFoundException`
+on the first nodb-mode repository it reaches, task-filtered or not).
+
+**Recommendation for a follow-up phase**: either (a) add a NoDB-native RPC to enumerate
+node versions older than a threshold (and to answer "is blob X referenced by any version",
+both directly against `node_version`/its GIN-indexed `binary_keys` column -- the data is
+already there, per Gate 0's §6 finding, just no RPC exposes it in bulk/by-age), or (b) give
+`BinaryBlobVacuumTask`/`VersionTableVacuumCommand` a backend-aware alternate discovery path
+for nodb mode that bypasses `findVersions` entirely. Both are materially larger than a
+client/config patch and are recommended as explicit follow-up work, not attempted here.
+
+### Everything stopped
+
+XP (`SIGTERM`, clean shutdown confirmed both times), `NodbServer` (`SIGTERM`), and both
+`nodb-pg-gated-d`/`nodb-minio-gated-d` containers (`docker stop && docker rm`) were stopped
+at the end of this gate. Confirmed: no listeners on 7700/8080/4848/2609/55432/19000/19001,
+`docker ps -a` empty.
+
+### Rough edges for later (in addition to the GC gap above)
+
+- `xp.suPassword`'s `{sha256}`/`{sha512}` requirement is undocumented in the shipped
+  `system.properties` template comment (reads as if a plaintext password is expected).
+- The `/system/vacuum` REST endpoint's `tasks` array parameter is broken
+  (`ClassCastException`), independent of nodb.
+- No content-management app ships in this repo, so any future gate wanting to exercise the
+  portal HTTP media-serving handlers specifically (as opposed to the underlying
+  `BinaryService`/`BlobStore` path proven here) will need either a minimal purpose-built XP
+  app or to bring in Content Studio.
+
+### Deviations from the work order
+
+- Used `/repo/import`/`/repo/export` (hand-built export-format zip) instead of "the
+  management/admin API" in the sense of a content-creation UI call, since no such API is
+  bundled in this repository (Content Studio is a separate application) -- this is the
+  work order's own explicitly-allowed fallback ("use the import/dump path... document what
+  you used").
+- Binary GC verification did not go green; documented as a root-caused, pre-existing
+  architectural gap rather than fixed, since the fix is Phase-3-shaped (new NoDB RPC
+  surface) and out of this gate's client/config/nodb-side remit. All other checks (boot,
+  decorator DS-wiring, create+retrieve, S3 ground truth, restart persistence) went green.
