@@ -316,8 +316,16 @@ pinning, so the context-monitor discipline and the fair per-slot locks are both 
 XP's Java 25 baseline. GraalJS context enter/leave on virtual threads is covered by a dedicated
 test, since task executions already run on virtual threads. Request handling on virtual threads
 exists as an **experimental, default-off** Jetty option (`threadPool.virtualThreads`) — a
-future consideration, not the supported mode. The executor's scope binding uses `ScopedValue`
-(not `ThreadLocal`), aligned with the platform-wide ThreadLocal elimination.
+future consideration, not the supported mode. When enabled, the `QueuedThreadPool` keeps its
+platform threads for the selectors/acceptors and hands blocking request handling to a
+virtual-thread-per-task executor whose threads are **named** (`xp-jetty-vt-*`) so they surface in
+thread dumps and the status reporter (the JDK default leaves them anonymous — jetty #11353). The
+executor is currently *unbounded*; Jetty's guide recommends a bounded `VirtualThreadPool`
+(`setMaxConcurrentTasks`) to cap concurrent virtual threads against load spikes, which is the
+natural next step for this option (deferred while `VirtualThreadPool`'s 12.1.x stability is
+confirmed — it carried a carrier-thread-starvation bug in 12.0.15/16). The executor's scope
+binding uses `ScopedValue` (not `ThreadLocal`), aligned with the platform-wide ThreadLocal
+elimination.
 
 #### Engine code cache: what makes many contexts affordable — and its retention rule
 

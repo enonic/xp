@@ -82,9 +82,13 @@ public final class JettyActivator
             new QueuedThreadPool( config.threadPool_maxThreads(), config.threadPool_minThreads(), config.threadPool_idleTimeout() );
         if ( config.threadPool_virtualThreads() )
         {
-            // Jetty stops the thread pool but does not own the provided executor: keep it and
-            // shut it down on deactivate
-            this.virtualThreadsExecutor = Executors.newVirtualThreadPerTaskExecutor();
+            // Blocking request handling runs on virtual threads while the QueuedThreadPool keeps its
+            // platform threads for the selectors/acceptors. Name the threads — the JDK default leaves
+            // per-task virtual threads anonymous, which makes them invisible in thread dumps and the
+            // status reporter (jetty #11353). Jetty does not own the executor it is handed, so keep the
+            // reference and shut it down on deactivate.
+            this.virtualThreadsExecutor =
+                Executors.newThreadPerTaskExecutor( Thread.ofVirtual().name( "xp-jetty-vt-", 0 ).factory() );
             threadPool.setVirtualThreadsExecutor( this.virtualThreadsExecutor );
         }
         final Server server = new Server( threadPool );
