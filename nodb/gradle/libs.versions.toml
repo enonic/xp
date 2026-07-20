@@ -9,6 +9,7 @@ grpc = "1.82.2"
 protobuf = "4.35.1"
 javax-annotation = "1.3.2"
 java-jwt = "4.6.0"
+awssdk = "2.29.15"
 
 [libraries]
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
@@ -21,6 +22,11 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-minio = { module = "org.testcontainers:minio", version.ref = "testcontainers" }
+
+awssdk-bom = { module = "software.amazon.awssdk:bom", version.ref = "awssdk" }
+awssdk-s3 = { module = "software.amazon.awssdk:s3" }
+awssdk-sts = { module = "software.amazon.awssdk:sts" }
 
 grpc-netty-shaded = { module = "io.grpc:grpc-netty-shaded", version.ref = "grpc" }
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }

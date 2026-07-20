@@ -89,6 +89,26 @@ service Snapshots {
   rpc Delete (DeleteSnapshotsRequest) returns (Ack);
 }
 
+// Phase 2 Gate A (BUILD-PHASE-2.md): binaries are content-addressed opaque blobs on S3,
+// NEVER in Postgres (rejected: WAL/TOAST) -- NoDB fronts the object store so XP holds no
+// object-store credentials. Data-plane, runtime-scoped (same as NodeStore): tenant comes
+// from the auth interceptor, never a request field. Upload is stream-through-NoDB
+// (Gate 0 decision): the client streams chunks in, NoDB assembles + hashes + HEAD-before-
+// PUT dedups + PUTs to S3, and returns only once durable -- the invariant that a binary
+// must be on S3 before the version referencing it commits (risk #4) falls out of this
+// being a single blocking call, the same way WriteBatch already gives that property to
+// Postgres writes. Download mirrors it: server-streaming bytes back out.
+service Binaries {
+  rpc PutBinary (stream PutBinaryChunk) returns (PutBinaryResponse);
+  rpc GetBinary (GetBinaryRequest) returns (stream GetBinaryChunk);
+  rpc BinaryExists (BinaryExistsRequest) returns (ExistsResponse);
+  rpc DeleteBinary (DeleteBinaryRequest) returns (Ack);
+  // STS-scoped presigned GET URL, restricted to the tenant's S3 prefix (DESIGN.md §7.2) --
+  // a documented opt-in for browser-serving of non-transformed attachments (Gate 0
+  // download-path decision); XP-internal reads always use GetBinary.
+  rpc PresignGet (PresignGetRequest) returns (PresignGetResponse);
+}
+
 // --- messages: field sets mirror nodb/spi Records.java / engine model records ---
 // Slice-1 step 5 implemented: NodeStore.WriteBatch/GetBranchEntry/GetChildren/GetVersion/
 // PutPayload/GetPayload and RepositoryAdmin.CreateRepository/DeleteRepository.
@@ -96,15 +116,17 @@ service Snapshots {
 // implements: NodeStore.StoreBranchEntry/DeleteBranchEntries/ExistsBranchEntry/
 // GetBranchEntries/GetBranchesWithNode/StoreVersion/DeleteVersion/StoreCommit/GetCommit
 // and RepositoryAdmin.RepositoryExists — every NodeStore + RepositoryStorageAdmin method
-// that has a real NoDB translation now has a 1:1 RPC. Still left as empty placeholders
-// (out of Phase 1 scope entirely, not merely deferred): NodeSearch, ChangeFeed,
-// BulkTransfer, Snapshots, RepositoryAdmin.ListRepositories/Stats — grpc-java's generated
-// *ImplBase returns UNIMPLEMENTED for any method the server class does not override, so
-// leaving those messages empty and simply not overriding the method is sufficient. Tenant
-// id is NEVER a field on any request message (DESIGN.md §7.2): it comes only from the
-// authenticated JWT, resolved server-side to a TenantContext.
+// that has a real NoDB translation now has a 1:1 RPC. Phase 2 Gate A (BUILD-PHASE-2.md)
+// adds the whole Binaries service: PutBinary/GetBinary/BinaryExists/DeleteBinary/
+// PresignGet. Still left as empty placeholders (out of scope entirely, not merely
+// deferred): NodeSearch, ChangeFeed, BulkTransfer, Snapshots,
+// RepositoryAdmin.ListRepositories/Stats — grpc-java's generated *ImplBase returns
+// UNIMPLEMENTED for any method the server class does not override, so leaving those
+// messages empty and simply not overriding the method is sufficient. Tenant id is NEVER a
+// field on any request message (DESIGN.md §7.2): it comes only from the authenticated JWT,
+// resolved server-side to a TenantContext — Binaries follows this exactly like NodeStore.
 //
-// --- gRPC status contract (Phase 1 Gate A) -------------------------------------------
+// --- gRPC status contract (Phase 1 Gate A; Binaries added Phase 2 Gate A) -------------
 // Engine outcome                                            gRPC status       XP SPI boundary
 // ---------------------------------------------------------------------------------------
 // Unknown repo id (engine.store.UnknownRepoException,       NOT_FOUND         StorageIndexNotFoundException
@@ -116,6 +138,9 @@ service Snapshots {
 //   detected by column/constraint, never by message text)
 // No matching row for a point lookup (GetBranchEntry/         NOT_FOUND        null (these SPI methods
 //   GetVersion/GetCommit/GetPayload)                                            return @Nullable, not throw)
+// Unknown hash (engine.binary.BinaryNotFoundException,        NOT_FOUND        analogous to a missing
+//   thrown by BinaryStore#get for a hash absent under the                       BlobStore.getRecord
+//   caller's own tenant S3 prefix — GetBinary/PresignGet)
 // Missing/invalid/expired/wrong-audience bearer token          UNAUTHENTICATED  connection-level failure
 //   (TenantAuthInterceptor)                                                     (Gate B: fail fast, no retry)
 // Runtime-scope token calling a tenant-level (operator) RPC     PERMISSION_DENIED connection-level failure
@@ -297,6 +322,39 @@ message PutPayloadResponse {
 message GetPayloadRequest {
   string hash = 1;
 }
+
+// --- Binaries (Phase 2 Gate A): opaque content-addressed blobs on S3, distinct from the
+// structured `payload` pool above -- see nodb/engine/.../binary/BinaryStore.java for the
+// key layout (<bucket>/<tenant>/binary/<sha256>) and dedup semantics. Chunk size is
+// client-chosen for PutBinary (no fixed size enforced wire-side, only a total-bytes cap);
+// GetBinary emits fixed-size chunks server-side (see BinariesService.CHUNK_SIZE).
+message PutBinaryChunk {
+  bytes chunk = 1;
+}
+message PutBinaryResponse {
+  string hash = 1; // "sha256:<hex>", dedup-if-already-seen under this tenant's prefix
+}
+message GetBinaryRequest {
+  string hash = 1;
+}
+message GetBinaryChunk {
+  bytes chunk = 1;
+}
+message BinaryExistsRequest {
+  string hash = 1;
+}
+message DeleteBinaryRequest {
+  string hash = 1;
+}
+// ttl_seconds <= 0 is treated server-side as "use the default TTL".
+message PresignGetRequest {
+  string hash = 1;
+  int64 ttl_seconds = 2;
+}
+message PresignGetResponse {
+  string url = 1;
+}
+
 message AwaitRefreshRequest {}
 message ReindexRequest {}
 message TaskHandle {}

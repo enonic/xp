@@ -14,19 +14,22 @@ import io.grpc.ServerInterceptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.nodb.engine.binary.BinaryStore;
 import com.enonic.nodb.server.auth.DevKeys;
 import com.enonic.nodb.server.auth.JwtVerifier;
 import com.enonic.nodb.server.auth.TenantAuthInterceptor;
+import com.enonic.nodb.server.service.BinariesService;
 import com.enonic.nodb.server.service.NodeStoreService;
 import com.enonic.nodb.server.service.RepositoryAdminService;
 
 /**
  * The standalone {@code enonic/nodb} server binding (DESIGN.md §7): engine + gRPC, no
  * OSGi/Spring. Wires a Postgres pool, the JWT auth interceptor (trivial dev issuer's
- * public key — see {@link com.enonic.nodb.server.auth.NodbTokenTool}), and the two
- * service impls implemented this slice (NodeStore's data-plane RPCs, RepositoryAdmin's
- * management-plane RPCs). NodeSearch/ChangeFeed/BulkTransfer/Snapshots are out of scope
- * for slice 1 and are simply never registered on this server.
+ * public key — see {@link com.enonic.nodb.server.auth.NodbTokenTool}), and the service
+ * impls implemented so far: NodeStore's data-plane RPCs, RepositoryAdmin's management-
+ * plane RPCs (slice 1), and Binaries' data-plane RPCs over S3 (Phase 2 Gate A,
+ * BUILD-PHASE-2.md). NodeSearch/ChangeFeed/BulkTransfer/Snapshots are out of scope so far
+ * and are simply never registered on this server.
  *
  * <p>Configuration is env-var only (no config file yet, matching this slice's scope):
  * <ul>
@@ -35,6 +38,8 @@ import com.enonic.nodb.server.service.RepositoryAdminService;
  *   <li>{@code NODB_PORT} — gRPC port (default 7700)
  *   <li>{@code NODB_KEYS_DIR} — dev issuer keypair directory (default {@code ./.nodb-dev-keys});
  *       the server only ever reads the public key from here, never the private key
+ *   <li>{@code NODB_S3_*} — object store config for the {@code Binaries} service; see
+ *       {@link BinaryStore#fromEnv}
  * </ul>
  */
 public final class NodbServer
@@ -45,13 +50,30 @@ public final class NodbServer
 
     private final HikariDataSource dataSource;
 
-    NodbServer( Server server, HikariDataSource dataSource )
+    private final BinaryStore binaryStore;
+
+    NodbServer( Server server, HikariDataSource dataSource, BinaryStore binaryStore )
     {
         this.server = server;
         this.dataSource = dataSource;
+        this.binaryStore = binaryStore;
     }
 
+    /**
+     * Builds the {@code Binaries} service's {@link BinaryStore} from environment
+     * configuration ({@code NODB_S3_*} — see {@link BinaryStore#fromEnv}). Existing callers
+     * (this class's own {@code main}, the bench harness) that don't care about binaries
+     * still get a working server: the client is built lazily/without eager I/O, so the
+     * absence of real S3 config only surfaces as an error the first time a {@code
+     * Binaries} RPC is actually invoked, exactly like an unreachable Postgres would.
+     */
     public static NodbServer create( int port, HikariDataSource dataSource, RSAPublicKey issuerPublicKey )
+        throws java.io.IOException
+    {
+        return create( port, dataSource, issuerPublicKey, BinaryStore.fromEnv() );
+    }
+
+    public static NodbServer create( int port, HikariDataSource dataSource, RSAPublicKey issuerPublicKey, BinaryStore binaryStore )
         throws java.io.IOException
     {
         TenantAuthInterceptor authInterceptor = new TenantAuthInterceptor( new JwtVerifier( issuerPublicKey ) );
@@ -59,13 +81,14 @@ public final class NodbServer
         Server server = ServerBuilder.forPort( port )
             .addService( ServerInterceptors.intercept( new NodeStoreService( dataSource ), authInterceptor ) )
             .addService( ServerInterceptors.intercept( new RepositoryAdminService( dataSource ), authInterceptor ) )
+            .addService( ServerInterceptors.intercept( new BinariesService( binaryStore ), authInterceptor ) )
             .build()
             .start();
 
         // Log the actual bound port, not the requested one: callers may pass 0 (OS-assigned
         // ephemeral port, e.g. the bench harness), in which case `port` itself is useless.
         LOG.info( "NoDB server listening on port {}", server.getPort() );
-        return new NodbServer( server, dataSource );
+        return new NodbServer( server, dataSource, binaryStore );
     }
 
     /** The bound TCP port — useful when {@link #create} was called with port 0 (OS-assigned ephemeral port), e.g. in tests/bench. */
@@ -96,6 +119,7 @@ public final class NodbServer
             Thread.currentThread().interrupt();
         }
         dataSource.close();
+        binaryStore.close();
     }
 
     public static void main( String[] args )

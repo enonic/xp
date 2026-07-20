@@ -35,6 +35,18 @@ dependencies {
     testImplementation(libs.slf4j.simple)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.bundles.testcontainers)
+    // BinariesService integration tests (Phase 2 Gate A) build a BinaryStore directly
+    // against a MinIO container via its raw constructor (S3Client/S3Presigner/etc.) rather
+    // than through env-var-driven BinaryStore.fromEnv() -- so, same convention as this
+    // module's own explicit hikaricp/postgresql redeclaration above (engine already
+    // depends on these, but `implementation` deps don't leak transitively), the AWS SDK
+    // types the raw constructor takes need to be on the test classpath explicitly. Server
+    // MAIN code never needs this: NodbServer/BinariesService only ever call
+    // BinaryStore.fromEnv(), never touching an AWS SDK type directly.
+    testImplementation(platform(libs.awssdk.bom))
+    testImplementation(libs.awssdk.s3)
+    testImplementation(libs.awssdk.sts)
+    testImplementation(libs.testcontainers.minio)
     testImplementation(libs.grpc.inprocess)
     testRuntimeOnly(libs.junit.platform.launcher)
 }

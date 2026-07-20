@@ -6,9 +6,17 @@ dependencies {
     implementation(libs.hikaricp)
     implementation(libs.slf4j.api)
 
+    // BinaryStore (Phase 2 Gate A): AWS SDK v2 S3 + STS clients over any S3-compatible
+    // object store (MinIO in dev/test). Main-scope, not test-only -- the engine's
+    // BinaryStore is a runtime dependency of the server, not just exercised by tests.
+    implementation(platform(libs.awssdk.bom))
+    implementation(libs.awssdk.s3)
+    implementation(libs.awssdk.sts)
+
     testImplementation(libs.slf4j.simple)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.bundles.testcontainers)
+    testImplementation(libs.testcontainers.minio)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
