@@ -317,13 +317,15 @@ XP's Java 25 baseline. GraalJS context enter/leave on virtual threads is covered
 test, since task executions already run on virtual threads. Request handling on virtual threads
 exists as an **experimental, default-off** Jetty option (`threadPool.virtualThreads`) — a
 future consideration, not the supported mode. When enabled, the `QueuedThreadPool` keeps its
-platform threads for the selectors/acceptors and hands blocking request handling to a
-virtual-thread-per-task executor whose threads are **named** (`xp-jetty-vt-*`) so they surface in
-thread dumps and the status reporter (the JDK default leaves them anonymous — jetty #11353). The
-executor is currently *unbounded*; Jetty's guide recommends a bounded `VirtualThreadPool`
-(`setMaxConcurrentTasks`) to cap concurrent virtual threads against load spikes, which is the
-natural next step for this option (deferred while `VirtualThreadPool`'s 12.1.x stability is
-confirmed — it carried a carrier-thread-starvation bug in 12.0.15/16). The executor's scope
+platform threads for the selectors/acceptors and hands blocking request handling to a Jetty
+`VirtualThreadPool` — which despite the name does not pool, but **names** the virtual threads
+(`xp-jetty-vt`, so they surface in thread dumps and the status reporter — the JDK per-task
+executor leaves them anonymous, jetty #11353) and caps concurrency with a `Semaphore`
+(`threadPool.virtualThreads.maxConcurrent`, default 1024; 0 = unbounded) so a load spike cannot
+spawn unbounded virtual threads and exhaust memory, as the Jetty threading guide warns. The cap
+sits well above the platform `maxThreads` (bounding it at the platform-thread count would negate
+the point of virtual threads). `QueuedThreadPool` does not manage the executor it is handed, so
+the pool is registered as a managed bean and starts/stops with the server. The executor's scope
 binding uses `ScopedValue` (not `ThreadLocal`), aligned with the platform-wide ThreadLocal
 elimination.
 

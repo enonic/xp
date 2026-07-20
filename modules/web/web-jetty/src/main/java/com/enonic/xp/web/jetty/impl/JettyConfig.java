@@ -188,6 +188,15 @@ public @interface JettyConfig
     boolean threadPool_virtualThreads() default false;
 
     /**
+     * Max request-handling tasks allowed to run concurrently on virtual threads when
+     * {@link #threadPool_virtualThreads()} is enabled. Caps virtual-thread growth so a load spike
+     * cannot exhaust memory; 0 (or negative) means unbounded. Keep it well above
+     * {@link #threadPool_maxThreads()} — bounding at the platform-thread count would negate the
+     * point of virtual threads. Ignored when virtual threads are disabled.
+     */
+    int threadPool_virtualThreads_maxConcurrent() default 1024;
+
+    /**
      * The time in milliseconds that a websocket may be idle before closing.
      */
     long websocket_idleTimeout() default 300000;

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.eclipse.jetty.ee11.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee11.servlet.ServletHolder;
@@ -17,6 +15,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.session.HouseKeeper;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.VirtualThreadPool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -59,8 +58,6 @@ public final class JettyActivator
 
     private volatile ServiceRegistration<Server> serverServiceRegistration;
 
-    private volatile ExecutorService virtualThreadsExecutor;
-
     @Activate
     public JettyActivator( final JettyConfig config, final BundleContext bundleContext,
                            @Reference final JettySessionStoreConfigurator jettySessionStoreConfigurator,
@@ -83,13 +80,17 @@ public final class JettyActivator
         if ( config.threadPool_virtualThreads() )
         {
             // Blocking request handling runs on virtual threads while the QueuedThreadPool keeps its
-            // platform threads for the selectors/acceptors. Name the threads — the JDK default leaves
-            // per-task virtual threads anonymous, which makes them invisible in thread dumps and the
-            // status reporter (jetty #11353). Jetty does not own the executor it is handed, so keep the
-            // reference and shut it down on deactivate.
-            this.virtualThreadsExecutor =
-                Executors.newThreadPerTaskExecutor( Thread.ofVirtual().name( "xp-jetty-vt-", 0 ).factory() );
-            threadPool.setVirtualThreadsExecutor( this.virtualThreadsExecutor );
+            // platform threads for the selectors/acceptors. VirtualThreadPool does not pool threads: it
+            // names them (so they surface in thread dumps and the status reporter — jetty #11353) and,
+            // when maxConcurrent > 0, caps concurrent virtual threads with a Semaphore so a load spike
+            // cannot spawn unbounded threads and exhaust memory (Jetty threading guide). QueuedThreadPool
+            // does not manage the executor it is handed, so add the pool as a managed bean to start and
+            // stop it with the server.
+            final VirtualThreadPool virtualThreadPool = new VirtualThreadPool();
+            virtualThreadPool.setName( "xp-jetty-vt" );
+            virtualThreadPool.setMaxConcurrentTasks( config.threadPool_virtualThreads_maxConcurrent() );
+            threadPool.addBean( virtualThreadPool, true );
+            threadPool.setVirtualThreadsExecutor( virtualThreadPool );
         }
         final Server server = new Server( threadPool );
 
@@ -158,12 +159,9 @@ public final class JettyActivator
         throws Exception
     {
         this.serverServiceRegistration.unregister();
+        // stopping the server stops the QueuedThreadPool, which stops the managed VirtualThreadPool bean
         this.server.stop();
         this.server.destroy();
-        if ( this.virtualThreadsExecutor != null )
-        {
-            this.virtualThreadsExecutor.shutdown();
-        }
         LOG.info( "Stopped Jetty" );
     }
 
