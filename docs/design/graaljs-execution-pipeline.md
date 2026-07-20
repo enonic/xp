@@ -327,7 +327,11 @@ sits well above the platform `maxThreads` (bounding it at the platform-thread co
 the point of virtual threads). `QueuedThreadPool` does not manage the executor it is handed, so
 the pool is registered as a managed bean and starts/stops with the server. The executor's scope
 binding uses `ScopedValue` (not `ThreadLocal`), aligned with the platform-wide ThreadLocal
-elimination.
+elimination. (`VirtualThreadPool`'s carrier-thread-starvation bug — jetty #12651, seen on
+12.0.15/16 — is a JDK ≤ 23 defect where `Selector.select()` pins its carrier; it is fixed in
+JDK 24+ and so does not apply on the Java 25 baseline. It also cannot arise from this wiring
+regardless of JDK: the selectors run on the `QueuedThreadPool`'s platform threads, and the
+`VirtualThreadPool` only ever runs blocking request handling — never a selector loop.)
 
 #### Engine code cache: what makes many contexts affordable — and its retention rule
 
