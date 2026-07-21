@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -62,6 +63,7 @@ import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
 import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetPayloadRequest;
+import com.enonic.nodb.proto.v1.GetPayloadsRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.Payload;
@@ -880,6 +882,124 @@ class NodbServerIntegrationTest
                                                                                           .setCommit( anotherCommit )
                                                                                           .build() ) );
         assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    // ---- 8. Phase 3 Gate A: node_version -> payload FK + batched GetPayloads -------------
+
+    @Test
+    void storeVersionWithUnknownPayloadHashFailsPreconditionAndPersistsNothing()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+
+        // Well-formed hash shape, never stored via PutPayload -- exactly the scenario the
+        // re-added node_version -> payload FK (BUILD-PHASE-3.md #10b) must reject.
+        String missingHash = "sha256:" + "1".repeat( 64 );
+        String versionId = UUID.randomUUID().toString();
+        Version version = Version.newBuilder()
+            .setVersionId( versionId )
+            .setNodeId( UUID.randomUUID().toString() )
+            .setNodePath( "/fk-violation" )
+            .setTimestampMillis( System.currentTimeMillis() )
+            .setNodeDataHash( missingHash )
+            .setIndexConfigHash( missingHash )
+            .setAclHash( missingHash )
+            .build();
+
+        StatusRuntimeException thrown = assertThrows( StatusRuntimeException.class,
+                                                        () -> acme.storeVersion( StoreVersionRequest.newBuilder()
+                                                                                     .setRepoId( acmeRepoId )
+                                                                                     .setVersion( version )
+                                                                                     .build() ) );
+        assertEquals( Status.Code.FAILED_PRECONDITION, thrown.getStatus().getCode() );
+
+        // The rejected write persisted nothing -- not even a dangling version row.
+        StatusRuntimeException notFound = assertThrows( StatusRuntimeException.class,
+                                                          () -> acme.getVersion(
+                                                              GetVersionRequest.newBuilder().setVersionId( versionId ).build() ) );
+        assertEquals( Status.Code.NOT_FOUND, notFound.getStatus().getCode() );
+    }
+
+    @Test
+    void writeBatchWithUnknownHashOnlyPayloadRefNeedsPayloadEvenWithFkOn()
+        throws SQLException
+    {
+        String acmeRepoId = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+
+        byte[] dataBytes = randomBytes();
+        String dataHash = sha256Key( dataBytes );
+        String missingHash = "sha256:" + "4".repeat( 64 );
+        String nodeId = UUID.randomUUID().toString();
+        String versionId = UUID.randomUUID().toString();
+        long nowMillis = System.currentTimeMillis();
+
+        Version version = Version.newBuilder()
+            .setVersionId( versionId )
+            .setNodeId( nodeId )
+            .setNodePath( "/needpayload-fk-on" )
+            .setTimestampMillis( nowMillis )
+            .setNodeDataHash( dataHash )
+            .setIndexConfigHash( missingHash )
+            .setAclHash( missingHash )
+            .build();
+        BranchEntry entry = BranchEntry.newBuilder()
+            .setBranch( "master" )
+            .setNodeId( nodeId )
+            .setVersionId( versionId )
+            .setNodePath( "/needpayload-fk-on" )
+            .setTimestampMillis( nowMillis )
+            .build();
+
+        WriteBatchResponse response = acme.writeBatch( WriteBatchRequest.newBuilder()
+                                                            .setRepoId( acmeRepoId )
+                                                            .addPayloads( PayloadRef.newBuilder()
+                                                                              .setInline(
+                                                                                  com.google.protobuf.ByteString.copyFrom( dataBytes ) ) )
+                                                            .addPayloads( PayloadRef.newBuilder().setHash( missingHash ) )
+                                                            .addVersions( version )
+                                                            .addBranchEntries( entry )
+                                                            .build() );
+
+        assertEquals( List.of( missingHash ), response.getNeedPayloadList() );
+        assertEquals( 0L, response.getOutboxSeq() );
+        assertEquals( 0, countInSchema( "acme", "node_version", "version_id = '" + versionId + "'" ),
+                      "nothing must persist when a hash-only ref is unknown, even though the FK is enabled" );
+    }
+
+    @Test
+    void getPayloadsBatchedMultiHashReturnsFoundOmitsMissingAndIsTenantIsolated()
+        throws SQLException
+    {
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        byte[] bytes1 = randomBytes();
+        byte[] bytes2 = randomBytes();
+        String hash1 = acme.putPayload( PutPayloadRequest.newBuilder()
+                                             .setBytes( com.google.protobuf.ByteString.copyFrom( bytes1 ) )
+                                             .build() ).getHash();
+        String hash2 = acme.putPayload( PutPayloadRequest.newBuilder()
+                                             .setBytes( com.google.protobuf.ByteString.copyFrom( bytes2 ) )
+                                             .build() ).getHash();
+        String missingHash = "sha256:" + "2".repeat( 64 );
+
+        Iterator<Payload> found = acme.getPayloads(
+            GetPayloadsRequest.newBuilder().addHashes( hash1 ).addHashes( hash2 ).addHashes( missingHash ).build() );
+        java.util.Map<String, com.google.protobuf.ByteString> byHash = new java.util.HashMap<>();
+        found.forEachRemaining( p -> byHash.put( p.getHash(), p.getBytes() ) );
+        assertEquals( Set.of( hash1, hash2 ), byHash.keySet(), "the missing hash must simply be absent, not an error" );
+        assertEquals( com.google.protobuf.ByteString.copyFrom( bytes1 ), byHash.get( hash1 ) );
+        assertEquals( com.google.protobuf.ByteString.copyFrom( bytes2 ), byHash.get( hash2 ) );
+
+        // cross-tenant: fisk never stored these hashes under its own schema.
+        Iterator<Payload> fiskFound =
+            fisk.getPayloads( GetPayloadsRequest.newBuilder().addHashes( hash1 ).addHashes( hash2 ).build() );
+        assertFalse( fiskFound.hasNext(), "tenant fisk must not see acme's payloads even by exact hash" );
+
+        // Empty request -> empty stream, not an error.
+        Iterator<Payload> empty = acme.getPayloads( GetPayloadsRequest.newBuilder().build() );
+        assertFalse( empty.hasNext() );
     }
 
     // ---- 7. Phase 1 Gate A: RepositoryExists + the ALREADY_EXISTS bug fix ----------------

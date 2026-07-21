@@ -44,16 +44,30 @@ CREATE TABLE node_version (
     node_id           text NOT NULL,
     node_path         text NOT NULL,
     ts                timestamptz NOT NULL,
-    -- NOT FK-enforced against payload(hash) (Phase 1 correction, BUILD-PHASE-1.md Gate C):
-    -- these three columns are content-hash REFERENCES, not necessarily rows in THIS
-    -- tenant's payload table -- nodb's own writers (WriteBatch/bench) do populate payload
-    -- via PutPayload first, but the Phase 1 XP integration keeps node data/index-config/ACL
-    -- payloads on XP's existing BlobStore (file/S3) per design (a NoDB-backed BlobStore
-    -- provider is the stretch gate), so hybrid-mode version writes carry hash values that
-    -- were never inserted into this table. An FK here would reject every such write.
-    node_data_hash    text NOT NULL,
-    index_config_hash text NOT NULL,
-    acl_hash          text NOT NULL,
+    -- FK RE-ENABLED (Phase 3 Gate A, BUILD-PHASE-3.md #10b): node/index-config/ACL
+    -- payloads now live in THIS tenant's `payload` table for every write path -- Phase 3
+    -- moved the node-payload segments off XP's BlobStore into NoDB (Gate 0's A-vs-B
+    -- decision: WriteBatch is the sole writer), so "a version referencing a payload hash
+    -- with no matching row" is no longer an expected hybrid-mode state, and the FK makes
+    -- it structurally impossible rather than merely disciplined-by-convention.
+    -- WriteService.write (and every other version-writing path) already inserts payload
+    -- rows before the version row, in the same transaction, so this ordering was already
+    -- required for correctness -- the FK just makes violating it fail loudly instead of
+    -- silently. (Originally dropped in Phase 1 Gate C for the hybrid-mode window where XP
+    -- kept these three segments on its own file/S3 BlobStore; that window is over.)
+    --
+    -- Applied by editing THIS migration in place rather than adding a 002 migration
+    -- (BUILD-PHASE-3.md Gate A scope item 1): the tenant schema is still pre-GA (every
+    -- itest/bench run provisions fresh schemas via TenantProvisioner against a throwaway
+    -- testcontainers Postgres; no tenant has ever been migrated in a durable environment),
+    -- so there is no already-applied `001_init.sql` anywhere that needs a follow-up
+    -- migration to catch up -- editing this file is simpler and mirrors the precedent Phase
+    -- 1 Gate C itself set when it REMOVED this same FK by editing these two files directly,
+    -- not by adding a migration. A 002 migration becomes the right tool once real tenants
+    -- exist that must not be re-provisioned from scratch.
+    node_data_hash    text NOT NULL REFERENCES payload (hash),
+    index_config_hash text NOT NULL REFERENCES payload (hash),
+    acl_hash          text NOT NULL REFERENCES payload (hash),
     binary_keys       text[] NOT NULL DEFAULT '{}',  -- S3 blob keys (binaries stay in object store)
     commit_id         text,
     attributes        jsonb,                          -- {k,v} attribute list

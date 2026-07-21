@@ -41,6 +41,14 @@ service NodeStore {
   rpc GetCommit (GetCommitRequest) returns (Commit);
   rpc PutPayload (PutPayloadRequest) returns (PutPayloadResponse); // returns content hash
   rpc GetPayload (GetPayloadRequest) returns (Payload);
+  // Batched multi-hash read (DESIGN.md §2.1 bulk-read requirement, Phase 3 Gate A). Missing
+  // hashes are simply absent from the stream -- not an error -- mirroring
+  // GetBranchEntries/GetBranchesWithNode's existing multi-get convention in this same
+  // proto; callers already hold the full requested hash set and can diff it against what
+  // streamed back if they need the missing subset. (WriteBatch's need_payload list remains
+  // the sharper tool for "what must I inline and retry" on the write path -- this RPC is
+  // read-only.) Single-hash GetPayload is unchanged.
+  rpc GetPayloads (GetPayloadsRequest) returns (stream Payload);
 }
 
 service NodeSearch {
@@ -118,7 +126,10 @@ service Binaries {
 // and RepositoryAdmin.RepositoryExists — every NodeStore + RepositoryStorageAdmin method
 // that has a real NoDB translation now has a 1:1 RPC. Phase 2 Gate A (BUILD-PHASE-2.md)
 // adds the whole Binaries service: PutBinary/GetBinary/BinaryExists/DeleteBinary/
-// PresignGet. Still left as empty placeholders (out of scope entirely, not merely
+// PresignGet. Phase 3 Gate A (BUILD-PHASE-3.md) adds NodeStore.GetPayloads (batched
+// multi-hash read) and re-enables the node_version -> payload FK (schema-level only, not
+// a new RPC — see schema.sql / the tenant migration for the constraint itself).
+// Still left as empty placeholders (out of scope entirely, not merely
 // deferred): NodeSearch, ChangeFeed, BulkTransfer, Snapshots,
 // RepositoryAdmin.ListRepositories/Stats — grpc-java's generated *ImplBase returns
 // UNIMPLEMENTED for any method the server class does not override, so leaving those
@@ -147,6 +158,18 @@ service Binaries {
 //   RPC (CreateRepository/DeleteRepository today)
 // Any other SQLException (constraint violation, etc.)          INTERNAL         generic wrapped exception
 // ---------------------------------------------------------------------------------------
+// FK violation: a version referencing a payload hash absent  FAILED_PRECONDITION N/A (a WriteBatch/
+//   from `payload` (SQLSTATE 23503 foreign_key_violation on                       StoreVersion-side
+//   node_version.node_data_hash/index_config_hash/acl_hash --                     invariant; no XP SPI
+//   Phase 3 Gate A's re-added FK, BUILD-PHASE-3.md #10b)                          boundary maps onto
+//                                                                                 this today)
+//   FAILED_PRECONDITION (not NOT_FOUND): this codebase reserves NOT_FOUND for point-lookup
+//   READS (GetVersion/GetBranchEntry/GetPayload/GetCommit — see above); a write-time
+//   referential-integrity failure is a different thing -- "the operation was rejected
+//   because the system is not in a state required for its execution" is FAILED_PRECONDITION's
+//   canonical gRPC meaning, and fits exactly: the caller must store the payload before the
+//   version can reference it.
+//
 // Never sent over the wire (semantic no-ops / accepted-and-ignored — documented, not
 // silently dropped; see BUILD-PHASE-1.md's reconciliation table for the full reasoning):
 //   * SearchPreference (LOCAL/PRIMARY): no request message below carries it. Every NoDB
@@ -321,6 +344,11 @@ message PutPayloadResponse {
 }
 message GetPayloadRequest {
   string hash = 1;
+}
+// Batched multi-hash read (Phase 3 Gate A) — see GetPayloads' service-level doc comment
+// for the missing-hash convention (simply absent from the response stream).
+message GetPayloadsRequest {
+  repeated string hashes = 1;
 }
 
 // --- Binaries (Phase 2 Gate A): opaque content-addressed blobs on S3, distinct from the

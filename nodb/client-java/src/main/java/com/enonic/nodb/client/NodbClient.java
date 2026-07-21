@@ -15,6 +15,7 @@ import com.enonic.nodb.proto.v1.CreateRepositoryRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetPayloadRequest;
+import com.enonic.nodb.proto.v1.GetPayloadsRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.Payload;
@@ -107,6 +108,12 @@ public final class NodbClient
     public Payload getPayload( GetPayloadRequest request )
     {
         return nodeStore.getPayload( request );
+    }
+
+    /** Batched multi-hash read (Phase 3 Gate A) — missing hashes are simply absent from the stream. */
+    public Iterator<Payload> getPayloads( GetPayloadsRequest request )
+    {
+        return nodeStore.getPayloads( request );
     }
 
     /**

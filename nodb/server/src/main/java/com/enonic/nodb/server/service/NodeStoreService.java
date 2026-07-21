@@ -32,6 +32,7 @@ import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
 import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetPayloadRequest;
+import com.enonic.nodb.proto.v1.GetPayloadsRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.Payload;
@@ -445,6 +446,27 @@ public final class NodeStoreService
         }
     }
 
+    @Override
+    public void getPayloads( GetPayloadsRequest request, StreamObserver<Payload> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        try
+        {
+            List<com.enonic.nodb.engine.model.PayloadRecord> results =
+                Tx.inTenantTx( dataSource, principal.tenantContext(),
+                                connection -> PayloadStore.getPayloads( connection, request.getHashesList() ) );
+            for ( com.enonic.nodb.engine.model.PayloadRecord result : results )
+            {
+                responseObserver.onNext( ProtoMapper.fromEnginePayload( result.hash(), result.bytes() ) );
+            }
+            responseObserver.onCompleted();
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( mapSqlException( e ) );
+        }
+    }
+
     private static TenantPrincipal currentPrincipal()
     {
         TenantPrincipal principal = TenantAuthInterceptor.PRINCIPAL_KEY.get();
@@ -480,6 +502,17 @@ public final class NodeStoreService
         if ( "23505".equals( e.getSQLState() ) )
         {
             return Status.ALREADY_EXISTS.withDescription( e.getMessage() ).asRuntimeException();
+        }
+        // PostgreSQL SQLSTATE 23503 = foreign_key_violation -- most commonly a version
+        // whose node_data_hash/index_config_hash/acl_hash has no matching `payload` row
+        // (Phase 3 Gate A's re-added FK, BUILD-PHASE-3.md #10b) -> FAILED_PRECONDITION, not
+        // NOT_FOUND: NOT_FOUND above is reserved for point-lookup READS in this codebase's
+        // convention, whereas this is a write rejected because a precondition (the
+        // referenced payload must already be stored) was not met -- FAILED_PRECONDITION's
+        // canonical gRPC meaning fits exactly. See nodb.proto's status-mapping table.
+        if ( "23503".equals( e.getSQLState() ) )
+        {
+            return Status.FAILED_PRECONDITION.withDescription( e.getMessage() ).asRuntimeException();
         }
         return Status.INTERNAL.withDescription( e.getMessage() ).withCause( e ).asRuntimeException();
     }

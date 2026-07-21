@@ -216,6 +216,47 @@ class WriteBatchTest
     }
 
     @Test
+    void hashOnlyRefsToAlreadyStoredPayloadsSucceedGateBShape()
+        throws SQLException
+    {
+        long repoKey = createRepo( "gateb-repo-" + UUID.randomUUID() );
+        createBranch( repoKey, "master" );
+        String repoId = repoIdFor( repoKey );
+
+        // Prime index-config/ACL once, mirroring real steady-state usage (BUILD-PHASE-3.md
+        // Gate 0's bench, BenchRunner's sharedIndexHashes/sharedAclHashes pattern): a
+        // handful of distinct index-config/ACL blobs shared across many nodes.
+        byte[] indexBytes = randomBytes();
+        byte[] aclBytes = randomBytes();
+        String indexHash = Tx.inTenantTx( dataSource, acme, connection -> PayloadStore.putPayload( connection, indexBytes ) );
+        String aclHash = Tx.inTenantTx( dataSource, acme, connection -> PayloadStore.putPayload( connection, aclBytes ) );
+
+        // The Gate-B shape under test (BUILD-PHASE-3.md Phase 3 Gate A scope item 2): ONE
+        // version + ONE branch entry, node-data inline, index-config/acl referenced by
+        // hash only.
+        byte[] dataBytes = randomBytes();
+        String dataHash = predictedHash( dataBytes );
+        VersionRecord version = newVersion( "/gate-b", dataHash, indexHash, aclHash );
+        BranchEntryRecord entry = new BranchEntryRecord( "master", version.nodeId(), version.versionId(), "/gate-b", Instant.now() );
+
+        WriteBatchRequest request =
+            new WriteBatchRequest( new RepoRef( repoId ),
+                                    List.of( new PayloadRef.Inline( dataBytes ), new PayloadRef.HashOnly( indexHash ),
+                                             new PayloadRef.HashOnly( aclHash ) ), List.of( version ), List.of( entry ), null );
+
+        WriteBatchResponse response = Tx.inTenantTx( dataSource, acme, connection -> WriteService.write( connection, request ) );
+
+        assertFalse( response.needsPayload() );
+        assertNotNull( response.outboxSeq() );
+        assertEquals( 1, countWhere( "node_version", "version_id = '" + version.versionId() + "'" ) );
+        assertEquals( 1, countWhere( "branch_entry", "node_id = '" + entry.nodeId() + "'" ) );
+        // dedup: the priming inserts above are the only rows for these hashes -- the
+        // hash-only refs in this batch must not have inserted duplicates.
+        assertEquals( 1, countWhere( "payload", "hash = '" + indexHash + "'" ) );
+        assertEquals( 1, countWhere( "payload", "hash = '" + aclHash + "'" ) );
+    }
+
+    @Test
     void branchForkCopiesEntriesSharesVersionsAndEmitsOutbox()
         throws SQLException
     {

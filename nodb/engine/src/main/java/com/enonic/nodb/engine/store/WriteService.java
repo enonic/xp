@@ -27,6 +27,20 @@ import com.enonic.nodb.engine.model.BranchEntryRecord;
  * via {@code Tx.inTenantTx}'s catch block — that path is unchanged and is what the
  * atomicity gate test exercises.
  *
+ * <p><b>FK ordering (Phase 3 Gate A, BUILD-PHASE-3.md #10b):</b> the payload-insert loop
+ * below runs strictly before the version-insert loop, in the same transaction. This was
+ * already required for correctness before {@code node_version.node_data_hash} /
+ * {@code index_config_hash} / {@code acl_hash} carried a {@code REFERENCES payload (hash)}
+ * constraint; now it is load-bearing — reordering these two loops (or a caller supplying a
+ * version whose hash was never inlined/hash-only-referenced in the same batch and isn't
+ * already stored) surfaces as a {@code foreign_key_violation} (SQLSTATE 23503) thrown out
+ * of the version-insert statement, which still rolls back the whole transaction via {@code
+ * Tx.inTenantTx}'s catch block (nothing partially persists either way) but is a genuine
+ * error — mapped to {@code FAILED_PRECONDITION} at the gRPC boundary (see
+ * {@code NodeStoreService#mapSqlException}) — distinct from the clean, pre-checked {@code
+ * needPayload} response above for a hash explicitly referenced via {@link
+ * PayloadRef.HashOnly}.
+ *
  * <p>All calls run on a connection already inside {@code Tx.inTenantTx}.
  */
 public final class WriteService

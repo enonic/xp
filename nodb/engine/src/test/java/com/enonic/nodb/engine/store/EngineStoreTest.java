@@ -28,6 +28,7 @@ import com.enonic.nodb.engine.Tx;
 import com.enonic.nodb.engine.model.BranchEntryRecord;
 import com.enonic.nodb.engine.model.CommitRecord;
 import com.enonic.nodb.engine.model.Page;
+import com.enonic.nodb.engine.model.PayloadRecord;
 import com.enonic.nodb.engine.model.RepoRef;
 import com.enonic.nodb.engine.model.VersionRecord;
 
@@ -112,6 +113,71 @@ class EngineStoreTest
             }
         } );
         assertEquals( 1L, count, "same bytes stored twice must dedup to one row" );
+    }
+
+    @Test
+    void payloadsBatchedMultiHashGetReturnsFoundOnlyMissingSimplyAbsent()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        byte[] bytes1 = ( "batch-1-" + UUID.randomUUID() ).getBytes( StandardCharsets.UTF_8 );
+        byte[] bytes2 = ( "batch-2-" + UUID.randomUUID() ).getBytes( StandardCharsets.UTF_8 );
+
+        String hash1 = Tx.inTenantTx( dataSource, acme, connection -> PayloadStore.putPayload( connection, bytes1 ) );
+        String hash2 = Tx.inTenantTx( dataSource, acme, connection -> PayloadStore.putPayload( connection, bytes2 ) );
+        String missingHash = "sha256:" + "3".repeat( 64 );
+
+        List<PayloadRecord> found = Tx.inTenantTx( dataSource, acme,
+                                                     connection -> PayloadStore.getPayloads( connection,
+                                                                                              List.of( hash1, hash2, missingHash ) ) );
+
+        assertEquals( 2, found.size(), "the missing hash must simply be absent, not an error" );
+        Map<String, byte[]> byHash =
+            found.stream().collect( Collectors.toMap( PayloadRecord::hash, PayloadRecord::bytes ) );
+        assertArrayEquals( bytes1, byHash.get( hash1 ) );
+        assertArrayEquals( bytes2, byHash.get( hash2 ) );
+
+        List<PayloadRecord> empty = Tx.inTenantTx( dataSource, acme, connection -> PayloadStore.getPayloads( connection, List.of() ) );
+        assertTrue( empty.isEmpty(), "an empty request must return an empty result without error" );
+    }
+
+    @Test
+    void payloadsBatchedGetIsTenantIsolated()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        TenantContext fisk = new TenantContext( "fisk" );
+
+        byte[] secretBytes = ( "acme-secret-" + UUID.randomUUID() ).getBytes( StandardCharsets.UTF_8 );
+        String secretHash = Tx.inTenantTx( dataSource, acme, connection -> PayloadStore.putPayload( connection, secretBytes ) );
+
+        List<PayloadRecord> seenFromFisk =
+            Tx.inTenantTx( dataSource, fisk, connection -> PayloadStore.getPayloads( connection, List.of( secretHash ) ) );
+        assertTrue( seenFromFisk.isEmpty(), "tenant fisk must not see acme's payload even by exact hash" );
+    }
+
+    @Test
+    void storingAVersionWithAnUnknownPayloadHashIsRejectedByTheForeignKeyAndPersistsNothing()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKey = createRepo( acme, "fk-violation-repo-" + UUID.randomUUID() );
+
+        // Well-formed hash shape, but never stored via PayloadStore.putPayload -- exactly
+        // the scenario Phase 3 Gate A's re-added FK (BUILD-PHASE-3.md #10b) must reject.
+        String missingHash = "sha256:" + "0".repeat( 64 );
+        VersionRecord version = new VersionRecord( UUID.randomUUID().toString(), UUID.randomUUID().toString(), "/fk-violation",
+                                                     Instant.now(), missingHash, missingHash, missingHash, List.of(), null, Map.of() );
+
+        SQLException thrown = assertThrows( SQLException.class, () -> Tx.inTenantTx( dataSource, acme, connection -> {
+            VersionStore.store( connection, repoKey, version );
+            return null;
+        } ) );
+        assertEquals( "23503", thrown.getSQLState(),
+                      "must be a foreign_key_violation against payload(hash), not some other failure" );
+
+        assertNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, version.versionId() ) ),
+                    "the rejected row must not have been persisted" );
     }
 
     @Test
