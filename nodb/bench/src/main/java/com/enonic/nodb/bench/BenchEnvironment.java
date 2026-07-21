@@ -43,14 +43,17 @@ final class BenchEnvironment
 
     private final String repoId;
 
+    private final String runtimeToken;
+
     private BenchEnvironment( PostgreSQLContainer<?> postgres, HikariDataSource dataSource, NodbServer server, NodbClient client,
-                               String repoId )
+                               String repoId, String runtimeToken )
     {
         this.postgres = postgres;
         this.dataSource = dataSource;
         this.server = server;
         this.client = client;
         this.repoId = repoId;
+        this.runtimeToken = runtimeToken;
     }
 
     static BenchEnvironment start()
@@ -83,7 +86,7 @@ final class BenchEnvironment
         adminClient.close();
 
         NodbClient client = NodbClient.connect( "localhost", server.getPort(), runtimeToken );
-        return new BenchEnvironment( postgres, dataSource, server, client, repoId );
+        return new BenchEnvironment( postgres, dataSource, server, client, repoId, runtimeToken );
     }
 
     NodbClient client()
@@ -94,6 +97,27 @@ final class BenchEnvironment
     String repoId()
     {
         return repoId;
+    }
+
+    /**
+     * PHASE-3 GATE-0 addition (BUILD-PHASE-3.md deliverable 2): {@link NodbClient}'s thin
+     * surface deliberately only exposes the slice-1 core method list plus a few additions
+     * (see its own class javadoc), so it has no {@code storeVersion}/{@code
+     * storeBranchEntry} passthroughs. The Gate-0 A-vs-B payload-path bench needs the raw
+     * {@code NodeStoreGrpc} stub to call those two RPCs directly (path A: the
+     * decorator-shape 5-separate-RPCs save). Exposing the port lets that scratch bench
+     * build its own authenticated stub over the same real loopback server without
+     * duplicating {@link #start()}'s container/server/token bootstrapping.
+     */
+    int port()
+    {
+        return server.getPort();
+    }
+
+    /** See {@link #port()} — the matching bearer token for a raw stub built from that port. */
+    String runtimeToken()
+    {
+        return runtimeToken;
     }
 
     @Override

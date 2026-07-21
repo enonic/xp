@@ -33,6 +33,11 @@ dependencies {
     testImplementation(libs.slf4j.simple)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.bundles.testcontainers)
+    // Phase-3 Gate-0 scratch (Gate0PayloadPathBenchTest) builds its own raw NodeStoreGrpc
+    // stub (CallCredentials/ManagedChannel/Metadata) to reach StoreVersion/StoreBranchEntry,
+    // which NodbClient's thin surface does not expose -- client-java depends on this bundle
+    // only as `implementation`, so it does not reach bench's classpath transitively.
+    testImplementation(libs.bundles.grpc.server)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
