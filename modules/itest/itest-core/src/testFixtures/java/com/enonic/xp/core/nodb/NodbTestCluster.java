@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import javax.sql.DataSource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -239,6 +240,26 @@ public final class NodbTestCluster
     public String s3Bucket()
     {
         return MINIO_BUCKET;
+    }
+
+    /**
+     * Phase 3 Gate C addition (nodb/BUILD-PHASE-3.md): raw JDBC access to the shared
+     * {@code postgres:17} container for itests that need SQL ground truth independent of
+     * what NoDB itself reports over the wire (e.g. "the {@code payload} table in tenant
+     * X's own schema has exactly one row for this hash"). Same {@link HikariDataSource}
+     * every {@link NodbServer}/{@link TenantProvisioner} call in this JVM already uses --
+     * a tenant's schema name is exactly its {@link NodbTenant#tenantId()} (see {@link
+     * com.enonic.nodb.engine.TenantContext}'s javadoc), so a caller only needs to
+     * schema-qualify its query, e.g. {@code SELECT ... FROM "<tenantId>".payload WHERE
+     * hash = ?}. Read-only use expected; this does not run inside {@code Tx.inTenantTx}
+     * (no {@code SET LOCAL ROLE}), so it reads with the pooled connection's own (superuser
+     * -- see {@code postgres.getUsername()} in {@link #start()}) privileges, deliberately
+     * bypassing the tenant-role boundary production traffic is confined to -- acceptable
+     * for a test-only ground-truth probe, never something production code should do.
+     */
+    public DataSource dataSource()
+    {
+        return dataSource;
     }
 
     /**
