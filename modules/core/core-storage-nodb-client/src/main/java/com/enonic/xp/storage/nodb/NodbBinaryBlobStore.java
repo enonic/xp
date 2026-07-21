@@ -21,8 +21,12 @@ import com.enonic.nodb.proto.v1.BinaryExistsRequest;
 import com.enonic.nodb.proto.v1.DeleteBinaryRequest;
 import com.enonic.nodb.proto.v1.GetBinaryChunk;
 import com.enonic.nodb.proto.v1.GetBinaryRequest;
+import com.enonic.nodb.proto.v1.GetPayloadRequest;
+import com.enonic.nodb.proto.v1.Payload;
 import com.enonic.nodb.proto.v1.PutBinaryChunk;
 import com.enonic.nodb.proto.v1.PutBinaryResponse;
+import com.enonic.nodb.proto.v1.PutPayloadRequest;
+import com.enonic.nodb.proto.v1.PutPayloadResponse;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -33,10 +37,30 @@ import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 
 /**
- * {@link BlobStore} that diverts only the BINARY segment to NoDB (Phase 2 Gate B,
- * nodb/BUILD-PHASE-2.md) -- everything else (node data, index config, ACL: "payloads",
- * Phase 3 territory) is untouched, delegated straight through to {@link #delegate}, the
- * plain file/S3 {@code BlobStore} this component wraps.
+ * {@link BlobStore} that diverts the BINARY segment (Phase 2 Gate B, nodb/BUILD-PHASE-2.md)
+ * AND the three node-payload segments -- node data, index config, ACL (Phase 3 Gate B,
+ * nodb/BUILD-PHASE-3.md) -- to NoDB; everything else is delegated straight through to
+ * {@link #delegate}, the plain file/S3 {@code BlobStore} this component wraps.
+ * <p>
+ * <b>Payload segments, read side only:</b> {@link #getRecord} routes NODE/INDEX_CONFIG/
+ * ACCESS_CONTROL segment reads to {@code GetPayload} (unary, unlike binaries' streaming --
+ * payload rows are small JSON documents, never chunked). {@link #addRecord} also routes
+ * these segments to {@code PutPayload} defensively, but is not expected to be reached in
+ * practice: Phase 3 Gate B moved payload PERSISTENCE into the storage SPI itself
+ * ({@code NodeStore#storeVersion}/{@code #storeNode}, carrying the bytes alongside the
+ * version/branch-entry row so nodb can bundle them into one {@code WriteBatch} transaction)
+ * -- no production caller writes these three segments through {@code BlobStore#addRecord}
+ * any more, in either mode. Implementing the write branch anyway keeps this decorator
+ * correct by construction rather than "correct because nothing calls it".
+ * <p>
+ * <b>One decorator, not two:</b> a SECOND {@code @Component(service = BlobStore.class,
+ * property = {"storage.backend=nodb", ...})} sibling would compete with this one for the
+ * same {@code @Reference BlobStore} consumers (DS picks exactly one same-ranked match per
+ * static reference) -- and if that sibling copied this class's
+ * {@code @Reference(target = "(!(storage.backend=nodb))")} delegate filter verbatim, it
+ * would bind straight to the real file/S3 store rather than chaining through THIS
+ * component, silently losing whichever segment kind the other component was meant to
+ * divert. Extending this single class sidesteps the whole problem.
  *
  * <p><b>Why a decorator, not a second BlobStore SPI:</b> {@link BlobStore} has no built-in
  * per-segment provider selection -- {@code BlobStoreActivator} (core-blobstore) picks
@@ -113,6 +137,18 @@ public class NodbBinaryBlobStore
      */
     private static final SegmentLevel BINARY_SEGMENT_LEVEL = SegmentLevel.from( "binary" );
 
+    /**
+     * Mirror {@code com.enonic.xp.repo.impl.node.NodeConstants.NODE_SEGMENT_LEVEL}/
+     * {@code INDEX_CONFIG_SEGMENT_LEVEL}/{@code ACCESS_CONTROL_SEGMENT_LEVEL} (see class
+     * javadoc's note on {@code BINARY_SEGMENT_LEVEL} for why this module does not depend on
+     * core-repo to reuse those constants directly).
+     */
+    private static final SegmentLevel NODE_SEGMENT_LEVEL = SegmentLevel.from( "node" );
+
+    private static final SegmentLevel INDEX_CONFIG_SEGMENT_LEVEL = SegmentLevel.from( "index" );
+
+    private static final SegmentLevel ACCESS_CONTROL_SEGMENT_LEVEL = SegmentLevel.from( "access" );
+
     /** Chunk size for the outbound PutBinary stream -- matches BinariesService.CHUNK_SIZE (nodb/server), not shared as a constant across the two separate Gradle builds. */
     private static final int CHUNK_SIZE = 256 * 1024;
 
@@ -132,6 +168,10 @@ public class NodbBinaryBlobStore
     public BlobRecord getRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
+        if ( isPayloadSegment( segment ) )
+        {
+            return getPayloadRecord( key );
+        }
         if ( !isBinarySegment( segment ) )
         {
             return delegate.getRecord( segment, key );
@@ -152,10 +192,33 @@ public class NodbBinaryBlobStore
         return new NodbBinaryBlobRecord( key, -1L, 0L, binaryByteSource( hash ) );
     }
 
+    /**
+     * Unary {@code GetPayload} (unlike binaries' streaming {@code GetBinary} -- payload rows
+     * are small JSON documents, read whole). {@code NodeVersionServiceImpl}'s three Guava
+     * caches sit in front of this (unchanged, §2.1) so a hot version's segments are fetched
+     * once per process, not once per read.
+     */
+    private BlobRecord getPayloadRecord( final BlobKey key )
+    {
+        final String hash = key.toString();
+        final Payload payload =
+            NodbStatusMapper.pointGet( () -> client.nodeStore().getPayload( GetPayloadRequest.newBuilder().setHash( hash ).build() ) );
+        if ( payload == null )
+        {
+            return null;
+        }
+        final byte[] bytes = payload.getBytes().toByteArray();
+        return new NodbBinaryBlobRecord( key, bytes.length, -1L, ByteSource.wrap( bytes ) );
+    }
+
     @Override
     public BlobRecord addRecord( final Segment segment, final ByteSource in )
         throws BlobStoreException
     {
+        if ( isPayloadSegment( segment ) )
+        {
+            return addPayloadRecord( in );
+        }
         if ( !isBinarySegment( segment ) )
         {
             return delegate.addRecord( segment, in );
@@ -168,6 +231,29 @@ public class NodbBinaryBlobStore
         {
             throw new BlobStoreException( "Failed to read binary content for NoDB upload", e );
         }
+    }
+
+    /**
+     * Defensive only -- see class javadoc's "payload segments, read side only" note: no
+     * production caller writes a payload segment through {@link BlobStore#addRecord} any
+     * more, but this keeps the decorator correct if one ever did.
+     */
+    private BlobRecord addPayloadRecord( final ByteSource in )
+        throws BlobStoreException
+    {
+        final byte[] bytes;
+        try
+        {
+            bytes = in.read();
+        }
+        catch ( IOException e )
+        {
+            throw new BlobStoreException( "Failed to read payload content for NoDB upload", e );
+        }
+        final PutPayloadResponse response = NodbStatusMapper.repoScoped(
+            () -> client.nodeStore().putPayload( PutPayloadRequest.newBuilder().setBytes( ByteString.copyFrom( bytes ) ).build() ) );
+        return new NodbBinaryBlobRecord( BlobKey.from( response.getHash() ), bytes.length, System.currentTimeMillis(),
+                                          ByteSource.wrap( bytes ) );
     }
 
     @Override
@@ -189,6 +275,17 @@ public class NodbBinaryBlobStore
     public void removeRecord( final Segment segment, final BlobKey key )
         throws BlobStoreException
     {
+        if ( isPayloadSegment( segment ) )
+        {
+            // Payload GC deferred to Phase 5 (nodb/BUILD-PHASE-3.md Gate 0 decision (d)):
+            // no DeletePayload RPC exists yet, and the only caller that would reach this
+            // (VersionTableVacuumCommand's version-sweep, mirroring its binary GC path) is
+            // already blocked in nodb mode for the same reason binary GC is --
+            // AbstractBlobVacuumCommand#findVersions has no nodb-mode implementation, so
+            // this branch is unreachable in practice today. An accepted no-op, not a silent
+            // bug: nothing is lost since nothing was ever discovered to delete.
+            return;
+        }
         if ( !isBinarySegment( segment ) )
         {
             delegate.removeRecord( segment, key );
@@ -226,6 +323,13 @@ public class NodbBinaryBlobStore
     private static boolean isBinarySegment( final Segment segment )
     {
         return RepositorySegmentUtils.hasBlobTypeLevel( segment, BINARY_SEGMENT_LEVEL );
+    }
+
+    private static boolean isPayloadSegment( final Segment segment )
+    {
+        return RepositorySegmentUtils.hasBlobTypeLevel( segment, NODE_SEGMENT_LEVEL ) ||
+            RepositorySegmentUtils.hasBlobTypeLevel( segment, INDEX_CONFIG_SEGMENT_LEVEL ) ||
+            RepositorySegmentUtils.hasBlobTypeLevel( segment, ACCESS_CONTROL_SEGMENT_LEVEL );
     }
 
     // ---- write path: client-streaming PutBinary, blocking until durable ------------------

@@ -10,6 +10,8 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.protobuf.ByteString;
+
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
@@ -22,23 +24,33 @@ import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
 import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
+import com.enonic.nodb.proto.v1.PayloadRef;
 import com.enonic.nodb.proto.v1.StoreBranchEntryRequest;
 import com.enonic.nodb.proto.v1.StoreCommitRequest;
-import com.enonic.nodb.proto.v1.StoreVersionRequest;
 import com.enonic.nodb.proto.v1.Version;
+import com.enonic.nodb.proto.v1.WriteBatchRequest;
+import com.enonic.nodb.proto.v1.WriteBatchResponse;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 import com.enonic.xp.storage.spi.CommitRecord;
+import com.enonic.xp.storage.spi.NodeSegments;
 import com.enonic.xp.storage.spi.NodeStore;
+import com.enonic.xp.storage.spi.PayloadSegment;
 import com.enonic.xp.storage.spi.SearchPreference;
 import com.enonic.xp.storage.spi.VersionRecord;
 
 /**
- * gRPC-backed {@link NodeStore}: every method maps onto the corresponding per-op RPC
- * (nodb/BUILD-PHASE-1.md Gate B scope constraint #2 -- per-op RPCs, not {@code WriteBatch};
- * {@code WriteBatch} stays the native/bench-optimized batched path with no XP caller).
+ * gRPC-backed {@link NodeStore}: most methods map onto the corresponding per-op RPC
+ * (nodb/BUILD-PHASE-1.md Gate B scope constraint #2). {@link #storeVersion} and
+ * {@link #storeNode} are the exception (Phase 3 Gate B, nodb/BUILD-PHASE-3.md's "symmetric
+ * B" decision): a version write always carries its three payload segments now (the
+ * re-added {@code node_version} payload FK requires it), so both ride {@code WriteBatch} --
+ * ONE transaction, payloads inserted before the version row (server-side, Gate A) -- rather
+ * than the old per-op {@code StoreVersion} RPC, which has no field for them. The per-op
+ * {@code StoreBranchEntry}/{@code StoreVersion} RPCs remain defined in the proto/engine for
+ * other callers; this client simply no longer uses {@code StoreVersion} for its own writes.
  * <p>
  * Registered with {@code storage.backend=nodb} and a positive {@code service.ranking} so it
  * outranks the elasticsearch-backed {@code NodeStore} (Phase 0, ranking 0/default) when
@@ -196,13 +208,65 @@ public class NodbNodeStore
     // --- versions ---
 
     @Override
-    public void storeVersion( final RepositoryId repositoryId, final VersionRecord version )
+    public void storeVersion( final RepositoryId repositoryId, final VersionRecord version, final NodeSegments segments )
     {
-        final StoreVersionRequest request = StoreVersionRequest.newBuilder()
+        final WriteBatchRequest request = WriteBatchRequest.newBuilder()
             .setRepoId( repositoryId.toString() )
-            .setVersion( RecordMapper.toProtoVersion( version ) )
+            .addAllPayloads( toPayloadRefs( segments ) )
+            .addVersions( RecordMapper.toProtoVersion( version ) )
             .build();
-        NodbStatusMapper.repoScopedVoid( () -> client.nodeStore().storeVersion( request ) );
+        writeBatch( request );
+    }
+
+    /**
+     * ONE {@code WriteBatch} RPC per save (Phase 3 Gate B, nodb/BUILD-PHASE-3.md): version +
+     * branch entry + payload segments as a single transaction, instead of the default
+     * {@code storeVersion} then {@code storeBranchEntry} sequence (two RPCs) that
+     * {@code NodeStore#storeNode}'s default method would otherwise produce.
+     */
+    @Override
+    public void storeNode( final RepositoryId repositoryId, final Branch branch, final NodeSegments segments, final VersionRecord version,
+                            final BranchEntryRecord branchEntry )
+    {
+        final WriteBatchRequest request = WriteBatchRequest.newBuilder()
+            .setRepoId( repositoryId.toString() )
+            .addAllPayloads( toPayloadRefs( segments ) )
+            .addVersions( RecordMapper.toProtoVersion( version ) )
+            .addBranchEntries( RecordMapper.toProtoBranchEntry( branch, branchEntry ) )
+            .build();
+        writeBatch( request );
+    }
+
+    private void writeBatch( final WriteBatchRequest request )
+    {
+        final WriteBatchResponse response = NodbStatusMapper.repoScoped( () -> client.nodeStore().writeBatch( request ) );
+        if ( !response.getNeedPayloadList().isEmpty() )
+        {
+            // v1 always sends inline bytes for a segment whose content is new (see
+            // #toPayloadRef) and hash-only ONLY for a segment the caller itself already
+            // knows is stored (VersionServiceImpl's commit/change-attributes convenience
+            // overload, reusing an existing NodeVersionKey verbatim) -- NEED_PAYLOAD can
+            // only be returned for a hash-only ref the server does NOT have, which should
+            // never happen under that discipline. Surfaced loudly rather than silently
+            // dropping the write (WriteService.write does not persist anything when
+            // needPayload is non-empty -- see nodb/engine's WriteService javadoc).
+            throw new NodbClientException(
+                "NoDB WriteBatch reported missing payload(s) the caller believed were already stored: " +
+                    response.getNeedPayloadList() );
+        }
+    }
+
+    private static Iterable<PayloadRef> toPayloadRefs( final NodeSegments segments )
+    {
+        return List.of( toPayloadRef( segments.nodeData() ), toPayloadRef( segments.indexConfig() ),
+                         toPayloadRef( segments.accessControl() ) );
+    }
+
+    private static PayloadRef toPayloadRef( final PayloadSegment segment )
+    {
+        return segment.bytes() == null
+            ? PayloadRef.newBuilder().setHash( segment.hash() ).build()
+            : PayloadRef.newBuilder().setInline( ByteString.copyFrom( segment.bytes() ) ).build();
     }
 
     @Override

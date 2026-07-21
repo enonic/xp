@@ -7,7 +7,14 @@ import com.enonic.xp.security.acl.AccessControlList;
 
 public interface NodeVersionService
 {
-    NodeVersionKey store( NodeStoreVersion nodeVersion, InternalContext context );
+    /**
+     * Serializes the three payload segments (node-data/index-config/ACL) and computes their
+     * content-addressed keys. Pure — no I/O, no persistence (Phase 3 Gate B,
+     * nodb/BUILD-PHASE-3.md: persisting the bytes is now the storage SPI's job, via
+     * {@code NodeStore#storeVersion}/{@code #storeNode}, so callers pass the result of this
+     * method on to {@code VersionService#store}/{@code BranchService#storeWithVersion}).
+     */
+    SerializedNodeVersion serialize( NodeStoreVersion nodeVersion );
 
     NodeStoreVersion get( NodeVersionKey nodeVersionKey, InternalContext context );
 

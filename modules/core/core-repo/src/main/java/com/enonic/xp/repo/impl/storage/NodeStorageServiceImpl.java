@@ -42,9 +42,12 @@ import com.enonic.xp.repo.impl.elasticsearch.NodeStoreDocumentFactory;
 import com.enonic.xp.repo.impl.index.document.IndexDocument;
 import com.enonic.xp.repo.impl.node.NodePermissionsResolver;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
+import com.enonic.xp.repo.impl.node.dao.SerializedNodeVersion;
 import com.enonic.xp.repo.impl.version.VersionService;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.storage.spi.NodeSegments;
+import com.enonic.xp.storage.spi.PayloadSegment;
 
 @Component
 public class NodeStorageServiceImpl
@@ -80,12 +83,12 @@ public class NodeStorageServiceImpl
         final Instant timestamp = Millis.fromOrElseNow( node.getTimestamp() );
         final NodeVersionId nodeVersionId = params.isNewVersion() ? new NodeVersionId() : node.getNodeVersionId();
         final NodeStoreVersion nodeStoreVersion = NodeStoreVersion.from( node );
-        final NodeVersionKey nodeVersionKey = nodeVersionService.store( nodeStoreVersion, context );
+        final SerializedNodeVersion serializedNodeVersion = nodeVersionService.serialize( nodeStoreVersion );
 
         final NodeVersion nodeVersion = NodeVersion.create()
             .nodeId( node.id() )
             .nodeVersionId( nodeVersionId )
-            .nodeVersionKey( nodeVersionKey )
+            .nodeVersionKey( serializedNodeVersion.key() )
             .binaryBlobKeys( getBinaryBlobKeys( node.getAttachedBinaries() ) )
             .nodePath( node.path() )
             .nodeCommitId( params.getNodeCommitId() )
@@ -95,8 +98,7 @@ public class NodeStorageServiceImpl
 
         final NodeBranchEntry nodeBranchEntry = NodeBranchEntry.fromNodeVersion( nodeVersion );
 
-        this.versionService.store( nodeVersion, context );
-        this.branchService.store( nodeBranchEntry, context );
+        this.branchService.storeWithVersion( nodeBranchEntry, nodeVersion, toNodeSegments( serializedNodeVersion ), context );
         this.indexDataService.store( NodeStoreDocumentFactory.from( nodeStoreVersion, nodeBranchEntry ), context );
 
         return new NodeVersionData( Node.create( node ).timestamp( timestamp ).nodeVersionId( nodeVersionId ).build(), nodeVersion );
@@ -114,18 +116,28 @@ public class NodeStorageServiceImpl
     @Override
     public void storeVersion( final StoreNodeVersionParams params, final InternalContext context )
     {
-        final NodeVersionKey nodeVersionKey = this.nodeVersionService.store( params.getNodeVersion(), context );
+        final SerializedNodeVersion serializedNodeVersion = this.nodeVersionService.serialize( params.getNodeVersion() );
 
-        this.versionService.store( NodeVersion.create()
-                                       .nodeId( params.getNodeId() )
-                                       .nodeVersionId( params.getNodeVersionId() )
-                                       .nodeVersionKey( nodeVersionKey )
-                                       .binaryBlobKeys( getBinaryBlobKeys( params.getNodeVersion().attachedBinaries() ) )
-                                       .nodePath( params.getNodePath() )
-                                       .nodeCommitId( params.getNodeCommitId() )
-                                       .timestamp( params.getTimestamp() )
-                                       .attributes( params.getAttributes() )
-                                       .build(), context );
+        final NodeVersion nodeVersion = NodeVersion.create()
+            .nodeId( params.getNodeId() )
+            .nodeVersionId( params.getNodeVersionId() )
+            .nodeVersionKey( serializedNodeVersion.key() )
+            .binaryBlobKeys( getBinaryBlobKeys( params.getNodeVersion().attachedBinaries() ) )
+            .nodePath( params.getNodePath() )
+            .nodeCommitId( params.getNodeCommitId() )
+            .timestamp( params.getTimestamp() )
+            .attributes( params.getAttributes() )
+            .build();
+
+        this.versionService.store( nodeVersion, toNodeSegments( serializedNodeVersion ), context );
+    }
+
+    private static NodeSegments toNodeSegments( final SerializedNodeVersion serialized )
+    {
+        final NodeVersionKey key = serialized.key();
+        return new NodeSegments( new PayloadSegment( key.getNodeBlobKey().toString(), serialized.nodeDataBytes() ),
+                                  new PayloadSegment( key.getIndexConfigBlobKey().toString(), serialized.indexConfigBytes() ),
+                                  new PayloadSegment( key.getAccessControlBlobKey().toString(), serialized.accessControlBytes() ) );
     }
 
     @Override

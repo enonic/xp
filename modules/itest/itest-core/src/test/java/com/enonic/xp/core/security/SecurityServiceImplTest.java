@@ -112,7 +112,7 @@ class SecurityServiceImplTest
 
         final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
 
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
+        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, blobStore );
 
         final BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 

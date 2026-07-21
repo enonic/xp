@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
+import com.google.protobuf.ByteString;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
@@ -52,15 +53,30 @@ class NodbBinaryBlobStoreTest
 
     private static final SegmentLevel BINARY_LEVEL = SegmentLevel.from( "binary" );
 
+    /** A segment kind this decorator does NOT know about -- the true "everything else stays untouched" representative. */
+    private static final SegmentLevel OTHER_LEVEL = SegmentLevel.from( "other" );
+
     private static final SegmentLevel NODE_LEVEL = SegmentLevel.from( "node" );
+
+    private static final SegmentLevel INDEX_CONFIG_LEVEL = SegmentLevel.from( "index" );
+
+    private static final SegmentLevel ACCESS_CONTROL_LEVEL = SegmentLevel.from( "access" );
 
     private static final Segment BINARY_SEGMENT = RepositorySegmentUtils.toSegment( REPO, BINARY_LEVEL );
 
+    private static final Segment OTHER_SEGMENT = RepositorySegmentUtils.toSegment( REPO, OTHER_LEVEL );
+
     private static final Segment NODE_SEGMENT = RepositorySegmentUtils.toSegment( REPO, NODE_LEVEL );
+
+    private static final Segment INDEX_CONFIG_SEGMENT = RepositorySegmentUtils.toSegment( REPO, INDEX_CONFIG_LEVEL );
+
+    private static final Segment ACCESS_CONTROL_SEGMENT = RepositorySegmentUtils.toSegment( REPO, ACCESS_CONTROL_LEVEL );
 
     private Map<String, byte[]> binaries;
 
     private StubBinariesService stubService;
+
+    private FakeNodbState nodeStoreState;
 
     private Server server;
 
@@ -76,9 +92,19 @@ class NodbBinaryBlobStoreTest
     {
         binaries = new ConcurrentHashMap<>();
         stubService = new StubBinariesService( binaries );
+        nodeStoreState = new FakeNodbState();
 
         final String serverName = "nodb-binary-blob-store-test-" + System.nanoTime();
-        server = InProcessServerBuilder.forName( serverName ).directExecutor().addService( stubService ).build().start();
+        server = InProcessServerBuilder.forName( serverName )
+            .directExecutor()
+            .addService( stubService )
+            // Payload segments (Phase 3 Gate B) route through GetPayload/PutPayload, which
+            // are NodeStore RPCs, not Binaries ones -- the stub for those is the same one
+            // NodbNodeStoreTest uses, backed by its own fake state (payloads are tenant-
+            // shared/unscoped by repo, so no `repos` entry is needed for this stub).
+            .addService( new StubNodeStoreService( nodeStoreState ) )
+            .build()
+            .start();
         channel = InProcessChannelBuilder.forName( serverName ).directExecutor().build();
 
         delegate = new RecordingBlobStore();
@@ -131,21 +157,64 @@ class NodbBinaryBlobStoreTest
     }
 
     @Test
-    void nonBinarySegment_delegatesUnchanged_neverTouchingNoDB()
+    void unrecognizedSegment_delegatesUnchanged_neverTouchingNoDB()
         throws IOException
     {
-        final byte[] content = "node payload bytes".getBytes();
-        final BlobRecord stored = store.addRecord( NODE_SEGMENT, ByteSource.wrap( content ) );
+        final byte[] content = "unrelated segment bytes".getBytes();
+        final BlobRecord stored = store.addRecord( OTHER_SEGMENT, ByteSource.wrap( content ) );
 
-        assertTrue( delegate.calls.contains( "addRecord:" + NODE_SEGMENT ) );
-        assertTrue( binaries.isEmpty(), "a non-binary write must never reach NoDB" );
+        assertTrue( delegate.calls.contains( "addRecord:" + OTHER_SEGMENT ) );
+        assertTrue( binaries.isEmpty(), "a non-binary, non-payload write must never reach NoDB" );
 
-        final BlobRecord fetched = store.getRecord( NODE_SEGMENT, stored.getKey() );
+        final BlobRecord fetched = store.getRecord( OTHER_SEGMENT, stored.getKey() );
         assertArrayEquals( content, fetched.getBytes().read() );
-        assertTrue( delegate.calls.contains( "getRecord:" + NODE_SEGMENT ) );
+        assertTrue( delegate.calls.contains( "getRecord:" + OTHER_SEGMENT ) );
 
-        store.removeRecord( NODE_SEGMENT, stored.getKey() );
-        assertTrue( delegate.calls.contains( "removeRecord:" + NODE_SEGMENT ) );
+        store.removeRecord( OTHER_SEGMENT, stored.getKey() );
+        assertTrue( delegate.calls.contains( "removeRecord:" + OTHER_SEGMENT ) );
+    }
+
+    @Test
+    void payloadSegment_getRecord_routesToGetPayload_neverTouchingDelegate()
+        throws IOException
+    {
+        // Populate the fake payload pool directly (as if an earlier WriteBatch/PutPayload had).
+        final byte[] content = "node-data json bytes".getBytes();
+        final String hash = BlobKey.sha256( ByteSource.wrap( content ) ).toString();
+        nodeStoreState.payloads.put( hash, ByteString.copyFrom( content ) );
+
+        final BlobRecord fetched = store.getRecord( NODE_SEGMENT, BlobKey.from( hash ) );
+
+        assertArrayEquals( content, fetched.getBytes().read() );
+        assertTrue( delegate.calls.isEmpty(), "a payload-segment read must never reach the real BlobStore" );
+    }
+
+    @Test
+    void payloadSegment_getRecord_missingHash_returnsNull()
+    {
+        assertNull( store.getRecord( INDEX_CONFIG_SEGMENT, BlobKey.from( "sha256:does-not-exist" ) ) );
+        assertTrue( delegate.calls.isEmpty() );
+    }
+
+    @Test
+    void payloadSegment_addRecord_routesToPutPayload_neverTouchingDelegate()
+        throws IOException
+    {
+        final byte[] content = "acl json bytes".getBytes();
+        final BlobRecord stored = store.addRecord( ACCESS_CONTROL_SEGMENT, ByteSource.wrap( content ) );
+
+        assertEquals( "sha256:" + sha256Hex( content ), stored.getKey().toString() );
+        assertTrue( delegate.calls.isEmpty(), "a payload-segment write must never reach the real BlobStore" );
+        assertArrayEquals( content, store.getRecord( ACCESS_CONTROL_SEGMENT, stored.getKey() ).getBytes().read() );
+    }
+
+    @Test
+    void payloadSegment_removeRecord_isAcceptedNoOp_gcDeferredToPhase5()
+    {
+        // No DeletePayload RPC exists yet (Phase 3 Gate B, Gate 0 decision (d)) -- must not
+        // throw, and must never reach the real delegate BlobStore either.
+        store.removeRecord( NODE_SEGMENT, BlobKey.from( "sha256:whatever" ) );
+        assertTrue( delegate.calls.isEmpty() );
     }
 
     @Test

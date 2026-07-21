@@ -11,6 +11,8 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 import com.enonic.xp.storage.spi.IndexSettings;
+import com.enonic.xp.storage.spi.NodeSegments;
+import com.enonic.xp.storage.spi.PayloadSegment;
 import com.enonic.xp.storage.spi.VersionRecord;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,11 +65,20 @@ class NodbLiveEndpointSmokeTest
             try
             {
                 final Instant now = Instant.now();
+                // Phase 3 Gate B (nodb/BUILD-PHASE-3.md): the re-added node_version payload
+                // FK requires all three hashes to reference a stored payload row -- inline
+                // segment bytes for all three (not null), matching each declared hash.
+                final NodeSegments segments =
+                    new NodeSegments( new PayloadSegment( "sha256:smoke-data", "smoke node data".getBytes() ),
+                                       new PayloadSegment( "sha256:smoke-idx", "smoke index config".getBytes() ),
+                                       new PayloadSegment( "sha256:smoke-acl", "smoke acl".getBytes() ) );
                 final VersionRecord version =
-                    new VersionRecord( "smoke-v1", "smoke-n1", "/smoke", now, "sha256:smoke", null, null, List.of(), null, null );
-                nodeStore.storeVersion( repo, version );
+                    new VersionRecord( "smoke-v1", "smoke-n1", "/smoke", now, "sha256:smoke-data", "sha256:smoke-idx", "sha256:smoke-acl",
+                                        List.of(), null, null );
+                nodeStore.storeVersion( repo, version, segments );
                 nodeStore.storeBranchEntry( repo, Branch.from( "master" ),
-                                             new BranchEntryRecord( "smoke-n1", "/smoke", "smoke-v1", "sha256:smoke", null, null, now ) );
+                                             new BranchEntryRecord( "smoke-n1", "/smoke", "smoke-v1", "sha256:smoke-data",
+                                                                     "sha256:smoke-idx", "sha256:smoke-acl", now ) );
 
                 final BranchEntryRecord fetched = nodeStore.getBranchEntry( repo, Branch.from( "master" ), "smoke-n1", null );
                 assertNotNull( fetched );

@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.protobuf.ByteString;
+
 import com.enonic.nodb.proto.v1.BranchEntry;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.Version;
@@ -33,6 +35,9 @@ final class FakeNodbState
 
     /** key: commitId */
     final Map<String, Commit> commits = new ConcurrentHashMap<>();
+
+    /** key: content hash ("sha256:&lt;hex&gt;") -- Phase 3 Gate B's node-payload segment pool. */
+    final Map<String, ByteString> payloads = new ConcurrentHashMap<>();
 
     static String entryKey( final String repo, final String branch, final String nodeId )
     {

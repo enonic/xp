@@ -303,7 +303,11 @@ public abstract class AbstractNodeTest
         }
         else
         {
-            this.nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
+            // Phase 3 Gate B (nodb/BUILD-PHASE-3.md): ElasticsearchNodeStore now persists the
+            // node/index-config/ACL payload segments itself (relocated from
+            // NodeVersionServiceImpl), so it needs a BlobStore reference too -- BLOB_STORE
+            // directly, same instance this.blobStore is set to just below.
+            this.nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, BLOB_STORE );
             this.repositoryStorageAdmin = this.indexServiceInternal;
             this.blobStore = BLOB_STORE;
         }

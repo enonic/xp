@@ -12,8 +12,13 @@ import com.enonic.xp.repository.RepositoryId;
 /**
  * System-of-record operations for branch entries, versions and commits. Replaces the ES
  * {@code storage-<repo>} index (via {@code StorageDao} and the {@code *StorageRequestFactory}
- * classes) for the node/repo layer above it. Node/binary payloads stay on the existing
- * {@code com.enonic.xp.blob.BlobStore} SPI and are NOT part of this Phase-0 contract.
+ * classes) for the node/repo layer above it. Binary payloads stay on the existing
+ * {@code com.enonic.xp.blob.BlobStore} SPI, out of scope here. Node payload segments
+ * (node-data/index-config/ACL) rode {@code BlobStore} too through Phase 2 (hybrid), but
+ * Phase 3 Gate B (nodb/BUILD-PHASE-3.md) moved their persistence into this contract — see
+ * {@link #storeVersion} and {@link #storeNode} — so each backend can store them its own way
+ * (elasticsearch: still {@code BlobStore}, relocated; nodb: the {@code payload} table, in
+ * the same transaction as the version/branch-entry row).
  * <p>
  * Method set is deliberately scoped to exactly what {@code BranchServiceImpl},
  * {@code VersionServiceImpl} and {@code CommitServiceImpl} need (Gate B) — not a
@@ -26,8 +31,8 @@ import com.enonic.xp.repository.RepositoryId;
  *   consistent for a subsequent read against the same repo/branch, EXCEPT
  *   {@link #getBranchEntryByPath}, which is served off a rebuildable index and is only
  *   consistent after a caller has forced a refresh (as today).</li>
- *   <li>Node data, index-config and ACL blob keys use today's BlobKey format
- *   ({@code "sha256:<hex>"}) — unchanged, resolved through {@code BlobStore}.</li>
+ *   <li>Node data, index-config and ACL hashes use today's BlobKey format
+ *   ({@code "sha256:<hex>"}) — unchanged.</li>
  *   <li>{@code searchPreference} may be {@code null}, meaning "implementation default"
  *   (today: ES {@code _local}).</li>
  * </ul>
@@ -83,12 +88,38 @@ public interface NodeStore
 
     // --- versions (VERSION document equivalent) ---
 
-    void storeVersion( RepositoryId repositoryId, VersionRecord version );
+    /**
+     * Stores a version together with its three payload segments (Phase 3 Gate B,
+     * nodb/BUILD-PHASE-3.md — payloads used to live on {@code BlobStore}, written by
+     * {@code NodeVersionServiceImpl} before this call; they now ride the SPI call itself so
+     * a transactional backend can persist version + payloads as one atomic write). Segment
+     * hashes MUST equal {@code version.nodeDataHash()}/{@code indexConfigHash()}/
+     * {@code aclHash()} (caller invariant, not re-validated here). Each segment may be
+     * hash-only ({@link PayloadSegment#bytes()} {@code null}) when the caller already knows
+     * the content is stored (see {@link PayloadSegment}'s javadoc).
+     */
+    void storeVersion( RepositoryId repositoryId, VersionRecord version, NodeSegments segments );
 
     void deleteVersion( RepositoryId repositoryId, String versionId );
 
     @Nullable
     VersionRecord getVersion( RepositoryId repositoryId, String versionId, @Nullable SearchPreference searchPreference );
+
+    /**
+     * Combined store of a version, its payload segments, and its branch entry — the save
+     * path used for every new/updated node ({@code NodeStorageServiceImpl#store}, via
+     * {@code BranchService#storeWithVersion}). Semantically equivalent to
+     * {@link #storeVersion} followed by {@link #storeBranchEntry} with the same arguments;
+     * implementations backed by a single transactional store (nodb) MAY perform it as one
+     * atomic write instead (nodb/BUILD-PHASE-3.md's "ONE WriteBatch per save" — the default
+     * below is what a per-document backend like elasticsearch relies on, unchanged).
+     */
+    default void storeNode( RepositoryId repositoryId, Branch branch, NodeSegments segments, VersionRecord version,
+                             BranchEntryRecord branchEntry )
+    {
+        storeVersion( repositoryId, version, segments );
+        storeBranchEntry( repositoryId, branch, branchEntry );
+    }
 
     // --- commits (COMMIT document equivalent) ---
 

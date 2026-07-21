@@ -61,39 +61,31 @@ public class NodeVersionServiceImpl
     }
 
     @Override
-    public NodeVersionKey store( final NodeStoreVersion nodeVersion, final InternalContext context )
+    public SerializedNodeVersion serialize( final NodeStoreVersion nodeVersion )
     {
-        final RepositoryId repositoryId = context.getRepositoryId();
+        final byte[] accessControlBytes = serializeSegment( nodeVersion, NodeVersionJsonSerializer::toAccessControlBytes );
+        final byte[] indexConfigBytes = serializeSegment( nodeVersion, NodeVersionJsonSerializer::toIndexConfigDocumentBytes );
+        final byte[] nodeDataBytes = serializeSegment( nodeVersion, NodeVersionJsonSerializer::toNodeVersionBytes );
 
-        final BlobKey accessControlBlobKey =
-            serializeAndAddBlobRecord( nodeVersion, repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL,
-                                       NodeVersionJsonSerializer::toAccessControlBytes );
-        final BlobKey indexConfigBlobKey = serializeAndAddBlobRecord( nodeVersion, repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL,
-                                                                      NodeVersionJsonSerializer::toIndexConfigDocumentBytes );
-        final BlobKey nodeBlobKey = serializeAndAddBlobRecord( nodeVersion, repositoryId, NodeConstants.NODE_SEGMENT_LEVEL,
-                                                               NodeVersionJsonSerializer::toNodeVersionBytes );
-
-        return NodeVersionKey.create()
-            .nodeBlobKey( nodeBlobKey )
-            .indexConfigBlobKey( indexConfigBlobKey )
-            .accessControlBlobKey( accessControlBlobKey )
+        final NodeVersionKey key = NodeVersionKey.create()
+            .nodeBlobKey( BlobKey.sha256( ByteSource.wrap( nodeDataBytes ) ) )
+            .indexConfigBlobKey( BlobKey.sha256( ByteSource.wrap( indexConfigBytes ) ) )
+            .accessControlBlobKey( BlobKey.sha256( ByteSource.wrap( accessControlBytes ) ) )
             .build();
+
+        return new SerializedNodeVersion( key, nodeDataBytes, indexConfigBytes, accessControlBytes );
     }
 
-    private BlobKey serializeAndAddBlobRecord( final NodeStoreVersion nodeVersion, final RepositoryId repositoryId,
-                                               final SegmentLevel segmentLevel, IOFunction<NodeStoreVersion, byte[]> serializer )
+    private static byte[] serializeSegment( final NodeStoreVersion nodeVersion, final IOFunction<NodeStoreVersion, byte[]> serializer )
     {
-        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
-        final byte[] nodeJson;
         try
         {
-            nodeJson = serializer.apply( nodeVersion );
+            return serializer.apply( nodeVersion );
         }
         catch ( IOException e )
         {
             throw new UncheckedIOException( e );
         }
-        return blobStore.addRecord( nodeSegment, ByteSource.wrap( nodeJson ) ).getKey();
     }
 
     @Override

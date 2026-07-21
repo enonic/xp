@@ -184,7 +184,7 @@ class DynamicSchemaServiceImplTest
 
         final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
 
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
+        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, blobStore );
 
         BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 

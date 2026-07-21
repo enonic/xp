@@ -39,10 +39,12 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.security.acl.AccessControlList;
 
+import static com.enonic.xp.repo.impl.node.NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL;
 import static com.enonic.xp.repo.impl.node.NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL;
 import static com.enonic.xp.repo.impl.node.NodeConstants.NODE_SEGMENT_LEVEL;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -72,7 +74,7 @@ class NodeVersionServiceImplTest
             .permissions( AccessControlList.empty() )
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
             .build();
-        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> storeAndPersist( nodeVersion, createInternalContext() ) );
 
         assertNotNull( nodeVersionKey );
 
@@ -82,6 +84,40 @@ class NodeVersionServiceImplTest
         final BlobRecord indexBlobRecord = BLOB_STORE.getRecord( executeInContext( () -> createSegment( INDEX_CONFIG_SEGMENT_LEVEL ) ),
                                                                  nodeVersionKey.getIndexConfigBlobKey() );
         assertNotNull( indexBlobRecord );
+    }
+
+    /**
+     * Phase 3 Gate B (nodb/BUILD-PHASE-3.md): {@code serialize} is pure -- persisting the
+     * segment bytes moved to the storage SPI ({@code NodeStore#storeVersion}/
+     * {@code #storeNode}), so calling it alone must NOT write anything to the injected
+     * {@code BlobStore} (unlike the old {@code store}, which always did). Checks the
+     * NODE segment only, not index-config/ACL: {@code BLOB_STORE} is a shared static field
+     * across this class's tests and index-config/ACL content is often byte-identical across
+     * tests (same {@code IndexConfig}/{@code AccessControlList} fixtures), so those segments
+     * can legitimately already be populated by an unrelated, earlier test's real write
+     * (content-addressed dedup) -- not evidence of a leak from THIS call. The node-data
+     * segment always embeds a fresh random {@code NodeId}, so its hash is guaranteed unique
+     * per test run.
+     */
+    @Test
+    void serialize_isPure_writesNothingToBlobStore()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myName", "myValue" );
+
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .permissions( AccessControlList.empty() )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
+
+        final SerializedNodeVersion serialized = nodeDao.serialize( nodeVersion );
+
+        assertNotNull( serialized.key() );
+        assertNull( BLOB_STORE.getRecord( executeInContext( () -> createSegment( NODE_SEGMENT_LEVEL ) ), serialized.key().getNodeBlobKey() ) );
     }
 
     @Test
@@ -106,7 +142,7 @@ class NodeVersionServiceImplTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
             .build();
 
-        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> storeAndPersist( nodeVersion, createInternalContext() ) );
 
         final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
 
@@ -136,7 +172,7 @@ class NodeVersionServiceImplTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
             .build();
 
-        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> storeAndPersist( nodeVersion, createInternalContext() ) );
         final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
 
         assertEquals( returnedNodeVersion.id(), nodeVersion.id() );
@@ -157,7 +193,7 @@ class NodeVersionServiceImplTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
             .build();
 
-        final NodeVersionKey nodeVersionKey1 = executeInContext( () -> nodeDao.store( nodeVersion1, createInternalContext() ) );
+        final NodeVersionKey nodeVersionKey1 = executeInContext( () -> storeAndPersist( nodeVersion1, createInternalContext() ) );
 
         final PropertyTree data2 = new PropertyTree();
         data2.addString( "myName", "myValue2" );
@@ -170,7 +206,7 @@ class NodeVersionServiceImplTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
             .build();
 
-        final NodeVersionKey nodeVersionKey2 = executeInContext( () -> nodeDao.store( nodeVersion2, createInternalContext() ) );
+        final NodeVersionKey nodeVersionKey2 = executeInContext( () -> storeAndPersist( nodeVersion2, createInternalContext() ) );
 
         List<NodeStoreVersion> nodeVersions = new ArrayList<>();
         List.of( nodeVersionKey1, nodeVersionKey2 )
@@ -199,7 +235,7 @@ class NodeVersionServiceImplTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
             .build();
 
-        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> storeAndPersist( nodeVersion, createInternalContext() ) );
 
         final Segment segment = executeInContext( () -> createSegment( NODE_SEGMENT_LEVEL ) );
         final BlobRecord blob = BLOB_STORE.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
@@ -228,7 +264,7 @@ class NodeVersionServiceImplTest
             .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
             .build();
 
-        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> storeAndPersist( nodeVersion, createInternalContext() ) );
 
         final Segment segment = executeInContext( () -> createSegment( NODE_SEGMENT_LEVEL ) );
         final BlobRecord blob = BLOB_STORE.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
@@ -246,6 +282,28 @@ class NodeVersionServiceImplTest
 
         final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
         assertNotNull( returnedNodeVersion );
+    }
+
+    /**
+     * Test-only stand-in for what {@code ElasticsearchNodeStore#storeVersion} now does in
+     * production (Phase 3 Gate B, nodb/BUILD-PHASE-3.md): serialize (pure), then persist the
+     * three segments to the BlobStore under this repository's segments -- same keys, same
+     * bytes, same {@code addRecord} calls the old {@code NodeVersionServiceImpl#store} made
+     * directly. Kept here (rather than resurrecting the old method) so this test class stays
+     * a focused unit test of {@link NodeVersionServiceImpl}, not a re-implementation of the
+     * ES backend.
+     */
+    private NodeVersionKey storeAndPersist( final NodeStoreVersion nodeVersion, final InternalContext context )
+    {
+        final SerializedNodeVersion serialized = nodeDao.serialize( nodeVersion );
+        final RepositoryId repositoryId = context.getRepositoryId();
+        BLOB_STORE.addRecord( RepositorySegmentUtils.toSegment( repositoryId, NODE_SEGMENT_LEVEL ),
+                               ByteSource.wrap( serialized.nodeDataBytes() ) );
+        BLOB_STORE.addRecord( RepositorySegmentUtils.toSegment( repositoryId, INDEX_CONFIG_SEGMENT_LEVEL ),
+                               ByteSource.wrap( serialized.indexConfigBytes() ) );
+        BLOB_STORE.addRecord( RepositorySegmentUtils.toSegment( repositoryId, ACCESS_CONTROL_SEGMENT_LEVEL ),
+                               ByteSource.wrap( serialized.accessControlBytes() ) );
+        return serialized.key();
     }
 
     protected Segment createSegment( SegmentLevel blobTypeLevel )

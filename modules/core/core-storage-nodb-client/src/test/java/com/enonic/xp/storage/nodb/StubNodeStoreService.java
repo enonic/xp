@@ -1,10 +1,15 @@
 package com.enonic.xp.storage.nodb;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+
+import com.google.common.io.ByteSource;
+import com.google.protobuf.ByteString;
 
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.BranchEntry;
@@ -19,12 +24,22 @@ import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
 import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetCommitRequest;
+import com.enonic.nodb.proto.v1.GetPayloadRequest;
+import com.enonic.nodb.proto.v1.GetPayloadsRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
+import com.enonic.nodb.proto.v1.Payload;
+import com.enonic.nodb.proto.v1.PayloadRef;
+import com.enonic.nodb.proto.v1.PutPayloadRequest;
+import com.enonic.nodb.proto.v1.PutPayloadResponse;
 import com.enonic.nodb.proto.v1.StoreBranchEntryRequest;
 import com.enonic.nodb.proto.v1.StoreCommitRequest;
 import com.enonic.nodb.proto.v1.StoreVersionRequest;
 import com.enonic.nodb.proto.v1.Version;
+import com.enonic.nodb.proto.v1.WriteBatchRequest;
+import com.enonic.nodb.proto.v1.WriteBatchResponse;
+
+import com.enonic.xp.blob.BlobKey;
 
 /**
  * Test-only {@code NodeStore} service backed by {@link FakeNodbState}. Reproduces just
@@ -257,6 +272,100 @@ final class StubNodeStoreService
         }
         responseObserver.onNext( commit );
         responseObserver.onCompleted();
+    }
+
+    /**
+     * Reproduces just enough of {@code nodb/engine}'s {@code WriteService.write} (Phase 3
+     * Gate B, nodb/BUILD-PHASE-3.md) to exercise {@link NodbNodeStore#storeVersion}/
+     * {@link NodbNodeStore#storeNode}: validate every hash-only {@link PayloadRef} is
+     * already in {@link FakeNodbState#payloads} BEFORE writing anything (an unknown hash
+     * short-circuits with {@code needPayload} populated and nothing persisted, mirroring the
+     * real engine's pre-check ordering); an inline ref's hash is always recomputed from its
+     * bytes (never trusted from the client), same sha256 scheme {@code BlobKey.sha256} and
+     * the real {@code PayloadStore.sha256Key} both use, so the two independently agree.
+     */
+    @Override
+    public void writeBatch( final WriteBatchRequest request, final StreamObserver<WriteBatchResponse> responseObserver )
+    {
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        final List<String> needPayload = new ArrayList<>();
+        for ( final PayloadRef ref : request.getPayloadsList() )
+        {
+            if ( ref.getRefCase() == PayloadRef.RefCase.HASH && !state.payloads.containsKey( ref.getHash() ) )
+            {
+                needPayload.add( ref.getHash() );
+            }
+        }
+        if ( !needPayload.isEmpty() )
+        {
+            responseObserver.onNext( WriteBatchResponse.newBuilder().addAllNeedPayload( needPayload ).build() );
+            responseObserver.onCompleted();
+            return;
+        }
+
+        for ( final PayloadRef ref : request.getPayloadsList() )
+        {
+            if ( ref.getRefCase() == PayloadRef.RefCase.INLINE )
+            {
+                state.payloads.put( sha256( ref.getInline() ), ref.getInline() );
+            }
+        }
+        for ( final Version version : request.getVersionsList() )
+        {
+            state.versions.put( version.getVersionId(), version );
+        }
+        for ( final BranchEntry entry : request.getBranchEntriesList() )
+        {
+            state.branchEntriesById.put( FakeNodbState.entryKey( request.getRepoId(), entry.getBranch(), entry.getNodeId() ), entry );
+            state.nodeIdByPath.put( FakeNodbState.pathKey( request.getRepoId(), entry.getBranch(), entry.getNodePath() ),
+                                     entry.getNodeId() );
+        }
+        responseObserver.onNext( WriteBatchResponse.newBuilder().build() );
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void putPayload( final PutPayloadRequest request, final StreamObserver<PutPayloadResponse> responseObserver )
+    {
+        final String hash = sha256( request.getBytes() );
+        state.payloads.put( hash, request.getBytes() );
+        responseObserver.onNext( PutPayloadResponse.newBuilder().setHash( hash ).build() );
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getPayload( final GetPayloadRequest request, final StreamObserver<Payload> responseObserver )
+    {
+        final ByteString bytes = state.payloads.get( request.getHash() );
+        if ( bytes == null )
+        {
+            responseObserver.onError( Status.NOT_FOUND.withDescription( "No such payload" ).asRuntimeException() );
+            return;
+        }
+        responseObserver.onNext( Payload.newBuilder().setHash( request.getHash() ).setBytes( bytes ).build() );
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getPayloads( final GetPayloadsRequest request, final StreamObserver<Payload> responseObserver )
+    {
+        for ( final String hash : request.getHashesList() )
+        {
+            final ByteString bytes = state.payloads.get( hash );
+            if ( bytes != null )
+            {
+                responseObserver.onNext( Payload.newBuilder().setHash( hash ).setBytes( bytes ).build() );
+            }
+        }
+        responseObserver.onCompleted();
+    }
+
+    private static String sha256( final ByteString bytes )
+    {
+        return BlobKey.sha256( ByteSource.wrap( bytes.toByteArray() ) ).toString();
     }
 
     private boolean requireRepo( final String repoId, final StreamObserver<?> responseObserver )

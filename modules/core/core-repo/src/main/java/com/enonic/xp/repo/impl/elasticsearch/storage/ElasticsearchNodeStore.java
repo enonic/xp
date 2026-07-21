@@ -9,10 +9,18 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.blob.Segment;
+import com.enonic.xp.blob.SegmentLevel;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.repo.impl.node.NodeConstants;
+import com.enonic.xp.storage.spi.NodeSegments;
+import com.enonic.xp.storage.spi.PayloadSegment;
 import com.enonic.xp.storage.spi.ReturnFields;
 import com.enonic.xp.storage.spi.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.StorageSource;
@@ -40,6 +48,7 @@ import com.enonic.xp.repo.impl.version.NodeVersionFactory;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.VersionStorageDocFactory;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositorySegmentUtils;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 import com.enonic.xp.storage.spi.CommitRecord;
 import com.enonic.xp.storage.spi.NodeStore;
@@ -75,11 +84,15 @@ public class ElasticsearchNodeStore
 
     private final SearchDao searchDao;
 
+    private final BlobStore blobStore;
+
     @Activate
-    public ElasticsearchNodeStore( @Reference final StorageDao storageDao, @Reference final SearchDao searchDao )
+    public ElasticsearchNodeStore( @Reference final StorageDao storageDao, @Reference final SearchDao searchDao,
+                                    @Reference final BlobStore blobStore )
     {
         this.storageDao = storageDao;
         this.searchDao = searchDao;
+        this.blobStore = blobStore;
     }
 
     // --- branch entries ---
@@ -218,9 +231,30 @@ public class ElasticsearchNodeStore
     // --- versions ---
 
     @Override
-    public void storeVersion( final RepositoryId repositoryId, final VersionRecord version )
+    public void storeVersion( final RepositoryId repositoryId, final VersionRecord version, final NodeSegments segments )
     {
+        // Relocated verbatim from NodeVersionServiceImpl (Phase 3 Gate B, nodb/BUILD-PHASE-3.md):
+        // same BlobStore, same segments/keys, same bytes -- byte-identical to before the move.
+        persistSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL, segments.accessControl() );
+        persistSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL, segments.indexConfig() );
+        persistSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL, segments.nodeData() );
+
         storageDao.store( VersionStorageDocFactory.create( NodeVersionFactory.fromRecord( version ), repositoryId ) );
+    }
+
+    /**
+     * {@code segment.bytes() == null} means the caller already knows this hash is stored
+     * (a hash-only segment reusing an existing version's key, e.g. commit/change-attributes
+     * -- see {@link PayloadSegment}'s javadoc): nothing to write.
+     */
+    private void persistSegment( final RepositoryId repositoryId, final SegmentLevel segmentLevel, final PayloadSegment segment )
+    {
+        if ( segment.bytes() == null )
+        {
+            return;
+        }
+        final Segment blobSegment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
+        blobStore.addRecord( blobSegment, ByteSource.wrap( segment.bytes() ) );
     }
 
     @Override

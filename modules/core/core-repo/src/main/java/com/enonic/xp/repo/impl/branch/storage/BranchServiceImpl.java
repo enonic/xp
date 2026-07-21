@@ -18,14 +18,17 @@ import com.enonic.xp.branch.Branches;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.cache.BranchPath;
 import com.enonic.xp.repo.impl.storage.SearchPreferences;
+import com.enonic.xp.repo.impl.version.NodeVersionFactory;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
+import com.enonic.xp.storage.spi.NodeSegments;
 import com.enonic.xp.storage.spi.NodeStore;
 
 @Component
@@ -68,6 +71,25 @@ public class BranchServiceImpl
             }
 
             this.nodeStore.storeBranchEntry( cK.getRepositoryId(), cK.getBranch(), NodeBranchVersionFactory.toRecord( nodeBranchEntry ) );
+            return nodeBranchEntry;
+        } );
+    }
+
+    @Override
+    public void storeWithVersion( final NodeBranchEntry nodeBranchEntry, final NodeVersion nodeVersion, final NodeSegments segments,
+                                   final InternalContext context )
+    {
+        final RepositoryId repositoryId = context.getRepositoryId();
+        final Branch branch = context.getBranch();
+
+        cache.asMap().compute( new BranchPath( repositoryId, branch, nodeBranchEntry.getNodePath() ), ( cK, inCache ) -> {
+            if ( inCache != null && !inCache.getNodeId().equals( nodeBranchEntry.getNodeId() ) )
+            {
+                throw new NodeAlreadyExistAtPathException( nodeBranchEntry.getNodePath(), repositoryId, branch );
+            }
+
+            this.nodeStore.storeNode( cK.getRepositoryId(), cK.getBranch(), segments, NodeVersionFactory.toRecord( nodeVersion ),
+                                       NodeBranchVersionFactory.toRecord( nodeBranchEntry ) );
             return nodeBranchEntry;
         } );
     }

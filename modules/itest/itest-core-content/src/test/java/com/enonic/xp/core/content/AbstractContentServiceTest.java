@@ -244,7 +244,7 @@ public abstract class AbstractContentServiceTest
 
         final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
 
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao );
+        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, BLOB_STORE );
 
         BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 
