@@ -376,3 +376,242 @@ binary GC (#14). Not revisited here.
 | GC | Deferred to Phase 5 (unchanged from work order header) |
 
 No blockers. Gate A can proceed with the WriteBatch (B) integration.
+
+## Gate D results (2026-07-21)
+
+Booted the real distro (`:runtime:installDist`, HEAD `2cef1423b8` — Gates 0/A/B/C) in
+`backend=nodb` mode against a from-scratch, real stack: postgres:17 + MinIO (plain Docker
+containers) + a standalone `NodbServer` with real S3 env wired to MinIO — same shape as
+Phase-2 Gate D, this time proving the **payload** path (Gates A/B/C's WriteBatch/FK/format
+work) at real boot rather than the binary path. Every process started, polled, and stopped
+by hand — no itest fixtures. Clean boot, psql ground truth, content round-trip with a
+Reference property, file-store-idle, growth baseline, and restart-persistence all went
+green on the first attempt. No blockers.
+
+### Stack recipe — deltas from Phase 2 Gate D
+
+Reused Phase-2 Gate D's recipe verbatim for postgres (fixed port 55432)/MinIO (fixed ports
+19000/19001)/NodbServer (port 7700)/`TenantBootstrapTool`/`NodbTokenTool` — all still free
+and correct on this machine, confirmed by `lsof` before starting anything. Two deltas:
+
+1. **XP jetty ports overridden** (`http.web.port=18080`, `http.management.port=14848`,
+   `http.statistics.port=12609` in `com.enonic.xp.web.jetty.cfg`, all `#`-commented-out by
+   default) instead of the documented 8080/4848/2609 — a **pre-existing, unrelated** Enonic
+   dev sandbox (`enonic-xp-mac-arm64-sdk-8.0.3`, sandbox `dev_portal`, PID 72939, uptime
+   ~5h before this gate started) was already holding those three ports on this shared
+   machine. Per the work order's "do not touch anything you don't recognize" instruction,
+   left it running untouched and configured our own instance on alternate ports instead —
+   not a nodb-specific issue, just a shared-machine collision worth flagging for whoever
+   runs the next gate here.
+2. **`xp.suPassword`** set directly to `{sha256}<hex>` up front (using the exact form
+   Phase-2 Gate D root-caused) — no boot/restart cycle lost rediscovering this one.
+
+Tenant `xpgate3` (fresh, distinct from Phase-2's `xpgated`); fresh `XP_HOME` copied from
+`modules/runtime/build/install/home`; fresh `NODB_KEYS_DIR` (RSA keypair auto-generated on
+first touch by `DevKeys.loadOrGenerate`, confirmed no separate keygen step needed). No
+schema-migration step was needed by hand — `TenantBootstrapTool` applies
+`nodb/engine/src/main/resources/nodb/migrations/tenant/001_init.sql` (the Gate-A FK-bearing
+version) itself.
+
+### Boot evidence
+
+Clean boot (`Started Enonic XP in 2242 ms`), zero `ERROR`/`Exception`/`Unresolved`/
+`Unsatisfied` lines beyond: (a) the pre-existing, Phase-1/2-documented cosmetic
+`Cluster not healthy: RED→YELLOW` transition — occurred exactly **4 times** on first boot
+(once per system repo created: `system-repo`, `system.auditlog`, `system.scheduler`,
+`system.app`) and **0 times** on the restart (indices already existed, recovered directly:
+`recovered [4] indices into cluster_state`); (b) one self-inflicted
+`UnrecognizedPropertyException` from an exploratory `curl` call with a typo'd JSON field —
+corrected immediately, not a product bug, noted only because it's an `ERROR`-level line a
+future log-diff might flag.
+
+`curl localhost:12609/osgi.bundle`: **115/115 bundles ACTIVE or RESOLVED**, confirmed on
+both the first boot and the post-restart boot:
+
+```
+{"id":65,"name":"com.enonic.xp.core.storage.nodb.client","state":"ACTIVE"}
+{"id":78,"name":"com.enonic.xp.core.blobstore","state":"ACTIVE"}
+{"id":93,"name":"com.enonic.xp.core.repo","state":"ACTIVE"}
+{"id":99,"name":"com.enonic.xp.blobstore.file","state":"ACTIVE"}
+```
+
+`su:<password>` basic auth against the management API (`http://localhost:14848`) verified
+authenticated with the admin role set (`"authenticated":true,"principals":["role:system.admin",...]`);
+wrong password correctly 401s.
+
+### psql ground truth
+
+Tenant schema `xpgate3` present with `payload` (`hash text PK`, `bytes bytea`,
+`byte_size bigint`, `created_at`) and `node_version` (partitioned by `repo_key`,
+`node_data_hash`/`index_config_hash`/`acl_hash` each `FOREIGN KEY ... REFERENCES
+xpgate3.payload(hash)` — the Gate-A FK, confirmed live via `\d xpgate3.node_version` on the
+running tenant, not just in the migration source).
+
+**Baseline** (post system-repo/security/scheduler/app bootstrap, before any gate-authored
+content): 54 payload rows / 28,364 bytes; 48 `node_version` rows.
+
+**NOT-EXISTS FK check** (every hash a version references must resolve in `payload`), run
+against the baseline and re-run after content creation — **0 missing in both runs**:
+
+```sql
+select
+  (select count(*) from xpgate3.node_version nv where not exists (select 1 from xpgate3.payload p where p.hash = nv.node_data_hash)) as missing_node_data,
+  (select count(*) from xpgate3.node_version nv where not exists (select 1 from xpgate3.payload p where p.hash = nv.index_config_hash)) as missing_index_config,
+  (select count(*) from xpgate3.node_version nv where not exists (select 1 from xpgate3.payload p where p.hash = nv.acl_hash)) as missing_acl;
+-- missing_node_data | missing_index_config | missing_acl
+-- 0                 | 0                    | 0
+```
+
+**Dedup observation** (baseline, 48 versions): `count(distinct node_data_hash)`=45 (node-data
+is near-unique per node, as expected), but `count(distinct index_config_hash)`=**2** and
+`count(distinct acl_hash)`=**7** — a large fraction of the system-repo bootstrap's 48 nodes
+share one of only 2 index-config shapes and one of only 7 ACL shapes, exactly the dedup
+DESIGN.md predicts for these two low-cardinality segments.
+
+### Content creation via API (Reference property + nested PropertySet)
+
+No content-management app ships in this repo (same fact Phase-2 Gate D established —
+Content Studio is a separate application); reused the same documented fallback,
+**`/repo/import`**/**`/repo/export`** (`RepositoryResource`, `@RolesAllowed(ADMIN_ID)`,
+authenticated as `su`). Hand-built an export-format zip
+(`<exportName>/<nodeName>/_/node.xml`) with two nodes targeting `system-repo:master:/`:
+
+- `xp-gate3-target` (`id=1111...0001`... `11111111-1111-1111-1111-111111111111`): plain
+  `<string>`/`<long>` properties.
+- `xp-gate3-refholder` (`id=2222...`): `<string>`, `<boolean>`, a **top-level
+  `<reference name="linkedNode">11111111-...</reference>`** pointing at the target node,
+  and a nested `<property-set name="meta">` containing another `<reference
+  name="nestedRef">...</reference>` to the same target — deliberately exercising Gate 0's
+  crux finding (a Reference is byte-identical to a String except for its type tag) at both
+  the top level and inside a nested set.
+
+`POST /repo/import {"exportName":"gate3-payload","targetRepoPath":"system-repo:master:/"}`:
+`state=FINISHED`, `addedNodes:["/xp-gate3-target","/xp-gate3-refholder"]`,
+`importErrors:[]` — a real `NodeImporter → ImportNodeCommand → NodeStorageServiceImpl.store`
+write, i.e. Gate B's WriteBatch path, exercised at real boot for the first time.
+
+**New payload rows appeared**: 54→57 rows (+3), 28,364→29,469 bytes (+1,105); `node_version`
+48→50 rows (+2). The +3-for-2-new-nodes delta is itself a live dedup proof: both new nodes'
+`index_config_hash` resolved to an **already-existing** hash from the system-repo bootstrap
+(`sha256:d74806...`, `created_at` = the original boot timestamp, not this import's) —
+cross-batch dedup — and both new nodes share one **newly-created** `acl_hash`
+(`sha256:239cecfb...`) between themselves — within-batch dedup — leaving only the two
+`node_data_hash` values (244 and 574 bytes — the ref-holder's node-data is larger, carrying
+the reference + nested set) genuinely new.
+
+**Re-read / round-trip**: `POST /repo/export` on both nodes, unzip, diff against the
+hand-built input — **byte-identical** except for one expected addition (`ImportNodeCommand`
+auto-adds a `role:system.authenticated: READ` permission entry not present in the input —
+normal XP default-permission behavior, not a data bug). The Reference property (both
+top-level and nested-in-set) round-tripped exactly:
+`<reference name="linkedNode">11111111-1111-1111-1111-111111111111</reference>`.
+
+**Raw psql read** of the ref-holder's node-data payload bytes (`select
+convert_from(bytes,'UTF8') from xpgate3.payload where hash=...`), zero XP code involved,
+pretty-printed:
+
+```json
+{
+  "data": [
+    { "name": "title", "type": "String", "values": [ { "v": "Gate3 reference holder" } ] },
+    { "name": "linkedNode", "type": "Reference", "values": [ { "v": "11111111-1111-1111-1111-111111111111" } ] },
+    { "name": "isActive", "type": "Boolean", "values": [ { "v": true } ] },
+    { "name": "meta", "type": "PropertySet", "values": [ { "set": [
+        { "name": "note", "type": "String", "values": [ { "v": "nested set value" } ] },
+        { "name": "nestedRef", "type": "Reference", "values": [ { "v": "11111111-1111-1111-1111-111111111111" } ] }
+    ] } ] }
+  ],
+  "id": "22222222-2222-2222-2222-222222222222", "nodeType": "default"
+}
+```
+
+Matches Gate 0's documented v1 format spec exactly — `"type":"Reference"` tag present and
+readable via plain SQL + JSON parsing, at both nesting levels, no XP serializer classes
+touched. This is the concrete, real-data confirmation of Gate 0's format answer.
+
+### File BlobStore idle
+
+`find <XP_HOME>/repo/blob -type f | wc -l` → **0**, `du -sh` → **0B** — checked three times
+(before content creation, after import, after restart) and stayed empty throughout. No
+node/index-config/ACL segment files (and, per Phase 2, no binary segment files either) ever
+land in the file BlobStore under `backend=nodb`; NoDB (payloads) + S3 (binaries) are the
+complete system of record.
+
+### Growth-count baseline (Phase-5 GC guardrail, §9.1)
+
+Recorded at the end of this gate (post-restart, i.e. the durable steady state) as the
+day-one baseline for Phase-5's deferred GC work:
+
+| Metric | Value |
+|---|---|
+| `payload` row count | **57** |
+| `payload` total bytes (`sum(byte_size)` = `sum(length(bytes))`, both agree) | **29,469 bytes** |
+| `node_version` row count | **50** |
+| Distinct `node_data_hash` / `index_config_hash` / `acl_hash` | 47 / 2 / 8 |
+| S3 (MinIO) object count | **0** |
+
+The S3 count is genuinely 0, not a measurement gap — this gate's content had no binary
+attachments (binaries were already proven end-to-end in Phase-2 Gate D); MinIO was
+provisioned per the boot recipe's requirement but not exercised for writes here. Flagging
+explicitly so Phase 5 doesn't misread "0 S3 objects" in this baseline as a regression.
+
+### Restart-persistence check
+
+`SIGTERM` (log confirms normal Jetty/ES/OSGi teardown ending in `Server has been stopped`,
+zero errors), then reboot with the **same** `XP_HOME` + the **same**, still-running
+NoDB/Postgres/MinIO stack. Result:
+
+- Clean restart (`Started Enonic XP in 2228 ms`), **zero** `Initializing System-repo` log
+  lines (vs one on first boot) — confirmed no re-init, and **zero** `Cluster not healthy`
+  lines (vs 4 on first boot) — all indices recovered directly (`recovered [4] indices into
+  cluster_state`).
+- All 115 bundles ACTIVE/RESOLVED again, including `core-storage-nodb-client`.
+- Re-exporting `xp-gate3-refholder` and diffing against the pre-restart export: **identical
+  bytes** — the Reference property, nested set, and all other properties survived the
+  restart unchanged.
+- `payload` row count/bytes **unchanged** (57 / 29,469) and `node_version` count
+  **unchanged** (50) across the restart — Postgres, not an in-process cache, is the durable
+  system of record.
+- File BlobStore still 0 files after restart.
+
+### Everything stopped
+
+XP (`SIGTERM`, clean shutdown confirmed both boots), `NodbServer` (`SIGTERM`), and both
+`nodb-pg-gate3-d`/`nodb-minio-gate3-d` containers (`docker stop && docker rm`) were stopped
+at the end of this gate. Confirmed: no listeners on 7700/18080/14848/12609/55432/19000/19001,
+`docker ps -a` shows only the pre-existing, untouched `enonic/ec-shell` container; the
+pre-existing unrelated dev-sandbox XP process (PID 72939, ports 8080/4848/2609) was left
+running, untouched, as required. Both worktree-root and `nodb/` Gradle daemons stopped.
+
+### Rough edges
+
+- Shared-machine port collision (8080/4848/2609 already held by an unrelated dev sandbox)
+  cost nothing this time (worked around via config) but is worth a heads-up for whoever
+  runs the next gate on this same machine.
+- `xp.suPassword`'s `{sha256}`/`{sha512}` requirement (Phase-2 Gate D finding) remains
+  undocumented in the shipped `system.properties` template comment — still not fixed, still
+  out of scope for a smoke gate.
+- No content-management app ships in this repo, so `/repo/import`/`/repo/export` remains the
+  only way to exercise node creation without bringing in a separate application — unchanged
+  from Phase 2.
+- S3/MinIO in this gate's baseline reads as 0 objects because no binaries were attached to
+  the gate's test content, not because binaries stopped working (Phase 2 already proved
+  that path); flagged above so it isn't misread later.
+
+### Deviations from the work order
+
+- Reused `/repo/import`/`/repo/export` (documented Phase-2 fallback) instead of a
+  content-creation UI call, for the same reason Phase-2 Gate D gives (no content-management
+  app bundled in this repo).
+- XP's jetty ports were moved off their documented defaults (18080/14848/12609 instead of
+  8080/4848/2609) due to an unrelated pre-existing process on this shared machine — a
+  config-only deviation, not a functional one; all other stack details match the Phase-2
+  Gate D recipe.
+
+**Definition of done, Phase 3**: node payloads store/read from NoDB's `payload` table with
+the FK enforced and the documented XP-independent v1 format (Gate 0); NoDB is now the
+complete system of record for structured data (branch/version/commit + node-data/
+index-config/ACL payloads in Postgres, binaries in S3 since Phase 2); the file BlobStore is
+idle in nodb mode; default mode is unaffected (Gates B/C); the distro boots and persists
+node data — including Reference-typed properties — in Postgres across a restart. Growth
+baseline recorded above for Phase 5's GC work.

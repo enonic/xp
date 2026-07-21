@@ -43,6 +43,14 @@ Rationale: version JSON is small, hot, latency-sensitive → belongs with the br
 rows it is read with (one round trip, one transaction, PITR-coherent backups, retention =
 `DELETE`). Binaries are large and streamed → object store. Search is a cache, never truth.
 
+**Status (2026-07-21)**: the node-data/index-config/ACL row above is REALIZED — see
+`nodb/BUILD-PHASE-3.md`'s Gate D, which proves it at real boot with psql ground truth (rows
+in the tenant `payload` table, FK-verified, dedup observed) and confirms the file BlobStore
+is idle for these segments. Binaries (row 4) were realized earlier, in
+`nodb/BUILD-PHASE-2.md`'s Gate D. Branch/version/commit (row 1) has been realized since
+`nodb/BUILD-PHASE-1.md`. Only search documents (row 3) remain ES-served (Phase 4, not yet
+started on this execution track — see the phase-numbering note under §9 below).
+
 ## 3. The SPI
 
 ### 3.1 What the code says the seam is
@@ -485,6 +493,19 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
 (Phase 0 alone removes the last three ES imports from core-repo's public layer).
 
+**Execution-track note (2026-07-21)**: the table above is this document's original,
+coarse-grained phase plan. The actual build tracks its work in finer-grained,
+separately-numbered phases in `nodb/BUILD-PHASE-0.md` through `BUILD-PHASE-3.md` (0 = spike/
+binary-vs-payload sequencing decision, 1 = NodeStore-on-Postgres storage-SPI read/write path,
+2 = binaries onto S3, 3 = node payloads — node-data/index-config/ACL — onto Postgres); these
+numbers do **not** map 1:1 onto the table's Phase 1–5 (e.g. this table's "Phase 3: Snapshots,
+vacuum, dump/load" is downstream of, and distinct from, `BUILD-PHASE-3.md`'s payload work).
+As of this note: `BUILD-PHASE-0/1/2/3.md` are all gate-complete (Gate D green in each) —
+this table's row 1 (NodeStore on Postgres + binaries on S3 + tenant model) is functionally
+done; row 2 (OpenSearch) has not been started on this track. Reconcile phase numbering with
+the `nodb-design` tracking branch's risk register (#12/#13 there) before renumbering this
+table — not attempted here to avoid clobbering that branch's own bookkeeping.
+
 ## 10. Risk register (self-review 2026-07-17)
 
 1. **Protocol atomicity (BUG)**: SPI promises atomic version+branch+outbox writes; proto
@@ -528,6 +549,31 @@ Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
     custom repo index definitions / putIndexMapping path dropped without replacement;
     INDEXING-vs-awaitRefresh semantics; schema-migration orchestration across N tenant
     schemas during rolling upgrades.
+    **Two sub-items resolved by the `BUILD-PHASE-3.md` execution track (2026-07-21)**,
+    referred to elsewhere as "#10b" (the payload FK) and "#10e" (the payload format spec) —
+    those labels do not appear as lettered sub-bullets in this copy of the risk register
+    (this document has not been kept in sync with the `nodb-design` tracking branch's own
+    numbering; reconcile there before relying on the letters). What was resolved:
+    - **Payload FK**: `node_version.{node_data_hash,index_config_hash,acl_hash}` now carry
+      `REFERENCES payload(hash)` (re-added in Gate A after Phase 1 Gate C had dropped it),
+      enforced live (`\d xpgate3.node_version` on a running tenant) and confirmed with a
+      `NOT EXISTS` sweep returning 0 for all three columns, before and after new content, in
+      `BUILD-PHASE-3.md`'s Gate D.
+    - **Payload format**: node-data/index-config/ACL payload bytes are plain JSON,
+      parseable without any XP serializer class — a closed, 14-entry type-tag table (e.g.
+      `"type":"Reference"`) is the only signal distinguishing a `Reference` from a same-
+      shaped `String`; documented as NoDB's own v1 format spec in Gate 0 and confirmed
+      against real bytes read via `psql` (no XP code involved) in Gate D.
+11. **Binary/payload GC blocked in nodb mode** (found at Phase-2 Gate D, reconfirmed
+    structurally in Phase-3 Gate 0): XP's existing blob-vacuum commands
+    (`BinaryBlobVacuumTask`, `VersionTableVacuumCommand`) both route through
+    `NodeService.findVersions`, served by an Elasticsearch storage-side index
+    (`storage-<repo>`) that nodb mode never creates (version-history queries are
+    out of scope through Phase 1's design). Payload GC is explicitly **deferred to
+    Phase 5** (Gate 0 decision, alongside binary GC) — safe because content-addressing
+    makes GC fully retroactive, at the cost of interim storage growth; `BUILD-PHASE-3.md`
+    Gate D records a payload-row/byte + S3-object baseline (57 rows / 29,469 bytes / 0
+    S3 objects as of 2026-07-21) as the pre-GC starting point.
 
 ## 11. Open questions
 
