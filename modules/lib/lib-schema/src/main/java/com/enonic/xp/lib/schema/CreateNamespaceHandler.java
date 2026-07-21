@@ -2,7 +2,6 @@ package com.enonic.xp.lib.schema;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.CreateNamespaceParams;
@@ -34,9 +33,7 @@ public final class CreateNamespaceHandler
         final CreateNamespaceParams params =
             CreateNamespaceParams.create().key( ApplicationKey.from( key ) ).description( description ).build();
 
-        final Application application = applicationServiceSupplier.get().createNamespace( params );
-
-        return new NamespaceMapper( application.getKey(), description );
+        return new NamespaceMapper( applicationServiceSupplier.get().createNamespace( params ) );
     }
 
     @Override

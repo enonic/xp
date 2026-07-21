@@ -31,9 +31,11 @@ public interface ApplicationService
 
     void installAllStoredApplications();
 
-    Application createNamespace( CreateNamespaceParams params );
+    Namespace createNamespace( CreateNamespaceParams params );
 
     boolean deleteNamespace( ApplicationKey key );
+
+    Namespace getNamespace( ApplicationKey key );
 
     List<Namespace> listNamespaces();
 }

@@ -1,11 +1,9 @@
 package com.enonic.xp.lib.schema;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateNamespaceParams;
+import com.enonic.xp.app.Namespace;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
@@ -17,12 +15,9 @@ class CreateNamespaceHandlerTest
     void testCreateNamespace()
     {
         when( applicationService.createNamespace( isA( CreateNamespaceParams.class ) ) ).thenAnswer( params -> {
-            final ApplicationKey key = params.getArgument( 0, CreateNamespaceParams.class ).getKey();
+            final CreateNamespaceParams createParams = params.getArgument( 0, CreateNamespaceParams.class );
 
-            final Application application = Mockito.mock( Application.class );
-            when( application.getKey() ).thenReturn( key );
-
-            return application;
+            return Namespace.create().key( createParams.getKey() ).description( createParams.getDescription() ).build();
         } );
 
         runScript( "/lib/xp/examples/schema/createNamespace.js" );

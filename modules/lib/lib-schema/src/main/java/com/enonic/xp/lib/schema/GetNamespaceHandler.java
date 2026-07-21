@@ -1,26 +1,31 @@
 package com.enonic.xp.lib.schema;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.lib.schema.mapper.NamespaceMapper;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
-public final class ListNamespacesHandler
+public final class GetNamespaceHandler
     implements ScriptBean
 {
+    private String key;
+
     private Supplier<ApplicationService> applicationServiceSupplier;
 
-    public List<NamespaceMapper> execute()
+    public void setKey( final String key )
     {
-        return applicationServiceSupplier.get()
-            .listNamespaces()
-            .stream()
+        this.key = key;
+    }
+
+    public NamespaceMapper execute()
+    {
+        return Optional.ofNullable( applicationServiceSupplier.get().getNamespace( ApplicationKey.from( key ) ) )
             .map( NamespaceMapper::new )
-            .collect( Collectors.toList() );
+            .orElse( null );
     }
 
     @Override

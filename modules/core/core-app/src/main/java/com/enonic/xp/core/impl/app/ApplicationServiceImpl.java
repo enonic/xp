@@ -217,7 +217,7 @@ public final class ApplicationServiceImpl
     }
 
     @Override
-    public Application createNamespace( final CreateNamespaceParams params )
+    public Namespace createNamespace( final CreateNamespaceParams params )
     {
         return this.virtualAppService.create( params );
     }
@@ -226,6 +226,12 @@ public final class ApplicationServiceImpl
     public boolean deleteNamespace( final ApplicationKey key )
     {
         return this.virtualAppService.delete( key );
+    }
+
+    @Override
+    public Namespace getNamespace( final ApplicationKey key )
+    {
+        return this.virtualAppService.getNamespace( key );
     }
 
     @Override

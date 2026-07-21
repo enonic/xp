@@ -51,6 +51,20 @@ public class VirtualAppService
         } );
     }
 
+    public Namespace getNamespace( final ApplicationKey applicationKey )
+    {
+        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+
+        return VirtualAppContext.createContext().callWith( () -> {
+            final Node node = nodeService.getByPath( appPath );
+            if ( node == null )
+            {
+                return null;
+            }
+            return Namespace.create().key( applicationKey ).description( node.data().getString( "description" ) ).build();
+        } );
+    }
+
     public List<Namespace> listNamespaces()
     {
         return VirtualAppContext.createContext().callWith( () -> {
@@ -83,13 +97,13 @@ public class VirtualAppService
         }
     }
 
-    public Application create( final CreateNamespaceParams params )
+    public Namespace create( final CreateNamespaceParams params )
     {
         requireAdminRole();
 
         VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params ) );
 
-        return VirtualAppFactory.create( params.getKey(), nodeService );
+        return Namespace.create().key( params.getKey() ).description( params.getDescription() ).build();
     }
 
     public boolean delete( final ApplicationKey key )

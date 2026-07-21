@@ -42,6 +42,7 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -161,7 +162,7 @@ class ApplicationServiceImplTest
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
 
-        final Application result = VirtualAppContext.createAdminContext()
+        final Namespace result = VirtualAppContext.createAdminContext()
             .callWith( () -> this.service.createNamespace( CreateNamespaceParams.create().key( appKey ).build() ) );
 
         assertEquals( appKey, result.getKey() );
@@ -203,6 +204,32 @@ class ApplicationServiceImplTest
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
         assertThrows( ForbiddenAccessException.class, () -> this.service.deleteNamespace( appKey ) );
+    }
+
+    @Test
+    void get_namespace()
+    {
+        final ApplicationKey key = ApplicationKey.from( "app1" );
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "description", "my namespace" );
+
+        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
+        when( nodeService.getByPath( appPath ) ).thenReturn(
+            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+                .data( data ).build() );
+
+        final Namespace result = this.service.getNamespace( key );
+
+        assertNotNull( result );
+        assertEquals( key, result.getKey() );
+        assertEquals( "my namespace", result.getDescription() );
+    }
+
+    @Test
+    void get_namespace_not_found()
+    {
+        assertNull( this.service.getNamespace( ApplicationKey.from( "app1" ) ) );
     }
 
     @Test

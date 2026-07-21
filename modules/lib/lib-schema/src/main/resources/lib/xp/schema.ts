@@ -885,6 +885,32 @@ export interface Namespace {
     description?: string;
 }
 
+export interface GetNamespaceParams {
+    key: string;
+}
+
+interface GetNamespaceHandler {
+    setKey(value: string): void;
+
+    execute(): Namespace | null;
+}
+
+/**
+ * Fetches a namespace (virtual application) by key.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Namespace (application) key.
+ *
+ * @returns {Namespace | null} fetched namespace, or `null` if not found.
+ */
+export function getNamespace(params: GetNamespaceParams): Namespace | null {
+    const key = checkRequired(params, 'key');
+
+    const bean: GetNamespaceHandler = __.newBean<GetNamespaceHandler>('com.enonic.xp.lib.schema.GetNamespaceHandler');
+    bean.setKey(key);
+    return __.toNativeObject(bean.execute());
+}
+
 export interface CreateNamespaceParams {
     key: string;
     description?: string;
