@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,11 +42,11 @@ import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.resource.SchemaService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -85,6 +84,8 @@ class ApplicationServiceImplTest
 
     private VirtualAppService virtualAppService;
 
+    private SchemaService schemaService;
+
     @BeforeEach
     void initService()
     {
@@ -112,8 +113,10 @@ class ApplicationServiceImplTest
 
         virtualAppService = new VirtualAppService( nodeService );
 
+        schemaService = mock( SchemaService.class );
+
         this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
-                                                   auditLogSupport );
+                                                   auditLogSupport, schemaService );
     }
 
     @Test
@@ -130,25 +133,24 @@ class ApplicationServiceImplTest
     @Test
     void get_application()
     {
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
+        final ApplicationKey key = ApplicationKey.from( "app1" );
+        final Application application = mock( Application.class );
+        when( schemaService.get( key ) ).thenReturn( application );
 
-        final ApplicationAdaptor result = (ApplicationAdaptor) this.service.get( ApplicationKey.from( "app1" ) );
-        assertNotNull( result );
-        assertSame( bundle, result.getBundle() );
+        final Application result = this.service.get( key );
+
+        assertSame( application, result );
     }
 
     @Test
-    void get_virtual_application()
+    void list()
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
+        final Applications applications = mock( Applications.class );
+        when( schemaService.list() ).thenReturn( applications );
 
-        final Application virtualApp = this.service.get( applicationKey );
+        final Applications result = this.service.list();
 
-        assertEquals( applicationKey, virtualApp.getKey() );
-        assertTrue( virtualApp.getModifiedTime().compareTo( Instant.now() ) <= 0 );
+        assertSame( applications, result );
     }
 
     @Test
@@ -245,32 +247,6 @@ class ApplicationServiceImplTest
         final Applications result = this.service.getInstalledApplications();
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
-    }
-
-    @Test
-    void list()
-    {
-        final Bundle bundle1 = deployAppBundle( "app1" );
-        final Bundle bundle2 = deployAppBundle( "app2" );
-        deployBundle( "noapp" );
-
-        applicationRegistry.registerApplication( bundle1 );
-        applicationRegistry.registerApplication( bundle2 );
-
-        NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
-
-        final NodeIds ids = NodeIds.from( virtualAppNodeId );
-
-        when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
-            FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );
-
-        when( nodeService.getByIds( ids ) ).thenReturn(
-            Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );
-
-        final Applications result = this.service.list();
-        assertNotNull( result );
-        assertEquals( 3, result.getSize() );
-        assertEquals( "app3", result.get( 2 ).getKey().toString() );
     }
 
     @Test

@@ -8,7 +8,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.schema.mapper.DescriptorConverter;
 import com.enonic.xp.lib.schema.mapper.DescriptorMapper;
 import com.enonic.xp.resource.DynamicComponentType;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -20,7 +20,7 @@ public final class ListDynamicComponentsHandler
 
     private String type;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setApplication( final String application )
     {
@@ -39,7 +39,7 @@ public final class ListDynamicComponentsHandler
             .type( DynamicComponentType.valueOf( type ) )
             .build();
 
-        return dynamicSchemaServiceSupplier.get()
+        return schemaServiceSupplier.get()
             .listComponents( params )
             .stream()
             .map( DescriptorConverter::convert )
@@ -50,6 +50,6 @@ public final class ListDynamicComponentsHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

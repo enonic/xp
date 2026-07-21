@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.app.mapper;
+package com.enonic.xp.lib.schema.mapper;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.script.serializer.MapGenerator;

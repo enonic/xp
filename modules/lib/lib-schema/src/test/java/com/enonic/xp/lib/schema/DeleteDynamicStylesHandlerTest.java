@@ -14,7 +14,7 @@ class DeleteDynamicStylesHandlerTest
     @Test
     void testStyles()
     {
-        when( dynamicSchemaService.deleteStyles( isA( ApplicationKey.class ) ) ).thenReturn( true );
+        when( schemaService.deleteStyles( isA( ApplicationKey.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deleteStyles.js" );
     }

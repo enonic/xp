@@ -1,4 +1,4 @@
-package com.enonic.xp.lib.app;
+package com.enonic.xp.lib.schema;
 
 import java.time.Instant;
 
@@ -13,13 +13,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class GetApplicationHandlerTest
-    extends BaseAppHandlerTest
+    extends BaseSchemaHandlerTest
 {
     @Test
     void testExample()
     {
 
-        when( applicationService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
+        when( schemaService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
 
             final Application application = mock( Application.class );
@@ -36,14 +36,14 @@ class GetApplicationHandlerTest
             return application;
         } );
 
-        runScript( "/lib/xp/examples/app/get.js" );
+        runScript( "/lib/xp/examples/schema/get.js" );
     }
 
     @Test
     void testMissing()
     {
 
-        when( applicationService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );
+        when( schemaService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );
 
         runFunction( "/test/GetApplicationHandlerTest.js", "getMissing" );
     }

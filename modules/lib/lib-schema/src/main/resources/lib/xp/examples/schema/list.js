@@ -1,11 +1,11 @@
-var appLib = require('/lib/xp/app');
+var schemaLib = require('/lib/xp/schema');
 var assert = require('/lib/xp/testing');
 
 /* global log*/
 
 // BEGIN
-// List virtual apps.
-var result = appLib.list();
+// List applications.
+var result = schemaLib.list();
 
 log.info('Listed apps: ' + result.map((app) => app.key).join(', '));
 

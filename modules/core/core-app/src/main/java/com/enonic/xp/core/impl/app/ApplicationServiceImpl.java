@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -32,6 +29,7 @@ import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.resource.SchemaService;
 
 @Component
 public final class ApplicationServiceImpl
@@ -53,11 +51,14 @@ public final class ApplicationServiceImpl
 
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
+    private final SchemaService schemaService;
+
     @Activate
     public ApplicationServiceImpl( @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
                                    @Reference final AppFilterService appFilterService, @Reference final VirtualAppService virtualAppService,
-                                   @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
+                                   @Reference final ApplicationAuditLogSupport applicationAuditLogSupport,
+                                   @Reference final SchemaService schemaService )
     {
         this.registry = applicationRegistry;
         this.repoService = repoService;
@@ -65,6 +66,7 @@ public final class ApplicationServiceImpl
         this.appFilterService = appFilterService;
         this.virtualAppService = virtualAppService;
         this.applicationAuditLogSupport = applicationAuditLogSupport;
+        this.schemaService = schemaService;
     }
 
     @Deactivate
@@ -92,8 +94,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application get( final ApplicationKey key )
     {
-        final Application installedApplication = this.registry.get( key );
-        return installedApplication != null ? installedApplication : virtualAppService.get( key );
+        return this.schemaService.get( key );
     }
 
     @Override
@@ -105,9 +106,7 @@ public final class ApplicationServiceImpl
     @Override
     public Applications list()
     {
-        return Applications.from( Stream.concat( this.registry.getAll().stream(), virtualAppService.list().stream() )
-                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
-                                      .values() );
+        return this.schemaService.list();
     }
 
     @Override

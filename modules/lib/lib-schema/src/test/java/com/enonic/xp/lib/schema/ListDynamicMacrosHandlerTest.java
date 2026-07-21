@@ -23,7 +23,7 @@ class ListDynamicMacrosHandlerTest
     @Test
     void testMacros()
     {
-        when( dynamicSchemaService.listMacros( isA( ListDynamicMacrosParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.listMacros( isA( ListDynamicMacrosParams.class ) ) ).thenAnswer( params -> {
             final String resourceValue =
                 "kind: \"Macro\"\n" + "title: \"My Macro\"\n" + "form:\n" + "- type: \"Double\"\n" + "  name: \"input\"\n" +
                     "  label: \"Input\"\n" + "  occurrences:\n" + "    min: 0\n" + "    max: 1\n" + "config:\n" +

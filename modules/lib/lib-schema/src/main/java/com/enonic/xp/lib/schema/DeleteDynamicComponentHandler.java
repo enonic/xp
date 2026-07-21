@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
 import com.enonic.xp.resource.DynamicComponentType;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -16,7 +16,7 @@ public final class DeleteDynamicComponentHandler
 
     private String type;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setKey( final String key )
     {
@@ -36,12 +36,12 @@ public final class DeleteDynamicComponentHandler
         final DeleteDynamicComponentParams params =
             DeleteDynamicComponentParams.create().descriptorKey( descriptorKey ).type( dynamicComponentType ).build();
 
-        return dynamicSchemaServiceSupplier.get().deleteComponent( params );
+        return schemaServiceSupplier.get().deleteComponent( params );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

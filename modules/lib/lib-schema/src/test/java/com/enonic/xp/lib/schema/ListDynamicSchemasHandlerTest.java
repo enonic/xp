@@ -25,7 +25,7 @@ class ListDynamicSchemasHandlerTest
     @Test
     void listSchemas()
     {
-        when( dynamicSchemaService.listContentSchemas( isA( ListDynamicContentSchemasParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.listContentSchemas( isA( ListDynamicContentSchemasParams.class ) ) ).thenAnswer( params -> {
             final ListDynamicContentSchemasParams schemasParams = params.getArgument( 0, ListDynamicContentSchemasParams.class );
 
             final ContentType contentType1 = ContentType.create()

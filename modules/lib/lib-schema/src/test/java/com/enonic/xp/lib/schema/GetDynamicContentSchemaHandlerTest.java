@@ -31,7 +31,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testContentType()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
             if ( DynamicContentSchemaType.CONTENT_TYPE != schemaParams.getType() )
@@ -74,7 +74,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testFormFragment()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
             if ( DynamicContentSchemaType.FORM_FRAGMENT != schemaParams.getType() )
@@ -111,7 +111,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testMixinDescriptor()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
             if ( DynamicContentSchemaType.MIXIN != schemaParams.getType() )
@@ -145,7 +145,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testNull()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenReturn( null );
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenReturn( null );
         runFunction( "/test/GetDynamicContentSchemaHandlerTest.js", "getNullSchema" );
     }
 

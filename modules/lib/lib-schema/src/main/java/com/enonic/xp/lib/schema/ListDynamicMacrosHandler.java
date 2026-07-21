@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.schema.mapper.MacroDescriptorMapper;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.resource.ListDynamicMacrosParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -16,7 +16,7 @@ public final class ListDynamicMacrosHandler
 {
     private String application;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setApplication( final String application )
     {
@@ -28,7 +28,7 @@ public final class ListDynamicMacrosHandler
         final ListDynamicMacrosParams params =
             ListDynamicMacrosParams.create().applicationKey( ApplicationKey.from( application ) ).build();
 
-        return dynamicSchemaServiceSupplier.get()
+        return schemaServiceSupplier.get()
             .listMacros( params )
             .stream()
             .map( result -> new MacroDescriptorMapper( result.getSchema(), result.getResource() ) )
@@ -38,6 +38,6 @@ public final class ListDynamicMacrosHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

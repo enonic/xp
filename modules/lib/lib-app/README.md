@@ -45,8 +45,6 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 
 ```ts
 const {
-    get,
-    list,
     getDescriptor
 } = require('/lib/xp/app');
 ```
@@ -76,8 +74,6 @@ types mapping to your configuration.
 
 ```ts
 import {
-    get,
-    list,
     getDescriptor
 } from '/lib/xp/app';
 ```

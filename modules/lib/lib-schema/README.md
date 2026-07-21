@@ -31,6 +31,8 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 
 ```ts
 const { 
+    get,
+    list,
     createSchema, 
     createComponent, 
     createStyles,
@@ -84,6 +86,8 @@ types mapping to your configuration.
 
 ```ts
 import {
+    get,
+    list,
     createSchema,
     createComponent,
     createStyles,

@@ -7,8 +7,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeFromMimeTypeResolver;
 import com.enonic.xp.schema.content.ContentTypeName;
@@ -28,10 +28,10 @@ public final class ContentTypeServiceImpl
     private final CmsFormFragmentService formFragmentService;
 
     @Activate
-    public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
+    public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final SchemaService schemaService,
                                    final @Reference CmsFormFragmentService formFragmentService )
     {
-        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
+        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), schemaService );
         this.formFragmentService = formFragmentService;
     }
 

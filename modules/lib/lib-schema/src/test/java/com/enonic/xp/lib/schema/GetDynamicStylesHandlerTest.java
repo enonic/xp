@@ -20,7 +20,7 @@ class GetDynamicStylesHandlerTest
     @Test
     void testStyles()
     {
-        when( dynamicSchemaService.getStyles( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getStyles( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
 
             StyleDescriptor styleDescriptor = StyleDescriptor.create()

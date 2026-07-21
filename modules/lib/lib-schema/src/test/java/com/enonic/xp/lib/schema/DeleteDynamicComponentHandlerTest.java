@@ -15,7 +15,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
 
             return DynamicComponentType.PART == componentParams.getType();
@@ -27,7 +27,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
 
             return DynamicComponentType.LAYOUT == componentParams.getType();
@@ -39,7 +39,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
 
             return DynamicComponentType.PAGE == componentParams.getType();

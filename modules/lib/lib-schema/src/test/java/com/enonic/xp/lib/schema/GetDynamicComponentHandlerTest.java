@@ -27,7 +27,7 @@ class GetDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
 
             if ( DynamicComponentType.PART != componentParams.getType() )
@@ -60,7 +60,7 @@ class GetDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
 
             if ( DynamicComponentType.LAYOUT != componentParams.getType() )
@@ -94,7 +94,7 @@ class GetDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
 
             if ( DynamicComponentType.PAGE != componentParams.getType() )

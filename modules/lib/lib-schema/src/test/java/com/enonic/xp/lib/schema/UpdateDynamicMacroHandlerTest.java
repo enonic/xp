@@ -20,7 +20,7 @@ class UpdateDynamicMacroHandlerTest
     @Test
     void testMacro()
     {
-        when( dynamicSchemaService.updateMacro( isA( UpdateDynamicMacroParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.updateMacro( isA( UpdateDynamicMacroParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicMacroParams macroParams = params.getArgument( 0, UpdateDynamicMacroParams.class );
 
             final MacroDescriptor.Builder builder =

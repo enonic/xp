@@ -7,7 +7,7 @@ import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -18,7 +18,7 @@ public final class CreateDynamicMacroHandler
 
     private String resource;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setKey( final String key )
     {
@@ -35,7 +35,7 @@ public final class CreateDynamicMacroHandler
         final CreateDynamicMacroParams params =
             CreateDynamicMacroParams.create().key( MacroKey.from( key ) ).resource( resource ).build();
 
-        final DynamicSchemaResult<MacroDescriptor> result = dynamicSchemaServiceSupplier.get().createMacro( params );
+        final DynamicSchemaResult<MacroDescriptor> result = schemaServiceSupplier.get().createMacro( params );
 
         return new MacroDescriptorMapper( result.getSchema(), result.getResource() );
     }
@@ -43,6 +43,6 @@ public final class CreateDynamicMacroHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

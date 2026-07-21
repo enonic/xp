@@ -2,13 +2,17 @@ package com.enonic.xp.core.impl.app;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -33,7 +37,6 @@ import com.enonic.xp.resource.DeleteDynamicMacroParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.GetDynamicMacroParams;
@@ -43,6 +46,7 @@ import com.enonic.xp.resource.ListDynamicMacrosParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
@@ -62,9 +66,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
-@Component(immediate = true, service = {DynamicSchemaService.class, DynamicSchemaServiceInternal.class})
-public class DynamicSchemaServiceImpl
-    implements DynamicSchemaService, DynamicSchemaServiceInternal
+@Component(immediate = true, service = {SchemaService.class, DynamicSchemaServiceInternal.class})
+public class SchemaServiceImpl
+    implements SchemaService, DynamicSchemaServiceInternal
 {
     private static final String PROJECT_OWNER_ROLE_SUFFIX = "." + ProjectRole.OWNER.name().toLowerCase();
 
@@ -72,11 +76,33 @@ public class DynamicSchemaServiceImpl
 
     private final DynamicResourceParser dynamicResourceParser;
 
+    private final ApplicationRegistry applicationRegistry;
+
+    private final VirtualAppService virtualAppService;
+
     @Activate
-    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService )
+    public SchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService,
+                              @Reference final ApplicationRegistry applicationRegistry, @Reference final VirtualAppService virtualAppService )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService, resourceService );
         this.dynamicResourceParser = new DynamicResourceParser();
+        this.applicationRegistry = applicationRegistry;
+        this.virtualAppService = virtualAppService;
+    }
+
+    @Override
+    public Application get( final ApplicationKey key )
+    {
+        final Application installedApplication = applicationRegistry.get( key );
+        return installedApplication != null ? installedApplication : virtualAppService.get( key );
+    }
+
+    @Override
+    public Applications list()
+    {
+        return Applications.from( Stream.concat( applicationRegistry.getAll().stream(), virtualAppService.list().stream() )
+                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
+                                      .values() );
     }
 
     @Override
@@ -567,7 +593,7 @@ public class DynamicSchemaServiceImpl
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         final boolean hasReadAccess =
-            hasAdminAccess( authInfo ) || authInfo.getPrincipals().stream().anyMatch( DynamicSchemaServiceImpl::isProjectRole );
+            hasAdminAccess( authInfo ) || authInfo.getPrincipals().stream().anyMatch( SchemaServiceImpl::isProjectRole );
         if ( !hasReadAccess )
         {
             throw new ForbiddenAccessException( authInfo.getUser() );

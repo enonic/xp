@@ -20,7 +20,7 @@ class CreateDynamicStylesHandlerTest
     @Test
     void testStyles()
     {
-        when( dynamicSchemaService.createStyles( isA( CreateDynamicStylesParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createStyles( isA( CreateDynamicStylesParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicStylesParams stylesParams = params.getArgument( 0, CreateDynamicStylesParams.class );
 
             final StyleDescriptor.Builder builder = YmlStyleDescriptorParser.parse( stylesParams.getResource(), stylesParams.getKey() );

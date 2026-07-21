@@ -13,7 +13,7 @@ class DeleteDynamicMacroHandlerTest
     @Test
     void testMacro()
     {
-        when( dynamicSchemaService.deleteMacro( isA( DeleteDynamicMacroParams.class ) ) ).thenReturn( true );
+        when( schemaService.deleteMacro( isA( DeleteDynamicMacroParams.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deleteMacro.js" );
     }

@@ -2,15 +2,21 @@ package com.enonic.xp.resource;
 
 import java.util.List;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.Applications;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
-public interface DynamicSchemaService
+public interface SchemaService
 {
+    Application get( ApplicationKey key );
+
+    Applications list();
+
     <T extends ComponentDescriptor> DynamicSchemaResult<T> createComponent( CreateDynamicComponentParams params );
 
     <T extends ComponentDescriptor> DynamicSchemaResult<T> updateComponent( UpdateDynamicComponentParams params );

@@ -1,11 +1,11 @@
-var appLib = require('/lib/xp/app');
+var schemaLib = require('/lib/xp/schema');
 var assert = require('/lib/xp/testing');
 
 /* global log*/
 
 // BEGIN
-// Create virtual app.
-var result = appLib.get({
+// Get application.
+var result = schemaLib.get({
     key: 'my_app',
 });
 

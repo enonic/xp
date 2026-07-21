@@ -24,7 +24,7 @@ class ListDynamicComponentsHandlerTest
     @Test
     void testParts()
     {
-        when( dynamicSchemaService.listComponents( isA( ListDynamicComponentsParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.listComponents( isA( ListDynamicComponentsParams.class ) ) ).thenAnswer( params -> {
             final ListDynamicComponentsParams componentsParams = params.getArgument( 0, ListDynamicComponentsParams.class );
 
             final Form partForm = Form.create()

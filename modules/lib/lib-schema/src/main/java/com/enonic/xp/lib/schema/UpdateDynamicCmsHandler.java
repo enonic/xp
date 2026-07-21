@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.schema.mapper.CmsDescriptorMapper;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -18,7 +18,7 @@ public final class UpdateDynamicCmsHandler
 
     private String resource;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setApplication( final String application )
     {
@@ -35,7 +35,7 @@ public final class UpdateDynamicCmsHandler
         final UpdateDynamicCmsParams params =
             UpdateDynamicCmsParams.create().key( ApplicationKey.from( application ) ).resource( resource ).build();
 
-        final DynamicSchemaResult<CmsDescriptor> result = dynamicSchemaServiceSupplier.get().updateCms( params );
+        final DynamicSchemaResult<CmsDescriptor> result = schemaServiceSupplier.get().updateCms( params );
 
         return new CmsDescriptorMapper( result.getSchema(), result.getResource() );
     }
@@ -43,6 +43,6 @@ public final class UpdateDynamicCmsHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

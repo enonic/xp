@@ -20,7 +20,7 @@ class UpdateDynamicCmsHandlerTest
     @Test
     void testCms()
     {
-        when( dynamicSchemaService.updateCms( isA( UpdateDynamicCmsParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.updateCms( isA( UpdateDynamicCmsParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicCmsParams siteParams = params.getArgument( 0, UpdateDynamicCmsParams.class );
 
             final CmsDescriptor.Builder builder = YmlCmsDescriptorParser.parse( siteParams.getResource(), siteParams.getKey() );

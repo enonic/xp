@@ -6,7 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.schema.mapper.StyleDescriptorMapper;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.style.StyleDescriptor;
@@ -18,7 +18,7 @@ public final class CreateDynamicStylesHandler
 
     private String resource;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setApplication( final String application )
     {
@@ -35,7 +35,7 @@ public final class CreateDynamicStylesHandler
         final CreateDynamicStylesParams params =
             CreateDynamicStylesParams.create().key( ApplicationKey.from( application ) ).resource( resource ).build();
 
-        final DynamicSchemaResult<StyleDescriptor> result = dynamicSchemaServiceSupplier.get().createStyles( params );
+        final DynamicSchemaResult<StyleDescriptor> result = schemaServiceSupplier.get().createStyles( params );
 
         return new StyleDescriptorMapper( result.getSchema(), result.getResource() );
     }
@@ -43,6 +43,6 @@ public final class CreateDynamicStylesHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }
