@@ -25,6 +25,14 @@ mode. This is the long pole and the last big wall before a fully NoDB-native XP.
    families (`factory/query/` expression-tree + `factory/dsl/`) collapse into one
    DSL→OpenSearch translator. The wire schema MAY be a superset of the public DSL if
    NoQL constructs lack DSL forms (internal contract; versioned).
+   **Boundary (pinned):** the NoQL→DSL renderer lives in XP CORE (core-repo, beside
+   the NoQL parser), invoked when SearchRequest is prepared — ABOVE the storage SPI.
+   The nodb-client accepts only canonical DSL + envelope and is a pure serializer
+   (zero query-language knowledge; missing DSL → fail fast, never translate). The
+   NoDB server validates against the versioned wire schema and rejects unknown
+   constructs loudly. The ES backend does NOT switch to the rendered DSL in this
+   phase — its legacy path stays untouched (default byte-identical rule); converging
+   ES onto DSL is optional later cleanup, never a Phase 4 requirement.
 2. **Server-side translation** (resolved open question #1): the translator lives in
    NoDB. XP-side stays thin (parse + normalize + envelope).
 3. **Index documents: XP-shipped v1.** XP keeps building index documents (today's
