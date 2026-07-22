@@ -15,7 +15,7 @@ class ListNamespacesHandlerTest
     @Test
     void testListNamespaces()
     {
-        when( applicationService.listNamespaces() ).thenReturn(
+        when( schemaService.listNamespaces() ).thenReturn(
             List.of( Namespace.create().key( ApplicationKey.from( "myapp1" ) ).description( "My namespace 1" ).build(),
                      Namespace.create().key( ApplicationKey.from( "myapp2" ) ).build() ) );
 

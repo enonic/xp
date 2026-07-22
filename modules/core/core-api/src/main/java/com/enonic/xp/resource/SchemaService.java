@@ -5,6 +5,8 @@ import java.util.List;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.CreateNamespaceParams;
+import com.enonic.xp.app.Namespace;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.schema.BaseSchema;
@@ -16,6 +18,14 @@ public interface SchemaService
     Application get( ApplicationKey key );
 
     Applications list();
+
+    Namespace createNamespace( CreateNamespaceParams params );
+
+    boolean deleteNamespace( ApplicationKey key );
+
+    Namespace getNamespace( ApplicationKey key );
+
+    List<Namespace> listNamespaces();
 
     <T extends ComponentDescriptor> DynamicSchemaResult<T> createComponent( CreateDynamicComponentParams params );
 

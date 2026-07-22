@@ -2,7 +2,6 @@ package com.enonic.xp.lib.schema;
 
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
@@ -10,8 +9,6 @@ public abstract class BaseSchemaHandlerTest
     extends ScriptTestSupport
 {
     protected SchemaService schemaService;
-
-    protected ApplicationService applicationService;
 
     @Override
     public void initialize()
@@ -21,8 +18,5 @@ public abstract class BaseSchemaHandlerTest
 
         this.schemaService = Mockito.mock( SchemaService.class );
         addService( SchemaService.class, this.schemaService );
-
-        this.applicationService = Mockito.mock( ApplicationService.class );
-        addService( ApplicationService.class, this.applicationService );
     }
 }

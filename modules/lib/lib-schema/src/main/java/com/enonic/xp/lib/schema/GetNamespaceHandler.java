@@ -4,8 +4,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.lib.schema.mapper.NamespaceMapper;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -14,7 +14,7 @@ public final class GetNamespaceHandler
 {
     private String key;
 
-    private Supplier<ApplicationService> applicationServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setKey( final String key )
     {
@@ -23,7 +23,7 @@ public final class GetNamespaceHandler
 
     public NamespaceMapper execute()
     {
-        return Optional.ofNullable( applicationServiceSupplier.get().getNamespace( ApplicationKey.from( key ) ) )
+        return Optional.ofNullable( schemaServiceSupplier.get().getNamespace( ApplicationKey.from( key ) ) )
             .map( NamespaceMapper::new )
             .orElse( null );
     }
@@ -31,6 +31,6 @@ public final class GetNamespaceHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        applicationServiceSupplier = context.getService( ApplicationService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

@@ -3,9 +3,9 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.lib.schema.mapper.NamespaceMapper;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -16,7 +16,7 @@ public final class CreateNamespaceHandler
 
     private String description;
 
-    private Supplier<ApplicationService> applicationServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setKey( final String key )
     {
@@ -33,12 +33,12 @@ public final class CreateNamespaceHandler
         final CreateNamespaceParams params =
             CreateNamespaceParams.create().key( ApplicationKey.from( key ) ).description( description ).build();
 
-        return new NamespaceMapper( applicationServiceSupplier.get().createNamespace( params ) );
+        return new NamespaceMapper( schemaServiceSupplier.get().createNamespace( params ) );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        applicationServiceSupplier = context.getService( ApplicationService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

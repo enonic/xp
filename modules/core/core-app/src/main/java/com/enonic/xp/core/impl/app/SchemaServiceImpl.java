@@ -13,6 +13,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.CreateNamespaceParams;
+import com.enonic.xp.app.Namespace;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -103,6 +105,30 @@ public class SchemaServiceImpl
         return Applications.from( Stream.concat( applicationRegistry.getAll().stream(), virtualAppService.list().stream() )
                                       .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
                                       .values() );
+    }
+
+    @Override
+    public Namespace createNamespace( final CreateNamespaceParams params )
+    {
+        return this.virtualAppService.create( params );
+    }
+
+    @Override
+    public boolean deleteNamespace( final ApplicationKey key )
+    {
+        return this.virtualAppService.delete( key );
+    }
+
+    @Override
+    public Namespace getNamespace( final ApplicationKey key )
+    {
+        return this.virtualAppService.getNamespace( key );
+    }
+
+    @Override
+    public List<Namespace> listNamespaces()
+    {
+        return this.virtualAppService.listNamespaces();
     }
 
     @Override

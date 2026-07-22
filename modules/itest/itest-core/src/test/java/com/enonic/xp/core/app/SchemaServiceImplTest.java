@@ -310,10 +310,10 @@ class SchemaServiceImplTest
                                                          new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ),
                                                          this.schemaService );
 
-        createSchemaAdminContext().runWith( () -> applicationService.createNamespace(
+        createSchemaAdminContext().runWith( () -> schemaService.createNamespace(
             CreateNamespaceParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
 
-        createAdminContext().runWith( () -> applicationService.createNamespace(
+        createAdminContext().runWith( () -> schemaService.createNamespace(
             CreateNamespaceParams.create().key( ApplicationKey.from( "my_other_app" ) ).build() ) );
 
         projectService =
@@ -1573,7 +1573,7 @@ class SchemaServiceImplTest
 
         createAdminContext().runWith( () -> applicationService.installGlobalApplication( app ) );
 
-        assertTrue( createAdminContext().callWith( () -> applicationService.listNamespaces() )
+        assertTrue( createAdminContext().callWith( () -> schemaService.listNamespaces() )
                         .stream()
                         .anyMatch( namespace -> "myglobalapp".equals( namespace.getKey().toString() ) ) );
 

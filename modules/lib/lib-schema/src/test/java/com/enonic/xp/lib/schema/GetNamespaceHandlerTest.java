@@ -14,7 +14,7 @@ class GetNamespaceHandlerTest
     @Test
     void testGetNamespace()
     {
-        when( applicationService.getNamespace( isA( ApplicationKey.class ) ) ).thenAnswer(
+        when( schemaService.getNamespace( isA( ApplicationKey.class ) ) ).thenAnswer(
             params -> Namespace.create().key( params.getArgument( 0, ApplicationKey.class ) ).description( "My namespace" ).build() );
 
         runScript( "/lib/xp/examples/schema/getNamespace.js" );

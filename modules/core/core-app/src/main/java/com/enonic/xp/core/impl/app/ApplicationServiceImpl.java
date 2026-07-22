@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -20,8 +19,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateNamespaceParams;
-import com.enonic.xp.app.Namespace;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.event.Event;
@@ -214,30 +211,6 @@ public final class ApplicationServiceImpl
         }
         doUninstallApplication( key );
         ApplicationHelper.runWithContext( () -> doReinstallStoredApplication( key ) );
-    }
-
-    @Override
-    public Namespace createNamespace( final CreateNamespaceParams params )
-    {
-        return this.virtualAppService.create( params );
-    }
-
-    @Override
-    public boolean deleteNamespace( final ApplicationKey key )
-    {
-        return this.virtualAppService.delete( key );
-    }
-
-    @Override
-    public Namespace getNamespace( final ApplicationKey key )
-    {
-        return this.virtualAppService.getNamespace( key );
-    }
-
-    @Override
-    public List<Namespace> listNamespaces()
-    {
-        return this.virtualAppService.listNamespaces();
     }
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )

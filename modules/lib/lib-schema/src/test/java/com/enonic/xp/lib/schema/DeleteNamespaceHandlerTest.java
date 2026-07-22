@@ -13,7 +13,7 @@ class DeleteNamespaceHandlerTest
     @Test
     void testDeleteNamespace()
     {
-        when( applicationService.deleteNamespace( isA( ApplicationKey.class ) ) ).thenReturn( true );
+        when( schemaService.deleteNamespace( isA( ApplicationKey.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deleteNamespace.js" );
     }

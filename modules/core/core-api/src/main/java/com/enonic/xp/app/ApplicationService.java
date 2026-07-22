@@ -1,7 +1,5 @@
 package com.enonic.xp.app;
 
-import java.util.List;
-
 import com.google.common.io.ByteSource;
 
 
@@ -30,12 +28,4 @@ public interface ApplicationService
     void uninstallLocalApplication( ApplicationKey key );
 
     void installAllStoredApplications();
-
-    Namespace createNamespace( CreateNamespaceParams params );
-
-    boolean deleteNamespace( ApplicationKey key );
-
-    Namespace getNamespace( ApplicationKey key );
-
-    List<Namespace> listNamespaces();
 }

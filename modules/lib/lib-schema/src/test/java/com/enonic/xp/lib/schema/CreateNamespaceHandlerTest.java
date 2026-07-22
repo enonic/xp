@@ -14,7 +14,7 @@ class CreateNamespaceHandlerTest
     @Test
     void testCreateNamespace()
     {
-        when( applicationService.createNamespace( isA( CreateNamespaceParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createNamespace( isA( CreateNamespaceParams.class ) ) ).thenAnswer( params -> {
             final CreateNamespaceParams createParams = params.getArgument( 0, CreateNamespaceParams.class );
 
             return Namespace.create().key( createParams.getKey() ).description( createParams.getDescription() ).build();

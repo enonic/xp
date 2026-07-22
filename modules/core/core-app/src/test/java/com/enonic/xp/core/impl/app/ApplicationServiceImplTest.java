@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,6 @@ import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateNamespaceParams;
-import com.enonic.xp.app.Namespace;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
@@ -34,18 +31,11 @@ import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.resource.SchemaService;
 
@@ -152,107 +142,6 @@ class ApplicationServiceImplTest
         final Applications result = this.service.list();
 
         assertSame( applications, result );
-    }
-
-    @Test
-    void create_virtual_application()
-    {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).name( "app-node" ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
-
-        final Namespace result = VirtualAppContext.createAdminContext()
-            .callWith( () -> this.service.createNamespace( CreateNamespaceParams.create().key( appKey ).build() ) );
-
-        assertEquals( appKey, result.getKey() );
-    }
-
-    @Test
-    void create_virtual_application_without_admin()
-    {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
-
-        assertThrows( ForbiddenAccessException.class,
-                      () -> this.service.createNamespace( CreateNamespaceParams.create().key( appKey ).build() ) );
-    }
-
-    @Test
-    void delete_virtual_application()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteNamespace( appKey ) ) );
-    }
-
-    @Test
-    void delete_virtual_application_without_admin()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertThrows( ForbiddenAccessException.class, () -> this.service.deleteNamespace( appKey ) );
-    }
-
-    @Test
-    void get_namespace()
-    {
-        final ApplicationKey key = ApplicationKey.from( "app1" );
-
-        final PropertyTree data = new PropertyTree();
-        data.setString( "description", "my namespace" );
-
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
-        when( nodeService.getByPath( appPath ) ).thenReturn(
-            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-                .data( data ).build() );
-
-        final Namespace result = this.service.getNamespace( key );
-
-        assertNotNull( result );
-        assertEquals( key, result.getKey() );
-        assertEquals( "my namespace", result.getDescription() );
-    }
-
-    @Test
-    void get_namespace_not_found()
-    {
-        assertNull( this.service.getNamespace( ApplicationKey.from( "app1" ) ) );
-    }
-
-    @Test
-    void list_namespaces()
-    {
-        final NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
-
-        final NodeIds ids = NodeIds.from( virtualAppNodeId );
-
-        when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
-            FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );
-
-        final PropertyTree data = new PropertyTree();
-        data.setString( "description", "my namespace" );
-
-        when( nodeService.getByIds( ids ) ).thenReturn(
-            Nodes.from( Node.create().id( new NodeId() ).name( "app1" ).parentPath( NodePath.ROOT ).data( data ).build() ) );
-
-        final List<Namespace> result = this.service.listNamespaces();
-        assertNotNull( result );
-        assertEquals( 1, result.size() );
-        assertEquals( "app1", result.get( 0 ).getKey().toString() );
-        assertEquals( "my namespace", result.get( 0 ).getDescription() );
     }
 
     @Test
