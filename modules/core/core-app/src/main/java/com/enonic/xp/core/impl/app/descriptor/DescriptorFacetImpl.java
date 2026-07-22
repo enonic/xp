@@ -60,13 +60,13 @@ final class DescriptorFacetImpl<T extends Descriptor>
     @Override
     public Descriptors<T> getAll()
     {
-        return get( this.schemaService.list().getApplicationKeys() );
+        return get( this.schemaService.listApplicationKeys() );
     }
 
     @Override
     public DescriptorKeys findAll()
     {
-        return find( this.schemaService.list().getApplicationKeys() );
+        return find( this.schemaService.listApplicationKeys() );
     }
 
     @Override

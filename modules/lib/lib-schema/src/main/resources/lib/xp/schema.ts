@@ -829,57 +829,6 @@ export function deleteMacro(params: DeleteDynamicMacroParams): boolean {
     return __.toNativeObject(bean.execute());
 }
 
-export interface Application {
-    key: string;
-    version: string | null;
-    systemVersion: string | null;
-    minSystemVersion: string | null;
-    maxSystemVersion: string | null;
-    modifiedTime: string | null;
-    started: boolean;
-    system: boolean;
-}
-
-export interface GetApplicationParams {
-    key: string;
-}
-
-interface GetApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): Application | null;
-}
-
-/**
- * Fetches application by key.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {Application | null} fetched application, or null if not found.
- */
-export function get(params: GetApplicationParams): Application | null {
-    const key = checkRequired(params, 'key');
-
-    const bean: GetApplicationHandler = __.newBean<GetApplicationHandler>('com.enonic.xp.lib.schema.GetApplicationHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
-}
-
-interface ListApplicationsHandler {
-    execute(): Application[];
-}
-
-/**
- * Fetches both static and namespace (virtual) applications.
- *
- * @returns {Application[]} applications list.
- */
-export function list(): Application[] {
-    const bean: ListApplicationsHandler = __.newBean<ListApplicationsHandler>('com.enonic.xp.lib.schema.ListApplicationsHandler');
-    return __.toNativeObject(bean.execute());
-}
-
 export interface Namespace {
     key: string;
     description?: string;

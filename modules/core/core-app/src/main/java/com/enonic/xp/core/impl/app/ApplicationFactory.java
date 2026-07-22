@@ -16,6 +16,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FakeCmsYamlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
@@ -49,7 +50,8 @@ public final class ApplicationFactory
 
         return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
                                                 new FilteredApplicationUrlResolver( createBundleUrlResolver( bundle ),
-                                                                                    () -> schemaDescriptorFilter( applicationKey ) ) );
+                                                                                    () -> schemaDescriptorFilter( applicationKey ) ),
+                                                new FakeCmsYamlUrlResolver( applicationKey, nodeService ) );
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )

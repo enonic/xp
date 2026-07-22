@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
@@ -36,21 +35,6 @@ public class VirtualAppService
         this.nodeService = nodeService;
     }
 
-    public List<Application> list()
-    {
-        return VirtualAppContext.createContext().callWith( () -> {
-            final FindNodesByParentResult result =
-                this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
-
-            final Nodes nodes = nodeService.getByIds( result.getNodeIds() );
-
-            return nodes.stream()
-                .map( node -> DynamicResourceManager.appKeyFromNodePath( node.path() ) )
-                .map( key -> VirtualAppFactory.create( key, nodeService ) )
-                .collect( Collectors.toList() );
-        } );
-    }
-
     public Namespace getNamespace( final ApplicationKey applicationKey )
     {
         final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
@@ -80,21 +64,6 @@ public class VirtualAppService
                     .build() )
                 .collect( Collectors.toList() );
         } );
-    }
-
-    public Application get( final ApplicationKey applicationKey )
-    {
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
-        boolean appExists = VirtualAppContext.createContext().callWith( () -> this.nodeService.nodeExists( appPath ) );
-
-        if ( appExists )
-        {
-            return VirtualAppFactory.create( applicationKey, nodeService );
-        }
-        else
-        {
-            return null;
-        }
     }
 
     public Namespace create( final CreateNamespaceParams params )

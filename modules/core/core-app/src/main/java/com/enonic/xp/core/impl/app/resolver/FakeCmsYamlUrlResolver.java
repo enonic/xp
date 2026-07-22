@@ -35,7 +35,7 @@ public class FakeCmsYamlUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        return SINGLE_FILE_SET;
+        return getApplicationNode() != null ? SINGLE_FILE_SET : Set.of();
     }
 
     @Override
@@ -43,9 +43,7 @@ public class FakeCmsYamlUrlResolver
     {
         if ( CMS_RESOURCE_PATH_YAML.equals( path ) )
         {
-            final NodePath appPath =
-                new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
-            final Node applicationNode = VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( appPath ) );
+            final Node applicationNode = getApplicationNode();
             if ( applicationNode != null )
             {
                 return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_CMS_RESOURCE_VALUE,
@@ -53,5 +51,11 @@ public class FakeCmsYamlUrlResolver
             }
         }
         return null;
+    }
+
+    private Node getApplicationNode()
+    {
+        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        return VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( appPath ) );
     }
 }

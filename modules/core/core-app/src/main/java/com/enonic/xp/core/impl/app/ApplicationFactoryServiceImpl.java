@@ -17,6 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.FakeCmsYamlUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -73,8 +76,7 @@ public class ApplicationFactoryServiceImpl
             .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) )
             .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
             .findAny()
-            .map( Map.Entry::getValue )
-            .or( () -> findVirtualApp( applicationKey ) );
+            .map( Map.Entry::getValue );
     }
 
     @Override
@@ -90,19 +92,20 @@ public class ApplicationFactoryServiceImpl
         if ( source == null )
         {
             return adaptorEntry.map( Map.Entry::getValue )
-                .or( () -> findVirtualApp( applicationKey ) )
-                .map( ApplicationAdaptor::getUrlResolver );
+                .map( ApplicationAdaptor::getUrlResolver )
+                .or( () -> findVirtualAppResolver( applicationKey ) );
         }
 
         return adaptorEntry.map( Map.Entry::getKey ).map( bundle -> factory.createUrlResolver( bundle, source ) );
     }
 
-    private Optional<ApplicationAdaptor> findVirtualApp( final ApplicationKey applicationKey )
+    private Optional<ApplicationUrlResolver> findVirtualAppResolver( final ApplicationKey applicationKey )
     {
         return VirtualAppContext.createContext().callWith( () -> {
             final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) );
             return this.nodeService.nodeExists( appPath )
-                ? Optional.of( VirtualAppFactory.create( applicationKey, nodeService ) )
+                ? Optional.of( new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
+                                                                new FakeCmsYamlUrlResolver( applicationKey, nodeService ) ) )
                 : Optional.empty();
         } );
     }

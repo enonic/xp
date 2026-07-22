@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,15 @@ import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.resource.Resource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -114,7 +117,34 @@ class ApplicationFactoryServiceImplTest
     }
 
     @Test
-    void findVirtualApplication()
+    void bundleApplicationWithNamespace_servesFakeCmsYaml()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( "app1" ) );
+        when( nodeService.nodeExists( appPath ) ).thenReturn( true );
+        when( nodeService.getByPath( appPath ) ).thenReturn(
+            Node.create().id( NodeId.from( "app-node" ) ).name( "app1" ).parentPath( NodePath.ROOT ).timestamp( Instant.now() ).build() );
+
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        final Bundle bundle = deploy( "app1", newBundle( "app1", true ) );
+        bundle.start();
+
+        final Optional<ApplicationUrlResolver> resolver = service.findResolver( applicationKey, null );
+        assertThat( resolver ).isNotEmpty();
+
+        final Resource resource = resolver.get().findResource( "/cms/cms.yaml" );
+        assertThat( resource ).isNotNull();
+        assertThat( resource.exists() ).isTrue();
+    }
+
+    @Test
+    void findVirtualApplicationResolver()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
@@ -124,6 +154,10 @@ class ApplicationFactoryServiceImplTest
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
-        assertEquals( applicationKey, service.findActiveApplication( applicationKey ).get().getKey() );
+        assertThat( service.findActiveApplication( applicationKey ) ).isEmpty();
+
+        final Optional<ApplicationUrlResolver> resolver = service.findResolver( applicationKey, null );
+        assertThat( resolver ).isNotEmpty();
+        assertThat( resolver.get() ).isInstanceOf( MultiApplicationUrlResolver.class );
     }
 }

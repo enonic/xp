@@ -35,9 +35,7 @@ import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
-import com.enonic.xp.core.impl.app.SchemaServiceImpl;
 import com.enonic.xp.core.impl.app.VirtualAppService;
-import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -85,15 +83,11 @@ class ApplicationServiceTest
         final ApplicationRegistryImpl applicationRegistry =
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
         final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
-        final ResourceServiceImpl resourceService = new ResourceServiceImpl( applicationFactoryService );
-
-        final SchemaServiceImpl schemaService =
-            new SchemaServiceImpl( nodeService, resourceService, applicationRegistry, virtualAppService );
 
         this.applicationService = new ApplicationServiceImpl( applicationRegistry, repoService,
                                                                new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
                                                                new AppFilterServiceImpl( appConfig ), virtualAppService,
-                                                               applicationAuditLogSupport, schemaService );
+                                                               applicationAuditLogSupport );
     }
 
     @AfterEach

@@ -2,9 +2,8 @@ package com.enonic.xp.resource;
 
 import java.util.List;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
 import com.enonic.xp.macro.MacroDescriptor;
@@ -15,9 +14,7 @@ import com.enonic.xp.style.StyleDescriptor;
 
 public interface SchemaService
 {
-    Application get( ApplicationKey key );
-
-    Applications list();
+    ApplicationKeys listApplicationKeys();
 
     Namespace createNamespace( CreateNamespaceParams params );
 

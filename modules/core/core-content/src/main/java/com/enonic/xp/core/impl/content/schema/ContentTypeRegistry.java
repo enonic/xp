@@ -53,7 +53,7 @@ final class ContentTypeRegistry
 
     public ContentTypes getAll()
     {
-        final ApplicationKeys applicationKeys = schemaService.list().getApplicationKeys();
+        final ApplicationKeys applicationKeys = schemaService.listApplicationKeys();
         return Stream.concat( builtInTypes.getAll().stream(), applicationKeys.stream().flatMap( this::loadByApplication ) )
             .collect( ContentTypes.collector() );
     }

@@ -1,9 +1,13 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -19,6 +23,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.Namespace;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.event.Event;
@@ -26,13 +31,14 @@ import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.resource.SchemaService;
 
 @Component
 public final class ApplicationServiceImpl
     implements ApplicationService, EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
+
+    private static final String CMS_DESCRIPTOR_RESOURCE_KEY = VirtualAppConstants.CMS_ROOT_NAME + ".yaml";
 
     private final Set<ApplicationKey> localApplicationSet = Collections.newSetFromMap( new ConcurrentHashMap<>() );
 
@@ -48,14 +54,11 @@ public final class ApplicationServiceImpl
 
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
-    private final SchemaService schemaService;
-
     @Activate
     public ApplicationServiceImpl( @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
                                    @Reference final AppFilterService appFilterService, @Reference final VirtualAppService virtualAppService,
-                                   @Reference final ApplicationAuditLogSupport applicationAuditLogSupport,
-                                   @Reference final SchemaService schemaService )
+                                   @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
         this.registry = applicationRegistry;
         this.repoService = repoService;
@@ -63,7 +66,6 @@ public final class ApplicationServiceImpl
         this.appFilterService = appFilterService;
         this.virtualAppService = virtualAppService;
         this.applicationAuditLogSupport = applicationAuditLogSupport;
-        this.schemaService = schemaService;
     }
 
     @Deactivate
@@ -91,7 +93,13 @@ public final class ApplicationServiceImpl
     @Override
     public Application get( final ApplicationKey key )
     {
-        return this.schemaService.get( key );
+        final Application installedApplication = this.registry.get( key );
+        if ( installedApplication != null )
+        {
+            return installedApplication;
+        }
+        final Namespace namespace = this.virtualAppService.getNamespace( key );
+        return namespace != null ? new NamespaceApplication( namespace ) : null;
     }
 
     @Override
@@ -103,7 +111,10 @@ public final class ApplicationServiceImpl
     @Override
     public Applications list()
     {
-        return this.schemaService.list();
+        return Applications.from( Stream.concat( this.registry.getAll().stream(),
+                                                 this.virtualAppService.listNamespaces().stream().map( NamespaceApplication::new ) )
+                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
+                                      .values() );
     }
 
     @Override
@@ -241,7 +252,11 @@ public final class ApplicationServiceImpl
 
         final Application application = doInstallApplication( byteSource, applicationKey );
 
-        this.virtualAppService.persistApplicationSchema( applicationKey, AppSchemaResolver.resolve( byteSource ) );
+        final Map<String, String> schemaResources = AppSchemaResolver.resolve( byteSource );
+        if ( schemaResources.containsKey( CMS_DESCRIPTOR_RESOURCE_KEY ) )
+        {
+            this.virtualAppService.persistApplicationSchema( applicationKey, schemaResources );
+        }
 
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 

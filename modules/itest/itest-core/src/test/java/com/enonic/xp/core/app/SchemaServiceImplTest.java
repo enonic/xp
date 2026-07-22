@@ -32,11 +32,11 @@ import org.osgi.framework.Constants;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateNamespaceParams;
+import com.enonic.xp.app.Namespace;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -101,6 +101,8 @@ import com.enonic.xp.repo.impl.search.NodeSearchServiceImpl;
 import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
@@ -123,6 +125,8 @@ import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.resource.UpdateDynamicMacroParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
+import com.enonic.xp.core.impl.site.CmsServiceImpl;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
@@ -155,6 +159,8 @@ class SchemaServiceImplTest
     NodeServiceImpl nodeService;
 
     private SchemaServiceImpl schemaService;
+
+    private ResourceServiceImpl resourceService;
 
     private ApplicationService applicationService;
 
@@ -276,7 +282,7 @@ class SchemaServiceImplTest
         ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
-        ResourceServiceImpl resourceService = new ResourceServiceImpl( applicationFactoryService );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
         AppFilterService appFilterService = new AppFilterServiceImpl( appConfig );
 
@@ -307,8 +313,7 @@ class SchemaServiceImplTest
 
         applicationService = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
                                                          virtualAppService,
-                                                         new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ),
-                                                         this.schemaService );
+                                                         new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
         createSchemaAdminContext().runWith( () -> schemaService.createNamespace(
             CreateNamespaceParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
@@ -338,30 +343,74 @@ class SchemaServiceImplTest
     }
 
     @Test
-    void get_application()
+    void namespace_cms_descriptor()
+    {
+        final CmsFormFragmentService formFragmentService = mock( CmsFormFragmentService.class );
+        when( formFragmentService.inlineFormItems( org.mockito.ArgumentMatchers.any() ) ).thenAnswer( inv -> inv.getArgument( 0 ) );
+
+        final CmsServiceImpl cmsService = new CmsServiceImpl( resourceService, formFragmentService );
+
+        final CmsDescriptor descriptor =
+            createAdminContext().callWith( () -> cmsService.getDescriptor( ApplicationKey.from( "myapp" ) ) );
+
+        assertNotNull( descriptor );
+        assertEquals( ApplicationKey.from( "myapp" ), descriptor.getApplicationKey() );
+    }
+
+    @Test
+    void namespace_cms_yaml_resource_admin()
+    {
+        final Resource resource = createAdminContext().callWith(
+            () -> resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "cms/cms.yaml" ) ) );
+
+        assertTrue( resource.exists() );
+    }
+
+    @Test
+    void namespace_cms_yaml_resource_non_admin()
+    {
+        final Resource resource = createContentManagerAdminContext().callWith(
+            () -> resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "cms/cms.yaml" ) ) );
+
+        assertTrue( resource.exists() );
+    }
+
+    @Test
+    void namespace_cms_yaml_resource_unauthenticated()
+    {
+        final Resource resource = ContextBuilder.copyOf( ctxDefault() )
+            .authInfo( AuthenticationInfo.unAuthenticated() )
+            .build()
+            .callWith( () -> resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "cms/cms.yaml" ) ) );
+
+        assertTrue( resource.exists() );
+    }
+
+    @Test
+    void get_namespace()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        final Application result = createAdminContext().callWith( () -> schemaService.get( applicationKey ) );
+        final Namespace result = createAdminContext().callWith( () -> schemaService.getNamespace( applicationKey ) );
 
         assertNotNull( result );
         assertEquals( applicationKey, result.getKey() );
     }
 
     @Test
-    void get_application_not_found()
+    void get_namespace_not_found()
     {
-        final Application result = createAdminContext().callWith( () -> schemaService.get( ApplicationKey.from( "nonexistent" ) ) );
+        final Namespace result = createAdminContext().callWith( () -> schemaService.getNamespace( ApplicationKey.from( "nonexistent" ) ) );
 
         assertNull( result );
     }
 
     @Test
-    void list()
+    void list_application_keys()
     {
-        final Applications result = createAdminContext().callWith( schemaService::list );
+        final ApplicationKeys result = createAdminContext().callWith( schemaService::listApplicationKeys );
 
-        assertThat( result.getApplicationKeys() ).contains( ApplicationKey.from( "myapp" ), ApplicationKey.from( "my_other_app" ) );
+        assertThat( result ).contains( ApplicationKey.from( "myapp" ), ApplicationKey.from( "my_other_app" ) );
     }
 
     @Test
@@ -1567,9 +1616,11 @@ class SchemaServiceImplTest
         throws Exception
     {
         final String contentTypeResource = readResource( "_contentType.yaml" );
+        final String cmsResource = "kind: \"CMS\"\nform: [ ]\n";
 
-        final ByteSource app =
-            createAppSource( "myglobalapp", "1.0.0", Map.of( "cms/content-types/mytype/mytype.yml", contentTypeResource ) );
+        final ByteSource app = createAppSource( "myglobalapp", "1.0.0",
+                                                Map.of( "cms/cms.yaml", cmsResource, "cms/content-types/mytype/mytype.yml",
+                                                        contentTypeResource ) );
 
         createAdminContext().runWith( () -> applicationService.installGlobalApplication( app ) );
 
@@ -1593,8 +1644,9 @@ class SchemaServiceImplTest
         assertEquals( "node", schema.getResource().getResolverName() );
         assertEquals( contentTypeResource, schema.getResource().readString() );
 
-        final ByteSource updatedApp =
-            createAppSource( "myglobalapp", "1.0.1", Map.of( "cms/content-types/newtype/newtype.yaml", contentTypeResource ) );
+        final ByteSource updatedApp = createAppSource( "myglobalapp", "1.0.1",
+                                                       Map.of( "cms/cms.yaml", cmsResource, "cms/content-types/newtype/newtype.yaml",
+                                                               contentTypeResource ) );
 
         createAdminContext().runWith( () -> applicationService.installGlobalApplication( updatedApp ) );
 
@@ -1617,6 +1669,25 @@ class SchemaServiceImplTest
 
         assertNotNull( newSchema );
         assertEquals( "node", newSchema.getResource().getResolverName() );
+    }
+
+    @Test
+    void installGlobalApplicationWithoutCmsYamlDoesNotCreateNamespace()
+        throws Exception
+    {
+        final String contentTypeResource = readResource( "_contentType.yaml" );
+
+        final ByteSource app =
+            createAppSource( "mynoncmsapp", "1.0.0", Map.of( "cms/content-types/mytype/mytype.yml", contentTypeResource ) );
+
+        createAdminContext().runWith( () -> applicationService.installGlobalApplication( app ) );
+
+        assertFalse( createAdminContext().callWith( () -> schemaService.listNamespaces() )
+                         .stream()
+                         .anyMatch( namespace -> "mynoncmsapp".equals( namespace.getKey().toString() ) ) );
+
+        assertFalse(
+            VirtualAppContext.createAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/mynoncmsapp" ) ) ) );
     }
 
     private static ByteSource createAppSource( final String name, final String version, final Map<String, String> resources )

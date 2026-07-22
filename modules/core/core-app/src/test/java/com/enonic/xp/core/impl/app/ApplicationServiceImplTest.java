@@ -32,12 +32,15 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.resource.SchemaService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -75,8 +78,6 @@ class ApplicationServiceImplTest
 
     private VirtualAppService virtualAppService;
 
-    private SchemaService schemaService;
-
     @BeforeEach
     void initService()
     {
@@ -104,10 +105,8 @@ class ApplicationServiceImplTest
 
         virtualAppService = new VirtualAppService( nodeService );
 
-        schemaService = mock( SchemaService.class );
-
         this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
-                                                   auditLogSupport, schemaService );
+                                                   auditLogSupport );
     }
 
     @Test
@@ -122,32 +121,67 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void get_application()
-    {
-        final ApplicationKey key = ApplicationKey.from( "app1" );
-        final Application application = mock( Application.class );
-        when( schemaService.get( key ) ).thenReturn( application );
-
-        final Application result = this.service.get( key );
-
-        assertSame( application, result );
-    }
-
-    @Test
-    void list()
-    {
-        final Applications applications = mock( Applications.class );
-        when( schemaService.list() ).thenReturn( applications );
-
-        final Applications result = this.service.list();
-
-        assertSame( applications, result );
-    }
-
-    @Test
     void get_application_not_found()
     {
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "app1" ) ) );
+    }
+
+    @Test
+    void get_prefers_installed_application()
+    {
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.registerApplication( bundle );
+
+        final Application result = this.service.get( ApplicationKey.from( "app1" ) );
+
+        assertSame( applicationRegistry.get( ApplicationKey.from( "app1" ) ), result );
+    }
+
+    @Test
+    void get_returns_namespace_backed_application()
+    {
+        final ApplicationKey key = ApplicationKey.from( "app1" );
+
+        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
+        when( nodeService.getByPath( appPath ) ).thenReturn(
+            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+                .build() );
+
+        final Application result = this.service.get( key );
+
+        assertNotNull( result );
+        assertEquals( key, result.getKey() );
+        assertTrue( result.isStarted() );
+    }
+
+    @Test
+    void get_not_installed_and_no_namespace()
+    {
+        assertNull( this.service.get( ApplicationKey.from( "app1" ) ) );
+    }
+
+    @Test
+    void list_merges_installed_applications_and_namespaces()
+    {
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.registerApplication( bundle );
+
+        final NodeIds ids = NodeIds.from( NodeId.from( "ns1" ), NodeId.from( "ns2" ) );
+        when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
+            FindNodesByParentResult.create().totalHits( 2L ).nodeIds( ids ).build() );
+        when( nodeService.getByIds( ids ) ).thenReturn(
+            Nodes.from( Node.create().id( new NodeId() ).name( "app1" ).parentPath( NodePath.ROOT ).build(),
+                        Node.create().id( new NodeId() ).name( "app2" ).parentPath( NodePath.ROOT ).build() ) );
+
+        final Applications result = this.service.list();
+
+        assertEquals( 2, result.getSize() );
+
+        final Application app1 =
+            result.stream().filter( app -> app.getKey().equals( ApplicationKey.from( "app1" ) ) ).findFirst().orElseThrow();
+        assertSame( applicationRegistry.get( ApplicationKey.from( "app1" ) ), app1 );
+
+        assertTrue( result.stream().anyMatch( app -> app.getKey().equals( ApplicationKey.from( "app2" ) ) ) );
     }
 
     @Test
@@ -333,9 +367,12 @@ class ApplicationServiceImplTest
         mockRepoCreateNode( node );
         mockRepoGetNode( node, bundleName );
 
+        final String cmsResource = "kind: \"CMS\"\nform: [ ]\n";
         final String contentTypeResource = "kind: \"ContentType\"\nform: [ ]\n";
 
         final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true )
+                                                                                    .addResource( "cms/cms.yaml", new ByteArrayInputStream(
+                                                                                        cmsResource.getBytes( StandardCharsets.UTF_8 ) ) )
                                                                                     .addResource(
                                                                                         "cms/content-types/mytype/mytype.yaml",
                                                                                         new ByteArrayInputStream(
@@ -348,8 +385,37 @@ class ApplicationServiceImplTest
         verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> bundleName.equals( params.getName().toString() ) &&
             VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT.equals( params.getParent() ) ) );
 
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "cms.yaml".equals( params.getName().toString() ) &&
+            cmsResource.equals( params.getData().getString( "resource" ) ) ) );
+
         verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "mytype.yaml".equals( params.getName().toString() ) &&
             contentTypeResource.equals( params.getData().getString( "resource" ) ) ) );
+    }
+
+    @Test
+    void install_global_without_cms_yaml_does_not_persist_schema()
+        throws Exception
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+
+        final String bundleName = "my.bundle";
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        final String contentTypeResource = "kind: \"ContentType\"\nform: [ ]\n";
+
+        final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true )
+                                                                                    .addResource(
+                                                                                        "cms/content-types/mytype/mytype.yaml",
+                                                                                        new ByteArrayInputStream(
+                                                                                            contentTypeResource.getBytes(
+                                                                                                StandardCharsets.UTF_8 ) ) )
+                                                                                    .build() ) );
+
+        this.service.installGlobalApplication( byteSource );
+
+        verify( nodeService, never() ).create( any( CreateNodeParams.class ) );
     }
 
     @Test

@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -12,7 +12,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.Applications;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
 import com.enonic.xp.context.ContextAccessor;
@@ -93,18 +93,11 @@ public class SchemaServiceImpl
     }
 
     @Override
-    public Application get( final ApplicationKey key )
+    public ApplicationKeys listApplicationKeys()
     {
-        final Application installedApplication = applicationRegistry.get( key );
-        return installedApplication != null ? installedApplication : virtualAppService.get( key );
-    }
-
-    @Override
-    public Applications list()
-    {
-        return Applications.from( Stream.concat( applicationRegistry.getAll().stream(), virtualAppService.list().stream() )
-                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
-                                      .values() );
+        return ApplicationKeys.from( Stream.concat( applicationRegistry.getAll().stream().map( Application::getKey ),
+                                                    virtualAppService.listNamespaces().stream().map( Namespace::getKey ) )
+                                         .collect( Collectors.toCollection( LinkedHashSet::new ) ) );
     }
 
     @Override

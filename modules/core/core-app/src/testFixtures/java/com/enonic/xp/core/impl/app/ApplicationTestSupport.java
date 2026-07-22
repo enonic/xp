@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
@@ -42,7 +43,7 @@ public abstract class ApplicationTestSupport
         when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
 
         this.schemaService = mock( SchemaService.class );
-        when( this.schemaService.list() ).then( invocationOnMock -> Applications.from( apps.values() ) );
+        when( this.schemaService.listApplicationKeys() ).then( invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );
 
         ApplicationFactoryService applicationFactoryService = mock( ApplicationFactoryService.class );
         when( applicationFactoryService.findActiveApplication( any() ) ).then(
