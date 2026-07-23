@@ -435,7 +435,11 @@ public class GraalScriptExecutor
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
             // retained slots belong to live connections (websocket/SSE): the request pool
-            // leaves them alone and grows replacements instead
+            // leaves them alone and grows replacements instead. The untimed tryLock deliberately
+            // barges past the lock's fairness on this fast path — only anonymous requests race
+            // here (no ordering requirement); every queued wait, pinned events included, uses the
+            // timed tryLock below, which honors fairness, and retained/main slots never enter
+            // this scan at all
             if ( slot != null && !slot.isRetained() && slot.lock.tryLock() )
             {
                 try
