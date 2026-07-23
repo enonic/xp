@@ -302,6 +302,23 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void closedExecutorRejectsExecutionOnExistingSlots()
+        throws Exception
+    {
+        final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
+        // populate the pool before closing: close() cancels the contexts but keeps the slot
+        // entries, so post-close execution must be rejected up front, not fail deep inside a
+        // cancelled context
+        local.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+        ( (Closeable) local ).close();
+
+        final IllegalStateException e = assertThrows( IllegalStateException.class,
+                                                      () -> local.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) ) );
+        assertEquals( "Script executor is closed", e.getMessage() );
+    }
+
+    @Test
+    @Timeout(60)
     void retainAndBindAreNoOpsWithoutAPinnedSlot()
     {
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );

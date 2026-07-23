@@ -410,6 +410,10 @@ public class GraalScriptExecutor
      */
     <T> T withSlot( final ContextSlot pinned, final Function<ContextSlot, T> work )
     {
+        // close() cancels the pooled contexts but leaves the slot entries in place: without this
+        // guard an execution racing app stop would lock a cancelled context and fail with a
+        // confusing engine error instead of a clear rejection
+        requireOpen();
         final ContextSlot bound = boundSlot();
         if ( bound != null && bound.owner() == this )
         {
