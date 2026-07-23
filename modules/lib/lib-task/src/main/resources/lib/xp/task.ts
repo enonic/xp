@@ -29,9 +29,10 @@ function checkRequired<T extends object, K extends keyof T>(
 
 /**
  * Data a task function can receive: any plain data value — object, array or scalar.
- * Functions are rejected at submit.
+ * Functions are rejected at submit; a nullish value is treated as "no params" and the
+ * function is called with no arguments.
  */
-export type CallbackParams = Record<string, unknown> | unknown[] | string | number | boolean | null;
+export type CallbackParams = Record<string, unknown> | unknown[] | string | number | boolean;
 
 export type CallbackFn = (params?: CallbackParams) => void;
 
@@ -99,7 +100,8 @@ interface ExecuteFunctionHandler {
  * use absolute paths with `require`. Engines without pooling keep the historical closure
  * behavior.
  * @param {object} [params.params] Data passed to the task function as its single argument.
- * Converted eagerly at submit time; functions are rejected.
+ * Converted eagerly at submit time; functions are rejected. A nullish value is treated as
+ * omitted: the function is called with no arguments.
  *
  * @returns {string} Id of the task that will be executed.
  */
@@ -113,11 +115,12 @@ export function executeFunction(params: ExecuteFunctionParams): string {
     bean.setDescription(description);
     // the routed path calls the function on the submitting context, where closures are legal:
     // bind params here instead of routing them through Java. Always wrap, so the function
-    // observes the same arguments as on the detached path — zero when params are omitted, one
-    // otherwise (the Java side's apply(null) argument must never leak through)
-    bean.setFunc(funcParams === undefined ? () => func() : () => func(funcParams));
+    // observes the same arguments as on the detached path — zero when params are nullish
+    // (omitted, undefined or null — one rule on every path), exactly one otherwise (the Java
+    // side's apply(null) argument must never leak through)
+    bean.setFunc(funcParams == null ? () => func() : () => func(funcParams));
     bean.setSource(String(func));
-    bean.setParams(funcParams !== undefined ? __.toScriptValue(funcParams) : null);
+    bean.setParams(funcParams != null ? __.toScriptValue(funcParams) : null);
 
     return bean.executeFunction();
 }
