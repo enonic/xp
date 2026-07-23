@@ -17,12 +17,14 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.runtime.BootstrapParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -70,6 +72,18 @@ class MainExecutorTest
         verify( this.scriptService ).bootstrap( captor.capture() );
         assertEquals( ApplicationKey.from( "foo.bar" ), captor.getValue().getApplication() );
         assertEquals( ResourceKey.from( "foo.bar:/main.js" ), captor.getValue().getMainScript().orElseThrow() );
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void addingService_vanishedService_isIgnored()
+    {
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        when( this.bundleContext.getService( reference ) ).thenReturn( null );
+
+        // unregistered between the tracker event and getService: nothing to track or bootstrap
+        assertNull( this.executor.addingService( reference ) );
+        verify( this.scriptService, never() ).bootstrap( any() );
     }
 
     @Test

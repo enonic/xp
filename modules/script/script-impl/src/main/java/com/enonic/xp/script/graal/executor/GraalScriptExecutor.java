@@ -310,11 +310,20 @@ public class GraalScriptExecutor
     {
         // drain, so each registered disposer runs at most once — teardown calls this twice
         // (invalidate's explicit run, then close())
-        this.disposers.values().forEach( queue -> {
+        this.disposers.forEach( ( key, queue ) -> {
             Runnable disposer;
             while ( ( disposer = queue.poll() ) != null )
             {
-                disposer.run();
+                try
+                {
+                    disposer.run();
+                }
+                catch ( Exception e )
+                {
+                    // teardown is best-effort: one bad disposer must neither stop the rest nor
+                    // keep close() from freeing contexts and returning budget permits
+                    LOG.warn( "Error while running disposer registered by {}", key, e );
+                }
             }
         } );
     }

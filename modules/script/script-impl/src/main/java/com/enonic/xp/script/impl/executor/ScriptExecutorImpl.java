@@ -294,6 +294,16 @@ public final class ScriptExecutorImpl
     @Override
     public void runDisposers()
     {
-        this.disposers.values().forEach( Runnable::run );
+        this.disposers.forEach( ( key, disposer ) -> {
+            try
+            {
+                disposer.run();
+            }
+            catch ( Exception e )
+            {
+                // teardown is best-effort: one bad disposer must not stop the rest
+                LOG.warn( "Error while running disposer registered by {}", key, e );
+            }
+        } );
     }
 }

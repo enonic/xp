@@ -83,6 +83,11 @@ public final class MainExecutor
     public Application addingService( final ServiceReference<Application> reference )
     {
         final Application application = this.bundleContext.getService( reference );
+        if ( application == null )
+        {
+            // unregistered between the tracker event and getService: nothing to track or bootstrap
+            return null;
+        }
         bootstrap( application.getKey() );
         return application;
     }
