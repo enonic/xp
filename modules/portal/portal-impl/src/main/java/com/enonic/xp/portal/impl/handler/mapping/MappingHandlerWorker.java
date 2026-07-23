@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
-
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
