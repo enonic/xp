@@ -119,7 +119,13 @@ public final class JsFunctionHandle
             final List<Object> result = new ArrayList<>();
             for ( int i = 0; i < value.getArraySize(); i++ )
             {
-                result.add( convert( value.getArrayElement( i ) ) );
+                final Object converted = convert( value.getArrayElement( i ) );
+                // null entries are dropped, matching GraalObjectConverter: the same JS value must
+                // convert identically whether it crosses via fromJs or a handle's return value
+                if ( converted != null )
+                {
+                    result.add( converted );
+                }
             }
             return result;
         }
@@ -128,7 +134,12 @@ public final class JsFunctionHandle
             final Map<String, Object> result = new LinkedHashMap<>();
             for ( final String key : value.getMemberKeys() )
             {
-                result.put( key, convert( value.getMember( key ) ) );
+                final Object converted = convert( value.getMember( key ) );
+                // null entries are dropped, matching GraalObjectConverter (see above)
+                if ( converted != null )
+                {
+                    result.put( key, converted );
+                }
             }
             return result;
         }
