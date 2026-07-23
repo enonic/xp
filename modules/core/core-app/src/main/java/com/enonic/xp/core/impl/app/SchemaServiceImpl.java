@@ -15,6 +15,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
+import com.enonic.xp.app.UpdateNamespaceParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -108,6 +109,12 @@ public class SchemaServiceImpl
     public Namespace createNamespace( final CreateNamespaceParams params )
     {
         return this.namespaceAppService.create( params );
+    }
+
+    @Override
+    public Namespace updateNamespace( final UpdateNamespaceParams params )
+    {
+        return this.namespaceAppService.update( params );
     }
 
     @Override

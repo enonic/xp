@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.Resource;
 
 import static com.enonic.xp.lib.schema.CreateDynamicPhrasesHandlerTest.mockPhrasesResource;
 import static org.mockito.Mockito.when;
@@ -17,9 +18,10 @@ class ListDynamicPhrasesHandlerTest
     {
         final ApplicationKey key = ApplicationKey.from( "myapp" );
 
-        when( schemaService.listPhrases( key ) ).thenReturn(
-            List.of( mockPhrasesResource( key, "phrases.properties", "action.save=Save" ),
-                     mockPhrasesResource( key, "phrases_no.properties", "action.save=Lagre" ) ) );
+        final Resource phrases = mockPhrasesResource( key, "phrases.properties", "action.save=Save" );
+        final Resource phrasesNo = mockPhrasesResource( key, "phrases_no.properties", "action.save=Lagre" );
+
+        when( schemaService.listPhrases( key ) ).thenReturn( List.of( phrases, phrasesNo ) );
 
         runScript( "/lib/xp/examples/schema/listPhrases.js" );
     }

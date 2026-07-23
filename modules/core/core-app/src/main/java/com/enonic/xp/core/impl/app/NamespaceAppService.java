@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
+import com.enonic.xp.app.NamespaceNotFoundException;
+import com.enonic.xp.app.UpdateNamespaceParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
@@ -22,6 +24,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -73,6 +76,35 @@ public class NamespaceAppService
         NamespaceAppContext.createContext().runWith( () -> initNamespaceNode( params ) );
 
         return Namespace.create().key( params.getKey() ).description( params.getDescription() ).build();
+    }
+
+    public Namespace update( final UpdateNamespaceParams params )
+    {
+        requireAdminRole();
+
+        return NamespaceAppContext.createContext().callWith( () -> {
+            final NodePath appPath =
+                new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( params.getKey().toString() ) );
+
+            if ( !nodeService.nodeExists( appPath ) )
+            {
+                throw new NamespaceNotFoundException( params.getKey() );
+            }
+
+            final PropertyTree data = new PropertyTree();
+            if ( params.getDescription() != null )
+            {
+                data.setString( "description", params.getDescription() );
+            }
+
+            final Node updatedNode = nodeService.update( UpdateNodeParams.create()
+                                                             .path( appPath )
+                                                             .editor( toBeEdited -> toBeEdited.data = data )
+                                                             .refresh( RefreshMode.ALL )
+                                                             .build() );
+
+            return Namespace.create().key( params.getKey() ).description( updatedNode.data().getString( "description" ) ).build();
+        } );
     }
 
     public boolean delete( final ApplicationKey key )

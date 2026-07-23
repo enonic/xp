@@ -10,6 +10,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
+import com.enonic.xp.app.NamespaceNotFoundException;
+import com.enonic.xp.app.UpdateNamespaceParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
@@ -24,6 +26,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.resource.ResourceService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,6 +82,46 @@ class SchemaServiceImplTest
 
         assertThrows( ForbiddenAccessException.class,
                       () -> this.service.createNamespace( CreateNamespaceParams.create().key( appKey ).build() ) );
+    }
+
+    @Test
+    void update_namespace()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( appKey.toString() ) );
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "description", "updated description" );
+
+        when( nodeService.nodeExists( appPath ) ).thenReturn( true );
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn(
+            Node.create().id( NodeId.from( "app-node" ) ).name( appKey.toString() ).parentPath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
+                .data( data ).build() );
+
+        final Namespace result = NamespaceAppContext.createAdminContext()
+            .callWith( () -> this.service.updateNamespace(
+                UpdateNamespaceParams.create().key( appKey ).description( "updated description" ).build() ) );
+
+        assertEquals( appKey, result.getKey() );
+        assertEquals( "updated description", result.getDescription() );
+    }
+
+    @Test
+    void update_namespace_not_found()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+
+        assertThrows( NamespaceNotFoundException.class, () -> NamespaceAppContext.createAdminContext()
+            .callWith( () -> this.service.updateNamespace( UpdateNamespaceParams.create().key( appKey ).build() ) ) );
+    }
+
+    @Test
+    void update_namespace_without_admin()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "app1" );
+
+        assertThrows( ForbiddenAccessException.class,
+                      () -> this.service.updateNamespace( UpdateNamespaceParams.create().key( appKey ).build() ) );
     }
 
     @Test

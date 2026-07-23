@@ -6,6 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
+import com.enonic.xp.app.UpdateNamespaceParams;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.schema.BaseSchema;
@@ -17,6 +18,8 @@ public interface SchemaService
     ApplicationKeys listApplicationKeys();
 
     Namespace createNamespace( CreateNamespaceParams params );
+
+    Namespace updateNamespace( UpdateNamespaceParams params );
 
     boolean deleteNamespace( ApplicationKey key );
 

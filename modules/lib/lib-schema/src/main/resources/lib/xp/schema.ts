@@ -1066,6 +1066,39 @@ export function createNamespace(params: CreateNamespaceParams): Namespace {
     return __.toNativeObject(bean.execute());
 }
 
+export interface UpdateNamespaceParams {
+    key: string;
+    description?: string;
+}
+
+interface UpdateNamespaceHandler {
+    setKey(value: string): void;
+
+    setDescription(value: string): void;
+
+    execute(): Namespace;
+}
+
+/**
+ * Updates a namespace. The namespace must exist.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Namespace (application) key.
+ * @param {string} [params.description] New namespace description. Omit to clear the description.
+ *
+ * @returns {Namespace} updated namespace.
+ */
+export function updateNamespace(params: UpdateNamespaceParams): Namespace {
+    const key = checkRequired(params, 'key');
+
+    const bean: UpdateNamespaceHandler = __.newBean<UpdateNamespaceHandler>('com.enonic.xp.lib.schema.UpdateNamespaceHandler');
+    bean.setKey(key);
+    if (params.description != null) {
+        bean.setDescription(params.description);
+    }
+    return __.toNativeObject(bean.execute());
+}
+
 export interface DeleteNamespaceParams {
     key: string;
 }

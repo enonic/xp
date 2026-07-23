@@ -37,6 +37,8 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
+import com.enonic.xp.app.NamespaceNotFoundException;
+import com.enonic.xp.app.UpdateNamespaceParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -407,6 +409,45 @@ class SchemaServiceImplTest
         final Namespace result = createAdminContext().callWith( () -> schemaService.getNamespace( ApplicationKey.from( "nonexistent" ) ) );
 
         assertNull( result );
+    }
+
+    @Test
+    void update_namespace()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        final Namespace result = createAdminContext().callWith( () -> schemaService.updateNamespace(
+            UpdateNamespaceParams.create().key( applicationKey ).description( "updated description" ).build() ) );
+
+        assertEquals( applicationKey, result.getKey() );
+        assertEquals( "updated description", result.getDescription() );
+
+        final Namespace fetched = createAdminContext().callWith( () -> schemaService.getNamespace( applicationKey ) );
+        assertEquals( "updated description", fetched.getDescription() );
+
+        // omitted description clears it
+        final Namespace cleared = createAdminContext().callWith( () -> schemaService.updateNamespace(
+            UpdateNamespaceParams.create().key( applicationKey ).build() ) );
+        assertNull( cleared.getDescription() );
+
+        // schemas survive the update
+        assertTrue( createAdminContext().callWith( () -> resourceService.getResource(
+            ResourceKey.from( applicationKey, "cms/cms.yaml" ) ) ).exists() );
+    }
+
+    @Test
+    void update_namespace_not_found()
+    {
+        assertThrows( NamespaceNotFoundException.class, () -> createAdminContext().callWith( () -> schemaService.updateNamespace(
+            UpdateNamespaceParams.create().key( ApplicationKey.from( "nonexistent" ) ).description( "x" ).build() ) ) );
+    }
+
+    @Test
+    void update_namespace_without_admin()
+    {
+        assertThrows( ForbiddenAccessException.class, () -> NamespaceAppContext.createContext()
+            .callWith( () -> schemaService.updateNamespace(
+                UpdateNamespaceParams.create().key( ApplicationKey.from( "myapp" ) ).description( "x" ).build() ) ) );
     }
 
     @Test
