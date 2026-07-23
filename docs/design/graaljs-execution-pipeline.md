@@ -182,11 +182,12 @@ The user-facing contract of `task.executeFunction` is the problem: it promises "
 closure on another thread", which JS cannot honor — a GraalJS function is bound to the exact
 context that created it.
 
-*Decision:* **`task.executeFunction` is not supported on GraalJS and fails immediately at
+*Decision:* **`task.executeFunction` is deprecated, and on GraalJS it fails immediately at
 submit** with an error pointing to named tasks (`task.submitTask`). The check is a one-liner in
 the task lib — `typeof Graal !== 'undefined'` (GraalJS installs the `Graal` builtin global;
 Nashorn has none) — so no engine-capability API exists at all. Engines without pooling
-(Nashorn) keep the historical attached-closure behavior unchanged. Apps bundling an older
+(Nashorn) keep the historical attached-closure behavior unchanged, but the API only works
+there, so it is scheduled for removal together with the Nashorn engine. Apps bundling an older
 compiled task lib skip the JS check and land on the routed-handle fallback of §4.2, so nothing
 crashes: their closures run on the owning context with `setTimeout`-like semantics
 (*asynchronous, but not parallel with that context*); recompiling surfaces the error.
@@ -445,8 +446,9 @@ what every Node.js cluster / worker deployment already imposes on developers.
    handlers are Java-based today — extend when JS-backed handlers arrive). Addresses the
    ordering/state side of [#8644](https://github.com/enonic/xp/issues/8644) at pool sizes
    above 1.
-4. **`executeFunction` fails fast on GraalJS** *(started on this branch)* — `task.
-   executeFunction` throws immediately at submit on GraalJS (`typeof Graal !== 'undefined'` in
+4. **`executeFunction` deprecated, fails fast on GraalJS** *(started on this branch)* — `task.
+   executeFunction` is deprecated (removal scheduled with the Nashorn engine) and throws
+   immediately at submit on GraalJS (`typeof Graal !== 'undefined'` in
    the task lib — no engine-capability API), pointing to named tasks; Nashorn keeps the
    historical attached-closure behavior unchanged, and apps bundling an older compiled task lib
    fall back to the §4.2 routed handle (setTimeout-like semantics, nothing crashes). An earlier

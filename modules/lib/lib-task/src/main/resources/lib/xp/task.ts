@@ -30,8 +30,14 @@ function checkRequired<T extends object, K extends keyof T>(
 // GraalJS installs the `Graal` builtin global; Nashorn has no such global
 declare const Graal: unknown;
 
+/**
+ * @deprecated Only {@link executeFunction} uses this, which is deprecated.
+ */
 export type CallbackFn = () => void;
 
+/**
+ * @deprecated Only {@link executeFunction} uses this, which is deprecated.
+ */
 export interface ExecuteFunctionParams {
     description: string;
     func: CallbackFn;
@@ -68,9 +74,10 @@ interface ExecuteFunctionHandler {
  *
  * This function returns immediately. The callback function will be executed asynchronously.
  *
- * Not supported on the GraalJS engine, where a function cannot leave the script context that
- * created it — calling this there fails immediately. Use a named task
- * ({@link module:task.submitTask}) instead.
+ * @deprecated Not supported on the GraalJS engine, where a function cannot leave the script
+ * context that created it — calling this there fails immediately. Use a named task
+ * ({@link module:task.submitTask}) instead. Scheduled for removal together with the Nashorn
+ * engine.
  *
  * @example-ref examples/task/executeFunction.js
  *
