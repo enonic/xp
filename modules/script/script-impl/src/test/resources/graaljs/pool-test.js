@@ -11,6 +11,11 @@ exports.inc = function () {
     return counter;
 };
 
+exports.incRecord = function () {
+    counter++;
+    require('/recorder.js').add('' + counter);
+};
+
 exports.mkCallback = function () {
     return function () {
         return require('/pool-lib.js').value;

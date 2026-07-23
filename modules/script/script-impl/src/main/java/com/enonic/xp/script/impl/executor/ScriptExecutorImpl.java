@@ -19,6 +19,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
@@ -101,10 +102,19 @@ public final class ScriptExecutorImpl
     }
 
     @Override
-    public ScriptExports backgroundExports( final ResourceKey key )
+    public BackgroundScript backgroundExports( final ResourceKey key )
     {
-        // no context pool: background execution shares the single context, like everything else
-        return executeMain( key );
+        // no context pool: background execution shares the single context, like everything else.
+        // A missing method fails loudly — ScriptExports.executeMethod answers it with null, which
+        // a background run has no caller to observe
+        return ( name, args ) -> {
+            final ScriptExports exports = executeMain( key );
+            if ( !exports.hasMethod( name ) )
+            {
+                throw new IllegalArgumentException( "Method [" + name + "] not found in script [" + key + "]" );
+            }
+            exports.executeMethod( name, args );
+        };
     }
 
     private ScriptExports doExecuteMain( final ResourceKey key )

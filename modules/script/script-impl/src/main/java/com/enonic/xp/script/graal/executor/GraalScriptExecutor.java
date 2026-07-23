@@ -34,6 +34,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
@@ -217,7 +218,7 @@ public class GraalScriptExecutor
     }
 
     @Override
-    public ScriptExports backgroundExports( final ResourceKey key )
+    public BackgroundScript backgroundExports( final ResourceKey key )
     {
         // resolving a view during app stop must fail like any other execution — without this
         // guard the lazy view resolves fine and only its first invocation fails, after a doomed
@@ -228,7 +229,7 @@ public class GraalScriptExecutor
         // executes lazily. Named tasks resolve their scripts this way — a pooled checkout here
         // would make every task run compete with live requests for request-serving slots.
         initializeBackground( key );
-        return GraalScriptExports.isolated( this, key );
+        return GraalScriptExports.isolated( this, key )::executeMethodRequired;
     }
 
     /**

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskId;
@@ -17,13 +17,13 @@ final class NamedTaskScript
 
     public static final String SCRIPT_METHOD_NAME = "run";
 
-    private final ScriptExports scriptExports;
+    private final BackgroundScript scriptExports;
 
     private final TaskDescriptor taskDescriptor;
 
     private final PropertyTree config;
 
-    NamedTaskScript( final ScriptExports scriptExports, TaskDescriptor taskDescriptor, final PropertyTree config )
+    NamedTaskScript( final BackgroundScript scriptExports, TaskDescriptor taskDescriptor, final PropertyTree config )
     {
         this.scriptExports = scriptExports;
         this.taskDescriptor = taskDescriptor;

@@ -214,12 +214,19 @@ Two alternatives were implemented or considered and rejected:
 "Background" remains a **service-level concept only** (`executeBackground`), not a method on
 `ScriptExports`: exports views execute, the service resolves them — one concept, one owner. It
 serves **named tasks** (`task.submitTask`), the canonical parallel primitive: the task worker
-`require`s the named module itself in its own fresh private context. Invocation results
-through a background view are reliable as **scalars only**: scalar results are unboxed eagerly
-at wrap time (`GraalScriptValueFactory`) and survive the private context's close, while
-object/array/function results hold live `Value`s that die with it. The contract is documented
-rather than compensated with an eager deep conversion — every platform caller discards the
-result, so a conversion tax on the common path would buy nothing.
+`require`s the named module itself in its own fresh private context. The view is its own
+minimal type, **`BackgroundScript`**, with exactly one operation — `void executeMethod(name,
+args...)`. Results could never outlive the invocation's private context, so the contract
+returns nothing *by type* instead of documenting which results happen to survive (an earlier
+draft returned `ScriptExports` and needed a scalars-only rule plus five methods that ranged
+from no-op to foot-gun on a context-less view). A missing script fails at resolve on every
+engine — existence is checkable without a context, where the lazy pooled view would otherwise
+surface it only on first invocation; a missing *method* fails loudly at invocation, because a
+background run has no caller to observe the silent `null` that `ScriptExports.executeMethod`
+answers a missing method with. A script without the expected export is therefore detected at
+run time and by the asynchronous background initialization in the logs, no longer by an eager
+submit-time `hasMethod` probe — which cost a throwaway private context on every named-task
+submit.
 
 ### 4.4 Websockets and SSE — connections keep the exact context of their request
 

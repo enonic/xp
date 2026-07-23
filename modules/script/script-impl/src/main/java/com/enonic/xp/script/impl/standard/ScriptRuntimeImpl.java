@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceNotFoundException;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.AppNotRegisteredException;
@@ -107,9 +109,15 @@ public class ScriptRuntimeImpl
     }
 
     @Override
-    public ScriptExports executeBackground( final ResourceKey script )
+    public BackgroundScript executeBackground( final ResourceKey script )
     {
         final AppExecutor app = executorFor( script.getApplicationKey() );
+        // a missing script fails at resolve on every engine: existence is checkable without a
+        // context, while the pooled view is lazy and would surface it only on invocation
+        if ( !app.executor.getResourceService().getResource( script ).exists() )
+        {
+            throw new ResourceNotFoundException( script );
+        }
         return app.executor.backgroundExports( script );
     }
 

@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 
@@ -16,20 +17,15 @@ public interface ScriptRuntime
     ScriptExports execute( ResourceKey script );
 
     /**
-     * Resolves a script's exports for background execution. On pooled script engines the returned
-     * view is bound to no context: each method invocation runs in a fresh private context, where
-     * the script's top level executes lazily, and no request-serving context is used to obtain
-     * the view. The script is additionally initialized asynchronously (once per executor
-     * incarnation), so a missing or broken script appears in the logs even if the view is never
-     * invoked — callers still see the error on their first invocation. On engines without
-     * pooling this is equivalent to {@link #execute}.
-     * <p>
-     * Invocation results are reliable as <b>scalar values only</b>: objects, arrays and functions
-     * returned by a background invocation are bound to the invocation's private context, which is
-     * gone when the invocation returns. A background function should return a scalar or nothing,
-     * and communicate richer data through platform APIs.
+     * Resolves a script for background execution. On pooled script engines the returned view is
+     * bound to no context: each method invocation runs in a fresh private context, where the
+     * script's top level executes lazily, and no request-serving context is used to obtain the
+     * view. A missing script fails here with {@code ResourceNotFoundException}, uniformly across
+     * engines; the script is additionally initialized asynchronously (once per executor
+     * incarnation), so a broken script appears in the logs even if the view is never invoked.
+     * On engines without pooling invocations execute on the shared context.
      */
-    ScriptExports executeBackground( ResourceKey script );
+    BackgroundScript executeBackground( ResourceKey script );
 
     /**
      * @deprecated Only {@code main.js} bootstrap used this, and it now runs synchronously through

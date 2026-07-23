@@ -13,6 +13,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.runtime.BootstrapParams;
@@ -70,7 +71,7 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
-    public ScriptExports executeBackground( final ResourceKey script )
+    public BackgroundScript executeBackground( final ResourceKey script )
     {
         return this.scriptRuntime.executeBackground( script );
     }

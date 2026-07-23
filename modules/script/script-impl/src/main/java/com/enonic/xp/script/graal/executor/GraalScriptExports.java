@@ -136,6 +136,31 @@ final class GraalScriptExports
         return withExports( ( slot, exports ) -> exports );
     }
 
+    /**
+     * Background invocation: the method must exist. {@link #executeMethod} answers a missing
+     * method with {@code null}, which an interactive caller can observe — a background run has
+     * no caller and would otherwise silently do nothing. One private context per call, method
+     * lookup and execution inside it.
+     */
+    void executeMethodRequired( final String name, final Object... args )
+    {
+        withExports( ( slot, exports ) -> {
+            final ScriptValue method = getMethod( slot, exports, name );
+            if ( method == null )
+            {
+                throw new IllegalArgumentException( "Method [" + name + "] not found in script [" + script + "]" );
+            }
+            try
+            {
+                return method.call( args );
+            }
+            catch ( StackOverflowError e )
+            {
+                throw new ResourceError( script, "Method execute failed: [" + script + "][" + name + "]", e );
+            }
+        } );
+    }
+
     private <T> T withExports( final BiFunction<GraalScriptExecutor.ContextSlot, Value, T> work )
     {
         return isolated ? executor.withIsolatedExports( script, work ) : executor.withExports( script, pinnedSlot, work );

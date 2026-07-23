@@ -2,7 +2,10 @@ package com.enonic.xp.script.graal;
 
 import java.io.Closeable;
 import java.net.URL;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +27,7 @@ import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.graal.executor.GraalContextBudget;
@@ -275,15 +279,30 @@ class GraalContextPoolTest
     @Timeout(60)
     void backgroundExportsSkipThePool()
     {
+        // background invocations return nothing by design: observe through a recorder mock
+        final Queue<String> recorded = new ConcurrentLinkedQueue<>();
+        scriptExecutor.registerMock( "/recorder.js", recorded );
+
         // resolving the view touches no pooled slot, and every invocation gets a fresh, private
         // context — the path named tasks use, so they never compete with request traffic
-        final ScriptExports background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
-        assertEquals( 1, intValue( background.executeMethod( "inc" ) ) );
-        assertEquals( 1, intValue( background.executeMethod( "inc" ) ) );
+        final BackgroundScript background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
+        background.executeMethod( "incRecord" );
+        background.executeMethod( "incRecord" );
+        // a fresh context per invocation: the module counter starts over every time
+        assertEquals( List.of( "1", "1" ), List.copyOf( recorded ) );
 
         // the pooled contexts are untouched by background runs
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
         assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void backgroundMethodMustExist()
+    {
+        // a background run has no caller to observe a silent no-op: a missing method fails loudly
+        final BackgroundScript background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
+        assertThrows( IllegalArgumentException.class, () -> background.executeMethod( "noSuchMethod" ) );
     }
 
     @Test
@@ -328,12 +347,6 @@ class GraalContextPoolTest
         // views without a pinned slot have nothing to retain — both calls are safe no-ops
         exports.retain();
         exports.release();
-
-        // a background view has no slot to capture: bound scopes receive the view itself
-        final ScriptExports background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
-        assertSame( background, background.executeBound( view -> view ) );
-        background.retain();
-        background.release();
     }
 
     @Test
@@ -397,11 +410,15 @@ class GraalContextPoolTest
     {
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
 
+        final Queue<String> recorded = new ConcurrentLinkedQueue<>();
+        scriptExecutor.registerMock( "/recorder.js", recorded );
+
         try (ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor())
         {
             assertEquals( 1, virtualThreads.submit( () -> intValue( exports.executeMethod( "inc" ) ) ).get() );
-            assertEquals( 1, virtualThreads.submit( () -> intValue(
-                scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "inc" ) ) ).get() );
+            virtualThreads.submit(
+                () -> scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "incRecord" ) ).get();
+            assertEquals( List.of( "1" ), List.copyOf( recorded ) );
         }
     }
 

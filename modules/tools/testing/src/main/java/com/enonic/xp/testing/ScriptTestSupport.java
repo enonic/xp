@@ -38,6 +38,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.ScriptValue;
@@ -234,11 +235,11 @@ public abstract class ScriptTestSupport
     }
 
     /**
-     * Exports view for background execution, engine-faithful: isolated per-invocation contexts on
-     * pooled engines, the shared context otherwise — what {@code PortalScriptService.executeBackground}
+     * View for background execution, engine-faithful: isolated per-invocation contexts on pooled
+     * engines, the shared context otherwise — what {@code PortalScriptService.executeBackground}
      * returns in production.
      */
-    public final ScriptExports runScriptBackground( final ResourceKey key )
+    public final BackgroundScript runScriptBackground( final ResourceKey key )
     {
         return this.executor.backgroundExports( key );
     }

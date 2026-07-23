@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.AppNotRegisteredException;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
@@ -173,6 +174,7 @@ class ScriptRuntimeImplTest
     void executeBackground_waitsForBootstrapAndSkipsPooledExecution()
     {
         mainScriptExists( true );
+        controllerScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
         runtime.bootstrap( params() );
@@ -182,6 +184,27 @@ class ScriptRuntimeImplTest
         inOrder.verify( scriptExecutor ).bootstrap( MAIN );
         inOrder.verify( scriptExecutor ).backgroundExports( CONTROLLER );
         verify( scriptExecutor, never() ).executeMain( CONTROLLER );
+    }
+
+    @Test
+    void executeBackground_missingScriptFailsAtResolve()
+    {
+        mainScriptExists( true );
+        controllerScriptExists( false );
+        final ScriptRuntimeImpl runtime = runtime();
+
+        runtime.bootstrap( params() );
+        // uniform across engines: the pooled view is lazy, so without this check a missing
+        // script would surface only on the first invocation
+        Assertions.assertThrows( ResourceNotFoundException.class, () -> runtime.executeBackground( CONTROLLER ) );
+        verify( scriptExecutor, never() ).backgroundExports( CONTROLLER );
+    }
+
+    private void controllerScriptExists( final boolean exists )
+    {
+        final Resource resource = mock( Resource.class );
+        lenient().when( resource.exists() ).thenReturn( exists );
+        lenient().when( resourceService.getResource( CONTROLLER ) ).thenReturn( resource );
     }
 
     @Test

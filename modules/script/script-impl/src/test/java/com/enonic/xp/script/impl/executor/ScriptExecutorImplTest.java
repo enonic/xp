@@ -10,7 +10,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -18,7 +18,7 @@ import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScriptExecutorImplTest
 {
@@ -35,16 +35,14 @@ class ScriptExecutorImplTest
     }
 
     @Test
-    void backgroundExportsShareTheSingleContext()
+    void backgroundMethodMustExist()
     {
         executor.registerMock( "/test/background.js", "the-exports" );
 
-        final ResourceKey key = ResourceKey.from( "myapplication:/test/background.js" );
-        final ScriptExports background = executor.backgroundExports( key );
-        final ScriptExports main = executor.executeMain( key );
-
-        assertSame( main.getRawValue(), background.getRawValue() );
-        assertEquals( key, background.getScript() );
+        // background invocations resolve on the single shared context; a missing method fails
+        // loudly - a background run has no caller to observe a silent no-op
+        final BackgroundScript background = executor.backgroundExports( ResourceKey.from( "myapplication:/test/background.js" ) );
+        assertThrows( IllegalArgumentException.class, () -> background.executeMethod( "run" ) );
     }
 
     @Test

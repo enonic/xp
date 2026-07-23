@@ -2,6 +2,7 @@ package com.enonic.xp.script.impl.executor;
 
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
@@ -20,12 +21,13 @@ public interface ScriptExecutor
     ScriptExports bootstrap( ResourceKey key );
 
     /**
-     * Exports view for background execution. On pooled engines the view is bound to no context —
-     * each invocation runs in a fresh private context where the script's top level executes lazily,
-     * and no request-serving slot is touched to obtain it. Engines without pooling return the same
-     * view as {@link #executeMain}.
+     * View for background execution. On pooled engines the view is bound to no context — each
+     * invocation runs in a fresh private context where the script's top level executes lazily,
+     * and no request-serving slot is touched to obtain it. Engines without pooling execute on
+     * the shared context. Unlike {@code ScriptExports.executeMethod}, invoking a missing method
+     * fails loudly — a background run has no caller to observe a silent no-op.
      */
-    ScriptExports backgroundExports( ResourceKey key );
+    BackgroundScript backgroundExports( ResourceKey key );
 
     Object executeRequire( ResourceKey key );
 
