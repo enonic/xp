@@ -6,6 +6,9 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -52,6 +55,28 @@ class WebSocketEndpointImplTest
         endpoint.onEvent( WebSocketEvent.create().type( WebSocketEventType.CLOSE ).build() );
 
         verify( script, times( 1 ) ).retain();
+        verify( script, times( 1 ) ).release();
+    }
+
+    @Test
+    void failedOpen_releasesThePin()
+    {
+        final ControllerScript script = mock( ControllerScript.class );
+        doThrow( new RuntimeException( "open handler failed" ) ).when( script ).onSocketEvent( any() );
+        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script );
+
+        // release without waiting for the container's ERROR/CLOSE — pool capacity must not
+        // depend on container semantics
+        assertThrows( RuntimeException.class,
+                      () -> endpoint.onEvent( WebSocketEvent.create().type( WebSocketEventType.OPEN ).build() ) );
+        verify( script ).retain();
+        verify( script, times( 1 ) ).release();
+
+        // the terminal events the container then fires must not double-release
+        assertThrows( RuntimeException.class,
+                      () -> endpoint.onEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).build() ) );
+        assertThrows( RuntimeException.class,
+                      () -> endpoint.onEvent( WebSocketEvent.create().type( WebSocketEventType.CLOSE ).build() ) );
         verify( script, times( 1 ) ).release();
     }
 }

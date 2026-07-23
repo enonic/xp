@@ -36,6 +36,23 @@ public final class WebSocketEndpointImpl
             // the connection now references the handshake context: keep it out of the request
             // pool until the connection ends
             this.script.retain();
+            boolean opened = false;
+            try
+            {
+                this.script.onSocketEvent( event );
+                opened = true;
+            }
+            finally
+            {
+                // the container fails the session on an open-handler error, so ERROR/CLOSE would
+                // release anyway — but do not depend on container semantics for pool capacity:
+                // release here, and the CAS makes the later terminal event a no-op
+                if ( !opened && this.released.compareAndSet( false, true ) )
+                {
+                    this.script.release();
+                }
+            }
+            return;
         }
         try
         {
