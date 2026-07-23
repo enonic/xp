@@ -1,7 +1,5 @@
 package com.enonic.xp.script.graal;
 
-import java.util.concurrent.Executors;
-
 import com.enonic.xp.app.Application;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptFixturesFacade;
@@ -26,8 +24,8 @@ public class GraalJsScriptFixturesFacade
     public ScriptExecutor createExecutor( final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
                                           ResourceService resourceService, Application application )
     {
-        return new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), application.getClassLoader(),
-                                        scriptSettings, serviceRegistry, resourceService,
+        return new GraalScriptExecutor( new GraalJSContextFactory(), application.getClassLoader(), scriptSettings, serviceRegistry,
+                                        resourceService,
                                         new ApplicationInfoBuilder( application.getKey(), application.getConfig(),
                                                                     application.getVersion() ), 1 );
     }

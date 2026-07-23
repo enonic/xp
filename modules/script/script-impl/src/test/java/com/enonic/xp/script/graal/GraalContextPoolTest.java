@@ -76,7 +76,7 @@ class GraalContextPoolTest
 
     private ScriptExecutor newExecutor( final int capacity, final GraalContextBudget budget )
     {
-        return new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), getClass().getClassLoader(),
+        return new GraalScriptExecutor( new GraalJSContextFactory(), getClass().getClassLoader(),
                                         ScriptSettings.create().build(), new ServiceRegistryImpl( bundleContext ), resourceService,
                                         application, capacity, budget );
     }
@@ -261,8 +261,7 @@ class GraalContextPoolTest
     void exportsResolveAcrossPool()
         throws Exception
     {
-        final ScriptExports exports =
-            scriptExecutor.executeMainAsync( ResourceKey.from( "graaljs:pool-test.js" ) ).get( 30, TimeUnit.SECONDS );
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
 
         assertTrue( exports.hasMethod( "inc" ) );
         assertFalse( exports.hasMethod( "unknown" ) );

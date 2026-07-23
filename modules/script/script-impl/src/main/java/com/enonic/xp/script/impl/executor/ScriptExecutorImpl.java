@@ -1,9 +1,7 @@
 package com.enonic.xp.script.impl.executor;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
 import javax.script.Bindings;
@@ -45,8 +43,6 @@ public final class ScriptExecutorImpl
 
     private static final String POST_SCRIPT = "\n});";
 
-    private final Executor asyncExecutor;
-
     private final ScriptEngine engine;
 
     private final ScriptSettings scriptSettings;
@@ -68,11 +64,10 @@ public final class ScriptExecutorImpl
     private final JavascriptHelper<Bindings> javascriptHelper;
 
     @SuppressWarnings("deprecation") // globalVariables kept for the xp-testing harness only
-    public ScriptExecutorImpl( final Executor asyncExecutor, final ClassLoader classLoader, final ScriptSettings scriptSettings,
+    public ScriptExecutorImpl( final ClassLoader classLoader, final ScriptSettings scriptSettings,
                                final ServiceRegistry serviceRegistry, final ResourceService resourceService,
                                final ApplicationInfoBuilder appInfo )
     {
-        this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
         this.classLoader = classLoader;
         this.serviceRegistry = serviceRegistry;
@@ -116,16 +111,6 @@ public final class ScriptExecutorImpl
     public boolean isPooled()
     {
         return false;
-    }
-
-    @Override
-    public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
-    {
-        if ( RunMode.isDev() )
-        {
-            exportsCache.expireCacheIfNeeded();
-        }
-        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
     }
 
     private ScriptExports doExecuteMain( final ResourceKey key )

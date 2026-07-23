@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -53,9 +54,13 @@ public class ScriptRuntimeImpl
 
     private final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory;
 
-    public ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory )
+    private final Function<ApplicationKey, Executor> asyncExecutors;
+
+    public ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory,
+                              final Function<ApplicationKey, Executor> asyncExecutors )
     {
         this.scriptExecutorFactory = scriptExecutorFactory;
+        this.asyncExecutors = asyncExecutors;
     }
 
     @Override
@@ -102,7 +107,10 @@ public class ScriptRuntimeImpl
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
         final AppExecutor app = executorFor( script.getApplicationKey() );
-        return app.executor.executeMainAsync( script );
+        // the deprecated contract (top level runs on the app's async executor) is preserved here,
+        // as a wrapper - the internal executor SPI carries no async variant
+        return CompletableFuture.supplyAsync( () -> app.executor.executeMain( script ),
+                                              asyncExecutors.apply( script.getApplicationKey() ) );
     }
 
     @Override

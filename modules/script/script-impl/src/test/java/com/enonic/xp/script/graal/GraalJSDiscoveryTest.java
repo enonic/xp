@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
@@ -127,7 +126,7 @@ class GraalJSDiscoveryTest
         final ScriptSettings scriptSettings = ScriptSettings.create().globalVariable( "xxx", "1243" ).build();
 
         ScriptExecutor scriptExecutor =
-            new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), getClass().getClassLoader(),
+            new GraalScriptExecutor( new GraalJSContextFactory(), getClass().getClassLoader(),
                                      scriptSettings, new ServiceRegistryImpl( bundleContext ), resourceService, application, 1 );
 
         ScriptExports scriptExports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:require-test.js" ) );

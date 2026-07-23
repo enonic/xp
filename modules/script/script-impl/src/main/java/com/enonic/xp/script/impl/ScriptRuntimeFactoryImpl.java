@@ -127,7 +127,7 @@ public class ScriptRuntimeFactoryImpl
 
     ScriptRuntimeImpl doCreate( final ScriptSettings settings )
     {
-        return new ScriptRuntimeImpl( new ScripExecutorFactory( settings )::create );
+        return new ScriptRuntimeImpl( new ScripExecutorFactory( settings )::create, scriptAsyncService::getAsyncExecutor );
     }
 
     @Override
@@ -223,15 +223,14 @@ public class ScriptRuntimeFactoryImpl
                         engine = Engine.newBuilder().build();
                     }
                 }
-                return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ),
-                                                scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
+                return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ), appClassloader, settings,
                                                 new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo,
                                                 contextPoolCapacity(), graalContextBudget );
             }
             else if ( NASHORN_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
-                return new ScriptExecutorImpl( scriptAsyncService.getAsyncExecutor( applicationKey ), appClassloader, settings,
-                                               new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo );
+                return new ScriptExecutorImpl( appClassloader, settings, new ServiceRegistryImpl( appBundleContext ), resourceService,
+                                               appInfo );
             }
             else
             {

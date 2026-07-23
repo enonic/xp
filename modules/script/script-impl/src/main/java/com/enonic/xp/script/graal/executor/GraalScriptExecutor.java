@@ -6,10 +6,8 @@ import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -72,8 +70,6 @@ public class GraalScriptExecutor
      * require replacing the monitor ownership discipline with timed locks.
      */
     private static final long PINNED_SLOT_WAIT_SECONDS = 30;
-
-    private final Executor asyncExecutor;
 
     private final ScriptSettings scriptSettings;
 
@@ -139,21 +135,20 @@ public class GraalScriptExecutor
      */
     private static final ScopedValue<ContextSlot> BOUND_SLOT = ScopedValue.newInstance();
 
-    public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ClassLoader classLoader,
+    public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final ClassLoader classLoader,
                                 final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
                                 final ResourceService resourceService, final ApplicationInfoBuilder application,
                                 final int contextPoolCapacity )
     {
-        this( contextFactory, asyncExecutor, classLoader, scriptSettings, serviceRegistry, resourceService, application,
-              contextPoolCapacity, GraalContextBudget.unlimited() );
+        this( contextFactory, classLoader, scriptSettings, serviceRegistry, resourceService, application, contextPoolCapacity,
+              GraalContextBudget.unlimited() );
     }
 
-    public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final Executor asyncExecutor, final ClassLoader classLoader,
+    public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final ClassLoader classLoader,
                                 final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
                                 final ResourceService resourceService, final ApplicationInfoBuilder application,
                                 final int contextPoolCapacity, final GraalContextBudget budget )
     {
-        this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
         this.resourceService = resourceService;
         this.serviceRegistry = serviceRegistry;
@@ -212,12 +207,6 @@ public class GraalScriptExecutor
         {
             throw new IllegalStateException( "Script executor is closed" );
         }
-    }
-
-    @Override
-    public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
-    {
-        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::executeMain, asyncExecutor );
     }
 
     @Override

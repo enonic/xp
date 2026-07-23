@@ -1,7 +1,5 @@
 package com.enonic.xp.script.impl.executor;
 
-import java.util.concurrent.CompletableFuture;
-
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.ScriptExports;
@@ -20,8 +18,6 @@ public interface ScriptExecutor
      * name — decides that this is the bootstrap.
      */
     ScriptExports bootstrap( ResourceKey key );
-
-    CompletableFuture<ScriptExports> executeMainAsync( ResourceKey key );
 
     /**
      * Exports view for background execution. On pooled engines the view is bound to no context —
