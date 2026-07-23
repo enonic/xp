@@ -176,56 +176,49 @@ final class JsFunctionHandle implements Function<Object[], Object> {
   they become safe by construction, at the cost of executing on the owner worker (serialized
   with that worker's other jobs, not with the whole app).
 
-### 4.3 `executeFunction` — always detached on pooled engines
+### 4.3 `executeFunction` — fails fast on GraalJS
 
 The user-facing contract of `task.executeFunction` is the problem: it promises "run this
-closure on another thread", which JS cannot honor.
+closure on another thread", which JS cannot honor — a GraalJS function is bound to the exact
+context that created it.
 
-*Decision:* **the engine decides — there is no user-facing flag.** On pooled engines tasks are
-always detached: JS developers have long been familiar with worker patterns, and a routed
-closure would only *appear* to work while silently serializing the task with the submitting
-context. Engines without pooling (Nashorn) always keep the historical attached-closure
-behavior. The engine is asked directly at submit via the `PortalScriptService.isPooled`
-capability; apps bundling an older compiled task lib (no source captured) keep the
-routed-handle fallback of §4.2, so nothing crashes. `params` are delivered on every path.
-"Background" is a **service-level concept only** (`executeBackground`), not a method on
-`ScriptExports`: exports views execute, the service resolves them — one concept, one owner.
-Invocation results through a background view are reliable as **scalars only**: scalar results
-are unboxed eagerly at wrap time (`GraalScriptValueFactory`) and survive the private context's
-close, while object/array/function results hold live `Value`s that die with it. The contract is
-documented rather than compensated with an eager deep conversion — every platform caller
-discards the result, so a conversion tax on the common path would buy nothing.
+*Decision:* **`task.executeFunction` is not supported on GraalJS and fails immediately at
+submit** with an error pointing to named tasks (`task.submitTask`). The check is a one-liner in
+the task lib — `typeof Graal !== 'undefined'` (GraalJS installs the `Graal` builtin global;
+Nashorn has none) — so no engine-capability API exists at all. Engines without pooling
+(Nashorn) keep the historical attached-closure behavior unchanged. Apps bundling an older
+compiled task lib skip the JS check and land on the routed-handle fallback of §4.2, so nothing
+crashes: their closures run on the owning context with `setTimeout`-like semantics
+(*asynchronous, but not parallel with that context*); recompiling surfaces the error.
 
-A detached function must be able to talk to the world: `log`, `require`, `resolve` and `__`
-are module-wrapper *parameters* in this codebase, not globals, so a bare re-materialized
-function would see only `params`, `app` and engine built-ins. The runner therefore evaluates
-the source inside a wrapper — `(function (log, require, resolve, __) { return (<source>); })` —
-and applies its own module environment, so detached functions can load libraries and log.
-`require` resolves relative to the runner's location (`/lib/xp/`): absolute paths are the
-documented convention. (An earlier `detached: true` opt-in flag existed briefly and was
-removed: engine-dependent defaults plus a flag made three behavior combinations to document
-and test, for no real use case.)
+Two alternatives were implemented or considered and rejected:
 
-1. **Routed fallback — "run later on owner"**: the handle from §4.2 keeps closure-based calls
-   from old compiled libs correct: the task thread submits the closure invocation to the owning
-   worker. Semantics: *asynchronous, but not parallel with that worker* — exactly how
-   `setTimeout` behaves in a browser.
-2. **Detached mode — eager params, no closures (the pooled-engine default)**:
-   `task.executeFunction({ func, params })` where:
-   - `params` are **eagerly converted to plain data at submit time** (JSON-like deep copy via
-     `GraalObjectConverter`, rejecting functions/host references);
-   - `func` is re-materialized in the target pooled context from its source
-     (`Function.prototype.toString` / `Value.getSourceLocation()`), evaluated with `params` as
-     the only input; **captured outer variables are not available** and referencing them fails
-     fast with a clear error.
-   This is Web-Worker semantics, matching the suggestion "parameters provided eagerly, external
-   closures ignored". It should fail loudly, not silently, when a closure variable is touched:
-   evaluate the function source in a scope whose `with`-like proxy throws
-   `ReferenceError: <name> is not transferable to a detached task` for anything but `params`
-   and globals.
-3. Keep steering documentation toward `task.submitTask` (named module + serializable config)
-   as the canonical parallel primitive — it already has the right shape: the task worker
-   `require`s the module itself in its own context.
+1. **Detached re-materialization (implemented, then removed)** — the function traveled as
+   source plus eagerly converted data params and was re-evaluated in a fresh private context,
+   Web Worker style. It worked, but carried a lot of machinery (a runner module, source
+   transfer with native-source rejection, a `params` addition to the public API, an `isPooled`
+   capability on two public interfaces) to prop up an API whose closure contract still could
+   not be honored — captured variables threw. Named tasks already offer the honest version of
+   the same thing. Failing fast is also **forward-compatible**: error → working is a
+   compatible change, so detached mode can return later if real demand appears, while shipped
+   semantics could never be withdrawn.
+2. **Stealing a context for the task's duration (considered)** — retain the closure's owning
+   context, websocket-style, until the task ends. Rejected: the stolen context can only ever be
+   *the submitting one* (the closure is bound to it), so tasks submitted from `main.js` would
+   hold the dedicated main context and starve every event listener for the task's whole
+   runtime; tasks are long-lived by nature, so each running task would pin a context
+   indefinitely against the global budget; and tasks submitted from the same context would
+   silently serialize — or deadlock, if one waits on another.
+
+"Background" remains a **service-level concept only** (`executeBackground`), not a method on
+`ScriptExports`: exports views execute, the service resolves them — one concept, one owner. It
+serves **named tasks** (`task.submitTask`), the canonical parallel primitive: the task worker
+`require`s the named module itself in its own fresh private context. Invocation results
+through a background view are reliable as **scalars only**: scalar results are unboxed eagerly
+at wrap time (`GraalScriptValueFactory`) and survive the private context's close, while
+object/array/function results hold live `Value`s that die with it. The contract is documented
+rather than compensated with an eager deep conversion — every platform caller discards the
+result, so a conversion tax on the common path would buy nothing.
 
 ### 4.4 Websockets and SSE — connections keep the exact context of their request
 
@@ -312,16 +305,17 @@ One shared pool lets any workload class starve the others; the budgets are parti
   workloads are a loved use case: task concurrency is effectively unbounded and an IO-waiting
   JS task holds its context for the entire wait. Any *bounded* task partition therefore
   regresses the Nashorn-era behavior (100 parked tasks over 8 slots = 8-way concurrency). So
-  detached tasks (and named `submitTask` executions) get a **fresh context per execution** —
-  create, run, close — with the shared engine reusing compiled code, so the per-run cost is
-  module re-initialization only: noise for long IO tasks, documented for hot short ones (which
-  can stay on the routed legacy path). Concurrency then scales with in-flight tasks; memory
-  backpressure is a single `max-task-contexts` semaphore that virtual threads park on cheaply.
-  This also fixes a defect in the initial phase-4 implementation: detached tasks currently
-  borrow request-serving slots for their full duration.
-- **Legacy routed `executeFunction`** cannot move to any task pool — a closure is physically
-  bound to its submitting context; it stays serialized with its origin slot (one more reason
-  the docs steer to detached/`submitTask`).
+  named `submitTask` executions get a **fresh context per execution** — create, run, close —
+  with the shared engine reusing compiled code, so the per-run cost is module
+  re-initialization only: noise for long IO tasks, documented for hot short ones. Concurrency
+  then scales with in-flight tasks; memory backpressure is a single `max-task-contexts`
+  semaphore that virtual threads park on cheaply. This also fixes a defect in the initial
+  phase-4 implementation: task runs used to borrow request-serving slots for their full
+  duration.
+- **Legacy routed `executeFunction`** (old compiled task libs) cannot move to any task pool —
+  a closure is physically bound to its submitting context; it stays serialized with its origin
+  slot (one more reason `executeFunction` fails fast on GraalJS and the docs steer to
+  `submitTask`).
 
 Virtual-thread facts this design relies on: JEP 491 (JDK 24) removed synchronized-monitor
 pinning, so the context-monitor discipline and the fair per-slot locks are both VT-safe on
@@ -402,7 +396,7 @@ what every Node.js cluster / worker deployment already imposes on developers.
 | Limitation today | Root cause | Fix in this proposal |
 |---|---|---|
 | App effectively single-threaded | one `Context` + `synchronized` everywhere | worker pool (§4.1) |
-| `executeFunction` broken | closure invoked on foreign thread | detached eager-param mode on pooled engines, routed handle elsewhere (§4.3) |
+| `executeFunction` broken | closure invoked on foreign thread | fails fast on GraalJS, steering to named tasks; routed handle for old compiled libs (§4.3) |
 | Callbacks (`lib-event`, converter `toFunction`) crash under load | unsynchronized cross-thread `Value.execute` | `JsFunctionHandle` routing (§4.2) |
 | Websocket/SSE ordering & state unclear | global lock + module state | connections keep their request's exact context (§4.4) |
 | Servlet threads blocked on JS lock | sync dispatch | async servlet + promise controllers (§4.5) |
@@ -451,25 +445,20 @@ what every Node.js cluster / worker deployment already imposes on developers.
    handlers are Java-based today — extend when JS-backed handlers arrive). Addresses the
    ordering/state side of [#8644](https://github.com/enonic/xp/issues/8644) at pool sizes
    above 1.
-4. **Detached `executeFunction`** *(started on this branch)* — the engine decides, no
-   user-facing flag: on pooled engines `task.executeFunction({ params, func })` always runs
-   detached — the function travels as source (captured via `Function.prototype.toString` at
-   submit; a bound or native function has no transferable source and is **rejected at submit**,
-   not with a cryptic eval error on the task thread) plus eagerly converted data params
-   (functions rejected at submit), and is re-materialized by an internal runner module
-   (`/lib/xp/detached-task.js`, resolved through `PortalScriptService.executeBackground` — a
-   view bound to no context, so a task run never checks out a request-serving slot; the script
-   is additionally **initialized asynchronously once per executor incarnation**, so a missing or
-   broken background script reaches the logs even if the lazy view is never invoked, and the
-   first parse happens off the critical path) in a fresh
-   context — true parallelism on GraalJS. The runner applies its module environment (`log`,
-   `require`, `resolve`, `__`) to the re-materialized function, so detached functions can load
-   libraries and log; captured outer variables throw `ReferenceError`, matching Web-Worker
-   expectations. Nashorn always keeps the historical attached-closure behavior; the engine is
-   asked via the `isPooled` capability, and the fallback to attached mode is reserved for
-   runtimes without a script service — a capability failure on a real service fails the submit
-   loudly instead of silently flipping the submission's semantics. Still to do: the §5 migration
-   guide for docs.
+4. **`executeFunction` fails fast on GraalJS** *(started on this branch)* — `task.
+   executeFunction` throws immediately at submit on GraalJS (`typeof Graal !== 'undefined'` in
+   the task lib — no engine-capability API), pointing to named tasks; Nashorn keeps the
+   historical attached-closure behavior unchanged, and apps bundling an older compiled task lib
+   fall back to the §4.2 routed handle (setTimeout-like semantics, nothing crashes). An earlier
+   detached re-materialization mode (function travels as source plus eager data params, re-run
+   by a runner module in a fresh private context) was implemented and then removed in favor of
+   failing fast — see §4.3 for the trade-off analysis. **Named tasks** are the parallel
+   primitive: they resolve through `PortalScriptService.executeBackground` — a view bound to no
+   context, each invocation in a fresh private context, so a task run never checks out a
+   request-serving slot; the script is additionally **initialized asynchronously once per
+   executor incarnation**, so a missing or broken task script reaches the logs even if the lazy
+   view is never invoked, and the first parse happens off the critical path. Still to do: the
+   §5 migration guide for docs.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (retention-aware growth), the global cross-app context budget

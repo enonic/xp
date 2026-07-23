@@ -276,7 +276,7 @@ class GraalContextPoolTest
     void backgroundExportsSkipThePool()
     {
         // resolving the view touches no pooled slot, and every invocation gets a fresh, private
-        // context — the path detached tasks use, so they never compete with request traffic
+        // context — the path named tasks use, so they never compete with request traffic
         final ScriptExports background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
         assertEquals( 1, intValue( background.executeMethod( "inc" ) ) );
         assertEquals( 1, intValue( background.executeMethod( "inc" ) ) );

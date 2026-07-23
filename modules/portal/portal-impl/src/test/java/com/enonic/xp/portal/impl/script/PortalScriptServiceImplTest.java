@@ -77,13 +77,6 @@ class PortalScriptServiceImplTest
     }
 
     @Test
-    void isPooled()
-    {
-        portalScriptService.isPooled( ApplicationKey.from( "myapp" ) );
-        verify( scriptRuntime ).isPooled( eq( ApplicationKey.from( "myapp" ) ) );
-    }
-
-    @Test
     void executeAsync()
     {
         portalScriptService.executeAsync( ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" ) );

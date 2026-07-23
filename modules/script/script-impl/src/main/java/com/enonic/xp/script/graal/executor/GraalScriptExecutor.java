@@ -221,7 +221,7 @@ public class GraalScriptExecutor
     {
         // no slot is touched: the view is not bound to any context, and each of its invocations
         // runs in a fresh private context (withIsolatedExports), where the script's top level
-        // executes lazily. Detached tasks resolve their runner this way — a pooled checkout here
+        // executes lazily. Named tasks resolve their scripts this way — a pooled checkout here
         // would make every task run compete with live requests for request-serving slots.
         initializeBackground( key );
         return GraalScriptExports.isolated( this, key );
@@ -249,12 +249,6 @@ public class GraalScriptExecutor
                 }
             } );
         }
-    }
-
-    @Override
-    public boolean isPooled()
-    {
-        return true;
     }
 
     @Override
@@ -544,7 +538,7 @@ public class GraalScriptExecutor
 
     /**
      * Executes against a fresh, private context that lives for this invocation only — the
-     * execution model for detached tasks: task threads are virtual and effectively unbounded,
+     * execution model for background (named-task) runs: task threads are virtual and effectively unbounded,
      * and an IO-waiting task holds its context for the entire wait, so tasks must not compete
      * for request-serving slots. Bounded by the task-context budget; the shared source registry
      * keeps re-initialization parse-free.

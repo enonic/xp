@@ -171,15 +171,6 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void isPooled_delegatesToTheExecutor()
-    {
-        final ScriptRuntimeImpl runtime = runtime();
-        when( scriptExecutor.isPooled() ).thenReturn( true );
-
-        Assertions.assertTrue( runtime.isPooled( APP ) );
-    }
-
-    @Test
     void executeBackground_waitsForBootstrapAndSkipsPooledExecution()
     {
         mainScriptExists( true );

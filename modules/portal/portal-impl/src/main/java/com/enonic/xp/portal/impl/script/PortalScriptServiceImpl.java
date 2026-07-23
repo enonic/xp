@@ -76,12 +76,6 @@ public final class PortalScriptServiceImpl
         return this.scriptRuntime.executeBackground( script );
     }
 
-    @Override
-    public boolean isPooled( final ApplicationKey application )
-    {
-        return this.scriptRuntime.isPooled( application );
-    }
-
     @Deprecated
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )

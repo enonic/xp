@@ -107,12 +107,6 @@ public final class ScriptExecutorImpl
         return executeMain( key );
     }
 
-    @Override
-    public boolean isPooled()
-    {
-        return false;
-    }
-
     private ScriptExports doExecuteMain( final ResourceKey key )
     {
         final Object exports = executeRequire( key );

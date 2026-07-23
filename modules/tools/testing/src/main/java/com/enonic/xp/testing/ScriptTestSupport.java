@@ -243,15 +243,6 @@ public abstract class ScriptTestSupport
         return this.executor.backgroundExports( key );
     }
 
-    /**
-     * Whether the engine under test pools contexts — what {@code PortalScriptService.isPooled}
-     * returns in production.
-     */
-    public final boolean isScriptEnginePooled()
-    {
-        return this.executor.isPooled();
-    }
-
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )
     {
         final ScriptExports exports = runScript( path );

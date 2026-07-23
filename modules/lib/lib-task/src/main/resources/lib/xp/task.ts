@@ -27,41 +27,20 @@ function checkRequired<T extends object, K extends keyof T>(
     return obj[name];
 }
 
-/**
- * Data a task function can receive: any plain data value — object, array or scalar.
- * Functions are rejected at submit; a nullish value is treated as "no params" and the
- * function is called with no arguments.
- */
-export type CallbackParams = Record<string, unknown> | unknown[] | string | number | boolean;
+// GraalJS installs the `Graal` builtin global; Nashorn has no such global
+declare const Graal: unknown;
 
-export type CallbackFn = (params?: CallbackParams) => void;
+export type CallbackFn = () => void;
 
 export interface ExecuteFunctionParams {
     description: string;
     func: CallbackFn;
-
-    /**
-     * Data passed to the task function as its single argument. Converted eagerly at submit
-     * time; must contain data only — functions are rejected.
-     *
-     * On pooled script engines (GraalJS) the task function runs detached from the submitting
-     * scope, Web Worker style: it is re-materialized from source in a fresh script context,
-     * so variables captured from the surrounding scope are NOT available (referencing one
-     * throws) — pass everything it needs via `params`. `log`, `require` and `resolve` are
-     * provided; use absolute paths with `require`. Engines without pooling keep the
-     * historical closure behavior.
-     */
-    params?: CallbackParams;
 }
 
 interface ExecuteFunctionHandler {
     setDescription(value: string | null): void;
 
     setFunc(callbackFn?: CallbackFn | null): void;
-
-    setSource(value: string): void;
-
-    setParams(value: ScriptValue | null): void;
 
     executeFunction(): string;
 }
@@ -89,38 +68,28 @@ interface ExecuteFunctionHandler {
  *
  * This function returns immediately. The callback function will be executed asynchronously.
  *
+ * Not supported on the GraalJS engine, where a function cannot leave the script context that
+ * created it — calling this there fails immediately. Use a named task
+ * ({@link module:task.submitTask}) instead.
+ *
  * @example-ref examples/task/executeFunction.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.description Text describing the task to be executed.
  * @param {function} params.func Callback function to be executed asynchronously.
- * On pooled script engines (GraalJS) the function runs detached, Web Worker style: it is
- * re-materialized from source in a fresh script context and captured outer variables are not
- * available — pass data via `params.params`. `log`, `require` and `resolve` are provided;
- * use absolute paths with `require`. Engines without pooling keep the historical closure
- * behavior.
- * @param {object} [params.params] Data passed to the task function as its single argument.
- * Converted eagerly at submit time; functions are rejected. A nullish value is treated as
- * omitted: the function is called with no arguments.
  *
  * @returns {string} Id of the task that will be executed.
  */
 export function executeFunction(params: ExecuteFunctionParams): string {
+    if (typeof Graal !== 'undefined') {
+        throw new Error('task.executeFunction is not supported on the GraalJS engine: '
+            + 'the function cannot leave the script context that created it. Use a named task (task.submitTask) instead.');
+    }
+
     const bean: ExecuteFunctionHandler = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
 
-    const description = checkRequired(params, 'description');
-    const func = checkRequired(params, 'func');
-    const funcParams = params.params;
-
-    bean.setDescription(description);
-    // the routed path calls the function on the submitting context, where closures are legal:
-    // bind params here instead of routing them through Java. Always wrap, so the function
-    // observes the same arguments as on the detached path — zero when params are nullish
-    // (omitted, undefined or null — one rule on every path), exactly one otherwise (the Java
-    // side's apply(null) argument must never leak through)
-    bean.setFunc(funcParams == null ? () => func() : () => func(funcParams));
-    bean.setSource(String(func));
-    bean.setParams(funcParams != null ? __.toScriptValue(funcParams) : null);
+    bean.setDescription(checkRequired(params, 'description'));
+    bean.setFunc(checkRequired(params, 'func'));
 
     return bean.executeFunction();
 }

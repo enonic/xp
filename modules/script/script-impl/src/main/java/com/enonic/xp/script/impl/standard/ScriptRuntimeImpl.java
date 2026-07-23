@@ -120,13 +120,6 @@ public class ScriptRuntimeImpl
         return app.executor.backgroundExports( script );
     }
 
-    @Override
-    public boolean isPooled( final ApplicationKey application )
-    {
-        // capability query, not an execution: no bootstrap-gate wait
-        return getExecutor( application ).executor.isPooled();
-    }
-
     /**
      * The bootstrapped executor for a top-level execution: re-arms the bootstrap gate if this
      * executor incarnation was created after its bootstrap call (see {@link #bootstrapParams}),

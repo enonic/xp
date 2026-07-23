@@ -18,7 +18,6 @@ import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ScriptExecutorImplTest
@@ -33,12 +32,6 @@ class ScriptExecutorImplTest
                                                 Mockito.mock( ServiceRegistry.class ), Mockito.mock( ResourceService.class ),
                                                 new ApplicationInfoBuilder( applicationKey, ConfigBuilder.create().build(),
                                                                             Version.emptyVersion ) );
-    }
-
-    @Test
-    void notPooled()
-    {
-        assertFalse( executor.isPooled() );
     }
 
     @Test
