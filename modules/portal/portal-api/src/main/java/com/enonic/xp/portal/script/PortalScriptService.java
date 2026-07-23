@@ -20,8 +20,10 @@ public interface PortalScriptService
     /**
      * Resolves a script's exports for background execution. On pooled script engines the returned
      * view is bound to no context: each method invocation runs in a fresh private context, where
-     * the script's top level executes (lazily — script errors surface on first invocation, not
-     * here), and no request-serving context is used to obtain the view. On engines without
+     * the script's top level executes lazily, and no request-serving context is used to obtain
+     * the view. The script is additionally initialized asynchronously (once per executor
+     * incarnation), so a missing or broken script appears in the logs even if the view is never
+     * invoked — callers still see the error on their first invocation. On engines without
      * pooling this is equivalent to {@link #execute}.
      */
     ScriptExports executeBackground( ResourceKey script );

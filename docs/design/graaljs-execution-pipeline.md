@@ -453,7 +453,10 @@ what every Node.js cluster / worker deployment already imposes on developers.
    not with a cryptic eval error on the task thread) plus eagerly converted data params
    (functions rejected at submit), and is re-materialized by an internal runner module
    (`/lib/xp/detached-task.js`, resolved through `PortalScriptService.executeBackground` — a
-   view bound to no context, so a task run never checks out a request-serving slot) in a fresh
+   view bound to no context, so a task run never checks out a request-serving slot; the script
+   is additionally **initialized asynchronously once per executor incarnation**, so a missing or
+   broken background script reaches the logs even if the lazy view is never invoked, and the
+   first parse happens off the critical path) in a fresh
    context — true parallelism on GraalJS. The runner applies its module environment (`log`,
    `require`, `resolve`, `__`) to the re-materialized function, so detached functions can load
    libraries and log; captured outer variables throw `ReferenceError`, matching Web-Worker
