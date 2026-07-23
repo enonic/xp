@@ -106,16 +106,19 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
+import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
 import com.enonic.xp.resource.DeleteDynamicMacroParams;
+import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.GetDynamicMacroParams;
+import com.enonic.xp.resource.GetDynamicPhrasesParams;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.resource.ListDynamicMacrosParams;
@@ -123,6 +126,7 @@ import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.resource.UpdateDynamicMacroParams;
+import com.enonic.xp.resource.UpdateDynamicPhrasesParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.core.impl.site.CmsServiceImpl;
@@ -1303,6 +1307,109 @@ class SchemaServiceImplTest
         assertThat( createAdminContext().callWith( () -> schemaService.getStyles( applicationKey ) ) ).isNull();
     }
 
+    @Test
+    void createPhrases()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+        final String resource = "action.save=Save\naction.delete=Delete\n";
+
+        assertNull( createAdminContext().callWith( () -> schemaService.getPhrases(
+            GetDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).build() ) ) );
+
+        final Resource result = createAdminContext().callWith( () -> schemaService.createPhrases(
+            CreateDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).resource( resource ).build() ) );
+
+        assertEquals( "node", result.getResolverName() );
+        assertTrue( result.exists() );
+        assertEquals( resource, result.readString() );
+        assertEquals( "myapp:/cms/i18n/phrases/phrases_en.properties", result.getKey().toString() );
+
+        final Resource fetched = createAdminContext().callWith( () -> schemaService.getPhrases(
+            GetDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).build() ) );
+
+        assertEquals( "node", fetched.getResolverName() );
+        assertEquals( resource, fetched.readString() );
+
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/i18n/phrases/phrases_en.properties" ) ) );
+
+        assertEquals( resource, resourceNode.data().getString( "resource" ) );
+    }
+
+    @Test
+    void createPhrases_without_admin()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        assertThrows( ForbiddenAccessException.class, () -> NamespaceAppContext.createContext()
+            .callWith( () -> schemaService.createPhrases(
+                CreateDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).resource( "a=b\n" ).build() ) ) );
+    }
+
+    @Test
+    void updatePhrases()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+        final String resource = "action.save=Save changes\n";
+
+        createAdminContext().callWith( () -> schemaService.createPhrases(
+            CreateDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).resource( "action.save=Save\n" ).build() ) );
+
+        final Resource result = createAdminContext().callWith( () -> schemaService.updatePhrases(
+            UpdateDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).resource( resource ).build() ) );
+
+        assertEquals( "node", result.getResolverName() );
+        assertEquals( resource, result.readString() );
+        assertEquals( "myapp:/cms/i18n/phrases/phrases_en.properties", result.getKey().toString() );
+
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/i18n/phrases/phrases_en.properties" ) ) );
+
+        assertEquals( resource, resourceNode.data().getString( "resource" ) );
+    }
+
+    @Test
+    void listPhrases()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        assertTrue( createAdminContext().callWith( () -> schemaService.listPhrases( applicationKey ) ).isEmpty() );
+
+        createAdminContext().callWith( () -> schemaService.createPhrases(
+            CreateDynamicPhrasesParams.create().key( applicationKey ).name( "phrases" ).resource( "action.save=Save\n" ).build() ) );
+        createAdminContext().callWith( () -> schemaService.createPhrases(
+            CreateDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_no" ).resource( "action.save=Lagre\n" ).build() ) );
+
+        final List<Resource> result = createAdminContext().callWith( () -> schemaService.listPhrases( applicationKey ) );
+
+        assertEquals( 2, result.size() );
+        assertTrue( result.stream()
+                        .anyMatch( resource -> "myapp:/cms/i18n/phrases/phrases.properties".equals( resource.getKey().toString() ) ) );
+        assertTrue( result.stream()
+                        .anyMatch( resource -> "myapp:/cms/i18n/phrases/phrases_no.properties".equals( resource.getKey().toString() ) ) );
+    }
+
+    @Test
+    void deletePhrases()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        createAdminContext().callWith( () -> schemaService.createPhrases(
+            CreateDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).resource( "action.save=Save\n" ).build() ) );
+
+        assertNotNull( createAdminContext().callWith( () -> schemaService.getPhrases(
+            GetDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).build() ) ) );
+
+        assertTrue( createAdminContext().callWith( () -> schemaService.deletePhrases(
+            DeleteDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).build() ) ) );
+
+        assertNull( createAdminContext().callWith( () -> schemaService.getPhrases(
+            GetDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).build() ) ) );
+
+        assertFalse( createAdminContext().callWith( () -> schemaService.deletePhrases(
+            DeleteDynamicPhrasesParams.create().key( applicationKey ).name( "phrases_en" ).build() ) ) );
+    }
+
 
     @Test
     void listPartComponents()
@@ -1617,10 +1724,12 @@ class SchemaServiceImplTest
     {
         final String contentTypeResource = readResource( "_contentType.yaml" );
         final String cmsResource = "kind: \"CMS\"\nform: [ ]\n";
+        final String phrasesResource = "action.save=Save\naction.delete=Delete\n";
 
         final ByteSource app = createAppSource( "myglobalapp", "1.0.0",
                                                 Map.of( "cms/cms.yaml", cmsResource, "cms/content-types/mytype/mytype.yml",
-                                                        contentTypeResource ) );
+                                                        contentTypeResource, "cms/i18n/phrases/phrases_en.properties", phrasesResource,
+                                                        "i18n/phrases/phrases_en.properties", "outside=schema" ) );
 
         createAdminContext().runWith( () -> applicationService.installGlobalApplication( app ) );
 
@@ -1633,6 +1742,23 @@ class SchemaServiceImplTest
 
         assertNotNull( resourceNode );
         assertEquals( contentTypeResource, resourceNode.data().getString( "resource" ) );
+
+        final Node phrasesNode = NamespaceAppContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myglobalapp/cms/i18n/phrases/phrases_en.properties" ) ) );
+
+        assertNotNull( phrasesNode );
+        assertEquals( phrasesResource, phrasesNode.data().getString( "resource" ) );
+
+        // app-root /i18n is not part of the namespace schema
+        assertFalse( NamespaceAppContext.createAdminContext()
+                         .callWith( () -> nodeService.nodeExists( new NodePath( "/myglobalapp/i18n" ) ) ) );
+
+        final Resource phrasesFromNode = createAdminContext().callWith( () -> resourceService.getResource(
+            ResourceKey.from( ApplicationKey.from( "myglobalapp" ), "cms/i18n/phrases/phrases_en.properties" ) ) );
+
+        assertTrue( phrasesFromNode.exists() );
+        assertEquals( "node", phrasesFromNode.getResolverName() );
+        assertEquals( phrasesResource, phrasesFromNode.readString() );
 
         final DynamicSchemaResult<BaseSchema<?>> schema = createAdminContext().callWith( () -> schemaService.getContentSchema(
             GetDynamicContentSchemaParams.create()
@@ -1653,6 +1779,13 @@ class SchemaServiceImplTest
         assertFalse( NamespaceAppContext.createAdminContext()
                          .callWith(
                              () -> nodeService.nodeExists( new NodePath( "/myglobalapp/cms/content-types/mytype/mytype.yaml" ) ) ) );
+
+        // update wipes the cms subtree: phrases from the previous version are gone, the skeleton folder remains
+        assertFalse( NamespaceAppContext.createAdminContext()
+                         .callWith(
+                             () -> nodeService.nodeExists( new NodePath( "/myglobalapp/cms/i18n/phrases/phrases_en.properties" ) ) ) );
+        assertTrue( NamespaceAppContext.createAdminContext()
+                        .callWith( () -> nodeService.nodeExists( new NodePath( "/myglobalapp/cms/i18n/phrases" ) ) ) );
 
         assertNull( createAdminContext().callWith( () -> schemaService.getContentSchema( GetDynamicContentSchemaParams.create()
                                                                                                     .name( ContentTypeName.from(

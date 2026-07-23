@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
 import com.enonic.xp.repository.CreateRepositoryParams;
@@ -14,8 +11,6 @@ public class NamespaceAppInitializer
     extends ExternalInitializer
 {
     private final InternalRepositoryService repositoryService;
-
-    private static final Logger LOG = LoggerFactory.getLogger( NamespaceAppInitializer.class );
 
     private final Context adminContext;
 

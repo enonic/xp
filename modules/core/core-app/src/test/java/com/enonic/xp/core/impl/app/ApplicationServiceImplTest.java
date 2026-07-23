@@ -76,8 +76,6 @@ class ApplicationServiceImplTest
 
     private NodeService nodeService;
 
-    private NamespaceAppService namespaceAppService;
-
     @BeforeEach
     void initService()
     {
@@ -103,7 +101,7 @@ class ApplicationServiceImplTest
             return Node.create().id( NodeId.from( params.getName() ) ).name( params.getName() ).parentPath( params.getParent() ).build();
         } );
 
-        namespaceAppService = new NamespaceAppService( nodeService );
+        final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
 
         this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, namespaceAppService,
                                                    auditLogSupport );
@@ -369,6 +367,7 @@ class ApplicationServiceImplTest
 
         final String cmsResource = "kind: \"CMS\"\nform: [ ]\n";
         final String contentTypeResource = "kind: \"ContentType\"\nform: [ ]\n";
+        final String phrasesResource = "action.save=Save\n";
 
         final ByteSource byteSource = ByteSource.wrap( ByteStreams.toByteArray( newBundle( bundleName, true )
                                                                                     .addResource( "cms/cms.yaml", new ByteArrayInputStream(
@@ -377,6 +376,11 @@ class ApplicationServiceImplTest
                                                                                         "cms/content-types/mytype/mytype.yaml",
                                                                                         new ByteArrayInputStream(
                                                                                             contentTypeResource.getBytes(
+                                                                                                StandardCharsets.UTF_8 ) ) )
+                                                                                    .addResource(
+                                                                                        "cms/i18n/phrases/phrases_en.properties",
+                                                                                        new ByteArrayInputStream(
+                                                                                            phrasesResource.getBytes(
                                                                                                 StandardCharsets.UTF_8 ) ) )
                                                                                     .build() ) );
 
@@ -390,6 +394,9 @@ class ApplicationServiceImplTest
 
         verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "mytype.yaml".equals( params.getName().toString() ) &&
             contentTypeResource.equals( params.getData().getString( "resource" ) ) ) );
+
+        verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "phrases_en.properties".equals( params.getName().toString() ) &&
+            phrasesResource.equals( params.getData().getString( "resource" ) ) ) );
     }
 
     @Test

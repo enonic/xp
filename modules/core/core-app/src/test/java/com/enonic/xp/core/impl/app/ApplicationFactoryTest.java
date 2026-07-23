@@ -37,6 +37,8 @@ class ApplicationFactoryTest
 
     private static final String ICON_PATH = "cms/content-types/mytype/mytype.svg";
 
+    private static final String PHRASES_PATH = "cms/i18n/phrases/phrases_en.properties";
+
     private NodeService nodeService;
 
     @BeforeEach
@@ -107,10 +109,12 @@ class ApplicationFactoryTest
 
         assertNotNull( resolver.findResource( "/" + DESCRIPTOR_PATH ) );
         assertNotNull( resolver.findResource( "/" + ICON_PATH ) );
+        assertNotNull( resolver.findResource( "/" + PHRASES_PATH ) );
 
         final Set<String> files = resolver.findFiles();
         assertTrue( files.contains( DESCRIPTOR_PATH ) );
         assertTrue( files.contains( ICON_PATH ) );
+        assertTrue( files.contains( PHRASES_PATH ) );
     }
 
     @Test
@@ -126,17 +130,20 @@ class ApplicationFactoryTest
 
         assertNull( resolver.findResource( "/" + DESCRIPTOR_PATH ) );
         assertNotNull( resolver.findResource( "/" + ICON_PATH ) );
+        assertNull( resolver.findResource( "/" + PHRASES_PATH ) );
 
         final Set<String> files = resolver.findFiles();
         assertFalse( files.contains( DESCRIPTOR_PATH ) );
         assertTrue( files.contains( ICON_PATH ) );
+        assertFalse( files.contains( PHRASES_PATH ) );
     }
 
     private TinyBundle createBundleWithCmsResources()
     {
         return newBundle( "app1", true )
             .addResource( DESCRIPTOR_PATH, new ByteArrayInputStream( "kind: \"ContentType\"".getBytes( StandardCharsets.UTF_8 ) ) )
-            .addResource( ICON_PATH, new ByteArrayInputStream( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
+            .addResource( ICON_PATH, new ByteArrayInputStream( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) )
+            .addResource( PHRASES_PATH, new ByteArrayInputStream( "key=value".getBytes( StandardCharsets.UTF_8 ) ) );
     }
 
     private Bundle deploy( final String name, final boolean isApp, final boolean hasSourcePath )

@@ -184,9 +184,10 @@ public class NamespaceAppService
         final NodeId mixinNodeId = initCmsFormFragmentNode( siteRoot.path() );
         final NodeId xDataNodeId = initMixinsNode( siteRoot.path() );
         final NodeId macroNodeId = initMacrosNode( siteRoot.path() );
+        final NodeId phrasesNodeId = initPhrasesNode( siteRoot.path() );
 
         return NodeIds.from( siteRoot.id(), contentTypeNodeId, partNodeId, layoutNodeId, pageNodeId, mixinNodeId, xDataNodeId,
-                             macroNodeId );
+                             macroNodeId, phrasesNodeId );
     }
 
     private NodeId initContentTypeNode( final NodePath parent )
@@ -255,6 +256,23 @@ public class NamespaceAppService
                                        .data( new PropertyTree() )
                                        .name( NamespaceAppConstants.MACROS_ROOT_NAME )
                                        .parent( parent )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
+                                       .build() ).id();
+    }
+
+    private NodeId initPhrasesNode( final NodePath parent )
+    {
+        final Node i18nNode = nodeService.create( CreateNodeParams.create()
+                                                      .data( new PropertyTree() )
+                                                      .name( NamespaceAppConstants.I18N_ROOT_NAME )
+                                                      .parent( parent )
+                                                      .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
+                                                      .build() );
+
+        return nodeService.create( CreateNodeParams.create()
+                                       .data( new PropertyTree() )
+                                       .name( NamespaceAppConstants.PHRASES_ROOT_NAME )
+                                       .parent( i18nNode.path() )
                                        .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }

@@ -609,6 +609,179 @@ export function updateStyles(params: UpdateDynamicStylesParams): StyleDescriptor
     return __.toNativeObject(bean.execute());
 }
 
+export interface Phrases {
+    application: string;
+    name: string;
+    modifiedTime: string;
+    resource: string;
+}
+
+export interface CreateDynamicPhrasesParams {
+    application: string;
+    name: string;
+    resource: string;
+}
+
+interface CreateDynamicPhrasesHandler {
+    setApplication(value: string): void;
+
+    setName(value: string): void;
+
+    setResource(value: string): void;
+
+    execute(): Phrases;
+}
+
+/**
+ * Creates dynamic i18n phrases resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ * @param {string} params.name Phrases file name without the `.properties` extension, e.g. `phrases` or `phrases_en`.
+ * @param {string} params.resource Phrases resource value in the Java properties format.
+ *
+ * @returns {Phrases} created resource.
+ */
+export function createPhrases(params: CreateDynamicPhrasesParams): Phrases {
+    const application = checkRequired(params, 'application');
+    const name = checkRequired(params, 'name');
+    const resource = checkRequired(params, 'resource');
+
+    const bean: CreateDynamicPhrasesHandler = __.newBean<CreateDynamicPhrasesHandler>('com.enonic.xp.lib.schema.CreateDynamicPhrasesHandler');
+    bean.setApplication(application);
+    bean.setName(name);
+    bean.setResource(resource);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface UpdateDynamicPhrasesParams {
+    application: string;
+    name: string;
+    resource: string;
+}
+
+interface UpdateDynamicPhrasesHandler {
+    setApplication(value: string): void;
+
+    setName(value: string): void;
+
+    setResource(value: string): void;
+
+    execute(): Phrases;
+}
+
+/**
+ * Updates dynamic i18n phrases resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ * @param {string} params.name Phrases file name without the `.properties` extension, e.g. `phrases` or `phrases_en`.
+ * @param {string} params.resource Phrases resource value in the Java properties format.
+ *
+ * @returns {Phrases} updated resource.
+ */
+export function updatePhrases(params: UpdateDynamicPhrasesParams): Phrases {
+    const application = checkRequired(params, 'application');
+    const name = checkRequired(params, 'name');
+    const resource = checkRequired(params, 'resource');
+
+    const bean: UpdateDynamicPhrasesHandler = __.newBean<UpdateDynamicPhrasesHandler>('com.enonic.xp.lib.schema.UpdateDynamicPhrasesHandler');
+    bean.setApplication(application);
+    bean.setName(name);
+    bean.setResource(resource);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface GetDynamicPhrasesParams {
+    application: string;
+    name: string;
+}
+
+interface GetDynamicPhrasesHandler {
+    setApplication(value: string): void;
+
+    setName(value: string): void;
+
+    execute(): Phrases | null;
+}
+
+/**
+ * Fetches dynamic i18n phrases resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ * @param {string} params.name Phrases file name without the `.properties` extension, e.g. `phrases` or `phrases_en`.
+ *
+ * @returns {Phrases | null} fetched resource, or `null` if not found.
+ */
+export function getPhrases(params: GetDynamicPhrasesParams): Phrases | null {
+    const application = checkRequired(params, 'application');
+    const name = checkRequired(params, 'name');
+
+    const bean: GetDynamicPhrasesHandler = __.newBean<GetDynamicPhrasesHandler>('com.enonic.xp.lib.schema.GetDynamicPhrasesHandler');
+    bean.setApplication(application);
+    bean.setName(name);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface ListDynamicPhrasesParams {
+    application: string;
+}
+
+interface ListDynamicPhrasesHandler {
+    setApplication(value: string): void;
+
+    execute(): Phrases[];
+}
+
+/**
+ * Fetches all dynamic i18n phrases resources of an application.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ *
+ * @returns {Phrases[]} fetched resources.
+ */
+export function listPhrases(params: ListDynamicPhrasesParams): Phrases[] {
+    const application = checkRequired(params, 'application');
+
+    const bean: ListDynamicPhrasesHandler = __.newBean<ListDynamicPhrasesHandler>('com.enonic.xp.lib.schema.ListDynamicPhrasesHandler');
+    bean.setApplication(application);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface DeleteDynamicPhrasesParams {
+    application: string;
+    name: string;
+}
+
+interface DeleteDynamicPhrasesHandler {
+    setApplication(value: string): void;
+
+    setName(value: string): void;
+
+    execute(): boolean;
+}
+
+/**
+ * Removes dynamic i18n phrases resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ * @param {string} params.name Phrases file name without the `.properties` extension, e.g. `phrases` or `phrases_en`.
+ *
+ * @returns {boolean} `true` if the resource was removed.
+ */
+export function deletePhrases(params: DeleteDynamicPhrasesParams): boolean {
+    const application = checkRequired(params, 'application');
+    const name = checkRequired(params, 'name');
+
+    const bean: DeleteDynamicPhrasesHandler = __.newBean<DeleteDynamicPhrasesHandler>('com.enonic.xp.lib.schema.DeleteDynamicPhrasesHandler');
+    bean.setApplication(application);
+    bean.setName(name);
+    return __.toNativeObject(bean.execute());
+}
+
 export interface ListDynamicComponentsParams {
     application: string;
     type: ComponentDescriptorType;

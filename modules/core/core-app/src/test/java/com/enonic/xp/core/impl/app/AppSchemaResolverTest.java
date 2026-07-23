@@ -25,11 +25,14 @@ class AppSchemaResolverTest
             {"cms/pages/mypage/mypage.yaml", "page"}, {"cms/form-fragments/myfragment/myfragment.yaml", "fragment"},
             {"cms/mixins/mymixin/mymixin.yaml", "mixin"}, {"cms/content-types/other/wrong.yaml", "ignored"},
             {"cms/macros/mymacro/mymacro.js", "ignored"}, {"assets/styles.yaml", "ignored"},
-            {"cms/unknown/mything/mything.yaml", "ignored"}} );
+            {"cms/unknown/mything/mything.yaml", "ignored"}, {"cms/i18n/phrases/phrases.properties", "phrases-default"},
+            {"cms/i18n/phrases/phrases_en.properties", "phrases-en"}, {"i18n/phrases/phrases.properties", "ignored"},
+            {"i18n/phrases.properties", "ignored"}, {"cms/i18n/loose.properties", "ignored"},
+            {"cms/i18n/phrases/nested/deep.properties", "ignored"}, {"cms/i18n/phrases/phrases.yaml", "ignored"}} );
 
         final Map<String, String> resources = AppSchemaResolver.resolve( byteSource );
 
-        assertEquals( 9, resources.size() );
+        assertEquals( 11, resources.size() );
         assertEquals( "cms-descriptor", resources.get( "cms.yaml" ) );
         assertEquals( "styles", resources.get( "style/style.yaml" ) );
         assertEquals( "content-type-yaml", resources.get( "content-types/mytype/mytype.yaml" ) );
@@ -39,6 +42,8 @@ class AppSchemaResolverTest
         assertEquals( "page", resources.get( "pages/mypage/mypage.yaml" ) );
         assertEquals( "fragment", resources.get( "form-fragments/myfragment/myfragment.yaml" ) );
         assertEquals( "mixin", resources.get( "mixins/mymixin/mymixin.yaml" ) );
+        assertEquals( "phrases-default", resources.get( "i18n/phrases/phrases.properties" ) );
+        assertEquals( "phrases-en", resources.get( "i18n/phrases/phrases_en.properties" ) );
     }
 
     private static ByteSource zip( final String[][] entries )

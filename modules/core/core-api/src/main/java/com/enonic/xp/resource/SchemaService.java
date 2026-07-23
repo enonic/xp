@@ -48,6 +48,16 @@ public interface SchemaService
 
     DynamicSchemaResult<CmsDescriptor> getCmsDescriptor( ApplicationKey key );
 
+    Resource createPhrases( CreateDynamicPhrasesParams params );
+
+    Resource updatePhrases( UpdateDynamicPhrasesParams params );
+
+    Resource getPhrases( GetDynamicPhrasesParams params );
+
+    List<Resource> listPhrases( ApplicationKey key );
+
+    boolean deletePhrases( DeleteDynamicPhrasesParams params );
+
     DynamicSchemaResult<StyleDescriptor> createStyles( CreateDynamicStylesParams params );
 
     DynamicSchemaResult<StyleDescriptor> updateStyles( UpdateDynamicStylesParams params );

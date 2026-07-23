@@ -36,16 +36,28 @@ class AppSchemaResolver
                     continue;
                 }
 
-                final String path = matcher.group( 1 ) + ".yaml";
                 final String content = new String( zip.readAllBytes(), StandardCharsets.UTF_8 );
 
-                if ( "yaml".equals( matcher.group( 3 ) ) )
+                final String phrasesPath = matcher.group( SchemaResourcePaths.PHRASES_PATH_GROUP );
+                if ( phrasesPath != null )
                 {
-                    resources.put( path, content );
+                    resources.put( phrasesPath, content );
                 }
                 else
                 {
-                    resources.putIfAbsent( path, content );
+                    // Both .yaml and .yml descriptors normalize to the same ".yaml" key.
+                    // If a JAR contains both variants, .yaml wins regardless of zip entry order:
+                    // put() lets .yaml overwrite, putIfAbsent() keeps .yml from replacing it.
+                    final String path = matcher.group( SchemaResourcePaths.DESCRIPTOR_PATH_GROUP ) + ".yaml";
+
+                    if ( "yaml".equals( matcher.group( SchemaResourcePaths.EXTENSION_GROUP ) ) )
+                    {
+                        resources.put( path, content );
+                    }
+                    else
+                    {
+                        resources.putIfAbsent( path, content );
+                    }
                 }
             }
         }

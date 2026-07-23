@@ -31,17 +31,20 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
+import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.DeleteDynamicMacroParams;
+import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.GetDynamicMacroParams;
+import com.enonic.xp.resource.GetDynamicPhrasesParams;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.resource.ListDynamicMacrosParams;
@@ -53,6 +56,7 @@ import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.resource.UpdateDynamicMacroParams;
+import com.enonic.xp.resource.UpdateDynamicPhrasesParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
@@ -245,6 +249,55 @@ public class SchemaServiceImpl
 
         return new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+    }
+
+    @Override
+    public Resource createPhrases( final CreateDynamicPhrasesParams params )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.createResourceFile( createPhrasesFolderPath( params.getKey() ),
+                                                          phrasesFileName( params.getName() ), params.getResource() );
+    }
+
+    @Override
+    public Resource updatePhrases( final UpdateDynamicPhrasesParams params )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.updateResourceFile( createPhrasesFolderPath( params.getKey() ),
+                                                          phrasesFileName( params.getName() ), params.getResource() );
+    }
+
+    @Override
+    public Resource getPhrases( final GetDynamicPhrasesParams params )
+    {
+        requireReadAccess();
+
+        return NamespaceAppContext.createAdminContext().callWith( () -> {
+            final Resource resource =
+                dynamicResourceManager.getResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ) );
+
+            return resource.exists() && resource.getSize() > 0 ? resource : null;
+        } );
+    }
+
+    @Override
+    public List<Resource> listPhrases( final ApplicationKey key )
+    {
+        requireListAccess();
+
+        return NamespaceAppContext.createAdminContext()
+            .callWith( () -> dynamicResourceManager.listResourceFiles( createPhrasesFolderPath( key ), "[^/]+\\.properties" ) );
+    }
+
+    @Override
+    public boolean deletePhrases( final DeleteDynamicPhrasesParams params )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.deleteResourceFile( createPhrasesFolderPath( params.getKey() ),
+                                                          phrasesFileName( params.getName() ), false );
     }
 
     @Override
@@ -539,6 +592,19 @@ public class SchemaServiceImpl
             .addElement( key.toString() )
             .addElement( NamespaceAppConstants.CMS_ROOT_NAME )
             .build();
+    }
+
+    private NodePath createPhrasesFolderPath( final ApplicationKey key )
+    {
+        return NodePath.create( createCmsFolderPath( key ) )
+            .addElement( NamespaceAppConstants.I18N_ROOT_NAME )
+            .addElement( NamespaceAppConstants.PHRASES_ROOT_NAME )
+            .build();
+    }
+
+    private static String phrasesFileName( final String name )
+    {
+        return name.endsWith( ".properties" ) ? name : name + ".properties";
     }
 
     private NodePath createMacroFolderPath( final MacroKey key )
