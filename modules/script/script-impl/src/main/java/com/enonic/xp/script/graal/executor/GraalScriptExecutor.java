@@ -658,7 +658,12 @@ public class GraalScriptExecutor
         {
             return slot.exportsCache.getOrCompute( key, resource -> requireJsOrJson( slot, resource ) );
         }
-        catch ( InterruptedException | TimeoutException e )
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException( "Script require failed: [" + key + "]", e );
+        }
+        catch ( TimeoutException e )
         {
             throw new RuntimeException( "Script require failed: [" + key + "]", e );
         }

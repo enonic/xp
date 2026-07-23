@@ -134,7 +134,12 @@ public final class ScriptExecutorImpl
         {
             return exportsCache.getOrCompute( key, this::requireJsOrJson );
         }
-        catch ( InterruptedException | TimeoutException e )
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException( "Script require failed: [" + key + "]", e );
+        }
+        catch ( TimeoutException e )
         {
             throw new RuntimeException( "Script require failed: [" + key + "]", e );
         }
