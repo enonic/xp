@@ -65,8 +65,7 @@ class ScriptRuntimeImplTest
     private ScriptRuntimeImpl runtime()
     {
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( scriptExecutor );
-        // a direct async executor makes the deprecated executeAsync path deterministic
-        return new ScriptRuntimeImpl( scriptExecutorFactory, key -> Runnable::run );
+        return new ScriptRuntimeImpl( scriptExecutorFactory );
     }
 
     @Test
@@ -186,21 +185,6 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void executeAsync_waitsForBootstrap()
-    {
-        mainScriptExists( true );
-        final ScriptRuntimeImpl runtime = runtime();
-
-        runtime.bootstrap( params() );
-        // the deprecated contract is a runtime-level wrapper: the executor SPI has no async variant
-        runtime.executeAsync( CONTROLLER ).join();
-
-        final InOrder inOrder = Mockito.inOrder( scriptExecutor );
-        inOrder.verify( scriptExecutor ).bootstrap( MAIN );
-        inOrder.verify( scriptExecutor ).executeMain( CONTROLLER );
-    }
-
-    @Test
     void invalidate_runsDisposersOfTheRemovedExecutor()
     {
         final ScriptRuntimeImpl runtime = runtime();
@@ -221,7 +205,7 @@ class ScriptRuntimeImplTest
             mock( ScriptExecutor.class, Mockito.withSettings().extraInterfaces( Closeable.class ) );
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( closeableExecutor );
 
-        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> Runnable::run );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
         runtime.bootstrap( paramsWithoutScript() );
 
         runtime.invalidate( APP );
@@ -240,7 +224,7 @@ class ScriptRuntimeImplTest
         when( resourceService.getResource( MAIN ) ).thenReturn( resource );
         when( resource.exists() ).thenReturn( true );
 
-        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> Runnable::run );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
 
         Assertions.assertTrue( runtime.hasScript( MAIN ) );
     }
@@ -248,7 +232,7 @@ class ScriptRuntimeImplTest
     @Test
     void has_script_app_not_found()
     {
-        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> Runnable::run );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
         when( scriptExecutorFactory.apply( APP ) ).thenThrow( AppNotRegisteredException.class );
 
         Assertions.assertFalse( runtime.hasScript( MAIN ) );

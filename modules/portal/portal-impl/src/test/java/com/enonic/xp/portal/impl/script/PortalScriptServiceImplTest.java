@@ -77,13 +77,6 @@ class PortalScriptServiceImplTest
     }
 
     @Test
-    void executeAsync()
-    {
-        portalScriptService.executeAsync( ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" ) );
-        verify( scriptRuntime ).executeAsync( eq( resourceKey ) );
-    }
-
-    @Test
     void toScriptValue()
     {
         portalScriptService.toScriptValue( ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" ), Collections.emptyList() );

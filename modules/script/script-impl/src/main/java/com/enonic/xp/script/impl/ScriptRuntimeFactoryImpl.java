@@ -27,7 +27,6 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
 import com.enonic.xp.script.graal.executor.GraalContextBudget;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutorImpl;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
@@ -56,8 +55,6 @@ public class ScriptRuntimeFactoryImpl
 
     private final ResourceService resourceService;
 
-    private final ScriptAsyncService scriptAsyncService;
-
     private Engine engine;
 
     private final BundleContext context;
@@ -65,12 +62,10 @@ public class ScriptRuntimeFactoryImpl
     private final ServiceTracker<Application, Application> tracker;
 
     @Activate
-    public ScriptRuntimeFactoryImpl( final BundleContext context, @Reference final ResourceService resourceService,
-                                     @Reference final ScriptAsyncService scriptAsyncService )
+    public ScriptRuntimeFactoryImpl( final BundleContext context, @Reference final ResourceService resourceService )
     {
         this.context = context;
         this.resourceService = resourceService;
-        this.scriptAsyncService = scriptAsyncService;
         // track Application services the same way MainExecutor does: opening replays active apps and
         // delivers future ones, and removedService fires on stop — no ApplicationListener whiteboard
         this.tracker = new ServiceTracker<>( context, Application.class, this );
@@ -131,7 +126,7 @@ public class ScriptRuntimeFactoryImpl
 
     ScriptRuntimeImpl doCreate( final ScriptSettings settings )
     {
-        return new ScriptRuntimeImpl( new ScripExecutorFactory( settings )::create, scriptAsyncService::getAsyncExecutor );
+        return new ScriptRuntimeImpl( new ScripExecutorFactory( settings )::create );
     }
 
     @Override

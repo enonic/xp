@@ -13,7 +13,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.script.impl.async.ScriptAsyncService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
@@ -36,9 +35,6 @@ class ScriptRuntimeFactoryImplTest
     @Mock(stubOnly = true)
     ResourceService resourceService;
 
-    @Mock(stubOnly = true)
-    ScriptAsyncService scriptAsyncService;
-
     @BeforeEach
     void setup()
         throws Exception
@@ -53,7 +49,7 @@ class ScriptRuntimeFactoryImplTest
     void invalidate()
     {
         final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
-            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService ) );
 
         final ScriptRuntimeImpl scriptRuntime = mock( ScriptRuntimeImpl.class );
         when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( scriptRuntime );
@@ -70,7 +66,7 @@ class ScriptRuntimeFactoryImplTest
     void removedService_invalidatesRuntimes()
     {
         final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
-            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService ) );
 
         final ScriptRuntimeImpl scriptRuntime = mock( ScriptRuntimeImpl.class );
         when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( scriptRuntime );
@@ -91,7 +87,7 @@ class ScriptRuntimeFactoryImplTest
     void dispose_closesTheRuntime()
     {
         final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
-            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService ) );
 
         final ScriptRuntimeImpl scriptRuntime = mock( ScriptRuntimeImpl.class );
         when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( scriptRuntime );
@@ -106,7 +102,7 @@ class ScriptRuntimeFactoryImplTest
     void destroy_closesLeftoverRuntimes()
     {
         final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
-            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService ) );
 
         final ScriptRuntimeImpl disposed = mock( ScriptRuntimeImpl.class );
         final ScriptRuntimeImpl leftover = mock( ScriptRuntimeImpl.class );
