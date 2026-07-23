@@ -113,6 +113,12 @@ public final class ScriptExecutorImpl
     }
 
     @Override
+    public boolean isPooled()
+    {
+        return false;
+    }
+
+    @Override
     public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
     {
         if ( RunMode.isDev() )

@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.MockTaskService;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -56,8 +57,13 @@ public class ExecuteFunctionHandlerTest
             @Override
             public ScriptExports executeBackground( final ResourceKey script )
             {
-                // mirror the production contract: the background view of the script's exports
-                return runScript( script ).background();
+                return runScriptBackground( script );
+            }
+
+            @Override
+            public boolean isPooled( final ApplicationKey application )
+            {
+                return isScriptEnginePooled();
             }
 
             @Override

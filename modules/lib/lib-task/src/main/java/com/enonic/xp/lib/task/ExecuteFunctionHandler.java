@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -85,8 +84,7 @@ public final class ExecuteFunctionHandler
      * it detached — Web Worker semantics: re-materialized from source in a fresh context with
      * {@code params}, {@code log} and {@code require} in scope, because a routed closure would
      * serialize the task with the submitting context. Engines without pooling (Nashorn) always
-     * keep the historical attached-closure behavior. Probed via {@link ScriptExports#background()}:
-     * pooled engines return a distinct view.
+     * keep the historical attached-closure behavior.
      */
     private boolean useDetached()
     {
@@ -102,16 +100,15 @@ public final class ExecuteFunctionHandler
         catch ( RuntimeException e )
         {
             // no script service registered (minimal runtimes, tests): keep the attached behavior.
-            // Only the lookup is shielded — a probe failure on a real service must fail the submit
-            // loudly, not silently flip this submission's execution semantics.
+            // Only the lookup is shielded — a capability failure on a real service must fail the
+            // submit loudly, not silently flip this submission's execution semantics.
             return false;
         }
         if ( scriptService == null )
         {
             return false;
         }
-        final ScriptExports runnerExports = scriptService.execute( detachedRunner );
-        return runnerExports.background() != runnerExports;
+        return scriptService.isPooled( detachedRunner.getApplicationKey() );
     }
 
     /**

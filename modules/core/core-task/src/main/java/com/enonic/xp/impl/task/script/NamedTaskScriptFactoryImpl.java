@@ -55,8 +55,9 @@ public class NamedTaskScriptFactoryImpl
                                              "Missing exported function '" + NamedTaskScript.SCRIPT_METHOD_NAME + "' in task script" );
         }
 
-        // a task runs in its own separated context, not on a request-serving slot: background()
-        // gives a fresh context per run on pooled engines (a no-op on engines without pooling)
-        return new NamedTaskScript( exports.background(), descriptor, data );
+        // the execute/hasMethod above validated eagerly on the pool (missing script or function
+        // fails at submit); the run itself uses the background view — a fresh context per run on
+        // pooled engines (free: no slot is touched), the same shared context on engines without
+        return new NamedTaskScript( scriptService.executeBackground( scriptResourceKey ), descriptor, data );
     }
 }

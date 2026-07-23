@@ -31,6 +31,13 @@ public interface ScriptExecutor
      */
     ScriptExports backgroundExports( ResourceKey key );
 
+    /**
+     * Whether this executor's engine pools contexts: concurrent executions run on separate
+     * contexts and {@link #backgroundExports} views are isolated (a fresh private context per
+     * invocation). Engines without pooling share one context for everything.
+     */
+    boolean isPooled();
+
     Object executeRequire( ResourceKey key );
 
     ScriptValue newScriptValue( Object value );

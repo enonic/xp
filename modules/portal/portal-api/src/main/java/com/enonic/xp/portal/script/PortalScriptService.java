@@ -2,6 +2,7 @@ package com.enonic.xp.portal.script;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
@@ -24,6 +25,15 @@ public interface PortalScriptService
      * pooling this is equivalent to {@link #execute}.
      */
     ScriptExports executeBackground( ResourceKey script );
+
+    /**
+     * Whether the application's script engine pools contexts. On a pooled engine concurrent
+     * executions run on separate contexts and {@link #executeBackground} is isolated — each
+     * invocation runs in a fresh private context, so functions cannot carry closures across. On
+     * an engine without pooling everything shares one context and background execution is
+     * attached.
+     */
+    boolean isPooled( ApplicationKey application );
 
     /**
      * @deprecated Only {@code main.js} bootstrap used this, and it now runs synchronously through

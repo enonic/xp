@@ -185,9 +185,11 @@ closure on another thread", which JS cannot honor.
 always detached: JS developers have long been familiar with worker patterns, and a routed
 closure would only *appear* to work while silently serializing the task with the submitting
 context. Engines without pooling (Nashorn) always keep the historical attached-closure
-behavior. The engine is probed at submit via `ScriptExports.background()` (pooled engines return
-a distinct view); apps bundling an older compiled task lib (no source captured) keep the
+behavior. The engine is asked directly at submit via the `PortalScriptService.isPooled`
+capability; apps bundling an older compiled task lib (no source captured) keep the
 routed-handle fallback of §4.2, so nothing crashes. `params` are delivered on every path.
+"Background" is a **service-level concept only** (`executeBackground`), not a method on
+`ScriptExports`: exports views execute, the service resolves them — one concept, one owner.
 
 A detached function must be able to talk to the world: `log`, `require`, `resolve` and `__`
 are module-wrapper *parameters* in this codebase, not globals, so a bare re-materialized
@@ -450,15 +452,16 @@ what every Node.js cluster / worker deployment already imposes on developers.
    context — true parallelism on GraalJS. The runner applies its module environment (`log`,
    `require`, `resolve`, `__`) to the re-materialized function, so detached functions can load
    libraries and log; captured outer variables throw `ReferenceError`, matching Web-Worker
-   expectations. Nashorn always keeps the historical attached-closure behavior; the
-   engine-probe's fallback to attached mode is reserved for runtimes without a script service —
-   a probe failure on a real service fails the submit loudly instead of silently flipping the
-   submission's semantics. Still to do: the §5 migration guide for docs.
+   expectations. Nashorn always keeps the historical attached-closure behavior; the engine is
+   asked via the `isPooled` capability, and the fallback to attached mode is reserved for
+   runtimes without a script service — a capability failure on a real service fails the submit
+   loudly instead of silently flipping the submission's semantics. Still to do: the §5 migration
+   guide for docs.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (retention-aware growth), the global cross-app context budget
    (`xp.script-engine.graal.max-contexts`, default 200; first slot per app always allowed),
-   ephemeral task contexts behind `ScriptExports.background()` bounded by
+   ephemeral task contexts behind `executeBackground` bounded by
    `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, bounded
    pinned waits, and the experimental Jetty virtual-threads option (default off). Remaining:
    slot-count/footprint metrics and the host-backed `lib-cache` registry (per-context caches

@@ -25,6 +25,15 @@ public interface ScriptRuntime
     ScriptExports executeBackground( ResourceKey script );
 
     /**
+     * Whether the application's script engine pools contexts. On a pooled engine concurrent
+     * executions run on separate contexts and {@link #executeBackground} is isolated — each
+     * invocation runs in a fresh private context, so functions cannot carry closures across. On
+     * an engine without pooling everything shares one context and background execution is
+     * attached.
+     */
+    boolean isPooled( ApplicationKey application );
+
+    /**
      * @deprecated Only {@code main.js} bootstrap used this, and it now runs synchronously through
      * {@link #bootstrap(ResourceKey)}; no caller remains. Scheduled for removal.
      */

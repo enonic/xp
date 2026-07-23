@@ -274,28 +274,17 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
-    void isolatedExecutionsGetFreshContexts()
-    {
-        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
-
-        // every background invocation runs in a fresh, private context
-        assertEquals( 1, intValue( exports.background().executeMethod( "inc" ) ) );
-        assertEquals( 1, intValue( exports.background().executeMethod( "inc" ) ) );
-
-        // the pooled contexts are untouched by background runs
-        assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
-    }
-
-    @Test
-    @Timeout(60)
     void backgroundExportsSkipThePool()
     {
         // resolving the view touches no pooled slot, and every invocation gets a fresh, private
         // context — the path detached tasks use, so they never compete with request traffic
-        assertEquals( 1, intValue(
-            scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "inc" ) ) );
-        assertEquals( 1, intValue(
-            scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "inc" ) ) );
+        final ScriptExports background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
+        assertEquals( 1, intValue( background.executeMethod( "inc" ) ) );
+        assertEquals( 1, intValue( background.executeMethod( "inc" ) ) );
+
+        // the pooled contexts are untouched by background runs
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+        assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
     }
 
     @Test
@@ -323,7 +312,7 @@ class GraalContextPoolTest
         exports.release();
 
         // a background view has no slot to capture: bound scopes receive the view itself
-        final ScriptExports background = exports.background();
+        final ScriptExports background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
         assertSame( background, background.executeBound( view -> view ) );
         background.retain();
         background.release();
@@ -393,7 +382,8 @@ class GraalContextPoolTest
         try (ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor())
         {
             assertEquals( 1, virtualThreads.submit( () -> intValue( exports.executeMethod( "inc" ) ) ).get() );
-            assertEquals( 1, virtualThreads.submit( () -> intValue( exports.background().executeMethod( "inc" ) ) ).get() );
+            assertEquals( 1, virtualThreads.submit( () -> intValue(
+                scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "inc" ) ) ).get() );
         }
     }
 

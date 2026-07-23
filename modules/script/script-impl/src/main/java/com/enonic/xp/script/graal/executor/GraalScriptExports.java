@@ -44,7 +44,7 @@ final class GraalScriptExports
 
     /**
      * An isolated view bound to no context: each invocation runs in a fresh private context where
-     * the script's top level executes lazily — what {@link #background()} returns, obtainable
+     * the script's top level executes lazily — what {@code executeBackground} returns, obtainable
      * without executing the script on a pooled slot first.
      */
     static GraalScriptExports isolated( final GraalScriptExecutor executor, final ResourceKey script )
@@ -89,12 +89,6 @@ final class GraalScriptExports
         {
             pinnedSlot.release();
         }
-    }
-
-    @Override
-    public ScriptExports background()
-    {
-        return isolated ? this : new GraalScriptExports( executor, script, null, true );
     }
 
     @Override

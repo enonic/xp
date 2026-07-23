@@ -233,6 +233,25 @@ public abstract class ScriptTestSupport
         return this.executor.executeMain( key );
     }
 
+    /**
+     * Exports view for background execution, engine-faithful: isolated per-invocation contexts on
+     * pooled engines, the shared context otherwise — what {@code PortalScriptService.executeBackground}
+     * returns in production.
+     */
+    public final ScriptExports runScriptBackground( final ResourceKey key )
+    {
+        return this.executor.backgroundExports( key );
+    }
+
+    /**
+     * Whether the engine under test pools contexts — what {@code PortalScriptService.isPooled}
+     * returns in production.
+     */
+    public final boolean isScriptEnginePooled()
+    {
+        return this.executor.isPooled();
+    }
+
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )
     {
         final ScriptExports exports = runScript( path );

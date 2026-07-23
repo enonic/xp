@@ -226,6 +226,12 @@ public class GraalScriptExecutor
     }
 
     @Override
+    public boolean isPooled()
+    {
+        return true;
+    }
+
+    @Override
     public Object executeRequire( final ResourceKey key )
     {
         final Object mock = this.mocks.get( key.getPath() );
