@@ -45,6 +45,7 @@ public final class MainExecutor
      * complete, so the tracker's open-time replay sees the full set. Injected only to gate; never
      * dereferenced.
      */
+    @SuppressWarnings("unused")
     @Reference(target = "(" + Condition.CONDITION_ID + "=com.enonic.xp.server.deploy.ready)")
     private volatile Condition deployReady;
 
