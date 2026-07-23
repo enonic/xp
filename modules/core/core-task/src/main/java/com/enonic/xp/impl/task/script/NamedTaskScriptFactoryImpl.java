@@ -38,26 +38,29 @@ public class NamedTaskScriptFactoryImpl
                                                                 TASKS_PATH_PREFIX + descriptor.getName() + "/" + descriptor.getName() +
                                                                     ".js" );
 
+        // everything goes through the background view, so the task script's require tree never
+        // loads into a request-serving pool context. Validation stays eager — hasMethod runs the
+        // script's top level (in a throwaway private context on pooled engines), so a missing
+        // script or missing run function still fails at submit, and each run gets a fresh context
         final ScriptExports exports;
+        final boolean exists;
         try
         {
-            exports = this.scriptService.execute( scriptResourceKey );
+            exports = this.scriptService.executeBackground( scriptResourceKey );
+            // a missing script surfaces at executeBackground on engines that resolve eagerly, and
+            // at the first invocation (hasMethod) on pooled engines, where the view is lazy
+            exists = exports.hasMethod( NamedTaskScript.SCRIPT_METHOD_NAME );
         }
         catch ( ResourceNotFoundException e )
         {
             throw new TaskNotFoundException( descriptor.getKey(), "Missing task script" );
         }
-
-        final boolean exists = exports.hasMethod( NamedTaskScript.SCRIPT_METHOD_NAME );
         if ( !exists )
         {
             throw new TaskNotFoundException( descriptor.getKey(),
                                              "Missing exported function '" + NamedTaskScript.SCRIPT_METHOD_NAME + "' in task script" );
         }
 
-        // the execute/hasMethod above validated eagerly on the pool (missing script or function
-        // fails at submit); the run itself uses the background view — a fresh context per run on
-        // pooled engines (free: no slot is touched), the same shared context on engines without
-        return new NamedTaskScript( scriptService.executeBackground( scriptResourceKey ), descriptor, data );
+        return new NamedTaskScript( exports, descriptor, data );
     }
 }
