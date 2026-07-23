@@ -160,7 +160,10 @@ public class ScriptRuntimeFactoryImpl
             return 1;
         }
         final Integer poolSize = Integer.getInteger( "xp.script-engine.graal.pool-size" );
-        return poolSize != null ? Math.max( 1, poolSize ) : maxContexts();
+        // capacity above the global budget is unreachable by construction (growth beyond the
+        // first slot is budgeted): clamp instead of allocating slot entries that can never
+        // materialize but would still be scanned on every anonymous checkout
+        return poolSize != null ? Math.min( maxContexts(), Math.max( 1, poolSize ) ) : maxContexts();
     }
 
     private static int maxContexts()
