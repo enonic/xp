@@ -43,6 +43,11 @@ public class ScriptRuntimeImpl
      * (application reconfigure re-registers the service before it calls invalidators) would leave
      * its lazily recreated successor's gate armed by no one — remembering the params lets the
      * successor re-arm itself on first use instead of every caller waiting out the gate timeout.
+     * Deliberately NOT cleared by {@code invalidate}: the racing invalidate is precisely the moment
+     * the memory must survive. Entries cannot go stale (the params are the application key plus the
+     * {@code /main.js} convention, invariant across incarnations, and resources resolve through the
+     * current executor), a fresh registration overwrites them, and the footprint is one small
+     * object per application key for the runtime's lifetime.
      */
     private final ConcurrentMap<ApplicationKey, BootstrapParams> bootstrapParams = new ConcurrentHashMap<>();
 

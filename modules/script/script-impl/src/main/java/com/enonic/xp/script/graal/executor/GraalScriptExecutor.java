@@ -64,7 +64,12 @@ public class GraalScriptExecutor
 
     /**
      * Pinned executions (websocket/SSE events) run on shared event-dispatch threads — they must
-     * fail fast when their slot is saturated instead of holding those threads for minutes.
+     * fail fast when their slot is saturated instead of holding those threads for minutes. The
+     * bound covers the slot-lock wait, which is what grows with queue depth; the context-monitor
+     * acquisition that follows is not timed ({@code synchronized} cannot be) and waits out
+     * in-flight foreign-thread callbacks ({@code JsFunctionHandle} holds only the monitor) — a
+     * tail bounded by callback execution time, not by waiter count. A hard total bound would
+     * require replacing the monitor ownership discipline with timed locks.
      */
     private static final long PINNED_SLOT_WAIT_SECONDS = 30;
 

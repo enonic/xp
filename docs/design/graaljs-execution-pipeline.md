@@ -297,7 +297,12 @@ One shared pool lets any workload class starve the others; the budgets are parti
   request ran on* out of the pool (retained while the connection lives), and the pool grows
   replacements within capacity and budget. Because event-dispatch threads are shared, pinned
   executions bound their slot wait (30 s instead of the 5-minute request wait) so a saturated
-  connection slot fails events fast instead of holding shared threads.
+  connection slot fails events fast instead of holding shared threads. Known limitation: the
+  bound covers the slot-lock wait (what grows with queue depth); the context-monitor acquisition
+  after it is untimed and waits out in-flight foreign-thread callbacks — a tail bounded by
+  callback execution time, not waiter count. A hard total bound needs the monitor discipline
+  replaced with timed locks (a future refactor, together with retiring `Thread.holdsLock`
+  probing).
 - **Tasks — ephemeral context per execution.** XP runs tasks on **virtual threads**, and IO-wait
   workloads are a loved use case: task concurrency is effectively unbounded and an IO-waiting
   JS task holds its context for the entire wait. Any *bounded* task partition therefore
