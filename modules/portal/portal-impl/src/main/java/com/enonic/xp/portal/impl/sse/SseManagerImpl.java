@@ -81,11 +81,13 @@ public final class SseManagerImpl
         {
             endpoint.onEvent( connectEvent );
         }
-        catch ( RuntimeException e )
+        catch ( Throwable e )
         {
             // the response is already committed, so nothing meaningful can be rendered and the
             // exception ends up swallowed upstream — without this the connection would idle as a
             // zombie forever (the default SSE timeout is infinite). Close it so the client learns.
+            // Throwable, not RuntimeException: a StackOverflowError escaping the handler must not
+            // leave the zombie behind either
             entry.close();
             throw e;
         }
