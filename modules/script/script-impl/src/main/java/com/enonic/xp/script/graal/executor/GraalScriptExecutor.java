@@ -219,6 +219,10 @@ public class GraalScriptExecutor
     @Override
     public ScriptExports backgroundExports( final ResourceKey key )
     {
+        // resolving a view during app stop must fail like any other execution — without this
+        // guard the lazy view resolves fine and only its first invocation fails, after a doomed
+        // init thread has logged a misleading warning
+        requireOpen();
         // no slot is touched: the view is not bound to any context, and each of its invocations
         // runs in a fresh private context (withIsolatedExports), where the script's top level
         // executes lazily. Named tasks resolve their scripts this way — a pooled checkout here
@@ -238,7 +242,9 @@ public class GraalScriptExecutor
     {
         if ( initializedBackground.add( key ) )
         {
-            Thread.ofVirtual().name( "background-init-", 0 ).start( () -> {
+            // one thread per script per incarnation: name it by the script, not a builder-local
+            // counter that would label every thread background-init-0
+            Thread.ofVirtual().name( "background-init-" + key ).start( () -> {
                 try
                 {
                     withIsolatedExports( key, ( slot, exports ) -> null );

@@ -298,6 +298,8 @@ class GraalContextPoolTest
         // teardown path can ever reach
         assertThrows( IllegalStateException.class, () -> local.bootstrap( ResourceKey.from( "graaljs:/main.js" ) ) );
         assertThrows( IllegalStateException.class, () -> local.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) ) );
+        // resolving a background view is rejected too — not just its first invocation
+        assertThrows( IllegalStateException.class, () -> local.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ) );
     }
 
     @Test
