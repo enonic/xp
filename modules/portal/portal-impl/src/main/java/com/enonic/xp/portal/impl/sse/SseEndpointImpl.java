@@ -63,8 +63,9 @@ public final class SseEndpointImpl
         }
         finally
         {
-            // TIMEOUT/ERROR may or may not be followed by CLOSE: release exactly once on the
-            // first terminal event
+            // every non-OPEN type (CLOSE/TIMEOUT/ERROR) is terminal — SSE delivers no inbound
+            // message events — and TIMEOUT/ERROR may or may not be followed by CLOSE: release
+            // exactly once on the first terminal event
             if ( this.released.compareAndSet( false, true ) )
             {
                 this.script.release();

@@ -35,7 +35,7 @@ public interface ScriptRuntime
 
     /**
      * @deprecated Only {@code main.js} bootstrap used this, and it now runs synchronously through
-     * {@link #bootstrap(ResourceKey)}; no caller remains. Scheduled for removal.
+     * {@link #bootstrap(BootstrapParams)}; no caller remains. Scheduled for removal.
      */
     @Deprecated
     CompletableFuture<ScriptExports> executeAsync( ResourceKey script );

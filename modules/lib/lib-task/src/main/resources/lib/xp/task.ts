@@ -27,7 +27,13 @@ function checkRequired<T extends object, K extends keyof T>(
     return obj[name];
 }
 
-export type CallbackFn = (params?: Record<string, unknown>) => void;
+/**
+ * Data a task function can receive: any plain data value — object, array or scalar.
+ * Functions are rejected at submit.
+ */
+export type CallbackParams = Record<string, unknown> | unknown[] | string | number | boolean | null;
+
+export type CallbackFn = (params?: CallbackParams) => void;
 
 export interface ExecuteFunctionParams {
     description: string;
@@ -44,7 +50,7 @@ export interface ExecuteFunctionParams {
      * provided; use absolute paths with `require`. Engines without pooling keep the
      * historical closure behavior.
      */
-    params?: Record<string, unknown>;
+    params?: CallbackParams;
 }
 
 interface ExecuteFunctionHandler {
