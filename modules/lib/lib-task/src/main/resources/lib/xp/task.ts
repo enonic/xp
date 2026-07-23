@@ -112,8 +112,10 @@ export function executeFunction(params: ExecuteFunctionParams): string {
 
     bean.setDescription(description);
     // the routed path calls the function on the submitting context, where closures are legal:
-    // bind params here instead of routing them through Java
-    bean.setFunc(funcParams === undefined ? func : () => func(funcParams));
+    // bind params here instead of routing them through Java. Always wrap, so the function
+    // observes the same arguments as on the detached path — zero when params are omitted, one
+    // otherwise (the Java side's apply(null) argument must never leak through)
+    bean.setFunc(funcParams === undefined ? () => func() : () => func(funcParams));
     bean.setSource(String(func));
     bean.setParams(funcParams !== undefined ? __.toScriptValue(funcParams) : null);
 
