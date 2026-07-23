@@ -190,6 +190,11 @@ capability; apps bundling an older compiled task lib (no source captured) keep t
 routed-handle fallback of §4.2, so nothing crashes. `params` are delivered on every path.
 "Background" is a **service-level concept only** (`executeBackground`), not a method on
 `ScriptExports`: exports views execute, the service resolves them — one concept, one owner.
+Invocation results through a background view are reliable as **scalars only**: scalar results
+are unboxed eagerly at wrap time (`GraalScriptValueFactory`) and survive the private context's
+close, while object/array/function results hold live `Value`s that die with it. The contract is
+documented rather than compensated with an eager deep conversion — every platform caller
+discards the result, so a conversion tax on the common path would buy nothing.
 
 A detached function must be able to talk to the world: `log`, `require`, `resolve` and `__`
 are module-wrapper *parameters* in this codebase, not globals, so a bare re-materialized

@@ -25,6 +25,11 @@ public interface PortalScriptService
      * incarnation), so a missing or broken script appears in the logs even if the view is never
      * invoked — callers still see the error on their first invocation. On engines without
      * pooling this is equivalent to {@link #execute}.
+     * <p>
+     * Invocation results are reliable as <b>scalar values only</b>: objects, arrays and functions
+     * returned by a background invocation are bound to the invocation's private context, which is
+     * gone when the invocation returns. A background function should return a scalar or nothing,
+     * and communicate richer data through platform APIs.
      */
     ScriptExports executeBackground( ResourceKey script );
 
