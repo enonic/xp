@@ -433,6 +433,22 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void throwingDisposerDoesNotStopTeardown()
+        throws Exception
+    {
+        final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
+        final AtomicInteger runs = new AtomicInteger();
+        local.registerMock( "/test/recorder", runs );
+
+        local.bootstrap( ResourceKey.from( "graaljs:/disposer-throwing-test.js" ) );
+
+        // teardown is best-effort: the first disposer throws, the second still runs, close completes
+        ( (Closeable) local ).close();
+        assertEquals( 1, runs.get() );
+    }
+
+    @Test
+    @Timeout(60)
     void disposerOutsideMainContextIsIgnored()
         throws Exception
     {
