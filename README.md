@@ -49,7 +49,7 @@ To get started with Enonic, visit **[developer.enonic.com/start](https://develop
 - [Git](https://git-scm.com/downloads)
 
 ```sh
-# Build everything, including integration tests
+# Build everything and run the tests
 ./gradlew build
 
 # Skip all tests

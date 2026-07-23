@@ -101,4 +101,27 @@ class ScriptRuntimeFactoryImplTest
 
         verify( scriptRuntime ).close();
     }
+
+    @Test
+    void destroy_closesLeftoverRuntimes()
+    {
+        final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
+            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService, scriptAsyncService ) );
+
+        final ScriptRuntimeImpl disposed = mock( ScriptRuntimeImpl.class );
+        final ScriptRuntimeImpl leftover = mock( ScriptRuntimeImpl.class );
+        when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( disposed, leftover );
+
+        scriptRuntimeFactory.create( ScriptSettings.create().build() );
+        scriptRuntimeFactory.create( ScriptSettings.create().build() );
+        scriptRuntimeFactory.dispose( disposed );
+
+        scriptRuntimeFactory.destroy();
+
+        // the leftover runtime is swept exactly once; the disposed one is not closed again
+        verify( disposed ).close();
+        verify( leftover ).close();
+        scriptRuntimeFactory.destroy();
+        verify( leftover ).close();
+    }
 }

@@ -81,6 +81,10 @@ public class ScriptRuntimeFactoryImpl
     public void destroy()
     {
         this.tracker.close();
+        // consumers normally dispose their runtimes before this component deactivates; sweep
+        // whatever remains so disposers run and contexts close before the shared engine does
+        this.list.forEach( ScriptRuntimeImpl::close );
+        this.list.clear();
         synchronized ( this )
         {
             if ( this.engine != null )
