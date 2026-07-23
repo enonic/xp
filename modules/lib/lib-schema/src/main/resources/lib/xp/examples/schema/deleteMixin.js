@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual mixin.
+// Delete dynamic mixin.
 
 var params = {
     name: 'myapp:mydata',

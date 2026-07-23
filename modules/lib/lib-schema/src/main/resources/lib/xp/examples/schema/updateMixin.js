@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 let resource = `kind: "Mixin"
-title: "Virtual Mixin"
+title: "Dynamic Mixin"
 description: "Mixin description"
 form:
 - type: "TextLine"
@@ -15,7 +15,7 @@ form:
     max: 2`;
 
 // BEGIN
-// Update virtual mixin.
+// Update dynamic mixin.
 var result = schemaLib.updateSchema({
     name: 'myapp:mydata',
     type: 'MIXIN',
@@ -30,12 +30,12 @@ log.info('Updated mixin: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mydata',
-    title: 'Virtual Mixin',
+    title: 'Dynamic Mixin',
     description: 'Mixin description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'kind: "Mixin"\n' +
-              'title: "Virtual Mixin"\n' +
+              'title: "Dynamic Mixin"\n' +
               'description: "Mixin description"\n' +
               'form:\n' +
               '- type: "TextLine"\n' +

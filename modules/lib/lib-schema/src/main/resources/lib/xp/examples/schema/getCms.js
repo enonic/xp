@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual CMS.
+// Fetch dynamic CMS.
 var result = schemaLib.getCms({
     application: 'myapp'
 });

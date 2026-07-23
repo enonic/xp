@@ -12,7 +12,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 @Component(immediate = true)
-public class VirtualAppServiceActivator
+public class NamespaceAppServiceActivator
 {
     private final IndexService indexService;
 
@@ -20,10 +20,10 @@ public class VirtualAppServiceActivator
 
     private final NodeService nodeService;
 
-    private ServiceRegistration<VirtualAppService> service;
+    private ServiceRegistration<NamespaceAppService> service;
 
     @Activate
-    public VirtualAppServiceActivator( @Reference final IndexService indexService,
+    public NamespaceAppServiceActivator( @Reference final IndexService indexService,
                                        @Reference final InternalRepositoryService repositoryService,
                                        @Reference final NodeService nodeService )
     {
@@ -35,9 +35,9 @@ public class VirtualAppServiceActivator
     @Activate
     public void activate( final BundleContext context )
     {
-        final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
-        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
-        service = context.registerService( VirtualAppService.class, virtualAppService, null );
+        final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
+        NamespaceAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
+        service = context.registerService( NamespaceAppService.class, namespaceAppService, null );
     }
 
     @Deactivate

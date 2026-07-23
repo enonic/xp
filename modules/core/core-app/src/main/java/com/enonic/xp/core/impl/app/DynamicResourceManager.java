@@ -32,7 +32,7 @@ final class DynamicResourceManager
 
     Resource createResource( final NodePath folderPath, final String name, final String resource )
     {
-        return VirtualAppContext.createContext().callWith( () -> {
+        return NamespaceAppContext.createContext().callWith( () -> {
 
             Node resourceFolder = nodeService.getByPath( folderPath );
             if ( resourceFolder == null )
@@ -66,7 +66,7 @@ final class DynamicResourceManager
 
     Resource updateResource( final NodePath folderPath, final String name, final String resource )
     {
-        return VirtualAppContext.createContext().callWith( () -> {
+        return NamespaceAppContext.createContext().callWith( () -> {
 
             final PropertyTree resourceData = new PropertyTree();
 
@@ -88,20 +88,20 @@ final class DynamicResourceManager
 
     boolean resourceNodeExists( final NodePath folderPath, final String name )
     {
-        return VirtualAppContext.createContext()
+        return NamespaceAppContext.createContext()
             .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + ".yaml" ) ) ) );
     }
 
     Resource getResource( final NodePath folderPath, final String name )
     {
-        return VirtualAppContext.createContext()
+        return NamespaceAppContext.createContext()
             .callWith( () -> resourceService.getResource(
                 ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + name + ".yaml" ) ) );
     }
 
     List<Resource> listResources( final NodePath folderPath )
     {
-        return VirtualAppContext.createContext()
+        return NamespaceAppContext.createContext()
             .callWith( () -> resourceService.findFiles( appKeyFromNodePath( folderPath ),
                                                         resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.yaml" )
                 .stream()
@@ -111,7 +111,7 @@ final class DynamicResourceManager
 
     boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder )
     {
-        return VirtualAppContext.createContext()
+        return NamespaceAppContext.createContext()
             .callWith( () -> nodeService.delete( DeleteNodeParams.create()
                                                      .nodePath( deleteFolder
                                                                     ? folderPath

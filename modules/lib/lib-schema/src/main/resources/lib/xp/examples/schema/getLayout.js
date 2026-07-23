@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual part.
+// Fetch dynamic layout.
 var result = schemaLib.getComponent({
     key: 'myapp:mylayout',
     type: 'LAYOUT'

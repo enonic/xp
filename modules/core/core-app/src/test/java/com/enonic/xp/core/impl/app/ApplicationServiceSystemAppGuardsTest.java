@@ -55,7 +55,7 @@ class ApplicationServiceSystemAppGuardsTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ),
             mock( ApplicationRepoService.class ), mock( EventPublisher.class ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), auditLogSupport );
+            new NamespaceAppService( nodeService ), auditLogSupport );
     }
 
     @Test

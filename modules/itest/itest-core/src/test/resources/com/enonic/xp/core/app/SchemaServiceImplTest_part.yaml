@@ -1,6 +1,6 @@
 kind: "Part"
 title:
-  text: "Virtual Part"
+  text: "Dynamic Part"
   i18n: "key.display-name"
 description:
   text: "My Part Description"

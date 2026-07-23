@@ -1,6 +1,6 @@
 kind: "Macro"
 title:
-  text: "Virtual Macro"
+  text: "Dynamic Macro"
   i18n: "key.display-name"
 description:
   text: "My Macro Description"

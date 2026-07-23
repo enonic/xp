@@ -26,20 +26,20 @@ import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-public class VirtualAppService
+public class NamespaceAppService
 {
     private final NodeService nodeService;
 
-    public VirtualAppService( final NodeService nodeService )
+    public NamespaceAppService( final NodeService nodeService )
     {
         this.nodeService = nodeService;
     }
 
     public Namespace getNamespace( final ApplicationKey applicationKey )
     {
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
 
-        return VirtualAppContext.createContext().callWith( () -> {
+        return NamespaceAppContext.createContext().callWith( () -> {
             final Node node = nodeService.getByPath( appPath );
             if ( node == null )
             {
@@ -51,7 +51,7 @@ public class VirtualAppService
 
     public List<Namespace> listNamespaces()
     {
-        return VirtualAppContext.createContext().callWith( () -> {
+        return NamespaceAppContext.createContext().callWith( () -> {
             final FindNodesByParentResult result =
                 this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
 
@@ -70,7 +70,7 @@ public class VirtualAppService
     {
         requireAdminRole();
 
-        VirtualAppContext.createContext().runWith( () -> initVirtualAppNode( params ) );
+        NamespaceAppContext.createContext().runWith( () -> initNamespaceNode( params ) );
 
         return Namespace.create().key( params.getKey() ).description( params.getDescription() ).build();
     }
@@ -79,28 +79,28 @@ public class VirtualAppService
     {
         requireAdminRole();
 
-        return VirtualAppContext.createContext().callWith( () -> deleteVirtualAppNode( key ) );
+        return NamespaceAppContext.createContext().callWith( () -> deleteNamespaceNode( key ) );
     }
 
     public void persistApplicationSchema( final ApplicationKey key, final Map<String, String> resources )
     {
-        VirtualAppContext.createAdminContext().runWith( () -> {
-            final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
+        NamespaceAppContext.createAdminContext().runWith( () -> {
+            final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
 
             if ( nodeService.nodeExists( appPath ) )
             {
                 nodeService.delete( DeleteNodeParams.create()
-                                        .nodePath( new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) ) )
+                                        .nodePath( new NodePath( appPath, NodeName.from( NamespaceAppConstants.CMS_ROOT_NAME ) ) )
                                         .refresh( RefreshMode.ALL )
                                         .build() );
                 initSiteNodes( appPath );
             }
             else
             {
-                initVirtualAppNode( CreateNamespaceParams.create().key( key ).build() );
+                initNamespaceNode( CreateNamespaceParams.create().key( key ).build() );
             }
 
-            final NodePath cmsPath = new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
+            final NodePath cmsPath = new NodePath( appPath, NodeName.from( NamespaceAppConstants.CMS_ROOT_NAME ) );
             resources.forEach( ( path, content ) -> createResourceNode( cmsPath, path, content ) );
 
             nodeService.refresh( RefreshMode.ALL );
@@ -139,7 +139,7 @@ public class VirtualAppService
                                 .build() );
     }
 
-    private Node initVirtualAppNode( final CreateNamespaceParams params )
+    private Node initNamespaceNode( final CreateNamespaceParams params )
     {
         final PropertyTree data = new PropertyTree();
         if ( params.getDescription() != null )
@@ -147,23 +147,23 @@ public class VirtualAppService
             data.setString( "description", params.getDescription() );
         }
 
-        final Node virtualAppNode = nodeService.create( CreateNodeParams.create()
+        final Node namespaceNode = nodeService.create( CreateNodeParams.create()
                                                             .data( data )
                                                             .name( params.getKey().toString() )
-                                                            .parent( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-                                                            .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                                            .parent( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
+                                                            .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                                             .build() );
-        initSiteNodes( virtualAppNode.path() );
+        initSiteNodes( namespaceNode.path() );
 
         nodeService.refresh( RefreshMode.ALL );
 
-        return virtualAppNode;
+        return namespaceNode;
     }
 
-    private boolean deleteVirtualAppNode( final ApplicationKey applicationKey )
+    private boolean deleteNamespaceNode( final ApplicationKey applicationKey )
     {
         return nodeService.delete( DeleteNodeParams.create()
-                                       .nodePath( new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) ) )
+                                       .nodePath( new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) ) )
                                        .refresh( RefreshMode.ALL )
                                        .build() ).getNodeIds().isNotEmpty();
     }
@@ -172,9 +172,9 @@ public class VirtualAppService
     {
         final Node siteRoot = nodeService.create( CreateNodeParams.create()
                                                       .data( new PropertyTree() )
-                                                      .name( VirtualAppConstants.CMS_ROOT_NAME )
+                                                      .name( NamespaceAppConstants.CMS_ROOT_NAME )
                                                       .parent( parent )
-                                                      .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                                      .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                                       .build() );
 
         final NodeId contentTypeNodeId = initContentTypeNode( siteRoot.path() );
@@ -193,9 +193,9 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.CONTENT_TYPE_ROOT_NAME )
+                                       .name( NamespaceAppConstants.CONTENT_TYPE_ROOT_NAME )
                                        .parent( parent )
-                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 
@@ -203,9 +203,9 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.PART_ROOT_NAME )
+                                       .name( NamespaceAppConstants.PART_ROOT_NAME )
                                        .parent( parent )
-                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 
@@ -213,9 +213,9 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.LAYOUT_ROOT_NAME )
+                                       .name( NamespaceAppConstants.LAYOUT_ROOT_NAME )
                                        .parent( parent )
-                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 
@@ -223,9 +223,9 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.PAGE_ROOT_NAME )
+                                       .name( NamespaceAppConstants.PAGE_ROOT_NAME )
                                        .parent( parent )
-                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 
@@ -233,9 +233,9 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME )
+                                       .name( NamespaceAppConstants.FORM_FRAGMENTS_ROOT_NAME )
                                        .parent( parent )
-                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 
@@ -243,9 +243,9 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.MIXINS_ROOT_NAME )
+                                       .name( NamespaceAppConstants.MIXINS_ROOT_NAME )
                                        .parent( parent )
-                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 
@@ -253,9 +253,9 @@ public class VirtualAppService
     {
         return nodeService.create( CreateNodeParams.create()
                                        .data( new PropertyTree() )
-                                       .name( VirtualAppConstants.MACROS_ROOT_NAME )
+                                       .name( NamespaceAppConstants.MACROS_ROOT_NAME )
                                        .parent( parent )
-                                       .permissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+                                       .permissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
                                        .build() ).id();
     }
 

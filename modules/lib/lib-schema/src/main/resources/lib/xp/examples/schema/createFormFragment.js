@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 let resource = `kind: "FormFragment"
-title: "Virtual FormFragment"
+title: "Dynamic FormFragment"
 description: "FormFragment description"
 form:
 - type: "TextLine"
@@ -17,7 +17,7 @@ form:
   name: "inline"`;
 
 // BEGIN
-// Create virtual form fragment.
+// Create dynamic form fragment.
 var result = schemaLib.createSchema({
     name: 'myapp:mytype',
     type: 'FORM_FRAGMENT',
@@ -32,12 +32,12 @@ log.info('Created form fragment: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mytype',
-    title: 'Virtual FormFragment',
+    title: 'Dynamic FormFragment',
     description: 'FormFragment description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'kind: "FormFragment"\n' +
-              'title: "Virtual FormFragment"\n' +
+              'title: "Dynamic FormFragment"\n' +
               'description: "FormFragment description"\n' +
               'form:\n' +
               '- type: "TextLine"\n' +

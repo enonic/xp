@@ -94,7 +94,7 @@ class GetDynamicContentSchemaHandlerTest
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( """
-                                                          displayName: "Virtual FormFragment"
+                                                          displayName: "Dynamic FormFragment"
                                                           description: "FormFragment description"
                                                           form:
                                                           - type: "TextLine"

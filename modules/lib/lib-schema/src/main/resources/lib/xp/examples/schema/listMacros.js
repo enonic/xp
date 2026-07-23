@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual macros of an application.
+// Fetch dynamic macros of an application.
 var result = schemaLib.listMacros({
     application: 'myapp'
 });

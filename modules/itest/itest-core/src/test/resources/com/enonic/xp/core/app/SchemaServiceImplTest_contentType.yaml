@@ -3,7 +3,7 @@ superType: "base:folder"
 abstract: false
 final: true
 allowChildContent: false
-title: "Virtual Content Type"
+title: "Dynamic Content Type"
 description: "description"
 form:
   - type: "Date"

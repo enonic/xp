@@ -845,7 +845,7 @@ interface GetNamespaceHandler {
 }
 
 /**
- * Fetches a namespace (virtual application) by key.
+ * Fetches a namespace by key.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Namespace (application) key.
@@ -874,7 +874,7 @@ interface CreateNamespaceHandler {
 }
 
 /**
- * Creates a namespace (virtual application).
+ * Creates a namespace.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Namespace (application) key.
@@ -904,7 +904,7 @@ interface DeleteNamespaceHandler {
 }
 
 /**
- * Deletes a namespace (virtual application).
+ * Deletes a namespace.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Namespace (application) key.
@@ -924,7 +924,7 @@ interface ListNamespacesHandler {
 }
 
 /**
- * Fetches all available namespaces (virtual applications).
+ * Fetches all available namespaces.
  *
  * @returns {Namespace[]} namespaces list.
  */

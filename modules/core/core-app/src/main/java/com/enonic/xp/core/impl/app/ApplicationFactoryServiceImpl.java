@@ -93,16 +93,16 @@ public class ApplicationFactoryServiceImpl
         {
             return adaptorEntry.map( Map.Entry::getValue )
                 .map( ApplicationAdaptor::getUrlResolver )
-                .or( () -> findVirtualAppResolver( applicationKey ) );
+                .or( () -> findNamespaceAppResolver( applicationKey ) );
         }
 
         return adaptorEntry.map( Map.Entry::getKey ).map( bundle -> factory.createUrlResolver( bundle, source ) );
     }
 
-    private Optional<ApplicationUrlResolver> findVirtualAppResolver( final ApplicationKey applicationKey )
+    private Optional<ApplicationUrlResolver> findNamespaceAppResolver( final ApplicationKey applicationKey )
     {
-        return VirtualAppContext.createContext().callWith( () -> {
-            final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) );
+        return NamespaceAppContext.createContext().callWith( () -> {
+            final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) );
             return this.nodeService.nodeExists( appPath )
                 ? Optional.of( new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
                                                                 new FakeCmsYamlUrlResolver( applicationKey, nodeService ) ) )

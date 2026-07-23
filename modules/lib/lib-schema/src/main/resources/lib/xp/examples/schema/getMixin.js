@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual mixin type.
+// Fetch dynamic mixin type.
 var result = schemaLib.getSchema({
     name: 'myapp:mydata',
     type: 'MIXIN'

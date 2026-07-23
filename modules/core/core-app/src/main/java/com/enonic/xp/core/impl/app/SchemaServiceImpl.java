@@ -80,48 +80,48 @@ public class SchemaServiceImpl
 
     private final ApplicationRegistry applicationRegistry;
 
-    private final VirtualAppService virtualAppService;
+    private final NamespaceAppService namespaceAppService;
 
     @Activate
     public SchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService,
-                              @Reference final ApplicationRegistry applicationRegistry, @Reference final VirtualAppService virtualAppService )
+                              @Reference final ApplicationRegistry applicationRegistry, @Reference final NamespaceAppService namespaceAppService )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService, resourceService );
         this.dynamicResourceParser = new DynamicResourceParser();
         this.applicationRegistry = applicationRegistry;
-        this.virtualAppService = virtualAppService;
+        this.namespaceAppService = namespaceAppService;
     }
 
     @Override
     public ApplicationKeys listApplicationKeys()
     {
         return ApplicationKeys.from( Stream.concat( applicationRegistry.getAll().stream().map( Application::getKey ),
-                                                    virtualAppService.listNamespaces().stream().map( Namespace::getKey ) )
+                                                    namespaceAppService.listNamespaces().stream().map( Namespace::getKey ) )
                                          .collect( Collectors.toCollection( LinkedHashSet::new ) ) );
     }
 
     @Override
     public Namespace createNamespace( final CreateNamespaceParams params )
     {
-        return this.virtualAppService.create( params );
+        return this.namespaceAppService.create( params );
     }
 
     @Override
     public boolean deleteNamespace( final ApplicationKey key )
     {
-        return this.virtualAppService.delete( key );
+        return this.namespaceAppService.delete( key );
     }
 
     @Override
     public Namespace getNamespace( final ApplicationKey key )
     {
-        return this.virtualAppService.getNamespace( key );
+        return this.namespaceAppService.getNamespace( key );
     }
 
     @Override
     public List<Namespace> listNamespaces()
     {
-        return this.virtualAppService.listNamespaces();
+        return this.namespaceAppService.listNamespaces();
     }
 
     @Override
@@ -192,7 +192,7 @@ public class SchemaServiceImpl
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
         final Resource createdResource =
-            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() );
+            dynamicResourceManager.createResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
@@ -207,9 +207,9 @@ public class SchemaServiceImpl
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
 
-        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME )
-            ? dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() )
-            : dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() );
+        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME )
+            ? dynamicResourceManager.updateResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() )
+            : dynamicResourceManager.createResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -223,9 +223,9 @@ public class SchemaServiceImpl
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
+            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( NamespaceAppConstants.STYLE_ROOT_NAME ).build();
         final Resource resource =
-            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, params.getResource() );
+            dynamicResourceManager.createResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -239,9 +239,9 @@ public class SchemaServiceImpl
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
+            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( NamespaceAppConstants.STYLE_ROOT_NAME ).build();
         final Resource resource =
-            dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, params.getResource() );
+            dynamicResourceManager.updateResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -252,7 +252,7 @@ public class SchemaServiceImpl
     {
         requireReadAccess();
 
-        return VirtualAppContext.createAdminContext().callWith( () -> {
+        return NamespaceAppContext.createAdminContext().callWith( () -> {
             final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
             final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
 
@@ -271,7 +271,7 @@ public class SchemaServiceImpl
     {
         requireListAccess();
 
-        return VirtualAppContext.createAdminContext().callWith( () -> dynamicResourceManager.listResources(
+        return NamespaceAppContext.createAdminContext().callWith( () -> dynamicResourceManager.listResources(
                 createComponentRootPath( params.getKey(), params.getType() ) )
             .stream()
             .map( resource -> {
@@ -290,7 +290,7 @@ public class SchemaServiceImpl
     {
         requireReadAccess();
 
-        return VirtualAppContext.createAdminContext().callWith( () -> {
+        return NamespaceAppContext.createAdminContext().callWith( () -> {
             final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
             final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getName().getLocalName() );
 
@@ -310,10 +310,10 @@ public class SchemaServiceImpl
     {
         requireReadAccess();
 
-        return VirtualAppContext.createAdminContext().callWith( () -> {
+        return NamespaceAppContext.createAdminContext().callWith( () -> {
             final NodePath resourceFolderPath = createCmsFolderPath( key );
 
-            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME );
+            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME );
 
             if ( resource.exists() && resource.getSize() > 0 )
             {
@@ -331,10 +331,10 @@ public class SchemaServiceImpl
     {
         requireReadAccess();
 
-        return VirtualAppContext.createAdminContext().callWith( () -> {
+        return NamespaceAppContext.createAdminContext().callWith( () -> {
             final NodePath resourceFolderPath =
-                NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
-            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME );
+                NodePath.create( createCmsFolderPath( key ) ).addElement( NamespaceAppConstants.STYLE_ROOT_NAME ).build();
+            final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME );
 
             if ( resource.exists() && resource.getSize() > 0 )
             {
@@ -372,7 +372,7 @@ public class SchemaServiceImpl
 
         final NodePath componentRootPath = createSchemaRootPath( params.getKey(), params.getType() );
 
-        return VirtualAppContext.createAdminContext()
+        return NamespaceAppContext.createAdminContext()
             .callWith( () -> dynamicResourceManager.listResources( componentRootPath ).stream().map( resource -> {
 
                 final BaseSchema<?> schema = dynamicResourceParser.parseSchema(
@@ -389,7 +389,7 @@ public class SchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createCmsFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, false );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, false );
     }
 
     @Override
@@ -398,8 +398,8 @@ public class SchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, false );
+            NodePath.create( createCmsFolderPath( key ) ).addElement( NamespaceAppConstants.STYLE_ROOT_NAME ).build();
+        return dynamicResourceManager.deleteResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME, false );
     }
 
     @Override
@@ -437,7 +437,7 @@ public class SchemaServiceImpl
     {
         requireReadAccess();
 
-        return VirtualAppContext.createAdminContext().callWith( () -> {
+        return NamespaceAppContext.createAdminContext().callWith( () -> {
             final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
             final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, params.getKey().getName() );
 
@@ -457,7 +457,7 @@ public class SchemaServiceImpl
     {
         requireListAccess();
 
-        return VirtualAppContext.createAdminContext().callWith( () -> dynamicResourceManager.listResources(
+        return NamespaceAppContext.createAdminContext().callWith( () -> dynamicResourceManager.listResources(
                 createMacroRootPath( params.getKey() ) )
             .stream()
             .map( resource -> {
@@ -510,9 +510,9 @@ public class SchemaServiceImpl
     private NodePath createComponentRootPath( final ApplicationKey key, final DynamicComponentType dynamicType )
     {
         final String resourceRootName = getComponentRootName( dynamicType );
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+        return NodePath.create( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
+            .addElement( NamespaceAppConstants.CMS_ROOT_NAME )
             .addElement( resourceRootName )
             .build();
     }
@@ -526,18 +526,18 @@ public class SchemaServiceImpl
     private NodePath createSchemaRootPath( final ApplicationKey key, final DynamicContentSchemaType dynamicType )
     {
         final String resourceRootName = getSchemaRootName( dynamicType );
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+        return NodePath.create( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
+            .addElement( NamespaceAppConstants.CMS_ROOT_NAME )
             .addElement( resourceRootName )
             .build();
     }
 
     private NodePath createCmsFolderPath( final ApplicationKey key )
     {
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+        return NodePath.create( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
+            .addElement( NamespaceAppConstants.CMS_ROOT_NAME )
             .build();
     }
 
@@ -549,10 +549,10 @@ public class SchemaServiceImpl
 
     private NodePath createMacroRootPath( final ApplicationKey key )
     {
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+        return NodePath.create( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
             .addElement( key.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
-            .addElement( VirtualAppConstants.MACROS_ROOT_NAME )
+            .addElement( NamespaceAppConstants.CMS_ROOT_NAME )
+            .addElement( NamespaceAppConstants.MACROS_ROOT_NAME )
             .build();
     }
 
@@ -561,11 +561,11 @@ public class SchemaServiceImpl
         switch ( type )
         {
             case CONTENT_TYPE:
-                return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
+                return NamespaceAppConstants.CONTENT_TYPE_ROOT_NAME;
             case FORM_FRAGMENT:
-                return VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME;
+                return NamespaceAppConstants.FORM_FRAGMENTS_ROOT_NAME;
             case MIXIN:
-                return VirtualAppConstants.MIXINS_ROOT_NAME;
+                return NamespaceAppConstants.MIXINS_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic schema type: " + type );
         }
@@ -576,11 +576,11 @@ public class SchemaServiceImpl
         switch ( type )
         {
             case PAGE:
-                return VirtualAppConstants.PAGE_ROOT_NAME;
+                return NamespaceAppConstants.PAGE_ROOT_NAME;
             case PART:
-                return VirtualAppConstants.PART_ROOT_NAME;
+                return NamespaceAppConstants.PART_ROOT_NAME;
             case LAYOUT:
-                return VirtualAppConstants.LAYOUT_ROOT_NAME;
+                return NamespaceAppConstants.LAYOUT_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic component type: " + type );
         }

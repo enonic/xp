@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual form fragment type.
+// Fetch dynamic form fragment type.
 var result = schemaLib.getSchema({
     name: 'myapp:myFormFragment',
     type: 'FORM_FRAGMENT'
@@ -22,7 +22,7 @@ assert.assertJsonEquals({
     createdTime: '2009-01-01T10:00:00Z',
     creator: 'user:system:anonymous',
     modifiedTime: '2010-01-01T10:00:00Z',
-    resource: 'displayName: \"Virtual FormFragment\"\ndescription: \"FormFragment description\"\nform:\n- type: \"TextLine\"\n  name: \"text\"\n  label: \"Text\"\n',
+    resource: 'displayName: \"Dynamic FormFragment\"\ndescription: \"FormFragment description\"\nform:\n- type: \"TextLine\"\n  name: \"text\"\n  label: \"Text\"\n',
     type: 'FORM_FRAGMENT',
     form: [
         {

@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual app.
+// Create namespace.
 var result = appLib.getDescriptor({
     key: 'my_app',
 });

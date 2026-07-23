@@ -20,7 +20,7 @@ form:
 
 
 // BEGIN
-// Update virtual CMS.
+// Update dynamic CMS.
 var result = schemaLib.updateCms({
     application: 'myapp',
     resource

@@ -38,7 +38,7 @@ public final class ApplicationServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationServiceImpl.class );
 
-    private static final String CMS_DESCRIPTOR_RESOURCE_KEY = VirtualAppConstants.CMS_ROOT_NAME + ".yaml";
+    private static final String CMS_DESCRIPTOR_RESOURCE_KEY = NamespaceAppConstants.CMS_ROOT_NAME + ".yaml";
 
     private final Set<ApplicationKey> localApplicationSet = Collections.newSetFromMap( new ConcurrentHashMap<>() );
 
@@ -50,21 +50,21 @@ public final class ApplicationServiceImpl
 
     private final AppFilterService appFilterService;
 
-    private final VirtualAppService virtualAppService;
+    private final NamespaceAppService namespaceAppService;
 
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
     @Activate
     public ApplicationServiceImpl( @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
-                                   @Reference final AppFilterService appFilterService, @Reference final VirtualAppService virtualAppService,
+                                   @Reference final AppFilterService appFilterService, @Reference final NamespaceAppService namespaceAppService,
                                    @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
         this.registry = applicationRegistry;
         this.repoService = repoService;
         this.eventPublisher = eventPublisher;
         this.appFilterService = appFilterService;
-        this.virtualAppService = virtualAppService;
+        this.namespaceAppService = namespaceAppService;
         this.applicationAuditLogSupport = applicationAuditLogSupport;
     }
 
@@ -98,7 +98,7 @@ public final class ApplicationServiceImpl
         {
             return installedApplication;
         }
-        final Namespace namespace = this.virtualAppService.getNamespace( key );
+        final Namespace namespace = this.namespaceAppService.getNamespace( key );
         return namespace != null ? new NamespaceApplication( namespace ) : null;
     }
 
@@ -112,7 +112,7 @@ public final class ApplicationServiceImpl
     public Applications list()
     {
         return Applications.from( Stream.concat( this.registry.getAll().stream(),
-                                                 this.virtualAppService.listNamespaces().stream().map( NamespaceApplication::new ) )
+                                                 this.namespaceAppService.listNamespaces().stream().map( NamespaceApplication::new ) )
                                       .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
                                       .values() );
     }
@@ -255,7 +255,7 @@ public final class ApplicationServiceImpl
         final Map<String, String> schemaResources = AppSchemaResolver.resolve( byteSource );
         if ( schemaResources.containsKey( CMS_DESCRIPTOR_RESOURCE_KEY ) )
         {
-            this.virtualAppService.persistApplicationSchema( applicationKey, schemaResources );
+            this.namespaceAppService.persistApplicationSchema( applicationKey, schemaResources );
         }
 
         LOG.info( "Global Application [{}] installed successfully", applicationKey );

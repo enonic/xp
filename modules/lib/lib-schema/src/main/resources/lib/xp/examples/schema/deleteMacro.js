@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Delete virtual macro.
+// Delete dynamic macro.
 var result = schemaLib.deleteMacro({
     key: 'myapp:mymacro'
 });

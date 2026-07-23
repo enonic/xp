@@ -12,11 +12,11 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-public final class VirtualAppConstants
+public final class NamespaceAppConstants
 {
-    public static final RepositoryId VIRTUAL_APP_REPO_ID = RepositoryId.from( "system.app" );
+    public static final RepositoryId NAMESPACE_APP_REPO_ID = RepositoryId.from( "system.app" );
 
-    public static final AccessControlList VIRTUAL_APP_REPO_DEFAULT_ACL = AccessControlList.create()
+    public static final AccessControlList NAMESPACE_APP_REPO_DEFAULT_ACL = AccessControlList.create()
         .add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() )
         .add( AccessControlEntry.create()
                   .principal( RoleKeys.SCHEMA_ADMIN )
@@ -44,9 +44,9 @@ public final class VirtualAppConstants
 
     public static final String STYLE_NAME = "style";
 
-    public static final NodePath VIRTUAL_APP_ROOT_PARENT = NodePath.ROOT;
+    public static final NodePath NAMESPACE_APP_ROOT_PARENT = NodePath.ROOT;
 
-    public static final Branch VIRTUAL_APP_BRANCH = Branch.from( "master" );
+    public static final Branch NAMESPACE_APP_BRANCH = Branch.from( "master" );
 
     public static final String CMS_DESCRIPTOR_DEFAULT_VALUE = """
         kind: "CMS"
@@ -57,7 +57,7 @@ public final class VirtualAppConstants
     public static final ByteSource DEFAULT_CMS_RESOURCE_VALUE =
         ByteSource.wrap( CMS_DESCRIPTOR_DEFAULT_VALUE.getBytes( StandardCharsets.UTF_8 ) );
 
-    private VirtualAppConstants()
+    private NamespaceAppConstants()
     {
 
     }

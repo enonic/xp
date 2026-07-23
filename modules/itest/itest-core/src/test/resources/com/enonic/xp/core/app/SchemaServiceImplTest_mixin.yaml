@@ -1,5 +1,5 @@
 kind: "Mixin"
-title: "Virtual Mixin"
+title: "Dynamic Mixin"
 description: "Mixin description"
 form:
   - type: "TextLine"

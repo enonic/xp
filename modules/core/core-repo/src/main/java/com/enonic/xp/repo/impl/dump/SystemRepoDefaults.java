@@ -32,9 +32,9 @@ public class SystemRepoDefaults
     public static final AccessControlList SCHEDULER_REPO_DEFAULT_ACL =
         AccessControlList.create().add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ).build();
 
-    public static final RepositoryId VIRTUAL_APP_REPO_ID = RepositoryId.from( "system.app" );
+    public static final RepositoryId NAMESPACE_APP_REPO_ID = RepositoryId.from( "system.app" );
 
-    public static final AccessControlList VIRTUAL_APP_REPO_DEFAULT_ACL = AccessControlList.create()
+    public static final AccessControlList NAMESPACE_APP_REPO_DEFAULT_ACL = AccessControlList.create()
         .add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() )
         .add( AccessControlEntry.create()
                   .principal( RoleKeys.SCHEMA_ADMIN )
@@ -44,7 +44,7 @@ public class SystemRepoDefaults
 
     public static final Map<RepositoryId, Data> SYSTEM_REPO_DEFAULTS =
         Map.of( AUDIT_LOG_REPO_ID, new Data( AUDIT_LOG_REPO_DEFAULT_ACL, AUDIT_LOG_REPO_DEFAULT_CHILD_ORDER ), SCHEDULER_REPO_ID,
-                new Data( SCHEDULER_REPO_DEFAULT_ACL ), VIRTUAL_APP_REPO_ID, new Data( VIRTUAL_APP_REPO_DEFAULT_ACL ) );
+                new Data( SCHEDULER_REPO_DEFAULT_ACL ), NAMESPACE_APP_REPO_ID, new Data( NAMESPACE_APP_REPO_DEFAULT_ACL ) );
 
     public record Data(AccessControlList acl, ChildOrder childOrder)
     {

@@ -124,7 +124,7 @@ class ApplicationFactoryServiceImplTest
         when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
 
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( "app1" ) );
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( "app1" ) );
         when( nodeService.nodeExists( appPath ) ).thenReturn( true );
         when( nodeService.getByPath( appPath ) ).thenReturn(
             Node.create().id( NodeId.from( "app-node" ) ).name( "app1" ).parentPath( NodePath.ROOT ).timestamp( Instant.now() ).build() );
@@ -144,12 +144,12 @@ class ApplicationFactoryServiceImplTest
     }
 
     @Test
-    void findVirtualApplicationResolver()
+    void findNamespaceApplicationResolver()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
         when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
+            new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
 
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();

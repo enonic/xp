@@ -16,7 +16,7 @@ config:
   provider: "myprovider"`;
 
 // BEGIN
-// Update virtual macro.
+// Update dynamic macro.
 var result = schemaLib.updateMacro({
     key: 'myapp:mymacro',
     resource

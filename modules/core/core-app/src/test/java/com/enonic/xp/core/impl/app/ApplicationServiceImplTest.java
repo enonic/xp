@@ -76,7 +76,7 @@ class ApplicationServiceImplTest
 
     private NodeService nodeService;
 
-    private VirtualAppService virtualAppService;
+    private NamespaceAppService namespaceAppService;
 
     @BeforeEach
     void initService()
@@ -103,9 +103,9 @@ class ApplicationServiceImplTest
             return Node.create().id( NodeId.from( params.getName() ) ).name( params.getName() ).parentPath( params.getParent() ).build();
         } );
 
-        virtualAppService = new VirtualAppService( nodeService );
+        namespaceAppService = new NamespaceAppService( nodeService );
 
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, namespaceAppService,
                                                    auditLogSupport );
     }
 
@@ -142,9 +142,9 @@ class ApplicationServiceImplTest
     {
         final ApplicationKey key = ApplicationKey.from( "app1" );
 
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
         when( nodeService.getByPath( appPath ) ).thenReturn(
-            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
                 .build() );
 
         final Application result = this.service.get( key );
@@ -383,7 +383,7 @@ class ApplicationServiceImplTest
         this.service.installGlobalApplication( byteSource );
 
         verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> bundleName.equals( params.getName().toString() ) &&
-            VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT.equals( params.getParent() ) ) );
+            NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT.equals( params.getParent() ) ) );
 
         verify( nodeService ).create( argThat( ( CreateNodeParams params ) -> "cms.yaml".equals( params.getName().toString() ) &&
             cmsResource.equals( params.getData().getString( "resource" ) ) ) );

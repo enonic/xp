@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual part.
+// Delete dynamic content type.
 
 var params = {
     name: 'myapp:mytype',

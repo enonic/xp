@@ -10,20 +10,20 @@ import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static java.util.Objects.requireNonNull;
 
-public class VirtualAppInitializer
+public class NamespaceAppInitializer
     extends ExternalInitializer
 {
     private final InternalRepositoryService repositoryService;
 
-    private static final Logger LOG = LoggerFactory.getLogger( VirtualAppInitializer.class );
+    private static final Logger LOG = LoggerFactory.getLogger( NamespaceAppInitializer.class );
 
     private final Context adminContext;
 
-    private VirtualAppInitializer( final Builder builder )
+    private NamespaceAppInitializer( final Builder builder )
     {
         super( builder );
         this.repositoryService = builder.repositoryService;
-        this.adminContext = VirtualAppContext.createAdminContext();
+        this.adminContext = NamespaceAppContext.createAdminContext();
     }
 
     public static Builder create()
@@ -34,7 +34,7 @@ public class VirtualAppInitializer
     @Override
     protected boolean isInitialized()
     {
-        return this.adminContext.callWith( () -> repositoryService.isInitialized( VirtualAppConstants.VIRTUAL_APP_REPO_ID ) );
+        return this.adminContext.callWith( () -> repositoryService.isInitialized( NamespaceAppConstants.NAMESPACE_APP_REPO_ID ) );
     }
 
     @Override
@@ -46,8 +46,8 @@ public class VirtualAppInitializer
     private void initializeRepository()
     {
         final CreateRepositoryParams createRepositoryParams = CreateRepositoryParams.create()
-            .repositoryId( VirtualAppConstants.VIRTUAL_APP_REPO_ID )
-            .rootPermissions( VirtualAppConstants.VIRTUAL_APP_REPO_DEFAULT_ACL )
+            .repositoryId( NamespaceAppConstants.NAMESPACE_APP_REPO_ID )
+            .rootPermissions( NamespaceAppConstants.NAMESPACE_APP_REPO_DEFAULT_ACL )
             .build();
 
         this.repositoryService.initializeRepository( createRepositoryParams );
@@ -56,7 +56,7 @@ public class VirtualAppInitializer
     @Override
     protected String getInitializationSubject()
     {
-        return VirtualAppConstants.VIRTUAL_APP_REPO_ID + " repo";
+        return NamespaceAppConstants.NAMESPACE_APP_REPO_ID + " repo";
     }
 
     public static class Builder
@@ -77,10 +77,10 @@ public class VirtualAppInitializer
             requireNonNull( repositoryService );
         }
 
-        public VirtualAppInitializer build()
+        public NamespaceAppInitializer build()
         {
             validate();
-            return new VirtualAppInitializer( this );
+            return new NamespaceAppInitializer( this );
         }
     }
 }

@@ -50,9 +50,9 @@ class SchemaServiceImplTest
         nodeService = mock( NodeService.class );
         applicationRegistry = mock( ApplicationRegistry.class );
 
-        final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
+        final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
 
-        this.service = new SchemaServiceImpl( nodeService, mock( ResourceService.class ), applicationRegistry, virtualAppService );
+        this.service = new SchemaServiceImpl( nodeService, mock( ResourceService.class ), applicationRegistry, namespaceAppService );
     }
 
     @Test
@@ -63,7 +63,7 @@ class SchemaServiceImplTest
 
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
 
-        final Namespace result = VirtualAppContext.createAdminContext()
+        final Namespace result = NamespaceAppContext.createAdminContext()
             .callWith( () -> this.service.createNamespace( CreateNamespaceParams.create().key( appKey ).build() ) );
 
         assertEquals( appKey, result.getKey() );
@@ -91,7 +91,7 @@ class SchemaServiceImplTest
             .build();
         when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
 
-        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteNamespace( appKey ) ) );
+        assertTrue( NamespaceAppContext.createAdminContext().callWith( () -> this.service.deleteNamespace( appKey ) ) );
     }
 
     @Test
@@ -115,9 +115,9 @@ class SchemaServiceImplTest
         final PropertyTree data = new PropertyTree();
         data.setString( "description", "my namespace" );
 
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( key.toString() ) );
         when( nodeService.getByPath( appPath ) ).thenReturn(
-            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+            Node.create().id( NodeId.from( "app-node" ) ).name( key.toString() ).parentPath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT )
                 .data( data ).build() );
 
         final Namespace result = this.service.getNamespace( key );
@@ -141,25 +141,25 @@ class SchemaServiceImplTest
         when( installedApp.getKey() ).thenReturn( installedKey );
         when( applicationRegistry.getAll() ).thenReturn( List.of( installedApp ) );
 
-        final NodeIds ids = NodeIds.from( NodeId.from( "virtual-app-id" ) );
+        final NodeIds ids = NodeIds.from( NodeId.from( "namespace-app-id" ) );
 
         when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
             FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );
 
         when( nodeService.getByIds( ids ) ).thenReturn(
-            Nodes.from( Node.create().id( new NodeId() ).name( "virtual.app" ).parentPath( NodePath.ROOT ).build() ) );
+            Nodes.from( Node.create().id( new NodeId() ).name( "namespace.app" ).parentPath( NodePath.ROOT ).build() ) );
 
         final ApplicationKeys result = this.service.listApplicationKeys();
 
-        assertEquals( ApplicationKeys.from( installedKey, ApplicationKey.from( "virtual.app" ) ), result );
+        assertEquals( ApplicationKeys.from( installedKey, ApplicationKey.from( "namespace.app" ) ), result );
     }
 
     @Test
     void list_namespaces()
     {
-        final NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
+        final NodeId namespaceNodeId = NodeId.from( "namespace-app-id" );
 
-        final NodeIds ids = NodeIds.from( virtualAppNodeId );
+        final NodeIds ids = NodeIds.from( namespaceNodeId );
 
         when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
             FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );

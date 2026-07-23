@@ -82,7 +82,7 @@ public final class ApplicationFactory
         return resolvers.size() == 1 ? resolvers.get( 0 ) : new MultiApplicationUrlResolver( resolvers.toArray( ApplicationUrlResolver[]::new ) );
     }
 
-    // Schema descriptors must not be contributed by the bundle when the application node exists in the virtual app repo
+    // Schema descriptors must not be contributed by the bundle when the application node exists in the namespace repo (system.app)
     private Predicate<String> schemaDescriptorFilter( final ApplicationKey applicationKey )
     {
         final Supplier<Boolean> appNodeExists = Suppliers.memoize( () -> appNodeExists( applicationKey ) );
@@ -91,8 +91,8 @@ public final class ApplicationFactory
 
     private boolean appNodeExists( final ApplicationKey applicationKey )
     {
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
-        return VirtualAppContext.createAdminContext().callWith( () -> nodeService.nodeExists( appPath ) );
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        return NamespaceAppContext.createAdminContext().callWith( () -> nodeService.nodeExists( appPath ) );
     }
 
     private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )

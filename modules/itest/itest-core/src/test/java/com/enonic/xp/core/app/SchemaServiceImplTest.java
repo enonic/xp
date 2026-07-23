@@ -54,10 +54,10 @@ import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.CreateDynamicCmsParams;
 import com.enonic.xp.core.impl.app.SchemaServiceImpl;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
-import com.enonic.xp.core.impl.app.VirtualAppContext;
-import com.enonic.xp.core.impl.app.VirtualAppInitializer;
-import com.enonic.xp.core.impl.app.VirtualAppService;
+import com.enonic.xp.core.impl.app.NamespaceAppConstants;
+import com.enonic.xp.core.impl.app.NamespaceAppContext;
+import com.enonic.xp.core.impl.app.NamespaceAppInitializer;
+import com.enonic.xp.core.impl.app.NamespaceAppService;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
@@ -306,13 +306,13 @@ class SchemaServiceImplTest
             .build()
             .initialize();
 
-        final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
-        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
+        final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
+        NamespaceAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        this.schemaService = new SchemaServiceImpl( nodeService, resourceService, applicationRegistry, virtualAppService );
+        this.schemaService = new SchemaServiceImpl( nodeService, resourceService, applicationRegistry, namespaceAppService );
 
         applicationService = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
-                                                         virtualAppService,
+                                                         namespaceAppService,
                                                          new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
 
         createSchemaAdminContext().runWith( () -> schemaService.createNamespace(
@@ -437,7 +437,7 @@ class SchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mytype", contentType.getName().toString() );
-        assertEquals( "Virtual Content Type", contentType.getTitle() );
+        assertEquals( "Dynamic Content Type", contentType.getTitle() );
         assertEquals( "description", contentType.getDescription() );
         assertEquals( 1, contentType.getForm().size() );
         assertFalse( contentType.allowChildContent() );
@@ -452,7 +452,7 @@ class SchemaServiceImplTest
         assertEquals( "myapp:/cms/content-types/mytype/mytype.yaml", result.getResource().getKey().toString() );
         assertTrue( result.getResource().getSize() > 0 );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -492,7 +492,7 @@ class SchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mytype", contentType.getName().toString() );
-        assertEquals( "Virtual Content Type", contentType.getTitle() );
+        assertEquals( "Dynamic Content Type", contentType.getTitle() );
         assertEquals( "description", contentType.getDescription() );
         assertEquals( 1, contentType.getForm().size() );
         assertFalse( contentType.allowChildContent() );
@@ -505,7 +505,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/content-types/mytype/mytype.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -535,7 +535,7 @@ class SchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:my-fragment", fragment.getName().toString() );
-        assertEquals( "Virtual FormFragment", fragment.getTitle() );
+        assertEquals( "Dynamic FormFragment", fragment.getTitle() );
         assertEquals( "FormFragment description", fragment.getDescription() );
         assertEquals( 2, fragment.getForm().size() );
         assertEquals( "myapp:inline", fragment.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
@@ -546,7 +546,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -583,7 +583,7 @@ class SchemaServiceImplTest
             .build();
 
         assertThrows( ForbiddenAccessException.class,
-                      () -> VirtualAppContext.createContext().callWith( () -> schemaService.createContentSchema( params ) ) );
+                      () -> NamespaceAppContext.createContext().callWith( () -> schemaService.createContentSchema( params ) ) );
     }
 
     @Test
@@ -623,7 +623,7 @@ class SchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:my-fragment", fragment.getName().toString() );
-        assertEquals( "Virtual FormFragment", fragment.getTitle() );
+        assertEquals( "Dynamic FormFragment", fragment.getTitle() );
         assertEquals( "FormFragment description", fragment.getDescription() );
         assertEquals( 2, fragment.getForm().size() );
         assertEquals( "myapp:inline", fragment.getForm().getFormFragment( "inline" ).getFormFragmentName().toString() );
@@ -634,7 +634,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -696,7 +696,7 @@ class SchemaServiceImplTest
             .build();
 
         assertThrows( ForbiddenAccessException.class,
-                      () -> VirtualAppContext.createContext().callWith( () -> schemaService.updateContentSchema( updateParams ) ) );
+                      () -> NamespaceAppContext.createContext().callWith( () -> schemaService.updateContentSchema( updateParams ) ) );
     }
 
 
@@ -724,7 +724,7 @@ class SchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
-        assertEquals( "Virtual Mixin", mixinDescriptor.getTitle() );
+        assertEquals( "Dynamic Mixin", mixinDescriptor.getTitle() );
         assertEquals( "Mixin description", mixinDescriptor.getDescription() );
         assertEquals( 1, mixinDescriptor.getForm().size() );
 
@@ -734,7 +734,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -749,7 +749,7 @@ class SchemaServiceImplTest
                 .name( MixinName.from( "myapp:mymixin" ) )
                 .resource( """
                                kind: "Mixin"
-                               title: "Virtual MIXIN"
+                               title: "Dynamic MIXIN"
                                form: [ ]
                                """ )
                 .type( DynamicContentSchemaType.MIXIN )
@@ -777,7 +777,7 @@ class SchemaServiceImplTest
                                                                    .build() ).getSchema() ) );
 
         assertEquals( "myapp:mymixin", mixinDescriptor.getName().toString() );
-        assertEquals( "Virtual Mixin", mixinDescriptor.getTitle() );
+        assertEquals( "Dynamic Mixin", mixinDescriptor.getTitle() );
         assertEquals( "Mixin description", mixinDescriptor.getDescription() );
         assertEquals( 1, mixinDescriptor.getForm().size() );
 
@@ -787,7 +787,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -818,7 +818,7 @@ class SchemaServiceImplTest
 
         assertEquals( "mypart", partDescriptor.getName() );
         assertEquals( "myapp", partDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Part", partDescriptor.getTitle() );
+        assertEquals( "Dynamic Part", partDescriptor.getTitle() );
         assertEquals( "key.display-name", partDescriptor.getTitleI18nKey() );
         assertEquals( "My Part Description", partDescriptor.getDescription() );
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
@@ -833,7 +833,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/parts/mypart/mypart.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -878,7 +878,7 @@ class SchemaServiceImplTest
 
         assertEquals( "mypart", partDescriptor.getName() );
         assertEquals( "myapp", partDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Part", partDescriptor.getTitle() );
+        assertEquals( "Dynamic Part", partDescriptor.getTitle() );
         assertEquals( "key.display-name", partDescriptor.getTitleI18nKey() );
         assertEquals( "My Part Description", partDescriptor.getDescription() );
         assertEquals( "key.description", partDescriptor.getDescriptionI18nKey() );
@@ -892,7 +892,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/parts/mypart/mypart.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -923,7 +923,7 @@ class SchemaServiceImplTest
 
         assertEquals( "mylayout", layoutDescriptor.getName() );
         assertEquals( "myapp", layoutDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Layout", layoutDescriptor.getTitle() );
+        assertEquals( "Dynamic Layout", layoutDescriptor.getTitle() );
         assertEquals( "key.display-name", layoutDescriptor.getTitleI18nKey() );
         assertEquals( "My Layout Description", layoutDescriptor.getDescription() );
         assertEquals( "key.description", layoutDescriptor.getDescriptionI18nKey() );
@@ -936,7 +936,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -981,7 +981,7 @@ class SchemaServiceImplTest
 
         assertEquals( "mylayout", layoutDescriptor.getName() );
         assertEquals( "myapp", layoutDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Layout", layoutDescriptor.getTitle() );
+        assertEquals( "Dynamic Layout", layoutDescriptor.getTitle() );
         assertEquals( "key.display-name", layoutDescriptor.getTitleI18nKey() );
         assertEquals( "My Layout Description", layoutDescriptor.getDescription() );
         assertEquals( "key.description", layoutDescriptor.getDescriptionI18nKey() );
@@ -994,7 +994,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -1025,7 +1025,7 @@ class SchemaServiceImplTest
 
         assertEquals( "mypage", pageDescriptor.getName() );
         assertEquals( "myapp", pageDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Page", pageDescriptor.getTitle() );
+        assertEquals( "Dynamic Page", pageDescriptor.getTitle() );
         assertEquals( "key.display-name", pageDescriptor.getTitleI18nKey() );
         assertEquals( "My Page Description", pageDescriptor.getDescription() );
         assertEquals( "key.description", pageDescriptor.getDescriptionI18nKey() );
@@ -1038,7 +1038,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/pages/mypage/mypage.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -1083,7 +1083,7 @@ class SchemaServiceImplTest
 
         assertEquals( "mypage", pageDescriptor.getName() );
         assertEquals( "myapp", pageDescriptor.getApplicationKey().toString() );
-        assertEquals( "Virtual Page", pageDescriptor.getTitle() );
+        assertEquals( "Dynamic Page", pageDescriptor.getTitle() );
         assertEquals( "key.display-name", pageDescriptor.getTitleI18nKey() );
         assertEquals( "My Page Description", pageDescriptor.getDescription() );
         assertEquals( "key.description", pageDescriptor.getDescriptionI18nKey() );
@@ -1096,7 +1096,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/pages/mypage/mypage.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -1128,7 +1128,7 @@ class SchemaServiceImplTest
         assertNotNull( cmsDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
+            NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1149,7 +1149,7 @@ class SchemaServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         createAdminContext().runWith( () -> schemaService.createCms(
-            CreateDynamicCmsParams.create().key( applicationKey ).resource( VirtualAppConstants.CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ) );
+            CreateDynamicCmsParams.create().key( applicationKey ).resource( NamespaceAppConstants.CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ) );
 
         final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
             () -> schemaService.updateCms( UpdateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
@@ -1167,7 +1167,7 @@ class SchemaServiceImplTest
         assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
+            NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1195,7 +1195,7 @@ class SchemaServiceImplTest
         assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
+            NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1251,7 +1251,7 @@ class SchemaServiceImplTest
         assertNotNull( styleDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
+            NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1281,7 +1281,7 @@ class SchemaServiceImplTest
         assertEquals( "myapp:/cms/style/style.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
+            NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1531,7 +1531,7 @@ class SchemaServiceImplTest
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+        assertThrows( ForbiddenAccessException.class, () -> NamespaceAppContext.createContext()
             .callWith( () -> schemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                           .applicationKey( applicationKey )
                                                                           .type( DynamicContentSchemaType.FORM_FRAGMENT )
@@ -1607,7 +1607,7 @@ class SchemaServiceImplTest
             createContentManagerAdminContext().callWith( () -> schemaService.getContentSchema( params ) );
         assertThat( result ).usingRecursiveComparison().isEqualTo( fragment );
 
-        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+        assertThrows( ForbiddenAccessException.class, () -> NamespaceAppContext.createContext()
             .callWith( () -> schemaService.getContentSchema( params ) ) );
     }
 
@@ -1628,7 +1628,7 @@ class SchemaServiceImplTest
                         .stream()
                         .anyMatch( namespace -> "myglobalapp".equals( namespace.getKey().toString() ) ) );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myglobalapp/cms/content-types/mytype/mytype.yaml" ) ) );
 
         assertNotNull( resourceNode );
@@ -1650,7 +1650,7 @@ class SchemaServiceImplTest
 
         createAdminContext().runWith( () -> applicationService.installGlobalApplication( updatedApp ) );
 
-        assertFalse( VirtualAppContext.createAdminContext()
+        assertFalse( NamespaceAppContext.createAdminContext()
                          .callWith(
                              () -> nodeService.nodeExists( new NodePath( "/myglobalapp/cms/content-types/mytype/mytype.yaml" ) ) ) );
 
@@ -1687,7 +1687,7 @@ class SchemaServiceImplTest
                          .anyMatch( namespace -> "mynoncmsapp".equals( namespace.getKey().toString() ) ) );
 
         assertFalse(
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/mynoncmsapp" ) ) ) );
+            NamespaceAppContext.createAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/mynoncmsapp" ) ) ) );
     }
 
     private static ByteSource createAppSource( final String name, final String version, final Map<String, String> resources )
@@ -1825,7 +1825,7 @@ class SchemaServiceImplTest
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+        assertThrows( ForbiddenAccessException.class, () -> NamespaceAppContext.createContext()
             .callWith( () -> schemaService.deleteContentSchema( DeleteDynamicContentSchemaParams.create()
                                                                            .name( contentType.getSchema().getName() )
                                                                            .type( DynamicContentSchemaType.CONTENT_TYPE )
@@ -1882,7 +1882,7 @@ class SchemaServiceImplTest
 
         assertEquals( "mymacro", macroDescriptor.getName() );
         assertEquals( "myapp", macroDescriptor.getKey().getApplicationKey().toString() );
-        assertEquals( "Virtual Macro", macroDescriptor.getTitle() );
+        assertEquals( "Dynamic Macro", macroDescriptor.getTitle() );
         assertEquals( "key.display-name", macroDescriptor.getTitleI18nKey() );
         assertEquals( "My Macro Description", macroDescriptor.getDescription() );
         assertEquals( "key.description", macroDescriptor.getDescriptionI18nKey() );
@@ -1895,7 +1895,7 @@ class SchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/macros/mymacro/mymacro.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
+        final Node resourceNode = NamespaceAppContext.createAdminContext()
             .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/macros/mymacro/mymacro.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
@@ -1924,7 +1924,7 @@ class SchemaServiceImplTest
         final DynamicSchemaResult<MacroDescriptor> result =
             createAdminContext().callWith( () -> schemaService.updateMacro( updateParams ) );
 
-        assertEquals( "Virtual Macro", result.getSchema().getTitle() );
+        assertEquals( "Dynamic Macro", result.getSchema().getTitle() );
         assertEquals( resource, result.getResource().readString() );
     }
 
