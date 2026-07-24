@@ -182,7 +182,7 @@ class ScriptRuntimeImplTest
 
         final InOrder inOrder = Mockito.inOrder( scriptExecutor );
         inOrder.verify( scriptExecutor ).bootstrap( MAIN );
-        inOrder.verify( scriptExecutor ).backgroundExports( CONTROLLER, "run" );
+        inOrder.verify( scriptExecutor ).executeBackground( CONTROLLER, "run" );
         verify( scriptExecutor, never() ).executeMain( CONTROLLER );
     }
 
@@ -194,10 +194,10 @@ class ScriptRuntimeImplTest
         final ScriptRuntimeImpl runtime = runtime();
 
         runtime.bootstrap( params() );
-        // uniform across engines: the pooled view is lazy, so without this check a missing
-        // script would surface only on the first invocation
+        // uniform across engines: the existence check fires ahead of the engine-specific
+        // require machinery, with one exception type
         Assertions.assertThrows( ResourceNotFoundException.class, () -> runtime.executeBackground( CONTROLLER, "run" ) );
-        verify( scriptExecutor, never() ).backgroundExports( CONTROLLER, "run" );
+        verify( scriptExecutor, never() ).executeBackground( CONTROLLER, "run" );
     }
 
     private void controllerScriptExists( final boolean exists )

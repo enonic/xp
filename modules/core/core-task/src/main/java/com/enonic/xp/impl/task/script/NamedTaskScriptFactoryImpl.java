@@ -7,8 +7,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceNotFoundException;
-import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskNotFoundException;
 
@@ -38,21 +36,15 @@ public class NamedTaskScriptFactoryImpl
                                                                 TASKS_PATH_PREFIX + descriptor.getName() + "/" + descriptor.getName() +
                                                                     ".js" );
 
-        // everything goes through the background view, so the task script's require tree never
-        // loads into a request-serving pool context. A missing script still fails at submit
-        // (executeBackground checks existence on every engine); a script without a run export
-        // fails at run time instead — the async background initialization puts it in the logs,
-        // and the task ends FAILED with a clear error
-        final BackgroundScript exports;
-        try
-        {
-            exports = this.scriptService.executeBackground( scriptResourceKey, NamedTaskScript.SCRIPT_METHOD_NAME );
-        }
-        catch ( ResourceNotFoundException e )
+        // a missing script fails at submit — existence is checkable without touching any script
+        // context. A script without a run export fails when the task runs, ending it FAILED with
+        // a clear error; the run itself goes through executeBackground, so the task script's
+        // require tree never loads into a request-serving pool context
+        if ( !this.scriptService.hasScript( scriptResourceKey ) )
         {
             throw new TaskNotFoundException( descriptor.getKey(), "Missing task script" );
         }
 
-        return new NamedTaskScript( exports, descriptor, data );
+        return new NamedTaskScript( this.scriptService, scriptResourceKey, descriptor, data );
     }
 }

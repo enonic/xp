@@ -6,7 +6,6 @@ import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +33,6 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceError;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
@@ -98,12 +96,6 @@ public class GraalScriptExecutor
      * Cleared on dev-mode cache expiry so reloads pick up changed resources.
      */
     private final Map<ResourceKey, Source> sources = new ConcurrentHashMap<>();
-
-    /**
-     * Background scripts whose async initialization has been kicked off (once per executor
-     * incarnation) — see {@link #backgroundExports}.
-     */
-    private final Set<ResourceKey> initializedBackground = ConcurrentHashMap.newKeySet();
 
     /**
      * Lazily populated, fixed logical capacity: slots retained by live connections leave the
@@ -218,45 +210,13 @@ public class GraalScriptExecutor
     }
 
     @Override
-    public BackgroundScript backgroundExports( final ResourceKey key, final String method )
+    public void executeBackground( final ResourceKey key, final String method, final Object... args )
     {
-        // resolving a view during app stop must fail like any other execution — without this
-        // guard the lazy view resolves fine and only its first invocation fails, after a doomed
-        // init thread has logged a misleading warning
-        requireOpen();
-        // no slot is touched: the view is not bound to any context, and each of its invocations
-        // runs in a fresh private context (withIsolatedExports), where the script's top level
-        // executes lazily. Named tasks resolve their scripts this way — a pooled checkout here
-        // would make every task run compete with live requests for request-serving slots.
-        initializeBackground( key );
-        final GraalScriptExports isolated = GraalScriptExports.isolated( this, key );
-        return args -> isolated.executeMethodRequired( method, args );
-    }
-
-    /**
-     * Asynchronously initializes a background script, once per executor incarnation: the view is
-     * lazy, so a missing or broken script would otherwise surface only if and when something
-     * invokes it. When the error fires does not matter — that it appears in the logs does. The
-     * warm-up also performs the first parse off the critical path, so the first real invocation
-     * hits the strong source registry.
-     */
-    private void initializeBackground( final ResourceKey key )
-    {
-        if ( initializedBackground.add( key ) )
-        {
-            // one thread per script per incarnation: name it by the script, not a builder-local
-            // counter that would label every thread background-init-0
-            Thread.ofVirtual().name( "background-init-" + key ).start( () -> {
-                try
-                {
-                    withIsolatedExports( key, ( slot, exports ) -> null );
-                }
-                catch ( Exception e )
-                {
-                    LOG.warn( "Background script {} failed to initialize", key, e );
-                }
-            } );
-        }
+        // no slot is touched: the call runs in a fresh private context (withIsolatedExports),
+        // where the script's top level executes lazily, and nothing is shared with any other
+        // call. Named tasks execute this way — a pooled checkout here would make every task run
+        // compete with live requests for request-serving slots.
+        GraalScriptExports.isolated( this, key ).executeMethodRequired( method, args );
     }
 
     @Override
@@ -774,8 +734,6 @@ public class GraalScriptExecutor
         // teardown mid-life and leave nothing for the actual stop
         // stale sources must not outlive the exports cache — dev-mode reloads re-parse
         this.sources.clear();
-        // an edited background script gets a fresh async initialization (and its errors logged)
-        this.initializedBackground.clear();
     }
 
     /**

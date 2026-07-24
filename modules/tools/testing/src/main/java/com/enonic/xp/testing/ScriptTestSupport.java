@@ -39,7 +39,6 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
-import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.ScriptValue;
@@ -236,18 +235,18 @@ public abstract class ScriptTestSupport
     }
 
     /**
-     * One script method resolved for background execution, engine-faithful: isolated
-     * per-invocation contexts on pooled engines, the shared context otherwise — what
-     * {@code PortalScriptService.executeBackground} returns in production.
+     * Executes one script method in the background execution model, engine-faithful: a fresh
+     * private context per call on pooled engines, the shared context otherwise — what
+     * {@code PortalScriptService.executeBackground} does in production.
      */
-    public final BackgroundScript runScriptBackground( final ResourceKey key, final String method )
+    public final void runScriptBackground( final ResourceKey key, final String method, final Object... args )
     {
-        // mirror production: executeBackground rejects a missing script at resolve, on every engine
+        // mirror production: executeBackground rejects a missing script up front, on every engine
         if ( !this.executor.getResourceService().getResource( key ).exists() )
         {
             throw new ResourceNotFoundException( key );
         }
-        return this.executor.backgroundExports( key, method );
+        this.executor.executeBackground( key, method, args );
     }
 
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )

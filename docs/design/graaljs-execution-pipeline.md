@@ -214,23 +214,23 @@ Two alternatives were implemented or considered and rejected:
 "Background" remains a **service-level concept only** (`executeBackground`), not a method on
 `ScriptExports`: exports views execute, the service resolves them — one concept, one owner. It
 serves **named tasks** (`task.submitTask`), the canonical parallel primitive: the task worker
-`require`s the named module itself in its own fresh private context. The view is its own
-minimal type, **`BackgroundScript`**: script *and method* bind at resolve
-(`executeBackground(script, method)`), leaving one operation — `void execute(args...)` — so
-the type reads as what it is: one script, one method, a fresh private context per call,
-nothing shared between calls. Results could never outlive the invocation's private context,
-so the contract returns nothing *by type* instead of documenting which results happen to
-survive (an earlier draft returned `ScriptExports` and needed a scalars-only rule plus five
-methods that ranged from no-op to foot-gun on a context-less view; a later one kept a
-per-call method name, which misread as an exports object with cross-call state). A missing
-script fails at resolve on every
-engine — existence is checkable without a context, where the lazy pooled view would otherwise
-surface it only on first invocation; a missing *method* fails loudly at invocation, because a
-background run has no caller to observe the silent `null` that `ScriptExports.executeMethod`
-answers a missing method with. A script without the expected export is therefore detected at
-run time and by the asynchronous background initialization in the logs, no longer by an eager
-submit-time `hasMethod` probe — which cost a throwaway private context on every named-task
-submit.
+`require`s the named module itself in its own fresh private context. The API is one direct
+call — `void executeBackground(script, method, args...)` — that resolves and executes in a
+single shot: one script, one method, a fresh private context per call, nothing shared between
+calls, nothing held between them. Results could never outlive the call's private context, so
+the contract returns nothing *by type* instead of documenting which results happen to survive.
+(Three earlier drafts converged here: a returned `ScriptExports` needed a scalars-only rule
+plus five methods that ranged from no-op to foot-gun on a context-less view; a per-call method
+name misread as an exports object with cross-call state; and a resolve-then-execute-later view
+captured the executor incarnation, going stale on redeploy — with resolve-at-run the task
+simply executes against the application's current incarnation. The lone deferred user, named
+tasks, validates at submit with the pre-existing `hasScript` instead.) A missing script fails
+with one exception type on every engine — existence is checkable without a context, ahead of
+the engine-specific require machinery; a missing *method* fails loudly, because a background
+run has no caller to observe the silent `null` that `ScriptExports.executeMethod` answers a
+missing method with. A script without the expected export is therefore detected when the task
+runs — ending it FAILED with the error in the logs — no longer by an eager submit-time
+`hasMethod` probe, which cost a throwaway private context on every named-task submit.
 
 ### 4.4 Websockets and SSE — connections keep the exact context of their request
 
@@ -466,12 +466,10 @@ what every Node.js cluster / worker deployment already imposes on developers.
    detached re-materialization mode (function travels as source plus eager data params, re-run
    by a runner module in a fresh private context) was implemented and then removed in favor of
    failing fast — see §4.3 for the trade-off analysis. **Named tasks** are the parallel
-   primitive: they resolve through `PortalScriptService.executeBackground` — a view bound to no
-   context, each invocation in a fresh private context, so a task run never checks out a
-   request-serving slot; the script is additionally **initialized asynchronously once per
-   executor incarnation**, so a missing or broken task script reaches the logs even if the lazy
-   view is never invoked, and the first parse happens off the critical path. Still to do: the
-   §5 migration guide for docs.
+   primitive: submit validates with `hasScript` (context-free), and the run is one direct
+   `PortalScriptService.executeBackground(script, method, args)` call in a fresh private
+   context, so a task run never checks out a request-serving slot and always executes against
+   the application's current incarnation. Still to do: the §5 migration guide for docs.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (retention-aware growth), the global cross-app context budget

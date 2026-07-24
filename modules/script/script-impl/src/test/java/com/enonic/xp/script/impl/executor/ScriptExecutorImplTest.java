@@ -10,7 +10,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.script.BackgroundScript;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -39,10 +38,10 @@ class ScriptExecutorImplTest
     {
         executor.registerMock( "/test/background.js", "the-exports" );
 
-        // background invocations resolve on the single shared context; a missing method fails
-        // loudly - a background run has no caller to observe a silent no-op
-        final BackgroundScript background = executor.backgroundExports( ResourceKey.from( "myapplication:/test/background.js" ), "run" );
-        assertThrows( IllegalArgumentException.class, background::execute );
+        // background runs execute on the single shared context; a missing method fails loudly -
+        // a background run has no caller to observe a silent no-op
+        assertThrows( IllegalArgumentException.class,
+                      () -> executor.executeBackground( ResourceKey.from( "myapplication:/test/background.js" ), "run" ) );
     }
 
     @Test
