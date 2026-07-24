@@ -41,8 +41,8 @@ class ScriptExecutorImplTest
 
         // background invocations resolve on the single shared context; a missing method fails
         // loudly - a background run has no caller to observe a silent no-op
-        final BackgroundScript background = executor.backgroundExports( ResourceKey.from( "myapplication:/test/background.js" ) );
-        assertThrows( IllegalArgumentException.class, () -> background.executeMethod( "run" ) );
+        final BackgroundScript background = executor.backgroundExports( ResourceKey.from( "myapplication:/test/background.js" ), "run" );
+        assertThrows( IllegalArgumentException.class, background::execute );
     }
 
     @Test

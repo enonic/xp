@@ -71,9 +71,9 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
-    public BackgroundScript executeBackground( final ResourceKey script )
+    public BackgroundScript executeBackground( final ResourceKey script, final String method )
     {
-        return this.scriptRuntime.executeBackground( script );
+        return this.scriptRuntime.executeBackground( script, method );
     }
 
     @Deprecated

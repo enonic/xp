@@ -218,7 +218,7 @@ public class GraalScriptExecutor
     }
 
     @Override
-    public BackgroundScript backgroundExports( final ResourceKey key )
+    public BackgroundScript backgroundExports( final ResourceKey key, final String method )
     {
         // resolving a view during app stop must fail like any other execution — without this
         // guard the lazy view resolves fine and only its first invocation fails, after a doomed
@@ -229,7 +229,8 @@ public class GraalScriptExecutor
         // executes lazily. Named tasks resolve their scripts this way — a pooled checkout here
         // would make every task run compete with live requests for request-serving slots.
         initializeBackground( key );
-        return GraalScriptExports.isolated( this, key )::executeMethodRequired;
+        final GraalScriptExports isolated = GraalScriptExports.isolated( this, key );
+        return args -> isolated.executeMethodRequired( method, args );
     }
 
     /**

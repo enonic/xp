@@ -284,9 +284,9 @@ class GraalContextPoolTest
 
         // resolving the view touches no pooled slot, and every invocation gets a fresh, private
         // context — the path named tasks use, so they never compete with request traffic
-        final BackgroundScript background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
-        background.executeMethod( "incRecord" );
-        background.executeMethod( "incRecord" );
+        final BackgroundScript background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" );
+        background.execute();
+        background.execute();
         // a fresh context per invocation: the module counter starts over every time
         assertEquals( List.of( "1", "1" ), List.copyOf( recorded ) );
 
@@ -300,8 +300,8 @@ class GraalContextPoolTest
     void backgroundMethodMustExist()
     {
         // a background run has no caller to observe a silent no-op: a missing method fails loudly
-        final BackgroundScript background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) );
-        assertThrows( IllegalArgumentException.class, () -> background.executeMethod( "noSuchMethod" ) );
+        final BackgroundScript background = scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ), "noSuchMethod" );
+        assertThrows( IllegalArgumentException.class, background::execute );
     }
 
     @Test
@@ -317,7 +317,7 @@ class GraalContextPoolTest
         assertThrows( IllegalStateException.class, () -> local.bootstrap( ResourceKey.from( "graaljs:/main.js" ) ) );
         assertThrows( IllegalStateException.class, () -> local.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) ) );
         // resolving a background view is rejected too — not just its first invocation
-        assertThrows( IllegalStateException.class, () -> local.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ) );
+        assertThrows( IllegalStateException.class, () -> local.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ), "inc" ) );
     }
 
     @Test
@@ -416,7 +416,7 @@ class GraalContextPoolTest
         {
             assertEquals( 1, virtualThreads.submit( () -> intValue( exports.executeMethod( "inc" ) ) ).get() );
             virtualThreads.submit(
-                () -> scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ) ).executeMethod( "incRecord" ) ).get();
+                () -> scriptExecutor.backgroundExports( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" ).execute() ).get();
             assertEquals( List.of( "1" ), List.copyOf( recorded ) );
         }
     }

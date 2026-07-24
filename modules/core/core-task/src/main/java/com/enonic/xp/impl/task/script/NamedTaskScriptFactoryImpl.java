@@ -46,7 +46,7 @@ public class NamedTaskScriptFactoryImpl
         final BackgroundScript exports;
         try
         {
-            exports = this.scriptService.executeBackground( scriptResourceKey );
+            exports = this.scriptService.executeBackground( scriptResourceKey, NamedTaskScript.SCRIPT_METHOD_NAME );
         }
         catch ( ResourceNotFoundException e )
         {

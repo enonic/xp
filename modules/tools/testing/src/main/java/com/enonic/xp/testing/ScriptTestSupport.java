@@ -235,13 +235,13 @@ public abstract class ScriptTestSupport
     }
 
     /**
-     * View for background execution, engine-faithful: isolated per-invocation contexts on pooled
-     * engines, the shared context otherwise — what {@code PortalScriptService.executeBackground}
-     * returns in production.
+     * One script method resolved for background execution, engine-faithful: isolated
+     * per-invocation contexts on pooled engines, the shared context otherwise — what
+     * {@code PortalScriptService.executeBackground} returns in production.
      */
-    public final BackgroundScript runScriptBackground( final ResourceKey key )
+    public final BackgroundScript runScriptBackground( final ResourceKey key, final String method )
     {
-        return this.executor.backgroundExports( key );
+        return this.executor.backgroundExports( key, method );
     }
 
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )

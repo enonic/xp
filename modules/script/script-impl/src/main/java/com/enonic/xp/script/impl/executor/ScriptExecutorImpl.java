@@ -102,18 +102,18 @@ public final class ScriptExecutorImpl
     }
 
     @Override
-    public BackgroundScript backgroundExports( final ResourceKey key )
+    public BackgroundScript backgroundExports( final ResourceKey key, final String method )
     {
         // no context pool: background execution shares the single context, like everything else.
         // A missing method fails loudly — ScriptExports.executeMethod answers it with null, which
         // a background run has no caller to observe
-        return ( name, args ) -> {
+        return args -> {
             final ScriptExports exports = executeMain( key );
-            if ( !exports.hasMethod( name ) )
+            if ( !exports.hasMethod( method ) )
             {
-                throw new IllegalArgumentException( "Method [" + name + "] not found in script [" + key + "]" );
+                throw new IllegalArgumentException( "Method [" + method + "] not found in script [" + key + "]" );
             }
-            exports.executeMethod( name, args );
+            exports.executeMethod( method, args );
         };
     }
 

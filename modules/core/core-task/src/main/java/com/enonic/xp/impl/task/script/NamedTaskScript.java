@@ -41,7 +41,7 @@ final class NamedTaskScript
         try
         {
             final PropertyTreeMapper configMapper = new PropertyTreeMapper( config );
-            this.scriptExports.executeMethod( SCRIPT_METHOD_NAME, configMapper, id.toString() );
+            this.scriptExports.execute( configMapper, id.toString() );
         }
         catch ( Throwable t )
         {

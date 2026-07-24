@@ -215,11 +215,15 @@ Two alternatives were implemented or considered and rejected:
 `ScriptExports`: exports views execute, the service resolves them — one concept, one owner. It
 serves **named tasks** (`task.submitTask`), the canonical parallel primitive: the task worker
 `require`s the named module itself in its own fresh private context. The view is its own
-minimal type, **`BackgroundScript`**, with exactly one operation — `void executeMethod(name,
-args...)`. Results could never outlive the invocation's private context, so the contract
-returns nothing *by type* instead of documenting which results happen to survive (an earlier
-draft returned `ScriptExports` and needed a scalars-only rule plus five methods that ranged
-from no-op to foot-gun on a context-less view). A missing script fails at resolve on every
+minimal type, **`BackgroundScript`**: script *and method* bind at resolve
+(`executeBackground(script, method)`), leaving one operation — `void execute(args...)` — so
+the type reads as what it is: one script, one method, a fresh private context per call,
+nothing shared between calls. Results could never outlive the invocation's private context,
+so the contract returns nothing *by type* instead of documenting which results happen to
+survive (an earlier draft returned `ScriptExports` and needed a scalars-only rule plus five
+methods that ranged from no-op to foot-gun on a context-less view; a later one kept a
+per-call method name, which misread as an exports object with cross-call state). A missing
+script fails at resolve on every
 engine — existence is checkable without a context, where the lazy pooled view would otherwise
 surface it only on first invocation; a missing *method* fails loudly at invocation, because a
 background run has no caller to observe the silent `null` that `ScriptExports.executeMethod`

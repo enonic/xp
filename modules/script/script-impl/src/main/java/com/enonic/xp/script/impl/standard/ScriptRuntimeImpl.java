@@ -109,7 +109,7 @@ public class ScriptRuntimeImpl
     }
 
     @Override
-    public BackgroundScript executeBackground( final ResourceKey script )
+    public BackgroundScript executeBackground( final ResourceKey script, final String method )
     {
         final AppExecutor app = executorFor( script.getApplicationKey() );
         // a missing script fails at resolve on every engine: existence is checkable without a
@@ -118,7 +118,7 @@ public class ScriptRuntimeImpl
         {
             throw new ResourceNotFoundException( script );
         }
-        return app.executor.backgroundExports( script );
+        return app.executor.backgroundExports( script, method );
     }
 
     /**
