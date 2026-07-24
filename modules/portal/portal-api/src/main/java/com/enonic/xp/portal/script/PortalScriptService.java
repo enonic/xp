@@ -23,10 +23,14 @@ public interface PortalScriptService
      * on engines without pooling it executes on the shared context. A missing script fails with
      * {@code ResourceNotFoundException}, uniformly across engines (use {@link #hasScript} to
      * validate ahead of time); a missing method fails loudly instead of silently doing nothing.
-     * Nothing is returned by design: on pooled engines a result could not outlive the private
-     * context. Named tasks run through this call.
+     * Named tasks run through this call.
+     *
+     * @return the method's result when it is a scalar (string, number, boolean, date), and
+     * {@code null} otherwise: on pooled engines a richer value could not survive the private
+     * context as-is, and is not (yet) converted — uniformly on every engine, so results do not
+     * change meaning with the engine choice.
      */
-    void executeMethod( ResourceKey script, String method, Object... args );
+    Object executeMethod( ResourceKey script, String method, Object... args );
 
     /**
      * @deprecated Only {@code main.js} bootstrap used this, and it now runs synchronously through

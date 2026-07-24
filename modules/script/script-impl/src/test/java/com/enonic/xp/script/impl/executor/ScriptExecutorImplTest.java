@@ -39,7 +39,7 @@ class ScriptExecutorImplTest
         executor.registerMock( "/test/background.js", "the-exports" );
 
         // executeMethod runs on the single shared context; a missing method fails loudly -
-        // the call returns nothing, so it would otherwise be an invisible no-op
+        // executeMethod's null is a legal scalar-contract result, so it cannot signal this
         assertThrows( IllegalArgumentException.class,
                       () -> executor.executeMethod( ResourceKey.from( "myapplication:/test/background.js" ), "run" ) );
     }

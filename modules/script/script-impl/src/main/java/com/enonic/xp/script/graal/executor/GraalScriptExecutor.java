@@ -210,13 +210,13 @@ public class GraalScriptExecutor
     }
 
     @Override
-    public void executeMethod( final ResourceKey key, final String method, final Object... args )
+    public Object executeMethod( final ResourceKey key, final String method, final Object... args )
     {
         // no slot is touched: the call runs in a fresh private context (withIsolatedExports),
         // where the script's top level executes lazily, and nothing is shared with any other
         // call. Named tasks execute this way — a pooled checkout here would make every task run
         // compete with live requests for request-serving slots.
-        GraalScriptExports.isolated( this, key ).executeMethodRequired( method, args );
+        return GraalScriptExports.isolated( this, key ).executeMethodRequired( method, args );
     }
 
     @Override

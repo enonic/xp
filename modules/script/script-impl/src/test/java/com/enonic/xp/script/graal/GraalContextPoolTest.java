@@ -2,10 +2,7 @@ package com.enonic.xp.script.graal;
 
 import java.io.Closeable;
 import java.net.URL;
-import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -277,16 +274,14 @@ class GraalContextPoolTest
     @Timeout(60)
     void executeMethodSkipsThePool()
     {
-        // executeMethod returns nothing by design: observe through a recorder mock
-        final Queue<String> recorded = new ConcurrentLinkedQueue<>();
-        scriptExecutor.registerMock( "/recorder.js", recorded );
-
         // executeMethod touches no pooled slot, and every call gets a fresh, private context —
-        // the path named tasks use, so they never compete with request traffic
-        scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" );
-        scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" );
-        // a fresh context per call: the module counter starts over every time
-        assertEquals( List.of( "1", "1" ), List.copyOf( recorded ) );
+        // the path named tasks use, so they never compete with request traffic. A fresh context
+        // per call: the module counter starts over every time, and the scalar result survives
+        // the private context's close
+        assertEquals( 1, ( (Number) scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "inc" ) ).intValue() );
+        assertEquals( 1, ( (Number) scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "inc" ) ).intValue() );
+        // a non-scalar result cannot survive the private context and comes back as null
+        assertNull( scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "mkCallback" ) );
 
         // the pooled contexts are untouched by isolated runs
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
@@ -297,7 +292,7 @@ class GraalContextPoolTest
     @Timeout(60)
     void executeMethodRequiresTheMethod()
     {
-        // executeMethod returns nothing, so a missing method must fail loudly, not no-op invisibly
+        // a missing method must fail loudly - executeMethod's null is a legal scalar-contract result
         assertThrows( IllegalArgumentException.class,
                       () -> scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "noSuchMethod" ) );
     }
@@ -406,15 +401,11 @@ class GraalContextPoolTest
     {
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
 
-        final Queue<String> recorded = new ConcurrentLinkedQueue<>();
-        scriptExecutor.registerMock( "/recorder.js", recorded );
-
         try (ExecutorService virtualThreads = Executors.newVirtualThreadPerTaskExecutor())
         {
             assertEquals( 1, virtualThreads.submit( () -> intValue( exports.executeMethod( "inc" ) ) ).get() );
-            virtualThreads.submit(
-                () -> scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" ) ).get();
-            assertEquals( List.of( "1" ), List.copyOf( recorded ) );
+            assertEquals( 1, ( (Number) virtualThreads.submit(
+                () -> scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "inc" ) ).get() ).intValue() );
         }
     }
 

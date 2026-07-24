@@ -70,9 +70,9 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
-    public void executeMethod( final ResourceKey script, final String method, final Object... args )
+    public Object executeMethod( final ResourceKey script, final String method, final Object... args )
     {
-        this.scriptRuntime.executeMethod( script, method, args );
+        return this.scriptRuntime.executeMethod( script, method, args );
     }
 
     @Deprecated

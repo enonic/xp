@@ -101,17 +101,20 @@ public final class ScriptExecutorImpl
     }
 
     @Override
-    public void executeMethod( final ResourceKey key, final String method, final Object... args )
+    public Object executeMethod( final ResourceKey key, final String method, final Object... args )
     {
         // no context pool: the call executes on the single shared context, like everything else.
-        // A missing method fails loudly — ScriptExports.executeMethod answers it with null, and
-        // this call returns nothing, so it would otherwise be an invisible no-op
+        // A missing method fails loudly — ScriptExports.executeMethod would answer it with an
+        // indistinguishable null
         final ScriptExports exports = executeMain( key );
         if ( !exports.hasMethod( method ) )
         {
             throw new IllegalArgumentException( "Method [" + method + "] not found in script [" + key + "]" );
         }
-        exports.executeMethod( method, args );
+        final ScriptValue result = exports.executeMethod( method, args );
+        // scalars only, matching the pooled engines where richer values die with the private
+        // context — results must not change meaning with the engine choice
+        return result != null && result.isValue() ? result.getValue() : null;
     }
 
     private ScriptExports doExecuteMain( final ResourceKey key )

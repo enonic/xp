@@ -215,10 +215,14 @@ Isolated execution is a **service-level concern only** — not a method on `Scri
 not a "background" API: the call is synchronous on the calling thread, so the name carries no
 threading claim. It serves **named tasks** (`task.submitTask`), the canonical parallel
 primitive: the task worker `require`s the named module itself in its own fresh private
-context. The API is one direct call — `void executeMethod(script, method, args...)` — that
-resolves and executes in a single shot: one script, one method, a fresh private context per call, nothing shared between
-calls, nothing held between them. Results could never outlive the call's private context, so
-the contract returns nothing *by type* instead of documenting which results happen to survive.
+context. The API is one direct call — `Object executeMethod(script, method, args...)` — that
+resolves and executes in a single shot: one script, one method, a fresh private context per
+call, nothing shared between calls, nothing held between them. The result comes back when it
+is a **scalar** (string, number, boolean, date — unboxed eagerly, so it survives the private
+context's close) and is `null` otherwise, uniformly on every engine: richer values could not
+survive the private context as-is and are not (yet) deep-converted. The `Object` return sits
+in the signature now, while the API is still unreleased, so conversion can be added later
+without a breaking change.
 (Three earlier drafts converged here: a returned `ScriptExports` needed a scalars-only rule
 plus five methods that ranged from no-op to foot-gun on a context-less view; a per-call method
 name misread as an exports object with cross-call state; and a resolve-then-execute-later view
@@ -226,9 +230,9 @@ captured the executor incarnation, going stale on redeploy — with resolve-at-r
 simply executes against the application's current incarnation. The lone deferred user, named
 tasks, validates at submit with the pre-existing `hasScript` instead.) A missing script fails
 with one exception type on every engine — existence is checkable without a context, ahead of
-the engine-specific require machinery; a missing *method* fails loudly, because a background
-run has no caller to observe the silent `null` that `ScriptExports.executeMethod` answers a
-missing method with. A script without the expected export is therefore detected when the task
+the engine-specific require machinery; a missing *method* fails loudly — the `null` that
+`ScriptExports.executeMethod` would answer with is a legal scalar-contract result here, so it
+cannot signal the mistake. A script without the expected export is therefore detected when the task
 runs — ending it FAILED with the error in the logs — no longer by an eager submit-time
 `hasMethod` probe, which cost a throwaway private context on every named-task submit.
 

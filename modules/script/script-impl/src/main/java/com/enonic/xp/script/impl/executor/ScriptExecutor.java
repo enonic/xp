@@ -24,10 +24,10 @@ public interface ScriptExecutor
      * the call runs in a fresh private context where the script's top level executes lazily — no
      * request-serving slot is touched, and nothing is shared with any other call. Engines
      * without pooling execute on the shared context. Unlike {@code ScriptExports.executeMethod},
-     * a missing method fails loudly — the call returns nothing, so it would otherwise be an
-     * invisible no-op.
+     * a missing method fails loudly instead of answering {@code null}. Returns the result when
+     * it is a scalar, {@code null} otherwise — uniformly on every engine.
      */
-    void executeMethod( ResourceKey key, String method, Object... args );
+    Object executeMethod( ResourceKey key, String method, Object... args );
 
     Object executeRequire( ResourceKey key );
 

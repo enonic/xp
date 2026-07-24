@@ -137,14 +137,15 @@ final class GraalScriptExports
     }
 
     /**
-     * Isolated invocation: the method must exist. {@link #executeMethod} answers a missing
-     * method with {@code null}, which an interactive caller can observe — this call returns
-     * nothing and would otherwise be an invisible no-op. One private context per call, method
-     * lookup and execution inside it.
+     * Isolated invocation: the method must exist — {@link #executeMethod} would answer a
+     * missing method with an indistinguishable {@code null}. One private context per call,
+     * method lookup and execution inside it; the result comes back only when it is a scalar
+     * (unboxed eagerly, so it survives the context's close) — richer values would not, and are
+     * not (yet) converted.
      */
-    void executeMethodRequired( final String name, final Object... args )
+    Object executeMethodRequired( final String name, final Object... args )
     {
-        withExports( ( slot, exports ) -> {
+        return withExports( ( slot, exports ) -> {
             final ScriptValue method = getMethod( slot, exports, name );
             if ( method == null )
             {
@@ -152,7 +153,8 @@ final class GraalScriptExports
             }
             try
             {
-                return method.call( args );
+                final ScriptValue result = method.call( args );
+                return result != null && result.isValue() ? result.getValue() : null;
             }
             catch ( StackOverflowError e )
             {

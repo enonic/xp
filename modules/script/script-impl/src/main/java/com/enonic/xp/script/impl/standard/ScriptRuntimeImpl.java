@@ -108,7 +108,7 @@ public class ScriptRuntimeImpl
     }
 
     @Override
-    public void executeMethod( final ResourceKey script, final String method, final Object... args )
+    public Object executeMethod( final ResourceKey script, final String method, final Object... args )
     {
         final AppExecutor app = executorFor( script.getApplicationKey() );
         // a missing script fails with the same exception on every engine: existence is checkable
@@ -117,7 +117,7 @@ public class ScriptRuntimeImpl
         {
             throw new ResourceNotFoundException( script );
         }
-        app.executor.executeMethod( script, method, args );
+        return app.executor.executeMethod( script, method, args );
     }
 
     /**

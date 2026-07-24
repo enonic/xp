@@ -239,14 +239,14 @@ public abstract class ScriptTestSupport
      * pooled engines, the shared context otherwise — what
      * {@code PortalScriptService.executeMethod} does in production.
      */
-    public final void runScriptMethod( final ResourceKey key, final String method, final Object... args )
+    public final Object runScriptMethod( final ResourceKey key, final String method, final Object... args )
     {
         // mirror production: executeMethod rejects a missing script up front, on every engine
         if ( !this.executor.getResourceService().getResource( key ).exists() )
         {
             throw new ResourceNotFoundException( key );
         }
-        this.executor.executeMethod( key, method, args );
+        return this.executor.executeMethod( key, method, args );
     }
 
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )
