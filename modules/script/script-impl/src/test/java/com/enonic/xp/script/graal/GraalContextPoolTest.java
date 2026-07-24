@@ -275,31 +275,31 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
-    void backgroundRunsSkipThePool()
+    void executeMethodSkipsThePool()
     {
-        // background invocations return nothing by design: observe through a recorder mock
+        // executeMethod returns nothing by design: observe through a recorder mock
         final Queue<String> recorded = new ConcurrentLinkedQueue<>();
         scriptExecutor.registerMock( "/recorder.js", recorded );
 
-        // background runs touch no pooled slot, and every call gets a fresh, private context —
+        // executeMethod touches no pooled slot, and every call gets a fresh, private context —
         // the path named tasks use, so they never compete with request traffic
-        scriptExecutor.executeBackground( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" );
-        scriptExecutor.executeBackground( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" );
+        scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" );
+        scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" );
         // a fresh context per call: the module counter starts over every time
         assertEquals( List.of( "1", "1" ), List.copyOf( recorded ) );
 
-        // the pooled contexts are untouched by background runs
+        // the pooled contexts are untouched by isolated runs
         final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
         assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
     }
 
     @Test
     @Timeout(60)
-    void backgroundMethodMustExist()
+    void executeMethodRequiresTheMethod()
     {
-        // a background run has no caller to observe a silent no-op: a missing method fails loudly
+        // executeMethod returns nothing, so a missing method must fail loudly, not no-op invisibly
         assertThrows( IllegalArgumentException.class,
-                      () -> scriptExecutor.executeBackground( ResourceKey.from( "graaljs:pool-test.js" ), "noSuchMethod" ) );
+                      () -> scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "noSuchMethod" ) );
     }
 
     @Test
@@ -314,7 +314,7 @@ class GraalContextPoolTest
         // teardown path can ever reach
         assertThrows( IllegalStateException.class, () -> local.bootstrap( ResourceKey.from( "graaljs:/main.js" ) ) );
         assertThrows( IllegalStateException.class, () -> local.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) ) );
-        assertThrows( IllegalStateException.class, () -> local.executeBackground( ResourceKey.from( "graaljs:pool-test.js" ), "inc" ) );
+        assertThrows( IllegalStateException.class, () -> local.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "inc" ) );
     }
 
     @Test
@@ -413,7 +413,7 @@ class GraalContextPoolTest
         {
             assertEquals( 1, virtualThreads.submit( () -> intValue( exports.executeMethod( "inc" ) ) ).get() );
             virtualThreads.submit(
-                () -> scriptExecutor.executeBackground( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" ) ).get();
+                () -> scriptExecutor.executeMethod( ResourceKey.from( "graaljs:pool-test.js" ), "incRecord" ) ).get();
             assertEquals( List.of( "1" ), List.copyOf( recorded ) );
         }
     }

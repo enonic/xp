@@ -20,14 +20,14 @@ public interface ScriptExecutor
     ScriptExports bootstrap( ResourceKey key );
 
     /**
-     * Executes one script method in the background execution model. On pooled engines the call
-     * runs in a fresh private context where the script's top level executes lazily — no
+     * Executes one method of a script, synchronously on the calling thread. On pooled engines
+     * the call runs in a fresh private context where the script's top level executes lazily — no
      * request-serving slot is touched, and nothing is shared with any other call. Engines
      * without pooling execute on the shared context. Unlike {@code ScriptExports.executeMethod},
-     * invoking a missing method fails loudly — a background run has no caller to observe a
-     * silent no-op.
+     * a missing method fails loudly — the call returns nothing, so it would otherwise be an
+     * invisible no-op.
      */
-    void executeBackground( ResourceKey key, String method, Object... args );
+    void executeMethod( ResourceKey key, String method, Object... args );
 
     Object executeRequire( ResourceKey key );
 

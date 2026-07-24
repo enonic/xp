@@ -44,7 +44,7 @@ final class GraalScriptExports
 
     /**
      * An isolated view bound to no context: each invocation runs in a fresh private context where
-     * the script's top level executes lazily — what {@code executeBackground} returns, obtainable
+     * the script's top level executes lazily — what {@code executeMethod} returns, obtainable
      * without executing the script on a pooled slot first.
      */
     static GraalScriptExports isolated( final GraalScriptExecutor executor, final ResourceKey script )
@@ -137,9 +137,9 @@ final class GraalScriptExports
     }
 
     /**
-     * Background invocation: the method must exist. {@link #executeMethod} answers a missing
-     * method with {@code null}, which an interactive caller can observe — a background run has
-     * no caller and would otherwise silently do nothing. One private context per call, method
+     * Isolated invocation: the method must exist. {@link #executeMethod} answers a missing
+     * method with {@code null}, which an interactive caller can observe — this call returns
+     * nothing and would otherwise be an invisible no-op. One private context per call, method
      * lookup and execution inside it.
      */
     void executeMethodRequired( final String name, final Object... args )

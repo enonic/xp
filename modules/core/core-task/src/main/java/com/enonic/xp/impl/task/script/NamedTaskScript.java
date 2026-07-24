@@ -48,7 +48,7 @@ final class NamedTaskScript
             final PropertyTreeMapper configMapper = new PropertyTreeMapper( config );
             // resolved at run time, so the task executes against the application's current
             // incarnation even if the app was redeployed between submit and run
-            this.scriptService.executeBackground( script, SCRIPT_METHOD_NAME, configMapper, id.toString() );
+            this.scriptService.executeMethod( script, SCRIPT_METHOD_NAME, configMapper, id.toString() );
         }
         catch ( Throwable t )
         {

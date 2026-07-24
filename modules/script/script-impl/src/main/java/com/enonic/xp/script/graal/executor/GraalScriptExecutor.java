@@ -210,7 +210,7 @@ public class GraalScriptExecutor
     }
 
     @Override
-    public void executeBackground( final ResourceKey key, final String method, final Object... args )
+    public void executeMethod( final ResourceKey key, final String method, final Object... args )
     {
         // no slot is touched: the call runs in a fresh private context (withIsolatedExports),
         // where the script's top level executes lazily, and nothing is shared with any other
@@ -510,7 +510,7 @@ public class GraalScriptExecutor
 
     /**
      * Executes against a fresh, private context that lives for this invocation only — the
-     * execution model for background (named-task) runs: task threads are virtual and effectively unbounded,
+     * execution model for isolated (named-task) runs: task threads are virtual and effectively unbounded,
      * and an IO-waiting task holds its context for the entire wait, so tasks must not compete
      * for request-serving slots. Bounded by the task-context budget; the shared source registry
      * keeps re-initialization parse-free.

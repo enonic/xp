@@ -70,10 +70,10 @@ class PortalScriptServiceImplTest
     }
 
     @Test
-    void executeBackground()
+    void executeMethod()
     {
-        portalScriptService.executeBackground( ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" ), "run", "arg" );
-        verify( scriptRuntime ).executeBackground( eq( resourceKey ), eq( "run" ), eq( "arg" ) );
+        portalScriptService.executeMethod( ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" ), "run", "arg" );
+        verify( scriptRuntime ).executeMethod( eq( resourceKey ), eq( "run" ), eq( "arg" ) );
     }
 
     @Test

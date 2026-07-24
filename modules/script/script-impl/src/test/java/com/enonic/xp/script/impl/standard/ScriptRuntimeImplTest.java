@@ -171,23 +171,23 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void executeBackground_waitsForBootstrapAndSkipsPooledExecution()
+    void executeMethod_waitsForBootstrapAndSkipsPooledExecution()
     {
         mainScriptExists( true );
         controllerScriptExists( true );
         final ScriptRuntimeImpl runtime = runtime();
 
         runtime.bootstrap( params() );
-        runtime.executeBackground( CONTROLLER, "run" );
+        runtime.executeMethod( CONTROLLER, "run" );
 
         final InOrder inOrder = Mockito.inOrder( scriptExecutor );
         inOrder.verify( scriptExecutor ).bootstrap( MAIN );
-        inOrder.verify( scriptExecutor ).executeBackground( CONTROLLER, "run" );
+        inOrder.verify( scriptExecutor ).executeMethod( CONTROLLER, "run" );
         verify( scriptExecutor, never() ).executeMain( CONTROLLER );
     }
 
     @Test
-    void executeBackground_missingScriptFailsAtResolve()
+    void executeMethod_missingScriptFailsAtResolve()
     {
         mainScriptExists( true );
         controllerScriptExists( false );
@@ -196,8 +196,8 @@ class ScriptRuntimeImplTest
         runtime.bootstrap( params() );
         // uniform across engines: the existence check fires ahead of the engine-specific
         // require machinery, with one exception type
-        Assertions.assertThrows( ResourceNotFoundException.class, () -> runtime.executeBackground( CONTROLLER, "run" ) );
-        verify( scriptExecutor, never() ).executeBackground( CONTROLLER, "run" );
+        Assertions.assertThrows( ResourceNotFoundException.class, () -> runtime.executeMethod( CONTROLLER, "run" ) );
+        verify( scriptExecutor, never() ).executeMethod( CONTROLLER, "run" );
     }
 
     private void controllerScriptExists( final boolean exists )

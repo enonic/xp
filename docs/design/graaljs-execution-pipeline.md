@@ -211,12 +211,12 @@ Two alternatives were implemented or considered and rejected:
    indefinitely against the global budget; and tasks submitted from the same context would
    silently serialize — or deadlock, if one waits on another.
 
-"Background" remains a **service-level concept only** (`executeBackground`), not a method on
-`ScriptExports`: exports views execute, the service resolves them — one concept, one owner. It
-serves **named tasks** (`task.submitTask`), the canonical parallel primitive: the task worker
-`require`s the named module itself in its own fresh private context. The API is one direct
-call — `void executeBackground(script, method, args...)` — that resolves and executes in a
-single shot: one script, one method, a fresh private context per call, nothing shared between
+Isolated execution is a **service-level concern only** — not a method on `ScriptExports` and
+not a "background" API: the call is synchronous on the calling thread, so the name carries no
+threading claim. It serves **named tasks** (`task.submitTask`), the canonical parallel
+primitive: the task worker `require`s the named module itself in its own fresh private
+context. The API is one direct call — `void executeMethod(script, method, args...)` — that
+resolves and executes in a single shot: one script, one method, a fresh private context per call, nothing shared between
 calls, nothing held between them. Results could never outlive the call's private context, so
 the contract returns nothing *by type* instead of documenting which results happen to survive.
 (Three earlier drafts converged here: a returned `ScriptExports` needed a scalars-only rule
@@ -467,14 +467,14 @@ what every Node.js cluster / worker deployment already imposes on developers.
    by a runner module in a fresh private context) was implemented and then removed in favor of
    failing fast — see §4.3 for the trade-off analysis. **Named tasks** are the parallel
    primitive: submit validates with `hasScript` (context-free), and the run is one direct
-   `PortalScriptService.executeBackground(script, method, args)` call in a fresh private
+   `PortalScriptService.executeMethod(script, method, args)` call in a fresh private
    context, so a task run never checks out a request-serving slot and always executes against
    the application's current incarnation. Still to do: the §5 migration guide for docs.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (retention-aware growth), the global cross-app context budget
    (`xp.script-engine.graal.max-contexts`, default 200; first slot per app always allowed),
-   ephemeral task contexts behind `executeBackground` bounded by
+   ephemeral task contexts behind `PortalScriptService.executeMethod` bounded by
    `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, bounded
    pinned waits, and the experimental Jetty virtual-threads option (default off). Remaining:
    slot-count/footprint metrics and the host-backed `lib-cache` registry (per-context caches

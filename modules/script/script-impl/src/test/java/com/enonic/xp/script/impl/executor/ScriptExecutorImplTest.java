@@ -34,14 +34,14 @@ class ScriptExecutorImplTest
     }
 
     @Test
-    void backgroundMethodMustExist()
+    void executeMethodRequiresTheMethod()
     {
         executor.registerMock( "/test/background.js", "the-exports" );
 
-        // background runs execute on the single shared context; a missing method fails loudly -
-        // a background run has no caller to observe a silent no-op
+        // executeMethod runs on the single shared context; a missing method fails loudly -
+        // the call returns nothing, so it would otherwise be an invisible no-op
         assertThrows( IllegalArgumentException.class,
-                      () -> executor.executeBackground( ResourceKey.from( "myapplication:/test/background.js" ), "run" ) );
+                      () -> executor.executeMethod( ResourceKey.from( "myapplication:/test/background.js" ), "run" ) );
     }
 
     @Test

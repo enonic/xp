@@ -101,11 +101,11 @@ public final class ScriptExecutorImpl
     }
 
     @Override
-    public void executeBackground( final ResourceKey key, final String method, final Object... args )
+    public void executeMethod( final ResourceKey key, final String method, final Object... args )
     {
-        // no context pool: background execution shares the single context, like everything else.
-        // A missing method fails loudly — ScriptExports.executeMethod answers it with null, which
-        // a background run has no caller to observe
+        // no context pool: the call executes on the single shared context, like everything else.
+        // A missing method fails loudly — ScriptExports.executeMethod answers it with null, and
+        // this call returns nothing, so it would otherwise be an invisible no-op
         final ScriptExports exports = executeMain( key );
         if ( !exports.hasMethod( method ) )
         {

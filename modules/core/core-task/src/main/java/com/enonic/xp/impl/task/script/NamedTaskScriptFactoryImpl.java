@@ -38,7 +38,7 @@ public class NamedTaskScriptFactoryImpl
 
         // a missing script fails at submit — existence is checkable without touching any script
         // context. A script without a run export fails when the task runs, ending it FAILED with
-        // a clear error; the run itself goes through executeBackground, so the task script's
+        // a clear error; the run itself goes through executeMethod, so the task script's
         // require tree never loads into a request-serving pool context
         if ( !this.scriptService.hasScript( scriptResourceKey ) )
         {

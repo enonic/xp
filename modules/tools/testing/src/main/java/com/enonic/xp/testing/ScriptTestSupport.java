@@ -235,18 +235,18 @@ public abstract class ScriptTestSupport
     }
 
     /**
-     * Executes one script method in the background execution model, engine-faithful: a fresh
-     * private context per call on pooled engines, the shared context otherwise — what
-     * {@code PortalScriptService.executeBackground} does in production.
+     * Executes one method of a script, engine-faithful: a fresh private context per call on
+     * pooled engines, the shared context otherwise — what
+     * {@code PortalScriptService.executeMethod} does in production.
      */
-    public final void runScriptBackground( final ResourceKey key, final String method, final Object... args )
+    public final void runScriptMethod( final ResourceKey key, final String method, final Object... args )
     {
-        // mirror production: executeBackground rejects a missing script up front, on every engine
+        // mirror production: executeMethod rejects a missing script up front, on every engine
         if ( !this.executor.getResourceService().getResource( key ).exists() )
         {
             throw new ResourceNotFoundException( key );
         }
-        this.executor.executeBackground( key, method, args );
+        this.executor.executeMethod( key, method, args );
     }
 
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )
