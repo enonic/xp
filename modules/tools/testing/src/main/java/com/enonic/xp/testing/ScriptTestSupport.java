@@ -36,6 +36,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.BackgroundScript;
@@ -241,6 +242,11 @@ public abstract class ScriptTestSupport
      */
     public final BackgroundScript runScriptBackground( final ResourceKey key, final String method )
     {
+        // mirror production: executeBackground rejects a missing script at resolve, on every engine
+        if ( !this.executor.getResourceService().getResource( key ).exists() )
+        {
+            throw new ResourceNotFoundException( key );
+        }
         return this.executor.backgroundExports( key, method );
     }
 
