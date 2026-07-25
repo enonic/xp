@@ -512,7 +512,10 @@ public class GraalScriptExecutor
             }
             finally
             {
-                slot.context.close();
+                // cancel + swallow, like the pooled teardown: a callback the script handed out
+                // could hold this context on another thread, and a throwing close here would
+                // mask the invocation's primary outcome
+                closeContext( slot );
             }
         }
         finally
