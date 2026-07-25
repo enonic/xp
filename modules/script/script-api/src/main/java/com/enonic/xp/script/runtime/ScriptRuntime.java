@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 
@@ -29,12 +30,13 @@ public interface ScriptRuntime
     /**
      * Executes one exported method of a script, synchronously on the calling thread. Each call is
      * independent: module state must not be expected to be shared with any other execution or to
-     * carry over between calls. Fails with {@code ResourceNotFoundException} when the script does
-     * not exist (use {@link #hasScript} to validate ahead of time) and with
-     * {@code IllegalArgumentException} when the script does not export the method.
+     * carry over between calls.
      *
      * @return the method's result when it is a scalar (string, number, boolean or date), and
      * {@code null} for any other result — identically on every script engine.
+     * @throws ResourceNotFoundException when the script does not exist (use {@link #hasScript} to
+     * validate ahead of time)
+     * @throws IllegalArgumentException when the script does not export the method
      */
     @Nullable Object executeMethod( ResourceKey script, String method, @Nullable Object... args );
 

@@ -85,6 +85,11 @@ public final class BootstrapParams
             return this;
         }
 
+        /**
+         * @throws NullPointerException when {@code application} is not set
+         * @throws IllegalArgumentException when {@code mainScript} belongs to a different
+         * application than {@code application}
+         */
         public BootstrapParams build()
         {
             return new BootstrapParams( this );
