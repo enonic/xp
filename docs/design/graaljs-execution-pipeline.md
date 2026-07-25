@@ -134,7 +134,7 @@ Replace the single `Context` in `GraalScriptExecutor` with a pool of **workers**
 
 ```
 GraalScriptExecutor
- └── JsWorkerPool (per app, size configurable, dev mode: 1)
+ └── JsWorkerPool (per app, size configurable)
       ├── JsWorker #1: Context + dedicated thread + FIFO job queue + ScriptExportsCache
       ├── JsWorker #2: ...
       └── JsWorker #N
@@ -151,8 +151,11 @@ GraalScriptExecutor
   job future initially — the async-servlet upgrade (§4.5) removes even that.
 - The `require` cache becomes **per worker**. This is the central semantic trade-off, see §5.
 
-Sizing: `pool-size = min(cores, configured max)`, lazy growth, idle shrink. Dev mode pins the
-pool to 1 worker to keep today's debugging and cache-invalidation behavior.
+Sizing: `pool-size = min(cores, configured max)`, lazy growth, idle shrink. Dev mode uses the
+same sizing: a slot retained by a live websocket/SSE connection is never shared (§4.4), so a
+one-slot dev pool would freeze the whole application behind a single open connection. Dev-mode
+reload does not need a single context — each slot's `require` cache expires lazily on that
+slot's next execution.
 
 ### 4.2 Building block B — function handles instead of raw closures
 
@@ -400,7 +403,7 @@ per-app**. `main.js` and every required module run once *per context*. Impact an
 | App singleton / counter in a module | global per app | per worker | document; provide `lib-app-state` (host-backed shared map with data-only values) for intentional shared state |
 | `main.js` side effects (event listeners, cron via lib-cron) | run once | would run N times | run `main.js` on a **dedicated "main" worker** only; listeners registered there execute there (routed handles, §4.2) |
 | WebSocket handler state in module vars | racy but shared | per context; a connection shares one context with its handshake request (§4.4) | works per connection; state spanning connections must be host-backed |
-| Dev-mode file-change invalidation | clear one cache | clear N caches | pool size 1 in dev mode |
+| Dev-mode file-change invalidation | clear one cache | clear N caches | each slot's cache expires lazily on its next execution — no coordinated sweep needed |
 
 These are exactly the "minimal, documented" divergences the platform can afford — they mirror
 what every Node.js cluster / worker deployment already imposes on developers.
@@ -435,8 +438,9 @@ what every Node.js cluster / worker deployment already imposes on developers.
    Small, independently shippable.
 2. **Context pool behind a flag** *(started on this branch)* — `GraalScriptExecutor` now owns N
    `ContextSlot`s (context + value factory + per-slot `require` cache), checked out per
-   invocation; `xp.script-engine.graal.pool-size` (default 1 = today's behavior; dev mode
-   forces 1). `ScriptExports` became a pool-aware facade so cached controller scripts don't pin
+   invocation; `xp.script-engine.graal.pool-size` (initially defaulting to 1; capacity now
+   defaults to the global budget — phase 5 — identically in dev mode, since a one-slot pool
+   would freeze a dev server behind a single retained websocket/SSE connection). `ScriptExports` became a pool-aware facade so cached controller scripts don't pin
    one slot. The context monitor remains the ownership primitive — slot resolution is
    ThreadLocal → `Thread.holdsLock` scan → checkout, which keeps `require` on a foreign-thread
    callback in the callback's own slot and avoids slot/monitor deadlock cycles. The

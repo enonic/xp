@@ -794,7 +794,7 @@ public class GraalScriptExecutor
         /**
          * Live connections referencing this slot. While positive, the slot serves only its
          * connections' events (and executions explicitly pinned to it) — the request pool
-         * skips it, except as a last resort when nothing else exists.
+         * never touches it.
          */
         private final AtomicInteger pins = new AtomicInteger();
 

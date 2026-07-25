@@ -11,7 +11,6 @@ import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
-import com.enonic.xp.server.RunMode;
 
 public class GraalJsScriptFixturesFacade
     implements ScriptFixturesFacade

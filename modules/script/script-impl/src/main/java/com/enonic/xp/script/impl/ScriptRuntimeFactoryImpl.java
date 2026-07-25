@@ -33,7 +33,6 @@ import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
-import com.enonic.xp.server.RunMode;
 
 import static java.util.Objects.requireNonNullElseGet;
 
@@ -175,16 +174,14 @@ public class ScriptRuntimeFactoryImpl
      * Logical GraalJS slot capacity per application. Slots are created
      * lazily on demand within the global cross-app budget, so capacity is cheap; it defaults to
      * the global maximum and can be overridden per installation with
-     * {@code xp.script-engine.graal.pool-size}. Dev mode stays at 1 so script reloading keeps a
-     * single context to invalidate. Above 1, module state is per-context (see the
-     * execution-pipeline design doc).
+     * {@code xp.script-engine.graal.pool-size}. Dev mode uses the same capacity: a retained slot
+     * (live websocket/SSE connection) is never shared, so a capacity of one would freeze the
+     * whole application behind a single open connection. Script reloading is unaffected — each
+     * slot's exports cache expires lazily on that slot's next execution. Above 1, module state
+     * is per-context (see the execution-pipeline design doc).
      */
     private static int contextPoolCapacity()
     {
-        if ( RunMode.isDev() )
-        {
-            return 1;
-        }
         final Integer poolSize = Integer.getInteger( "xp.script-engine.graal.pool-size" );
         // capacity above the global budget is unreachable by construction (growth beyond the
         // first slot is budgeted): clamp instead of allocating slot entries that can never
