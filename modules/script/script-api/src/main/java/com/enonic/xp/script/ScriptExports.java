@@ -8,17 +8,18 @@ import org.jspecify.annotations.Nullable;
 import com.enonic.xp.resource.ResourceKey;
 
 
+@NullMarked
 public interface ScriptExports
 {
     ResourceKey getScript();
 
-    ScriptValue getValue();
+    @Nullable ScriptValue getValue();
 
     boolean hasMethod( String name );
 
-    ScriptValue executeMethod( String name, Object... args );
+    @Nullable ScriptValue executeMethod( String name, @Nullable Object... args );
 
-    Object getRawValue();
+    @Nullable Object getRawValue();
 
     /**
      * Runs {@code work} with every script execution on the calling thread — through these exports
@@ -26,7 +27,6 @@ public interface ScriptExports
      * a view of these exports permanently bound to that context: executions through the view,
      * inside or after the scope, observe the module state the scope's executions observed.
      */
-    @NullMarked
     default <T extends @Nullable Object> T executeBound( Function<ScriptExports, T> work )
     {
         return work.apply( this );

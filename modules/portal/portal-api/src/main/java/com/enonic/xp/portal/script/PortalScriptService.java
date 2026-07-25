@@ -11,6 +11,7 @@ import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.runtime.BootstrapParams;
 
 
+@NullMarked
 public interface PortalScriptService
 {
     boolean hasScript( ResourceKey script );
@@ -22,7 +23,6 @@ public interface PortalScriptService
      * observe the completed bootstrap. A failing bootstrap script is logged, and the application
      * still becomes ready.
      */
-    @NullMarked
     void bootstrap( BootstrapParams params );
 
     ScriptExports execute( ResourceKey script );
@@ -37,7 +37,6 @@ public interface PortalScriptService
      * @return the method's result when it is a scalar (string, number, boolean or date), and
      * {@code null} for any other result — identically on every script engine.
      */
-    @NullMarked
     @Nullable Object executeMethod( ResourceKey script, String method, @Nullable Object... args );
 
     /**
@@ -48,7 +47,7 @@ public interface PortalScriptService
     @Deprecated
     CompletableFuture<ScriptExports> executeAsync( ResourceKey script );
 
-    ScriptValue toScriptValue( ResourceKey script, Object value );
+    @Nullable ScriptValue toScriptValue( ResourceKey script, @Nullable Object value );
 
-    Object toNativeObject( ResourceKey script, Object value );
+    @Nullable Object toNativeObject( ResourceKey script, @Nullable Object value );
 }
