@@ -74,10 +74,9 @@ interface ExecuteFunctionHandler {
  *
  * This function returns immediately. The callback function will be executed asynchronously.
  *
- * @deprecated Not supported on the GraalJS engine, where a function cannot leave the script
- * context that created it — calling this there fails immediately. Use a named task
- * ({@link module:task.submitTask}) instead. Scheduled for removal together with the Nashorn
- * engine.
+ * @deprecated Not supported on the GraalJS engine — calling this there fails immediately. Use a
+ * named task ({@link module:task.submitTask}) instead. Scheduled for removal together with the
+ * Nashorn engine.
  *
  * @example-ref examples/task/executeFunction.js
  *

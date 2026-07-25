@@ -17,24 +17,21 @@ public interface PortalScriptService
     ScriptExports execute( ResourceKey script );
 
     /**
-     * Executes one method of a script, synchronously on the calling thread. On pooled script
-     * engines the call runs in a fresh private context, where the script's top level executes
-     * lazily — no request-serving context is touched, and nothing is shared with any other call;
-     * on engines without pooling it executes on the shared context. A missing script fails with
-     * {@code ResourceNotFoundException}, uniformly across engines (use {@link #hasScript} to
-     * validate ahead of time); a missing method fails loudly instead of silently doing nothing.
-     * Named tasks run through this call.
+     * Executes one exported method of a script, synchronously on the calling thread. Each call is
+     * independent: module state must not be expected to be shared with any other execution or to
+     * carry over between calls. Fails with {@code ResourceNotFoundException} when the script does
+     * not exist (use {@link #hasScript} to validate ahead of time) and with
+     * {@code IllegalArgumentException} when the script does not export the method.
      *
-     * @return the method's result when it is a scalar (string, number, boolean, date), and
-     * {@code null} otherwise: on pooled engines a richer value could not survive the private
-     * context as-is, and is not (yet) converted — uniformly on every engine, so results do not
-     * change meaning with the engine choice.
+     * @return the method's result when it is a scalar (string, number, boolean or date), and
+     * {@code null} for any other result — identically on every script engine.
      */
     Object executeMethod( ResourceKey script, String method, Object... args );
 
     /**
-     * @deprecated Only {@code main.js} bootstrap used this, and it now runs synchronously through
-     * {@link #bootstrap(BootstrapParams)}; no caller remains. Scheduled for removal.
+     * @deprecated Scheduled for removal. Use {@link #bootstrap(BootstrapParams)} for bootstrap
+     * scripts, or {@link #execute(ResourceKey)} on an executor of the caller's choice when
+     * asynchrony is needed.
      */
     @Deprecated
     CompletableFuture<ScriptExports> executeAsync( ResourceKey script );

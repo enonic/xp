@@ -22,9 +22,9 @@ public final class ScriptSettings
 
     /**
      * @deprecated Custom JS globals are being phased out: {@code app} is the only supported
-     * production global, and injected globals get per-context identity on pooled script engines.
-     * This mechanism remains only for the {@code xp-testing} harness ({@code testInstance}) and
-     * will be removed together with its migration.
+     * production global, and injected globals are no longer guaranteed one shared identity
+     * across executions. This mechanism remains only for the {@code xp-testing} harness
+     * ({@code testInstance}) and will be removed together with its migration.
      */
     @Deprecated
     public Map<String, Object> getGlobalVariables()

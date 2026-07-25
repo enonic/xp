@@ -235,9 +235,8 @@ public abstract class ScriptTestSupport
     }
 
     /**
-     * Executes one method of a script, engine-faithful: a fresh private context per call on
-     * pooled engines, the shared context otherwise — what
-     * {@code PortalScriptService.executeMethod} does in production.
+     * Executes one exported method of a script with the production semantics of
+     * {@code PortalScriptService.executeMethod}, including its isolation and failure behavior.
      */
     public final Object runScriptMethod( final ResourceKey key, final String method, final Object... args )
     {

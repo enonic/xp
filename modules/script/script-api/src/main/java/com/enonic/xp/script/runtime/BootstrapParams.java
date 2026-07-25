@@ -7,9 +7,9 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 
 /**
- * Parameters for {@link ScriptRuntime#bootstrap(BootstrapParams)}. Calling {@code bootstrap} arms
- * the application's gate that top-level executions wait on; running a bootstrap script is optional —
- * {@code mainScript} may be absent, in which case the gate simply opens.
+ * Parameters for {@link ScriptRuntime#bootstrap(BootstrapParams)}. Every application must be
+ * bootstrapped before its other scripts execute. Running a bootstrap script is optional:
+ * {@code mainScript} may be absent, in which case the application simply becomes ready.
  */
 public final class BootstrapParams
 {

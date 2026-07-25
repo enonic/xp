@@ -18,12 +18,10 @@ public interface ScriptExports
     Object getRawValue();
 
     /**
-     * Runs {@code work} with one exclusively-held script context bound to the calling thread for
-     * the whole scope: every execution inside — through these exports or nested ones — lands on
-     * that exact context. {@code work} receives a view of these exports permanently pinned to it,
-     * which may be retained beyond the scope so that later executions (e.g. the events of a
-     * connection opened by this scope) run on the very context that ran the scope, preserving
-     * its module state. Engines without context pooling simply pass {@code this}.
+     * Runs {@code work} with every script execution on the calling thread — through these exports
+     * or nested ones — confined to one script context for the whole scope. {@code work} receives
+     * a view of these exports permanently bound to that context: executions through the view,
+     * inside or after the scope, observe the module state the scope's executions observed.
      */
     default <T> T executeBound( Function<ScriptExports, T> work )
     {
@@ -31,19 +29,18 @@ public interface ScriptExports
     }
 
     /**
-     * Marks the context this view is pinned to as referenced by a long-lived consumer (e.g. an
-     * open websocket or SSE connection): while referenced, the context is excluded from serving
-     * unrelated executions, so the consumer's state and latency are not disturbed by the request
-     * pool. Reference-counted — pair every call with {@link #release()}. No-op on views without
-     * a pinned context and on engines without pooling.
+     * Declares the context this view is bound to in use by a long-lived consumer (such as an open
+     * websocket or SSE connection): while retained, the context executes only through this view,
+     * keeping the consumer's module state undisturbed by unrelated executions. Reference-counted —
+     * pair every call with {@link #release()}. Views not bound to a context ignore both calls.
      */
     default void retain()
     {
     }
 
     /**
-     * Releases one {@link #retain()} reference; at zero the pinned context returns to the
-     * general pool.
+     * Releases one {@link #retain()} reference; at zero the bound context becomes available to
+     * other executions again.
      */
     default void release()
     {

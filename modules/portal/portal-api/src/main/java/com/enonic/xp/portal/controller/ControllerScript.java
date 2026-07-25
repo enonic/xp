@@ -23,11 +23,10 @@ public interface ControllerScript
     }
 
     /**
-     * Runs {@code work} with one exclusively-held script context bound to the calling thread for
-     * the whole scope. {@code work} receives a view of this controller permanently pinned to
-     * that exact context; retaining it lets a connection opened by this scope (websocket/SSE)
-     * dispatch all its events to the very context that executed the request, preserving its
-     * module state. Engines without context pooling simply pass {@code this}.
+     * Runs {@code work} with every script execution on the calling thread confined to one script
+     * context for the whole scope. {@code work} receives a view of this controller permanently
+     * bound to that context: a connection opened by this scope (websocket/SSE) keeps the view,
+     * and its events observe the module state the request's execution observed.
      */
     default <T> T executeBound( Function<ControllerScript, T> work )
     {
@@ -35,17 +34,18 @@ public interface ControllerScript
     }
 
     /**
-     * Marks the context this view is pinned to as referenced by a live connection: while
-     * referenced it is excluded from serving unrelated requests. Reference-counted — pair every
-     * call with {@link #release()}. No-op on unpinned views and engines without pooling.
+     * Declares the context this view is bound to in use by a live connection: while retained,
+     * the context executes only through this view, keeping the connection's module state
+     * undisturbed by unrelated requests. Reference-counted — pair every call with
+     * {@link #release()}. Views not bound to a context ignore both calls.
      */
     default void retain()
     {
     }
 
     /**
-     * Releases one {@link #retain()} reference; at zero the pinned context returns to the
-     * request pool.
+     * Releases one {@link #retain()} reference; at zero the bound context becomes available to
+     * other requests again.
      */
     default void release()
     {
