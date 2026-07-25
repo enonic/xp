@@ -1,6 +1,12 @@
 package com.enonic.xp.script.impl.standard;
 
 import java.io.Closeable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -180,6 +186,37 @@ class ScriptRuntimeImplTest
         verify( scriptExecutor ).runDisposers();
         verify( scriptExecutor, times( 2 ) ).bootstrap( MAIN );
         verify( scriptExecutor, times( 2 ) ).executeMain( CONTROLLER );
+    }
+
+    @Test
+    void waiterReleasedByInvalidate_failsFastInsteadOfExecuting()
+        throws Exception
+    {
+        final AtomicReference<Object> current = new AtomicReference<>( new Object() );
+        when( scriptExecutorFactory.apply( APP ) ).thenReturn( scriptExecutor ).thenThrow( new AppNotRegisteredException() );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> current.get() );
+
+        final ExecutorService thread = Executors.newSingleThreadExecutor();
+        try
+        {
+            // no bootstrap has run: the execution parks at the application's gate
+            final Future<?> execution = thread.submit( () -> runtime.execute( CONTROLLER ) );
+            Assertions.assertThrows( TimeoutException.class, () -> execution.get( 500, TimeUnit.MILLISECONDS ) );
+
+            // the application stops: teardown opens the gate to release waiters, and the released
+            // waiter must fail fast instead of executing on the torn-down executor
+            current.set( null );
+            runtime.invalidate( APP );
+
+            final ExecutionException e =
+                Assertions.assertThrows( ExecutionException.class, () -> execution.get( 10, TimeUnit.SECONDS ) );
+            Assertions.assertInstanceOf( AppNotRegisteredException.class, e.getCause() );
+            verify( scriptExecutor, never() ).executeMain( CONTROLLER );
+        }
+        finally
+        {
+            thread.shutdownNow();
+        }
     }
 
     @Test

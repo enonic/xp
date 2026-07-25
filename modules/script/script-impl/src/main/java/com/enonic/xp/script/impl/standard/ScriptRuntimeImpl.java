@@ -115,13 +115,22 @@ public class ScriptRuntimeImpl
     }
 
     /**
-     * The bootstrapped executor for a top-level execution: waits for the gate.
+     * The bootstrapped executor for a top-level execution: waits for the gate, then confirms the
+     * executor survived the wait. Teardown opens the gate to release waiters, and a released
+     * waiter must not proceed on the torn-down executor — it resolves again, which fails fast
+     * when the application is gone and lands on the successor when it was replaced.
      */
     private AppExecutor executorFor( final ApplicationKey key )
     {
-        final AppExecutor app = getExecutor( key );
-        await( key, app );
-        return app;
+        while ( true )
+        {
+            final AppExecutor app = getExecutor( key );
+            await( key, app );
+            if ( executors.get( key ) == app )
+            {
+                return app;
+            }
+        }
     }
 
     @Override
