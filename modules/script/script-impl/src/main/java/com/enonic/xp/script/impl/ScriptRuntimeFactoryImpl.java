@@ -73,8 +73,6 @@ public class ScriptRuntimeFactoryImpl
     {
         this.context = context;
         this.resourceService = resourceService;
-        // track Application services the same way MainExecutor does: opening replays active apps and
-        // delivers future ones, and removedService fires on stop — no ApplicationListener whiteboard
         this.tracker = new ServiceTracker<>( context, Application.class, this );
         this.tracker.open();
     }
@@ -122,8 +120,6 @@ public class ScriptRuntimeFactoryImpl
         // The registry's ApplicationInvalidator round is the opposite — it arrives AFTER the
         // re-registration — which is why this factory deliberately does not implement it.
         this.apps.remove( application.getKey(), new TrackedApplication( reference, application ) );
-        // instance teardown on app stop (#10844): the removed executor runs its own disposers, closes
-        // its contexts and returns its budget; a replacement incarnation gets a fresh executor lazily
         this.list.forEach( runtime -> runtime.invalidate( application.getKey() ) );
         this.context.ungetService( reference );
     }
@@ -160,7 +156,6 @@ public class ScriptRuntimeFactoryImpl
         this.list.remove( runtime );
         if ( runtime instanceof ScriptRuntimeImpl )
         {
-            // instance-owned teardown: run disposers, close contexts, return budget permits
             ( (ScriptRuntimeImpl) runtime ).close();
         }
     }

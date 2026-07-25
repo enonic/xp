@@ -36,10 +36,8 @@ public class NamedTaskScriptFactoryImpl
                                                                 TASKS_PATH_PREFIX + descriptor.getName() + "/" + descriptor.getName() +
                                                                     ".js" );
 
-        // a missing script fails at submit — existence is checkable without touching any script
-        // context. A script without a run export fails when the task runs, ending it FAILED with
-        // a clear error; the run itself goes through executeMethod, so the task script's
-        // require tree never loads into a request-serving pool context
+        // a missing script fails at submit; a script without a run export fails when the task
+        // runs, ending it FAILED with a clear error
         if ( !this.scriptService.hasScript( scriptResourceKey ) )
         {
             throw new TaskNotFoundException( descriptor.getKey(), "Missing task script" );

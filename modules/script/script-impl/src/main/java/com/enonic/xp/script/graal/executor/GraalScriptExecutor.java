@@ -117,10 +117,9 @@ public class GraalScriptExecutor
     private final AtomicInteger roundRobin = new AtomicInteger();
 
     /**
-     * The slot bound to the current execution scope (nested executions must stay on it). A
-     * ScopedValue, aligned with the platform-wide ThreadLocal elimination; shared across
-     * executors, so reads check slot ownership — a nested cross-app call must not adopt the
-     * outer app's slot.
+     * The slot bound to the current execution scope (nested executions must stay on it). Shared
+     * across executors, so reads check slot ownership — a nested cross-app call must not adopt
+     * the outer app's slot.
      */
     private static final ScopedValue<ContextSlot> BOUND_SLOT = ScopedValue.newInstance();
 
@@ -201,10 +200,6 @@ public class GraalScriptExecutor
     @Override
     public Object executeMethod( final ResourceKey key, final String method, final Object... args )
     {
-        // no slot is touched: the call runs in a fresh private context (withIsolatedExports),
-        // where the script's top level executes lazily, and nothing is shared with any other
-        // call. Named tasks execute this way — a pooled checkout here would make every task run
-        // compete with live requests for request-serving slots.
         return GraalScriptExports.isolated( this, key ).executeMethodRequired( method, args );
     }
 
@@ -584,10 +579,9 @@ public class GraalScriptExecutor
     /**
      * Pinned executions (websocket/SSE events, and anything queued behind them) wait for their
      * exact slot without a time bound: a pinned execution has exactly one legal context, so a
-     * timeout could only break the connection sooner. The wait stays interruptible, and parked
-     * dispatch threads are what the Jetty virtual-threads option compensates. The context-monitor
-     * acquisition that follows is untimed as well ({@code synchronized}) and waits out in-flight
-     * foreign-thread callbacks.
+     * timeout could only break the connection sooner. The wait stays interruptible. The
+     * context-monitor acquisition that follows is untimed as well ({@code synchronized}) and
+     * waits out in-flight foreign-thread callbacks.
      */
     private <T> T lockAndRunInterruptibly( final ContextSlot slot, final Function<ContextSlot, T> work )
     {

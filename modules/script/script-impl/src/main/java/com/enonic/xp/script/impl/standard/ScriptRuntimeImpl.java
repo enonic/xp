@@ -99,8 +99,6 @@ public class ScriptRuntimeImpl
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {
-        // no caller remains: the deprecated contract (execute off the calling thread) is kept as
-        // a thin wrapper on a virtual thread, with no dedicated executor plumbing behind it
         return CompletableFuture.supplyAsync( () -> execute( script ), Thread::startVirtualThread );
     }
 
@@ -108,8 +106,7 @@ public class ScriptRuntimeImpl
     public Object executeMethod( final ResourceKey script, final String method, final Object... args )
     {
         final AppExecutor app = executorFor( script.getApplicationKey() );
-        // a missing script fails with the same exception on every engine: existence is checkable
-        // without a context, ahead of the engine-specific require machinery
+        // a missing script must fail with the same exception on every engine
         if ( !app.executor.getResourceService().getResource( script ).exists() )
         {
             throw new ResourceNotFoundException( script );
