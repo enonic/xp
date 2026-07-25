@@ -1,14 +1,14 @@
 package com.enonic.xp.script.impl;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.graalvm.polyglot.Engine;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -20,8 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationInvalidationLevel;
-import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
@@ -41,7 +39,7 @@ import static java.util.Objects.requireNonNullElseGet;
 
 @Component
 public class ScriptRuntimeFactoryImpl
-    implements ScriptRuntimeFactory, ApplicationInvalidator, ServiceTrackerCustomizer<Application, Application>
+    implements ScriptRuntimeFactory, ServiceTrackerCustomizer<Application, Application>
 {
     private static final Logger LOG = LoggerFactory.getLogger( ScriptRuntimeFactoryImpl.class );
 
@@ -52,6 +50,16 @@ public class ScriptRuntimeFactoryImpl
     private final List<ScriptRuntimeImpl> list = new CopyOnWriteArrayList<>();
 
     private final GraalContextBudget graalContextBudget = new GraalContextBudget( maxContexts(), maxTaskContexts() );
+
+    /**
+     * The current incarnation of each application: its live service registration and the service
+     * it delivered. Maintained by the tracker; executor creation resolves through it (no service
+     * registry scan), and runtimes revalidate their executors against it on every use. The
+     * {@link ServiceReference} doubles as the incarnation identity — application reconfigure
+     * re-registers the <em>same</em> {@code Application} object under a <em>new</em> registration,
+     * so the registration is what actually changes per incarnation, not the service object.
+     */
+    private final ConcurrentMap<ApplicationKey, TrackedApplication> apps = new ConcurrentHashMap<>();
 
     private final ResourceService resourceService;
 
@@ -76,6 +84,7 @@ public class ScriptRuntimeFactoryImpl
     public void destroy()
     {
         this.tracker.close();
+        this.apps.clear();
         // consumers normally dispose their runtimes before this component deactivates; sweep
         // whatever remains so disposers run and contexts close before the shared engine does
         this.list.forEach( ScriptRuntimeImpl::close );
@@ -90,15 +99,15 @@ public class ScriptRuntimeFactoryImpl
     }
 
     @Override
-    public void invalidate( final ApplicationKey key, final ApplicationInvalidationLevel level )
-    {
-        this.list.forEach( runtime -> runtime.invalidate( key ) );
-    }
-
-    @Override
     public Application addingService( final ServiceReference<Application> reference )
     {
-        return this.context.getService( reference );
+        final Application application = this.context.getService( reference );
+        if ( application == null )
+        {
+            return null;
+        }
+        this.apps.put( application.getKey(), new TrackedApplication( reference, application ) );
+        return application;
     }
 
     @Override
@@ -109,6 +118,11 @@ public class ScriptRuntimeFactoryImpl
     @Override
     public void removedService( final ServiceReference<Application> reference, final Application application )
     {
+        // this fires synchronously inside unregister(): on reconfigure that is BEFORE the
+        // replacement registers, so a key-wide teardown can never hit a successor incarnation.
+        // The registry's ApplicationInvalidator round is the opposite — it arrives AFTER the
+        // re-registration — which is why this factory deliberately does not implement it.
+        this.apps.remove( application.getKey(), new TrackedApplication( reference, application ) );
         // instance teardown on app stop (#10844): the removed executor runs its own disposers, closes
         // its contexts and returns its budget; a replacement incarnation gets a fresh executor lazily
         this.list.forEach( runtime -> runtime.invalidate( application.getKey() ) );
@@ -126,7 +140,19 @@ public class ScriptRuntimeFactoryImpl
 
     ScriptRuntimeImpl doCreate( final ScriptSettings settings )
     {
-        return new ScriptRuntimeImpl( new ScripExecutorFactory( settings )::create );
+        return new ScriptRuntimeImpl( new ScripExecutorFactory( settings )::create, this::currentIncarnation );
+    }
+
+    /**
+     * The identity of the application's current service registration, or {@code null} when the
+     * application is not registered. Runtimes compare their executors' creation-time incarnation
+     * against this on every use, so an executor built from a registration that is gone dies on
+     * its next touch instead of serving a stopped or replaced application.
+     */
+    private Object currentIncarnation( final ApplicationKey key )
+    {
+        final TrackedApplication tracked = this.apps.get( key );
+        return tracked == null ? null : tracked.reference();
     }
 
     @Override
@@ -206,15 +232,25 @@ public class ScriptRuntimeFactoryImpl
         {
             LOG.debug( "Create Script Executor for {}", applicationKey );
 
-            final AppBundleData appBundleData = getAppBundleData( applicationKey );
+            final TrackedApplication tracked = apps.get( applicationKey );
+            if ( tracked == null )
+            {
+                throw new AppNotRegisteredException();
+            }
+            final Application application = tracked.application();
+            final Bundle bundle = tracked.reference().getBundle();
+            if ( bundle == null || application.getConfig() == null || !application.isStarted() )
+            {
+                throw new AppNotRegisteredException();
+            }
 
             final String appScriptEngine = normalizeEngineName(
-                requireNonNullElseGet( appBundleData.bundle.getHeaders().get( "X-Script-Engine" ),
-                                               ScriptRuntimeFactoryImpl::defaultEngineName ) );
+                requireNonNullElseGet( bundle.getHeaders().get( "X-Script-Engine" ), ScriptRuntimeFactoryImpl::defaultEngineName ) );
 
-            final ClassLoader appClassloader = appBundleData.appClassloader;
-            final BundleContext appBundleContext = appBundleData.bundle.getBundleContext();
-            final ApplicationInfoBuilder appInfo = appBundleData.appInfo;
+            final ClassLoader appClassloader = application.getClassLoader();
+            final BundleContext appBundleContext = bundle.getBundleContext();
+            final ApplicationInfoBuilder appInfo =
+                new ApplicationInfoBuilder( applicationKey, application.getConfig(), application.getVersion() );
 
             if ( GRAAL_JS_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
@@ -241,52 +277,7 @@ public class ScriptRuntimeFactoryImpl
         }
     }
 
-    private AppBundleData getAppBundleData( final ApplicationKey applicationKey )
-    {
-        ServiceReference<Application> appRef = null;
-        try
-        {
-            final Collection<ServiceReference<Application>> appRefs =
-                context.getServiceReferences( Application.class, "(name=" + applicationKey + ")" );
-            for ( ServiceReference<Application> ref : appRefs )
-            {
-                final Bundle aBundle = ref.getBundle();
-                if ( aBundle != null && aBundle.getState() == Bundle.ACTIVE )
-                {
-                    appRef = ref;
-                    break;
-                }
-            }
-        }
-        catch ( InvalidSyntaxException e )
-        {
-            throw new RuntimeException( e );
-        }
-
-        if ( appRef == null )
-        {
-            throw new AppNotRegisteredException();
-        }
-        final Bundle bundle = appRef.getBundle();
-
-        final Application application = context.getService( appRef );
-        try
-        {
-            if ( application == null || application.getConfig() == null || !application.isStarted() )
-            {
-                throw new AppNotRegisteredException();
-            }
-
-            return new AppBundleData( bundle, application.getClassLoader(),
-                                      new ApplicationInfoBuilder( applicationKey, application.getConfig(), application.getVersion() ) );
-        }
-        finally
-        {
-            context.ungetService( appRef );
-        }
-    }
-
-    private record AppBundleData(Bundle bundle, ClassLoader appClassloader, ApplicationInfoBuilder appInfo)
+    private record TrackedApplication(ServiceReference<Application> reference, Application application)
     {
     }
 }

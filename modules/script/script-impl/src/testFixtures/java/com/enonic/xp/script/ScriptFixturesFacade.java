@@ -24,11 +24,13 @@ public interface ScriptFixturesFacade
             @Override
             public ScriptRuntime create( final ScriptSettings settings )
             {
+                // one immutable incarnation per fixture runtime: applications never restart here
+                final Object incarnation = new Object();
                 final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl(
                     applicationKey -> createExecutor( settings, services, resourceService, Arrays.stream( applications )
                         .filter( app -> app.getKey().equals( applicationKey ) )
                         .findFirst()
-                        .orElseThrow() ) );
+                        .orElseThrow() ), applicationKey -> incarnation );
                 // open each application's bootstrap gate: production arms it via MainExecutor, the
                 // test harness arms it here (no main.js script — just opens the gate)
                 for ( final Application application : applications )

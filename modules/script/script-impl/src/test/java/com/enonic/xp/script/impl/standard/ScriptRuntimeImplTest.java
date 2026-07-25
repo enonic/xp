@@ -1,6 +1,7 @@
 package com.enonic.xp.script.impl.standard;
 
 import java.io.Closeable;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Assertions;
@@ -63,10 +64,12 @@ class ScriptRuntimeImplTest
         lenient().when( resourceService.getResource( MAIN ) ).thenReturn( resource );
     }
 
+    private final Object incarnation = new Object();
+
     private ScriptRuntimeImpl runtime()
     {
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( scriptExecutor );
-        return new ScriptRuntimeImpl( scriptExecutorFactory );
+        return new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
     }
 
     @Test
@@ -155,19 +158,28 @@ class ScriptRuntimeImplTest
     }
 
     @Test
-    void execute_rearmsBootstrapAfterInvalidate()
+    void staleIncarnation_diesOnNextUse()
     {
         mainScriptExists( true );
-        final ScriptRuntimeImpl runtime = runtime();
+        final AtomicReference<Object> current = new AtomicReference<>( new Object() );
+        when( scriptExecutorFactory.apply( APP ) ).thenReturn( scriptExecutor );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> current.get() );
 
         runtime.bootstrap( params() );
-        runtime.invalidate( APP );
-        // the executor incarnation the bootstrap armed is gone (app reconfigure): a top-level
-        // execution re-arms the lazily recreated one instead of waiting out the gate timeout
         runtime.execute( CONTROLLER );
 
+        // the application was replaced (new service registration) and this runtime's teardown
+        // raced the creation: the executor stamped with the old incarnation is torn down on its
+        // next touch and rebuilt from the current one — here armed again by the new bootstrap
+        current.set( new Object() );
+        runtime.bootstrap( params() );
+        runtime.execute( CONTROLLER );
+
+        verify( scriptExecutorFactory, times( 2 ) ).apply( APP );
+        // the stale executor got a full instance teardown
+        verify( scriptExecutor ).runDisposers();
         verify( scriptExecutor, times( 2 ) ).bootstrap( MAIN );
-        verify( scriptExecutor ).executeMain( CONTROLLER );
+        verify( scriptExecutor, times( 2 ) ).executeMain( CONTROLLER );
     }
 
     @Test
@@ -228,7 +240,7 @@ class ScriptRuntimeImplTest
             mock( ScriptExecutor.class, Mockito.withSettings().extraInterfaces( Closeable.class ) );
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( closeableExecutor );
 
-        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
         runtime.bootstrap( paramsWithoutScript() );
 
         runtime.invalidate( APP );
@@ -247,7 +259,7 @@ class ScriptRuntimeImplTest
         when( resourceService.getResource( MAIN ) ).thenReturn( resource );
         when( resource.exists() ).thenReturn( true );
 
-        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
 
         Assertions.assertTrue( runtime.hasScript( MAIN ) );
     }
@@ -255,7 +267,7 @@ class ScriptRuntimeImplTest
     @Test
     void has_script_app_not_found()
     {
-        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
         when( scriptExecutorFactory.apply( APP ) ).thenThrow( AppNotRegisteredException.class );
 
         Assertions.assertFalse( runtime.hasScript( MAIN ) );

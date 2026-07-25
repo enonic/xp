@@ -10,7 +10,6 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.app.Application;
-import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
@@ -43,22 +42,6 @@ class ScriptRuntimeFactoryImplTest
         lenient().when( this.bundleContext.createFilter( anyString() ) )
             .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
         lenient().when( this.bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
-    }
-
-    @Test
-    void invalidate()
-    {
-        final ScriptRuntimeFactoryImpl scriptRuntimeFactory =
-            spy( new ScriptRuntimeFactoryImpl( bundleContext, resourceService ) );
-
-        final ScriptRuntimeImpl scriptRuntime = mock( ScriptRuntimeImpl.class );
-        when( scriptRuntimeFactory.doCreate( any() ) ).thenReturn( scriptRuntime );
-
-        scriptRuntimeFactory.create( ScriptSettings.create().build() );
-        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
-        scriptRuntimeFactory.invalidate( applicationKey, ApplicationInvalidationLevel.FULL );
-
-        verify( scriptRuntime ).invalidate( eq( applicationKey ) );
     }
 
     @Test

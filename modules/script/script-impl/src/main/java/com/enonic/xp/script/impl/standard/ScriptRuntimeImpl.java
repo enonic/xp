@@ -39,24 +39,22 @@ public class ScriptRuntimeImpl
 
     private final ConcurrentMap<ApplicationKey, AppExecutor> executors = new ConcurrentHashMap<>();
 
-    /**
-     * Last bootstrap request per application. An executor discarded by a racing {@link #invalidate}
-     * (application reconfigure re-registers the service before it calls invalidators) would leave
-     * its lazily recreated successor's gate armed by no one — remembering the params lets the
-     * successor re-arm itself on first use instead of every caller waiting out the gate timeout.
-     * Deliberately NOT cleared by {@code invalidate}: the racing invalidate is precisely the moment
-     * the memory must survive. Entries cannot go stale (the params are the application key plus the
-     * {@code /main.js} convention, invariant across incarnations, and resources resolve through the
-     * current executor), a fresh registration overwrites them, and the footprint is one small
-     * object per application key for the runtime's lifetime.
-     */
-    private final ConcurrentMap<ApplicationKey, BootstrapParams> bootstrapParams = new ConcurrentHashMap<>();
-
     private final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory;
 
-    public ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory )
+    /**
+     * The identity of an application's current service registration ({@code null} when not
+     * registered) — fed by the factory's service tracker. Executors are stamped with the
+     * incarnation they were built from and revalidated against this on every use, so a stale
+     * executor (its registration stopped or replaced while the creation raced the teardown)
+     * dies on its next touch instead of serving a gone application.
+     */
+    private final Function<ApplicationKey, Object> incarnations;
+
+    public ScriptRuntimeImpl( final Function<ApplicationKey, ScriptExecutor> scriptExecutorFactory,
+                              final Function<ApplicationKey, Object> incarnations )
     {
         this.scriptExecutorFactory = scriptExecutorFactory;
+        this.incarnations = incarnations;
     }
 
     @Override
@@ -79,7 +77,6 @@ public class ScriptRuntimeImpl
     public void bootstrap( final BootstrapParams params )
     {
         final ApplicationKey key = params.getApplication();
-        bootstrapParams.put( key, params );
         final AppExecutor app = getExecutor( key );
         if ( app.bootstrapStarted.compareAndSet( false, true ) )
         {
@@ -121,32 +118,13 @@ public class ScriptRuntimeImpl
     }
 
     /**
-     * The bootstrapped executor for a top-level execution: re-arms the bootstrap gate if this
-     * executor incarnation was created after its bootstrap call (see {@link #bootstrapParams}),
-     * then waits for the gate.
+     * The bootstrapped executor for a top-level execution: waits for the gate.
      */
     private AppExecutor executorFor( final ApplicationKey key )
     {
         final AppExecutor app = getExecutor( key );
-        rearmIfNeeded( key, app );
         await( key, app );
         return app;
-    }
-
-    private void rearmIfNeeded( final ApplicationKey key, final AppExecutor app )
-    {
-        if ( !app.bootstrapStarted.get() )
-        {
-            final BootstrapParams params = bootstrapParams.get( key );
-            if ( params != null && app.bootstrapStarted.compareAndSet( false, true ) )
-            {
-                // a detached thread, like MainExecutor's bootstrap: the triggering caller then waits
-                // on the gate with the bounded timeout instead of running main.js unboundedly itself
-                Thread.ofVirtual()
-                    .name( "re-bootstrap-" + key )
-                    .start( () -> runBootstrap( key, app, params.getMainScript().orElse( null ) ) );
-            }
-        }
     }
 
     @Override
@@ -158,6 +136,11 @@ public class ScriptRuntimeImpl
         {
             return;
         }
+        teardown( key, removed );
+    }
+
+    private void teardown( final ApplicationKey key, final AppExecutor removed )
+    {
         // release any waiters: the app is gone, so its bootstrap will never complete on its own
         removed.bootstrapped.complete( null );
         // instance-owned teardown (#10844): the removed executor's own disposers run against its
@@ -270,19 +253,39 @@ public class ScriptRuntimeImpl
 
     private AppExecutor getExecutor( final ApplicationKey key )
     {
-        return executors.computeIfAbsent( key, k -> new AppExecutor( scriptExecutorFactory.apply( k ) ) );
+        while ( true )
+        {
+            // the incarnation is read before the executor is built: a reconfigure racing the
+            // creation can only make the stamp too old, never too new — the entry then fails
+            // revalidation and is rebuilt, instead of a stale executor passing as current
+            final AppExecutor app = executors.computeIfAbsent( key, k -> new AppExecutor( incarnations.apply( k ),
+                                                                                          scriptExecutorFactory.apply( k ) ) );
+            if ( app.incarnation == incarnations.apply( key ) )
+            {
+                return app;
+            }
+            // built from a service registration that is gone (application stopped, or replaced by
+            // a reconfigure that raced this creation): tear it down and resolve the current one
+            if ( executors.remove( key, app ) )
+            {
+                teardown( key, app );
+            }
+        }
     }
 
     private static final class AppExecutor
     {
+        final Object incarnation;
+
         final ScriptExecutor executor;
 
         final AtomicBoolean bootstrapStarted = new AtomicBoolean();
 
         final CompletableFuture<Void> bootstrapped = new CompletableFuture<>();
 
-        AppExecutor( final ScriptExecutor executor )
+        AppExecutor( final Object incarnation, final ScriptExecutor executor )
         {
+            this.incarnation = incarnation;
             this.executor = executor;
         }
     }

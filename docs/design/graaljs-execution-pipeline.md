@@ -550,12 +550,12 @@ twice over:
   (surfaces in the log, never a permanently dammed app); event callbacks and tasks on their own
   threads are gated normally (async, no deadlock); the wait is bounded (300 s, then fail-open with a
   warning, **latched** so the timeout is paid once — not by every subsequent caller) so a hanging or
-  never-armed bootstrap degrades to proceeding rather than a deadlock. The runtime also **remembers
-  each application's last `BootstrapParams`**: application reconfigure re-registers the service
-  *before* running invalidators, so the executor incarnation that `MainExecutor`'s bootstrap armed
-  can be discarded by the trailing invalidate — a lazily recreated successor re-arms itself from the
-  remembered params on first use (on a detached virtual thread; the triggering caller just waits on
-  the gate) instead of stranding the app behind a gate nobody will ever arm.
+  never-armed bootstrap degrades to proceeding rather than a deadlock. An earlier revision also
+  remembered each application's last `BootstrapParams` and re-armed lazily recreated executors
+  from them — compensation for the factory's `ApplicationInvalidator` round discarding the freshly
+  bootstrapped successor after a reconfigure. That machinery is gone with its cause: the factory
+  no longer implements `ApplicationInvalidator` at all (see the #10844 lifecycle note below), so
+  no trailing invalidate ever discards a healthy successor.
 
 **[#10844 Disposers race condition](https://github.com/enonic/xp/issues/10844)** — disposers
 registered by one bundle incarnation invoked for its replacement (rooted in #7966). The
@@ -567,12 +567,24 @@ pipeline sharpens both the fix shape and the stakes:
   the executor instance, run **its** disposers against **its** still-open contexts, close them
   and return **its** budget permits. The name-keyed `runDisposers(key)` lookup (which under
   replacement resolves to the successor incarnation — the #10844 confusion) is gone; runtime
-  disposal tears down all owned executors the same way. The stop signal is now uniform with the
-  portal layer: `ScriptRuntimeFactoryImpl` is a `ServiceTracker<Application>` (like
-  `MainExecutor`, not an `ApplicationListener` whiteboard), so `removedService` drives the
-  teardown. The remaining exposure is the #7966 event-ordering root: a late stop event can still
-  tear down a *healthy successor* executor — but that now self-heals (it is lazily recreated on
-  next use) instead of running the wrong incarnation's disposers or leaking budget.
+  disposal tears down all owned executors the same way. **The service tracker is the only stop
+  signal.** `ScriptRuntimeFactoryImpl` is a `ServiceTracker<Application>` (like `MainExecutor`)
+  and deliberately does *not* implement `ApplicationInvalidator`: every registry flow
+  (reconfigure, stop, uninstall) calls `unregister()` **before** its invalidator round, and the
+  tracker's `removedService` is delivered synchronously inside `unregister()` — so the tracker
+  fires at the right moment (before a reconfigure's replacement registers), while the invalidator
+  fires at the wrong one (after it, killing the freshly bootstrapped successor: the very race a
+  pile of re-arm compensation used to paper over). The factory also tracks each application's
+  **current incarnation** — the `ServiceReference` of its live registration (reconfigure
+  re-registers the *same* `Application` object, so the registration is the identity, not the
+  service object) — and executor creation resolves through this map instead of scanning the
+  service registry. Executors are **stamped with the incarnation they were built from and
+  revalidated on every use**: an executor whose registration is gone (stopped, or replaced by a
+  reconfigure that raced its creation) dies on its next touch — full instance teardown, then a
+  rebuild from the current incarnation — closing the check-then-act window that a plain
+  app-key-keyed map leaves open. This resolves the #7966 event-ordering exposure for script
+  runtimes: a late or misordered signal can no longer kill a healthy successor, and a stale
+  executor cannot outlive its bundle.
 - Teardown is **non-negotiable and race-hardened**: contexts close with *cancel* (a context still
   executing an in-flight request or connection dispatch must not veto app stop — its execution
   fails on its own thread, and a stale pinned websocket dispatch failing makes the container close
