@@ -12,6 +12,13 @@ public interface PortalScriptService
 {
     boolean hasScript( ResourceKey script );
 
+    /**
+     * Bootstraps an application: runs its optional bootstrap script and marks the application
+     * ready — top-level executions of the application's scripts wait for that. Only the first
+     * call per application incarnation runs the script; concurrent and later calls wait for or
+     * observe the completed bootstrap. A failing bootstrap script is logged, and the application
+     * still becomes ready.
+     */
     void bootstrap( BootstrapParams params );
 
     ScriptExports execute( ResourceKey script );

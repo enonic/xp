@@ -23,16 +23,25 @@ public final class BootstrapParams
         this.mainScript = builder.mainScript;
     }
 
+    /**
+     * The application to bootstrap.
+     */
     public ApplicationKey getApplication()
     {
         return this.application;
     }
 
+    /**
+     * The bootstrap script to run, when the application has one.
+     */
     public Optional<ResourceKey> getMainScript()
     {
         return Optional.ofNullable( this.mainScript );
     }
 
+    /**
+     * Creates a new builder.
+     */
     public static Builder create()
     {
         return new Builder();
@@ -48,12 +57,19 @@ public final class BootstrapParams
         {
         }
 
+        /**
+         * The application to bootstrap. Required.
+         */
         public Builder application( final ApplicationKey application )
         {
             this.application = application;
             return this;
         }
 
+        /**
+         * The bootstrap script to run. Optional: without it, the application becomes ready
+         * without executing a script.
+         */
         public Builder mainScript( final ResourceKey mainScript )
         {
             this.mainScript = mainScript;
