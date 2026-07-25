@@ -46,6 +46,8 @@ class ScriptRuntimeImplTest
     @Mock
     ResourceService resourceService;
 
+    private final Object incarnation = new Object();
+
     private static BootstrapParams params()
     {
         return BootstrapParams.create().application( APP ).mainScript( MAIN ).build();
@@ -63,8 +65,6 @@ class ScriptRuntimeImplTest
         lenient().when( scriptExecutor.getResourceService() ).thenReturn( resourceService );
         lenient().when( resourceService.getResource( MAIN ) ).thenReturn( resource );
     }
-
-    private final Object incarnation = new Object();
 
     private ScriptRuntimeImpl runtime()
     {
