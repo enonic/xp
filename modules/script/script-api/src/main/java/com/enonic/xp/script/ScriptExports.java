@@ -2,6 +2,9 @@ package com.enonic.xp.script;
 
 import java.util.function.Function;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.resource.ResourceKey;
 
 
@@ -23,7 +26,8 @@ public interface ScriptExports
      * a view of these exports permanently bound to that context: executions through the view,
      * inside or after the scope, observe the module state the scope's executions observed.
      */
-    default <T> T executeBound( Function<ScriptExports, T> work )
+    @NullMarked
+    default <T extends @Nullable Object> T executeBound( Function<ScriptExports, T> work )
     {
         return work.apply( this );
     }

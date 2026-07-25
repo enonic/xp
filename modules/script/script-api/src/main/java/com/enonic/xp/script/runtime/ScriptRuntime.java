@@ -2,6 +2,9 @@ package com.enonic.xp.script.runtime;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
@@ -18,6 +21,7 @@ public interface ScriptRuntime
      * observe the completed bootstrap. A failing bootstrap script is logged, and the application
      * still becomes ready.
      */
+    @NullMarked
     void bootstrap( BootstrapParams params );
 
     ScriptExports execute( ResourceKey script );
@@ -32,7 +36,8 @@ public interface ScriptRuntime
      * @return the method's result when it is a scalar (string, number, boolean or date), and
      * {@code null} for any other result — identically on every script engine.
      */
-    Object executeMethod( ResourceKey script, String method, Object... args );
+    @NullMarked
+    @Nullable Object executeMethod( ResourceKey script, String method, @Nullable Object... args );
 
     /**
      * @deprecated Scheduled for removal. Use {@link #bootstrap(BootstrapParams)} for bootstrap

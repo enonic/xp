@@ -3,6 +3,7 @@ package com.enonic.xp.portal.controller;
 import java.util.function.Function;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -28,7 +29,7 @@ public interface ControllerScript
      * bound to that context: a connection opened by this scope (websocket/SSE) keeps the view,
      * and its events observe the module state the request's execution observed.
      */
-    default <T> T executeBound( Function<ControllerScript, T> work )
+    default <T extends @Nullable Object> T executeBound( Function<ControllerScript, T> work )
     {
         return work.apply( this );
     }

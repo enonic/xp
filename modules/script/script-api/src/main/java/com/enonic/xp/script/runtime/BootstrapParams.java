@@ -3,6 +3,9 @@ package com.enonic.xp.script.runtime;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 
@@ -11,15 +14,21 @@ import com.enonic.xp.resource.ResourceKey;
  * bootstrapped before its other scripts execute. Running a bootstrap script is optional:
  * {@code mainScript} may be absent, in which case the application simply becomes ready.
  */
+@NullMarked
 public final class BootstrapParams
 {
     private final ApplicationKey application;
 
-    private final ResourceKey mainScript;
+    private final @Nullable ResourceKey mainScript;
 
     private BootstrapParams( final Builder builder )
     {
         this.application = Objects.requireNonNull( builder.application, "application is required" );
+        if ( builder.mainScript != null && !this.application.equals( builder.mainScript.getApplicationKey() ) )
+        {
+            throw new IllegalArgumentException(
+                "mainScript [" + builder.mainScript + "] does not belong to application [" + this.application + "]" );
+        }
         this.mainScript = builder.mainScript;
     }
 
@@ -49,9 +58,9 @@ public final class BootstrapParams
 
     public static final class Builder
     {
-        private ApplicationKey application;
+        private @Nullable ApplicationKey application;
 
-        private ResourceKey mainScript;
+        private @Nullable ResourceKey mainScript;
 
         private Builder()
         {
@@ -70,7 +79,7 @@ public final class BootstrapParams
          * The bootstrap script to run. Optional: without it, the application becomes ready
          * without executing a script.
          */
-        public Builder mainScript( final ResourceKey mainScript )
+        public Builder mainScript( final @Nullable ResourceKey mainScript )
         {
             this.mainScript = mainScript;
             return this;

@@ -101,6 +101,7 @@ class ScriptRuntimeFactoryImplTest
         verify( disposed ).close();
         verify( leftover ).close();
         scriptRuntimeFactory.destroy();
+        verify( disposed ).close();
         verify( leftover ).close();
     }
 }
