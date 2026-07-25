@@ -492,15 +492,15 @@ public class GraalScriptExecutor
 
     /**
      * Executes against a fresh, private context that lives for this invocation only — the
-     * execution model for isolated (named-task) runs: task threads are virtual and effectively unbounded,
-     * and an IO-waiting task holds its context for the entire wait, so tasks must not compete
-     * for request-serving slots. Bounded by the task-context budget; the shared source registry
-     * keeps re-initialization parse-free.
+     * execution model for isolated runs ({@code executeMethod}, named tasks): their threads are
+     * virtual and effectively unbounded, and an IO-waiting run holds its context for the entire
+     * wait, so isolated runs must not compete for request-serving slots. Bounded by the
+     * isolated-context budget; the shared source registry keeps re-initialization parse-free.
      */
     <T> T withIsolatedExports( final ResourceKey key, final BiFunction<ContextSlot, Value, T> work )
     {
         requireOpen();
-        budget.acquireTaskContext();
+        budget.acquireIsolatedContext();
         try
         {
             final ContextSlot slot = new ContextSlot( contextFactory, application );
@@ -521,7 +521,7 @@ public class GraalScriptExecutor
         }
         finally
         {
-            budget.releaseTaskContext();
+            budget.releaseIsolatedContext();
         }
     }
 
@@ -813,12 +813,21 @@ public class GraalScriptExecutor
 
         void retain()
         {
+            // throws when the connection budget is exhausted: the failed open propagates to the
+            // endpoint and rejects the marginal connection — requests are not the victim
+            budget.acquireRetainedContext();
             pins.incrementAndGet();
         }
 
         void release()
         {
-            pins.updateAndGet( count -> Math.max( 0, count - 1 ) );
+            // backstop guard: the view layer already confines each release to its own
+            // successful retains, so a pin is normally always here to remove
+            final int before = pins.getAndUpdate( count -> Math.max( 0, count - 1 ) );
+            if ( before > 0 )
+            {
+                budget.releaseRetainedContext();
+            }
         }
 
         boolean isRetained()

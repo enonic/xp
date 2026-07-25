@@ -311,13 +311,18 @@ One shared pool lets any workload class starve the others; the budgets are parti
 
 - **Requests** — the elastic pool above. Nested executions (component rendering) stay on the
   request's slot via the scoped binding.
-- **Websocket/SSE events** — no separate partition: a connection *steals the exact slot its
-  request ran on* out of the pool (retained while the connection lives), and the pool grows
-  replacements within capacity and budget. A pinned execution has exactly one legal context,
-  so it waits for it **without a time bound, interruptibly** (the fair lock preserves event
-  order; the monitor acquisition after it is untimed as well): timing out could only break the
-  connection sooner, and parked dispatch threads are what the Jetty virtual-threads option
-  compensates.
+- **Websocket/SSE events** — a connection *steals the exact slot its request ran on* out of
+  the pool (retained while the connection lives), and the pool grows replacements within
+  capacity and budget. Connections additionally draw one permit each from a **retained-context
+  budget** (`xp.script-engine.graal.max-retained-contexts`, default half of `max-contexts`):
+  a connection outlives its request thread, so demand scales with *open connections* (arrival
+  rate × lifetime — Little's law), not with the servlet thread count, and without its own cap
+  a connection flood would consume the whole pool and starve plain requests. With the cap it is
+  the **marginal connection that is rejected at open** — the next request always has headroom.
+  A pinned execution has exactly one legal context, so it waits for it **without a time bound,
+  interruptibly** (the fair lock preserves event order; the monitor acquisition after it is
+  untimed as well): timing out could only break the connection sooner, and parked dispatch
+  threads are what the Jetty virtual-threads option compensates.
 - **Tasks — ephemeral context per execution.** XP runs tasks on **virtual threads**, and IO-wait
   workloads are a loved use case: task concurrency is effectively unbounded and an IO-waiting
   JS task holds its context for the entire wait. Any *bounded* task partition therefore
@@ -325,7 +330,7 @@ One shared pool lets any workload class starve the others; the budgets are parti
   named `submitTask` executions get a **fresh context per execution** — create, run, close —
   with the shared engine reusing compiled code, so the per-run cost is module
   re-initialization only: noise for long IO tasks, documented for hot short ones. Concurrency
-  then scales with in-flight tasks; memory backpressure is a single `max-task-contexts`
+  then scales with in-flight tasks; memory backpressure is a single `max-isolated-contexts`
   semaphore that virtual threads park on cheaply. This also fixes a defect in the initial
   phase-4 implementation: task runs used to borrow request-serving slots for their full
   duration.
@@ -479,19 +484,24 @@ what every Node.js cluster / worker deployment already imposes on developers.
 5. **Elastic pool (contexts ≈ concurrent executions)** *(started on this branch)* — replaces
    the earlier async-servlet phase, see §4.5. Landed: lazy slot creation over a fixed logical
    capacity (retention-aware growth), the global cross-app context budget
-   (`xp.script-engine.graal.max-contexts`, default 200; first slot per app always allowed),
-   ephemeral task contexts behind `PortalScriptService.executeMethod` bounded by
-   `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, unbounded
-   interruptible pinned waits, and the experimental Jetty virtual-threads option (default off). Remaining:
-   slot-count/footprint metrics and the host-backed `lib-cache` registry (per-context caches
-   fragment at scale).
+   (`xp.script-engine.graal.max-contexts`, default 1024; first slot per app always allowed),
+   the retained-context budget for live connections
+   (`xp.script-engine.graal.max-retained-contexts`, default half of `max-contexts`; the
+   marginal connection is rejected at open instead of the next request failing), isolated
+   contexts behind `PortalScriptService.executeMethod` bounded by
+   `xp.script-engine.graal.max-isolated-contexts` (default 1024), the strong per-app `Source`
+   registry, unbounded interruptible pinned waits, and the experimental Jetty virtual-threads
+   option (default off). Remaining: slot-count/footprint metrics and the host-backed
+   `lib-cache` registry (per-context caches fragment at scale).
 6. **Flip the default** — `xp.script-engine=GraalJS` with pool enabled; Nashorn path stays for
    one release cycle via `X-Script-Engine` per app, then removed.
 
 ## 8. Open questions
 
 - ~~Pool sizing policy: per app, global cap, or weighted by app traffic?~~ Decided (§4.5): a
-  global cross-app budget in the order of the Jetty thread pool, grown lazily on demand.
+  global cross-app budget grown lazily on demand, sized to concurrent open connections plus
+  in-flight requests — not to the servlet thread count, which bounds neither connections nor
+  isolated runs — with a separate cap for connection-retained contexts.
 - ES modules (`import`) support could ride on the new pipeline (`Source.mimeType
   ("application/javascript+module")`) — worth deciding before freezing the wrapper design.
 - ~~Should the "main" worker also serve requests, or stay reserved for listeners/timers?~~

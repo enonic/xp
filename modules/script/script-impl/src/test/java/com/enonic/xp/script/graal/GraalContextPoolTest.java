@@ -353,7 +353,7 @@ class GraalContextPoolTest
     void budgetExhaustionFallsBackToExistingSlot()
         throws Exception
     {
-        final ScriptExecutor limited = newExecutor( 4, new GraalContextBudget( 0, 4 ) );
+        final ScriptExecutor limited = newExecutor( 4, new GraalContextBudget( 0, 4, 4 ) );
         try
         {
             final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
@@ -363,6 +363,87 @@ class GraalContextPoolTest
             final ScriptExports second = exports.executeBound( view -> view );
             assertEquals( 1, intValue( first.executeMethod( "inc" ) ) );
             assertEquals( 2, intValue( second.executeMethod( "inc" ) ) );
+        }
+        finally
+        {
+            ( (Closeable) limited ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
+    void connectionBudgetRejectsTheMarginalConnection()
+        throws Exception
+    {
+        final ScriptExecutor limited = newExecutor( 2, new GraalContextBudget( Integer.MAX_VALUE, 1, 1 ) );
+        try
+        {
+            final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+            final ScriptExports first = exports.executeBound( view -> view );
+            first.retain();
+            try
+            {
+                // one connection is the budget: the next open fails — and it is the connection
+                // that is rejected, the request pool keeps serving
+                final ScriptExports second = exports.executeBound( view -> view );
+                final IllegalStateException e = assertThrows( IllegalStateException.class, second::retain );
+                assertTrue( e.getMessage().contains( "connection budget" ), e.getMessage() );
+                assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
+            }
+            finally
+            {
+                first.release();
+            }
+
+            // released: the permit is back, and an unpaired release must not mint another
+            final ScriptExports third = exports.executeBound( view -> view );
+            third.retain();
+            third.release();
+            third.release();
+            final ScriptExports fourth = exports.executeBound( view -> view );
+            fourth.retain();
+            try
+            {
+                assertThrows( IllegalStateException.class, () -> exports.executeBound( view -> view ).retain() );
+            }
+            finally
+            {
+                fourth.release();
+            }
+        }
+        finally
+        {
+            ( (Closeable) limited ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
+    void failedRetainDoesNotStealAnotherConnectionsPin()
+        throws Exception
+    {
+        final ScriptExecutor limited = newExecutor( 1, new GraalContextBudget( Integer.MAX_VALUE, 1, 1 ) );
+        try
+        {
+            final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+            // both views capture the single slot before any retention
+            final ScriptExports a = exports.executeBound( view -> view );
+            final ScriptExports b = exports.executeBound( view -> view );
+            a.retain();
+            try
+            {
+                assertThrows( IllegalStateException.class, b::retain );
+                // the endpoint releases after a failed open: it must not strip a's pin
+                b.release();
+                assertThrows( IllegalStateException.class, () -> exports.executeMethod( "inc" ) );
+            }
+            finally
+            {
+                a.release();
+            }
+            assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
         }
         finally
         {

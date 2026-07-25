@@ -48,7 +48,8 @@ public class ScriptRuntimeFactoryImpl
 
     private final List<ScriptRuntimeImpl> list = new CopyOnWriteArrayList<>();
 
-    private final GraalContextBudget graalContextBudget = new GraalContextBudget( maxContexts(), maxTaskContexts() );
+    private final GraalContextBudget graalContextBudget =
+        new GraalContextBudget( maxContexts(), maxRetainedContexts(), maxIsolatedContexts() );
 
     /**
      * The current incarnation of each application: its live service registration and the service
@@ -186,12 +187,22 @@ public class ScriptRuntimeFactoryImpl
 
     private static int maxContexts()
     {
-        return Math.max( 1, Integer.getInteger( "xp.script-engine.graal.max-contexts", 200 ) );
+        return Math.max( 1, Integer.getInteger( "xp.script-engine.graal.max-contexts", 1024 ) );
     }
 
-    private static int maxTaskContexts()
+    /**
+     * Cap on contexts retained by live connections (websocket/SSE) — one permit per connection.
+     * Defaults to half the context budget, so connections can never consume the whole pool:
+     * request serving always keeps headroom, and the marginal connection is what gets rejected.
+     */
+    private static int maxRetainedContexts()
     {
-        return Math.max( 1, Integer.getInteger( "xp.script-engine.graal.max-task-contexts", 100 ) );
+        return Math.max( 1, Integer.getInteger( "xp.script-engine.graal.max-retained-contexts", maxContexts() / 2 ) );
+    }
+
+    private static int maxIsolatedContexts()
+    {
+        return Math.max( 1, Integer.getInteger( "xp.script-engine.graal.max-isolated-contexts", 1024 ) );
     }
 
     private static String normalizeEngineName( final String scriptEngine )

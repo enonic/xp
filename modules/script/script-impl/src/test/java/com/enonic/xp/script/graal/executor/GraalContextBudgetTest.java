@@ -11,7 +11,7 @@ class GraalContextBudgetTest
     @Test
     void contextPermitsAreExhaustibleAndReleasable()
     {
-        final GraalContextBudget budget = new GraalContextBudget( 1, 1 );
+        final GraalContextBudget budget = new GraalContextBudget( 1, 1, 1 );
 
         assertTrue( budget.tryAcquireContext() );
         assertFalse( budget.tryAcquireContext() );
@@ -24,6 +24,19 @@ class GraalContextBudgetTest
     }
 
     @Test
+    void retainedPermitsRejectTheMarginalConnection()
+    {
+        final GraalContextBudget budget = new GraalContextBudget( 1, 1, 1 );
+
+        budget.acquireRetainedContext();
+        // one connection is the budget: the next open fails, immediately
+        assertThrows( IllegalStateException.class, budget::acquireRetainedContext );
+
+        budget.releaseRetainedContext();
+        budget.acquireRetainedContext();
+    }
+
+    @Test
     void unlimitedNeverExhausts()
     {
         final GraalContextBudget budget = GraalContextBudget.unlimited();
@@ -31,21 +44,23 @@ class GraalContextBudgetTest
         {
             assertTrue( budget.tryAcquireContext() );
         }
-        budget.acquireTaskContext();
-        budget.releaseTaskContext();
+        budget.acquireRetainedContext();
+        budget.releaseRetainedContext();
+        budget.acquireIsolatedContext();
+        budget.releaseIsolatedContext();
     }
 
     @Test
-    void interruptedTaskContextWaitRestoresInterruptFlag()
+    void interruptedIsolatedContextWaitRestoresInterruptFlag()
         throws Exception
     {
-        final GraalContextBudget budget = new GraalContextBudget( 1, 1 );
-        budget.acquireTaskContext();
+        final GraalContextBudget budget = new GraalContextBudget( 1, 1, 1 );
+        budget.acquireIsolatedContext();
 
         try
         {
             Thread.currentThread().interrupt();
-            assertThrows( RuntimeException.class, budget::acquireTaskContext );
+            assertThrows( RuntimeException.class, budget::acquireIsolatedContext );
             assertTrue( Thread.currentThread().isInterrupted(), "interrupt flag must be restored" );
         }
         finally

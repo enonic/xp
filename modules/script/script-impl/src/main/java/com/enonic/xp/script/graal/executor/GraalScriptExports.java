@@ -1,5 +1,6 @@
 package com.enonic.xp.script.graal.executor;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -26,6 +27,15 @@ final class GraalScriptExports
     private final GraalScriptExecutor.ContextSlot pinnedSlot;
 
     private final boolean isolated;
+
+    /**
+     * References this view holds on its pinned slot. A slot can be pinned by several views
+     * (connections whose handshakes shared it), so a view must never release more than it
+     * acquired — an endpoint releases on any open failure, including a {@link #retain()} that
+     * threw on the exhausted connection budget, and that release must not strip another
+     * connection's pin.
+     */
+    private final AtomicInteger retained = new AtomicInteger();
 
     GraalScriptExports( final GraalScriptExecutor executor, final ResourceKey script )
     {
@@ -79,13 +89,14 @@ final class GraalScriptExports
         if ( pinnedSlot != null )
         {
             pinnedSlot.retain();
+            retained.incrementAndGet();
         }
     }
 
     @Override
     public void release()
     {
-        if ( pinnedSlot != null )
+        if ( pinnedSlot != null && retained.getAndUpdate( count -> Math.max( 0, count - 1 ) ) > 0 )
         {
             pinnedSlot.release();
         }
