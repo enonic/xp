@@ -451,6 +451,7 @@ public class GraalScriptExecutor
     private ContextSlot grownOrExistingSlot( final int start, final int size )
     {
         // every eligible slot is busy: grow within the budget
+        boolean budgetDenied = false;
         for ( int i = 0; i < size; i++ )
         {
             final int index = Math.floorMod( start + i, size );
@@ -461,6 +462,7 @@ public class GraalScriptExecutor
                 {
                     return created;
                 }
+                budgetDenied = true;
                 break;
             }
         }
@@ -476,7 +478,11 @@ public class GraalScriptExecutor
         // exclusivity over liveness: a retained context carries one connection's module state,
         // and GraalJS offers no way to share it safely — a request never intrudes on it, it
         // fails loudly instead
-        throw new IllegalStateException( "No script context available" );
+        throw new IllegalStateException( "No script context available for application [" + application.appKey() +
+                                             "]: every pooled context is retained by a live websocket/SSE connection, and the pool cannot grow — " +
+                                             ( budgetDenied
+                                                 ? "the global context budget is exhausted (xp.script-engine.graal.max-contexts)"
+                                                 : "the pool is at capacity (" + size + ", xp.script-engine.graal.pool-size)" ) );
     }
 
     <T> T withSlot( final Function<ContextSlot, T> work )

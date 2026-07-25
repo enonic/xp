@@ -232,8 +232,12 @@ class GraalContextPoolTest
             try
             {
                 // exclusivity over liveness: the retained context carries the connection's
-                // module state, and GraalJS offers no safe sharing — the request fails loudly
-                assertThrows( IllegalStateException.class, () -> exports.executeMethod( "inc" ) );
+                // module state, and GraalJS offers no safe sharing — the request fails loudly,
+                // and the message names the failure mode for operators
+                final IllegalStateException e =
+                    assertThrows( IllegalStateException.class, () -> exports.executeMethod( "inc" ) );
+                assertTrue( e.getMessage().contains( "retained" ), e.getMessage() );
+                assertTrue( e.getMessage().contains( "at capacity" ), e.getMessage() );
             }
             finally
             {
