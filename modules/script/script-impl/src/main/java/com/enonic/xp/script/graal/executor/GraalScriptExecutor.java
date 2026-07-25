@@ -60,17 +60,6 @@ public class GraalScriptExecutor
 
     private static final long SLOT_WAIT_SECONDS = 300;
 
-    /**
-     * Pinned executions (websocket/SSE events) run on shared event-dispatch threads — they must
-     * fail fast when their slot is saturated instead of holding those threads for minutes. The
-     * bound covers the slot-lock wait, which is what grows with queue depth; the context-monitor
-     * acquisition that follows is not timed ({@code synchronized} cannot be) and waits out
-     * in-flight foreign-thread callbacks ({@code JsFunctionHandle} holds only the monitor) — a
-     * tail bounded by callback execution time, not by waiter count. A hard total bound would
-     * require replacing the monitor ownership discipline with timed locks.
-     */
-    private static final long PINNED_SLOT_WAIT_SECONDS = 30;
-
     private final ScriptSettings scriptSettings;
 
     private final ClassLoader classLoader;
@@ -396,7 +385,7 @@ public class GraalScriptExecutor
 
         if ( pinned != null )
         {
-            return lockAndRun( pinned, work, PINNED_SLOT_WAIT_SECONDS );
+            return lockAndRunInterruptibly( pinned, work );
         }
 
         return withAnySlot( work );
@@ -438,9 +427,9 @@ public class GraalScriptExecutor
             // retained slots belong to live connections (websocket/SSE): the request pool
             // leaves them alone and grows replacements instead. The untimed tryLock deliberately
             // barges past the lock's fairness on this fast path — only anonymous requests race
-            // here (no ordering requirement); every queued wait, pinned events included, uses the
-            // timed tryLock below, which honors fairness, and retained/main slots never enter
-            // this scan at all
+            // here (no ordering requirement); queued anonymous waits use the timed fair tryLock
+            // below, pinned waits are unbounded and interruptible, and retained/main slots never
+            // enter this scan at all
             if ( slot != null && !slot.isRetained() && slot.lock.tryLock() )
             {
                 try
@@ -476,25 +465,17 @@ public class GraalScriptExecutor
             }
         }
         // at capacity or out of budget: wait fairly on an existing free slot
-        ContextSlot retainedFallback = null;
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
-            if ( slot != null )
+            if ( slot != null && !slot.isRetained() )
             {
-                if ( !slot.isRetained() )
-                {
-                    return slot;
-                }
-                retainedFallback = slot;
+                return slot;
             }
         }
-        // liveness over exclusivity: when every existing slot is retained by a connection and
-        // nothing can grow, sharing a retained slot beats starving requests
-        if ( retainedFallback != null )
-        {
-            return retainedFallback;
-        }
+        // exclusivity over liveness: a retained context carries one connection's module state,
+        // and GraalJS offers no way to share it safely — a request never intrudes on it, it
+        // fails loudly instead
         throw new IllegalStateException( "No script context available" );
     }
 
@@ -589,6 +570,38 @@ public class GraalScriptExecutor
         // scoped rebinding nests naturally: an isolated execution inside a slot-bound one
         // shadows the binding for its scope and the outer binding is restored on exit
         return ScopedValue.where( BOUND_SLOT, slot ).call( () -> work.apply( slot ) );
+    }
+
+    /**
+     * Pinned executions (websocket/SSE events, and anything queued behind them) wait for their
+     * exact slot without a time bound: a pinned execution has exactly one legal context, so a
+     * timeout could only break the connection sooner. The wait stays interruptible, and parked
+     * dispatch threads are what the Jetty virtual-threads option compensates. The context-monitor
+     * acquisition that follows is untimed as well ({@code synchronized}) and waits out in-flight
+     * foreign-thread callbacks.
+     */
+    private <T> T lockAndRunInterruptibly( final ContextSlot slot, final Function<ContextSlot, T> work )
+    {
+        try
+        {
+            slot.lock.lockInterruptibly();
+        }
+        catch ( final InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException( "Interrupted while waiting for the pinned script context", e );
+        }
+        try
+        {
+            synchronized ( slot.context )
+            {
+                return runBound( slot, work );
+            }
+        }
+        finally
+        {
+            slot.lock.unlock();
+        }
     }
 
     private <T> T lockAndRun( final ContextSlot slot, final Function<ContextSlot, T> work, final long waitSeconds )

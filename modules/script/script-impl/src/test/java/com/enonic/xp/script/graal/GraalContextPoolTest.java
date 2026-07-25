@@ -216,7 +216,7 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
-    void allSlotsRetainedFallsBackForLiveness()
+    void allSlotsRetainedStarvesRequests()
         throws Exception
     {
         final ScriptExecutor limited = newExecutor( 1, GraalContextBudget.unlimited() );
@@ -231,13 +231,17 @@ class GraalContextPoolTest
             connection.retain();
             try
             {
-                // the only slot is retained and nothing can grow: sharing it beats starving
-                assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
+                // exclusivity over liveness: the retained context carries the connection's
+                // module state, and GraalJS offers no safe sharing — the request fails loudly
+                assertThrows( IllegalStateException.class, () -> exports.executeMethod( "inc" ) );
             }
             finally
             {
                 connection.release();
             }
+
+            // released: the slot serves requests again
+            assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
         }
         finally
         {

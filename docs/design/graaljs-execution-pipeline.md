@@ -247,9 +247,10 @@ runs — ending it FAILED with the error in the logs — no longer by an eager s
 - While a connection references its context (`retain()` on OPEN, `release()` once on the first
   terminal event — CLOSE/ERROR/TIMEOUT), **the context leaves the request pool**: unrelated
   requests never run there, so connection state and event latency are not disturbed, and the
-  pool grows replacement slots within capacity and budget instead. Liveness beats exclusivity
-  in one corner: if every existing slot is retained and nothing can grow, requests share a
-  retained slot rather than starve.
+  pool grows replacement slots within capacity and budget instead. Exclusivity beats liveness:
+  if every existing slot is retained and nothing can grow, a request fails loudly rather than
+  intrude on a connection's context — a retained context carries one connection's module
+  state, and GraalJS offers no way to share it safely.
 - An earlier design hashed connection keys onto slots (zero bookkeeping, but a *random* stable
   slot that kept serving requests). Rejected: the handshake's module state ended up on a
   different context than the events, and request traffic interleaved with connection handlers.
@@ -309,14 +310,11 @@ One shared pool lets any workload class starve the others; the budgets are parti
   request's slot via the scoped binding.
 - **Websocket/SSE events** — no separate partition: a connection *steals the exact slot its
   request ran on* out of the pool (retained while the connection lives), and the pool grows
-  replacements within capacity and budget. Because event-dispatch threads are shared, pinned
-  executions bound their slot wait (30 s instead of the 5-minute request wait) so a saturated
-  connection slot fails events fast instead of holding shared threads. Known limitation: the
-  bound covers the slot-lock wait (what grows with queue depth); the context-monitor acquisition
-  after it is untimed and waits out in-flight foreign-thread callbacks — a tail bounded by
-  callback execution time, not waiter count. A hard total bound needs the monitor discipline
-  replaced with timed locks (a future refactor, together with retiring `Thread.holdsLock`
-  probing).
+  replacements within capacity and budget. A pinned execution has exactly one legal context,
+  so it waits for it **without a time bound, interruptibly** (the fair lock preserves event
+  order; the monitor acquisition after it is untimed as well): timing out could only break the
+  connection sooner, and parked dispatch threads are what the Jetty virtual-threads option
+  compensates.
 - **Tasks — ephemeral context per execution.** XP runs tasks on **virtual threads**, and IO-wait
   workloads are a loved use case: task concurrency is effectively unbounded and an IO-waiting
   JS task holds its context for the entire wait. Any *bounded* task partition therefore
@@ -455,7 +453,7 @@ what every Node.js cluster / worker deployment already imposes on developers.
    per-slot locks). Endpoints `retain()` the context on OPEN and `release()` it once on the
    first terminal event: while retained, the context is excluded from the request pool (the
    pool grows replacements within capacity and budget; if everything is retained and nothing
-   can grow, requests share a retained slot — liveness over exclusivity). Replaced the earlier
+   can grow, requests fail loudly rather than intrude — exclusivity over liveness). Replaced the earlier
    hash-key affinity (`pinned(affinityKey)`): a random stable slot lost the handshake's module
    state and kept serving unrelated requests. Universal-API endpoints are untouched (their
    handlers are Java-based today — extend when JS-backed handlers arrive). Addresses the
@@ -479,8 +477,8 @@ what every Node.js cluster / worker deployment already imposes on developers.
    capacity (retention-aware growth), the global cross-app context budget
    (`xp.script-engine.graal.max-contexts`, default 200; first slot per app always allowed),
    ephemeral task contexts behind `PortalScriptService.executeMethod` bounded by
-   `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, bounded
-   pinned waits, and the experimental Jetty virtual-threads option (default off). Remaining:
+   `xp.script-engine.graal.max-task-contexts`, the strong per-app `Source` registry, unbounded
+   interruptible pinned waits, and the experimental Jetty virtual-threads option (default off). Remaining:
    slot-count/footprint metrics and the host-backed `lib-cache` registry (per-context caches
    fragment at scale).
 6. **Flip the default** — `xp.script-engine=GraalJS` with pool enabled; Nashorn path stays for
