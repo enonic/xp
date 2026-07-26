@@ -190,16 +190,17 @@ class JsFunctionHandleTest
 
     @Test
     @Timeout(30)
-    void dropsNullEntriesLikeObjectConverter()
+    void convertsNullEntriesLikeObjectConverter()
         throws Exception
     {
         @SuppressWarnings("unchecked") final Function<Object, Object> fn = context.eval( "js",
             "(function () { return { a: 1, b: null, list: [1, null, 2] }; })" ).as( Function.class );
 
         // the same JS value must convert identically whether it crosses via ObjectConverter.fromJs
-        // or a handle's return value: null entries are dropped from objects and arrays
+        // or a handle's return value: null-valued keys stay in objects, null elements drop from arrays
         final Map<?, ?> result = (Map<?, ?>) executor.submit( () -> fn.apply( null ) ).get();
-        assertFalse( result.containsKey( "b" ) );
+        assertTrue( result.containsKey( "b" ) );
+        assertNull( result.get( "b" ) );
         assertEquals( 2, ( (List<?>) result.get( "list" ) ).size() );
     }
 

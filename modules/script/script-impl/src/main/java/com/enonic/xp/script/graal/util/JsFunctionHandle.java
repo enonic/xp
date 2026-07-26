@@ -120,7 +120,7 @@ public final class JsFunctionHandle
             for ( int i = 0; i < value.getArraySize(); i++ )
             {
                 final Object converted = convert( value.getArrayElement( i ) );
-                // null entries are dropped, matching GraalObjectConverter: the same JS value must
+                // null elements are dropped, matching GraalObjectConverter: the same JS value must
                 // convert identically whether it crosses via fromJs or a handle's return value
                 if ( converted != null )
                 {
@@ -134,12 +134,9 @@ public final class JsFunctionHandle
             final Map<String, Object> result = new LinkedHashMap<>();
             for ( final String key : value.getMemberKeys() )
             {
-                final Object converted = convert( value.getMember( key ) );
-                // null entries are dropped, matching GraalObjectConverter (see above)
-                if ( converted != null )
-                {
-                    result.put( key, converted );
-                }
+                // null-valued keys stay, matching GraalObjectConverter (and Nashorn):
+                // {key: null} is not {}
+                result.put( key, convert( value.getMember( key ) ) );
             }
             return result;
         }
