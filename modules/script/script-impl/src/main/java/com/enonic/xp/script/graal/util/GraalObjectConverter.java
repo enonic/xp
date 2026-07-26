@@ -161,13 +161,9 @@ public final class GraalObjectConverter
     private Map<String, Object> toMap( final Value source )
     {
         Map<String, Object> result = new LinkedHashMap<>();
-        source.getMemberKeys().forEach( key -> {
-            Object converted = toObject( source.getMember( key ) );
-            if ( converted != null )
-            {
-                result.put( key, converted );
-            }
-        } );
+        // parity with the Nashorn converter: a null-valued key stays in the map — dropping it
+        // would make {key: null} indistinguishable from {}
+        source.getMemberKeys().forEach( key -> result.put( key, toObject( source.getMember( key ) ) ) );
         return result;
     }
 
