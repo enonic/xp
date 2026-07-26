@@ -1,5 +1,14 @@
 package com.enonic.xp.script.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import org.graalvm.polyglot.Engine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +24,8 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -64,6 +75,42 @@ class ScriptRuntimeFactoryImplTest
 
         // app stop is a full instance teardown, not a name-keyed disposer lookup (#10844)
         verify( scriptRuntime ).invalidate( eq( applicationKey ) );
+    }
+
+    @Test
+    void sharedEngine_isCreatedOnceForEveryCaller()
+        throws Exception
+    {
+        final ScriptRuntimeFactoryImpl scriptRuntimeFactory = new ScriptRuntimeFactoryImpl( bundleContext, resourceService );
+
+        // every GraalJS application must be built on the same engine to share its code cache, and
+        // each runtime resolves it through its own executor factory — concurrently on startup
+        final int callers = 8;
+        final CyclicBarrier barrier = new CyclicBarrier( callers );
+        final ExecutorService threads = Executors.newFixedThreadPool( callers );
+        try
+        {
+            final List<Future<Engine>> engines = new ArrayList<>();
+            for ( int i = 0; i < callers; i++ )
+            {
+                engines.add( threads.submit( () -> {
+                    barrier.await( 30, TimeUnit.SECONDS );
+                    return scriptRuntimeFactory.sharedEngine();
+                } ) );
+            }
+
+            final Engine engine = engines.get( 0 ).get( 30, TimeUnit.SECONDS );
+            assertNotNull( engine );
+            for ( final Future<Engine> other : engines )
+            {
+                assertSame( engine, other.get( 30, TimeUnit.SECONDS ) );
+            }
+        }
+        finally
+        {
+            threads.shutdownNow();
+            scriptRuntimeFactory.destroy();
+        }
     }
 
     @Test

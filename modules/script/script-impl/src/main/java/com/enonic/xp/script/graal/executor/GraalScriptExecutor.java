@@ -313,9 +313,13 @@ public class GraalScriptExecutor
             closed = true;
             try
             {
+                // a connection whose terminal event never arrives would hold its permit past its
+                // executor's death: drain every slot's outstanding pins and return them — a late
+                // endpoint release finds no pin to remove and returns nothing
                 if ( mainSlot != null )
                 {
                     closeContext( mainSlot );
+                    budget.releaseRetainedContexts( mainSlot.drainPins() );
                     mainSlot = null;
                 }
                 for ( int i = 0; i < slots.length(); i++ )
@@ -324,9 +328,6 @@ public class GraalScriptExecutor
                     if ( slot != null )
                     {
                         closeContext( slot );
-                        // a connection whose terminal event never arrives would hold its permit
-                        // past its executor's death: drain outstanding pins and return them —
-                        // a late endpoint release finds no pin to remove and returns nothing
                         budget.releaseRetainedContexts( slot.drainPins() );
                     }
                 }

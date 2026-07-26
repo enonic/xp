@@ -443,6 +443,35 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void executorCloseReturnsTheMainContextsConnectionPermits()
+        throws Exception
+    {
+        final GraalContextBudget budget = new GraalContextBudget( Integer.MAX_VALUE, 1, 1 );
+        final ScriptExecutor first = newExecutor( 1, budget );
+        try
+        {
+            // bootstrap exports are pinned to the main context, which lives outside the slot array
+            first.bootstrap( ResourceKey.from( "graaljs:main.js" ) ).retain();
+        }
+        finally
+        {
+            ( (Closeable) first ).close();
+        }
+
+        // the main context's pin is drained by teardown too, so its permit is back in the budget
+        final ScriptExecutor second = newExecutor( 1, budget );
+        try
+        {
+            second.bootstrap( ResourceKey.from( "graaljs:main.js" ) ).retain();
+        }
+        finally
+        {
+            ( (Closeable) second ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
     void executorCloseReturnsOrphanedConnectionPermits()
         throws Exception
     {

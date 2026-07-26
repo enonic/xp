@@ -63,7 +63,9 @@ public class ScriptRuntimeFactoryImpl
 
     private final ResourceService resourceService;
 
-    private Engine engine;
+    private final Object engineLock = new Object();
+
+    private volatile Engine engine;
 
     private final BundleContext context;
 
@@ -87,13 +89,37 @@ public class ScriptRuntimeFactoryImpl
         // whatever remains so disposers run and contexts close before the shared engine does
         this.list.forEach( ScriptRuntimeImpl::close );
         this.list.clear();
-        synchronized ( this )
+        synchronized ( engineLock )
         {
             if ( this.engine != null )
             {
                 this.engine.close();
             }
         }
+    }
+
+    /**
+     * The engine shared by every GraalJS application, created on first use. One engine for the
+     * whole installation is what makes its code cache shared: a script parsed for one application
+     * context is reused by every other context built from it (pool growth, isolated runs). Two
+     * engines would silently halve that reuse and leak the one nobody closes.
+     */
+    Engine sharedEngine()
+    {
+        Engine result = this.engine;
+        if ( result == null )
+        {
+            synchronized ( engineLock )
+            {
+                result = this.engine;
+                if ( result == null )
+                {
+                    result = Engine.newBuilder().build();
+                    this.engine = result;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -257,14 +283,7 @@ public class ScriptRuntimeFactoryImpl
 
             if ( GRAAL_JS_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
-                synchronized ( this )
-                {
-                    if ( engine == null )
-                    {
-                        engine = Engine.newBuilder().build();
-                    }
-                }
-                return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, engine ), appClassloader, settings,
+                return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, sharedEngine() ), appClassloader, settings,
                                                 new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo,
                                                 contextPoolCapacity(), graalContextBudget );
             }
