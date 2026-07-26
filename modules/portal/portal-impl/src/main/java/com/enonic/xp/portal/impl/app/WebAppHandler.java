@@ -115,7 +115,7 @@ public final class WebAppHandler
         final SseConfig sseConfig = res.getSse();
         if ( sseConfig != null )
         {
-            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript );
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript, applicationKey );
             this.sseManager.setupSse( req, sseEndpoint );
         }
 
@@ -129,7 +129,7 @@ public final class WebAppHandler
         {
             trace.put( "app", app.toString() );
         }
-        return new WebSocketEndpointImpl( config, script );
+        return new WebSocketEndpointImpl( config, script, app );
     }
 
     private ControllerScript getScript( final ApplicationKey applicationKey )

@@ -3,7 +3,9 @@ package com.enonic.xp.portal.impl.sse;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.web.sse.SseEndpoint;
 import com.enonic.xp.web.sse.SseEvent;
@@ -22,12 +24,15 @@ public final class SseEndpointImpl
      */
     private final ControllerScript script;
 
+    private final @Nullable ApplicationKey application;
+
     private final AtomicBoolean released = new AtomicBoolean();
 
-    public SseEndpointImpl( final SseConfig config, final ControllerScript script )
+    public SseEndpointImpl( final SseConfig config, final ControllerScript script, final @Nullable ApplicationKey application )
     {
         this.config = config;
         this.script = script;
+        this.application = application;
     }
 
     @Override
@@ -77,5 +82,11 @@ public final class SseEndpointImpl
     public SseConfig getConfig()
     {
         return this.config;
+    }
+
+    @Override
+    public @Nullable ApplicationKey getApplication()
+    {
+        return this.application;
     }
 }

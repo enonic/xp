@@ -25,7 +25,7 @@ class SseEndpointImplTest
     void getConfig()
     {
         final SseConfig config = SseConfig.empty();
-        final SseEndpointImpl endpoint = new SseEndpointImpl( config, mock( ControllerScript.class ) );
+        final SseEndpointImpl endpoint = new SseEndpointImpl( config, mock( ControllerScript.class ), null );
         assertSame( config, endpoint.getConfig() );
     }
 
@@ -33,7 +33,7 @@ class SseEndpointImplTest
     void open_retainsTheBoundContext()
     {
         final ControllerScript script = mock( ControllerScript.class );
-        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), script );
+        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), script, null );
 
         final SseEvent open = event( SseEventType.OPEN );
         endpoint.onEvent( open );
@@ -47,7 +47,7 @@ class SseEndpointImplTest
     void timeoutThenClose_releasesExactlyOnce()
     {
         final ControllerScript script = mock( ControllerScript.class );
-        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), script );
+        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), script, null );
 
         endpoint.onEvent( event( SseEventType.OPEN ) );
         endpoint.onEvent( event( SseEventType.TIMEOUT ) );
@@ -62,7 +62,7 @@ class SseEndpointImplTest
     {
         final ControllerScript script = mock( ControllerScript.class );
         doThrow( new RuntimeException( "open handler failed" ) ).when( script ).onSseEvent( any() );
-        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), script );
+        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), script, null );
 
         // a failed open gets no terminal event: the pin must not leak the slot out of the pool
         assertThrows( RuntimeException.class, () -> endpoint.onEvent( event( SseEventType.OPEN ) ) );

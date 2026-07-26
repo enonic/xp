@@ -605,9 +605,12 @@ pipeline sharpens both the fix shape and the stakes:
   the connection so clients reconnect), the shared budget permits are returned in a `finally`
   (a leaked permit would shrink the global pool for every application, forever), and a `closed`
   flag stops a bootstrap or task racing app stop from lazily resurrecting contexts no teardown
-  path could ever reach. One consequence is documented deliberately: **SSE connections pinned to a
-  redeployed app linger silently** (nothing inbound ever dispatches on them) until their timeout —
-  proactive per-app connection teardown is a follow-up.
+  path could ever reach. **Connections are torn down with their application**: endpoints carry
+  the application they serve, and the SSE/websocket managers track `Application` services — on
+  stop or redeploy every connection of that application is closed by the server (websockets
+  with `GOING_AWAY`), so clients reconnect to the successor incarnation instead of lingering
+  silently on a context of the gone one (nothing inbound would ever dispatch; the default SSE
+  timeout is infinite).
 - On pooled engines a disposer only outlives its registration meaningfully on the **main
   context**: bootstrap's disposer is stable and torn down with the app, whereas a pool slot's is
   per-context (one per slot the module loads into) and a task's ephemeral context is already

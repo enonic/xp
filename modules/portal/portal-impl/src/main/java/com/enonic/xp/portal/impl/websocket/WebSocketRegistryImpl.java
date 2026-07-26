@@ -4,6 +4,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Stream;
 
+import com.enonic.xp.app.ApplicationKey;
+
 final class WebSocketRegistryImpl
     implements WebSocketRegistry
 {
@@ -31,5 +33,11 @@ final class WebSocketRegistryImpl
     public Stream<WebSocketEntry> getByGroup( final String group )
     {
         return this.map.values().stream().filter( e -> e.isInGroup( group ) );
+    }
+
+    @Override
+    public Stream<WebSocketEntry> getByApplication( final ApplicationKey application )
+    {
+        return this.map.values().stream().filter( e -> application.equals( e.getApplication() ) );
     }
 }

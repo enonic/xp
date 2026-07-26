@@ -376,12 +376,12 @@ public class SlashApiHandler
         final WebSocketConfig webSocketConfig = res.getWebSocket();
 
         applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
-                                 () -> new WebSocketApiEndpointImpl( webSocketConfig, () -> dynamicApiHandler ) );
+                                 () -> new WebSocketApiEndpointImpl( webSocketConfig, () -> dynamicApiHandler, req.getApplicationKey() ) );
 
         final SseConfig sseConfig = res.getSse();
         if ( sseConfig != null )
         {
-            final SseApiEndpointImpl sseEndpoint = new SseApiEndpointImpl( sseConfig, () -> dynamicApiHandler );
+            final SseApiEndpointImpl sseEndpoint = new SseApiEndpointImpl( sseConfig, () -> dynamicApiHandler, req.getApplicationKey() );
             this.sseManager.setupSse( req, sseEndpoint );
         }
 
@@ -403,12 +403,12 @@ public class SlashApiHandler
 
         final WebSocketConfig webSocketConfig = res.getWebSocket();
         applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
-                                 () -> new WebSocketEndpointImpl( webSocketConfig, boundScript ) );
+                                 () -> new WebSocketEndpointImpl( webSocketConfig, boundScript, descriptorKey.getApplicationKey() ) );
 
         final SseConfig sseConfig = res.getSse();
         if ( sseConfig != null )
         {
-            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript );
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript, descriptorKey.getApplicationKey() );
             this.sseManager.setupSse( req, sseEndpoint );
         }
 

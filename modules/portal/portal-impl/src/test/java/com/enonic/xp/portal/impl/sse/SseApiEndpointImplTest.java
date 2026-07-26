@@ -20,7 +20,7 @@ class SseApiEndpointImplTest
     void getConfig()
     {
         final SseConfig config = SseConfig.empty();
-        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( config, () -> mock( UniversalApiHandler.class ) );
+        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( config, () -> mock( UniversalApiHandler.class ), null );
         assertSame( config, endpoint.getConfig() );
     }
 
@@ -28,7 +28,7 @@ class SseApiEndpointImplTest
     void onEvent_delegatesToApiHandler()
     {
         final UniversalApiHandler handler = mock( UniversalApiHandler.class );
-        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( SseConfig.empty(), () -> handler );
+        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( SseConfig.empty(), () -> handler, null );
 
         final SseEvent event = SseEvent.create()
             .type( SseEventType.OPEN )

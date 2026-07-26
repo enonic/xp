@@ -8,11 +8,16 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.web.sse.SseEndpoint;
@@ -28,8 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,9 +48,15 @@ class SseManagerImplTest
 
     @BeforeEach
     void setup()
+        throws Exception
     {
         ContextBuilder.create().build().runWith( ContextAccessor::current );
-        manager = new SseManagerImpl();
+        // let the ServiceTracker construct and open against a mock registry (no initial services)
+        final BundleContext bundleContext = mock( BundleContext.class );
+        lenient().when( bundleContext.createFilter( anyString() ) )
+            .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
+        lenient().when( bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
+        manager = new SseManagerImpl( bundleContext );
     }
 
     @Test
@@ -97,6 +112,43 @@ class SseManagerImplTest
             // timeout: completing it is the only way the client ever learns
             verify( asyncContext ).complete();
         } );
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void appRemoval_closesOnlyItsConnections()
+        throws Exception
+    {
+        final AsyncContext myAppConnection = setupConnection( ApplicationKey.from( "myapp" ) );
+        final AsyncContext otherAppConnection = setupConnection( ApplicationKey.from( "otherapp" ) );
+
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( "myapp" ) );
+        manager.removedService( mock( ServiceReference.class ), application );
+
+        // the stopped application's connection is completed; the other application's lives on
+        verify( myAppConnection ).complete();
+        verify( otherAppConnection, never() ).complete();
+    }
+
+    private AsyncContext setupConnection( final ApplicationKey applicationKey )
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final WebRequest webReq = new WebRequest();
+        webReq.setRawRequest( req );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final AsyncContext asyncContext = mock( AsyncContext.class );
+        when( req.startAsync() ).thenReturn( asyncContext );
+        when( asyncContext.getResponse() ).thenReturn( res );
+        when( res.getWriter() ).thenReturn( new PrintWriter( new StringWriter() ) );
+
+        final SseEndpoint endpoint = mock( SseEndpoint.class );
+        when( endpoint.getConfig() ).thenReturn( SseConfig.empty() );
+        when( endpoint.getApplication() ).thenReturn( applicationKey );
+
+        ContextBuilder.create().build().runWith( () -> manager.setupSse( webReq, endpoint ) );
+        return asyncContext;
     }
 
     @Test

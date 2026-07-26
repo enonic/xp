@@ -2,6 +2,9 @@ package com.enonic.xp.portal.impl.websocket;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.jspecify.annotations.Nullable;
+
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEndpoint;
@@ -19,12 +22,16 @@ public final class WebSocketEndpointImpl
 
     private final WebSocketConfig config;
 
+    private final @Nullable ApplicationKey application;
+
     private final AtomicBoolean released = new AtomicBoolean();
 
-    public WebSocketEndpointImpl( final WebSocketConfig config, final ControllerScript script )
+    public WebSocketEndpointImpl( final WebSocketConfig config, final ControllerScript script,
+                                  final @Nullable ApplicationKey application )
     {
         this.config = config;
         this.script = script;
+        this.application = application;
     }
 
     @Override
@@ -73,5 +80,11 @@ public final class WebSocketEndpointImpl
     public WebSocketConfig getConfig()
     {
         return this.config;
+    }
+
+    @Override
+    public @Nullable ApplicationKey getApplication()
+    {
+        return this.application;
     }
 }

@@ -74,7 +74,8 @@ final class MappingHandlerWorker
         final SseConfig sseConfig = portalResponse.getSse();
         if ( sseConfig != null && this.sseManager != null )
         {
-            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript );
+            final SseEndpointImpl sseEndpoint =
+                new SseEndpointImpl( sseConfig, boundScript, mappingDescriptor.getController().getApplicationKey() );
             this.sseManager.setupSse( this.request, sseEndpoint );
         }
 
@@ -99,6 +100,6 @@ final class MappingHandlerWorker
         {
             trace.put( "app", app.toString() );
         }
-        return new WebSocketEndpointImpl( config, script );
+        return new WebSocketEndpointImpl( config, script, app );
     }
 }

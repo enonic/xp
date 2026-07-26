@@ -4,15 +4,24 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import jakarta.servlet.AsyncContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.sse.SseEndpoint;
@@ -23,13 +32,49 @@ import com.enonic.xp.web.sse.SseMessage;
 @NullMarked
 @Component(service = SseManager.class)
 public final class SseManagerImpl
-    implements SseManager
+    implements SseManager, ServiceTrackerCustomizer<Application, Application>
 {
     private final SseRegistry registry;
 
-    public SseManagerImpl()
+    private final BundleContext context;
+
+    private final ServiceTracker<Application, Application> tracker;
+
+    @Activate
+    public SseManagerImpl( final BundleContext context )
     {
         this.registry = new SseRegistry();
+        this.context = context;
+        this.tracker = new ServiceTracker<>( context, Application.class, this );
+        this.tracker.open();
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.tracker.close();
+    }
+
+    @Override
+    public @Nullable Application addingService( final ServiceReference<Application> reference )
+    {
+        return this.context.getService( reference );
+    }
+
+    @Override
+    public void modifiedService( final ServiceReference<Application> reference, final Application application )
+    {
+    }
+
+    @Override
+    public void removedService( final ServiceReference<Application> reference, final Application application )
+    {
+        // the application stopped or is being redeployed: its connections dispatch to a script
+        // context of the gone incarnation and would otherwise linger until the client disconnects
+        // (the default SSE timeout is infinite) — close them, so clients reconnect to the successor
+        final List<SseEntry> entries = this.registry.getByApplication( application.getKey() ).toList();
+        entries.forEach( SseEntry::close );
+        this.context.ungetService( reference );
     }
 
     @Override

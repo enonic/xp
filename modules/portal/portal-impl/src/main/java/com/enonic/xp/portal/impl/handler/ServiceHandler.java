@@ -152,6 +152,6 @@ public class ServiceHandler
         {
             trace.put( "app", applicationKey.toString() );
         }
-        return new WebSocketEndpointImpl( config, script );
+        return new WebSocketEndpointImpl( config, script, applicationKey );
     }
 }

@@ -20,7 +20,7 @@ class WebSocketEndpointImplTest
     void open_retainsTheBoundContext()
     {
         final ControllerScript script = mock( ControllerScript.class );
-        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script );
+        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script, null );
 
         final WebSocketEvent open = WebSocketEvent.create().type( WebSocketEventType.OPEN ).build();
         endpoint.onEvent( open );
@@ -34,7 +34,7 @@ class WebSocketEndpointImplTest
     void message_dispatchesWithoutLifecycleChanges()
     {
         final ControllerScript script = mock( ControllerScript.class );
-        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script );
+        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script, null );
 
         final WebSocketEvent message = WebSocketEvent.create().type( WebSocketEventType.MESSAGE ).build();
         endpoint.onEvent( message );
@@ -48,7 +48,7 @@ class WebSocketEndpointImplTest
     void errorThenClose_releasesExactlyOnce()
     {
         final ControllerScript script = mock( ControllerScript.class );
-        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script );
+        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script, null );
 
         endpoint.onEvent( WebSocketEvent.create().type( WebSocketEventType.OPEN ).build() );
         endpoint.onEvent( WebSocketEvent.create().type( WebSocketEventType.ERROR ).build() );
@@ -63,7 +63,7 @@ class WebSocketEndpointImplTest
     {
         final ControllerScript script = mock( ControllerScript.class );
         doThrow( new RuntimeException( "open handler failed" ) ).when( script ).onSocketEvent( any() );
-        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script );
+        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, script, null );
 
         // release without waiting for the container's ERROR/CLOSE — pool capacity must not
         // depend on container semantics

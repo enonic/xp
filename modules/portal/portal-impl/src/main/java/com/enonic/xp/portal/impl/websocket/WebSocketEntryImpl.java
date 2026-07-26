@@ -1,8 +1,13 @@
 package com.enonic.xp.portal.impl.websocket;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Endpoint;
@@ -10,6 +15,7 @@ import jakarta.websocket.EndpointConfig;
 import jakarta.websocket.MessageHandler;
 import jakarta.websocket.Session;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -23,6 +29,8 @@ final class WebSocketEntryImpl
     extends Endpoint
     implements MessageHandler.Whole<String>, WebSocketEntry
 {
+    private static final Logger LOG = LoggerFactory.getLogger( WebSocketEntryImpl.class );
+
     private final WebSocketEndpoint endpoint;
 
     private final WebSocketRegistry registry;
@@ -105,6 +113,25 @@ final class WebSocketEntryImpl
     public String getId()
     {
         return this.session.getId();
+    }
+
+    @Override
+    public @Nullable ApplicationKey getApplication()
+    {
+        return this.endpoint.getApplication();
+    }
+
+    @Override
+    public void close()
+    {
+        try
+        {
+            this.session.close( new CloseReason( CloseReason.CloseCodes.GOING_AWAY, "Application stopped" ) );
+        }
+        catch ( IOException e )
+        {
+            LOG.debug( "Failed to close websocket session [{}]", this.session.getId(), e );
+        }
     }
 
     @Override

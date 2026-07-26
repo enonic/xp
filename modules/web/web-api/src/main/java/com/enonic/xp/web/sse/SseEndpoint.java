@@ -1,6 +1,9 @@
 package com.enonic.xp.web.sse;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import com.enonic.xp.app.ApplicationKey;
 
 /**
  * Server-side endpoint for an SSE connection.
@@ -25,4 +28,15 @@ public interface SseEndpoint
      * @return the SSE configuration.
      */
     SseConfig getConfig();
+
+    /**
+     * The application this connection serves, when known. Connections of a stopped or redeployed
+     * application are closed by the server.
+     *
+     * @return the application, or {@code null} when the connection is not tied to one.
+     */
+    default @Nullable ApplicationKey getApplication()
+    {
+        return null;
+    }
 }
