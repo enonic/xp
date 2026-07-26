@@ -602,7 +602,12 @@ pipeline sharpens both the fix shape and the stakes:
   rebuild from the current incarnation — closing the check-then-act window that a plain
   app-key-keyed map leaves open. This resolves the #7966 event-ordering exposure for script
   runtimes: a late or misordered signal can no longer kill a healthy successor, and a stale
-  executor cannot outlive its bundle.
+  executor cannot outlive its bundle. **`ScriptEventManagerImpl` follows the same rule**: it had
+  the identical wrong-moment invalidation — its `ApplicationInvalidator` round raced the
+  successor's asynchronously bootstrapped listener registrations, so a reconfigured application
+  could come up deaf to events — and now removes an application's listeners from its own
+  `Application` service tracker instead, before any replacement registers (the
+  rejected-execution self-removal stays as a backstop for events racing a bundle stop).
 - Teardown is **non-negotiable and race-hardened**: contexts close with *cancel* (a context still
   executing an in-flight request or connection dispatch must not veto app stop — its execution
   fails on its own thread, and a stale pinned websocket dispatch failing makes the container close
