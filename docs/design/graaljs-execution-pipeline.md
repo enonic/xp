@@ -608,6 +608,9 @@ pipeline sharpens both the fix shape and the stakes:
   could come up deaf to events — and now removes an application's listeners from its own
   `Application` service tracker instead, before any replacement registers (the
   rejected-execution self-removal stays as a backstop for events racing a bundle stop).
+  `ApplicationInvalidator` itself is now **deprecated** platform-wide as error-prone by timing;
+  the one remaining in-repo implementor (`ResourceServiceImpl`) is a timestamp-revalidating
+  cache, for which a wrong-moment eviction costs only a recompute, never correctness.
 - Teardown is **non-negotiable and race-hardened**: contexts close with *cancel* (a context still
   executing an in-flight request or connection dispatch must not veto app stop — its execution
   fails on its own thread, and a stale pinned websocket dispatch failing makes the container close
