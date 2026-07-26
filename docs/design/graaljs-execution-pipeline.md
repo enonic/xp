@@ -371,9 +371,13 @@ long-lived slots keep their code alive through their own contexts, but an **ephe
 context retains nothing after close** — between task runs the app's cache entries become
 collectable, and repeated tasks may silently pay full re-parse/compile, defeating the
 "re-init only" cost model. Requirement: a per-app **strong `Source` registry**
-(`ResourceKey → Source`, invalidated with the app and on dev-mode reload) used by `doExecute`.
-It pins the engine-cache entries for the app's lifetime, makes new-slot and ephemeral-context
-warmup parse-free, and costs only the retained source text.
+(`ResourceKey → Source`, invalidated with the app) used by `doExecute`. It pins the
+engine-cache entries for the app's lifetime, makes new-slot and ephemeral-context warmup
+parse-free, and costs only the retained source text. **Dev mode bypasses the registry** and
+compiles every `Source` fresh: the engine cache is content-keyed, so an unchanged file still
+parses once while an edited one misses by construction — a name-keyed strong entry could hand
+a stale `Source` to a fresh context (an isolated run, a grown slot) in the window before a
+request-path expiry check notices the edit.
 
 ### 4.6 Representation clean-up
 

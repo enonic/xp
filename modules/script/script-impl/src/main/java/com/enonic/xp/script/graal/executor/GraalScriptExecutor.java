@@ -82,7 +82,8 @@ public class GraalScriptExecutor
      * Strong per-app source registry: the shared engine's code cache is weak and keyed by
      * {@link Source} equality, so entries survive only while an equal Source is strongly
      * reachable. Retaining them here keeps slot growth and ephemeral task contexts parse-free.
-     * Cleared on dev-mode cache expiry so reloads pick up changed resources.
+     * Unused in dev mode, which compiles every Source fresh so edits are picked up through the
+     * engine's content-keyed caching.
      */
     private final Map<ResourceKey, Source> sources = new ConcurrentHashMap<>();
 
@@ -721,7 +722,13 @@ public class GraalScriptExecutor
     {
         try
         {
-            final Source source = this.sources.computeIfAbsent( script.getKey(), key -> buildSource( script ) );
+            // dev mode compiles fresh: the engine's code cache is content-keyed, so an unchanged
+            // file still parses once while an edited one misses by construction — the name-keyed
+            // strong registry could hand a stale Source to a fresh context (an isolated run, a
+            // grown slot) in the window before a request-path expiry check notices the edit
+            final Source source = RunMode.isDev()
+                ? buildSource( script )
+                : this.sources.computeIfAbsent( script.getKey(), key -> buildSource( script ) );
             bindings.forEach( ( key, value ) -> slot.context.getBindings( "js" ).putMember( key, value ) );
             return slot.context.eval( source );
         }
@@ -752,9 +759,8 @@ public class GraalScriptExecutor
     {
         // disposers are NOT drained here: only bootstrap (main context) can register them, and a
         // dev-mode reload re-executes controllers, never main.js — draining would run the app's
-        // teardown mid-life and leave nothing for the actual stop
-        // stale sources must not outlive the exports cache — dev-mode reloads re-parse
-        this.sources.clear();
+        // teardown mid-life and leave nothing for the actual stop. The source registry needs no
+        // clearing either: dev mode never populates it (every compile builds a fresh Source)
     }
 
     /**

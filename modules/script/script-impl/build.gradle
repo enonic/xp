@@ -5,6 +5,7 @@ dependencies {
     implementation libs.nashorn
     implementation libs.graalvm.polyglot
 
+    testImplementation( testFixtures( project(":core:core-api") ) )
     testImplementation( testFixtures( project(":core:core-app") ) )
 
     testImplementation libs.graalvm.js

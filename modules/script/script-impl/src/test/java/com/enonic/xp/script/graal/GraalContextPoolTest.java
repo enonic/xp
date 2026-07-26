@@ -32,6 +32,8 @@ import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
 import com.enonic.xp.script.runtime.ScriptSettings;
+import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -415,6 +417,27 @@ class GraalContextPoolTest
         finally
         {
             ( (Closeable) limited ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
+    void devModeCompilesSourcesFreshAndKeepsServing()
+    {
+        RunModeSupport.set( RunMode.DEV );
+        try
+        {
+            // dev mode skips the strong source registry (fresh compile per require) and checks
+            // cache expiry on every top-level execution — unchanged resources keep their module
+            // state across executions on the same slot
+            final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+            assertEquals( 1, intValue( exports.executeMethod( "inc" ) ) );
+            scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+            assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
+        }
+        finally
+        {
+            RunModeSupport.set( RunMode.PROD );
         }
     }
 
