@@ -290,10 +290,11 @@ public class GraalScriptExecutor
                 {
                     disposer.run();
                 }
-                catch ( Exception e )
+                catch ( Exception | StackOverflowError e )
                 {
-                    // teardown is best-effort: one bad disposer must neither stop the rest nor
-                    // keep close() from freeing contexts and returning budget permits
+                    // teardown is best-effort: one bad disposer — including deeply recursive
+                    // user JS — must neither stop the rest nor keep close() from freeing
+                    // contexts and returning budget permits
                     LOG.warn( "Error while running disposer registered by {}", key, e );
                 }
             }

@@ -293,9 +293,10 @@ public final class ScriptExecutorImpl
             {
                 disposer.run();
             }
-            catch ( Exception e )
+            catch ( Exception | StackOverflowError e )
             {
-                // teardown is best-effort: one bad disposer must not stop the rest
+                // teardown is best-effort: one bad disposer — including deeply recursive user
+                // JS — must not stop the rest
                 LOG.warn( "Error while running disposer registered by {}", key, e );
             }
         } );

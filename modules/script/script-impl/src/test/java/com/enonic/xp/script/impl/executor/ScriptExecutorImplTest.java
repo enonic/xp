@@ -51,7 +51,11 @@ class ScriptExecutorImplTest
         executor.registerDisposer( ResourceKey.from( "myapplication:/a.js" ), () -> {
             throw new IllegalStateException( "boom" );
         } );
-        executor.registerDisposer( ResourceKey.from( "myapplication:/b.js" ), recorder::incrementAndGet );
+        // deeply recursive user JS surfaces as a StackOverflowError — best-effort, like exceptions
+        executor.registerDisposer( ResourceKey.from( "myapplication:/b.js" ), () -> {
+            throw new StackOverflowError();
+        } );
+        executor.registerDisposer( ResourceKey.from( "myapplication:/c.js" ), recorder::incrementAndGet );
 
         assertDoesNotThrow( executor::runDisposers );
         assertEquals( 1, recorder.get() );
