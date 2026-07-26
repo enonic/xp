@@ -2,10 +2,12 @@ package com.enonic.xp.portal.impl.websocket;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -16,6 +18,14 @@ import static org.mockito.Mockito.verify;
 
 class WebSocketEndpointImplTest
 {
+    @Test
+    void exposesItsApplication()
+    {
+        final ApplicationKey app = ApplicationKey.from( "myapp" );
+        final WebSocketEndpointImpl endpoint = new WebSocketEndpointImpl( null, mock( ControllerScript.class ), app );
+        assertSame( app, endpoint.getApplication() );
+    }
+
     @Test
     void open_retainsTheBoundContext()
     {

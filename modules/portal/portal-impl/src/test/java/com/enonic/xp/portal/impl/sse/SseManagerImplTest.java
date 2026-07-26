@@ -46,17 +46,32 @@ class SseManagerImplTest
 {
     private SseManagerImpl manager;
 
+    private BundleContext bundleContext;
+
     @BeforeEach
     void setup()
         throws Exception
     {
         ContextBuilder.create().build().runWith( ContextAccessor::current );
         // let the ServiceTracker construct and open against a mock registry (no initial services)
-        final BundleContext bundleContext = mock( BundleContext.class );
+        bundleContext = mock( BundleContext.class );
         lenient().when( bundleContext.createFilter( anyString() ) )
             .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
         lenient().when( bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
         manager = new SseManagerImpl( bundleContext );
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void trackerLifecycle()
+    {
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        final Application application = mock( Application.class );
+        when( bundleContext.getService( reference ) ).thenReturn( application );
+
+        assertEquals( application, manager.addingService( reference ) );
+        manager.modifiedService( reference, application );
+        manager.deactivate();
     }
 
     @Test

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.sse.SseConfig;
@@ -27,6 +28,14 @@ class SseEndpointImplTest
         final SseConfig config = SseConfig.empty();
         final SseEndpointImpl endpoint = new SseEndpointImpl( config, mock( ControllerScript.class ), null );
         assertSame( config, endpoint.getConfig() );
+    }
+
+    @Test
+    void exposesItsApplication()
+    {
+        final ApplicationKey app = ApplicationKey.from( "myapp" );
+        final SseEndpointImpl endpoint = new SseEndpointImpl( SseConfig.empty(), mock( ControllerScript.class ), app );
+        assertSame( app, endpoint.getApplication() );
     }
 
     @Test
