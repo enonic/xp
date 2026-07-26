@@ -81,10 +81,15 @@ class WebSocketManagerImplTest
     {
         final Session session = openConnection( ApplicationKey.from( "myapp" ), "session1" );
         doThrow( new IOException( "already gone" ) ).when( session ).close( any( CloseReason.class ) );
+        manager.addToGroup( "g", "session1" );
+        assertEquals( 1, manager.getGroupSize( "g" ) );
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( ApplicationKey.from( "myapp" ) );
         assertDoesNotThrow( () -> manager.removedService( mock( ServiceReference.class ), application ) );
+
+        // the dead entry left the registry even though the session refused to close
+        assertEquals( 0, manager.getGroupSize( "g" ) );
     }
 
     @Test

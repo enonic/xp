@@ -124,6 +124,9 @@ final class WebSocketEntryImpl
     @Override
     public void close()
     {
+        // defensive, like the SSE entry: the registry entry must die with the application even
+        // if the container never delivers onClose — the callback's own remove is then a no-op
+        this.registry.remove( this );
         try
         {
             this.session.close( new CloseReason( CloseReason.CloseCodes.GOING_AWAY, "Application stopped" ) );
