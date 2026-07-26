@@ -322,6 +322,10 @@ public class GraalScriptExecutor
                     if ( slot != null )
                     {
                         closeContext( slot );
+                        // a connection whose terminal event never arrives would hold its permit
+                        // past its executor's death: drain outstanding pins and return them —
+                        // a late endpoint release finds no pin to remove and returns nothing
+                        budget.releaseRetainedContexts( slot.drainPins() );
                     }
                 }
             }
@@ -833,6 +837,11 @@ public class GraalScriptExecutor
         boolean isRetained()
         {
             return pins.get() > 0;
+        }
+
+        int drainPins()
+        {
+            return pins.getAndSet( 0 );
         }
 
         @SuppressWarnings("deprecation") // globalVariables kept for the xp-testing harness only

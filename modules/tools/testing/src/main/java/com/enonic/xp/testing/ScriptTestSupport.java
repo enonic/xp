@@ -235,8 +235,9 @@ public abstract class ScriptTestSupport
     }
 
     /**
-     * Executes one exported method of a script with the production semantics of
-     * {@code PortalScriptService.executeMethod}, including its isolation and failure behavior.
+     * Executes one exported method of a script exactly as {@code PortalScriptService.executeMethod}
+     * does in production: the same per-engine execution model, failure behavior and result
+     * conversion.
      */
     public final Object runScriptMethod( final ResourceKey key, final String method, final Object... args )
     {

@@ -420,6 +420,52 @@ class GraalContextPoolTest
 
     @Test
     @Timeout(60)
+    void executorCloseReturnsOrphanedConnectionPermits()
+        throws Exception
+    {
+        final GraalContextBudget budget = new GraalContextBudget( Integer.MAX_VALUE, 1, 1 );
+        final ScriptExecutor first = newExecutor( 1, budget );
+        final ScriptExports orphan;
+        try
+        {
+            final ScriptExports exports = first.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+            orphan = exports.executeBound( view -> view );
+            // the connection's terminal event never arrives: no release before the app dies
+            orphan.retain();
+        }
+        finally
+        {
+            ( (Closeable) first ).close();
+        }
+
+        // teardown drained the orphaned pin and returned its permit to the shared budget
+        final ScriptExecutor second = newExecutor( 2, budget );
+        try
+        {
+            final ScriptExports exports = second.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+            final ScriptExports connection = exports.executeBound( view -> view );
+            connection.retain();
+            try
+            {
+                // a late release from the orphaned endpoint finds no pin and returns no permit
+                orphan.release();
+                final IllegalStateException e =
+                    assertThrows( IllegalStateException.class, () -> exports.executeBound( view -> view ).retain() );
+                assertTrue( e.getMessage().contains( "connection budget" ), e.getMessage() );
+            }
+            finally
+            {
+                connection.release();
+            }
+        }
+        finally
+        {
+            ( (Closeable) second ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
     void failedRetainDoesNotStealAnotherConnectionsPin()
         throws Exception
     {

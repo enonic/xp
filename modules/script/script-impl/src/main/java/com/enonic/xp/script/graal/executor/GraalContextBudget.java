@@ -64,6 +64,14 @@ public final class GraalContextBudget
         retainedPermits.release();
     }
 
+    void releaseRetainedContexts( final int permits )
+    {
+        if ( permits > 0 )
+        {
+            retainedPermits.release( permits );
+        }
+    }
+
     void acquireIsolatedContext()
     {
         try
