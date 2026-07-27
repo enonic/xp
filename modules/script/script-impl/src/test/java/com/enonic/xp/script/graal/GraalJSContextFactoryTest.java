@@ -26,7 +26,7 @@ class GraalJSContextFactoryTest
             // factory — but no engine
             assertEquals( 0, resolved.get() );
 
-            try ( final Context context = factory.create() )
+            try ( Context context = factory.create() )
             {
                 assertEquals( 1, resolved.get() );
                 assertEquals( 42, context.eval( "js", "42" ).asInt() );
