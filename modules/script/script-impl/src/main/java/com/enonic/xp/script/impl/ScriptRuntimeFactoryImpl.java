@@ -36,7 +36,8 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 
 import static java.util.Objects.requireNonNullElseGet;
 
-@Component
+// tracking applications is an implementation detail; only the factory itself is a service
+@Component(service = ScriptRuntimeFactory.class)
 public class ScriptRuntimeFactoryImpl
     implements ScriptRuntimeFactory, ServiceTrackerCustomizer<Application, Application>
 {

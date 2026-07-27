@@ -24,7 +24,9 @@ import com.enonic.xp.script.event.ScriptEventListener;
 import com.enonic.xp.script.event.ScriptEventManager;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 
-@Component(immediate = true)
+// the services this component provides, spelled out: tracking applications is how it maintains
+// itself, not something to publish
+@Component(immediate = true, service = {ScriptEventManager.class, EventListener.class})
 public final class ScriptEventManagerImpl
     implements ScriptEventManager, EventListener, ServiceTrackerCustomizer<Application, Application>
 {
