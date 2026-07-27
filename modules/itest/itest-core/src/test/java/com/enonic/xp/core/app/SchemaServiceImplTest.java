@@ -54,6 +54,7 @@ import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
+import com.enonic.xp.core.impl.app.SchemaAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.SchemaServiceImpl;
 import com.enonic.xp.core.impl.app.NamespaceAppConstants;
 import com.enonic.xp.core.impl.app.NamespaceAppContext;
@@ -155,7 +156,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -167,6 +171,8 @@ class SchemaServiceImplTest
     NodeServiceImpl nodeService;
 
     private SchemaServiceImpl schemaService;
+
+    private AuditLogService auditLogService;
 
     private ResourceServiceImpl resourceService;
 
@@ -317,7 +323,9 @@ class SchemaServiceImplTest
         final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
         NamespaceAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        this.schemaService = new SchemaServiceImpl( nodeService, resourceService, applicationRegistry, namespaceAppService );
+        this.auditLogService = mock( AuditLogService.class );
+        this.schemaService = new SchemaServiceImpl( nodeService, resourceService, applicationRegistry, namespaceAppService,
+                                                    new SchemaAuditLogSupportImpl( auditLogService ) );
 
         applicationService = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService,
                                                          namespaceAppService,
@@ -1287,6 +1295,29 @@ class SchemaServiceImplTest
     {
         assertThrows( ForbiddenAccessException.class, () -> NamespaceAppContext.createContext()
             .callWith( () -> schemaService.deleteCms( ApplicationKey.from( "myapp" ) ) ) );
+    }
+
+    @Test
+    void mutation_writes_audit_log()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+
+        createAdminContext().callWith( () -> schemaService.createCms(
+            CreateDynamicCmsParams.create().key( applicationKey ).resource( readResource( "_cms.yaml" ) ).build() ) );
+
+        verify( auditLogService ).log( argThat( params -> "system.schema.cms.create".equals( params.getType() ) ) );
+
+        assertTrue( createAdminContext().callWith( () -> schemaService.deleteCms( applicationKey ) ) );
+
+        verify( auditLogService ).log( argThat( params -> "system.schema.cms.delete".equals( params.getType() ) ) );
+    }
+
+    @Test
+    void unsuccessful_delete_is_not_audited()
+    {
+        assertFalse( createAdminContext().callWith( () -> schemaService.deleteStyles( ApplicationKey.from( "myapp" ) ) ) );
+
+        verify( auditLogService, never() ).log( argThat( params -> "system.schema.styles.delete".equals( params.getType() ) ) );
     }
 
     @Test

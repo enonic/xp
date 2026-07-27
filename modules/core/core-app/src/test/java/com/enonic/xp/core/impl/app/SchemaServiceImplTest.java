@@ -55,7 +55,8 @@ class SchemaServiceImplTest
 
         final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
 
-        this.service = new SchemaServiceImpl( nodeService, mock( ResourceService.class ), applicationRegistry, namespaceAppService );
+        this.service = new SchemaServiceImpl( nodeService, mock( ResourceService.class ), applicationRegistry, namespaceAppService,
+                                              mock( SchemaAuditLogSupport.class ) );
     }
 
     @Test

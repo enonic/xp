@@ -88,14 +88,18 @@ public class SchemaServiceImpl
 
     private final NamespaceAppService namespaceAppService;
 
+    private final SchemaAuditLogSupport schemaAuditLogSupport;
+
     @Activate
     public SchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService,
-                              @Reference final ApplicationRegistry applicationRegistry, @Reference final NamespaceAppService namespaceAppService )
+                              @Reference final ApplicationRegistry applicationRegistry, @Reference final NamespaceAppService namespaceAppService,
+                              @Reference final SchemaAuditLogSupport schemaAuditLogSupport )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService, resourceService );
         this.dynamicResourceParser = new DynamicResourceParser();
         this.applicationRegistry = applicationRegistry;
         this.namespaceAppService = namespaceAppService;
+        this.schemaAuditLogSupport = schemaAuditLogSupport;
     }
 
     @Override
@@ -109,19 +113,34 @@ public class SchemaServiceImpl
     @Override
     public Namespace createNamespace( final CreateNamespaceParams params )
     {
-        return this.namespaceAppService.create( params );
+        final Namespace namespace = this.namespaceAppService.create( params );
+
+        schemaAuditLogSupport.createNamespace( params, namespace );
+
+        return namespace;
     }
 
     @Override
     public Namespace updateNamespace( final UpdateNamespaceParams params )
     {
-        return this.namespaceAppService.update( params );
+        final Namespace namespace = this.namespaceAppService.update( params );
+
+        schemaAuditLogSupport.updateNamespace( params, namespace );
+
+        return namespace;
     }
 
     @Override
     public boolean deleteNamespace( final ApplicationKey key )
     {
-        return this.namespaceAppService.delete( key );
+        final boolean deleted = this.namespaceAppService.delete( key );
+
+        if ( deleted )
+        {
+            schemaAuditLogSupport.deleteNamespace( key );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -148,8 +167,11 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+        final DynamicSchemaResult<T> result = new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
 
+        schemaAuditLogSupport.createComponent( params, result );
+
+        return result;
     }
 
     @Override
@@ -164,7 +186,11 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+        final DynamicSchemaResult<T> result = new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+
+        schemaAuditLogSupport.updateComponent( params, result );
+
+        return result;
     }
 
 
@@ -179,7 +205,11 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+        final DynamicSchemaResult<T> result = new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+
+        schemaAuditLogSupport.createContentSchema( params, result );
+
+        return result;
     }
 
     @Override
@@ -192,7 +222,12 @@ public class SchemaServiceImpl
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
-        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+
+        final DynamicSchemaResult<T> result = new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+
+        schemaAuditLogSupport.updateContentSchema( params, result );
+
+        return result;
     }
 
     @Override
@@ -206,8 +241,12 @@ public class SchemaServiceImpl
         final Resource createdResource =
             dynamicResourceManager.createResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<CmsDescriptor> result = new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
+
+        schemaAuditLogSupport.createCms( params, result );
+
+        return result;
     }
 
     @Override
@@ -222,8 +261,12 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<CmsDescriptor> result = new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        schemaAuditLogSupport.updateCms( params, result );
+
+        return result;
     }
 
     @Override
@@ -238,8 +281,12 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<StyleDescriptor> result = new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        schemaAuditLogSupport.createStyles( params, result );
+
+        return result;
     }
 
     @Override
@@ -254,8 +301,12 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<StyleDescriptor> result = new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        schemaAuditLogSupport.updateStyles( params, result );
+
+        return result;
     }
 
     @Override
@@ -263,8 +314,12 @@ public class SchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.createResourceFile( createPhrasesFolderPath( params.getKey() ),
-                                                          phrasesFileName( params.getName() ), params.getResource() );
+        final Resource resource = dynamicResourceManager.createResourceFile( createPhrasesFolderPath( params.getKey() ),
+                                                                             phrasesFileName( params.getName() ), params.getResource() );
+
+        schemaAuditLogSupport.createPhrases( params, resource );
+
+        return resource;
     }
 
     @Override
@@ -272,8 +327,12 @@ public class SchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.updateResourceFile( createPhrasesFolderPath( params.getKey() ),
-                                                          phrasesFileName( params.getName() ), params.getResource() );
+        final Resource resource = dynamicResourceManager.updateResourceFile( createPhrasesFolderPath( params.getKey() ),
+                                                                             phrasesFileName( params.getName() ), params.getResource() );
+
+        schemaAuditLogSupport.updatePhrases( params, resource );
+
+        return resource;
     }
 
     @Override
@@ -303,8 +362,15 @@ public class SchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.deleteResourceFile( createPhrasesFolderPath( params.getKey() ),
-                                                          phrasesFileName( params.getName() ), false );
+        final boolean deleted = dynamicResourceManager.deleteResourceFile( createPhrasesFolderPath( params.getKey() ),
+                                                                           phrasesFileName( params.getName() ), false );
+
+        if ( deleted )
+        {
+            schemaAuditLogSupport.deletePhrases( params );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -413,7 +479,14 @@ public class SchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createComponentFolderPath( params.getKey(), params.getType() );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getKey().getName(), true );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, params.getKey().getName(), true );
+
+        if ( deleted )
+        {
+            schemaAuditLogSupport.deleteComponent( params );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -422,7 +495,14 @@ public class SchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, params.getName().getLocalName(), true );
+
+        if ( deleted )
+        {
+            schemaAuditLogSupport.deleteContentSchema( params );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -449,7 +529,14 @@ public class SchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createCmsFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, false );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, false );
+
+        if ( deleted )
+        {
+            schemaAuditLogSupport.deleteCms( key );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -459,7 +546,14 @@ public class SchemaServiceImpl
 
         final NodePath resourceFolderPath =
             NodePath.create( createCmsFolderPath( key ) ).addElement( NamespaceAppConstants.STYLE_ROOT_NAME ).build();
-        return dynamicResourceManager.deleteResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME, false );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, NamespaceAppConstants.STYLE_NAME, false );
+
+        if ( deleted )
+        {
+            schemaAuditLogSupport.deleteStyles( key );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -473,8 +567,12 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<MacroDescriptor> result = new DynamicSchemaResult<>(
             MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        schemaAuditLogSupport.createMacro( params, result );
+
+        return result;
     }
 
     @Override
@@ -488,8 +586,12 @@ public class SchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<MacroDescriptor> result = new DynamicSchemaResult<>(
             MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        schemaAuditLogSupport.updateMacro( params, result );
+
+        return result;
     }
 
     @Override
@@ -538,7 +640,14 @@ public class SchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, params.getKey().getName(), true );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, params.getKey().getName(), true );
+
+        if ( deleted )
+        {
+            schemaAuditLogSupport.deleteMacro( params );
+        }
+
+        return deleted;
     }
 
     private BaseSchemaName getSchemaName( final ApplicationKey applicationKey, final DynamicContentSchemaType type, final String name )
