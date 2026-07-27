@@ -57,6 +57,7 @@ public final class UpdateDynamicMacroParams
         private void validate()
         {
             requireNonNull( key, "key is required" );
+            requireNonNull( resource, "resource is required" );
         }
 
         public UpdateDynamicMacroParams build()

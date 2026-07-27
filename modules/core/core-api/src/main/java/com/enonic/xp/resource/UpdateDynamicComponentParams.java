@@ -74,6 +74,7 @@ public final class UpdateDynamicComponentParams
         {
             requireNonNull( key, "key is required" );
             requireNonNull( type, "type is required" );
+            requireNonNull( resource, "resource is required" );
         }
 
         public UpdateDynamicComponentParams build()

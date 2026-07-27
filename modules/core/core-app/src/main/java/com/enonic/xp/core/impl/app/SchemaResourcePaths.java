@@ -40,7 +40,7 @@ public final class SchemaResourcePaths
     {
     }
 
-    public static boolean isSchemaDescriptorPath( final String path )
+    public static boolean isSchemaResourcePath( final String path )
     {
         final String normalized = path.startsWith( "/" ) ? path.substring( 1 ) : path;
         return SCHEMA_RESOURCE_PATTERN.matcher( normalized ).matches();

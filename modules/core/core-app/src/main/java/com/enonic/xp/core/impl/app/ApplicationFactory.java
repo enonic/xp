@@ -50,7 +50,7 @@ public final class ApplicationFactory
 
         return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
                                                 new FilteredApplicationUrlResolver( createBundleUrlResolver( bundle ),
-                                                                                    () -> schemaDescriptorFilter( applicationKey ) ),
+                                                                                    () -> schemaResourceFilter( applicationKey ) ),
                                                 new FakeCmsYamlUrlResolver( applicationKey, nodeService ) );
     }
 
@@ -82,11 +82,11 @@ public final class ApplicationFactory
         return resolvers.size() == 1 ? resolvers.get( 0 ) : new MultiApplicationUrlResolver( resolvers.toArray( ApplicationUrlResolver[]::new ) );
     }
 
-    // Schema descriptors must not be contributed by the bundle when the application node exists in the namespace repo (system.app)
-    private Predicate<String> schemaDescriptorFilter( final ApplicationKey applicationKey )
+    // Schema resources (descriptors and i18n phrases) must not be contributed by the bundle when the application node exists in the namespace repo (system.app)
+    private Predicate<String> schemaResourceFilter( final ApplicationKey applicationKey )
     {
         final Supplier<Boolean> appNodeExists = Suppliers.memoize( () -> appNodeExists( applicationKey ) );
-        return path -> !( SchemaResourcePaths.isSchemaDescriptorPath( path ) && appNodeExists.get() );
+        return path -> !( SchemaResourcePaths.isSchemaResourcePath( path ) && appNodeExists.get() );
     }
 
     private boolean appNodeExists( final ApplicationKey applicationKey )
