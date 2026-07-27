@@ -283,7 +283,10 @@ public class ScriptRuntimeFactoryImpl
 
             if ( GRAAL_JS_SCRIPT_ENGINE.equals( appScriptEngine ) )
             {
-                return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, sharedEngine() ), appClassloader, settings,
+                // the engine follows the first context, not the executor: an application without
+                // scripts is bootstrapped like any other, and must not bring an engine to life
+                return new GraalScriptExecutor( new GraalJSContextFactory( appClassloader, ScriptRuntimeFactoryImpl.this::sharedEngine ),
+                                                appClassloader, settings,
                                                 new ServiceRegistryImpl( appBundleContext ), resourceService, appInfo,
                                                 contextPoolCapacity(), graalContextBudget );
             }

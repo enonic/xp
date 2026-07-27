@@ -18,14 +18,19 @@ public final class GraalJSContextFactory
 {
     private final ClassLoader classLoader;
 
-    private final Engine sharedEngine;
+    /**
+     * Resolved when a context is actually built, never before: an application that executes no
+     * script — pure Java, or simply without a bootstrap script — gets an executor but no context,
+     * and must not pay for an engine it never uses.
+     */
+    private final Supplier<Engine> sharedEngine;
 
     public GraalJSContextFactory()
     {
         this( null, null );
     }
 
-    public GraalJSContextFactory( final ClassLoader classLoader, final Engine sharedEngine )
+    public GraalJSContextFactory( final ClassLoader classLoader, final Supplier<Engine> sharedEngine )
     {
         this.classLoader = classLoader;
         this.sharedEngine = sharedEngine;
@@ -49,7 +54,7 @@ public final class GraalJSContextFactory
 
         if ( sharedEngine != null )
         {
-            contextBuilder.engine( sharedEngine );
+            contextBuilder.engine( sharedEngine.get() );
         }
         if ( classLoader != null )
         {

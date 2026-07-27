@@ -363,6 +363,11 @@ regardless of JDK: the selectors run on the `QueuedThreadPool`'s platform thread
 
 #### Engine code cache: what makes many contexts affordable — and its retention rule
 
+The engine itself is created with the **first context**, not with the first executor: every
+application is bootstrapped, script-less Java applications included, and those get an executor
+but never a context — they must not bring a Truffle engine to life. An installation that runs
+no JavaScript therefore never builds one.
+
 The shared engine's code cache is what compensates the memory of many contexts: parsed/compiled
 code is shared, so per-context cost is runtime module state only. But the cache is keyed by
 `Source` equality and held **weakly** — an entry survives only while an equal `Source` instance
