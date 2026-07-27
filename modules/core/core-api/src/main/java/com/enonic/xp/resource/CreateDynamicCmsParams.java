@@ -1,8 +1,9 @@
-package com.enonic.xp.core.impl.app;
+package com.enonic.xp.resource;
 
 import com.enonic.xp.app.ApplicationKey;
 
 import static java.util.Objects.requireNonNull;
+
 
 public final class CreateDynamicCmsParams
 {
@@ -37,6 +38,10 @@ public final class CreateDynamicCmsParams
 
         private String resource;
 
+        private Builder()
+        {
+        }
+
         public Builder key( final ApplicationKey key )
         {
             this.key = key;
@@ -62,5 +67,3 @@ public final class CreateDynamicCmsParams
         }
     }
 }
-
-

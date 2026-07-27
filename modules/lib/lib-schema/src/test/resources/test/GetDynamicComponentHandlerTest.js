@@ -10,4 +10,11 @@ exports.getInvalidComponentType = function () {
     }));
 };
 
+exports.getComponentNotFound = function () {
+    assert.assertNull(schemaLib.getComponent({
+        key: 'myapp:mydata',
+        type: 'PART'
+    }));
+};
+
 

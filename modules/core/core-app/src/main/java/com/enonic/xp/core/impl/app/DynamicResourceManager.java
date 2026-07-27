@@ -96,17 +96,6 @@ final class DynamicResourceManager
         } );
     }
 
-    boolean resourceNodeExists( final NodePath folderPath, final String name )
-    {
-        return resourceFileExists( folderPath, name + ".yaml" );
-    }
-
-    boolean resourceFileExists( final NodePath folderPath, final String fileName )
-    {
-        return NamespaceAppContext.createContext()
-            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( fileName ) ) ) );
-    }
-
     Resource getResource( final NodePath folderPath, final String name )
     {
         return getResourceFile( folderPath, name + ".yaml" );

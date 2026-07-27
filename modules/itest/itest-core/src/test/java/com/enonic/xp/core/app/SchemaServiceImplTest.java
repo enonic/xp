@@ -54,7 +54,6 @@ import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
-import com.enonic.xp.core.impl.app.CreateDynamicCmsParams;
 import com.enonic.xp.core.impl.app.SchemaServiceImpl;
 import com.enonic.xp.core.impl.app.NamespaceAppConstants;
 import com.enonic.xp.core.impl.app.NamespaceAppContext;
@@ -76,6 +75,8 @@ import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.CreateProjectParams;
@@ -105,6 +106,7 @@ import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.CreateDynamicCmsParams;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
@@ -1224,25 +1226,34 @@ class SchemaServiceImplTest
         final String resource = readResource( "_cms.yaml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
-            () -> schemaService.updateCms( UpdateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
+        assertThrows( NodeNotFoundException.class, () -> createAdminContext().callWith(
+            () -> schemaService.updateCms( UpdateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) ) );
+    }
 
-        final CmsDescriptor cmsDescriptor = result.getSchema();
+    @Test
+    void createAlreadyCreatedSite()
+        throws Exception
+    {
+        final String resource = readResource( "_cms.yaml" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        createAdminContext().runWith( () -> assertThat( cmsDescriptor ).usingRecursiveComparison(
-                RecursiveComparisonConfiguration.builder().withIgnoredFields( "mappingDescriptors" ).build() )
-            .isEqualTo( schemaService.getCmsDescriptor( applicationKey ).getSchema() ) );
+        createAdminContext().runWith( () -> schemaService.createCms(
+            CreateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
 
-        assertEquals( "node", result.getResource().getResolverName() );
-        assertTrue( result.getResource().exists() );
-        assertTrue( Instant.now().isAfter( Instant.ofEpochMilli( result.getResource().getTimestamp() ) ) );
-        assertEquals( resource, result.getResource().readString() );
-        assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
+        assertThrows( NodeAlreadyExistAtPathException.class, () -> createAdminContext().callWith(
+            () -> schemaService.createCms( CreateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) ) );
+    }
 
-        final Node resourceNode =
-            NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
+    @Test
+    void createCms_without_admin()
+    {
+        final CreateDynamicCmsParams params = CreateDynamicCmsParams.create()
+            .key( ApplicationKey.from( "myapp" ) )
+            .resource( NamespaceAppConstants.CMS_DESCRIPTOR_DEFAULT_VALUE )
+            .build();
 
-        assertEquals( resource, resourceNode.data().getString( "resource" ) );
+        assertThrows( ForbiddenAccessException.class,
+                      () -> NamespaceAppContext.createContext().callWith( () -> schemaService.createCms( params ) ) );
     }
 
     @Test
@@ -1269,6 +1280,13 @@ class SchemaServiceImplTest
 
         assertThat( cmsDescriptorResult.getSchema().getForm() ).isEmpty();
         assertThat( cmsDescriptorResult.getSchema().getMixinMappings() ).isEmpty();
+    }
+
+    @Test
+    void deleteCms_without_admin()
+    {
+        assertThrows( ForbiddenAccessException.class, () -> NamespaceAppContext.createContext()
+            .callWith( () -> schemaService.deleteCms( ApplicationKey.from( "myapp" ) ) ) );
     }
 
     @Test

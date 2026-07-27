@@ -30,6 +30,7 @@ import com.enonic.xp.project.ProjectRole;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.resource.CreateDynamicCmsParams;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
@@ -73,9 +74,9 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
-@Component(immediate = true, service = {SchemaService.class, DynamicSchemaServiceInternal.class})
+@Component(immediate = true, service = SchemaService.class)
 public class SchemaServiceImpl
-    implements SchemaService, DynamicSchemaServiceInternal
+    implements SchemaService
 {
     private static final String PROJECT_OWNER_ROLE_SUFFIX = "." + ProjectRole.OWNER.name().toLowerCase();
 
@@ -218,9 +219,8 @@ public class SchemaServiceImpl
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
 
-        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME )
-            ? dynamicResourceManager.updateResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() )
-            : dynamicResourceManager.createResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() );
+        final Resource resource =
+            dynamicResourceManager.updateResource( resourceFolderPath, NamespaceAppConstants.CMS_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );

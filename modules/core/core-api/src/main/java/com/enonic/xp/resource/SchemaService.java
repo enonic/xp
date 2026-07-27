@@ -47,9 +47,13 @@ public interface SchemaService
 
     boolean deleteContentSchema( DeleteDynamicContentSchemaParams params );
 
+    DynamicSchemaResult<CmsDescriptor> createCms( CreateDynamicCmsParams params );
+
     DynamicSchemaResult<CmsDescriptor> updateCms( UpdateDynamicCmsParams params );
 
     DynamicSchemaResult<CmsDescriptor> getCmsDescriptor( ApplicationKey key );
+
+    boolean deleteCms( ApplicationKey key );
 
     Resource createPhrases( CreateDynamicPhrasesParams params );
 

@@ -132,4 +132,12 @@ class GetDynamicComponentHandlerTest
         runFunction( "/test/GetDynamicComponentHandlerTest.js", "getInvalidComponentType" );
     }
 
+    @Test
+    void testNotFound()
+    {
+        when( schemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenReturn( null );
+
+        runFunction( "/test/GetDynamicComponentHandlerTest.js", "getComponentNotFound" );
+    }
+
 }

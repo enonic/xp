@@ -292,7 +292,7 @@ interface GetDynamicComponentHandler {
 
     setType(value: ComponentDescriptorType): void;
 
-    execute(): LayoutDescriptor | PageDescriptor | PartDescriptor;
+    execute(): LayoutDescriptor | PageDescriptor | PartDescriptor | null;
 }
 
 /**
@@ -302,9 +302,9 @@ interface GetDynamicComponentHandler {
  * @param {string} params.key Component resource descriptor key.
  * @param {string} params.type Component type.
  *
- * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} fetched resource.
+ * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor | null} fetched resource, or `null` if not found.
  */
-export function getComponent(params: GetDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
+export function getComponent(params: GetDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor | null {
     const key = checkRequired(params, 'key');
     const type = checkRequired(params, 'type');
 
@@ -545,6 +545,38 @@ export function updateComponent(params: UpdateDynamicComponentParams): LayoutDes
     return __.toNativeObject(bean.execute());
 }
 
+export interface CreateDynamicCmsParams {
+    application: string;
+    resource: string;
+}
+
+interface CreateDynamicCmsHandler {
+    setApplication(value: string): void;
+
+    setResource(value: string): void;
+
+    execute(): CmsDescriptor;
+}
+
+/**
+ * Creates dynamic CMS schema resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ * @param {string} params.resource CMS schema resource value.
+ *
+ * @returns {CmsDescriptor} created resource.
+ */
+export function createCms(params: CreateDynamicCmsParams): CmsDescriptor {
+    const application = checkRequired(params, 'application');
+    const resource = checkRequired(params, 'resource');
+
+    const bean: CreateDynamicCmsHandler = __.newBean<CreateDynamicCmsHandler>('com.enonic.xp.lib.schema.CreateDynamicCmsHandler');
+    bean.setApplication(application);
+    bean.setResource(resource);
+    return __.toNativeObject(bean.execute());
+}
+
 export interface UpdateDynamicCmsParams {
     application: string;
     resource: string;
@@ -606,6 +638,32 @@ export function updateStyles(params: UpdateDynamicStylesParams): StyleDescriptor
     const bean: UpdateDynamicStylesHandler = __.newBean<UpdateDynamicStylesHandler>('com.enonic.xp.lib.schema.UpdateDynamicStylesHandler');
     bean.setApplication(application);
     bean.setResource(resource);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface DeleteDynamicCmsParams {
+    application: string;
+}
+
+interface DeleteDynamicCmsHandler {
+    setApplication(value: string): void;
+
+    execute(): boolean;
+}
+
+/**
+ * Removes dynamic CMS descriptor resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ *
+ * @returns {boolean} `true` if the resource was removed.
+ */
+export function deleteCms(params: DeleteDynamicCmsParams): boolean {
+    const application = checkRequired(params, 'application');
+
+    const bean: DeleteDynamicCmsHandler = __.newBean<DeleteDynamicCmsHandler>('com.enonic.xp.lib.schema.DeleteDynamicCmsHandler');
+    bean.setApplication(application);
     return __.toNativeObject(bean.execute());
 }
 
