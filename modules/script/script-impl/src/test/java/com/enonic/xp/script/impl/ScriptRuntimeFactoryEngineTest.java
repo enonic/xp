@@ -44,8 +44,6 @@ class ScriptRuntimeFactoryEngineTest
 
     private BundleContext bundleContext;
 
-    private ResourceService resourceService;
-
     private ScriptRuntimeFactoryImpl factory;
 
     private Application application;
@@ -60,14 +58,14 @@ class ScriptRuntimeFactoryEngineTest
             .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
         Mockito.lenient().when( this.bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
 
-        this.resourceService = Mockito.mock( ResourceService.class );
-        Mockito.lenient().when( this.resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        Mockito.lenient().when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
             final ResourceKey key = invocation.getArgument( 0 );
             final URL url = getClass().getResource( "/" + key.getApplicationKey() + key.getPath() );
             return new UrlResource( key, url );
         } );
 
-        this.factory = new ScriptRuntimeFactoryImpl( this.bundleContext, this.resourceService );
+        this.factory = new ScriptRuntimeFactoryImpl( this.bundleContext, resourceService );
     }
 
     @AfterEach

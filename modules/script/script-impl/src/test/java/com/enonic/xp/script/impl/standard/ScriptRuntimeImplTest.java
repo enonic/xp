@@ -325,7 +325,7 @@ class ScriptRuntimeImplTest
         throws Exception
     {
         final ScriptExecutor closeableExecutor =
-            mock( ScriptExecutor.class, Mockito.withSettings().extraInterfaces( Closeable.class ) );
+            mock( ScriptExecutor.class, withSettings().extraInterfaces( Closeable.class ) );
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( closeableExecutor );
 
         final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
