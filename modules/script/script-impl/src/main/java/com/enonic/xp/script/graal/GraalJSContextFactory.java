@@ -1,6 +1,7 @@
 package com.enonic.xp.script.graal;
 
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -88,6 +89,7 @@ public final class GraalJSContextFactory
             .targetTypeMapping( Value.class, Runnable.class, isJsFunction, toHandle::apply )
             .targetTypeMapping( Value.class, Supplier.class, isJsFunction, toHandle::apply )
             .targetTypeMapping( Value.class, Predicate.class, isJsFunction, toHandle::apply )
+            .targetTypeMapping( Value.class, Callable.class, isJsFunction, toHandle::apply )
             .build();
     }
 }

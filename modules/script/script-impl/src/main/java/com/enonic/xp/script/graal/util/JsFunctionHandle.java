@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -23,7 +24,7 @@ import org.graalvm.polyglot.Value;
  * without a handle; nested functions become nested handles.
  */
 public final class JsFunctionHandle
-    implements Function<Object, Object>, Consumer<Object>, Runnable, Supplier<Object>, Predicate<Object>
+    implements Function<Object, Object>, Consumer<Object>, Runnable, Supplier<Object>, Predicate<Object>, Callable<Object>
 {
     private static final Object[] NO_ARGS = new Object[0];
 
@@ -74,6 +75,12 @@ public final class JsFunctionHandle
 
     @Override
     public Object get()
+    {
+        return execute( NO_ARGS );
+    }
+
+    @Override
+    public Object call()
     {
         return execute( NO_ARGS );
     }

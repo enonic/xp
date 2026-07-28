@@ -2,6 +2,7 @@ package com.enonic.xp.script.graal.util;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -172,6 +173,22 @@ class JsFunctionHandleTest
 
     @Test
     @Timeout(30)
+    void callableParameterBecomesHandle()
+        throws Exception
+    {
+        final TaskHolder holder = new TaskHolder();
+        context.eval( "js", "(function (h) { h.setCallback(function () { return { value: 7 }; }); })" ).execute( holder );
+
+        assertInstanceOf( JsFunctionHandle.class, holder.callback );
+
+        // lib-context's run() hands its callback straight to Context.callWith, which may invoke it
+        // on a thread that does not own the script context
+        final Map<?, ?> result = (Map<?, ?>) executor.submit( () -> holder.callback.call() ).get();
+        assertEquals( 7, ( (Number) result.get( "value" ) ).intValue() );
+    }
+
+    @Test
+    @Timeout(30)
     void convertsScalarResults()
         throws Exception
     {
@@ -281,6 +298,16 @@ class JsFunctionHandleTest
         public void log( final Object value )
         {
             this.received = value;
+        }
+    }
+
+    public static class TaskHolder
+    {
+        volatile Callable<Object> callback;
+
+        public void setCallback( final Callable<Object> callback )
+        {
+            this.callback = callback;
         }
     }
 

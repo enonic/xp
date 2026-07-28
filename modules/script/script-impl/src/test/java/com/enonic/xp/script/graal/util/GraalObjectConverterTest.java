@@ -73,6 +73,17 @@ class GraalObjectConverterTest
     }
 
     @Test
+    void toJs_map()
+    {
+        final Object result = instance.toJs( Map.of( "outer", Map.of( "inner", List.of( 1, 2 ) ) ) );
+
+        // a script reads members, so the map has to arrive as an object and not as a host value
+        final Value bindings = this.context.getBindings( "js" );
+        assertEquals( "{\"outer\":{\"inner\":[1,2]}}",
+                      bindings.getMember( "JSON" ).getMember( "stringify" ).execute( result ).asString() );
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     void fromJs_keepsNullValuedKeys()
     {

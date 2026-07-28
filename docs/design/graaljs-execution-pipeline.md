@@ -429,6 +429,7 @@ the moment the GraalJS suites actually ran (phase 0). They belong in the migrati
 |---|---|---|---|
 | JavaBean property shorthand — `bean.status` for `getStatus()` | supported | not supported (it is a `js.nashorn-compat` feature, and that mode is gone) | call the accessor: `bean.getStatus()` |
 | A Java `long` outside the JS safe-integer range, `BigInteger`, `BigDecimal` | opaque Java object (`typeof` is `'object'`) | presented as a JS number where it fits the interop numeric model | do not branch on `typeof`; convert explicitly on the Java side when the exact value matters |
+| A bean returning a bare `java.util.Map` through `__.toNativeObject` | Java object — `m.get('k')`, not `m.k` | plain JS object — `m.k`, not `m.get('k')` | read members, which is what the same call already gives for a `MapSerializable`. Required for callback results: a handle converts eagerly, so what Nashorn returns as the original guest object arrives on the Java side as a `Map` (`lib-context` `run`) |
 
 ## 6. What this replaces, per limitation
 
@@ -457,8 +458,9 @@ the moment the GraalJS suites actually ran (phase 0). They belong in the migrati
 1. **Boundary audit & handle type** *(started on this branch)* — introduce `JsFunctionHandle`
    and route *all* JS-function escapes through it. Implemented so far: `HostAccess` target-type
    mappings convert JS functions passed to `Function`/`Consumer`/`Runnable`/`Supplier`/
-   `Predicate` parameters into handles (covers `lib-task` `executeFunction` and `lib-event`
-   listeners with no lib changes), and `GraalObjectConverter.toFunction` returns handles. This
+   `Predicate`/`Callable` parameters into handles (covers `lib-task` `executeFunction`,
+   `lib-event` listeners and `lib-context` `run` with no lib changes), and
+   `GraalObjectConverter.toFunction` returns handles. This
    alone turns crashes into correct-but-serialized behavior on the current single context.
    Small, independently shippable.
 2. **Context pool behind a flag** *(started on this branch)* — `GraalScriptExecutor` now owns N

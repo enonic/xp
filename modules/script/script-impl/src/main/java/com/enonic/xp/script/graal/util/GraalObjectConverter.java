@@ -41,6 +41,15 @@ public final class GraalObjectConverter
             return toJs( (List) value );
         }
 
+        // A callback result reaches Java as a Map, because a handle converts eagerly rather than
+        // let a context-bound value escape. Nashorn hands the guest object straight back, so
+        // without this branch the same script sees a plain object on one engine and an opaque
+        // host value on the other.
+        if ( value instanceof Map )
+        {
+            return toJs( (Map<?, ?>) value );
+        }
+
         if ( value != null && value.getClass().isArray() && !value.getClass().getComponentType().isPrimitive() )
         {
             return toJs( Arrays.asList( (Object[]) value ) );
@@ -65,6 +74,17 @@ public final class GraalObjectConverter
         final GraalScriptMapGenerator generator = new GraalScriptMapGenerator( this.helper );
         value.serialize( generator );
         return generator.getRoot();
+    }
+
+    private Object toJs( final Map<?, ?> map )
+    {
+        final Object object = this.helper.newJsObject();
+        for ( final Map.Entry<?, ?> entry : map.entrySet() )
+        {
+            GraalJSHelper.addToNativeObject( object, String.valueOf( entry.getKey() ), toJs( entry.getValue() ) );
+        }
+
+        return object;
     }
 
     private Object toJs( final List list )
