@@ -2,6 +2,8 @@ package com.enonic.xp.script.graal;
 
 import java.io.Closeable;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -348,6 +350,45 @@ class GraalContextPoolTest
         // views without a pinned slot have nothing to retain — both calls are safe no-ops
         exports.retain();
         exports.release();
+    }
+
+    @Test
+    @Timeout(60)
+    void growthFillsTheSlotsDensely()
+        throws Exception
+    {
+        // capacity far above what the test uses: scans are bounded by the created slots, which
+        // only holds if growth fills the array from the front instead of at a rotating offset
+        final ScriptExecutor wide = newExecutor( 512, GraalContextBudget.unlimited() );
+        final ExecutorService threads = Executors.newFixedThreadPool( 3 );
+        try
+        {
+            final ScriptExports exports = wide.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+            // three concurrent executions force the pool to grow to exactly three slots
+            final SyncPoint sync = new SyncPoint( 3 );
+            final List<Future<ScriptValue>> blocked = new ArrayList<>();
+            for ( int i = 0; i < 3; i++ )
+            {
+                blocked.add( threads.submit( () -> exports.executeMethod( "block", sync ) ) );
+            }
+            for ( final Future<ScriptValue> result : blocked )
+            {
+                assertEquals( 1, intValue( result.get() ) );
+            }
+
+            // every one of them is a distinct slot, and each holds its own module state: three
+            // further executions land on those same three slots, advancing each counter once
+            for ( int i = 0; i < 3; i++ )
+            {
+                assertEquals( 2, intValue( exports.executeMethod( "inc" ) ) );
+            }
+        }
+        finally
+        {
+            threads.shutdownNow();
+            ( (Closeable) wide ).close();
+        }
     }
 
     @Test
@@ -704,7 +745,17 @@ class GraalContextPoolTest
 
     public static class SyncPoint
     {
-        private final CyclicBarrier barrier = new CyclicBarrier( 2 );
+        private final CyclicBarrier barrier;
+
+        public SyncPoint()
+        {
+            this( 2 );
+        }
+
+        public SyncPoint( final int parties )
+        {
+            this.barrier = new CyclicBarrier( parties );
+        }
 
         public void await()
             throws InterruptedException, BrokenBarrierException, TimeoutException

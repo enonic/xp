@@ -88,8 +88,9 @@ public class GraalScriptExecutor
     private final Map<ResourceKey, Source> sources = new ConcurrentHashMap<>();
 
     /**
-     * Lazily populated, fixed logical capacity: slots retained by live connections leave the
-     * request rotation, and growth fills free indices instead.
+     * Lazily populated up to a fixed logical capacity, and populated <em>densely</em>: growth
+     * always takes the next free index, so the live slots are exactly {@code [0, createdSlots)}.
+     * Slots retained by live connections stay in place and leave the request rotation.
      */
     private final AtomicReferenceArray<ContextSlot> slots;
 
@@ -97,7 +98,13 @@ public class GraalScriptExecutor
 
     private int budgetedSlots;
 
-    private boolean hasSlots;
+    /**
+     * How much of {@link #slots} is populated. Written under {@link #slotCreationLock} after the
+     * slot itself is in the array, read anywhere (volatile), and every scan is bounded by it:
+     * capacity defaults to the whole global budget, so scanning the array instead of the created
+     * prefix would walk a thousand empty entries to find one of a handful of live slots.
+     */
+    private volatile int createdSlots;
 
     /**
      * Written under {@link #slotCreationLock}, read anywhere (volatile). An execution racing
@@ -322,6 +329,8 @@ public class GraalScriptExecutor
                     budget.releaseRetainedContexts( mainSlot.drainPins() );
                     mainSlot = null;
                 }
+                // the whole array rather than the created prefix: teardown is the one place that
+                // must not depend on the dense-population invariant to free a context
                 for ( int i = 0; i < slots.length(); i++ )
                 {
                     final ContextSlot slot = slots.get( i );
@@ -408,7 +417,8 @@ public class GraalScriptExecutor
         {
             return main;
         }
-        for ( int i = 0; i < slots.length(); i++ )
+        final int size = createdSlots;
+        for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( i );
             if ( slot != null && Thread.holdsLock( slot.context ) )
@@ -422,7 +432,7 @@ public class GraalScriptExecutor
     private <T> T withAnySlot( final Function<ContextSlot, T> work )
     {
         final int start = this.roundRobin.getAndIncrement();
-        final int size = slots.length();
+        final int size = createdSlots;
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
@@ -447,28 +457,24 @@ public class GraalScriptExecutor
                 }
             }
         }
-        return lockAndRun( grownOrExistingSlot( start, size ), work, SLOT_WAIT_SECONDS );
+        return lockAndRun( grownOrExistingSlot( start ), work, SLOT_WAIT_SECONDS );
     }
 
-    private ContextSlot grownOrExistingSlot( final int start, final int size )
+    private ContextSlot grownOrExistingSlot( final int start )
     {
-        // every eligible slot is busy: grow within the budget
-        boolean budgetDenied = false;
-        for ( int i = 0; i < size; i++ )
+        // every eligible slot is busy: grow within capacity and the budget
+        final boolean atCapacity = createdSlots >= slots.length();
+        if ( !atCapacity )
         {
-            final int index = Math.floorMod( start + i, size );
-            if ( slots.get( index ) == null )
+            final ContextSlot created = growSlot();
+            if ( created != null )
             {
-                final ContextSlot created = slotAt( index );
-                if ( created != null )
-                {
-                    return created;
-                }
-                budgetDenied = true;
-                break;
+                return created;
             }
         }
-        // at capacity or out of budget: wait fairly on an existing free slot
+        // at capacity or out of budget: wait fairly on an existing free slot. Re-read the count —
+        // a concurrent growth may have added one since the check above
+        final int size = createdSlots;
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
@@ -477,6 +483,7 @@ public class GraalScriptExecutor
                 return slot;
             }
         }
+        final boolean budgetDenied = !atCapacity;
         // exclusivity over liveness: a retained context carries one connection's module state,
         // and GraalJS offers no way to share it safely — a request never intrudes on it, it
         // fails loudly instead
@@ -484,7 +491,8 @@ public class GraalScriptExecutor
                                              "]: every pooled context is retained by a live websocket/SSE connection, and the pool cannot grow — " +
                                              ( budgetDenied
                                                  ? "the global context budget is exhausted (xp.script-engine.graal.max-contexts)"
-                                                 : "the pool is at capacity (" + size + ", xp.script-engine.graal.pool-size)" ) );
+                                                 : "the pool is at capacity (" + slots.length() +
+                                                     ", xp.script-engine.graal.pool-size)" ) );
     }
 
     <T> T withSlot( final Function<ContextSlot, T> work )
@@ -532,28 +540,28 @@ public class GraalScriptExecutor
         }
     }
 
-    private ContextSlot slotAt( final int index )
+    /**
+     * Adds one slot at the end of the created prefix, or answers {@code null} when the pool is at
+     * capacity or the global budget is exhausted.
+     */
+    private ContextSlot growSlot()
     {
-        final ContextSlot existing = slots.get( index );
-        if ( existing != null )
-        {
-            return existing;
-        }
         synchronized ( slotCreationLock )
         {
             requireOpen();
-            ContextSlot slot = slots.get( index );
-            if ( slot != null )
+            final int index = createdSlots;
+            if ( index >= slots.length() )
             {
-                return slot;
+                return null;
             }
             // an app's first slot is always allowed — a full global budget must not lock a
             // fresh application out; only growth beyond it is budgeted
-            final boolean budgeted = hasSlots;
+            final boolean budgeted = index > 0;
             if ( budgeted && !budget.tryAcquireContext() )
             {
                 return null;
             }
+            final ContextSlot slot;
             try
             {
                 slot = new ContextSlot( contextFactory, application );
@@ -567,7 +575,8 @@ public class GraalScriptExecutor
                 throw e;
             }
             slots.set( index, slot );
-            hasSlots = true;
+            // published last: a reader that sees the count sees the slot behind it
+            createdSlots = index + 1;
             if ( budgeted )
             {
                 budgetedSlots++;
@@ -784,7 +793,8 @@ public class GraalScriptExecutor
         {
             return held;
         }
-        for ( int i = 0; i < slots.length(); i++ )
+        final int size = createdSlots;
+        for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( i );
             if ( slot != null )
@@ -792,7 +802,8 @@ public class GraalScriptExecutor
                 return slot;
             }
         }
-        return slotAt( 0 );
+        // no slot exists yet: the first one is unbudgeted, so growth cannot be refused here
+        return growSlot();
     }
 
     /**
