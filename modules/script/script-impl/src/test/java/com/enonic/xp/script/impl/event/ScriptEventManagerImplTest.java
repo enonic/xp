@@ -16,7 +16,9 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.script.event.ScriptEventListener;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -61,6 +63,17 @@ class ScriptEventManagerImplTest
         final ScriptEventListener listener = mock( ScriptEventListener.class );
         when( listener.getApplication() ).thenReturn( ApplicationKey.from( app ) );
         return listener;
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void trackerCallbacksResolveTheService()
+    {
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        // the tracked service is what the customizer stores; a modification is not interesting
+        // to a listener registry, so it is deliberately a no-op
+        assertNull( this.manager.addingService( reference ) );
+        assertDoesNotThrow( () -> this.manager.modifiedService( reference, mock( Application.class ) ) );
     }
 
     @Test

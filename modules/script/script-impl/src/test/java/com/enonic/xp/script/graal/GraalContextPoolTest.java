@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GraalContextPoolTest
@@ -350,6 +351,99 @@ class GraalContextPoolTest
         // views without a pinned slot have nothing to retain — both calls are safe no-ops
         exports.retain();
         exports.release();
+    }
+
+    @Test
+    @Timeout(60)
+    void starvationNamesTheBudgetWhenGrowthIsRefusedByIt()
+        throws Exception
+    {
+        // room to grow in the pool, but no budget to grow into: the diagnostic must point at the
+        // global budget rather than at the per-application capacity
+        final ScriptExecutor limited = newExecutor( 8, new GraalContextBudget( 0, 4, 4 ) );
+        try
+        {
+            final ScriptExports exports = limited.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+            final ScriptExports connection = exports.executeBound( view -> view );
+            connection.retain();
+            try
+            {
+                final IllegalStateException e =
+                    assertThrows( IllegalStateException.class, () -> exports.executeMethod( "inc" ) );
+                assertTrue( e.getMessage().contains( "budget is exhausted" ), e.getMessage() );
+                assertTrue( e.getMessage().contains( "max-contexts" ), e.getMessage() );
+            }
+            finally
+            {
+                connection.release();
+            }
+        }
+        finally
+        {
+            ( (Closeable) limited ).close();
+        }
+    }
+
+    @Test
+    @Timeout(60)
+    void aPinnedWaitEndsWhenTheThreadIsInterrupted()
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+        final ScriptExports connection = exports.executeBound( view -> view );
+
+        Thread.currentThread().interrupt();
+        try
+        {
+            // a pinned execution waits for its one legal context without a time bound, so the
+            // interrupt is the only way out — and it must not be swallowed
+            final RuntimeException e = assertThrows( RuntimeException.class, () -> connection.executeMethod( "inc" ) );
+            assertTrue( e.getMessage().contains( "Interrupted" ), e.getMessage() );
+            assertTrue( Thread.currentThread().isInterrupted() );
+        }
+        finally
+        {
+            Thread.interrupted();
+        }
+    }
+
+    @Test
+    @Timeout(60)
+    void theMainContextIsCreatedOnceAndReused()
+    {
+        final ResourceKey main = ResourceKey.from( "graaljs:main.js" );
+
+        // bootstrap twice: the second call finds the dedicated context already there, and the
+        // module state proves it is the same one
+        assertEquals( 1, intValue( scriptExecutor.bootstrap( main ).executeMethod( "inc" ) ) );
+        assertEquals( 2, intValue( scriptExecutor.bootstrap( main ).executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void conversionOutsideAnExecutionUsesASlot()
+    {
+        // no execution in progress and no slot yet: the converter still resolves, by creating the
+        // application's first (unbudgeted) slot
+        assertNotNull( scriptExecutor.getObjectConverter() );
+
+        // with a slot in place the same call reuses it rather than growing the pool
+        assertNotNull( scriptExecutor.getObjectConverter() );
+        assertEquals( 1, intValue( scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) )
+                                       .executeMethod( "inc" ) ) );
+    }
+
+    @Test
+    @Timeout(60)
+    void aHostObjectRoundTripsAsItself()
+    {
+        final ScriptExports exports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:pool-test.js" ) );
+
+        // a Java object is opaque data to a script: it must come back as the very instance, not
+        // as a JS view whose members are the object's methods
+        final Object host = new java.util.concurrent.atomic.AtomicLong( 42 );
+        final ScriptValue result = exports.executeMethod( "echo", host );
+        assertTrue( result.isValue() );
+        assertSame( host, result.getValue() );
     }
 
     @Test

@@ -19,6 +19,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.impl.util.ObjectConverter;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceNotFoundException;
@@ -27,12 +29,16 @@ import com.enonic.xp.script.impl.AppNotRegisteredException;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.runtime.BootstrapParams;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @ExtendWith(MockitoExtension.class)
 class ScriptRuntimeImplTest
@@ -76,6 +82,51 @@ class ScriptRuntimeImplTest
     {
         when( scriptExecutorFactory.apply( APP ) ).thenReturn( scriptExecutor );
         return new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
+    }
+
+    @Test
+    void conversionsGoThroughTheApplicationsExecutor()
+    {
+        final ScriptRuntimeImpl runtime = runtime();
+
+        final ScriptValue value = mock( ScriptValue.class );
+        when( scriptExecutor.newScriptValue( "raw" ) ).thenReturn( value );
+        assertSame( value, runtime.toScriptValue( CONTROLLER, "raw" ) );
+
+        final ObjectConverter converter = mock( ObjectConverter.class );
+        when( converter.toJs( "raw" ) ).thenReturn( "converted" );
+        when( scriptExecutor.getObjectConverter() ).thenReturn( converter );
+        Assertions.assertEquals( "converted", runtime.toNativeObject( CONTROLLER, "raw" ) );
+    }
+
+    @Test
+    void closeTearsDownEveryExecutorItOwns()
+        throws Exception
+    {
+        final ScriptExecutor closeable = mock( ScriptExecutor.class, withSettings().extraInterfaces( Closeable.class ) );
+        when( scriptExecutorFactory.apply( APP ) ).thenReturn( closeable );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
+        runtime.bootstrap( paramsWithoutScript() );
+
+        runtime.close();
+
+        verify( closeable ).runDisposers();
+        verify( (Closeable) closeable ).close();
+    }
+
+    @Test
+    void teardownSurvivesAThrowingDisposerRound()
+        throws Exception
+    {
+        final ScriptExecutor closeable = mock( ScriptExecutor.class, withSettings().extraInterfaces( Closeable.class ) );
+        doThrow( new IllegalStateException( "boom" ) ).when( closeable ).runDisposers();
+        when( scriptExecutorFactory.apply( APP ) ).thenReturn( closeable );
+        final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl( scriptExecutorFactory, key -> incarnation );
+        runtime.bootstrap( paramsWithoutScript() );
+
+        // an escaping exception here would abort the OSGi callback that drives application stop
+        assertDoesNotThrow( runtime::close );
+        verify( (Closeable) closeable ).close();
     }
 
     @Test

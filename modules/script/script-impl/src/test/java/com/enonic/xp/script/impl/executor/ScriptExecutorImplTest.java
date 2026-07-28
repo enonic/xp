@@ -10,6 +10,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -17,6 +18,8 @@ import com.enonic.xp.util.Version;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScriptExecutorImplTest
@@ -27,8 +30,14 @@ class ScriptExecutorImplTest
     void setUp()
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+        final ResourceService resourceService = Mockito.mock( ResourceService.class );
+        Mockito.lenient().when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
+            final ResourceKey key = invocation.getArgument( 0 );
+            return new UrlResource( key, getClass().getResource( "/" + key.getApplicationKey() + key.getPath() ) );
+        } );
+
         this.executor = new ScriptExecutorImpl( getClass().getClassLoader(), ScriptSettings.create().build(),
-                                                Mockito.mock( ServiceRegistry.class ), Mockito.mock( ResourceService.class ),
+                                                Mockito.mock( ServiceRegistry.class ), resourceService,
                                                 new ApplicationInfoBuilder( applicationKey, ConfigBuilder.create().build(),
                                                                             Version.emptyVersion ) );
     }
@@ -42,6 +51,26 @@ class ScriptExecutorImplTest
         // executeMethod's null is a legal scalar-contract result, so it cannot signal this
         assertThrows( IllegalArgumentException.class,
                       () -> executor.executeMethod( ResourceKey.from( "myapplication:/test/background.js" ), "run" ) );
+    }
+
+    @Test
+    void executeMethodReturnsScalarResults()
+    {
+        final ResourceKey script = ResourceKey.from( "myapplication:/export-test.js" );
+
+        // the same contract the pooled engines answer with: a scalar comes back as itself
+        assertEquals( "Hello World!", executor.executeMethod( script, "hello", "World" ) );
+    }
+
+    @Test
+    void bootstrapSharesTheOneContext()
+    {
+        final ResourceKey script = ResourceKey.from( "myapplication:/export-test.js" );
+
+        // without a pool there is no dedicated main context: bootstrap resolves the same exports
+        // any other execution would
+        assertNotNull( executor.bootstrap( script ) );
+        assertSame( executor.bootstrap( script ).getRawValue(), executor.executeMain( script ).getRawValue() );
     }
 
     @Test

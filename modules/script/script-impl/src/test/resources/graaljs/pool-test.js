@@ -28,3 +28,7 @@ exports.mkBlocker = function (sync) {
 exports.readJson = function () {
     return require('/pool-data.json').key;
 };
+
+exports.echo = function (value) {
+    return value;
+};
