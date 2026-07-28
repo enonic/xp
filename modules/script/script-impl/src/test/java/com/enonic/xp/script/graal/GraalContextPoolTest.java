@@ -747,12 +747,12 @@ class GraalContextPoolTest
     {
         private final CyclicBarrier barrier;
 
-        public SyncPoint()
+        SyncPoint()
         {
             this( 2 );
         }
 
-        public SyncPoint( final int parties )
+        SyncPoint( final int parties )
         {
             this.barrier = new CyclicBarrier( parties );
         }
