@@ -18,7 +18,7 @@ for (var i = 0; i < 10; i++) {
         total: 10
     });
 
-    processItem(i);
+    processItem();
 }
 
 taskLib.progress({info: 'Task completed'});

@@ -696,7 +696,11 @@ public class GraalScriptExecutor
             module.putMember( "exports", exports );
 
             final GraalScriptFunctions functions = new GraalScriptFunctions( slot.context, script, this );
-            func.execute( functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports, module );
+            // `this` is the module's exports inside a module body (CommonJS, and what the other
+            // engine binds): calling the wrapper without a receiver leaves `this` undefined under
+            // strict mode, so `this.foo = ...` at module level fails instead of exporting
+            func.invokeMember( "call", exports, functions.getLog(), functions.getRequire(), functions.getResolve(), functions, exports,
+                               module );
             return module.getMember( "exports" );
         }
         catch ( final Exception e )

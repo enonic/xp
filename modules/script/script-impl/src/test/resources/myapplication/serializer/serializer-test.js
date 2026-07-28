@@ -44,8 +44,10 @@ exports.testNumber = function (o) {
     assert.assertTrue(o['short'] === 32767);
     assert.assertTrue(o['byte'] === 127);
 
-    // BigInteger and BigDecimal and not JS safe integer pass through as-is (not converted)
-    assert.assertTrue(typeof o['maxLong'] === 'object');
-    assert.assertTrue(typeof o['bigInteger'] === 'object');
-    assert.assertTrue(typeof o['bigDecimal'] === 'object');
+    // BigInteger, BigDecimal and integers outside the JS safe range pass through as-is (not
+    // converted). The engines surface such a Java value differently - GraalJS presents a Java
+    // long as a JS number - so assert the value survives, which is what passing through means.
+    assert.assertEquals('9223372036854775807', String(o['maxLong']));
+    assert.assertEquals('9223372036854775807', String(o['bigInteger']));
+    assert.assertEquals('1.7976931348623157E+308', String(o['bigDecimal']));
 };

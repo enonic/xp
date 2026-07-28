@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.script.ScriptException;
 
 import org.graalvm.polyglot.PolyglotException;
+import org.graalvm.polyglot.SourceSection;
 
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
@@ -61,6 +62,19 @@ public final class GraalErrorHelper
                 }
                 final StackTraceElement hostElem = findScriptTraceElement( e );
                 return hostElem == null ? e : buildResourceProblemException( hostElem, hostException );
+            }
+
+            // a guest error carries its own location, which is the only attribution available for
+            // a failure in the module body: its frames are the wrapper's internal ones, which the
+            // Java stack trace scan below deliberately skips
+            final SourceSection location = polyglotException.getSourceLocation();
+            if ( location != null && location.getSource() != null )
+            {
+                return ResourceProblemException.create()
+                    .cause( e )
+                    .lineNumber( location.getStartLine() )
+                    .resource( toResourceKey( location.getSource().getName() ) )
+                    .build();
             }
         }
 
