@@ -422,6 +422,14 @@ per-app**. `main.js` and every required module run once *per context*. Impact an
 These are exactly the "minimal, documented" divergences the platform can afford — they mirror
 what every Node.js cluster / worker deployment already imposes on developers.
 
+Two further divergences come from the engine itself rather than from the pool, and both surfaced
+the moment the GraalJS suites actually ran (phase 0). They belong in the migration guide:
+
+| Pattern | Nashorn | GraalJS | Migration |
+|---|---|---|---|
+| JavaBean property shorthand — `bean.status` for `getStatus()` | supported | not supported (it is a `js.nashorn-compat` feature, and that mode is gone) | call the accessor: `bean.getStatus()` |
+| A Java `long` outside the JS safe-integer range, `BigInteger`, `BigDecimal` | opaque Java object (`typeof` is `'object'`) | presented as a JS number where it fits the interop numeric model | do not branch on `typeof`; convert explicitly on the Java side when the exact value matters |
+
 ## 6. What this replaces, per limitation
 
 | Limitation today | Root cause | Fix in this proposal |
@@ -439,10 +447,13 @@ what every Node.js cluster / worker deployment already imposes on developers.
    (`JvmVendorSpec.GRAAL_VM`, auto-provisioned via the foojay resolver; CI uses
    `graalvm/setup-graalvm` with `graalvm-community`) so GraalJS runs with runtime compilation
    instead of the slow fallback interpreter, and run every JS-executing test suite **twice**:
-   `test` (Nashorn, as before) plus a new `testGraalJs` task wired into `check`
-   (see `gradle/js-tests.gradle`; applied to all `lib:*` modules, `script-impl`, `portal-impl`,
-   `core-task`, `app-system`, `tools:testing`). GraalJS regressions now fail CI instead of
-   surfacing in production; every fix below lands with engine-parity coverage by construction.
+   `test` (Nashorn, as before) plus a new `testGraalJs` task (see `gradle/js-tests.gradle`;
+   applied to all `lib:*` modules, `script-impl`, `portal-impl`, `core-task`, `app-system`,
+   `tools:testing`). The GraalJS task hangs off each module's `jacocoTestReport`, not only off
+   `check`: CI runs `gradlew ci` → root `build` + `jacocoMergedReport` → per-project
+   `jacocoTestReport` → `test`, and never a per-project `check`, so a `check`-only wiring runs
+   locally and silently does nothing in CI. GraalJS regressions now fail CI instead of surfacing
+   in production; every fix below lands with engine-parity coverage by construction.
 1. **Boundary audit & handle type** *(started on this branch)* — introduce `JsFunctionHandle`
    and route *all* JS-function escapes through it. Implemented so far: `HostAccess` target-type
    mappings convert JS functions passed to `Function`/`Consumer`/`Runnable`/`Supplier`/
