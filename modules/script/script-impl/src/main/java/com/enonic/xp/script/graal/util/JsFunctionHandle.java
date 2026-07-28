@@ -1,14 +1,20 @@
 package com.enonic.xp.script.graal.util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
@@ -22,9 +28,14 @@ import org.graalvm.polyglot.Value;
  * <p>
  * Results are converted eagerly to plain Java values so no context-bound {@link Value} escapes
  * without a handle; nested functions become nested handles.
+ * <p>
+ * The interfaces below are the ones a bean may declare for a parameter it wants a script function
+ * for. A functional interface outside this set is rejected at the boundary rather than satisfied
+ * by a proxy the handle does not control — see {@code GraalJSContextFactory}.
  */
 public final class JsFunctionHandle
-    implements Function<Object, Object>, Consumer<Object>, Runnable, Supplier<Object>, Predicate<Object>, Callable<Object>
+    implements Function<Object, Object>, UnaryOperator<Object>, Consumer<Object>, BiConsumer<Object, Object>, Runnable,
+    Supplier<Object>, Callable<Object>, Predicate<Object>, Comparator<Object>
 {
     private static final Object[] NO_ARGS = new Object[0];
 
@@ -68,6 +79,12 @@ public final class JsFunctionHandle
     }
 
     @Override
+    public void accept( final Object first, final Object second )
+    {
+        execute( first, second );
+    }
+
+    @Override
     public void run()
     {
         execute( NO_ARGS );
@@ -89,6 +106,46 @@ public final class JsFunctionHandle
     public boolean test( final Object arg )
     {
         return Boolean.TRUE.equals( execute( arg ) );
+    }
+
+    @Override
+    public int compare( final Object first, final Object second )
+    {
+        final Object result = execute( first, second );
+        if ( !( result instanceof Number ) )
+        {
+            throw new IllegalArgumentException( "Comparator function must return a number, got " + result );
+        }
+        return ( (Number) result ).intValue();
+    }
+
+    /**
+     * The two-argument interfaces cannot sit on the handle itself: {@code BiFunction.andThen} and
+     * {@code BiPredicate.negate} have the same erasure as their one-argument counterparts but a
+     * different return type, so a single class cannot implement both. This shares the handle's
+     * routing and conversion.
+     */
+    public static final class TwoArg
+        implements BiFunction<Object, Object, Object>, BinaryOperator<Object>, BiPredicate<Object, Object>
+    {
+        private final JsFunctionHandle handle;
+
+        public TwoArg( final JsFunctionHandle handle )
+        {
+            this.handle = handle;
+        }
+
+        @Override
+        public Object apply( final Object first, final Object second )
+        {
+            return handle.execute( first, second );
+        }
+
+        @Override
+        public boolean test( final Object first, final Object second )
+        {
+            return Boolean.TRUE.equals( handle.execute( first, second ) );
+        }
     }
 
     private Object convert( final Value value )

@@ -429,6 +429,7 @@ the moment the GraalJS suites actually ran (phase 0). They belong in the migrati
 |---|---|---|---|
 | JavaBean property shorthand — `bean.status` for `getStatus()` | supported | not supported (it is a `js.nashorn-compat` feature, and that mode is gone) | call the accessor: `bean.getStatus()` |
 | A Java `long` outside the JS safe-integer range, `BigInteger`, `BigDecimal` | opaque Java object (`typeof` is `'object'`) | presented as a JS number where it fits the interop numeric model | do not branch on `typeof`; convert explicitly on the Java side when the exact value matters |
+| A bean parameter typed as an interface outside the supported set (a lib's own callback interface, a primitive-specialised `java.util.function` type) receiving a script function or object | implemented by an adapter | refused: `Cannot convert ... Unsupported target type` | declare the parameter as one of the supported functional interfaces. The adapter Nashorn produced is not safe here — it enters the script context on the calling thread, so it survives testing and fails under concurrency |
 | A bean returning a bare `java.util.Map` through `__.toNativeObject` | Java object — `m.get('k')`, not `m.k` | plain JS object — `m.k`, not `m.get('k')` | read members, which is what the same call already gives for a `MapSerializable`. Required for callback results: a handle converts eagerly, so what Nashorn returns as the original guest object arrives on the Java side as a `Map` (`lib-context` `run`) |
 
 ## 6. What this replaces, per limitation
@@ -457,10 +458,18 @@ the moment the GraalJS suites actually ran (phase 0). They belong in the migrati
    in production; every fix below lands with engine-parity coverage by construction.
 1. **Boundary audit & handle type** *(started on this branch)* — introduce `JsFunctionHandle`
    and route *all* JS-function escapes through it. Implemented so far: `HostAccess` target-type
-   mappings convert JS functions passed to `Function`/`Consumer`/`Runnable`/`Supplier`/
-   `Predicate`/`Callable` parameters into handles (covers `lib-task` `executeFunction`,
+   mappings convert JS functions passed to `Function`/`UnaryOperator`/`BiFunction`/
+   `BinaryOperator`/`Consumer`/`BiConsumer`/`Runnable`/`Supplier`/`Callable`/`Predicate`/
+   `BiPredicate`/`Comparator` parameters into handles (covers `lib-task` `executeFunction`,
    `lib-event` listeners and `lib-context` `run` with no lib changes), and
-   `GraalObjectConverter.toFunction` returns handles. This
+   `GraalObjectConverter.toFunction` returns handles. That set is closed:
+   `allowAllImplementations(false)` and `allowAllClassImplementations(false)` stop
+   `HostAccess.ALL` from satisfying every *other* interface with a proxy that enters the context
+   on the calling thread — including from a plain script object, which no target-type mapping can
+   intercept, since a mapping keys on the value being executable. A bean declaring an interface
+   outside the set now fails at the call that passes the function instead of on the first
+   invocation from another thread. Host objects already implementing such an interface are
+   unaffected. This
    alone turns crashes into correct-but-serialized behavior on the current single context.
    Small, independently shippable.
 2. **Context pool behind a flag** *(started on this branch)* — `GraalScriptExecutor` now owns N

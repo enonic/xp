@@ -1,5 +1,6 @@
 package com.enonic.xp.script.graal.util;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -9,12 +10,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Value;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -189,6 +194,66 @@ class JsFunctionHandleTest
 
     @Test
     @Timeout(30)
+    void twoArgumentInterfacesBecomeHandles()
+        throws Exception
+    {
+        final PairHolder holder = new PairHolder();
+        context.eval( "js", "(function (h) {" + //
+            " h.setBiFunction(function (a, b) { return a + b; });" + //
+            " h.setBiConsumer(function (a, b) { h.log(a + b); });" + //
+            " h.setBiPredicate(function (a, b) { return a > b; });" + //
+            " h.setComparator(function (a, b) { return a - b; });" + //
+            "})" ).execute( holder );
+
+        assertEquals( 5, ( (Number) executor.submit( () -> holder.biFunction.apply( 2, 3 ) ).get() ).intValue() );
+        executor.submit( () -> holder.biConsumer.accept( 2, 3 ) ).get();
+        assertEquals( 5, ( (Number) holder.received ).intValue() );
+        assertTrue( executor.submit( () -> holder.biPredicate.test( 3, 2 ) ).get() );
+        assertEquals( -1, executor.submit( () -> holder.comparator.compare( 1, 2 ) ).get().intValue() );
+    }
+
+    @Test
+    @Timeout(30)
+    void aComparatorThatDoesNotReturnANumberIsRejected()
+    {
+        final PairHolder holder = new PairHolder();
+        context.eval( "js", "(function (h) { h.setComparator(function (a, b) { return 'nope'; }); })" ).execute( holder );
+
+        assertThrows( IllegalArgumentException.class, () -> holder.comparator.compare( 1, 2 ) );
+    }
+
+    @Test
+    @Timeout(30)
+    void anInterfaceWithoutAMappingIsRefused()
+    {
+        final ListenerHolder holder = new ListenerHolder();
+
+        // a proxy for an unmapped interface would enter the context on the calling thread, so the
+        // boundary reports the unsupported type instead of deferring the failure to first use
+        final PolyglotException e = assertThrows( PolyglotException.class, () -> context.eval( "js",
+            "(function (h) { h.setUnmapped(function (s) { return s; }); })" ).execute( holder ) );
+        assertTrue( e.getMessage().contains( "Unsupported target type" ), e.getMessage() );
+
+        // ... and a plain object gets the same answer, which no target-type mapping could give
+        final PolyglotException fromObject = assertThrows( PolyglotException.class, () -> context.eval( "js",
+            "(function (h) { h.setUnmapped({ handle: function (s) { return s; } }); })" ).execute( holder ) );
+        assertTrue( fromObject.getMessage().contains( "Unsupported target type" ), fromObject.getMessage() );
+    }
+
+    @Test
+    @Timeout(30)
+    void aHostImplementationOfAnUnmappedInterfaceStillPasses()
+    {
+        final ListenerHolder holder = new ListenerHolder();
+        final Unmapped host = value -> value;
+
+        context.eval( "js", "(function (h, impl) { h.setUnmapped(impl); })" ).execute( holder, host );
+
+        assertSame( host, holder.unmapped );
+    }
+
+    @Test
+    @Timeout(30)
     void convertsScalarResults()
         throws Exception
     {
@@ -253,15 +318,65 @@ class JsFunctionHandleTest
         }
     }
 
+    public interface Unmapped
+    {
+        Object handle( Object value );
+    }
+
     public static class ListenerHolder
     {
         volatile Consumer<Object> listener;
+
+        volatile Unmapped unmapped;
 
         volatile Object received;
 
         public void setListener( final Consumer<Object> listener )
         {
             this.listener = listener;
+        }
+
+        public void setUnmapped( final Unmapped unmapped )
+        {
+            this.unmapped = unmapped;
+        }
+
+        public void log( final Object value )
+        {
+            this.received = value;
+        }
+    }
+
+    public static class PairHolder
+    {
+        volatile BiFunction<Object, Object, Object> biFunction;
+
+        volatile BiConsumer<Object, Object> biConsumer;
+
+        volatile BiPredicate<Object, Object> biPredicate;
+
+        volatile Comparator<Object> comparator;
+
+        volatile Object received;
+
+        public void setBiFunction( final BiFunction<Object, Object, Object> biFunction )
+        {
+            this.biFunction = biFunction;
+        }
+
+        public void setBiConsumer( final BiConsumer<Object, Object> biConsumer )
+        {
+            this.biConsumer = biConsumer;
+        }
+
+        public void setBiPredicate( final BiPredicate<Object, Object> biPredicate )
+        {
+            this.biPredicate = biPredicate;
+        }
+
+        public void setComparator( final Comparator<Object> comparator )
+        {
+            this.comparator = comparator;
         }
 
         public void log( final Object value )
