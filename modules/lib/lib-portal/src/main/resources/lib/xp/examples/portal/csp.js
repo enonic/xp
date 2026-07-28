@@ -56,4 +56,4 @@ portalLib.cspReportOnly().scriptSrc(portalLib.CspSource.SELF, portalLib.CspSourc
 // at response-flush time
 // END
 
-assert.assertTrue('nonce is a non-empty string', typeof nonce === 'string' && nonce.length > 0);
+assert.assertTrue(typeof nonce === 'string' && nonce.length > 0, 'nonce is a non-empty string');

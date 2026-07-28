@@ -8,27 +8,20 @@ function processItem() {
 }
 
 // BEGIN
-// Execute function and keep taskId for polling status
-var taskId = taskLib.executeFunction({
-    description: 'Background task',
-    func() {
+// Report progress from inside a running task.
+taskLib.progress({info: 'Initializing task'});
 
-        taskLib.progress({info: 'Initializing task'});
+for (var i = 0; i < 10; i++) {
+    taskLib.progress({
+        info: 'Processing item ' + (i + 1),
+        current: i,
+        total: 10
+    });
 
-        for (var i = 0; i < 10; i++) {
-            taskLib.progress({
-                info: 'Processing item ' + (i + 1),
-                current: i,
-                total: 10
-            });
+    processItem(i);
+}
 
-            processItem(i);
-        }
-
-        taskLib.progress({info: 'Task completed'});
-    }
-});
+taskLib.progress({info: 'Task completed'});
 // END
 
-assert.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
 assert.assertEquals(10, count);

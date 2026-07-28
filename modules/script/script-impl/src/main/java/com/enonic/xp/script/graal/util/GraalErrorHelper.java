@@ -45,36 +45,27 @@ public final class GraalErrorHelper
 
     private static RuntimeException doHandleException( final RuntimeException e )
     {
-        final StackTraceElement elem = findScriptTraceElement( e );
-        if ( elem == null )
-        {
-            return e;
-        }
-
         if ( e instanceof PolyglotException )
         {
-            PolyglotException polyglotException = (PolyglotException) e;
+            final PolyglotException polyglotException = (PolyglotException) e;
             if ( polyglotException.isHostException() )
             {
                 final Throwable hostException = polyglotException.asHostException();
                 if ( hostException instanceof RuntimeException && !( hostException instanceof IllegalArgumentException ) )
                 {
+                    // an exception a bean threw reaches its Java caller as itself — callers catch
+                    // application exception types, and the engine's wrapper must not leak. This is
+                    // independent of script attribution: without a script frame the wrapper would
+                    // otherwise be returned as is
                     return (RuntimeException) hostException;
                 }
-                else
-                {
-                    return buildResourceProblemException( elem, hostException );
-                }
-            }
-            else
-            {
-                return buildResourceProblemException( elem, e );
+                final StackTraceElement hostElem = findScriptTraceElement( e );
+                return hostElem == null ? e : buildResourceProblemException( hostElem, hostException );
             }
         }
-        else
-        {
-            return buildResourceProblemException( elem, e );
-        }
+
+        final StackTraceElement elem = findScriptTraceElement( e );
+        return elem == null ? e : buildResourceProblemException( elem, e );
     }
 
     private static ResourceProblemException buildResourceProblemException( StackTraceElement elem, final Throwable e )

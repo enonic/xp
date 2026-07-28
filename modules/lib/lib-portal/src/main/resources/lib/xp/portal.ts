@@ -1326,7 +1326,9 @@ function createCsp(reportOnly: boolean): Csp {
             return instance;
         },
         merge(headerValue: string): Csp {
-            bean.merge(headerValue);
+            // engine-neutral: Nashorn would hand a missing argument to Java as the string
+            // 'undefined' and merge that as a policy
+            bean.merge(checkRequired({headerValue}, 'headerValue'));
             return instance;
         },
         directive(directive: string): string[] | null {
@@ -1341,7 +1343,7 @@ function createCsp(reportOnly: boolean): Csp {
             return instance;
         },
         resetTo(headerValue: string): Csp {
-            bean.resetTo(headerValue);
+            bean.resetTo(checkRequired({headerValue}, 'headerValue'));
             return instance;
         },
         strict(): Csp {

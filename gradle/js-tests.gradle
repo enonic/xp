@@ -36,6 +36,10 @@ def testGraalJs = tasks.register( 'testGraalJs', Test ) {
 
 check.dependsOn( testGraalJs )
 
+// CI runs `gradlew ci`, which reaches test tasks through jacocoMergedReport -> each project's
+// jacocoTestReport -> test, and never through a per-project `check`. Hanging the GraalJS run off
+// the report task is therefore what makes it execute in CI at all; `dependsOn`, not
+// `mustRunAfter`, because ordering alone never pulls a task into the graph.
 tasks.named( 'jacocoTestReport' ) {
-    mustRunAfter( testGraalJs )
+    dependsOn( testGraalJs )
 }
