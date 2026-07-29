@@ -66,6 +66,18 @@ mode. This is the long pole and the last big wall before a fully NoDB-native XP.
 
 `nodb-phase4-opensearch` off `nodb-phase3-payloads`.
 
+## Prerequisite gates
+
+Complete these compact storage-contract gates before Gate 0 turns the query wire and
+schema into larger moving targets. They deliberately do **not** pull Phase 5 operations
+or Phase 6 production hardening into Phase 4.
+
+| Gate | Deliverable | Verification (all must hold) | Est. |
+|---|---|---|---|
+| **P1** | **One protobuf source of truth.** Replace the independently maintained server/client copies of `nodb.proto` with one canonical source and generated artifacts consumed by both sides. Record the compatibility policy for this internal API (versioned rolling compatibility or explicit lockstep deployment). | Server and XP client generate/compile from the same schema; no manually synchronized proto copy remains; a build check fails on generated/schema drift; the selected compatibility policy is documented. | ~150k |
+| **P2** | **Repository-scoped version identity.** Resolve the mismatch between the SPI's repo-scoped version operations and PostgreSQL's `(repo_key, version_id)` key: version get/delete and the Phase-4 SQL history surface MUST resolve the repository and predicate on `repo_key`; do not rely on an unenforced tenant-global version-id assumption. | A test stores the same `version_id` in two repos in one tenant, then proves get/delete/history affect only the selected repo; server requests carry/resolve repo identity; grep/review finds no unscoped runtime version lookup/delete. Existing single-repo behavior remains green. | ~120k |
+| **P3** | **Forward-only migration discipline.** Freeze applied migration contents before Phase 4 adds OpenSearch/checkpoint/history schema. Add immutable ordered migrations with recorded checksums (or equivalent tamper detection) and define the pre-GA baseline/upgrade rule for Phase-3 tenants. | Fresh tenant provisioning and upgrade from a Phase-3 schema both pass; changing an already-applied migration is rejected loudly; new Phase-4 schema lands in a new migration rather than an edit to `001_init.sql`; migration-order/checksum tests are green. | ~120k |
+
 ## Gates
 
 | Gate | Deliverable | Verification (all must hold) | Est. |
@@ -77,9 +89,9 @@ mode. This is the long pole and the last big wall before a fully NoDB-native XP.
 | **D** | **Translation batch 2 — text + geo**: fulltext/ngram/stemmed/simple-query-string with weighted fields, language analyzers + ICU collation, pathMatch, geo-distance sort; **suggesters + highlighting**. | Corpus diff green under the acceptance rule (set-match for scored queries, exact for deterministic); text-family itest classes green in nodb mode incl. the 4 icuSort tests (now on a modern engine — if they PASS in nodb mode where they failed on ES 2.4, document it; they are env-sensitive). | ~800k |
 | **E** | **Translation batch 3 — aggregations**: terms/stats/min/max/value-count/numeric-range/date-range/histogram/date-histogram/geo-distance + sub-aggregations. | Bucket-level corpus diff green; aggregation itest classes green in nodb mode. | ~600k |
 | **F** | **The switch + full-suite gate**: nodb mode drops embedded ES entirely (fixture + runtime — no ES node starts in nodb mode); ALL itest classes run in nodb mode. | **Full itest-core + itest-core-content green in nodb mode** (the phase gate; icuSort disposition per Gate D). Default mode: full suites still byte-identical on embedded ES. Corpus fully green under the acceptance rules. | ~700k |
-| **G** | **Boot smoke + docs + push**: full stack (PG + MinIO + OpenSearch) boot with `backend=nodb`; live editing flow (create → query-your-write via refresh → publish → aggregate); restart persistence incl. index intact + rebuild drill (drop index, reindex from outbox/docs, verify identical); RUNNING.md updated (OpenSearch container + env); DESIGN.md §9/§10 updates; push `nodb-phase4-opensearch`. | Smoke green; rebuild drill proves the index is disposable; growth counts recorded; docs current. | ~400k |
+| **G** | **Boot smoke + performance baseline + docs + push**: full stack (PG + MinIO + OpenSearch) boot with `backend=nodb`; live editing flow (create → query-your-write via refresh → publish → aggregate); restart persistence incl. index intact + rebuild drill (drop index, reindex from outbox/docs, verify identical); make the boot/restart smoke a repeatable CI job; record a cross-host concurrent baseline for the complete PostgreSQL + OpenSearch path; RUNNING.md updated (OpenSearch container + env); DESIGN.md §9/§10 updates; push `nodb-phase4-opensearch`. | CI smoke green; rebuild drill proves the index is disposable; cross-host p50/p95 throughput and latency recorded as a baseline (not yet an SLO); growth counts recorded; docs current. | ~450k |
 
-Total ≈ **5.0M** output tokens (within the long-standing 5–8M window; G's rebuild drill
+Total ≈ **5.4M** output tokens (within the long-standing 5–8M window; G's rebuild drill
 and E's bucket diffs are where surprises would push it up).
 
 ## Key risks carried into the gates
@@ -100,6 +112,22 @@ and E's bucket diffs are where surprises would push it up).
   (Gate G's rebuild drill replays shipped docs, which is index-disposable but not yet
   XP-independent).
 
+## Explicit later-phase gates
+
+The prerequisite gates above close contract debt that Phase 4 would otherwise amplify.
+The following remain intentionally deferred:
+
+- Binary and payload garbage collection stays in **Phase 5**.
+- Multi-XP cache coherence, RPC deadlines/cancellation, upload concurrency and temporary-
+  disk quotas, real-AWS STS isolation, and shared-cell load/fairness stay in **Phase 6**.
+  Multi-XP coherence and the AWS STS isolation test are mandatory before a horizontally
+  split or production pilot, even though they do not block the Phase-4 search port.
+- The independent payload parser/validator lands with the first server-derived consumer
+  (index-document derivation or Phase-8 `_references`), protected by a golden payload
+  corpus.
+- Cross-host end-to-end performance baselines land in Phase-4 Gate G, once the complete
+  PostgreSQL + OpenSearch request path exists.
+
 ## Execution guidance
 
 Same regime as Phases 0–3: agents build, orchestrator verifies (forced reruns, corpus
@@ -112,6 +140,7 @@ the team before Gate B locks the format.
 
 ## Definition of done
 
-nodb mode runs zero embedded ES; full itest suites green in nodb mode; corpus green
-under the documented acceptance rules; refresh contract proven; index rebuild drill
-green; default mode byte-identical; RUNNING.md + DESIGN.md updated; branch pushed.
+P1–P3 are green; nodb mode runs zero embedded ES; full itest suites green in nodb mode;
+corpus green under the documented acceptance rules; refresh contract proven; index
+rebuild drill green; default mode byte-identical; RUNNING.md + DESIGN.md updated; branch
+pushed.
