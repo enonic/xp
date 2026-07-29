@@ -457,6 +457,10 @@ the moment the GraalJS suites actually ran (phase 0). They belong in the migrati
    `jacocoTestReport` → `test`, and never a per-project `check`, so a `check`-only wiring runs
    locally and silently does nothing in CI. GraalJS regressions now fail CI instead of surfacing
    in production; every fix below lands with engine-parity coverage by construction.
+   `com.enonic.xp:testing` also carries the GraalJS language implementation at runtime scope, so an
+   application or library outside this build inherits it: script-impl publishes only the polyglot
+   API, and without that every consumer would have to name a GraalVM version of its own before it
+   could run its tests on both engines.
 1. **Boundary audit & handle type** *(started on this branch)* — introduce `JsFunctionHandle`
    and route *all* JS-function escapes through it. Implemented so far: `HostAccess` target-type
    mappings convert JS functions passed to `Function`/`UnaryOperator`/`BiFunction`/

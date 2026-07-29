@@ -7,8 +7,10 @@
  */
 
 dependencies {
-    // The GraalJS language implementation must be on the test runtime classpath;
-    // script-impl itself only carries the polyglot API.
+    // The GraalJS language implementation must be on the test runtime classpath; script-impl itself
+    // only carries the polyglot API. Modules that depend on tools:testing now inherit it from there,
+    // which is what lets an application or library outside this build run its tests on both engines
+    // without naming a GraalVM version; script-impl and portal-impl do not, so it stays declared here.
     testRuntimeOnly libs.graalvm.js
 }
 
