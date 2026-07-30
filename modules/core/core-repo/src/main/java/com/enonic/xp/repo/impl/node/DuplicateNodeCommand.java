@@ -1,8 +1,10 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -20,13 +22,14 @@ import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repository.RepositoryId;
@@ -77,14 +80,7 @@ public final class DuplicateNodeCommand
 
         if ( params.getIncludeChildren() )
         {
-            final Map<NodePath, List<NodeBranchEntry>> childrenByParent = FindNodeBranchEntriesByParentCommand.create( this )
-                .parentPath( existingNode.path() )
-                .build()
-                .execute()
-                .stream()
-                .collect( Collectors.groupingBy( entry -> entry.getNodePath().getParentPath() ) );
-
-            storeChildNodes( existingNode, duplicatedNode, builder, childrenByParent, createdChildren );
+            storeChildNodes( existingNode, duplicatedNode, builder, createdChildren );
         }
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
@@ -181,22 +177,37 @@ public final class DuplicateNodeCommand
     }
 
     private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder,
-                                  final Map<NodePath, List<NodeBranchEntry>> childrenByParent, final List<Node> createdChildren )
+                                  final List<Node> createdChildren )
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        final NodeIds childrenIds = childrenByParent.getOrDefault( originalParent.path(), List.of() )
+        final NodeBranchEntries subTree =
+            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().execute();
+
+        final NodeIds subTreeIds = subTree.stream().map( NodeBranchEntry::getNodeId ).collect( NodeIds.collector() );
+
+        // nodes not readable by the caller are not returned, and neither they nor their children are duplicated
+        final Map<NodeId, Node> originalNodes = this.nodeStorageService.get( subTreeIds, internalContext )
             .stream()
-            .map( NodeBranchEntry::getNodeId )
-            .collect( NodeIds.collector() );
+            .collect( Collectors.toMap( Node::id, Function.identity() ) );
 
-        final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
+        // entries are ordered by path, so a node is always duplicated before any of its children
+        final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
+        duplicatedParents.put( originalParent.path(), new DuplicatedParent( originalParent, newParent ) );
 
-        for ( final Node node : children )
+        for ( final NodeBranchEntry entry : subTree )
         {
-            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( newParent.path() );
+            final Node node = originalNodes.get( entry.getNodeId() );
+            final DuplicatedParent parent = duplicatedParents.get( entry.getNodePath().getParentPath() );
 
-            decideInsertStrategy( originalParent, node, paramsBuilder );
+            if ( node == null || parent == null )
+            {
+                continue;
+            }
+
+            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( parent.copy().path() );
+
+            decideInsertStrategy( parent.original(), node, paramsBuilder );
 
             attachBinaries( node, paramsBuilder );
 
@@ -206,8 +217,14 @@ public final class DuplicateNodeCommand
 
             final CreateNodeParams processedParams = executeProcessors( originalParams );
 
-            final Node newChildNode =
-                CreateNodeCommand.create( this ).params( processedParams ).binaryService( this.binaryService ).build().execute();
+            // the parent was just created, so it is both known and known to be empty
+            final Node newChildNode = CreateNodeCommand.create( this )
+                .params( processedParams )
+                .binaryService( this.binaryService )
+                .knownParentNode( parent.copy() )
+                .skipVerification( true )
+                .build()
+                .execute();
 
             builder.add( node.id(), newChildNode.id() );
 
@@ -215,8 +232,12 @@ public final class DuplicateNodeCommand
             createdChildren.add( newChildNode );
             listener.nodesDuplicated( 1 );
 
-            storeChildNodes( node, newChildNode, builder, childrenByParent, createdChildren );
+            duplicatedParents.put( node.path(), new DuplicatedParent( node, newChildNode ) );
         }
+    }
+
+    private record DuplicatedParent(Node original, Node copy)
+    {
     }
 
     private void decideInsertStrategy( final Node originalParent, final Node node, final CreateNodeParams.Builder paramsBuilder )

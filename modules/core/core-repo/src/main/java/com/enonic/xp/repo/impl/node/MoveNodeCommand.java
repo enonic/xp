@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -21,6 +20,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
@@ -93,13 +93,7 @@ public class MoveNodeCommand
             .authInfo( AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build() )
             .build();
 
-        final Map<NodePath, List<NodeBranchEntry>> childrenByParent = adminContext.callWith(
-            () -> FindNodeBranchEntriesByParentCommand.create( this ).parentPath( existingNode.path() ).build()
-                .execute()
-                .stream()
-                .collect( Collectors.groupingBy( entry -> entry.getNodePath().getParentPath() ) ) );
-
-        adminContext.callWith( () -> doMoveNode( newParentPath, newNodeName, params.getNodeId(), childrenByParent ) );
+        adminContext.runWith( () -> doMoveNodeTree( existingNode, newParentPath, newNodeName ) );
 
         refresh( params.getRefresh() );
 
@@ -137,8 +131,30 @@ public class MoveNodeCommand
         return existingNode.parentPath().equals( newParentPath ) && existingNode.name().equals( newNodeName );
     }
 
-    private Node doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id,
-                             final Map<NodePath, List<NodeBranchEntry>> childrenByParent )
+    private void doMoveNodeTree( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
+    {
+        final NodeBranchEntries subTree =
+            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( existingNode.path() ).build().execute();
+
+        doMoveNode( newParentPath, newNodeName, params.getNodeId() );
+
+        // entries are ordered by path, so a node is always moved before any of its children
+        final Map<NodePath, NodePath> newPaths = new HashMap<>();
+        newPaths.put( existingNode.path(), new NodePath( newParentPath, newNodeName ) );
+
+        for ( final NodeBranchEntry entry : subTree )
+        {
+            final NodePath newChildParentPath = requireNonNull( newPaths.get( entry.getNodePath().getParentPath() ),
+                                                                () -> "Parent of [" + entry.getNodePath() + "] was not moved yet" );
+            final NodeName childName = NodeName.from( entry.getNodePath().getName() );
+
+            newPaths.put( entry.getNodePath(), new NodePath( newChildParentPath, childName ) );
+
+            doMoveNode( newChildParentPath, childName, entry.getNodeId() );
+        }
+    }
+
+    private void doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
         final NodeVersionData persistedData = this.nodeStorageService.getNodeVersionData( id, internalContext );
@@ -180,13 +196,6 @@ public class MoveNodeCommand
         this.result.addMovedNode( MoveNodeResult.MovedNode.create().previousPath( persistedNode.path() ).node( movedNode ).build() );
 
         moveListener.nodesMoved( 1 );
-
-        for ( final NodeBranchEntry childEntry : childrenByParent.getOrDefault( persistedNode.path(), List.of() ) )
-        {
-            doMoveNode( movedNode.path(), NodeName.from( childEntry.getNodePath().getName() ), childEntry.getNodeId(), childrenByParent );
-        }
-
-        return movedNode;
     }
 
     private void verifyNoExistingAtNewPath( final NodePath newParentPath, final NodeName newNodeName )

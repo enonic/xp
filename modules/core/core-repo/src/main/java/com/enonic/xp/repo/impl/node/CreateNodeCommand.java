@@ -39,12 +39,15 @@ public final class CreateNodeCommand
 
     private final boolean skipVerification;
 
+    private final Node knownParentNode;
+
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
         this.binaryService = builder.binaryService;
         this.skipVerification = builder.skipVerification;
+        this.knownParentNode = builder.knownParentNode;
     }
 
     public static Builder create()
@@ -63,7 +66,7 @@ public final class CreateNodeCommand
         {
             NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
         }
-        final Node parentNode = NodeHelper.runAsAdmin( this::getParentNode );
+        final Node parentNode = knownParentNode != null ? knownParentNode : NodeHelper.runAsAdmin( this::getParentNode );
 
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
 
@@ -198,6 +201,8 @@ public final class CreateNodeCommand
 
         private boolean skipVerification;
 
+        private Node knownParentNode;
+
         private Builder()
         {
             super();
@@ -223,6 +228,15 @@ public final class CreateNodeCommand
         public Builder skipVerification( boolean skipVerification )
         {
             this.skipVerification = skipVerification;
+            return this;
+        }
+
+        /**
+         * Parent node already known by the caller, so that it does not have to be looked up again.
+         */
+        public Builder knownParentNode( final Node knownParentNode )
+        {
+            this.knownParentNode = knownParentNode;
             return this;
         }
 
