@@ -57,7 +57,8 @@ class LocalTaskManagerImplTest
 
         cleanupScheduler = new TaskManagerCleanupSchedulerMock();
 
-        taskMan = new LocalTaskManagerImpl( Runnable::run, cleanupScheduler, event -> this.eventsPublished.add( event ) );
+        taskMan = new LocalTaskManagerImpl( ( applicationKey, command ) -> command.run(), cleanupScheduler,
+                                            event -> this.eventsPublished.add( event ) );
         taskMan.activate();
 
         this.eventsPublished = new ArrayList<>();

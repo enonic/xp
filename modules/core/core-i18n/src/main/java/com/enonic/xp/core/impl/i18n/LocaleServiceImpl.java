@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.i18n;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -10,8 +11,6 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringJoiner;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NullMarked;
@@ -24,22 +23,21 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationListener;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.ResourcesProcessor;
 
 import static java.util.Objects.requireNonNullElse;
 
 @Component(immediate = true)
 @NullMarked
 public final class LocaleServiceImpl
-    implements LocaleService, ApplicationListener
+    implements LocaleService
 {
     private static final Logger LOG = LoggerFactory.getLogger( LocaleServiceImpl.class );
 
@@ -55,10 +53,6 @@ public final class LocaleServiceImpl
 
     private final ResourceService resourceService;
 
-    private final ConcurrentMap<String, MessageBundle> bundleCache = new ConcurrentHashMap<>();
-
-    private final ConcurrentMap<String, Set<Locale>> appLocalesCache = new ConcurrentHashMap<>();
-
     @Activate
     public LocaleServiceImpl( @Reference final ResourceService resourceService )
     {
@@ -71,17 +65,22 @@ public final class LocaleServiceImpl
         final String[] baseNames = bundleNames.length == 0 ? DEFAULT_BASE_NAMES : bundleNames;
         final Locale nonNullLocale = requireNonNullElse( locale, Locale.ROOT );
 
-        final String key = bundleCacheKey( applicationKey, nonNullLocale, baseNames );
-        return this.bundleCache.computeIfAbsent( key, k -> createMessageBundle( applicationKey, nonNullLocale, baseNames ) );
+        final ResourcesProcessor<String, MessageBundle> processor =
+            new ResourcesProcessor.Builder<String, MessageBundle>().key( bundleCacheKey( applicationKey, nonNullLocale, baseNames ) )
+                .segment( "i18n" )
+                .keysTranslator( k -> candidateKeys( applicationKey, nonNullLocale, baseNames ) )
+                .processor( resources -> createMessageBundle( resources, nonNullLocale ) )
+                .build();
+
+        final MessageBundle bundle = resourceService.processResources( processor );
+        return bundle != null ? bundle : new MessageBundleImpl( new Properties(), nonNullLocale );
     }
 
     @Override
     public Set<Locale> getLocales( final ApplicationKey applicationKey, final String... bundleNames )
     {
         final String[] baseNames = bundleNames.length == 0 ? DEFAULT_BASE_NAMES : bundleNames;
-
-        final String key = appBundlesCacheKey( applicationKey, baseNames );
-        return this.appLocalesCache.computeIfAbsent( key, k -> getAppLocales( applicationKey, baseNames ) );
+        return getAppLocales( applicationKey, baseNames );
     }
 
     @Override
@@ -162,84 +161,49 @@ public final class LocaleServiceImpl
         return key.toString();
     }
 
-    private String appBundlesCacheKey( final ApplicationKey applicationKey, final String... baseNames )
+    private List<ResourceKey> candidateKeys( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
     {
-        StringJoiner key = new StringJoiner( KEY_SEPARATOR ).add( applicationKey.toString() );
-        for ( String bundleName : baseNames )
-        {
-            key.add( bundleName );
-        }
-        return key.toString();
-    }
+        final ResourceBundle.Control control = ResourceBundle.Control.getControl( ResourceBundle.Control.FORMAT_PROPERTIES );
 
-    private MessageBundle createMessageBundle( final ApplicationKey applicationKey, final Locale locale, final String... bundleNames )
-    {
-        LOG.debug( "Create message bundle for {} {}", applicationKey, locale );
-        final Properties props = new Properties();
+        final List<ResourceKey> keys = new ArrayList<>();
         for ( final String baseName : bundleNames )
         {
-            props.putAll( loadBundles( applicationKey, locale, baseName ) );
-        }
+            final List<Locale> candidateLocales = control.getCandidateLocales( baseName, locale );
+            Collections.reverse( candidateLocales );
 
+            for ( final Locale candidateLocale : candidateLocales )
+            {
+                keys.add( ResourceKey.from( applicationKey, control.toBundleName( baseName, candidateLocale ) + ".properties" ) );
+            }
+        }
+        return keys;
+    }
+
+    private MessageBundle createMessageBundle( final List<Resource> resources, final Locale locale )
+    {
+        LOG.debug( "Create message bundle for {}", locale );
+        final Properties props = new Properties();
+        for ( final Resource resource : resources )
+        {
+            if ( resource.exists() )
+            {
+                props.putAll( loadProperties( resource ) );
+            }
+        }
         return new MessageBundleImpl( props, locale );
     }
 
-    private Properties loadBundles( final ApplicationKey applicationKey, final Locale locale, final String baseName )
+    private Properties loadProperties( final Resource resource )
     {
-        final Properties props = new Properties();
-
-        final ResourceBundle.Control control = ResourceBundle.Control.getControl( ResourceBundle.Control.FORMAT_PROPERTIES );
-        final List<Locale> candidateLocales = control.getCandidateLocales( baseName, locale );
-        Collections.reverse( candidateLocales );
-
-        for ( Locale candidateLocale : candidateLocales )
-        {
-            props.putAll( loadBundle( applicationKey, control.toBundleName( baseName, candidateLocale ) ) );
-        }
-
-        return props;
-    }
-
-    private Properties loadBundle( final ApplicationKey applicationKey, final String bundleName )
-    {
-        final ResourceKey resourceKey = ResourceKey.from( applicationKey, bundleName + ".properties" );
-        final Resource resource = resourceService.getResource( resourceKey );
-
         final Properties properties = new Properties();
-        if ( resource.exists() )
+        try (Reader in = resource.openReader())
         {
-            try (Reader in = resource.openReader())
-            {
-                properties.load( in );
-            }
-            catch ( final IOException e )
-            {
-                throw new LocalizationException( "Not able to load resource for: " + applicationKey, e );
-            }
+            properties.load( in );
         }
-
+        catch ( final IOException e )
+        {
+            throw new LocalizationException( "Not able to load resource for: " + resource.getKey(), e );
+        }
         return properties;
-    }
-
-    @Override
-    public void activated( final Application app )
-    {
-        // Locale and message bundle cache can get populated even when application was uninstalled.
-        // We clear it as soon as application is started, so it can be repopulated.
-        clearCache( app.getKey() );
-    }
-
-    @Override
-    public void deactivated( final Application app )
-    {
-        clearCache( app.getKey() );
-    }
-
-    private void clearCache( ApplicationKey appKey )
-    {
-        LOG.debug( "Cleanup i18n caches for {}", appKey );
-        final String cacheKeyPrefix = appKey + KEY_SEPARATOR;
-        bundleCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
-        appLocalesCache.keySet().removeIf( ( k ) -> k.startsWith( cacheKeyPrefix ) );
     }
 }

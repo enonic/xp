@@ -3,16 +3,18 @@ package com.enonic.xp.core.impl.app.resource;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.osgi.framework.Bundle;
 
-import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
@@ -37,6 +39,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
+import com.enonic.xp.resource.ResourcesProcessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,8 +83,16 @@ class ResourceServiceImplTest
 
         when( applicationFactoryService.findActiveApplication( appKey ) ).thenReturn( Optional.of( app ) );
         when( applicationFactoryService.findResolver( appKey, null ) ).thenReturn( Optional.of( app.getUrlResolver() ) );
+        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( bundle ) );
 
         resourceService = new ResourceServiceImpl( applicationFactoryService );
+    }
+
+    private Bundle newBundle( final long bundleId )
+    {
+        final Bundle newBundle = mock( Bundle.class );
+        when( newBundle.getBundleId() ).thenReturn( bundleId );
+        return newBundle;
     }
 
     private void newFile( final String name )
@@ -133,7 +144,9 @@ class ResourceServiceImplTest
         final String value2 = processResource( "segment1", "a.txt", "2" );
         assertEquals( value1, value2 );
 
-        this.resourceService.invalidate( ApplicationKey.from( "myapp" ), ApplicationInvalidationLevel.FULL );
+        // a new bundle incarnation of the application invalidates cached entries
+        final Bundle newBundle = newBundle( 42 );
+        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
 
         final String value3 = processResource( "segment1", "a.txt", "3" );
         assertEquals( "myapp:/a.txt->3", value3 );
@@ -237,6 +250,75 @@ class ResourceServiceImplTest
     {
         final String value = processResource( "segment1", "a.txt", "1" );
         assertNull( value );
+    }
+
+    private String processResources( final String segment, final String key, final List<String> names, final String suffix )
+    {
+        final ResourcesProcessor<String, String> processor = new ResourcesProcessor.Builder<String, String>().key( key )
+            .segment( segment )
+            .keysTranslator( k -> names.stream().map( name -> ResourceKey.from( "myapp:/" + name ) ).toList() )
+            .processor( resources -> resources.stream()
+                .filter( Resource::exists )
+                .map( res -> res.getKey().toString() )
+                .collect( Collectors.joining( ",", "", "->" + suffix ) ) )
+            .build();
+
+        return this.resourceService.processResources( processor );
+    }
+
+    @Test
+    void testProcessResources()
+        throws Exception
+    {
+        newFile( "a.txt" );
+
+        final List<String> names = List.of( "a.txt", "b.txt" );
+
+        final String value1 = processResources( "segment1", "bundle", names, "1" );
+        assertEquals( "myapp:/a.txt->1", value1 );
+
+        final String value2 = processResources( "segment1", "bundle", names, "2" );
+        assertEquals( value1, value2 );
+
+        // a resource appearing invalidates the cached value
+        newFile( "b.txt" );
+
+        final String value3 = processResources( "segment1", "bundle", names, "3" );
+        assertEquals( "myapp:/a.txt,myapp:/b.txt->3", value3 );
+
+        final String value4 = processResources( "segment1", "bundle", names, "4" );
+        assertEquals( value3, value4 );
+
+        // a resource modification invalidates the cached value
+        Files.setLastModifiedTime( appDir.resolve( "b.txt" ), FileTime.fromMillis( System.currentTimeMillis() + 10_000 ) );
+
+        final String value5 = processResources( "segment1", "bundle", names, "5" );
+        assertEquals( "myapp:/a.txt,myapp:/b.txt->5", value5 );
+
+        // a new bundle incarnation of the application invalidates the cached value
+        final Bundle newBundle = newBundle( 42 );
+        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
+
+        final String value6 = processResources( "segment1", "bundle", names, "6" );
+        assertEquals( "myapp:/a.txt,myapp:/b.txt->6", value6 );
+    }
+
+    @Test
+    void testProcessResources_allMissingCachedUntilResourceAppears()
+        throws Exception
+    {
+        final List<String> names = List.of( "a.txt" );
+
+        final String value1 = processResources( "segment1", "bundle", names, "1" );
+        assertEquals( "->1", value1 );
+
+        final String value2 = processResources( "segment1", "bundle", names, "2" );
+        assertEquals( value1, value2 );
+
+        newFile( "a.txt" );
+
+        final String value3 = processResources( "segment1", "bundle", names, "3" );
+        assertEquals( "myapp:/a.txt->3", value3 );
     }
 
     private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data )
