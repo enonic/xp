@@ -2,9 +2,11 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -123,51 +125,77 @@ public class ApplyNodePermissionsCommand
 
     private void doApply( List<Map<Branch, NodeVersion>> versionsToApply, final AccessControlList permissions )
     {
-        for ( Branch branch : branches )
+        // permissions are applied equally on all branches, authorized on the reference (context) branch, which goes first
+        final Branch referenceBranch = ContextAccessor.current().getBranch();
+
+        final List<Branch> orderedBranches = new ArrayList<>();
+        orderedBranches.add( referenceBranch );
+        branches.stream().filter( branch -> !branch.equals( referenceBranch ) ).forEach( orderedBranches::add );
+
+        final Set<NodeId> deniedNodes = new HashSet<>();
+
+        for ( Branch branch : orderedBranches )
         {
             versionsToApply.stream()
                 .map( versionMap -> versionMap.get( branch ) )
                 .filter( Objects::nonNull )
-                .forEach( node -> doApplyOnNode( node, branch, permissions ) );
+                .forEach( node -> doApplyOnNode( node, branch, branch.equals( referenceBranch ), deniedNodes, permissions ) );
         }
     }
 
-    private void doApplyOnNode( final NodeVersion nodeVersion, final Branch branch, final AccessControlList permissions )
+    private void doApplyOnNode( final NodeVersion nodeVersion, final Branch branch, final boolean isReferenceBranch,
+                                final Set<NodeId> deniedNodes, final AccessControlList permissions )
     {
-        final InternalContext targetContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
+        if ( isReferenceBranch && !allowedOnReferenceBranch( nodeVersion, branch ) )
+        {
+            deniedNodes.add( nodeVersion.getNodeId() );
+        }
 
-        final Node originalNode = nodeStorageService.get( nodeVersion.getNodeId(), targetContext );
-
-        if ( originalNode == null || !NodePermissionsResolver.hasPermission( targetContext.getPrincipalKeys(), Permission.WRITE_PERMISSIONS,
-                                                                             originalNode.getPermissions() ) )
+        if ( deniedNodes.contains( nodeVersion.getNodeId() ) )
         {
             listener.notEnoughRights( 1 );
             results.addResult( nodeVersion.getNodeId(), branch, null, null );
+            return;
         }
 
         NodeHelper.runAsAdmin( () -> {
+            final InternalContext adminContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
+
             final NodePatchCache.Entry<AccessControlList> cachedVersionData = appliedVersions.get( nodeVersion.getNodeVersionId() );
 
             if ( cachedVersionData != null )
             {
-                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedVersionData.version() ), targetContext );
+                this.nodeStorageService.push( NodeBranchEntry.fromNodeVersion( cachedVersionData.version() ), adminContext );
 
                 results.addResult( nodeVersion.getNodeId(), branch, cachedVersionData.version(), cachedVersionData.data() );
             }
             else
             {
+                final Node originalNode = nodeStorageService.get( nodeVersion.getNodeId(), adminContext );
+
                 final Node editedNode = Node.create( originalNode ).timestamp( Millis.now() ).permissions( permissions ).build();
                 final Attributes resolvedAttributes =
                     resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, editedNode, branch,
                                               nodeVersion.getAttributes() );
                 final NodeVersionData result =
-                    this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, resolvedAttributes ), targetContext );
+                    this.nodeStorageService.store( StoreNodeParams.newVersion( editedNode, resolvedAttributes ), adminContext );
                 appliedVersions.put( nodeVersion.getNodeVersionId(), branch, result.version(), result.node().getPermissions() );
 
                 listener.permissionsApplied( 1 );
                 results.addResult( nodeVersion.getNodeId(), branch, result.version(), result.node().getPermissions() );
             }
         } );
+    }
+
+    private boolean allowedOnReferenceBranch( final NodeVersion nodeVersion, final Branch referenceBranch )
+    {
+        final InternalContext referenceContext = InternalContext.create( ContextAccessor.current() ).branch( referenceBranch ).build();
+
+        final Node referenceNode = nodeStorageService.get( nodeVersion.getNodeId(), referenceContext );
+
+        return referenceNode != null &&
+            NodePermissionsResolver.hasPermission( referenceContext.getPrincipalKeys(), Permission.WRITE_PERMISSIONS,
+                                                   referenceNode.getPermissions() );
     }
 
     private Map<Branch, NodeVersion> getActiveNodes( NodeId nodeId )
