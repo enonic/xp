@@ -30,8 +30,6 @@ public class AdminExtensionApiHandler
 {
     private static final Pattern EXTENSION_API_PATTERN = Pattern.compile( "^/admin:extension/(?<descriptor>[^/]+:[^/]+)" );
 
-    private static final String GENERIC_EXTENSION_INTERFACE = "generic";
-
     private final AdminExtensionDescriptorService descriptorService;
 
     private final ControllerScriptFactory controllerScriptFactory;
@@ -86,7 +84,7 @@ public class AdminExtensionApiHandler
 
     private void verifyMounts( final AdminExtensionDescriptor descriptor, final WebRequest webRequest )
     {
-        if ( descriptor.hasInterface( GENERIC_EXTENSION_INTERFACE ) )
+        if ( descriptor.hasInterface( AdminExtensionDescriptor.GENERIC_INTERFACE ) )
         {
             return;
         }

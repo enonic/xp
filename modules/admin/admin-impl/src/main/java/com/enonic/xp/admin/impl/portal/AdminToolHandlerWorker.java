@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.impl.portal;
 
+import com.enonic.xp.admin.impl.portal.extension.AdminExtensionResponseProcessorExecutor;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.context.ContextAccessor;
@@ -8,6 +9,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.WebException;
@@ -19,6 +21,10 @@ final class AdminToolHandlerWorker
     ControllerScriptFactory controllerScriptFactory;
 
     AdminToolDescriptorService adminToolDescriptorService;
+
+    AdminExtensionResponseProcessorExecutor extensionResponseProcessorExecutor;
+
+    PostProcessor postProcessor;
 
     DescriptorKey descriptorKey;
 
@@ -49,6 +55,15 @@ final class AdminToolHandlerWorker
         final ResourceKey script = ResourceKey.from( descriptorKey.getApplicationKey(),
                                                      "admin/tools/" + descriptorKey.getName() + "/" + descriptorKey.getName() + ".js" );
         final ControllerScript controllerScript = this.controllerScriptFactory.fromScript( script );
-        return controllerScript.execute( this.request );
+        PortalResponse response = controllerScript.execute( this.request );
+
+        //Lets extensions mounted to the admin tool process the response (adjust CSP, add page contributions)
+        response = extensionResponseProcessorExecutor.execute( adminToolDescriptor, this.request, response );
+
+        if ( response.hasContributions() )
+        {
+            response = postProcessor.processResponseContributions( this.request, response );
+        }
+        return response;
     }
 }

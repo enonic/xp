@@ -16,6 +16,8 @@ import com.enonic.xp.util.GenericValue;
 public final class AdminExtensionDescriptor
     extends Descriptor
 {
+    public static final String GENERIC_INTERFACE = "generic";
+
     private final String title;
 
     private final String titleI18nKey;

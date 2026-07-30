@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.admin.impl.portal.extension.AdminExtensionResponseProcessorExecutor;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -13,6 +14,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.postprocess.HtmlTag;
+import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.trace.TestTrace;
@@ -50,22 +53,35 @@ class AdminToolHandlerTest
 
     private AdminToolDescriptorService adminToolDescriptorService;
 
+    private ControllerScript controllerScript;
+
+    private AdminExtensionResponseProcessorExecutor extensionResponseProcessorExecutor;
+
+    private PostProcessor postProcessor;
+
     @BeforeEach
     public final void setup()
     {
 
         this.adminToolDescriptorService = mock( AdminToolDescriptorService.class );
-        ControllerScript controllerScript = mock( ControllerScript.class );
+        this.controllerScript = mock( ControllerScript.class );
 
         this.portalResponse = PortalResponse.create().build();
-        when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( this.portalResponse );
+        when( this.controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn( this.portalResponse );
 
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
-        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( controllerScript );
+        when( controllerScriptFactory.fromScript( any( ResourceKey.class ) ) ).thenReturn( this.controllerScript );
+
+        this.extensionResponseProcessorExecutor = mock( AdminExtensionResponseProcessorExecutor.class );
+        when( this.extensionResponseProcessorExecutor.execute( any(), any(), any() ) ).thenAnswer( inv -> inv.getArgument( 2 ) );
+
+        this.postProcessor = mock( PostProcessor.class );
 
         this.handler = new AdminToolHandler();
         this.handler.setAdminToolDescriptorService( this.adminToolDescriptorService );
         this.handler.setControllerScriptFactory( controllerScriptFactory );
+        this.handler.setExtensionResponseProcessorExecutor( this.extensionResponseProcessorExecutor );
+        this.handler.setPostProcessor( this.postProcessor );
 
         this.rawRequest = mock( HttpServletRequest.class );
         when( this.rawRequest.isUserInRole( Mockito.anyString() ) ).thenReturn( true );
@@ -157,6 +173,26 @@ class AdminToolHandlerTest
         assertEquals( 200L, trace.get( "status" ) );
         assertInstanceOf( String.class, trace.get( "type" ) );
         assertInstanceOf( Long.class, trace.get( "size" ) );
+    }
+
+    @Test
+    void testExtensionProcessorResponseWithContributionsIsPostProcessed()
+        throws Exception
+    {
+        this.mockDescriptor( DescriptorKey.from( "app:tool" ), true );
+        this.portalRequest.setBaseUri( "/admin/webapp/tool" );
+        this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
+
+        final PortalResponse withContributions =
+            PortalResponse.create().contribution( HtmlTag.HEAD_END, "<script src=\"widget.js\"></script>" ).build();
+        when( this.extensionResponseProcessorExecutor.execute( any(), any(), any() ) ).thenReturn( withContributions );
+
+        final PortalResponse postProcessed = PortalResponse.create().body( "post-processed" ).build();
+        when( this.postProcessor.processResponseContributions( any( PortalRequest.class ), any( PortalResponse.class ) ) ).thenReturn(
+            postProcessed );
+
+        final WebResponse response = this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
+        assertEquals( postProcessed, response );
     }
 
     @Test
