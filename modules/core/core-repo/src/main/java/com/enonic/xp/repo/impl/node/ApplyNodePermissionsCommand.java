@@ -18,17 +18,12 @@ import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.PrincipalKey;
@@ -111,32 +106,19 @@ public class ApplyNodePermissionsCommand
 
         if ( ApplyPermissionsScope.SUBTREE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
         {
-            refresh( RefreshMode.SEARCH );
-            result.addAll( findChildrenVersionsToApply(
-                this.nodeStorageService.get( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) ).path() ) );
+            final NodePath parentPath =
+                this.nodeStorageService.get( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) ).path();
+
+            FindNodeBranchEntriesByParentCommand.create( this )
+                .parentPath( parentPath )
+                .requiredPermission( Permission.READ )
+                .build()
+                .execute()
+                .stream()
+                .map( NodeBranchEntry::getNodeId )
+                .map( this::getActiveNodes )
+                .forEach( result::add );
         }
-
-        return result;
-    }
-
-    private List<Map<Branch, NodeVersion>> findChildrenVersionsToApply( final NodePath node )
-    {
-        final List<Map<Branch, NodeVersion>> result = new ArrayList<>();
-
-        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-
-        final SearchResult queryResult = this.nodeSearchService.query(
-            NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).withPath( true ).parent( node ).build(),
-            SingleRepoSearchSource.from( internalContext ) );
-
-        queryResult.getIds().stream().map( NodeId::from ).map( this::getActiveNodes ).forEach( result::add );
-
-        queryResult.getHits()
-            .stream()
-            .map(
-                hit -> hit.getReturnValues().getOptional( NodeIndexPath.PATH ).map( Object::toString ).map( NodePath::new ).orElse( null ) )
-            .filter( Objects::nonNull )
-            .forEach( path -> result.addAll( findChildrenVersionsToApply( path ) ) );
 
         return result;
     }
