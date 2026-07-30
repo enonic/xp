@@ -81,7 +81,7 @@ class FindNodeIdsByParentCommandTest
 
         moveNode( node1_1.id(), node2.path() );
 
-        nodeService.refresh( RefreshMode.ALL );
+        nodeService.refresh( RefreshMode.SEARCH );
 
         final FindNodesByParentResult children = FindNodeIdsByParentCommand.create()
             .parentPath( node.path() )

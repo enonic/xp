@@ -75,8 +75,10 @@ public class PushNodesCommand
         {
             if ( comparison.getCompareStatus() == NodeCompareStatus.MOVED )
             {
+                // storage index is per-repository, so the refresh( STORAGE ) at the start of execute() already covers the target branch
                 final NodeIds childrenIds = targetContext().callWith( () -> FindNodeBranchEntriesByParentCommand.create( this )
                     .parentPath( comparison.getTargetPath() )
+                    .refreshStorage( false )
                     .build()
                     .execute()
                     .stream()

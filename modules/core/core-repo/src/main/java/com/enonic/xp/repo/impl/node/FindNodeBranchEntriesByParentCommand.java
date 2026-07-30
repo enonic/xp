@@ -37,12 +37,15 @@ final class FindNodeBranchEntriesByParentCommand
 
     private final Permission requiredPermission;
 
+    private final boolean refreshStorage;
+
     private FindNodeBranchEntriesByParentCommand( final Builder builder )
     {
         super( builder );
         this.parentPath = builder.parentPath;
         this.pathOrder = builder.pathOrder;
         this.requiredPermission = builder.requiredPermission;
+        this.refreshStorage = builder.refreshStorage;
     }
 
     static Builder create( final AbstractNodeCommand source )
@@ -54,7 +57,10 @@ final class FindNodeBranchEntriesByParentCommand
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
-        refresh( RefreshMode.STORAGE );
+        if ( refreshStorage )
+        {
+            refresh( RefreshMode.STORAGE );
+        }
 
         final NodeBranchQuery query = NodeBranchQuery.create()
             .query( QueryExpr.from( createParentExpr() ) )
@@ -107,6 +113,8 @@ final class FindNodeBranchEntriesByParentCommand
 
         private Permission requiredPermission;
 
+        private boolean refreshStorage = true;
+
         private Builder( final AbstractNodeCommand source )
         {
             super( source );
@@ -127,6 +135,12 @@ final class FindNodeBranchEntriesByParentCommand
         Builder requiredPermission( final Permission requiredPermission )
         {
             this.requiredPermission = requiredPermission;
+            return this;
+        }
+
+        Builder refreshStorage( final boolean refreshStorage )
+        {
+            this.refreshStorage = refreshStorage;
             return this;
         }
 
