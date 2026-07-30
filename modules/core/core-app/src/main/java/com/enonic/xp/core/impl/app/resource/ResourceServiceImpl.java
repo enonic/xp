@@ -2,14 +2,15 @@ package com.enonic.xp.core.impl.app.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -20,6 +21,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationAdaptor;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
@@ -52,8 +54,17 @@ public final class ResourceServiceImpl
     @Override
     public Resource getResource( final ResourceKey key )
     {
-        return findApplicationUrlResolver( key.getApplicationKey() ).map( urlResolver -> urlResolver.findResource( key.getPath() ) )
-            .orElse( new UrlResource( key, null ) );
+        return findResource( findApplicationUrlResolver( key.getApplicationKey() ), key );
+    }
+
+    private static Resource findResource( final Optional<ApplicationUrlResolver> urlResolver, final ResourceKey key )
+    {
+        return urlResolver.map( resolver -> resolver.findResource( key.getPath() ) ).orElse( new UrlResource( key, null ) );
+    }
+
+    private static boolean isStable( final Optional<ApplicationUrlResolver> urlResolver )
+    {
+        return urlResolver.filter( resolver -> resolver instanceof BundleApplicationUrlResolver ).isPresent();
     }
 
     @Override
@@ -92,21 +103,29 @@ public final class ResourceServiceImpl
         final ProcessingEntry entry = this.cache.compute( new ProcessingKey( processor.getSegment(), processor.getKey() ), ( k, v ) -> {
             // stamp is read before the resource: a redeploy racing in-between costs a recompute, never staleness
             final BundleStamp stamp = bundleStamp( resourceKey.getApplicationKey() );
-            final Resource resource = this.getResource( resourceKey );
-            if ( v == null || !Objects.equals( v.stamp, stamp ) || !resource.exists() || resource.getTimestamp() != v.timestamp )
-            {
-                final V value = processor.process( resource );
-                if ( value == null )
-                {
-                    return null;
-                }
+            final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( resourceKey.getApplicationKey() );
+            final boolean stable = isStable( urlResolver );
 
-                return new ProcessingEntry( value, resource.getTimestamp(), stamp );
+            final boolean sameStamp = v != null && Objects.equals( v.stamp, stamp );
+            if ( sameStamp && stable && v.stable )
+            {
+                // resources come straight from the immutable bundle: a new bundle is the only signal that
+                // files may be new - their timestamps prove nothing (constant with reproducible builds)
+                return v;
             }
-            else
+
+            final Resource resource = findResource( urlResolver, resourceKey );
+            if ( sameStamp && resource.exists() && resource.getTimestamp() == v.timestamp )
             {
                 return v;
             }
+
+            final V value = processor.process( resource );
+            if ( value == null )
+            {
+                return null;
+            }
+            return new ProcessingEntry( value, resource.getTimestamp(), stamp, stable );
         } );
 
         return entry != null ? (V) entry.value : null;
@@ -119,33 +138,49 @@ public final class ResourceServiceImpl
         final MultiProcessingEntry entry =
             this.multiCache.compute( new ProcessingKey( processor.getSegment(), processor.getKey() ), ( k, v ) -> {
                 // stamps are read before the resources: a redeploy racing in-between costs a recompute, never staleness
-                final List<BundleStamp> stamps =
-                    resourceKeys.stream().map( ResourceKey::getApplicationKey ).distinct().map( this::bundleStamp ).collect(
-                        Collectors.toList() );
+                final List<ApplicationKey> applicationKeys =
+                    resourceKeys.stream().map( ResourceKey::getApplicationKey ).distinct().toList();
+
+                final List<BundleStamp> stamps = new ArrayList<>( applicationKeys.size() );
+                final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
+                boolean stable = true;
+                for ( final ApplicationKey applicationKey : applicationKeys )
+                {
+                    stamps.add( bundleStamp( applicationKey ) );
+                    final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( applicationKey );
+                    urlResolvers.put( applicationKey, urlResolver );
+                    stable = stable && isStable( urlResolver );
+                }
+
+                final boolean sameStamps = v != null && v.stamps.equals( stamps );
+                if ( sameStamps && stable && v.stable )
+                {
+                    // resources come straight from the immutable bundles: a new bundle is the only signal that
+                    // files may be new - their timestamps prove nothing (constant with reproducible builds)
+                    return v;
+                }
 
                 final List<Resource> resources = new ArrayList<>( resourceKeys.size() );
                 final long[] timestamps = new long[resourceKeys.size()];
                 for ( int i = 0; i < resourceKeys.size(); i++ )
                 {
-                    final Resource resource = this.getResource( resourceKeys.get( i ) );
+                    final ResourceKey resourceKey = resourceKeys.get( i );
+                    final Resource resource = findResource( urlResolvers.get( resourceKey.getApplicationKey() ), resourceKey );
                     resources.add( resource );
                     timestamps[i] = resource.getTimestamp();
                 }
 
-                if ( v == null || !v.stamps.equals( stamps ) || !Arrays.equals( v.timestamps, timestamps ) )
-                {
-                    final V value = processor.process( resources );
-                    if ( value == null )
-                    {
-                        return null;
-                    }
-
-                    return new MultiProcessingEntry( value, timestamps, stamps );
-                }
-                else
+                if ( sameStamps && Arrays.equals( v.timestamps, timestamps ) )
                 {
                     return v;
                 }
+
+                final V value = processor.process( resources );
+                if ( value == null )
+                {
+                    return null;
+                }
+                return new MultiProcessingEntry( value, timestamps, stamps, stable );
             } );
 
         return entry != null ? (V) entry.value : null;

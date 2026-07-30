@@ -8,10 +8,13 @@ final class ProcessingEntry
 
     final BundleStamp stamp;
 
-    ProcessingEntry( final Object value, final long timestamp, final BundleStamp stamp )
+    final boolean stable;
+
+    ProcessingEntry( final Object value, final long timestamp, final BundleStamp stamp, final boolean stable )
     {
         this.value = value;
         this.timestamp = timestamp;
         this.stamp = stamp;
+        this.stable = stable;
     }
 }

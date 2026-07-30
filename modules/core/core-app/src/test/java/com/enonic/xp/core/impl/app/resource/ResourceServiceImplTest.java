@@ -24,6 +24,7 @@ import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.data.PropertyTree;
@@ -156,6 +157,59 @@ class ResourceServiceImplTest
 
         final String value5 = processResource( "segment2", "a.txt", "5" );
         assertEquals( "myapp:/a.txt->5", value5 );
+    }
+
+    @Test
+    void testProcessResource_bundleResolverIgnoresTimestamps()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
+        doReturn( Optional.of( new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResolver( appKey, null );
+
+        final String value1 = processResource( "segment1", "a.txt", "1" );
+        assertEquals( "myapp:/a.txt->1", value1 );
+
+        // timestamps of bundle-backed resources are unreliable (constant with reproducible builds):
+        // under the same bundle they are not even probed
+        Files.setLastModifiedTime( appDir.resolve( "a.txt" ), FileTime.fromMillis( System.currentTimeMillis() + 10_000 ) );
+
+        final String value2 = processResource( "segment1", "a.txt", "2" );
+        assertEquals( value1, value2 );
+
+        // a new bundle is the only signal that files may be new
+        final Bundle newBundle = newBundle( 42 );
+        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
+
+        final String value3 = processResource( "segment1", "a.txt", "3" );
+        assertEquals( "myapp:/a.txt->3", value3 );
+    }
+
+    @Test
+    void testProcessResources_bundleResolverIgnoresTimestamps()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
+        doReturn( Optional.of( new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResolver( appKey, null );
+
+        final List<String> names = List.of( "a.txt", "b.txt" );
+
+        final String value1 = processResources( "segment1", "bundle", names, "1" );
+        assertEquals( "myapp:/a.txt->1", value1 );
+
+        Files.setLastModifiedTime( appDir.resolve( "a.txt" ), FileTime.fromMillis( System.currentTimeMillis() + 10_000 ) );
+
+        final String value2 = processResources( "segment1", "bundle", names, "2" );
+        assertEquals( value1, value2 );
+
+        final Bundle newBundle = newBundle( 42 );
+        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
+
+        final String value3 = processResources( "segment1", "bundle", names, "3" );
+        assertEquals( "myapp:/a.txt->3", value3 );
     }
 
     @Test

@@ -10,10 +10,13 @@ final class MultiProcessingEntry
 
     final List<BundleStamp> stamps;
 
-    MultiProcessingEntry( final Object value, final long[] timestamps, final List<BundleStamp> stamps )
+    final boolean stable;
+
+    MultiProcessingEntry( final Object value, final long[] timestamps, final List<BundleStamp> stamps, final boolean stable )
     {
         this.value = value;
         this.timestamps = timestamps;
         this.stamps = stamps;
+        this.stable = stable;
     }
 }
