@@ -3,6 +3,7 @@ package com.enonic.xp.impl.task;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Phaser;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -15,6 +16,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -159,6 +161,10 @@ class TaskManagerExecutorImplTest
             taskManagerExecutor.removedService( reference, application );
 
             assertTrue( interrupted.await( 5, TimeUnit.SECONDS ) );
+
+            // a submit racing or following the stop is rejected, never quietly run on the shared executor
+            assertThrows( RejectedExecutionException.class, () -> taskManagerExecutor.execute( applicationKey, () -> {
+            } ) );
         }
         finally
         {

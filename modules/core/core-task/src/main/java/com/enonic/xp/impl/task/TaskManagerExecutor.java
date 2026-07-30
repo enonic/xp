@@ -10,7 +10,8 @@ public interface TaskManagerExecutor
      *
      * @param applicationKey application the task belongs to
      * @param command        task command
-     * @throws java.util.concurrent.RejectedExecutionException if the executor is already shut down
+     * @throws java.util.concurrent.RejectedExecutionException if the application is stopped, or the executor
+     *                                                         is already shut down
      */
     void execute( ApplicationKey applicationKey, Runnable command );
 }

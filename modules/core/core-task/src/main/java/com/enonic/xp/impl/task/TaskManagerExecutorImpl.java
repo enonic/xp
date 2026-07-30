@@ -87,10 +87,13 @@ public class TaskManagerExecutorImpl
     public void removedService( final ServiceReference<Application> reference, final Application application )
     {
         // the application stopped or is being redeployed: its tasks belong to the gone incarnation - stop them,
-        // so the executor never outlives the incarnation it was created for
+        // so the executor never outlives the incarnation it was created for. The shut-down executor stays in the
+        // map as a tombstone: a submit racing or following the stop is rejected instead of silently landing on
+        // the shared executor, where the application's lifecycle could never reach it. A successor incarnation
+        // replaces the tombstone in addingService.
         final ApplicationKey applicationKey = application.getKey();
         final ApplicationTaskExecutor current = applicationExecutors.get( applicationKey );
-        if ( current != null && current.reference() == reference && applicationExecutors.remove( applicationKey, current ) )
+        if ( current != null && current.reference() == reference )
         {
             shutdown( applicationKey, current );
         }
