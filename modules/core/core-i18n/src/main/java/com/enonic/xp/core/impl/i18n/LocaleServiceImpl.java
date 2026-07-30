@@ -26,11 +26,11 @@ import com.google.common.io.Files;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.LocaleService;
 import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourcesProcessor;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -65,8 +65,8 @@ public final class LocaleServiceImpl
         final String[] baseNames = bundleNames.length == 0 ? DEFAULT_BASE_NAMES : bundleNames;
         final Locale nonNullLocale = requireNonNullElse( locale, Locale.ROOT );
 
-        final ResourcesProcessor<String, MessageBundle> processor =
-            new ResourcesProcessor.Builder<String, MessageBundle>().key( bundleCacheKey( applicationKey, nonNullLocale, baseNames ) )
+        final MultiResourceProcessor<String, MessageBundle> processor =
+            new MultiResourceProcessor.Builder<String, MessageBundle>().key( bundleCacheKey( applicationKey, nonNullLocale, baseNames ) )
                 .segment( "i18n" )
                 .keysTranslator( k -> candidateKeys( applicationKey, nonNullLocale, baseNames ) )
                 .processor( resources -> createMessageBundle( resources, nonNullLocale ) )

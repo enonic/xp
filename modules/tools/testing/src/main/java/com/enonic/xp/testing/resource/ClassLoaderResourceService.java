@@ -10,12 +10,12 @@ import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourcesProcessor;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.vfs.VirtualFile;
 import com.enonic.xp.vfs.VirtualFilePath;
@@ -53,7 +53,7 @@ public final class ClassLoaderResourceService
     }
 
     @Override
-    public <K, V> V processResources( final ResourcesProcessor<K, V> processor )
+    public <K, V> V processResources( final MultiResourceProcessor<K, V> processor )
     {
         return processor.process( processor.toResourceKeys().stream().map( this::getResource ).collect( Collectors.toList() ) );
     }

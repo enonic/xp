@@ -10,13 +10,13 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * Unlike {@link ResourceProcessor}, the produced value depends on several resources at once
  * (for example, a chain of {@code .properties} files merged into one message bundle).
- * {@link ResourceService#processResources(ResourcesProcessor)} caches the value and recomputes it
+ * {@link ResourceService#processResources(MultiResourceProcessor)} caches the value and recomputes it
  * when the owning application bundle changes or any of the resources appears, disappears or is modified.
  *
  * @param <K> type of the cache key
  * @param <V> type of the processed value
  */
-public final class ResourcesProcessor<K, V>
+public final class MultiResourceProcessor<K, V>
 {
     private final K key;
 
@@ -27,7 +27,7 @@ public final class ResourcesProcessor<K, V>
     private final Function<List<Resource>, V> processor;
 
     @SuppressWarnings("unchecked")
-    private ResourcesProcessor( final Builder builder )
+    private MultiResourceProcessor( final Builder builder )
     {
         this.key = (K) builder.key;
         this.segment = builder.segment;
@@ -102,14 +102,14 @@ public final class ResourcesProcessor<K, V>
             return this;
         }
 
-        public ResourcesProcessor<K, V> build()
+        public MultiResourceProcessor<K, V> build()
         {
             requireNonNull( this.key, "key is required" );
             requireNonNull( this.segment, "segment is required" );
             requireNonNull( this.keysTranslator, "keysTranslator is required" );
             requireNonNull( this.processor, "processor is required" );
 
-            return new ResourcesProcessor<>( this );
+            return new MultiResourceProcessor<>( this );
         }
     }
 }

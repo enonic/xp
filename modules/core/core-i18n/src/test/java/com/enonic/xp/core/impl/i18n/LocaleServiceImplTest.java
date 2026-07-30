@@ -17,11 +17,11 @@ import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceService;
-import com.enonic.xp.resource.ResourcesProcessor;
 import com.enonic.xp.resource.UrlResource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +53,7 @@ class LocaleServiceImplTest
 
     private Object processResources( final InvocationOnMock invocation )
     {
-        final ResourcesProcessor<?, ?> processor = invocation.getArgument( 0 );
+        final MultiResourceProcessor<?, ?> processor = invocation.getArgument( 0 );
         return processor.process( processor.toResourceKeys().stream().map( this::loadResource ).collect( Collectors.toList() ) );
     }
 
@@ -186,7 +186,7 @@ class LocaleServiceImplTest
         } );
 
         doAnswer( invocation -> {
-            final ResourcesProcessor<?, ?> processor = invocation.getArgument( 0 );
+            final MultiResourceProcessor<?, ?> processor = invocation.getArgument( 0 );
             return processor.process( List.of( broken ) );
         } ).when( resourceService ).processResources( any() );
 

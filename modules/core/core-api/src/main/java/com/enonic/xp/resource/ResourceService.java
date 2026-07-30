@@ -19,7 +19,7 @@ public interface ResourceService
      * @param processor multi-resource processor
      * @return processed value, or null if the processor returned null
      */
-    <K, V> V processResources( ResourcesProcessor<K, V> processor );
+    <K, V> V processResources( MultiResourceProcessor<K, V> processor );
 
     VirtualFile getVirtualFile( ResourceKey resourceKey );
 }

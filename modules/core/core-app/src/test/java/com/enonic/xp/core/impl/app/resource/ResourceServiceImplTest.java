@@ -36,11 +36,11 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
 import com.enonic.xp.resource.ResourceProcessor;
-import com.enonic.xp.resource.ResourcesProcessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -308,7 +308,7 @@ class ResourceServiceImplTest
 
     private String processResources( final String segment, final String key, final List<String> names, final String suffix )
     {
-        final ResourcesProcessor<String, String> processor = new ResourcesProcessor.Builder<String, String>().key( key )
+        final MultiResourceProcessor<String, String> processor = new MultiResourceProcessor.Builder<String, String>().key( key )
             .segment( segment )
             .keysTranslator( k -> names.stream().map( name -> ResourceKey.from( "myapp:/" + name ) ).toList() )
             .processor( resources -> resources.stream()
@@ -363,7 +363,7 @@ class ResourceServiceImplTest
     {
         newFile( "a.txt" );
 
-        final ResourcesProcessor<String, String> processor = new ResourcesProcessor.Builder<String, String>().key( "bundle" )
+        final MultiResourceProcessor<String, String> processor = new MultiResourceProcessor.Builder<String, String>().key( "bundle" )
             .segment( "segment1" )
             .keysTranslator( k -> List.of( ResourceKey.from( "myapp:/a.txt" ) ) )
             .processor( resources -> null )
