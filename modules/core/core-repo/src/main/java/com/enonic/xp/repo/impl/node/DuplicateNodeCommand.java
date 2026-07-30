@@ -217,7 +217,7 @@ public final class DuplicateNodeCommand
 
             final CreateNodeParams processedParams = executeProcessors( originalParams );
 
-            // the parent was just created, so it is both known and known to be empty
+            // the parent copy is already at hand, and every child path below it is created exactly once
             final Node newChildNode = CreateNodeCommand.create( this )
                 .params( processedParams )
                 .binaryService( this.binaryService )

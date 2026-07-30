@@ -245,6 +245,11 @@ public final class CreateNodeCommand
         {
             super.validate();
             requireNonNull( params, "params cannot be null" );
+            if ( knownParentNode != null && !knownParentNode.path().equals( params.getParent() ) )
+            {
+                throw new IllegalArgumentException(
+                    "knownParentNode [" + knownParentNode.path() + "] is not the parent [" + params.getParent() + "] to create node in" );
+            }
         }
 
         public CreateNodeCommand build()
