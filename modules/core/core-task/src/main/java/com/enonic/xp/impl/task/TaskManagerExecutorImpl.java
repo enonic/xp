@@ -69,7 +69,7 @@ public class TaskManagerExecutorImpl
         }
         final ApplicationKey applicationKey = application.getKey();
         final ApplicationTaskExecutor created = new ApplicationTaskExecutor( reference, SimpleExecutor.ofVirtual(
-            "task-" + applicationKey + "-", e -> LOG.error( "Task execution failed", e ) ) );
+            "task-manager-" + applicationKey + "-thread-", e -> LOG.error( "Task execution failed", e ) ) );
         final ApplicationTaskExecutor stale = applicationExecutors.put( applicationKey, created );
         if ( stale != null )
         {

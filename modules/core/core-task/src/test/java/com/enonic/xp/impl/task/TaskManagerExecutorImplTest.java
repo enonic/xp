@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.BundleContext;
@@ -138,7 +139,9 @@ class TaskManagerExecutorImplTest
 
             final CountDownLatch started = new CountDownLatch( 1 );
             final CountDownLatch interrupted = new CountDownLatch( 1 );
+            final AtomicReference<String> threadName = new AtomicReference<>();
             taskManagerExecutor.execute( applicationKey, () -> {
+                threadName.set( Thread.currentThread().getName() );
                 started.countDown();
                 try
                 {
@@ -151,6 +154,7 @@ class TaskManagerExecutorImplTest
             } );
 
             assertTrue( started.await( 5, TimeUnit.SECONDS ) );
+            assertTrue( threadName.get().startsWith( "task-manager-myapp-thread-" ), threadName.get() );
 
             taskManagerExecutor.removedService( reference, application );
 
