@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.RejectedExecutionException;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -35,6 +36,10 @@ public class TaskManagerExecutorImpl
 
     private record ApplicationTaskExecutor(ServiceReference<Application> reference, SimpleExecutor executor) {}
 
+    // marks a stopped application: rejects submits without retaining anything of the dead incarnation
+    // (a reference to its ServiceReference or executor could pin the gone bundle's classloader)
+    private static final ApplicationTaskExecutor TOMBSTONE = new ApplicationTaskExecutor( null, null );
+
     @Activate
     public TaskManagerExecutorImpl( final BundleContext context )
     {
@@ -56,7 +61,18 @@ public class TaskManagerExecutorImpl
     public void execute( final ApplicationKey applicationKey, final Runnable command )
     {
         final ApplicationTaskExecutor applicationExecutor = applicationExecutors.get( applicationKey );
-        ( applicationExecutor != null ? applicationExecutor.executor() : sharedExecutor ).execute( command );
+        if ( applicationExecutor == null )
+        {
+            sharedExecutor.execute( command );
+        }
+        else if ( applicationExecutor.executor() == null )
+        {
+            throw new RejectedExecutionException( "Application " + applicationKey + " is stopped" );
+        }
+        else
+        {
+            applicationExecutor.executor().execute( command );
+        }
     }
 
     @Override
@@ -71,7 +87,7 @@ public class TaskManagerExecutorImpl
         final ApplicationTaskExecutor created = new ApplicationTaskExecutor( reference, SimpleExecutor.ofVirtual(
             "task-manager-" + applicationKey + "-thread-", e -> LOG.error( "Task execution failed", e ) ) );
         final ApplicationTaskExecutor stale = applicationExecutors.put( applicationKey, created );
-        if ( stale != null )
+        if ( stale != null && stale.executor() != null )
         {
             shutdown( applicationKey, stale );
         }
@@ -87,15 +103,16 @@ public class TaskManagerExecutorImpl
     public void removedService( final ServiceReference<Application> reference, final Application application )
     {
         // the application stopped or is being redeployed: its tasks belong to the gone incarnation - stop them,
-        // so the executor never outlives the incarnation it was created for. The shut-down executor stays in the
-        // map as a tombstone: a submit racing or following the stop is rejected instead of silently landing on
-        // the shared executor, where the application's lifecycle could never reach it. A successor incarnation
-        // replaces the tombstone in addingService.
+        // so the executor never outlives the incarnation it was created for. A tombstone takes the map slot:
+        // a submit racing or following the stop is rejected instead of silently landing on the shared executor,
+        // where the application's lifecycle could never reach it. A successor incarnation replaces the
+        // tombstone in addingService.
         final ApplicationKey applicationKey = application.getKey();
         final ApplicationTaskExecutor current = applicationExecutors.get( applicationKey );
         if ( current != null && current.reference() == reference )
         {
             shutdown( applicationKey, current );
+            applicationExecutors.replace( applicationKey, current, TOMBSTONE );
         }
         context.ungetService( reference );
     }
