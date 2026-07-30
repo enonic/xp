@@ -50,7 +50,7 @@ class AdminExtensionResponseProcessorExecutorTest
     void executesProcessorOfMountedExtension()
     {
         final PortalResponse processed = PortalResponse.create().body( "processed" ).build();
-        this.executor.addProcessor( processor( "app:ext", ( req, res ) -> processed ) );
+        this.executor.addProcessor( processor( "app:ext", res -> processed ) );
         mockDescriptor( "app:ext", Set.of( "admin.dashboard" ), true );
 
         assertSame( processed, this.executor.execute( this.tool, this.request, this.response ) );
@@ -60,7 +60,7 @@ class AdminExtensionResponseProcessorExecutorTest
     void genericExtensionRunsForAnyTool()
     {
         final PortalResponse processed = PortalResponse.create().body( "processed" ).build();
-        this.executor.addProcessor( processor( "app:ext", ( req, res ) -> processed ) );
+        this.executor.addProcessor( processor( "app:ext", res -> processed ) );
         mockDescriptor( "app:ext", Set.of( AdminExtensionDescriptor.GENERIC_INTERFACE ), true );
 
         assertSame( processed, this.executor.execute( this.tool, this.request, this.response ) );
@@ -69,7 +69,7 @@ class AdminExtensionResponseProcessorExecutorTest
     @Test
     void skipsExtensionNotMountedToTool()
     {
-        this.executor.addProcessor( processor( "app:ext", ( req, res ) -> PortalResponse.create().build() ) );
+        this.executor.addProcessor( processor( "app:ext", res -> PortalResponse.create().build() ) );
         mockDescriptor( "app:ext", Set.of( "other.interface" ), true );
 
         assertSame( this.response, this.executor.execute( this.tool, this.request, this.response ) );
@@ -78,7 +78,7 @@ class AdminExtensionResponseProcessorExecutorTest
     @Test
     void skipsExtensionWithoutDescriptor()
     {
-        this.executor.addProcessor( processor( "app:ext", ( req, res ) -> PortalResponse.create().build() ) );
+        this.executor.addProcessor( processor( "app:ext", res -> PortalResponse.create().build() ) );
         when( this.descriptorService.getByKey( eq( DescriptorKey.from( "app:ext" ) ) ) ).thenReturn( null );
 
         assertSame( this.response, this.executor.execute( this.tool, this.request, this.response ) );
@@ -87,7 +87,7 @@ class AdminExtensionResponseProcessorExecutorTest
     @Test
     void skipsExtensionWhenAccessDenied()
     {
-        this.executor.addProcessor( processor( "app:ext", ( req, res ) -> PortalResponse.create().build() ) );
+        this.executor.addProcessor( processor( "app:ext", res -> PortalResponse.create().build() ) );
         mockDescriptor( "app:ext", Set.of( "admin.dashboard" ), false );
 
         assertSame( this.response, this.executor.execute( this.tool, this.request, this.response ) );
@@ -97,11 +97,11 @@ class AdminExtensionResponseProcessorExecutorTest
     void executesProcessorsOrderedByExtensionKey()
     {
         final List<String> invocations = new ArrayList<>();
-        this.executor.addProcessor( processor( "appb:ext", ( req, res ) -> {
+        this.executor.addProcessor( processor( "appb:ext", res -> {
             invocations.add( "appb:ext" );
             return res;
         } ) );
-        this.executor.addProcessor( processor( "appa:ext", ( req, res ) -> {
+        this.executor.addProcessor( processor( "appa:ext", res -> {
             invocations.add( "appa:ext" );
             return res;
         } ) );
@@ -115,7 +115,7 @@ class AdminExtensionResponseProcessorExecutorTest
     @Test
     void removedProcessorDoesNotRun()
     {
-        final AdminExtensionResponseProcessor processor = processor( "app:ext", ( req, res ) -> PortalResponse.create().build() );
+        final AdminExtensionResponseProcessor processor = processor( "app:ext", res -> PortalResponse.create().build() );
         this.executor.addProcessor( processor );
         this.executor.removeProcessor( processor );
         mockDescriptor( "app:ext", Set.of( "admin.dashboard" ), true );
@@ -126,7 +126,7 @@ class AdminExtensionResponseProcessorExecutorTest
     @Test
     void failsWhenProcessorReturnsNull()
     {
-        this.executor.addProcessor( processor( "app:ext", ( req, res ) -> null ) );
+        this.executor.addProcessor( processor( "app:ext", res -> null ) );
         mockDescriptor( "app:ext", Set.of( "admin.dashboard" ), true );
 
         assertThrows( NullPointerException.class, () -> this.executor.execute( this.tool, this.request, this.response ) );
@@ -155,13 +155,13 @@ class AdminExtensionResponseProcessorExecutorTest
             @Override
             public PortalResponse process( final PortalRequest request, final PortalResponse response )
             {
-                return process.apply( request, response );
+                return process.apply( response );
             }
         };
     }
 
     private interface ProcessFunction
     {
-        PortalResponse apply( PortalRequest request, PortalResponse response );
+        PortalResponse apply( PortalResponse response );
     }
 }
