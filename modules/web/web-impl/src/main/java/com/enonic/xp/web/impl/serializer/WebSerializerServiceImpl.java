@@ -24,6 +24,13 @@ public final class WebSerializerServiceImpl
     }
 
     @Override
+    public void serializeBody( final WebRequest webRequest, final HttpServletRequest httpRequest )
+        throws IOException
+    {
+        webRequest.setBody( RequestBodyReader.readBody( httpRequest ) );
+    }
+
+    @Override
     public void response( final WebRequest webRequest, final WebResponse webResponse, final HttpServletResponse response )
         throws IOException
     {
