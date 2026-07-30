@@ -19,7 +19,6 @@ import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -79,7 +78,9 @@ public class ApplyNodePermissionsCommand
             throw new NodeNotFoundException( "Node not found: " + params.getNodeId() );
         }
 
-        final List<Map<Branch, NodeVersion>> versionsToApply = findVersionsToApply();
+        NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.READ, persistedNode );
+
+        final List<Map<Branch, NodeVersion>> versionsToApply = findVersionsToApply( persistedNode );
 
         if ( listener != NoopApplyNodePermissionsListener.INSTANCE )
         {
@@ -95,7 +96,7 @@ public class ApplyNodePermissionsCommand
         return results.build();
     }
 
-    private List<Map<Branch, NodeVersion>> findVersionsToApply()
+    private List<Map<Branch, NodeVersion>> findVersionsToApply( final Node persistedNode )
     {
         final List<Map<Branch, NodeVersion>> result = new ArrayList<>();
 
@@ -106,11 +107,8 @@ public class ApplyNodePermissionsCommand
 
         if ( ApplyPermissionsScope.SUBTREE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
         {
-            final NodePath parentPath =
-                this.nodeStorageService.get( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) ).path();
-
             FindNodeBranchEntriesByParentCommand.create( this )
-                .parentPath( parentPath )
+                .parentPath( persistedNode.path() )
                 .requiredPermission( Permission.READ )
                 .build()
                 .execute()
