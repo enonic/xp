@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.i18n;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +28,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 class LocaleServiceImplTest
@@ -146,6 +151,46 @@ class LocaleServiceImplTest
         assertNotNull( bundle );
         assertEquals( 9, bundle.getKeys().size() );
         assertEquals( "override", bundle.localize( "msg" ) );
+    }
+
+    @Test
+    void get_bundle_no_processed_value()
+    {
+        doReturn( null ).when( resourceService ).processResources( any() );
+
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
+
+        assertNotNull( bundle );
+        assertEquals( 0, bundle.getKeys().size() );
+    }
+
+    @Test
+    void get_bundle_unreadable_resource()
+    {
+        final Resource broken = Mockito.mock( Resource.class );
+        when( broken.exists() ).thenReturn( true );
+        when( broken.getKey() ).thenReturn( ResourceKey.from( "myapplication:/i18n/phrases.properties" ) );
+        when( broken.openReader() ).thenReturn( new Reader()
+        {
+            @Override
+            public int read( final char[] cbuf, final int off, final int len )
+                throws IOException
+            {
+                throw new IOException( "broken" );
+            }
+
+            @Override
+            public void close()
+            {
+            }
+        } );
+
+        doAnswer( invocation -> {
+            final ResourcesProcessor<?, ?> processor = invocation.getArgument( 0 );
+            return processor.process( List.of( broken ) );
+        } ).when( resourceService ).processResources( any() );
+
+        assertThrows( LocalizationException.class, () -> localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH ) );
     }
 
     @Test

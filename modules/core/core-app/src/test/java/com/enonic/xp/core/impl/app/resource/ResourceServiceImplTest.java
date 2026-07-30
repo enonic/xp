@@ -304,6 +304,22 @@ class ResourceServiceImplTest
     }
 
     @Test
+    void testProcessResources_nullValueNotCached()
+        throws Exception
+    {
+        newFile( "a.txt" );
+
+        final ResourcesProcessor<String, String> processor = new ResourcesProcessor.Builder<String, String>().key( "bundle" )
+            .segment( "segment1" )
+            .keysTranslator( k -> List.of( ResourceKey.from( "myapp:/a.txt" ) ) )
+            .processor( resources -> null )
+            .build();
+
+        assertNull( this.resourceService.processResources( processor ) );
+        assertNull( this.resourceService.processResources( processor ) );
+    }
+
+    @Test
     void testProcessResources_allMissingCachedUntilResourceAppears()
         throws Exception
     {

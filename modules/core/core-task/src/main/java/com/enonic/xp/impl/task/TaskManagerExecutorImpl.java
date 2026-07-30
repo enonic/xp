@@ -108,7 +108,7 @@ public class TaskManagerExecutorImpl
         }
     }
 
-    private static void failNotCommenced( final ApplicationKey applicationKey, final List<Runnable> neverCommenced )
+    static void failNotCommenced( final ApplicationKey applicationKey, final List<Runnable> neverCommenced )
     {
         for ( final Runnable runnable : neverCommenced )
         {
