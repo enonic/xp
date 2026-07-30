@@ -125,32 +125,32 @@ public class ApplyNodePermissionsCommand
 
     private void doApply( List<Map<Branch, NodeVersion>> versionsToApply, final AccessControlList permissions )
     {
-        // permissions are applied equally on all branches, authorized on the reference (context) branch, which goes first
+        // permissions are read/authorized from the reference (context) branch, but applied equally on all specified branches,
+        // preserving the caller-supplied branch order (which determines the version origin)
         final Branch referenceBranch = ContextAccessor.current().getBranch();
 
-        final List<Branch> orderedBranches = new ArrayList<>();
-        orderedBranches.add( referenceBranch );
-        branches.stream().filter( branch -> !branch.equals( referenceBranch ) ).forEach( orderedBranches::add );
-
         final Set<NodeId> deniedNodes = new HashSet<>();
+        for ( final Map<Branch, NodeVersion> versionMap : versionsToApply )
+        {
+            final NodeVersion referenceVersion = versionMap.get( referenceBranch );
+            if ( referenceVersion != null && !allowedOnReferenceBranch( referenceVersion, referenceBranch ) )
+            {
+                deniedNodes.add( referenceVersion.getNodeId() );
+            }
+        }
 
-        for ( Branch branch : orderedBranches )
+        for ( Branch branch : branches )
         {
             versionsToApply.stream()
                 .map( versionMap -> versionMap.get( branch ) )
                 .filter( Objects::nonNull )
-                .forEach( node -> doApplyOnNode( node, branch, branch.equals( referenceBranch ), deniedNodes, permissions ) );
+                .forEach( node -> doApplyOnNode( node, branch, deniedNodes, permissions ) );
         }
     }
 
-    private void doApplyOnNode( final NodeVersion nodeVersion, final Branch branch, final boolean isReferenceBranch,
-                                final Set<NodeId> deniedNodes, final AccessControlList permissions )
+    private void doApplyOnNode( final NodeVersion nodeVersion, final Branch branch, final Set<NodeId> deniedNodes,
+                                final AccessControlList permissions )
     {
-        if ( isReferenceBranch && !allowedOnReferenceBranch( nodeVersion, branch ) )
-        {
-            deniedNodes.add( nodeVersion.getNodeId() );
-        }
-
         if ( deniedNodes.contains( nodeVersion.getNodeId() ) )
         {
             listener.notEnoughRights( 1 );
