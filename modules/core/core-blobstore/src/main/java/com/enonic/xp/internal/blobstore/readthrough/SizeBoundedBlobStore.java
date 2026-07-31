@@ -1,6 +1,8 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
@@ -71,17 +73,20 @@ public final class SizeBoundedBlobStore
         long count = 0;
         try
         {
-            try (Stream<Segment> segments = this.store.listSegments())
+            final List<Segment> segments;
+            try (Stream<Segment> segmentStream = this.store.listSegments())
             {
-                for ( final Segment segment : segments.toList() )
+                segments = segmentStream.toList();
+            }
+            for ( final Segment segment : segments )
+            {
+                try (Stream<BlobRecord> records = this.store.list( segment ))
                 {
-                    try (Stream<BlobRecord> records = this.store.list( segment ))
+                    for ( final Iterator<BlobRecord> it = records.iterator(); it.hasNext(); )
                     {
-                        for ( final BlobRecord record : records.toList() )
-                        {
-                            this.index.put( new IndexKey( segment, record.getKey() ), record.getLength() );
-                            count++;
-                        }
+                        final BlobRecord record = it.next();
+                        this.index.put( new IndexKey( segment, record.getKey() ), record.getLength() );
+                        count++;
                     }
                 }
             }
