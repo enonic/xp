@@ -2,7 +2,6 @@ package com.enonic.xp.internal.blobstore.readthrough;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.io.TempDir;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
@@ -164,16 +162,13 @@ class ReadThroughBlobStoreTest
     }
 
     @Test
-    void evict_oldest_down_to_capacity()
-        throws Exception
+    void evict_down_to_capacity()
     {
         final Segment segment = Segment.from( "test", "blob" );
 
-        final BlobRecord oldest = this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 1".getBytes() ) );
-        Thread.sleep( 10 );
-        final BlobRecord middle = this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 2".getBytes() ) );
-        Thread.sleep( 10 );
-        final BlobRecord newest = this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+        this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 3".getBytes() ) );
 
         final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
             .readThroughStore( this.readThroughStore )
@@ -183,9 +178,10 @@ class ReadThroughBlobStoreTest
 
         assertEquals( 1, actualBlobStore.evict() );
 
-        assertNull( this.readThroughStore.getRecord( segment, oldest.getKey() ) );
-        assertNotNull( this.readThroughStore.getRecord( segment, middle.getKey() ) );
-        assertNotNull( this.readThroughStore.getRecord( segment, newest.getKey() ) );
+        try (Stream<BlobRecord> remaining = this.readThroughStore.list( segment ))
+        {
+            assertEquals( 2, remaining.count() );
+        }
     }
 
     @Test
@@ -215,60 +211,6 @@ class ReadThroughBlobStoreTest
 
         assertEquals( 0, actualBlobStore.evict() );
         assertNotNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
-    }
-
-    @Test
-    void evict_skips_records_without_last_modified()
-    {
-        final Segment segment = Segment.from( "test", "blob" );
-        final BlobRecord unorderable = withoutLastModified( ByteSource.wrap( "10 bytes 1".getBytes() ) );
-        this.readThroughStore.addRecord( segment, unorderable );
-
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
-            .readThroughStore( this.readThroughStore )
-            .store( this.finalStore )
-            .cacheCapacity( 5 )
-            .build();
-
-        assertEquals( 0, actualBlobStore.evict() );
-        assertNotNull( this.readThroughStore.getRecord( segment, unorderable.getKey() ) );
-    }
-
-    private static BlobRecord withoutLastModified( final ByteSource source )
-    {
-        return new BlobRecord()
-        {
-            @Override
-            public BlobKey getKey()
-            {
-                return BlobKey.sha256( source );
-            }
-
-            @Override
-            public long getLength()
-            {
-                try
-                {
-                    return source.size();
-                }
-                catch ( IOException e )
-                {
-                    throw new UncheckedIOException( e );
-                }
-            }
-
-            @Override
-            public ByteSource getBytes()
-            {
-                return source;
-            }
-
-            @Override
-            public long lastModified()
-            {
-                return 0;
-            }
-        };
     }
 
     private ByteSource overThresholdBinary()

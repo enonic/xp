@@ -1,12 +1,9 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
@@ -21,8 +18,6 @@ import com.enonic.xp.blob.Segment;
 public class ReadThroughBlobStore
     implements BlobStore, CachingBlobStore, EvictableBlobStore
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ReadThroughBlobStore.class );
-
     private final BlobStore store;
 
     private final BlobStore readThroughStore;
@@ -144,7 +139,6 @@ public class ReadThroughBlobStore
 
         final List<CacheEntry> entries = new ArrayList<>();
         long total = 0;
-        long unorderable = 0;
 
         try (Stream<Segment> segments = this.readThroughStore.listSegments())
         {
@@ -154,16 +148,8 @@ public class ReadThroughBlobStore
                 {
                     for ( final BlobRecord record : records.toList() )
                     {
-                        final long lastModified = record.lastModified();
                         total += record.getLength();
-                        if ( lastModified > 0 )
-                        {
-                            entries.add( new CacheEntry( segment, record.getKey(), record.getLength(), lastModified ) );
-                        }
-                        else
-                        {
-                            unorderable++;
-                        }
+                        entries.add( new CacheEntry( segment, record.getKey(), record.getLength() ) );
                     }
                 }
             }
@@ -174,7 +160,9 @@ public class ReadThroughBlobStore
             return 0;
         }
 
-        entries.sort( Comparator.comparingLong( CacheEntry::lastModified ) );
+        // The future access pattern is unknown and a miss simply repopulates from the main store,
+        // so random eviction is good enough - it needs no access tracking and no filesystem timestamp support.
+        Collections.shuffle( entries );
 
         long evicted = 0;
         for ( final CacheEntry entry : entries )
@@ -188,17 +176,10 @@ public class ReadThroughBlobStore
             evicted++;
         }
 
-        if ( total > this.cacheCapacity )
-        {
-            LOG.warn(
-                "Could not evict read-through store below capacity [{}]: {} records have no valid last modified time. Automatic cleanup is not supported on filesystems without last modified time support",
-                this.cacheCapacity, unorderable );
-        }
-
         return evicted;
     }
 
-    private record CacheEntry(Segment segment, BlobKey key, long length, long lastModified)
+    private record CacheEntry(Segment segment, BlobKey key, long length)
     {
     }
 
