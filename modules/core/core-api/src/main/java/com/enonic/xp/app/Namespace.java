@@ -1,5 +1,7 @@
 package com.enonic.xp.app;
 
+import java.time.Instant;
+
 import static java.util.Objects.requireNonNull;
 
 
@@ -9,10 +11,13 @@ public final class Namespace
 
     private final String description;
 
+    private final Instant modifiedTime;
+
     private Namespace( final Builder builder )
     {
         this.key = builder.key;
         this.description = builder.description;
+        this.modifiedTime = builder.modifiedTime;
     }
 
     public static Builder create()
@@ -30,11 +35,18 @@ public final class Namespace
         return description;
     }
 
+    public Instant getModifiedTime()
+    {
+        return modifiedTime;
+    }
+
     public static final class Builder
     {
         private ApplicationKey key;
 
         private String description;
+
+        private Instant modifiedTime;
 
         private Builder()
         {
@@ -49,6 +61,12 @@ public final class Namespace
         public Builder description( final String description )
         {
             this.description = description;
+            return this;
+        }
+
+        public Builder modifiedTime( final Instant modifiedTime )
+        {
+            this.modifiedTime = modifiedTime;
             return this;
         }
 

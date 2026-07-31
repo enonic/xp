@@ -48,7 +48,11 @@ public class NamespaceAppService
             {
                 return null;
             }
-            return Namespace.create().key( applicationKey ).description( node.data().getString( "description" ) ).build();
+            return Namespace.create()
+                .key( applicationKey )
+                .description( node.data().getString( "description" ) )
+                .modifiedTime( node.getTimestamp() )
+                .build();
         } );
     }
 
@@ -64,6 +68,7 @@ public class NamespaceAppService
                 .map( node -> Namespace.create()
                     .key( DynamicResourceManager.appKeyFromNodePath( node.path() ) )
                     .description( node.data().getString( "description" ) )
+                    .modifiedTime( node.getTimestamp() )
                     .build() )
                 .collect( Collectors.toList() );
         } );
@@ -73,9 +78,13 @@ public class NamespaceAppService
     {
         requireAdminRole();
 
-        NamespaceAppContext.createContext().runWith( () -> initNamespaceNode( params ) );
+        final Node namespaceNode = NamespaceAppContext.createContext().callWith( () -> initNamespaceNode( params ) );
 
-        return Namespace.create().key( params.getKey() ).description( params.getDescription() ).build();
+        return Namespace.create()
+            .key( params.getKey() )
+            .description( params.getDescription() )
+            .modifiedTime( namespaceNode.getTimestamp() )
+            .build();
     }
 
     public Namespace update( final UpdateNamespaceParams params )
@@ -103,7 +112,11 @@ public class NamespaceAppService
                                                              .refresh( RefreshMode.ALL )
                                                              .build() );
 
-            return Namespace.create().key( params.getKey() ).description( updatedNode.data().getString( "description" ) ).build();
+            return Namespace.create()
+                .key( params.getKey() )
+                .description( updatedNode.data().getString( "description" ) )
+                .modifiedTime( updatedNode.getTimestamp() )
+                .build();
         } );
     }
 

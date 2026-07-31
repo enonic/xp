@@ -8,7 +8,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.Namespace;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
-import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.util.Version;
 
@@ -61,7 +60,7 @@ final class NamespaceApplication
     @Override
     public Instant getModifiedTime()
     {
-        return Millis.now();
+        return namespace.getModifiedTime();
     }
 
     @Override
