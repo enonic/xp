@@ -3,15 +3,14 @@ package com.enonic.xp.repo.impl.node.dao;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.Weigher;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -40,11 +39,11 @@ public class NodeVersionServiceImpl
 {
     private final BlobStore blobStore;
 
-    private final Cache<BlobKey, WithWeight<ImmutableNodeVersion>> nodeDataCache;
+    private final BoundedCache<ImmutableNodeVersion> nodeDataCache;
 
-    private final Cache<BlobKey, WithWeight<PatternIndexConfigDocument>> indexConfigCache;
+    private final BoundedCache<PatternIndexConfigDocument> indexConfigCache;
 
-    private final Cache<BlobKey, WithWeight<AccessControlList>> accessControlCache;
+    private final BoundedCache<AccessControlList> accessControlCache;
 
     @Activate
     public NodeVersionServiceImpl( @Reference final BlobStore blobStore, @Reference final RepoConfiguration repoConfiguration )
@@ -55,9 +54,9 @@ public class NodeVersionServiceImpl
         final long nodeCacheCapacity = (long) ( cacheCapacity * 0.98D );
         final long otherCachesCapacity = (long) ( cacheCapacity * 0.01D );
 
-        this.nodeDataCache = CacheBuilder.newBuilder().maximumWeight( nodeCacheCapacity ).weigher( WithWeight.WEIGHTER ).build();
-        this.indexConfigCache = CacheBuilder.newBuilder().maximumWeight( otherCachesCapacity ).weigher( WithWeight.WEIGHTER ).build();
-        this.accessControlCache = CacheBuilder.newBuilder().maximumWeight( otherCachesCapacity ).weigher( WithWeight.WEIGHTER ).build();
+        this.nodeDataCache = new BoundedCache<>( nodeCacheCapacity );
+        this.indexConfigCache = new BoundedCache<>( otherCachesCapacity );
+        this.accessControlCache = new BoundedCache<>( otherCachesCapacity );
     }
 
     @Override
@@ -142,22 +141,31 @@ public class NodeVersionServiceImpl
     }
 
     private <T> T fetchAndDeserializeCached( final RepositoryId repositoryId, final SegmentLevel segmentLevel, final BlobKey blobKey,
-                                             final IOFunction<ByteSource, T> deserializer, Cache<BlobKey, WithWeight<T>> cache )
+                                             final IOFunction<ByteSource, T> deserializer, final BoundedCache<T> cache )
     {
         try
         {
-            return cache.get( blobKey, () -> fetchAndDeserialize( repositoryId, segmentLevel, blobKey, deserializer ) ).value;
+            final AtomicReference<T> uncacheable = new AtomicReference<>();
+            final WithWeight<T> cached = cache.cache.get( blobKey, key -> {
+                final WithWeight<T> loaded = fetchAndDeserialize( repositoryId, segmentLevel, key, deserializer, cache.maxItemWeight );
+                if ( loaded.weight >= cache.maxItemWeight )
+                {
+                    uncacheable.set( loaded.value );
+                    return null;
+                }
+                return loaded;
+            } );
+            return cached != null ? cached.value : uncacheable.get();
         }
-        catch ( ExecutionException e )
+        catch ( UncheckedIOException e )
         {
             throw new RuntimeException( String.format( "Failed to load blob %s [%s/%s]", blobKey, repositoryId, segmentLevel ),
                                         e.getCause() );
         }
     }
 
-    private <T> WithWeight<T> fetchAndDeserialize( RepositoryId repositoryId, SegmentLevel segmentLevel, BlobKey blobKey,
-                                                   final IOFunction<ByteSource, T> deserializer )
-        throws IOException
+    private <T> WithWeight<T> fetchAndDeserialize( final RepositoryId repositoryId, final SegmentLevel segmentLevel, final BlobKey blobKey,
+                                                   final IOFunction<ByteSource, T> deserializer, final long bailOutWeight )
     {
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
         final BlobRecord blobRecord = blobStore.getRecord( segment, blobKey );
@@ -165,12 +173,44 @@ public class NodeVersionServiceImpl
         {
             throw new IllegalStateException( String.format( "Blob record not found %s [%s/%s]", blobKey, repositoryId, segmentLevel ) );
         }
-        final ByteSource bytes = blobRecord.getBytes();
-        return new WithWeight<>( deserializer.apply( bytes ), blobRecord.getLength() );
+        try
+        {
+            final byte[] json = blobRecord.getBytes().read();
+            final T value = deserializer.apply( ByteSource.wrap( json ) );
+            return new WithWeight<>( value, WithWeight.estimateWeight( json, bailOutWeight ) );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
-    private static class WithWeight<T>
+    private static final class BoundedCache<T>
     {
+        final Cache<BlobKey, WithWeight<T>> cache;
+
+        // an entry heavier than a fraction of the whole cache would evict a large
+        // number of useful entries, so such entries are not cached at all
+        final long maxItemWeight;
+
+        BoundedCache( final long capacity )
+        {
+            this.cache =
+                Caffeine.newBuilder().maximumWeight( capacity ).<BlobKey, WithWeight<T>>weigher( ( key, value ) -> value.weight ).build();
+            this.maxItemWeight = Math.max( 1, capacity / 100 );
+        }
+    }
+
+    private static final class WithWeight<T>
+    {
+        // Memory model of a deserialized JSON blob: an object turns into headers and
+        // field pointers, an array into a list with a backing array, a string into a
+        // java.lang.String with its own backing array (two quotes per string), while
+        // the character data is retained roughly byte-for-byte.
+        private static final int CONTAINER_WEIGHT = 64;
+
+        private static final int QUOTE_WEIGHT = 24;
+
         final T value;
 
         final int weight;
@@ -181,7 +221,23 @@ public class NodeVersionServiceImpl
             this.weight = (int) Math.min( weight, Integer.MAX_VALUE );
         }
 
-        static final Weigher<BlobKey, WithWeight<?>> WEIGHTER = ( key, value ) -> value.weight;
+        static long estimateWeight( final byte[] json, final long bailOutWeight )
+        {
+            long weight = CONTAINER_WEIGHT + json.length;
+            for ( int i = 0; i < json.length && weight < bailOutWeight; i++ )
+            {
+                final byte b = json[i];
+                if ( b == '{' || b == '[' )
+                {
+                    weight += CONTAINER_WEIGHT;
+                }
+                else if ( b == '"' )
+                {
+                    weight += QUOTE_WEIGHT;
+                }
+            }
+            return weight;
+        }
     }
 
     @FunctionalInterface

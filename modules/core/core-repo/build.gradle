@@ -14,6 +14,7 @@ dependencies {
     runtimeOnly libs.jackson.dataformat.cbor
     runtimeOnly libs.jackson.dataformat.yaml
 
+    implementation libs.caffeine
     implementation libs.commons.compress
     implementation libs.tika.core
     implementation libs.tika.parser.image

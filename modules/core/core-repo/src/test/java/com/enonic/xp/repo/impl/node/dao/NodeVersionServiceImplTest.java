@@ -248,6 +248,72 @@ class NodeVersionServiceImplTest
         assertNotNull( returnedNodeVersion );
     }
 
+    @Test
+    void getVersionCached()
+        throws Exception
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myName", "myCachedValue" );
+
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
+
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
+        executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
+
+        // corrupt the blob in the source blob store: further reads can only succeed from the cache
+        corruptBlob( nodeVersionKey );
+
+        final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
+        assertEquals( nodeVersion.data(), returnedNodeVersion.data() );
+    }
+
+    @Test
+    void getVersionTooHeavyToCache()
+        throws Exception
+    {
+        this.nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of( "cache.capacity", "1kb" ) ) );
+
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myName", "myTooHeavyValue" );
+
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .nodeType( NodeType.DEFAULT_NODE_COLLECTION )
+            .id( new NodeId() )
+            .childOrder( ChildOrder.defaultOrder() )
+            .data( data )
+            .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+            .build();
+
+        final NodeVersionKey nodeVersionKey = executeInContext( () -> nodeDao.store( nodeVersion, createInternalContext() ) );
+
+        // too heavy entries are still returned, just not cached
+        final NodeStoreVersion returnedNodeVersion = executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) );
+        assertEquals( nodeVersion.data(), returnedNodeVersion.data() );
+
+        // corrupt the blob in the source blob store: the second read must hit the blob store again and fail
+        corruptBlob( nodeVersionKey );
+
+        RuntimeException e =
+            assertThrows( RuntimeException.class, () -> executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) );
+        assertTrue( e.getMessage().startsWith( "Failed to load blob" ) );
+    }
+
+    private void corruptBlob( final NodeVersionKey nodeVersionKey )
+        throws Exception
+    {
+        final Segment segment = executeInContext( () -> createSegment( NODE_SEGMENT_LEVEL ) );
+        final BlobRecord blob = BLOB_STORE.getRecord( segment, nodeVersionKey.getNodeBlobKey() );
+        final byte[] blobData = blob.getBytes().read();
+        final byte[] blobDataTruncated = Arrays.copyOf( blobData, blobData.length / 2 );
+        BLOB_STORE.addRecord( segment, new MemoryBlobRecord( blob.getKey(), ByteSource.wrap( blobDataTruncated ) ) );
+    }
+
     protected Segment createSegment( SegmentLevel blobTypeLevel )
     {
         final RepositoryId repositoryId = ContextAccessor.current().getRepositoryId();
