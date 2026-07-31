@@ -17,12 +17,13 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.CachingBlobStore;
+import com.enonic.xp.blob.EvictableBlobStore;
 import com.enonic.xp.blob.Segment;
 
 import static java.util.Objects.requireNonNullElse;
 
 public final class CachedBlobStore
-    implements BlobStore, CachingBlobStore
+    implements BlobStore, CachingBlobStore, EvictableBlobStore
 {
     private static final Logger LOG = LoggerFactory.getLogger( CachedBlobStore.class );
 
@@ -134,6 +135,16 @@ public final class CachedBlobStore
     {
         store.deleteSegment( segment );
         cache.invalidateAll();
+    }
+
+    @Override
+    public long evict()
+    {
+        if ( this.store instanceof EvictableBlobStore )
+        {
+            return ( (EvictableBlobStore) this.store ).evict();
+        }
+        return 0;
     }
 
     public static Builder create()

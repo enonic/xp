@@ -73,6 +73,7 @@ final class BlobStoreFactory
                     store( providerStore ).
                     readThroughStore( readThroughProvider.get() ).
                     sizeThreshold( config.readThroughSizeThreshold() ).
+                    cacheCapacity( config.readThroughCacheCapacity() ).
                     build();
             }
         }

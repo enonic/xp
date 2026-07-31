@@ -9,4 +9,6 @@ public interface BlobStoreConfig
     long cacheSizeThreshold();
 
     long memoryCapacity();
+
+    String readThroughEvictInterval();
 }

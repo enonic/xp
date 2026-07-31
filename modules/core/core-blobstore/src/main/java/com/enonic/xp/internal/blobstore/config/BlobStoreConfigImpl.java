@@ -51,6 +51,12 @@ public class BlobStoreConfigImpl
         return getSizeProperty( "cache.memoryCapacity" );
     }
 
+    @Override
+    public String readThroughEvictInterval()
+    {
+        return this.config.get( "readThrough.evictInterval" );
+    }
+
 
     private long getSizeProperty( final String key )
     {

@@ -22,6 +22,7 @@ class BlobStoreConfigImplTest
         assertTrue( blobStoreConfig.cache() );
         assertNotNull( blobStoreConfig.cacheSizeThreshold() );
         assertNotNull( blobStoreConfig.memoryCapacity() );
+        assertEquals( "PT10M", blobStoreConfig.readThroughEvictInterval() );
     }
 
 

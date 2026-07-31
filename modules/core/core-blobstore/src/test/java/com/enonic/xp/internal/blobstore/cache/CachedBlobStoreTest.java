@@ -199,4 +199,22 @@ class CachedBlobStoreTest
         cachedBlobStore.addRecord( segment, corruptedRecord );
         assertNull( cachedBlobStore.getRecord( segment, BlobKey.from( "invalidKey" ) ) );
     }
+
+    @Test
+    void evictDelegatesToEvictableStore()
+    {
+        final BlobStore evictable =
+            Mockito.mock( BlobStore.class, Mockito.withSettings().extraInterfaces( com.enonic.xp.blob.EvictableBlobStore.class ) );
+        Mockito.when( ( (com.enonic.xp.blob.EvictableBlobStore) evictable ).evict() ).thenReturn( 7L );
+
+        final CachedBlobStore cached = CachedBlobStore.create().blobStore( evictable ).memoryCapacity( 100 ).sizeThreshold( 10 ).build();
+
+        assertEquals( 7L, cached.evict() );
+    }
+
+    @Test
+    void evictWithoutEvictableStore()
+    {
+        assertEquals( 0, this.cachedBlobStore.evict() );
+    }
 }

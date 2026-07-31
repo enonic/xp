@@ -1,6 +1,12 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSource;
 
@@ -9,20 +15,26 @@ import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.CachingBlobStore;
+import com.enonic.xp.blob.EvictableBlobStore;
 import com.enonic.xp.blob.Segment;
 
 public class ReadThroughBlobStore
-    implements BlobStore, CachingBlobStore
+    implements BlobStore, CachingBlobStore, EvictableBlobStore
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ReadThroughBlobStore.class );
+
     private final BlobStore store;
 
     private final BlobStore readThroughStore;
 
     private final long sizeThreshold;
 
+    private final long cacheCapacity;
+
     private ReadThroughBlobStore( final Builder builder )
     {
         this.sizeThreshold = builder.sizeThreshold;
+        this.cacheCapacity = builder.cacheCapacity;
         this.store = builder.store;
         this.readThroughStore = builder.readThroughStore;
     }
@@ -122,6 +134,74 @@ public class ReadThroughBlobStore
         readThroughStore.deleteSegment( segment );
     }
 
+    @Override
+    public long evict()
+    {
+        if ( this.cacheCapacity <= 0 )
+        {
+            return 0;
+        }
+
+        final List<CacheEntry> entries = new ArrayList<>();
+        long total = 0;
+        long unorderable = 0;
+
+        try (Stream<Segment> segments = this.readThroughStore.listSegments())
+        {
+            for ( final Segment segment : segments.toList() )
+            {
+                try (Stream<BlobRecord> records = this.readThroughStore.list( segment ))
+                {
+                    for ( final BlobRecord record : records.toList() )
+                    {
+                        final long lastModified = record.lastModified();
+                        total += record.getLength();
+                        if ( lastModified > 0 )
+                        {
+                            entries.add( new CacheEntry( segment, record.getKey(), record.getLength(), lastModified ) );
+                        }
+                        else
+                        {
+                            unorderable++;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ( total <= this.cacheCapacity )
+        {
+            return 0;
+        }
+
+        entries.sort( Comparator.comparingLong( CacheEntry::lastModified ) );
+
+        long evicted = 0;
+        for ( final CacheEntry entry : entries )
+        {
+            if ( total <= this.cacheCapacity )
+            {
+                break;
+            }
+            this.readThroughStore.removeRecord( entry.segment(), entry.key() );
+            total -= entry.length();
+            evicted++;
+        }
+
+        if ( total > this.cacheCapacity )
+        {
+            LOG.warn(
+                "Could not evict read-through store below capacity [{}]: {} records have no valid last modified time. Automatic cleanup is not supported on filesystems without last modified time support",
+                this.cacheCapacity, unorderable );
+        }
+
+        return evicted;
+    }
+
+    private record CacheEntry(Segment segment, BlobKey key, long length, long lastModified)
+    {
+    }
+
     public static final class Builder
     {
         private BlobStore store;
@@ -129,6 +209,8 @@ public class ReadThroughBlobStore
         private BlobStore readThroughStore;
 
         private long sizeThreshold;
+
+        private long cacheCapacity;
 
         private Builder()
         {
@@ -149,6 +231,12 @@ public class ReadThroughBlobStore
         public Builder sizeThreshold( final long sizeThreshold )
         {
             this.sizeThreshold = sizeThreshold;
+            return this;
+        }
+
+        public Builder cacheCapacity( final long cacheCapacity )
+        {
+            this.cacheCapacity = cacheCapacity;
             return this;
         }
 
