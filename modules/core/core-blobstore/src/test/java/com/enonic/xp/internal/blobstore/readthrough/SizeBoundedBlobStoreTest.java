@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
@@ -133,31 +132,30 @@ class SizeBoundedBlobStoreTest
     }
 
     @Test
-    void no_writes_until_seeded()
+    void writes_pass_through_until_seeded()
     {
         final BlobRecord existing = this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
 
         final List<Runnable> pendingSeed = new ArrayList<>();
-        final SizeBoundedBlobStore boundedStore = new SizeBoundedBlobStore( this.delegate, 100, Runnable::run, pendingSeed::add );
+        final SizeBoundedBlobStore boundedStore = new SizeBoundedBlobStore( this.delegate, 25, Runnable::run, pendingSeed::add );
 
         // reads are served from the delegate while seeding is pending
         assertNotNull( boundedStore.getRecord( SEGMENT, existing.getKey() ) );
 
-        // writes are not persisted, but the returned record carries the content
-        final ByteSource binary = ByteSource.wrap( "10 bytes 2".getBytes() );
-        final BlobRecord transientRecord = boundedStore.addRecord( SEGMENT, binary );
-        assertEquals( BlobKey.sha256( binary ), transientRecord.getKey() );
-        assertEquals( 10, transientRecord.getLength() );
-        assertNull( this.delegate.getRecord( SEGMENT, transientRecord.getKey() ) );
+        // writes go to the delegate store, but are not yet indexed - capacity is not enforced
+        final BlobRecord stored = boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        assertNotNull( this.delegate.getRecord( SEGMENT, stored.getKey() ) );
 
         final BlobRecord source = new MemoryBlobStore().addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
-        assertEquals( source, boundedStore.addRecord( SEGMENT, source ) );
-        assertNull( this.delegate.getRecord( SEGMENT, source.getKey() ) );
+        boundedStore.addRecord( SEGMENT, source );
+        assertNotNull( this.delegate.getRecord( SEGMENT, source.getKey() ) );
 
-        // seeding completes - writes are stored again
+        assertEquals( 30, delegateTotalSize() );
+
+        // seeding completes and indexes everything written so far - capacity is enforced again
         pendingSeed.forEach( Runnable::run );
+        boundedStore.cleanUp();
 
-        final BlobRecord stored = boundedStore.addRecord( SEGMENT, binary );
-        assertNotNull( this.delegate.getRecord( SEGMENT, stored.getKey() ) );
+        assertTrue( delegateTotalSize() <= 25 );
     }
 }

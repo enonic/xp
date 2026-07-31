@@ -1,6 +1,5 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -31,8 +30,9 @@ import com.enonic.xp.blob.Segment;
  * immediately after being written. No access tracking is persisted and no filesystem timestamp support is needed.
  * <p>
  * On startup the index is seeded from the existing delegate content by a single virtual thread. Until seeding
- * completes, reads are served directly from the delegate but no new records are stored and no accesses are
- * recorded - the store content and the index would otherwise drift apart.
+ * completes, reads and writes pass straight through to the delegate without touching the index: no accesses are
+ * recorded and no capacity is enforced. Records written while seeding runs are picked up by the seeding walk
+ * itself or, failing that, indexed on their first read after seeding.
  */
 public final class SizeBoundedBlobStore
     implements BlobStore
@@ -140,13 +140,11 @@ public final class SizeBoundedBlobStore
     public BlobRecord addRecord( final Segment segment, final ByteSource in )
         throws BlobStoreException
     {
-        if ( !this.seeded )
-        {
-            return new TransientBlobRecord( in );
-        }
-
         final BlobRecord record = this.store.addRecord( segment, in );
-        this.index.put( new IndexKey( segment, record.getKey() ), record.getLength() );
+        if ( this.seeded )
+        {
+            this.index.put( new IndexKey( segment, record.getKey() ), record.getLength() );
+        }
         return record;
     }
 
@@ -154,13 +152,11 @@ public final class SizeBoundedBlobStore
     public BlobRecord addRecord( final Segment segment, final BlobRecord record )
         throws BlobStoreException
     {
-        if ( !this.seeded )
-        {
-            return record;
-        }
-
         final BlobRecord added = this.store.addRecord( segment, record );
-        this.index.put( new IndexKey( segment, added.getKey() ), added.getLength() );
+        if ( this.seeded )
+        {
+            this.index.put( new IndexKey( segment, added.getKey() ), added.getLength() );
+        }
         return added;
     }
 
@@ -198,54 +194,5 @@ public final class SizeBoundedBlobStore
 
     private record IndexKey(Segment segment, BlobKey key)
     {
-    }
-
-    /**
-     * Returned instead of storing while the index seeding is in progress. The record carries the content,
-     * so callers can still read it, but nothing is persisted in the cache store.
-     */
-    private static final class TransientBlobRecord
-        implements BlobRecord
-    {
-        private final BlobKey key;
-
-        private final ByteSource bytes;
-
-        TransientBlobRecord( final ByteSource bytes )
-        {
-            this.key = BlobKey.sha256( bytes );
-            this.bytes = bytes;
-        }
-
-        @Override
-        public BlobKey getKey()
-        {
-            return this.key;
-        }
-
-        @Override
-        public long getLength()
-        {
-            try
-            {
-                return this.bytes.size();
-            }
-            catch ( IOException e )
-            {
-                throw new BlobStoreException( "Failed to get blob size", e );
-            }
-        }
-
-        @Override
-        public ByteSource getBytes()
-        {
-            return this.bytes;
-        }
-
-        @Override
-        public long lastModified()
-        {
-            return System.currentTimeMillis();
-        }
     }
 }
