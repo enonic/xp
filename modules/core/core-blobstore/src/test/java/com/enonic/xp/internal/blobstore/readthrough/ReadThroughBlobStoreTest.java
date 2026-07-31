@@ -1,6 +1,9 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +89,7 @@ class ReadThroughBlobStoreTest
             .sizeThreshold( ByteSizeParser.parse( "80kb" ) )
             .build();
 
-        final ByteSource binary = ByteSource.wrap( ByteStreams.toByteArray( this.getClass().getResourceAsStream( "fish-86kb.jpg" ) ) );
+        final ByteSource binary = overThresholdBinary();
 
         final Segment segment = Segment.from( "test", "blob" );
         final BlobRecord record = actualBlobStore.addRecord( segment, binary );
@@ -99,7 +102,7 @@ class ReadThroughBlobStoreTest
     void obey_size_threshold_after_read()
         throws Exception
     {
-        final ByteSource binary = ByteSource.wrap( ByteStreams.toByteArray( this.getClass().getResourceAsStream( "fish-86kb.jpg" ) ) );
+        final ByteSource binary = overThresholdBinary();
         final Segment segment = Segment.from( "test", "blob" );
 
         final BlobRecord record = this.finalStore.addRecord( segment, binary );
@@ -119,7 +122,7 @@ class ReadThroughBlobStoreTest
     void obey_size_threshold_on_record_add()
         throws Exception
     {
-        final ByteSource binary = ByteSource.wrap( ByteStreams.toByteArray( this.getClass().getResourceAsStream( "fish-86kb.jpg" ) ) );
+        final ByteSource binary = overThresholdBinary();
         final Segment segment = Segment.from( "test", "blob" );
 
         final MemoryBlobStore sourceStore = new MemoryBlobStore();
@@ -135,6 +138,36 @@ class ReadThroughBlobStoreTest
 
         assertNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
         assertNotNull( this.finalStore.getRecord( segment, record.getKey() ) );
+    }
+
+    @Test
+    void stored_in_readthrough_on_record_add()
+    {
+        final ByteSource binary = ByteSource.wrap( "this is a record".getBytes() );
+        final Segment segment = Segment.from( "test", "blob" );
+
+        final MemoryBlobStore sourceStore = new MemoryBlobStore();
+        final BlobRecord record = sourceStore.addRecord( segment, binary );
+
+        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
+            .readThroughStore( this.readThroughStore )
+            .store( this.finalStore )
+            .sizeThreshold( ByteSizeParser.parse( "80kb" ) )
+            .build();
+
+        actualBlobStore.addRecord( segment, record );
+
+        assertNotNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
+        assertNotNull( this.finalStore.getRecord( segment, record.getKey() ) );
+    }
+
+    private ByteSource overThresholdBinary()
+        throws IOException
+    {
+        try (InputStream in = Objects.requireNonNull( this.getClass().getResourceAsStream( "fish-86kb.jpg" ) ))
+        {
+            return ByteSource.wrap( ByteStreams.toByteArray( in ) );
+        }
     }
 
     @Test
