@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create namespace.
+// Get application descriptor.
 var result = appLib.getDescriptor({
     key: 'my_app',
 });
