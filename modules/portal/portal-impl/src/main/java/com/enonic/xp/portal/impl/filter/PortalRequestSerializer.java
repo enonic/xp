@@ -45,6 +45,7 @@ public final class PortalRequestSerializer
         populateHost( req, value.getMember( "host" ) );
         populatePort( req, value.getMember( "port" ) );
         populatePath( req, value.getMember( "path" ) );
+        populateRawPath( req, value.getMember( "rawPath" ) );
         populateUrl( req, value.getMember( "url" ) );
         populateRemoteAddress( req, value.getMember( "remoteAddress" ) );
         populateMode( req, value.getMember( "mode" ) );
@@ -113,6 +114,15 @@ public final class PortalRequestSerializer
         if ( value != null )
         {
             req.setPath( value );
+        }
+    }
+
+    private void populateRawPath( final PortalRequest req, final ScriptValue scriptValue )
+    {
+        final String value = ( scriptValue != null ) ? scriptValue.getValue( String.class ) : null;
+        if ( value != null )
+        {
+            req.setRawPath( value );
         }
     }
 

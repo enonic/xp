@@ -114,6 +114,33 @@ class PortalRequestSerializerTest
     }
 
     @Test
+    void serializeRawPath()
+    {
+        final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setRawPath( "/site/myproject/draft/mysite" );
+
+        final ScriptValue value = factory.evalValue( "var result = {rawPath: '/site/myproject/draft/mysite/oslo'}; result;" );
+
+        final PortalRequest portalRequest = new PortalRequestSerializer( sourceRequest, value ).serialize();
+
+        assertEquals( "/site/myproject/draft/mysite/oslo", portalRequest.getRawPath() );
+        assertEquals( "/site/myproject/draft/mysite/oslo", portalRequest.getBasePath() );
+    }
+
+    @Test
+    void serializeRawPathUnchanged()
+    {
+        final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setRawPath( "/site/myproject/draft/mysite" );
+
+        final ScriptValue value = factory.evalValue( "var result = {path: '/other'}; result;" );
+
+        final PortalRequest portalRequest = new PortalRequestSerializer( sourceRequest, value ).serialize();
+
+        assertEquals( "/site/myproject/draft/mysite", portalRequest.getRawPath() );
+    }
+
+    @Test
     void serializeNonObject()
     {
         final PortalRequest sourceRequest = new PortalRequest();
