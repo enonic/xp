@@ -8,7 +8,6 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.portal.script.PortalScriptService;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceKey;
 
 @Component
@@ -20,11 +19,10 @@ public final class FilterScriptFactoryImpl
     private final PortalRequestRerouter rerouter;
 
     @Activate
-    public FilterScriptFactoryImpl( @Reference final PortalScriptService scriptService, @Reference final ContentService contentService,
-                                    @Reference final ProjectService projectService )
+    public FilterScriptFactoryImpl( @Reference final PortalScriptService scriptService, @Reference final ContentService contentService )
     {
         this.scriptService = scriptService;
-        this.rerouter = new PortalRequestRerouter( contentService, projectService );
+        this.rerouter = new PortalRequestRerouter( contentService );
     }
 
     @Override

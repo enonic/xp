@@ -23,9 +23,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.filter.FilterScript;
 import com.enonic.xp.portal.impl.script.PortalScriptServiceImpl;
-import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.resource.ResourceService;
@@ -66,8 +64,6 @@ class FilterScriptImplTest
 
     protected ContentService contentService;
 
-    protected ProjectService projectService;
-
     public FilterScriptImplTest()
     {
     }
@@ -101,9 +97,8 @@ class FilterScriptImplTest
         scriptService.initialize();
 
         this.contentService = Mockito.mock( ContentService.class );
-        this.projectService = Mockito.mock( ProjectService.class );
 
-        this.factory = new FilterScriptFactoryImpl( scriptService, contentService, projectService );
+        this.factory = new FilterScriptFactoryImpl( scriptService, contentService );
     }
 
     @Test
@@ -222,7 +217,7 @@ class FilterScriptImplTest
     }
 
     @Test
-    void testRerouteOnRawPathChange()
+    void testRerouteOnContentPathChange()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -231,11 +226,9 @@ class FilterScriptImplTest
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setRawPath( "/site/myproject/draft/mysite/municipalities" );
+        this.portalRequest.setContentPath( ContentPath.from( "/mysite/municipalities" ) );
         this.portalRequest.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
         this.portalRequest.setBranch( Branch.from( "draft" ) );
-
-        final Project project = Mockito.mock( Project.class );
-        when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
 
         final Content content = newContent();
         when( contentService.getByPath( eq( ContentPath.from( "/mysite/municipalities/oslo" ) ) ) ).thenReturn( content );
@@ -249,18 +242,17 @@ class FilterScriptImplTest
         Mockito.verify( webHandlerChain ).handle( requestCaptor.capture(), Mockito.any() );
 
         final PortalRequest reroutedRequest = (PortalRequest) requestCaptor.getValue();
-        assertEquals( "/site/myproject/draft/mysite/municipalities/oslo", reroutedRequest.getRawPath() );
+        assertEquals( "/site/myproject/draft/mysite/municipalities", reroutedRequest.getRawPath() );
         assertEquals( ContentPath.from( "/mysite/municipalities/oslo" ), reroutedRequest.getContentPath() );
         assertEquals( ProjectName.from( "myproject" ).getRepoId(), reroutedRequest.getRepositoryId() );
         assertEquals( Branch.from( "draft" ), reroutedRequest.getBranch() );
         assertEquals( content, reroutedRequest.getContent() );
         assertEquals( site, reroutedRequest.getSite() );
-        assertEquals( project, reroutedRequest.getProject() );
         assertEquals( "/site/myproject/draft/mysite", reroutedRequest.getContextPath() );
     }
 
     @Test
-    void testRerouteToInvalidPath()
+    void testRerouteToNonExistentContent()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -268,17 +260,24 @@ class FilterScriptImplTest
 
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setBaseUri( "/site" );
-        this.portalRequest.setRawPath( "/site/myproject/draft/mysite" );
+        this.portalRequest.setRawPath( "/site/myproject/draft/mysite/municipalities" );
+        this.portalRequest.setContentPath( ContentPath.from( "/mysite/municipalities" ) );
+        this.portalRequest.setRepositoryId( ProjectName.from( "myproject" ).getRepoId() );
+        this.portalRequest.setBranch( Branch.from( "draft" ) );
 
-        final WebException e =
-            assertThrows( WebException.class, () -> execute( "myapplication:/filter/reroute_invalid.js", webHandlerChain ) );
-        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        execute( "myapplication:/filter/reroute.js", webHandlerChain );
 
-        Mockito.verifyNoInteractions( webHandlerChain );
+        final ArgumentCaptor<WebRequest> requestCaptor = ArgumentCaptor.forClass( WebRequest.class );
+        Mockito.verify( webHandlerChain ).handle( requestCaptor.capture(), Mockito.any() );
+
+        final PortalRequest reroutedRequest = (PortalRequest) requestCaptor.getValue();
+        assertEquals( ContentPath.from( "/mysite/municipalities/oslo" ), reroutedRequest.getContentPath() );
+        Assertions.assertNull( reroutedRequest.getContent() );
+        Assertions.assertNull( reroutedRequest.getSite() );
     }
 
     @Test
-    void testNoRerouteWhenRawPathUnchanged()
+    void testNoRerouteWhenContentPathUnchanged()
         throws Exception
     {
         WebHandlerChain webHandlerChain = Mockito.mock( WebHandlerChain.class );
@@ -287,11 +286,12 @@ class FilterScriptImplTest
         this.portalRequest.setMethod( HttpMethod.GET );
         this.portalRequest.setBaseUri( "/site" );
         this.portalRequest.setRawPath( "/site/myproject/draft/mysite" );
+        this.portalRequest.setContentPath( ContentPath.from( "/mysite" ) );
 
         execute( "myapplication:/filter/callnext.js", webHandlerChain );
 
         Mockito.verify( webHandlerChain ).handle( Mockito.any(), Mockito.any() );
-        Mockito.verifyNoInteractions( contentService, projectService );
+        Mockito.verifyNoInteractions( contentService );
     }
 
     private Content newContent()

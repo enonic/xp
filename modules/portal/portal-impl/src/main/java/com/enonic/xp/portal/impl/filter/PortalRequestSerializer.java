@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.script.ScriptValue;
@@ -45,7 +46,7 @@ public final class PortalRequestSerializer
         populateHost( req, value.getMember( "host" ) );
         populatePort( req, value.getMember( "port" ) );
         populatePath( req, value.getMember( "path" ) );
-        populateRawPath( req, value.getMember( "rawPath" ) );
+        populateContentPath( req, value.getMember( "contentPath" ) );
         populateUrl( req, value.getMember( "url" ) );
         populateRemoteAddress( req, value.getMember( "remoteAddress" ) );
         populateMode( req, value.getMember( "mode" ) );
@@ -117,12 +118,12 @@ public final class PortalRequestSerializer
         }
     }
 
-    private void populateRawPath( final PortalRequest req, final ScriptValue scriptValue )
+    private void populateContentPath( final PortalRequest req, final ScriptValue scriptValue )
     {
         final String value = ( scriptValue != null ) ? scriptValue.getValue( String.class ) : null;
         if ( value != null )
         {
-            req.setRawPath( value );
+            req.setContentPath( ContentPath.from( value ) );
         }
     }
 

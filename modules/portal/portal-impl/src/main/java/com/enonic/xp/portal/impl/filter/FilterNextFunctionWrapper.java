@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.filter;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import com.enonic.xp.portal.PortalRequest;
@@ -56,7 +57,8 @@ public final class FilterNextFunctionWrapper
         {
             final PortalRequest portalRequest = new PortalRequestSerializer( request, scriptRequestParam ).serialize();
 
-            if ( !portalRequest.getRawPath().equals( request.getRawPath() ) && PortalRequestHelper.isSiteBase( portalRequest ) )
+            if ( !Objects.equals( portalRequest.getContentPath(), request.getContentPath() ) &&
+                PortalRequestHelper.isSiteBase( portalRequest ) )
             {
                 rerouter.reroute( portalRequest );
             }

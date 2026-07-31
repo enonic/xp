@@ -1,4 +1,4 @@
 exports.filter = function (req, next) {
-    req.rawPath = '/site/myproject/draft/mysite/municipalities/oslo';
+    req.contentPath = '/mysite/municipalities/oslo';
     return next(req);
 };

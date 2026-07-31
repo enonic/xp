@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.script.ScriptFixturesFacade;
@@ -114,30 +115,29 @@ class PortalRequestSerializerTest
     }
 
     @Test
-    void serializeRawPath()
+    void serializeContentPath()
     {
         final PortalRequest sourceRequest = new PortalRequest();
-        sourceRequest.setRawPath( "/site/myproject/draft/mysite" );
+        sourceRequest.setContentPath( ContentPath.from( "/mysite/municipalities" ) );
 
-        final ScriptValue value = factory.evalValue( "var result = {rawPath: '/site/myproject/draft/mysite/oslo'}; result;" );
+        final ScriptValue value = factory.evalValue( "var result = {contentPath: '/mysite/municipalities/oslo'}; result;" );
 
         final PortalRequest portalRequest = new PortalRequestSerializer( sourceRequest, value ).serialize();
 
-        assertEquals( "/site/myproject/draft/mysite/oslo", portalRequest.getRawPath() );
-        assertEquals( "/site/myproject/draft/mysite/oslo", portalRequest.getBasePath() );
+        assertEquals( ContentPath.from( "/mysite/municipalities/oslo" ), portalRequest.getContentPath() );
     }
 
     @Test
-    void serializeRawPathUnchanged()
+    void serializeContentPathUnchanged()
     {
         final PortalRequest sourceRequest = new PortalRequest();
-        sourceRequest.setRawPath( "/site/myproject/draft/mysite" );
+        sourceRequest.setContentPath( ContentPath.from( "/mysite/municipalities" ) );
 
         final ScriptValue value = factory.evalValue( "var result = {path: '/other'}; result;" );
 
         final PortalRequest portalRequest = new PortalRequestSerializer( sourceRequest, value ).serialize();
 
-        assertEquals( "/site/myproject/draft/mysite", portalRequest.getRawPath() );
+        assertEquals( ContentPath.from( "/mysite/municipalities" ), portalRequest.getContentPath() );
     }
 
     @Test

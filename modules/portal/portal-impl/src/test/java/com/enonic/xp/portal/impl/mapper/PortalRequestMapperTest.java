@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
@@ -78,6 +79,14 @@ class PortalRequestMapperTest
         this.portalRequest.setBody( "Hello World" );
 
         assertHelper.assertJson( "request-body.json", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    @Test
+    void contentPath()
+    {
+        this.portalRequest.setContentPath( ContentPath.from( "/a/b" ) );
+        final ScriptValue value = MapSerializableAssert.serializeJs( new PortalRequestMapper( this.portalRequest ) );
+        assertEquals( "/a/b", value.getMember( "contentPath" ).getValue( String.class ) );
     }
 
     @Test
