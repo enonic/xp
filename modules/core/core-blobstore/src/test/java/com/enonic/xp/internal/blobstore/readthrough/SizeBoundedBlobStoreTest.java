@@ -1,0 +1,128 @@
+package com.enonic.xp.internal.blobstore.readthrough;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.Segment;
+import com.enonic.xp.internal.blobstore.MemoryBlobStore;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class SizeBoundedBlobStoreTest
+{
+    private static final Segment SEGMENT = Segment.from( "test", "blob" );
+
+    private MemoryBlobStore delegate;
+
+    @BeforeEach
+    void setUp()
+    {
+        this.delegate = new MemoryBlobStore();
+    }
+
+    private SizeBoundedBlobStore newBoundedStore( final long capacity )
+    {
+        return new SizeBoundedBlobStore( this.delegate, capacity, Runnable::run );
+    }
+
+    private long delegateTotalSize()
+    {
+        try (Stream<BlobRecord> records = this.delegate.list( SEGMENT ))
+        {
+            return records.mapToLong( BlobRecord::getLength ).sum();
+        }
+    }
+
+    @Test
+    void stays_within_capacity()
+    {
+        final SizeBoundedBlobStore boundedStore = newBoundedStore( 25 );
+
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+        boundedStore.cleanUp();
+
+        assertTrue( delegateTotalSize() <= 25 );
+    }
+
+    @Test
+    void within_capacity_keeps_everything()
+    {
+        final SizeBoundedBlobStore boundedStore = newBoundedStore( 100 );
+
+        final BlobRecord record1 = boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        final BlobRecord record2 = boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        boundedStore.cleanUp();
+
+        assertNotNull( this.delegate.getRecord( SEGMENT, record1.getKey() ) );
+        assertNotNull( this.delegate.getRecord( SEGMENT, record2.getKey() ) );
+    }
+
+    @Test
+    void seeds_existing_content()
+    {
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+
+        final SizeBoundedBlobStore boundedStore = newBoundedStore( 25 );
+        boundedStore.cleanUp();
+
+        assertTrue( delegateTotalSize() <= 25 );
+    }
+
+    @Test
+    void get_returns_and_indexes_unindexed_record()
+    {
+        final SizeBoundedBlobStore boundedStore = newBoundedStore( 100 );
+
+        // added behind the bounded store's back, e.g. leftover from a previous run
+        final BlobRecord record = this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+
+        final BlobRecord found = boundedStore.getRecord( SEGMENT, record.getKey() );
+
+        assertNotNull( found );
+        assertEquals( record.getKey(), found.getKey() );
+    }
+
+    @Test
+    void getRecord_missing()
+    {
+        final SizeBoundedBlobStore boundedStore = newBoundedStore( 100 );
+
+        final BlobRecord record = new MemoryBlobStore().addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+
+        assertNull( boundedStore.getRecord( SEGMENT, record.getKey() ) );
+    }
+
+    @Test
+    void removeRecord()
+    {
+        final SizeBoundedBlobStore boundedStore = newBoundedStore( 100 );
+
+        final BlobRecord record = boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        boundedStore.removeRecord( SEGMENT, record.getKey() );
+
+        assertNull( this.delegate.getRecord( SEGMENT, record.getKey() ) );
+    }
+
+    @Test
+    void deleteSegment()
+    {
+        final SizeBoundedBlobStore boundedStore = newBoundedStore( 100 );
+
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        boundedStore.deleteSegment( SEGMENT );
+
+        assertEquals( 0, this.delegate.listSegments().count() );
+    }
+}

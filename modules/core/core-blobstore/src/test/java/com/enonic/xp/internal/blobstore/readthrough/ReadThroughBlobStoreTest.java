@@ -161,58 +161,6 @@ class ReadThroughBlobStoreTest
         assertNotNull( this.finalStore.getRecord( segment, record.getKey() ) );
     }
 
-    @Test
-    void evict_down_to_capacity()
-    {
-        final Segment segment = Segment.from( "test", "blob" );
-
-        this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 1".getBytes() ) );
-        this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 2".getBytes() ) );
-        this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 3".getBytes() ) );
-
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
-            .readThroughStore( this.readThroughStore )
-            .store( this.finalStore )
-            .cacheCapacity( 25 )
-            .build();
-
-        assertEquals( 1, actualBlobStore.evict() );
-
-        try (Stream<BlobRecord> remaining = this.readThroughStore.list( segment ))
-        {
-            assertEquals( 2, remaining.count() );
-        }
-    }
-
-    @Test
-    void evict_noop_within_capacity()
-    {
-        final Segment segment = Segment.from( "test", "blob" );
-        final BlobRecord record = this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 1".getBytes() ) );
-
-        final ReadThroughBlobStore actualBlobStore = ReadThroughBlobStore.create()
-            .readThroughStore( this.readThroughStore )
-            .store( this.finalStore )
-            .cacheCapacity( 100 )
-            .build();
-
-        assertEquals( 0, actualBlobStore.evict() );
-        assertNotNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
-    }
-
-    @Test
-    void evict_noop_without_capacity()
-    {
-        final Segment segment = Segment.from( "test", "blob" );
-        final BlobRecord record = this.readThroughStore.addRecord( segment, ByteSource.wrap( "10 bytes 1".getBytes() ) );
-
-        final ReadThroughBlobStore actualBlobStore =
-            ReadThroughBlobStore.create().readThroughStore( this.readThroughStore ).store( this.finalStore ).build();
-
-        assertEquals( 0, actualBlobStore.evict() );
-        assertNotNull( this.readThroughStore.getRecord( segment, record.getKey() ) );
-    }
-
     private ByteSource overThresholdBinary()
         throws IOException
     {

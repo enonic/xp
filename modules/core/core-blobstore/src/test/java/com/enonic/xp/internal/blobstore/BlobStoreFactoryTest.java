@@ -133,12 +133,6 @@ class BlobStoreFactoryTest
             {
                 return 0;
             }
-
-            @Override
-            public String readThroughEvictInterval()
-            {
-                return "PT10M";
-            }
         };
     }
 }
