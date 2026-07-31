@@ -1,5 +1,7 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
@@ -30,7 +33,7 @@ class SizeBoundedBlobStoreTest
 
     private SizeBoundedBlobStore newBoundedStore( final long capacity )
     {
-        return new SizeBoundedBlobStore( this.delegate, capacity, Runnable::run );
+        return new SizeBoundedBlobStore( this.delegate, capacity, Runnable::run, Runnable::run );
     }
 
     private long delegateTotalSize()
@@ -124,5 +127,34 @@ class SizeBoundedBlobStoreTest
         boundedStore.deleteSegment( SEGMENT );
 
         assertEquals( 0, this.delegate.listSegments().count() );
+    }
+
+    @Test
+    void no_writes_until_seeded()
+    {
+        final BlobRecord existing = this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+
+        final List<Runnable> pendingSeed = new ArrayList<>();
+        final SizeBoundedBlobStore boundedStore = new SizeBoundedBlobStore( this.delegate, 100, Runnable::run, pendingSeed::add );
+
+        // reads are served from the delegate while seeding is pending
+        assertNotNull( boundedStore.getRecord( SEGMENT, existing.getKey() ) );
+
+        // writes are not persisted, but the returned record carries the content
+        final ByteSource binary = ByteSource.wrap( "10 bytes 2".getBytes() );
+        final BlobRecord transientRecord = boundedStore.addRecord( SEGMENT, binary );
+        assertEquals( BlobKey.sha256( binary ), transientRecord.getKey() );
+        assertEquals( 10, transientRecord.getLength() );
+        assertNull( this.delegate.getRecord( SEGMENT, transientRecord.getKey() ) );
+
+        final BlobRecord source = new MemoryBlobStore().addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+        assertEquals( source, boundedStore.addRecord( SEGMENT, source ) );
+        assertNull( this.delegate.getRecord( SEGMENT, source.getKey() ) );
+
+        // seeding completes - writes are stored again
+        pendingSeed.forEach( Runnable::run );
+
+        final BlobRecord stored = boundedStore.addRecord( SEGMENT, binary );
+        assertNotNull( this.delegate.getRecord( SEGMENT, stored.getKey() ) );
     }
 }
