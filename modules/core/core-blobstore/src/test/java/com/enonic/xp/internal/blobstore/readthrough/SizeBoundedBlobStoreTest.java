@@ -126,7 +126,10 @@ class SizeBoundedBlobStoreTest
         boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
         boundedStore.deleteSegment( SEGMENT );
 
-        assertEquals( 0, this.delegate.listSegments().count() );
+        try (Stream<Segment> segments = this.delegate.listSegments())
+        {
+            assertEquals( 0, segments.count() );
+        }
     }
 
     @Test
