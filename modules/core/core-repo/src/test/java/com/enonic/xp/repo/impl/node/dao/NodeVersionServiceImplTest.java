@@ -280,7 +280,8 @@ class NodeVersionServiceImplTest
         this.nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of( "cache.capacity", "1kb" ) ) );
 
         final PropertyTree data = new PropertyTree();
-        data.addString( "myName", "myTooHeavyValue" );
+        // heavier than the whole cache capacity, so it can never be retained
+        data.addString( "myName", "myTooHeavyValue".repeat( 200 ) );
 
         final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
             .nodeType( NodeType.DEFAULT_NODE_COLLECTION )

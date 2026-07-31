@@ -267,15 +267,17 @@ public class NodeVersionServiceImpl
     {
         final Cache<BlobKey, WithWeight<T>> cache;
 
-        // an entry heavier than a fraction of the whole cache would evict a large
-        // number of useful entries, so such entries are not cached at all
+        // Entries heavier than the whole cache can never be retained, so they are not
+        // inserted at all. Anything below that is left to Caffeine's Window TinyLFU
+        // admission policy: a big entry is only kept if it is accessed frequently
+        // enough to beat the entries it would evict.
         final long maxItemWeight;
 
         BoundedCache( final long capacity )
         {
             this.cache =
                 Caffeine.newBuilder().maximumWeight( capacity ).<BlobKey, WithWeight<T>>weigher( ( key, value ) -> value.weight ).build();
-            this.maxItemWeight = Math.max( 1, capacity / 100 );
+            this.maxItemWeight = capacity;
         }
     }
 
