@@ -90,7 +90,7 @@ public final class SizeBoundedBlobStore
                     }
                 }
             }
-            LOG.info( "Indexed {} existing blobs in {} ms", count, ( System.nanoTime() - start ) / 1_000_000 );
+            LOG.debug( "Indexed {} existing blobs in {} ms", count, ( System.nanoTime() - start ) / 1_000_000 );
         }
         catch ( Exception e )
         {
