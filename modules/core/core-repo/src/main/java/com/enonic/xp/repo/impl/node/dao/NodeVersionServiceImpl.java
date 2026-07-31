@@ -1,6 +1,8 @@
 package com.enonic.xp.repo.impl.node.dao;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -147,7 +149,7 @@ public class NodeVersionServiceImpl
         {
             final AtomicReference<T> uncacheable = new AtomicReference<>();
             final WithWeight<T> cached = cache.cache.get( blobKey, key -> {
-                final WithWeight<T> loaded = fetchAndDeserialize( repositoryId, segmentLevel, key, deserializer, cache.maxItemWeight );
+                final WithWeight<T> loaded = fetchAndDeserialize( repositoryId, segmentLevel, key, deserializer );
                 if ( loaded.weight >= cache.maxItemWeight )
                 {
                     uncacheable.set( loaded.value );
@@ -165,7 +167,7 @@ public class NodeVersionServiceImpl
     }
 
     private <T> WithWeight<T> fetchAndDeserialize( final RepositoryId repositoryId, final SegmentLevel segmentLevel, final BlobKey blobKey,
-                                                   final IOFunction<ByteSource, T> deserializer, final long bailOutWeight )
+                                                   final IOFunction<ByteSource, T> deserializer )
     {
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
         final BlobRecord blobRecord = blobStore.getRecord( segment, blobKey );
@@ -175,13 +177,89 @@ public class NodeVersionServiceImpl
         }
         try
         {
-            final byte[] json = blobRecord.getBytes().read();
-            final T value = deserializer.apply( ByteSource.wrap( json ) );
-            return new WithWeight<>( value, WithWeight.estimateWeight( json, bailOutWeight ) );
+            final WeighingByteSource bytes = new WeighingByteSource( blobRecord.getBytes() );
+            final T value = deserializer.apply( bytes );
+            return new WithWeight<>( value, bytes.weight() );
         }
         catch ( IOException e )
         {
             throw new UncheckedIOException( e );
+        }
+    }
+
+    private static final class WeighingByteSource
+        extends ByteSource
+    {
+        // Memory model of a deserialized JSON blob: an object turns into headers and
+        // field pointers, an array into a list with a backing array, a string into a
+        // java.lang.String with its own backing array (two quotes per string), while
+        // the character data is retained roughly byte-for-byte.
+        private static final int CONTAINER_WEIGHT = 64;
+
+        private static final int QUOTE_WEIGHT = 24;
+
+        private final ByteSource source;
+
+        private long weight;
+
+        WeighingByteSource( final ByteSource source )
+        {
+            this.source = source;
+        }
+
+        long weight()
+        {
+            return weight;
+        }
+
+        @Override
+        public InputStream openStream()
+            throws IOException
+        {
+            weight = CONTAINER_WEIGHT;
+            return new FilterInputStream( source.openStream() )
+            {
+                @Override
+                public int read()
+                    throws IOException
+                {
+                    final int b = in.read();
+                    if ( b != -1 )
+                    {
+                        weight += 1 + weightOf( (byte) b );
+                    }
+                    return b;
+                }
+
+                @Override
+                public int read( final byte[] b, final int off, final int len )
+                    throws IOException
+                {
+                    final int n = in.read( b, off, len );
+                    for ( int i = off, end = off + n; i < end; i++ )
+                    {
+                        weight += weightOf( b[i] );
+                    }
+                    if ( n > 0 )
+                    {
+                        weight += n;
+                    }
+                    return n;
+                }
+            };
+        }
+
+        private static int weightOf( final byte b )
+        {
+            if ( b == '{' || b == '[' )
+            {
+                return CONTAINER_WEIGHT;
+            }
+            else if ( b == '"' )
+            {
+                return QUOTE_WEIGHT;
+            }
+            return 0;
         }
     }
 
@@ -203,14 +281,6 @@ public class NodeVersionServiceImpl
 
     private static final class WithWeight<T>
     {
-        // Memory model of a deserialized JSON blob: an object turns into headers and
-        // field pointers, an array into a list with a backing array, a string into a
-        // java.lang.String with its own backing array (two quotes per string), while
-        // the character data is retained roughly byte-for-byte.
-        private static final int CONTAINER_WEIGHT = 64;
-
-        private static final int QUOTE_WEIGHT = 24;
-
         final T value;
 
         final int weight;
@@ -219,24 +289,6 @@ public class NodeVersionServiceImpl
         {
             this.value = value;
             this.weight = (int) Math.min( weight, Integer.MAX_VALUE );
-        }
-
-        static long estimateWeight( final byte[] json, final long bailOutWeight )
-        {
-            long weight = CONTAINER_WEIGHT + json.length;
-            for ( int i = 0; i < json.length && weight < bailOutWeight; i++ )
-            {
-                final byte b = json[i];
-                if ( b == '{' || b == '[' )
-                {
-                    weight += CONTAINER_WEIGHT;
-                }
-                else if ( b == '"' )
-                {
-                    weight += QUOTE_WEIGHT;
-                }
-            }
-            return weight;
         }
     }
 
