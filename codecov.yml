@@ -1,6 +1,6 @@
 coverage:
   status:
-    # Fixed target instead of auto (base coverage): 80% keeps a real gate on
+    # Fixed target instead of auto (base coverage): 85% keeps a real gate on
     # changed lines while tolerating defensive branches that are impractical to
     # exercise (interrupts, timeouts, StackOverflowError handlers).
     patch:
