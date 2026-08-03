@@ -60,7 +60,7 @@ public final class GraalJavascriptHelperFactory
 
             @Override
             public GraalObjectConverter objectConverter() {
-                return new GraalObjectConverter( this );
+                return new GraalObjectConverter( this, context );
             }
         };
     }

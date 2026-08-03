@@ -69,13 +69,4 @@ final class GraalObjectScriptValue
             return converter.toMap( this.value );
         }
     }
-
-    @Override
-    public Object getValue()
-    {
-        synchronized ( context )
-        {
-            return value.isHostObject() ? value.asHostObject() : value;
-        }
-    }
 }

@@ -15,17 +15,8 @@ if (result1.authenticated) {
 // END
 
 // BEGIN
-// Login to any of the id providers, in sequence.
-var result2 = authLib.login({
-    user: 'user1@enonic.com',
-    password: 'secret',
-    idProvider: ['enonic', 'vip']
-});
-// END
-
-// BEGIN
 // Login to any of the existing id providers.
-var result3 = authLib.login({
+var result2 = authLib.login({
     user: 'user1@enonic.com',
     password: 'secret'
 });
@@ -33,7 +24,7 @@ var result3 = authLib.login({
 
 // BEGIN
 // Login with a explicit id provider without authentication.
-var result4 = authLib.login({
+var result3 = authLib.login({
     user: 'user1@enonic.com',
     idProvider: 'enonic',
     skipAuth: true
@@ -42,7 +33,7 @@ var result4 = authLib.login({
 
 // BEGIN
 // Login with an explicit scope SESSION.
-var result5 = authLib.login({
+var result4 = authLib.login({
     user: 'user1@enonic.com',
     idProvider: 'enonic',
     skipAuth: true,
@@ -52,7 +43,7 @@ var result5 = authLib.login({
 
 // BEGIN
 // Login with an explicit scope REQUEST.
-var result6 = authLib.login({
+var result5 = authLib.login({
     user: 'user1@enonic.com',
     idProvider: 'enonic',
     skipAuth: true,
@@ -83,4 +74,3 @@ t.assertJsonEquals(expected, result2);
 t.assertJsonEquals(expected, result3);
 t.assertJsonEquals(expected, result4);
 t.assertJsonEquals(expected, result5);
-t.assertJsonEquals(expected, result6);

@@ -42,8 +42,32 @@ public final class GraalScriptLogger
         proxyAsMap.put( "warning", new LogProxyExecutable( context, source, log, converter, LogLevelType.WARN ) );
         proxyAsMap.put( "debug", new LogProxyExecutable( context, source, log, converter, LogLevelType.DEBUG ) );
         proxyAsMap.put( "error", new LogProxyExecutable( context, source, log, converter, LogLevelType.ERROR ) );
+        // the other engine exposes the logger bean itself, format() included
+        proxyAsMap.put( "format", (ProxyExecutable) arguments -> {
+            synchronized ( context )
+            {
+                return format( arguments );
+            }
+        } );
 
         return ProxyObject.fromMap( proxyAsMap );
+    }
+
+    private String format( final Value... arguments )
+    {
+        if ( arguments.length == 0 )
+        {
+            throw new IllegalArgumentException( "log.format(...) must have at least one parameter" );
+        }
+
+        final Value message = arguments[0];
+        final String text = message.isString() ? message.asString() : message.toString();
+        final String prefix = "(" + source.getPath() + ") ";
+        if ( arguments.length == 1 )
+        {
+            return prefix + text;
+        }
+        return prefix + String.format( text, converter.convertArgs( Arrays.stream( arguments ).skip( 1 ).toArray() ) );
     }
 
     private enum LogLevelType

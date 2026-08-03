@@ -7,4 +7,8 @@ dependencies {
     implementation libs.junit.jupiter.api
     implementation libs.mockito.core
     implementation libs.slf4j.simple
+
+    // the harness runs scripts on every supported engine, and script-impl carries only the
+    // polyglot API — so consumers inherit the GraalJS language implementation from here
+    runtimeOnly libs.graalvm.js
 }

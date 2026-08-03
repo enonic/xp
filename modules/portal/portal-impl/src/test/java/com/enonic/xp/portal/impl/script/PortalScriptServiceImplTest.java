@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -41,7 +42,6 @@ class PortalScriptServiceImplTest
             @Override
             public void dispose( final ScriptRuntime runtime )
             {
-
             }
         } );
         portalScriptService.initialize();
@@ -50,9 +50,16 @@ class PortalScriptServiceImplTest
     @Test
     void hasScript()
     {
-
         portalScriptService.hasScript( resourceKey );
         verify( scriptRuntime ).hasScript( eq( resourceKey ) );
+    }
+
+    @Test
+    void bootstrap()
+    {
+        final BootstrapParams params = BootstrapParams.create().application( ApplicationKey.from( "myapp" ) ).build();
+        portalScriptService.bootstrap( params );
+        verify( scriptRuntime ).bootstrap( eq( params ) );
     }
 
     @Test
@@ -63,10 +70,10 @@ class PortalScriptServiceImplTest
     }
 
     @Test
-    void executeAsync()
+    void executeMethod()
     {
-        portalScriptService.executeAsync( ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" ) );
-        verify( scriptRuntime ).executeAsync( eq( resourceKey ) );
+        portalScriptService.executeMethod( ResourceKey.from( ApplicationKey.from( "myapp" ), "main.js" ), "run", "arg" );
+        verify( scriptRuntime ).executeMethod( eq( resourceKey ), eq( "run" ), eq( "arg" ) );
     }
 
     @Test

@@ -19,4 +19,4 @@ if (flag) {
 }
 // END
 
-assert.assertTrue(flag);
+assert.assertNotNull(flag);

@@ -3,8 +3,11 @@ package com.enonic.xp.web.jetty.impl;
 import java.util.Collections;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.VirtualThreadPool;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +20,9 @@ import com.enonic.xp.web.jetty.impl.session.JettySessionStoreConfigurator;
 import com.enonic.xp.web.jetty.impl.websocket.WebSocketSessionTracker;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -56,6 +62,45 @@ class JettyActivatorTest
         Mockito.verify( jettySessionStoreConfigurator ).configure( any( Server.class ), eq( 360 ) );
 
         activator.deactivate();
+    }
+
+    @Test
+    void testLifecycle_withVirtualThreads()
+        throws Exception
+    {
+        final ArgumentCaptor<Server> serverCaptor = ArgumentCaptor.forClass( Server.class );
+        when( bundleContext.registerService( eq( Server.class ), serverCaptor.capture(), any() ) ).
+            thenReturn( serverServiceRegistration );
+
+        this.config = mock( JettyConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( this.config.http_web_port() ).thenReturn( 0 );
+        when( this.config.http_statistics_port() ).thenReturn( 0 );
+        when( this.config.http_management_port() ).thenReturn( 0 );
+        when( this.config.threadPool_virtualThreads() ).thenReturn( true );
+        when( this.config.threadPool_virtualThreads_maxConcurrent() ).thenReturn( 16 );
+
+        final JettySessionStoreConfigurator jettySessionStoreConfigurator = Mockito.mock( JettySessionStoreConfigurator.class );
+        final DispatchServlet xpDispatcherServlet = mock( DispatchServlet.class );
+        when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        final JettyActivator activator =
+            new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, new WebSocketSessionTracker(),
+                                Collections.singletonList( xpDispatcherServlet ) );
+
+        activator.activate();
+
+        // the VirtualThreadPool is the QueuedThreadPool's virtual-threads executor and a managed bean,
+        // so it starts with the server and carries the configured concurrency bound
+        final QueuedThreadPool threadPool = (QueuedThreadPool) serverCaptor.getValue().getThreadPool();
+        final VirtualThreadPool virtualThreadPool = threadPool.getBean( VirtualThreadPool.class );
+        assertNotNull( virtualThreadPool );
+        assertEquals( virtualThreadPool, threadPool.getVirtualThreadsExecutor() );
+        assertEquals( 16, virtualThreadPool.getMaxConcurrentTasks() );
+        assertTrue( virtualThreadPool.isRunning() );
+
+        activator.deactivate();
+
+        // stopping the server stops the managed VirtualThreadPool bean
+        assertFalse( virtualThreadPool.isRunning() );
     }
 
     @Test

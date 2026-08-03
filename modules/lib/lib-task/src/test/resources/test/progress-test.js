@@ -3,25 +3,17 @@ var taskLib = require('/lib/xp/task.js');
 
 exports.reportProgress = function () {
 
-    var taskId = taskLib.executeFunction({
-        description: 'Background task',
-        func() {
+    taskLib.progress({info: 'Starting task'});
 
-            taskLib.progress({info: 'Starting task'});
+    for (var i = 0; i < 10; i++) {
+        taskLib.progress({
+            info: 'Step ' + i,
+            current: i,
+            total: 10
+        });
+    }
 
-            for (var i = 0; i < 10; i++) {
-                taskLib.progress({
-                    info: 'Step ' + i,
-                    current: i,
-                    total: 10
-                });
-            }
-
-            taskLib.progress({info: 'Work completed'});
-        }
-    });
-
-    t.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
+    taskLib.progress({info: 'Work completed'});
 };
 
 exports.reportProgressOutsideTask = function () {
@@ -33,35 +25,17 @@ exports.reportProgressOutsideTask = function () {
 
 exports.reportProgressWithoutInfo = function () {
 
-    var taskId = taskLib.executeFunction({
-        description: 'Background task',
-        func() {
-
-            for (var i = 0; i < 10; i++) {
-                taskLib.progress({
-                    current: i,
-                    total: 10
-                });
-            }
-
-        }
-    });
-
-    t.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
+    for (var i = 0; i < 10; i++) {
+        taskLib.progress({
+            current: i,
+            total: 10
+        });
+    }
 };
 
 exports.reportProgressInfoOnly = function () {
 
-    var taskId = taskLib.executeFunction({
-        description: 'Background task',
-        func() {
-
-            taskLib.progress({info: 'Step 1'});
-            taskLib.progress({info: 'Step 2'});
-            taskLib.progress({info: 'Step 3'});
-
-        }
-    });
-
-    t.assertEquals('7ca603c1-3b88-4009-8f30-46ddbcc4bb19', taskId);
+    taskLib.progress({info: 'Step 1'});
+    taskLib.progress({info: 'Step 2'});
+    taskLib.progress({info: 'Step 3'});
 };

@@ -36,6 +36,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
@@ -135,7 +136,7 @@ public abstract class ScriptTestSupport
         this.scriptSettings.binding( Context.class, ContextAccessor::current );
         this.scriptSettings.binding( PortalRequest.class, () -> this.portalRequest );
         this.scriptSettings.debug( new ScriptDebugSettings() );
-        this.scriptSettings.globalVariable( "testInstance", this );
+        addTestInstanceGlobal();
 
         this.executor = createExecutor();
         PortalRequestAccessor.set( this.portalRequest );
@@ -162,6 +163,21 @@ public abstract class ScriptTestSupport
         this.scriptSettings.binding( type, () -> instance );
     }
 
+    @SuppressWarnings("deprecation")
+    private void addTestInstanceGlobal()
+    {
+        // the last sanctioned use of custom JS globals: test scripts reach their JUnit test
+        // object as `testInstance`
+        this.scriptSettings.globalVariable( "testInstance", this );
+    }
+
+    /**
+     * @deprecated Custom JS globals are being phased out ({@code app} and {@code testInstance}
+     * are the only supported ones). Pass data to scripts through services, beans or function
+     * arguments instead.
+     */
+    @Deprecated
+    @SuppressWarnings("deprecation")
     protected final void addGlobalVariable( final String name, final Object value )
     {
         this.scriptSettings.globalVariable( name, value );
@@ -216,6 +232,21 @@ public abstract class ScriptTestSupport
     public final ScriptExports runScript( final ResourceKey key )
     {
         return this.executor.executeMain( key );
+    }
+
+    /**
+     * Executes one exported method of a script exactly as {@code PortalScriptService.executeMethod}
+     * does in production: the same per-engine execution model, failure behavior and result
+     * conversion.
+     */
+    public final Object runScriptMethod( final ResourceKey key, final String method, final Object... args )
+    {
+        // mirror production: executeMethod rejects a missing script up front, on every engine
+        if ( !this.executor.getResourceService().getResource( key ).exists() )
+        {
+            throw new ResourceNotFoundException( key );
+        }
+        return this.executor.executeMethod( key, method, args );
     }
 
     protected final ScriptValue runFunction( final String path, final String funcName, final Object... funcParams )

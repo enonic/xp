@@ -19,7 +19,9 @@ public class MockTaskService
 
     public String description;
 
-    public List<TaskProgress> progressHistory;
+    // pre-initialized: progress can be reported from any task context, not only from a
+    // task this mock itself submitted
+    public List<TaskProgress> progressHistory = new ArrayList<>();
 
     @Override
     public TaskId submitLocalTask( final SubmitLocalTaskParams params )

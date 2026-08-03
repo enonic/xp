@@ -35,7 +35,7 @@ var expected = {
             },
             'configs': [
                 {
-                    'path': 'displayName',
+                    'path': 'displayname',
                     'config': {
                         'decideByType': false,
                         'enabled': true,
@@ -51,7 +51,7 @@ var expected = {
             'allText': {
                 'enabled': true,
                 'nGram': true,
-                'fulltext': false,
+                'fulltext': true,
                 'languages': []
             }
         },
@@ -71,7 +71,7 @@ var expected = {
             }
         ],
         '_nodeType': 'default',
-        '_versionKey': 'versionKey',
+        '_versionKey': 'versionkey',
         '_ts': '2010-10-10T10:10:10.100Z',
         'displayName': 'This is brand new node',
         'someData': {
@@ -81,12 +81,11 @@ var expected = {
             ],
             'likes': 'plywood',
             'numberOfUselessGadgets': 123
-        },
-        reorderedNodes: []
-    }
-
+        }
+    },
+    reorderedNodes: []
 };
 // END
 
-assert.assertNotNull(expected, result);
+assert.assertJsonEquals(expected, result);
 

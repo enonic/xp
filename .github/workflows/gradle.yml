@@ -33,9 +33,9 @@ jobs:
         with:
           ref: ${{ github.event.client_payload.ref || github.ref }}
 
-      - uses: actions/setup-java@v5
+      - uses: graalvm/setup-graalvm@v1
         with:
-          distribution: temurin
+          distribution: graalvm-community
           java-version: 25
 
       - name: Setup Gradle

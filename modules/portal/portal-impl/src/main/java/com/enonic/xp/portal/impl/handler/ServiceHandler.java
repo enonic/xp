@@ -81,13 +81,19 @@ public class ServiceHandler
         final ControllerScript controllerScript =
             controllerScriptFactory.fromScript( ResourceKey.from( applicationKey, "services/" + name + "/" + name + ".js" ) );
 
-        final PortalResponse portalResponse = controllerScript.execute( portalRequest );
+        // bound execution: a websocket opened by this request stays on the exact context that
+        // executed it
+        final ControllerScript[] boundRef = new ControllerScript[1];
+        final PortalResponse portalResponse = controllerScript.executeBound( bound -> {
+            boundRef[0] = bound;
+            return bound.execute( portalRequest );
+        } );
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = portalRequest.getWebSocketContext();
         if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
         {
-            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, controllerScript, applicationKey );
+            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, boundRef[0], applicationKey );
             webSocketContext.apply( webSocketEndpoint );
         }
 
@@ -146,6 +152,6 @@ public class ServiceHandler
         {
             trace.put( "app", applicationKey.toString() );
         }
-        return new WebSocketEndpointImpl( config, () -> script );
+        return new WebSocketEndpointImpl( config, script, applicationKey );
     }
 }

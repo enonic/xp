@@ -8,6 +8,7 @@ import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.service.ServiceRegistry;
 import com.enonic.xp.script.impl.standard.ScriptRuntimeImpl;
 import com.enonic.xp.script.impl.value.ScriptValueFactory;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -23,11 +24,20 @@ public interface ScriptFixturesFacade
             @Override
             public ScriptRuntime create( final ScriptSettings settings )
             {
-                return new ScriptRuntimeImpl( applicationKey -> createExecutor( settings, services, resourceService,
-                                                                                Arrays.stream( applications )
-                                                                                    .filter( app -> app.getKey().equals( applicationKey ) )
-                                                                                    .findFirst()
-                                                                                    .orElseThrow() ) );
+                // one immutable incarnation per fixture runtime: applications never restart here
+                final Object incarnation = new Object();
+                final ScriptRuntimeImpl runtime = new ScriptRuntimeImpl(
+                    applicationKey -> createExecutor( settings, services, resourceService, Arrays.stream( applications )
+                        .filter( app -> app.getKey().equals( applicationKey ) )
+                        .findFirst()
+                        .orElseThrow() ), applicationKey -> incarnation );
+                // open each application's bootstrap gate: production arms it via MainExecutor, the
+                // test harness arms it here (no main.js script — just opens the gate)
+                for ( final Application application : applications )
+                {
+                    runtime.bootstrap( BootstrapParams.create().application( application.getKey() ).build() );
+                }
+                return runtime;
             }
 
             @Override

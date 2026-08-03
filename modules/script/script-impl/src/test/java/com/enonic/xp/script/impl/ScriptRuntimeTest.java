@@ -38,6 +38,12 @@ class ScriptRuntimeTest
         assertSame( script, exports.getScript() );
         assertTrue( exports.hasMethod( "hello" ) );
         assertEquals( "Hello World!", exports.executeMethod( "hello", "World" ).getValue() );
+        // a bound scope yields a view onto the same exports — on a pooled engine one pinned to the
+        // executing context, so the view's identity is not part of the contract, its behavior is
+        final ScriptExports bound = exports.executeBound( view -> view );
+        assertEquals( "Hello World!", bound.executeMethod( "hello", "World" ).getValue() );
+        exports.retain();
+        exports.release();
     }
 
     @Test
@@ -119,19 +125,19 @@ class ScriptRuntimeTest
     {
         final ResourceKey script = ResourceKey.from( "myapplication:/empty-test.js" );
 
-        final ScriptExports exports1 = runTestScript( script );
-        final ScriptExports exports2 = runTestScript( script );
-        assertNotNull( exports2 );
-        assertSame( exports1.getRawValue(), exports2.getRawValue() );
+        // read up front: an invalidated application's exports belong to a torn-down executor,
+        // which engines that own script contexts close
+        final Object cached = runTestScript( script ).getRawValue();
+        assertSame( cached, runTestScript( script ).getRawValue() );
 
         this.scriptRuntime.invalidate( ApplicationKey.from( "othermodule" ) );
 
-        final ScriptExports exports3 = runTestScript( script );
-        assertSame( exports1.getRawValue(), exports3.getRawValue() );
+        // another application's teardown leaves this one's module cache intact
+        assertSame( cached, runTestScript( script ).getRawValue() );
 
         this.scriptRuntime.invalidate( script.getApplicationKey() );
 
-        final ScriptExports exports4 = runTestScript( script );
-        assertNotSame( exports1.getRawValue(), exports4.getRawValue() );
+        // its own teardown drops it
+        assertNotSame( cached, runTestScript( script ).getRawValue() );
     }
 }

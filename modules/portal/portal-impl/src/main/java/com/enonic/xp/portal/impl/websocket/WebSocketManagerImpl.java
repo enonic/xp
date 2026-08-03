@@ -1,12 +1,21 @@
 package com.enonic.xp.portal.impl.websocket;
 
+import java.util.List;
+
+import org.jspecify.annotations.Nullable;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
@@ -14,17 +23,51 @@ import com.enonic.xp.web.websocket.WebSocketService;
 
 @Component(service = {WebSocketManager.class, WebSocketContextFactory.class})
 public final class WebSocketManagerImpl
-    implements WebSocketContextFactory, WebSocketManager
+    implements WebSocketContextFactory, WebSocketManager, ServiceTrackerCustomizer<Application, Application>
 {
     private final WebSocketRegistryImpl registry;
 
     private final WebSocketService webSocketService;
 
+    private final BundleContext context;
+
+    private final ServiceTracker<Application, Application> tracker;
+
     @Activate
-    public WebSocketManagerImpl( @Reference final WebSocketService webSocketService )
+    public WebSocketManagerImpl( final BundleContext context, @Reference final WebSocketService webSocketService )
     {
         this.webSocketService = webSocketService;
         this.registry = new WebSocketRegistryImpl();
+        this.context = context;
+        this.tracker = new ServiceTracker<>( context, Application.class, this );
+        this.tracker.open();
+    }
+
+    @Deactivate
+    public void deactivate()
+    {
+        this.tracker.close();
+    }
+
+    @Override
+    public @Nullable Application addingService( final ServiceReference<Application> reference )
+    {
+        return this.context.getService( reference );
+    }
+
+    @Override
+    public void modifiedService( final ServiceReference<Application> reference, final Application application )
+    {
+    }
+
+    @Override
+    public void removedService( final ServiceReference<Application> reference, final Application application )
+    {
+        // the application stopped or is being redeployed: its connections dispatch to a script
+        // context of the gone incarnation — close them, so clients reconnect to the successor
+        final List<WebSocketEntry> entries = this.registry.getByApplication( application.getKey() ).toList();
+        entries.forEach( WebSocketEntry::close );
+        this.context.ungetService( reference );
     }
 
     @Override

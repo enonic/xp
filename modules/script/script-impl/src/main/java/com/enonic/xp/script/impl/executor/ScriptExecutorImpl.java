@@ -1,9 +1,7 @@
 package com.enonic.xp.script.impl.executor;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeoutException;
 
 import javax.script.Bindings;
@@ -45,8 +43,6 @@ public final class ScriptExecutorImpl
 
     private static final String POST_SCRIPT = "\n});";
 
-    private final Executor asyncExecutor;
-
     private final ScriptEngine engine;
 
     private final ScriptSettings scriptSettings;
@@ -67,11 +63,11 @@ public final class ScriptExecutorImpl
 
     private final JavascriptHelper<Bindings> javascriptHelper;
 
-    public ScriptExecutorImpl( final Executor asyncExecutor, final ClassLoader classLoader, final ScriptSettings scriptSettings,
+    @SuppressWarnings("deprecation") // globalVariables kept for the xp-testing harness only
+    public ScriptExecutorImpl( final ClassLoader classLoader, final ScriptSettings scriptSettings,
                                final ServiceRegistry serviceRegistry, final ResourceService resourceService,
                                final ApplicationInfoBuilder appInfo )
     {
-        this.asyncExecutor = asyncExecutor;
         this.scriptSettings = scriptSettings;
         this.classLoader = classLoader;
         this.serviceRegistry = serviceRegistry;
@@ -98,13 +94,27 @@ public final class ScriptExecutorImpl
     }
 
     @Override
-    public CompletableFuture<ScriptExports> executeMainAsync( final ResourceKey key )
+    public ScriptExports bootstrap( final ResourceKey key )
     {
-        if ( RunMode.isDev() )
+        // no context pool: the single shared context is both the request and the bootstrap context
+        return executeMain( key );
+    }
+
+    @Override
+    public Object executeMethod( final ResourceKey key, final String method, final Object... args )
+    {
+        // no context pool: the call executes on the single shared context, like everything else.
+        // A missing method fails loudly — ScriptExports.executeMethod would answer it with an
+        // indistinguishable null
+        final ScriptExports exports = executeMain( key );
+        if ( !exports.hasMethod( method ) )
         {
-            exportsCache.expireCacheIfNeeded();
+            throw new IllegalArgumentException( "Method [" + method + "] not found in script [" + key + "]" );
         }
-        return CompletableFuture.completedFuture( key ).thenApplyAsync( this::doExecuteMain, asyncExecutor );
+        final ScriptValue result = exports.executeMethod( method, args );
+        // scalars only, matching the pooled engines where richer values die with the private
+        // context — results must not change meaning with the engine choice
+        return result != null && result.isValue() ? result.getValue() : null;
     }
 
     private ScriptExports doExecuteMain( final ResourceKey key )
@@ -128,7 +138,12 @@ public final class ScriptExecutorImpl
         {
             return exportsCache.getOrCompute( key, this::requireJsOrJson );
         }
-        catch ( InterruptedException | TimeoutException e )
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException( "Script require failed: [" + key + "]", e );
+        }
+        catch ( TimeoutException e )
         {
             throw new RuntimeException( "Script require failed: [" + key + "]", e );
         }
@@ -273,6 +288,17 @@ public final class ScriptExecutorImpl
     @Override
     public void runDisposers()
     {
-        this.disposers.values().forEach( Runnable::run );
+        this.disposers.forEach( ( key, disposer ) -> {
+            try
+            {
+                disposer.run();
+            }
+            catch ( Exception | StackOverflowError e )
+            {
+                // teardown is best-effort: one bad disposer — including deeply recursive user
+                // JS — must not stop the rest
+                LOG.warn( "Error while running disposer registered by {}", key, e );
+            }
+        } );
     }
 }
