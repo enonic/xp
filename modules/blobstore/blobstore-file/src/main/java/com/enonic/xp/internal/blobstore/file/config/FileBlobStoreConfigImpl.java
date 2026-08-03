@@ -37,6 +37,12 @@ public final class FileBlobStoreConfigImpl
     }
 
     @Override
+    public long readThroughCacheCapacity()
+    {
+        return ByteSizeParser.parse( this.config.get( "readThrough.cacheCapacity" ) );
+    }
+
+    @Override
     public String readThroughProvider()
     {
         return this.config.get( "readThrough.provider" );
