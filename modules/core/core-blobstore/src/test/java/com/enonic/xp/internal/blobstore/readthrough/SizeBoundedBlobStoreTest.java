@@ -6,10 +6,12 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobRecord;
+import com.enonic.xp.blob.BlobStoreException;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 
@@ -129,6 +131,38 @@ class SizeBoundedBlobStoreTest
         {
             assertEquals( 0, segments.count() );
         }
+    }
+
+    @Test
+    void seeding_retries_on_failure()
+    {
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+
+        final MemoryBlobStore flaky = Mockito.spy( this.delegate );
+        Mockito.doThrow( new BlobStoreException( "transient failure" ) ).doCallRealMethod().when( flaky ).listSegments();
+
+        final SizeBoundedBlobStore boundedStore = new SizeBoundedBlobStore( flaky, 25, Runnable::run, Runnable::run );
+        boundedStore.cleanUp();
+
+        assertTrue( delegateTotalSize() <= 25 );
+    }
+
+    @Test
+    void seeding_failure_still_enforces_capacity_for_new_records()
+    {
+        final MemoryBlobStore failing = Mockito.spy( this.delegate );
+        Mockito.doThrow( new BlobStoreException( "permanent failure" ) ).when( failing ).listSegments();
+
+        final SizeBoundedBlobStore boundedStore = new SizeBoundedBlobStore( failing, 25, Runnable::run, Runnable::run );
+
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+        boundedStore.cleanUp();
+
+        assertTrue( delegateTotalSize() <= 25 );
     }
 
     @Test
