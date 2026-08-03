@@ -3,6 +3,7 @@ package com.enonic.xp.script.impl;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ import com.enonic.xp.script.runtime.ScriptSettings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -104,6 +106,23 @@ class ScriptRuntimeFactoryEngineTest
         return reference;
     }
 
+    /**
+     * A registration present in the registry that this factory's tracker callback has not been
+     * delivered for yet.
+     */
+    @SuppressWarnings("unchecked")
+    private ServiceReference<Application> registerWithoutTrackerCallback( final String scriptEngineHeader )
+        throws Exception
+    {
+        final ServiceReference<Application> reference = register( scriptEngineHeader, true );
+        // undo the callback: the registry still has it, this factory has not seen it
+        this.factory.removedService( reference, this.application );
+
+        Mockito.when( this.bundleContext.getServiceReferences( Application.class, "(name=" + APP_KEY + ")" ) )
+            .thenReturn( List.of( reference ) );
+        return reference;
+    }
+
     private String engineOf( final ScriptRuntimeImpl runtime )
     {
         // top-level executions wait on the bootstrap gate, which only bootstrap() opens
@@ -133,6 +152,30 @@ class ScriptRuntimeFactoryEngineTest
         final String expected =
             "GraalJS".equalsIgnoreCase( System.getProperty( "xp.script-engine", "Nashorn" ) ) ? "graal" : "nashorn";
         assertEquals( expected, engineOf( this.factory.doCreate( ScriptSettings.create().build() ) ) );
+    }
+
+    @Test
+    void anApplicationIsResolvedBeforeItsTrackerCallbackArrives()
+        throws Exception
+    {
+        registerWithoutTrackerCallback( "GraalJS" );
+
+        // bootstrap is driven by a second Application tracker, and OSGi orders neither against the
+        // other: resolving has to consult the registry, not just what this tracker has recorded
+        final ScriptRuntimeImpl runtime = this.factory.doCreate( ScriptSettings.create().build() );
+        assertEquals( "graal", engineOf( runtime ) );
+    }
+
+    @Test
+    void anApplicationTheRegistryDoesNotHaveIsStillRefused()
+        throws Exception
+    {
+        final ServiceReference<Application> reference = registerWithoutTrackerCallback( "GraalJS" );
+        Mockito.when( this.bundleContext.getServiceReferences( Application.class, "(name=" + APP_KEY + ")" ) )
+            .thenReturn( List.of() );
+
+        assertFalse( this.factory.doCreate( ScriptSettings.create().build() ).hasScript( SCRIPT ) );
+        assertNotNull( reference );
     }
 
     @Test

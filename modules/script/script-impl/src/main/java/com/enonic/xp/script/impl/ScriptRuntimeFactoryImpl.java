@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.graalvm.polyglot.Engine;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -54,8 +55,8 @@ public class ScriptRuntimeFactoryImpl
 
     /**
      * The current incarnation of each application: its live service registration and the service
-     * it delivered. Maintained by the tracker; executor creation resolves through it (no service
-     * registry scan), and runtimes revalidate their executors against it on every use. The
+     * it delivered. Maintained by the tracker, and by an on-demand lookup for the window before a
+     * tracker callback has run; runtimes revalidate their executors against it on every use. The
      * {@link ServiceReference} doubles as the incarnation identity — application reconfigure
      * re-registers the <em>same</em> {@code Application} object under a <em>new</em> registration,
      * so the registration is what actually changes per incarnation, not the service object.
@@ -126,13 +127,67 @@ public class ScriptRuntimeFactoryImpl
     @Override
     public Application addingService( final ServiceReference<Application> reference )
     {
+        final TrackedApplication tracked = track( reference );
+        return tracked == null ? null : tracked.application();
+    }
+
+    /**
+     * Records a registration as the application's current incarnation. Reached both from the
+     * tracker callback and from {@link #trackedApplication} when an executor is asked for before
+     * that callback has run, so it tolerates the registration already being tracked and keeps one
+     * outstanding {@code getService} per registration for {@link #removedService} to release.
+     */
+    private TrackedApplication track( final ServiceReference<Application> reference )
+    {
         final Application application = this.context.getService( reference );
         if ( application == null )
         {
             return null;
         }
-        this.apps.put( application.getKey(), new TrackedApplication( reference, application ) );
-        return application;
+        final TrackedApplication tracked = new TrackedApplication( reference, application );
+        final TrackedApplication previous = this.apps.put( application.getKey(), tracked );
+        if ( previous != null && previous.reference().equals( reference ) )
+        {
+            this.context.ungetService( reference );
+        }
+        return tracked;
+    }
+
+    /**
+     * The application's current incarnation, or {@code null} when it has none.
+     * <p>
+     * This component is not the only one tracking {@code Application} services — application
+     * bootstrap is driven by another — and OSGi does not order event delivery between listeners, so
+     * an executor can be asked for before this component's own callback has recorded the
+     * registration. The registry, not the tracked map, is therefore what decides whether an
+     * application is registered; the map is how the current incarnation is remembered and retired.
+     */
+    private TrackedApplication trackedApplication( final ApplicationKey applicationKey )
+    {
+        final TrackedApplication tracked = this.apps.get( applicationKey );
+        if ( tracked != null )
+        {
+            return tracked;
+        }
+        final ServiceReference<Application> reference = lookup( applicationKey );
+        return reference == null ? null : track( reference );
+    }
+
+    private ServiceReference<Application> lookup( final ApplicationKey applicationKey )
+    {
+        try
+        {
+            // applications register under their bundle's symbolic name, which is the application key
+            return this.context.getServiceReferences( Application.class, "(name=" + applicationKey + ")" )
+                .stream()
+                .findFirst()
+                .orElse( null );
+        }
+        catch ( InvalidSyntaxException e )
+        {
+            LOG.debug( "Could not look up application {}", applicationKey, e );
+            return null;
+        }
     }
 
     @Override
@@ -259,7 +314,7 @@ public class ScriptRuntimeFactoryImpl
         {
             LOG.debug( "Create Script Executor for {}", applicationKey );
 
-            final TrackedApplication tracked = apps.get( applicationKey );
+            final TrackedApplication tracked = trackedApplication( applicationKey );
             if ( tracked == null )
             {
                 throw new AppNotRegisteredException();
