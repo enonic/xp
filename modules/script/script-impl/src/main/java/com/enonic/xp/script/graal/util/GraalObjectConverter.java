@@ -41,10 +41,8 @@ public final class GraalObjectConverter
             return toJs( (List) value );
         }
 
-        // A callback result reaches Java as a Map, because a handle converts eagerly rather than
-        // let a context-bound value escape. Nashorn hands the guest object straight back, so
-        // without this branch the same script sees a plain object on one engine and an opaque
-        // host value on the other.
+        // a handle converts a callback result eagerly, so it arrives here as a Map; without this
+        // branch a script would see a plain object on Nashorn and an opaque host value here
         if ( value instanceof Map )
         {
             return toJs( (Map<?, ?>) value );

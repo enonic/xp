@@ -1,16 +1,8 @@
 coverage:
   status:
-    # Informational: integration-test coverage no longer feeds PR builds
-    # (integrationTest is detached from `check`), so absolute project
-    # coverage dropped and must not block PRs. Patch status still gates
-    # coverage of changed lines.
-    project:
-      default:
-        informational: true
-    # Fixed target instead of auto (base coverage): the auto target tracks
-    # overall project coverage, which no longer includes integration tests.
-    # 80% keeps a real gate on changed lines while tolerating defensive
-    # branches (interrupts, timeouts, StackOverflowError handlers).
+    # Fixed target instead of auto (base coverage): 80% keeps a real gate on
+    # changed lines while tolerating defensive branches that are impractical to
+    # exercise (interrupts, timeouts, StackOverflowError handlers).
     patch:
       default:
         target: 80%

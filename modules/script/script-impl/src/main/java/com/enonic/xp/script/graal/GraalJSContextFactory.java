@@ -85,13 +85,10 @@ public final class GraalJSContextFactory
      * deriving the context from the {@link Value} can yield a different wrapper instance,
      * silently breaking mutual exclusion.
      * <p>
-     * The mappings are a closed set, and every other interface is refused rather than left to the
-     * default conversion. {@code HostAccess.ALL} satisfies <em>any</em> interface from a script
-     * function — and from a plain script object, which no mapping can intercept — with a proxy
-     * that enters the context on the calling thread. That proxy works until the first invocation
-     * from another thread, so a bean declaring an interface outside this set would fail under
-     * load rather than at the boundary. Refusing it reports the unsupported type at the call
-     * that passes the function, and the fix is to declare one of the types below.
+     * The mappings are a closed set: {@code HostAccess.ALL} would satisfy any other interface
+     * with a proxy that enters the context on the calling thread and so fails only under load,
+     * which is why implementations are disallowed. A bean wanting a script function must declare
+     * one of the types below.
      */
     private static HostAccess hostAccess( final AtomicReference<Context> contextRef )
     {

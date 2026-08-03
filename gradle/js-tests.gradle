@@ -7,10 +7,8 @@
  */
 
 dependencies {
-    // The GraalJS language implementation must be on the test runtime classpath; script-impl itself
-    // only carries the polyglot API. Modules that depend on tools:testing now inherit it from there,
-    // which is what lets an application or library outside this build run its tests on both engines
-    // without naming a GraalVM version; script-impl and portal-impl do not, so it stays declared here.
+    // for script-impl and portal-impl, which do not depend on tools:testing and so do not
+    // inherit the GraalJS language implementation from it
     testRuntimeOnly libs.graalvm.js
 }
 
@@ -38,10 +36,8 @@ def testGraalJs = tasks.register( 'testGraalJs', Test ) {
 
 check.dependsOn( testGraalJs )
 
-// CI runs `gradlew ci`, which reaches test tasks through jacocoMergedReport -> each project's
-// jacocoTestReport -> test, and never through a per-project `check`. Hanging the GraalJS run off
-// the report task is therefore what makes it execute in CI at all; `dependsOn`, not
-// `mustRunAfter`, because ordering alone never pulls a task into the graph.
+// `gradlew ci` reaches test tasks through jacocoMergedReport -> jacocoTestReport -> test and never
+// through a per-project `check`, so this is what makes the GraalJS run execute in CI.
 tasks.named( 'jacocoTestReport' ) {
     dependsOn( testGraalJs )
 }

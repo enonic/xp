@@ -144,9 +144,7 @@ public class ScriptRuntimeFactoryImpl
     public void removedService( final ServiceReference<Application> reference, final Application application )
     {
         // this fires synchronously inside unregister(): on reconfigure that is BEFORE the
-        // replacement registers, so a key-wide teardown can never hit a successor incarnation.
-        // The registry's ApplicationInvalidator round is the opposite — it arrives AFTER the
-        // re-registration — which is why this factory deliberately does not implement it.
+        // replacement registers, so a key-wide teardown can never hit a successor incarnation
         this.apps.remove( application.getKey(), new TrackedApplication( reference, application ) );
         this.list.forEach( runtime -> runtime.invalidate( application.getKey() ) );
         this.context.ungetService( reference );
@@ -201,14 +199,13 @@ public class ScriptRuntimeFactoryImpl
      * (live websocket/SSE connection) is never shared, so a capacity of one would freeze the
      * whole application behind a single open connection. Script reloading is unaffected — each
      * slot's exports cache expires lazily on that slot's next execution. Above 1, module state
-     * is per-context (see the execution-pipeline design doc).
+     * is per-context.
      */
     private static int contextPoolCapacity()
     {
         final Integer poolSize = Integer.getInteger( "xp.script-engine.graal.pool-size" );
-        // capacity above the global budget is unreachable by construction (growth beyond the
-        // first slot is budgeted): clamp instead of allocating slot entries that can never
-        // materialize but would still be scanned on every anonymous checkout
+        // growth beyond the first slot is budgeted, so capacity above the global budget is
+        // unreachable: clamp rather than allocate entries that can never materialize
         return poolSize != null ? Math.min( maxContexts(), Math.max( 1, poolSize ) ) : maxContexts();
     }
 

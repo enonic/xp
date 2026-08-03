@@ -34,8 +34,7 @@ import com.enonic.xp.script.runtime.BootstrapParams;
  * already-active application plus delivers future ones — no {@code ApplicationListener}, no missed
  * events regardless of boot order.
  */
-// a pure side-effect component: it bootstraps applications and provides no service — without an
-// explicit empty list DS would publish the tracker callback interface it happens to implement
+// a pure side-effect component: it bootstraps applications and provides no service
 @Component(immediate = true, service = {})
 public final class MainExecutor
     implements ServiceTrackerCustomizer<Application, Application>

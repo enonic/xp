@@ -99,10 +99,8 @@ public class GraalScriptExecutor
     private int budgetedSlots;
 
     /**
-     * How much of {@link #slots} is populated. Written under {@link #slotCreationLock} after the
-     * slot itself is in the array, read anywhere (volatile), and every scan is bounded by it:
-     * capacity defaults to the whole global budget, so scanning the array instead of the created
-     * prefix would walk a thousand empty entries to find one of a handful of live slots.
+     * How much of {@link #slots} is populated, and the bound of every scan. Written under
+     * {@link #slotCreationLock} after the slot itself is in the array, read anywhere (volatile).
      */
     private volatile int createdSlots;
 
@@ -329,8 +327,8 @@ public class GraalScriptExecutor
                     budget.releaseRetainedContexts( mainSlot.drainPins() );
                     mainSlot = null;
                 }
-                // the whole array rather than the created prefix: teardown is the one place that
-                // must not depend on the dense-population invariant to free a context
+                // the whole array, not createdSlots: teardown must not depend on the
+                // dense-population invariant to free a context
                 for ( int i = 0; i < slots.length(); i++ )
                 {
                     final ContextSlot slot = slots.get( i );
@@ -436,12 +434,9 @@ public class GraalScriptExecutor
         for ( int i = 0; i < size; i++ )
         {
             final ContextSlot slot = slots.get( Math.floorMod( start + i, size ) );
-            // retained slots belong to live connections (websocket/SSE): the request pool
-            // leaves them alone and grows replacements instead. The untimed tryLock deliberately
-            // barges past the lock's fairness on this fast path — only anonymous requests race
-            // here (no ordering requirement); queued anonymous waits use the timed fair tryLock
-            // below, pinned waits are unbounded and interruptible, and retained/main slots never
-            // enter this scan at all
+            // retained slots belong to live connections (websocket/SSE); the request pool leaves
+            // them alone and grows replacements. Ordering does not matter on this fast path, so
+            // the untimed tryLock may barge; ordered waits go through the fair paths below.
             if ( slot != null && !slot.isRetained() && slot.lock.tryLock() )
             {
                 try

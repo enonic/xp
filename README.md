@@ -55,7 +55,7 @@ To get started with Enonic, visit **[developer.enonic.com/start](https://develop
 # Skip all tests
 ./gradlew build -x check
 
-# Run the (slow) integration tests — not part of the default build
+# Run only the (slow) integration tests
 ./gradlew integrationTest
 ```
 
