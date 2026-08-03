@@ -109,7 +109,7 @@ public class TaskManagerExecutorImpl
         // tombstone in addingService.
         final ApplicationKey applicationKey = application.getKey();
         final ApplicationTaskExecutor current = applicationExecutors.get( applicationKey );
-        if ( current != null && current.reference() == reference )
+        if ( current != null && reference.equals( current.reference() ) )
         {
             shutdown( applicationKey, current );
             applicationExecutors.replace( applicationKey, current, TOMBSTONE );

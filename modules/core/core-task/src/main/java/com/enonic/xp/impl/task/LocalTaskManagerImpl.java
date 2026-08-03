@@ -35,6 +35,8 @@ import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.trace.Tracer;
 
+import static java.util.Objects.requireNonNullElse;
+
 @Component(immediate = true)
 @Local
 public final class LocalTaskManagerImpl
@@ -197,7 +199,7 @@ public final class LocalTaskManagerImpl
         }
         catch ( RejectedExecutionException e )
         {
-            progressReporter.failed( "Task execution rejected" );
+            progressReporter.failed( requireNonNullElse( e.getMessage(), "Task execution rejected" ) );
             throw e;
         }
     }
