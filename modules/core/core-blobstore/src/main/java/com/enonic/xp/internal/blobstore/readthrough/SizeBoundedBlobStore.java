@@ -1,5 +1,6 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -43,16 +44,29 @@ public final class SizeBoundedBlobStore
 
     private final Cache<IndexKey, Long> index;
 
+    private final Duration seedRetryDelay;
+
     private volatile boolean seeded;
+
+    private static final int SEED_ATTEMPTS = 3;
+
+    private static final Duration SEED_RETRY_DELAY = Duration.ofSeconds( 10 );
 
     public SizeBoundedBlobStore( final BlobStore store, final long capacity )
     {
-        this( store, capacity, null, task -> Thread.ofVirtual().name( "blobstore-cache-seed" ).start( task ) );
+        this( store, capacity, null, task -> Thread.ofVirtual().name( "blobstore-cache-seed" ).start( task ), SEED_RETRY_DELAY );
     }
 
     SizeBoundedBlobStore( final BlobStore store, final long capacity, final Executor indexExecutor, final Executor seedExecutor )
     {
+        this( store, capacity, indexExecutor, seedExecutor, Duration.ZERO );
+    }
+
+    SizeBoundedBlobStore( final BlobStore store, final long capacity, final Executor indexExecutor, final Executor seedExecutor,
+                          final Duration seedRetryDelay )
+    {
         this.store = store;
+        this.seedRetryDelay = seedRetryDelay;
 
         final Caffeine<IndexKey, Long> builder = Caffeine.newBuilder()
             .maximumWeight( capacity )
@@ -69,37 +83,67 @@ public final class SizeBoundedBlobStore
 
     private void seed()
     {
-        final long start = System.nanoTime();
-        long count = 0;
         try
         {
-            final List<Segment> segments;
-            try (Stream<Segment> segmentStream = this.store.listSegments())
+            for ( int attempt = 1; attempt <= SEED_ATTEMPTS; attempt++ )
             {
-                segments = segmentStream.toList();
-            }
-            for ( final Segment segment : segments )
-            {
-                try (Stream<BlobRecord> records = this.store.list( segment ))
+                try
                 {
-                    for ( final Iterator<BlobRecord> it = records.iterator(); it.hasNext(); )
+                    doSeed();
+                    return;
+                }
+                catch ( Exception e )
+                {
+                    if ( attempt < SEED_ATTEMPTS )
                     {
-                        final BlobRecord record = it.next();
-                        this.index.put( new IndexKey( segment, record.getKey() ), record.getLength() );
-                        count++;
+                        LOG.debug( "Failed to index existing blobs, retrying", e );
+                        Thread.sleep( this.seedRetryDelay );
+                    }
+                    else
+                    {
+                        // Capacity is still enforced: a partial index bounds all new growth, while unindexed
+                        // records are indexed on their first read. Staying in pass-through mode would bound nothing.
+                        LOG.warn( "Failed to index existing blobs after {} attempts."
+                                      + " Capacity is enforced on the indexed records only until unindexed records are read",
+                                  SEED_ATTEMPTS, e );
                     }
                 }
             }
-            LOG.debug( "Indexed {} existing blobs in {} ms", count, ( System.nanoTime() - start ) / 1_000_000 );
         }
-        catch ( Exception e )
+        catch ( InterruptedException e )
         {
-            LOG.warn( "Failed to index existing blobs", e );
+            LOG.warn( "Interrupted while indexing existing blobs."
+                          + " Capacity is enforced on the indexed records only until unindexed records are read" );
+            Thread.currentThread().interrupt();
         }
         finally
         {
             this.seeded = true;
         }
+    }
+
+    private void doSeed()
+    {
+        final long start = System.nanoTime();
+        long count = 0;
+        final List<Segment> segments;
+        try (Stream<Segment> segmentStream = this.store.listSegments())
+        {
+            segments = segmentStream.toList();
+        }
+        for ( final Segment segment : segments )
+        {
+            try (Stream<BlobRecord> records = this.store.list( segment ))
+            {
+                for ( final Iterator<BlobRecord> it = records.iterator(); it.hasNext(); )
+                {
+                    final BlobRecord record = it.next();
+                    this.index.put( new IndexKey( segment, record.getKey() ), record.getLength() );
+                    count++;
+                }
+            }
+        }
+        LOG.debug( "Indexed {} existing blobs in {} ms", count, ( System.nanoTime() - start ) / 1_000_000 );
     }
 
     private void removeEvicted( final IndexKey key )
@@ -110,7 +154,8 @@ public final class SizeBoundedBlobStore
         }
         catch ( Exception e )
         {
-            LOG.debug( "Failed to remove evicted blob [{}]", key.key(), e );
+            LOG.warn( "Failed to remove evicted blob [{}]. The record stays in the store untracked until it is read again",
+                      key.key(), e );
         }
     }
 
@@ -123,7 +168,8 @@ public final class SizeBoundedBlobStore
             return this.store.getRecord( segment, key );
         }
 
-        // records the access in the admission filter, also when the record is not present yet
+        // a hit refreshes the record in the admission policy; a missed record gains admission
+        // priority through the repeated population attempts that follow the fallback reads
         final Long indexed = this.index.getIfPresent( new IndexKey( segment, key ) );
 
         final BlobRecord record = this.store.getRecord( segment, key );
