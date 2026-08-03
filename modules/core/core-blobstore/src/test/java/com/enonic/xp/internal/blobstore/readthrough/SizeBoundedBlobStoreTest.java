@@ -1,5 +1,6 @@
 package com.enonic.xp.internal.blobstore.readthrough;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -162,6 +163,65 @@ class SizeBoundedBlobStoreTest
         boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
         boundedStore.cleanUp();
 
+        assertTrue( delegateTotalSize() <= 25 );
+    }
+
+    @Test
+    void seeding_interrupted_still_enforces_capacity_for_new_records()
+        throws Exception
+    {
+        final MemoryBlobStore failing = Mockito.spy( this.delegate );
+        Mockito.doThrow( new BlobStoreException( "failure" ) ).when( failing ).listSegments();
+
+        final List<Runnable> seedTask = new ArrayList<>();
+        final SizeBoundedBlobStore boundedStore =
+            new SizeBoundedBlobStore( failing, 25, Runnable::run, seedTask::add, Duration.ofDays( 1 ) );
+
+        final Thread seeder = new Thread( seedTask.get( 0 ) );
+        seeder.start();
+        seeder.interrupt();
+        seeder.join( 10_000 );
+
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+        boundedStore.cleanUp();
+
+        assertTrue( delegateTotalSize() <= 25 );
+    }
+
+    @Test
+    void eviction_removal_failure_is_tolerated()
+    {
+        final MemoryBlobStore failing = Mockito.spy( this.delegate );
+        Mockito.doThrow( new BlobStoreException( "no removal" ) ).when( failing ).removeRecord( Mockito.any(), Mockito.any() );
+
+        final SizeBoundedBlobStore boundedStore = new SizeBoundedBlobStore( failing, 25, Runnable::run, Runnable::run );
+
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        boundedStore.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+        boundedStore.cleanUp();
+
+        // records stay in the delegate because removal fails, but no exception surfaces
+        assertEquals( 30, delegateTotalSize() );
+    }
+
+    @Test
+    void seeds_in_background()
+        throws Exception
+    {
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 1".getBytes() ) );
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 2".getBytes() ) );
+        this.delegate.addRecord( SEGMENT, ByteSource.wrap( "10 bytes 3".getBytes() ) );
+
+        new SizeBoundedBlobStore( this.delegate, 25 );
+
+        // seeding and eviction run on background threads - wait for the bound to take effect
+        for ( int i = 0; i < 200 && delegateTotalSize() > 25; i++ )
+        {
+            Thread.sleep( 50 );
+        }
         assertTrue( delegateTotalSize() <= 25 );
     }
 
