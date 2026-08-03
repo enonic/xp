@@ -112,6 +112,8 @@ public final class SizeBoundedBlobStore
         }
         catch ( InterruptedException e )
         {
+            LOG.warn( "Interrupted while indexing existing blobs."
+                          + " Capacity is enforced on the indexed records only until unindexed records are read" );
             Thread.currentThread().interrupt();
         }
         finally
