@@ -442,6 +442,24 @@ for storage events between XP replicas, and it is what makes external writers (C
 load/import, console) safe while runtimes are live — they are ordinary writers whose
 changes invalidate caches like anyone else's.
 
+**Application events**: the existing `lib-event` distinction is preserved during the
+transition. A local event remains in XP's in-process multicaster. An application event
+sent with `distributed=true` is published as a tenant-scoped event envelope through
+NoDB and fanned out to the other active XP runtimes, which re-enter their local event
+bus with `localOrigin=false`. The envelope adds an event id, origin runtime, tenant-local
+sequence and format version; the tenant is always derived from the runtime credential.
+This compatibility stream is best-effort (with a bounded reconnect window), and retains
+the current broadcast semantics where every active runtime may process the event. It is
+not a durable work queue.
+
+**Durable application work**: applications that require one logical consumer, retries,
+acknowledgement or replay use a separate durable event/task API with consumer groups and
+leases. Delivery is at-least-once and application handlers must be idempotent. NoDB
+stores and routes envelopes but never loads or executes tenant application code. The
+repository outbox remains the source for events that must be atomic with a committed
+content mutation; arbitrary application events are not implicitly part of a content
+transaction.
+
 **Realtime (roadmap)**: two tiers. *Observation* — the change feed IS the realtime
 source for committed changes (live lists, preview refresh, "someone saved" banners):
 NoDB streams tenant-wide, XP terminates websockets and applies node-ACL filtering

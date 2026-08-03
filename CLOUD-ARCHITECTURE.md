@@ -231,6 +231,9 @@ invalidation. Other Hazelcast responsibilities require explicit replacements:
 | Current concern | Long-term direction |
 |---|---|
 | storage change events | NoDB ordered tenant change feed |
+| local application events | XP in-process event multicaster |
+| distributed application broadcast | NoDB tenant event stream; best-effort fan-out to active runtimes |
+| durable application work | durable tenant event records with consumer-group leases |
 | durable task submission/status | durable tenant task records |
 | task placement | role/capability-aware worker claims |
 | scheduler singleton behavior | database leases with fencing |
@@ -241,6 +244,20 @@ invalidation. Other Hazelcast responsibilities require explicit replacements:
 Jobs must be idempotent or carry a clearly documented at-most-once requirement. Lease
 expiry, retry, cancellation, duplicate delivery, and rolling deployment behavior are
 part of the task contract rather than side effects of cluster membership.
+
+Application-created events follow the same separation. The existing `distributed=true`
+event API remains a compatibility broadcast: XP delivers it locally and publishes a
+tenant-scoped envelope through NoDB to the other active XP runtimes for that tenant. The
+event carries an id, origin runtime, sequence, type and format version; NoDB never
+executes application code. This stream is best-effort, with a short reconnect window,
+and may deliver to every replica as Hazelcast does today. It is not a work queue.
+
+Applications that need one execution, retries, acknowledgement or replay use a distinct
+durable consumer-group/task API. Delivery is at-least-once and callbacks must be
+idempotent. Repository events are emitted from the same NoDB transaction as the committed
+mutation; application events are separate unless an explicit transactional publish API
+is used. This prevents a generic event callback from becoming an implicit database
+transaction boundary.
 
 ## 7. NoDB content data plane
 
@@ -749,9 +766,12 @@ Owned by [`nodb/DESIGN.md`](nodb/DESIGN.md):
 3. Make local files and caches disposable.
 4. Add supported `all`, `delivery`, `admin`, and `worker` profiles.
 5. Move storage invalidation to the NoDB change feed.
-6. Replace durable Hazelcast task/scheduler responsibilities with leased stores.
-7. Externalize remaining session/coordination state where required.
-8. Establish graceful draining, startup SLOs, and safe scale-to-zero behavior.
+6. Preserve local and distributed application-event compatibility through the tenant
+   event stream; add event ids, cursors, reconnect behavior and tenant quotas.
+7. Replace durable Hazelcast task/scheduler responsibilities with leased stores and add
+   explicit durable consumer-group semantics for application work.
+8. Externalize remaining session/coordination state where required.
+9. Establish graceful draining, startup SLOs, and safe scale-to-zero behavior.
 
 ### Track D — Cloud control plane
 
@@ -809,21 +829,24 @@ old cell.
    and readiness latency are measured and improved.
 6. **Task semantics:** moving from member execution to durable claims exposes implicit
    retry and idempotency assumptions in existing application tasks.
-7. **Application artifacts:** cloud reconciliation needs immutable, reproducible
+7. **Application event semantics:** legacy distributed events are broadcast fan-out,
+   while durable work needs consumer groups; collapsing both into one API risks duplicate
+   side effects, missed events or an unbounded event log.
+8. **Application artifacts:** cloud reconciliation needs immutable, reproducible
    application sets while XP currently supports dynamic installation behavior.
-8. **Image compatibility:** a faster native image engine may not be byte- or
+9. **Image compatibility:** a faster native image engine may not be byte- or
    pixel-identical to current Java output.
-9. **Private image delivery:** signed CDN/object delivery must preserve XP permission and
+10. **Private image delivery:** signed CDN/object delivery must preserve XP permission and
    cache semantics without making the image service an ACL engine.
-10. **Image request abuse:** arbitrary dimensions and filters can become a tenant-funded
+11. **Image request abuse:** arbitrary dimensions and filters can become a tenant-funded
     denial-of-service unless recipes and concurrency are bounded.
-11. **Cross-service versioning:** XP, NoDB, image service, payload formats, and renderer
+12. **Cross-service versioning:** XP, NoDB, image service, payload formats, and renderer
     profiles need an explicit compatibility matrix.
-12. **Control-plane availability:** provisioning may pause during an outage, but existing
+13. **Control-plane availability:** provisioning may pause during an outage, but existing
     tenants must continue serving from cell-local state.
-13. **Tenant movement:** moving PostgreSQL, OpenSearch projection, binaries, derivatives,
+14. **Tenant movement:** moving PostgreSQL, OpenSearch projection, binaries, derivatives,
     runtime routing, and change-feed cursors needs a tested state machine.
-14. **Cost attribution:** shared fixed costs and burst capacity require a transparent
+15. **Cost attribution:** shared fixed costs and burst capacity require a transparent
     allocation model that does not turn low-level metrics directly into confusing
     customer charges.
 
