@@ -135,6 +135,11 @@ public class SnapshotServiceImpl
     {
         final String snapshotName = restoreParams.isLatest() ? determineNameOfLatestSnapshot() : restoreParams.getSnapshotName();
 
+        if ( snapshotName == null || snapshotName.isBlank() )
+        {
+            throw new SnapshotException( "Failed to restore snapshot: Snapshot name is required when 'latest' is not set" );
+        }
+
         validateSnapshot( snapshotName );
 
         final RepositoryId repositoryToRestore = restoreParams.getRepositoryId();
