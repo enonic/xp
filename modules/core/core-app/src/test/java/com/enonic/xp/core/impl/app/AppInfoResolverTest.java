@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 import org.ops4j.pax.tinybundles.TinyBundle;
@@ -54,6 +56,50 @@ class AppInfoResolverTest
         final String appName = AppInfoResolver.resolve( source ).name;
 
         assertEquals( "myBundle", appName );
+    }
+
+    @Test
+    void descriptor_enonic_yaml()
+        throws Exception
+    {
+        final ByteSource source =
+            wrapBundle( newBundle( "myBundle", false ).addResource( "enonic.yaml", descriptorYaml( "Enonic title" ) ) );
+
+        final AppInfo appInfo = AppInfoResolver.resolve( source );
+
+        assertEquals( "Enonic title", appInfo.title );
+    }
+
+    @Test
+    void descriptor_enonic_yaml_preferred_over_application_yaml()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle( newBundle( "myBundle", true ).addResource( "application.yaml",
+                                                                                         descriptorYaml( "Application title" ) )
+                                                  .addResource( "enonic.yaml", descriptorYaml( "Enonic title" ) ) );
+
+        final AppInfo appInfo = AppInfoResolver.resolve( source );
+
+        assertEquals( "Enonic title", appInfo.title );
+    }
+
+    @Test
+    void descriptor_application_yml()
+        throws Exception
+    {
+        final ByteSource source =
+            wrapBundle( newBundle( "myBundle", true ).addResource( "application.yml", descriptorYaml( "Application title" ) ) );
+
+        final AppInfo appInfo = AppInfoResolver.resolve( source );
+
+        assertEquals( "Application title", appInfo.title );
+    }
+
+    private static InputStream descriptorYaml( final String title )
+        throws IOException
+    {
+        return ByteSource.wrap( ( "kind: \"Application\"\ntitle: \"" + title + "\"\n" ).getBytes( StandardCharsets.UTF_8 ) )
+            .openStream();
     }
 
 
