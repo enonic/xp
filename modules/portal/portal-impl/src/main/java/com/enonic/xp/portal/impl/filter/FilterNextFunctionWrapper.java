@@ -1,9 +1,11 @@
 package com.enonic.xp.portal.impl.filter;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.mapper.PortalResponseMapper;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
@@ -26,16 +28,19 @@ public final class FilterNextFunctionWrapper
 
     private final PortalScriptService scriptService;
 
+    private final PortalRequestRerouter rerouter;
+
     private boolean functionWasCalled;
 
     public FilterNextFunctionWrapper( WebHandlerChain webHandlerChain, PortalRequest request, WebResponse response, ResourceKey script,
-                                      final PortalScriptService scriptService )
+                                      final PortalScriptService scriptService, final PortalRequestRerouter rerouter )
     {
         this.webHandlerChain = webHandlerChain;
         this.response = response;
         this.request = request;
         this.script = script;
         this.scriptService = scriptService;
+        this.rerouter = rerouter;
     }
 
     @Override
@@ -51,6 +56,12 @@ public final class FilterNextFunctionWrapper
         try
         {
             final PortalRequest portalRequest = new PortalRequestSerializer( request, scriptRequestParam ).serialize();
+
+            if ( !Objects.equals( portalRequest.getContentPath(), request.getContentPath() ) &&
+                PortalRequestHelper.isSiteBase( portalRequest ) )
+            {
+                rerouter.reroute( portalRequest );
+            }
 
             final WebResponse newResponse = webHandlerChain.handle( portalRequest, response );
             final PortalResponseMapper response = new PortalResponseMapper( (PortalResponse) newResponse );

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.script.ScriptFixturesFacade;
@@ -111,6 +112,32 @@ class PortalRequestSerializerTest
         assertEquals( 0, portalRequest.getHeaders().size() );
         assertEquals( 0, portalRequest.getCookies().size() );
         assertEquals( 0, portalRequest.getParams().size() );
+    }
+
+    @Test
+    void serializeContentPath()
+    {
+        final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setContentPath( ContentPath.from( "/mysite/municipalities" ) );
+
+        final ScriptValue value = factory.evalValue( "var result = {contentPath: '/mysite/municipalities/oslo'}; result;" );
+
+        final PortalRequest portalRequest = new PortalRequestSerializer( sourceRequest, value ).serialize();
+
+        assertEquals( ContentPath.from( "/mysite/municipalities/oslo" ), portalRequest.getContentPath() );
+    }
+
+    @Test
+    void serializeContentPathUnchanged()
+    {
+        final PortalRequest sourceRequest = new PortalRequest();
+        sourceRequest.setContentPath( ContentPath.from( "/mysite/municipalities" ) );
+
+        final ScriptValue value = factory.evalValue( "var result = {path: '/other'}; result;" );
+
+        final PortalRequest portalRequest = new PortalRequestSerializer( sourceRequest, value ).serialize();
+
+        assertEquals( ContentPath.from( "/mysite/municipalities" ), portalRequest.getContentPath() );
     }
 
     @Test

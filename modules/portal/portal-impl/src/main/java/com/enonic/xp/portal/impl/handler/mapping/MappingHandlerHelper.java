@@ -163,7 +163,7 @@ class MappingHandlerHelper
         throws Exception
     {
         final MappingFilterHandlerWorker worker =
-            new MappingFilterHandlerWorker( request, response, webHandlerChain, mappings, mapping -> handleController( request, mapping ) );
+            new MappingFilterHandlerWorker( request, response, webHandlerChain, mappings, this::handleController );
         worker.resourceService = this.resourceService;
         worker.filterScriptFactory = this.filterScriptFactory;
 
