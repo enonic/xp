@@ -161,6 +161,19 @@ class PublishContentHandlerTest
     }
 
     @Test
+    void publishMixedFailures()
+    {
+        final PublishContentResult result = PublishContentResult.create()
+            .add( PublishContentResult.Result.success( ContentId.from( PUB_ID_3 ) ) )
+            .add( PublishContentResult.Result.failure( ContentId.from( FAIL_ID ), PublishContentResult.Reason.NOT_READY ) )
+            .build();
+
+        when( this.contentService.publish( any() ) ).thenReturn( result );
+
+        runFunction( "/test/PublishContentHandlerTest.js", "publishMixedFailures" );
+    }
+
+    @Test
     void testContentNotFound()
     {
         runFunction( "/test/PublishContentHandlerTest.js", "contentNotFound" );

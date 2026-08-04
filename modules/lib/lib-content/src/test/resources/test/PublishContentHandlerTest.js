@@ -117,3 +117,31 @@ exports.contentNotFound = function () {
 
     assert.assertJsonEquals(contentNotFoundExpectedJson, result);
 };
+
+// Engine-reported failures come first, then keys that could not be resolved to any content.
+var mixedFailuresExpectedJson = {
+    'pushedContents': [
+        'e1f57280-d672-4cd8-b674-98e26e5b69ae'
+    ],
+    'failedContents': [
+        '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
+        '/non-existing-content'
+    ],
+    'failed': [
+        {
+            'id': '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
+            'reason': 'NOT_READY'
+        },
+        {
+            'id': '/non-existing-content'
+        }
+    ]
+};
+
+exports.publishMixedFailures = function () {
+    var result = content.publish({
+        keys: ['79e21db0-5b43-45ce-b58c-6e1c420b22bd', '/non-existing-content']
+    });
+
+    assert.assertJsonEquals(mixedFailuresExpectedJson, result);
+};
