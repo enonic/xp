@@ -3,11 +3,13 @@ package com.enonic.xp.admin.impl.portal;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.admin.impl.portal.extension.AdminExtensionResponseProcessorExecutor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
+import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
@@ -25,6 +27,10 @@ public final class AdminToolHandler
     private AdminToolDescriptorService adminToolDescriptorService;
 
     private ControllerScriptFactory controllerScriptFactory;
+
+    private AdminExtensionResponseProcessorExecutor extensionResponseProcessorExecutor;
+
+    private PostProcessor postProcessor;
 
     public AdminToolHandler()
     {
@@ -63,6 +69,8 @@ public final class AdminToolHandler
         final AdminToolHandlerWorker worker = new AdminToolHandlerWorker( portalRequest );
         worker.controllerScriptFactory = this.controllerScriptFactory;
         worker.adminToolDescriptorService = adminToolDescriptorService;
+        worker.extensionResponseProcessorExecutor = this.extensionResponseProcessorExecutor;
+        worker.postProcessor = this.postProcessor;
         worker.descriptorKey = descriptorKey;
 
         final PortalResponse response = worker.execute();
@@ -80,5 +88,17 @@ public final class AdminToolHandler
     public void setControllerScriptFactory( final ControllerScriptFactory controllerScriptFactory )
     {
         this.controllerScriptFactory = controllerScriptFactory;
+    }
+
+    @Reference
+    public void setExtensionResponseProcessorExecutor( final AdminExtensionResponseProcessorExecutor extensionResponseProcessorExecutor )
+    {
+        this.extensionResponseProcessorExecutor = extensionResponseProcessorExecutor;
+    }
+
+    @Reference
+    public void setPostProcessor( final PostProcessor postProcessor )
+    {
+        this.postProcessor = postProcessor;
     }
 }

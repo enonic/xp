@@ -1,5 +1,6 @@
 dependencies {
     api project( ':core:core-api' )
+    api project( ':portal:portal-api' )
 }
 
 jar {
