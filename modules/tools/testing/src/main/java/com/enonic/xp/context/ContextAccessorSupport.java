@@ -8,6 +8,6 @@ public final class ContextAccessorSupport
 
     public static ThreadLocal<Context> getInstance()
     {
-        return ContextAccessor.INSTANCE;
+        return ContextAccessor.LEGACY;
     }
 }

@@ -94,7 +94,7 @@ class BlobStoreFactoryTest
             @Override
             public long readThroughSizeThreshold()
             {
-                return 0;
+                return 1024;
             }
 
             @Override

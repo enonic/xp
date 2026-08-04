@@ -28,10 +28,13 @@ final class FilterScriptImpl
 
     private final PortalScriptService scriptService;
 
-    FilterScriptImpl( final PortalScriptService scriptService, final ResourceKey script )
+    private final PortalRequestRerouter rerouter;
+
+    FilterScriptImpl( final PortalScriptService scriptService, final ResourceKey script, final PortalRequestRerouter rerouter )
     {
         this.scriptExports = scriptService.execute( script );
         this.scriptService = scriptService;
+        this.rerouter = rerouter;
     }
 
     @Override
@@ -73,7 +76,7 @@ final class FilterScriptImpl
 
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final FilterNextFunctionWrapper nextHandler =
-            new FilterNextFunctionWrapper( webHandlerChain, request, response, scriptExports.getScript(), scriptService );
+            new FilterNextFunctionWrapper( webHandlerChain, request, response, scriptExports.getScript(), scriptService, rerouter );
 
         final ScriptValue result = this.scriptExports.executeMethod( FILTER_SCRIPT_METHOD, requestMapper, nextHandler );
         return new PortalResponseSerializer( result ).serialize();

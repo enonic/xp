@@ -8,6 +8,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +34,7 @@ import com.enonic.xp.trace.Tracer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -59,7 +61,8 @@ class LocalTaskManagerImplTest
 
         cleanupScheduler = new TaskManagerCleanupSchedulerMock();
 
-        taskMan = new LocalTaskManagerImpl( Runnable::run, cleanupScheduler, event -> this.eventsPublished.add( event ) );
+        taskMan = new LocalTaskManagerImpl( ( applicationKey, command ) -> command.run(), cleanupScheduler,
+                                            event -> this.eventsPublished.add( event ) );
         taskMan.activate();
 
         this.eventsPublished = new ArrayList<>();
@@ -179,6 +182,31 @@ class LocalTaskManagerImplTest
         assertEquals( 0, taskMan.getRunningTasks().size() );
         assertEquals( 4, eventsPublished.size() );
         assertEquals( "task.submitted , task.updated , task.finished , task.removed", eventTypes() );
+    }
+
+    @Test
+    void submitTaskRejected()
+    {
+        final TaskManagerCleanupSchedulerMock rejectedCleanupScheduler = new TaskManagerCleanupSchedulerMock();
+        final LocalTaskManagerImpl rejectingTaskMan = new LocalTaskManagerImpl( ( applicationKey, command ) -> {
+            throw new RejectedExecutionException( "executor stopped" );
+        }, rejectedCleanupScheduler, event -> this.eventsPublished.add( event ) );
+        rejectingTaskMan.activate();
+        try
+        {
+            final DescribedTaskImpl describedTask =
+                new DescribedTaskImpl( ( id, progressReporter ) -> {
+                }, "task-1", "task 1", TEST_TASK_CONTEXT );
+
+            assertThrows( RejectedExecutionException.class, () -> rejectingTaskMan.submitTask( describedTask ) );
+
+            assertEquals( TaskState.FAILED, rejectingTaskMan.getTaskInfo( describedTask.getTaskId() ).getState() );
+        }
+        finally
+        {
+            rejectingTaskMan.deactivate();
+            rejectedCleanupScheduler.verifyStopped();
+        }
     }
 
     private String eventTypes()

@@ -366,12 +366,12 @@ public class SlashApiHandler
         final WebSocketConfig webSocketConfig = res.getWebSocket();
 
         applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
-                                 () -> new WebSocketApiEndpointImpl( webSocketConfig, () -> dynamicApiHandler ) );
+                                 () -> new WebSocketApiEndpointImpl( webSocketConfig, () -> dynamicApiHandler, req.getApplicationKey() ) );
 
         final SseConfig sseConfig = res.getSse();
         if ( sseConfig != null )
         {
-            final SseApiEndpointImpl sseEndpoint = new SseApiEndpointImpl( sseConfig, () -> dynamicApiHandler );
+            final SseApiEndpointImpl sseEndpoint = new SseApiEndpointImpl( sseConfig, () -> dynamicApiHandler, req.getApplicationKey() );
             this.sseManager.setupSse( req, sseEndpoint );
         }
 
@@ -381,16 +381,24 @@ public class SlashApiHandler
     private PortalResponse executeController( final PortalRequest req, final DescriptorKey descriptorKey )
     {
         final ControllerScript script = getScript( descriptorKey );
-        final PortalResponse res = script.execute( req );
-        final WebSocketConfig webSocketConfig = res.getWebSocket();
 
+        // bound execution: a connection opened by this request stays on the exact context that
+        // executed it
+        final ControllerScript[] boundRef = new ControllerScript[1];
+        final PortalResponse res = script.executeBound( bound -> {
+            boundRef[0] = bound;
+            return bound.execute( req );
+        } );
+        final ControllerScript boundScript = boundRef[0];
+
+        final WebSocketConfig webSocketConfig = res.getWebSocket();
         applyWebSocketIfPresent( req.getWebSocketContext(), webSocketConfig,
-                                 () -> new WebSocketEndpointImpl( webSocketConfig, () -> script ) );
+                                 () -> new WebSocketEndpointImpl( webSocketConfig, boundScript, descriptorKey.getApplicationKey() ) );
 
         final SseConfig sseConfig = res.getSse();
         if ( sseConfig != null )
         {
-            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, () -> script );
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript, descriptorKey.getApplicationKey() );
             this.sseManager.setupSse( req, sseEndpoint );
         }
 

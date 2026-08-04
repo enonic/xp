@@ -1,12 +1,15 @@
 package com.enonic.xp.portal.impl.sse;
 
-import java.util.function.Supplier;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.web.sse.SseEndpoint;
 import com.enonic.xp.web.sse.SseEvent;
+import com.enonic.xp.web.sse.SseEventType;
 import com.enonic.xp.web.sse.SseConfig;
 
 @NullMarked
@@ -15,23 +18,75 @@ public final class SseEndpointImpl
 {
     private final SseConfig config;
 
-    private final Supplier<ControllerScript> scriptSupplier;
+    /**
+     * Pinned to the exact script context that executed the subscribing request, so every event
+     * of this client sees the module state that request initialized.
+     */
+    private final ControllerScript script;
 
-    public SseEndpointImpl( final SseConfig config, final Supplier<ControllerScript> scriptSupplier )
+    private final @Nullable ApplicationKey application;
+
+    private final AtomicBoolean released = new AtomicBoolean();
+
+    public SseEndpointImpl( final SseConfig config, final ControllerScript script, final @Nullable ApplicationKey application )
     {
         this.config = config;
-        this.scriptSupplier = scriptSupplier;
+        this.script = script;
+        this.application = application;
     }
 
     @Override
     public void onEvent( final SseEvent event )
     {
-        this.scriptSupplier.get().onSseEvent( event );
+        final SseEventType type = event.getType();
+        if ( type == SseEventType.OPEN )
+        {
+            // the connection now references the subscribing context: keep it out of the request
+            // pool until the connection ends
+            this.script.retain();
+            boolean opened = false;
+            try
+            {
+                this.script.onSseEvent( event );
+                opened = true;
+            }
+            finally
+            {
+                // a failed open gets no terminal event (the servlet layer swallows the failure,
+                // and the default SSE timeout is infinite): release here or the pin leaks the
+                // slot out of the request pool for good
+                if ( !opened && this.released.compareAndSet( false, true ) )
+                {
+                    this.script.release();
+                }
+            }
+            return;
+        }
+        try
+        {
+            this.script.onSseEvent( event );
+        }
+        finally
+        {
+            // every non-OPEN type (CLOSE/TIMEOUT/ERROR) is terminal — SSE delivers no inbound
+            // message events — and TIMEOUT/ERROR may or may not be followed by CLOSE: release
+            // exactly once on the first terminal event
+            if ( this.released.compareAndSet( false, true ) )
+            {
+                this.script.release();
+            }
+        }
     }
 
     @Override
     public SseConfig getConfig()
     {
         return this.config;
+    }
+
+    @Override
+    public @Nullable ApplicationKey getApplication()
+    {
+        return this.application;
     }
 }

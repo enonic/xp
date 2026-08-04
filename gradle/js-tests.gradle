@@ -1,0 +1,43 @@
+/**
+ * Applied to modules whose tests execute JavaScript (see jsTestProjects in the root build script).
+ *
+ * Such tests must pass on every supported script engine: the default `test` task runs them with
+ * the engine from the `xp.script-engine` project property (Nashorn unless overridden), and the
+ * additional `testGraalJs` task repeats them with GraalJS. Both are part of `check`.
+ */
+
+dependencies {
+    // for script-impl and portal-impl, which do not depend on tools:testing and so do not
+    // inherit the GraalJS language implementation from it
+    testRuntimeOnly libs.graalvm.js
+}
+
+def testGraalJs = tasks.register( 'testGraalJs', Test ) {
+    group = 'verification'
+    description = 'Runs tests with the GraalJS script engine.'
+
+    useJUnitPlatform {
+        excludeTags 'elasticsearch'
+    }
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    systemProperty 'java.awt.headless', 'true'
+    systemProperty 'xp.script-engine', 'GraalJS'
+    maxHeapSize = '2G'
+
+    doFirst {
+        jvmArgs += ["-javaagent:${configurations.mockitoAgent.asPath}", "-XX:TieredStopAtLevel=1"]
+    }
+
+    shouldRunAfter test
+}
+
+check.dependsOn( testGraalJs )
+
+// `gradlew ci` reaches test tasks through jacocoMergedReport -> jacocoTestReport -> test and never
+// through a per-project `check`, so this is what makes the GraalJS run execute in CI.
+tasks.named( 'jacocoTestReport' ) {
+    dependsOn( testGraalJs )
+}

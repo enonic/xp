@@ -310,6 +310,61 @@ class ApplyNodePermissionsCommandTest
 
         assertEquals( 1, result.getResults().size() );
         assertNull( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).permissions() );
+
+        final Node unchangedNode = ctxDefaultAdmin().callWith( () -> nodeService.getById( createdNode.id() ) );
+        assertEquals( createdNode.getPermissions(), unchangedNode.getPermissions() );
+    }
+
+    @Test
+    void applied_on_all_branches_when_allowed_on_reference_branch()
+    {
+        final PrincipalKey user = ContextAccessor.current().getAuthInfo().getUser().getKey();
+
+        // active version in master is not even readable by the user
+        final Node createdNode = ctxDefaultAdmin().callWith( () -> nodeService.create( CreateNodeParams.create()
+                                                                                           .name( "my-node" )
+                                                                                           .parent( NodePath.ROOT )
+                                                                                           .permissions( AccessControlList.of(
+                                                                                               AccessControlEntry.create()
+                                                                                                   .principal( PrincipalKey.from(
+                                                                                                       "user:system:someone-else" ) )
+                                                                                                   .allowAll()
+                                                                                                   .build() ) )
+                                                                                           .build() ) );
+
+        ctxDefaultAdmin().runWith( () -> pushNodes( WS_OTHER, createdNode.id() ) );
+
+        // reference (draft) version grants the user full access
+        ctxDefaultAdmin().runWith( () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                           .nodeId( createdNode.id() )
+                                                                           .branches( Branches.from( WS_DEFAULT ) )
+                                                                           .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                                                   .principal( user )
+                                                                                                                   .allowAll()
+                                                                                                                   .build() ) )
+                                                                           .build() ) );
+
+        refresh();
+
+        final AccessControlList newPermissions = AccessControlList.create()
+            .add( AccessControlEntry.create().principal( user ).allowAll().build() )
+            .add( AccessControlEntry.create().principal( PrincipalKey.from( "user:my-provider:my-user" ) ).allowAll().build() )
+            .build();
+
+        final ApplyNodePermissionsResult result = nodeService.applyPermissions( ApplyNodePermissionsParams.create()
+                                                                                    .nodeId( createdNode.id() )
+                                                                                    .branches( Branches.from( WS_DEFAULT, WS_OTHER ) )
+                                                                                    .permissions( newPermissions )
+                                                                                    .build() );
+
+        assertEquals( newPermissions, result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).permissions() );
+        assertEquals( newPermissions, result.getResult( createdNode.id(), ContentConstants.BRANCH_MASTER ).permissions() );
+
+        final Node masterNode = ContextBuilder.from( ctxDefaultAdmin() )
+            .branch( ContentConstants.BRANCH_MASTER )
+            .build()
+            .callWith( () -> nodeService.getById( createdNode.id() ) );
+        assertEquals( newPermissions, masterNode.getPermissions() );
     }
 
     @Test

@@ -1,5 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,15 +25,13 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
-import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
-import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
@@ -71,17 +76,20 @@ public final class DuplicateNodeCommand
         final NodeReferenceUpdatesHolder.Builder builder =
             NodeReferenceUpdatesHolder.create().add( existingNode.id(), duplicatedNode.id() );
 
+        final List<Node> createdChildren = new ArrayList<>();
+
         if ( params.getIncludeChildren() )
         {
-            storeChildNodes( existingNode, duplicatedNode, builder );
+            storeChildNodes( existingNode, duplicatedNode, builder, createdChildren );
         }
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
 
-        refresh( RefreshMode.SEARCH );
-
         updateNodeReferences( duplicatedNode, nodesToBeUpdated );
-        updateChildReferences( duplicatedNode, nodesToBeUpdated );
+        for ( final Node createdChild : createdChildren )
+        {
+            updateNodeReferences( createdChild, nodesToBeUpdated );
+        }
 
         refresh( params.getRefresh() );
         return result.build();
@@ -168,29 +176,38 @@ public final class DuplicateNodeCommand
         return updatedParams;
     }
 
-    private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder )
+    private void storeChildNodes( final Node originalParent, final Node newParent, final NodeReferenceUpdatesHolder.Builder builder,
+                                  final List<Node> createdChildren )
     {
-        refresh( RefreshMode.SEARCH );
-
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final NodeIds childrenIds = this.nodeSearchService.query( NodeQuery.create()
-                                                                      .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                                                      .parent( originalParent.path() )
-                                                                      .setOrderExpressions(
-                                                                          originalParent.getChildOrder().getOrderExpressions() )
-                                                                      .build(), SingleRepoSearchSource.from( internalContext ) )
-            .getIds()
+
+        final NodeBranchEntries subTree =
+            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().execute();
+
+        final NodeIds subTreeIds = subTree.stream().map( NodeBranchEntry::getNodeId ).collect( NodeIds.collector() );
+
+        // nodes not readable by the caller are not returned, and neither they nor their children are duplicated
+        final Map<NodeId, Node> originalNodes = this.nodeStorageService.get( subTreeIds, internalContext )
             .stream()
-            .map( NodeId::from )
-            .collect( NodeIds.collector() );
+            .collect( Collectors.toMap( Node::id, Function.identity() ) );
 
-        final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
+        // entries are ordered by path, so a node is always duplicated before any of its children
+        final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
+        duplicatedParents.put( originalParent.path(), new DuplicatedParent( originalParent, newParent ) );
 
-        for ( final Node node : children )
+        for ( final NodeBranchEntry entry : subTree )
         {
-            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( newParent.path() );
+            final Node node = originalNodes.get( entry.getNodeId() );
+            final DuplicatedParent parent = duplicatedParents.get( entry.getNodePath().getParentPath() );
 
-            decideInsertStrategy( originalParent, node, paramsBuilder );
+            if ( node == null || parent == null )
+            {
+                continue;
+            }
+
+            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( parent.copy().path() );
+
+            decideInsertStrategy( parent.original(), node, paramsBuilder );
 
             attachBinaries( node, paramsBuilder );
 
@@ -200,16 +217,27 @@ public final class DuplicateNodeCommand
 
             final CreateNodeParams processedParams = executeProcessors( originalParams );
 
-            final Node newChildNode =
-                CreateNodeCommand.create( this ).params( processedParams ).binaryService( this.binaryService ).build().execute();
+            // the parent copy is already at hand, and every child path below it is created exactly once
+            final Node newChildNode = CreateNodeCommand.create( this )
+                .params( processedParams )
+                .binaryService( this.binaryService )
+                .knownParentNode( parent.copy() )
+                .skipVerification( true )
+                .build()
+                .execute();
 
             builder.add( node.id(), newChildNode.id() );
 
             result.addChild( newChildNode );
+            createdChildren.add( newChildNode );
             listener.nodesDuplicated( 1 );
 
-            storeChildNodes( node, newChildNode, builder );
+            duplicatedParents.put( node.path(), new DuplicatedParent( node, newChildNode ) );
         }
+    }
+
+    private record DuplicatedParent(Node original, Node copy)
+    {
     }
 
     private void decideInsertStrategy( final Node originalParent, final Node node, final CreateNodeParams.Builder paramsBuilder )
@@ -226,22 +254,6 @@ public final class DuplicateNodeCommand
         for ( final AttachedBinary attachedBinary : node.getAttachedBinaries() )
         {
             paramsBuilder.attachBinary( attachedBinary.getBinaryReference(), this.binaryService.get( repositoryId, attachedBinary ) );
-        }
-    }
-
-    private void updateChildReferences( final Node duplicatedParent, final NodeReferenceUpdatesHolder nodeReferenceUpdatesHolder )
-    {
-        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final NodeIds childrenIds = this.nodeSearchService.query(
-            NodeQuery.create().size( NodeSearchService.GET_ALL_SIZE_FLAG ).parent( duplicatedParent.path() ).build(),
-            SingleRepoSearchSource.from( internalContext ) ).getIds().stream().map( NodeId::from ).collect( NodeIds.collector() );
-
-        final Nodes children = this.nodeStorageService.get( childrenIds, internalContext );
-
-        for ( final Node node : children )
-        {
-            updateNodeReferences( node, nodeReferenceUpdatesHolder );
-            updateChildReferences( node, nodeReferenceUpdatesHolder );
         }
     }
 

@@ -23,6 +23,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.repo.impl.node.CreateNodeCommand;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
@@ -287,4 +288,19 @@ class CreateNodeCommandTest
         doDeleteNode( defaultNode.id() );
     }
 
+    @Test
+    void known_parent_node_must_match_parent_to_create_in()
+    {
+        final Node otherParent = createNode( CreateNodeParams.create().name( "other-parent" ).parent( NodePath.ROOT ).build() );
+
+        final CreateNodeCommand.Builder builder = CreateNodeCommand.create()
+            .params( CreateNodeParams.create().name( "myNode" ).parent( NodePath.ROOT ).build() )
+            .knownParentNode( otherParent )
+            .binaryService( this.binaryService )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService );
+
+        assertThrows( IllegalArgumentException.class, builder::build );
+    }
 }

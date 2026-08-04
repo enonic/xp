@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 
 import org.osgi.framework.Bundle;
@@ -17,20 +16,9 @@ import com.enonic.xp.icon.Icon;
 
 final class ApplicationDescriptorBuilder
 {
-    private static final String APP_DESCRIPTOR_PATH_YAML = "application.yaml";
-
-    private static final String ENONIC_APP_DESCRIPTOR_PATH_YAML = "enonic.yaml";
-
-    private static final String APP_DESCRIPTOR_PATH_YML = "application.yml";
-
-    private static final String ENONIC_APP_DESCRIPTOR_PATH_YML = "enonic.yml";
-
     private static final String APP_ICON_FILENAME = "application.svg";
 
     private static final String ENONIC_APP_ICON_FILENAME = "enonic.svg";
-
-    private static final List<String> DESCRIPTOR_PATHS =
-        List.of( ENONIC_APP_DESCRIPTOR_PATH_YAML, ENONIC_APP_DESCRIPTOR_PATH_YML, APP_DESCRIPTOR_PATH_YAML, APP_DESCRIPTOR_PATH_YML );
 
     private Bundle bundle;
 
@@ -79,7 +67,7 @@ final class ApplicationDescriptorBuilder
 
     private static URL resolveDescriptorUrl( final Bundle bundle )
     {
-        return DESCRIPTOR_PATHS.stream()
+        return ApplicationBundleUtils.DESCRIPTOR_PATHS.stream()
             .filter( path -> bundle.getEntry( path ) != null )
             .findFirst()
             .map( bundle::getResource )
@@ -100,7 +88,7 @@ final class ApplicationDescriptorBuilder
 
     public static boolean hasAppDescriptor( final Bundle bundle )
     {
-        return DESCRIPTOR_PATHS.stream().anyMatch( path -> bundle.getEntry( path ) != null );
+        return ApplicationBundleUtils.DESCRIPTOR_PATHS.stream().anyMatch( path -> bundle.getEntry( path ) != null );
     }
 
     private boolean hasAppIcon( final Bundle bundle )

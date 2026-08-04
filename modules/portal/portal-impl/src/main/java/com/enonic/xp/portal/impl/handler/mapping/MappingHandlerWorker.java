@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
@@ -55,21 +54,29 @@ final class MappingHandlerWorker
 
         this.request.setControllerScript( controllerScript );
 
-        final PortalResponse portalResponse = rendererDelegate.render( mappingDescriptor, this.request );
+        // render bound to one script context: the controller executes there, and a connection
+        // opened by this request dispatches its events to that exact context
+        final ControllerScript[] boundRef = new ControllerScript[1];
+        final PortalResponse portalResponse = controllerScript.executeBound( bound -> {
+            boundRef[0] = bound;
+            return rendererDelegate.render( mappingDescriptor, this.request );
+        } );
+        final ControllerScript boundScript = boundRef[0];
 
         final WebSocketConfig webSocketConfig = portalResponse.getWebSocket();
         final WebSocketContext webSocketContext = this.request.getWebSocketContext();
         if ( webSocketContext != null && webSocketConfig != null )
         {
             final WebSocketEndpoint webSocketEndpoint =
-                newWebSocketEndpoint( webSocketConfig, this::getScript, mappingDescriptor.getController().getApplicationKey() );
+                newWebSocketEndpoint( webSocketConfig, boundScript, mappingDescriptor.getController().getApplicationKey() );
             webSocketContext.apply( webSocketEndpoint );
         }
 
         final SseConfig sseConfig = portalResponse.getSse();
         if ( sseConfig != null && this.sseManager != null )
         {
-            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, this::getScript );
+            final SseEndpointImpl sseEndpoint =
+                new SseEndpointImpl( sseConfig, boundScript, mappingDescriptor.getController().getApplicationKey() );
             this.sseManager.setupSse( this.request, sseEndpoint );
         }
 
@@ -86,10 +93,10 @@ final class MappingHandlerWorker
         return this.controllerScriptFactory.fromScript( resource.getKey() );
     }
 
-    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final Supplier<ControllerScript> script,
+    private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script,
                                                     final ApplicationKey app )
     {
         Tracer.attribute( "app", Objects.toString( app, null ) );
-        return new WebSocketEndpointImpl( config, script );
+        return new WebSocketEndpointImpl( config, script, app );
     }
 }

@@ -13,13 +13,13 @@ import com.enonic.xp.task.TaskProgressReporterContext;
 final class TaskWrapper
     implements RunnableTask
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SubmitTaskHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TaskWrapper.class );
 
-    private final Function<Void, Void> taskFunction;
+    private final Function<Object, Object> taskFunction;
 
     private final String description;
 
-    TaskWrapper( final Function<Void, Void> taskFunction, final String description )
+    TaskWrapper( final Function<Object, Object> taskFunction, final String description )
     {
         this.taskFunction = taskFunction;
         this.description = description;

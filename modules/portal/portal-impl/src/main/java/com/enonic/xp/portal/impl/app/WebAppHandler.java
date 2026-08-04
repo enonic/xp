@@ -87,20 +87,29 @@ public final class WebAppHandler
         Tracer.withCurrent( trace -> trace.attribute( "app", applicationKey.toString() )
             .attribute( "path", req.getRawPath().substring( req.getBaseUri().length() ) ) );
         final ControllerScript script = getScript( applicationKey );
-        final PortalResponse res = script.execute( req );
+
+        // run the request bound to one script context and keep the view pinned to that exact
+        // context: a connection opened by this request dispatches its events there, seeing the
+        // module state the request initialized
+        final ControllerScript[] boundRef = new ControllerScript[1];
+        final PortalResponse res = script.executeBound( bound -> {
+            boundRef[0] = bound;
+            return bound.execute( req );
+        } );
+        final ControllerScript boundScript = boundRef[0];
 
         final WebSocketConfig webSocketConfig = res.getWebSocket();
         final WebSocketContext webSocketContext = req.getWebSocketContext();
         if ( ( webSocketContext != null ) && ( webSocketConfig != null ) )
         {
-            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, script, applicationKey );
+            final WebSocketEndpoint webSocketEndpoint = newWebSocketEndpoint( webSocketConfig, boundScript, applicationKey );
             webSocketContext.apply( webSocketEndpoint );
         }
 
         final SseConfig sseConfig = res.getSse();
         if ( sseConfig != null )
         {
-            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, () -> script );
+            final SseEndpointImpl sseEndpoint = new SseEndpointImpl( sseConfig, boundScript, applicationKey );
             this.sseManager.setupSse( req, sseEndpoint );
         }
 
@@ -110,7 +119,7 @@ public final class WebAppHandler
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script, final ApplicationKey app )
     {
         Tracer.attribute( "app", app.toString() );
-        return new WebSocketEndpointImpl( config, () -> script );
+        return new WebSocketEndpointImpl( config, script, app );
     }
 
     private ControllerScript getScript( final ApplicationKey applicationKey )

@@ -65,8 +65,17 @@ class PortalErrorMapperTest
     @Test
     void testSimple()
     {
+        // the mapped exception is a Java object, and JSON.stringify renders one differently per
+        // engine (an empty object here, omitted there), so the JSON fixture covers the error
+        // without it and the exception is asserted on its own below
+        final PortalError withoutException = PortalError.create()
+            .status( this.error.getStatus() )
+            .message( this.error.getMessage() )
+            .request( this.error.getRequest() )
+            .build();
+        assertHelper.assertJson( "error-simple.json", new PortalErrorMapper( withoutException ) );
+
         final PortalErrorMapper value = new PortalErrorMapper( this.error );
-        assertHelper.assertJson( "error-simple.json", value );
         final Exception exception = MapSerializableAssert.serializeJs( value ).getMember( "exception" ).getValue( Exception.class );
         assertThat( exception ).isInstanceOf( NotFoundException.class ).message().isEqualTo( "Not found." );
     }

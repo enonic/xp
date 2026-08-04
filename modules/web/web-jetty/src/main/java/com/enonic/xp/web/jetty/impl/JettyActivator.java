@@ -15,6 +15,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.session.HouseKeeper;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.VirtualThreadPool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
@@ -76,6 +77,21 @@ public final class JettyActivator
     {
         final QueuedThreadPool threadPool =
             new QueuedThreadPool( config.threadPool_maxThreads(), config.threadPool_minThreads(), config.threadPool_idleTimeout() );
+        if ( config.threadPool_virtualThreads() )
+        {
+            // Blocking request handling runs on virtual threads while the QueuedThreadPool keeps its
+            // platform threads for the selectors/acceptors. VirtualThreadPool does not pool threads: it
+            // names them (so they surface in thread dumps and the status reporter — jetty #11353) and,
+            // when maxConcurrent > 0, caps concurrent virtual threads with a Semaphore so a load spike
+            // cannot spawn unbounded threads and exhaust memory (Jetty threading guide). QueuedThreadPool
+            // does not manage the executor it is handed, so add the pool as a managed bean to start and
+            // stop it with the server.
+            final VirtualThreadPool virtualThreadPool = new VirtualThreadPool();
+            virtualThreadPool.setName( "xp-jetty-vt" );
+            virtualThreadPool.setMaxConcurrentTasks( config.threadPool_virtualThreads_maxConcurrent() );
+            threadPool.addBean( virtualThreadPool, true );
+            threadPool.setVirtualThreadsExecutor( virtualThreadPool );
+        }
         final Server server = new Server( threadPool );
 
         this.jettySessionStoreConfigurator.configure( server, sessionScavengeIntervalSeconds( config.session_timeout() ) );
@@ -143,6 +159,7 @@ public final class JettyActivator
         throws Exception
     {
         this.serverServiceRegistration.unregister();
+        // stopping the server stops the QueuedThreadPool, which stops the managed VirtualThreadPool bean
         this.server.stop();
         this.server.destroy();
         LOG.info( "Stopped Jetty" );

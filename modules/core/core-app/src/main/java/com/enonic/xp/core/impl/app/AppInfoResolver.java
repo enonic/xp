@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -18,13 +19,10 @@ import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.internal.ApplicationBundleUtils;
 
 class AppInfoResolver
 {
-    public static final String APPLICATION_YML = "application.yml";
-
-    public static final String APPLICATION_YAML = "application.yaml";
-
     public static AppInfo resolve( final ByteSource byteSource )
         throws Exception
     {
@@ -104,11 +102,11 @@ class AppInfoResolver
     private static String readDescriptorYaml( final JarFile jarFile )
         throws IOException
     {
-        JarEntry entry = jarFile.getJarEntry( APPLICATION_YAML );
-        if ( entry == null )
-        {
-            entry = jarFile.getJarEntry( APPLICATION_YML );
-        }
+        final JarEntry entry = ApplicationBundleUtils.DESCRIPTOR_PATHS.stream()
+            .map( jarFile::getJarEntry )
+            .filter( Objects::nonNull )
+            .findFirst()
+            .orElse( null );
         if ( entry == null )
         {
             return null;

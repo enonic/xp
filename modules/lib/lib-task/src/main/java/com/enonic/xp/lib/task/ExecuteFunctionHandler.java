@@ -16,14 +16,14 @@ public final class ExecuteFunctionHandler
 
     private String description;
 
-    private Function<Void, Void> taskFunction;
+    private Function<Object, Object> taskFunction;
 
     public void setDescription( final String description )
     {
         this.description = description;
     }
 
-    public void setFunc( final Function<Void, Void> taskFunction )
+    public void setFunc( final Function<Object, Object> taskFunction )
     {
         this.taskFunction = taskFunction;
     }
@@ -31,10 +31,10 @@ public final class ExecuteFunctionHandler
     public String executeFunction()
     {
         final TaskService taskService = taskServiceSupplier.get();
-        final TaskWrapper taskWrapper = new TaskWrapper( taskFunction, description );
-        final TaskId taskId =
-            taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( taskWrapper ).description( description ).build() );
-
+        final TaskId taskId = taskService.submitLocalTask( SubmitLocalTaskParams.create()
+                                                               .runnableTask( new TaskWrapper( taskFunction, description ) )
+                                                               .description( description )
+                                                               .build() );
         return taskId.toString();
     }
 

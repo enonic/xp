@@ -54,6 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -75,7 +76,7 @@ class ServiceHandlerTest
     {
         this.request = new PortalRequest();
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
-        this.controllerScript = mock( ControllerScript.class );
+        this.controllerScript = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( this.controllerScript );
 
         final PortalResponse portalResponse = PortalResponse.create().build();

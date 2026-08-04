@@ -19,8 +19,10 @@ import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.context.LocalScope;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.jaxrs.impl.multipart.MultipartFormReader;
@@ -64,9 +66,9 @@ public abstract class JaxRsResourceTestSupport
 
         mockCurrentContextHttpRequest();
 
-        ContextAccessorSupport.getInstance().remove();
-
-        ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
+        final Context context = ContextBuilder.create().build();
+        context.getLocalScope().setSession( new SessionMock() );
+        ContextAccessorSupport.getInstance().set( context );
     }
 
     @AfterEach
@@ -83,6 +85,8 @@ public abstract class JaxRsResourceTestSupport
                 session.invalidate();
             }
         }
+
+        ContextAccessorSupport.getInstance().remove();
     }
 
     private void mockCurrentContextHttpRequest()

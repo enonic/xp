@@ -80,28 +80,15 @@ final class ContextImpl
     @Override
     public void runWith( final Runnable runnable )
     {
-        final Context old = ContextAccessor.INSTANCE.get();
-        ContextAccessor.INSTANCE.set( this );
-
-        try
-        {
-            runnable.run();
-        }
-        finally
-        {
-            ContextAccessor.INSTANCE.set( old );
-        }
+        ScopedValue.where( ContextAccessor.INSTANCE, this ).run( runnable );
     }
 
     @Override
     public <T extends @Nullable Object> T callWith( final Callable<T> runnable )
     {
-        final Context old = ContextAccessor.INSTANCE.get();
-        ContextAccessor.INSTANCE.set( this );
-
         try
         {
-            return runnable.call();
+            return ScopedValue.where( ContextAccessor.INSTANCE, this ).call( runnable::call );
         }
         catch ( final RuntimeException e )
         {
@@ -110,10 +97,6 @@ final class ContextImpl
         catch ( final Exception e )
         {
             throw Exceptions.unchecked( e );
-        }
-        finally
-        {
-            ContextAccessor.INSTANCE.set( old );
         }
     }
 }

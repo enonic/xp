@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Value;
 
 import com.enonic.xp.script.impl.util.JavascriptHelper;
@@ -19,9 +20,12 @@ public final class GraalObjectConverter
 {
     private final JavascriptHelper<?> helper;
 
-    public GraalObjectConverter( final JavascriptHelper<?> helper )
+    private final Context context;
+
+    public GraalObjectConverter( final JavascriptHelper<?> helper, final Context context )
     {
         this.helper = helper;
+        this.context = context;
     }
 
     @Override
@@ -35,6 +39,13 @@ public final class GraalObjectConverter
         if ( value instanceof List )
         {
             return toJs( (List) value );
+        }
+
+        // a handle converts a callback result eagerly, so it arrives here as a Map; without this
+        // branch a script would see a plain object on Nashorn and an opaque host value here
+        if ( value instanceof Map )
+        {
+            return toJs( (Map<?, ?>) value );
         }
 
         if ( value != null && value.getClass().isArray() && !value.getClass().getComponentType().isPrimitive() )
@@ -61,6 +72,17 @@ public final class GraalObjectConverter
         final GraalScriptMapGenerator generator = new GraalScriptMapGenerator( this.helper );
         value.serialize( generator );
         return generator.getRoot();
+    }
+
+    private Object toJs( final Map<?, ?> map )
+    {
+        final Object object = this.helper.newJsObject();
+        for ( final Map.Entry<?, ?> entry : map.entrySet() )
+        {
+            GraalJSHelper.addToNativeObject( object, String.valueOf( entry.getKey() ), toJs( entry.getValue() ) );
+        }
+
+        return object;
     }
 
     private Object toJs( final List list )
@@ -157,18 +179,15 @@ public final class GraalObjectConverter
     private Map<String, Object> toMap( final Value source )
     {
         Map<String, Object> result = new LinkedHashMap<>();
-        source.getMemberKeys().forEach( key -> {
-            Object converted = toObject( source.getMember( key ) );
-            if ( converted != null )
-            {
-                result.put( key, converted );
-            }
-        } );
+        // parity with the Nashorn converter: a null-valued key stays in the map — dropping it
+        // would make {key: null} indistinguishable from {}
+        source.getMemberKeys().forEach( key -> result.put( key, toObject( source.getMember( key ) ) ) );
         return result;
     }
 
     private Function<Object[], Object> toFunction( final Value source )
     {
-        return arg -> toObject( source.execute( arg ) );
+        final JsFunctionHandle handle = new JsFunctionHandle( context, source );
+        return handle::execute;
     }
 }

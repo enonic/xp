@@ -73,6 +73,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -116,7 +117,7 @@ class SlashApiHandlerTest
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
-        controllerScript = mock( ControllerScript.class );
+        controllerScript = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( controllerScript.execute( any( PortalRequest.class ) ) ).thenReturn(
             PortalResponse.create().webSocket( webSocketConfig ).build() );
 

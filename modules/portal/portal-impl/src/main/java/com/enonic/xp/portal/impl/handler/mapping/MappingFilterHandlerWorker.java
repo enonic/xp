@@ -21,7 +21,7 @@ final class MappingFilterHandlerWorker
     @FunctionalInterface
     interface ControllerInvoker
     {
-        PortalResponse invoke( ControllerMappingDescriptor mapping )
+        PortalResponse invoke( PortalRequest request, ControllerMappingDescriptor mapping )
             throws Exception;
     }
 
@@ -80,14 +80,18 @@ final class MappingFilterHandlerWorker
                 return webHandlerChain.handle( webRequest, webResponse );
             }
 
+            final PortalRequest portalRequest = (PortalRequest) webRequest;
+
             final ControllerMappingDescriptor mapping = mappingDescriptors.get( index++ );
-            Tracer.withCurrent(
-                trace -> trace.attribute( "contentPath", request.getContentPath() != null ? request.getContentPath().toString() : null ) );
+            Tracer.withCurrent( trace -> trace.attribute( "contentPath",
+                                                          portalRequest.getContentPath() != null
+                                                              ? portalRequest.getContentPath().toString()
+                                                              : null ) );
 
             if ( mapping.isController() )
             {
-                request.setApplicationKey( mapping.getApplication() );
-                return controllerInvoker.invoke( mapping );
+                portalRequest.setApplicationKey( mapping.getApplication() );
+                return controllerInvoker.invoke( portalRequest, mapping );
             }
 
             Tracer.withCurrent( trace -> {
@@ -95,7 +99,7 @@ final class MappingFilterHandlerWorker
                 trace.attribute( "filter", mapping.getFilter().toString() );
             } );
 
-            return getScript( mapping ).execute( (PortalRequest) webRequest, webResponse, this );
+            return getScript( mapping ).execute( portalRequest, webResponse, this );
         }
     }
 }

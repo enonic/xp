@@ -81,7 +81,10 @@ public final class GraalScriptValueFactory
                 Value castedValue = (Value) value;
                 if ( castedValue.isHostObject() )
                 {
-                    return new GraalObjectScriptValue( context, this, castedValue );
+                    // opaque data, not a JS object: a host object's members are its Java methods,
+                    // and a consumer that branches on isObject() would read those instead of the
+                    // instance. The other engine hands such values back the same way
+                    return new GraalScalarScriptValue( context, castedValue.asHostObject() );
                 }
                 else if ( castedValue.isNumber() )
                 {

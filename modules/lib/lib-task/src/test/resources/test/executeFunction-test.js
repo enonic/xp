@@ -24,3 +24,15 @@ exports.executeFunctionThrowingError = function () {
 
     t.assertEquals('123', taskId);
 };
+
+exports.executeClosureFunction = function () {
+
+    var captured = 'closure';
+
+    taskLib.executeFunction({
+        description: 'Closure task',
+        func: function () {
+            testInstance.record(captured);
+        }
+    });
+};

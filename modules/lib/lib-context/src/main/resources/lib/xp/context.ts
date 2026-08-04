@@ -60,12 +60,18 @@ interface ContextRunParams {
     setCallback<T>(fn: () => T): void;
 }
 
+export type CustomAttributeValue = string | number | boolean | CustomAttributeValue[] | {
+    [key: string]: CustomAttributeValue;
+};
+
 interface ContextHandler {
     get(): Context;
 
     run<T>(params: ContextRunParams): T;
 
     newRunParams(): ContextRunParams;
+
+    setCustomLocalAttribute(name: string, value: ScriptValue | null): void;
 }
 
 const bean: ContextHandler = __.newBean<ContextHandler>('com.enonic.xp.lib.context.ContextHandlerBean');
@@ -127,5 +133,29 @@ export function run<T>(context: ContextParams, callback: () => T): T {
 export function get(): Context {
     const result = bean.get();
     return __.toNativeObject(result);
+}
+
+/**
+ * Stores a JSON-like value as a custom attribute in the local scope of the current context.
+ *
+ * The local scope lives for the duration of the current execution and is shared with nested `run` calls,
+ * so a value stored by one piece of code is visible to everything else running in the same execution.
+ *
+ * The attribute is stored under the `custom.` prefix and is returned by `get()` as `attributes['custom.<name>']`.
+ *
+ * The value is serialized on write: later modifications of the passed object are not reflected in the
+ * stored attribute, and readers always get their own copy.
+ *
+ * Setting `null` or `undefined` removes the attribute.
+ *
+ * @example
+ * contextLib.setCustomLocalAttribute('my-data', {values: ['one', 'two']});
+ * const data = contextLib.get().attributes['custom.my-data'];
+ *
+ * @param {string} name Attribute name, stored with the `custom.` prefix.
+ * @param {string|number|boolean|array|object|null} [value] JSON-like value to store, or null/undefined to remove the attribute.
+ */
+export function setCustomLocalAttribute(name: string, value?: CustomAttributeValue | null): void {
+    bean.setCustomLocalAttribute(name, value === null || value === undefined ? null : __.toScriptValue(value));
 }
 

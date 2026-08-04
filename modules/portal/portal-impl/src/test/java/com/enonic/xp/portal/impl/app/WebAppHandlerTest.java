@@ -21,12 +21,16 @@ import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandlerChain;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.sse.SseEndpoint;
+import com.enonic.xp.web.websocket.WebSocketConfig;
+import com.enonic.xp.web.websocket.WebSocketContext;
+import com.enonic.xp.web.websocket.WebSocketEndpoint;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -85,7 +89,7 @@ class WebAppHandlerTest
         this.request.setBaseUri( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
 
-        final ControllerScript script = mock( ControllerScript.class );
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         final PortalResponse response = PortalResponse.create().build();
@@ -126,7 +130,7 @@ class WebAppHandlerTest
         this.request.setPath( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/" );
 
-        final ControllerScript script = mock( ControllerScript.class );
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         final PortalResponse response = PortalResponse.create().build();
@@ -178,6 +182,26 @@ class WebAppHandlerTest
     }
 
     @Test
+    void handle_appliesWebSocketWhenResponseHasConfig()
+        throws Exception
+    {
+        this.request.setApplicationKey( ApplicationKey.from( "myapp" ) );
+        this.request.setBaseUri( "/webapp/myapp" );
+        this.request.setRawPath( "/webapp/myapp/a.txt" );
+
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
+        when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
+
+        final WebSocketContext webSocketContext = mock( WebSocketContext.class );
+        this.request.setWebSocketContext( webSocketContext );
+        when( script.execute( any() ) ).thenReturn( PortalResponse.create().webSocket( new WebSocketConfig() ).build() );
+
+        this.handler.doHandle( this.request, null, this.chain );
+
+        verify( webSocketContext ).apply( any( WebSocketEndpoint.class ) );
+    }
+
+    @Test
     void handle_setupSseWhenResponseHasSseConfig()
         throws Exception
     {
@@ -185,7 +209,7 @@ class WebAppHandlerTest
         this.request.setBaseUri( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
 
-        final ControllerScript script = mock( ControllerScript.class );
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         when( script.execute( any() ) ).thenReturn( PortalResponse.create().sse( SseConfig.empty() ).build() );

@@ -98,6 +98,11 @@ final class TaskRunnable
         return context.build();
     }
 
+    void failNotCommenced( final String message )
+    {
+        progressReporter.failed( message );
+    }
+
     private String betterThreadName()
     {
         final String defaultName = "task-" + runnableTask.getApplicationKey() + "-" + runnableTask.getTaskId();

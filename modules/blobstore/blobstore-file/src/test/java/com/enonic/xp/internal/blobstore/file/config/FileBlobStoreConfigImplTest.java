@@ -21,6 +21,7 @@ class FileBlobStoreConfigImplTest
         assertFalse( config.readThroughEnabled() );
         assertEquals( Path.of( "${xp.home}/repo/blob" ), config.baseDir() );
         assertEquals( 104857600, config.readThroughSizeThreshold() );
+        assertEquals( 1073741824, config.readThroughCacheCapacity() );
     }
 
 

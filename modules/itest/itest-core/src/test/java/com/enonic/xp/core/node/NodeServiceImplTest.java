@@ -470,7 +470,8 @@ class NodeServiceImplTest
 
         this.nodeService.refresh( RefreshMode.SEARCH );
 
-        final Node duplicatedNode = this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node_1.id() ).build() ).getNode();
+        final Node duplicatedNode =
+            this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node_1.id() ).refresh( RefreshMode.SEARCH ).build() ).getNode();
 
         final NodeId node_1_2_dup_id =
             this.nodeService.findByParent( FindNodesByParentParams.create().parentId( duplicatedNode.id() ).build() ).getNodeIds().first();

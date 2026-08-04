@@ -5,27 +5,16 @@ import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
-import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
-import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
-import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -83,19 +72,11 @@ public class DeleteNodeCommand
 
         final NodePath effectiveNodePath = node.getNodePath();
 
-        refresh( RefreshMode.STORAGE );
-
-        final NodeBranchEntries childrenBranchEntries = NodeBranchQueryResultFactory.create( this.nodeSearchService.query(
-            NodeBranchQuery.create()
-                .query( QueryExpr.from(
-                    CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( effectiveNodePath + "/*" ) ) ) )
-                .addQueryFilter( ValueFilter.create()
-                                     .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
-                                     .addValue( ValueFactory.newString( internalContext.getBranch().getValue() ) )
-                                     .build() )
-                .addOrderBy( FieldOrderExpr.create( BranchIndexPath.PATH, OrderExpr.Direction.DESC ) )
-                .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                .build(), internalContext.getRepositoryId() ) );
+        final NodeBranchEntries childrenBranchEntries = FindNodeBranchEntriesByParentCommand.create( this )
+            .parentPath( effectiveNodePath )
+            .pathOrder( OrderExpr.Direction.DESC )
+            .build()
+            .execute();
 
         final NodeBranchEntries nodeBranchEntries = NodeBranchEntries.create().addAll( childrenBranchEntries ).add( node ).build();
 

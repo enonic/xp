@@ -48,6 +48,11 @@ public final class PortalRequestMapper
             gen.value( "branch", this.request.getBranch().getValue() );
         }
 
+        if ( this.request.getContentPath() != null )
+        {
+            gen.value( "contentPath", this.request.getContentPath().toString() );
+        }
+
         if ( this.request.getContextPath() != null )
         {
             gen.value( "contextPath", this.request.getContextPath() );
