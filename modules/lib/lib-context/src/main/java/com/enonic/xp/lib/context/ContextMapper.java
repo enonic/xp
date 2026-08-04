@@ -17,6 +17,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.session.Session;
+import com.enonic.xp.util.GenericValue;
 
 public final class ContextMapper
     implements MapSerializable
@@ -89,7 +90,11 @@ public final class ContextMapper
     {
         gen.map( "attributes" );
         getAttributes().forEach( ( k, v ) -> {
-            if ( canBeSerialized( v ) )
+            if ( v instanceof GenericValue genericValue )
+            {
+                gen.value( k, genericValue.toRawJs() );
+            }
+            else if ( canBeSerialized( v ) )
             {
                 gen.value( k, v );
             }

@@ -24,6 +24,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
@@ -93,12 +94,15 @@ class PortalUrlServiceImpl_processHtmlTest
         this.portalRequest.setRawRequest( req );
 
         PortalRequestAccessor.set( portalRequest );
+
+        ContextAccessorSupport.getInstance().set( ContextBuilder.create().build() );
     }
 
     @AfterEach
     void destroy()
     {
         PortalRequestAccessor.remove();
+        ContextAccessorSupport.getInstance().remove();
     }
 
     @Test
@@ -780,7 +784,7 @@ class PortalUrlServiceImpl_processHtmlTest
         result = this.service.processHtml( params );
 
         assertEquals( "<a href=\"/site/myproject/draft" + content.getPath() +
-                          "\" data-link-ref=\"linkRef\">Text</a>\n<!--#MACRO _name=\"correct_macro\" _document=\"__macroDocument10\" _body=\"\"-->",
+                          "\" data-link-ref=\"linkRef\">Text</a>\n<!--#MACRO _name=\"correct_macro\" _document=\"__macroDocument1\" _body=\"\"-->",
                       result );
     }
 

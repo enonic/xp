@@ -64,28 +64,33 @@ class ContextImplTest
     void testRunWith()
     {
         final Context old = createContext();
-        ContextAccessor.INSTANCE.set( old );
-
         final ContextImpl context = createContext();
-        assertSame( old, ContextAccessor.current() );
 
-        context.runWith( () -> assertSame( context, ContextAccessor.current() ) );
+        old.runWith( () -> {
+            assertSame( old, ContextAccessor.current() );
 
-        assertSame( old, ContextAccessor.current() );
+            context.runWith( () -> assertSame( context, ContextAccessor.current() ) );
+
+            assertSame( old, ContextAccessor.current() );
+        } );
     }
 
     @Test
     void testCallWith()
     {
         final Context old = createContext();
-        ContextAccessor.INSTANCE.set( old );
-
         final ContextImpl context = createContext();
-        assertSame( old, ContextAccessor.current() );
 
-        final boolean result = context.callWith( () -> {
-            assertSame( context, ContextAccessor.current() );
-            return true;
+        final boolean result = old.callWith( () -> {
+            assertSame( old, ContextAccessor.current() );
+
+            final boolean inner = context.callWith( () -> {
+                assertSame( context, ContextAccessor.current() );
+                return true;
+            } );
+
+            assertSame( old, ContextAccessor.current() );
+            return inner;
         } );
 
         assertTrue( result );

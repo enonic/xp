@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.script.event.ScriptEventListener;
@@ -121,7 +122,10 @@ public final class ScriptEventManagerImpl
         {
             try
             {
-                asyncExecutor.execute( () -> listener.onEvent( event ) );
+                // Bind a fresh context around the whole dispatch: ambient state the listener itself sets
+                // (e.g. REQUEST-scope login) stays visible for the rest of that dispatch, and nothing
+                // leaks between dispatches.
+                asyncExecutor.execute( () -> ContextBuilder.create().build().runWith( () -> listener.onEvent( event ) ) );
             }
             catch ( RejectedExecutionException e )
             {
