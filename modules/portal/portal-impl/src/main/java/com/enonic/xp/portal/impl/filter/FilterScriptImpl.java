@@ -12,6 +12,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -43,11 +44,7 @@ final class FilterScriptImpl
         request.setApplicationKey( this.scriptExports.getScript().getApplicationKey() );
         try
         {
-            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "filterScript",
-                                                                                trace -> trace.put( "script",
-                                                                                                    this.scriptExports.getScript().toString() ),
-                                                                                () -> doExecute( request, response,
-                                                                                                 webHandlerChain ) ) );
+            return PortalRequestAccessor.callWith( request, () -> doExecute( request, response, webHandlerChain ) );
         }
         catch ( ResourceProblemException | WebException e )
         {
@@ -65,8 +62,11 @@ final class FilterScriptImpl
         }
     }
 
+    @Traced("filterScript")
     private PortalResponse doExecute( final PortalRequest request, final WebResponse response, final WebHandlerChain webHandlerChain )
     {
+        Tracer.attribute( "script", this.scriptExports.getScript().toString() );
+
         if ( !this.scriptExports.hasMethod( FILTER_SCRIPT_METHOD ) )
         {
             throw new WebException( HttpStatus.NOT_IMPLEMENTED,

@@ -27,6 +27,8 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -117,6 +119,28 @@ class PageHandlerTest
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, res.getContentType() );
         assertEquals( "some-value", res.getHeaders().get( "some-header" ) );
         assertEquals( "component rendered", res.getBody() );
+    }
+
+    @Test
+    void getContentFound_recordsTraceAttributes()
+        throws Exception
+    {
+        setupSite();
+        setupContent();
+        setupTemplates();
+
+        setRendererResult( PortalResponse.create().body( "component rendered" ).status( HttpStatus.OK ).build() );
+
+        this.request.setContentPath( ContentPath.from( "/site/somepath/content" ) );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "renderComponent" );
+        final WebResponse res =
+            Tracer.traceEx( trace, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( "/site/somepath/content", trace.get( "contentPath" ) );
+        assertEquals( "page", trace.get( "type" ) );
     }
 
     @Test

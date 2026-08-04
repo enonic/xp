@@ -30,7 +30,7 @@ import com.enonic.xp.region.FragmentComponent;
 import com.enonic.xp.region.LayoutComponent;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -89,20 +89,15 @@ public class ComponentHandler
 
         final PortalRequest portalRequest = updatePortalRequest( webRequest );
 
-        final Trace trace = Tracer.newTrace( "renderComponent" );
-        if ( trace == null )
-        {
-            return doHandle( portalRequest );
-        }
-
-        trace.put( "componentPath", portalRequest.getComponent().getPath() );
-        trace.put( "type", portalRequest.getComponent().getType().toString() );
-
-        return Tracer.trace( trace, () -> doHandle( portalRequest ) );
+        return doHandle( portalRequest );
     }
 
+    @Traced("renderComponent")
     private PortalResponse doHandle( final PortalRequest portalRequest )
     {
+        Tracer.withCurrent( trace -> trace.attribute( "componentPath", portalRequest.getComponent().getPath().toString() )
+            .attribute( "type", portalRequest.getComponent().getType().toString() ) );
+
         final PortalResponse result = rendererDelegate.render( portalRequest.getComponent(), portalRequest );
         final boolean isEditMode = portalRequest.getMode() == RenderMode.EDIT;
         final PortalResponse response = ( isEditMode && result.hasContributions() ) ? addHasContributionsHeader( result ) : result;

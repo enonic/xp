@@ -9,7 +9,7 @@ import com.enonic.xp.portal.filter.FilterScriptFactory;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -49,6 +49,7 @@ final class MappingFilterHandlerWorker
         this.controllerInvoker = controllerInvoker;
     }
 
+    @Traced("filter")
     public PortalResponse execute()
         throws Exception
     {
@@ -82,11 +83,10 @@ final class MappingFilterHandlerWorker
             final PortalRequest portalRequest = (PortalRequest) webRequest;
 
             final ControllerMappingDescriptor mapping = mappingDescriptors.get( index++ );
-            final Trace trace = Tracer.current();
-            if ( trace != null )
-            {
-                trace.put( "contentPath", portalRequest.getContentPath() != null ? portalRequest.getContentPath().toString() : null );
-            }
+            Tracer.withCurrent( trace -> trace.attribute( "contentPath",
+                                                          portalRequest.getContentPath() != null
+                                                              ? portalRequest.getContentPath().toString()
+                                                              : null ) );
 
             if ( mapping.isController() )
             {
@@ -94,11 +94,10 @@ final class MappingFilterHandlerWorker
                 return controllerInvoker.invoke( portalRequest, mapping );
             }
 
-            if ( trace != null )
-            {
-                trace.put( "type", "filter" );
-                trace.put( "filter", mapping.getFilter().toString() );
-            }
+            Tracer.withCurrent( trace -> {
+                trace.attribute( "type", "filter" );
+                trace.attribute( "filter", mapping.getFilter().toString() );
+            } );
 
             return getScript( mapping ).execute( portalRequest, webResponse, this );
         }

@@ -5,7 +5,6 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
-import com.enonic.xp.trace.Trace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.WebRequest;
@@ -40,11 +39,9 @@ public final class AttachmentHandlerWorker
     @Override
     protected void addTrace( final Content content )
     {
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "contentPath", content.getPath() );
-            trace.put( "type", "attachment" );
-        }
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "contentPath", content.getPath().toString() );
+            trace.attribute( "type", "attachment" );
+        } );
     }
 }

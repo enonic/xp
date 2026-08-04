@@ -16,6 +16,7 @@ import com.enonic.xp.portal.impl.mapper.SseEventMapper;
 import com.enonic.xp.portal.impl.mapper.WebSocketEventMapper;
 import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -39,10 +40,7 @@ final class ControllerScriptImpl
         request.setApplicationKey( this.scriptExports.getScript().getApplicationKey() );
         try
         {
-            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "controllerScript",
-                                                                                trace -> trace.put( "script",
-                                                                                                    this.scriptExports.getScript().toString() ),
-                                                                                () -> doExecute( request ) ) );
+            return PortalRequestAccessor.callWith( request, () -> doExecute( request ) );
         }
         finally
         {
@@ -50,8 +48,11 @@ final class ControllerScriptImpl
         }
     }
 
+    @Traced("controllerScript")
     private PortalResponse doExecute( final PortalRequest portalRequest )
     {
+        Tracer.attribute( "script", this.scriptExports.getScript().toString() );
+
         final HttpMethod method = portalRequest.getMethod();
         final String methodName = method == HttpMethod.HEAD ? HttpMethod.GET.name() : method.name();
 

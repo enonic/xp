@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,8 +47,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.trace.Trace;
-import com.enonic.xp.trace.TraceManager;
+import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -69,6 +67,7 @@ import com.enonic.xp.webapp.WebappService;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -136,17 +135,6 @@ class SlashApiHandlerTest
         servletRequestMock = mock( HttpServletRequest.class );
         when( servletRequestMock.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
         request.setRawRequest( servletRequestMock );
-
-        final TraceManager manager = mock( TraceManager.class );
-        final Trace trace = mock( Trace.class );
-        when( manager.newTrace( any(), any() ) ).thenReturn( trace );
-        Tracer.setManager( manager );
-    }
-
-    @AfterEach
-    void tearDown()
-    {
-        Tracer.setManager( null );
     }
 
     @Test
@@ -240,6 +228,32 @@ class SlashApiHandlerTest
     }
 
     @Test
+    void testHandleApiRecordsTraceAttributes()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "universalAPI" );
+        final WebResponse webResponse = Tracer.traceEx( trace, () -> this.handler.handle( request ) );
+
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+        assertEquals( "com.enonic.app.myapp", trace.get( "app" ) );
+        assertEquals( "api-key", trace.get( "api" ) );
+        assertEquals( 200L, trace.get( "status" ) );
+        assertInstanceOf( String.class, trace.get( "type" ) );
+        assertInstanceOf( Long.class, trace.get( "size" ) );
+    }
+
+    @Test
     void testHandleApiWhenApiDisabled()
     {
         request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
@@ -264,14 +278,6 @@ class SlashApiHandlerTest
 
         WebException exception = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.NOT_FOUND, exception.getStatus() );
-    }
-
-    @Test
-    void testHandleApiWithoutTracer()
-        throws Exception
-    {
-        Tracer.setManager( null );
-        testHandleApi();
     }
 
     @Test

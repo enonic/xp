@@ -2,8 +2,7 @@ package com.enonic.xp.web.impl.trace;
 
 import org.osgi.service.component.annotations.Component;
 
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -28,29 +27,22 @@ public final class TraceWebFilter
     }
 
     @Override
+    @Traced("portalRequest")
     protected WebResponse doHandle( final WebRequest req, final WebResponse res, final WebHandlerChain chain )
         throws Exception
     {
-        final Trace trace = Tracer.newTrace( "portalRequest" );
-        if ( trace == null )
-        {
-            return chain.handle( req, res );
-        }
-
-        trace.put( "path", req.getPath() );
-        trace.put( "rawpath", req.getRawPath() );
-        trace.put( "url", req.getUrl() );
-        trace.put( "method", req.getMethod().toString() );
-        trace.put( "host", req.getHost() );
-        trace.put( "httpRequest", req );
-        trace.put( "httpResponse", res );
-        trace.put( "context", ContextAccessor.current() );
-
-        return Tracer.traceEx( trace, () -> {
-            final WebResponse webResponse = chain.handle( req, res );
-            addTraceInfo( trace, webResponse );
-            trace.put( "httpResponse", webResponse );
-            return webResponse;
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "path", req.getPath() );
+            trace.attribute( "rawpath", req.getRawPath() );
+            trace.attribute( "url", req.getUrl() );
+            trace.attribute( "method", req.getMethod().toString() );
+            trace.attribute( "host", req.getHost() );
         } );
+
+        final WebResponse webResponse = chain.handle( req, res );
+
+        Tracer.withCurrent( trace -> addTraceInfo( trace, webResponse ) );
+
+        return webResponse;
     }
 }

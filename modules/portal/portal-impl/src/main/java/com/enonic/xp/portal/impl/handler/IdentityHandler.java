@@ -8,14 +8,13 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -81,29 +80,19 @@ public class IdentityHandler
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 
-        final Trace trace = Tracer.newTrace( "portalRequest" );
-
-        if ( trace == null )
-        {
-            return doHandle( idProviderKey, idProviderFunction, portalRequest );
-        }
-
-        trace.put( "path", webRequest.getPath() );
-        trace.put( "method", webRequest.getMethod().toString() );
-        trace.put( "host", webRequest.getHost() );
-        trace.put( "httpRequest", webRequest );
-        trace.put( "context", ContextAccessor.current() );
-
-        return Tracer.traceIO( trace, () -> {
-            final PortalResponse portalResponse = doHandle( idProviderKey, idProviderFunction, portalRequest );
-            HandlerHelper.addTraceInfo( trace, portalResponse );
-            return portalResponse;
-        } );
+        return doHandle( idProviderKey, idProviderFunction, portalRequest );
     }
 
+    @Traced("portalRequest")
     private PortalResponse doHandle( final IdProviderKey idProviderKey, final String idProviderFunction, final PortalRequest portalRequest )
         throws IOException
     {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "path", portalRequest.getPath() );
+            trace.attribute( "method", portalRequest.getMethod().toString() );
+            trace.attribute( "host", portalRequest.getHost() );
+        } );
+
         final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
             .idProviderKey( idProviderKey )
             .functionName( idProviderFunction )
@@ -118,6 +107,7 @@ public class IdentityHandler
                 String.format( "ID Provider function [%s] not found for id provider [%s]", idProviderFunction, idProviderKey ) );
         }
 
+        Tracer.withCurrent( trace -> HandlerHelper.addTraceInfo( trace, portalResponse ) );
         return portalResponse;
     }
 

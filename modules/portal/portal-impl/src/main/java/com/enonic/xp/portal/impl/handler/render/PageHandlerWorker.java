@@ -18,7 +18,7 @@ import com.enonic.xp.portal.impl.rendering.RendererDelegate;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.Reference;
 import com.enonic.xp.web.HttpStatus;
@@ -43,6 +43,7 @@ final class PageHandlerWorker
         this.request = request;
     }
 
+    @Traced("renderComponent")
     public PortalResponse execute()
     {
         final Content content = PortalRequestHelper.getContentOrElseThrow( request );
@@ -63,12 +64,10 @@ final class PageHandlerWorker
         this.request.setPageDescriptor( resolvedPage.getPageDescriptor() );
         this.request.setApplicationKey( resolvedPage.getApplicationKey() );
 
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "contentPath", effectiveContent.getPath().toString() );
-            trace.put( "type", "page" );
-        }
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "contentPath", effectiveContent.getPath().toString() );
+            trace.attribute( "type", "page" );
+        } );
 
         return rendererDelegate.render( effectiveContent, this.request );
     }

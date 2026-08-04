@@ -8,6 +8,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.task.distributed.DescribedTask;
 import com.enonic.xp.impl.task.distributed.TaskContext;
 import com.enonic.xp.security.User;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 
 import static com.enonic.xp.content.ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE;
@@ -35,12 +36,7 @@ final class TaskRunnable
         Thread.currentThread().setName( betterThreadName() );
         try
         {
-            User user = runnableTask.getTaskContext().getAuthInfo() != null ? runnableTask.getTaskContext().getAuthInfo().getUser() : null;
-            Tracer.trace( "task.run", trace -> {
-                trace.put( "taskId", runnableTask.getTaskId() );
-                trace.put( "user", requireNonNullElseGet( user, User::anonymous ).getKey() );
-                trace.put( "app", runnableTask.getApplicationKey() );
-            }, this::doRun, ( trace, success ) -> trace.put( "success", success ) );
+            doRun();
         }
         finally
         {
@@ -48,19 +44,30 @@ final class TaskRunnable
         }
     }
 
+    @Traced("task.run")
     private boolean doRun()
     {
+        Tracer.withCurrent( trace -> {
+            final User user =
+                runnableTask.getTaskContext().getAuthInfo() != null ? runnableTask.getTaskContext().getAuthInfo().getUser() : null;
+            trace.attribute( "taskId", runnableTask.getTaskId().toString() );
+            trace.attribute( "user", requireNonNullElseGet( user, User::anonymous ).getKey().toString() );
+            trace.attribute( "app", runnableTask.getApplicationKey().toString() );
+        } );
+
         progressReporter.running();
         try
         {
             newContext().runWith( () -> runnableTask.run( progressReporter ) );
             progressReporter.finished();
+            Tracer.attribute( "success", true );
             return true;
         }
         catch ( Throwable t )
         {
             progressReporter.failed( t.getMessage() );
             LOG.error( "Error executing task [{}] '{}': {}", runnableTask.getTaskId(), runnableTask.getName(), t.getMessage(), t );
+            Tracer.attribute( "success", false );
             return false;
         }
     }

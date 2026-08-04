@@ -25,6 +25,8 @@ import com.enonic.xp.region.Regions;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -68,6 +70,27 @@ class ComponentInstructionTest
         portalRequest.setSite( site );
 
         assertEquals( "<b>part content</b>", instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ).getBody() );
+    }
+
+    @Test
+    void testInstructionRecordsTraceAttributes()
+    {
+        returnOnRender( "<b>part content</b>" );
+
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMode( RenderMode.LIVE );
+        final Content content = createPage( "content-id", "content-name", "myapplication:content-type" );
+        portalRequest.setContent( content );
+        final Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
+        portalRequest.setSite( site );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "renderComponent" );
+        final PortalResponse response = Tracer.trace( trace, () -> instruction.evaluate( portalRequest, "COMPONENT myRegion/0" ) );
+
+        assertEquals( "<b>part content</b>", response.getBody() );
+        assertEquals( "/myRegion/0", trace.get( "componentPath" ) );
+        assertEquals( "part", trace.get( "type" ) );
     }
 
     @Test

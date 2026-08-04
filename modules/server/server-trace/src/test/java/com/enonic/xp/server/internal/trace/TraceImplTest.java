@@ -56,4 +56,76 @@ class TraceImplTest
         assertTrue( this.trace.getDuration().toMillis() >= 0 );
         assertFalse( this.trace.inProgress() );
     }
+
+    @Test
+    void typedAttributeMethods()
+    {
+        this.trace.attribute( "string", "value" )
+            .attribute( "long", 42L )
+            .attribute( "double", 1.5d )
+            .attribute( "boolean", true )
+            .attribute( "list", java.util.List.of( "a", "b" ) );
+
+        assertEquals( "value", this.trace.get( "string" ) );
+        assertEquals( 42L, this.trace.get( "long" ) );
+        assertEquals( 1.5d, this.trace.get( "double" ) );
+        assertEquals( Boolean.TRUE, this.trace.get( "boolean" ) );
+        assertEquals( java.util.List.of( "a", "b" ), this.trace.get( "list" ) );
+
+        // null values are ignored, not removals
+        this.trace.attribute( "string", (String) null );
+        assertEquals( "value", this.trace.get( "string" ) );
+        this.trace.attribute( "absent", (java.util.List<String>) null );
+        assertFalse( this.trace.containsKey( "absent" ) );
+
+        // overwrite is allowed
+        this.trace.attribute( "string", "updated" );
+        assertEquals( "updated", this.trace.get( "string" ) );
+    }
+
+    @Test
+    void putNormalizesValues()
+    {
+        // pass-through types
+        this.trace.put( "string", "value" );
+        this.trace.put( "boolean", true );
+        this.trace.put( "long", 42L );
+        this.trace.put( "double", 1.5d );
+        assertEquals( "value", this.trace.get( "string" ) );
+        assertEquals( Boolean.TRUE, this.trace.get( "boolean" ) );
+        assertEquals( 42L, this.trace.get( "long" ) );
+        assertEquals( 1.5d, this.trace.get( "double" ) );
+
+        // numeric widening
+        this.trace.put( "int", 7 );
+        this.trace.put( "float", 2.5f );
+        assertEquals( 7L, this.trace.get( "int" ) );
+        assertEquals( 2.5d, this.trace.get( "float" ) );
+
+        // iterables become immutable lists of strings
+        this.trace.put( "list", java.util.List.of( "a", 1, true ) );
+        assertEquals( java.util.List.of( "a", "1", "true" ), this.trace.get( "list" ) );
+
+        // arbitrary objects are converted eagerly to String
+        this.trace.put( "object", new java.math.BigInteger( "9999999999999999999999" ) );
+        assertEquals( "9999999999999999999999", this.trace.get( "object" ) );
+
+        this.trace.put( "uri", java.net.URI.create( "repo:branch" ) );
+        assertEquals( "repo:branch", this.trace.get( "uri" ) );
+    }
+
+    @Test
+    void putNullValueRemoves()
+    {
+        this.trace.put( "key", "value" );
+        assertEquals( "value", this.trace.get( "key" ) );
+
+        // null values are treated as removals (the map must stay ConcurrentHashMap-safe without throwing NPE)
+        this.trace.put( "key", null );
+        assertNull( this.trace.get( "key" ) );
+        assertFalse( this.trace.containsKey( "key" ) );
+
+        this.trace.put( "absent", null );
+        assertFalse( this.trace.containsKey( "absent" ) );
+    }
 }

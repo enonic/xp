@@ -28,6 +28,8 @@ import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskState;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -132,6 +134,22 @@ class LocalTaskManagerImplTest
         assertEquals( TaskState.FAILED, taskMan.getTaskInfo( describedTask.getTaskId() ).getState() );
         assertEquals( 4, eventsPublished.size() );
         assertEquals( "task.submitted , task.updated , task.updated , task.failed", eventTypes() );
+    }
+
+    @Test
+    void submitTaskRecordsTraceAttributes()
+    {
+        final RunnableTask runnableTask = ( id, progressReporter ) -> {
+        };
+
+        final DescribedTaskImpl describedTask = new DescribedTaskImpl( runnableTask, "task-1", "task 1", TEST_TASK_CONTEXT );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "task.submit" );
+        Tracer.trace( trace, () -> taskMan.submitTask( describedTask ) );
+
+        assertEquals( describedTask.getTaskId().toString(), trace.get( "taskId" ) );
+        assertEquals( "task-1", trace.get( "name" ) );
     }
 
     @Test

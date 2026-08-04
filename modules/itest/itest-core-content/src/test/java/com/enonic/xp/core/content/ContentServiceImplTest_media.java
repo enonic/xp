@@ -30,6 +30,8 @@ import com.enonic.xp.core.impl.media.MediaInfoServiceImpl;
 import com.enonic.xp.extractor.BinaryExtractor;
 import com.enonic.xp.extractor.ExtractedData;
 import com.enonic.xp.media.MediaInfo;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +75,26 @@ class ContentServiceImplTest_media
         assertNotNull( storedContent.getData().getString( ContentPropertyNames.MEDIA ) );
         final Attachments attachments = storedContent.getAttachments();
         assertEquals( 1, attachments.getSize() );
+    }
+
+    @Test
+    void get_binary_records_trace_attributes()
+    {
+        final CreateMediaParams createMediaParams = new CreateMediaParams();
+        createMediaParams.byteSource( loadImage( "cat-small.jpg" ) ).name( "Small cat" ).parent( ContentPath.ROOT );
+
+        final Content content = this.contentService.create( createMediaParams );
+        final Attachment attachment = this.contentService.getById( content.getId() ).getAttachments().first();
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "content.getBinary" );
+        final ByteSource byteSource =
+            Tracer.trace( trace, () -> this.contentService.getBinary( content.getId(), attachment.getBinaryReference() ) );
+
+        assertNotNull( byteSource );
+        assertEquals( content.getId().toString(), trace.get( "id" ) );
+        assertEquals( attachment.getBinaryReference().toString(), trace.get( "reference" ) );
+        assertEquals( byteSource.sizeIfKnown().or( -1L ), trace.get( "size" ) );
     }
 
     @Test

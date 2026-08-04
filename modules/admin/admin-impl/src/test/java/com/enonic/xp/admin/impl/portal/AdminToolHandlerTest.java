@@ -15,6 +15,9 @@ import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
+import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
@@ -23,6 +26,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -128,6 +132,31 @@ class AdminToolHandlerTest
         WebResponse response = this.handler.doHandle( this.portalRequest, this.webResponse, this.chain );
         assertEquals( this.portalResponse, response );
         assertEquals( "/admin/webapp/tool", this.portalRequest.getContextPath() );
+    }
+
+    @Test
+    void testRecordsTraceAttributes()
+        throws Exception
+    {
+        this.mockDescriptor( DescriptorKey.from( "app:tool" ), true );
+        this.portalRequest.setBaseUri( "/admin/webapp/tool" );
+        this.portalRequest.setRawPath( "/admin/webapp/tool/1" );
+        this.portalRequest.setMethod( HttpMethod.GET );
+        this.portalRequest.setPath( "/admin/webapp/tool/1" );
+        this.portalRequest.setHost( "localhost" );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final WebResponse response =
+            Tracer.traceEx( trace, () -> this.handler.doHandle( this.portalRequest, this.webResponse, this.chain ) );
+
+        assertEquals( this.portalResponse, response );
+        assertEquals( "/admin/webapp/tool/1", trace.get( "path" ) );
+        assertEquals( "GET", trace.get( "method" ) );
+        assertEquals( "localhost", trace.get( "host" ) );
+        assertEquals( 200L, trace.get( "status" ) );
+        assertInstanceOf( String.class, trace.get( "type" ) );
+        assertInstanceOf( Long.class, trace.get( "size" ) );
     }
 
     @Test

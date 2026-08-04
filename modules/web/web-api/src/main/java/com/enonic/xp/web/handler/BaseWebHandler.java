@@ -152,9 +152,9 @@ public abstract class BaseWebHandler
     {
         if ( trace != null )
         {
-            trace.put( "status", webResponse.getStatus().value() );
-            trace.put( "type", webResponse.getContentType().toString() );
-            trace.put( "size", getSize( webResponse ) );
+            trace.attribute( "status", webResponse.getStatus().value() );
+            trace.attribute( "type", webResponse.getContentType().toString() );
+            trace.attribute( "size", getSize( webResponse ) );
         }
     }
 

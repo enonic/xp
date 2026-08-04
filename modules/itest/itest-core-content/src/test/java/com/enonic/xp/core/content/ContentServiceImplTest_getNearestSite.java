@@ -25,6 +25,8 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,6 +35,30 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class ContentServiceImplTest_getNearestSite
     extends AbstractContentServiceTest
 {
+    @Test
+    void records_trace_attributes()
+    {
+        final Content site = createSite();
+        final Content child = createContent( site.getPath() );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "content.getNearestSite" );
+        final Site fetchedSite = Tracer.trace( trace, () -> this.contentService.getNearestSite( child.getId() ) );
+
+        assertNotNull( fetchedSite );
+        // "id" is overwritten by nested node-level tracing sharing the bound trace; "path" is written last, when a site is found
+        assertNotNull( trace.get( "id" ) );
+        assertEquals( site.getPath().toString(), trace.get( "path" ) );
+
+        // when no site is found the "path" attribute is not recorded by getNearestSite (the guard branch still runs)
+        final Content noSiteContent = createContent( ContentPath.ROOT );
+        final TestTrace noSiteTrace = TestTrace.of( "content.getNearestSite" );
+        final Site noSite = Tracer.trace( noSiteTrace, () -> this.contentService.getNearestSite( noSiteContent.getId() ) );
+
+        assertNull( noSite );
+        assertNotNull( noSiteTrace.get( "id" ) );
+    }
+
     @Test
     void child_of_site()
     {

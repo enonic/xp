@@ -1,33 +1,34 @@
 package com.enonic.xp.trace;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+@NullMarked
 public final class Tracer
 {
-    private static final Tracer INSTANCE = new Tracer();
+    private static final ScopedValue<@Nullable Trace> CURRENT = ScopedValue.newInstance();
 
-    private final ThreadLocal<Trace> current;
-
-    private TraceManager manager;
+    private static volatile @Nullable TraceManager manager;
 
     private Tracer()
     {
-        this.current = new ThreadLocal<>();
-        this.manager = null;
     }
 
     public static boolean isEnabled()
     {
-        return INSTANCE.manager != null;
+        return manager != null;
     }
 
-    public static Trace current()
+    public static @Nullable Trace current()
     {
-        return INSTANCE.current.get();
+        return CURRENT.isBound() ? CURRENT.get() : null;
     }
 
     public static void withCurrent( final Consumer<Trace> consumer )
@@ -39,74 +40,103 @@ public final class Tracer
         }
     }
 
-    public static void trace( final Trace trace, final Runnable runnable )
+    /**
+     * Records a single string attribute on the current trace; does nothing when no trace is bound. Note that the
+     * value argument is evaluated by the caller regardless - record expensive-to-compute values, or several
+     * attributes at once, inside {@link #withCurrent(Consumer)} instead. Ignored when the value is {@code null}.
+     */
+    public static void attribute( final String key, final @Nullable String value )
     {
-        trace( trace, () -> {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single integer attribute on the current trace; does nothing when no trace is bound.
+     * Values that may exceed 2^53 must be recorded as strings instead.
+     */
+    public static void attribute( final String key, final long value )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single floating-point attribute on the current trace; does nothing when no trace is bound.
+     */
+    public static void attribute( final String key, final double value )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single boolean attribute on the current trace; does nothing when no trace is bound.
+     */
+    public static void attribute( final String key, final boolean value )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, value );
+        }
+    }
+
+    /**
+     * Records a single list-of-strings attribute on the current trace; does nothing when no trace is bound.
+     * Ignored when the value is {@code null}.
+     */
+    public static void attribute( final String key, final @Nullable List<String> values )
+    {
+        final Trace trace = current();
+        if ( trace != null )
+        {
+            trace.attribute( key, values );
+        }
+    }
+
+    public static void trace( final @Nullable Trace trace, final Runnable runnable )
+    {
+        callWith( trace, () -> {
             runnable.run();
             return null;
         } );
     }
 
-    public static <T> T trace( final Trace trace, final TraceRunnable<T> runnable )
+    /**
+     * Executes the runnable in the given trace scope. Exceptions propagate unchanged: tracing never alters what a
+     * caller catches.
+     */
+    public static <T extends @Nullable Object> T trace( final @Nullable Trace trace, final TraceRunnable<T> runnable )
     {
-        try
-        {
-            return traceEx( trace, runnable::run );
-        }
-        catch ( final RuntimeException e )
-        {
-            throw e;
-        }
-        catch ( final Exception e )
-        {
-            throw new RuntimeException( e );
-        }
+        return callWith( trace, runnable::run );
     }
 
-    public static <T> T traceEx( final Trace trace, final Callable<T> callable )
+    public static <T extends @Nullable Object> T traceEx( final @Nullable Trace trace, final Callable<T> callable )
         throws Exception
     {
-        final Trace current = current();
-
-        try
-        {
-            setCurrent( trace );
-            startTrace( trace );
-            return callable.call();
-        }
-        finally
-        {
-            endTrace( trace );
-            setCurrent( current );
-        }
+        return callWith( trace, callable::call );
     }
 
-    public static <T> T traceIO( final Trace trace, final TraceIO<T> callable )
+    public static <T extends @Nullable Object> T traceIO( final @Nullable Trace trace, final TraceIO<T> callable )
         throws IOException
     {
-        final Trace current = current();
-
-        try
-        {
-            setCurrent( trace );
-            startTrace( trace );
-            return callable.call();
-        }
-        finally
-        {
-            endTrace( trace );
-            setCurrent( current );
-        }
+        return callWith( trace, callable::call );
     }
 
-    public static Trace newTrace( final String name )
+    public static @Nullable Trace newTrace( final String name )
     {
-        if ( !isEnabled() )
-        {
-            return null;
-        }
-
-        return INSTANCE.manager.newTrace( name, current() );
+        final TraceManager current = manager;
+        return current == null ? null : current.newTrace( name, current() );
     }
 
     public static void trace( final String name, final Runnable runnable )
@@ -114,47 +144,36 @@ public final class Tracer
         trace( newTrace( name ), runnable );
     }
 
-    public static <T> T trace( final String name, final TraceRunnable<T> runnable )
+    public static <T extends @Nullable Object> T trace( final String name, final TraceRunnable<T> runnable )
     {
         return trace( newTrace( name ), runnable );
     }
 
-    public static <T> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main, final BiConsumer<Trace, T> after )
+    public static <T extends @Nullable Object> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main,
+                                                        final BiConsumer<Trace, T> after )
     {
         final Trace trace = newTrace( name );
 
-        if ( trace != null )
-        {
-            before.accept( trace );
-            final Trace current = current();
-
-            try
-            {
-                setCurrent( trace );
-                startTrace( trace );
-                final T result = main.get();
-                after.accept( trace, result );
-                return result;
-            }
-            finally
-            {
-                endTrace( trace );
-                setCurrent( current );
-            }
-        }
-        else
+        if ( trace == null )
         {
             return main.get();
         }
+
+        before.accept( trace );
+        return callWith( trace, () -> {
+            final T result = main.get();
+            after.accept( trace, result );
+            return result;
+        } );
     }
 
-    public static <T> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main )
+    public static <T extends @Nullable Object> T trace( final String name, final Consumer<Trace> before, final Supplier<T> main )
     {
         return trace( name, before, main, ( trace, t ) -> {
         } );
     }
 
-    public static <T> T trace( final String name, final Consumer<Trace> before, final Runnable main )
+    public static <T extends @Nullable Object> @Nullable T trace( final String name, final Consumer<Trace> before, final Runnable main )
     {
         return trace( name, before, () -> {
             main.run();
@@ -163,23 +182,33 @@ public final class Tracer
         } );
     }
 
-    public static <T> T traceEx( final String name, final Callable<T> callable )
+    public static <T extends @Nullable Object> T traceEx( final String name, final Callable<T> callable )
         throws Exception
     {
         return traceEx( newTrace( name ), callable );
     }
 
-    public static void setManager( final TraceManager manager )
+    public static void setManager( final @Nullable TraceManager manager )
     {
-        INSTANCE.manager = manager;
+        Tracer.manager = manager;
     }
 
-    private static void setCurrent( final Trace trace )
+    static <T extends @Nullable Object, X extends Throwable> T callWith( final @Nullable Trace trace,
+                                                                         final ScopedValue.CallableOp<T, X> op )
+        throws X
     {
-        INSTANCE.current.set( trace );
+        try
+        {
+            startTrace( trace );
+            return ScopedValue.where( CURRENT, trace ).call( op );
+        }
+        finally
+        {
+            endTrace( trace );
+        }
     }
 
-    private static void startTrace( final Trace trace )
+    private static void startTrace( final @Nullable Trace trace )
     {
         if ( trace == null )
         {
@@ -187,13 +216,14 @@ public final class Tracer
         }
 
         trace.start();
-        if ( INSTANCE.manager != null )
+        final TraceManager current = manager;
+        if ( current != null )
         {
-            INSTANCE.manager.dispatch( TraceEvent.start( trace ) );
+            current.dispatch( TraceEvent.start( trace ) );
         }
     }
 
-    private static void endTrace( final Trace trace )
+    private static void endTrace( final @Nullable Trace trace )
     {
         if ( trace == null )
         {
@@ -201,9 +231,10 @@ public final class Tracer
         }
 
         trace.end();
-        if ( INSTANCE.manager != null )
+        final TraceManager current = manager;
+        if ( current != null )
         {
-            INSTANCE.manager.dispatch( TraceEvent.end( trace ) );
+            current.dispatch( TraceEvent.end( trace ) );
         }
     }
 }

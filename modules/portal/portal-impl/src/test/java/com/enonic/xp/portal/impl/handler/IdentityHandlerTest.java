@@ -13,6 +13,8 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -123,6 +125,26 @@ class IdentityHandlerTest
 
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
         assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
+    }
+
+    @Test
+    void testHandle_recordsTraceAttributes()
+        throws Exception
+    {
+        this.request.setPath( "/site/project/branch/_/idprovider/myidprovider" );
+        this.request.setHost( "localhost" );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final WebResponse portalResponse = Tracer.traceEx( trace, () -> this.handler.handle( this.request ) );
+
+        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
+        assertEquals( "/site/project/branch/_/idprovider/myidprovider", trace.get( "path" ) );
+        assertEquals( "GET", trace.get( "method" ) );
+        assertEquals( "localhost", trace.get( "host" ) );
+        assertEquals( 200L, trace.get( "status" ) );
+        assertEquals( "text/plain; charset=utf-8", trace.get( "type" ) );
+        assertEquals( 0L, trace.get( "size" ) );
     }
 
     @Test

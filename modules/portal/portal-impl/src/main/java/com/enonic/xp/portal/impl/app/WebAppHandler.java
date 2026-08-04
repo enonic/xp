@@ -16,7 +16,7 @@ import com.enonic.xp.portal.impl.sse.SseEndpointImpl;
 import com.enonic.xp.portal.impl.websocket.WebSocketEndpointImpl;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
@@ -63,16 +63,7 @@ public final class WebAppHandler
         {
             return handleRedirect( webRequest );
         }
-        final Trace trace = Tracer.newTrace( "renderApp" );
-        if ( trace == null )
-        {
-            return executeController( portalRequest );
-        }
-        return Tracer.traceEx( trace, () -> {
-            final WebResponse resp = executeController( portalRequest );
-            addTraceInfo( trace, portalRequest.getApplicationKey(), restPath );
-            return resp;
-        } );
+        return executeController( portalRequest );
     }
 
     private WebResponse handleRedirect( WebRequest webRequest )
@@ -88,10 +79,13 @@ public final class WebAppHandler
         return WebResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( HttpHeaders.LOCATION, redirectUrl ).build();
     }
 
+    @Traced("renderApp")
     private PortalResponse executeController( final PortalRequest req )
         throws Exception
     {
         final ApplicationKey applicationKey = req.getApplicationKey();
+        Tracer.withCurrent( trace -> trace.attribute( "app", applicationKey.toString() )
+            .attribute( "path", req.getRawPath().substring( req.getBaseUri().length() ) ) );
         final ControllerScript script = getScript( applicationKey );
 
         // run the request bound to one script context and keep the view pinned to that exact
@@ -124,11 +118,7 @@ public final class WebAppHandler
 
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script, final ApplicationKey app )
     {
-        final Trace trace = Tracer.current();
-        if ( trace != null && !trace.containsKey( "app" ) )
-        {
-            trace.put( "app", app.toString() );
-        }
+        Tracer.attribute( "app", app.toString() );
         return new WebSocketEndpointImpl( config, script, app );
     }
 
@@ -138,12 +128,4 @@ public final class WebAppHandler
         return this.controllerScriptFactory.fromScript( script );
     }
 
-    private void addTraceInfo( final Trace trace, final ApplicationKey applicationKey, final String path )
-    {
-        if ( trace != null )
-        {
-            trace.put( "app", applicationKey.toString() );
-            trace.put( "path", path );
-        }
-    }
 }

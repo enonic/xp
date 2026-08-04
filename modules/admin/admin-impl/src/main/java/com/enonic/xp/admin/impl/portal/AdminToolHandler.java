@@ -4,13 +4,12 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
@@ -41,9 +40,16 @@ public final class AdminToolHandler
     }
 
     @Override
+    @Traced("portalRequest")
     protected WebResponse doHandle( final WebRequest webRequest, final WebResponse webResponse, final WebHandlerChain webHandlerChain )
         throws Exception
     {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "path", webRequest.getPath() );
+            trace.attribute( "method", webRequest.getMethod().toString() );
+            trace.attribute( "host", webRequest.getHost() );
+        } );
+
         WebHandlerHelper.checkAdminLoginRole( webRequest );
 
         final DescriptorKey descriptorKey = AdminToolPortalHandler.getDescriptorKey( webRequest.getBasePath() );
@@ -59,24 +65,9 @@ public final class AdminToolHandler
         worker.adminToolDescriptorService = adminToolDescriptorService;
         worker.descriptorKey = descriptorKey;
 
-        final Trace trace = Tracer.newTrace( "portalRequest" );
-        if ( trace == null )
-        {
-            return worker.execute();
-        }
-
-        trace.put( "path", webRequest.getPath() );
-        trace.put( "method", webRequest.getMethod().toString() );
-        trace.put( "host", webRequest.getHost() );
-        trace.put( "httpRequest", webRequest );
-        trace.put( "httpResponse", webResponse );
-        trace.put( "context", ContextAccessor.current() );
-
-        return Tracer.traceEx( trace, () -> {
-            final PortalResponse response = worker.execute();
-            addTraceInfo( trace, response );
-            return response;
-        } );
+        final PortalResponse response = worker.execute();
+        Tracer.withCurrent( trace -> addTraceInfo( trace, response ) );
+        return response;
     }
 
     @Reference

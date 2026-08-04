@@ -36,7 +36,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -145,19 +145,16 @@ public class SlashApiHandler
         return dynamicApiHandler != null ? dynamicApiHandler.getApiDescriptor() : apiDescriptorService.getByKey( descriptorKey );
     }
 
+    @Traced("universalAPI")
     private WebResponse execute( final PortalRequest portalRequest, final DescriptorKey descriptorKey,
                                  final Supplier<WebResponse> supplier )
     {
-        final Trace trace = Tracer.newTrace( "universalAPI" );
-        if ( trace == null )
-        {
-            return handleAPIRequest( portalRequest, supplier );
-        }
-        return Tracer.trace( trace, () -> {
-            final WebResponse response = handleAPIRequest( portalRequest, supplier );
-            addTranceInfo( trace, descriptorKey, response );
-            return response;
+        final WebResponse response = handleAPIRequest( portalRequest, supplier );
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "app", descriptorKey.getApplicationKey().toString() ).attribute( "api", descriptorKey.getName() );
+            HandlerHelper.addTraceInfo( trace, response );
         } );
+        return response;
     }
 
     private MountContext resolveMountContext( final PortalRequest portalRequest )
@@ -266,13 +263,6 @@ public class SlashApiHandler
             .filter( Objects::nonNull )
             .map( SiteDescriptor::getApiMounts )
             .anyMatch( mounts -> mounts.contains( descriptorKey ) );
-    }
-
-    private static void addTranceInfo( final Trace trace, final DescriptorKey descriptorKey, final WebResponse response )
-    {
-        trace.put( "app", descriptorKey.getApplicationKey().toString() );
-        trace.put( "api", descriptorKey.getName() );
-        HandlerHelper.addTraceInfo( trace, response );
     }
 
     private WebResponse handleAPIRequest( final PortalRequest portalRequest, final Supplier<WebResponse> supplier )

@@ -7,13 +7,39 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ContentServiceImplTest_contentExists
     extends AbstractContentServiceTest
 {
+
+    @Test
+    void records_trace_attributes()
+    {
+        final Content content = createContent( ContentPath.ROOT, "my-content" );
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace byIdTrace = TestTrace.of( "content.exists" );
+        final boolean existsById = Tracer.trace( byIdTrace, () -> this.contentService.contentExists( content.getId() ) );
+
+        assertTrue( existsById );
+        assertEquals( content.getId().toString(), byIdTrace.get( "id" ) );
+        assertEquals( Boolean.TRUE, byIdTrace.get( "exists" ) );
+
+        final ContentPath missingPath = ContentPath.from( "/missing-content" );
+        final TestTrace byPathTrace = TestTrace.of( "content.exists" );
+        final boolean existsByPath = Tracer.trace( byPathTrace, () -> this.contentService.contentExists( missingPath ) );
+
+        assertFalse( existsByPath );
+        // nested node-level tracing shares the bound trace and overwrites "path" with the node path
+        assertTrue( byPathTrace.containsKey( "path" ) );
+        assertEquals( Boolean.FALSE, byPathTrace.get( "exists" ) );
+    }
 
     @Test
     void test_pending_publish_master()

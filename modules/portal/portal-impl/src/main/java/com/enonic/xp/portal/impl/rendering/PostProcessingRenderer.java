@@ -7,6 +7,7 @@ import com.enonic.xp.portal.impl.processor.ResponseProcessorExecutor;
 import com.enonic.xp.portal.postprocess.PostProcessor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptors;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 
 public abstract class PostProcessingRenderer<R>
@@ -56,13 +57,7 @@ public abstract class PostProcessingRenderer<R>
         PortalResponse filterResponse = portalResponse;
         for ( ResponseProcessorDescriptor filter : filters )
         {
-            final PortalResponse filterPortalResponse = filterResponse;
-
-            filterResponse = Tracer.trace( "renderFilter", trace -> {
-                trace.put( "app", filter.getApplication().toString() );
-                trace.put( "name", filter.getName() );
-                trace.put( "type", "filter" );
-            }, () -> processorExecutor.execute( filter, portalRequest, filterPortalResponse ) );
+            filterResponse = executeProcessor( filter, portalRequest, filterResponse );
 
             if ( !filterResponse.applyFilters() )
             {
@@ -71,5 +66,17 @@ public abstract class PostProcessingRenderer<R>
         }
 
         return filterResponse;
+    }
+
+    @Traced("renderFilter")
+    private PortalResponse executeProcessor( final ResponseProcessorDescriptor filter, final PortalRequest portalRequest,
+                                             final PortalResponse portalResponse )
+    {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "app", filter.getApplication().toString() );
+            trace.attribute( "name", filter.getName() );
+            trace.attribute( "type", "filter" );
+        } );
+        return processorExecutor.execute( filter, portalRequest, portalResponse );
     }
 }

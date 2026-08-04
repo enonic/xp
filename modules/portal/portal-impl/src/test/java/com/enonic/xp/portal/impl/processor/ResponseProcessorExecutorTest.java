@@ -26,6 +26,8 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptFixturesFacade;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
+import com.enonic.xp.trace.TestTrace;
+import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,6 +83,22 @@ class ResponseProcessorExecutorTest
         assertThat( response.getContentType() ).isSameAs( portalResponse.getContentType() );
         assertThat( response.getContributions( HtmlTag.BODY_END ) ).containsExactly(
             "<script src=\"http://some.cdn/js/tracker.js\"></script>" );
+    }
+
+    @Test
+    void testExecuteResponseProcessor_recordsScriptTraceAttribute()
+    {
+        this.portalResponse = PortalResponse.create()
+            .body( ByteSource.wrap( "DATA".getBytes( StandardCharsets.UTF_8 ) ) )
+            .contentType( MediaType.XHTML_UTF_8 )
+            .build();
+
+        // outside OSGi the @Traced wrapper is inert; a manually bound trace exercises the attribute enrichment code
+        final TestTrace trace = TestTrace.of( "responseProcessorScript" );
+        final PortalResponse response = Tracer.trace( trace, () -> execute( "myapplication:/processor/processor.js" ) );
+
+        assertThat( response.getBody() ).isSameAs( portalResponse.getBody() );
+        assertEquals( "myapplication:/cms/processors/processor.js", trace.get( "script" ) );
     }
 
     @Test

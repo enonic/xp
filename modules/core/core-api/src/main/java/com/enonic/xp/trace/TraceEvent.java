@@ -1,5 +1,8 @@
 package com.enonic.xp.trace;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public final class TraceEvent
 {
     public enum Type

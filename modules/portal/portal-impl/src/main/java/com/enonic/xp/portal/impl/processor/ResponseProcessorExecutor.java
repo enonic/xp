@@ -15,6 +15,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.site.processor.ResponseProcessorDescriptor;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 
 public final class ResponseProcessorExecutor
@@ -45,11 +46,7 @@ public final class ResponseProcessorExecutor
         request.setApplicationKey( script.getApplicationKey() );
         try
         {
-            return PortalRequestAccessor.callWith( request, () -> Tracer.trace( "responseProcessorScript",
-                                                                                trace -> trace.put( "script",
-                                                                                                    filterExports.getScript().toString() ),
-                                                                                () -> executeFilter( filterExports, request,
-                                                                                                     response ) ) );
+            return PortalRequestAccessor.callWith( request, () -> executeFilter( filterExports, request, response ) );
         }
         finally
         {
@@ -57,8 +54,11 @@ public final class ResponseProcessorExecutor
         }
     }
 
+    @Traced("responseProcessorScript")
     private PortalResponse executeFilter( final ScriptExports filterExports, final PortalRequest request, final PortalResponse response )
     {
+        Tracer.attribute( "script", filterExports.getScript().toString() );
+
         final PortalRequestMapper requestMapper = new PortalRequestMapper( request );
         final PortalResponseMapper responseMapper = new PortalResponseMapper( response );
 

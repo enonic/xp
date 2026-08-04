@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler.mapping;
 
+import java.util.Objects;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -12,7 +14,7 @@ import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.mapping.ControllerMappingDescriptor;
-import com.enonic.xp.trace.Trace;
+import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.sse.SseConfig;
@@ -39,17 +41,16 @@ final class MappingHandlerWorker
         this.request = request;
     }
 
+    @Traced("renderComponent")
     public PortalResponse execute()
         throws Exception
     {
         final ControllerScript controllerScript = getScript();
 
-        final Trace trace = Tracer.current();
-        if ( trace != null )
-        {
-            trace.put( "contentPath", this.request.getContentPath() != null ? this.request.getContentPath().toString() : null );
-            trace.put( "type", "mapping" );
-        }
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "contentPath", this.request.getContentPath() != null ? this.request.getContentPath().toString() : null );
+            trace.attribute( "type", "mapping" );
+        } );
 
         this.request.setControllerScript( controllerScript );
 
@@ -95,11 +96,7 @@ final class MappingHandlerWorker
     private WebSocketEndpoint newWebSocketEndpoint( final WebSocketConfig config, final ControllerScript script,
                                                     final ApplicationKey app )
     {
-        final Trace trace = Tracer.current();
-        if ( trace != null && app != null && !trace.containsKey( "app" ) )
-        {
-            trace.put( "app", app.toString() );
-        }
+        Tracer.attribute( "app", Objects.toString( app, null ) );
         return new WebSocketEndpointImpl( config, script, app );
     }
 }
