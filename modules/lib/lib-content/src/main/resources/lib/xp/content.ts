@@ -928,7 +928,7 @@ export function patch(params: PatchContentParams): PatchContentResult {
     bean.setPatcher(__.toScriptValue(patcher));
     bean.setAttachments(__.toScriptValue(attachments));
     bean.setBranches(branches);
-    bean.setSkipSync(skipSync);
+    bean.setSkipSync(!!skipSync);
 
     return __.toNativeObject(bean.execute());
 }

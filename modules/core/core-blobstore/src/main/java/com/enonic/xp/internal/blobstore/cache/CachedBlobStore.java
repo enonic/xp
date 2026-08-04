@@ -7,9 +7,9 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.Weigher;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Weigher;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -36,7 +36,7 @@ public final class CachedBlobStore
     {
         this.store = builder.store;
         this.sizeThreshold = builder.sizeThreshold;
-        this.cache = CacheBuilder.newBuilder().maximumWeight( builder.capacity ).weigher( BlobRecordWeigher.INSTANCE ).build();
+        this.cache = Caffeine.newBuilder().maximumWeight( builder.capacity ).weigher( BlobRecordWeigher.INSTANCE ).build();
     }
 
     @Override

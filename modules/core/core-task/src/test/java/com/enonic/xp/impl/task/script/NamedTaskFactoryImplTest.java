@@ -99,7 +99,10 @@ class NamedTaskFactoryImplTest
     {
         final TaskDescriptor descriptor = TaskDescriptor.create().key( DescriptorKey.from( "myapplication:mytask2" ) ).build();
 
-        assertThrows( TaskNotFoundException.class, () -> namedTaskScriptFactory.create( descriptor, new PropertyTree() ) );
+        // the script exists, so submit succeeds; the missing run export is detected when the
+        // task runs
+        final RunnableTask runnableTask = namedTaskScriptFactory.create( descriptor, new PropertyTree() );
+        assertThrows( RuntimeException.class, () -> runnableTask.run( TaskId.from( "123" ), null ) );
     }
 
     @Test

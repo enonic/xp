@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.impl.task.MockTaskService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskProgress;
+import com.enonic.xp.task.TaskProgressReporterContext;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.testing.ScriptTestSupport;
 
@@ -27,12 +28,22 @@ class TaskProgressHandlerTest
         addService( TaskService.class, taskService );
     }
 
+    /**
+     * Runs the script inside a task's progress-reporting context, which is what
+     * {@code task.progress} requires - and all it requires. Reaching that state by submitting a
+     * task with a callback would tie these tests to {@code task.executeFunction}, which only the
+     * engines without context pooling support.
+     */
+    private void runInTask( final Runnable script )
+    {
+        TaskProgressReporterContext.withContext( ( id, reporter ) -> script.run() )
+            .run( TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" ), taskService );
+    }
+
     @Test
     void testExample()
     {
-        taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-
-        runScript( "/lib/xp/examples/task/progress.js" );
+        runInTask( () -> runScript( "/lib/xp/examples/task/progress.js" ) );
 
         final List<TaskProgress> progress = taskService.progressHistory;
         assertEquals( 12, progress.size() );
@@ -46,8 +57,7 @@ class TaskProgressHandlerTest
     @Test
     void testReportProgress()
     {
-        taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        runFunction( "/test/progress-test.js", "reportProgress" );
+        runInTask( () -> runFunction( "/test/progress-test.js", "reportProgress" ) );
 
         final List<TaskProgress> progress = taskService.progressHistory;
         assertEquals( 12, progress.size() );
@@ -75,8 +85,7 @@ class TaskProgressHandlerTest
     @Test
     void testReportProgressWithoutInfo()
     {
-        taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        runFunction( "/test/progress-test.js", "reportProgressWithoutInfo" );
+        runInTask( () -> runFunction( "/test/progress-test.js", "reportProgressWithoutInfo" ) );
 
         final List<TaskProgress> progress = taskService.progressHistory;
         assertEquals( 10, progress.size() );
@@ -90,8 +99,7 @@ class TaskProgressHandlerTest
     @Test
     void testReportProgressInfoOnly()
     {
-        taskService.taskId = TaskId.from( "7ca603c1-3b88-4009-8f30-46ddbcc4bb19" );
-        runFunction( "/test/progress-test.js", "reportProgressInfoOnly" );
+        runInTask( () -> runFunction( "/test/progress-test.js", "reportProgressInfoOnly" ) );
 
         final List<TaskProgress> progress = taskService.progressHistory;
         assertEquals( 3, progress.size() );

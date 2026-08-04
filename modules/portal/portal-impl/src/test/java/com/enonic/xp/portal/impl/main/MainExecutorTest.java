@@ -1,20 +1,30 @@
 package com.enonic.xp.portal.impl.main;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.script.runtime.BootstrapParams;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,47 +37,79 @@ class MainExecutorTest
     @Mock
     private PortalScriptService scriptService;
 
+    @Mock
+    private BundleContext bundleContext;
+
     @BeforeEach
     void setup()
+        throws Exception
     {
-        this.executor = new MainExecutor( this.scriptService );
+        // let the ServiceTracker construct and open against the mock registry (no initial services)
+        lenient().when( this.bundleContext.createFilter( anyString() ) )
+            .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
+        lenient().when( this.bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
+
+        // run the bootstrap synchronously on the caller thread so the test is deterministic
+        this.executor = new MainExecutor( this.scriptService, this.bundleContext, Runnable::run );
+    }
+
+    @SuppressWarnings("unchecked")
+    private ServiceReference<Application> appReference( final String applicationKey )
+    {
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( applicationKey ) );
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        when( this.bundleContext.getService( reference ) ).thenReturn( application );
+        return reference;
     }
 
     @Test
-    void mainJsMissing()
+    void addingService_triggersBootstrap()
     {
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
+        this.executor.addingService( appReference( "foo.bar" ) );
 
-        this.executor.activated( app );
-
-        verify( this.scriptService, times( 1 ) ).hasScript( any() );
-        verify( this.scriptService, times( 0 ) ).execute( any() );
+        final ArgumentCaptor<BootstrapParams> captor = ArgumentCaptor.forClass( BootstrapParams.class );
+        verify( this.scriptService ).bootstrap( captor.capture() );
+        assertEquals( ApplicationKey.from( "foo.bar" ), captor.getValue().getApplication() );
+        assertEquals( ResourceKey.from( "foo.bar:/main.js" ), captor.getValue().getMainScript().orElseThrow() );
     }
 
     @Test
-    void mainJsError()
+    @SuppressWarnings("unchecked")
+    void addingService_vanishedService_isIgnored()
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.failedFuture( new RuntimeException() ) );
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        when( this.bundleContext.getService( reference ) ).thenReturn( null );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
-
-        this.executor.activated( app );
+        // unregistered between the tracker event and getService: nothing to track or bootstrap
+        assertNull( this.executor.addingService( reference ) );
+        verify( this.scriptService, never() ).bootstrap( any() );
     }
 
     @Test
-    void mainJsExecute()
+    void bootstrapError_isSwallowed()
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.completedFuture( null ) );
+        doThrow( new RuntimeException() ).when( this.scriptService ).bootstrap( any() );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
+        this.executor.addingService( appReference( "foo.bar" ) );
 
-        this.executor.activated( app );
+        verify( this.scriptService, times( 1 ) ).bootstrap( any() );
+    }
+
+    @Test
+    void removedService_ungetsService()
+    {
+        final ServiceReference<Application> reference = appReference( "foo.bar" );
+        final Application application = this.executor.addingService( reference );
+
+        this.executor.removedService( reference, application );
+
+        verify( this.bundleContext ).ungetService( reference );
+    }
+
+    @Test
+    void deactivate_closesTracker()
+    {
+        this.executor.deactivate();
     }
 }

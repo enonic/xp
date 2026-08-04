@@ -15,6 +15,7 @@ import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.script.runtime.ScriptRuntime;
 import com.enonic.xp.script.runtime.ScriptRuntimeFactory;
 import com.enonic.xp.script.runtime.ScriptSettings;
@@ -57,11 +58,24 @@ public final class PortalScriptServiceImpl
     }
 
     @Override
+    public void bootstrap( final BootstrapParams params )
+    {
+        this.scriptRuntime.bootstrap( params );
+    }
+
+    @Override
     public ScriptExports execute( final ResourceKey script )
     {
         return this.scriptRuntime.execute( script );
     }
 
+    @Override
+    public Object executeMethod( final ResourceKey script, final String method, final Object... args )
+    {
+        return this.scriptRuntime.executeMethod( script, method, args );
+    }
+
+    @Deprecated
     @Override
     public CompletableFuture<ScriptExports> executeAsync( final ResourceKey script )
     {

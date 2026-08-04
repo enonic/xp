@@ -17,28 +17,19 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeCompareStatus;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodeResult;
 import com.enonic.xp.node.PushNodesListener;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.SearchPreference;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
-import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
@@ -71,7 +62,7 @@ public class PushNodesCommand
 
     public PushNodesResult execute()
     {
-        refresh( RefreshMode.ALL );
+        refresh( RefreshMode.STORAGE );
 
         final InternalContext internalContext =
             InternalContext.create( ContextAccessor.current() ).searchPreference( SearchPreference.PRIMARY ).build();
@@ -80,23 +71,19 @@ public class PushNodesCommand
 
         final NodeComparisons comparisons = getNodeComparisons( params.getIds() );
 
-        final SingleRepoSearchSource targetSearchSource = SingleRepoSearchSource.from( InternalContext.from( targetContext() ) );
         for ( NodeComparison comparison : comparisons )
         {
             if ( comparison.getCompareStatus() == NodeCompareStatus.MOVED )
             {
-                final NodeIds childrenIds = this.nodeSearchService.query( NodeQuery.create()
-                                                                              .query( QueryExpr.from(
-                                                                                  CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ),
-                                                                                                    ValueExpr.string(
-                                                                                                        comparison.getTargetPath() +
-                                                                                                            "/*" ) ) ) )
-                                                                              .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                                                              .build(), targetSearchSource )
-                    .getIds()
+                // storage index is per-repository, so the refresh( STORAGE ) at the start of execute() already covers the target branch
+                final NodeIds childrenIds = targetContext().callWith( () -> FindNodeBranchEntriesByParentCommand.create( this )
+                    .parentPath( comparison.getTargetPath() )
+                    .refreshStorage( false )
+                    .build()
+                    .execute()
                     .stream()
-                    .map( NodeId::from )
-                    .collect( NodeIds.collector() );
+                    .map( NodeBranchEntry::getNodeId )
+                    .collect( NodeIds.collector() ) );
                 allIdsBuilder.addAll( childrenIds );
             }
         }

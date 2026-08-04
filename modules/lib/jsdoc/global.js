@@ -197,6 +197,10 @@ var __ = {
     /**
      * Add a disposer that is called when the app is stopped.
      *
+     * Only supported during application bootstrap (<code>main.js</code> and the modules it
+     * requires): on pooled script engines (GraalJS) a registration made from a request or task
+     * context is logged as a warning and ignored.
+     *
      * @param func Function to call.
      */
     disposer(func) {

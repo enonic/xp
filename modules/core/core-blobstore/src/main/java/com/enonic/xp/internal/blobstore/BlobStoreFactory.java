@@ -9,6 +9,7 @@ import com.enonic.xp.blob.ProviderConfig;
 import com.enonic.xp.internal.blobstore.cache.CachedBlobStore;
 import com.enonic.xp.internal.blobstore.config.BlobStoreConfig;
 import com.enonic.xp.internal.blobstore.readthrough.ReadThroughBlobStore;
+import com.enonic.xp.internal.blobstore.readthrough.SizeBoundedBlobStore;
 
 final class BlobStoreFactory
 {
@@ -69,9 +70,14 @@ final class BlobStoreFactory
             {
                 LOG.info( "Readthrough provider [" + readThroughProviderName + "] registered successfully" );
 
+                final long cacheCapacity = config.readThroughCacheCapacity();
+                final BlobStore readThroughStore = cacheCapacity > 0
+                    ? new SizeBoundedBlobStore( readThroughProvider.get(), cacheCapacity )
+                    : readThroughProvider.get();
+
                 return ReadThroughBlobStore.create().
                     store( providerStore ).
-                    readThroughStore( readThroughProvider.get() ).
+                    readThroughStore( readThroughStore ).
                     sizeThreshold( config.readThroughSizeThreshold() ).
                     build();
             }

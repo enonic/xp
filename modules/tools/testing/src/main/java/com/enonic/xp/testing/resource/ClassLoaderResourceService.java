@@ -3,11 +3,14 @@ package com.enonic.xp.testing.resource;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import com.google.common.io.Resources;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
@@ -47,6 +50,12 @@ public final class ClassLoaderResourceService
     public <K, V> V processResource( final ResourceProcessor<K, V> processor )
     {
         return processor.process( getResource( processor.toResourceKey() ) );
+    }
+
+    @Override
+    public <K, V> V processResources( final MultiResourceProcessor<K, V> processor )
+    {
+        return processor.process( processor.toResourceKeys().stream().map( this::getResource ).collect( Collectors.toList() ) );
     }
 
     @Override

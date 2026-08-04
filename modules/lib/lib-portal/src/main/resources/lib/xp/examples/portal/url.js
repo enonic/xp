@@ -32,5 +32,5 @@ try {
         }
     });
 } catch (e) {
-    assert.assertTrue('java.lang.IllegalArgumentException: Invalid path value', `${e}`);
+    assert.assertEquals('java.lang.IllegalArgumentException: Invalid path value', `${e}`);
 }

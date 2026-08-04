@@ -31,6 +31,7 @@ class ScriptSettingsTest
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void testGlobals()
     {
         final ScriptSettings settings = ScriptSettings.create().

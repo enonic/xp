@@ -1,19 +1,20 @@
 package com.enonic.xp.core.impl.app.resource;
 
-import com.enonic.xp.resource.ResourceKey;
-
 final class ProcessingEntry
 {
-    final ResourceKey key;
-
     final Object value;
 
     final long timestamp;
 
-    ProcessingEntry( final ResourceKey key, final Object value, final long timestamp )
+    final BundleStamp stamp;
+
+    final boolean stable;
+
+    ProcessingEntry( final Object value, final long timestamp, final BundleStamp stamp, final boolean stable )
     {
-        this.key = key;
         this.value = value;
         this.timestamp = timestamp;
+        this.stamp = stamp;
+        this.stable = stable;
     }
 }

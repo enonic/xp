@@ -1,14 +1,17 @@
 pluginManagement {
     plugins {
-        id 'com.gradle.develocity' version '4.4.3'
+        id 'com.gradle.develocity' version '4.5.0'
         id 'biz.aQute.bnd.builder' version '7.3.0'
         id 'com.github.jk1.dependency-license-report' version '3.1.4'
         id 'com.github.node-gradle.node' version '7.1.0'
+        id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
     }
 }
 
 plugins {
     id 'com.gradle.develocity'
+    // Auto-provisions the GraalVM toolchain required by gradle/java.gradle when it is not installed locally.
+    id 'org.gradle.toolchains.foojay-resolver-convention'
 }
 
 dependencyResolutionManagement {

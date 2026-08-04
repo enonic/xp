@@ -82,6 +82,17 @@ public class ApplicationFactoryServiceImpl
     }
 
     @Override
+    public Optional<Bundle> findActiveBundle( final ApplicationKey applicationKey )
+    {
+        return bundleTracker.getTracked()
+            .keySet()
+            .stream()
+            .filter( bundle -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundle ) ) )
+            .filter( bundle -> bundle.getState() == Bundle.ACTIVE )
+            .findAny();
+    }
+
+    @Override
     public Optional<ApplicationUrlResolver> findResolver( final ApplicationKey applicationKey, final String source )
     {
         final Optional<Map.Entry<Bundle, ApplicationAdaptor>> adaptorEntry = bundleTracker.getTracked()

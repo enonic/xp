@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
@@ -35,6 +35,8 @@ import com.enonic.xp.task.TaskProgress;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.trace.Tracer;
 
+import static java.util.Objects.requireNonNullElse;
+
 @Component(immediate = true)
 @Local
 public final class LocalTaskManagerImpl
@@ -48,7 +50,7 @@ public final class LocalTaskManagerImpl
 
     private final TaskManagerCleanupScheduler cleanupScheduler;
 
-    private final Executor executor;
+    private final TaskManagerExecutor executor;
 
     static Clock clock = Clock.systemUTC();
 
@@ -57,7 +59,7 @@ public final class LocalTaskManagerImpl
     private volatile ClusterConfig clusterConfig;
 
     @Activate
-    public LocalTaskManagerImpl( @Reference(service = TaskManagerExecutor.class) final Executor executor,
+    public LocalTaskManagerImpl( @Reference final TaskManagerExecutor executor,
                                  @Reference TaskManagerCleanupScheduler cleanupScheduler, @Reference final EventPublisher eventPublisher )
     {
         this.executor = executor;
@@ -190,7 +192,16 @@ public final class LocalTaskManagerImpl
 
         eventPublisher.publish( TaskEvents.submitted( info ) );
 
-        executor.execute( new TaskRunnable( runnableTask, new ProgressReporterAdapter( id ) ) );
+        final ProgressReporterAdapter progressReporter = new ProgressReporterAdapter( id );
+        try
+        {
+            executor.execute( runnableTask.getApplicationKey(), new TaskRunnable( runnableTask, progressReporter ) );
+        }
+        catch ( RejectedExecutionException e )
+        {
+            progressReporter.failed( requireNonNullElse( e.getMessage(), "Task execution rejected" ) );
+            throw e;
+        }
     }
 
     private void removeExpiredTasks()

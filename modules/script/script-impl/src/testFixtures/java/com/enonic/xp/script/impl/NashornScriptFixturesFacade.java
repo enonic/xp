@@ -1,7 +1,5 @@
 package com.enonic.xp.script.impl;
 
-import java.util.concurrent.Executors;
-
 import javax.script.ScriptEngine;
 
 import com.enonic.xp.app.Application;
@@ -30,8 +28,8 @@ public class NashornScriptFixturesFacade
     public ScriptExecutor createExecutor( final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
                                           ResourceService resourceService, Application application )
     {
-        return new ScriptExecutorImpl( Executors.newSingleThreadExecutor(), application.getClassLoader(), scriptSettings, serviceRegistry,
-                                       resourceService, new ApplicationInfoBuilder( application.getKey(), application.getConfig(),
-                                                                                    application.getVersion() ) );
+        return new ScriptExecutorImpl( application.getClassLoader(), scriptSettings, serviceRegistry, resourceService,
+                                       new ApplicationInfoBuilder( application.getKey(), application.getConfig(),
+                                                                   application.getVersion() ) );
     }
 }

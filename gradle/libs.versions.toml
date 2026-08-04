@@ -1,16 +1,17 @@
 [versions]
-jackson = "2.22.0"
-junit5 = "6.1.1"
+jackson = "2.22.1"
+junit5 = "6.1.2"
 mockito = "5.23.0"
 slf4j = "2.0.18"
-jetty = "12.1.10"
+jetty = "12.1.11"
 resteasy = "7.0.2.Final"
 hazelcast = "5.7.0"
 tika = "3.3.1"
-log4j = "2.26.0"
+log4j = "2.26.1"
 micrometer = "1.17.0"
 prometheus = "1.8.0"
 graalvm = "25.0.3"
+caffeine = "3.2.4"
 guava = "33.6.0-jre"
 
 [libraries]
@@ -60,7 +61,7 @@ felix-framework = { module = "org.apache.felix:org.apache.felix.framework", vers
 felix-utils = { module = "org.apache.felix:org.apache.felix.utils", version = "1.11.8" }
 felix-log = { module = "org.apache.felix:org.apache.felix.log", version = "1.3.0" }
 
-bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.84" }
+bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.85" }
 
 elasticsearch = { module = "org.elasticsearch:elasticsearch", version = "2.4.6" }
 elasticsearch-icu = { module = "org.elasticsearch.plugin:analysis-icu", version = "2.4.6" }
@@ -70,6 +71,7 @@ jna = { module = "net.java.dev.jna:jna", version = "5.19.1" }
 
 jspecify = { module = "org.jspecify:jspecify", version = "1.0.0" }
 
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 guava-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 
@@ -77,7 +79,7 @@ jsoup = { module = "org.jsoup:jsoup", version = "1.22.2" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20260313.1" }
 
-bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.10" }
+bytebuddy = { module = "net.bytebuddy:byte-buddy", version = "1.18.11" }
 
 cronutils = { module = "com.cronutils:cron-utils", version = "9.2.1" }
 

@@ -1,17 +1,18 @@
 package com.enonic.xp.repo.impl.node.dao;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.Weigher;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.blob.BlobKey;
@@ -40,11 +41,11 @@ public class NodeVersionServiceImpl
 {
     private final BlobStore blobStore;
 
-    private final Cache<BlobKey, WithWeight<ImmutableNodeVersion>> nodeDataCache;
+    private final BoundedCache<ImmutableNodeVersion> nodeDataCache;
 
-    private final Cache<BlobKey, WithWeight<PatternIndexConfigDocument>> indexConfigCache;
+    private final BoundedCache<PatternIndexConfigDocument> indexConfigCache;
 
-    private final Cache<BlobKey, WithWeight<AccessControlList>> accessControlCache;
+    private final BoundedCache<AccessControlList> accessControlCache;
 
     @Activate
     public NodeVersionServiceImpl( @Reference final BlobStore blobStore, @Reference final RepoConfiguration repoConfiguration )
@@ -55,9 +56,9 @@ public class NodeVersionServiceImpl
         final long nodeCacheCapacity = (long) ( cacheCapacity * 0.98D );
         final long otherCachesCapacity = (long) ( cacheCapacity * 0.01D );
 
-        this.nodeDataCache = CacheBuilder.newBuilder().maximumWeight( nodeCacheCapacity ).weigher( WithWeight.WEIGHTER ).build();
-        this.indexConfigCache = CacheBuilder.newBuilder().maximumWeight( otherCachesCapacity ).weigher( WithWeight.WEIGHTER ).build();
-        this.accessControlCache = CacheBuilder.newBuilder().maximumWeight( otherCachesCapacity ).weigher( WithWeight.WEIGHTER ).build();
+        this.nodeDataCache = new BoundedCache<>( nodeCacheCapacity );
+        this.indexConfigCache = new BoundedCache<>( otherCachesCapacity );
+        this.accessControlCache = new BoundedCache<>( otherCachesCapacity );
     }
 
     @Override
@@ -142,22 +143,31 @@ public class NodeVersionServiceImpl
     }
 
     private <T> T fetchAndDeserializeCached( final RepositoryId repositoryId, final SegmentLevel segmentLevel, final BlobKey blobKey,
-                                             final IOFunction<ByteSource, T> deserializer, Cache<BlobKey, WithWeight<T>> cache )
+                                             final IOFunction<ByteSource, T> deserializer, final BoundedCache<T> cache )
     {
         try
         {
-            return cache.get( blobKey, () -> fetchAndDeserialize( repositoryId, segmentLevel, blobKey, deserializer ) ).value;
+            final AtomicReference<T> uncacheable = new AtomicReference<>();
+            final WithWeight<T> cached = cache.cache.get( blobKey, key -> {
+                final WithWeight<T> loaded = fetchAndDeserialize( repositoryId, segmentLevel, key, deserializer );
+                if ( loaded.weight > cache.maxItemWeight )
+                {
+                    uncacheable.set( loaded.value );
+                    return null;
+                }
+                return loaded;
+            } );
+            return cached != null ? cached.value : uncacheable.get();
         }
-        catch ( ExecutionException e )
+        catch ( UncheckedIOException e )
         {
             throw new RuntimeException( String.format( "Failed to load blob %s [%s/%s]", blobKey, repositoryId, segmentLevel ),
                                         e.getCause() );
         }
     }
 
-    private <T> WithWeight<T> fetchAndDeserialize( RepositoryId repositoryId, SegmentLevel segmentLevel, BlobKey blobKey,
+    private <T> WithWeight<T> fetchAndDeserialize( final RepositoryId repositoryId, final SegmentLevel segmentLevel, final BlobKey blobKey,
                                                    final IOFunction<ByteSource, T> deserializer )
-        throws IOException
     {
         final Segment segment = RepositorySegmentUtils.toSegment( repositoryId, segmentLevel );
         final BlobRecord blobRecord = blobStore.getRecord( segment, blobKey );
@@ -165,11 +175,113 @@ public class NodeVersionServiceImpl
         {
             throw new IllegalStateException( String.format( "Blob record not found %s [%s/%s]", blobKey, repositoryId, segmentLevel ) );
         }
-        final ByteSource bytes = blobRecord.getBytes();
-        return new WithWeight<>( deserializer.apply( bytes ), blobRecord.getLength() );
+        try
+        {
+            final WeighingByteSource bytes = new WeighingByteSource( blobRecord.getBytes() );
+            final T value = deserializer.apply( bytes );
+            return new WithWeight<>( value, bytes.weight() );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
-    private static class WithWeight<T>
+    private static final class WeighingByteSource
+        extends ByteSource
+    {
+        // Memory model of a deserialized JSON blob: an object turns into headers and
+        // field pointers, an array into a list with a backing array, a string into a
+        // java.lang.String with its own backing array (two quotes per string), while
+        // the character data is retained roughly byte-for-byte.
+        private static final int CONTAINER_WEIGHT = 64;
+
+        private static final int QUOTE_WEIGHT = 24;
+
+        private final ByteSource source;
+
+        private long weight;
+
+        WeighingByteSource( final ByteSource source )
+        {
+            this.source = source;
+        }
+
+        long weight()
+        {
+            return weight;
+        }
+
+        @Override
+        public InputStream openStream()
+            throws IOException
+        {
+            weight = 0;
+            return new FilterInputStream( source.openStream() )
+            {
+                @Override
+                public int read()
+                    throws IOException
+                {
+                    final int b = in.read();
+                    if ( b != -1 )
+                    {
+                        weight += 1 + weightOf( (byte) b );
+                    }
+                    return b;
+                }
+
+                @Override
+                public int read( final byte[] b, final int off, final int len )
+                    throws IOException
+                {
+                    final int n = in.read( b, off, len );
+                    for ( int i = off, end = off + n; i < end; i++ )
+                    {
+                        weight += weightOf( b[i] );
+                    }
+                    if ( n > 0 )
+                    {
+                        weight += n;
+                    }
+                    return n;
+                }
+            };
+        }
+
+        private static int weightOf( final byte b )
+        {
+            if ( b == '{' || b == '[' )
+            {
+                return CONTAINER_WEIGHT;
+            }
+            else if ( b == '"' )
+            {
+                return QUOTE_WEIGHT;
+            }
+            return 0;
+        }
+    }
+
+    private static final class BoundedCache<T>
+    {
+        final Cache<BlobKey, WithWeight<T>> cache;
+
+        // Entries heavier than the whole cache can never be retained, so they are not
+        // inserted at all. Anything below that is left to Caffeine's Window TinyLFU
+        // admission policy: a big entry is only kept if it is accessed frequently
+        // enough to beat the entries it would evict.
+        final long maxItemWeight;
+
+        BoundedCache( final long capacity )
+        {
+            this.cache =
+                Caffeine.newBuilder().maximumWeight( capacity ).<BlobKey, WithWeight<T>>weigher( ( key, value ) -> value.weight ).build();
+            this.maxItemWeight = capacity;
+        }
+    }
+
+    private static final class WithWeight<T>
     {
         final T value;
 
@@ -180,8 +292,6 @@ public class NodeVersionServiceImpl
             this.value = value;
             this.weight = (int) Math.min( weight, Integer.MAX_VALUE );
         }
-
-        static final Weigher<BlobKey, WithWeight<?>> WEIGHTER = ( key, value ) -> value.weight;
     }
 
     @FunctionalInterface

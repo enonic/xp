@@ -113,7 +113,7 @@ exports.resetToUndefinedThrows = function () {
     } catch (e) {
         threw = true;
     }
-    assert.assertTrue('expected resetTo to throw on a missing header value', threw);
+    assert.assertTrue(threw, 'expected resetTo to throw on a missing header value');
 };
 
 exports.invalidSourceThrows = function () {
@@ -124,7 +124,7 @@ exports.invalidSourceThrows = function () {
     } catch (e) {
         threw = true;
     }
-    assert.assertTrue('expected scriptSrc to throw on policy injection', threw);
+    assert.assertTrue(threw, 'expected scriptSrc to throw on policy injection');
 };
 
 exports.externalNonceSourceThrows = function () {
@@ -135,7 +135,7 @@ exports.externalNonceSourceThrows = function () {
     } catch (e) {
         threw = true;
     }
-    assert.assertTrue('expected scriptSrc to throw on a hand-supplied nonce source', threw);
+    assert.assertTrue(threw, 'expected scriptSrc to throw on a hand-supplied nonce source');
 
     threw = false;
     try {
@@ -143,7 +143,7 @@ exports.externalNonceSourceThrows = function () {
     } catch (e) {
         threw = true;
     }
-    assert.assertTrue('expected add to throw on a hand-supplied nonce source', threw);
+    assert.assertTrue(threw, 'expected add to throw on a hand-supplied nonce source');
 };
 
 exports.resetToDropsExternalNonceSources = function () {
@@ -186,7 +186,7 @@ exports.unsupportedAlgo = function () {
     } catch (e) {
         threw = true;
     }
-    assert.assertTrue('expected shaScriptSrc to throw on unsupported algo', threw);
+    assert.assertTrue(threw, 'expected shaScriptSrc to throw on unsupported algo');
 };
 
 exports.nonceScriptSrc = function () {
@@ -266,7 +266,7 @@ exports.mergeUndefinedThrows = function () {
     } catch (e) {
         threw = true;
     }
-    assert.assertTrue('expected merge to throw on a missing header value', threw);
+    assert.assertTrue(threw, 'expected merge to throw on a missing header value');
 };
 
 exports.directiveReads = function () {

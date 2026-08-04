@@ -30,7 +30,6 @@ public abstract class ScriptRunnerSupport
 
     @TestFactory
     List<DynamicTest> js()
-        throws Exception
     {
         return findTestNames().stream().map( name -> dynamicTest( name, () -> {
             ScriptExports exports = this.runScript( this.getScriptTestFile() );
@@ -40,10 +39,14 @@ public abstract class ScriptRunnerSupport
         } ) ).collect( Collectors.toList() );
     }
 
+    /**
+     * Discovers the exported test functions on the harness the {@code @BeforeEach} lifecycle has
+     * already set up, and leaves it running: the dynamic tests are executed after this method
+     * returns and share this instance, so a script executor torn down here would be torn down for
+     * them too — engines that close their script contexts reject every later execution.
+     */
     private Set<String> findTestNames()
     {
-        // setup() has already initialized the environment, and the dynamic tests run inside the same
-        // lifecycle, so the ambient context installed by setup() must stay in place until destroy().
         return this.runScript( this.getScriptTestFile() )
             .getValue()
             .getKeys()
