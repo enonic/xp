@@ -43,6 +43,12 @@ public class ApplicationFactoryServiceMock
     }
 
     @Override
+    public Optional<Bundle> findActiveBundle( final ApplicationKey applicationKey )
+    {
+        return map.keySet().stream().filter( bundle -> ApplicationHelper.getApplicationKey( bundle ).equals( applicationKey ) ).findAny();
+    }
+
+    @Override
     public Optional<ApplicationUrlResolver> findResolver( final ApplicationKey applicationKey, final String resolverName )
     {
         return map.entrySet()

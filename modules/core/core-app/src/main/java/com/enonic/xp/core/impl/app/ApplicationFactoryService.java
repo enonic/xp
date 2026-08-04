@@ -13,5 +13,7 @@ public interface ApplicationFactoryService
 
     Optional<ApplicationAdaptor> findActiveApplication( ApplicationKey applicationKey );
 
+    Optional<Bundle> findActiveBundle( ApplicationKey applicationKey );
+
     Optional<ApplicationUrlResolver> findResolver( ApplicationKey applicationKey, String resolverSource );
 }

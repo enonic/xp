@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.i18n;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -13,9 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.i18n.MessageBundle;
+import com.enonic.xp.resource.MultiResourceProcessor;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceKeys;
@@ -25,12 +27,13 @@ import com.enonic.xp.resource.UrlResource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 class LocaleServiceImplTest
@@ -44,12 +47,24 @@ class LocaleServiceImplTest
     {
         this.resourceService = Mockito.mock( ResourceService.class );
         when( resourceService.getResource( any() ) ).thenAnswer( this::loadResource );
+        when( resourceService.processResources( any() ) ).thenAnswer( this::processResources );
         this.localeService = new LocaleServiceImpl( resourceService );
+    }
+
+    private Object processResources( final InvocationOnMock invocation )
+    {
+        final MultiResourceProcessor<?, ?> processor = invocation.getArgument( 0 );
+        return processor.process( processor.toResourceKeys().stream().map( this::loadResource ).collect( Collectors.toList() ) );
     }
 
     private Resource loadResource( final InvocationOnMock invocation )
     {
         final ResourceKey resourceKey = invocation.getArgument( 0 );
+        return loadResource( resourceKey );
+    }
+
+    private Resource loadResource( final ResourceKey resourceKey )
+    {
         final String path = resourceKey.getName();
         final URL url = getClass().getResource( path.substring( path.lastIndexOf( '/' ) + 1 ) );
         return new UrlResource( resourceKey, url );
@@ -139,6 +154,46 @@ class LocaleServiceImplTest
     }
 
     @Test
+    void get_bundle_no_processed_value()
+    {
+        doReturn( null ).when( resourceService ).processResources( any() );
+
+        final MessageBundle bundle = localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH );
+
+        assertNotNull( bundle );
+        assertEquals( 0, bundle.getKeys().size() );
+    }
+
+    @Test
+    void get_bundle_unreadable_resource()
+    {
+        final Resource broken = Mockito.mock( Resource.class );
+        when( broken.exists() ).thenReturn( true );
+        when( broken.getKey() ).thenReturn( ResourceKey.from( "myapplication:/i18n/phrases.properties" ) );
+        when( broken.openReader() ).thenReturn( new Reader()
+        {
+            @Override
+            public int read( final char[] cbuf, final int off, final int len )
+                throws IOException
+            {
+                throw new IOException( "broken" );
+            }
+
+            @Override
+            public void close()
+            {
+            }
+        } );
+
+        doAnswer( invocation -> {
+            final MultiResourceProcessor<?, ?> processor = invocation.getArgument( 0 );
+            return processor.process( List.of( broken ) );
+        } ).when( resourceService ).processResources( any() );
+
+        assertThrows( LocalizationException.class, () -> localeService.getBundle( ApplicationKey.from( "myapplication" ), Locale.ENGLISH ) );
+    }
+
+    @Test
     void getLocales()
     {
         final ResourceKeys resourceKeys =
@@ -157,35 +212,6 @@ class LocaleServiceImplTest
         assertTrue( locales.contains( new Locale( "en", "US", "1" ) ) );
         assertTrue( locales.contains( new Locale( "fr" ) ) );
         assertTrue( locales.contains( new Locale( "ca" ) ) );
-    }
-
-    @Test
-    void bundleInvalidateCaching()
-    {
-        final ResourceKeys resourceKeys = ResourceKeys.empty();
-        when( resourceService.findFiles( any(), anyString() ) ).thenReturn( resourceKeys );
-
-        final ApplicationKey myApp = ApplicationKey.from( "myapplication" );
-        final ApplicationKey otherApp = ApplicationKey.from( "otherapp" );
-
-        MessageBundle bundleCached = localeService.getBundle( myApp, Locale.ENGLISH, "/phrases", "/override" );
-        MessageBundle bundle = localeService.getBundle( myApp, Locale.ENGLISH, "/phrases", "/override" );
-
-        MessageBundle otherBundleCached = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
-        MessageBundle otherBundle = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
-
-        assertSame( bundle, bundleCached );
-        assertSame( otherBundle, otherBundleCached );
-
-        Application application = Mockito.mock( Application.class );
-        when( application.getKey() ).thenReturn( myApp );
-        localeService.activated( application );
-
-        bundle = localeService.getBundle( myApp, Locale.ENGLISH, "/phrases", "/override" );
-        otherBundle = localeService.getBundle( otherApp, Locale.ENGLISH, "/texts" );
-
-        assertNotSame( bundle, bundleCached );
-        assertSame( otherBundle, otherBundleCached );
     }
 
     @Test
