@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobRecord;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.blob.SegmentLevel;
@@ -303,6 +304,20 @@ class NodeVersionServiceImplTest
         RuntimeException e =
             assertThrows( RuntimeException.class, () -> executeInContext( () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) );
         assertTrue( e.getMessage().startsWith( "Failed to load blob" ) );
+    }
+
+    @Test
+    void getVersionMissingBlob()
+    {
+        final NodeVersionKey nodeVersionKey = NodeVersionKey.create()
+            .nodeBlobKey( BlobKey.from( "missingnode" ) )
+            .indexConfigBlobKey( BlobKey.from( "missingindexconfig" ) )
+            .accessControlBlobKey( BlobKey.from( "missingaccesscontrol" ) )
+            .build();
+
+        final IllegalStateException e = assertThrows( IllegalStateException.class, () -> executeInContext(
+            () -> nodeDao.get( nodeVersionKey, createInternalContext() ) ) );
+        assertTrue( e.getMessage().startsWith( "Blob record not found" ) );
     }
 
     private void corruptBlob( final NodeVersionKey nodeVersionKey )
