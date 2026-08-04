@@ -90,8 +90,7 @@ class ApplicationServiceImplTest
     {
         final BundleContext bundleContext = getBundleContext();
 
-        this.applicationRegistry =
-            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), new ApplicationFactoryServiceMock() );
+        this.applicationRegistry = new ApplicationRegistryImpl( bundleContext, new ApplicationFactoryServiceMock() );
         this.eventPublisher = mock( EventPublisher.class );
         this.appFilterService = mock( AppFilterService.class );
 

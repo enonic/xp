@@ -36,7 +36,6 @@ import com.enonic.xp.core.impl.app.AppFilterService;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
-import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistry;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
@@ -239,8 +238,7 @@ class DynamicSchemaServiceImplTest
 
         AppFilterService appFilterService = new AppFilterServiceImpl( appConfig );
 
-        ApplicationRegistry applicationRegistry =
-            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
+        ApplicationRegistry applicationRegistry = new ApplicationRegistryImpl( bundleContext, applicationFactoryService );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
             .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );

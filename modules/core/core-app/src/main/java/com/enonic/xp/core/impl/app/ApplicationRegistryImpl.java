@@ -46,16 +46,12 @@ public class ApplicationRegistryImpl
 
     private final ApplicationFactoryService applicationFactoryService;
 
-    private final ApplicationListenerHub applicationListenerHub;
-
     private final List<ApplicationInvalidator> invalidators = new CopyOnWriteArrayList<>();
 
     @Activate
-    public ApplicationRegistryImpl( final BundleContext context, @Reference final ApplicationListenerHub applicationListenerHub,
-                                    @Reference final ApplicationFactoryService applicationFactoryService )
+    public ApplicationRegistryImpl( final BundleContext context, @Reference final ApplicationFactoryService applicationFactoryService )
     {
         this.context = context;
-        this.applicationListenerHub = applicationListenerHub;
         this.applicationFactoryService = applicationFactoryService;
     }
 
@@ -121,7 +117,7 @@ public class ApplicationRegistryImpl
 
         final ApplicationKey applicationKey = ApplicationHelper.getApplicationKey( bundle );
 
-        final ApplicationAdaptor application = applications.compute( applicationKey, ( key, existingApp ) -> {
+        applications.compute( applicationKey, ( key, existingApp ) -> {
 
             if ( existingApp != null )
             {
@@ -148,8 +144,6 @@ public class ApplicationRegistryImpl
 
                     LOG.info( "Reconfiguring application {} bundle {}", key, bundle.getBundleId() );
 
-                    applicationListenerHub.deactivated( existingApp );
-
                     existingApp.setConfig( configuration );
                     register( bundle, existingApp );
                     callInvalidators( key );
@@ -171,8 +165,6 @@ public class ApplicationRegistryImpl
                 return app;
             }
         } );
-
-        applicationListenerHub.activated( application );
     }
 
     @Override
@@ -202,10 +194,6 @@ public class ApplicationRegistryImpl
     private void doUninstall( final ApplicationAdaptor existingApp )
     {
         final Bundle bundle = existingApp.getBundle();
-        if ( bundle.getState() == Bundle.ACTIVE )
-        {
-            applicationListenerHub.deactivated( existingApp );
-        }
 
         unregister( existingApp );
 
@@ -239,8 +227,6 @@ public class ApplicationRegistryImpl
         if ( bundle.getState() == Bundle.ACTIVE )
         {
             LOG.info( "Stopping application {} bundle {}", applicationKey, bundle.getBundleId() );
-
-            applicationListenerHub.deactivated( application );
 
             unregister( application );
 
