@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -73,7 +74,7 @@ class ImageServiceMappingHandlerTest
         this.webHandlerChain = mock( WebHandlerChain.class );
 
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
-        ControllerScript controllerScript = mock( ControllerScript.class );
+        ControllerScript controllerScript = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( controllerScript );
         final PortalResponse portalResponse = PortalResponse.create().build();
         when( controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );

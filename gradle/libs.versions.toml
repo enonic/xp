@@ -3,7 +3,7 @@ jackson = "2.22.0"
 junit5 = "6.1.1"
 mockito = "5.23.0"
 slf4j = "2.0.18"
-jetty = "12.1.10"
+jetty = "12.1.11"
 resteasy = "7.0.2.Final"
 hazelcast = "5.7.0"
 tika = "3.3.1"
@@ -11,6 +11,7 @@ log4j = "2.26.0"
 micrometer = "1.17.0"
 prometheus = "1.8.0"
 graalvm = "25.0.3"
+caffeine = "3.2.4"
 guava = "33.6.0-jre"
 
 [libraries]
@@ -70,7 +71,7 @@ jna = { module = "net.java.dev.jna:jna", version = "5.19.1" }
 
 jspecify = { module = "org.jspecify:jspecify", version = "1.0.0" }
 
-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version = "3.2.4" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 guava-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 

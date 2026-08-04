@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.controller;
 
 import java.util.Locale;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.NullMarked;
@@ -60,6 +61,25 @@ final class ControllerScriptImpl
             .map( n -> new PortalResponseSerializer( this.scriptExports.executeMethod( n, new PortalRequestMapper( portalRequest ) ) ) )
             .orElseGet( () -> new PortalResponseSerializer( null, HttpStatus.METHOD_NOT_ALLOWED ) )
             .serialize();
+    }
+
+    @Override
+    public <T> T executeBound( final Function<ControllerScript, T> work )
+    {
+        return this.scriptExports.executeBound(
+            bound -> work.apply( bound == this.scriptExports ? this : new ControllerScriptImpl( bound ) ) );
+    }
+
+    @Override
+    public void retain()
+    {
+        this.scriptExports.retain();
+    }
+
+    @Override
+    public void release()
+    {
+        this.scriptExports.release();
     }
 
     @Override

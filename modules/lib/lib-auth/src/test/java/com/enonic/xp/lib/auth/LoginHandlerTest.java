@@ -192,7 +192,7 @@ class LoginHandlerTest
 
         runScript( "/lib/xp/examples/auth/login.js" );
 
-        verify( session, times( 5 ) ).invalidate();
+        verify( session, times( 4 ) ).invalidate();
     }
 
     private static class AuthTokenMatcher

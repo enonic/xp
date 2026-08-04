@@ -72,6 +72,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -109,7 +110,7 @@ class MappingHandlerTest
         this.request.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final ControllerScriptFactory controllerScriptFactory = mock( ControllerScriptFactory.class );
-        ControllerScript controllerScript = mock( ControllerScript.class );
+        ControllerScript controllerScript = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( controllerScriptFactory.fromScript( Mockito.any() ) ).thenReturn( controllerScript );
         final PortalResponse portalResponse = PortalResponse.create().build();
         when( controllerScript.execute( Mockito.any() ) ).thenReturn( portalResponse );

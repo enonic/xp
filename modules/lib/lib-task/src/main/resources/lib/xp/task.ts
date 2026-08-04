@@ -27,8 +27,17 @@ function checkRequired<T extends object, K extends keyof T>(
     return obj[name];
 }
 
+// GraalJS installs the `Graal` builtin global; Nashorn has no such global
+declare const Graal: unknown;
+
+/**
+ * @deprecated Only {@link executeFunction} uses this, which is deprecated.
+ */
 export type CallbackFn = () => void;
 
+/**
+ * @deprecated Only {@link executeFunction} uses this, which is deprecated.
+ */
 export interface ExecuteFunctionParams {
     description: string;
     func: CallbackFn;
@@ -65,6 +74,10 @@ interface ExecuteFunctionHandler {
  *
  * This function returns immediately. The callback function will be executed asynchronously.
  *
+ * @deprecated Not supported on the GraalJS engine — calling this there fails immediately. Use a
+ * named task ({@link module:task.submitTask}) instead. Scheduled for removal together with the
+ * Nashorn engine.
+ *
  * @example-ref examples/task/executeFunction.js
  *
  * @param {object} params JSON with the parameters.
@@ -74,13 +87,15 @@ interface ExecuteFunctionHandler {
  * @returns {string} Id of the task that will be executed.
  */
 export function executeFunction(params: ExecuteFunctionParams): string {
+    if (typeof Graal !== 'undefined') {
+        throw new Error('task.executeFunction is not supported on the GraalJS engine: '
+            + 'the function cannot leave the script context that created it. Use a named task (task.submitTask) instead.');
+    }
+
     const bean: ExecuteFunctionHandler = __.newBean<ExecuteFunctionHandler>('com.enonic.xp.lib.task.ExecuteFunctionHandler');
 
-    const description = checkRequired(params, 'description');
-    const func = checkRequired(params, 'func');
-
-    bean.setDescription(description);
-    bean.setFunc(func);
+    bean.setDescription(checkRequired(params, 'description'));
+    bean.setFunc(checkRequired(params, 'func'));
 
     return bean.executeFunction();
 }

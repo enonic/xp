@@ -2,7 +2,8 @@ var taskLib = require('/lib/xp/task.js');
 var assert = require('/lib/xp/testing');
 
 // BEGIN
-// Execute task function and keep taskId for polling status
+// Execute task function and keep taskId for polling status.
+// Not supported on the GraalJS engine - use a named task (submitTask) there.
 var taskId = taskLib.executeFunction({
     description: 'Background task',
     func() {

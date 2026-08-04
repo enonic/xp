@@ -38,6 +38,10 @@ java {
     withSourcesJar()
     toolchain {
         languageVersion = JavaLanguageVersion.of( 25 )
+        // GraalVM ships the Truffle/JVMCI runtime GraalJS needs for runtime compilation,
+        // so build and tests must run on it. Matches GraalVM Community (auto-provisioned
+        // via the foojay resolver configured in settings.gradle).
+        vendor = JvmVendorSpec.GRAAL_VM
     }
     sourceCompatibility = JavaVersion.VERSION_25
     targetCompatibility = sourceCompatibility

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseEventType;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
@@ -20,15 +21,24 @@ class SseApiEndpointImplTest
     void getConfig()
     {
         final SseConfig config = SseConfig.empty();
-        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( config, () -> mock( UniversalApiHandler.class ) );
+        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( config, () -> mock( UniversalApiHandler.class ), null );
         assertSame( config, endpoint.getConfig() );
+    }
+
+    @Test
+    void exposesItsApplication()
+    {
+        final ApplicationKey app = ApplicationKey.from( "myapp" );
+        final SseApiEndpointImpl endpoint =
+            new SseApiEndpointImpl( SseConfig.empty(), () -> mock( UniversalApiHandler.class ), app );
+        assertSame( app, endpoint.getApplication() );
     }
 
     @Test
     void onEvent_delegatesToApiHandler()
     {
         final UniversalApiHandler handler = mock( UniversalApiHandler.class );
-        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( SseConfig.empty(), () -> handler );
+        final SseApiEndpointImpl endpoint = new SseApiEndpointImpl( SseConfig.empty(), () -> handler, null );
 
         final SseEvent event = SseEvent.create()
             .type( SseEventType.OPEN )

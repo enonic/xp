@@ -2,7 +2,6 @@ package com.enonic.xp.script.graal;
 
 import java.io.Closeable;
 import java.net.URL;
-import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,6 +24,7 @@ import com.enonic.xp.util.Version;
 class GraalJSTest
 {
     @Test
+    @SuppressWarnings("deprecation")
     void test()
         throws Exception
     {
@@ -45,8 +45,8 @@ class GraalJSTest
         final ScriptSettings scriptSettings = ScriptSettings.create().globalVariable( "xxx", "1243" ).build();
 
         ScriptExecutor scriptExecutor =
-            new GraalScriptExecutor( new GraalJSContextFactory(), Executors.newSingleThreadExecutor(), getClass().getClassLoader(),
-                                     scriptSettings, new ServiceRegistryImpl( bundleContext ), resourceService, application );
+            new GraalScriptExecutor( new GraalJSContextFactory(), getClass().getClassLoader(),
+                                     scriptSettings, new ServiceRegistryImpl( bundleContext ), resourceService, application, 1 );
 
         ScriptExports scriptExports = scriptExecutor.executeMain( ResourceKey.from( "graaljs:require-test.js" ) );
 

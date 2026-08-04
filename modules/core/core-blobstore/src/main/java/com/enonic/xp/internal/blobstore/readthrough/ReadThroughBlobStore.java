@@ -45,7 +45,7 @@ public class ReadThroughBlobStore
 
         record = store.getRecord( segment, key );
 
-        if ( record != null )
+        if ( record != null && withinLimit( record ) )
         {
             this.readThroughStore.addRecord( segment, record );
         }
@@ -77,7 +77,10 @@ public class ReadThroughBlobStore
         throws BlobStoreException
     {
         this.store.addRecord( segment, record );
-        this.readThroughStore.addRecord( segment, record );
+        if ( withinLimit( record ) )
+        {
+            this.readThroughStore.addRecord( segment, record );
+        }
         return record;
     }
 

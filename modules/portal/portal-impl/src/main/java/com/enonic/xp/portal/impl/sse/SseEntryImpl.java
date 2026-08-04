@@ -14,6 +14,9 @@ import jakarta.servlet.AsyncContext;
 import jakarta.servlet.AsyncEvent;
 import jakarta.servlet.AsyncListener;
 
+import org.jspecify.annotations.Nullable;
+
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -60,6 +63,12 @@ final class SseEntryImpl
     public UUID getClientId()
     {
         return this.clientId;
+    }
+
+    @Override
+    public @Nullable ApplicationKey getApplication()
+    {
+        return this.endpoint.getApplication();
     }
 
     @Override
