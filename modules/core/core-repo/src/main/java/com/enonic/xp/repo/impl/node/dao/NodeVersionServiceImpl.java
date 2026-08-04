@@ -150,7 +150,7 @@ public class NodeVersionServiceImpl
             final AtomicReference<T> uncacheable = new AtomicReference<>();
             final WithWeight<T> cached = cache.cache.get( blobKey, key -> {
                 final WithWeight<T> loaded = fetchAndDeserialize( repositoryId, segmentLevel, key, deserializer );
-                if ( loaded.weight >= cache.maxItemWeight )
+                if ( loaded.weight > cache.maxItemWeight )
                 {
                     uncacheable.set( loaded.value );
                     return null;
@@ -216,7 +216,7 @@ public class NodeVersionServiceImpl
         public InputStream openStream()
             throws IOException
         {
-            weight = CONTAINER_WEIGHT;
+            weight = 0;
             return new FilterInputStream( source.openStream() )
             {
                 @Override
