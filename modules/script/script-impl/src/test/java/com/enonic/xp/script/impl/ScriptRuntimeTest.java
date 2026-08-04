@@ -6,6 +6,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProblemException;
 import com.enonic.xp.script.ScriptExports;
+import com.enonic.xp.script.runtime.BootstrapParams;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -136,6 +137,8 @@ class ScriptRuntimeTest
         assertSame( cached, runTestScript( script ).getRawValue() );
 
         this.scriptRuntime.invalidate( script.getApplicationKey() );
+
+        this.scriptRuntime.bootstrap( BootstrapParams.create().application( script.getApplicationKey() ).build() );
 
         // its own teardown drops it
         assertNotSame( cached, runTestScript( script ).getRawValue() );
