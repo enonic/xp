@@ -184,7 +184,10 @@ export interface PatchableContent<
     variantOf: string;
     attachments: Attachments;
     validationErrors: ValidationError[];
-    type: Type;
+    /**
+     * Read-only. Available on the content passed to the patcher, but assigning it has no effect.
+     */
+    readonly type: Type;
     childOrder: string;
     originProject: string;
     originalParentPath: string;
@@ -1036,9 +1039,20 @@ export interface PublishContentParams {
     message?: string;
 }
 
+export type PublishFailureReason = 'ALREADY_EXIST' | 'PARENT_NOT_FOUND' | 'ACCESS_DENIED' | 'INVALID' | 'NOT_READY';
+
+export interface PublishFailure {
+    id: string;
+    /**
+     * Absent for content that could not be resolved from the given path.
+     */
+    reason?: PublishFailureReason;
+}
+
 export interface PublishContentResult {
     pushedContents: string[];
     failedContents: string[];
+    failed: PublishFailure[];
 }
 
 interface PublishContentHandler {
@@ -1071,7 +1085,10 @@ interface PublishContentHandler {
  * @param {boolean} [params.includeDependencies=true] Whether all related content should be included when publishing content.
  * @param {string} [params.message] Publish message.
  *
- * @returns {object} Status of the publish operation in JSON.
+ * @returns {object} Status of the publish operation in JSON. In addition to the `pushedContents` and `failedContents` id arrays,
+ * `failed` holds one entry per failed item with the reason it could not be published
+ * (`ALREADY_EXIST`, `PARENT_NOT_FOUND`, `ACCESS_DENIED`, `INVALID` or `NOT_READY`). The reason is absent for keys given as a path
+ * that could not be resolved to any content.
  */
 export function publish(params: PublishContentParams): PublishContentResult {
     const keys = checkRequired(params, 'keys');
@@ -1351,12 +1368,7 @@ export interface ApplyPermissionsParams {
     removePermissions?: AccessControlEntry[];
 }
 
-export type ApplyPermissionsResult = Record<string, BranchResult[]>;
-
-export interface BranchResult {
-    branch: string;
-    permissions: AccessControlEntry[];
-}
+export type ApplyPermissionsResult = Record<string, Permissions>;
 
 export interface Permissions {
     permissions?: AccessControlEntry[];
@@ -1857,6 +1869,14 @@ export interface ContentVersion {
 
 export interface ContentVersionAction {
     operation: string;
+    /**
+     * Branch the operation was performed in.
+     */
+    origin?: string;
+    /**
+     * Version id of the editorial content this version originates from.
+     */
+    editorial?: string;
     user: string;
     opTime: string;
 }

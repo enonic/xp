@@ -17,6 +17,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class PublishContentHandlerTest
@@ -144,6 +145,19 @@ class PublishContentHandlerTest
 
         assertThat( captor.getValue() ).extracting( "contentIds", "message" )
             .containsExactly( ContentIds.from( PUB_ID_2, DEL_ID, FAIL_ID ), "My first publish" );
+    }
+
+    @Test
+    void publishAllFailed()
+    {
+        final PublishContentResult result = PublishContentResult.create()
+            .add( PublishContentResult.Result.failure( ContentId.from( PUB_ID_2 ), PublishContentResult.Reason.NOT_READY ) )
+            .add( PublishContentResult.Result.failure( ContentId.from( FAIL_ID ), PublishContentResult.Reason.ACCESS_DENIED ) )
+            .build();
+
+        when( this.contentService.publish( any() ) ).thenReturn( result );
+
+        runFunction( "/test/PublishContentHandlerTest.js", "publishAllFailed" );
     }
 
     @Test
