@@ -63,14 +63,16 @@ public abstract class ComponentDescriptor
 
     /**
      * Returns the modification time recorded for this descriptor.
-     * <p>
-     * Dependable only for a descriptor stored in a repository node, as that of a virtual application is.
-     * When the descriptor is read from an application resource instead, the value derives from a jar entry
-     * timestamp that build tools normalize to a constant for reproducibility, and so does not reflect an
-     * edit to the descriptor.
      *
      * @return the recorded modification time, which may be {@code null}.
+     * @deprecated Not a dependable measure of when the descriptor last changed. A descriptor read from an
+     * application resource derives this value from a jar entry timestamp that build tools normalize to a
+     * constant for reproducibility. Only a descriptor stored in a repository node, as that of a virtual
+     * application is, carries a genuine time, and a caller cannot tell the two apart - so the value cannot
+     * be relied upon. Note that rendering additionally tests it for {@code null} as a way of telling a
+     * parsed descriptor from a synthesized one; that check is about presence rather than about time.
      */
+    @Deprecated
     public Instant getModifiedTime()
     {
         return modifiedTime;

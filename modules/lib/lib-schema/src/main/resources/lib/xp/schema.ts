@@ -80,6 +80,12 @@ export interface Schema {
     descriptionI18nKey: string;
     createdTime: string;
     creator: UserKey;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     modifier: UserKey;
     resource: string;
@@ -161,6 +167,12 @@ export interface ComponentDescriptor {
     description: string;
     descriptionI18nKey: string;
     componentPath: string;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     resource: string;
     type: ComponentDescriptorType;
@@ -225,6 +237,12 @@ export type EditorConfig = ConfigObject & {
 
 export interface StyleDescriptor {
     application: string;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     resource: string;
     elements: {
@@ -323,6 +341,12 @@ export function getComponent(params: GetDynamicComponentParams): LayoutDescripto
 export interface SiteDescriptor {
     application: string;
     resource: string;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     form: FormItem[];
     mixinMappings?: {

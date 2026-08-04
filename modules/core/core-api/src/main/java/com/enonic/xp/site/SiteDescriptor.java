@@ -41,6 +41,15 @@ public final class SiteDescriptor
         return applicationKey;
     }
 
+    /**
+     * Returns the modification time recorded for this descriptor.
+     *
+     * @return the recorded modification time, which may be {@code null}.
+     * @deprecated Not a dependable measure of when the descriptor last changed. A site descriptor is always
+     * read from an application resource, so the value derives from a jar entry timestamp that build tools
+     * normalize to a constant for reproducibility rather than from an edit to the descriptor.
+     */
+    @Deprecated
     public Instant getModifiedTime()
     {
         return modifiedTime;

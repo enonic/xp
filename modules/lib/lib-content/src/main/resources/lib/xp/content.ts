@@ -1465,7 +1465,8 @@ export interface Icon {
  * @property {boolean} abstract Whether or not content of this type may be instantiated.
  * @property {boolean} final Whether or not it may be used as super type of other content types.
  * @property {boolean} allowChildContent Whether or not allow creating child items on content of this type.
- * @property {string} modifiedTime Modified time of the content type.
+ * @property {string} modifiedTime Modified time of the content type. Deprecated: derives from the build
+ * rather than from an edit whenever the content type comes from an application.
  * @property {object} [icon] Icon of the content type.
  * @property {object} [icon.data] Stream with the binary data for the icon.
  * @property {string} [icon.mimeType] Mime type of the icon image.
@@ -1482,6 +1483,12 @@ export interface ContentType {
     abstract: boolean;
     final: boolean;
     allowChildContent: boolean;
+    /**
+     * @deprecated Not a dependable measure of when the content type last changed. Read from an application
+     * resource, this derives from a jar entry timestamp that build tools normalize to a constant for
+     * reproducibility; only a dynamic schema stored in a repository node carries a genuine time, and the two
+     * cannot be told apart here.
+     */
     modifiedTime: string;
     icon?: Icon;
     form: FormItem[];
