@@ -21,6 +21,7 @@ import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
@@ -170,6 +171,27 @@ class PatchNodeCommandTest
             return NodeId.from( node.get( "id" ) ).equals( createdNode.id() ) &&
                 node.get( "branch" ).equals( RepositoryConstants.MASTER_BRANCH.getValue() );
         } ).count() );
+    }
+
+    @Test
+    void patch_pushed_to_other_branch_refreshes_search_index()
+    {
+        final Node createdNode = createNode( CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build() );
+
+        pushNodes( RepositoryConstants.MASTER_BRANCH, createdNode.id() );
+
+        nodeService.patch( PatchNodeParams.create()
+                               .id( createdNode.id() )
+                               .branches( Branches.from( ContextAccessor.current().getBranch(), RepositoryConstants.MASTER_BRANCH ) )
+                               .editor( toBeEdited -> toBeEdited.data.addString( "another", "stuff" ) )
+                               .build() );
+
+        final FindNodesByQueryResult result = ContextBuilder.from( ContextAccessor.current() )
+            .branch( RepositoryConstants.MASTER_BRANCH )
+            .build()
+            .callWith( () -> doQuery( "another = 'stuff'" ) );
+
+        assertEquals( 1, result.getTotalHits() );
     }
 
     @Test

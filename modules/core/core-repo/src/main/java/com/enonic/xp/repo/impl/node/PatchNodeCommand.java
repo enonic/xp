@@ -18,6 +18,7 @@ import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.PatchNodeResult;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
@@ -81,9 +82,36 @@ public final class PatchNodeCommand
 
         doPatchNode( persistedNode.id(), internalContext );
 
-        refresh( params.getRefresh() );
+        final PatchNodeResult result = results.build();
 
-        return results.build();
+        refresh( resolveRefreshMode( result ) );
+
+        return result;
+    }
+
+    private RefreshMode resolveRefreshMode( final PatchNodeResult result )
+    {
+        final RefreshMode requested = params.getRefresh();
+
+        if ( requested == RefreshMode.ALL || !pushedToOtherBranches( result ) )
+        {
+            return requested;
+        }
+
+        // A patch that propagates the context branch version to other branches is effectively a push (publish),
+        // so the search index must be refreshed before push events are published.
+        return requested == RefreshMode.STORAGE ? RefreshMode.ALL : RefreshMode.SEARCH;
+    }
+
+    private boolean pushedToOtherBranches( final PatchNodeResult result )
+    {
+        final Branch contextBranch = ContextAccessor.current().getBranch();
+        final Node contextNode = result.getResult( contextBranch );
+
+        return contextNode != null && result.getResults()
+            .stream()
+            .anyMatch( branchResult -> branchResult.node() != null && !contextBranch.equals( branchResult.branch() ) &&
+                contextNode.getNodeVersionId().equals( branchResult.node().getNodeVersionId() ) );
     }
 
     private void doPatchNode( NodeId nodeId, InternalContext internalContext )
