@@ -74,11 +74,7 @@ var contentNotFoundExpectedJson = {
     "failedContents": [
         "/non-existing-content"
     ],
-    "failed": [
-        {
-            "id": "/non-existing-content"
-        }
-    ]
+    "failed": []
 };
 
 var allFailedExpectedJson = {
@@ -118,7 +114,8 @@ exports.contentNotFound = function () {
     assert.assertJsonEquals(contentNotFoundExpectedJson, result);
 };
 
-// Engine-reported failures come first, then keys that could not be resolved to any content.
+// An unresolvable key is reported in failedContents only - it never reaches the publish engine,
+// so there is no reason for it and it gets no entry in failed.
 var mixedFailuresExpectedJson = {
     'pushedContents': [
         'e1f57280-d672-4cd8-b674-98e26e5b69ae'
@@ -131,9 +128,6 @@ var mixedFailuresExpectedJson = {
         {
             'id': '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
             'reason': 'NOT_READY'
-        },
-        {
-            'id': '/non-existing-content'
         }
     ]
 };

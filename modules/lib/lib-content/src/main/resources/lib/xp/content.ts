@@ -1043,15 +1043,18 @@ export type PublishFailureReason = 'ALREADY_EXIST' | 'PARENT_NOT_FOUND' | 'ACCES
 
 export interface PublishFailure {
     id: string;
-    /**
-     * Absent for content that could not be resolved from the given path.
-     */
-    reason?: PublishFailureReason;
+    reason: PublishFailureReason;
 }
 
 export interface PublishContentResult {
     pushedContents: string[];
     failedContents: string[];
+    /**
+     * One entry per content the publish engine rejected, with the reason it was rejected.
+     *
+     * Keys that could not be resolved to any content never reach the engine and so have no reason;
+     * they are listed in `failedContents` only.
+     */
     failed: PublishFailure[];
 }
 
@@ -1086,9 +1089,9 @@ interface PublishContentHandler {
  * @param {string} [params.message] Publish message.
  *
  * @returns {object} Status of the publish operation in JSON. In addition to the `pushedContents` and `failedContents` id arrays,
- * `failed` holds one entry per failed item with the reason it could not be published
- * (`ALREADY_EXIST`, `PARENT_NOT_FOUND`, `ACCESS_DENIED`, `INVALID` or `NOT_READY`). The reason is absent for keys given as a path
- * that could not be resolved to any content.
+ * `failed` holds one `{id, reason}` entry per content the engine rejected, where reason is one of
+ * `ALREADY_EXIST`, `PARENT_NOT_FOUND`, `ACCESS_DENIED`, `INVALID` or `NOT_READY`. Keys that could not be resolved to any
+ * content never reach the engine and are listed in `failedContents` only.
  */
 export function publish(params: PublishContentParams): PublishContentResult {
     const keys = checkRequired(params, 'keys');
@@ -1369,6 +1372,15 @@ export interface ApplyPermissionsParams {
 }
 
 export type ApplyPermissionsResult = Record<string, Permissions>;
+
+/**
+ * @deprecated Never emitted by `applyPermissions`, which returns one `Permissions` object per content id.
+ * Kept only so existing imports keep resolving.
+ */
+export interface BranchResult {
+    branch: string;
+    permissions: AccessControlEntry[];
+}
 
 export interface Permissions {
     permissions?: AccessControlEntry[];

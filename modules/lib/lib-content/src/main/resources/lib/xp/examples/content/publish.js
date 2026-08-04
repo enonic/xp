@@ -19,9 +19,9 @@ if (result) {
     log.info('Pushed ' + result.pushedContents.length + ' content.');
     log.info('Content that failed operation: ' + result.failedContents.length);
 
-    // Inspect why each item failed
+    // Inspect why each item was rejected
     result.failed.forEach(function (failure) {
-        log.info(failure.id + ' failed: ' + (failure.reason || 'NOT_FOUND'));
+        log.info(failure.id + ' failed: ' + failure.reason);
     });
 } else {
     log.info('Operation failed.');

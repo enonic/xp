@@ -45,12 +45,6 @@ public class PublishContentResultMapper
             gen.value( "reason", result.failureReason() );
             gen.end();
         }
-        for ( ContentPath path : this.contentNotFound )
-        {
-            gen.map();
-            gen.value( "id", path.toString() );
-            gen.end();
-        }
         gen.end();
     }
 
