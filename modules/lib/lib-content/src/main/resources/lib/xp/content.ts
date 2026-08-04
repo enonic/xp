@@ -1446,6 +1446,12 @@ export function getPermissions(params: GetPermissionsParams): Permissions | null
 export interface Icon {
     data: ByteSource;
     mimeType: string;
+    /**
+     * @deprecated Not a dependable measure of when the icon last changed, and unsuitable for cache
+     * invalidation. Icons are loaded from application resources, so this derives from a jar entry timestamp
+     * that build tools normalize to a constant for reproducibility, from the install time of the bundle
+     * providing the icon, or from the time the icon happened to be read.
+     */
     modifiedTime: string;
 }
 
@@ -1463,7 +1469,8 @@ export interface Icon {
  * @property {object} [icon] Icon of the content type.
  * @property {object} [icon.data] Stream with the binary data for the icon.
  * @property {string} [icon.mimeType] Mime type of the icon image.
- * @property {string} [icon.modifiedTime] Modified time of the icon. May be used for caching.
+ * @property {string} [icon.modifiedTime] Modified time of the icon. Deprecated: derives from the build
+ * rather than from an edit to the icon, so it must not be used for caching.
  * @property {object[]} form Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet.
  * @property {object} config Custom schema configuration for the descriptor.
  */

@@ -52,6 +52,16 @@ public final class Icon
         return iconData.length;
     }
 
+    /**
+     * Returns the modification time recorded for this icon.
+     *
+     * @return the recorded modification time, which may be {@code null}.
+     * @deprecated Not a dependable measure of when the icon last changed. Icons are loaded from
+     * application resources, so the value derives from a jar entry timestamp that build tools normalize
+     * to a constant for reproducibility, from the install time of the bundle providing the icon, or from
+     * the time the icon happened to be read. None of these reflect an edit to the icon itself.
+     */
+    @Deprecated
     public Instant getModifiedTime()
     {
         return this.modifiedTime;

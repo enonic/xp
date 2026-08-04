@@ -82,6 +82,15 @@ public final class MacroDescriptor
         return icon;
     }
 
+    /**
+     * Returns the modification time recorded for this descriptor.
+     *
+     * @return the recorded modification time, which may be {@code null}.
+     * @deprecated Not a dependable measure of when the descriptor last changed. A macro descriptor is
+     * always read from an application resource, so the value derives from a jar entry timestamp that build
+     * tools normalize to a constant for reproducibility rather than from an edit to the descriptor.
+     */
+    @Deprecated
     public Instant getModifiedTime()
     {
         return modifiedTime;

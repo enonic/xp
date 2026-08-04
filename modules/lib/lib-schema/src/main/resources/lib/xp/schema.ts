@@ -45,6 +45,12 @@ function checkRequired<T extends object, K extends keyof T>(
 export interface Icon {
     data: ByteSource;
     mimeType: string;
+    /**
+     * @deprecated Not a dependable measure of when the icon last changed, and unsuitable for cache
+     * invalidation. Icons are loaded from application resources, so this derives from a jar entry timestamp
+     * that build tools normalize to a constant for reproducibility, from the install time of the bundle
+     * providing the icon, or from the time the icon happened to be read.
+     */
     modifiedTime: string;
 }
 

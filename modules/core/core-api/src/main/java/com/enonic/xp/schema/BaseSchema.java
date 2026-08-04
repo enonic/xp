@@ -76,6 +76,16 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         return createdTime;
     }
 
+    /**
+     * Returns the modification time recorded for this schema.
+     * <p>
+     * Dependable only for a schema stored in a repository node, as a dynamic schema of a virtual
+     * application is. When the schema is read from an application resource instead, the value derives from
+     * a jar entry timestamp that build tools normalize to a constant for reproducibility, and so does not
+     * reflect an edit to the schema.
+     *
+     * @return the recorded modification time, which may be {@code null}.
+     */
     public Instant getModifiedTime()
     {
         return modifiedTime;

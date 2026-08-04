@@ -44,6 +44,16 @@ public final class CmsDescriptor
         return mixinMappings;
     }
 
+    /**
+     * Returns the modification time recorded for this descriptor.
+     * <p>
+     * Dependable only for a descriptor stored in a repository node, as that of a virtual application is.
+     * When the descriptor is read from an application resource instead, the value derives from a jar entry
+     * timestamp that build tools normalize to a constant for reproducibility, and so does not reflect an
+     * edit to the descriptor.
+     *
+     * @return the recorded modification time, which may be {@code null}.
+     */
     public Instant getModifiedTime()
     {
         return modifiedTime;
