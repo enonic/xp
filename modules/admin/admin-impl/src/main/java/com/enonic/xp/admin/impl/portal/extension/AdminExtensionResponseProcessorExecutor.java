@@ -2,6 +2,7 @@ package com.enonic.xp.admin.impl.portal.extension;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -16,6 +17,7 @@ import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
 import com.enonic.xp.admin.extension.AdminExtensionResponseProcessor;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.security.PrincipalKeys;
@@ -23,7 +25,11 @@ import com.enonic.xp.security.PrincipalKeys;
 @Component(service = AdminExtensionResponseProcessorExecutor.class)
 public class AdminExtensionResponseProcessorExecutor
 {
-    private final List<AdminExtensionResponseProcessor> processors = new CopyOnWriteArrayList<>();
+    private record RegisteredProcessor(DescriptorKey extensionKey, AdminExtensionResponseProcessor processor)
+    {
+    }
+
+    private final List<RegisteredProcessor> processors = new CopyOnWriteArrayList<>();
 
     private final AdminExtensionDescriptorService descriptorService;
 
@@ -41,22 +47,22 @@ public class AdminExtensionResponseProcessorExecutor
         }
 
         // registration order is non-deterministic, sort to make the chain stable across restarts
-        final List<AdminExtensionResponseProcessor> chain = this.processors.stream()
-            .sorted( Comparator.comparing( processor -> processor.getExtensionKey().toString() ) )
+        final List<RegisteredProcessor> chain = this.processors.stream()
+            .sorted( Comparator.comparing( registered -> registered.extensionKey().toString() ) )
             .toList();
 
         final PrincipalKeys principals = ContextAccessor.current().getAuthInfo().getPrincipals();
 
         PortalResponse result = response;
-        for ( final AdminExtensionResponseProcessor processor : chain )
+        for ( final RegisteredProcessor registered : chain )
         {
-            final AdminExtensionDescriptor descriptor = descriptorService.getByKey( processor.getExtensionKey() );
+            final AdminExtensionDescriptor descriptor = descriptorService.getByKey( registered.extensionKey() );
             if ( descriptor == null || !isMounted( descriptor, tool ) || !descriptor.isAccessAllowed( principals ) )
             {
                 continue;
             }
-            result = Objects.requireNonNull( processor.process( request, result ), () -> String.format(
-                "Response processor for extension [%s] returned null", processor.getExtensionKey() ) );
+            result = Objects.requireNonNull( registered.processor().process( request, result ), () -> String.format(
+                "Response processor for extension [%s] returned null", registered.extensionKey() ) );
         }
         return result;
     }
@@ -68,13 +74,14 @@ public class AdminExtensionResponseProcessorExecutor
     }
 
     @Reference(policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MULTIPLE)
-    public void addProcessor( final AdminExtensionResponseProcessor processor )
+    public void addProcessor( final AdminExtensionResponseProcessor processor, final Map<String, ?> properties )
     {
-        this.processors.add( processor );
+        final DescriptorKey extensionKey = DescriptorKey.from( (String) properties.get( "key" ) );
+        this.processors.add( new RegisteredProcessor( extensionKey, processor ) );
     }
 
     public void removeProcessor( final AdminExtensionResponseProcessor processor )
     {
-        this.processors.remove( processor );
+        this.processors.removeIf( registered -> registered.processor() == processor );
     }
 }
