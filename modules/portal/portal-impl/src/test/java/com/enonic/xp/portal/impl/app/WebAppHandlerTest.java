@@ -107,7 +107,7 @@ class WebAppHandlerTest
         this.request.setBaseUri( "/webapp/myapp" );
         this.request.setRawPath( "/webapp/myapp/a.txt" );
 
-        final ControllerScript script = mock( ControllerScript.class );
+        final ControllerScript script = mock( ControllerScript.class, CALLS_REAL_METHODS );
         when( this.controllerScriptFactory.fromScript( ResourceKey.from( "myapp:/webapp/webapp.js" ) ) ).thenReturn( script );
 
         final PortalResponse response = PortalResponse.create().build();
