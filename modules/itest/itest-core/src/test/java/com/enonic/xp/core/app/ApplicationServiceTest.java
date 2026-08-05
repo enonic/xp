@@ -30,6 +30,7 @@ import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
+import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
@@ -81,7 +82,7 @@ class ApplicationServiceTest
         applicationAuditLogSupport.activate( appConfig );
 
         this.applicationService = new ApplicationServiceImpl(
-            new ApplicationRegistryImpl( bundleContext, applicationFactoryService ), repoService,
+            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
             new VirtualAppService( nodeService ), applicationAuditLogSupport );
     }

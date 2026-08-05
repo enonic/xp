@@ -1,14 +1,15 @@
 package com.enonic.xp.app;
 
 /**
- * Whiteboard callback for application activation and deactivation.
+ * Whiteboard callback invoked when an application is activated or deactivated.
  *
- * @deprecated No longer invoked — a registered listener will never be called. Track
- * {@link Application} services instead: they are registered while an application is active and
- * unregistered on stop or reconfigure, so a service tracker's {@code addingService} replays every
- * already-active application on open and delivers future ones, and {@code removedService} is
- * delivered inside the unregistration, before any replacement exists. That makes tracking immune to
- * the boot-order and reconfigure-timing races this callback was subject to. Scheduled for removal.
+ * @deprecated Misses events by registration order: dispatch reaches only the listeners registered at
+ * the time, and there is no replay, so a listener whose bundle starts after an application is
+ * already active never learns about it. Track {@link Application} services instead: they are
+ * registered while an application is active and unregistered on stop or reconfigure, so a service
+ * tracker's {@code addingService} replays every already-active application on open and delivers
+ * future ones, and {@code removedService} is delivered inside the unregistration, before any
+ * replacement exists. Scheduled for removal.
  */
 @Deprecated
 public interface ApplicationListener
