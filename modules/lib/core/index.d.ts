@@ -834,6 +834,15 @@ export type ByteSource = Brand<object, 'ByteSource'>;
 export interface Resource {
     getSize(): number;
 
+    /**
+     * @deprecated Not a dependable measure of when a resource last changed. A resource served from an
+     * application bundle reports the time recorded in its jar entry, and build tools normalize that value
+     * to a constant so that builds are reproducible — Gradle does so by default as of version 9. Two
+     * different builds of an application therefore report identical timestamps, making the value a
+     * property of the build rather than of the file. Only resources backed by a repository node carry a
+     * genuine modification time; for file-backed resources the value is meaningful in development mode
+     * alone.
+     */
     getTimestamp(): number;
 
     getStream(): ByteSource;

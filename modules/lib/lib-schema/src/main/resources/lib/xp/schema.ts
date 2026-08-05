@@ -45,6 +45,12 @@ function checkRequired<T extends object, K extends keyof T>(
 export interface Icon {
     data: ByteSource;
     mimeType: string;
+    /**
+     * @deprecated Not a dependable measure of when the icon last changed, and unsuitable for cache
+     * invalidation. Icons are loaded from application resources, so this derives from a jar entry timestamp
+     * that build tools normalize to a constant for reproducibility, from the install time of the bundle
+     * providing the icon, or from the time the icon happened to be read.
+     */
     modifiedTime: string;
 }
 
@@ -74,6 +80,12 @@ export interface Schema {
     descriptionI18nKey: string;
     createdTime: string;
     creator: UserKey;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     modifier: UserKey;
     resource: string;
@@ -155,6 +167,12 @@ export interface ComponentDescriptor {
     description: string;
     descriptionI18nKey: string;
     componentPath: string;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     resource: string;
     type: ComponentDescriptorType;
@@ -219,6 +237,12 @@ export type EditorConfig = ConfigObject & {
 
 export interface StyleDescriptor {
     application: string;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     resource: string;
     elements: {
@@ -317,6 +341,12 @@ export function getComponent(params: GetDynamicComponentParams): LayoutDescripto
 export interface SiteDescriptor {
     application: string;
     resource: string;
+    /**
+     * @deprecated Not a dependable measure of when this last changed. Read from an application resource,
+     * this derives from a jar entry timestamp that build tools normalize to a constant for reproducibility;
+     * only a dynamic schema stored in a repository node carries a genuine time, and the two cannot be told
+     * apart here.
+     */
     modifiedTime: string;
     form: FormItem[];
     mixinMappings?: {

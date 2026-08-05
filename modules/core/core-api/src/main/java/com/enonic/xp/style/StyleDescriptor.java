@@ -38,6 +38,17 @@ public final class StyleDescriptor
         return elements;
     }
 
+    /**
+     * Returns the modification time recorded for this descriptor.
+     *
+     * @return the recorded modification time, which may be {@code null}.
+     * @deprecated Not a dependable measure of when the descriptor last changed. A descriptor read from an
+     * application resource derives this value from a jar entry timestamp that build tools normalize to a
+     * constant for reproducibility. Only a descriptor stored in a repository node, as that of a virtual
+     * application is, carries a genuine time, and a caller cannot tell the two apart - so the value cannot
+     * be relied upon.
+     */
+    @Deprecated
     public Instant getModifiedTime()
     {
         return modifiedTime;

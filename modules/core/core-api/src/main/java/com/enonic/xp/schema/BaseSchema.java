@@ -76,6 +76,17 @@ public abstract class BaseSchema<T extends BaseSchemaName>
         return createdTime;
     }
 
+    /**
+     * Returns the modification time recorded for this schema.
+     *
+     * @return the recorded modification time, which may be {@code null}.
+     * @deprecated Not a dependable measure of when the schema last changed. A schema read from an
+     * application resource derives this value from a jar entry timestamp that build tools normalize to a
+     * constant for reproducibility. Only a schema stored in a repository node, as a dynamic schema of a
+     * virtual application is, carries a genuine time, and a caller cannot tell the two apart - so the
+     * value cannot be relied upon.
+     */
+    @Deprecated
     public Instant getModifiedTime()
     {
         return modifiedTime;

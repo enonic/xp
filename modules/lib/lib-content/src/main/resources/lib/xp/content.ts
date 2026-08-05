@@ -1470,6 +1470,12 @@ export function getPermissions(params: GetPermissionsParams): Permissions | null
 export interface Icon {
     data: ByteSource;
     mimeType: string;
+    /**
+     * @deprecated Not a dependable measure of when the icon last changed, and unsuitable for cache
+     * invalidation. Icons are loaded from application resources, so this derives from a jar entry timestamp
+     * that build tools normalize to a constant for reproducibility, from the install time of the bundle
+     * providing the icon, or from the time the icon happened to be read.
+     */
     modifiedTime: string;
 }
 
@@ -1483,11 +1489,13 @@ export interface Icon {
  * @property {boolean} abstract Whether or not content of this type may be instantiated.
  * @property {boolean} final Whether or not it may be used as super type of other content types.
  * @property {boolean} allowChildContent Whether or not allow creating child items on content of this type.
- * @property {string} modifiedTime Modified time of the content type.
+ * @property {string} modifiedTime Modified time of the content type. Deprecated: derives from the build
+ * rather than from an edit whenever the content type comes from an application.
  * @property {object} [icon] Icon of the content type.
  * @property {object} [icon.data] Stream with the binary data for the icon.
  * @property {string} [icon.mimeType] Mime type of the icon image.
- * @property {string} [icon.modifiedTime] Modified time of the icon. May be used for caching.
+ * @property {string} [icon.modifiedTime] Modified time of the icon. Deprecated: derives from the build
+ * rather than from an edit to the icon, so it must not be used for caching.
  * @property {object[]} form Form schema represented as an array of form items: Input, ItemSet, Layout, OptionSet.
  * @property {object} config Custom schema configuration for the descriptor.
  */
@@ -1499,6 +1507,12 @@ export interface ContentType {
     abstract: boolean;
     final: boolean;
     allowChildContent: boolean;
+    /**
+     * @deprecated Not a dependable measure of when the content type last changed. Read from an application
+     * resource, this derives from a jar entry timestamp that build tools normalize to a constant for
+     * reproducibility; only a dynamic schema stored in a repository node carries a genuine time, and the two
+     * cannot be told apart here.
+     */
     modifiedTime: string;
     icon?: Icon;
     form: FormItem[];
