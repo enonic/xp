@@ -80,6 +80,149 @@ prerequisite) into its own deliverable because:
 Total ≈ **580k** output tokens (the conversational ~400k estimate excluded P2's
 full weight and the smoke/docs gate).
 
+## Gate 0 results (2026-08-04)
+
+**P2 status:** landed — `VersionStore.get/delete` repo-scoped end-to-end with proof
+tests at engine/server/client layers. One holdout found by inventory: **commit get is
+tenant-global on the wire** (`GetCommitRequest` carries no repo; `CommitStore.get` has
+no `repo_key` predicate). `node_commit`'s PK is `commit_id` alone so no data collision
+exists, but addressing must be repo-scoped — folded into Gate A (the commit RPC gains
+`repo_id` alongside the new `FindCommits`).
+
+**Scope corrections from inventory:**
+- **Active versions already works in nodb mode** — `GetActiveNodeVersionsCommand` loops
+  branches via SPI-routed `getBranchEntry` + `getVersion`; no storage-index query
+  remains. The `getActiveVersions` SPI method is a one-round-trip convenience
+  (engine has the join already: `BranchStore.JOINED_SELECT`); no Gate B routing needed.
+- **`getVersionsByBlobKey` is not a separate method** — `IsBlobUsedByVersionCommand`
+  builds a `NodeVersionQuery` with a blob-key `ValueFilter` and `size(0)`; it is served
+  by the `findVersions` surface's filter support.
+
+**The `findVersions` surface is bounded but wider than "history by node".** Enumerated
+callers and their needs: `GetNodeVersionsCommand` (order `ts DESC, version_id ASC` +
+keyset cursor `(ts, version_id)`), `RepoDumper` (ts floor, scroll-all `size=-1`),
+`VersionTableVacuumCommand` (keyset `version_id ASC` + ts ceiling), `SegmentVacuum` /
+`IsBlobUsedByVersion` (`size=0` count-only; blob-key term on `binary_keys` /
+`node_data_hash`). Accurate `totalHits` required independent of page size. No ACL
+filtering on any storage-source query (parity: SQL must not filter either).
+
+**Diff semantics pinned (ES reference,** `DiffQueryFactory`**):** scope root IS
+included; path comparison is CASE-INSENSITIVE (paths indexed lowercased; `NodePath`
+equality ignores case); scope/excludes evaluate per-side (each hit's own branch-child
+paths — what makes renames behave); both-present-with-different-versions yields 2 ES
+hits deduped client-side into a NodeId set — SQL returns distinct node ids and the
+corpus compares SETS, not raw hit counts (`HasUnpublishedChildren` needs only
+existence). `HasUnpublishedChildrenCommand` is the observed root-`must_not`: scope =
+parent path, excludes = [parent path], count-only.
+
+**Required DDL (no migration-discipline gate landed yet — new ordered migration file,
+upgrade note for existing dev tenants):**
+```sql
+CREATE INDEX branch_entry_path_lower ON branch_entry (repo_key, branch, lower(node_path) text_pattern_ops);
+CREATE INDEX node_version_by_node_v2 ON node_version (repo_key, node_id, ts DESC, version_id ASC); -- replaces node_version_by_node
+CREATE INDEX node_commit_by_repo ON node_commit (repo_key);
+```
+(The unique path index cannot serve prefix scans: DB collation is `en_US.utf8`, no
+`text_pattern_ops`/`COLLATE "C"` anywhere; and parity needs `lower()`.)
+
+**Routing seam (Gate B):** no production command-level routing precedent exists yet —
+this phase writes the first. Backend detection = capability probe on the injected
+`NodeStore` (a `default false` method beside the default-throws hooks), never a config
+lookup. Owning commands: `FindNodeVersionsCommand` (one seam covers history, dump,
+vacuum, blob checks), `FindNodesWithVersionDifferenceCommand`,
+`HasUnpublishedChildrenCommand`, `FindNodeCommitsCommand` (sole caller: `RepoDumper`).
+
+**Gate B itest list:** itest-core: `FindNodeVersionsCommandTest`,
+`GetNodeVersionsCommandTest`, `FindNodesWithVersionDifferenceCommandTest`,
+`HasUnpublishedChildrenCommandTest`, `ResolveSyncWorkCommandTest`,
+`PushNodesCommandTest`, `GetActiveNodeVersionsCommandTest` (baseline),
+`CompareNodeCommandTest` + `CompareNodesCommandTest` (setup-dependent — verify, don't
+drop silently), `VersionTableVacuumTaskTest`. itest-core-content:
+`ContentServiceImplTest_{versions,versionAttributes,getActiveVersions,publish,`
+`publish_update_publishedTime,unpublish,resolvePublishDependencies,`
+`resolveRequiredDependencies}` — ⚠️ itest-core-content has ZERO nodb harness plumbing
+(no property forwarding, no `NodbTestCluster` wiring): Gate B extends the harness or
+explicitly defers content-level proof to Gate C's live smoke.
+
+**Wire toehold:** proto already reserves `rpc FindVersions (...) returns (stream
+Version)` with an empty placeholder request message; server leaves it un-overridden.
+
+## Gate B results (2026-08-05)
+
+**Routing pattern established (first production instance):** builder-injected
+`nodeStore(NodeStore)` on the owning commands; at `execute()`,
+`nodeStore.supportsVersionQueries()` selects the SPI path, else the legacy search
+path textually unchanged. `NodeServiceImpl` gains the `NodeStore` as an OSGi
+`@Reference` constructor parameter (same acquisition as `VersionServiceImpl`).
+ES translators, request factories and `DiffQueryFactory` untouched — default mode
+byte-identical by construction (core-repo 396/396 green).
+
+**Translator (`SpiVersionQueryFactory`):** accepts exactly the Gate 0 inventory
+shapes; everything else throws `IllegalArgumentException` naming the construct —
+no predicate is ever silently dropped. One documented widening: bare
+`[timestamp DESC]` maps to `TS_DESC_ID_ASC` (ES leaves equal-ts order undefined).
+
+**Fixes made during verification:** root path scope normalized to null scope
+(engine `'/'`-prefix predicate only matched the root row); engine diff ordering
+pinned to `GROUP BY node_id ORDER BY min(lower(node_path))` — deterministic,
+parents-before-children, matching the ES path's asserted order (oracle corpus
+rerun green); one itest-harness retrofit.
+
+**Results:** curated nodb set green — FindNodeVersions 2/2, GetNodeVersions 8/8,
+FindNodesWithVersionDifference 8/8, HasUnpublishedChildren 2/2, ResolveSyncWork
+34/34, GetActiveNodeVersions 1/1, CompareNode 7/7, PushNodes 15/15. Default ES
+mode: full classes incl. every excluded method, 112/112.
+
+**Recorded exclusions (each verified against its stack trace):**
+- `deleted_in_source`/`deleted_in_target` (diff), `status_deleted_stage_yields_new_
+  in_target` (CompareNode), `CompareNodesCommandTest`, and 2 VersionTableVacuum
+  methods: all fail in `DeleteNodeCommand` — the DELETE CASCADE lists children via
+  a `NodeBranchQuery` against the ES storage index. **The one remaining
+  storage-index consumer this phase exposed; Phase 4/8 dependency** (needs
+  `NodeStore.getChildren` production wiring).
+- `VersionTableVacuumTaskTest` (rest of class): per-method ES wipe vs class-scoped
+  nodb tenant — pre-existing Phase 1 fixture-granularity asymmetry. The vacuum
+  query shapes themselves are engine-tested.
+- `PushNodesCommandTest#rename_to_name_already_there_but_renamed_in_same_push`:
+  intra-push path swap vs `unique(repo_key, branch, node_path)` — DESIGN.md risk
+  #8 (DEFERRABLE unique), predates this phase; schedule with subtree-move work.
+
+**itest-core-content: deferred** — zero nodb harness plumbing exists (fixture
+hard-codes the ES store across ~6 service constructions); wiring it is a full
+replication of AbstractNodeTest's nodb branch, not mechanical forwarding.
+Content-level proof moved to Gate C's live smoke per the work order's option.
+
+## Gate C results (2026-08-05) — PHASE COMPLETE
+
+Live smoke on the rebuilt stack (both sides on the new proto): full CS flow green —
+create → update ×2 → version history (exact order) → resolvePublishContent →
+publish → modify → hasUnpublishedChildren → compare → revert, all via the CS REST
+endpoints with a session login. **Gate check: zero "Search request failed", zero
+IndexException in the entire boot log.** Ground truth: versions 48→93, commits 0→4,
+3 versions commit-linked; migration 002 confirmed applied to the live tenant.
+
+**Second in-family latent bug found by the smoke and fixed:** publish's
+commit-linkage step (`NodeStorageServiceImpl.commit`) re-stores each pushed version
+with `commit_id` set; the engine's plain `INSERT` threw duplicate-key — publish
+half-completed (pushed, no commit link, error swallowed by CS). Fix:
+`VersionStore.store` is now `ON CONFLICT (repo_key, version_id) DO UPDATE` — the
+ES-parity semantics (the ES path is an index-doc overwrite; DO NOTHING would
+silently drop the commit_id mutation). Immutability lives above the store: payload
+FKs still reject unknown hashes; re-storing callers mutate only
+commit_id/attributes; data changes mint new version ids. `WriteBatchTest`'s
+mid-batch-failure mechanism moved to the payload FK (property unchanged, 6/6).
+New proof test: `versionReStoreIsAnUpsertLinkingTheCommitId`.
+
+Revalidation post-fix: 72 itests, 69 green; the 3 failures are the two documented
+out-of-family exclusions verbatim (delete-cascade ×2, rename-swap ×1). Two mid-smoke
+publish ERRORs were correct behavior (raw updates left workflow IN_PROGRESS;
+CheckContentValidity correctly refused — CS marks ready first).
+
+Docs updated: RUNNING.md state-of-world, DESIGN.md §9 (3.5 row, DONE 2026-08-05),
+BUILD-PHASE-4.md amendments (P2 done-in-3.5, decision 4 landed, Gate C reduced) —
+the P4 file exists only on nodb-design; its edits sit untracked here and must be
+carried to that branch.
+
 ## Key risks carried into the gates
 
 - **Diff-semantics drift**: the ES `has_child` query encodes subtle cases
