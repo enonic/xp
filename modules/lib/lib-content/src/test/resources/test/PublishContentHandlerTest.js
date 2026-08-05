@@ -9,6 +9,12 @@ var expectedJson = {
     ],
     'failedContents': [
         '79e21db0-5b43-45ce-b58c-6e1c420b22bd'
+    ],
+    'failed': [
+        {
+            'id': '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
+            'reason': 'INVALID'
+        }
     ]
 };
 
@@ -16,7 +22,8 @@ var expectedLimitedJson = {
     'pushedContents': [
         'e1f57280-d672-4cd8-b674-98e26e5b69ae'
     ],
-    'failedContents': []
+    'failedContents': [],
+    'failed': []
 };
 
 exports.publishById = function () {
@@ -66,7 +73,34 @@ var contentNotFoundExpectedJson = {
     "pushedContents": [],
     "failedContents": [
         "/non-existing-content"
+    ],
+    "failed": []
+};
+
+var allFailedExpectedJson = {
+    'pushedContents': [],
+    'failedContents': [
+        '9f5b0db0-38f9-4e81-b92e-116f25476b1c',
+        '79e21db0-5b43-45ce-b58c-6e1c420b22bd'
+    ],
+    'failed': [
+        {
+            'id': '9f5b0db0-38f9-4e81-b92e-116f25476b1c',
+            'reason': 'NOT_READY'
+        },
+        {
+            'id': '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
+            'reason': 'ACCESS_DENIED'
+        }
     ]
+};
+
+exports.publishAllFailed = function () {
+    var result = content.publish({
+        keys: ['9f5b0db0-38f9-4e81-b92e-116f25476b1c', '79e21db0-5b43-45ce-b58c-6e1c420b22bd']
+    });
+
+    assert.assertJsonEquals(allFailedExpectedJson, result);
 };
 
 exports.contentNotFound = function () {
@@ -78,4 +112,30 @@ exports.contentNotFound = function () {
     });
 
     assert.assertJsonEquals(contentNotFoundExpectedJson, result);
+};
+
+// An unresolvable key is reported in failedContents only - it never reaches the publish engine,
+// so there is no reason for it and it gets no entry in failed.
+var mixedFailuresExpectedJson = {
+    'pushedContents': [
+        'e1f57280-d672-4cd8-b674-98e26e5b69ae'
+    ],
+    'failedContents': [
+        '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
+        '/non-existing-content'
+    ],
+    'failed': [
+        {
+            'id': '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
+            'reason': 'NOT_READY'
+        }
+    ]
+};
+
+exports.publishMixedFailures = function () {
+    var result = content.publish({
+        keys: ['79e21db0-5b43-45ce-b58c-6e1c420b22bd', '/non-existing-content']
+    });
+
+    assert.assertJsonEquals(mixedFailuresExpectedJson, result);
 };
