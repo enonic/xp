@@ -1,3 +1,4 @@
 # Ordered list of tenant-schema template migrations. One filename per line, applied in
 # order; MigrationRunner records the highest applied index as nodb_system.tenant.template_version.
 001_init.sql
+002_version_query_indexes.sql

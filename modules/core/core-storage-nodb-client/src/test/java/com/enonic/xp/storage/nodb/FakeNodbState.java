@@ -30,10 +30,10 @@ final class FakeNodbState
     /** key: repo|branch|nodePath -> nodeId, mirrors the engine's rebuildable path index. */
     final Map<String, String> nodeIdByPath = new ConcurrentHashMap<>();
 
-    /** key: versionId */
+    /** key: repo|versionId — version identity is (repo, version_id), mirroring node_version's PK (Phase 3.5 gate P2). */
     final Map<String, Version> versions = new ConcurrentHashMap<>();
 
-    /** key: commitId */
+    /** key: repo|commitId — commit addressing is repo-scoped on the wire (Phase 3.5 gate A). */
     final Map<String, Commit> commits = new ConcurrentHashMap<>();
 
     /** key: content hash ("sha256:&lt;hex&gt;") -- Phase 3 Gate B's node-payload segment pool. */
@@ -47,5 +47,15 @@ final class FakeNodbState
     static String pathKey( final String repo, final String branch, final String path )
     {
         return repo + "|" + branch + "|" + path;
+    }
+
+    static String versionKey( final String repo, final String versionId )
+    {
+        return repo + "|" + versionId;
+    }
+
+    static String commitKey( final String repo, final String commitId )
+    {
+        return repo + "|" + commitId;
     }
 }

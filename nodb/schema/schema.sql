@@ -1,4 +1,6 @@
--- NoDB Postgres schema, v0.3 (draft)
+-- NoDB Postgres schema, v0.4 (draft) — the summed content of the ordered tenant
+-- migrations (001_init.sql + 002_version_query_indexes.sql); kept content-identical
+-- with them by hand.
 --
 -- Tenancy model:
 --   * One SCHEMA per tenant (never one database per tenant: PG connection pools are
@@ -69,7 +71,10 @@ CREATE TABLE node_version (
     PRIMARY KEY (repo_key, version_id)                -- partition key must be in PK
 ) PARTITION BY LIST (repo_key);
 
-CREATE INDEX node_version_by_node   ON node_version (repo_key, node_id, ts DESC);
+-- Version history (Phase 3.5): ts DESC with version_id ASC as the equal-ts tiebreaker,
+-- so the keyset cursor (ts, version_id) is fully index-served. Replaced 001's
+-- node_version_by_node (002_version_query_indexes.sql).
+CREATE INDEX node_version_by_node_v2 ON node_version (repo_key, node_id, ts DESC, version_id ASC);
 CREATE INDEX node_version_by_commit ON node_version (repo_key, commit_id) WHERE commit_id IS NOT NULL;
 -- Vacuum support: "is this data row still referenced?" is an indexed lookup.
 CREATE INDEX node_version_data_hash ON node_version (node_data_hash);
@@ -86,6 +91,9 @@ CREATE TABLE node_commit (
     committer text,
     ts        timestamptz NOT NULL
 );
+
+-- Per-repo commit enumeration (Phase 3.5: FindCommits, RepoDumper's dump).
+CREATE INDEX node_commit_by_repo ON node_commit (repo_key);
 
 -- BRANCH document equivalent: head pointer per (repo, branch, node). Partition per repo,
 -- sub-partition per branch.
@@ -108,6 +116,10 @@ CREATE TABLE branch_entry (
 
 -- Children listing / getByPath prefix ops (served from Postgres, strongly consistent).
 CREATE INDEX branch_entry_children ON branch_entry (repo_key, branch, parent_path);
+-- Branch diff / resolve-sync-work (Phase 3.5): per-side case-insensitive path-scope
+-- prefix predicates (lower(node_path) = ... OR LIKE '.../%'). The unique path index
+-- above cannot serve these: DB collation is en_US.utf8, and ES parity needs lower().
+CREATE INDEX branch_entry_path_lower ON branch_entry (repo_key, branch, lower(node_path) text_pattern_ops);
 
 -- Per-repo partitions, created at repo creation / dropped at repo deletion:
 --   CREATE TABLE node_version_<repo_key>  PARTITION OF node_version  FOR VALUES IN (<repo_key>);

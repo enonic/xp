@@ -176,7 +176,7 @@ class EngineStoreTest
         assertEquals( "23503", thrown.getSQLState(),
                       "must be a foreign_key_violation against payload(hash), not some other failure" );
 
-        assertNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, version.versionId() ) ),
+        assertNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKey, version.versionId() ) ),
                     "the rejected row must not have been persisted" );
     }
 
@@ -199,7 +199,7 @@ class EngineStoreTest
             return v;
         } );
 
-        VersionRecord fetched = Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, version.versionId() ) );
+        VersionRecord fetched = Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKey, version.versionId() ) );
 
         assertEquals( version.versionId(), fetched.versionId() );
         assertEquals( version.nodeId(), fetched.nodeId() );
@@ -296,7 +296,7 @@ class EngineStoreTest
             return null;
         } );
 
-        CommitRecord fetched = Tx.inTenantTx( dataSource, acme, connection -> CommitStore.get( connection, commit.commitId() ) );
+        CommitRecord fetched = Tx.inTenantTx( dataSource, acme, connection -> CommitStore.get( connection, repoKey, commit.commitId() ) );
         assertEquals( commit.commitId(), fetched.commitId() );
         assertEquals( commit.message(), fetched.message() );
         assertEquals( commit.committer(), fetched.committer() );
@@ -435,21 +435,60 @@ class EngineStoreTest
         long repoKey = createRepo( acme, "version-delete-repo-" + UUID.randomUUID() );
         String versionId = writeMinimalVersion( acme, repoKey, "/to-delete" );
 
-        assertNotNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, versionId ) ) );
+        assertNotNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKey, versionId ) ) );
 
         Tx.inTenantTx( dataSource, acme, connection -> {
-            VersionStore.delete( connection, versionId );
+            VersionStore.delete( connection, repoKey, versionId );
             return null;
         } );
 
-        assertNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, versionId ) ),
+        assertNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKey, versionId ) ),
                     "version must be gone after delete" );
 
         // deleting an already-absent version id is a no-op, not an error.
         Tx.inTenantTx( dataSource, acme, connection -> {
-            VersionStore.delete( connection, versionId );
+            VersionStore.delete( connection, repoKey, versionId );
             return null;
         } );
+    }
+
+    @Test
+    void versionIdentityIsRepoScopedWithinOneTenant()
+        throws SQLException
+    {
+        // Phase 3.5 gate P2: version identity is (repo_key, version_id) — the SAME
+        // version_id string stored in TWO repos of ONE tenant must stay independent.
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKeyA = createRepo( acme, "p2-repo-a-" + UUID.randomUUID() );
+        long repoKeyB = createRepo( acme, "p2-repo-b-" + UUID.randomUUID() );
+        String sharedVersionId = UUID.randomUUID().toString();
+
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            String hashA = PayloadStore.putPayload( connection, ( "p2-a-" + UUID.randomUUID() ).getBytes( StandardCharsets.UTF_8 ) );
+            VersionStore.store( connection, repoKeyA, new VersionRecord( sharedVersionId, UUID.randomUUID().toString(), "/p2-a",
+                                                                           Instant.now(), hashA, hashA, hashA, List.of(), null, Map.of() ) );
+            String hashB = PayloadStore.putPayload( connection, ( "p2-b-" + UUID.randomUUID() ).getBytes( StandardCharsets.UTF_8 ) );
+            VersionStore.store( connection, repoKeyB, new VersionRecord( sharedVersionId, UUID.randomUUID().toString(), "/p2-b",
+                                                                           Instant.now(), hashB, hashB, hashB, List.of(), null, Map.of() ) );
+            return null;
+        } );
+
+        VersionRecord fromA = Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKeyA, sharedVersionId ) );
+        assertEquals( "/p2-a", fromA.nodePath(), "get by (repo A, version_id) must return repo A's row only" );
+        VersionRecord fromB = Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKeyB, sharedVersionId ) );
+        assertEquals( "/p2-b", fromB.nodePath(), "get by (repo B, version_id) must return repo B's row only" );
+
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            VersionStore.delete( connection, repoKeyA, sharedVersionId );
+            return null;
+        } );
+
+        assertNull( Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKeyA, sharedVersionId ) ),
+                    "repo A's row must be gone after the repo-A delete" );
+        VersionRecord stillInB =
+            Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKeyB, sharedVersionId ) );
+        assertNotNull( stillInB, "deleting the version in repo A must not touch repo B's row with the same version_id" );
+        assertEquals( "/p2-b", stillInB.nodePath() );
     }
 
     @Test
@@ -516,14 +555,15 @@ class EngineStoreTest
         } );
 
         // fisk has its own repo_key for the "same" external repoId (different schema entirely);
-        // querying fisk's repo_key must never see acme's row, and version_id lookups (which
-        // scan node_version without a repo_key predicate) must not cross the schema boundary.
+        // querying fisk's repo_key must never see acme's row, and version lookups must not
+        // cross the schema boundary.
         BranchEntryRecord seenFromFisk = Tx.inTenantTx( dataSource, fisk,
                                                          connection -> BranchStore.getByPath( connection, fiskRepoKey, "master",
                                                                                                "/secret" ) );
         assertNull( seenFromFisk, "tenant fisk must not see data written under tenant acme" );
 
-        VersionRecord versionSeenFromFisk = Tx.inTenantTx( dataSource, fisk, connection -> VersionStore.get( connection, versionId ) );
+        VersionRecord versionSeenFromFisk =
+            Tx.inTenantTx( dataSource, fisk, connection -> VersionStore.get( connection, fiskRepoKey, versionId ) );
         assertNull( versionSeenFromFisk, "tenant fisk must not see a version written under tenant acme" );
 
         boolean existsSeenFromFisk =

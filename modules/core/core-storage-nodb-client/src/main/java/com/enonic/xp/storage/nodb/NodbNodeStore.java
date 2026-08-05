@@ -3,7 +3,9 @@ package com.enonic.xp.storage.nodb;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
@@ -12,12 +14,20 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.google.protobuf.ByteString;
 
+import com.enonic.nodb.proto.v1.ActiveVersion;
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.DeleteVersionRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesResponse;
 import com.enonic.nodb.proto.v1.ExistsBranchEntryRequest;
 import com.enonic.nodb.proto.v1.ExistsResponse;
+import com.enonic.nodb.proto.v1.FindCommitsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsResponse;
+import com.enonic.nodb.proto.v1.GetActiveVersionsRequest;
+import com.enonic.nodb.proto.v1.GetActiveVersionsResponse;
 import com.enonic.nodb.proto.v1.GetBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
@@ -39,6 +49,8 @@ import com.enonic.xp.storage.spi.NodeSegments;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.PayloadSegment;
 import com.enonic.xp.storage.spi.SearchPreference;
+import com.enonic.xp.storage.spi.VersionQuery;
+import com.enonic.xp.storage.spi.VersionQueryResult;
 import com.enonic.xp.storage.spi.VersionRecord;
 
 /**
@@ -272,7 +284,8 @@ public class NodbNodeStore
     @Override
     public void deleteVersion( final RepositoryId repositoryId, final String versionId )
     {
-        final DeleteVersionRequest request = DeleteVersionRequest.newBuilder().setVersionId( versionId ).build();
+        final DeleteVersionRequest request =
+            DeleteVersionRequest.newBuilder().setRepoId( repositoryId.toString() ).setVersionId( versionId ).build();
         NodbStatusMapper.repoScopedVoid( () -> client.nodeStore().deleteVersion( request ) );
     }
 
@@ -281,9 +294,89 @@ public class NodbNodeStore
     public VersionRecord getVersion( final RepositoryId repositoryId, final String versionId,
                                       final @Nullable SearchPreference searchPreference )
     {
-        final GetVersionRequest request = GetVersionRequest.newBuilder().setVersionId( versionId ).build();
+        final GetVersionRequest request =
+            GetVersionRequest.newBuilder().setRepoId( repositoryId.toString() ).setVersionId( versionId ).build();
         final Version version = NodbStatusMapper.pointGet( () -> client.nodeStore().getVersion( request ) );
         return version == null ? null : RecordMapper.toSpiVersion( version );
+    }
+
+    // --- storage-index query family (Phase 3.5 Gate A, nodb/BUILD-PHASE-3.5.md) ---
+
+    /**
+     * Capability probe (see {@link NodeStore#supportsVersionQueries}): NoDB serves the
+     * whole family from Postgres, so commands may route {@link #findVersions}/
+     * {@link #diffBranches}/{@link #getActiveVersions}/{@link #findCommits} here instead
+     * of the ES storage-index flow.
+     */
+    @Override
+    public boolean supportsVersionQueries()
+    {
+        return true;
+    }
+
+    @Override
+    public VersionQueryResult findVersions( final RepositoryId repositoryId, final VersionQuery query )
+    {
+        final FindVersionsRequest request =
+            RecordMapper.toProtoVersionQuery( query ).setRepoId( repositoryId.toString() ).build();
+        final FindVersionsResponse response = NodbStatusMapper.repoScoped( () -> client.nodeStore().findVersions( request ) );
+        final List<VersionRecord> versions = new ArrayList<>();
+        for ( final Version version : response.getVersionsList() )
+        {
+            versions.add( RecordMapper.toSpiVersion( version ) );
+        }
+        return new VersionQueryResult( response.getTotalHits(), versions );
+    }
+
+    @Override
+    public List<String> diffBranches( final RepositoryId repositoryId, final Branch source, final Branch target,
+                                       final @Nullable String pathScope, final Collection<String> excludes, final int limit )
+    {
+        final DiffBranchesRequest.Builder builder = DiffBranchesRequest.newBuilder()
+            .setRepoId( repositoryId.toString() )
+            .setSourceBranch( source.getValue() )
+            .setTargetBranch( target.getValue() )
+            .addAllExcludePaths( excludes )
+            .setLimit( limit );
+        if ( pathScope != null )
+        {
+            builder.setPathScope( pathScope );
+        }
+        final DiffBranchesResponse response = NodbStatusMapper.repoScoped( () -> client.nodeStore().diffBranches( builder.build() ) );
+        return List.copyOf( response.getNodeIdsList() );
+    }
+
+    @Override
+    public Map<Branch, VersionRecord> getActiveVersions( final RepositoryId repositoryId, final String nodeId,
+                                                          final Collection<Branch> branches )
+    {
+        final GetActiveVersionsRequest.Builder builder =
+            GetActiveVersionsRequest.newBuilder().setRepoId( repositoryId.toString() ).setNodeId( nodeId );
+        for ( final Branch branch : branches )
+        {
+            builder.addBranches( branch.getValue() );
+        }
+        final GetActiveVersionsResponse response =
+            NodbStatusMapper.repoScoped( () -> client.nodeStore().getActiveVersions( builder.build() ) );
+        final Map<Branch, VersionRecord> result = new LinkedHashMap<>();
+        for ( final ActiveVersion activeVersion : response.getActiveVersionsList() )
+        {
+            result.put( Branch.from( activeVersion.getBranch() ), RecordMapper.toSpiVersion( activeVersion.getVersion() ) );
+        }
+        return result;
+    }
+
+    @Override
+    public List<CommitRecord> findCommits( final RepositoryId repositoryId )
+    {
+        final FindCommitsRequest request = FindCommitsRequest.newBuilder().setRepoId( repositoryId.toString() ).build();
+        final List<CommitRecord> result = new ArrayList<>();
+        // See getBranchEntries above: streaming RPC, wrap call + iteration together.
+        NodbStatusMapper.repoScopedVoid( () -> {
+            final Iterator<Commit> commits = client.nodeStore().findCommits( request );
+            commits.forEachRemaining( commit -> result.add( RecordMapper.toSpiCommit( commit ) ) );
+        } );
+        return result;
     }
 
     // --- commits ---
@@ -303,7 +396,8 @@ public class NodbNodeStore
     public CommitRecord getCommit( final RepositoryId repositoryId, final String commitId,
                                     final @Nullable SearchPreference searchPreference )
     {
-        final GetCommitRequest request = GetCommitRequest.newBuilder().setCommitId( commitId ).build();
+        final GetCommitRequest request =
+            GetCommitRequest.newBuilder().setRepoId( repositoryId.toString() ).setCommitId( commitId ).build();
         final Commit commit = NodbStatusMapper.pointGet( () -> client.nodeStore().getCommit( request ) );
         return commit == null ? null : RecordMapper.toSpiCommit( commit );
     }

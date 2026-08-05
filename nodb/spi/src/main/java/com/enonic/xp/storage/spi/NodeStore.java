@@ -2,6 +2,7 @@ package com.enonic.xp.storage.spi;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * System-of-record operations: branch entries, versions, commits and content-addressed
@@ -46,11 +47,24 @@ public interface NodeStore
 
     List<VersionRecord> findVersions( RepoRef repo, VersionQuery query );
 
+    /** Active version per branch for one node, one round trip; absent branches simply missing (Phase 3.5). */
+    Map<String, VersionRecord> getActiveVersions( RepoRef repo, String nodeId, Collection<String> branches );
+
+    /**
+     * Branch diff / resolve-sync-work (Phase 3.5): distinct ids of nodes in exactly one of
+     * (source, target) or in both with different version ids; scope root included,
+     * case-insensitive paths, scope/excludes per side, exact-path excludes.
+     */
+    List<String> diffBranches( RepoRef repo, String source, String target, String pathScope, Collection<String> excludes, int limit );
+
     // --- commits (COMMIT document equivalent) ---
 
     void storeCommit( RepoRef repo, CommitRecord commit );
 
     CommitRecord getCommit( RepoRef repo, String commitId );
+
+    /** All commits of the repo (RepoDumper's dump enumeration, Phase 3.5). */
+    List<CommitRecord> findCommits( RepoRef repo );
 
     // --- content-addressed payloads (node data / index config / ACL segments) ---
 

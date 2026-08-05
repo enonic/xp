@@ -9,6 +9,7 @@ import org.jspecify.annotations.Nullable;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 import com.enonic.xp.storage.spi.CommitRecord;
+import com.enonic.xp.storage.spi.VersionQuery;
 import com.enonic.xp.storage.spi.VersionRecord;
 
 /**
@@ -113,6 +114,69 @@ final class RecordMapper
             builder.setCommitter( record.committer() );
         }
         return builder.build();
+    }
+
+    /**
+     * SPI query -&gt; wire query (Phase 3.5 Gate A). {@code null} SPI fields stay at their
+     * proto3 defaults (empty string / 0 / absent message), which the server reads as "no
+     * predicate"; {@code from}/{@code size} pass through untranslated ({@code size} 0 =
+     * count-only, -1 = all — the same convention at both layers). Returns a builder so the
+     * caller can stamp the repo id on it (record mapping here never handles repo identity).
+     */
+    static com.enonic.nodb.proto.v1.FindVersionsRequest.Builder toProtoVersionQuery( final VersionQuery query )
+    {
+        final com.enonic.nodb.proto.v1.FindVersionsRequest.Builder builder = com.enonic.nodb.proto.v1.FindVersionsRequest.newBuilder()
+            .setOrder( toProtoVersionOrder( query.order() ) )
+            .setFrom( query.from() )
+            .setSize( query.size() );
+        if ( query.nodeId() != null )
+        {
+            builder.setNodeId( query.nodeId() );
+        }
+        if ( query.tsFloor() != null )
+        {
+            builder.setTsFloorMillis( query.tsFloor().toEpochMilli() );
+        }
+        if ( query.tsCeiling() != null )
+        {
+            builder.setTsCeilingMillis( query.tsCeiling().toEpochMilli() );
+        }
+        if ( query.versionIdAfter() != null )
+        {
+            builder.setVersionIdAfter( query.versionIdAfter() );
+        }
+        if ( query.blobKeyTerm() != null )
+        {
+            builder.setBlobKey( com.enonic.nodb.proto.v1.BlobKeyTerm.newBuilder()
+                                    .setBlobKey( query.blobKeyTerm().blobKey() )
+                                    .setField( toProtoBlobKeyField( query.blobKeyTerm().field() ) ) );
+        }
+        if ( query.cursor() != null )
+        {
+            builder.setCursor( com.enonic.nodb.proto.v1.VersionCursor.newBuilder()
+                                   .setTsMillis( query.cursor().ts().toEpochMilli() )
+                                   .setVersionId( query.cursor().versionId() ) );
+        }
+        return builder;
+    }
+
+    private static com.enonic.nodb.proto.v1.VersionOrder toProtoVersionOrder( final VersionQuery.Order order )
+    {
+        return switch ( order )
+        {
+            case UNORDERED -> com.enonic.nodb.proto.v1.VersionOrder.VERSION_ORDER_UNORDERED;
+            case TS_DESC_ID_ASC -> com.enonic.nodb.proto.v1.VersionOrder.VERSION_ORDER_TS_DESC_ID_ASC;
+            case ID_ASC -> com.enonic.nodb.proto.v1.VersionOrder.VERSION_ORDER_ID_ASC;
+        };
+    }
+
+    private static com.enonic.nodb.proto.v1.BlobKeyField toProtoBlobKeyField( final VersionQuery.BlobKeyField field )
+    {
+        return switch ( field )
+        {
+            case BINARY_KEYS -> com.enonic.nodb.proto.v1.BlobKeyField.BLOB_KEY_FIELD_BINARY_KEYS;
+            case NODE_DATA_HASH -> com.enonic.nodb.proto.v1.BlobKeyField.BLOB_KEY_FIELD_NODE_DATA_HASH;
+        };
     }
 
     static CommitRecord toSpiCommit( final com.enonic.nodb.proto.v1.Commit commit )

@@ -123,7 +123,7 @@ final class BenchRunner
         } ) );
         opStats.add( measure( "getVersion", config, () -> {
             String versionId = versionIds.get( random.nextInt( versionIds.size() ) );
-            client.getVersion( GetVersionRequest.newBuilder().setVersionId( versionId ).build() );
+            client.getVersion( GetVersionRequest.newBuilder().setRepoId( repoId ).setVersionId( versionId ).build() );
         } ) );
         opStats.add( measure( "writeBatch(1 node)", config, () -> {
             List<PayloadRef> payloads = new ArrayList<>();

@@ -31,6 +31,8 @@ import com.enonic.xp.storage.spi.CommitRecord;
 import com.enonic.xp.storage.spi.NodeSegments;
 import com.enonic.xp.storage.spi.PayloadSegment;
 import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
+import com.enonic.xp.storage.spi.VersionQuery;
+import com.enonic.xp.storage.spi.VersionQueryResult;
 import com.enonic.xp.storage.spi.VersionRecord;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -323,6 +325,170 @@ class NodbNodeStoreTest
                                                           List.of(), null, null ), hashOnly );
 
         assertEquals( "v11", nodeStore.getVersion( REPO, "v11", null ).versionId() );
+    }
+
+    @Test
+    void versionGetAndDeleteAreRepoScoped_sameVersionIdInTwoRepos()
+    {
+        // Phase 3.5 gate P2: version identity is (repo, version_id) on the wire — the SAME
+        // version_id string stored in TWO repos must stay independent for get and delete.
+        final RepositoryId repoB = RepositoryId.from( "otherrepo" );
+        state.repos.add( repoB.toString() );
+
+        nodeStore.storeVersion( REPO, new VersionRecord( "v-shared", "nA", "/p2-a", Instant.now(), "sha256:a", null, null, List.of(),
+                                                          null, null ), TEST_SEGMENTS );
+        nodeStore.storeVersion( repoB, new VersionRecord( "v-shared", "nB", "/p2-b", Instant.now(), "sha256:b", null, null, List.of(),
+                                                           null, null ), TEST_SEGMENTS );
+
+        assertEquals( "/p2-a", nodeStore.getVersion( REPO, "v-shared", null ).nodePath() );
+        assertEquals( "/p2-b", nodeStore.getVersion( repoB, "v-shared", null ).nodePath() );
+
+        nodeStore.deleteVersion( REPO, "v-shared" );
+
+        assertNull( nodeStore.getVersion( REPO, "v-shared", null ) );
+        assertEquals( "/p2-b", nodeStore.getVersion( repoB, "v-shared", null ).nodePath() );
+    }
+
+    @Test
+    void supportsVersionQueries_capabilityProbeIsTrue()
+    {
+        assertTrue( nodeStore.supportsVersionQueries(), "capability probe must be true so Gate B commands can route without config lookups" );
+    }
+
+    @Test
+    void findVersions_historyOrderingTotalHitsAndKeysetCursor()
+    {
+        // Four versions of one node; two share a timestamp so the version_id ASC
+        // tiebreaker is observable in the ts DESC ordering.
+        storeVersionAt( "vh-1", "nh", 1_000 );
+        storeVersionAt( "vh-2a", "nh", 2_000 );
+        storeVersionAt( "vh-2b", "nh", 2_000 );
+        storeVersionAt( "vh-3", "nh", 3_000 );
+
+        final VersionQueryResult page1 = nodeStore.findVersions( REPO,
+                                                                  new VersionQuery( "nh", null, null, null, null, null,
+                                                                                     VersionQuery.Order.TS_DESC_ID_ASC, 0, 2 ) );
+        assertEquals( 4, page1.totalHits(), "totalHits must be accurate independent of page size" );
+        assertEquals( List.of( "vh-3", "vh-2a" ), page1.versions().stream().map( VersionRecord::versionId ).toList() );
+
+        final VersionQueryResult continuation = nodeStore.findVersions( REPO, new VersionQuery( "nh", null, null, null, null,
+                                                                                                  new VersionQuery.Cursor(
+                                                                                                      Instant.ofEpochMilli( 2_000 ),
+                                                                                                      "vh-2a" ),
+                                                                                                  VersionQuery.Order.TS_DESC_ID_ASC, 0,
+                                                                                                  -1 ) );
+        assertEquals( List.of( "vh-2b", "vh-1" ), continuation.versions().stream().map( VersionRecord::versionId ).toList(),
+                      "keyset cursor must continue strictly after the last-seen (ts, version_id) with no overlap or skip" );
+    }
+
+    @Test
+    void findVersions_countOnlyAndBlobKeyTerms()
+    {
+        final VersionRecord withBinary = new VersionRecord( "vb-1", "nb", "/vb", Instant.ofEpochMilli( 1_000 ), "sha256:vb-data", null,
+                                                             null, List.of( "s3-bin-1" ), null, null );
+        nodeStore.storeVersion( REPO, withBinary, TEST_SEGMENTS );
+        final VersionRecord withoutBinary = new VersionRecord( "vb-2", "nb", "/vb", Instant.ofEpochMilli( 2_000 ), "sha256:vb-other",
+                                                                null, null, List.of(), null, null );
+        nodeStore.storeVersion( REPO, withoutBinary, TEST_SEGMENTS );
+
+        final VersionQueryResult binaryCount = nodeStore.findVersions( REPO, new VersionQuery( null, null, null, null,
+                                                                                                 new VersionQuery.BlobKeyTerm( "s3-bin-1",
+                                                                                                                                VersionQuery.BlobKeyField.BINARY_KEYS ),
+                                                                                                 null, VersionQuery.Order.UNORDERED, 0,
+                                                                                                 0 ) );
+        assertEquals( 1, binaryCount.totalHits() );
+        assertTrue( binaryCount.versions().isEmpty(), "size 0 must be count-only" );
+
+        final VersionQueryResult byDataHash = nodeStore.findVersions( REPO, new VersionQuery( null, null, null, null,
+                                                                                                new VersionQuery.BlobKeyTerm(
+                                                                                                    "sha256:vb-other",
+                                                                                                    VersionQuery.BlobKeyField.NODE_DATA_HASH ),
+                                                                                                null, VersionQuery.Order.UNORDERED, 0,
+                                                                                                -1 ) );
+        assertEquals( List.of( "vb-2" ), byDataHash.versions().stream().map( VersionRecord::versionId ).toList() );
+    }
+
+    @Test
+    void diffBranches_returnsDistinctNodeIdsHonorsScopeAndLimit()
+    {
+        final Branch draft = Branch.from( "draft" );
+        storeEntry( BRANCH, "n-both-diff", "v-old", "/a/both-diff" );
+        storeEntry( draft, "n-both-diff", "v-new", "/a/both-diff" );
+        storeEntry( BRANCH, "n-same", "v-same", "/a/same" );
+        storeEntry( draft, "n-same", "v-same", "/a/same" );
+        storeEntry( draft, "n-draft-only", "v-d", "/a/draft-only" );
+        storeEntry( draft, "n-outside", "v-o", "/elsewhere/outside" );
+
+        final List<String> all = nodeStore.diffBranches( REPO, draft, BRANCH, null, List.of(), 0 );
+        assertEquals( Set.of( "n-both-diff", "n-draft-only", "n-outside" ), Set.copyOf( all ),
+                      "both-with-different-versions dedups to one id; same-version is absent" );
+
+        final List<String> scoped = nodeStore.diffBranches( REPO, draft, BRANCH, "/A", List.of(), 0 );
+        assertEquals( Set.of( "n-both-diff", "n-draft-only" ), Set.copyOf( scoped ), "scope is case-insensitive" );
+
+        final List<String> limited = nodeStore.diffBranches( REPO, draft, BRANCH, "/a", List.of(), 1 );
+        assertEquals( 1, limited.size(), "limit 1 is the existence-only probe" );
+    }
+
+    @Test
+    void getActiveVersions_returnsVersionPerBranchWhereNodeExists()
+    {
+        final Branch draft = Branch.from( "draft" );
+        final VersionRecord masterVersion =
+            new VersionRecord( "av-m", "n-av", "/av", Instant.ofEpochMilli( 1_000 ), "sha256:av-m", null, null, List.of(), null, null );
+        final VersionRecord draftVersion =
+            new VersionRecord( "av-d", "n-av", "/av", Instant.ofEpochMilli( 2_000 ), "sha256:av-d", null, null, List.of(), null, null );
+        nodeStore.storeVersion( REPO, masterVersion, TEST_SEGMENTS );
+        nodeStore.storeVersion( REPO, draftVersion, TEST_SEGMENTS );
+        storeEntry( BRANCH, "n-av", "av-m", "/av" );
+        storeEntry( draft, "n-av", "av-d", "/av" );
+
+        final Map<Branch, VersionRecord> active =
+            nodeStore.getActiveVersions( REPO, "n-av", List.of( BRANCH, draft, Branch.from( "no-such-branch" ) ) );
+        assertEquals( 2, active.size(), "a branch without the node must simply be absent" );
+        assertEquals( "av-m", active.get( BRANCH ).versionId() );
+        assertEquals( "av-d", active.get( draft ).versionId() );
+    }
+
+    @Test
+    void findCommits_returnsOnlyThisReposCommits()
+    {
+        final RepositoryId repoB = RepositoryId.from( "otherrepo" );
+        state.repos.add( repoB.toString() );
+
+        nodeStore.storeCommit( REPO, new CommitRecord( "fc-1", "first", "user:a", Instant.ofEpochMilli( 1_000 ) ) );
+        nodeStore.storeCommit( REPO, new CommitRecord( "fc-2", "second", "user:a", Instant.ofEpochMilli( 2_000 ) ) );
+        nodeStore.storeCommit( repoB, new CommitRecord( "fc-other", "other repo", "user:b", Instant.ofEpochMilli( 1_500 ) ) );
+
+        final List<CommitRecord> commits = nodeStore.findCommits( REPO );
+        assertEquals( List.of( "fc-1", "fc-2" ), commits.stream().map( CommitRecord::commitId ).toList() );
+    }
+
+    @Test
+    void getCommit_isRepoScoped()
+    {
+        final RepositoryId repoB = RepositoryId.from( "otherrepo" );
+        state.repos.add( repoB.toString() );
+
+        nodeStore.storeCommit( REPO, new CommitRecord( "gc-scoped", "mine", "user:a", Instant.ofEpochMilli( 1_000 ) ) );
+
+        assertEquals( "mine", nodeStore.getCommit( REPO, "gc-scoped", null ).message() );
+        assertNull( nodeStore.getCommit( repoB, "gc-scoped", null ), "a commit is not addressable through another repo" );
+    }
+
+    private void storeVersionAt( final String versionId, final String nodeId, final long tsMillis )
+    {
+        nodeStore.storeVersion( REPO, new VersionRecord( versionId, nodeId, "/" + nodeId, Instant.ofEpochMilli( tsMillis ),
+                                                          "sha256:" + versionId, null, null, List.of(), null, null ), TEST_SEGMENTS );
+    }
+
+    private void storeEntry( final Branch branch, final String nodeId, final String versionId, final String nodePath )
+    {
+        nodeStore.storeVersion( REPO, new VersionRecord( versionId, nodeId, nodePath, Instant.ofEpochMilli( 1_000 ),
+                                                          "sha256:" + versionId, null, null, List.of(), null, null ), TEST_SEGMENTS );
+        nodeStore.storeBranchEntry( REPO, branch,
+                                     new BranchEntryRecord( nodeId, nodePath, versionId, "sha256:" + versionId, null, null,
+                                                             Instant.ofEpochMilli( 1_000 ) ) );
     }
 
     @Test

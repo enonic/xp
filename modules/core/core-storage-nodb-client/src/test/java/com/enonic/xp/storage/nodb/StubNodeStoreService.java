@@ -2,8 +2,12 @@ package com.enonic.xp.storage.nodb;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -12,13 +16,21 @@ import com.google.common.io.ByteSource;
 import com.google.protobuf.ByteString;
 
 import com.enonic.nodb.proto.v1.Ack;
+import com.enonic.nodb.proto.v1.ActiveVersion;
 import com.enonic.nodb.proto.v1.BranchEntry;
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.DeleteVersionRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesResponse;
 import com.enonic.nodb.proto.v1.ExistsBranchEntryRequest;
 import com.enonic.nodb.proto.v1.ExistsResponse;
+import com.enonic.nodb.proto.v1.FindCommitsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsResponse;
+import com.enonic.nodb.proto.v1.GetActiveVersionsRequest;
+import com.enonic.nodb.proto.v1.GetActiveVersionsResponse;
 import com.enonic.nodb.proto.v1.GetBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
@@ -123,7 +135,7 @@ final class StubNodeStoreService
             responseObserver.onError( Status.NOT_FOUND.withDescription( "No such branch entry" ).asRuntimeException() );
             return;
         }
-        responseObserver.onNext( joinHashes( entry ) );
+        responseObserver.onNext( joinHashes( request.getRepoId(), entry ) );
         responseObserver.onCompleted();
     }
 
@@ -139,16 +151,16 @@ final class StubNodeStoreService
             final BranchEntry entry = state.branchEntriesById.get( FakeNodbState.entryKey( request.getRepoId(), request.getBranch(), nodeId ) );
             if ( entry != null )
             {
-                responseObserver.onNext( joinHashes( entry ) );
+                responseObserver.onNext( joinHashes( request.getRepoId(), entry ) );
             }
         }
         responseObserver.onCompleted();
     }
 
     /** See class javadoc: reproduces BranchStore's read-side JOIN against node_version. */
-    private BranchEntry joinHashes( final BranchEntry entry )
+    private BranchEntry joinHashes( final String repoId, final BranchEntry entry )
     {
-        final Version version = state.versions.get( entry.getVersionId() );
+        final Version version = state.versions.get( FakeNodbState.versionKey( repoId, entry.getVersionId() ) );
         if ( version == null )
         {
             // Mirrors the real engine's FK guarantee not holding here only if a test builds
@@ -188,7 +200,7 @@ final class StubNodeStoreService
             .sorted( Comparator.comparing( BranchEntry::getNodePath ) )
             .skip( request.getFrom() )
             .limit( size )
-            .forEach( entry -> responseObserver.onNext( joinHashes( entry ) ) );
+            .forEach( entry -> responseObserver.onNext( joinHashes( request.getRepoId(), entry ) ) );
         responseObserver.onCompleted();
     }
 
@@ -226,21 +238,25 @@ final class StubNodeStoreService
         {
             return;
         }
-        state.versions.put( request.getVersion().getVersionId(), request.getVersion() );
+        state.versions.put( FakeNodbState.versionKey( request.getRepoId(), request.getVersion().getVersionId() ), request.getVersion() );
         respondAck( responseObserver );
     }
 
     @Override
     public void deleteVersion( final DeleteVersionRequest request, final StreamObserver<Ack> responseObserver )
     {
-        state.versions.remove( request.getVersionId() );
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        state.versions.remove( FakeNodbState.versionKey( request.getRepoId(), request.getVersionId() ) );
         respondAck( responseObserver );
     }
 
     @Override
     public void getVersion( final GetVersionRequest request, final StreamObserver<Version> responseObserver )
     {
-        final Version version = state.versions.get( request.getVersionId() );
+        final Version version = state.versions.get( FakeNodbState.versionKey( request.getRepoId(), request.getVersionId() ) );
         if ( version == null )
         {
             responseObserver.onError( Status.NOT_FOUND.withDescription( "No such version" ).asRuntimeException() );
@@ -257,20 +273,197 @@ final class StubNodeStoreService
         {
             return;
         }
-        state.commits.put( request.getCommit().getCommitId(), request.getCommit() );
+        state.commits.put( FakeNodbState.commitKey( request.getRepoId(), request.getCommit().getCommitId() ), request.getCommit() );
         respondAck( responseObserver );
     }
 
     @Override
     public void getCommit( final GetCommitRequest request, final StreamObserver<Commit> responseObserver )
     {
-        final Commit commit = state.commits.get( request.getCommitId() );
+        final Commit commit = state.commits.get( FakeNodbState.commitKey( request.getRepoId(), request.getCommitId() ) );
         if ( commit == null )
         {
             responseObserver.onError( Status.NOT_FOUND.withDescription( "No such commit" ).asRuntimeException() );
             return;
         }
         responseObserver.onNext( commit );
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void findCommits( final FindCommitsRequest request, final StreamObserver<Commit> responseObserver )
+    {
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        final String prefix = request.getRepoId() + "|";
+        state.commits.entrySet()
+            .stream()
+            .filter( e -> e.getKey().startsWith( prefix ) )
+            .map( Map.Entry::getValue )
+            .sorted( Comparator.comparingLong( Commit::getTimestampMillis ).thenComparing( Commit::getCommitId ) )
+            .forEach( responseObserver::onNext );
+        responseObserver.onCompleted();
+    }
+
+    /** Mirrors VersionStore.findVersions' predicate/order/paging semantics in memory (see VersionQuery's javadoc for the conventions). */
+    @Override
+    public void findVersions( final FindVersionsRequest request, final StreamObserver<FindVersionsResponse> responseObserver )
+    {
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        final String prefix = request.getRepoId() + "|";
+        final List<Version> matches = new ArrayList<>( state.versions.entrySet()
+                                                           .stream()
+                                                           .filter( e -> e.getKey().startsWith( prefix ) )
+                                                           .map( Map.Entry::getValue )
+                                                           .filter( v -> request.getNodeId().isEmpty() ||
+                                                               v.getNodeId().equals( request.getNodeId() ) )
+                                                           .filter( v -> request.getTsFloorMillis() == 0 ||
+                                                               v.getTimestampMillis() >= request.getTsFloorMillis() )
+                                                           .filter( v -> request.getTsCeilingMillis() == 0 ||
+                                                               v.getTimestampMillis() <= request.getTsCeilingMillis() )
+                                                           .filter( v -> request.getVersionIdAfter().isEmpty() ||
+                                                               v.getVersionId().compareTo( request.getVersionIdAfter() ) > 0 )
+                                                           .filter( v -> matchesBlobKey( request, v ) )
+                                                           .filter( v -> matchesCursor( request, v ) )
+                                                           .toList() );
+        switch ( request.getOrder() )
+        {
+            case VERSION_ORDER_TS_DESC_ID_ASC -> matches.sort(
+                Comparator.comparingLong( Version::getTimestampMillis ).reversed().thenComparing( Version::getVersionId ) );
+            case VERSION_ORDER_ID_ASC -> matches.sort( Comparator.comparing( Version::getVersionId ) );
+            default ->
+            {
+            }
+        }
+        final FindVersionsResponse.Builder builder = FindVersionsResponse.newBuilder().setTotalHits( matches.size() );
+        if ( request.getSize() != 0 )
+        {
+            Stream<Version> page = matches.stream().skip( request.getFrom() );
+            if ( request.getSize() > 0 )
+            {
+                page = page.limit( request.getSize() );
+            }
+            page.forEach( builder::addVersions );
+        }
+        responseObserver.onNext( builder.build() );
+        responseObserver.onCompleted();
+    }
+
+    private static boolean matchesBlobKey( final FindVersionsRequest request, final Version version )
+    {
+        if ( !request.hasBlobKey() )
+        {
+            return true;
+        }
+        return switch ( request.getBlobKey().getField() )
+        {
+            case BLOB_KEY_FIELD_BINARY_KEYS -> version.getBinaryKeysList().contains( request.getBlobKey().getBlobKey() );
+            case BLOB_KEY_FIELD_NODE_DATA_HASH -> version.getNodeDataHash().equals( request.getBlobKey().getBlobKey() );
+            case UNRECOGNIZED -> false;
+        };
+    }
+
+    private static boolean matchesCursor( final FindVersionsRequest request, final Version version )
+    {
+        if ( !request.hasCursor() )
+        {
+            return true;
+        }
+        return version.getTimestampMillis() < request.getCursor().getTsMillis() ||
+            ( version.getTimestampMillis() == request.getCursor().getTsMillis() &&
+                version.getVersionId().compareTo( request.getCursor().getVersionId() ) > 0 );
+    }
+
+    /** Mirrors BranchStore.diffBranches' pinned semantics (per-side case-insensitive scope, exact-path excludes, UNION dedup). */
+    @Override
+    public void diffBranches( final DiffBranchesRequest request, final StreamObserver<DiffBranchesResponse> responseObserver )
+    {
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        final Map<String, BranchEntry> source = entriesOfBranch( request.getRepoId(), request.getSourceBranch() );
+        final Map<String, BranchEntry> target = entriesOfBranch( request.getRepoId(), request.getTargetBranch() );
+        final Set<String> nodeIds = new LinkedHashSet<>();
+        source.forEach( ( nodeId, entry ) -> {
+            final BranchEntry other = target.get( nodeId );
+            if ( ( other == null || !other.getVersionId().equals( entry.getVersionId() ) ) && sideMatches( request, entry ) )
+            {
+                nodeIds.add( nodeId );
+            }
+        } );
+        target.forEach( ( nodeId, entry ) -> {
+            final BranchEntry other = source.get( nodeId );
+            if ( ( other == null || !other.getVersionId().equals( entry.getVersionId() ) ) && sideMatches( request, entry ) )
+            {
+                nodeIds.add( nodeId );
+            }
+        } );
+        Stream<String> result = nodeIds.stream();
+        if ( request.getLimit() > 0 )
+        {
+            result = result.limit( request.getLimit() );
+        }
+        final DiffBranchesResponse.Builder builder = DiffBranchesResponse.newBuilder();
+        result.forEach( builder::addNodeIds );
+        responseObserver.onNext( builder.build() );
+        responseObserver.onCompleted();
+    }
+
+    private Map<String, BranchEntry> entriesOfBranch( final String repoId, final String branch )
+    {
+        final String prefix = repoId + "|" + branch + "|";
+        final Map<String, BranchEntry> result = new LinkedHashMap<>();
+        state.branchEntriesById.forEach( ( key, entry ) -> {
+            if ( key.startsWith( prefix ) )
+            {
+                result.put( entry.getNodeId(), entry );
+            }
+        } );
+        return result;
+    }
+
+    private static boolean sideMatches( final DiffBranchesRequest request, final BranchEntry entry )
+    {
+        final String path = entry.getNodePath().toLowerCase();
+        if ( !request.getPathScope().isEmpty() )
+        {
+            final String scope = request.getPathScope().toLowerCase();
+            if ( !path.equals( scope ) && !path.startsWith( scope + "/" ) )
+            {
+                return false;
+            }
+        }
+        return request.getExcludePathsList().stream().noneMatch( exclude -> exclude.toLowerCase().equals( path ) );
+    }
+
+    @Override
+    public void getActiveVersions( final GetActiveVersionsRequest request, final StreamObserver<GetActiveVersionsResponse> responseObserver )
+    {
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        final GetActiveVersionsResponse.Builder builder = GetActiveVersionsResponse.newBuilder();
+        for ( final String branch : request.getBranchesList() )
+        {
+            final BranchEntry entry =
+                state.branchEntriesById.get( FakeNodbState.entryKey( request.getRepoId(), branch, request.getNodeId() ) );
+            if ( entry != null )
+            {
+                final Version version = state.versions.get( FakeNodbState.versionKey( request.getRepoId(), entry.getVersionId() ) );
+                if ( version != null )
+                {
+                    builder.addActiveVersions( ActiveVersion.newBuilder().setBranch( branch ).setVersion( version ) );
+                }
+            }
+        }
+        responseObserver.onNext( builder.build() );
         responseObserver.onCompleted();
     }
 
@@ -315,7 +508,7 @@ final class StubNodeStoreService
         }
         for ( final Version version : request.getVersionsList() )
         {
-            state.versions.put( version.getVersionId(), version );
+            state.versions.put( FakeNodbState.versionKey( request.getRepoId(), version.getVersionId() ), version );
         }
         for ( final BranchEntry entry : request.getBranchEntriesList() )
         {

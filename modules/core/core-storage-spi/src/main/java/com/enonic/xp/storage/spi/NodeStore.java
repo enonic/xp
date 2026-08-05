@@ -2,6 +2,7 @@ package com.enonic.xp.storage.spi;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -104,6 +105,79 @@ public interface NodeStore
 
     @Nullable
     VersionRecord getVersion( RepositoryId repositoryId, String versionId, @Nullable SearchPreference searchPreference );
+
+    // --- storage-index query family (Phase 3.5, nodb/BUILD-PHASE-3.5.md Gate A) ---
+    //
+    // These queries ran on the ES storage index (has_child over VERSION/BRANCH docs),
+    // which a non-ES backend never creates — for them, storage-side SQL is the only path,
+    // not an optimization. Default methods throw (the getChildren hook pattern): commands
+    // route here only when supportsVersionQueries() says the backend can answer, otherwise
+    // the legacy storage-index flow runs unchanged. No ACL filtering on any of them —
+    // storage-source queries never filtered by ACL on the ES path either (parity).
+
+    /**
+     * Capability probe for the storage-index query family: {@code true} means
+     * {@link #findVersions}, {@link #diffBranches}, {@link #getActiveVersions} and
+     * {@link #findCommits} are implemented and commands may route to them instead of the
+     * legacy storage-index flow. A probe on the injected instance, deliberately not a
+     * configuration lookup (nodb/BUILD-PHASE-3.5.md Gate 0's routing-seam decision).
+     */
+    default boolean supportsVersionQueries()
+    {
+        return false;
+    }
+
+    /**
+     * The bounded version-query surface: history-by-node (paged/ordered with keyset
+     * cursor), dump/vacuum range scans and blob-key usage checks — see
+     * {@link VersionQuery} for the exact option set and bound semantics.
+     * {@link VersionQueryResult#totalHits} is accurate regardless of the paging window.
+     */
+    default VersionQueryResult findVersions( RepositoryId repositoryId, VersionQuery query )
+    {
+        throw new UnsupportedOperationException(
+            "findVersions is not supported by this NodeStore implementation; version queries go through the search index instead (see this method's javadoc)" );
+    }
+
+    /**
+     * Branch diff / resolve-sync-work: DISTINCT ids of nodes present in exactly one of
+     * (source, target), or present in both with different version ids. Semantics pinned
+     * by nodb/BUILD-PHASE-3.5.md Gate 0 (the ES {@code DiffQueryFactory} query is the
+     * reference): the scope root itself IS included; path comparison is CASE-INSENSITIVE;
+     * {@code pathScope} and {@code excludes} are evaluated PER SIDE (each side's rows
+     * against that side's own paths — the rename-correct form); excludes match EXACT
+     * paths only, never subtrees (what makes scope = parent, excludes = [parent] mean
+     * "children of parent"). {@code pathScope} {@code null} = the whole branch;
+     * {@code limit <= 0} = all ids, {@code limit} 1 = cheap existence-only probe
+     * ({@code HasUnpublishedChildren}).
+     */
+    default List<String> diffBranches( RepositoryId repositoryId, Branch source, Branch target, @Nullable String pathScope,
+                                        Collection<String> excludes, int limit )
+    {
+        throw new UnsupportedOperationException(
+            "diffBranches is not supported by this NodeStore implementation; branch diff goes through the storage index instead (see this method's javadoc)" );
+    }
+
+    /**
+     * Active version of one node per branch, ONE round trip — collapses the per-branch
+     * {@link #getBranchEntry}+{@link #getVersion} loop. Branches where the node does not
+     * exist are simply absent from the result.
+     */
+    default Map<Branch, VersionRecord> getActiveVersions( RepositoryId repositoryId, String nodeId, Collection<Branch> branches )
+    {
+        throw new UnsupportedOperationException(
+            "getActiveVersions is not supported by this NodeStore implementation; use per-branch getBranchEntry/getVersion instead (see this method's javadoc)" );
+    }
+
+    /**
+     * All commits of the repository ({@code RepoDumper}'s dump enumeration), in a
+     * deterministic (timestamp, commit id) order.
+     */
+    default List<CommitRecord> findCommits( RepositoryId repositoryId )
+    {
+        throw new UnsupportedOperationException(
+            "findCommits is not supported by this NodeStore implementation; commit enumeration goes through the storage index instead (see this method's javadoc)" );
+    }
 
     /**
      * Combined store of a version, its payload segments, and its branch entry — the save

@@ -19,6 +19,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -131,6 +132,40 @@ class TenantProvisioningTest
 
         assertEquals( tablesAfterFirst, tablesIn( "acme" ) );
         assertEquals( templateVersionAfterFirst, templateVersion( "acme" ) );
+    }
+
+    @Test
+    void freshProvisioningAppliesAllOrderedMigrations()
+        throws SQLException
+    {
+        provisioner.provision( new TenantContext( "acme" ) );
+
+        assertEquals( 2, templateVersion( "acme" ), "001_init + 002_version_query_indexes must both apply on fresh provisioning" );
+
+        Set<String> indexes = indexesIn( "acme" );
+        assertTrue( indexes.contains( "branch_entry_path_lower" ), "002's diff-scope index must exist" );
+        assertTrue( indexes.contains( "node_version_by_node_v2" ), "002's history keyset index must exist" );
+        assertTrue( indexes.contains( "node_commit_by_repo" ), "002's per-repo commit index must exist" );
+        assertFalse( indexes.contains( "node_version_by_node" ), "002 must drop the index it replaces" );
+    }
+
+    private static Set<String> indexesIn( String schema )
+        throws SQLException
+    {
+        Set<String> indexes = new HashSet<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement( "SELECT indexname FROM pg_indexes WHERE schemaname = ?" ))
+        {
+            statement.setString( 1, schema );
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                while ( resultSet.next() )
+                {
+                    indexes.add( resultSet.getString( 1 ) );
+                }
+            }
+        }
+        return indexes;
     }
 
     private static Set<String> tablesIn( String schema )

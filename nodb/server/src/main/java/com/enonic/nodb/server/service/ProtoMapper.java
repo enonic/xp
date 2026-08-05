@@ -6,10 +6,13 @@ import java.util.Map;
 
 import com.google.protobuf.ByteString;
 
+import com.enonic.nodb.proto.v1.BlobKeyField;
 import com.enonic.nodb.proto.v1.BranchEntry;
 import com.enonic.nodb.proto.v1.Commit;
+import com.enonic.nodb.proto.v1.FindVersionsRequest;
 import com.enonic.nodb.proto.v1.Payload;
 import com.enonic.nodb.proto.v1.Version;
+import com.enonic.nodb.proto.v1.VersionOrder;
 
 /**
  * Proto &lt;-&gt; engine model conversions for the NodeStore RPCs. Kept in one place since
@@ -102,6 +105,57 @@ final class ProtoMapper
             builder.setCommitter( r.committer() );
         }
         return builder.build();
+    }
+
+    /**
+     * Wire query -&gt; engine query (Phase 3.5 Gate A). proto3 defaults (empty string, 0,
+     * absent message) map to "no predicate" ({@code null}), per FindVersionsRequest's own
+     * field comments; {@code from}/{@code size} pass through untranslated ({@code size} 0 =
+     * count-only, -1 = all — the same convention at both layers).
+     */
+    static com.enonic.nodb.engine.model.VersionQuery toEngineVersionQuery( FindVersionsRequest request )
+    {
+        return new com.enonic.nodb.engine.model.VersionQuery( request.getNodeId().isEmpty() ? null : request.getNodeId(),
+                                                                request.getTsFloorMillis() == 0
+                                                                    ? null
+                                                                    : Instant.ofEpochMilli( request.getTsFloorMillis() ),
+                                                                request.getTsCeilingMillis() == 0
+                                                                    ? null
+                                                                    : Instant.ofEpochMilli( request.getTsCeilingMillis() ),
+                                                                request.getVersionIdAfter().isEmpty()
+                                                                    ? null
+                                                                    : request.getVersionIdAfter(),
+                                                                request.hasBlobKey()
+                                                                    ? new com.enonic.nodb.engine.model.VersionQuery.BlobKeyTerm(
+                                                                        request.getBlobKey().getBlobKey(),
+                                                                        toEngineBlobKeyField( request.getBlobKey().getField() ) )
+                                                                    : null, request.hasCursor()
+                                                                    ? new com.enonic.nodb.engine.model.VersionQuery.Cursor(
+                                                                        Instant.ofEpochMilli( request.getCursor().getTsMillis() ),
+                                                                        request.getCursor().getVersionId() )
+                                                                    : null, toEngineVersionOrder( request.getOrder() ),
+                                                                request.getFrom(), request.getSize() );
+    }
+
+    private static com.enonic.nodb.engine.model.VersionQuery.BlobKeyField toEngineBlobKeyField( BlobKeyField field )
+    {
+        return switch ( field )
+        {
+            case BLOB_KEY_FIELD_BINARY_KEYS -> com.enonic.nodb.engine.model.VersionQuery.BlobKeyField.BINARY_KEYS;
+            case BLOB_KEY_FIELD_NODE_DATA_HASH -> com.enonic.nodb.engine.model.VersionQuery.BlobKeyField.NODE_DATA_HASH;
+            case UNRECOGNIZED -> throw new IllegalArgumentException( "Unrecognized blob key field" );
+        };
+    }
+
+    private static com.enonic.nodb.engine.model.VersionQuery.Order toEngineVersionOrder( VersionOrder order )
+    {
+        return switch ( order )
+        {
+            case VERSION_ORDER_UNORDERED -> com.enonic.nodb.engine.model.VersionQuery.Order.UNORDERED;
+            case VERSION_ORDER_TS_DESC_ID_ASC -> com.enonic.nodb.engine.model.VersionQuery.Order.TS_DESC_ID_ASC;
+            case VERSION_ORDER_ID_ASC -> com.enonic.nodb.engine.model.VersionQuery.Order.ID_ASC;
+            case UNRECOGNIZED -> throw new IllegalArgumentException( "Unrecognized version order" );
+        };
     }
 
     static com.enonic.nodb.engine.store.PayloadRef toEnginePayloadRef( com.enonic.nodb.proto.v1.PayloadRef ref )

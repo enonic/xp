@@ -19,13 +19,21 @@ import com.enonic.nodb.engine.store.UnknownRepoException;
 import com.enonic.nodb.engine.store.VersionStore;
 import com.enonic.nodb.engine.store.WriteService;
 import com.enonic.nodb.proto.v1.Ack;
+import com.enonic.nodb.proto.v1.ActiveVersion;
 import com.enonic.nodb.proto.v1.BranchEntry;
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.DeleteVersionRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesResponse;
 import com.enonic.nodb.proto.v1.ExistsBranchEntryRequest;
 import com.enonic.nodb.proto.v1.ExistsResponse;
+import com.enonic.nodb.proto.v1.FindCommitsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsResponse;
+import com.enonic.nodb.proto.v1.GetActiveVersionsRequest;
+import com.enonic.nodb.proto.v1.GetActiveVersionsResponse;
 import com.enonic.nodb.proto.v1.GetBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
@@ -54,15 +62,16 @@ import com.enonic.nodb.server.auth.TenantPrincipal;
  * reconciliation table) adds the standalone per-op mirrors of every other {@code
  * spi.NodeStore} method that has a real NoDB translation: StoreBranchEntry,
  * DeleteBranchEntries, ExistsBranchEntry, GetBranchEntries, GetBranchesWithNode,
- * StoreVersion, DeleteVersion, StoreCommit, GetCommit. Accepts runtime OR operator scope
- * (enforced by {@link TenantAuthInterceptor}, which only requires operator for the
- * RepositoryAdmin management RPCs).
+ * StoreVersion, DeleteVersion, StoreCommit, GetCommit. Phase 3.5 Gate A
+ * (nodb/BUILD-PHASE-3.5.md) adds the storage-index query family: FindVersions (the former
+ * empty placeholder, now unary), DiffBranches, GetActiveVersions, FindCommits — and
+ * repo-scopes GetCommit. Accepts runtime OR operator scope (enforced by
+ * {@link TenantAuthInterceptor}, which only requires operator for the RepositoryAdmin
+ * management RPCs).
  *
- * <p>Every method declared on {@code NodeStoreGrpc.NodeStoreImplBase} that is still out of
- * scope entirely (FindVersions — no XP SPI equivalent) is left un-overridden: the
- * generated base class replies {@code UNIMPLEMENTED} for any method a subclass doesn't
- * override, which is exactly the "stub" behavior the work order allows for out-of-scope
- * RPCs — no separate marker code needed.
+ * <p>Every method declared on {@code NodeStoreGrpc.NodeStoreImplBase} that is out of scope
+ * entirely is left un-overridden: the generated base class replies {@code UNIMPLEMENTED}
+ * for any method a subclass doesn't override — no separate marker code needed.
  *
  * <p>Tenant is taken ONLY from {@link TenantAuthInterceptor#PRINCIPAL_KEY} (populated by
  * the auth interceptor from the verified JWT) — request messages never carry a tenant
@@ -301,11 +310,12 @@ public final class NodeStoreService
     public void getVersion( GetVersionRequest request, StreamObserver<Version> responseObserver )
     {
         TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
         try
         {
             com.enonic.nodb.engine.model.VersionRecord result =
                 Tx.inTenantTx( dataSource, principal.tenantContext(),
-                                connection -> VersionStore.get( connection, request.getVersionId() ) );
+                                connection -> VersionStore.get( connection, repo, request.getVersionId() ) );
             if ( result == null )
             {
                 responseObserver.onError( Status.NOT_FOUND.withDescription( "No such version" ).asRuntimeException() );
@@ -346,13 +356,113 @@ public final class NodeStoreService
     public void deleteVersion( DeleteVersionRequest request, StreamObserver<Ack> responseObserver )
     {
         TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
         try
         {
             Tx.inTenantTx( dataSource, principal.tenantContext(), connection -> {
-                VersionStore.delete( connection, request.getVersionId() );
+                VersionStore.delete( connection, repo, request.getVersionId() );
                 return null;
             } );
             responseObserver.onNext( Ack.newBuilder().build() );
+            responseObserver.onCompleted();
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( mapSqlException( e ) );
+        }
+    }
+
+    @Override
+    public void findVersions( FindVersionsRequest request, StreamObserver<FindVersionsResponse> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
+        try
+        {
+            com.enonic.nodb.engine.model.VersionQuery query = ProtoMapper.toEngineVersionQuery( request );
+            com.enonic.nodb.engine.model.VersionQueryResult result =
+                Tx.inTenantTx( dataSource, principal.tenantContext(), connection -> VersionStore.findVersions( connection, repo, query ) );
+
+            FindVersionsResponse.Builder builder = FindVersionsResponse.newBuilder().setTotalHits( result.totalHits() );
+            for ( com.enonic.nodb.engine.model.VersionRecord version : result.versions() )
+            {
+                builder.addVersions( ProtoMapper.fromEngineVersion( version ) );
+            }
+            responseObserver.onNext( builder.build() );
+            responseObserver.onCompleted();
+        }
+        catch ( IllegalArgumentException e )
+        {
+            responseObserver.onError( Status.INVALID_ARGUMENT.withDescription( e.getMessage() ).asRuntimeException() );
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( mapSqlException( e ) );
+        }
+    }
+
+    @Override
+    public void diffBranches( DiffBranchesRequest request, StreamObserver<DiffBranchesResponse> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
+        String pathScope = request.getPathScope().isEmpty() ? null : request.getPathScope();
+        try
+        {
+            List<String> nodeIds = Tx.inTenantTx( dataSource, principal.tenantContext(),
+                                                    connection -> BranchStore.diffBranches( connection, repo, request.getSourceBranch(),
+                                                                                             request.getTargetBranch(), pathScope,
+                                                                                             request.getExcludePathsList(),
+                                                                                             request.getLimit() ) );
+            responseObserver.onNext( DiffBranchesResponse.newBuilder().addAllNodeIds( nodeIds ).build() );
+            responseObserver.onCompleted();
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( mapSqlException( e ) );
+        }
+    }
+
+    @Override
+    public void getActiveVersions( GetActiveVersionsRequest request, StreamObserver<GetActiveVersionsResponse> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
+        try
+        {
+            java.util.Map<String, com.enonic.nodb.engine.model.VersionRecord> active =
+                Tx.inTenantTx( dataSource, principal.tenantContext(),
+                                connection -> VersionStore.getActiveVersions( connection, repo, request.getNodeId(),
+                                                                               request.getBranchesList() ) );
+            GetActiveVersionsResponse.Builder builder = GetActiveVersionsResponse.newBuilder();
+            for ( java.util.Map.Entry<String, com.enonic.nodb.engine.model.VersionRecord> entry : active.entrySet() )
+            {
+                builder.addActiveVersions( ActiveVersion.newBuilder()
+                                               .setBranch( entry.getKey() )
+                                               .setVersion( ProtoMapper.fromEngineVersion( entry.getValue() ) ) );
+            }
+            responseObserver.onNext( builder.build() );
+            responseObserver.onCompleted();
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( mapSqlException( e ) );
+        }
+    }
+
+    @Override
+    public void findCommits( FindCommitsRequest request, StreamObserver<Commit> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
+        try
+        {
+            List<com.enonic.nodb.engine.model.CommitRecord> commits =
+                Tx.inTenantTx( dataSource, principal.tenantContext(), connection -> CommitStore.findByRepo( connection, repo ) );
+            for ( com.enonic.nodb.engine.model.CommitRecord commit : commits )
+            {
+                responseObserver.onNext( ProtoMapper.fromEngineCommit( commit ) );
+            }
             responseObserver.onCompleted();
         }
         catch ( SQLException e )
@@ -387,11 +497,12 @@ public final class NodeStoreService
     public void getCommit( GetCommitRequest request, StreamObserver<Commit> responseObserver )
     {
         TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
         try
         {
             com.enonic.nodb.engine.model.CommitRecord result =
                 Tx.inTenantTx( dataSource, principal.tenantContext(),
-                                connection -> CommitStore.get( connection, request.getCommitId() ) );
+                                connection -> CommitStore.get( connection, repo, request.getCommitId() ) );
             if ( result == null )
             {
                 responseObserver.onError( Status.NOT_FOUND.withDescription( "No such commit" ).asRuntimeException() );

@@ -291,6 +291,115 @@ public final class BranchStore
     }
 
     /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
+    public static List<String> diffBranches( Connection connection, RepoRef repo, String source, String target, String pathScope,
+                                              Collection<String> excludes, int limit )
+        throws SQLException
+    {
+        return diffBranches( connection, RepoKeys.resolve( connection, repo ), source, target, pathScope, excludes, limit );
+    }
+
+    /**
+     * Branch diff / resolve-sync-work (Phase 3.5 Gate A): DISTINCT ids of nodes present in
+     * exactly one of (source, target), or present in both with different version ids —
+     * {@code branch_entry} semantics as pinned by Gate 0 (nodb/BUILD-PHASE-3.5.md; the ES
+     * {@code DiffQueryFactory} query is the reference, not the specification):
+     * <ul>
+     *   <li>the scope root itself IS included ({@code path = scope OR path LIKE scope/%});</li>
+     *   <li>path comparison is CASE-INSENSITIVE ({@code lower(node_path)}, matching both the
+     *   lowercased ES path index and the {@code branch_entry_path_lower} index that serves
+     *   these predicates);</li>
+     *   <li>scope and excludes are evaluated PER SIDE — source rows against the source
+     *   branch's own paths, target rows against the target branch's — the form that makes
+     *   renames behave (a node moved out of scope in one branch still diffs via the branch
+     *   where it is in scope);</li>
+     *   <li>excludes match EXACT paths only (case-insensitively), never subtrees — the ES
+     *   reference is a {@code terms} query on full lowercased paths, which is what makes
+     *   the HasUnpublishedChildren pattern (scope = parent, excludes = [parent]) mean
+     *   "children of parent, excluding parent itself";</li>
+     *   <li>a node in both branches with different version ids yields ONE id (the GROUP BY
+     *   dedups, even when the paths differ between sides); same version id in both — absent.</li>
+     *   <li>result order is deterministic: ascending by the node's (lowercased) path, the
+     *   smaller of the two sides' paths when they differ — parents always precede their
+     *   children, the order the search-index path yields and resolve-sync-work consumers
+     *   assert (Phase 3.5 Gate B).</li>
+     * </ul>
+     * {@code pathScope} {@code null} means the whole branch (callers pass {@code null}, not
+     * {@code "/"}, for a root scope — the XP commands normalize). {@code limit <= 0} means
+     * all ids; {@code limit = 1} is the cheap existence-only probe (HasUnpublishedChildren).
+     */
+    public static List<String> diffBranches( Connection connection, long repoKey, String source, String target, String pathScope,
+                                              Collection<String> excludes, int limit )
+        throws SQLException
+    {
+        String sideConditions = "";
+        if ( pathScope != null )
+        {
+            sideConditions += " AND (lower(side.node_path) = ? OR lower(side.node_path) LIKE ?)";
+        }
+        if ( !excludes.isEmpty() )
+        {
+            sideConditions += " AND NOT (lower(side.node_path) = ANY(?))";
+        }
+        String oneSide = """
+            SELECT side.node_id, lower(side.node_path) AS node_path
+            FROM branch_entry side
+            LEFT JOIN branch_entry other ON other.repo_key = ? AND other.branch = ? AND other.node_id = side.node_id
+            WHERE side.repo_key = ? AND side.branch = ?
+              AND (other.node_id IS NULL OR other.version_id <> side.version_id)
+            """ + sideConditions;
+        String sql = "SELECT node_id FROM (" + oneSide + " UNION " + oneSide + ") diff GROUP BY node_id ORDER BY min(node_path)" +
+            ( limit > 0 ? " LIMIT ?" : "" );
+
+        try (PreparedStatement statement = connection.prepareStatement( sql ))
+        {
+            int index = bindDiffSide( statement, 1, connection, repoKey, source, target, pathScope, excludes );
+            index = bindDiffSide( statement, index, connection, repoKey, target, source, pathScope, excludes );
+            if ( limit > 0 )
+            {
+                statement.setInt( index, limit );
+            }
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                List<String> result = new ArrayList<>();
+                while ( resultSet.next() )
+                {
+                    result.add( resultSet.getString( 1 ) );
+                }
+                return List.copyOf( result );
+            }
+        }
+    }
+
+    private static int bindDiffSide( PreparedStatement statement, int index, Connection connection, long repoKey, String side,
+                                      String other, String pathScope, Collection<String> excludes )
+        throws SQLException
+    {
+        statement.setLong( index++, repoKey );
+        statement.setString( index++, other );
+        statement.setLong( index++, repoKey );
+        statement.setString( index++, side );
+        if ( pathScope != null )
+        {
+            String lowered = pathScope.toLowerCase();
+            statement.setString( index++, lowered );
+            statement.setString( index++, escapeLike( lowered ) + "/%" );
+        }
+        if ( !excludes.isEmpty() )
+        {
+            statement.setArray( index++, connection.createArrayOf( "text", excludes.stream()
+                .map( String::toLowerCase )
+                .toArray( String[]::new ) ) );
+        }
+        return index;
+    }
+
+    /** LIKE-pattern escaping for the scope prefix: node paths may legally contain {@code _} (and in principle {@code %}). */
+    private static String escapeLike( String value )
+    {
+        return value.replace( "\\", "\\\\" ).replace( "%", "\\%" ).replace( "_", "\\_" );
+    }
+
+    /** {@link RepoRef}-addressed variant — see {@link #getByNodeId(Connection, RepoRef, String, String)}. */
     public static void delete( Connection connection, RepoRef repo, String branch, Collection<String> nodeIds )
         throws SQLException
     {

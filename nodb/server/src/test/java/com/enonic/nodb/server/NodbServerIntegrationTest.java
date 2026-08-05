@@ -49,6 +49,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.enonic.nodb.engine.TenantContext;
 import com.enonic.nodb.engine.TenantProvisioner;
 import com.enonic.nodb.proto.v1.Ack;
+import com.enonic.nodb.proto.v1.ActiveVersion;
 import com.enonic.nodb.proto.v1.BranchEntry;
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
@@ -56,7 +57,14 @@ import com.enonic.nodb.proto.v1.CreateRepositoryRequest;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.DeleteRepositoryRequest;
 import com.enonic.nodb.proto.v1.DeleteVersionRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesRequest;
+import com.enonic.nodb.proto.v1.DiffBranchesResponse;
 import com.enonic.nodb.proto.v1.ExistsBranchEntryRequest;
+import com.enonic.nodb.proto.v1.FindCommitsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsRequest;
+import com.enonic.nodb.proto.v1.FindVersionsResponse;
+import com.enonic.nodb.proto.v1.GetActiveVersionsRequest;
+import com.enonic.nodb.proto.v1.GetActiveVersionsResponse;
 import com.enonic.nodb.proto.v1.GetBranchEntriesRequest;
 import com.enonic.nodb.proto.v1.GetBranchEntryRequest;
 import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
@@ -76,6 +84,8 @@ import com.enonic.nodb.proto.v1.StoreBranchEntryRequest;
 import com.enonic.nodb.proto.v1.StoreCommitRequest;
 import com.enonic.nodb.proto.v1.StoreVersionRequest;
 import com.enonic.nodb.proto.v1.Version;
+import com.enonic.nodb.proto.v1.VersionCursor;
+import com.enonic.nodb.proto.v1.VersionOrder;
 import com.enonic.nodb.proto.v1.WriteBatchRequest;
 import com.enonic.nodb.proto.v1.WriteBatchResponse;
 import com.enonic.nodb.server.auth.DevKeys;
@@ -312,6 +322,24 @@ class NodbServerIntegrationTest
         return new WrittenNode( nodeId, versionId );
     }
 
+    /** Version with explicit identity/timestamp (no branch entry) — the Phase 3.5 query tests need deterministic ids and ts values. */
+    private static void storeVersionForNode( NodeStoreGrpc.NodeStoreBlockingStub stub, String repoId, String nodeId, String versionId,
+                                              String nodePath, long tsMillis )
+    {
+        byte[] dataBytes = randomBytes();
+        stub.putPayload( PutPayloadRequest.newBuilder().setBytes( com.google.protobuf.ByteString.copyFrom( dataBytes ) ).build() );
+        Version version = Version.newBuilder()
+            .setVersionId( versionId )
+            .setNodeId( nodeId )
+            .setNodePath( nodePath )
+            .setTimestampMillis( tsMillis )
+            .setNodeDataHash( sha256Key( dataBytes ) )
+            .setIndexConfigHash( sha256Key( dataBytes ) )
+            .setAclHash( sha256Key( dataBytes ) )
+            .build();
+        stub.storeVersion( StoreVersionRequest.newBuilder().setRepoId( repoId ).setVersion( version ).build() );
+    }
+
     private static long countInSchema( String schema, String table, String whereClause )
         throws SQLException
     {
@@ -441,7 +469,7 @@ class NodbServerIntegrationTest
         assertEquals( versionId, fetched.getVersionId() );
 
         // GetVersion, PutPayload/GetPayload round-trip on the same fixture.
-        Version fetchedVersion = acme.getVersion( GetVersionRequest.newBuilder().setVersionId( versionId ).build() );
+        Version fetchedVersion = acme.getVersion( GetVersionRequest.newBuilder().setRepoId( repoId ).setVersionId( versionId ).build() );
         assertEquals( dataHash, fetchedVersion.getNodeDataHash() );
 
         Payload fetchedPayload = acme.getPayload( GetPayloadRequest.newBuilder().setHash( dataHash ).build() );
@@ -777,18 +805,22 @@ class NodbServerIntegrationTest
     void storeVersionStandaloneRoundTripsAndIsTenantIsolated()
     {
         String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
         NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
         NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
 
         WrittenNode written = storeVersionOnly( acme, acmeRepoId, UUID.randomUUID().toString(), "/standalone-version" );
 
-        Version fetched = acme.getVersion( GetVersionRequest.newBuilder().setVersionId( written.versionId() ).build() );
+        Version fetched =
+            acme.getVersion( GetVersionRequest.newBuilder().setRepoId( acmeRepoId ).setVersionId( written.versionId() ).build() );
         assertEquals( "/standalone-version", fetched.getNodePath() );
 
         // cross-tenant: this exact version id was never written under fisk.
         StatusRuntimeException fiskLookup = assertThrows( StatusRuntimeException.class,
-                                                            () -> fisk.getVersion(
-                                                                GetVersionRequest.newBuilder().setVersionId( written.versionId() ).build() ) );
+                                                            () -> fisk.getVersion( GetVersionRequest.newBuilder()
+                                                                                       .setRepoId( fiskRepoId )
+                                                                                       .setVersionId( written.versionId() )
+                                                                                       .build() ) );
         assertEquals( Status.Code.NOT_FOUND, fiskLookup.getStatus().getCode() );
 
         // NOT_FOUND for an unknown repo id on StoreVersion itself.
@@ -825,18 +857,56 @@ class NodbServerIntegrationTest
         storeVersionOnly( acme, acmeRepoId, sharedVersionId, "/dv-acme" );
         storeVersionOnly( fisk, fiskRepoId, sharedVersionId, "/dv-fisk" );
 
-        acme.deleteVersion( DeleteVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() );
+        acme.deleteVersion( DeleteVersionRequest.newBuilder().setRepoId( acmeRepoId ).setVersionId( sharedVersionId ).build() );
 
         StatusRuntimeException goneForAcme = assertThrows( StatusRuntimeException.class,
-                                                              () -> acme.getVersion(
-                                                                  GetVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() ) );
+                                                              () -> acme.getVersion( GetVersionRequest.newBuilder()
+                                                                                         .setRepoId( acmeRepoId )
+                                                                                         .setVersionId( sharedVersionId )
+                                                                                         .build() ) );
         assertEquals( Status.Code.NOT_FOUND, goneForAcme.getStatus().getCode() );
 
-        Version stillThereForFisk = fisk.getVersion( GetVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() );
+        Version stillThereForFisk =
+            fisk.getVersion( GetVersionRequest.newBuilder().setRepoId( fiskRepoId ).setVersionId( sharedVersionId ).build() );
         assertEquals( "/dv-fisk", stillThereForFisk.getNodePath(), "acme's delete must not remove fisk's row with the same version_id" );
 
         // deleting an already-gone id is a no-op, not an error.
-        acme.deleteVersion( DeleteVersionRequest.newBuilder().setVersionId( sharedVersionId ).build() );
+        acme.deleteVersion( DeleteVersionRequest.newBuilder().setRepoId( acmeRepoId ).setVersionId( sharedVersionId ).build() );
+    }
+
+    @Test
+    void versionIdentityIsRepoScopedWithinOneTenant()
+        throws SQLException
+    {
+        // Phase 3.5 gate P2: the SAME version_id string stored in TWO repos of ONE tenant —
+        // get must return only the addressed repo's row, and delete must not cross repos.
+        String repoA = createRepo( "acme" );
+        String repoB = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+
+        String sharedVersionId = UUID.randomUUID().toString();
+        storeVersionOnly( acme, repoA, sharedVersionId, "/p2-repo-a" );
+        storeVersionOnly( acme, repoB, sharedVersionId, "/p2-repo-b" );
+
+        Version fromA = acme.getVersion( GetVersionRequest.newBuilder().setRepoId( repoA ).setVersionId( sharedVersionId ).build() );
+        assertEquals( "/p2-repo-a", fromA.getNodePath(), "get by (repo A, version_id) must return repo A's row only" );
+        Version fromB = acme.getVersion( GetVersionRequest.newBuilder().setRepoId( repoB ).setVersionId( sharedVersionId ).build() );
+        assertEquals( "/p2-repo-b", fromB.getNodePath(), "get by (repo B, version_id) must return repo B's row only" );
+
+        acme.deleteVersion( DeleteVersionRequest.newBuilder().setRepoId( repoA ).setVersionId( sharedVersionId ).build() );
+
+        StatusRuntimeException goneInA = assertThrows( StatusRuntimeException.class,
+                                                         () -> acme.getVersion( GetVersionRequest.newBuilder()
+                                                                                    .setRepoId( repoA )
+                                                                                    .setVersionId( sharedVersionId )
+                                                                                    .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, goneInA.getStatus().getCode() );
+
+        Version stillInB = acme.getVersion( GetVersionRequest.newBuilder().setRepoId( repoB ).setVersionId( sharedVersionId ).build() );
+        assertEquals( "/p2-repo-b", stillInB.getNodePath(), "deleting in repo A must not touch repo B's row with the same version_id" );
+
+        // SQL-level ground truth: exactly one row with this version_id remains in the tenant schema.
+        assertEquals( 1, countInSchema( "acme", "node_version", "version_id = '" + sharedVersionId + "'" ) );
     }
 
     @Test
@@ -856,19 +926,22 @@ class NodbServerIntegrationTest
 
         acme.storeCommit( StoreCommitRequest.newBuilder().setRepoId( acmeRepoId ).setCommit( commit ).build() );
 
-        Commit fetched = acme.getCommit( GetCommitRequest.newBuilder().setCommitId( commitId ).build() );
+        Commit fetched = acme.getCommit( GetCommitRequest.newBuilder().setRepoId( acmeRepoId ).setCommitId( commitId ).build() );
         assertEquals( "a message", fetched.getMessage() );
         assertEquals( "user:system:admin", fetched.getCommitter() );
 
-        // cross-tenant: fisk never wrote this commit id.
+        // cross-tenant: fisk has no repo with acme's repo id, let alone this commit.
         StatusRuntimeException fiskLookup = assertThrows( StatusRuntimeException.class,
-                                                            () -> fisk.getCommit(
-                                                                GetCommitRequest.newBuilder().setCommitId( commitId ).build() ) );
+                                                            () -> fisk.getCommit( GetCommitRequest.newBuilder()
+                                                                                       .setRepoId( acmeRepoId )
+                                                                                       .setCommitId( commitId )
+                                                                                       .build() ) );
         assertEquals( Status.Code.NOT_FOUND, fiskLookup.getStatus().getCode() );
 
         // NOT_FOUND for a commit id that was simply never written.
         StatusRuntimeException missing = assertThrows( StatusRuntimeException.class,
                                                           () -> acme.getCommit( GetCommitRequest.newBuilder()
+                                                                                     .setRepoId( acmeRepoId )
                                                                                      .setCommitId( UUID.randomUUID().toString() )
                                                                                      .build() ) );
         assertEquals( Status.Code.NOT_FOUND, missing.getStatus().getCode() );
@@ -915,8 +988,10 @@ class NodbServerIntegrationTest
 
         // The rejected write persisted nothing -- not even a dangling version row.
         StatusRuntimeException notFound = assertThrows( StatusRuntimeException.class,
-                                                          () -> acme.getVersion(
-                                                              GetVersionRequest.newBuilder().setVersionId( versionId ).build() ) );
+                                                          () -> acme.getVersion( GetVersionRequest.newBuilder()
+                                                                                     .setRepoId( acmeRepoId )
+                                                                                     .setVersionId( versionId )
+                                                                                     .build() ) );
         assertEquals( Status.Code.NOT_FOUND, notFound.getStatus().getCode() );
     }
 
@@ -1000,6 +1075,219 @@ class NodbServerIntegrationTest
         // Empty request -> empty stream, not an error.
         Iterator<Payload> empty = acme.getPayloads( GetPayloadsRequest.newBuilder().build() );
         assertFalse( empty.hasNext() );
+    }
+
+    // ---- 9. Phase 3.5 Gate A: the storage-index query family -----------------------------
+
+    @Test
+    void findVersionsHistoryPagingKeysetCursorCountOnlyAndTenantIsolation()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        String nodeId = UUID.randomUUID().toString();
+        storeVersionForNode( acme, acmeRepoId, nodeId, "h1", "/h", 1_000 );
+        storeVersionForNode( acme, acmeRepoId, nodeId, "h2a", "/h", 2_000 );
+        storeVersionForNode( acme, acmeRepoId, nodeId, "h2b", "/h", 2_000 );
+        storeVersionForNode( acme, acmeRepoId, nodeId, "h3", "/h", 3_000 );
+
+        FindVersionsResponse page1 = acme.findVersions( FindVersionsRequest.newBuilder()
+                                                             .setRepoId( acmeRepoId )
+                                                             .setNodeId( nodeId )
+                                                             .setOrder( VersionOrder.VERSION_ORDER_TS_DESC_ID_ASC )
+                                                             .setSize( 2 )
+                                                             .build() );
+        assertEquals( 4, page1.getTotalHits(), "totalHits must be accurate independent of page size" );
+        assertEquals( List.of( "h3", "h2a" ),
+                      page1.getVersionsList().stream().map( Version::getVersionId ).toList(),
+                      "ts DESC with version_id ASC as the equal-ts tiebreaker" );
+
+        FindVersionsResponse continuation = acme.findVersions( FindVersionsRequest.newBuilder()
+                                                                    .setRepoId( acmeRepoId )
+                                                                    .setNodeId( nodeId )
+                                                                    .setOrder( VersionOrder.VERSION_ORDER_TS_DESC_ID_ASC )
+                                                                    .setCursor( VersionCursor.newBuilder()
+                                                                                    .setTsMillis( 2_000 )
+                                                                                    .setVersionId( "h2a" ) )
+                                                                    .setSize( -1 )
+                                                                    .build() );
+        assertEquals( List.of( "h2b", "h1" ),
+                      continuation.getVersionsList().stream().map( Version::getVersionId ).toList(),
+                      "keyset cursor continues strictly after (ts, version_id), no overlap or skip" );
+
+        FindVersionsResponse countOnly = acme.findVersions(
+            FindVersionsRequest.newBuilder().setRepoId( acmeRepoId ).setNodeId( nodeId ).build() );
+        assertEquals( 4, countOnly.getTotalHits() );
+        assertEquals( 0, countOnly.getVersionsCount(), "size 0 (the proto3 default) is count-only" );
+
+        // cross-tenant: fisk's own repo has no versions for acme's node id.
+        FindVersionsResponse fiskSees = fisk.findVersions( FindVersionsRequest.newBuilder()
+                                                                .setRepoId( fiskRepoId )
+                                                                .setNodeId( nodeId )
+                                                                .setSize( -1 )
+                                                                .build() );
+        assertEquals( 0, fiskSees.getTotalHits() );
+
+        // NOT_FOUND for an unknown repo id.
+        StatusRuntimeException unknownRepo = assertThrows( StatusRuntimeException.class,
+                                                             () -> acme.findVersions( FindVersionsRequest.newBuilder()
+                                                                                          .setRepoId( "no-such-repo-" +
+                                                                                                          UUID.randomUUID() )
+                                                                                          .setNodeId( nodeId )
+                                                                                          .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, unknownRepo.getStatus().getCode() );
+    }
+
+    @Test
+    void diffBranchesResolvesWorkWithScopeExcludesLimitAndIsTenantIsolated()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        String fiskRepoId = createRepo( "fisk" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+        NodeStoreGrpc.NodeStoreBlockingStub fisk = nodeStore( token( "fisk", Scope.RUNTIME ) );
+
+        // n-same: identical version in both branches -> absent from the diff.
+        WrittenNode same = writeNode( acme, acmeRepoId, "master", "/d/same" );
+        acme.storeBranchEntry( StoreBranchEntryRequest.newBuilder().setRepoId( acmeRepoId ).setEntry( BranchEntry.newBuilder()
+                                                                                                          .setBranch( "draft" )
+                                                                                                          .setNodeId( same.nodeId() )
+                                                                                                          .setVersionId(
+                                                                                                              same.versionId() )
+                                                                                                          .setNodePath( "/d/same" )
+                                                                                                          .setTimestampMillis(
+                                                                                                              1_000 )
+                                                                                                          .build() ).build() );
+        // n-new: draft only.
+        WrittenNode draftOnly = writeNode( acme, acmeRepoId, "draft", "/d/new" );
+        // n-edit: both branches, different versions -> ONE id.
+        WrittenNode edited = writeNode( acme, acmeRepoId, "master", "/d/edit" );
+        String editedDraftVersion = UUID.randomUUID().toString();
+        storeVersionForNode( acme, acmeRepoId, edited.nodeId(), editedDraftVersion, "/d/edit", 5_000 );
+        acme.storeBranchEntry( StoreBranchEntryRequest.newBuilder().setRepoId( acmeRepoId ).setEntry( BranchEntry.newBuilder()
+                                                                                                          .setBranch( "draft" )
+                                                                                                          .setNodeId(
+                                                                                                              edited.nodeId() )
+                                                                                                          .setVersionId(
+                                                                                                              editedDraftVersion )
+                                                                                                          .setNodePath( "/d/edit" )
+                                                                                                          .setTimestampMillis(
+                                                                                                              5_000 )
+                                                                                                          .build() ).build() );
+
+        DiffBranchesResponse whole = acme.diffBranches( DiffBranchesRequest.newBuilder()
+                                                             .setRepoId( acmeRepoId )
+                                                             .setSourceBranch( "draft" )
+                                                             .setTargetBranch( "master" )
+                                                             .build() );
+        assertEquals( Set.of( draftOnly.nodeId(), edited.nodeId() ), Set.copyOf( whole.getNodeIdsList() ),
+                      "same-version absent; both-with-different-versions dedups to one id" );
+
+        DiffBranchesResponse scoped = acme.diffBranches( DiffBranchesRequest.newBuilder()
+                                                              .setRepoId( acmeRepoId )
+                                                              .setSourceBranch( "draft" )
+                                                              .setTargetBranch( "master" )
+                                                              .setPathScope( "/D" )
+                                                              .addExcludePaths( "/d/new" )
+                                                              .build() );
+        assertEquals( Set.of( edited.nodeId() ), Set.copyOf( scoped.getNodeIdsList() ),
+                      "case-insensitive scope; exact-path exclude removes only that node" );
+
+        DiffBranchesResponse probe = acme.diffBranches( DiffBranchesRequest.newBuilder()
+                                                             .setRepoId( acmeRepoId )
+                                                             .setSourceBranch( "draft" )
+                                                             .setTargetBranch( "master" )
+                                                             .setLimit( 1 )
+                                                             .build() );
+        assertEquals( 1, probe.getNodeIdsCount(), "limit 1 is the existence-only probe" );
+
+        // cross-tenant: fisk's own repo diffs empty.
+        DiffBranchesResponse fiskDiff = fisk.diffBranches( DiffBranchesRequest.newBuilder()
+                                                                .setRepoId( fiskRepoId )
+                                                                .setSourceBranch( "draft" )
+                                                                .setTargetBranch( "master" )
+                                                                .build() );
+        assertEquals( 0, fiskDiff.getNodeIdsCount() );
+    }
+
+    @Test
+    void getActiveVersionsReturnsBranchVersionPairsInOneRoundTrip()
+    {
+        String acmeRepoId = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+
+        WrittenNode node = writeNode( acme, acmeRepoId, "master", "/av" );
+        String draftVersionId = UUID.randomUUID().toString();
+        storeVersionForNode( acme, acmeRepoId, node.nodeId(), draftVersionId, "/av", 2_000 );
+        acme.storeBranchEntry( StoreBranchEntryRequest.newBuilder().setRepoId( acmeRepoId ).setEntry( BranchEntry.newBuilder()
+                                                                                                          .setBranch( "draft" )
+                                                                                                          .setNodeId( node.nodeId() )
+                                                                                                          .setVersionId(
+                                                                                                              draftVersionId )
+                                                                                                          .setNodePath( "/av" )
+                                                                                                          .setTimestampMillis(
+                                                                                                              2_000 )
+                                                                                                          .build() ).build() );
+
+        GetActiveVersionsResponse response = acme.getActiveVersions( GetActiveVersionsRequest.newBuilder()
+                                                                          .setRepoId( acmeRepoId )
+                                                                          .setNodeId( node.nodeId() )
+                                                                          .addBranches( "master" )
+                                                                          .addBranches( "draft" )
+                                                                          .addBranches( "no-such-branch" )
+                                                                          .build() );
+        assertEquals( 2, response.getActiveVersionsCount(), "a branch without the node is simply absent" );
+        java.util.Map<String, Version> byBranch = new java.util.HashMap<>();
+        for ( ActiveVersion activeVersion : response.getActiveVersionsList() )
+        {
+            byBranch.put( activeVersion.getBranch(), activeVersion.getVersion() );
+        }
+        assertEquals( node.versionId(), byBranch.get( "master" ).getVersionId() );
+        assertEquals( draftVersionId, byBranch.get( "draft" ).getVersionId() );
+        assertEquals( "/av", byBranch.get( "draft" ).getNodePath(), "the full version record rides along" );
+    }
+
+    @Test
+    void findCommitsStreamsOnlyTheReposCommitsAndGetCommitIsRepoScoped()
+    {
+        String repoA = createRepo( "acme" );
+        String repoB = createRepo( "acme" );
+        NodeStoreGrpc.NodeStoreBlockingStub acme = nodeStore( token( "acme", Scope.RUNTIME ) );
+
+        String commitId1 = UUID.randomUUID().toString();
+        String commitId2 = UUID.randomUUID().toString();
+        String commitIdB = UUID.randomUUID().toString();
+        acme.storeCommit( StoreCommitRequest.newBuilder().setRepoId( repoA ).setCommit( Commit.newBuilder()
+                                                                                            .setCommitId( commitId1 )
+                                                                                            .setMessage( "first" )
+                                                                                            .setTimestampMillis( 1_000 )
+                                                                                            .build() ).build() );
+        acme.storeCommit( StoreCommitRequest.newBuilder().setRepoId( repoA ).setCommit( Commit.newBuilder()
+                                                                                            .setCommitId( commitId2 )
+                                                                                            .setMessage( "second" )
+                                                                                            .setTimestampMillis( 2_000 )
+                                                                                            .build() ).build() );
+        acme.storeCommit( StoreCommitRequest.newBuilder().setRepoId( repoB ).setCommit( Commit.newBuilder()
+                                                                                            .setCommitId( commitIdB )
+                                                                                            .setMessage( "other repo" )
+                                                                                            .setTimestampMillis( 1_500 )
+                                                                                            .build() ).build() );
+
+        Iterator<Commit> commits = acme.findCommits( FindCommitsRequest.newBuilder().setRepoId( repoA ).build() );
+        List<String> streamed = new java.util.ArrayList<>();
+        commits.forEachRemaining( commit -> streamed.add( commit.getCommitId() ) );
+        assertEquals( List.of( commitId1, commitId2 ), streamed, "only repo A's commits, ordered by (ts, commit_id)" );
+
+        // Repo-scoped get (the Gate 0 holdout): repo A's commit is not addressable via repo B.
+        StatusRuntimeException wrongRepo = assertThrows( StatusRuntimeException.class,
+                                                           () -> acme.getCommit( GetCommitRequest.newBuilder()
+                                                                                      .setRepoId( repoB )
+                                                                                      .setCommitId( commitId1 )
+                                                                                      .build() ) );
+        assertEquals( Status.Code.NOT_FOUND, wrongRepo.getStatus().getCode() );
+        assertEquals( "first",
+                      acme.getCommit( GetCommitRequest.newBuilder().setRepoId( repoA ).setCommitId( commitId1 ).build() ).getMessage() );
     }
 
     // ---- 7. Phase 1 Gate A: RepositoryExists + the ALREADY_EXISTS bug fix ----------------
