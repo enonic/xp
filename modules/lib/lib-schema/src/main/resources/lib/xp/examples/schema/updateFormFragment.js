@@ -19,9 +19,8 @@ form:
 
 // BEGIN
 // Update dynamic form fragment.
-var result = schemaLib.updateSchema({
+var result = schemaLib.updateFormFragment({
     name: 'myapp:mytype',
-    type: 'FORM_FRAGMENT',
     resource
 
 });

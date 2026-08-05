@@ -37,9 +37,8 @@ config:
 
 // BEGIN
 // Create dynamic part.
-var result = schemaLib.createComponent({
+var result = schemaLib.createPart({
     key: 'myapp:mypart',
-    type: 'PART',
     resource
 
 });

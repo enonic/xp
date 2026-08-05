@@ -7,11 +7,10 @@ var assert = require('/lib/xp/testing');
 // Delete dynamic layout.
 
 var params = {
-    key: 'myapp:mylayout',
-    type: 'LAYOUT'
+    key: 'myapp:mylayout'
 };
 
-var result = schemaLib.deleteComponent(params);
+var result = schemaLib.deleteLayout(params);
 
 
 if (result) {

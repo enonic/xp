@@ -26,9 +26,8 @@ config:
 
 // BEGIN
 // Create dynamic content type.
-var result = schemaLib.createSchema({
+var result = schemaLib.createContentType({
     name: 'myapp:mytype',
-    type: 'CONTENT_TYPE',
     resource
 
 });

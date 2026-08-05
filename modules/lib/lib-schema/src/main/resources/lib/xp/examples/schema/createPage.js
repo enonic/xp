@@ -29,9 +29,8 @@ regions:
 
 // BEGIN
 // Create dynamic page.
-var result = schemaLib.createComponent({
+var result = schemaLib.createPage({
     key: 'myapp:mypage',
-    type: 'PAGE',
     resource
 
 });

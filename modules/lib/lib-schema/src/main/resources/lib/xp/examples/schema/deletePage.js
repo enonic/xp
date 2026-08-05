@@ -7,11 +7,10 @@ var assert = require('/lib/xp/testing');
 // Delete dynamic page.
 
 var params = {
-    key: 'myapp:mypage',
-    type: 'PAGE'
+    key: 'myapp:mypage'
 };
 
-var result = schemaLib.deleteComponent(params);
+var result = schemaLib.deletePage(params);
 
 
 if (result) {

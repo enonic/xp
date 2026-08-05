@@ -5,9 +5,8 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Fetch dynamic content type.
-var result = schemaLib.getSchema({
-    name: 'myapp:mytype',
-    type: 'CONTENT_TYPE'
+var result = schemaLib.getContentType({
+    name: 'myapp:mytype'
 });
 
 log.info('Fetched content type: ' + result.name);
@@ -20,7 +19,28 @@ assert.assertJsonEquals({
     title: 'My type display name',
     description: 'My type description',
     modifiedTime: '2010-01-01T10:00:00Z',
-    resource: '<content-type><some-data></some-data></content-type>',
+    resource: 'kind: "ContentType"\n' +
+              'superType: "base:structured"\n' +
+              'title: "My type display name"\n' +
+              'description: "My type description"\n' +
+              'allowChildContentType:\n' +
+              '- "myapp:other-type"\n' +
+              '- "myapp:another-type"\n' +
+              'displayNamePlaceholder: "Enter a display name"\n' +
+              'displayNameExpression: "${title}"\n' +
+              'form:\n' +
+              '- type: "FieldSet"\n' +
+              '  label: "My layout"\n' +
+              '  items:\n' +
+              '  - type: "ItemSet"\n' +
+              '    name: "mySet"\n' +
+              '    occurrences:\n' +
+              '      min: 1\n' +
+              '      max: 1\n' +
+              '    items:\n' +
+              '    - type: "TextLine"\n' +
+              '      name: "myInput"\n' +
+              '      label: "Input"\n',
     type: 'CONTENT_TYPE',
     superType: 'base:structured',
     abstract: false,

@@ -91,13 +91,6 @@ class UpdateDynamicComponentHandlerTest
         runScript( "/lib/xp/examples/schema/updatePage.js" );
     }
 
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/UpdateDynamicComponentHandlerTest.js", "updateInvalidComponentType" );
-    }
-
     @Test
     void testInvalidSchema()
     {

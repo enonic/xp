@@ -7,17 +7,16 @@ var assert = require('/lib/xp/testing');
 // Delete dynamic content type.
 
 var params = {
-    name: 'myapp:mytype',
-    type: 'CONTENT_TYPE'
+    name: 'myapp:mytype'
 };
 
-var result = schemaLib.deleteSchema(params);
+var result = schemaLib.deleteContentType(params);
 
 
 if (result) {
-    log.info('Deleted content type: ' + params.key);
+    log.info('Deleted content type: ' + params.name);
 } else {
-    log.info('Content type deletion failed: ' + params.key);
+    log.info('Content type deletion failed: ' + params.name);
 }
 
 // END

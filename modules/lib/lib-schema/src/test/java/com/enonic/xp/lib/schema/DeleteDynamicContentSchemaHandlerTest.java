@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.schema;
 
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
@@ -48,10 +47,4 @@ class DeleteDynamicContentSchemaHandlerTest
         runScript( "/lib/xp/examples/schema/deleteMixin.js" );
     }
 
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/DeleteDynamicContentSchemaHandlerTest.js", "deleteInvalidContentSchemaType" );
-    }
 }

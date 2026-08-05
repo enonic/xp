@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.schema;
 
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
@@ -48,10 +47,4 @@ class DeleteDynamicComponentHandlerTest
         runScript( "/lib/xp/examples/schema/deletePage.js" );
     }
 
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/DeleteDynamicComponentHandlerTest.js", "deleteInvalidComponentType" );
-    }
 }

@@ -16,9 +16,8 @@ form:
 
 // BEGIN
 // Update dynamic mixin.
-var result = schemaLib.updateSchema({
+var result = schemaLib.updateMixin({
     name: 'myapp:mydata',
-    type: 'MIXIN',
     resource
 
 });

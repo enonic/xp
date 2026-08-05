@@ -106,16 +106,9 @@ class CreateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    void testInvalidContentSchemaType()
-    {
-        runFunction( "/test/CreateDynamicContentSchemaHandlerTest.js", "createInvalidContentSchemaType" );
-    }
-
-    @Test
     void testInvalidContentSchema()
     {
         runFunction( "/test/CreateDynamicContentSchemaHandlerTest.js", "createInvalidContentSchema" );
     }
-
 
 }

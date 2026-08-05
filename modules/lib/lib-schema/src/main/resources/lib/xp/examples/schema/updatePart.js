@@ -37,8 +37,8 @@ config:
 
 // BEGIN
 // Update dynamic part.
-var result = schemaLib.updateComponent({
-    key: 'myapp:mypart', type: 'PART', resource
+var result = schemaLib.updatePart({
+    key: 'myapp:mypart', resource
 
 });
 

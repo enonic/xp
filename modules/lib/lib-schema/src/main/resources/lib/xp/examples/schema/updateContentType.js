@@ -21,9 +21,8 @@ form:
 
 // BEGIN
 // Update dynamic content type.
-var result = schemaLib.updateSchema({
+var result = schemaLib.updateContentType({
     name: 'myapp:mytype',
-    type: 'CONTENT_TYPE',
     resource
 
 });

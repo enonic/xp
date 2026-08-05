@@ -91,13 +91,6 @@ class CreateDynamicComponentHandlerTest
         runScript( "/lib/xp/examples/schema/createPage.js" );
     }
 
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/CreateDynamicComponentHandlerTest.js", "createInvalidComponentType" );
-    }
-
     @Test
     void testInvalidSchema()
     {

@@ -4,20 +4,11 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 exports.updateInvalidContentSchema = function () {
-    assert.assertThrows(() => schemaLib.updateSchema({
+    assert.assertThrows(() => schemaLib.updateContentType({
         name: 'myapp:mydata',
-        type: 'CONTENT_TYPE',
         resource: `<?xml version='1.0' encoding='UTF-8'?>
         <content-type xmlns='urn:enonic:xp:model:1.0'>
         </content-type>`
-    }));
-};
-
-exports.updateInvalidContentSchemaType = function () {
-    assert.assertThrows(() => schemaLib.updateSchema({
-        name: 'myapp:mydata',
-        type: 'INVALID_TYPE',
-        resource: ''
     }));
 };
 
@@ -159,9 +150,8 @@ form:
 `;
 
 exports.updateWithForm = function () {
-    let result = schemaLib.updateSchema({
+    let result = schemaLib.updateContentType({
         name: 'myapp:mydata',
-        type: 'CONTENT_TYPE',
         resource
     });
 

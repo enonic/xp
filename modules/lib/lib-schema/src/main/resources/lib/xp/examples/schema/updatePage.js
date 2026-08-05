@@ -29,9 +29,8 @@ regions:
 
 // BEGIN
 // Update dynamic page.
-var result = schemaLib.updateComponent({
+var result = schemaLib.updatePage({
     key: 'myapp:mypage',
-    type: 'PAGE',
     resource
 
 });

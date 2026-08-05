@@ -62,9 +62,8 @@ regions:
 
 // BEGIN
 // Create dynamic layout.
-var result = schemaLib.createComponent({
+var result = schemaLib.createLayout({
     key: 'myapp:mylayout',
-    type: 'LAYOUT',
     resource
 
 });

@@ -48,9 +48,8 @@ regions:
 
 // BEGIN
 // Update dynamic layout.
-var result = schemaLib.updateComponent({
+var result = schemaLib.updateLayout({
     key: 'myapp:mylayout',
-    type: 'LAYOUT',
     resource
 
 });

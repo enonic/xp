@@ -5,9 +5,8 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Fetch dynamic page.
-var result = schemaLib.getComponent({
-    key: 'myapp:mypage',
-    type: 'PAGE'
+var result = schemaLib.getPage({
+    key: 'myapp:mypage'
 });
 
 log.info('Fetched page: ' + result.key);
@@ -22,7 +21,17 @@ assert.assertJsonEquals({
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/pages/mypage',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    resource: '<page><some-data></some-data></page>',
+    resource: 'kind: "Page"\n' +
+              'title: "News page"\n' +
+              'description:\n' +
+              '  text: "My news page"\n' +
+              '  i18n: "key.description"\n' +
+              'form:\n' +
+              '- type: "Double"\n' +
+              '  name: "width"\n' +
+              '  label: "width"\n' +
+              'regions:\n' +
+              '- "region-one"\n',
     type: 'PAGE',
     form: [
         {

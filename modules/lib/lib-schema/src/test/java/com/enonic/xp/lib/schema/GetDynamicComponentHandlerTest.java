@@ -49,7 +49,17 @@ class GetDynamicComponentHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<part><some-data></some-data></part>" );
+            when( resource.readString() ).thenReturn( """
+                kind: "Part"
+                title: "News part"
+                description:
+                  text: "My news part"
+                  i18n: "key.description"
+                form:
+                - type: "Double"
+                  name: "width"
+                  label: "width"
+                """ );
 
             return new DynamicSchemaResult<PartDescriptor>( partDescriptor, resource );
         } );
@@ -83,7 +93,19 @@ class GetDynamicComponentHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<layout><some-data></some-data></layout>" );
+            when( resource.readString() ).thenReturn( """
+                kind: "Layout"
+                title: "News layout"
+                description:
+                  text: "My news layout"
+                  i18n: "key.description"
+                form:
+                - type: "Double"
+                  name: "width"
+                  label: "width"
+                regions:
+                - "region-one"
+                """ );
 
             return new DynamicSchemaResult<LayoutDescriptor>( layoutDescriptor, resource );
         } );
@@ -117,19 +139,24 @@ class GetDynamicComponentHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<page><some-data></some-data></page>" );
+            when( resource.readString() ).thenReturn( """
+                kind: "Page"
+                title: "News page"
+                description:
+                  text: "My news page"
+                  i18n: "key.description"
+                form:
+                - type: "Double"
+                  name: "width"
+                  label: "width"
+                regions:
+                - "region-one"
+                """ );
 
             return new DynamicSchemaResult<PageDescriptor>( pageDescriptor, resource );
         } );
 
         runScript( "/lib/xp/examples/schema/getPage.js" );
-    }
-
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/GetDynamicComponentHandlerTest.js", "getInvalidComponentType" );
     }
 
     @Test

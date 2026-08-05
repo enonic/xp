@@ -18,9 +18,8 @@ form:
 
 // BEGIN
 // Create dynamic form fragment.
-var result = schemaLib.createSchema({
+var result = schemaLib.createFormFragment({
     name: 'myapp:mytype',
-    type: 'FORM_FRAGMENT',
     resource
 
 });

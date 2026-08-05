@@ -16,9 +16,8 @@ form:
 
 // BEGIN
 // Create dynamic mixin.
-var result = schemaLib.createSchema({
+var result = schemaLib.createMixin({
     name: 'myapp:mydata',
-    type: 'MIXIN',
     resource
 
 });

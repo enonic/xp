@@ -5,9 +5,8 @@ var assert = require('/lib/xp/testing');
 
 // BEGIN
 // Fetch dynamic part.
-var result = schemaLib.getComponent({
-    key: 'myapp:mypart',
-    type: 'PART'
+var result = schemaLib.getPart({
+    key: 'myapp:mypart'
 });
 
 log.info('Fetched part: ' + result.key);
@@ -22,7 +21,15 @@ assert.assertJsonEquals({
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/parts/mypart',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    resource: '<part><some-data></some-data></part>',
+    resource: 'kind: "Part"\n' +
+              'title: "News part"\n' +
+              'description:\n' +
+              '  text: "My news part"\n' +
+              '  i18n: "key.description"\n' +
+              'form:\n' +
+              '- type: "Double"\n' +
+              '  name: "width"\n' +
+              '  label: "width"\n',
     type: 'PART',
     form: [
         {
