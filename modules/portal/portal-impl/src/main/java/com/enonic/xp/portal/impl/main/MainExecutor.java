@@ -31,8 +31,7 @@ import com.enonic.xp.script.runtime.BootstrapParams;
  * Applications are OSGi {@link Application} services, registered while active and unregistered on
  * stop, so this component simply tracks them: DS activation is gated on the deploy-ready Condition
  * (so nothing runs until the initial deployment is complete), and opening the tracker replays every
- * already-active application plus delivers future ones — no {@code ApplicationListener}, no missed
- * events regardless of boot order.
+ * already-active application plus delivers future ones — no missed events regardless of boot order.
  */
 // a pure side-effect component: it bootstraps applications and provides no service
 @Component(immediate = true, service = {})
