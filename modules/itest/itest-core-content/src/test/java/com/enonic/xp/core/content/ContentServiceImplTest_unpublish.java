@@ -12,6 +12,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.UnpublishContentParams;
+import com.enonic.xp.content.UpdateContentParams;
+import com.enonic.xp.content.WorkflowInfo;
 import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -57,6 +59,51 @@ class ContentServiceImplTest_unpublish
         assertNull( unpublishedContent.getPublishInfo().to() );
         assertNotNull( unpublishedContent.getPublishInfo().first() );
         assertEquals( WorkflowState.READY, unpublishedContent.getWorkflowInfo().getState() );
+    }
+
+    @Test
+    void unpublish_keeps_workflow_state()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "This is my content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .workflowInfo( WorkflowInfo.ready() )
+                                                                .build() );
+
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        this.contentService.unpublish( UnpublishContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        assertEquals( WorkflowState.READY, this.contentService.getById( content.getId() ).getWorkflowInfo().getState() );
+    }
+
+    @Test
+    void unpublish_modified_content_keeps_in_progress_workflow_state()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "This is my content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .workflowInfo( WorkflowInfo.ready() )
+                                                                .build() );
+
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        final UpdateContentParams updateParams = new UpdateContentParams();
+        updateParams.contentId( content.getId() ).editor( edit -> edit.displayName = "new display name" );
+
+        this.contentService.update( updateParams );
+
+        assertEquals( WorkflowState.IN_PROGRESS, this.contentService.getById( content.getId() ).getWorkflowInfo().getState() );
+
+        this.contentService.unpublish( UnpublishContentParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        final Content unpublishedContent = this.contentService.getById( content.getId() );
+        assertEquals( "new display name", unpublishedContent.getDisplayName() );
+        assertEquals( WorkflowState.IN_PROGRESS, unpublishedContent.getWorkflowInfo().getState() );
     }
 
     @Test
