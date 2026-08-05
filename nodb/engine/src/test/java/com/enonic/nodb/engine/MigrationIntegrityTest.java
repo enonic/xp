@@ -69,13 +69,19 @@ class MigrationIntegrityTest
         TenantContext tenant = new TenantContext( "p3fresh" );
         provisioner.provision( tenant );
 
-        assertEquals( 2, templateVersion( "p3fresh" ) );
-        assertEquals( 2, recordedVersions( "p3fresh" ).size() );
+        // Derived from the manifest rather than hardcoded, so adding a migration (Phase 4 Gate A
+        // added 003) does not make this test a chore that gets weakened instead of updated.
+        assertEquals( migrations.size(), templateVersion( "p3fresh" ) );
+        assertEquals( migrations.size(), recordedVersions( "p3fresh" ).size() );
 
+        for ( int version = 1; version <= migrations.size(); version++ )
+        {
+            assertEquals( migrations.get( version - 1 ).name(), recordedName( "p3fresh", version ) );
+            assertEquals( migrations.get( version - 1 ).checksum(), recordedChecksum( "p3fresh", version ) );
+        }
         assertEquals( "001_init.sql", recordedName( "p3fresh", 1 ) );
         assertEquals( "002_version_query_indexes.sql", recordedName( "p3fresh", 2 ) );
-        assertEquals( migrations.get( 0 ).checksum(), recordedChecksum( "p3fresh", 1 ) );
-        assertEquals( migrations.get( 1 ).checksum(), recordedChecksum( "p3fresh", 2 ) );
+        assertEquals( "003_search_index.sql", recordedName( "p3fresh", 3 ) );
         assertTrue( recordedChecksum( "p3fresh", 1 ).startsWith( "sha256:" ) );
     }
 
@@ -90,14 +96,18 @@ class MigrationIntegrityTest
         assertEquals( 1, templateVersion( "p3upgrade" ) );
         assertEquals( Set.of( 1 ), recordedVersions( "p3upgrade" ) );
         assertFalse( indexesIn( "p3upgrade" ).contains( "branch_entry_path_lower" ), "002 must not be applied yet" );
+        assertFalse( indexesIn( "p3upgrade" ).contains( "search_document_replay" ), "003 must not be applied yet" );
 
         provisioner.provision( tenant );
 
-        assertEquals( 2, templateVersion( "p3upgrade" ) );
-        assertEquals( Set.of( 1, 2 ), recordedVersions( "p3upgrade" ) );
-        assertEquals( migrations.get( 0 ).checksum(), recordedChecksum( "p3upgrade", 1 ) );
-        assertEquals( migrations.get( 1 ).checksum(), recordedChecksum( "p3upgrade", 2 ) );
+        assertEquals( migrations.size(), templateVersion( "p3upgrade" ) );
+        assertEquals( allVersions(), recordedVersions( "p3upgrade" ) );
+        for ( int version = 1; version <= migrations.size(); version++ )
+        {
+            assertEquals( migrations.get( version - 1 ).checksum(), recordedChecksum( "p3upgrade", version ) );
+        }
         assertTrue( indexesIn( "p3upgrade" ).contains( "branch_entry_path_lower" ), "002 must be applied by the upgrade run" );
+        assertTrue( indexesIn( "p3upgrade" ).contains( "search_document_replay" ), "003 must be applied by the upgrade run" );
     }
 
     @Test
@@ -115,7 +125,7 @@ class MigrationIntegrityTest
         assertTrue( thrown.getMessage().contains( "migrations are immutable" ),
                     "expected the specific immutability error, got: " + thrown.getMessage() );
 
-        assertEquals( 2, templateVersion( "p3tamper" ) );
+        assertEquals( migrations.size(), templateVersion( "p3tamper" ) );
         assertEquals( migrations.get( 1 ).checksum(), recordedChecksum( "p3tamper", 2 ), "the recorded checksum must not be rewritten" );
         assertFalse( indexesIn( "p3tamper" ).contains( "p3_tampered_index" ), "the tampered DDL must not have run" );
     }
@@ -130,9 +140,9 @@ class MigrationIntegrityTest
         Migration reformatted =
             new Migration( migrations.get( 1 ).name(), migrations.get( 1 ).sql().replace( "\n", "  \r\n" ) + "\r\n\r\n" );
 
-        provisioner.provision( tenant, List.of( migrations.get( 0 ), reformatted ) );
+        provisioner.provision( tenant, replacing( 1, reformatted ) );
 
-        assertEquals( 2, templateVersion( "p3space" ) );
+        assertEquals( migrations.size(), templateVersion( "p3space" ) );
         assertEquals( migrations.get( 1 ).checksum(), recordedChecksum( "p3space", 2 ) );
     }
 
@@ -143,8 +153,7 @@ class MigrationIntegrityTest
         TenantContext tenant = new TenantContext( "p3rename" );
         provisioner.provision( tenant );
 
-        List<Migration> renamed =
-            List.of( migrations.get( 0 ), new Migration( "002_version_query_indices.sql", migrations.get( 1 ).sql() ) );
+        List<Migration> renamed = replacing( 1, new Migration( "002_version_query_indices.sql", migrations.get( 1 ).sql() ) );
 
         MigrationIntegrityException thrown =
             assertThrows( MigrationIntegrityException.class, () -> provisioner.provision( tenant, renamed ) );
@@ -184,7 +193,7 @@ class MigrationIntegrityTest
     void aGapInMigrationNumberingIsRejected()
     {
         TenantContext tenant = new TenantContext( "p3gap" );
-        List<Migration> gapped = List.of( migrations.get( 0 ), new Migration( "003_later.sql", "SELECT 1" ) );
+        List<Migration> gapped = List.of( migrations.get( 0 ), new Migration( "004_later.sql", "SELECT 1" ) );
 
         MigrationIntegrityException thrown =
             assertThrows( MigrationIntegrityException.class, () -> provisioner.provision( tenant, gapped ) );
@@ -214,14 +223,14 @@ class MigrationIntegrityTest
 
         forgetRecordedChecksums( "p3adopt" );
         assertTrue( recordedVersions( "p3adopt" ).isEmpty(), "the pre-P3 tenant shape has a template_version but no checksums" );
-        assertEquals( 2, templateVersion( "p3adopt" ) );
+        assertEquals( migrations.size(), templateVersion( "p3adopt" ) );
 
         provisioner.provision( tenant );
 
-        assertEquals( Set.of( 1, 2 ), recordedVersions( "p3adopt" ), "adoption must record a baseline instead of failing" );
+        assertEquals( allVersions(), recordedVersions( "p3adopt" ), "adoption must record a baseline instead of failing" );
         assertEquals( migrations.get( 0 ).checksum(), recordedChecksum( "p3adopt", 1 ) );
         assertEquals( migrations.get( 1 ).checksum(), recordedChecksum( "p3adopt", 2 ) );
-        assertEquals( 2, templateVersion( "p3adopt" ) );
+        assertEquals( migrations.size(), templateVersion( "p3adopt" ) );
 
         // The adopted baseline is a real baseline: tampering is detected from now on.
         assertThrows( MigrationIntegrityException.class, () -> provisioner.provision( tenant, tamper002() ) );
@@ -246,15 +255,37 @@ class MigrationIntegrityTest
         forgetRecordedChecksums( "p3duala" );
         provisioner.provision( one );
 
-        assertEquals( Set.of( 1, 2 ), recordedVersions( "p3duala" ) );
-        assertEquals( Set.of( 1, 2 ), recordedVersions( "p3dualb" ) );
+        assertEquals( allVersions(), recordedVersions( "p3duala" ) );
+        assertEquals( allVersions(), recordedVersions( "p3dualb" ) );
         assertThrows( MigrationIntegrityException.class, () -> provisioner.provision( two, tamper002() ) );
     }
 
+    /**
+     * The full manifest with 002 edited. Must be the FULL list, not a truncated one: a short list
+     * would trip the forward-only check first and the test would pass for the wrong reason.
+     */
     private static List<Migration> tamper002()
     {
-        return List.of( migrations.get( 0 ), new Migration( migrations.get( 1 ).name(), migrations.get( 1 ).sql() +
+        return replacing( 1, new Migration( migrations.get( 1 ).name(), migrations.get( 1 ).sql() +
             "\nCREATE INDEX p3_tampered_index ON node_commit (commit_id);\n" ) );
+    }
+
+    /** The manifest with one slot swapped out — keeps these tests independent of how many migrations exist. */
+    private static List<Migration> replacing( int index, Migration replacement )
+    {
+        List<Migration> modified = new java.util.ArrayList<>( migrations );
+        modified.set( index, replacement );
+        return List.copyOf( modified );
+    }
+
+    private static Set<Integer> allVersions()
+    {
+        Set<Integer> versions = new java.util.HashSet<>();
+        for ( int version = 1; version <= migrations.size(); version++ )
+        {
+            versions.add( version );
+        }
+        return versions;
     }
 
     private static void forgetRecordedChecksums( String tenantId )

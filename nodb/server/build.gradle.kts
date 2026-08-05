@@ -26,6 +26,9 @@ dependencies {
     implementation(libs.slf4j.api)
     implementation(libs.hikaricp)
     implementation(libs.postgresql)
+    // Same reason as hikaricp/postgresql above: `implementation` deps don't leak transitively, and
+    // the search services hand Jackson nodes to the engine's index/projection code.
+    implementation(libs.jackson.databind)
 
     implementation(libs.bundles.grpc.server)
     implementation(libs.protobuf.java)

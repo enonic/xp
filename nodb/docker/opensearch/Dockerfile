@@ -1,7 +1,25 @@
+# ┌──────────────────────────────────────────────────────────────────────────────────────┐
+# │ SUPERSEDED — NOT USED, NOT BUILT. Kept as the record of why it is unnecessary.        │
+# │                                                                                      │
+# │ Phase 4 Gate A / decision D8 (nodb/BUILD-PHASE-4.md): NoDB computes the ICU          │
+# │ collation keys for `*._orderby_<loc>` ITSELF (engine/.../search/CollationKeyResolver, │
+# │ icu4j pinned in nodb/gradle/libs.versions.toml) and stores them as a plain `keyword`. │
+# │ The 44 `icu_collation` filters were analysis-icu's ONLY consumer, so with them gone   │
+# │ the plugin is needed for NOTHING and the stack runs the STOCK                         │
+# │ opensearchproject/opensearch:3.7.0 image — see dev-stack.sh and docker-compose.yml.   │
+# │                                                                                      │
+# │ What that buys, beyond deleting a build step: no managed-service plugin-parity risk   │
+# │ (AWS preinstalls ICU today, but the dependency is now simply absent), and the sort    │
+# │ contract stops depending on the ENGINE's icu4j — the 3.7.0 image bundles 77.1, older  │
+# │ than the 78.3 both XP and NoDB pin. The version-pinning and plugin-inventory notes    │
+# │ below remain accurate and are the reasoning that led here; delete this file only when │
+# │ the reasoning is no longer worth having.                                              │
+# └──────────────────────────────────────────────────────────────────────────────────────┘
+#
 # enonic/nodb-opensearch — OpenSearch for NoDB, with the analysis plugins XP's
 # index settings require.
 #
-# WHY THIS IMAGE EXISTS
+# WHY THIS IMAGE EXISTED
 #   Amazon OpenSearch Service (the managed target) ships the ICU Analysis plugin
 #   preinstalled on every domain. The vanilla opensearchproject/opensearch image does
 #   NOT. XP's search-settings.json declares 44 `icu_collation` token filters feeding 44

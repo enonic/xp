@@ -6,8 +6,12 @@ import javax.sql.DataSource;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.nodb.engine.Tx;
 import com.enonic.nodb.engine.model.RepoRef;
+import com.enonic.nodb.engine.search.SearchIndexAdmin;
 import com.enonic.nodb.engine.store.RepositoryLifecycle;
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.CreateRepositoryRequest;
@@ -48,13 +52,36 @@ public final class RepositoryAdminService
      */
     public static final String DEFAULT_BRANCH = "master";
 
+    private static final Logger LOG = LoggerFactory.getLogger( RepositoryAdminService.class );
+
     private final DataSource dataSource;
+
+    /** {@code null} when this NoDB has no search backend — the whole pre-Gate-F hybrid window. */
+    private final SearchIndexAdmin searchIndexAdmin;
 
     public RepositoryAdminService( DataSource dataSource )
     {
-        this.dataSource = dataSource;
+        this( dataSource, null );
     }
 
+    public RepositoryAdminService( DataSource dataSource, SearchIndexAdmin searchIndexAdmin )
+    {
+        this.dataSource = dataSource;
+        this.searchIndexAdmin = searchIndexAdmin;
+    }
+
+    /**
+     * Repo create also creates the repo's OpenSearch index when a search backend is configured
+     * (Phase 4 Gate A): alias {@code <tenant>-<repo>} over {@code <tenant>-<repo>+g1}, with the
+     * ported mappings and analyzers.
+     *
+     * <p>Postgres first, index second, and NOT in one transaction — because they cannot be. The
+     * order is chosen so the failure modes are the recoverable ones: a repo with no index yet is a
+     * repo whose search is empty until a rebuild (the indexer skips it explicitly, see
+     * {@code Indexer#indexNameFor}), whereas an index with no repo row would be an orphan nothing
+     * ever cleans up. If index creation fails the RPC fails, so the caller sees it rather than
+     * discovering later that queries return nothing.
+     */
     @Override
     public void createRepository( CreateRepositoryRequest request, StreamObserver<Ack> responseObserver )
     {
@@ -68,6 +95,10 @@ public final class RepositoryAdminService
                 RepositoryLifecycle.createBranch( connection, repoKey, DEFAULT_BRANCH );
                 return null;
             } );
+            if ( searchIndexAdmin != null )
+            {
+                searchIndexAdmin.createIndex( principal.tenantContext(), request.getRepoId() );
+            }
             responseObserver.onNext( Ack.newBuilder().build() );
             responseObserver.onCompleted();
         }
@@ -75,14 +106,39 @@ public final class RepositoryAdminService
         {
             responseObserver.onError( NodeStoreService.mapSqlException( e ) );
         }
+        catch ( RuntimeException e )
+        {
+            responseObserver.onError( Status.INTERNAL.withDescription( e.getMessage() ).withCause( e ).asRuntimeException() );
+        }
     }
 
+    /**
+     * Index first, Postgres second — the mirror of {@link #createRepository}'s ordering, for the
+     * same reason. Dropping the {@code repository} row cascades {@code search_index} away, so doing
+     * it first would leave the physical index unreachable through NoDB's own metadata: an orphan
+     * that only a name-parsing sweep could find, which DESIGN §5 forbids. An index deleted while
+     * the repo row survives is merely a repo whose search is empty.
+     */
     @Override
     public void deleteRepository( DeleteRepositoryRequest request, StreamObserver<Ack> responseObserver )
     {
         TenantPrincipal principal = currentPrincipal();
         try
         {
+            if ( searchIndexAdmin != null )
+            {
+                try
+                {
+                    searchIndexAdmin.deleteIndex( principal.tenantContext(), request.getRepoId() );
+                }
+                catch ( RuntimeException e )
+                {
+                    // A search backend that is down must not block a repo delete: the storage side
+                    // is the system of record, and search is rebuildable by definition. Logged
+                    // loudly so the leftover index is findable.
+                    LOG.warn( "Failed to delete the search index for repo {}; continuing with the storage delete", request.getRepoId(), e );
+                }
+            }
             Tx.inTenantSchema( dataSource, principal.tenantContext(), connection -> {
                 RepositoryLifecycle.deleteRepository( connection, new RepoRef( request.getRepoId() ) );
                 return null;

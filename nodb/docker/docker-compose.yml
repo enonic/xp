@@ -22,13 +22,16 @@ services:
     command: postgres -c default_toast_compression=lz4
     volumes: [pgdata:/var/lib/postgresql/data]
 
-  # Pinned derived image: OpenSearch + analysis-icu (see opensearch/Dockerfile).
-  # NOT opensearchproject/opensearch:3 — that floating tag already points past what
-  # Amazon OpenSearch Service supports, and the vanilla image has no ICU plugin, which
-  # XP's 44 icu_collation filters require.
+  # STOCK image, pinned to the exact minor Amazon OpenSearch Service runs (3.7; it adopts
+  # every OTHER 3.x minor, so the next legitimate bump is 3.9). NOT the floating ':3' tag,
+  # which already points past what the managed target supports.
+  #
+  # No derived image and no analysis-icu: Phase 4 decision D8 moved ICU collation-key
+  # computation into NoDB (engine/.../search/CollationKeyResolver), and the 44 icu_collation
+  # filters were the plugin's only consumer. opensearch/Dockerfile stays in the tree as the
+  # record of why it is unnecessary.
   opensearch:
-    build: ./opensearch
-    image: enonic/nodb-opensearch:3.7.0
+    image: opensearchproject/opensearch:3.7.0
     environment:
       discovery.type: single-node
       DISABLE_SECURITY_PLUGIN: "true"

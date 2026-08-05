@@ -35,7 +35,10 @@ class TenantProvisioningTest
 
     private static final Set<String> TEMPLATE_TABLES =
         Set.of( "repository", "branch", "payload", "node_version", "node_commit", "branch_entry", "outbox", "index_checkpoint",
-                "audit_log" );
+                "audit_log",
+                // 003_search_index.sql (Phase 4 Gate A): the XP-shipped index documents the outbox
+                // indexer applies, and the authoritative alias->generation map.
+                "search_document", "search_index" );
 
     private static HikariDataSource dataSource;
 
@@ -140,13 +143,16 @@ class TenantProvisioningTest
     {
         provisioner.provision( new TenantContext( "acme" ) );
 
-        assertEquals( 2, templateVersion( "acme" ), "001_init + 002_version_query_indexes must both apply on fresh provisioning" );
+        assertEquals( 3, templateVersion( "acme" ),
+                      "001_init + 002_version_query_indexes + 003_search_index must all apply on fresh provisioning" );
 
         Set<String> indexes = indexesIn( "acme" );
         assertTrue( indexes.contains( "branch_entry_path_lower" ), "002's diff-scope index must exist" );
         assertTrue( indexes.contains( "node_version_by_node_v2" ), "002's history keyset index must exist" );
         assertTrue( indexes.contains( "node_commit_by_repo" ), "002's per-repo commit index must exist" );
         assertFalse( indexes.contains( "node_version_by_node" ), "002 must drop the index it replaces" );
+        assertTrue( indexes.contains( "search_document_replay" ), "003's rebuild-replay index must exist" );
+        assertTrue( indexes.contains( "search_index_live" ), "003's live-generation index must exist" );
     }
 
     private static Set<String> indexesIn( String schema )

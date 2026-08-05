@@ -11,14 +11,17 @@ import com.enonic.nodb.engine.model.RepoRef;
  * Resolves a {@link RepoRef} (external repo id) to the surrogate {@code repo_key} used by
  * every partitioned table. Never derives repo_key any other way (schema.sql: repo_key is
  * {@code GENERATED ALWAYS AS IDENTITY}) — this lookup is the one source of truth.
+ *
+ * <p>Public since Phase 4 Gate A: {@code engine.search}'s stores address the same partitioned
+ * tables and must resolve repo ids through this one lookup rather than duplicating it.
  */
-final class RepoKeys
+public final class RepoKeys
 {
     private RepoKeys()
     {
     }
 
-    static long resolve( Connection connection, RepoRef repo )
+    public static long resolve( Connection connection, RepoRef repo )
         throws SQLException
     {
         try (PreparedStatement statement = connection.prepareStatement( "SELECT repo_key FROM repository WHERE repo_id = ?" ))

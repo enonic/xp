@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enonic.nodb.engine.model.BranchEntryRecord;
+import com.enonic.nodb.engine.model.RepoRef;
 
 /**
  * The transactional WriteBatch (DESIGN.md §10 risk #1, the core deliverable of this
@@ -97,6 +98,17 @@ public final class WriteService
         return new WriteBatchResponse( maxSeq, List.of() );
     }
 
+    /**
+     * One INDEX outbox row per branch-entry change, in the same transaction as the rows themselves
+     * — the invariant DESIGN §3.3 rests on ("the search index can lag but can never miss a
+     * committed write").
+     *
+     * <p>Also reachable from the per-op paths below (Phase 4 Gate A, risk 10a): {@code WriteBatch}
+     * was the ONLY path that emitted, so a node written through the standalone
+     * {@code StoreBranchEntry}/{@code DeleteBranchEntries} RPCs committed to Postgres and was never
+     * seen by the indexer. Nothing errored — the node simply never appeared in search, which is the
+     * failure mode a lagging-but-never-missing contract exists to make impossible.
+     */
     private static Long insertOutboxRows( Connection connection, long repoKey, List<BranchEntryRecord> entries )
         throws SQLException
     {
@@ -126,6 +138,84 @@ public final class WriteService
             }
         }
         return maxSeq;
+    }
+
+    /**
+     * Per-op branch-entry upsert WITH outbox emission (risk 10a) — the standalone equivalent of
+     * one {@link #write} branch entry, for {@code StoreBranchEntry}.
+     *
+     * <p>Returns the emitted seq so the RPC can populate {@code Ack.outbox_seq} and the caller can
+     * {@code awaitRefresh} on it. Before this gate that field was documented as "only WriteBatch
+     * populates this meaningfully today", with the per-op changefeed/outbox story explicitly
+     * deferred; this closes it.
+     */
+    public static Long storeBranchEntry( Connection connection, RepoRef repo, BranchEntryRecord entry )
+        throws SQLException
+    {
+        long repoKey = RepoKeys.resolve( connection, repo );
+        BranchStore.store( connection, repoKey, entry );
+        return insertOutboxRows( connection, repoKey, List.of( entry ) );
+    }
+
+    /**
+     * Per-op branch-entry delete WITH outbox emission (risk 10a), for {@code DeleteBranchEntries}.
+     *
+     * <p>Also removes the shipped search documents, in the SAME transaction: leaving them behind
+     * would make Gate G's rebuild resurrect deleted nodes, since a rebuild replays
+     * {@code search_document} rather than {@code branch_entry}. The DELETE outbox rows then remove
+     * them from the live index too.
+     */
+    public static Long deleteBranchEntries( Connection connection, RepoRef repo, String branch, List<String> nodeIds )
+        throws SQLException
+    {
+        if ( nodeIds.isEmpty() )
+        {
+            return null;
+        }
+        long repoKey = RepoKeys.resolve( connection, repo );
+        BranchStore.delete( connection, repoKey, branch, nodeIds );
+        deleteSearchDocuments( connection, repoKey, branch, nodeIds );
+
+        Long maxSeq = null;
+        try (PreparedStatement statement = connection.prepareStatement(
+            "INSERT INTO outbox (repo_key, branch, node_id, op) VALUES (?, ?, ?, 'DELETE') RETURNING seq" ))
+        {
+            for ( String nodeId : nodeIds )
+            {
+                statement.setLong( 1, repoKey );
+                statement.setString( 2, branch );
+                statement.setString( 3, nodeId );
+                try (ResultSet resultSet = statement.executeQuery())
+                {
+                    resultSet.next();
+                    long seq = resultSet.getLong( 1 );
+                    if ( maxSeq == null || seq > maxSeq )
+                    {
+                        maxSeq = seq;
+                    }
+                }
+            }
+        }
+        return maxSeq;
+    }
+
+    /**
+     * Inlined rather than calling {@code engine.search.SearchDocumentStore}: this package is the
+     * write path and must not depend on the search package (the search package already depends on
+     * {@code store} for {@link RepoKeys}, and a cycle between the two would be the start of the
+     * kind of tangle DESIGN §8's "explicit wiring" rule exists to prevent).
+     */
+    private static void deleteSearchDocuments( Connection connection, long repoKey, String branch, List<String> nodeIds )
+        throws SQLException
+    {
+        try (PreparedStatement statement = connection.prepareStatement(
+            "DELETE FROM search_document WHERE repo_key = ? AND branch = ? AND node_id = ANY(?)" ))
+        {
+            statement.setLong( 1, repoKey );
+            statement.setString( 2, branch );
+            statement.setArray( 3, connection.createArrayOf( "text", nodeIds.toArray( new String[0] ) ) );
+            statement.executeUpdate();
+        }
     }
 
     /**

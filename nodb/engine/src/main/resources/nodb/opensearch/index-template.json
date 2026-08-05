@@ -1,0 +1,664 @@
+{
+  "_doc": {
+    "artifact": "nodb repo index template (Phase 4 Gate A) -- the create-index body.",
+    "ported_from": "modules/core/core-repo/src/main/resources/com/enonic/xp/repo/impl/repository/index/{settings,mapping}/default/search-{settings,mapping}.json (Elasticsearch 2.4.6). Those files are UNTOUCHED: this is a nodb-path-only port, so embedded ES keeps its layout byte-identical and no existing install needs a reindex.",
+    "engine": "OpenSearch 3.7.0, STOCK opensearchproject/opensearch:3.7.0 -- analysis-icu is NOT required (D8: the 44 icu_collation filters were its only consumer; the 2 remaining filters and all 38 language analyzers are core Lucene, with ja/ko/zh on core `cjk`).",
+    "how_it_is_applied": [
+      "NoDB PUTs `<tenant>-<repo>+g<N>` with `settings` + `mappings` from this file plus a computed `aliases: {\"<tenant>-<repo>\": {}}`. A composable index template cannot carry a per-index alias, so the alias is attached in the create call.",
+      "`settings.index.number_of_replicas` and `settings.index.refresh_interval` are substituted from cell config at create time (OpenSearchConfig). Everything else is identical across environments so analysis is environment-independent.",
+      "`mappings._meta.templateVersion` travels into the live index, so a generation can be asked which template built it. A template change is a new generation (`+g(N+1)` rebuild + alias flip), never an in-place mutation."
+    ],
+    "divergences_from_the_es_layout_and_why": {
+      "_text": "D1/BLOCKER 1. StaticIndexValueType.STRING has postfix \"\", so XP emits a BARE field alongside its dotted sub-fields -- and OpenSearch expands dots into objects, so `data.x` would have to be a leaf AND an object at once. It fires on the FIRST document of every repo. The nodb path gives the text value type the postfix `_text`, completing the nine-postfix public vocabulary (text is the only one whose postfix was empty). NOTE: OpenSearch's `text` means ANALYZED, so XP's `_text` maps to an engine `keyword` -- a vocabulary collision, not an error (XP's `_fulltext` is itself an engine `text` field).",
+      "_fulltext": "D1b. The index-config directive is `fulltext`, the query function is `fulltext()`, the dynamic template was already NAMED template_fulltext -- only the physical field said `_analyzed`. Renamed on the nodb path at zero incremental cost since D1 already moves the resolver table.",
+      "path_match": "BLOCKER 2. All 91 ES templates use `match: \"*._analyzed\"`, which after dot-expansion matches the LEAF name (`_analyzed`) and therefore NEVER fires: index create succeeds, indexing succeeds, and queries return zero hits with no error anywhere. Every template here uses `path_match`, and DynamicTemplateFiringTest proves it with a real indexed document and a real query rather than by inspection.",
+      "_orderby_<loc>": "D8. Was `type:string, index:analyzed, analyzer:icu_sort_<loc>` and sorted on directly (legal in ES 2.4 only because fielddata was on by default). NoDB now computes the ICU collation key itself (CollationKeyResolver, hex-encoded, icu4j pinned in nodb's version catalog) and stores a plain `keyword`, so: no fielddata, no icu_collation_keyword, no analysis-icu plugin, 44 filters + 44 analyzers deleted (settings 600 -> ~60 lines), and 44 templates collapsed into ONE. The engine's own icu4j (77.1 in the image) never touches the sort contract.",
+      "standard_token_filter": "REMOVED in OpenSearch and present in 6 XP analyzers. Deleted here. This is a BEHAVIOUR change, not a syntax fix (it was already a no-op in late ES 2.x); Gate D's corpus is what proves the token streams still match.",
+      "document_index_default_vs_fulltext_search_default": "These two are BYTE-IDENTICAL in search-settings.json (same custom/standard/lowercase+asciifolding+word_delimiter chain), i.e. there is no index/search asymmetry to preserve. Both names are kept (the mapping and, from Gate D, query-time analyzer selection reference them by name) but they are one analyzer. Consequence worth documenting: because asciifolding is in the chain, `fulltext()` IS accent-insensitive while the raw `_text` field is NOT -- proven by corpus row UNTYPED-05-ascii-folding -> 0 hits. That asymmetry is behaviour, not a bug.",
+      "default_search": "search-mapping.json sets `search_analyzer` ONLY on `*._ngram`. Everything else falls back to the index-level default search analyzer, which is what the analyzer literally named `default_search` IS (a reserved name, in ES 2.4 and in OpenSearch alike). Preserved exactly: the fulltext/path templates deliberately do NOT set an explicit search_analyzer. Gate 0(d)'s draft did, and flagged it as a behaviour change -- this port does not take it.",
+      "bare_untyped_string_mapping": "Settled BY MEASUREMENT, not reasoning (Gate 0(e), 10 UNTYPED-* corpus rows in ES mode): exact multi-word value 1 hit, single token of it 0 hits (NOT tokenized), case-differing 1 hit (lowercased), punctuation preserved, ASCII folding 0 hits (NO folding), over-ignore_above 0 hits (not indexed), LIKE prefix works. That is exactly `keyword` + a lowercase normalizer + ignore_above -- which is also what template_metadata_strings' `keywordlowercase` analyzer did. So `_text` (and the catch-all) map to keyword/keywordlowercase/ignore_above:3072 -- XP's OWN 3072, not the 8191 the Gate 0(d) draft guessed.",
+      "_all": "`_all` and 91 `include_in_all: false` deleted (removed in ES 6). XP has its own `_allText`, so nothing is lost; `all_field_analyzer` was `_all`'s only consumer and is deleted with it.",
+      "_default_": "The `_default_` mapping-type wrapper is gone (mapping types removed). With it goes the \"a new branch inherits the templates\" trick -- which is moot here because branch is no longer a mapping type but an ordinary `_branch` keyword field, and one index holds every branch of a repo.",
+      "normalizer": "`ignore_above` is illegal on `text`, legal on `keyword`. Porting the 47 `ignore_above` fields to keyword needs a `lowercase` NORMALIZER, which does not exist anywhere in XP's settings today (only the analyzer of the same name) and is authored here.",
+      "edge_ngram": "`edgeNGram` -> `edge_ngram`. `\"side\": \"front\"` is DROPPED: it is silently ACCEPTED and inert in Lucene 10 (front is the only behaviour), and silent acceptance is worse than rejection.",
+      "dates": "Explicit `format` on `*._datetime` -- OpenSearch date parsing is stricter than 2.4's. The wire ships epoch millis (proto int64), which is exactly the precision an ES 2.4 `date` stored, so `epoch_millis` is listed first.",
+      "limits": "`total_fields.limit` 1000 (OpenSearch's default; ES 2.4 had none) -> 10000, because dot expansion means every path SEGMENT is an object mapper that now counts too -- 3 properties can be 10 leaves but 15 mappers. `depth.limit` 20 -> 50 for the same reason. `max_result_window` pinned at the 10000 XP already lives with rather than left implicit.",
+      "catch_all_must_exclude_objects": "FOUND AT GATE A, third blocker of the same family as Gate 0's two, and only findable by indexing a real document. ES 2.4's `match: \"*\"` matched LEAF field names, so template_metadata_strings was harmless. `path_match: \"*\"` matches every PATH -- including the object nodes that dot expansion creates (`data`, `data.title`, `_path`, `_permissions`). The catch-all then maps `data` as a keyword and EVERY document fails: `failed to parse field [data] of type [keyword] ... Can't get text on a START_OBJECT`. Fix: `match_mapping_type: \"string\"` on the catch-all -- `object` is one of the values match_mapping_type can take, so naming a leaf type is what excludes objects. Note it takes a SINGLE value in OpenSearch 3.7, not the array ES 8 accepts (`No field type matched on [[string, long, double, boolean]], possible values are [object, string, long, double, boolean, date, binary]`). Consequence, and an improvement over parity rather than a gap: a NON-string leaf that no postfix template claims now falls to OpenSearch's own dynamic default (long stays long) instead of being coerced to a string the way ES 2.4's template_metadata_strings did. Under D1 there are no such leaves -- every field XP emits ends in a postfix -- so no behaviour changes; the catch-all is purely a safety net. Louder than blocker 2 (it errors rather than returning zero hits) but it fires on the FIRST document of every repo, exactly like blocker 1.",
+      "reserved_metadata": "`_id` and `_source` are rejected outright as document fields by OpenSearch (ES 2.4 tolerated both). NodeIndexPath declares both, but NodeStoreDocumentFactory never emits them; the projection rejects them defensively rather than trusting that."
+    },
+    "deferred": [
+      "`nested_fields.limit` left at its default 50 -- the V1 layout uses no nested fields (DESIGN \u00a75 roadmap).",
+      "`index.search.idle.after` (default 30s, new since 2.4) stops background refresh on an idle index and makes the next search block. Harmless for correctness because \u00a73.3's contract is checkpoint + explicit refresh, but it makes first-query latency after idle lumpy.",
+      "`_allText` has no `_text` base variant (createAllText emits only ANALYZED + NGRAM + stemmed), so its concatenated text still sits in _source twice. Making it a multi-field halves the largest field in the index -- additive, DESIGN \u00a75 'Virtual / derived fields', not a parity item.",
+      "ja/ko/zh are on core `cjk`, a bigram analyzer materially weaker than kuromoji. The managed service preinstalls kuromoji, so improving this later costs no infrastructure change."
+    ],
+    "icu_locales_supported_by_orderby": [
+      "ducet",
+      "af",
+      "ar",
+      "az",
+      "be",
+      "bg",
+      "bn",
+      "bs",
+      "cs",
+      "da",
+      "el",
+      "es",
+      "et",
+      "fa",
+      "fi",
+      "fo",
+      "gl",
+      "he",
+      "hi",
+      "hr",
+      "hu",
+      "hy",
+      "is",
+      "ja",
+      "kk",
+      "ko",
+      "lt",
+      "lv",
+      "mk",
+      "no",
+      "pl",
+      "ro",
+      "ru",
+      "sk",
+      "sl",
+      "sq",
+      "sr",
+      "sv",
+      "th",
+      "tr",
+      "uk",
+      "ur",
+      "vi",
+      "zh"
+    ]
+  },
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "refresh_interval": "1s",
+      "max_result_window": 10000,
+      "mapping": {
+        "total_fields": {
+          "limit": 10000
+        },
+        "depth": {
+          "limit": 50
+        }
+      }
+    },
+    "analysis": {
+      "tokenizer": {
+        "path-tokenizer": {
+          "type": "path_hierarchy",
+          "delimiter": "/"
+        }
+      },
+      "filter": {
+        "front_ngram": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 25
+        },
+        "nynorsk_stemmer": {
+          "type": "stemmer",
+          "language": "light_nynorsk"
+        }
+      },
+      "normalizer": {
+        "keywordlowercase": {
+          "type": "custom",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      },
+      "analyzer": {
+        "default_search": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "keywordlowercase": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "keywordasciilowercase": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "document_index_default": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "word_delimiter"
+          ]
+        },
+        "fulltext_search_default": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "word_delimiter"
+          ]
+        },
+        "ngram_search_default": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "word_delimiter"
+          ]
+        },
+        "ngram_index_front": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "word_delimiter",
+            "front_ngram"
+          ]
+        },
+        "path_analyzer": {
+          "type": "custom",
+          "tokenizer": "path-tokenizer",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "language_analyzer_nn": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "nynorsk_stemmer"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "_meta": {
+      "templateVersion": 1,
+      "layout": "v1-doc-per-node-per-branch"
+    },
+    "_source": {
+      "enabled": true
+    },
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "_branch": {
+        "type": "keyword"
+      },
+      "_repo": {
+        "type": "keyword"
+      },
+      "_document_analyzer": {
+        "type": "keyword"
+      }
+    },
+    "dynamic_templates": [
+      {
+        "template_fulltext": {
+          "path_match": "*._fulltext",
+          "mapping": {
+            "type": "text",
+            "analyzer": "document_index_default"
+          }
+        }
+      },
+      {
+        "template_ngram": {
+          "path_match": "*._ngram",
+          "mapping": {
+            "type": "text",
+            "analyzer": "ngram_index_front",
+            "search_analyzer": "document_index_default"
+          }
+        }
+      },
+      {
+        "template_path": {
+          "path_match": "*._path",
+          "mapping": {
+            "type": "text",
+            "analyzer": "path_analyzer"
+          }
+        }
+      },
+      {
+        "template_userdata_date": {
+          "path_match": "*._datetime",
+          "mapping": {
+            "type": "date",
+            "format": "epoch_millis||strict_date_optional_time"
+          }
+        }
+      },
+      {
+        "template_userdata_number": {
+          "path_match": "*._number",
+          "mapping": {
+            "type": "double"
+          }
+        }
+      },
+      {
+        "template_userdata_geopoint": {
+          "path_match": "*._geopoint",
+          "mapping": {
+            "type": "geo_point"
+          }
+        }
+      },
+      {
+        "template_userdata_orderby": {
+          "path_match": "*._orderby",
+          "mapping": {
+            "type": "keyword",
+            "normalizer": "keywordlowercase",
+            "ignore_above": 3072
+          }
+        }
+      },
+      {
+        "template_orderby_collated": {
+          "path_match": "*._orderby_*",
+          "mapping": {
+            "type": "keyword",
+            "index": false,
+            "doc_values": true,
+            "ignore_above": 8192
+          }
+        }
+      },
+      {
+        "template_stemmed_ar": {
+          "path_match": "*._stemmed_ar",
+          "mapping": {
+            "type": "text",
+            "analyzer": "arabic"
+          }
+        }
+      },
+      {
+        "template_stemmed_hy": {
+          "path_match": "*._stemmed_hy",
+          "mapping": {
+            "type": "text",
+            "analyzer": "armenian"
+          }
+        }
+      },
+      {
+        "template_stemmed_eu": {
+          "path_match": "*._stemmed_eu",
+          "mapping": {
+            "type": "text",
+            "analyzer": "basque"
+          }
+        }
+      },
+      {
+        "template_stemmed_bn": {
+          "path_match": "*._stemmed_bn",
+          "mapping": {
+            "type": "text",
+            "analyzer": "bengali"
+          }
+        }
+      },
+      {
+        "template_stemmed_pt-br": {
+          "path_match": "*._stemmed_pt-br",
+          "mapping": {
+            "type": "text",
+            "analyzer": "brazilian"
+          }
+        }
+      },
+      {
+        "template_stemmed_bg": {
+          "path_match": "*._stemmed_bg",
+          "mapping": {
+            "type": "text",
+            "analyzer": "bulgarian"
+          }
+        }
+      },
+      {
+        "template_stemmed_ca": {
+          "path_match": "*._stemmed_ca",
+          "mapping": {
+            "type": "text",
+            "analyzer": "catalan"
+          }
+        }
+      },
+      {
+        "template_stemmed_zh": {
+          "path_match": "*._stemmed_zh",
+          "mapping": {
+            "type": "text",
+            "analyzer": "cjk"
+          }
+        }
+      },
+      {
+        "template_stemmed_ja": {
+          "path_match": "*._stemmed_ja",
+          "mapping": {
+            "type": "text",
+            "analyzer": "cjk"
+          }
+        }
+      },
+      {
+        "template_stemmed_ko": {
+          "path_match": "*._stemmed_ko",
+          "mapping": {
+            "type": "text",
+            "analyzer": "cjk"
+          }
+        }
+      },
+      {
+        "template_stemmed_cs": {
+          "path_match": "*._stemmed_cs",
+          "mapping": {
+            "type": "text",
+            "analyzer": "czech"
+          }
+        }
+      },
+      {
+        "template_stemmed_da": {
+          "path_match": "*._stemmed_da",
+          "mapping": {
+            "type": "text",
+            "analyzer": "danish"
+          }
+        }
+      },
+      {
+        "template_stemmed_nl": {
+          "path_match": "*._stemmed_nl",
+          "mapping": {
+            "type": "text",
+            "analyzer": "dutch"
+          }
+        }
+      },
+      {
+        "template_stemmed_en": {
+          "path_match": "*._stemmed_en",
+          "mapping": {
+            "type": "text",
+            "analyzer": "english"
+          }
+        }
+      },
+      {
+        "template_stemmed_fi": {
+          "path_match": "*._stemmed_fi",
+          "mapping": {
+            "type": "text",
+            "analyzer": "finnish"
+          }
+        }
+      },
+      {
+        "template_stemmed_fr": {
+          "path_match": "*._stemmed_fr",
+          "mapping": {
+            "type": "text",
+            "analyzer": "french"
+          }
+        }
+      },
+      {
+        "template_stemmed_gl": {
+          "path_match": "*._stemmed_gl",
+          "mapping": {
+            "type": "text",
+            "analyzer": "galician"
+          }
+        }
+      },
+      {
+        "template_stemmed_de": {
+          "path_match": "*._stemmed_de",
+          "mapping": {
+            "type": "text",
+            "analyzer": "german"
+          }
+        }
+      },
+      {
+        "template_stemmed_el": {
+          "path_match": "*._stemmed_el",
+          "mapping": {
+            "type": "text",
+            "analyzer": "greek"
+          }
+        }
+      },
+      {
+        "template_stemmed_hi": {
+          "path_match": "*._stemmed_hi",
+          "mapping": {
+            "type": "text",
+            "analyzer": "hindi"
+          }
+        }
+      },
+      {
+        "template_stemmed_hu": {
+          "path_match": "*._stemmed_hu",
+          "mapping": {
+            "type": "text",
+            "analyzer": "hungarian"
+          }
+        }
+      },
+      {
+        "template_stemmed_id": {
+          "path_match": "*._stemmed_id",
+          "mapping": {
+            "type": "text",
+            "analyzer": "indonesian"
+          }
+        }
+      },
+      {
+        "template_stemmed_ga": {
+          "path_match": "*._stemmed_ga",
+          "mapping": {
+            "type": "text",
+            "analyzer": "irish"
+          }
+        }
+      },
+      {
+        "template_stemmed_it": {
+          "path_match": "*._stemmed_it",
+          "mapping": {
+            "type": "text",
+            "analyzer": "italian"
+          }
+        }
+      },
+      {
+        "template_stemmed_lv": {
+          "path_match": "*._stemmed_lv",
+          "mapping": {
+            "type": "text",
+            "analyzer": "latvian"
+          }
+        }
+      },
+      {
+        "template_stemmed_lt": {
+          "path_match": "*._stemmed_lt",
+          "mapping": {
+            "type": "text",
+            "analyzer": "lithuanian"
+          }
+        }
+      },
+      {
+        "template_stemmed_no": {
+          "path_match": "*._stemmed_no",
+          "mapping": {
+            "type": "text",
+            "analyzer": "norwegian"
+          }
+        }
+      },
+      {
+        "template_stemmed_nb": {
+          "path_match": "*._stemmed_nb",
+          "mapping": {
+            "type": "text",
+            "analyzer": "norwegian"
+          }
+        }
+      },
+      {
+        "template_stemmed_nn": {
+          "path_match": "*._stemmed_nn",
+          "mapping": {
+            "type": "text",
+            "analyzer": "language_analyzer_nn"
+          }
+        }
+      },
+      {
+        "template_stemmed_fa": {
+          "path_match": "*._stemmed_fa",
+          "mapping": {
+            "type": "text",
+            "analyzer": "persian"
+          }
+        }
+      },
+      {
+        "template_stemmed_pt": {
+          "path_match": "*._stemmed_pt",
+          "mapping": {
+            "type": "text",
+            "analyzer": "portuguese"
+          }
+        }
+      },
+      {
+        "template_stemmed_ro": {
+          "path_match": "*._stemmed_ro",
+          "mapping": {
+            "type": "text",
+            "analyzer": "romanian"
+          }
+        }
+      },
+      {
+        "template_stemmed_ru": {
+          "path_match": "*._stemmed_ru",
+          "mapping": {
+            "type": "text",
+            "analyzer": "russian"
+          }
+        }
+      },
+      {
+        "template_stemmed_ku": {
+          "path_match": "*._stemmed_ku",
+          "mapping": {
+            "type": "text",
+            "analyzer": "sorani"
+          }
+        }
+      },
+      {
+        "template_stemmed_es": {
+          "path_match": "*._stemmed_es",
+          "mapping": {
+            "type": "text",
+            "analyzer": "spanish"
+          }
+        }
+      },
+      {
+        "template_stemmed_sv": {
+          "path_match": "*._stemmed_sv",
+          "mapping": {
+            "type": "text",
+            "analyzer": "swedish"
+          }
+        }
+      },
+      {
+        "template_stemmed_tr": {
+          "path_match": "*._stemmed_tr",
+          "mapping": {
+            "type": "text",
+            "analyzer": "turkish"
+          }
+        }
+      },
+      {
+        "template_stemmed_th": {
+          "path_match": "*._stemmed_th",
+          "mapping": {
+            "type": "text",
+            "analyzer": "thai"
+          }
+        }
+      },
+      {
+        "template_text": {
+          "path_match": "*._text",
+          "mapping": {
+            "type": "keyword",
+            "normalizer": "keywordlowercase",
+            "ignore_above": 3072
+          }
+        }
+      },
+      {
+        "template_catch_all": {
+          "path_match": "*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "keyword",
+            "normalizer": "keywordlowercase",
+            "ignore_above": 3072
+          }
+        }
+      }
+    ]
+  }
+}

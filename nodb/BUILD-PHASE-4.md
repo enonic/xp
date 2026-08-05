@@ -219,6 +219,97 @@ field vs its dotted sub-fields), and all 91 dynamic templates silently never fir
 Prerequisites remaining: P1 (proto source of truth — now also fixes the stale "serialized
 AST" comment), P3 (migration checksums).
 
+## GATE A DONE (2026-08-06) — OpenSearch foundations + indexer
+
+190 nodb tests / 21 suites / zero failures under a clean forced rerun; XP client bundle
+green; **zero XP module files changed** (`git diff -- modules/ gradle/` empty), so the
+byte-identical rule holds by construction rather than by testing. Migration **003** added
+under P3's checksum discipline (001/002 untouched). Mapping port: settings 600 lines → 2
+filters + 9 analyzers + 1 normalizer + 1 tokenizer; 91 dynamic templates → 48; stock
+`opensearchproject/opensearch:3.7.0` (no plugin, no derived image).
+
+### 🚨 BLOCKER 3 — `path_match: "*"` matches OBJECT paths (third of the same family)
+
+Blocker 2's fix (`match` → `path_match`) exposed the next layer: ES 2.4's `match: "*"`
+matched *leaf names*, so the catch-all was harmless; `path_match: "*"` also matches object
+paths, so the catch-all mapped `data` itself as a keyword and **every document failed** —
+`failed to parse field [data] of type [keyword] … Can't get text on a START_OBJECT`.
+Fix: **`match_mapping_type: "string"`** on the catch-all (`object` is one of the values it
+can take, so naming a leaf type is what excludes objects). Note it takes a SINGLE value in
+OpenSearch 3.7, not the array ES 8 accepts. Fires on the first document of every repo, like
+blocker 1. Asserted by `theCatchAllExcludesObjectsViaMatchMappingType`, and found ONLY
+because the test indexes a real document — the bar this gate set.
+
+### D8 amended: the collation resolver lives in NoDB, not XP core
+
+D8 said XP computes the keys. Implemented server-side instead (`CollationKeyResolver` in
+`nodb/engine`, **icu4j 78.3 pinned in nodb's own version catalog** — the same version XP
+pins). Rationale accepted: D8's actual risk was the *engine image's* ICU (77.1) silently
+owning the sort contract, and an explicitly pinned 78.3 under NoDB's control removes that
+identically — while NoDB is the component that owns index generations, i.e. exactly who
+must pin a version whose bump requires `+g(N+1)`. The XP-side alternatives were both worse:
+`IndexItem.getPath()` and `IndexItemFactory.createOrderBy` are *unconditional* call sites,
+so wiring them there either breaks byte-identical or needs a backend flag inside core-repo
+(which has none — selection is OSGi service ranking, invisible above the SPI); and the
+client bundle embeds dependencies as private packages, i.e. a 14 MB icu4j embed. The input
+is faithful by construction: XP already ships the same lowercased/1024-truncated
+`OrderByValueResolver` output that ES 2.4's `icu_sort_<loc>` chain collated.
+**Consequences:** `IcuSortConfigConsistencyTest` stays green and untouched (its 44-filter
+assertions still describe the ES path), and port-list item 13 (test fixtures) does not
+apply — the port is a new resource with its own consistency test. `_text`/`_fulltext` are
+likewise server-side, in two classes (`IndexFields` + `IndexDocumentProjection`), so Gate
+B's client stays a pure serializer and decision 3's later swap needs no rework.
+
+### Composite `_id` (D10): `<nodeId>@<branch>`
+
+`@` is legal in an OpenSearch `_id` and cannot occur in either component (`Branch` is
+`^[a-zA-Z0-9\-:_]+$`), so it is injective without being parseable — deliberately, since
+`_branch`/`_repo` are the fields that answer attribution. Without it, draft would silently
+overwrite master in a single-type index: data loss, not an error.
+
+### Migration 003 — two tables, and why
+
+- **`search_document`** stores the **canonical XP-shipped** document (not the projected
+  one), PK `(repo_key, branch, node_id)`, FK to branch `ON DELETE CASCADE`. Required
+  because decision 3 + an async indexer means `refresh(SEARCH)` cannot survive a restart
+  and Gate G has nothing to replay unless the document is durable — and because the
+  projection is **versioned**, a bump must be replayable from rows that predate it.
+- **`search_index`** is DESIGN §5's authoritative alias→generation map (`state`,
+  `template_version`, `projection_version`). `projection_version` is what makes the Gate
+  0(b) ACL finding *detectable* (a doc missing the injected admin key would otherwise
+  vanish silently from admin queries).
+- `outbox`/`index_checkpoint` from 001 unchanged — what was missing was content to apply.
+
+### Notable implementation decisions (not pinned by the work order)
+
+Jackson + raw REST rather than `opensearch-java` (the wire IS JSON DSL, so the translator's
+job is JSON→JSON; a typed client forces parse→builder→re-serialize and adds a second query
+model) · writes target the physical generation, reads target the alias (alias writes break
+the moment a rebuild puts two indices behind it) · bulk first, checkpoint second
+(at-least-once; the other order loses writes) · a repo with no index is skipped, never
+implicitly indexed (an implicit index would come up with OpenSearch's dynamic mapping —
+blocker 2's symptom by another door) · a missing shipped document is skipped, not treated
+as a delete (WriteBatch commits its outbox row before XP ships the document — two SPI
+calls, always have been) · per-op delete drops `search_document` rows in the same
+transaction, or a rebuild resurrects deleted nodes · version/commit-only writes emit no
+outbox row and report `outbox_seq = 0` · dates on the wire are epoch millis · repo create
+is PG-then-index, delete is index-then-PG (a down search backend must not block a repo
+delete) · `refresh(SEARCH)` drains synchronously if the poller is dead · `_bulk`'s
+200-with-item-errors is inspected and thrown · container tests run `refresh_interval: -1`
+so a missing `awaitRefresh` fails deterministically.
+
+### Deferred from Gate A, with reasons
+
+`_analyzed`→`_fulltext` in the **ES** highlighter (byte-identical path; Gate D owns
+highlighting) · `_allText._text` base variant (additive, post-parity) ·
+`unmappedType("keyword")` (query-side; Gate C) · `Search`/`Reindex` RPCs answer
+UNIMPLEMENTED (Gates B–E) · the alias-flip rebuild **drill** (structure, metadata and
+atomic `updateAliases` are in place; the drill is Gate G) · RUNNING.md (Gate G) ·
+Prometheus/`nodb_outbox_lag_*` (Phase 6) · multi-instance indexer leader election (Phase 6;
+the checkpoint's `GREATEST` semantics already make a second instance safe, just wasteful) ·
+server-side document derivation from payloads (the phase's recorded main deferral — which
+is exactly why `search_document` stores rather than forwards).
+
 ## Gate 0(a) results — DSL completeness (2026-08-05)
 
 **STOP CONDITION NOT TRIGGERED.** Every NoQL construct renders as DSL: all 10 comparison

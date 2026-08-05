@@ -170,6 +170,13 @@ public final class NodeStoreService
         }
     }
 
+    /**
+     * Risk 10a closed (Phase 4 Gate A): routed through {@link WriteService#storeBranchEntry} rather
+     * than straight to {@code BranchStore.store}, so the branch-entry row and its INDEX outbox row
+     * commit in ONE transaction and the seq comes back on the {@link Ack}. Previously this RPC
+     * wrote the row and emitted nothing — the node was in Postgres and invisible to search forever,
+     * with no error anywhere.
+     */
     @Override
     public void storeBranchEntry( StoreBranchEntryRequest request, StreamObserver<Ack> responseObserver )
     {
@@ -179,11 +186,9 @@ public final class NodeStoreService
 
         try
         {
-            Tx.inTenantTx( dataSource, principal.tenantContext(), connection -> {
-                BranchStore.store( connection, repo, entry );
-                return null;
-            } );
-            responseObserver.onNext( Ack.newBuilder().build() );
+            Long seq = Tx.inTenantTx( dataSource, principal.tenantContext(),
+                                       connection -> WriteService.storeBranchEntry( connection, repo, entry ) );
+            responseObserver.onNext( ack( seq ) );
             responseObserver.onCompleted();
         }
         catch ( SQLException e )
@@ -192,6 +197,7 @@ public final class NodeStoreService
         }
     }
 
+    /** Risk 10a closed — see {@link #storeBranchEntry}. Emits DELETE rows and drops the shipped documents. */
     @Override
     public void deleteBranchEntries( DeleteBranchEntriesRequest request, StreamObserver<Ack> responseObserver )
     {
@@ -200,17 +206,26 @@ public final class NodeStoreService
 
         try
         {
-            Tx.inTenantTx( dataSource, principal.tenantContext(), connection -> {
-                BranchStore.delete( connection, repo, request.getBranch(), request.getNodeIdsList() );
-                return null;
-            } );
-            responseObserver.onNext( Ack.newBuilder().build() );
+            Long seq = Tx.inTenantTx( dataSource, principal.tenantContext(),
+                                       connection -> WriteService.deleteBranchEntries( connection, repo, request.getBranch(),
+                                                                                        request.getNodeIdsList() ) );
+            responseObserver.onNext( ack( seq ) );
             responseObserver.onCompleted();
         }
         catch ( SQLException e )
         {
             responseObserver.onError( mapSqlException( e ) );
         }
+    }
+
+    private static Ack ack( Long outboxSeq )
+    {
+        Ack.Builder builder = Ack.newBuilder();
+        if ( outboxSeq != null )
+        {
+            builder.setOutboxSeq( outboxSeq );
+        }
+        return builder.build();
     }
 
     @Override

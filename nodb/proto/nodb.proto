@@ -105,6 +105,17 @@ service NodeSearch {
   // server-side (decision 2), and the server rejects constructs outside the versioned wire
   // schema loudly rather than guessing.
   rpc Search (SearchRequest) returns (SearchResult);
+  // Phase 4 Gate A. Decision 3: XP keeps BUILDING index documents (today's IndexDataService
+  // output -- property values expanded per index-config into typed sub-fields) and ships them
+  // here with the write; NoDB stores them and the outbox indexer applies them to OpenSearch.
+  // Server-side derivation from the Phase-3 payload format is the phase's main deferral, an
+  // explicit LATER swap -- fighting translation parity and doc-building parity at the same time
+  // is how a port becomes unbounded. Mirrors spi.NodeSearchIndex#index(RepositoryId, Branch,
+  // IndexDocumentRecord), batched: one repo+branch, N documents, one transaction, one seq.
+  rpc IndexDocuments (IndexDocumentsRequest) returns (IndexAck);
+  // Mirrors spi.NodeSearchIndex#delete(repo, branch, ids). Deletes the stored documents AND
+  // emits DELETE outbox rows -- both halves, or a rebuild would resurrect deleted nodes.
+  rpc DeleteDocuments (DeleteDocumentsRequest) returns (IndexAck);
   rpc AwaitRefresh (AwaitRefreshRequest) returns (Ack); // RefreshMode.SEARCH
   rpc Reindex (ReindexRequest) returns (TaskHandle);
 }
@@ -240,13 +251,19 @@ service Binaries {
 //     equivalent (Postgres partitions/columns are static DDL, not tunable settings or
 //     dynamic mappings) — permanently N/A, client-side no-ops, not missing surface.
 message Ack {
-  // Max outbox seq written by this call, for AwaitRefresh (read-your-writes). Only
-  // WriteBatch populates this meaningfully today (branch-entry mutations feed the
-  // outbox) — the standalone per-op RPCs added in Phase 1 Gate A (StoreBranchEntry,
-  // DeleteBranchEntries, StoreVersion, DeleteVersion, StoreCommit) leave it at the
-  // proto3 default (0): the changefeed/outbox story for per-op calls is deferred
-  // (BUILD-PHASE-1.md scope constraint #4), not silently broken — Gate A's reconciliation
-  // table prescribes exactly Tx.inTenantTx -> the relevant store method for these, no more.
+  // Max outbox seq written by this call, for AwaitRefresh (read-your-writes).
+  //
+  // Phase 4 Gate A closed risk 10a: EVERY write path that changes branch-entry state now emits
+  // outbox rows in its own transaction and reports the seq here. Previously only WriteBatch did,
+  // so a node written through the standalone StoreBranchEntry / DeleteBranchEntries RPCs
+  // committed to Postgres and was never seen by the indexer — nothing errored, the node simply
+  // never appeared in search, which is precisely the failure a "can lag but never miss"
+  // contract exists to make impossible.
+  //
+  // Still 0, correctly: StoreVersion, DeleteVersion, StoreCommit. A version or commit row with
+  // no branch-entry change is not visible in any branch and has no search-document of its own,
+  // so there is nothing for the indexer to apply. (When the change feed lands — DESIGN §7.3 —
+  // it may want its own op vocabulary for these; that is a feed concern, not an index one.)
   uint64 outbox_seq = 1;
 }
 
@@ -517,7 +534,77 @@ message PresignGetResponse {
   string url = 1;
 }
 
-message AwaitRefreshRequest {}
+// --- NodeSearch write path (Phase 4 Gate A) -------------------------------------------
+//
+// One XP-shipped index document, mirroring spi.IndexDocumentRecord(id, analyzer,
+// Map<String, Collection<Object>> fields) 1:1 -- with the map expressed as a REPEATED FIELD
+// LIST rather than a proto map<string, ...>, for two reasons: proto maps cannot have repeated
+// values, and map iteration order is unspecified, whereas the indexer's bulk body must be
+// deterministic (BUILD-PHASE-4.md "items the work order does not account for" #5: today's
+// HashSet-backed request JSON varies across JVM runs and breaks wire-level golden files).
+//
+// Field NAMES are XP's CANONICAL vocabulary, exactly as IndexItem.getPath() produces them
+// (`data.title`, `data.title._analyzed`, `_permissions.read`, ...). The nodb-specific physical
+// renaming -- the `_text` postfix for the bare text variant (D1/blocker 1) and `_analyzed` ->
+// `_fulltext` (D1b) -- happens SERVER-SIDE in IndexDocumentProjection, not on the wire. That
+// keeps this message a faithful mirror of the SPI record (so the XP-side client stays a pure
+// serializer with no vocabulary knowledge), keeps ONE copy of the postfix table next to the
+// mapping resource that declares the templates and next to the translator that will resolve
+// field names from Gate C, and -- because what is stored is the canonical input rather than the
+// projected output -- keeps a projection bump replayable from the stored documents.
+message IndexDoc {
+  string id = 1;                    // XP node id. The OpenSearch _id is composite: <id>@<branch> (D10).
+  string analyzer = 2;              // optional per-document analyzer override; empty = index default
+  repeated IndexField fields = 3;
+}
+message IndexField {
+  string name = 1;
+  repeated IndexValue values = 2;
+}
+// Typed on purpose: the mapping depends on it (`*._number` is a double, `*._datetime` a date),
+// and a single JSON-ish "string or number" would coerce a timestamp into a keyword or turn an
+// integral long into a double on every round trip -- silently breaking _orderby parity.
+// Instants ride as epoch millis, which is exactly the precision an ES 2.4 `date` stored, and the
+// mapping lists `epoch_millis` first in its date format for that reason.
+message IndexValue {
+  oneof value {
+    string string_value = 1;
+    double double_value = 2;
+    int64 long_value = 3;
+    bool bool_value = 4;
+    int64 instant_millis = 5;
+  }
+}
+message IndexDocumentsRequest {
+  string repo_id = 1;
+  string branch = 2;               // CASE-PRESERVED: it becomes the `_branch` keyword field verbatim
+  repeated IndexDoc documents = 3;
+}
+message DeleteDocumentsRequest {
+  string repo_id = 1;
+  string branch = 2;
+  repeated string node_ids = 3;
+}
+// Separate from Ack only because the field means something specific here: the max outbox seq this
+// call committed, which is exactly what the caller passes back to AwaitRefresh.
+message IndexAck {
+  uint64 outbox_seq = 1;
+}
+
+// RefreshMode.SEARCH (DESIGN.md §3.3): block until the indexer's checkpoint reaches `seq`, then
+// issue an OpenSearch refresh on the affected indices. STORAGE is not on the wire at all -- it is
+// a client-side no-op, because Postgres transactional visibility is strictly stronger than an ES
+// refresh.
+//
+// `repo_ids` empty = refresh every index of this tenant. Refreshing only what the caller wrote is
+// the point of the field: a whole-tenant refresh on a shared cell is a noisy-neighbour operation.
+// `timeout_millis` <= 0 = server default; exceeding it is DEADLINE_EXCEEDED, never a rollback --
+// the write IS committed and durable, it is only not yet searchable.
+message AwaitRefreshRequest {
+  uint64 seq = 1;
+  repeated string repo_ids = 2;
+  int64 timeout_millis = 3;
+}
 message ReindexRequest {}
 message TaskHandle {}
 

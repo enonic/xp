@@ -16,10 +16,16 @@
 #
 #   WITH_OPENSEARCH=1 nodb/dev-stack.sh start     also start OpenSearch on $OS_PORT
 #
-# It uses the pinned derived image built from nodb/docker/opensearch/Dockerfile (OpenSearch
-# + analysis-icu, matching what Amazon OpenSearch Service preinstalls). The image is built
-# on first use. Data lives in the named volume nodb-os-data. `clean` removes the container
-# (volume preserved) whether or not the flag is set.
+# Uses the STOCK opensearchproject/opensearch image (Gate A / decision D8): NoDB computes ICU
+# collation keys itself, which was analysis-icu's only consumer, so no derived image is needed
+# and there is no managed-service plugin-parity risk. nodb/docker/opensearch/Dockerfile stays
+# in the tree as the record of WHY it is unnecessary.
+#
+# When the flag is set, NODB_OPENSEARCH_URL is passed to the NoDB server, which then registers
+# the NodeSearch RPCs, creates a per-repo index on repo create, and runs the outbox indexer.
+# Unset, NoDB starts with no search backend at all and NodeSearch answers UNIMPLEMENTED.
+# Data lives in the named volume nodb-os-data. `clean` removes the container (volume preserved)
+# whether or not the flag is set.
 
 set -euo pipefail
 
@@ -36,14 +42,18 @@ MINIO_PORT=19000
 MINIO_CONSOLE_PORT=19001
 OS_PORT=19200
 NODB_PORT=7700
+NODB_OPS_PORT=7701
 XP_LOG=/tmp/xp-nodb.log
 NODB_LOG=/tmp/nodb-server.log
 
 # OpenSearch (Phase 4) — opt-in until Gate A has something that talks to it.
 WITH_OPENSEARCH="${WITH_OPENSEARCH:-0}"
 OS_VERSION=3.7.0
-OS_IMAGE="enonic/nodb-opensearch:$OS_VERSION"
-# Measured on this image: ~925 MiB RSS idle at 512m heap, ~1000 MiB after light indexing
+# STOCK image (D8) -- pinned to the exact minor AWS OpenSearch Service runs (3.7; it adopts
+# every other minor, so the next legitimate bump is 3.9). NOT the floating ':3' tag, which
+# already resolves past what the managed target supports.
+OS_IMAGE="opensearchproject/opensearch:$OS_VERSION"
+# Measured on the derived image: ~925 MiB RSS idle at 512m heap, ~1000 MiB after light indexing
 # (512m heap + ~230 MiB non-heap from the 27 bundled plugins + ~200 MiB native/direct).
 # 256m heap also boots fine (~650 MiB RSS) if the dev box is tight. The limit is a cap,
 # not a reservation — 2g leaves GC headroom for Gate A's bulk-indexing tests.
@@ -136,11 +146,7 @@ start_containers() {
     if docker inspect nodb-os >/dev/null 2>&1; then
       docker start nodb-os >/dev/null
     else
-      if ! docker image inspect "$OS_IMAGE" >/dev/null 2>&1; then
-        log "Building $OS_IMAGE (OpenSearch $OS_VERSION + analysis-icu)"
-        docker build -q -t "$OS_IMAGE" "$ROOT/nodb/docker/opensearch" >/dev/null
-      fi
-      log "Creating OpenSearch container (port $OS_PORT, volume nodb-os-data)"
+      log "Creating OpenSearch container (stock $OS_IMAGE, port $OS_PORT, volume nodb-os-data)"
       docker run -d --name nodb-os -p "$OS_PORT:9200" \
         -v nodb-os-data:/usr/share/opensearch/data \
         --memory "$OS_MEM_LIMIT" \
@@ -169,15 +175,22 @@ start_nodb() {
     return
   fi
   log "Starting NoDB server (port $NODB_PORT, log $NODB_LOG)"
+  # Gate A owns this wiring (Gate 0(d) decision 8). Empty when the opt-in is off, which the
+  # server reads as "no search backend": NodeSearch is not registered and no indexer starts.
+  local os_url=""
+  [ "$WITH_OPENSEARCH" = 1 ] && os_url="http://localhost:$OS_PORT"
   NODB_PG_URL="jdbc:postgresql://localhost:$PG_PORT/nodb" \
   NODB_PG_USER=nodb NODB_PG_PASSWORD=nodb \
   NODB_PORT=$NODB_PORT NODB_KEYS_DIR="$KEYS_DIR" \
+  NODB_OPS_PORT=$NODB_OPS_PORT \
+  NODB_OPENSEARCH_URL="$os_url" \
   NODB_S3_ENDPOINT="http://localhost:$MINIO_PORT" \
   NODB_S3_BUCKET=nodb-binaries NODB_S3_REGION=us-east-1 \
   NODB_S3_ACCESS_KEY=nodb NODB_S3_SECRET_KEY=nodb-secret \
   NODB_S3_PATH_STYLE=true \
   nohup "$NODB_DIST/bin/server" > "$NODB_LOG" 2>&1 &
   wait_for 30 "NoDB gRPC port" bash -c "nc -z localhost $NODB_PORT"
+  wait_for 30 "NoDB health endpoint" bash -c "curl -sf localhost:$NODB_OPS_PORT/health/ready >/dev/null"
 }
 
 provision_tenant() {
@@ -263,7 +276,8 @@ verify() {
   echo
   log "Ready:  http://localhost:8080/admin   (su / $SU_PASS)"
   echo "        MinIO console: http://localhost:$MINIO_CONSOLE_PORT (nodb / nodb-secret)"
-  [ "$WITH_OPENSEARCH" = 1 ] && echo "        OpenSearch:    http://localhost:$OS_PORT (not wired into NoDB yet — Phase 4 Gate A)"
+  [ "$WITH_OPENSEARCH" = 1 ] && echo "        OpenSearch:    http://localhost:$OS_PORT (wired into NoDB: indexer + per-repo indices)"
+  echo "        NoDB health:   http://localhost:$NODB_OPS_PORT/health/ready"
   echo "        Logs: $XP_LOG  $NODB_LOG"
   echo "        Note: publish/version-history/compare work since Phase 3.5; search/aggregations stay on embedded ES until Phase 4."
 }
