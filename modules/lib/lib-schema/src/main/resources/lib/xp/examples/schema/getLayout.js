@@ -4,10 +4,9 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual part.
-var result = schemaLib.getComponent({
-    key: 'myapp:mylayout',
-    type: 'LAYOUT'
+// Fetch dynamic layout.
+var result = schemaLib.getLayout({
+    key: 'myapp:mylayout'
 });
 
 log.info('Fetched layout: ' + result.key);
@@ -22,7 +21,17 @@ assert.assertJsonEquals({
     descriptionI18nKey: 'key.description',
     componentPath: 'myapp:/cms/layouts/mylayout',
     modifiedTime: '2021-02-25T10:44:33.170079900Z',
-    resource: '<layout><some-data></some-data></layout>',
+    resource: 'kind: "Layout"\n' +
+              'title: "News layout"\n' +
+              'description:\n' +
+              '  text: "My news layout"\n' +
+              '  i18n: "key.description"\n' +
+              'form:\n' +
+              '- type: "Double"\n' +
+              '  name: "width"\n' +
+              '  label: "width"\n' +
+              'regions:\n' +
+              '- "region-one"\n',
     type: 'LAYOUT',
     form: [
         {

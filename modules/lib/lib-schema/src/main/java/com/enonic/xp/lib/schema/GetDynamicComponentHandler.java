@@ -4,8 +4,10 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.lib.schema.mapper.DescriptorConverter;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.resource.DynamicComponentType;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -17,7 +19,7 @@ public final class GetDynamicComponentHandler
 
     private String type;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setKey( final String key )
     {
@@ -36,12 +38,13 @@ public final class GetDynamicComponentHandler
             .type( DynamicComponentType.valueOf( type ) )
             .build();
 
-        return DescriptorConverter.convert( dynamicSchemaServiceSupplier.get().getComponent( params ) );
+        final DynamicSchemaResult<ComponentDescriptor> component = schemaServiceSupplier.get().getComponent( params );
+        return component != null ? DescriptorConverter.convert( component ) : null;
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

@@ -14,4 +14,7 @@ public interface WebSerializerService
 
     void response( WebRequest webRequest, WebResponse webResponse, HttpServletResponse httpResponse )
         throws IOException;
+
+    void serializeBody( WebRequest webRequest, HttpServletRequest httpRequest )
+        throws IOException;
 }

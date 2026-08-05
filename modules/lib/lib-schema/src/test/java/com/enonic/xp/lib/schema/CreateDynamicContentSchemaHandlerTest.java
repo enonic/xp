@@ -31,7 +31,7 @@ class CreateDynamicContentSchemaHandlerTest
     @Test
     void testContentType()
     {
-        when( dynamicSchemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicContentSchemaParams schemaParams = params.getArgument( 0, CreateDynamicContentSchemaParams.class );
 
             final ContentType.Builder builder =
@@ -62,7 +62,7 @@ class CreateDynamicContentSchemaHandlerTest
     @Test
     void testFormFragment()
     {
-        when( dynamicSchemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicContentSchemaParams schemaParams = params.getArgument( 0, CreateDynamicContentSchemaParams.class );
 
             final FormFragmentDescriptor.Builder builder = YmlFormFragmentParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
@@ -85,7 +85,7 @@ class CreateDynamicContentSchemaHandlerTest
     @Test
     void testMixin()
     {
-        when( dynamicSchemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createContentSchema( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicContentSchemaParams schemaParams = params.getArgument( 0, CreateDynamicContentSchemaParams.class );
 
             final MixinDescriptor.Builder builder = YmlMixinDescriptorParser.parse( schemaParams.getResource(), schemaParams.getName().getApplicationKey() );
@@ -106,16 +106,9 @@ class CreateDynamicContentSchemaHandlerTest
     }
 
     @Test
-    void testInvalidContentSchemaType()
-    {
-        runFunction( "/test/CreateDynamicContentSchemaHandlerTest.js", "createInvalidContentSchemaType" );
-    }
-
-    @Test
     void testInvalidContentSchema()
     {
         runFunction( "/test/CreateDynamicContentSchemaHandlerTest.js", "createInvalidContentSchema" );
     }
-
 
 }

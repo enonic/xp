@@ -20,7 +20,7 @@ class GetDynamicStylesHandlerTest
     @Test
     void testStyles()
     {
-        when( dynamicSchemaService.getStyles( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getStyles( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
 
             StyleDescriptor styleDescriptor = StyleDescriptor.create()
@@ -41,7 +41,20 @@ class GetDynamicStylesHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<styles><some-data></some-data></styles>" );
+            when( resource.readString() ).thenReturn( """
+                kind: "Style"
+                styles:
+                - name: "mystyle"
+                  type: "Image"
+                  label:
+                    text: "Style display name"
+                    i18n: "style.display"
+                  aspectRatio: "16:9"
+                  filter: "sharpen()"
+                - name: "plain"
+                  type: "Image"
+                  label: "Plain"
+                """ );
 
             return new DynamicSchemaResult<>( styleDescriptor, resource );
         } );

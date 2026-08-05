@@ -3,18 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-exports.getInvalidContentSchemaType = function () {
-    assert.assertThrows(() => schemaLib.getSchema({
-        name: 'myapp:mydata',
-        type: 'INVALID_TYPE'
-    }));
-};
-
 exports.getNullSchema = function () {
-    assert.assertNull(schemaLib.getSchema({
-        name: 'non.existing:schema',
-        type: 'FORM_FRAGMENT'
+    assert.assertNull(schemaLib.getFormFragment({
+        name: 'non.existing:schema'
     }));
 };
-
-

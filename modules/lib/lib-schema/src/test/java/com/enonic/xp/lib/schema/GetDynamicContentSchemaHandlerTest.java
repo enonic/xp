@@ -31,7 +31,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testContentType()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
             if ( DynamicContentSchemaType.CONTENT_TYPE != schemaParams.getType() )
@@ -63,7 +63,30 @@ class GetDynamicContentSchemaHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<content-type><some-data></some-data></content-type>" );
+            when( resource.readString() ).thenReturn( """
+                kind: "ContentType"
+                superType: "base:structured"
+                title: "My type display name"
+                description: "My type description"
+                allowChildContentType:
+                - "myapp:other-type"
+                - "myapp:another-type"
+                displayNamePlaceholder: "Enter a display name"
+                displayNameExpression: "${title}"
+                form:
+                - type: "FieldSet"
+                  label: "My layout"
+                  items:
+                  - type: "ItemSet"
+                    name: "mySet"
+                    occurrences:
+                      min: 1
+                      max: 1
+                    items:
+                    - type: "TextLine"
+                      name: "myInput"
+                      label: "Input"
+                """ );
 
             return new DynamicSchemaResult<ContentType>( contentType, resource );
         } );
@@ -74,7 +97,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testFormFragment()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
             if ( DynamicContentSchemaType.FORM_FRAGMENT != schemaParams.getType() )
@@ -94,13 +117,14 @@ class GetDynamicContentSchemaHandlerTest
 
             final Resource resource = mock( Resource.class );
             when( resource.readString() ).thenReturn( """
-                                                          displayName: "Virtual FormFragment"
-                                                          description: "FormFragment description"
-                                                          form:
-                                                          - type: "TextLine"
-                                                            name: "text"
-                                                            label: "Text"
-                                                          """ );
+                kind: "FormFragment"
+                title: "My FormFragment display name"
+                description: "My FormFragment description"
+                form:
+                - type: "TextLine"
+                  name: "inputToBeMixedIn"
+                  label: "Mixed in"
+                """ );
 
             return new DynamicSchemaResult<>( fragmentDescriptor, resource );
         } );
@@ -111,7 +135,7 @@ class GetDynamicContentSchemaHandlerTest
     @Test
     void testMixinDescriptor()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
             final GetDynamicContentSchemaParams schemaParams = params.getArgument( 0, GetDynamicContentSchemaParams.class );
 
             if ( DynamicContentSchemaType.MIXIN != schemaParams.getType() )
@@ -127,7 +151,12 @@ class GetDynamicContentSchemaHandlerTest
                 .build();
 
             final Resource resource = mock( Resource.class );
-            when( resource.readString() ).thenReturn( "<x-data><some-data></some-data></x-data>" );
+            when( resource.readString() ).thenReturn( """
+                kind: "Mixin"
+                title:
+                  text: "Photo Info"
+                  i18n: "media.cameraInfo.displayName"
+                """ );
 
             return new DynamicSchemaResult<>( mixinDescriptor, resource );
         } );
@@ -135,17 +164,10 @@ class GetDynamicContentSchemaHandlerTest
         runScript( "/lib/xp/examples/schema/getMixin.js" );
     }
 
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/GetDynamicContentSchemaHandlerTest.js", "getInvalidContentSchemaType" );
-    }
-
     @Test
     void testNull()
     {
-        when( dynamicSchemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenReturn( null );
+        when( schemaService.getContentSchema( isA( GetDynamicContentSchemaParams.class ) ) ).thenReturn( null );
         runFunction( "/test/GetDynamicContentSchemaHandlerTest.js", "getNullSchema" );
     }
 

@@ -32,7 +32,12 @@ final class DynamicResourceManager
 
     Resource createResource( final NodePath folderPath, final String name, final String resource )
     {
-        return VirtualAppContext.createContext().callWith( () -> {
+        return createResourceFile( folderPath, name + ".yaml", resource );
+    }
+
+    Resource createResourceFile( final NodePath folderPath, final String fileName, final String resource )
+    {
+        return NamespaceAppContext.createContext().callWith( () -> {
 
             Node resourceFolder = nodeService.getByPath( folderPath );
             if ( resourceFolder == null )
@@ -54,7 +59,7 @@ final class DynamicResourceManager
 
             final Node schemaNode = nodeService.create( CreateNodeParams.create()
                                                             .parent( resourceFolder.path() )
-                                                            .name( name + ".yaml" )
+                                                            .name( fileName )
                                                             .data( resourceData )
                                                             .inheritPermissions( true )
                                                             .refresh( RefreshMode.ALL )
@@ -66,7 +71,12 @@ final class DynamicResourceManager
 
     Resource updateResource( final NodePath folderPath, final String name, final String resource )
     {
-        return VirtualAppContext.createContext().callWith( () -> {
+        return updateResourceFile( folderPath, name + ".yaml", resource );
+    }
+
+    Resource updateResourceFile( final NodePath folderPath, final String fileName, final String resource )
+    {
+        return NamespaceAppContext.createContext().callWith( () -> {
 
             final PropertyTree resourceData = new PropertyTree();
 
@@ -76,7 +86,7 @@ final class DynamicResourceManager
             }
 
             final Node schemaNode = nodeService.update( UpdateNodeParams.create()
-                                                            .path( new NodePath( folderPath, NodeName.from( name + ".yaml" ) ) )
+                                                            .path( new NodePath( folderPath, NodeName.from( fileName ) ) )
                                                             .editor( toBeEdited -> toBeEdited.data = resourceData )
                                                             .refresh( RefreshMode.ALL )
                                                             .build() );
@@ -86,24 +96,28 @@ final class DynamicResourceManager
         } );
     }
 
-    boolean resourceNodeExists( final NodePath folderPath, final String name )
-    {
-        return VirtualAppContext.createContext()
-            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + ".yaml" ) ) ) );
-    }
-
     Resource getResource( final NodePath folderPath, final String name )
     {
-        return VirtualAppContext.createContext()
+        return getResourceFile( folderPath, name + ".yaml" );
+    }
+
+    Resource getResourceFile( final NodePath folderPath, final String fileName )
+    {
+        return NamespaceAppContext.createContext()
             .callWith( () -> resourceService.getResource(
-                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + name + ".yaml" ) ) );
+                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + fileName ) ) );
     }
 
     List<Resource> listResources( final NodePath folderPath )
     {
-        return VirtualAppContext.createContext()
+        return listResourceFiles( folderPath, ".+/.+\\.yaml" );
+    }
+
+    List<Resource> listResourceFiles( final NodePath folderPath, final String fileNamePattern )
+    {
+        return NamespaceAppContext.createContext()
             .callWith( () -> resourceService.findFiles( appKeyFromNodePath( folderPath ),
-                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.yaml" )
+                                                        resourcePathFromNodePath( folderPath ) + "/" + fileNamePattern )
                 .stream()
                 .map( resourceService::getResource )
                 .collect( Collectors.toList() ) );
@@ -111,11 +125,16 @@ final class DynamicResourceManager
 
     boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder )
     {
-        return VirtualAppContext.createContext()
+        return deleteResourceFile( folderPath, name + ".yaml", deleteFolder );
+    }
+
+    boolean deleteResourceFile( final NodePath folderPath, final String fileName, final boolean deleteFolder )
+    {
+        return NamespaceAppContext.createContext()
             .callWith( () -> nodeService.delete( DeleteNodeParams.create()
                                                      .nodePath( deleteFolder
                                                                     ? folderPath
-                                                                    : new NodePath( folderPath, NodeName.from( name + ".yaml" ) ) )
+                                                                    : new NodePath( folderPath, NodeName.from( fileName ) ) )
                                                      .refresh( RefreshMode.ALL )
                                                      .build() ) )
             .getNodeIds()

@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
 import com.enonic.xp.resource.DynamicContentSchemaType;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
@@ -19,7 +19,7 @@ public class DeleteDynamicContentSchemaHandler
 
     private String type;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setName( final String name )
     {
@@ -53,12 +53,12 @@ public class DeleteDynamicContentSchemaHandler
         final DeleteDynamicContentSchemaParams params =
             DeleteDynamicContentSchemaParams.create().name( schemaName ).type( dynamicContentSchemaType ).build();
 
-        return dynamicSchemaServiceSupplier.get().deleteContentSchema( params );
+        return schemaServiceSupplier.get().deleteContentSchema( params );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

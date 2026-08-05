@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
-import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -22,11 +22,11 @@ final class ContentTypeRegistry
 
     private final ContentTypeLoader contentTypeLoader;
 
-    private final ApplicationService applicationService;
+    private final SchemaService schemaService;
 
-    ContentTypeRegistry( final ContentTypeLoader contentTypeLoader, final ApplicationService applicationService )
+    ContentTypeRegistry( final ContentTypeLoader contentTypeLoader, final SchemaService schemaService )
     {
-        this.applicationService = applicationService;
+        this.schemaService = schemaService;
         this.builtInTypes = new BuiltinContentTypes();
         this.contentTypeLoader = contentTypeLoader;
     }
@@ -53,7 +53,7 @@ final class ContentTypeRegistry
 
     public ContentTypes getAll()
     {
-        final ApplicationKeys applicationKeys = applicationService.list().getApplicationKeys();
+        final ApplicationKeys applicationKeys = schemaService.listApplicationKeys();
         return Stream.concat( builtInTypes.getAll().stream(), applicationKeys.stream().flatMap( this::loadByApplication ) )
             .collect( ContentTypes.collector() );
     }

@@ -3,7 +3,7 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -12,7 +12,7 @@ public class DeleteDynamicStylesHandler
 {
     private String application;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setApplication( final String application )
     {
@@ -21,12 +21,12 @@ public class DeleteDynamicStylesHandler
 
     public boolean execute()
     {
-        return dynamicSchemaServiceSupplier.get().deleteStyles( ApplicationKey.from( application ) );
+        return schemaServiceSupplier.get().deleteStyles( ApplicationKey.from( application ) );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

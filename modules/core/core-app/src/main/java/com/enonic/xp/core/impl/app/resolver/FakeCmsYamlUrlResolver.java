@@ -4,8 +4,8 @@ import java.util.Set;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.NodeValueResource;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
-import com.enonic.xp.core.impl.app.VirtualAppContext;
+import com.enonic.xp.core.impl.app.NamespaceAppConstants;
+import com.enonic.xp.core.impl.app.NamespaceAppContext;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -13,7 +13,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 
-import static com.enonic.xp.core.impl.app.VirtualAppConstants.CMS_ROOT_NAME;
+import static com.enonic.xp.core.impl.app.NamespaceAppConstants.CMS_ROOT_NAME;
 
 public class FakeCmsYamlUrlResolver
     implements ApplicationUrlResolver
@@ -35,7 +35,7 @@ public class FakeCmsYamlUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        return SINGLE_FILE_SET;
+        return getApplicationNode() != null ? SINGLE_FILE_SET : Set.of();
     }
 
     @Override
@@ -43,15 +43,19 @@ public class FakeCmsYamlUrlResolver
     {
         if ( CMS_RESOURCE_PATH_YAML.equals( path ) )
         {
-            final NodePath appPath =
-                new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
-            final Node applicationNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( appPath ) );
+            final Node applicationNode = getApplicationNode();
             if ( applicationNode != null )
             {
-                return new NodeValueResource( ResourceKey.from( applicationKey, path ), VirtualAppConstants.DEFAULT_CMS_RESOURCE_VALUE,
+                return new NodeValueResource( ResourceKey.from( applicationKey, path ), NamespaceAppConstants.DEFAULT_CMS_RESOURCE_VALUE,
                                               applicationNode.getTimestamp() );
             }
         }
         return null;
+    }
+
+    private Node getApplicationNode()
+    {
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        return NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( appPath ) );
     }
 }

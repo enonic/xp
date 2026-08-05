@@ -4,13 +4,12 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual content types.
-var result = schemaLib.listSchemas({
-    application: 'myapp',
-    type: 'CONTENT_TYPE'
+// Fetch dynamic content types.
+var result = schemaLib.listContentTypes({
+    application: 'myapp'
 });
 
-log.info('Fetched content types: ' + result.map((type) => type.key).join(','));
+log.info('Fetched content types: ' + result.map((type) => type.name).join(','));
 
 // END
 
@@ -21,7 +20,23 @@ assert.assertJsonEquals([
         title: 'My type display name',
         description: 'My type description',
         modifiedTime: '2010-01-01T10:00:00Z',
-        resource: '<content-type><some-data></some-data></content-type>',
+        resource: 'kind: "ContentType"\n' +
+                  'superType: "base:structured"\n' +
+                  'title: "My type display name"\n' +
+                  'description: "My type description"\n' +
+                  'form:\n' +
+                  '- type: "FieldSet"\n' +
+                  '  label: "My layout"\n' +
+                  '  items:\n' +
+                  '  - type: "ItemSet"\n' +
+                  '    name: "mySet"\n' +
+                  '    occurrences:\n' +
+                  '      min: 1\n' +
+                  '      max: 1\n' +
+                  '    items:\n' +
+                  '    - type: "TextLine"\n' +
+                  '      name: "myInput"\n' +
+                  '      label: "Input"\n',
         type: 'CONTENT_TYPE',
         superType: 'base:structured',
         abstract: false,
@@ -63,7 +78,10 @@ assert.assertJsonEquals([
         title: 'My type display name 2',
         description: 'My type description 2',
         modifiedTime: '2012-01-01T10:00:00Z',
-        resource: '<content-type><some-other-data></some-other-data></content-type>',
+        resource: 'kind: "ContentType"\n' +
+                  'superType: "media:archive"\n' +
+                  'title: "My type display name 2"\n' +
+                  'description: "My type description 2"\n',
         type: 'CONTENT_TYPE',
         superType: 'media:archive',
         abstract: false,

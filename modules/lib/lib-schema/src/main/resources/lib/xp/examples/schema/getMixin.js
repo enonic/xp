@@ -4,10 +4,9 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual mixin type.
-var result = schemaLib.getSchema({
-    name: 'myapp:mydata',
-    type: 'MIXIN'
+// Fetch dynamic mixin type.
+var result = schemaLib.getMixin({
+    name: 'myapp:mydata'
 });
 
 log.info('Fetched mixin: ' + result.name);
@@ -20,7 +19,10 @@ assert.assertJsonEquals({
     title: 'Photo Info',
     titleI18nKey: 'media.cameraInfo.displayName',
     modifiedTime: '1970-01-06T03:07:14.242Z',
-    resource: '<x-data><some-data></some-data></x-data>',
+    resource: 'kind: "Mixin"\n' +
+              'title:\n' +
+              '  text: "Photo Info"\n' +
+              '  i18n: "media.cameraInfo.displayName"\n',
     type: 'MIXIN',
     form: [],
     config: {}

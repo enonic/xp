@@ -46,8 +46,7 @@ class ApplicationServiceSystemAppGuardsTest
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         final NodeService nodeService = mock( NodeService.class );
 
-        final ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -56,7 +55,7 @@ class ApplicationServiceSystemAppGuardsTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ),
             mock( ApplicationRepoService.class ), mock( EventPublisher.class ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), auditLogSupport );
+            new NamespaceAppService( nodeService ), auditLogSupport );
     }
 
     @Test

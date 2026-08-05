@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.enonic.xp.lib.schema.mapper.SchemaConverter;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
@@ -22,7 +22,7 @@ public class GetDynamicContentSchemaHandler
 
     private String type;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setName( final String name )
     {
@@ -57,13 +57,13 @@ public class GetDynamicContentSchemaHandler
         final GetDynamicContentSchemaParams params =
             GetDynamicContentSchemaParams.create().name( schemaName ).type( dynamicContentSchemaType ).build();
 
-        final DynamicSchemaResult<BaseSchema<?>> contentSchema = dynamicSchemaServiceSupplier.get().getContentSchema( params );
+        final DynamicSchemaResult<BaseSchema<?>> contentSchema = schemaServiceSupplier.get().getContentSchema( params );
         return contentSchema != null ? SchemaConverter.convert( contentSchema ) : null;
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

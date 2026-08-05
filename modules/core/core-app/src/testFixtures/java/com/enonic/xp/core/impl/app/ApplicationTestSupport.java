@@ -8,10 +8,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.SchemaService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -25,6 +27,8 @@ public abstract class ApplicationTestSupport
 
     protected ApplicationService applicationService;
 
+    protected SchemaService schemaService;
+
     private Map<ApplicationKey, MockApplication> apps;
 
     @BeforeEach
@@ -37,7 +41,9 @@ public abstract class ApplicationTestSupport
         when( this.applicationService.getInstalledApplication( any() ) ).then(
             invocationOnMock -> apps.get( invocationOnMock.getArgument( 0 ) ) );
         when( this.applicationService.getInstalledApplications() ).then( invocationOnMock -> Applications.from( apps.values() ) );
-        when( this.applicationService.list() ).then( invocationOnMock -> Applications.from( apps.values() ) );
+
+        this.schemaService = mock( SchemaService.class );
+        when( this.schemaService.listApplicationKeys() ).then( invocationOnMock -> ApplicationKeys.from( apps.keySet() ) );
 
         ApplicationFactoryService applicationFactoryService = mock( ApplicationFactoryService.class );
         when( applicationFactoryService.findActiveApplication( any() ) ).then(

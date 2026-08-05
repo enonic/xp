@@ -74,6 +74,7 @@ public final class UpdateDynamicContentSchemaParams
         {
             requireNonNull( name, "name is required" );
             requireNonNull( type, "type is required" );
+            requireNonNull( resource, "resource is required" );
         }
 
         public UpdateDynamicContentSchemaParams build()

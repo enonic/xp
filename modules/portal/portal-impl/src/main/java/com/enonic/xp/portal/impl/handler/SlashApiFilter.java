@@ -66,6 +66,7 @@ public final class SlashApiFilter
         }
 
         final WebRequest webRequest = webSerializerService.request( req );
+        webSerializerService.serializeBody( webRequest, req );
         final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
         webRequest.setWebSocketContext( webSocketContext );
 

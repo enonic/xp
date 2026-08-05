@@ -25,7 +25,7 @@ class CreateDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
 
             final PartDescriptor.Builder builder =
@@ -48,7 +48,7 @@ class CreateDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
 
             final LayoutDescriptor.Builder builder =
@@ -71,7 +71,7 @@ class CreateDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
 
             final DescriptorKey descriptorKey =
@@ -89,13 +89,6 @@ class CreateDynamicComponentHandlerTest
         } );
 
         runScript( "/lib/xp/examples/schema/createPage.js" );
-    }
-
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/CreateDynamicComponentHandlerTest.js", "createInvalidComponentType" );
     }
 
     @Test

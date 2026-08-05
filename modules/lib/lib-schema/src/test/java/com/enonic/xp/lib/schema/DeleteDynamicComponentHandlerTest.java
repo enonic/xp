@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.schema;
 
-
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
@@ -15,7 +14,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
 
             return DynamicComponentType.PART == componentParams.getType();
@@ -27,7 +26,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
 
             return DynamicComponentType.LAYOUT == componentParams.getType();
@@ -39,7 +38,7 @@ class DeleteDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( schemaService.deleteComponent( isA( DeleteDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final DeleteDynamicComponentParams componentParams = params.getArgument( 0, DeleteDynamicComponentParams.class );
 
             return DynamicComponentType.PAGE == componentParams.getType();
@@ -48,10 +47,4 @@ class DeleteDynamicComponentHandlerTest
         runScript( "/lib/xp/examples/schema/deletePage.js" );
     }
 
-
-    @Test
-    void testInvalidSchemaType()
-    {
-        runFunction( "/test/DeleteDynamicComponentHandlerTest.js", "deleteInvalidComponentType" );
-    }
 }

@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import com.enonic.xp.lib.schema.mapper.SchemaConverter;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.DynamicContentSchemaType;
-import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.SchemaService;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
@@ -22,7 +22,7 @@ public class CreateDynamicContentSchemaHandler
 
     private String resource;
 
-    private Supplier<DynamicSchemaService> dynamicSchemaServiceSupplier;
+    private Supplier<SchemaService> schemaServiceSupplier;
 
     public void setName( final String name )
     {
@@ -61,12 +61,12 @@ public class CreateDynamicContentSchemaHandler
         final CreateDynamicContentSchemaParams params =
             CreateDynamicContentSchemaParams.create().name( schemaName ).type( dynamicContentSchemaType ).resource( resource ).build();
 
-        return SchemaConverter.convert( dynamicSchemaServiceSupplier.get().createContentSchema( params ) );
+        return SchemaConverter.convert( schemaServiceSupplier.get().createContentSchema( params ) );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        dynamicSchemaServiceSupplier = context.getService( DynamicSchemaService.class );
+        schemaServiceSupplier = context.getService( SchemaService.class );
     }
 }

@@ -22,7 +22,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
+import com.enonic.xp.core.impl.app.NamespaceAppConstants;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
@@ -271,7 +271,7 @@ class ResourceServiceImplTest
             final RepositoryId repositoryId = invocation.getArgument( 0 );
             return Repository.create()
                 .id( repositoryId )
-                .branches( Branches.from( VirtualAppConstants.VIRTUAL_APP_BRANCH, Branch.from( "master" ) ) )
+                .branches( Branches.from( NamespaceAppConstants.NAMESPACE_APP_BRANCH, Branch.from( "master" ) ) )
                 .build();
         } );
 

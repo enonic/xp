@@ -1,0 +1,10 @@
+kind: "Mixin"
+title: "Dynamic Mixin"
+description: "Mixin description"
+form:
+  - type: "TextLine"
+    name: "label"
+    label: "Label"
+    occurrences:
+      min: 0
+      max: 2

@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.NodeValueResource;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
-import com.enonic.xp.core.impl.app.VirtualAppContext;
+import com.enonic.xp.core.impl.app.NamespaceAppConstants;
+import com.enonic.xp.core.impl.app.NamespaceAppContext;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
@@ -40,9 +40,9 @@ public final class NodeResourceApplicationUrlResolver
     public Set<String> findFiles()
     {
         final QueryExpr query = QueryExpr.from( CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
-            "/" + applicationKey + "/" + VirtualAppConstants.CMS_ROOT_NAME + "/*/*/*" ) ) );
+            "/" + applicationKey + "/" + NamespaceAppConstants.CMS_ROOT_NAME + "/*/*/*" ) ) );
 
-        return VirtualAppContext.createContext().callWith( () -> {
+        return NamespaceAppContext.createAdminContext().callWith( () -> {
             final FindNodesByQueryResult nodes = this.nodeService.findByQuery( NodeQuery.create().query( query ).withPath( true ).build() );
 
             return nodes.getNodeHits()
@@ -56,18 +56,18 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Resource findResource( final String path )
     {
-        if ( !path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) )
+        if ( !path.startsWith( "/" + NamespaceAppConstants.CMS_ROOT_NAME + "/" ) )
         {
             return null;
         }
 
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        final NodePath appPath = new NodePath( NamespaceAppConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
 
         final NodePath.Builder builder = NodePath.create( appPath );
 
         Arrays.stream( path.split( "/" ) ).forEach( builder::addElement );
 
-        final Node resourceNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( builder.build() ) );
+        final Node resourceNode = NamespaceAppContext.createAdminContext().callWith( () -> nodeService.getByPath( builder.build() ) );
 
         if ( resourceNode == null )
         {
