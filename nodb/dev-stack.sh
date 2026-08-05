@@ -36,13 +36,13 @@ else
   JAVA_HOME_RUN="${JAVA_HOME:?No JDK found: install openjdk@25 or set JAVA_HOME}"
 fi
 
-# Hardcoded admin apps (XP 8.1 line; snapshot URLs pinned 2026-08-04 — refresh via
-# https://repo.enonic.com/service/rest/v1/search/assets?q=<name>&sort=version)
+# Hardcoded admin apps — latest OFFICIAL RELEASES (stable URLs; snapshots rotate and 404).
+# Bump versions via: curl -sL https://repo.enonic.com/repository/public/com/enonic/xp/<app>/maven-metadata.xml
 APP_URLS=(
-  "https://repo.enonic.com/repository/snapshot/com/enonic/xp/app-standardidprovider/8.1.0-SNAPSHOT/app-standardidprovider-8.1.0-20260804.101214-158.jar"
-  "https://repo.enonic.com/repository/snapshot/com/enonic/xp/app-main/8.1.0-SNAPSHOT/app-main-8.1.0-20260804.101231-228.jar"
-  "https://repo.enonic.com/repository/snapshot/com/enonic/xp/app-applications/8.1.0-SNAPSHOT/app-applications-8.1.0-20260804.101218-217.jar"
-  "https://repo.enonic.com/repository/snapshot/com/enonic/xp/app-users/8.1.0-SNAPSHOT/app-users-8.1.0-20260804.101219-206.jar"
+  "https://repo.enonic.com/repository/public/com/enonic/xp/app-standardidprovider/8.0.3/app-standardidprovider-8.0.3.jar"
+  "https://repo.enonic.com/repository/public/com/enonic/xp/app-main/8.0.3/app-main-8.0.3.jar"
+  "https://repo.enonic.com/repository/public/com/enonic/xp/app-applications/8.0.3/app-applications-8.0.3.jar"
+  "https://repo.enonic.com/repository/public/com/enonic/xp/app-users/8.0.3/app-users-8.0.3.jar"
   "https://repo.enonic.com/repository/public/com/enonic/app/contentstudio/6.0.3/contentstudio-6.0.3.jar"
 )
 APP_NAMES=(
