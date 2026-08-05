@@ -4,6 +4,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigs;
 
 final class BaseUrlMetadata
 {
@@ -17,6 +18,8 @@ final class BaseUrlMetadata
 
     private final Branch branch;
 
+    private final SiteConfigs siteConfigs;
+
     private BaseUrlMetadata( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
@@ -24,11 +27,17 @@ final class BaseUrlMetadata
         this.content = builder.content;
         this.projectName = builder.projectName;
         this.branch = builder.branch;
+        this.siteConfigs = builder.siteConfigs;
     }
 
     public String getBaseUrl()
     {
         return baseUrl;
+    }
+
+    public SiteConfigs getSiteConfigs()
+    {
+        return siteConfigs;
     }
 
     public Site getNearestSite()
@@ -68,9 +77,17 @@ final class BaseUrlMetadata
 
         private Branch branch;
 
+        private SiteConfigs siteConfigs = SiteConfigs.empty();
+
         public Builder setBaseUrl( final String baseUrl )
         {
             this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder setSiteConfigs( final SiteConfigs siteConfigs )
+        {
+            this.siteConfigs = siteConfigs;
             return this;
         }
 

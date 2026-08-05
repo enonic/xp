@@ -25,6 +25,8 @@ public final class AttachmentUrlParams
 
     private String baseUrl;
 
+    private String mediaBaseUrl;
+
     public String getId()
     {
         return this.id;
@@ -114,7 +116,24 @@ public final class AttachmentUrlParams
 
     public AttachmentUrlParams baseUrl( final String baseUrl )
     {
-        this.baseUrl = baseUrl;
+        this.baseUrl = Strings.emptyToNull( baseUrl );
+        return this;
+    }
+
+    public String getMediaBaseUrl()
+    {
+        return mediaBaseUrl;
+    }
+
+    /**
+     * Base URL used verbatim as the API root of the generated media URL:
+     * {@code <mediaBaseUrl>/media:attachment/...} - no "_" endpoint segment is added.
+     * Takes precedence over {@code baseUrl}, which points at a mount where APIs
+     * live under the "_" endpoint segment: {@code <baseUrl>/_/media:attachment/...}.
+     */
+    public AttachmentUrlParams mediaBaseUrl( final String mediaBaseUrl )
+    {
+        this.mediaBaseUrl = Strings.emptyToNull( mediaBaseUrl );
         return this;
     }
 

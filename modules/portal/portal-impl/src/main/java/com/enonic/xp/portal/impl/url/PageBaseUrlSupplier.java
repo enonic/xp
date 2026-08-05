@@ -41,10 +41,11 @@ final class PageBaseUrlSupplier
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final boolean preferSiteRequest =
-            PortalRequestHelper.isSiteBase( portalRequest ) && params.getProjectName() == null && params.getBranch() == null;
+        final boolean preferSiteRequest = params.getBaseUrl() == null && PortalRequestHelper.isSiteBase( portalRequest ) &&
+            params.getProjectName() == null && params.getBranch() == null;
 
-        final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, baseUrlParams ).resolve( metadata -> {
+        final String baseUrl =
+            new ContentBaseUrlResolver( contentService, projectService, baseUrlParams, params.getBaseUrl() ).resolve( metadata -> {
             if ( preferSiteRequest )
             {
                 return new ContentPathResolver().portalRequest( portalRequest )

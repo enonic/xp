@@ -23,7 +23,7 @@ final class MediaResolver
 
     private final ContentService contentService;
 
-    private final String baseUrl;
+    private final boolean hasExplicitBaseUrl;
 
     private final String id;
 
@@ -34,7 +34,7 @@ final class MediaResolver
         this.projectName = requireNonNull( builder.projectName );
         this.branch = requireNonNull( builder.branch );
         this.contentService = requireNonNull( builder.contentService );
-        this.baseUrl = builder.baseUrl;
+        this.hasExplicitBaseUrl = builder.hasExplicitBaseUrl;
         this.id = builder.id;
         this.path = builder.path;
     }
@@ -42,7 +42,7 @@ final class MediaResolver
     public MediaResolverResult resolve()
     {
         final String contentKey = requireNonNullElseGet( id, () -> {
-            if ( baseUrl != null )
+            if ( hasExplicitBaseUrl )
             {
                 return requireNonNull( path );
             }
@@ -88,7 +88,7 @@ final class MediaResolver
 
         private final ContentService contentService;
 
-        private String baseUrl;
+        private boolean hasExplicitBaseUrl;
 
         private String id;
 
@@ -101,9 +101,9 @@ final class MediaResolver
             this.contentService = contentService;
         }
 
-        public Builder setBaseUrl( final String baseUrl )
+        public Builder setHasExplicitBaseUrl( final boolean hasExplicitBaseUrl )
         {
-            this.baseUrl = baseUrl;
+            this.hasExplicitBaseUrl = hasExplicitBaseUrl;
             return this;
         }
 

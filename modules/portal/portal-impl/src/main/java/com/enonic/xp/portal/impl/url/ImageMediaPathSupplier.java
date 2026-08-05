@@ -45,22 +45,28 @@ final class ImageMediaPathSupplier
     @Override
     public String get()
     {
+        final MediaPathParts parts = parts();
+
+        final StringBuilder url = new StringBuilder();
+
+        appendPart( url, parts.context() );
+        appendPart( url, parts.idWithHash() );
+        appendPart( url, parts.scale() );
+        appendPart( url, parts.name() );
+
+        return url.toString();
+    }
+
+    MediaPathParts parts()
+    {
         final Media media = requireNonNull( mediaSupplier.get() );
         final ProjectName project = requireNonNull( projectNameSupplier.get() );
         final Branch branch = requireNonNull( branchSupplier.get() );
 
-        final String hash = MediaHashResolver.resolveImageHash( media );
-        final String resolvedScale = resolveScale( scale );
-        final String name = resolveName( media, format );
+        final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 
-        final StringBuilder url = new StringBuilder();
-
-        appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
-        appendPart( url, media.getId() + ( hash != null ? ":" + hash : "" ) );
-        appendPart( url, resolvedScale );
-        appendPart( url, name );
-
-        return url.toString();
+        return new MediaPathParts( context, media.getId().toString(), MediaHashResolver.resolveImageHash( media ),
+                                        resolveScale( scale ), resolveName( media, format ) );
     }
 
     private String resolveName( final Content media, final String format )

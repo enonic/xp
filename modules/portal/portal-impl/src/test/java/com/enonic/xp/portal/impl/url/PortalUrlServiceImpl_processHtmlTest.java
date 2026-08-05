@@ -21,6 +21,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
@@ -40,10 +41,13 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
+import com.enonic.xp.webapp.WebappService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,11 +81,12 @@ class PortalUrlServiceImpl_processHtmlTest
         this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
-                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService );
+                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService,
+                                      mock( SiteService.class ) );
 
         req = mock( HttpServletRequest.class );
 
@@ -233,6 +238,101 @@ class PortalUrlServiceImpl_processHtmlTest
         assertEquals( String.format(
             "<a href=\"/site/context-project/context-branch/a/b/mycontent\">Content</a><a href=\"baseUrl/_/media:attachment/context-project:context-branch/%s/picture.jpg?download\">Download</a>",
             content.getId() ), html );
+    }
+
+    @Test
+    void testMediaLinksWithDivergedBaseUrls()
+    {
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/guillotine:graphql" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/api/guillotine:graphql" );
+
+        final Attachment attachment = Attachment.create().label( "source" ).name( "picture.jpg" ).mimeType( "image/jpeg" ).build();
+
+        final Attachments attachments = Attachments.from( attachment );
+        final Content content = Content.create( ContentFixtures.newMedia() ).attachments( attachments ).build();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams();
+        params.value( String.format( "<img src=\"image://%s\"/><a href=\"media://download/%s\">Download</a>", content.getId(),
+                                     content.getId() ) );
+        params.imageBaseUrl( "https://site.example.com/_" );
+        params.attachmentBaseUrl( "https://media.example.com" );
+
+        final String html = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> service.processHtml( params ) );
+
+        // the two media APIs can be mounted at different locations: each link kind follows its own base
+        assertThat( html ).startsWith( "<img src=\"https://site.example.com/_/media:image/context-project:context-branch/" );
+        assertThat( html ).contains(
+            String.format( "<a href=\"https://media.example.com/media:attachment/context-project:context-branch/%s/picture.jpg?download\">",
+                           content.getId() ) );
+    }
+
+    @Test
+    void testMediaLinksWithMediaBaseUrl()
+    {
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/guillotine:graphql" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/api/guillotine:graphql" );
+
+        final Attachment attachment = Attachment.create().label( "source" ).name( "picture.jpg" ).mimeType( "image/jpeg" ).build();
+
+        final Attachments attachments = Attachments.from( attachment );
+        final Content content = Content.create( ContentFixtures.newContent() ).attachments( attachments ).build();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams();
+        params.value( String.format( "<a href=\"media://download/%s\">Download</a>", content.getId() ) );
+        params.baseUrl( "ignoredBaseUrl" );
+        params.attachmentBaseUrl( "https://media.example.com/" );
+
+        final String html = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> service.processHtml( params ) );
+
+        // attachmentBaseUrl points at the API root (no "_" segment) and takes precedence over baseUrl for attachments
+        assertEquals( String.format(
+            "<a href=\"https://media.example.com/media:attachment/context-project:context-branch/%s/picture.jpg?download\">Download</a>",
+            content.getId() ), html );
+    }
+
+    @Test
+    void testContentLinkWithPageBaseUrl()
+    {
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/guillotine:graphql" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/api/guillotine:graphql" );
+
+        final Content content = Content.create( ContentFixtures.newContent() ).build();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+        when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams();
+        params.value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) );
+        params.pageBaseUrl( "https://www.example.com/" );
+
+        final String html = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> service.processHtml( params ) );
+
+        assertEquals( "<a href=\"https://www.example.com/b/mycontent\">Content</a>", html );
     }
 
     @Test

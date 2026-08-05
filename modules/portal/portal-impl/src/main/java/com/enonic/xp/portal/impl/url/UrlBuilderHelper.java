@@ -104,7 +104,7 @@ public final class UrlBuilderHelper
         }
     }
 
-    private static String urlEncodePathSegment( final String value )
+    static String urlEncodePathSegment( final String value )
     {
         return UrlEscapers.urlPathSegmentEscaper().escape( value );
     }

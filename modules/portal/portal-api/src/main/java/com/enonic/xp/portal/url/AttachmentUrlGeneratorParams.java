@@ -9,6 +9,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.project.ProjectName;
 
+import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
@@ -16,6 +17,8 @@ import static java.util.Objects.requireNonNullElse;
 public final class AttachmentUrlGeneratorParams
 {
     private final String baseUrl;
+
+    private final String mediaBaseUrl;
 
     private final String urlType;
 
@@ -36,6 +39,7 @@ public final class AttachmentUrlGeneratorParams
     private AttachmentUrlGeneratorParams( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
+        this.mediaBaseUrl = builder.mediaBaseUrl;
         this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.contentSupplier = requireNonNull( builder.contentSupplier );
         this.projectName = requireNonNull( builder.projectNameSupplier );
@@ -49,6 +53,11 @@ public final class AttachmentUrlGeneratorParams
     public String getBaseUrl()
     {
         return baseUrl;
+    }
+
+    public String getMediaBaseUrl()
+    {
+        return mediaBaseUrl;
     }
 
     public String getUrlType()
@@ -100,6 +109,8 @@ public final class AttachmentUrlGeneratorParams
     {
         private String baseUrl;
 
+        private String mediaBaseUrl;
+
         private String urlType;
 
         private Supplier<Content> contentSupplier;
@@ -116,9 +127,29 @@ public final class AttachmentUrlGeneratorParams
 
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
+        /**
+         * Base URL of a mount where the generated media URL lives under the "_"
+         * endpoint segment: {@code <baseUrl>/_/media:attachment/...}.
+         *
+         * @deprecated use {@link #setMediaBaseUrl(String)} - append {@code /_} to the
+         * value to keep the mount form produced by this method.
+         */
+        @Deprecated
         public Builder setBaseUrl( final String baseUrl )
         {
             this.baseUrl = baseUrl;
+            return this;
+        }
+
+        /**
+         * Base URL used verbatim as the API root of the generated media URL:
+         * {@code <mediaBaseUrl>/media:attachment/...} - no "_" endpoint segment is added.
+         * Takes precedence over {@code baseUrl}, which points at a mount where APIs
+         * live under the "_" endpoint segment: {@code <baseUrl>/_/media:attachment/...}.
+         */
+        public Builder setMediaBaseUrl( final String mediaBaseUrl )
+        {
+            this.mediaBaseUrl = emptyToNull( mediaBaseUrl );
             return this;
         }
 

@@ -866,7 +866,7 @@ interface ApiUrlHandler {
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.api Descriptor of the API
- * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
+ * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`. Ignored when a base URL applies.
  * @param {string|string[]} [params.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  * @param {string} [params.baseUrl] Custom baseUrl.

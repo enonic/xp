@@ -39,21 +39,29 @@ final class AttachmentMediaPathSupplier
     @Override
     public String get()
     {
+        final MediaPathParts parts = parts();
+
+        final StringBuilder url = new StringBuilder();
+
+        appendPart( url, parts.context() );
+        appendPart( url, parts.idWithHash() );
+        appendPart( url, parts.name() );
+
+        return url.toString();
+    }
+
+    MediaPathParts parts()
+    {
         final Content content = requireNonNull( contentSupplier.get() );
         final ProjectName project = requireNonNull( projectNameSupplier.get() );
         final Branch branch = requireNonNull( branchSupplier.get() );
 
-        final StringBuilder url = new StringBuilder();
-
-        appendPart( url, project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch ) );
+        final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 
         final Attachment attachment = resolveAttachment( content );
         final String hash = MediaHashResolver.resolveAttachmentHash( attachment );
 
-        appendPart( url, content.getId().toString() + ( hash != null ? ":" + hash : "" ) );
-        appendPart( url, attachment.getName() );
-
-        return url.toString();
+        return new MediaPathParts( context, content.getId().toString(), hash, null, attachment.getName() );
     }
 
     private Attachment resolveAttachment( final Content content )

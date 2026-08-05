@@ -1,14 +1,21 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentNotFoundException;
@@ -17,6 +24,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
@@ -29,6 +37,7 @@ import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -38,6 +47,10 @@ import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.StyleDescriptorService;
 
 import static java.util.Objects.requireNonNull;
@@ -60,12 +73,19 @@ public final class PortalUrlServiceImpl
 
     private final PortalUrlGeneratorService portalUrlGeneratorService;
 
+    private final SiteService siteService;
+
+    private volatile String defaultMediaBaseUrl;
+
+    private volatile boolean mediaApiAutoMount = true;
+
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
                                  @Reference final RedirectChecksumService redirectChecksumService,
                                  @Reference final ProjectService projectService,
-                                 @Reference final PortalUrlGeneratorService portalUrlGeneratorService )
+                                 @Reference final PortalUrlGeneratorService portalUrlGeneratorService,
+                                 @Reference final SiteService siteService )
     {
         this.contentService = contentService;
         this.resourceService = resourceService;
@@ -74,6 +94,15 @@ public final class PortalUrlServiceImpl
         this.redirectChecksumService = redirectChecksumService;
         this.projectService = projectService;
         this.portalUrlGeneratorService = portalUrlGeneratorService;
+        this.siteService = siteService;
+    }
+
+    @Activate
+    @Modified
+    public void activate( final PortalConfig config )
+    {
+        this.defaultMediaBaseUrl = Strings.emptyToNull( config.media_defaultBaseUrl() );
+        this.mediaApiAutoMount = config.legacy_mediaApiAutoMount_enabled();
     }
 
     @Override
@@ -112,8 +141,38 @@ public final class PortalUrlServiceImpl
     @Override
     public String baseUrl( final BaseUrlParams params )
     {
+        if ( params.getApi() != null )
+        {
+            return runWithAdminRole( () -> resolveApiBaseUrl( params ) );
+        }
+
         final Supplier<String> baseUrlStrategy = new ContentBaseUrlSupplier( contentService, projectService, params );
         return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlStrategy ).build() );
+    }
+
+    private String resolveApiBaseUrl( final BaseUrlParams params )
+    {
+        final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extract( params, null );
+
+        final String configuredBaseUrl = metadata.getBaseUrl();
+
+        if ( configuredBaseUrl != null &&
+            ApiMountVerifier.isApiMountedOnSite( params.getApi(), metadata.getSiteConfigs(), siteService, mediaApiAutoMount ) )
+        {
+            // the configured Base URL is a mount base: APIs live under its "_" endpoint segment
+            final StringBuilder url = new StringBuilder(
+                configuredBaseUrl.endsWith( "/" ) ? configuredBaseUrl.substring( 0, configuredBaseUrl.length() - 1 ) : configuredBaseUrl );
+            UrlBuilderHelper.appendPart( url, "_" );
+            return url.toString();
+        }
+
+        if ( ApplicationKey.MEDIA_MOD.equals( params.getApi().getApplicationKey() ) )
+        {
+            // the default media base points directly at the API root: no "_" endpoint segment
+            return defaultMediaBaseUrl;
+        }
+
+        return null;
     }
 
     @Override
@@ -126,6 +185,43 @@ public final class PortalUrlServiceImpl
 
         return portalUrlGeneratorService.generateUrl(
             UrlGeneratorParams.create().setBaseUrl( baseUrlSupplier ).setQueryString( queryParamsStrategy ).build() );
+    }
+
+    @Override
+    public PageUrlParts pageUrlParts( final PageUrlParams params )
+    {
+        return runWithAdminRole( () -> {
+            final BaseUrlParams baseUrlParams = BaseUrlParams.create()
+                .setUrlType( params.getType() )
+                .setProjectName( params.getProjectName() )
+                .setBranch( params.getBranch() )
+                .setId( params.getId() )
+                .setPath( params.getPath() )
+                .build();
+
+            // an explicit empty base disables resolution from configuration and from the request:
+            // the result is the escaped path relative to the nearest site, with a leading slash
+            final String path = new ContentBaseUrlResolver( contentService, projectService, baseUrlParams, "" ).resolve( metadata -> {
+                final Site nearestSite = metadata.getNearestSite();
+                final Content content = metadata.getContent();
+                return nearestSite != null
+                    ? content.getPath().toString().substring( nearestSite.getPath().toString().length() )
+                    : content.getPath().toString();
+            } );
+
+            final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
+            queryParamsStrategy.params( params.getParams() );
+
+            return new PageUrlParts( path, queryParamsStrategy.get() );
+        } );
+    }
+
+    private static <T> T runWithAdminRole( final Callable<T> callable )
+    {
+        final Context context = ContextAccessor.current();
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.copyOf( context.getAuthInfo() ).principals( RoleKeys.ADMIN ).build();
+        return ContextBuilder.from( context ).authInfo( authenticationInfo ).build().callWith( callable );
     }
 
     @Override
@@ -151,15 +247,17 @@ public final class PortalUrlServiceImpl
     @Override
     public String imageUrl( final ImageUrlParams params )
     {
+        final String mediaBaseUrl = PortalUrlGeneratorServiceImpl.resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
+
         final Supplier<ProjectName> projectNameSupplier = () -> ContentProjectResolver.create()
             .setProjectName( params.getProjectName() )
-            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .setPreferSiteRequest( mediaBaseUrl == null )
             .build()
             .resolve();
 
         final Supplier<Branch> branchSupplier = () -> ContentBranchResolver.create()
             .setBranch( params.getBranch() )
-            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .setPreferSiteRequest( mediaBaseUrl == null )
             .build()
             .resolve();
 
@@ -168,7 +266,7 @@ public final class PortalUrlServiceImpl
             final Branch branch = branchSupplier.get();
 
             final MediaResolverResult mediaResolverResult = MediaResolver.create( projectName, branch, contentService )
-                .setBaseUrl( params.getBaseUrl() )
+                .setHasExplicitBaseUrl( mediaBaseUrl != null )
                 .setId( params.getId() )
                 .setPath( params.getPath() )
                 .build()
@@ -183,7 +281,7 @@ public final class PortalUrlServiceImpl
         };
 
         final ImageUrlGeneratorParams generatorParams = ImageUrlGeneratorParams.create()
-            .setBaseUrl( params.getBaseUrl() )
+            .setMediaBaseUrl( mediaBaseUrl )
             .setUrlType( params.getType() )
             .setMedia( mediaSupplier )
             .setProjectName( projectNameSupplier )
@@ -202,15 +300,17 @@ public final class PortalUrlServiceImpl
     @Override
     public String attachmentUrl( final AttachmentUrlParams params )
     {
+        final String mediaBaseUrl = PortalUrlGeneratorServiceImpl.resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
+
         final Supplier<ProjectName> projectNameSupplier = () -> ContentProjectResolver.create()
             .setProjectName( params.getProjectName() )
-            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .setPreferSiteRequest( mediaBaseUrl == null )
             .build()
             .resolve();
 
         final Supplier<Branch> branchSupplier = () -> ContentBranchResolver.create()
             .setBranch( params.getBranch() )
-            .setPreferSiteRequest( params.getBaseUrl() == null )
+            .setPreferSiteRequest( mediaBaseUrl == null )
             .build()
             .resolve();
 
@@ -219,7 +319,7 @@ public final class PortalUrlServiceImpl
             final Branch branch = branchSupplier.get();
 
             final MediaResolverResult mediaResolverResult = MediaResolver.create( projectName, branch, contentService )
-                .setBaseUrl( params.getBaseUrl() )
+                .setHasExplicitBaseUrl( mediaBaseUrl != null )
                 .setId( params.getId() )
                 .setPath( params.getPath() )
                 .build()
@@ -236,7 +336,7 @@ public final class PortalUrlServiceImpl
         };
 
         final AttachmentUrlGeneratorParams generatorParams = AttachmentUrlGeneratorParams.create()
-            .setBaseUrl( params.getBaseUrl() )
+            .setMediaBaseUrl( mediaBaseUrl )
             .setUrlType( params.getType() )
             .setProjectName( projectNameSupplier )
             .setBranch( branchSupplier )

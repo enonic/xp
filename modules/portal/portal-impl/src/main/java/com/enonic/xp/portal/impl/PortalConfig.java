@@ -12,6 +12,10 @@ public @interface PortalConfig
 
     String media_contentSecurityPolicy_svg() default "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'";
 
+    String media_defaultBaseUrl() default "";
+
+    boolean legacy_mediaApiAutoMount_enabled() default true;
+
     boolean legacy_attachmentService_enabled() default true;
 
     boolean legacy_imageService_enabled() default true;

@@ -55,10 +55,10 @@ final class DefaultImageLinkProcessor
         Optional.ofNullable( imageStyle ).map( ImageStyle::getFilter ).ifPresent( filter -> queryParamsStrategy.param( "filter", filter ) );
 
         final Supplier<ProjectName> projectNameSupplier = Suppliers.memoize(
-            () -> ContentProjectResolver.create().setPreferSiteRequest( params.getBaseUrl() == null ).build().resolve() );
+            () -> ContentProjectResolver.create().setPreferSiteRequest( params.getBaseUrl() == null && params.getImageBaseUrl() == null ).build().resolve() );
 
         final Supplier<Branch> branchSupplier =
-            Suppliers.memoize( () -> ContentBranchResolver.create().setPreferSiteRequest( params.getBaseUrl() == null ).build().resolve() );
+            Suppliers.memoize( () -> ContentBranchResolver.create().setPreferSiteRequest( params.getBaseUrl() == null && params.getImageBaseUrl() == null ).build().resolve() );
 
         final Supplier<Media> imageSupplier = Suppliers.memoize( () -> {
             final Content content = ContextBuilder.copyOf( ContextAccessor.current() )

@@ -28,8 +28,10 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.webapp.WebappService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,11 +49,11 @@ class PortalUrlServiceImpl_apiUrlTest
     @BeforeEach
     void setUp()
     {
-        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
+        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
         this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ), portalUrlGeneratorService );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService, mock( SiteService.class ) );
 
         req = mock( HttpServletRequest.class );
 
