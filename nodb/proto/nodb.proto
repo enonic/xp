@@ -1,6 +1,32 @@
 // NoDB wire protocol, v0.1 draft — mirrors the storage SPI 1:1.
 // This is XP's ONLY path to NoDB in every topology (dev, self-hosted, cloud).
 // Tenant identity comes from the auth channel (mTLS / bearer token), never from the payload.
+//
+// ── THE ONE SOURCE OF TRUTH ────────────────────────────────────────────────────────────
+// This file is the only copy of the schema in the repository. Both Gradle builds generate
+// from it in place — nodb/server (the separate nodb/ build) and XP's
+// modules/core/core-storage-nodb-client (the root build) point their protobuf source sets
+// at this directory. Do NOT vendor a copy under any <module>/src/main/proto/: both builds
+// run a `checkNoVendoredProto` task that fails loudly if one reappears.
+// Phase 4 gate P1, nodb/BUILD-PHASE-4.md.
+//
+// ── COMPATIBILITY POLICY: EXPLICIT LOCKSTEP (v0.1 draft) ───────────────────────────────
+// Every producer and consumer of this protocol lives in this repository, and XP and NoDB
+// are built and deployed together (dev-stack.sh rebuilds both). There is no independent
+// upgrade path to preserve, so the protocol carries NO backward-compatibility guarantee:
+// breaking changes — renumbering fields, changing a field's type, replacing an RPC's
+// request/response shape, deleting messages — are allowed, and Phase 3.5 renumbered fields
+// freely. The obligation is only that both sides are regenerated and redeployed from the
+// same revision of this file. A mixed-version XP/NoDB pair is unsupported and undefined.
+//
+// This ENDS at Phase 6 (multi-XP runtimes, rolling upgrades, horizontally split runtimes),
+// where an XP built from revision N must talk to a NoDB built from revision N±1 while both
+// are live. Moving to versioned rolling compatibility then requires: no field renumbering
+// or retyping, ever; additive-only changes (new optional fields, new RPCs); `reserved`
+// ranges for every removed field number and name; new semantics behind a new field rather
+// than a redefined one; and an explicit protocol version negotiated per connection (the
+// `format_version` envelope field is the search path's precedent). Until that phase lands,
+// lockstep is the policy — stated so it is a recorded decision, not an accident.
 syntax = "proto3";
 
 package enonic.nodb.v1;
@@ -70,8 +96,14 @@ service NodeStore {
 }
 
 service NodeSearch {
-  // Carries the serialized XP query AST; translation to the engine DSL is server-side
-  // (open question #1 in DESIGN.md — this is the preferred resolution).
+  // Carries XP's canonical JSON query DSL plus an envelope (format version, sources,
+  // paging, sort/aggregations/filters/highlight/suggest) — NOT a serialized query AST,
+  // which decision 1 of nodb/BUILD-PHASE-4.md supersedes. XP normalizes at its own
+  // boundary: DSL queries pass through, NoQL strings are parsed and then RENDERED to DSL by
+  // a renderer that lives in XP CORE, above the storage SPI; the nodb client is a pure
+  // serializer with zero query-language knowledge. Translation DSL → engine query is
+  // server-side (decision 2), and the server rejects constructs outside the versioned wire
+  // schema loudly rather than guessing.
   rpc Search (SearchRequest) returns (SearchResult);
   rpc AwaitRefresh (AwaitRefreshRequest) returns (Ack); // RefreshMode.SEARCH
   rpc Reindex (ReindexRequest) returns (TaskHandle);

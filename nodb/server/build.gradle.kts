@@ -1,6 +1,8 @@
 // NoDB server — gRPC bindings over the engine (slice 1 step 5): proto codegen, JWT auth
 // interceptor, dev token issuer, service impls wired to the engine's stores/WriteService.
 
+import com.google.protobuf.gradle.proto
+
 plugins {
     id("com.google.protobuf") version "0.10.0"
     application
@@ -50,6 +52,42 @@ dependencies {
     testImplementation(libs.grpc.inprocess)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
+
+// ONE protobuf source of truth (Phase 4 gate P1, nodb/BUILD-PHASE-4.md): codegen reads
+// nodb/proto/nodb.proto directly instead of a vendored src/main/proto copy. The XP root
+// build's core-storage-nodb-client points its own proto srcDir at the same file, and
+// checkNoVendoredProto below fails the build if a copy is re-introduced here.
+val canonicalProtoDir = rootProject.layout.projectDirectory.dir("proto")
+
+sourceSets {
+    main {
+        proto {
+            srcDir(canonicalProtoDir)
+        }
+    }
+}
+
+val checkNoVendoredProto = tasks.register("checkNoVendoredProto") {
+    val vendoredDir = layout.projectDirectory.dir("src/main/proto").asFile
+    val canonical = canonicalProtoDir.file("nodb.proto").asFile
+    doLast {
+        if (!canonical.isFile) {
+            throw GradleException("Canonical proto is missing: $canonical")
+        }
+        val copies = vendoredDir.walkTopDown().filter { it.isFile && it.extension == "proto" }.toList()
+        if (copies.isNotEmpty()) {
+            throw GradleException(
+                "Vendored .proto copy found: ${copies.joinToString(", ")}. " +
+                    "nodb/proto/nodb.proto is the ONE source of truth (gate P1, " +
+                    "nodb/BUILD-PHASE-4.md) -- both builds generate from it directly. " +
+                    "Delete the copy; do not re-introduce a hand-synchronized schema."
+            )
+        }
+    }
+}
+
+tasks.named("generateProto") { dependsOn(checkNoVendoredProto) }
+tasks.named("check") { dependsOn(checkNoVendoredProto) }
 
 val protobufVersion = libs.versions.protobuf.get()
 val grpcVersion = libs.versions.grpc.get()
