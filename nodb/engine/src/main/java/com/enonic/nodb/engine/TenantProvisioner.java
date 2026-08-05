@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import javax.sql.DataSource;
 
 /**
@@ -34,6 +35,12 @@ public final class TenantProvisioner
     public void provision( TenantContext tenant )
         throws SQLException
     {
+        provision( tenant, MigrationRunner.loadMigrations() );
+    }
+
+    void provision( TenantContext tenant, List<MigrationRunner.Migration> migrations )
+        throws SQLException
+    {
         String schema = tenant.tenantId();
         String quotedSchema = Identifiers.quote( schema );
 
@@ -54,7 +61,7 @@ public final class TenantProvisioner
                     statement.execute( "GRANT USAGE ON SCHEMA " + quotedSchema + " TO " + quotedSchema );
                 }
 
-                MigrationRunner.migrateTenantSchema( connection, schema );
+                MigrationRunner.migrateTenantSchema( connection, schema, migrations );
 
                 try (Statement statement = connection.createStatement())
                 {

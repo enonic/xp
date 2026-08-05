@@ -112,6 +112,81 @@ or Phase 6 production hardening into Phase 4.
 | **P2** | **Repository-scoped version identity.** **DONE — delivered in Phase 3.5** (`BUILD-PHASE-3.5.md` gate P2, branch `nodb-phase35-version-sql`); kept for the record. Resolve the mismatch between the SPI's repo-scoped version operations and PostgreSQL's `(repo_key, version_id)` key: version get/delete and the Phase-4 SQL history surface MUST resolve the repository and predicate on `repo_key`; do not rely on an unenforced tenant-global version-id assumption. | A test stores the same `version_id` in two repos in one tenant, then proves get/delete/history affect only the selected repo; server requests carry/resolve repo identity; grep/review finds no unscoped runtime version lookup/delete. Existing single-repo behavior remains green. | ~120k |
 | **P3** | **Forward-only migration discipline.** Freeze applied migration contents before Phase 4 adds OpenSearch/checkpoint/history schema. Add immutable ordered migrations with recorded checksums (or equivalent tamper detection) and define the pre-GA baseline/upgrade rule for Phase-3 tenants. | Fresh tenant provisioning and upgrade from a Phase-3 schema both pass; changing an already-applied migration is rejected loudly; new Phase-4 schema lands in a new migration rather than an edit to `001_init.sql`; migration-order/checksum tests are green. | ~120k |
 
+### P3 DONE (2026-08-06) — mechanism and the pre-GA baseline rule
+
+**Checksum:** `sha256:<hex>` (same shape as the content-addressed `payload.hash` keys) over
+each migration file's UTF-8 content, **normalized** by converting `\r\n`/`\r` to `\n` and
+stripping trailing whitespace per line and at end of file. Those are exactly the edits
+tooling makes with no human intent (`core.autocrlf` on a fresh checkout, an editor's
+strip-on-save, a missing/added final newline) — a checksum that fired on them would cry wolf
+instead of catching drift. Everything else, down to one character of SQL or comment, flips
+the hash. Consequence to respect: a migration may not rely on significant trailing
+whitespace inside a multi-line string literal.
+
+**Storage:** a **companion table** `nodb_system.tenant_migration (tenant_id, version, name,
+checksum, applied_at)`, PK `(tenant_id, version)`, FK to `nodb_system.tenant` `ON DELETE
+CASCADE` (so `dropTenant`'s existing single DELETE still cleans up). Not a column on
+`nodb_system.tenant`: checksums are one row *per migration per tenant*, which a single
+`template_version` column cannot hold. Created by `MigrationRunner.ensureSystemSchema`
+alongside the `tenant` table, so it appears with `CREATE TABLE IF NOT EXISTS` on existing
+installations. **`nodb/schema/schema.sql` is unchanged (still v0.4)** — it is the summed
+*tenant-schema* content of `001+002`, and `nodb_system` has never been part of it (it is
+Java-side DDL); no tenant-schema DDL was added and `001`/`002` were not touched.
+
+**Invariants enforced on every provisioning/upgrade run**, each failing with
+`MigrationIntegrityException` (never a downstream SQL error): (1) the manifest is
+`NNN_name.sql`, ordered and gapless from `001`; (2) an already-applied slot still carries the
+same file name (rename/reorder rejected); (3) an already-applied slot still has the same
+checksum — *"migration 002_x.sql has changed since it was applied to tenant Y; migrations are
+immutable — add a new migration instead"*; (4) a tenant is never ahead of the manifest
+(forward-only, no downgrade).
+
+**Adopt-on-first-run rule (pre-GA).** A tenant with a `template_version` but **no**
+`tenant_migration` row for an applied slot is in an UNKNOWN state, not a mismatch: it was
+provisioned before this gate. On the first run after this gate it **adopts** the current file
+checksums as its baseline (one `INFO` log line per adopted slot) and proceeds; only slots that
+do carry a recorded checksum are compared. Safe strictly because everything is pre-GA — the
+protocol and schema are a draft, every installation is a development installation whose
+tenants are provisioned from scratch by itest/bench/dev-stack runs, so an unchecksummed slot
+can only have come from the matching file in the same working tree. **At GA this must become
+an error:** no adoption, an unknown state is a failure like a tamper, resolved only by an
+explicit audited operator action (a recorded baseline import) — with durable customer data,
+"assume it matches" is precisely the assumption that hides a divergent schema.
+
+**Green:** `nodb/engine` `MigrationIntegrityTest` 11 tests (fresh checksum recording,
+Phase-3→002 upgrade, tamper rejected, whitespace-only reformat accepted, rename rejected,
+ahead-of-manifest rejected, out-of-order/gap/bad-name manifests rejected, adopt-on-first-run,
+dual-tenant isolation) + `TenantProvisioningTest` 5, whole `nodb` build green.
+
+### P1 DONE (2026-08-06) — mechanism and compatibility policy
+
+**One source of truth: `nodb/proto/nodb.proto`, read in place by both builds.** The protobuf
+Gradle plugin's proto source set accepts an arbitrary `srcDir`, so neither build needs the
+file inside its own module: `nodb/server/build.gradle.kts` adds `$rootDir/proto` and
+`modules/core/core-storage-nodb-client/build.gradle` adds `$rootDir/nodb/proto` — the same
+file, no copy, no generated staging dir, nothing tracked twice. The two vendored copies
+(`nodb/server/src/main/proto/nodb.proto`,
+`modules/core/core-storage-nodb-client/src/main/proto/nodb.proto`) are deleted. **Drift
+guard:** each build registers `checkNoVendoredProto` (wired into both `generateProto` and
+`check`, so it fires before protoc and inside the normal verification lifecycle) which
+fails if the canonical file is missing or if *any* `.proto` reappears under that module's
+`src/main/proto/`. Fixed on the way past: the `Search` RPC comment, which still described
+the abandoned "serialized XP query AST" wire (decision 1) — item 6 of "Items the work
+order does not account for".
+
+**Compatibility policy: EXPLICIT LOCKSTEP while the protocol is a v0.1 draft** (recorded
+in full at the top of the canonical proto). All producers and consumers live in this
+repository, and XP and NoDB are built and deployed together (`dev-stack.sh` rebuilds both),
+so there is no independent upgrade path to preserve: breaking changes — field renumbering
+(Phase 3.5 did exactly that), retyping, RPC reshaping, message deletion — are permitted,
+and the only obligation is that both sides are regenerated and redeployed from the same
+revision. A mixed-version XP/NoDB pair is unsupported and undefined. **This ends at Phase 6**
+(multi-XP, rolling upgrades, horizontally split runtimes), where revision N must interoperate
+with N±1 live. Moving to versioned rolling compatibility then requires: no renumbering or
+retyping ever, additive-only changes, `reserved` ranges for every removed field number and
+name, new semantics behind new fields rather than redefined ones, and a per-connection
+negotiated protocol version (the search envelope's `format_version` is the precedent).
+
 ## GATE 0 COMPLETE (2026-08-05) — decisions awaiting a ruling
 
 All five items delivered (a: DSL completeness · b: envelope · c: translator surface ·
