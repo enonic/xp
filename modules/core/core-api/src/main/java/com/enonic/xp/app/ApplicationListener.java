@@ -1,9 +1,9 @@
 package com.enonic.xp.app;
 
 /**
- * Whiteboard callback invoked when an application is activated or deactivated.
+ * Whiteboard callback for application activation and deactivation.
  *
- * @deprecated No longer invoked — XP does not dispatch to registered listeners anymore. Track
+ * @deprecated No longer invoked — a registered listener will never be called. Track
  * {@link Application} services instead: they are registered while an application is active and
  * unregistered on stop or reconfigure, so a service tracker's {@code addingService} replays every
  * already-active application on open and delivers future ones, and {@code removedService} is
