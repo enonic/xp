@@ -8,7 +8,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.content.UnpublishContentsResult;
-import com.enonic.xp.content.WorkflowState;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -105,12 +104,6 @@ public class UnpublishContentCommand
         {
             final UpdateNodeParams updateParams =
                 UpdateNodeParams.create().id( deleted ).versionAttributesResolver( unpublishInfoAttr ).editor( toBeEdited -> {
-                    PropertySet workflowInfo = toBeEdited.data.getSet( ContentPropertyNames.WORKFLOW_INFO );
-                    if ( workflowInfo != null )
-                    {
-                        workflowInfo.setString( ContentPropertyNames.WORKFLOW_INFO_STATE, WorkflowState.READY.toString() );
-                    }
-
                     PropertySet publishInfo = toBeEdited.data.getSet( ContentPropertyNames.PUBLISH_INFO );
                     if ( publishInfo != null )
                     {
