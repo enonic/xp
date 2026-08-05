@@ -1,0 +1,518 @@
+{
+  "_meta": {
+    "artifact": "nodb repo index template — DRAFT",
+    "gate": "Phase 4 Gate 0 item (d). NOT production. The full 44-locale / 44-language analyzer port is Gate A.",
+    "engine": "OpenSearch 3.7.0 (Lucene 10.4.0, analysis-icu 3.7.0 / icu4j 77.1)",
+    "ported_from": "modules/core/core-repo/src/main/resources/com/enonic/xp/repo/impl/repository/index/{settings,mapping}/default/search-*.json (Elasticsearch 2.4.6)",
+    "templateVersion": 1,
+
+    "how_this_is_applied": [
+      "This document is BOTH a composable index template and the source of a create-index body.",
+      "NoDB does NOT rely on a server-side template to create repo indices: the alias name is",
+      "per-index (`<tenant>-<repo>`) and a composable template can only carry a STATIC alias, so",
+      "the alias must be attached in the create call. NoDB therefore issues an explicit",
+      "`PUT /<tenant>-<repo>+g<N>` whose body is this file's `template` object plus a computed",
+      "`aliases` block. `index_patterns`/`priority` below exist so the same file can also be PUT",
+      "to `_index_template/nodb-repo-v1` as a safety net for out-of-band index creation.",
+      "The generation that built an index records `_meta.templateVersion`; a template change is a",
+      "new generation (`+g(N+1)` rebuild), never an in-place mutation."
+    ],
+
+    "naming": {
+      "alias": "<tenant>-<repo>            e.g. acme-com.enonic.cms.default",
+      "physical": "<tenant>-<repo>+g<N>      e.g. acme-com.enonic.cms.default+g1",
+      "why_unambiguous": [
+        "Tenant ids are control-plane-minted `^[a-z][a-z0-9]{2,30}$` and contain no '-', so the",
+        "FIRST dash is always the tenant/repo boundary even though repo ids may contain dashes.",
+        "'+' is illegal in a RepositoryId but legal mid-name in OpenSearch, so `+g<N>` can never",
+        "collide with an alias (aliases and indices share one namespace).",
+        "Names are constructed one-way from TenantContext; nothing security-relevant parses them",
+        "back — the authoritative alias→generation map is NoDB metadata."
+      ]
+    },
+
+    "generations": {
+      "create": "PUT <tenant>-<repo>+g1 with this body + aliases {\"<tenant>-<repo>\": {}}. One index kind per repo — Postgres replaced the ES storage index, so there is no `search`/`storage` discriminator.",
+      "rebuild": [
+        "1. PUT <tenant>-<repo>+g(N+1) with the NEW template, no alias.",
+        "2. Backfill from Postgres/outbox while the indexer double-writes both generations.",
+        "3. When g(N+1) has caught up to the g<N> checkpoint, ONE atomic call:",
+        "   POST /_aliases {\"actions\":[",
+        "     {\"remove\":{\"index\":\"<t>-<r>+g<N>\",   \"alias\":\"<t>-<r>\"}},",
+        "     {\"add\":   {\"index\":\"<t>-<r>+g<N+1>\",\"alias\":\"<t>-<r>\"}}]}",
+        "4. Stop double-writing, DELETE g<N>.",
+        "Alias actions are atomic in one cluster-state update, so readers never see zero or two",
+        "indices behind the alias. This is the mechanism for: analyzer/template changes, the V2",
+        "one-doc-per-version layout swap, shard-count changes (fixed at create), embedding-model",
+        "migration, and OpenSearch major upgrades."
+      ],
+      "queries": "Always target the ALIAS, never a physical name. Multi-repo queries target the list of aliases in one request (DESIGN §5 / decision 1); `_index` in each hit is the PHYSICAL name, so repo/branch attribution must map physical → alias through NoDB metadata, not by string-parsing the index name."
+    },
+
+    "dev_vs_cloud": {
+      "shards": "1 in both. Index-per-repo means most indices are small; a large repo gets more shards at its next generation. Dev has one node, so >1 shard buys nothing.",
+      "replicas": "DEV 0, CLOUD 1. XP's search-settings.json hardcodes number_of_replicas:1, which on a single-node dev cluster parks every index at YELLOW forever and makes `wait_for_status=green` health checks unusable. Overridden per environment, not per template.",
+      "override_mechanism": "NoDB substitutes `number_of_replicas` and `refresh_interval` from cell config at create time; everything else is identical across environments so that collation keys and analysis are environment-independent."
+    },
+
+    "refresh_interval_rationale": [
+      "Kept at OpenSearch's default 1s, which is also ES 2.4's default — closest to today's",
+      "observable visibility behavior, so the Gate F byte-identical comparison is not perturbed",
+      "by a refresh-policy change on top of an engine change.",
+      "The §3.3 read-your-writes contract does NOT depend on this value: the indexer implements",
+      "`awaitRefresh(seq)` by waiting for the checkpoint to pass `seq` and then issuing an",
+      "explicit `POST /<alias>/_refresh` (or by writing the batch with `?refresh=wait_for`).",
+      "The background interval is only an upper bound on incidental staleness for readers that",
+      "did not await.",
+      "GATE A KNOBS / TRAPS:",
+      "  * Tests should run with `refresh_interval: -1` so that ANY code path missing an explicit",
+      "    awaitRefresh fails deterministically instead of passing on a 1s timer. Do not ship -1.",
+      "  * `index.search.idle.after` (default 30s) is new since ES 2.4: an index with no search",
+      "    traffic for 30s STOPS refreshing in the background, and the next search then blocks",
+      "    until a refresh completes. Harmless for correctness, but it makes first-query latency",
+      "    after an idle period lumpy and can mask/unmask timing bugs in the refresh tests.",
+      "  * Cloud may raise this to 5s-30s for indexing throughput once Gate F parity is banked."
+    ],
+
+    "limits_raised_and_why": {
+      "index.mapping.total_fields.limit": "1000 -> 10000. Did not exist in ES 2.4. XP emits one sub-field per (property x index-config suffix) — `_analyzed`, `_ngram`, `_path`, `_orderby`, `_orderby_<locale>`, `_stemmed_<lang>`, `_number`, `_datetime`, `_geopoint` — and because OpenSearch expands dotted names into OBJECT mappers (see es_24_isms), every path segment now counts against the limit too. A content repo blows 1000 easily. 10000 is a starting point; Gate A must measure the real count on the itest corpus and on a production-shaped content set.",
+      "index.mapping.depth.limit": "20 -> 50. Each dot in `data.a.b.c._analyzed` is now a mapping LEVEL, not part of a flat name. Deep content types plus the suffix segment can exceed 20.",
+      "index.mapping.nested_fields.limit": "left at default 50 — the V1 layout uses no nested fields. Revisit for chunked-vector nested docs (DESIGN §5 roadmap).",
+      "index.max_result_window": "left at default 10000 — same default XP already lives with on ES 2.4.6. Deep paging moves to search_after/PIT in Gate C.",
+      "index.max_docvalue_fields_search": "left at 100. Flagged only because sorting on many `_orderby_*` fields at once would hit it."
+    },
+
+    "es_24_isms_found": "See es_24_isms below — every entry was verified by PUTting it against a live OpenSearch 3.7.0 with analysis-icu installed."
+  },
+
+  "index_patterns": ["*+g*"],
+  "priority": 100,
+
+  "template": {
+    "settings": {
+      "index": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0,
+        "refresh_interval": "1s",
+        "mapping": {
+          "total_fields": { "limit": 10000 },
+          "depth": { "limit": 50 }
+        }
+      },
+      "analysis": {
+        "tokenizer": {
+          "path-tokenizer": {
+            "type": "path_hierarchy",
+            "delimiter": "/"
+          }
+        },
+        "normalizer": {
+          "keywordlowercase": {
+            "type": "custom",
+            "filter": ["lowercase"]
+          },
+          "keywordasciilowercase": {
+            "type": "custom",
+            "filter": ["lowercase", "asciifolding"]
+          }
+        },
+        "filter": {
+          "front_ngram": {
+            "type": "edge_ngram",
+            "min_gram": 1,
+            "max_gram": 25
+          },
+          "nynorsk_stemmer": {
+            "type": "stemmer",
+            "language": "light_nynorsk"
+          },
+          "icu_collation_ducet": { "type": "icu_collation" },
+          "icu_collation_no": { "type": "icu_collation", "language": "no" }
+        },
+        "analyzer": {
+          "default_search": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": ["lowercase", "asciifolding"]
+          },
+          "keywordlowercase": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": ["lowercase"]
+          },
+          "keywordasciilowercase": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": ["lowercase", "asciifolding"]
+          },
+          "document_index_default": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase", "asciifolding", "word_delimiter"]
+          },
+          "fulltext_search_default": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase", "asciifolding", "word_delimiter"]
+          },
+          "ngram_search_default": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase", "asciifolding", "word_delimiter"]
+          },
+          "ngram_index_front": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase", "asciifolding", "word_delimiter", "front_ngram"]
+          },
+          "path_analyzer": {
+            "type": "custom",
+            "tokenizer": "path-tokenizer",
+            "filter": ["lowercase", "asciifolding"]
+          },
+          "language_analyzer_nn": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": ["lowercase", "nynorsk_stemmer"]
+          },
+          "icu_sort_ducet": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": ["icu_collation_ducet"]
+          },
+          "icu_sort_no": {
+            "type": "custom",
+            "tokenizer": "keyword",
+            "filter": ["icu_collation_no"]
+          }
+        }
+      }
+    },
+
+    "mappings": {
+      "date_detection": false,
+      "numeric_detection": false,
+      "dynamic_templates": [
+        {
+          "template_fulltext": {
+            "path_match": "*._analyzed",
+            "mapping": {
+              "type": "text",
+              "analyzer": "document_index_default",
+              "search_analyzer": "fulltext_search_default"
+            }
+          }
+        },
+        {
+          "template_ngram": {
+            "path_match": "*._ngram",
+            "mapping": {
+              "type": "text",
+              "analyzer": "ngram_index_front",
+              "search_analyzer": "ngram_search_default"
+            }
+          }
+        },
+        {
+          "template_path": {
+            "path_match": "*._path",
+            "mapping": {
+              "type": "text",
+              "analyzer": "path_analyzer"
+            }
+          }
+        },
+        {
+          "template_userdata_date": {
+            "path_match": "*._datetime",
+            "mapping": { "type": "date" }
+          }
+        },
+        {
+          "template_userdata_number": {
+            "path_match": "*._number",
+            "mapping": { "type": "double" }
+          }
+        },
+        {
+          "template_userdata_geopoint": {
+            "path_match": "*._geopoint",
+            "mapping": { "type": "geo_point" }
+          }
+        },
+        {
+          "template_userdata_orderby": {
+            "path_match": "*._orderby",
+            "mapping": {
+              "type": "keyword",
+              "normalizer": "keywordlowercase",
+              "ignore_above": 3072
+            }
+          }
+        },
+        {
+          "template_orderby_ducet": {
+            "path_match": "*._orderby_ducet",
+            "mapping": {
+              "type": "icu_collation_keyword",
+              "index": false,
+              "doc_values": true,
+              "ignore_above": 3072
+            }
+          }
+        },
+        {
+          "template_orderby_no": {
+            "path_match": "*._orderby_no",
+            "mapping": {
+              "type": "icu_collation_keyword",
+              "language": "no",
+              "index": false,
+              "doc_values": true,
+              "ignore_above": 3072
+            }
+          }
+        },
+        {
+          "template_stemmed_en": {
+            "path_match": "*._stemmed_en",
+            "mapping": { "type": "text", "analyzer": "english" }
+          }
+        },
+        {
+          "template_stemmed_nn": {
+            "path_match": "*._stemmed_nn",
+            "mapping": { "type": "text", "analyzer": "language_analyzer_nn" }
+          }
+        },
+        {
+          "template_string_default": {
+            "path_match": "*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword",
+              "ignore_above": 8191
+            }
+          }
+        }
+      ]
+    },
+
+    "aliases": {}
+  },
+
+  "es_24_isms": {
+    "_note": "Verified empirically against OpenSearch 3.7.0 + analysis-icu on 2026-08-05. Gate A owns the port; this is the list, not the fix.",
+
+    "hard_rejections": [
+      {
+        "ism": "\"type\": \"string\"  (every one of ~91 dynamic templates)",
+        "error": "mapper_parsing_exception: No handler for type [string]",
+        "translation": "text (analyzed) or keyword (not_analyzed)"
+      },
+      {
+        "ism": "\"index\": \"analyzed\" / \"not_analyzed\"",
+        "error": "Failed to parse value [analyzed] as only [true] or [false] are allowed",
+        "translation": "drop; the field TYPE now carries the distinction"
+      },
+      {
+        "ism": "\"_all\": {\"enabled\": false}  (search-mapping.json root)",
+        "error": "Root mapping definition has unsupported parameters: [_all]",
+        "translation": "drop. _all is gone. XP also defines an `all_field_analyzer` (standard+lowercase+asciifolding+front_ngram) which has no consumer once _all is gone — Gate A must confirm nothing queries `_all` and delete the analyzer."
+      },
+      {
+        "ism": "\"include_in_all\": false  (on ~91 templates)",
+        "error": "unknown parameter [include_in_all]",
+        "translation": "drop"
+      },
+      {
+        "ism": "\"_default_\": { ... }  mapping-type wrapper",
+        "error": "Root mapping definition has unsupported parameters: [_default_]",
+        "translation": "drop the wrapper; mapping types are gone (single implicit _doc)"
+      },
+      {
+        "ism": "\"type\": \"edgeNGram\"  (front_ngram filter)",
+        "error": "The [edgeNGram] tokenizer name was deprecated pre 1.0. Please change the tokenizer name to [edge_ngram] for indices created in versions 3.0 or higher",
+        "translation": "edge_ngram. Also drop the `\"side\": \"front\"` param — it is silently ACCEPTED but has no effect in Lucene 10; front is the only behavior. Silent acceptance is worse than rejection: nothing will tell you."
+      },
+      {
+        "ism": "\"standard\" used as a token FILTER in 5 analyzers (ngram_index_front, ngram_search_default, fulltext_search_default, document_index_default, all_field_analyzer, path_analyzer)",
+        "error": "The [standard] token filter has been removed.",
+        "translation": "delete the filter entry. It was already a no-op in late ES 2.x. THIS IS AN ANALYZER-BEHAVIOR CHANGE TO VERIFY, not a pure syntax fix — Gate D's corpus is what proves the token streams still match."
+      },
+      {
+        "ism": "\"ignore_above\": 3072 on an ANALYZED (text) field — used by all 45 _orderby* templates",
+        "error": "unknown parameter [ignore_above] on mapper [f] of type [text]",
+        "translation": "ignore_above is valid on keyword and on icu_collation_keyword, not on text. This is an additional argument for the icu_collation_keyword rewrite below."
+      },
+      {
+        "ism": "\"number_of_replicas\": 1 in search-settings.json",
+        "error": "accepted, but pins a single-node dev/CI cluster at YELLOW forever",
+        "translation": "environment-substituted: 0 dev, 1 cloud"
+      }
+    ],
+
+    "BLOCKER_bare_string_field_vs_object": {
+      "severity": "HARD BLOCKER for Gate A. Nothing can be indexed until it is resolved. Found and reproduced at Gate 0.",
+      "what_xp_does": [
+        "IndexItem.getPath() = indexPath.getPath() + (postfix.isEmpty() ? \"\" : \".\" + postfix)",
+        "StaticIndexValueType.STRING has postfix \"\" — i.e. NO suffix — and",
+        "IndexItemFactory.create() ALWAYS emits the STRING variant for every indexed value.",
+        "So for one property `data.displayname` XP emits, in the SAME document:",
+        "  data.displayname                (bare, the STRING variant — always)",
+        "  data.displayname._analyzed",
+        "  data.displayname._ngram",
+        "  data.displayname._orderby",
+        "  data.displayname._orderby_<loc>",
+        "  data.displayname._stemmed_<lang>",
+        "  data.displayname._path / ._number / ._datetime / ._geopoint",
+        "The same applies to NodeIndexPath system fields: `_path` (bare) plus `_path._path`,",
+        "`_allText` (bare) plus `_allText._analyzed` / `._ngram`."
+      ],
+      "why_it_breaks": [
+        "ES 2.4 with -Dmapper.allow_dots_in_name=true treated all of these as INDEPENDENT FLAT",
+        "field names. OpenSearch expands dots into objects, so `data.displayname` must be a leaf",
+        "(from the bare STRING variant) AND an object (parent of `_analyzed` etc.) at once.",
+        "Verified errors:",
+        "  {\"data.x\":\"Hello\",\"data.x._analyzed\":\"Hello\"}",
+        "    -> can't merge a non object mapping [data.x] with an object mapping",
+        "  {\"data.y._analyzed\":\"Hello\",\"data.y\":\"Hello\"}",
+        "    -> mapper [data.y] cannot be changed from type [keyword] to [ObjectMapper]",
+        "  {\"_path\":\"/a/b\",\"_path._path\":\"/a/b\"}",
+        "    -> can't merge a non object mapping [_path] with an object mapping",
+        "  {\"_allText\":\"t\",\"_allText._analyzed\":\"t\"}   -> same",
+        "Note the order-dependence of the message: this is a real conflict, not a template issue,",
+        "and it fires on the FIRST document of every repo."
+      ],
+      "also_reserved_metadata": [
+        "NodeIndexPath.ID = \"_id\" and NodeIndexPath.SOURCE = \"_source\" collide with OpenSearch",
+        "METADATA fields and are rejected outright as document fields:",
+        "  {\"_id\":\"abc-123\"}      -> failed to parse field [_id] of type [_id]",
+        "  {\"_source\":\"whatever\"} -> failed to parse field [_source] of type [_source]",
+        "ES 2.4 tolerated both. Gate A must rename or drop them (`_id` is already the document id;",
+        "XP's `_source` index field is unrelated to OpenSearch's stored _source)."
+      ],
+      "options": [
+        "OPTION 1 — RECOMMENDED, VERIFIED: give StaticIndexValueType.STRING a real postfix (e.g.",
+        "  `_string`). Every emitted field then ends in a suffix and the object hierarchy is",
+        "  consistent — siblings, never leaf-vs-object. Verified accepted:",
+        "    {\"data.w._string\":\"Hello\",\"data.w._analyzed\":\"Hello\",\"data.w._orderby\":\"hello\"}",
+        "    {\"_path._string\":\"/a/b\",\"_path._path\":\"/a/b\"}",
+        "  The whole end-to-end validation of this template used this shape and all query families",
+        "  (term, fulltext, ngram-prefix, path_hierarchy, numeric range, date range, terms agg,",
+        "  collated sort) work. Cost: the translator's field-name resolution must append `_string`",
+        "  for the untyped/exact case, and this is a WIRE-VISIBLE doc-format change (Gate B).",
+        "OPTION 2 — change IndexItem.INDEX_VALUE_TYPE_SEPARATOR from `.` to a character OpenSearch",
+        "  does not expand (e.g. `~`). Sub-fields become siblings of the bare leaf under the same",
+        "  object parent, so no conflict either. Smaller doc-shape change than Option 1 but it",
+        "  rewrites every field name the translator and every query construct 44+91 templates",
+        "  refer to. Does NOT fix the `_id`/`_source` metadata collisions.",
+        "OPTION 3 — multi-fields: map the bare field as keyword with `fields: {_analyzed: ...}`.",
+        "  REJECTED: multi-field values are DERIVED from the parent value, so XP could not ship an",
+        "  independently computed `_orderby` (OrderByValueResolver may differ from the raw string),",
+        "  which contradicts Phase 4 decision 3 (XP-shipped index documents). It would also force",
+        "  every string property to carry every sub-field, defeating index-config opt-in.",
+        "GATE A MUST PICK ONE BEFORE WRITING THE INDEXER. It changes the index-document RPC shape,",
+        "so it also changes Gate B's wire serialization — decide before either is coded.",
+        "Good news: OpenSearch's stored _source preserves XP's ORIGINAL FLAT dotted keys verbatim",
+        "(verified), so whichever option is chosen, `_source` round-trips the shipped document and",
+        "the Gate G rebuild-from-docs drill stays viable."
+      ]
+    },
+
+    "silent_semantic_changes": [
+      {
+        "ism": "DOTTED FIELD NAMES — the mechanism behind the blocker above",
+        "detail": [
+          "XP runs with `-Dmapper.allow_dots_in_name=true` (modules/runtime/src/bin/server.sh) and",
+          "builds FLAT field names like `data.title._analyzed`. In ES 2.4 that was one literal",
+          "field name. `index.mapper.allow_dots_in_name` no longer exists in OpenSearch 3.7",
+          "(verified: \"unknown setting ... check the breaking changes documentation for removed",
+          "settings\"), and dots in a document key are ALWAYS expanded into an object hierarchy.",
+          "CONSEQUENCE 1 (silent, severe): `\"match\": \"*._analyzed\"` matches against the LEAF",
+          "field name, which after expansion is just `_analyzed` — so `*._analyzed` never matches.",
+          "All ~91 dynamic templates stop applying and every field falls back to dynamic",
+          "text+keyword mapping. Verified: index create succeeds, indexing succeeds, and a term",
+          "query on `data.title._orderby` returns 0 hits with NO error anywhere.",
+          "CONSEQUENCE 2: object mappers now count toward total_fields.limit and each dot toward",
+          "depth.limit.",
+          "FIX (verified working): use `path_match` instead of `match` — `path_match: \"*._analyzed\"`",
+          "matches the full dotted path. Term queries and sorts on the dotted path then work.",
+          "`match: \"_analyzed\"` (bare leaf name, no wildcard) also works but is less explicit.",
+          "This template uses path_match throughout."
+        ]
+      },
+      {
+        "ism": "SORTING ON A text FIELD",
+        "detail": [
+          "XP's 45 _orderby* templates are `type:string, index:analyzed, analyzer:icu_sort_<loc>`",
+          "and XP sorts on them directly. ES 2.4 allowed that via fielddata-on-by-default.",
+          "OpenSearch refuses: \"Text fields are not optimised for operations that require",
+          "per-document field data like aggregations and sorting, so these operations are disabled",
+          "by default.\"",
+          "Option A (minimal, works): keep the analyzer form and add \"fielddata\": true. Verified",
+          "correct — sorts æ ø å — but loads collation keys into the heap-resident field-data",
+          "cache. On a shared multi-tenant cell that is a memory-pressure and noisy-neighbour",
+          "liability across 44 possible sort locales.",
+          "Option B (RECOMMENDED, what this draft does): `type: icu_collation_keyword` with the",
+          "locale in `language`/`country`, `index:false`, `doc_values:true`. Verified correct —",
+          "sorts æ ø å — with the collation key stored as a binary doc value, no fielddata, and",
+          "`ignore_above` legal again. The 44 `icu_collation_*` filters and 44 `icu_sort_*`",
+          "analyzers then only need to survive for any QUERY-time use of icu_sort_* (Gate A must",
+          "grep: if nothing but sorting uses them, 88 settings entries disappear).",
+          "GATE A MUST DECIDE A OR B. B is a mapping change, so it also changes what",
+          "`_orderby_<loc>` looks like on the wire — but not what XP SHIPS (still a plain string)."
+        ]
+      },
+      {
+        "ism": "ICU / CLDR VERSION IS PART OF THE SORT CONTRACT",
+        "detail": [
+          "OpenSearch 3.7.0's analysis-icu bundles icu4j 77.1 (verified in the image:",
+          "/usr/share/opensearch/plugins/analysis-icu/icu4j-77.1.jar). XP's ES 2.4.6 analysis-icu",
+          "is ~a decade of CLDR older. Collation keys and therefore SORT ORDER differ between",
+          "CLDR releases for some locales. Two implications:",
+          "1. Gate D's icuSort tests may legitimately produce a different-but-correct order than",
+          "   ES 2.4. That is the acceptance-rule conversation, and it is a DATA MIGRATION concern",
+          "   for existing customers' saved sort expectations, not just a test concern.",
+          "2. Because icu_collation_keyword bakes the collation key into doc values at INDEX time,",
+          "   an OpenSearch upgrade that bumps icu4j silently changes stored keys. Mixed-version",
+          "   shards would sort inconsistently. This is precisely what the `+g<N>` generational",
+          "   rebuild exists for: engine/ICU upgrade = new generation + alias flip, never in-place."
+        ]
+      },
+      {
+        "ism": "`search_analyzer` only on _ngram",
+        "detail": "search-mapping.json sets search_analyzer only for `*._ngram` (document_index_default). `default_search` (keyword tokenizer + lowercase + asciifolding) is the index-level default search analyzer for everything else — meaning a fulltext query string is analyzed as ONE keyword token unless the query names an analyzer explicitly. Gate A must decide whether that ES-2.4 arrangement is intentional XP behavior to preserve or an accident that the translator compensates for at query time. This draft sets an explicit `search_analyzer` per template instead of relying on `default_search`, which IS a behavior change — flagging it rather than hiding it."
+      },
+      {
+        "ism": "THE BARE/UNTYPED STRING FIELD HAS NO DYNAMIC TEMPLATE AT ALL",
+        "detail": [
+          "search-mapping.json has templates for `*._analyzed`, `*._ngram`, `*._orderby*`,",
+          "`*._stemmed_*`, `*._path`, `*._number`, `*._datetime`, `*._geopoint` — but NOTHING for",
+          "the bare STRING variant that IndexItemFactory always emits. On ES 2.4 it therefore fell",
+          "through to the dynamic default: an ANALYZED string, index-time analyzer `standard`,",
+          "search-time analyzer `default_search` (keyword+lowercase+asciifolding, set as the",
+          "index-level default search analyzer). That is a mismatched pair — index-time splits on",
+          "whitespace, query-time does not — so exact-match behavior on the untyped field is an",
+          "ES-2.4 accident that XP's term/in/like/exists translation has been living with.",
+          "This draft maps it to `keyword` + `ignore_above: 8191` (template_string_default), which",
+          "is the intuitive 'exact value' behavior and what the structured-query families in Gate C",
+          "most likely want — but it IS a behavior change on the most heavily used field variant in",
+          "the system.",
+          "GATE A/C MUST RESOLVE THIS with the golden-query corpus, not by reasoning: run the",
+          "batch-1 term/in/like/exists corpus in ES mode, look at what actually matches on the bare",
+          "field, and decide keyword vs text-with-matched-analyzers. This is the highest-leverage",
+          "single mapping decision in the port."
+        ]
+      },
+      {
+        "ism": "icu_collation TOKEN FILTER still accepted",
+        "detail": "Good news: `{\"type\":\"icu_collation\",\"language\":\"no\"}` still creates fine in OpenSearch 3.7 with NO deprecation warning header, despite being deprecated in Lucene since 5.0. So Option A above is available and the 44 filter definitions port verbatim. It is the SORT (fielddata) that breaks, not the filter."
+      },
+      {
+        "ism": "language analyzers referenced by search-mapping.json",
+        "detail": "All 40 are core Lucene and need no plugin: arabic armenian basque bengali brazilian bulgarian catalan cjk czech danish dutch english finnish french galician german greek hindi hungarian indonesian irish italian latvian lithuanian norwegian persian portuguese romanian russian sorani spanish swedish thai turkish + the custom light_nynorsk stemmer (verified accepted). ja/ko/zh are mapped onto core `cjk`, NOT kuromoji/nori/smartcn — so no analysis plugin beyond ICU is required. Gate A should note that `cjk` for Japanese is a bigram analyzer, materially weaker than kuromoji; the managed service offers kuromoji preinstalled and Sudachi as an optional package, so IMPROVING this later costs no infrastructure change."
+      }
+    ]
+  }
+}

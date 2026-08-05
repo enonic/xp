@@ -18,6 +18,12 @@ dependencies {
 
     testImplementation libs.hazelcast.hazelcast
 
+    // Phase 4 Gate 0(e) (nodb/BUILD-PHASE-4.md): the golden-query corpus harness reads and writes
+    // its baseline artifact as JSON. Jackson is already on this classpath transitively (via
+    // core-api and elasticsearch); declared explicitly so the harness does not silently depend on
+    // someone else's transitive graph.
+    testImplementation libs.jackson.databind
+
     // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): binary itests assert ground truth directly
     // against the shared MinIO container (NodbTestCluster#s3Client/#s3Bucket) -- same
     // artifact set as the testFixtures block below.
@@ -147,6 +153,75 @@ tasks.register( 'integrationTest', Test ) {
 }
 
 check.dependsOn( tasks.named( 'integrationTest' ) )
+
+// Phase 4 Gate 0(e) (nodb/BUILD-PHASE-4.md): the golden-query corpus harness. Two thin
+// wrappers around the same test class, differing only in -Dxp.nodb.corpus.mode:
+//
+//   ./gradlew :itest:itest-core:recordNodbCorpus   -- (re)write src/test/resources/nodb/corpus/es-baseline.json
+//   ./gradlew :itest:itest-core:diffNodbCorpus     -- diff a run against that baseline
+//
+// Deliberately NOT wired into `check`: the corpus is a gate artifact reviewed on purpose, not
+// a per-build assertion, and `integrationTest` already runs the class as part of the
+// elasticsearch-tagged suite (in diff mode, since no mode property is set there).
+def nodbCorpusTest = { Test t, String mode ->
+    t.usesService( gradle.sharedServices.registrations.named( "integration" ).get().service )
+    t.group = 'verification'
+
+    t.useJUnitPlatform {
+        includeTags 'elasticsearch'
+    }
+    t.filter {
+        includeTestsMatching 'com.enonic.xp.core.nodb.corpus.NodbGoldenCorpusTest'
+    }
+
+    t.testClassesDirs = sourceSets.test.output.classesDirs
+    t.classpath = sourceSets.test.runtimeClasspath
+
+    t.systemProperty 'java.awt.headless', 'true'
+    t.systemProperty 'xp.nodb.corpus.mode', mode
+    t.maxHeapSize = '2G'
+    t.outputs.upToDateWhen { false }
+
+    // The forked test JVM resolves the baseline path relative to its working directory; pin it
+    // to this project so the task works from anywhere in the build.
+    t.workingDir = projectDir
+
+    // Show the harness's own summary/delta lines without needing --info.
+    t.testLogging {
+        showStandardStreams = true
+    }
+
+    // Same mode forwarding as integrationTest above: a future nodb-mode diff run needs
+    // -Dxp.itest.storage=nodb to reach the forked JVM.
+    if ( System.getProperty( 'xp.itest.storage' ) != null )
+    {
+        t.systemProperty 'xp.itest.storage', System.getProperty( 'xp.itest.storage' )
+    }
+    // Lets a run diff against (or record to) a baseline other than the committed one -- used to
+    // negative-test the comparator, and by Gates C/D/E to keep a nodb-mode recording side by side
+    // with the ES-mode one.
+    if ( System.getProperty( 'xp.nodb.corpus.baseline' ) != null )
+    {
+        t.systemProperty 'xp.nodb.corpus.baseline', System.getProperty( 'xp.nodb.corpus.baseline' )
+    }
+    def dockerDesktopSock = file( "${System.getProperty( 'user.home' )}/.docker/run/docker.sock" )
+    if ( System.getenv( 'DOCKER_HOST' ) == null && dockerDesktopSock.exists() )
+    {
+        t.environment 'DOCKER_HOST', "unix://${dockerDesktopSock.absolutePath}"
+        t.environment 'TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE', '/var/run/docker.sock'
+    }
+    t.systemProperty 'api.version', '1.44'
+}
+
+tasks.register( 'recordNodbCorpus', Test ) {
+    description = 'Records the ES-mode golden-query corpus baseline (nodb/BUILD-PHASE-4.md Gate 0(e)).'
+    nodbCorpusTest( it, 'record' )
+}
+
+tasks.register( 'diffNodbCorpus', Test ) {
+    description = 'Diffs a golden-query corpus run against the committed ES-mode baseline.'
+    nodbCorpusTest( it, 'diff' )
+}
 
 tasks.named( 'jacocoTestReport' ) {
     dependsOn( tasks.named( 'integrationTest' ) )
