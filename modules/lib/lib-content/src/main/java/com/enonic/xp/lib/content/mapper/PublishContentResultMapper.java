@@ -32,6 +32,20 @@ public class PublishContentResultMapper
     {
         serializeContentIds( gen, "pushedContents", value.getPushedContents() );
         serializeFailedContent( gen, "failedContents", value.getFailedContents() );
+        serializeFailed( gen, "failed", value.getFailed() );
+    }
+
+    private void serializeFailed( final MapGenerator gen, final String name, final List<PublishContentResult.Result> failed )
+    {
+        gen.array( name );
+        for ( PublishContentResult.Result result : failed )
+        {
+            gen.map();
+            gen.value( "id", result.contentId().toString() );
+            gen.value( "reason", result.failureReason() );
+            gen.end();
+        }
+        gen.end();
     }
 
     private void serializeContentIds( final MapGenerator gen, final String name, final ContentIds contents )

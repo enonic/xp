@@ -18,6 +18,11 @@ var result = contentLib.publish({
 if (result) {
     log.info('Pushed ' + result.pushedContents.length + ' content.');
     log.info('Content that failed operation: ' + result.failedContents.length);
+
+    // Inspect why each item was rejected
+    result.failed.forEach(function (failure) {
+        log.info(failure.id + ' failed: ' + failure.reason);
+    });
 } else {
     log.info('Operation failed.');
 }
@@ -33,6 +38,12 @@ var expected = {
     ],
     'failedContents': [
         '79e21db0-5b43-45ce-b58c-6e1c420b22bd'
+    ],
+    'failed': [
+        {
+            'id': '79e21db0-5b43-45ce-b58c-6e1c420b22bd',
+            'reason': 'INVALID'
+        }
     ]
 };
 // END
