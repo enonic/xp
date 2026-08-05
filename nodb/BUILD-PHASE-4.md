@@ -365,10 +365,24 @@ deliberate deltas.
    date/path/manual = **exact**; `_orderby_<loc>` (ICU) = **documented per-locale deltas with a
    pinned ICU version**, treated like today's 4 icuSort tests.
 3. **Doc `_id` identity change** (item 3 above) belongs in Gate A's deliverable text.
-4. **Nondeterministic request JSON:** aggregations, suggestions and `ESSource` index/type sets
+4. **`unmappedType("long")` on string fields — latent bug, becomes live at Gate C.**
+   `SortQueryBuilderFactory` hardcodes `UNMAPPED_TYPE = "long"` and applies it to EVERY field
+   sort (line 70), including the `_score`/`_id`/`_doc` pseudo-fields — but every `_orderby*`
+   field is a lexi-encoded STRING (and a `keyword` after D8). Invisible today: when the field
+   IS mapped the setting is ignored, and when it is absent everywhere the docs are all
+   "missing" and `missing` defaults to `_last` regardless of type. **It bites on multi-index
+   sorts** — repo A has `data.title._orderby` mapped as a string, repo B never had that
+   property so it falls back to `long`, and modern OpenSearch rejects mixed types in one
+   sort across indices. That is exactly Gate C's multi-source fan-out, over repos with
+   divergent dynamic mappings, which is normal in XP. Fix: `unmappedType("keyword")` for
+   `_orderby*`, and do not set it at all for the built-in pseudo-fields. Behavior-neutral
+   where it works today. **Corpus row to add** (would pass in ES mode and fail on
+   OpenSearch, so it is worth having before Gate C): a multi-repo sort on a field present in
+   only one of the repos.
+5. **Nondeterministic request JSON:** aggregations, suggestions and `ESSource` index/type sets
    are `HashSet`s — once serialized, element order varies across JVM runs, breaking wire-level
    golden files and any request caching. **Gate B's serializer must use ordered collections.**
-5. **Proto drift:** `nodb/proto/nodb.proto:73-75` still documents `Search` as carrying "the
+6. **Proto drift:** `nodb/proto/nodb.proto:73-75` still documents `Search` as carrying "the
    serialized XP query AST", which decision 1 supersedes — fix in P1 so the single source of
    truth does not describe the abandoned design.
 
