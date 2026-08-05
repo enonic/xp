@@ -213,6 +213,44 @@ class EngineStoreTest
     }
 
     @Test
+    void versionReStoreIsAnUpsertLinkingTheCommitId()
+        throws SQLException
+    {
+        TenantContext acme = new TenantContext( "acme" );
+        long repoKey = createRepo( acme, "version-upsert-repo-" + UUID.randomUUID() );
+
+        VersionRecord original = Tx.inTenantTx( dataSource, acme, connection -> {
+            String dataHash = PayloadStore.putPayload( connection, "upsert-data".getBytes( StandardCharsets.UTF_8 ) );
+            String indexHash = PayloadStore.putPayload( connection, "upsert-index".getBytes( StandardCharsets.UTF_8 ) );
+            String aclHash = PayloadStore.putPayload( connection, "upsert-acl".getBytes( StandardCharsets.UTF_8 ) );
+
+            VersionRecord v = new VersionRecord( UUID.randomUUID().toString(), UUID.randomUUID().toString(), "/upsert",
+                                                  Instant.now(), dataHash, indexHash, aclHash, List.of(), null, Map.of() );
+            VersionStore.store( connection, repoKey, v );
+            return v;
+        } );
+
+        // The publish flow re-stores an already-stored version with commit_id set
+        // (NodeStorageServiceImpl.commit): the store must behave as an upsert, like the
+        // ES document index it replaces.
+        String commitId = UUID.randomUUID().toString();
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            CommitStore.store( connection, repoKey, new CommitRecord( commitId, "msg", "user:system:admin", Instant.now() ) );
+            VersionStore.store( connection, repoKey,
+                                 new VersionRecord( original.versionId(), original.nodeId(), original.nodePath(),
+                                                     original.timestamp(), original.nodeDataHash(), original.indexConfigHash(),
+                                                     original.aclHash(), original.binaryKeys(), commitId,
+                                                     Map.of( "content.publish", "{}" ) ) );
+            return null;
+        } );
+
+        VersionRecord fetched = Tx.inTenantTx( dataSource, acme, connection -> VersionStore.get( connection, repoKey, original.versionId() ) );
+        assertEquals( commitId, fetched.commitId() );
+        assertEquals( Map.of( "content.publish", "{}" ), fetched.attributes() );
+        assertEquals( original.nodeDataHash(), fetched.nodeDataHash() );
+    }
+
+    @Test
     void branchUpsertGetByPathAndChildren()
         throws SQLException
     {

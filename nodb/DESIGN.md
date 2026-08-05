@@ -487,6 +487,7 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 | **1** | NoDB engine + gRPC server + `nodb-client`; `NodeStore` on Postgres, binaries on S3; tenant model END-TO-END (token→TenantContext as the only entry, trivial dev issuer; schema-per-tenant + SET LOCAL ROLE) | Storage-level itests green against NoDB, run DUAL-TENANT with cross-tenant isolation assertions |
 | **2** | OpenSearch index + translator port; outbox/indexer; refresh checkpoint | Full core-repo + itest suites green; golden-query corpus diffed against ES backend |
 | **3** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
+| **3.5** | Storage-index query family → SQL (`BUILD-PHASE-3.5.md`): version history, branch diff / resolve-sync-work, commit get/find served from `node_version`/`branch_entry`/`node_commit` in nodb mode; repo-scoped version identity (absorbs Phase 4 prerequisite P2); three new indexes via tenant migration 002 | Curated itest list green in both modes (both-backend diff corpus identical); live Content Studio publish/version/compare smoke clean on the hybrid stack | **DONE 2026-08-05** — branch `nodb-phase35-version-sql` |
 | **4** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
 | **5** | Migration tooling, dual-run validation, embedded-ES deprecation | Pilot tenant migrated |
 

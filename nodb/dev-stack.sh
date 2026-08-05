@@ -217,7 +217,7 @@ verify() {
   log "Ready:  http://localhost:8080/admin   (su / $SU_PASS)"
   echo "        MinIO console: http://localhost:$MINIO_CONSOLE_PORT (nodb / nodb-secret)"
   echo "        Logs: $XP_LOG  $NODB_LOG"
-  echo "        Note: publish/version-history/compare dialogs fail until Phase 3.5/4 (storage-index queries)."
+  echo "        Note: publish/version-history/compare work since Phase 3.5; search/aggregations stay on embedded ES until Phase 4."
 }
 
 # ---- commands ----------------------------------------------------------------

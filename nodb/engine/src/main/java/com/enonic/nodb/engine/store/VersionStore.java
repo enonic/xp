@@ -42,6 +42,11 @@ public final class VersionStore
             INSERT INTO node_version
                 (repo_key, version_id, node_id, node_path, ts, node_data_hash, index_config_hash, acl_hash, binary_keys, commit_id, attributes)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?::jsonb)
+            ON CONFLICT (repo_key, version_id) DO UPDATE
+                SET node_id = EXCLUDED.node_id, node_path = EXCLUDED.node_path, ts = EXCLUDED.ts,
+                    node_data_hash = EXCLUDED.node_data_hash, index_config_hash = EXCLUDED.index_config_hash,
+                    acl_hash = EXCLUDED.acl_hash, binary_keys = EXCLUDED.binary_keys,
+                    commit_id = EXCLUDED.commit_id, attributes = EXCLUDED.attributes
             """ ))
         {
             statement.setLong( 1, repoKey );

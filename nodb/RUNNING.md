@@ -5,12 +5,19 @@ mint a token, and boot XP with `backend=nodb`. Every command below is taken from
 recipes that actually ran in the Phase 1–3 Gate D smokes (see BUILD-PHASE-*.md for the
 evidence they produced).
 
-**State of the world on this branch** (`nodb-phase3-payloads`): in nodb mode, XP stores
+**State of the world on this branch** (`nodb-phase35-version-sql`): in nodb mode, XP stores
 branch/version/commit records AND node payloads (node-data, index-config, ACL) in NoDB's
-Postgres, and binaries via NoDB in S3/MinIO. Search still runs on XP's embedded
-Elasticsearch (hybrid mode — the OpenSearch phase is next), so query behavior in nodb
-mode is limited to what the embedded ES indexes this boot. Vacuum/GC is deferred
-(Phase 5): deleted content leaves payload rows/S3 objects behind by design, for now.
+Postgres, and binaries via NoDB in S3/MinIO. Since Phase 3.5, the storage-index query
+family is served from Postgres too: version history, publish resolution
+(resolve-sync-work), compare and commit queries all run as SQL in nodb mode — Content
+Studio's publish dialog, publish-status badges, version history panel and
+compare/restore work on this stack. Remaining known gaps in hybrid mode:
+search/aggregations still run on XP's embedded Elasticsearch (the OpenSearch phase is
+next), so free-text query behavior is limited to what the embedded ES indexes this
+boot; delete-with-children fails (`DeleteNodeCommand` lists children via a
+storage-index `NodeBranchQuery` — Phase 4/8); rename-swap pushes hit the branch-path
+constraint (DESIGN.md risk #8); and vacuum/GC is deferred (Phase 5): deleted content
+leaves payload rows/S3 objects behind by design, for now.
 
 ## Prerequisites
 

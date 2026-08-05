@@ -139,18 +139,23 @@ class WriteBatchTest
         String indexHash = predictedHash( indexBytes );
         String aclHash = predictedHash( aclBytes );
 
-        String duplicateVersionId = UUID.randomUUID().toString();
+        String version1Id = UUID.randomUUID().toString();
+        String version2Id = UUID.randomUUID().toString();
         VersionRecord version1 =
-            new VersionRecord( duplicateVersionId, UUID.randomUUID().toString(), "/a", Instant.now(), dataHash, indexHash, aclHash,
+            new VersionRecord( version1Id, UUID.randomUUID().toString(), "/a", Instant.now(), dataHash, indexHash, aclHash,
                                 List.of(), null, Map.of() );
-        // Same version_id as version1: node_version PK is (repo_key, version_id), so
-        // storing this second forces a duplicate-key failure partway through the batch.
+        // References a payload hash that is not in the batch: node_version's FK to
+        // payload(hash) forces a failure partway through the batch. (Duplicate version
+        // ids no longer fail: version store is an upsert, matching the ES document
+        // index's overwrite semantics — the commit flow re-stores versions with
+        // commit_id set.)
         VersionRecord version2 =
-            new VersionRecord( duplicateVersionId, UUID.randomUUID().toString(), "/b", Instant.now(), dataHash, indexHash, aclHash,
+            new VersionRecord( version2Id, UUID.randomUUID().toString(), "/b", Instant.now(),
+                                predictedHash( randomBytes() ), indexHash, aclHash,
                                 List.of(), null, Map.of() );
 
         BranchEntryRecord entry1 = new BranchEntryRecord( "draft", version1.nodeId(), version1.versionId(), "/a", Instant.now() );
-        BranchEntryRecord entry2 = new BranchEntryRecord( "draft", version2.nodeId(), duplicateVersionId, "/b", Instant.now() );
+        BranchEntryRecord entry2 = new BranchEntryRecord( "draft", version2.nodeId(), version2Id, "/b", Instant.now() );
         CommitRecord commit = new CommitRecord( UUID.randomUUID().toString(), "msg", "user:system:admin", Instant.now() );
 
         WriteBatchRequest request =
@@ -162,9 +167,9 @@ class WriteBatchTest
         assertThrows( SQLException.class, () -> Tx.inTenantTx( dataSource, acme, connection -> WriteService.write( connection, request ) ) );
 
         // Whole transaction rolled back: not even the payloads (inserted before the
-        // duplicate-key version) or version1 (inserted successfully before version2 failed)
+        // FK-violating version) or version1 (inserted successfully before version2 failed)
         // survive.
-        assertEquals( 0, countWhere( "node_version", "version_id = '" + duplicateVersionId + "'" ) );
+        assertEquals( 0, countWhere( "node_version", "version_id IN ('" + version1Id + "', '" + version2Id + "')" ) );
         assertEquals( 0, countWhere( "branch_entry", "node_id = '" + entry1.nodeId() + "' OR node_id = '" + entry2.nodeId() + "'" ) );
         assertEquals( 0, countWhere( "node_commit", "commit_id = '" + commit.commitId() + "'" ) );
         assertEquals( 0, countWhere( "payload", "hash IN ('" + dataHash + "', '" + indexHash + "', '" + aclHash + "')" ) );

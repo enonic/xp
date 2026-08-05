@@ -192,6 +192,37 @@ hard-codes the ES store across ~6 service constructions); wiring it is a full
 replication of AbstractNodeTest's nodb branch, not mechanical forwarding.
 Content-level proof moved to Gate C's live smoke per the work order's option.
 
+## Gate C results (2026-08-05) — PHASE COMPLETE
+
+Live smoke on the rebuilt stack (both sides on the new proto): full CS flow green —
+create → update ×2 → version history (exact order) → resolvePublishContent →
+publish → modify → hasUnpublishedChildren → compare → revert, all via the CS REST
+endpoints with a session login. **Gate check: zero "Search request failed", zero
+IndexException in the entire boot log.** Ground truth: versions 48→93, commits 0→4,
+3 versions commit-linked; migration 002 confirmed applied to the live tenant.
+
+**Second in-family latent bug found by the smoke and fixed:** publish's
+commit-linkage step (`NodeStorageServiceImpl.commit`) re-stores each pushed version
+with `commit_id` set; the engine's plain `INSERT` threw duplicate-key — publish
+half-completed (pushed, no commit link, error swallowed by CS). Fix:
+`VersionStore.store` is now `ON CONFLICT (repo_key, version_id) DO UPDATE` — the
+ES-parity semantics (the ES path is an index-doc overwrite; DO NOTHING would
+silently drop the commit_id mutation). Immutability lives above the store: payload
+FKs still reject unknown hashes; re-storing callers mutate only
+commit_id/attributes; data changes mint new version ids. `WriteBatchTest`'s
+mid-batch-failure mechanism moved to the payload FK (property unchanged, 6/6).
+New proof test: `versionReStoreIsAnUpsertLinkingTheCommitId`.
+
+Revalidation post-fix: 72 itests, 69 green; the 3 failures are the two documented
+out-of-family exclusions verbatim (delete-cascade ×2, rename-swap ×1). Two mid-smoke
+publish ERRORs were correct behavior (raw updates left workflow IN_PROGRESS;
+CheckContentValidity correctly refused — CS marks ready first).
+
+Docs updated: RUNNING.md state-of-world, DESIGN.md §9 (3.5 row, DONE 2026-08-05),
+BUILD-PHASE-4.md amendments (P2 done-in-3.5, decision 4 landed, Gate C reduced) —
+the P4 file exists only on nodb-design; its edits sit untracked here and must be
+carried to that branch.
+
 ## Key risks carried into the gates
 
 - **Diff-semantics drift**: the ES `has_child` query encodes subtle cases
