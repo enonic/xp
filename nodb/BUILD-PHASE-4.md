@@ -128,7 +128,7 @@ field vs its dotted sub-fields), and all 91 dynamic templates silently never fir
 
 | # | Decision | Recommendation from the evidence |
 |---|---|---|
-| D1 | **`STRING` postfix** (blocker 1) — change the index-document shape | give STRING a real postfix (`_string`); verified end-to-end. Decide FIRST: it changes the Gate A index RPC and the Gate B serializer |
+| D1 | **`STRING` postfix** (blocker 1) — change the index-document shape | give STRING a real postfix (`_string`); verified end-to-end. Decide FIRST: it changes the Gate A index RPC and the Gate B serializer. **Apply on the nodb side ONLY** — changing the ES layout would break the byte-identical rule and force a reindex of existing installs; the nodb doc builder emits `_string` and NoDB's translator resolves STRING to it (same mechanism as D6). Safe by XP's own rules: `.`, `_` and `[]` are ILLEGAL in property keys (dot IS the path separator, underscore is the system-reserved prefix — developer.enonic.com/docs/code/stable/storage/properties), so no user property can collide with a `_`-prefixed sub-field, and every dot in a physical name is a genuine PropertyPath separator — the OpenSearch object tree therefore mirrors XP's PropertyTree exactly (which is also what would make a future `nested` mapping clean). No dotted-property-name parity risk exists |
 | D2 | **BRANCH store type** — OpenSearch query or a 4th SQL surface | **SQL surface** (`listChildEntries`/`listBranchEntries`, 3 call sites, ~150–250k). Retires the last ES-storage-index consumer instead of recreating it |
 | D3 | **G-1 geoPoint** | **fail fast, no wire support** — it already errors in ES 2.4 |
 | D4 | **G-2 `IN` typing / G-4 `range` case** | **fix both** — the DSL path already behaves correctly where NoQL does not; pin the new behavior with the existing corpus rows |
@@ -456,6 +456,16 @@ appears in 6 XP analyzers** (behavior change, not syntax); `ignore_above` illega
    cluster — index enumeration and Gate G's rebuild drill must ignore them.
 8. `NODB_OPENSEARCH_URL` is deliberately not yet passed by `dev-stack.sh`; Gate A owns that
    wiring.
+9. **`_allText` becomes an explicit XP mechanism at this gate** (deleting `_all`/
+   `include_in_all` kills the last ES magic it leaned on) — see DESIGN.md §5 "Virtual /
+   derived fields". Two Gate A choices to record rather than inherit: (i) its
+   retrievability — the value is in `_source` today and the SPI can already read it via
+   `returnFields`, which is simply never exposed to apps (an API gap, closable
+   independently of this phase); (ii) **emit it as a multi-field** — `_analyzed` and
+   `_ngram` are pure analyzer derivatives of ONE value, so unlike `_orderby` (independently
+   computed, cannot be a multi-field) they can share it. `_source` carries the whole
+   concatenated text twice today; this halves the largest field in the index and yields one
+   canonical retrievable form.
 
 ## Gate 0(e) results — golden-query corpus + ES baseline (2026-08-05)
 

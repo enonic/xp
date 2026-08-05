@@ -165,6 +165,52 @@ TenantContext; nothing correctness- or security-relevant ever parses a name back
 the authoritative alias→generation mapping is NoDB metadata. Index-per-repo
 initially; shared-index-with-routing as a later density optimization for small tenants.
 
+**Virtual / derived fields (roadmap, additive)**: `_allText` is the archetype of a pattern
+the platform already uses three times without naming it — a field whose value is COMPUTED
+from other fields rather than authored ("put the value of these fields into this one").
+The instances differ on two axes:
+
+- *Computation site*: XP-side at index time (`_allText` today) vs NoDB server-side
+  derivation from the payload (the Phase-4 deferral; Phase 8's `_references`; the
+  embedding enrichment stage).
+- *Storage target and retrievability*: (a) index-only, retrievable from `_source`
+  (`_allText`); (b) index-only, deliberately excluded from `_source`, recoverable from a
+  cache (vectors, below); (c) **materialized into the system of record**
+  (`node_version.references` + GIN, Phase 8) — readable by ordinary node reads and
+  surviving an index rebuild.
+
+The rule that binds them: **search is a cache, never truth**, so a derived value kept only
+in the index MUST be regenerable, and "retrievable" is not "authoritative". A virtual-field
+declaration therefore needs four parts — name, source expression over other fields, index
+config, and *target* (index-only vs materialized) — where index-only is right for
+search-adjacent aids like `_allText` and materialization is right when applications treat
+the value as data. Declaration rides the same per-property index-config seam as
+`embedding:` below (portable, versioned, app-declared).
+
+*The retrievability pain and its actual cause*: `_allText`'s concatenated value IS present
+in `_source`, and the SPI already reads arbitrary values out of `_source` via
+`returnFields` (`SearchHitsFactory`) — but `returnFields` is never exposed to applications
+(zero occurrences in `modules/lib/` and core-api's node package). So "you can't get the
+stored value back" is an **API-surface gap, not an engine limitation**, closable by
+surfacing `SearchHit.returnValues` through the query API, independently of the OpenSearch
+port.
+
+*Index-size note*: `_allText` is emitted only as ANALYZED + NGRAM items (no raw variant),
+so `_source` carries the entire concatenated text TWICE. Because both are pure analyzer
+derivatives of one value, multi-fields are appropriate here — unlike `_orderby`, whose
+value is computed independently and therefore cannot be a multi-field. That halves the
+largest field in the index and yields one canonical retrievable form.
+
+*Also enabled by the OpenSearch move (roadmap)*: dot-expanded object mapping means the
+physical index hierarchy mirrors XP's PropertyTree exactly (property keys forbid `.`, `_`
+and `[]`, so the mapping is unambiguous). Plain objects flatten for querying — so
+`data.x = a AND data.y = b` still matches across different array elements, exactly as
+today — but marking a property set `nested` becomes a natural per-property index-config
+directive plus a query construct, giving same-object matching ("the contact named Bob whose
+email is @acme") that XP has never been able to express. Additive, post-parity, and it
+lands most cleanly after server-side document derivation, when NoDB knows the property
+structure itself.
+
 **Vector search / embeddings (roadmap, additive)**: extends three existing seams —
 (1) index config: per-property `embedding: {model, dimensions}` directive alongside
 fulltext/ngram, emitted as `knn_vector` mappings on `<property>._vector` sub-fields —
