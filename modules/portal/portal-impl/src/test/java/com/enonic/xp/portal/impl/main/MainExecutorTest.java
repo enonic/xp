@@ -7,67 +7,134 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.portal.script.PortalScriptService;
 import com.enonic.xp.resource.ResourceKey;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MainExecutorTest
 {
-    private MainExecutor executor;
+    private static final ResourceKey MAIN_JS = ResourceKey.from( "foo.bar:/main.js" );
 
     @Mock
     private PortalScriptService scriptService;
 
+    @Mock
+    private BundleContext bundleContext;
+
+    private MainExecutor executor;
+
     @BeforeEach
     void setup()
+        throws Exception
     {
-        this.executor = new MainExecutor( this.scriptService );
+        // let the ServiceTracker construct and open against the mock registry (no initial services)
+        lenient().when( this.bundleContext.createFilter( anyString() ) )
+            .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
+        lenient().when( this.bundleContext.getServiceReferences( anyString(), nullable( String.class ) ) ).thenReturn( null );
+
+        this.executor = new MainExecutor( this.scriptService, this.bundleContext );
+    }
+
+    @SuppressWarnings("unchecked")
+    private ServiceReference<Application> appReference( final String applicationKey )
+    {
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( ApplicationKey.from( applicationKey ) );
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        when( this.bundleContext.getService( reference ) ).thenReturn( application );
+        return reference;
     }
 
     @Test
-    void mainJsMissing()
+    void addingService_executesMain()
     {
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
+        when( this.scriptService.hasScript( MAIN_JS ) ).thenReturn( true );
+        when( this.scriptService.executeAsync( MAIN_JS ) ).thenReturn( CompletableFuture.completedFuture( null ) );
 
-        this.executor.activated( app );
+        this.executor.addingService( appReference( "foo.bar" ) );
 
-        verify( this.scriptService, times( 1 ) ).hasScript( any() );
-        verify( this.scriptService, times( 0 ) ).execute( any() );
+        verify( this.scriptService ).executeAsync( MAIN_JS );
     }
 
     @Test
-    void mainJsError()
+    void alreadyActiveApplication_isReplayedOnOpen()
+        throws Exception
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.failedFuture( new RuntimeException() ) );
+        final ServiceReference<Application> reference = appReference( "foo.bar" );
+        when( this.bundleContext.getServiceReferences( Application.class.getName(), null ) ).thenReturn(
+            new ServiceReference[]{reference} );
+        when( this.scriptService.hasScript( MAIN_JS ) ).thenReturn( true );
+        when( this.scriptService.executeAsync( MAIN_JS ) ).thenReturn( CompletableFuture.completedFuture( null ) );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
+        assertDoesNotThrow( () -> new MainExecutor( this.scriptService, this.bundleContext ) );
 
-        this.executor.activated( app );
+        verify( this.scriptService ).executeAsync( MAIN_JS );
     }
 
     @Test
-    void mainJsExecute()
+    void addingService_mainJsMissing()
     {
-        final ResourceKey key = ResourceKey.from( "foo.bar:/main.js" );
-        when( this.scriptService.hasScript( key ) ).thenReturn( true );
-        when( this.scriptService.executeAsync( key ) ).thenReturn( CompletableFuture.completedFuture( null ) );
+        when( this.scriptService.hasScript( MAIN_JS ) ).thenReturn( false );
 
-        final Application app = mock( Application.class );
-        when( app.getKey() ).thenReturn( ApplicationKey.from( "foo.bar" ) );
+        this.executor.addingService( appReference( "foo.bar" ) );
 
-        this.executor.activated( app );
+        verify( this.scriptService, never() ).executeAsync( any() );
+    }
+
+    @Test
+    void addingService_mainJsError_isSwallowed()
+    {
+        when( this.scriptService.hasScript( MAIN_JS ) ).thenReturn( true );
+        when( this.scriptService.executeAsync( MAIN_JS ) ).thenReturn( CompletableFuture.failedFuture( new RuntimeException() ) );
+
+        assertDoesNotThrow( () -> this.executor.addingService( appReference( "foo.bar" ) ) );
+
+        verify( this.scriptService ).executeAsync( MAIN_JS );
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void addingService_vanishedService_isIgnored()
+    {
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        when( this.bundleContext.getService( reference ) ).thenReturn( null );
+
+        assertNull( this.executor.addingService( reference ) );
+
+        verify( this.scriptService, never() ).hasScript( any() );
+    }
+
+    @Test
+    void removedService_ungetsService()
+    {
+        final ServiceReference<Application> reference = appReference( "foo.bar" );
+        final Application application = this.executor.addingService( reference );
+
+        this.executor.removedService( reference, application );
+
+        verify( this.bundleContext ).ungetService( reference );
+    }
+
+    @Test
+    void deactivate_closesTracker()
+    {
+        assertDoesNotThrow( () -> this.executor.deactivate() );
     }
 }
