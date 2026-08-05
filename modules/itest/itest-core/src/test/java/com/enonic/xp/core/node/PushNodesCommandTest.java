@@ -90,7 +90,7 @@ class PushNodesCommandTest
 
         final FindNodesByQueryResult allNodesInOther = ctxOther().callWith( () -> FindNodesByQueryCommand.create()
             .query( NodeQuery.create().parent( NodePath.ROOT ).build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .searchService( this.searchService )
             .storageService( this.storageService )
@@ -400,7 +400,8 @@ class PushNodesCommandTest
         final ResolveSyncWorkResult syncWork = ResolveSyncWorkCommand.create()
             .nodeId( rootNode.id() )
             .target( WS_OTHER )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
+            .nodeStore( this.nodeStore )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -411,7 +412,7 @@ class PushNodesCommandTest
 
         final PushNodesResult result = PushNodesCommand.create()
             .params( PushNodeParams.create().ids( syncWork.getNodeComparisons().getNodeIds() ).target( WS_OTHER ).build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )

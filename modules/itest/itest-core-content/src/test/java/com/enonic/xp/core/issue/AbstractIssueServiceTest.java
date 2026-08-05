@@ -149,7 +149,7 @@ public abstract class AbstractIssueServiceTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         issueService.setNodeService( nodeService );
 

@@ -169,6 +169,7 @@ class GetNodeVersionsCommandTest
         return GetNodeVersionsCommand.create()
             .params( GetNodeVersionsParams.create().nodeId( nodeId ).size( size ).cursor( cursor ).build() )
             .searchService( this.searchService )
+            .nodeStore( this.nodeStore )
             .build()
             .execute();
     }

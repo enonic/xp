@@ -21,6 +21,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.storage.spi.NodeStore;
 
 import static java.util.Objects.requireNonNull;
 
@@ -45,9 +46,12 @@ public class ResolveSyncWorkCommand
 
     private final Function<NodeIds, NodeIds> filter;
 
+    private final NodeStore nodeStore;
+
     private ResolveSyncWorkCommand( final Builder builder )
     {
         super( builder );
+        this.nodeStore = builder.nodeStore;
         this.target = builder.target;
         this.includeChildren = builder.includeChildren;
         this.result = ResolveSyncWorkResult.create();
@@ -116,6 +120,7 @@ public class ResolveSyncWorkCommand
             .excludes( this.excludedIds )
             .searchService( this.nodeSearchService )
             .storageService( this.nodeStorageService )
+            .nodeStore( this.nodeStore )
             .build()
             .execute();
 
@@ -253,8 +258,16 @@ public class ResolveSyncWorkCommand
 
         private Function<NodeIds, NodeIds> filter;
 
+        private NodeStore nodeStore;
+
         private Builder()
         {
+        }
+
+        public Builder nodeStore( final NodeStore nodeStore )
+        {
+            this.nodeStore = nodeStore;
+            return this;
         }
 
         public Builder nodeId( final NodeId nodeId )
@@ -306,6 +319,7 @@ public class ResolveSyncWorkCommand
         void validate()
         {
             super.validate();
+            requireNonNull( nodeStore );
             requireNonNull( nodeId, "nodeId is required" );
             requireNonNull( target, "target branch is required" );
         }

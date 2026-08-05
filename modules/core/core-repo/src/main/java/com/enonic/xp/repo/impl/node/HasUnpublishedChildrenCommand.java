@@ -1,10 +1,13 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.List;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePaths;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 
@@ -15,11 +18,14 @@ public class HasUnpublishedChildrenCommand
 
     private final NodeId parent;
 
+    private final NodeStore nodeStore;
+
     private HasUnpublishedChildrenCommand( final Builder builder )
     {
         super( builder );
         target = builder.target;
         parent = builder.parent;
+        nodeStore = builder.nodeStore;
     }
 
     public boolean execute()
@@ -29,6 +35,13 @@ public class HasUnpublishedChildrenCommand
         if ( parentNode == null )
         {
             return false;
+        }
+
+        if ( nodeStore.supportsVersionQueries() )
+        {
+            return !nodeStore.diffBranches( ContextAccessor.current().getRepositoryId(), ContextAccessor.current().getBranch(), target,
+                                             parentNode.path().isRoot() ? null : parentNode.path().toString(),
+                                             List.of( parentNode.path().toString() ), 1 ).isEmpty();
         }
 
         final SearchResult result = nodeSearchService.query( NodeVersionDiffQuery.create()
@@ -53,6 +66,8 @@ public class HasUnpublishedChildrenCommand
 
         private NodeId parent;
 
+        private NodeStore nodeStore;
+
         private Builder()
         {
         }
@@ -66,6 +81,12 @@ public class HasUnpublishedChildrenCommand
         public Builder parent( final NodeId val )
         {
             parent = val;
+            return this;
+        }
+
+        public Builder nodeStore( final NodeStore nodeStore )
+        {
+            this.nodeStore = nodeStore;
             return this;
         }
 

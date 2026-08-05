@@ -222,7 +222,7 @@ class DynamicSchemaServiceImplTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 

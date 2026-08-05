@@ -14,6 +14,7 @@ import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
+import com.enonic.xp.storage.spi.NodeStore;
 
 import static java.util.Objects.requireNonNull;
 
@@ -23,10 +24,13 @@ public class GetNodeVersionsCommand
 
     private final NodeSearchService nodeSearchService;
 
+    private final NodeStore nodeStore;
+
     private GetNodeVersionsCommand( final Builder builder )
     {
         this.params = builder.params;
         this.nodeSearchService = builder.nodeSearchService;
+        this.nodeStore = builder.nodeStore;
     }
 
     public GetNodeVersionsResult execute()
@@ -60,8 +64,12 @@ public class GetNodeVersionsCommand
                                              .build() );
         }
 
-        final NodeVersionQueryResult queryResult =
-            FindNodeVersionsCommand.create().query( queryBuilder.build() ).searchService( this.nodeSearchService ).build().execute();
+        final NodeVersionQueryResult queryResult = FindNodeVersionsCommand.create()
+            .query( queryBuilder.build() )
+            .searchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
+            .build()
+            .execute();
 
         final NodeVersions versions = queryResult.getNodeVersions();
 
@@ -94,6 +102,8 @@ public class GetNodeVersionsCommand
 
         private NodeSearchService nodeSearchService;
 
+        private NodeStore nodeStore;
+
         private Builder()
         {
         }
@@ -110,9 +120,16 @@ public class GetNodeVersionsCommand
             return this;
         }
 
+        public Builder nodeStore( final NodeStore nodeStore )
+        {
+            this.nodeStore = nodeStore;
+            return this;
+        }
+
         private void validate()
         {
             requireNonNull( this.nodeSearchService );
+            requireNonNull( this.nodeStore );
             requireNonNull( this.params, "params is required" );
         }
 

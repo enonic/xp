@@ -280,7 +280,7 @@ public abstract class AbstractContentServiceTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );

@@ -1,12 +1,16 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.List;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.ReturnFields;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.storage.spi.SearchResult;
@@ -28,6 +32,8 @@ public class FindNodesWithVersionDifferenceCommand
 
     private final NodeStorageService nodeStorageService;
 
+    private final NodeStore nodeStore;
+
     private static final int BATCH_SIZE = 20_000;
 
     private FindNodesWithVersionDifferenceCommand( final Builder builder )
@@ -37,6 +43,7 @@ public class FindNodesWithVersionDifferenceCommand
         target = builder.target;
         nodeSearchService = builder.nodeSearchService;
         this.nodeStorageService = builder.nodeStorageService;
+        this.nodeStore = builder.nodeStore;
         this.excludes = builder.excludes;
     }
 
@@ -56,6 +63,17 @@ public class FindNodesWithVersionDifferenceCommand
                 .map( NodeBranchEntry::getNodePath )
                 .collect( NodePaths.collector() );
 
+        if ( this.nodeStore.supportsVersionQueries() )
+        {
+            final List<String> nodeIds = this.nodeStore.diffBranches( context.getRepositoryId(), source, target,
+                                                                       nodePath == null || nodePath.isRoot() ? null : nodePath.toString(),
+                                                                       excludeEntries.stream().map( NodePath::toString ).toList(), -1 );
+
+            final NodeVersionDiffResult.Builder result = NodeVersionDiffResult.create().totalHits( nodeIds.size() );
+            nodeIds.forEach( nodeId -> result.add( NodeId.from( nodeId ) ) );
+            return result.build();
+        }
+
         final SearchResult result = this.nodeSearchService.query( NodeVersionDiffQuery.create()
                                                                       .source( source )
                                                                       .target( target )
@@ -74,6 +92,8 @@ public class FindNodesWithVersionDifferenceCommand
         private NodeSearchService nodeSearchService;
 
         private NodeStorageService nodeStorageService;
+
+        private NodeStore nodeStore;
 
         private NodePath nodePath;
 
@@ -96,6 +116,12 @@ public class FindNodesWithVersionDifferenceCommand
         public Builder storageService( final NodeStorageService nodeStorageService )
         {
             this.nodeStorageService = nodeStorageService;
+            return this;
+        }
+
+        public Builder nodeStore( final NodeStore nodeStore )
+        {
+            this.nodeStore = nodeStore;
             return this;
         }
 

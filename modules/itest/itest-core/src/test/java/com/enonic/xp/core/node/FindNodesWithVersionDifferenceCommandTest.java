@@ -318,6 +318,7 @@ class FindNodesWithVersionDifferenceCommandTest
         final FindNodesWithVersionDifferenceCommand.Builder commandBuilder = FindNodesWithVersionDifferenceCommand.create().
             searchService( this.searchService ).
             storageService( this.storageService ).
+            nodeStore( this.nodeStore ).
             target( target ).
             source( source );
 
@@ -338,7 +339,7 @@ class FindNodesWithVersionDifferenceCommandTest
             build();
 
         return PatchNodeCommand.create().
-            params( updateNodeParams ).binaryService( this.binaryService ).repositoryStorageAdmin( this.indexServiceInternal )
+            params( updateNodeParams ).binaryService( this.binaryService ).repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -348,7 +349,7 @@ class FindNodesWithVersionDifferenceCommandTest
     private PushNodesResult doPushNode( final Branch target, final Node createdNode )
     {
         return PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( createdNode.id() ) ).target( target ).build() ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).

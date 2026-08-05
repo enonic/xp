@@ -81,7 +81,7 @@ class CompareNodeCommandTest
 
         DeleteNodeCommand.create()
             .nodeId( createdNode.id() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -188,7 +188,7 @@ class CompareNodeCommandTest
         return PatchNodeCommand.create()
             .params( updateNodeParams )
             .binaryService( this.binaryService )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -201,7 +201,7 @@ class CompareNodeCommandTest
     {
         return PushNodesCommand.create()
             .params( PushNodeParams.create().ids( NodeIds.from( createdNode.id() ) ).target( branch ).build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )

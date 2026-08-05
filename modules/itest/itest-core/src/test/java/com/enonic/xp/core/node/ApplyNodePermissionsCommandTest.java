@@ -533,7 +533,7 @@ class ApplyNodePermissionsCommandTest
             .build();
 
         final NodeVersionQueryResult versions =
-            FindNodeVersionsCommand.create().query( query ).searchService( this.searchService ).build().execute();
+            FindNodeVersionsCommand.create().query( query ).searchService( this.searchService ).nodeStore( this.nodeStore ).build().execute();
 
         assertEquals( 2, versions.getNodeVersions().getSize() );
         final Iterator<NodeVersion> iterator = versions.getNodeVersions().iterator();

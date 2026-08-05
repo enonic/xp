@@ -341,7 +341,7 @@ public abstract class AbstractNodeTest
                                        () -> null );
 
         this.nodeService =
-            new NodeServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, eventPublisher,
+            new NodeServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher,
                                 binaryService );
 
         this.indexService =

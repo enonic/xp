@@ -452,6 +452,6 @@ class MoveNodeCommandTest
     {
         final NodeVersionQuery query = NodeVersionQuery.create().size( 100 ).from( 0 ).nodeId( node.id() ).build();
 
-        return FindNodeVersionsCommand.create().query( query ).searchService( this.searchService ).build().execute();
+        return FindNodeVersionsCommand.create().query( query ).searchService( this.searchService ).nodeStore( this.nodeStore ).build().execute();
     }
 }

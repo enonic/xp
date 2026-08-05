@@ -149,7 +149,7 @@ class SecurityServiceImplTest
             .build()
             .initialize();
 
-        this.nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+        this.nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         IndexServiceImpl indexService =
             new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );

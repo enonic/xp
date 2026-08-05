@@ -52,6 +52,7 @@ class FindNodeVersionsCommandTest
         final NodeVersionQueryResult result = FindNodeVersionsCommand.create().
             query( query ).
             searchService( this.searchService ).
+            nodeStore( this.nodeStore ).
             build().
             execute();
 
@@ -85,6 +86,7 @@ class FindNodeVersionsCommandTest
         final NodeVersionQueryResult result = FindNodeVersionsCommand.create().
             query( query ).
             searchService( this.searchService ).
+            nodeStore( this.nodeStore ).
             build().
             execute();
 

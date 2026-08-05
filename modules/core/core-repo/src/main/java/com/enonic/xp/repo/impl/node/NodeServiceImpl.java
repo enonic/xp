@@ -87,6 +87,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 import com.enonic.xp.trace.Tracer;
@@ -105,6 +106,8 @@ public class NodeServiceImpl
 
     private final NodeSearchService nodeSearchService;
 
+    private final NodeStore nodeStore;
+
     private final EventPublisher eventPublisher;
 
     private final BinaryService binaryService;
@@ -116,12 +119,14 @@ public class NodeServiceImpl
     @Activate
     public NodeServiceImpl( @Reference final RepositoryStorageAdmin repositoryStorageAdmin, @Reference final NodeSearchIndex nodeSearchIndex,
                             @Reference final NodeStorageService nodeStorageService, @Reference final NodeSearchService nodeSearchService,
-                            @Reference final EventPublisher eventPublisher, @Reference final BinaryService binaryService )
+                            @Reference final NodeStore nodeStore, @Reference final EventPublisher eventPublisher,
+                            @Reference final BinaryService binaryService )
     {
         this.repositoryStorageAdmin = repositoryStorageAdmin;
         this.nodeSearchIndex = nodeSearchIndex;
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
+        this.nodeStore = nodeStore;
         this.eventPublisher = eventPublisher;
         this.binaryService = binaryService;
     }
@@ -596,21 +601,36 @@ public class NodeServiceImpl
     public GetNodeVersionsResult getVersions( final GetNodeVersionsParams params )
     {
         verifyContext();
-        return GetNodeVersionsCommand.create().params( params ).searchService( this.nodeSearchService ).build().execute();
+        return GetNodeVersionsCommand.create()
+            .params( params )
+            .searchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
+            .build()
+            .execute();
     }
 
     @Override
     public NodeVersionQueryResult findVersions( final NodeVersionQuery query )
     {
         verifyContext();
-        return FindNodeVersionsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
+        return FindNodeVersionsCommand.create()
+            .query( query )
+            .searchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
+            .build()
+            .execute();
     }
 
     @Override
     public NodeCommitQueryResult findCommits( final NodeCommitQuery query )
     {
         verifyContext();
-        return FindNodeCommitsCommand.create().query( query ).searchService( this.nodeSearchService ).build().execute();
+        return FindNodeCommitsCommand.create()
+            .query( query )
+            .searchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
+            .build()
+            .execute();
     }
 
     @Override
@@ -644,6 +664,7 @@ public class NodeServiceImpl
             .nodeSearchIndex( nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
             .build()
             .execute();
     }
@@ -850,6 +871,7 @@ public class NodeServiceImpl
             .nodeSearchIndex( nodeSearchIndex )
             .storageService( nodeStorageService )
             .searchService( nodeSearchService )
+            .nodeStore( nodeStore )
             .build()
             .execute();
     }
