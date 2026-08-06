@@ -28,6 +28,7 @@ import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.storage.spi.SingleRepoSearchSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -179,25 +180,122 @@ class NodbSearchWireEndToEndTest
 
     /**
      * The client is a serializer: a construct with no wire form is a loud failure, never a guess.
-     * Aggregations are the last such construct — Gate D removed the text family and the suggest and
-     * highlight slots from this list, so it is asserted rather than assumed that the remaining fence
-     * still holds.
+     * Gate D removed the text family and the suggest and highlight slots from this list and Gate E
+     * removed aggregations — so what is left is an aggregation SUBTYPE the renderer does not know,
+     * which is the same fence one level down. Kept as a row rather than deleted, because "every
+     * envelope slot is translated" must not quietly become "anything in a slot is accepted".
      */
     @Test
     void anUntranslatedConstructFailsLoudly()
     {
-        final NodeQuery query = NodeQuery.create()
-            .query( QueryParser.parse( "" ) )
-            .addAggregationQuery(
-                com.enonic.xp.query.aggregation.TermsAggregationQuery.create( "byTitle" ).fieldName( "data.title" ).build() )
-            .size( 10 )
-            .build();
+        final com.enonic.xp.query.aggregation.AggregationQuery unknownType =
+            new com.enonic.xp.query.aggregation.BucketAggregationQuery(
+                new com.enonic.xp.query.aggregation.BucketAggregationQuery.Builder<>( "cardinality" ) )
+            {
+            };
+
+        final NodeQuery query =
+            NodeQuery.create().query( QueryParser.parse( "" ) ).addAggregationQuery( unknownType ).size( 10 ).build();
 
         assertThrows( RuntimeException.class, () -> searchService.query( query, SingleRepoSearchSource.create()
             .repositoryId( repositoryId )
             .branch( MASTER )
             .acl( ADMIN )
             .build() ) );
+    }
+
+    // --- Gate E ----------------------------------------------------------------------
+
+    /**
+     * Aggregations over the whole path, into XP's own result types. This is the row that makes D9 real:
+     * the response carries no Elasticsearch classes to test {@code instanceof} against, so the
+     * {@code DateHistogramBucket} and its {@code Instant} below exist only because NoDB TAGGED the
+     * aggregation's kind and its bucket-key type and the client's decoder read those tags. A tag
+     * mismatch here is a {@code ClassCastException} on the line after the one that caused it, which is
+     * why the assertions are on the classes rather than only on the counts.
+     */
+    @Test
+    void aggregationsTravelTheWholeWireIntoXpsOwnResultTypes()
+    {
+        index( repositoryId, document( "node-1", "alpha", 100, "/content/a" ) );
+        index( repositoryId, document( "node-2", "alpha", 300, "/content/b" ) );
+        index( repositoryId, document( "node-3", "beta", 900, "/content/c" ) );
+        nodeSearchIndex.refresh( repositoryId );
+
+        final SearchResult result = searchService.query( NodeQuery.create()
+                                                            .query( QueryParser.parse( "" ) )
+                                                            .addAggregationQuery(
+                                                                com.enonic.xp.query.aggregation.TermsAggregationQuery.create( "byTitle" )
+                                                                    .fieldName( "data.title" )
+                                                                    .orderType(
+                                                                        com.enonic.xp.query.aggregation.TermsAggregationQuery.Type.TERM )
+                                                                    .orderDirection(
+                                                                        com.enonic.xp.query.aggregation.TermsAggregationQuery.Direction.ASC )
+                                                                    .addSubQuery(
+                                                                        com.enonic.xp.query.aggregation.metric.StatsAggregationQuery.create(
+                                                                            "countStats" ).fieldName( "data.count" ).build() )
+                                                                    .build() )
+                                                            .addAggregationQuery(
+                                                                com.enonic.xp.query.aggregation.HistogramAggregationQuery.create( "hist" )
+                                                                    .fieldName( "data.count" )
+                                                                    .interval( 500L )
+                                                                    .build() )
+                                                            .addAggregationQuery(
+                                                                com.enonic.xp.query.aggregation.DateHistogramAggregationQuery.create( "byDay" )
+                                                                    .fieldName( "_ts" )
+                                                                    .interval( "1d" )
+                                                                    .build() )
+                                                            .addAggregationQuery(
+                                                                com.enonic.xp.query.aggregation.NumericRangeAggregationQuery.create( "ranges" )
+                                                                    .fieldName( "data.count" )
+                                                                    .addRange(
+                                                                        com.enonic.xp.query.aggregation.NumericRange.create().to( 500d ).build() )
+                                                                    .addRange( com.enonic.xp.query.aggregation.NumericRange.create()
+                                                                                   .from( 500d )
+                                                                                   .build() )
+                                                                    .build() )
+                                                            .size( 10 )
+                                                            .build(), source() );
+
+        assertEquals( 4, result.getAggregations().getSize() );
+
+        // terms, with a metric nested under each bucket
+        final com.enonic.xp.aggregation.BucketAggregation byTitle =
+            (com.enonic.xp.aggregation.BucketAggregation) result.getAggregations().get( "byTitle" );
+        assertEquals( List.of( "alpha", "beta" ), byTitle.getBuckets().stream().map( com.enonic.xp.aggregation.Bucket::getKey ).toList() );
+        assertEquals( 2, byTitle.getBuckets().first().getDocCount() );
+        final com.enonic.xp.aggregation.StatsAggregation stats =
+            (com.enonic.xp.aggregation.StatsAggregation) byTitle.getBuckets().first().getSubAggregations().get( "countStats" );
+        assertEquals( 100d, stats.getMin() );
+        assertEquals( 300d, stats.getMax() );
+        assertEquals( 200d, stats.getAvg() );
+
+        // the numeric histogram: an integral key is a long, as ES 2.4's raw formatter rendered it
+        final com.enonic.xp.aggregation.BucketAggregation hist =
+            (com.enonic.xp.aggregation.BucketAggregation) result.getAggregations().get( "hist" );
+        assertEquals( List.of( "0", "500" ), hist.getBuckets().stream().map( com.enonic.xp.aggregation.Bucket::getKey ).toList() );
+        assertEquals( com.enonic.xp.aggregation.Bucket.class, hist.getBuckets().first().getClass(),
+                      "a NUMERIC histogram bucket is a plain Bucket -- the distinction ES made by instanceof ordering" );
+
+        // …and the DATE histogram: the same response shape, a different XP class, carrying an Instant
+        final com.enonic.xp.aggregation.BucketAggregation byDay =
+            (com.enonic.xp.aggregation.BucketAggregation) result.getAggregations().get( "byDay" );
+        assertEquals( 1, byDay.getBuckets().getSize() );
+        final com.enonic.xp.aggregation.Bucket dayBucket = byDay.getBuckets().first();
+        assertInstanceOf( com.enonic.xp.aggregation.DateHistogramBucket.class, dayBucket );
+        assertEquals( "2026-08-01T00:00:00.000Z", dayBucket.getKey() );
+        assertEquals( Instant.parse( "2026-08-01T00:00:00Z" ),
+                      ( (com.enonic.xp.aggregation.DateHistogramBucket) dayBucket ).getKeyAsInstant() );
+
+        // the numeric range: NumericRangeBucket, with an open bound as the infinity ES reported
+        final com.enonic.xp.aggregation.BucketAggregation ranges =
+            (com.enonic.xp.aggregation.BucketAggregation) result.getAggregations().get( "ranges" );
+        assertEquals( List.of( "*-500.0", "500.0-*" ),
+                      ranges.getBuckets().stream().map( com.enonic.xp.aggregation.Bucket::getKey ).toList() );
+        final com.enonic.xp.aggregation.NumericRangeBucket first =
+            (com.enonic.xp.aggregation.NumericRangeBucket) ranges.getBuckets().first();
+        assertEquals( Double.NEGATIVE_INFINITY, first.getFrom() );
+        assertEquals( 500.0, first.getTo() );
     }
 
     // --- Gate D ----------------------------------------------------------------------

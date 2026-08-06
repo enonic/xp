@@ -258,6 +258,7 @@ public class NodbNodeSearchIndex
             .totalHits( result.getTotalHits() )
             .maxScore( result.getMaxScore() )
             .suggestions( decodeSuggestions( result.getSuggestions() ) )
+            .aggregations( NodbAggregationsFactory.create( result.getAggregations() ) )
             .build();
     }
 

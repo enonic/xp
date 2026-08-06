@@ -51,12 +51,14 @@ public final class SearchQueryExecutor
     }
 
     /**
-     * @param suggestions the canonical suggest section as JSON text, empty when none was requested.
-     *                    Carried as JSON rather than a typed structure for the same reason the
-     *                    query is: the wire slot is one opaque document, and a typed model here
-     *                    would be a second suggester vocabulary to keep in step with XP's.
+     * @param suggestions  the canonical suggest section as JSON text, empty when none was requested.
+     *                     Carried as JSON rather than a typed structure for the same reason the
+     *                     query is: the wire slot is one opaque document, and a typed model here
+     *                     would be a second suggester vocabulary to keep in step with XP's.
+     * @param aggregations the TAGGED aggregation section as JSON text, empty when none was
+     *                     requested — see {@link AggregationTranslator} for why the tags exist.
      */
-    public record Result(List<Hit> hits, long totalHits, float maxScore, String suggestions)
+    public record Result(List<Hit> hits, long totalHits, float maxScore, String suggestions, String aggregations)
     {
     }
 
@@ -113,6 +115,8 @@ public final class SearchQueryExecutor
             // scroll path read them: they describe the whole result set, so a later page's copy is
             // redundant and the final EMPTY page carries none at all.
             String suggestions = "";
+            String aggregations = "";
+            boolean firstPage = true;
             JsonNode searchAfter = null;
 
             while ( true )
@@ -133,9 +137,11 @@ public final class SearchQueryExecutor
                 JsonNode response = client.searchPit( body );
                 Result batch = decode( response, query );
                 totalHits = batch.totalHits();
-                if ( suggestions.isEmpty() )
+                if ( firstPage )
                 {
                     suggestions = batch.suggestions();
+                    aggregations = batch.aggregations();
+                    firstPage = false;
                 }
                 batch.hits().forEach( hit -> hits.add( withoutTiebreaker( hit ) ) );
 
@@ -147,7 +153,7 @@ public final class SearchQueryExecutor
                 searchAfter = last.path( "sort" );
             }
 
-            return new Result( hits, totalHits, Float.NaN, suggestions );
+            return new Result( hits, totalHits, Float.NaN, suggestions, aggregations );
         }
         finally
         {
@@ -232,6 +238,18 @@ public final class SearchQueryExecutor
                 sort.add( translator.translateSort( parse( element ) ) );
             }
             body.set( "sort", sort );
+        }
+
+        // The aggregation block is a SIBLING of query/post_filter, never merged into either: XP's
+        // post-filters must narrow the hits without narrowing the buckets, which is the whole reason
+        // the envelope keeps the two filter slots apart.
+        if ( !query.aggregations().isEmpty() )
+        {
+            ObjectNode aggs = AggregationTranslator.translate( parse( query.aggregations() ) );
+            if ( aggs != null )
+            {
+                body.set( "aggs", aggs );
+            }
         }
 
         if ( !query.suggest().isEmpty() )
@@ -378,7 +396,12 @@ public final class SearchQueryExecutor
             hits.add( decodeHit( hit, query ) );
         }
 
-        return new Result( hits, totalHits, maxScore, SuggestTranslator.decode( response ) );
+        // The aggregation kinds live only in the REQUEST, so decoding needs both sides (D9).
+        String aggregations = query.aggregations().isEmpty()
+            ? ""
+            : AggregationTranslator.decode( parse( query.aggregations() ), response );
+
+        return new Result( hits, totalHits, maxScore, SuggestTranslator.decode( response ), aggregations );
     }
 
     private Hit decodeHit( JsonNode hit, SearchQuery query )

@@ -16,6 +16,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.ValueCountAggregationQuery;
 
@@ -43,7 +44,7 @@ class ValueCountAggregationTest
         createNode( "c2", "n6", NodePath.ROOT );
 
         createNode( "c3", "n7", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).
@@ -78,7 +79,7 @@ class ValueCountAggregationTest
         createNode( "c2", "n2", NodePath.ROOT );
         createNode( "c3", "n3", NodePath.ROOT );
         createNode( null, "n4", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         NodeQuery query = NodeQuery.create().
             addAggregationQuery( ValueCountAggregationQuery.create( "testCountAgg" ).fieldName( "category" ).build() ).

@@ -17,6 +17,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.DateRange;
 import com.enonic.xp.query.aggregation.DateRangeAggregationQuery;
 
@@ -41,7 +42,7 @@ class DateRangeAggregationTest
         createNode( Instant.parse( "2014-12-10T12:45:00Z" ), "n4", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T13:59:59Z" ), "n5", NodePath.ROOT );
         createNode( Instant.parse( "2014-12-10T14:01:00Z" ), "n6", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).
@@ -84,7 +85,7 @@ class DateRangeAggregationTest
         createNode( now.plusSeconds( -3600 * 3 ), "n4", NodePath.ROOT );
         createNode( now.plusSeconds( -3600 * 4 ), "n5", NodePath.ROOT );
         createNode( now.plusSeconds( -3600 * 5 ), "n6", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).
@@ -127,7 +128,7 @@ class DateRangeAggregationTest
         createNode( anchor.plusSeconds( -3600 * 3 ), "n4", NodePath.ROOT );
         createNode( anchor.plusSeconds( -3600 * 4 ), "n5", NodePath.ROOT );
         createNode( anchor.plusSeconds( -3600 * 5 ), "n6", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( DateRangeAggregationQuery.create( "myDateRange" ).

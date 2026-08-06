@@ -23,8 +23,11 @@ import com.enonic.xp.storage.spi.SearchDsl;
  * backend, so that exactly one component in the system knows the query language. A backend
  * receiving a {@link SearchDsl} is a serializer.
  * <p>
- * Suggesters and highlighting are rendered from Gate D. Aggregations are still not: they are
- * owned by the last translation batch and fail loudly rather than being shipped half-translated.
+ * Suggesters and highlighting are rendered from Gate D, aggregations from Gate E — so every member
+ * of a {@code Query} now has a wire form, and the only remaining fail-loudly case is a
+ * {@code Query}/{@code AggregationQuery}/{@code SuggestionQuery} SUBTYPE this renderer does not
+ * know. That is deliberate: a construct rendered as an approximation of itself returns
+ * plausible-looking wrong results, which is the one failure mode this port cannot afford.
  */
 public final class SearchDslRenderer
 {
@@ -80,7 +83,11 @@ public final class SearchDslRenderer
             builder.highlight( highlight );
         }
 
-        rejectUnrenderable( query );
+        final Map<String, Object> aggregations = AggregationDslRenderer.render( query.getAggregationQueries() );
+        if ( aggregations != null )
+        {
+            builder.aggregations( aggregations );
+        }
 
         return builder.from( query.getFrom() )
             .size( query.getSize() )
@@ -117,13 +124,5 @@ public final class SearchDslRenderer
             .fieldName( NodeIndexPath.PARENT_PATH.getPath() )
             .addValue( ValueFactory.newString( ( (NodeQuery) query ).getParent().toString() ) )
             .build();
-    }
-
-    private static void rejectUnrenderable( final Query query )
-    {
-        if ( !query.getAggregationQueries().isEmpty() )
-        {
-            throw new DslRenderException( "Aggregations have no wire form yet; they are not supported by this storage backend" );
-        }
     }
 }

@@ -16,6 +16,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.NumericRange;
 import com.enonic.xp.query.aggregation.NumericRangeAggregationQuery;
 
@@ -41,7 +42,7 @@ class NumericRangeAggregationTest
         createNode( 200d, "n4", NodePath.ROOT );
         createNode( 600d, "n5", NodePath.ROOT );
         createNode( 500d, "n6", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( NumericRangeAggregationQuery.create( "myNumericRange" ).
@@ -87,7 +88,7 @@ class NumericRangeAggregationTest
         createNode( 400d, "n3", NodePath.ROOT );
         createNode( 500d, "n6", NodePath.ROOT );
         createNode( 600d, "n5", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( NumericRangeAggregationQuery.create( "myNumericRange" ).

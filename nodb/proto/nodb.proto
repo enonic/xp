@@ -368,7 +368,15 @@ message SearchRequest {
   repeated string query_filters = 4;
   repeated string post_filters = 5;
   repeated string sort = 6;              // ALWAYS an array; every element carries an explicit `direction`
-  string aggregations = 7;               // Gate E
+  // Gate E. Canonical aggregation config, keyed and SORTED by aggregation name:
+  //   {"<name>": {"<type>": {..params..}, "aggregations": {..nested..}}}
+  // <type> is one of terms | stats | min | max | valueCount | numericRange | dateRange |
+  // geoDistance | histogram | dateHistogram, params carry XP's own spelling (minDocCount,
+  // extendedBounds), and field names are unpostfixed -- the server resolves the sub-field from
+  // the aggregation TYPE (terms/valueCount -> text, metrics/histogram -> number, the date
+  // families -> datetime, geoDistance -> geopoint). `aggregations` is legal only on the six
+  // BUCKET types; a sub-aggregation under a metric type is rejected, not dropped.
+  string aggregations = 7;
   string suggest = 8;                    // Gate D
   string highlight = 9;                  // Gate D
   int32 from = 10;
@@ -390,7 +398,22 @@ message SearchResult {
   repeated SearchHit hits = 1;
   uint64 total_hits = 2;
   float max_score = 3;                   // NaN when results are sorted by field, matching today's behaviour
-  string aggregations = 4;               // Gate E
+  // Gate E, and the one response member that carries EXPLICIT TYPE TAGS (D9). An ARRAY, in the
+  // request's (name-sorted) order:
+  //   [{"name":..,"type":..,"keyType":"string|double|instant|none",
+  //     "buckets":[{"key":..,"docCount":..,"aggregations":[..], <typed extras>}]}]
+  // The tags exist because XP's AggregationsFactory discriminates results by `instanceof` on
+  // Elasticsearch INTERNAL classes -- a date histogram is told from a numeric one ONLY by
+  // `InternalHistogram` preceding `Histogram` in that chain -- and a JSON response has no such
+  // identity: terms, histogram, date_histogram and range all come back as {"buckets": [...]}.
+  // The kind is therefore never inferred; the server copies it from the REQUEST, which it still
+  // holds, and the client's decoder is a table lookup on the tag with no type identity in it.
+  // Typed extras per kind: keyMillis (dateHistogram), fromMillis/toMillis (dateRange),
+  // from/to (numericRange, geoDistance). An ABSENT metric or bound is the "no documents" case;
+  // the client restores the sentinel Elasticsearch's own result objects carried (min +Inf, max
+  // -Inf, avg NaN, an open numeric/geo bound +-Inf, an open DATE bound null), because JSON has
+  // no literal for any of them.
+  string aggregations = 4;
   string suggestions = 5;                // Gate D
 }
 

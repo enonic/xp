@@ -16,6 +16,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.DistanceRange;
 import com.enonic.xp.query.aggregation.GeoDistanceAggregationQuery;
 import com.enonic.xp.util.GeoPoint;
@@ -57,7 +58,7 @@ class GeoDistanceAggregationTest
         createNode( MOSCOW, "moscow", NodePath.ROOT );
         createNode( FREDRIKSTAD, "fredrikstad", NodePath.ROOT );
         createNode( LONDON, "london", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( GeoDistanceAggregationQuery.create( "myGeoDistance" ).

@@ -564,6 +564,93 @@ OpenSearch's flipped default would have dismantled the three-field expansion sil
 proto change and no `format_version` bump**. Suggesters are sorted by name before
 serialization (`SuggestionQueries` is a set; element order is part of the format).
 
+## GATE E DONE (2026-08-06) — aggregations + D9 response tagging
+
+nodb **325 tests / 26 suites**, core-repo **490 / 98**, client+spi **67 / 6**, zero failures.
+Corpus `aggregation,filter`: **19 rows, 0 FAILURE, 18 DOCUMENTED** (verified independently,
+and the agent ran it twice with byte-identical deltas). **`FindNodesByQueryCommandTest` 6/6**
+(was 4/6 — both failures were exactly this gate's fence), all 8 aggregation itest classes
+green in nodb mode (19/19), `ContentServiceImplTest_find` 23/23 so content-level aggregations
+work end to end, and 25/25 in ES mode. Fences held: `git status` empty under `elasticsearch/`
+(so the ES translator, `factory/*` and `AggregationsFactory` are untouched).
+
+### D9 solved: the kind is COPIED from the request, never inferred
+
+`AggregationTranslator.decode(canonicalRequest, response)` walks request and response together,
+pairing by name and recursing into sub-aggregations in lockstep — so class identity is never
+needed. Response rides as opaque JSON in the **existing** `SearchResult.aggregations` slot
+(no proto reshape, no `format_version` bump — Gate D's trick), as a JSON **array in the
+request's name-sorted order** so ordering is explicit rather than engine-dependent:
+`{name, type, keyType, buckets[{key, docCount, aggregations[], <typed extras>}]}`.
+`NodbAggregationsFactory` is a table lookup on the tag with **no type identity and no shape
+sniffing**; `type` and `keyType` are deliberately redundant and it asserts they agree rather
+than trusting either. Three things only a tag can answer: **date-vs-numeric histogram**
+(byte-identical JSON — tested), the three range families (one shape, three XP bucket classes),
+and the sentinels JSON cannot carry (`min` absent → `+∞`, `max` → `−∞`, stats `avg` → NaN,
+open numeric/geo bound → `∓∞`, open **date** bound → `null` — exactly what `InternalRange` vs
+`InternalDateRange` returned).
+
+### The interval rule
+
+**An interval is CALENDAR exactly when it is one of the sixteen strings ES 2.4's
+`DateHistogramParser.DATE_FIELD_UNITS` held** (`year 1y quarter 1q month 1M week 1w day 1d
+hour 1h minute 1m second 1s`), FIXED otherwise, validated against `^[0-9]+(ms|s|m|h|d)$` or
+rejected loudly. Not a guess: that table *is* the classification ES 2.4 made (calendar-field
+rounding on a hit, `TimeValue` rounding on a miss), so it reproduces what the baseline was
+recorded with, and it coincides with what `calendar_interval` accepts. Case is never
+normalised (`1M` month vs `1m` minute). Ambiguous case pinned: `1d`/`1h`/`1m`/`1s` are
+accepted by **both** parameters and are not equivalent (a calendar day is 23/25 h across DST)
+— the test fixes all four to calendar and pairs them with `24h` → fixed, showing the rule
+keys on the spelling ES 2.4 classified, not the duration.
+
+### Sub-aggregation rule
+
+The removed `AbstractAggregationBuilder` discriminator is replaced by an explicit list: **the
+six BUCKET types accept sub-aggregations; the four METRIC types do not.** A sub-agg under a
+metric type is now **rejected** where the old guard dropped it silently — asserted in all six
+positive and four negative directions, plus arbitrary depth, at renderer, translator and RPC
+level.
+
+### 🔴 A silent, run-dependent MISCOUNT that DROPS DOCUMENTS
+
+Run 2 of the corpus failed `AGG-13` with identical keys and counts in a **different order**.
+Root cause: XP holds ranges in an `ImmutableSet` copied from a `HashSet` of objects that never
+override `hashCode`, so range order on the wire was **identity-hash order** — different per
+JVM run (Gate 0(c) item 5's nondeterminism, with teeth). Measured against the engine:
+`range`/`date_range` sort their own range array, but **`geo_distance` does NOT** — and the
+shared `RangeAggregator` binary-searches that array assuming order. So an unsorted geo range
+list does not merely reorder buckets, it **loses documents**: `[{from:1000},{to:1000}]` over
+docs at 0 km and 5900 km answers `*-1000.0: 0`, dropping the one at the origin. No error.
+Fixed in two places for two distinct reasons (renderer: wire determinism; translator: the
+engine contract, so a hand-built envelope cannot miscount), with the raw engine hazard pinned
+by a test that hits OpenSearch directly.
+
+### 🔴 The 8 aggregation itest classes were measuring nothing in nodb mode
+
+All 18 bodies failed with **0 buckets**: they call the `protected static refresh()` on
+`AbstractElasticsearchIntegrationTest`, which refreshes the **embedded ES cluster** — a no-op
+for OpenSearch, so nothing they wrote was ever searchable. Same family as Gate C's "the corpus
+was comparing ES against itself": the harness silently pointed at the wrong engine. Switched
+to `nodeService.refresh( RefreshMode.ALL )` (what ~40 other classes already use); green in
+both modes. **Pattern worth generalising: any test that reaches past the SPI into a concrete
+engine is measuring the wrong thing the moment a second backend exists.**
+
+### Decisions not pinned by the work order
+
+`terms size <= 0` → `Integer.MAX_VALUE` (ES 2.4 read 0 as unlimited; OpenSearch rejects it and
+inheriting the default of 10 would silently truncate) · default date format
+`strict_date_optional_time` for both date families, required for baseline-identical keys *and*
+for parsing XP's millis-less date-math bounds · the histogram bucket key is **derived, not
+read** from `key_as_string` (absent under a raw format, and would render `"0.0"` where ES 2.4
+gave `"0"`) · XP's builder defaults are always written explicitly because the histogram
+`minDocCount` default is 1 in XP and **0** in the engine, so inheriting would silently add
+every empty bucket · aggregation names must be unique (the name is both wire key and response
+key; a duplicate is a loud failure, not a silent overwrite) · a missing aggregation in the
+response is an error, not an empty entry — that is the shape "aggregations come back but
+throw" would take · the calendar-vs-fixed rule lives in NoDB, not the renderer: it is a
+property of the target engine, like a field postfix, so the wire carries XP's untyped string
+verbatim.
+
 ## Gate 0(a) results — DSL completeness (2026-08-05)
 
 **STOP CONDITION NOT TRIGGERED.** Every NoQL construct renders as DSL: all 10 comparison

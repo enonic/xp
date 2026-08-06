@@ -16,6 +16,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.aggregation.metric.StatsAggregationQuery;
 
@@ -43,7 +44,7 @@ class StatsAggregationTest
         createNode( "c2", 4.0, "n6", NodePath.ROOT );
 
         createNode( "c3", 2.0, "n7", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).

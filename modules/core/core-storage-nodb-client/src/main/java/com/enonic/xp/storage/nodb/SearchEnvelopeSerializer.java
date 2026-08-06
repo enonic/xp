@@ -96,6 +96,12 @@ final class SearchEnvelopeSerializer
         {
             builder.setHighlight( toJson( dsl.getHighlight() ) );
         }
+        // Also one opaque document: an aggregation section is a map keyed by aggregation name, and
+        // the response comes back keyed the same way. The renderer already sorted it.
+        if ( !dsl.getAggregations().isEmpty() )
+        {
+            builder.setAggregations( toJson( dsl.getAggregations() ) );
+        }
 
         return builder.setFrom( dsl.getFrom() )
             .setSize( dsl.getSize() )

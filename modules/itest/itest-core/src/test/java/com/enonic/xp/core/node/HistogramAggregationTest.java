@@ -14,6 +14,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.HistogramAggregationQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +38,7 @@ class HistogramAggregationTest
         createNode( 40d, "n4", NodePath.ROOT );
         createNode( 50d, "n5", NodePath.ROOT );
         createNode( 60d, "n6", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( HistogramAggregationQuery.create( "ten" ).
@@ -76,7 +77,7 @@ class HistogramAggregationTest
         createNode( 10d, "n4", NodePath.ROOT );
         createNode( 11d, "n5", NodePath.ROOT );
         createNode( 20d, "n6", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( HistogramAggregationQuery.create( "count_asc" ).

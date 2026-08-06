@@ -8,13 +8,17 @@ import java.util.List;
  * record rather than the generated proto type — the engine has no protobuf dependency, and
  * keeping the boundary explicit is what lets the translator be unit-tested without a server.
  *
- * @param size      -1 means ALL, paged by {@code batchSize}
- * @param suggest   canonical suggest config as JSON text, empty when none was requested (Gate D)
- * @param highlight canonical highlight config as JSON text, empty when none was requested (Gate D)
+ * @param size         -1 means ALL, paged by {@code batchSize}
+ * @param aggregations canonical aggregation config as JSON text, empty when none was requested
+ *                     (Gate E). Kept as text on the way in and re-parsed by the executor because
+ *                     it is needed TWICE: once to build the request and once, in the response
+ *                     direction, as the only place the aggregation kinds exist (D9).
+ * @param suggest      canonical suggest config as JSON text, empty when none was requested (Gate D)
+ * @param highlight    canonical highlight config as JSON text, empty when none was requested (Gate D)
  */
 public record SearchQuery(List<Source> sources, String query, List<String> queryFilters, List<String> postFilters, List<String> sort,
-                          String suggest, String highlight, int from, int size, int batchSize, boolean explain, String searchOptimizer,
-                          List<String> returnFields)
+                          String aggregations, String suggest, String highlight, int from, int size, int batchSize, boolean explain,
+                          String searchOptimizer, List<String> returnFields)
 {
     /**
      * One (repo, branch, principals) triple. {@code branch} is case-preserved — it is matched

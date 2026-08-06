@@ -15,6 +15,7 @@ import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -188,7 +189,7 @@ class TermsAggregationsTest
         createNode( "c3", "d2", "node10", NodePath.ROOT );
         createNode( "c3", "d3", "node11", NodePath.ROOT );
         createNode( "c3", "d3", "node12", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().
             addAggregationQuery( TermsAggregationQuery.create( "category" ).
@@ -257,7 +258,7 @@ class TermsAggregationsTest
         createNode( "c2", "n5", NodePath.ROOT );
 
         createNode( "c3", "n6", NodePath.ROOT );
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
     }
 
 

@@ -47,11 +47,11 @@ import com.enonic.nodb.server.auth.TenantPrincipal;
  * base class's own convention used throughout this server.
  *
  * <p>{@code Search} receives XP's canonical JSON query DSL and an envelope, and translates it
- * server-side (decision 2). Gate B translates the structured families only; anything else is a
- * loud {@code INVALID_ARGUMENT} rather than a partial translation returning plausible-looking
- * wrong hits. Note the envelope is validated by consequence rather than by a schema pass: the
- * translator rejects every construct it does not know, and the wire's {@code format_version} is
- * checked before anything else is read.
+ * server-side (decision 2). Gates B–E translate every envelope slot; anything the translators do
+ * not know is a loud {@code INVALID_ARGUMENT} rather than a partial translation returning
+ * plausible-looking wrong hits. Note the envelope is validated by consequence rather than by a
+ * schema pass: the translators reject every construct they do not know, and the wire's
+ * {@code format_version} is checked before anything else is read.
  *
  * <p>Decision 3 in one sentence: XP builds the index documents and ships them here, NoDB stores
  * them transactionally with an outbox row, and the {@link Indexer} applies them to OpenSearch.
@@ -110,6 +110,7 @@ public final class NodeSearchService
             SearchResult.Builder response =
                 SearchResult.newBuilder().setTotalHits( result.totalHits() ).setMaxScore( result.maxScore() );
             response.setSuggestions( result.suggestions() );
+            response.setAggregations( result.aggregations() );
             for ( SearchQueryExecutor.Hit hit : result.hits() )
             {
                 response.addHits( toProto( hit ) );
@@ -142,19 +143,15 @@ public final class NodeSearchService
             sources.add( new SearchQuery.Source( source.getRepoId(), source.getBranch(), List.copyOf( source.getPrincipalsList() ) ) );
         }
 
-        // Gate E's fence, and it is asserted rather than assumed: suggest and highlight are now
-        // translated (Gate D), aggregations are still not, and an aggregation must keep failing
-        // LOUDLY rather than being silently dropped from the response.
-        if ( !request.getAggregations().isEmpty() )
-        {
-            throw new QueryDslTranslator.UnsupportedQueryException(
-                "Aggregations are not translated yet; they arrive with the last translation batch" );
-        }
-
+        // Every envelope slot is now translated (Gate E closed the last one). The fence moved DOWN a
+        // level rather than away: an aggregation naming a type the translator does not implement, or
+        // a sub-aggregation under a metric aggregation, still fails loudly inside
+        // AggregationTranslator instead of being dropped from the response.
         return new SearchQuery( sources, request.getQuery(), List.copyOf( request.getQueryFiltersList() ),
-                                List.copyOf( request.getPostFiltersList() ), List.copyOf( request.getSortList() ), request.getSuggest(),
-                                request.getHighlight(), request.getFrom(), request.getSize(), request.getBatchSize(), request.getExplain(),
-                                request.getSearchOptimizer(), List.copyOf( request.getReturnFieldsList() ) );
+                                List.copyOf( request.getPostFiltersList() ), List.copyOf( request.getSortList() ),
+                                request.getAggregations(), request.getSuggest(), request.getHighlight(), request.getFrom(),
+                                request.getSize(), request.getBatchSize(), request.getExplain(), request.getSearchOptimizer(),
+                                List.copyOf( request.getReturnFieldsList() ) );
     }
 
     private static SearchHit toProto( SearchQueryExecutor.Hit hit )

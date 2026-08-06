@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.HexFormat;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -508,10 +509,269 @@ class NodeSearchServiceIntegrationTest
                           searchRequest( repoId ).setQuery( "{\"somethingNew\":{\"field\":\"data.title\"}}" ).build() ) ),
                       "an untranslated construct must fail loudly, never return plausible wrong hits" );
 
-        // Gate E's fence, asserted rather than assumed: suggest and highlight are translated now,
-        // aggregations are not, and an aggregation must keep erroring instead of being dropped.
+        // Gate E moved this fence DOWN rather than removing it: aggregations are translated now, so
+        // what must still fail loudly is an aggregation naming a type NoDB does not implement, an
+        // aggregation naming no type at all, and a sub-aggregation under a METRIC aggregation --
+        // which is where ES 2.4's vanished AbstractAggregationBuilder guard silently dropped it.
         assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
             searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).setAggregations( "{\"x\":{}}" ).build() ) ) );
+        assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
+                          searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" )
+                              .setAggregations( "{\"x\":{\"cardinality\":{\"field\":\"data.category\"}}}" )
+                              .build() ) ), "an unimplemented aggregation type must fail loudly, never come back empty" );
+        assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
+            searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" )
+                .setAggregations( "{\"x\":{\"min\":{\"field\":\"data.population\"},\"aggregations\":" +
+                                      "{\"y\":{\"max\":{\"field\":\"data.population\"}}}}}" )
+                .build() ) ), "a sub-aggregation under a metric aggregation must be rejected, not dropped" );
+    }
+
+    // ---------------------------------------------------------------- Gate E: aggregations
+
+    /**
+     * Every aggregation family against a real OpenSearch, checked at BUCKET level on the tagged wire
+     * document. The engine tests prove the JSON shapes in isolation; what only a real engine can prove
+     * is that the bucket KEYS come back in the spellings XP's result types have always carried — which
+     * is where the two traps live:
+     * <ul>
+     * <li>a numeric histogram key must be {@code "0"}/{@code "500"}, not {@code "0.0"}, because ES
+     * 2.4's raw formatter collapsed an integral double to a long;</li>
+     * <li>a date range or date histogram key must be an ISO instant with millis, which only happens
+     * because the translator always sends a {@code format} — the field's own
+     * {@code epoch_millis||strict_date_optional_time} would key them by epoch millis instead.</li>
+     * </ul>
+     * Both are silent-wrong-value failures, not errors.
+     */
+    @Test
+    void everyAggregationFamilyComesBackTaggedAndBucketedFromTheRealEngine()
+    {
+        String repoId = createRepo( "queryaggs" );
+        indexAndRefresh( repoId, aggregationDocument( "node-1", "c1", 100, "2020-01-15T00:00:00Z", 59.91273, 10.74609 ) );
+        indexAndRefresh( repoId, aggregationDocument( "node-2", "c1", 300, "2020-02-20T00:00:00Z", 60.39299, 5.32415 ) );
+        indexAndRefresh( repoId, aggregationDocument( "node-3", "c1", 700, "2021-01-10T00:00:00Z", 52.52001, 13.40495 ) );
+        indexAndRefresh( repoId, aggregationDocument( "node-4", "c2", 900, "2021-05-05T00:00:00Z", 40.71427, -74.00597 ) );
+
+        // terms, ordered by doc count DESC
+        JsonNode terms = aggregation( repoId, "{\"byCategory\":{\"terms\":{\"field\":\"data.category\",\"size\":10," +
+            "\"minDocCount\":1,\"order\":{\"type\":\"DOC_COUNT\",\"direction\":\"DESC\"}}}}", "byCategory" );
+        assertEquals( "terms", terms.path( "type" ).asText() );
+        assertEquals( "string", terms.path( "keyType" ).asText() );
+        assertEquals( List.of( "c1:3", "c2:1" ), buckets( terms ) );
+
+        // the four metric families
+        JsonNode stats = aggregation( repoId, "{\"popStats\":{\"stats\":{\"field\":\"data.population\"}}}", "popStats" );
+        assertEquals( "stats", stats.path( "type" ).asText() );
+        assertEquals( "none", stats.path( "keyType" ).asText() );
+        assertEquals( 4, stats.path( "count" ).asInt() );
+        assertEquals( 100.0, stats.path( "min" ).asDouble() );
+        assertEquals( 900.0, stats.path( "max" ).asDouble() );
+        assertEquals( 2000.0, stats.path( "sum" ).asDouble() );
+        assertEquals( 500.0, stats.path( "avg" ).asDouble() );
+
+        assertEquals( 100.0,
+                      aggregation( repoId, "{\"a\":{\"min\":{\"field\":\"data.population\"}}}", "a" ).path( "value" ).asDouble() );
+        assertEquals( 900.0,
+                      aggregation( repoId, "{\"a\":{\"max\":{\"field\":\"data.population\"}}}", "a" ).path( "value" ).asDouble() );
+        // value_count resolves to the TEXT variant, exactly as XP's factory does (StaticIndexValueType
+        // .STRING) -- so it counts data.population._text and every value has one.
+        assertEquals( 4.0,
+                      aggregation( repoId, "{\"a\":{\"valueCount\":{\"field\":\"data.population\"}}}", "a" ).path( "value" ).asDouble() );
+
+        // numeric range: the engine's own generated keys, byte-identical to ES 2.4's
+        JsonNode numericRange = aggregation( repoId, "{\"a\":{\"numericRange\":{\"field\":\"data.population\"," +
+            "\"ranges\":[{\"to\":500},{\"from\":500}]}}}", "a" );
+        assertEquals( List.of( "*-500.0:2", "500.0-*:2" ), buckets( numericRange ) );
+
+        // numeric histogram: "0" and "500", NOT "0.0"/"500.0"
+        JsonNode histogram =
+            aggregation( repoId, "{\"a\":{\"histogram\":{\"field\":\"data.population\",\"interval\":500,\"minDocCount\":1}}}", "a" );
+        assertEquals( "double", histogram.path( "keyType" ).asText() );
+        assertEquals( List.of( "0:2", "500:2" ), buckets( histogram ),
+                      "an integral histogram key is a LONG, as ES 2.4's raw formatter rendered it" );
+
+        // date range: ISO keys with millis, and the bounds re-tagged as epoch millis
+        JsonNode dateRange = aggregation( repoId, "{\"a\":{\"dateRange\":{\"field\":\"data.founded\"," +
+            "\"ranges\":[{\"to\":\"2021-01-01T00:00:00Z\"},{\"from\":\"2021-01-01T00:00:00Z\"}]}}}", "a" );
+        assertEquals( List.of( "*-2021-01-01T00:00:00.000Z:2", "2021-01-01T00:00:00.000Z-*:2" ), buckets( dateRange ) );
+        assertEquals( 1609459200000L, dateRange.path( "buckets" ).get( 0 ).path( "toMillis" ).asLong() );
+
+        // date histogram, calendar interval: one bucket per month that has a document
+        JsonNode monthly =
+            aggregation( repoId, "{\"a\":{\"dateHistogram\":{\"field\":\"data.founded\",\"interval\":\"1M\",\"minDocCount\":1}}}", "a" );
+        assertEquals( "instant", monthly.path( "keyType" ).asText() );
+        assertEquals( List.of( "2020-01-01T00:00:00.000Z:1", "2020-02-01T00:00:00.000Z:1", "2021-01-01T00:00:00.000Z:1",
+                               "2021-05-01T00:00:00.000Z:1" ), buckets( monthly ) );
+        assertEquals( 1577836800000L, monthly.path( "buckets" ).get( 0 ).path( "keyMillis" ).asLong(),
+                      "the instant tag is what makes this a DateHistogramBucket rather than a plain one" );
+
+        // …and the ambiguous interval: 1d is CALENDAR here, which the engine accepts as either
+        JsonNode daily =
+            aggregation( repoId, "{\"a\":{\"dateHistogram\":{\"field\":\"data.founded\",\"interval\":\"1d\",\"minDocCount\":1}}}", "a" );
+        assertEquals( List.of( "2020-01-15T00:00:00.000Z:1", "2020-02-20T00:00:00.000Z:1", "2021-01-10T00:00:00.000Z:1",
+                               "2021-05-05T00:00:00.000Z:1" ), buckets( daily ) );
+
+        // a format XP sets wins over the default
+        assertEquals( List.of( "2020-01:1", "2020-02:1", "2021-01:1", "2021-05:1" ), buckets( aggregation( repoId,
+            "{\"a\":{\"dateHistogram\":{\"field\":\"data.founded\",\"interval\":\"1M\",\"minDocCount\":1," +
+                "\"format\":\"yyyy-MM\"}}}", "a" ) ) );
+
+        // geo distance from Oslo
+        JsonNode geo = aggregation( repoId, "{\"a\":{\"geoDistance\":{\"field\":\"data.location\"," +
+            "\"origin\":{\"lat\":59.91273,\"lon\":10.74609},\"unit\":\"km\"," +
+            "\"ranges\":[{\"to\":100},{\"from\":100,\"to\":1000},{\"from\":1000}]}}}", "a" );
+        assertEquals( List.of( "*-100.0:1", "100.0-1000.0:2", "1000.0-*:1" ), buckets( geo ) );
+
+        // sub-aggregations: a metric nested under a bucket, one level and two
+        JsonNode nested = aggregation( repoId, "{\"byCategory\":{\"terms\":{\"field\":\"data.category\"," +
+            "\"order\":{\"type\":\"TERM\",\"direction\":\"ASC\"}},\"aggregations\":{\"popMax\":{\"max\":" +
+            "{\"field\":\"data.population\"}}}}}", "byCategory" );
+        assertEquals( 700.0, nested.path( "buckets" ).get( 0 ).path( "aggregations" ).get( 0 ).path( "value" ).asDouble() );
+        assertEquals( "popMax", nested.path( "buckets" ).get( 0 ).path( "aggregations" ).get( 0 ).path( "name" ).asText() );
+
+        JsonNode deep = aggregation( repoId, "{\"byCategory\":{\"terms\":{\"field\":\"data.category\"," +
+            "\"order\":{\"type\":\"TERM\",\"direction\":\"ASC\"}},\"aggregations\":{\"byMonth\":{\"dateHistogram\":" +
+            "{\"field\":\"data.founded\",\"interval\":\"1M\",\"minDocCount\":1},\"aggregations\":{\"popSum\":" +
+            "{\"stats\":{\"field\":\"data.population\"}}}}}}}", "byCategory" );
+        JsonNode innerMonth = deep.path( "buckets" ).get( 0 ).path( "aggregations" ).get( 0 );
+        assertEquals( "dateHistogram", innerMonth.path( "type" ).asText() );
+        assertEquals( "stats", innerMonth.path( "buckets" ).get( 0 ).path( "aggregations" ).get( 0 ).path( "type" ).asText() );
+
+        // Post-filters narrow the hits but NOT the buckets -- the reason the envelope keeps the two
+        // filter slots apart, and the one aggregation property a merged filter would silently break.
+        SearchResult filtered = nodeSearch().search( searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" )
+                                                        .addPostFilters(
+                                                            "{\"values\":{\"field\":\"data.category\",\"values\":[\"c2\"]}}" )
+                                                        .setAggregations( "{\"byCategory\":{\"terms\":{\"field\":\"data.category\"," +
+                                                                              "\"order\":{\"type\":\"TERM\",\"direction\":\"ASC\"}}}}" )
+                                                        .build() );
+        assertEquals( 1, filtered.getTotalHits() );
+        assertEquals( List.of( "c1:3", "c2:1" ), buckets( named( filtered.getAggregations(), "byCategory" ) ) );
+    }
+
+    /**
+     * <b>Why the XP-side renderer has to sort its ranges</b>, measured rather than assumed — and the
+     * reason corpus row {@code AGG-13} came back with the same keys and counts in a DIFFERENT ORDER on
+     * a repeat run before the fix.
+     *
+     * <p>{@code range} and {@code date_range} sort their own range array: a reversed request comes back
+     * ascending and correctly counted, and so does one whose bounds are date math the engine has to
+     * evaluate first. {@code geo_distance} does NOT — and the shared {@code RangeAggregator}
+     * binary-searches that array assuming it is ordered, so an unsorted geo range list does not merely
+     * answer in an odd order, it <b>silently loses documents</b>: the row below sends
+     * {@code [{from:1000},{to:1000}]} against documents at 0 km and 5900 km and gets
+     * {@code *-1000.0: 0}, dropping the one at the origin. No error, a plausible number.
+     *
+     * <p>Since XP holds its ranges in an {@code ImmutableSet} copied from a {@code HashSet} of objects
+     * that never override {@code hashCode}, the order reaching the wire was identity-hash order and
+     * varied per JVM run — so this was a live, silent, run-dependent MISCOUNT, not a cosmetic one. It is
+     * now sorted in two places (the XP renderer for wire determinism, the NoDB translator for the engine
+     * contract), and this row asserts the raw engine behaviour both fixes rest on by deliberately
+     * bypassing the renderer.
+     */
+    @Test
+    void rangeAggregationsSortTheirOwnRangesButAnUnsortedGeoDistanceListMiscounts()
+    {
+        String repoId = createRepo( "queryrangeorder" );
+        indexAndRefresh( repoId, aggregationDocument( "node-1", "c1", 100, "2020-01-15T00:00:00Z", 59.91273, 10.74609 ) );
+        indexAndRefresh( repoId, aggregationDocument( "node-2", "c2", 900, "2021-05-05T00:00:00Z", 40.71427, -74.00597 ) );
+
+        assertEquals( List.of( "*-500.0:1", "500.0-*:1" ), buckets( aggregation( repoId,
+            "{\"a\":{\"numericRange\":{\"field\":\"data.population\",\"ranges\":[{\"from\":500},{\"to\":500}]}}}", "a" ) ),
+                      "a reversed range request comes back ascending: the engine sorts by resolved from" );
+
+        assertEquals( List.of( "*-2021-01-01T00:00:00.000Z:1", "2021-01-01T00:00:00.000Z-*:1" ), buckets( aggregation( repoId,
+            "{\"a\":{\"dateRange\":{\"field\":\"data.founded\",\"ranges\":[{\"from\":\"2021-01-01T00:00:00Z\"}," +
+                "{\"to\":\"2021-01-01T00:00:00Z\"}]}}}", "a" ) ), "…and so does date_range, date math included" );
+
+        // The hazard, straight at the engine with no translator in the way: an unsorted geo range list
+        // loses the document at the origin entirely.
+        ObjectNode raw = OpenSearchClient.mapper().createObjectNode();
+        raw.put( "size", 0 );
+        raw.set( "aggs", parseJson( "{\"a\":{\"geo_distance\":{\"field\":\"data.location._geopoint\"," +
+                                        "\"origin\":{\"lat\":59.91273,\"lon\":10.74609},\"unit\":\"km\"," +
+                                        "\"ranges\":[{\"from\":1000.0},{\"to\":1000.0}]}}}" ) );
+        JsonNode unsorted = openSearchClient.search( SearchIndexNames.alias( new TenantContext( "acme" ), repoId ), raw );
+        List<String> engineBuckets = new java.util.ArrayList<>();
+        unsorted.path( "aggregations" )
+            .path( "a" )
+            .path( "buckets" )
+            .forEach( bucket -> engineBuckets.add( bucket.path( "key" ).asText() + ":" + bucket.path( "doc_count" ).asLong() ) );
+        assertEquals( List.of( "1000.0-*:1", "*-1000.0:0" ), engineBuckets,
+                      "an unsorted geo_distance range list silently DROPS the document at the origin" );
+
+        // …and the same request through the translator, which sorts it: right order, right counts.
+        assertEquals( List.of( "*-1000.0:1", "1000.0-*:1" ), buckets( aggregation( repoId,
+            "{\"a\":{\"geoDistance\":{\"field\":\"data.location\",\"origin\":{\"lat\":59.91273,\"lon\":10.74609}," +
+                "\"unit\":\"km\",\"ranges\":[{\"from\":1000},{\"to\":1000}]}}}", "a" ) ),
+                      "the translator sorts geo ranges, so an unsorted envelope cannot miscount" );
+    }
+
+    private static JsonNode parseJson( String json )
+    {
+        try
+        {
+            return OpenSearchClient.mapper().readTree( json );
+        }
+        catch ( Exception e )
+        {
+            throw new IllegalStateException( e );
+        }
+    }
+
+    /** {@code "<key>:<docCount>"} per bucket, in the order the engine returned them. */
+    private static List<String> buckets( JsonNode aggregation )
+    {
+        List<String> out = new java.util.ArrayList<>();
+        aggregation.path( "buckets" )
+            .forEach( bucket -> out.add( bucket.path( "key" ).asText() + ":" + bucket.path( "docCount" ).asLong() ) );
+        return out;
+    }
+
+    private static JsonNode aggregation( String repoId, String aggregations, String name )
+    {
+        SearchResult result = nodeSearch().search(
+            searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).setAggregations( aggregations ).build() );
+        return named( result.getAggregations(), name );
+    }
+
+    private static JsonNode named( String tagged, String name )
+    {
+        try
+        {
+            for ( JsonNode aggregation : OpenSearchClient.mapper().readTree( tagged ) )
+            {
+                if ( name.equals( aggregation.path( "name" ).asText() ) )
+                {
+                    return aggregation;
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            throw new IllegalStateException( "not a tagged aggregation document: " + tagged, e );
+        }
+        throw new AssertionError( "no aggregation named '" + name + "' in " + tagged );
+    }
+
+    /** One document carrying every value type the aggregation families need. */
+    private static IndexDoc aggregationDocument( String nodeId, String category, double population, String founded, double lat,
+                                                 double lon )
+    {
+        return IndexDoc.newBuilder()
+            .setId( nodeId )
+            .addFields( textField( "data.category", category ) )
+            // The bare (text) variant AND the typed one, as XP emits for every indexed property --
+            // which is what makes a value_count over the text variant meaningful.
+            .addFields( textField( "data.population", Double.toString( population ) ) )
+            .addFields( IndexField.newBuilder()
+                            .setName( "data.population._number" )
+                            .addValues( IndexValue.newBuilder().setDoubleValue( population ) ) )
+            .addFields( IndexField.newBuilder()
+                            .setName( "data.founded._datetime" )
+                            .addValues( IndexValue.newBuilder().setInstantMillis( Instant.parse( founded ).toEpochMilli() ) ) )
+            .addFields( textField( "data.location._geopoint", lat + "," + lon ) )
+            .addFields( textField( IndexFields.PERMISSIONS_READ, "role:system.everyone" ) )
+            .build();
     }
 
     // ---------------------------------------------------------------------------- Gate D: text

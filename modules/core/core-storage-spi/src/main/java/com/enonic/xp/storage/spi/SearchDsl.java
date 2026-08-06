@@ -44,6 +44,16 @@ public final class SearchDsl
      */
     private final Map<String, Object> highlight;
 
+    /**
+     * The canonical aggregation config, {@code {"<name>": {"<type>": {..}, "aggregations": {..}}}},
+     * empty when the query requested none. A MAP keyed by aggregation name, sorted by the renderer,
+     * because the name is what the response comes back under. Field names carry no postfixes and
+     * every parameter is in XP's own spelling; which sub-field an aggregation type resolves to is
+     * decided by the backend from the TYPE (a terms aggregation is a keyword aggregation, a stats
+     * aggregation a numeric one), which is the same rule the query side follows from the value.
+     */
+    private final Map<String, Object> aggregations;
+
     private final int from;
 
     private final int size;
@@ -62,6 +72,7 @@ public final class SearchDsl
         this.sort = builder.sort.build();
         this.suggest = builder.suggest.build();
         this.highlight = builder.highlight.build();
+        this.aggregations = builder.aggregations.build();
         this.from = builder.from;
         this.size = builder.size;
         this.batchSize = builder.batchSize;
@@ -104,6 +115,11 @@ public final class SearchDsl
         return highlight;
     }
 
+    public Map<String, Object> getAggregations()
+    {
+        return aggregations;
+    }
+
     public int getFrom()
     {
         return from;
@@ -142,6 +158,8 @@ public final class SearchDsl
         private final ImmutableMap.Builder<String, Object> suggest = ImmutableMap.builder();
 
         private final ImmutableMap.Builder<String, Object> highlight = ImmutableMap.builder();
+
+        private final ImmutableMap.Builder<String, Object> aggregations = ImmutableMap.builder();
 
         private int from;
 
@@ -191,6 +209,13 @@ public final class SearchDsl
         public Builder highlight( final Map<String, Object> highlight )
         {
             this.highlight.putAll( highlight );
+            return this;
+        }
+
+        /** The whole aggregation section, already keyed and ordered by aggregation name. */
+        public Builder aggregations( final Map<String, Object> aggregations )
+        {
+            this.aggregations.putAll( aggregations );
             return this;
         }
 

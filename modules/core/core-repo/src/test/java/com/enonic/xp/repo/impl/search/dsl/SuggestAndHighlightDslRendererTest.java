@@ -206,16 +206,24 @@ class SuggestAndHighlightDslRendererTest
         assertFalse( dsl.getQuery().isEmpty() );
     }
 
-    /** Aggregations are the remaining fence and must still fail loudly rather than be dropped. */
+    /**
+     * The fence that was here — "aggregations have no wire form yet" — is gone: Gate E renders them,
+     * and this row is flipped to assert exactly that rather than deleted, so the transition is
+     * recorded where the rejection used to be. What remains a fence is an aggregation TYPE the
+     * renderer does not know, which {@code AggregationDslRendererTest} owns along with the rest of
+     * the aggregation surface.
+     */
     @Test
-    void aggregationsStillHaveNoWireForm()
+    void aggregationsNowHaveAWireForm()
     {
         final NodeQuery query = NodeQuery.create()
             .query( QueryParser.parse( "_path LIKE '/x*'" ) )
             .addAggregationQuery( com.enonic.xp.query.aggregation.TermsAggregationQuery.create( "byType" ).fieldName( "_type" ).build() )
             .build();
 
-        assertThrows( DslRenderException.class, () -> render( query ) );
+        assertEquals( Map.of( "byType", Map.of( "terms", Map.of( "field", "_type", "size", 10, "minDocCount", 1L, "order",
+                                                                 Map.of( "type", "TERM", "direction", "ASC" ) ) ) ),
+                      render( query ).getAggregations() );
     }
 
     private static SearchDsl render( final NodeQuery query )
