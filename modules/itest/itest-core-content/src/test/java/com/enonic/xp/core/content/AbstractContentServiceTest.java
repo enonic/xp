@@ -117,8 +117,13 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
+import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.core.nodb.NodbTenant;
+import com.enonic.xp.core.nodb.NodbTestCluster;
+import com.enonic.xp.storage.nodb.NodbBinaryBlobStore;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.util.GeoPoint;
 import com.enonic.xp.util.Reference;
@@ -134,7 +139,31 @@ public abstract class AbstractContentServiceTest
 {
     private static final AtomicInteger PROJECT_COUNTER = new AtomicInteger();
 
-    private static final MemoryBlobStore BLOB_STORE = new MemoryBlobStore();
+    protected static final MemoryBlobStore BLOB_STORE = new MemoryBlobStore();
+
+    /**
+     * Phase 4 Gate B: the nodb harness, replicating {@code AbstractNodeTest}'s single mode
+     * branch for the content fixture. Non-null only in nodb mode; memoized per concrete test
+     * CLASS by {@link NodbTestCluster#tenantForClass}, deliberately NOT closed in teardown
+     * (closing it after the first method would break every later method in the same class).
+     * <p>
+     * Class-scoped is the granularity this fixture needs, and it is not arbitrary: the ES side
+     * is wiped in {@code @BeforeAll} while a fresh project (repository) is created per method,
+     * so storage and search agree about the SYSTEM repository for the whole class. Making the
+     * tenant per-method would make {@code SystemRepoInitializer}'s
+     * {@code isInitialized} check see "search says it exists, storage says it does not" on the
+     * second method and fail with {@code RepositoryAlreadyExistsException}.
+     */
+    private NodbTenant nodbTenant;
+
+    /** {@code ElasticsearchNodeStore} in default mode, the nodb gRPC client in nodb mode. */
+    protected NodeStore nodeStore;
+
+    /** The swappable {@code RepositoryStorageAdmin} slot; {@code indexServiceInternal} stays ES. */
+    protected RepositoryStorageAdmin repositoryStorageAdmin;
+
+    /** {@link #BLOB_STORE}, wrapped by a {@code NodbBinaryBlobStore} in nodb mode. */
+    protected BlobStore blobStore;
 
     final ProjectName testprojectName = ProjectName.from( "test" + PROJECT_COUNTER.incrementAndGet() );
 
@@ -234,8 +263,6 @@ public abstract class AbstractContentServiceTest
         initialContext = ContextAccessor.current();
         ContextAccessorSupport.getInstance().set( ctxDraft() );
 
-        final BinaryServiceImpl binaryService = new BinaryServiceImpl( BLOB_STORE );
-
         final StorageDaoImpl storageDao = new StorageDaoImpl( client );
 
         this.eventPublisher = new EventPublisherImpl( executorService );
@@ -244,7 +271,27 @@ public abstract class AbstractContentServiceTest
 
         final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
 
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, BLOB_STORE );
+        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
+
+        // The one mode branch, same shape and same role split as AbstractNodeTest: nodb owns the
+        // STORAGE side (NodeStore + RepositoryStorageAdmin + the binary blob segment), the SEARCH
+        // side stays on embedded ES. indexServiceInternal remains the concrete ES admin either
+        // way -- it also fills the IndexServiceInternal-typed parameters below, which never move.
+        if ( NodbTestCluster.isEnabled() )
+        {
+            this.nodbTenant = NodbTestCluster.get().tenantForClass( this.getClass() );
+            this.nodeStore = nodbTenant.nodeStore();
+            this.repositoryStorageAdmin = nodbTenant.repositoryStorageAdmin();
+            this.blobStore = new NodbBinaryBlobStore( BLOB_STORE, nodbTenant.client() );
+        }
+        else
+        {
+            this.nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, BLOB_STORE );
+            this.repositoryStorageAdmin = indexServiceInternal;
+            this.blobStore = BLOB_STORE;
+        }
+
+        final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 
         BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 
@@ -252,9 +299,7 @@ public abstract class AbstractContentServiceTest
 
         CommitServiceImpl commitService = new CommitServiceImpl( nodeStore );
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
-
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( BLOB_STORE, new RepoConfiguration( Map.of() ) );
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
 
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
@@ -263,11 +308,11 @@ public abstract class AbstractContentServiceTest
 
         NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
-        indexService = new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        indexService = new IndexServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex );
 
         RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
@@ -280,7 +325,7 @@ public abstract class AbstractContentServiceTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         formFragmentService = mock( CmsFormFragmentService.class );
         when( formFragmentService.inlineFormItems( Mockito.isA( Form.class ) ) ).then( AdditionalAnswers.returnsFirstArg() );

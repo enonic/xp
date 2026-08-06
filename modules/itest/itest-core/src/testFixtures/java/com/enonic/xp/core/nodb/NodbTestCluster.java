@@ -23,17 +23,21 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MinIOContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 import com.enonic.nodb.engine.TenantContext;
 import com.enonic.nodb.engine.TenantProvisioner;
 import com.enonic.nodb.engine.binary.BinaryStore;
+import com.enonic.nodb.engine.search.OpenSearchConfig;
 import com.enonic.nodb.server.NodbServer;
 import com.enonic.nodb.server.auth.DevKeys;
 import com.enonic.nodb.server.auth.JwtIssuer;
 import com.enonic.nodb.server.auth.Scope;
 
+import com.enonic.xp.storage.nodb.NodbNodeSearchIndex;
 import com.enonic.xp.storage.nodb.NodbNodeStore;
 import com.enonic.xp.storage.nodb.NodbRepositoryStorageAdmin;
 import com.enonic.xp.storage.nodb.NodbStorageClient;
@@ -98,6 +102,19 @@ public final class NodbTestCluster
 
     private static final String BACKEND_NODB = "nodb";
 
+    /**
+     * Phase 4 Gate B: {@code -Dxp.itest.opensearch=true} additionally starts an OpenSearch
+     * container and hands it to the {@link NodbServer}, so the {@code NodeSearch} RPCs answer
+     * for real instead of UNIMPLEMENTED. Opt-in rather than always-on because it adds a
+     * multi-hundred-megabyte container and tens of seconds of startup to every nodb itest run,
+     * while only the query itests need it; Gate F, which drops embedded ES in nodb mode
+     * entirely, is where it stops being optional.
+     */
+    private static final String OPENSEARCH_PROPERTY = "xp.itest.opensearch";
+
+    /** STOCK image, pinned to the minor the managed service runs (D8: no analysis-icu needed). */
+    private static final String OPENSEARCH_IMAGE = "opensearchproject/opensearch:3.7.0";
+
     private static volatile NodbTestCluster INSTANCE;
 
     private static final Object LOCK = new Object();
@@ -116,6 +133,8 @@ public final class NodbTestCluster
 
     private final BinaryStore binaryStore;
 
+    private final GenericContainer<?> opensearch;
+
     private final NodbServer server;
 
     private final RSAPrivateKey issuerPrivateKey;
@@ -128,8 +147,10 @@ public final class NodbTestCluster
     private final Map<Class<?>, NodbTenant> tenantsByClass = new ConcurrentHashMap<>();
 
     private NodbTestCluster( PostgreSQLContainer<?> postgres, HikariDataSource dataSource, MinIOContainer minio, S3Client s3Client,
-                              S3Presigner s3Presigner, BinaryStore binaryStore, NodbServer server, KeyPair issuerKeyPair )
+                              S3Presigner s3Presigner, BinaryStore binaryStore, GenericContainer<?> opensearch, NodbServer server,
+                              KeyPair issuerKeyPair )
     {
+        this.opensearch = opensearch;
         this.postgres = postgres;
         this.dataSource = dataSource;
         this.minio = minio;
@@ -145,6 +166,12 @@ public final class NodbTestCluster
     public static boolean isEnabled()
     {
         return BACKEND_NODB.equals( System.getProperty( SYSTEM_PROPERTY ) );
+    }
+
+    /** True when the shared stack also carries an OpenSearch backend -- see {@link #OPENSEARCH_PROPERTY}. */
+    public static boolean isSearchEnabled()
+    {
+        return isEnabled() && Boolean.parseBoolean( System.getProperty( OPENSEARCH_PROPERTY ) );
     }
 
     /** Lazily starts the shared stack on first use; a no-op on every subsequent call in this JVM. */
@@ -213,10 +240,35 @@ public final class NodbTestCluster
             BinaryStore binaryStore =
                 new BinaryStore( s3Client, s3Presigner, null, null, MINIO_BUCKET, region, endpoint, serviceConfiguration );
 
-            KeyPair issuerKeyPair = DevKeys.loadOrGenerate( Files.createTempDirectory( "nodb-itest-dev-keys" ) );
-            NodbServer server = NodbServer.create( 0, dataSource, (RSAPublicKey) issuerKeyPair.getPublic(), binaryStore );
+            GenericContainer<?> opensearch = null;
+            OpenSearchConfig openSearchConfig = OpenSearchConfig.fromEnv();
+            if ( isSearchEnabled() )
+            {
+                opensearch = new GenericContainer<>( OPENSEARCH_IMAGE ).withExposedPorts( 9200 )
+                    .withEnv( "discovery.type", "single-node" )
+                    .withEnv( "DISABLE_SECURITY_PLUGIN", "true" )
+                    .withEnv( "DISABLE_INSTALL_DEMO_CONFIG", "true" )
+                    .withEnv( "OPENSEARCH_JAVA_OPTS", "-Xms512m -Xmx512m" )
+                    .waitingFor( Wait.forHttp( "/_cluster/health?wait_for_status=yellow&timeout=30s" )
+                                     .forPort( 9200 )
+                                     .forStatusCode( 200 )
+                                     .withStartupTimeout( Duration.ofMinutes( 4 ) ) );
+                opensearch.start();
 
-            return new NodbTestCluster( postgres, dataSource, minio, s3Client, s3Presigner, binaryStore, server, issuerKeyPair );
+                // refresh_interval -1, same reasoning as nodb's own container tests: with the
+                // production 1s interval a path that forgets to await a refresh still passes on
+                // a timer, and the refresh contract silently stops being tested.
+                openSearchConfig =
+                    OpenSearchConfig.of( "http://" + opensearch.getHost() + ":" + opensearch.getMappedPort( 9200 ) )
+                        .withRefreshInterval( "-1" );
+            }
+
+            KeyPair issuerKeyPair = DevKeys.loadOrGenerate( Files.createTempDirectory( "nodb-itest-dev-keys" ) );
+            NodbServer server =
+                NodbServer.create( 0, dataSource, (RSAPublicKey) issuerKeyPair.getPublic(), binaryStore, openSearchConfig );
+
+            return new NodbTestCluster( postgres, dataSource, minio, s3Client, s3Presigner, binaryStore, opensearch, server,
+                                        issuerKeyPair );
         }
         catch ( Exception e )
         {
@@ -305,7 +357,8 @@ public final class NodbTestCluster
         NodbStorageClient client = new NodbStorageClient();
         client.activate( Map.of( "backend", BACKEND_NODB, "nodbEndpoint", "localhost:" + server.getPort(), "nodbToken", runtimeToken ) );
 
-        return new NodbTenant( tenantId, client, new NodbNodeStore( client ), new NodbRepositoryStorageAdmin( client ) );
+        return new NodbTenant( tenantId, client, new NodbNodeStore( client ), new NodbRepositoryStorageAdmin( client ),
+                               new NodbNodeSearchIndex( client ) );
     }
 
     private void shutdown()
@@ -317,6 +370,10 @@ public final class NodbTestCluster
         // exposes for test assertions) -- do not close them a second time here either.
         binaryStore.close();
         minio.stop();
+        if ( opensearch != null )
+        {
+            opensearch.stop();
+        }
         postgres.stop();
     }
 }

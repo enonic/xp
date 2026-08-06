@@ -316,8 +316,103 @@ message Payload {
   bytes bytes = 2;
 }
 
-message SearchRequest {}
-message SearchResult {}
+// --- NodeSearch query path (Phase 4 Gate B) -------------------------------------------
+//
+// The DSL IS the wire format (decision 1). Every query-language member below is an opaque
+// JSON document produced by XP core's QueryExpr -> DSL renderer, which sits ABOVE the
+// storage SPI; the client that fills this message in is a pure serializer and the server
+// owns the DSL -> engine translation. Consequences worth stating, because they are what the
+// field list encodes:
+//
+//   * Field names arrive post-IndexPath (lowercased, trimmed) and WITHOUT value-type
+//     postfixes. Resolving `data.title` to `data.title._text`/`._datetime`/... is the
+//     server's job (IndexFields), so the postfix table exists in exactly one place.
+//   * `sources` is a LIST of (repo, branch, principals) triples because XP's multi-repo
+//     queries carry PER-SOURCE principal sets. One request, N indices, the ACL filter
+//     applied per index. All sources resolve under the token's tenant: multi-repo never
+//     means multi-tenant.
+//   * `branch` is CASE-PRESERVED. ES matched branches with an IdFilter on _type precisely
+//     to avoid ValueFilter's lowercasing; lowercasing here would be a silent behaviour
+//     change.
+//   * The ACL filter is NEVER absent, not even for role:system.admin. The ES path skipped
+//     it entirely for admins; DESIGN.md 7.2 replaces that with an admin read-key injected
+//     into every document, so `principals` is always authoritative and an empty set is
+//     fail-closed (user:system:anonymous), never match-all.
+//   * DELIBERATELY ABSENT: search_preference (structurally always null on the search path),
+//     any filter-mode / ACL-bypass flag (no such concept exists — admin is an asserted
+//     principal), store_type (branch/version/commit queries are answered from Postgres, not
+//     from a search index, so they never reach this RPC), and the dead filter.cache flag.
+message SearchSourceRef {
+  string repo_id = 1;
+  string branch = 2;
+  repeated string principals = 3;
+}
+
+message SearchRequest {
+  uint32 format_version = 1;
+  repeated SearchSourceRef sources = 2;
+  string query = 3;                      // canonical DSL; ALWAYS present (empty query => {"matchAll":{}})
+  // Applied inside bool.filter together with the ACL filter. Kept SEPARATE from
+  // post_filters, which occupy the engine's own post-filter slot: merging them would make
+  // post-filters affect aggregations, which is the one thing they must not do.
+  repeated string query_filters = 4;
+  repeated string post_filters = 5;
+  repeated string sort = 6;              // ALWAYS an array; every element carries an explicit `direction`
+  string aggregations = 7;               // Gate E
+  string suggest = 8;                    // Gate D
+  string highlight = 9;                  // Gate D
+  int32 from = 10;
+  int32 size = 11;                       // -1 = ALL (search_after/PIT on the server)
+  int32 batch_size = 12;                 // page size when size = -1
+  bool explain = 13;
+  string search_optimizer = 14;          // SPEED | ACCURACY
+  repeated string return_fields = 15;
+  // Reserved for the later register-once optimization: principal sets are small (~100 bytes)
+  // but highly stable per request, so a digest would let the server cache the resolved
+  // filter. Reserved rather than added, because it needs per-connection server state that
+  // collides with Phase 6's horizontally split runtimes — and because reserving it now keeps
+  // adding it later from being a format break.
+  reserved 16;
+  reserved "principals_digest";
+}
+
+message SearchResult {
+  repeated SearchHit hits = 1;
+  uint64 total_hits = 2;
+  float max_score = 3;                   // NaN when results are sorted by field, matching today's behaviour
+  string aggregations = 4;               // Gate E
+  string suggestions = 5;                // Gate D
+}
+
+// Attribution is EXPLICIT. The ES path derived the repo by string-slicing _index and the
+// branch from _type; under generational index names (<tenant>-<repo>+g<N>) that breaks, and
+// DESIGN.md 5 forbids parsing a name back. These are the _repo/_branch document fields.
+message SearchHit {
+  string id = 1;                         // bare node id, never the composite <nodeId>@<branch> _id
+  string repo_id = 2;
+  string branch = 3;
+  float score = 4;
+  repeated ReturnValue return_values = 5;
+  repeated string sort_values = 6;
+  repeated HighlightedProperty highlights = 7;
+  Explanation explanation = 8;
+}
+
+message ReturnValue {
+  string name = 1;                       // canonical (unpostfixed) field name, as requested
+  repeated IndexValue values = 2;
+}
+
+message HighlightedProperty {
+  string name = 1;
+  repeated string fragments = 2;
+}
+
+message Explanation {
+  float value = 1;
+  string description = 2;
+  repeated Explanation details = 3;
+}
 
 // repo_id + the full entry to upsert (branch is a field on `entry`, same shape as
 // WriteBatchRequest.branch_entries — no separate branch field needed).

@@ -310,6 +310,82 @@ the checkpoint's `GREATEST` semantics already make a second instance safe, just 
 server-side document derivation from payloads (the phase's recorded main deferral — which
 is exactly why `search_document` stores rather than forwards).
 
+## GATE B DONE (2026-08-06) — XP wire + NoQL→DSL renderer
+
+core-repo **461 tests / 96 suites / 0 failures** (forced rerun); nodb **198 tests**; XP
+client **51**; whole tree assembles. **The end-to-end path works**: NoQL → renderer → wire
+→ NoDB → OpenSearch → attributed results, 6/6 green against a real OpenSearch container
+(`NodbSearchWireEndToEndTest` — includes multi-repo fan-out with per-hit attribution,
+fail-closed empty principals, and an untranslated construct failing loudly).
+
+**Byte-identical rule held**: zero files touched under `elasticsearch/query/translator/`,
+`factory/query`, `factory/dsl`, `factory/function` or the resolvers. The only ES-adjacent
+edit is 2 lines in `NodeSearchServiceImpl` — an import and `.searchDsl( () -> … )` — whose
+lambda never executes in ES mode.
+
+**The oracle is the gate's teeth, and it is cheap**: `NoqlDslRoundTripOracleTest`, **65
+tests**, builds each NoQL string BOTH ways (expression tree vs renderer→`DslExpr`→
+`ConstraintExpressionBuilder`) and requires identity across **44 construct rows**, of which
+28 are additionally byte-diffed against **26 distinct pre-existing golden fixtures**
+(verified present on disk). Two documented normalizations: `_name` removal, and collapsing
+ES's `{"term":{"f":{"value":x}}}` long form — the engine emits those only to attach a query
+name, and the two builder families disagree about query *names*, not about queries.
+
+**Rulings implemented as decided:** G-1 geoPoint fails fast; G-2/G-4 **fixed** (per-value-type
+resolution; normalized string bounds) with no `normalize:false` escape hatch; G-3 emits the
+optional `analyzer`; G-5 rewrites both-bounds-empty `range()` to `exists`. Nesting is
+preserved pairwise left-associative (asserted — a 3-term AND renders as two nested pairs).
+Item 4's `unmappedType` bug fixed on the way past: field sorts now emit
+`unmapped_type: keyword`, pseudo-fields none.
+
+**Key design decisions not pinned by the work order:**
+1. **The DSL is a lazy `Supplier<SearchDsl>` on `SearchRequest`, not eager.** Eager rendering
+   would make G-1's fail-fast fire in ES mode — where a geoPoint term must keep erroring at
+   ES — i.e. it would break byte-identity. An absent supplier means "no wire form", which is
+   how branch/version/commit queries fail fast **without needing a `store_type` field**
+   (D6 resolved by construction).
+2. `SearchDsl` carries Java `Map`/`List`, not JSON text, so the client is a literal
+   serializer and the oracle can feed the same structure into `PropertyTree.fromMap`.
+3. G-3's `analyzer` was NOT added to XP's public `factory/dsl` builders — it is a
+   wire-superset field, and expanding XP's public DSL is a product decision. That makes
+   `ngram_set_analyzer` a documented asserted delta rather than a byte-identical row.
+4. Aggregations/suggest/highlight are **not rendered at all** — the envelope slots exist and
+   are rejected when populated (Gates D/E own the server side; half-filling them would be
+   ~400 unverifiable lines).
+5. `NodeSearchIndex#get` throws in nodb mode — verified its only route (`IndexDataService#get`)
+   has **zero callers** in the repo.
+6. Index create/delete are no-ops in nodb mode: `NodeRepositoryServiceImpl` calls the storage
+   admin first, so `CreateRepository` already made the OpenSearch index; a second create
+   would race.
+7. `refresh(repositoryId)` awaits the highest outbox seq **this JVM** wrote for that repo (the
+   SPI method carries no seq).
+8. OpenSearch in `NodbTestCluster` is opt-in (`-Dxp.itest.opensearch=true`) — it adds a large
+   container to every nodb itest run while only query itests need it. **Gate F is where it
+   stops being optional.**
+
+**NoDB translator subset now live** (Gate C extends it): term, in (N `should` clauses —
+fan-out preserved, not a `terms` query), like, range, exists, boolean, matchAll, all with
+boost; filters values/ids/exists/range/boolean; field sorts. ACL applied per source as
+`should[ must[ term _repo, term _branch, terms _permissions.read._text ] ]` with
+`minimum_should_match:1` — **no admin shortcut**, per DESIGN §7.2. Fails `INVALID_ARGUMENT`
+on: fulltext/ngram/stemmed/pathMatch, geoDistance sorts, COLLATE sorts, aggregations/
+suggest/highlight, unknown `format_version`, and GET_ALL beyond the 10 000 window (real
+`search_after`+PIT is Gate C).
+
+### `itest-core-content`: plumbing DONE, blocked by D2 — and it proves D2's necessity
+
+All plumbing landed (property forwarding, Docker-socket block, nodb-client dependency, and
+the nodb branch replicated into `AbstractContentServiceTest` per-class **and**
+`AbstractIssueServiceTest` per-**method**, because that fixture wipes ES indices in
+`@BeforeEach` and a per-class tenant reproduces the documented granularity hazard).
+`ContentServiceImplTest_getById` in nodb mode: **all 6 test bodies PASS** — content create,
+publish and get run green through the nodb backend — and all 6 then fail in the shared
+`@AfterEach` `projectService.delete(...)` with `IndexNotFoundException[storage-system-repo]`
+from `DeleteNodeCommand:88`'s `NodeBranchQuery`. **That is exactly D2's delete-cascade gap**,
+reached from a second direction. No workaround was added: papering over teardown would hide
+the one thing D2 exists to fix. **Gate C must land D2 before content-level itests can be
+green**, which sharpens Gate C's ordering.
+
 ## Gate 0(a) results — DSL completeness (2026-08-05)
 
 **STOP CONDITION NOT TRIGGERED.** Every NoQL construct renders as DSL: all 10 comparison

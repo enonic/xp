@@ -54,8 +54,13 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.core.nodb.NodbTenant;
+import com.enonic.xp.core.nodb.NodbTestCluster;
+import com.enonic.xp.storage.nodb.NodbBinaryBlobStore;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
@@ -84,6 +89,17 @@ public abstract class AbstractIssueServiceTest
 
     private Context initialContext;
 
+    /**
+     * Phase 4 Gate B. Unlike the content fixture this one is PER METHOD, because this fixture
+     * wipes the ES indices in {@code @BeforeEach}: storage and search must be reset at the same
+     * granularity or {@code SystemRepoInitializer}'s {@code isInitialized} check sees the two
+     * halves disagree about the system repository and the second test method fails with
+     * {@code RepositoryAlreadyExistsException}. A fresh tenant is a fresh Postgres schema against
+     * the already-running shared container, so this is a provisioning round trip, not a container
+     * start.
+     */
+    private NodbTenant nodbTenant;
+
     @BeforeEach
     void setUpAbstractIssueServiceTest()
     {
@@ -97,9 +113,7 @@ public abstract class AbstractIssueServiceTest
         initialContext = ContextAccessor.current();
         ContextAccessorSupport.getInstance().set( ctx );
 
-        final MemoryBlobStore blobStore = new MemoryBlobStore();
-
-        final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
+        final MemoryBlobStore memoryBlobStore = new MemoryBlobStore();
 
         final StorageDaoImpl storageDao = new StorageDaoImpl( client );
 
@@ -109,15 +123,32 @@ public abstract class AbstractIssueServiceTest
 
         final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
 
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, blobStore );
+        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
+
+        final NodeStore nodeStore;
+        final RepositoryStorageAdmin repositoryStorageAdmin;
+        final BlobStore blobStore;
+        if ( NodbTestCluster.isEnabled() )
+        {
+            this.nodbTenant = NodbTestCluster.get().freshTenant();
+            nodeStore = nodbTenant.nodeStore();
+            repositoryStorageAdmin = nodbTenant.repositoryStorageAdmin();
+            blobStore = new NodbBinaryBlobStore( memoryBlobStore, nodbTenant.client() );
+        }
+        else
+        {
+            nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, memoryBlobStore );
+            repositoryStorageAdmin = indexServiceInternal;
+            blobStore = memoryBlobStore;
+        }
+
+        final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 
         BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 
         VersionServiceImpl versionService = new VersionServiceImpl( nodeStore );
 
         CommitServiceImpl commitService = new CommitServiceImpl( nodeStore );
-
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
 
         NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
 
@@ -130,13 +161,13 @@ public abstract class AbstractIssueServiceTest
 
         NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, repositoryStorageAdmin, nodeSearchIndex );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
 
         final IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
 
         final RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
@@ -149,7 +180,7 @@ public abstract class AbstractIssueServiceTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         issueService.setNodeService( nodeService );
 

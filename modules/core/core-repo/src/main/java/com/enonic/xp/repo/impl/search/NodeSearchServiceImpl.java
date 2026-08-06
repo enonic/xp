@@ -11,6 +11,7 @@ import com.enonic.xp.node.NodeVersionQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;
+import com.enonic.xp.repo.impl.search.dsl.SearchDslRenderer;
 import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repo.impl.version.search.NodeVersionDiffQuery;
 import com.enonic.xp.repository.RepositoryId;
@@ -57,6 +58,7 @@ public class NodeSearchServiceImpl
         final SearchRequest searchRequest = SearchRequest.create()
             .searchSource( source )
             .query( query )
+            .searchDsl( () -> SearchDslRenderer.render( query ) )
             .returnFields( query.isWithPath() ? returnFields.add( NodeIndexPath.PATH ) : returnFields )
             .build();
 

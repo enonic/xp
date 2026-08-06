@@ -133,6 +133,11 @@ tasks.register( 'integrationTest', Test ) {
     {
         systemProperty 'xp.itest.storage', System.getProperty( 'xp.itest.storage' )
     }
+    // Phase 4 Gate B: opts the shared nodb stack into a real OpenSearch backend (NodbTestCluster).
+    if ( System.getProperty( 'xp.itest.opensearch' ) != null )
+    {
+        systemProperty 'xp.itest.opensearch', System.getProperty( 'xp.itest.opensearch' )
+    }
 
     // Testcontainers Docker socket detection (nodb mode only -- NodbTestCluster's Postgres
     // container). Identical to nodb/engine and nodb/server's own build.gradle.kts blocks:

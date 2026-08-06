@@ -18,6 +18,13 @@ dependencies {
 
     testImplementation( testFixtures( project( ":itest:itest-core" ) ) )
 
+    // Phase 4 Gate B: the nodb harness. The nodb-client types (NodbBinaryBlobStore) are used
+    // directly by AbstractContentServiceTest/AbstractIssueServiceTest, and itest-core declares
+    // the client as testFixturesImplementation -- i.e. not exported -- so it must be declared
+    // here too rather than inherited. The nodb engine/server jars come along on the runtime
+    // classpath via the fixtures, which is what NodbTestCluster loads NodbServer from.
+    testImplementation project( ':core:core-storage-nodb-client' )
+
     testImplementation libs.hazelcast.hazelcast
     testImplementation libs.felix.framework
 }
@@ -36,6 +43,29 @@ tasks.register( 'integrationTest', Test ) {
 
     systemProperty 'java.awt.headless', 'true'
     maxHeapSize = '2G'
+
+    // Phase 4 Gate B: -Dxp.itest.storage=nodb is a system property of the GRADLE JVM and is not
+    // automatically visible to the forked test JVM this task spawns. Only set when actually
+    // passed, so a plain `integrationTest` run stays byte-identical to before this gate.
+    if ( System.getProperty( 'xp.itest.storage' ) != null )
+    {
+        systemProperty 'xp.itest.storage', System.getProperty( 'xp.itest.storage' )
+    }
+    if ( System.getProperty( 'xp.itest.opensearch' ) != null )
+    {
+        systemProperty 'xp.itest.opensearch', System.getProperty( 'xp.itest.opensearch' )
+    }
+
+    // Required for testcontainers inside the forked JVM: the Gradle daemon's environment is
+    // frozen at startup, so DOCKER_HOST on the gradlew invocation never reaches this JVM, and
+    // docker-java 3.4.0 defaults to an API version engines >= 29 reject.
+    def dockerDesktopSock = file( "${System.getProperty( 'user.home' )}/.docker/run/docker.sock" )
+    if ( System.getenv( 'DOCKER_HOST' ) == null && dockerDesktopSock.exists() )
+    {
+        environment 'DOCKER_HOST', "unix://${dockerDesktopSock.absolutePath}"
+        environment 'TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE', '/var/run/docker.sock'
+    }
+    systemProperty 'api.version', '1.44'
 
     shouldRunAfter test
 }

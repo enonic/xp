@@ -24,6 +24,7 @@ import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.Server;
 import io.grpc.ServerInterceptors;
+import io.grpc.Status;
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
 import io.grpc.stub.AbstractStub;
@@ -42,6 +43,7 @@ import com.enonic.nodb.engine.search.Indexer;
 import com.enonic.nodb.engine.search.OpenSearchClient;
 import com.enonic.nodb.engine.search.OpenSearchConfig;
 import com.enonic.nodb.engine.search.SearchIndexAdmin;
+import com.enonic.nodb.engine.search.SearchQueryExecutor;
 import com.enonic.nodb.engine.search.SearchIndexNames;
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.AwaitRefreshRequest;
@@ -58,6 +60,9 @@ import com.enonic.nodb.proto.v1.NodeSearchGrpc;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.PayloadRef;
 import com.enonic.nodb.proto.v1.RepositoryAdminGrpc;
+import com.enonic.nodb.proto.v1.SearchHit;
+import com.enonic.nodb.proto.v1.SearchResult;
+import com.enonic.nodb.proto.v1.SearchSourceRef;
 import com.enonic.nodb.proto.v1.StoreBranchEntryRequest;
 import com.enonic.nodb.proto.v1.Version;
 import com.enonic.nodb.proto.v1.WriteBatchRequest;
@@ -143,7 +148,8 @@ class NodeSearchServiceIntegrationTest
             .addService( ServerInterceptors.intercept( new RepositoryAdminService( dataSource, searchIndexAdmin ), authInterceptor ) )
             .addService( ServerInterceptors.intercept( new NodeSearchService( dataSource, tenant -> new Indexer( dataSource, tenant,
                                                                                                                 openSearchClient,
-                                                                                                                searchIndexAdmin ) ),
+                                                                                                                searchIndexAdmin ),
+                                                                             new SearchQueryExecutor( openSearchClient ) ),
                                                         authInterceptor ) )
             .build()
             .start();
@@ -322,6 +328,220 @@ class NodeSearchServiceIntegrationTest
         Ack removed = nodeStore().deleteBranchEntries(
             DeleteBranchEntriesRequest.newBuilder().setRepoId( repoId ).setBranch( "master" ).addNodeIds( nodeId ).build() );
         assertTrue( removed.getOutboxSeq() > stored.getOutboxSeq(), "DeleteBranchEntries must report a LATER outbox seq (risk 10a)" );
+    }
+
+    // --- Search (Gate B) ---------------------------------------------------------------
+
+    /**
+     * The query path end to end over gRPC: canonical DSL in, hits with EXPLICIT repo/branch
+     * attribution out. The term is sent in mixed case on purpose — the text variant is a
+     * lowercase-normalized keyword, so a translator that forwards the value raw returns zero
+     * hits with no error, which is the failure mode this whole port is built to avoid.
+     */
+    @Test
+    void searchTranslatesTheCanonicalDslAndAttributesHitsExplicitly()
+    {
+        String repoId = createRepo( "querypath" );
+        indexAndRefresh( repoId, document( "node-1", "Hello Brave World" ) );
+
+        SearchResult result = nodeSearch().search( searchRequest( repoId )
+                                                       .setQuery( "{\"term\":{\"field\":\"data.title\",\"value\":\"Hello Brave World\"}}" )
+                                                       .addReturnFields( "data.title" )
+                                                       .build() );
+
+        assertEquals( 1, result.getTotalHits() );
+        assertEquals( 1, result.getHitsCount() );
+
+        SearchHit hit = result.getHits( 0 );
+        assertEquals( "node-1", hit.getId(), "the composite <nodeId>@<branch> _id must not leak to callers" );
+        assertEquals( repoId, hit.getRepoId() );
+        assertEquals( "master", hit.getBranch() );
+        assertEquals( 1, hit.getReturnValuesCount() );
+        assertEquals( "data.title", hit.getReturnValues( 0 ).getName() );
+        // _source keeps the value XP shipped; only the INDEXED keyword is lowercase-normalized,
+        // which is why the mixed-case term above matched at all.
+        assertEquals( "Hello Brave World", hit.getReturnValues( 0 ).getValues( 0 ).getStringValue() );
+    }
+
+    @Test
+    void searchTranslatesNumericAndDateTypedPredicates()
+    {
+        String repoId = createRepo( "querytypes" );
+        indexAndRefresh( repoId, document( "node-1", "typed" ) );
+
+        assertEquals( 1, nodeSearch().search( searchRequest( repoId )
+                                                  .setQuery( "{\"range\":{\"field\":\"data.count\",\"gte\":41.0,\"lte\":43.0}}" )
+                                                  .build() ).getTotalHits() );
+
+        assertEquals( 1, nodeSearch().search( searchRequest( repoId )
+                                                  .setQuery( "{\"range\":{\"field\":\"_ts\",\"type\":\"dateTime\"," +
+                                                                 "\"gt\":\"2020-01-01T00:00:00Z\"}}" )
+                                                  .build() ).getTotalHits() );
+
+        assertEquals( 0, nodeSearch().search( searchRequest( repoId )
+                                                  .setQuery( "{\"range\":{\"field\":\"_ts\",\"type\":\"dateTime\"," +
+                                                                 "\"lt\":\"2020-01-01T00:00:00Z\"}}" )
+                                                  .build() ).getTotalHits() );
+    }
+
+    @Test
+    void searchTranslatesBooleanNestingAndInAndExistsAndSort()
+    {
+        String repoId = createRepo( "querystructured" );
+        indexAndRefresh( repoId, document( "node-1", "alpha" ) );
+        indexAndRefresh( repoId, document( "node-2", "beta" ) );
+
+        assertEquals( 2, nodeSearch().search( searchRequest( repoId )
+                                                  .setQuery( "{\"in\":{\"field\":\"data.title\",\"values\":[\"alpha\",\"beta\"]}}" )
+                                                  .build() ).getTotalHits() );
+
+        assertEquals( 1, nodeSearch().search( searchRequest( repoId ).setQuery(
+            "{\"boolean\":{\"must\":[{\"exists\":{\"field\":\"data.title\"}}," +
+                "{\"boolean\":{\"mustNot\":{\"term\":{\"field\":\"data.title\",\"value\":\"beta\"}}}}]}}" ).build() )
+                          .getTotalHits() );
+
+        SearchResult sorted = nodeSearch().search( searchRequest( repoId )
+                                                      .setQuery( "{\"matchAll\":{}}" )
+                                                      .addSort( "{\"field\":\"data.title\",\"direction\":\"DESC\"}" )
+                                                      .build() );
+        assertEquals( List.of( "node-2", "node-1" ), sorted.getHitsList().stream().map( SearchHit::getId ).toList() );
+        assertTrue( Float.isNaN( sorted.getMaxScore() ), "a field-sorted result reports a NaN max score, as the ES path did" );
+    }
+
+    /** GET_ALL: size -1 pages by batch_size rather than honouring the default page size. */
+    @Test
+    void searchWithSizeMinusOneReturnsEverything()
+    {
+        String repoId = createRepo( "queryall" );
+        for ( int i = 0; i < 7; i++ )
+        {
+            indexAndRefresh( repoId, document( "node-" + i, "page" ) );
+        }
+
+        SearchResult result = nodeSearch().search(
+            searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).setSize( -1 ).setBatchSize( 2 ).build() );
+
+        assertEquals( 7, result.getTotalHits() );
+        assertEquals( 7, result.getHitsCount() );
+    }
+
+    /**
+     * The ACL filter is applied unconditionally, including for admin. An unrelated principal set
+     * therefore sees nothing — the ES path's "no filter at all for role:system.admin" shortcut has
+     * no equivalent here, and neither does a match-all fallback for an unknown principal.
+     */
+    @Test
+    void searchAlwaysAppliesTheAclFilter()
+    {
+        String repoId = createRepo( "queryacl" );
+        indexAndRefresh( repoId, document( "node-1", "secret" ) );
+
+        assertEquals( 0, nodeSearch().search( com.enonic.nodb.proto.v1.SearchRequest.newBuilder()
+                                                  .setFormatVersion( 1 )
+                                                  .addSources( SearchSourceRef.newBuilder()
+                                                                   .setRepoId( repoId )
+                                                                   .setBranch( "master" )
+                                                                   .addPrincipals( "user:system:nobody" ) )
+                                                  .setQuery( "{\"matchAll\":{}}" )
+                                                  .setSize( 10 )
+                                                  .build() ).getTotalHits() );
+
+        assertEquals( 1, nodeSearch().search( searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).build() ).getTotalHits(),
+                      "the admin read key the projection injects is what makes an admin context see the document" );
+    }
+
+    /** A branch the document does not live in must not match: branch is a filter, not a hint. */
+    @Test
+    void searchIsScopedToTheRequestedBranch()
+    {
+        String repoId = createRepo( "querybranch" );
+        indexAndRefresh( repoId, document( "node-1", "draftonly" ) );
+
+        assertEquals( 0, nodeSearch().search( com.enonic.nodb.proto.v1.SearchRequest.newBuilder()
+                                                  .setFormatVersion( 1 )
+                                                  .addSources( SearchSourceRef.newBuilder()
+                                                                   .setRepoId( repoId )
+                                                                   .setBranch( "draft" )
+                                                                   .addPrincipals( IndexFields.ADMIN_PRINCIPAL ) )
+                                                  .setQuery( "{\"matchAll\":{}}" )
+                                                  .setSize( 10 )
+                                                  .build() ).getTotalHits() );
+    }
+
+    /** Multi-source: one request, several aliases, per-source ACL, attributed hits. */
+    @Test
+    void searchFansOutAcrossSourcesAndAttributesEachHit()
+    {
+        String first = createRepo( "querymultia" );
+        String second = createRepo( "querymultib" );
+        indexAndRefresh( first, document( "node-a", "shared" ) );
+        indexAndRefresh( second, document( "node-b", "shared" ) );
+
+        SearchResult result = nodeSearch().search( com.enonic.nodb.proto.v1.SearchRequest.newBuilder()
+                                                      .setFormatVersion( 1 )
+                                                      .addSources( SearchSourceRef.newBuilder()
+                                                                       .setRepoId( first )
+                                                                       .setBranch( "master" )
+                                                                       .addPrincipals( IndexFields.ADMIN_PRINCIPAL ) )
+                                                      .addSources( SearchSourceRef.newBuilder()
+                                                                       .setRepoId( second )
+                                                                       .setBranch( "master" )
+                                                                       .addPrincipals( IndexFields.ADMIN_PRINCIPAL ) )
+                                                      .setQuery( "{\"term\":{\"field\":\"data.title\",\"value\":\"shared\"}}" )
+                                                      .setSize( 10 )
+                                                      .build() );
+
+        assertEquals( 2, result.getTotalHits() );
+        assertEquals( List.of( first, second ),
+                      result.getHitsList().stream().map( SearchHit::getRepoId ).sorted().toList() );
+    }
+
+    @Test
+    void searchRejectsAnUnknownEnvelopeVersionAndUntranslatedConstructs()
+    {
+        String repoId = createRepo( "queryreject" );
+
+        assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
+            searchRequest( repoId ).setFormatVersion( 99 ).setQuery( "{\"matchAll\":{}}" ).build() ) ) );
+
+        assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search( searchRequest( repoId ).setQuery(
+            "{\"fulltext\":{\"fields\":[\"data.title\"],\"query\":\"x\",\"operator\":\"OR\"}}" ).build() ) ),
+                      "an untranslated construct must fail loudly, never return plausible wrong hits" );
+
+        assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
+            searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).setAggregations( "{\"x\":{}}" ).build() ) ) );
+    }
+
+    private static Status.Code statusOf( Runnable call )
+    {
+        try
+        {
+            call.run();
+            return Status.Code.OK;
+        }
+        catch ( io.grpc.StatusRuntimeException e )
+        {
+            return e.getStatus().getCode();
+        }
+    }
+
+    private static com.enonic.nodb.proto.v1.SearchRequest.Builder searchRequest( String repoId )
+    {
+        return com.enonic.nodb.proto.v1.SearchRequest.newBuilder()
+            .setFormatVersion( 1 )
+            .addSources( SearchSourceRef.newBuilder()
+                             .setRepoId( repoId )
+                             .setBranch( "master" )
+                             .addPrincipals( IndexFields.ADMIN_PRINCIPAL ) )
+            .setSize( 10 );
+    }
+
+    private static void indexAndRefresh( String repoId, IndexDoc doc )
+    {
+        IndexAck ack = nodeSearch().indexDocuments(
+            IndexDocumentsRequest.newBuilder().setRepoId( repoId ).setBranch( "master" ).addDocuments( doc ).build() );
+        nodeSearch().awaitRefresh(
+            AwaitRefreshRequest.newBuilder().setSeq( ack.getOutboxSeq() ).addRepoIds( repoId ).setTimeoutMillis( 30_000 ).build() );
     }
 
     // ---------------------------------------------------------------------------------- helpers

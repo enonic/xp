@@ -18,6 +18,9 @@ import com.enonic.nodb.engine.search.IndexRefreshTimeoutException;
 import com.enonic.nodb.engine.search.Indexer;
 import com.enonic.nodb.engine.search.OpenSearchException;
 import com.enonic.nodb.engine.search.OutboxStore;
+import com.enonic.nodb.engine.search.QueryDslTranslator;
+import com.enonic.nodb.engine.search.SearchQuery;
+import com.enonic.nodb.engine.search.SearchQueryExecutor;
 import com.enonic.nodb.engine.search.SearchDocument;
 import com.enonic.nodb.engine.search.SearchDocumentStore;
 import com.enonic.nodb.engine.store.RepoKeys;
@@ -30,14 +33,25 @@ import com.enonic.nodb.proto.v1.IndexDocumentsRequest;
 import com.enonic.nodb.proto.v1.IndexField;
 import com.enonic.nodb.proto.v1.IndexValue;
 import com.enonic.nodb.proto.v1.NodeSearchGrpc;
+import com.enonic.nodb.proto.v1.ReturnValue;
+import com.enonic.nodb.proto.v1.SearchHit;
+import com.enonic.nodb.proto.v1.SearchResult;
+import com.enonic.nodb.proto.v1.SearchSourceRef;
 import com.enonic.nodb.server.auth.TenantAuthInterceptor;
 import com.enonic.nodb.server.auth.TenantPrincipal;
 
 /**
  * The {@code NodeSearch} write path (Phase 4 Gate A): {@code IndexDocuments},
- * {@code DeleteDocuments}, {@code AwaitRefresh}. {@code Search} and {@code Reindex} stay
- * un-overridden and therefore answer UNIMPLEMENTED — the generated base class's own convention,
- * used throughout this server; the query path is Gates B–E.
+ * {@code DeleteDocuments}, {@code AwaitRefresh} — plus, from Gate B, the {@code Search} query
+ * path. {@code Reindex} stays un-overridden and therefore answers UNIMPLEMENTED, the generated
+ * base class's own convention used throughout this server.
+ *
+ * <p>{@code Search} receives XP's canonical JSON query DSL and an envelope, and translates it
+ * server-side (decision 2). Gate B translates the structured families only; anything else is a
+ * loud {@code INVALID_ARGUMENT} rather than a partial translation returning plausible-looking
+ * wrong hits. Note the envelope is validated by consequence rather than by a schema pass: the
+ * translator rejects every construct it does not know, and the wire's {@code format_version} is
+ * checked before anything else is read.
  *
  * <p>Decision 3 in one sentence: XP builds the index documents and ships them here, NoDB stores
  * them transactionally with an outbox row, and the {@link Indexer} applies them to OpenSearch.
@@ -58,16 +72,132 @@ public final class NodeSearchService
     /** Matches the ES-era refresh timeout order of magnitude; overridable per request. */
     private static final long DEFAULT_AWAIT_TIMEOUT_MILLIS = 30_000;
 
+    /** The only envelope version this server understands. */
+    private static final int SUPPORTED_FORMAT_VERSION = 1;
+
     private final DataSource dataSource;
 
     private final Function<TenantContext, Indexer> indexers;
 
+    private final SearchQueryExecutor executor;
+
     private final Map<String, Indexer> cache = new LinkedHashMap<>();
 
-    public NodeSearchService( DataSource dataSource, Function<TenantContext, Indexer> indexerFactory )
+    public NodeSearchService( DataSource dataSource, Function<TenantContext, Indexer> indexerFactory, SearchQueryExecutor executor )
     {
         this.dataSource = dataSource;
         this.indexers = indexerFactory;
+        this.executor = executor;
+    }
+
+    @Override
+    public void search( com.enonic.nodb.proto.v1.SearchRequest request, StreamObserver<SearchResult> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+
+        if ( request.getFormatVersion() != SUPPORTED_FORMAT_VERSION )
+        {
+            responseObserver.onError( Status.INVALID_ARGUMENT.withDescription(
+                "Unsupported search envelope format_version " + request.getFormatVersion() + " (this server speaks " +
+                    SUPPORTED_FORMAT_VERSION + ")" ).asRuntimeException() );
+            return;
+        }
+
+        try
+        {
+            SearchQueryExecutor.Result result = executor.execute( principal.tenantContext(), toEngineQuery( request ) );
+
+            SearchResult.Builder response =
+                SearchResult.newBuilder().setTotalHits( result.totalHits() ).setMaxScore( result.maxScore() );
+            for ( SearchQueryExecutor.Hit hit : result.hits() )
+            {
+                response.addHits( toProto( hit ) );
+            }
+
+            responseObserver.onNext( response.build() );
+            responseObserver.onCompleted();
+        }
+        catch ( QueryDslTranslator.UnsupportedQueryException e )
+        {
+            responseObserver.onError( Status.INVALID_ARGUMENT.withDescription( e.getMessage() ).asRuntimeException() );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            responseObserver.onError( Status.INVALID_ARGUMENT.withDescription( e.getMessage() ).asRuntimeException() );
+        }
+        catch ( OpenSearchException e )
+        {
+            // The engine's own response body is the actionable part, so it is carried through
+            // rather than collapsed into a generic message.
+            responseObserver.onError( Status.UNAVAILABLE.withDescription( e.getMessage() ).asRuntimeException() );
+        }
+    }
+
+    private static SearchQuery toEngineQuery( com.enonic.nodb.proto.v1.SearchRequest request )
+    {
+        List<SearchQuery.Source> sources = new ArrayList<>( request.getSourcesCount() );
+        for ( SearchSourceRef source : request.getSourcesList() )
+        {
+            sources.add( new SearchQuery.Source( source.getRepoId(), source.getBranch(), List.copyOf( source.getPrincipalsList() ) ) );
+        }
+
+        if ( !request.getAggregations().isEmpty() || !request.getSuggest().isEmpty() || !request.getHighlight().isEmpty() )
+        {
+            throw new QueryDslTranslator.UnsupportedQueryException(
+                "Aggregations, suggesters and highlighting are not translated yet; they arrive with the later translation batches" );
+        }
+
+        return new SearchQuery( sources, request.getQuery(), List.copyOf( request.getQueryFiltersList() ),
+                                List.copyOf( request.getPostFiltersList() ), List.copyOf( request.getSortList() ), request.getFrom(),
+                                request.getSize(), request.getBatchSize(), request.getExplain(), request.getSearchOptimizer(),
+                                List.copyOf( request.getReturnFieldsList() ) );
+    }
+
+    private static SearchHit toProto( SearchQueryExecutor.Hit hit )
+    {
+        SearchHit.Builder builder = SearchHit.newBuilder().setId( hit.id() ).setScore( hit.score() );
+        if ( hit.repoId() != null )
+        {
+            builder.setRepoId( hit.repoId() );
+        }
+        if ( hit.branch() != null )
+        {
+            builder.setBranch( hit.branch() );
+        }
+        builder.addAllSortValues( hit.sortValues() );
+
+        hit.returnValues().forEach( ( name, values ) -> {
+            ReturnValue.Builder value = ReturnValue.newBuilder().setName( name );
+            for ( Object raw : values )
+            {
+                value.addValues( toProto( raw ) );
+            }
+            builder.addReturnValues( value.build() );
+        } );
+
+        return builder.build();
+    }
+
+    private static IndexValue toProto( Object value )
+    {
+        IndexValue.Builder builder = IndexValue.newBuilder();
+        if ( value instanceof Double || value instanceof Float )
+        {
+            builder.setDoubleValue( ( (Number) value ).doubleValue() );
+        }
+        else if ( value instanceof Number )
+        {
+            builder.setLongValue( ( (Number) value ).longValue() );
+        }
+        else if ( value instanceof Boolean )
+        {
+            builder.setBoolValue( (Boolean) value );
+        }
+        else
+        {
+            builder.setStringValue( String.valueOf( value ) );
+        }
+        return builder.build();
     }
 
     @Override

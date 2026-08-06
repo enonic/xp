@@ -21,6 +21,7 @@ import com.enonic.nodb.engine.search.Indexer;
 import com.enonic.nodb.engine.search.OpenSearchClient;
 import com.enonic.nodb.engine.search.OpenSearchConfig;
 import com.enonic.nodb.engine.search.SearchIndexAdmin;
+import com.enonic.nodb.engine.search.SearchQueryExecutor;
 import com.enonic.nodb.server.auth.DevKeys;
 import com.enonic.nodb.server.auth.JwtVerifier;
 import com.enonic.nodb.server.auth.TenantAuthInterceptor;
@@ -160,7 +161,7 @@ public final class NodbServer
                 indexer.start();
                 indexers.add( indexer );
                 return indexer;
-            } ), authInterceptor ) );
+            }, new SearchQueryExecutor( openSearchClient ) ), authInterceptor ) );
             LOG.info( "Search backend enabled: {}", openSearchConfig.baseUrl() );
         }
         else

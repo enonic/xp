@@ -16,6 +16,7 @@ import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.ConfigInterpolator;
 import com.enonic.xp.config.Configuration;
 import com.enonic.nodb.proto.v1.BinariesGrpc;
+import com.enonic.nodb.proto.v1.NodeSearchGrpc;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.RepositoryAdminGrpc;
 
@@ -77,6 +78,8 @@ public class NodbStorageClient
 
     private NodeStoreGrpc.NodeStoreBlockingStub nodeStoreStub;
 
+    private NodeSearchGrpc.NodeSearchBlockingStub nodeSearchStub;
+
     private RepositoryAdminGrpc.RepositoryAdminBlockingStub repositoryAdminStub;
 
     // Two stub flavors for the Binaries service (Phase 2 Gate B): GetBinary/BinaryExists/
@@ -137,6 +140,7 @@ public class NodbStorageClient
         this.channel = ManagedChannelBuilder.forAddress( host, port ).usePlaintext().build();
 
         final NodeStoreGrpc.NodeStoreBlockingStub baseNodeStore = NodeStoreGrpc.newBlockingStub( channel );
+        final NodeSearchGrpc.NodeSearchBlockingStub baseNodeSearch = NodeSearchGrpc.newBlockingStub( channel );
         final RepositoryAdminGrpc.RepositoryAdminBlockingStub baseAdmin = RepositoryAdminGrpc.newBlockingStub( channel );
         final BinariesGrpc.BinariesBlockingStub baseBinariesBlocking = BinariesGrpc.newBlockingStub( channel );
         final BinariesGrpc.BinariesStub baseBinariesAsync = BinariesGrpc.newStub( channel );
@@ -144,6 +148,7 @@ public class NodbStorageClient
         if ( token == null || token.isBlank() )
         {
             this.nodeStoreStub = baseNodeStore;
+            this.nodeSearchStub = baseNodeSearch;
             this.repositoryAdminStub = baseAdmin;
             this.binariesBlockingStub = baseBinariesBlocking;
             this.binariesAsyncStub = baseBinariesAsync;
@@ -152,6 +157,7 @@ public class NodbStorageClient
         {
             final CallCredentials credentials = new BearerTokenCallCredentials( token );
             this.nodeStoreStub = baseNodeStore.withCallCredentials( credentials );
+            this.nodeSearchStub = baseNodeSearch.withCallCredentials( credentials );
             this.repositoryAdminStub = baseAdmin.withCallCredentials( credentials );
             this.binariesBlockingStub = baseBinariesBlocking.withCallCredentials( credentials );
             this.binariesAsyncStub = baseBinariesAsync.withCallCredentials( credentials );
@@ -183,6 +189,11 @@ public class NodbStorageClient
     NodeStoreGrpc.NodeStoreBlockingStub nodeStore()
     {
         return nodeStoreStub;
+    }
+
+    NodeSearchGrpc.NodeSearchBlockingStub nodeSearch()
+    {
+        return nodeSearchStub;
     }
 
     RepositoryAdminGrpc.RepositoryAdminBlockingStub repositoryAdmin()

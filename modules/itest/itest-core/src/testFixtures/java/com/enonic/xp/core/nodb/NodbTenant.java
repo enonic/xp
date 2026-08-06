@@ -1,8 +1,10 @@
 package com.enonic.xp.core.nodb;
 
+import com.enonic.xp.storage.nodb.NodbNodeSearchIndex;
 import com.enonic.xp.storage.nodb.NodbNodeStore;
 import com.enonic.xp.storage.nodb.NodbRepositoryStorageAdmin;
 import com.enonic.xp.storage.nodb.NodbStorageClient;
+import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 
@@ -33,13 +35,16 @@ public final class NodbTenant
 
     private final RepositoryStorageAdmin repositoryStorageAdmin;
 
+    private final NodeSearchIndex nodeSearchIndex;
+
     NodbTenant( final String tenantId, final NodbStorageClient client, final NodbNodeStore nodeStore,
-                final NodbRepositoryStorageAdmin repositoryStorageAdmin )
+                final NodbRepositoryStorageAdmin repositoryStorageAdmin, final NodbNodeSearchIndex nodeSearchIndex )
     {
         this.tenantId = tenantId;
         this.client = client;
         this.nodeStore = nodeStore;
         this.repositoryStorageAdmin = repositoryStorageAdmin;
+        this.nodeSearchIndex = nodeSearchIndex;
     }
 
     public String tenantId()
@@ -61,6 +66,17 @@ public final class NodbTenant
     public RepositoryStorageAdmin repositoryStorageAdmin()
     {
         return repositoryStorageAdmin;
+    }
+
+    /**
+     * Phase 4 Gate B: the search half. Only useful when the shared stack was started with an
+     * OpenSearch backend ({@link NodbTestCluster#isSearchEnabled()}); without one the
+     * {@code NodeSearch} RPCs answer UNIMPLEMENTED, which is why {@code AbstractNodeTest} still
+     * leaves the search side on embedded Elasticsearch.
+     */
+    public NodeSearchIndex nodeSearchIndex()
+    {
+        return nodeSearchIndex;
     }
 
     @Override
