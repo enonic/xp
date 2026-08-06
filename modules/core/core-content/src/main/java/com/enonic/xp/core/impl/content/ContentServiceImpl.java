@@ -29,6 +29,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentDependencies;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentListEntry;
 import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
@@ -61,6 +62,8 @@ import com.enonic.xp.content.GetPublishStatusResult;
 import com.enonic.xp.content.GetPublishStatusesParams;
 import com.enonic.xp.content.GetPublishStatusesResult;
 import com.enonic.xp.content.HasUnpublishedChildrenParams;
+import com.enonic.xp.content.ListContentsByParentParams;
+import com.enonic.xp.content.ListContentsByParentResult;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PatchContentParams;
@@ -88,8 +91,12 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.media.MediaInfoService;
+import com.enonic.xp.node.ListNodesByParentParams;
+import com.enonic.xp.node.ListNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
@@ -688,6 +695,67 @@ public class ContentServiceImpl
         contentAuditLogSupport.restore( params, result );
 
         return result;
+    }
+
+    @Override
+    @Traced("content.list")
+    public ListContentsByParentResult list( final ListContentsByParentParams params )
+    {
+        requireReadAccess();
+
+        Tracer.withCurrent( trace -> trace.attribute( "parent", Objects.toString(
+            params.getParentPath() != null ? params.getParentPath() : params.getParentId(), null ) ) );
+
+        final NodePath parentNodePath = resolveListParent( params );
+
+        final ListContentsByParentResult.Builder result = ListContentsByParentResult.create();
+
+        if ( parentNodePath != null )
+        {
+            final ListNodesByParentResult nodes = nodeService.list(
+                ListNodesByParentParams.create().parentPath( parentNodePath ).recursive( params.isRecursive() ).build() );
+
+            for ( final NodeListEntry entry : nodes.getEntries() )
+            {
+                result.addEntry( ContentListEntry.create()
+                                     .id( ContentId.from( entry.getNodeId() ) )
+                                     .path( ContentNodeHelper.translateNodePathToContentPath( entry.getNodePath() ) )
+                                     .build() );
+            }
+        }
+
+        final ListContentsByParentResult listResult = result.build();
+
+        Tracer.attribute( "hits", (long) listResult.getSize() );
+
+        return listResult;
+    }
+
+    /**
+     * The node path whose children the listing enumerates, or {@code null} when the parent does not exist or lives outside the content
+     * tree of the current context - a listing below a parent that is not there is simply empty.
+     */
+    private NodePath resolveListParent( final ListContentsByParentParams params )
+    {
+        if ( params.getParentPath() != null )
+        {
+            return ContentNodeHelper.translateContentPathToNodePath( params.getParentPath() );
+        }
+
+        final Node parentNode;
+        try
+        {
+            parentNode = nodeService.getById( NodeId.from( params.getParentId() ) );
+        }
+        catch ( NodeNotFoundException e )
+        {
+            return null;
+        }
+
+        final NodePath contentRoot = ContentNodeHelper.getContentRoot();
+        final NodePath parentNodePath = parentNode.path();
+
+        return parentNodePath.equals( contentRoot ) || parentNodePath.toString().startsWith( contentRoot + "/" ) ? parentNodePath : null;
     }
 
     @Override

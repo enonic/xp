@@ -92,6 +92,20 @@ public interface ContentService
     @Deprecated
     FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
 
+    /**
+     * Enumerates the children of a content - or with {@link ListContentsByParentParams.Builder#recursive(boolean)} its whole subtree -
+     * from the branch storage alone. Unlike a {@link #find(ContentQuery)} search this needs no search-index refresh, so it always sees
+     * the latest writes, and it reads no contents: entries carry only id and path, permission-checked per entry. Everything readable is
+     * returned, ordered by path - an enumeration takes no paging, no filters and no ordering choice; use a search when any of those
+     * matter.
+     * <p>
+     * Storage-only also means storage-only semantics: publish times are not evaluated, so on the master branch entries include contents
+     * whose publish window a search would filter out.
+     *
+     * @since 8.1.0
+     */
+    ListContentsByParentResult list( ListContentsByParentParams params );
+
     FindContentIdsByQueryResult find( ContentQuery query );
 
     FindContentPathsByQueryResult findPaths( ContentQuery query );

@@ -42,6 +42,8 @@ import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.ListNodesByParentParams;
+import com.enonic.xp.node.ListNodesByParentResult;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -54,6 +56,7 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -89,6 +92,7 @@ import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -355,6 +359,44 @@ public class NodeServiceImpl
             .storageService( this.nodeStorageService )
             .build()
             .execute();
+    }
+
+    @Override
+    @Traced("node.list")
+    public ListNodesByParentResult list( final ListNodesByParentParams params )
+    {
+        verifyContext();
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "parent", params.getParentPath().toString() );
+            trace.attribute( "repo", Objects.toString( ContextAccessor.current().getRepositoryId(), null ) );
+            trace.attribute( "branch", Objects.toString( ContextAccessor.current().getBranch(), null ) );
+        } );
+
+        final NodeBranchEntries entries = FindNodeBranchEntriesByParentCommand.create()
+            .parentPath( params.getParentPath() )
+            .recursive( params.isRecursive() )
+            .requiredPermission( Permission.READ )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
+            .build()
+            .execute();
+
+        final ListNodesByParentResult.Builder result = ListNodesByParentResult.create();
+        for ( final NodeBranchEntry entry : entries )
+        {
+            result.addEntry( NodeListEntry.create()
+                                 .nodeId( entry.getNodeId() )
+                                 .nodePath( entry.getNodePath() )
+                                 .timestamp( entry.getTimestamp() )
+                                 .build() );
+        }
+
+        final ListNodesByParentResult listResult = result.build();
+
+        Tracer.attribute( "hits", (long) listResult.getSize() );
+
+        return listResult;
     }
 
     @Override

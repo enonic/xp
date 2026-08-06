@@ -50,6 +50,17 @@ public interface NodeService
     @Deprecated
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
+    /**
+     * Enumerates the children of a node - or with {@link ListNodesByParentParams.Builder#recursive(boolean)} its whole subtree - from the
+     * branch storage alone. Unlike a {@link #findByQuery(NodeQuery)} search this needs no search-index refresh, so it always sees the
+     * latest writes, and it reads no nodes: entries carry only what the branch holds (id, path, timestamp), permission-checked per entry.
+     * Everything readable is returned, ordered by path - an enumeration takes no paging, no filters and no ordering choice; use a query
+     * when any of those matter.
+     *
+     * @since 8.1.0
+     */
+    ListNodesByParentResult list( ListNodesByParentParams params );
+
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 
     FindNodesByMultiRepoQueryResult findByQuery( MultiRepoNodeQuery nodeQuery );
