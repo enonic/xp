@@ -1,5 +1,6 @@
 package com.enonic.xp.content;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.query.aggregation.AggregationQueries;
@@ -18,7 +19,9 @@ public final class ContentQuery
 
     private final QueryExpr queryExpr;
 
-    private final ContentPath parent;
+    private final ContentPath parentPath;
+
+    private final ContentId parentId;
 
     private final ContentTypeNames contentTypeNames;
 
@@ -36,8 +39,11 @@ public final class ContentQuery
 
     public ContentQuery( final Builder builder )
     {
+        Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
+                                     "expected either parentPath or parentId, but not both" );
         this.queryExpr = builder.queryExpr;
-        this.parent = builder.parent;
+        this.parentPath = builder.parentPath;
+        this.parentId = builder.parentId;
         this.contentTypeNames = builder.contentTypeNamesBuilder.build();
         this.filterContentIds = builder.filterContentIds;
         this.from = builder.from;
@@ -58,13 +64,25 @@ public final class ContentQuery
     }
 
     /**
-     * Path of the content whose direct children the query is restricted to, or {@code null} when the query is not restricted to a parent.
+     * Path of the content whose direct children the query is restricted to, or {@code null} when the parent is given by id or the query is
+     * not restricted to a parent at all.
      *
      * @since 8.1.0
      */
-    public ContentPath getParent()
+    public ContentPath getParentPath()
     {
-        return parent;
+        return parentPath;
+    }
+
+    /**
+     * Id of the content whose direct children the query is restricted to, or {@code null} when the parent is given by path or the query is
+     * not restricted to a parent at all.
+     *
+     * @since 8.1.0
+     */
+    public ContentId getParentId()
+    {
+        return parentId;
     }
 
     public ContentTypeNames getContentTypes()
@@ -106,7 +124,9 @@ public final class ContentQuery
     {
         private QueryExpr queryExpr;
 
-        private ContentPath parent;
+        private ContentPath parentPath;
+
+        private ContentId parentId;
 
         private final ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
@@ -133,18 +153,34 @@ public final class ContentQuery
         }
 
         /**
-         * Restricts the query to the direct children of the given content path. Combines with every other constraint of the query, so
-         * ordering, paging, filters, content types and aggregations apply as usual. Descendants deeper than one level are not matched.
+         * Restricts the query to the direct children of the content at the given path. Combines with every other constraint of the query,
+         * so paging, filters, content types, aggregations and highlighting apply as usual. Descendants deeper than one level are not
+         * matched, and a parent that does not exist matches nothing.
          * <p>
-         * Unlike {@link ContentService#findIdsByParent(FindContentByParentParams)}, the order of the parent is not applied implicitly:
-         * pass explicit order expressions when the child order matters.
+         * When the query itself specifies no order expressions, results come back in the child order of the parent, the same order
+         * {@link ContentService#findIdsByParent(FindContentByParentParams)} uses. Specify order expressions to sort otherwise.
+         * <p>
+         * Mutually exclusive with {@link #parentId(ContentId)}.
          *
-         * @param parent path of the parent content, {@link ContentPath#ROOT} for the top level of the content tree.
+         * @param parentPath path of the parent content, {@link ContentPath#ROOT} for the top level of the content tree.
          * @since 8.1.0
          */
-        public Builder parent( final ContentPath parent )
+        public Builder parentPath( final ContentPath parentPath )
         {
-            this.parent = parent;
+            this.parentPath = parentPath;
+            return this;
+        }
+
+        /**
+         * Restricts the query to the direct children of the content with the given id, otherwise identical to
+         * {@link #parentPath(ContentPath)}. Mutually exclusive with it.
+         *
+         * @param parentId id of the parent content.
+         * @since 8.1.0
+         */
+        public Builder parentId( final ContentId parentId )
+        {
+            this.parentId = parentId;
             return this;
         }
 

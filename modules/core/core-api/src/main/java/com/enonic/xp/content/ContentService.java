@@ -75,7 +75,8 @@ public interface ContentService
      * @deprecated Hides a {@link #getByIds(GetContentByIdsParams)} call per page of children behind what looks like a search, so a caller
      * that only needs ids, paths or a count pays for full content resolution anyway. Search with
      * {@link #findIdsByParent(FindContentByParentParams)} or with {@link #find(ContentQuery)} and
-     * {@link ContentQuery.Builder#parent(ContentPath)}, then resolve only the ids actually needed. Scheduled for removal.
+     * {@link ContentQuery.Builder#parentPath(ContentPath)} / {@link ContentQuery.Builder#parentId(ContentId)}, then resolve only the ids
+     * actually needed. Scheduled for removal.
      */
     @Deprecated
     FindContentByParentResult findByParent( FindContentByParentParams params );

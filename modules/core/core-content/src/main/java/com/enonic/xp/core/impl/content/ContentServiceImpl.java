@@ -705,9 +705,10 @@ public class ContentServiceImpl
         Tracer.withCurrent( trace -> {
             trace.attribute( "query", Objects.toString( query.getQueryExpr(), null ) );
             trace.attribute( "filter", Objects.toString( query.getQueryFilters(), null ) );
-            if ( query.getParent() != null )
+            if ( query.getParentPath() != null || query.getParentId() != null )
             {
-                trace.attribute( "parent", query.getParent().toString() );
+                trace.attribute( "parent", Objects.toString(
+                    query.getParentPath() != null ? query.getParentPath() : query.getParentId(), null ) );
             }
             trace.attribute( "from", query.getFrom() );
             trace.attribute( "size", query.getSize() );

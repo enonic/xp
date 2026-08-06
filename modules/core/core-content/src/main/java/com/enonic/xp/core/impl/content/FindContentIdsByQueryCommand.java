@@ -2,7 +2,10 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
@@ -30,7 +33,24 @@ final class FindContentIdsByQueryCommand
 
     FindContentIdsByQueryResult execute()
     {
-        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.query ).
+        final ContentQueryParent parent;
+        if ( ContentQueryParent.isSpecifiedIn( this.query ) )
+        {
+            parent = ContentQueryParent.resolve( this.query, this );
+            if ( parent == null )
+            {
+                return FindContentIdsByQueryResult.create()
+                    .contents( ContentIds.empty() )
+                    .aggregations( Aggregations.empty() )
+                    .build();
+            }
+        }
+        else
+        {
+            parent = null;
+        }
+
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.query, parent ).
             addQueryFilters( createFilters() ).
             build();
 

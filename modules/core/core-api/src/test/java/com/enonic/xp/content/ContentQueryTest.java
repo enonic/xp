@@ -1,0 +1,47 @@
+package com.enonic.xp.content;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class ContentQueryTest
+{
+    @Test
+    void no_parent()
+    {
+        final ContentQuery query = ContentQuery.create().build();
+
+        assertNull( query.getParentPath() );
+        assertNull( query.getParentId() );
+    }
+
+    @Test
+    void parent_path()
+    {
+        final ContentQuery query = ContentQuery.create().parentPath( ContentPath.from( "/mysite/articles" ) ).build();
+
+        assertEquals( ContentPath.from( "/mysite/articles" ), query.getParentPath() );
+        assertNull( query.getParentId() );
+    }
+
+    @Test
+    void parent_id()
+    {
+        final ContentQuery query = ContentQuery.create().parentId( ContentId.from( "content-id" ) ).build();
+
+        assertEquals( ContentId.from( "content-id" ), query.getParentId() );
+        assertNull( query.getParentPath() );
+    }
+
+    @Test
+    void parent_path_and_id_are_mutually_exclusive()
+    {
+        final ContentQuery.Builder builder =
+            ContentQuery.create().parentPath( ContentPath.from( "/mysite" ) ).parentId( ContentId.from( "content-id" ) );
+
+        assertEquals( "expected either parentPath or parentId, but not both",
+                      assertThrows( IllegalArgumentException.class, builder::build ).getMessage() );
+    }
+}

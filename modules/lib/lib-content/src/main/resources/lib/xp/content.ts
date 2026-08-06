@@ -536,9 +536,8 @@ interface GetChildContentHandler {
  *
  * @example-ref examples/content/getChildren.js
  *
- * @deprecated Use {@link query} with `parent` instead. It accepts the same path or id, and additionally supports filters, content types,
- * aggregations and highlighting. Note that `query` does not inherit the child order of the parent, so pass `sort` explicitly when the
- * order matters — `sort: '_manualordervalue DESC'` for manually ordered children.
+ * @deprecated Use {@link query} with `parent` instead. It accepts the same path or id, falls back to the same child order of the parent
+ * when `sort` is left out, and additionally supports filters, content types, aggregations and highlighting.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the parent content.
@@ -740,9 +739,8 @@ interface QueryContentHandler {
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} [params.parent] Path or id of a content to restrict the query to the direct children of. Children of a parent that
- * does not exist is an empty result, not an error. Unlike `getChildren`, the child order of the parent is not applied implicitly: pass
- * `sort` when the order matters.
+ * @param {string} [params.parent] Path or id of a content to restrict the query to the direct children of. When `sort` is not specified,
+ * the children come back in the child order of the parent. A parent that does not exist matches nothing.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.

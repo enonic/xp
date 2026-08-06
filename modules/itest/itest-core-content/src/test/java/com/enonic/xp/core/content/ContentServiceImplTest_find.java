@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +21,7 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
@@ -86,14 +89,28 @@ class ContentServiceImplTest_find
     }
 
     @Test
-    void parent()
+    void parent_path()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );
         final Content child1 = createContent( site.getPath(), "b" );
         final Content child2 = createContent( site.getPath(), "c" );
         createContent( child1.getPath(), "grandchild" );
 
-        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parent( site.getPath() ).build() );
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentPath( site.getPath() ).build() );
+
+        assertEquals( 2, result.getTotalHits() );
+        assertThat( result.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId() );
+    }
+
+    @Test
+    void parent_id()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        createContent( child1.getPath(), "grandchild" );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentId( site.getId() ).build() );
 
         assertEquals( 2, result.getTotalHits() );
         assertThat( result.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId() );
@@ -105,21 +122,93 @@ class ContentServiceImplTest_find
         final Content site = createContent( ContentPath.ROOT, "a" );
         createContent( site.getPath(), "b" );
 
-        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parent( ContentPath.ROOT ).build() );
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentPath( ContentPath.ROOT ).build() );
 
         assertThat( result.getContentIds() ).containsExactly( site.getId() );
     }
 
     @Test
-    void parent_that_does_not_exist()
+    void parent_path_that_does_not_exist()
     {
         createContent( ContentPath.ROOT, "a" );
 
         final FindContentIdsByQueryResult result =
-            contentService.find( ContentQuery.create().parent( ContentPath.from( "/no-such-content" ) ).build() );
+            contentService.find( ContentQuery.create().parentPath( ContentPath.from( "/no-such-content" ) ).build() );
 
         assertEquals( 0, result.getTotalHits() );
         assertTrue( result.getContentIds().isEmpty() );
+    }
+
+    @Test
+    void parent_id_that_does_not_exist()
+    {
+        createContent( ContentPath.ROOT, "a" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().parentId( ContentId.from( "no-such-content" ) ).build() );
+
+        assertEquals( 0, result.getTotalHits() );
+        assertTrue( result.getContentIds().isEmpty() );
+    }
+
+    @Test
+    void parent_applies_child_order_of_parent()
+    {
+        final Content parent = createParentWithChildOrder( ChildOrder.from( "_name DESC" ) );
+        final Content child1 = createContent( parent.getPath(), "b" );
+        final Content child2 = createContent( parent.getPath(), "c" );
+        final Content child3 = createContent( parent.getPath(), "d" );
+
+        assertOrder( contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() ).getContentIds(), child3, child2,
+                     child1 );
+
+        assertOrder( contentService.find( ContentQuery.create().parentId( parent.getId() ).build() ).getContentIds(), child3, child2,
+                     child1 );
+    }
+
+    @Test
+    void parent_applies_language_of_parent_to_child_order_by_display_name()
+    {
+        final Content parent = contentService.create( CreateContentParams.create()
+                                                          .displayName( "parent" )
+                                                          .parent( ContentPath.ROOT )
+                                                          .contentData( new PropertyTree() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .language( Locale.forLanguageTag( "nb" ) )
+                                                          .childOrder( ChildOrder.from( "displayName ASC" ) )
+                                                          .build() );
+
+        // Norwegian ICU collation: æ < ø < å
+        for ( final String displayName : List.of( "år", "øl", "æsel", "alfa" ) )
+        {
+            contentService.create( CreateContentParams.create()
+                                       .displayName( displayName )
+                                       .parent( parent.getPath() )
+                                       .contentData( new PropertyTree() )
+                                       .type( ContentTypeName.folder() )
+                                       .build() );
+        }
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() );
+
+        assertThat( result.getContentIds() ).extracting( contentService::getById )
+            .extracting( Content::getDisplayName )
+            .containsExactly( "alfa", "æsel", "øl", "år" );
+    }
+
+    @Test
+    void parent_own_order_wins_over_child_order_of_parent()
+    {
+        final Content parent = createParentWithChildOrder( ChildOrder.from( "_name DESC" ) );
+        final Content child1 = createContent( parent.getPath(), "b" );
+        final Content child2 = createContent( parent.getPath(), "c" );
+
+        final ContentQuery query = ContentQuery.create()
+            .parentPath( parent.getPath() )
+            .queryExpr( QueryParser.parse( "order by _path asc" ) )
+            .build();
+
+        assertOrder( contentService.find( query ).getContentIds(), child1, child2 );
     }
 
     @Test
@@ -132,7 +221,7 @@ class ContentServiceImplTest_find
         createContent( ContentPath.ROOT, "e" );
 
         final ContentQuery query = ContentQuery.create()
-            .parent( site.getPath() )
+            .parentPath( site.getPath() )
             .addContentTypeName( ContentTypeName.folder() )
             .queryExpr( QueryParser.parse( "order by _path desc" ) )
             .build();
@@ -146,12 +235,17 @@ class ContentServiceImplTest_find
         final Content site = createContent( ContentPath.ROOT, "a" );
         createContent( site.getPath(), "b" );
 
-        final TestTrace trace = TestTrace.of( "content.find" );
-        final FindContentIdsByQueryResult result =
-            Tracer.trace( trace, () -> this.contentService.find( ContentQuery.create().parent( site.getPath() ).build() ) );
+        final TestTrace pathTrace = TestTrace.of( "content.find" );
+        final FindContentIdsByQueryResult byPath =
+            Tracer.trace( pathTrace, () -> this.contentService.find( ContentQuery.create().parentPath( site.getPath() ).build() ) );
 
-        assertEquals( 1L, result.getTotalHits() );
-        assertEquals( "/a", trace.get( "parent" ) );
+        assertEquals( 1L, byPath.getTotalHits() );
+        assertEquals( "/a", pathTrace.get( "parent" ) );
+
+        final TestTrace idTrace = TestTrace.of( "content.find" );
+        Tracer.trace( idTrace, () -> this.contentService.find( ContentQuery.create().parentId( site.getId() ).build() ) );
+
+        assertEquals( site.getId().toString(), idTrace.get( "parent" ) );
     }
 
     @Test
@@ -623,6 +717,17 @@ class ContentServiceImplTest_find
             ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
 
         assertOrder( contentService.find( queryDsl ).getContentIds(), child2 );
+    }
+
+    private Content createParentWithChildOrder( final ChildOrder childOrder )
+    {
+        return contentService.create( CreateContentParams.create()
+                                          .displayName( "a" )
+                                          .parent( ContentPath.ROOT )
+                                          .contentData( new PropertyTree() )
+                                          .type( ContentTypeName.folder() )
+                                          .childOrder( childOrder )
+                                          .build() );
     }
 
     private FindContentIdsByQueryResult findContent( final ContentId contentId )

@@ -27,7 +27,21 @@ final class FindContentPathsByQueryCommand
 
     public FindContentPathsByQueryResult execute()
     {
-        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.contentQuery ).
+        final ContentQueryParent parent;
+        if ( ContentQueryParent.isSpecifiedIn( this.contentQuery ) )
+        {
+            parent = ContentQueryParent.resolve( this.contentQuery, this );
+            if ( parent == null )
+            {
+                return FindContentPathsByQueryResult.create().build();
+            }
+        }
+        else
+        {
+            parent = null;
+        }
+
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.contentQuery, parent ).
             addQueryFilters( createFilters() ).
             withPath( true ).
             build();

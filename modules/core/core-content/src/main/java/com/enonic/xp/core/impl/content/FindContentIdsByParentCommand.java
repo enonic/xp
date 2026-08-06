@@ -1,18 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
-import java.util.Locale;
-
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.filter.Filters;
 
 import static java.util.Objects.requireNonNull;
@@ -54,7 +49,7 @@ final class FindContentIdsByParentCommand
         {
             childOrder = parentContent.getChildOrder();
         }
-        childOrder = childOrderWithLanguage( childOrder, parentContent.getLanguage() );
+        childOrder = ContentChildOrder.withLanguage( childOrder, parentContent.getLanguage() );
 
         return builder.queryFilters( Filters.create().addAll( createFilters() ).addAll( params.getQueryFilters() ).build() )
             .from( params.getFrom() )
@@ -79,28 +74,6 @@ final class FindContentIdsByParentCommand
         {
             return GetContentByPathCommand.create( ContentPath.ROOT, this ).allowRoot().build().execute();
         }
-    }
-
-    private static ChildOrder childOrderWithLanguage( final ChildOrder childOrder, final Locale language )
-    {
-        if ( childOrder == null || language == null )
-        {
-            return childOrder;
-        }
-        final ChildOrder.Builder builder = ChildOrder.create();
-        for ( final OrderExpr orderExpr : childOrder.getOrderExpressions() )
-        {
-            if ( orderExpr instanceof FieldOrderExpr fieldOrderExpr && fieldOrderExpr.getLanguage() == null &&
-                ContentIndexPath.DISPLAY_NAME.equals( fieldOrderExpr.getField().getIndexPath() ) )
-            {
-                builder.add( FieldOrderExpr.create( fieldOrderExpr.getField().getIndexPath(), fieldOrderExpr.getDirection(), language ) );
-            }
-            else
-            {
-                builder.add( orderExpr );
-            }
-        }
-        return builder.build();
     }
 
     public static class Builder

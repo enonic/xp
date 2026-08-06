@@ -22,10 +22,8 @@ import com.enonic.xp.aggregation.NumericRangeBucket;
 import com.enonic.xp.aggregation.SingleValueMetricAggregation;
 import com.enonic.xp.aggregation.StatsAggregation;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
@@ -109,8 +107,9 @@ class QueryContentHandlerTest
 
         runFunction( "/test/QueryContentHandlerTest_parent.js", "parentByPath" );
 
-        Mockito.verify( contentService, Mockito.never() ).getById( Mockito.any() );
-        Assertions.assertEquals( ContentPath.from( "/a/b" ), capturedQuery().getParent() );
+        final ContentQuery query = capturedQuery();
+        Assertions.assertEquals( ContentPath.from( "/a/b" ), query.getParentPath() );
+        Assertions.assertNull( query.getParentId() );
     }
 
     @Test
@@ -118,28 +117,11 @@ class QueryContentHandlerTest
     {
         setupQuery( 3, false, false );
 
-        Mockito.when( contentService.getById( ContentId.from( "123456" ) ) )
-            .thenReturn( Content.create().id( ContentId.from( "123456" ) ).name( "b" ).parentPath( ContentPath.from( "/a" ) ).build() );
-
         runFunction( "/test/QueryContentHandlerTest_parent.js", "parentById" );
 
-        Assertions.assertEquals( ContentPath.from( "/a/b" ), capturedQuery().getParent() );
-    }
-
-    @Test
-    void parentNotFound()
-    {
-        setupQuery( 3, false, false );
-
-        Mockito.when( contentService.getById( ContentId.from( "unknown-id" ) ) )
-            .thenThrow( ContentNotFoundException.create()
-                            .contentId( ContentId.from( "unknown-id" ) )
-                            .branch( ContentConstants.BRANCH_DRAFT )
-                            .build() );
-
-        runFunction( "/test/QueryContentHandlerTest_parent.js", "parentNotFound" );
-
-        Mockito.verify( contentService, Mockito.never() ).find( Mockito.any( ContentQuery.class ) );
+        final ContentQuery query = capturedQuery();
+        Assertions.assertEquals( ContentId.from( "123456" ), query.getParentId() );
+        Assertions.assertNull( query.getParentPath() );
     }
 
     @Test
@@ -149,7 +131,9 @@ class QueryContentHandlerTest
 
         runFunction( "/test/QueryContentHandlerTest.js", "query" );
 
-        Assertions.assertNull( capturedQuery().getParent() );
+        final ContentQuery query = capturedQuery();
+        Assertions.assertNull( query.getParentPath() );
+        Assertions.assertNull( query.getParentId() );
     }
 
     private ContentQuery capturedQuery()

@@ -5,8 +5,7 @@ exports.parentByPath = function () {
 
     var result = content.query({
         'count': 10,
-        'parent': '/a/b',
-        'sort': '_manualordervalue DESC'
+        'parent': '/a/b'
     });
 
     assert.assertEquals(20, result.total);
@@ -17,21 +16,10 @@ exports.parentById = function () {
 
     var result = content.query({
         'count': 10,
-        'parent': '123456'
+        'parent': '123456',
+        'sort': '_manualordervalue DESC'
     });
 
     assert.assertEquals(20, result.total);
     assert.assertEquals(3, result.count);
-};
-
-exports.parentNotFound = function () {
-
-    var result = content.query({
-        'count': 10,
-        'parent': 'unknown-id'
-    });
-
-    assert.assertEquals(0, result.total);
-    assert.assertEquals(0, result.count);
-    assert.assertEquals(0, result.hits.length);
 };

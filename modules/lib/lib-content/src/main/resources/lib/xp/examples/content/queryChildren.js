@@ -2,14 +2,13 @@ var contentLib = require('/lib/xp/content');
 var assert = require('/lib/xp/testing');
 
 // BEGIN
-// Query the direct children of a content.
-// Unlike getChildren, the child order of the parent is not applied implicitly, so sort explicitly when the order matters.
+// Query the direct children of a content. The parent can be given by path or by id.
+// Without a sort expression the children come back in the child order of the parent.
 var result = contentLib.query({
     parent: '/path/to',
     start: 0,
     count: 2,
-    sort: '_manualordervalue DESC',
-    contentTypes: ['portal:fragment']
+    contentTypes: ['base:unstructured']
 });
 
 log.info('Found ' + result.total + ' number of contents');

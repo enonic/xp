@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
-import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
@@ -56,16 +55,6 @@ public final class QueryContentHandler
     @Override
     protected Object doExecute()
     {
-        final ContentPath parentPath;
-        try
-        {
-            parentPath = resolveParentPath();
-        }
-        catch ( ContentNotFoundException e )
-        {
-            return new ContentsResultMapper( Contents.empty(), 0 );
-        }
-
         final ContentTypeNames contentTypeNames = getContentTypeNames();
 
         final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), buildOrderExpr() );
@@ -80,8 +69,9 @@ public final class QueryContentHandler
             .aggregationQueries( aggregations )
             .highlight( highlight )
             .addContentTypeNames( contentTypeNames )
-            .parent( parentPath )
             .queryExpr( queryExpr );
+
+        applyParent( queryBuilder );
 
         if ( start != null )
         {
@@ -148,23 +138,21 @@ public final class QueryContentHandler
     }
 
     /**
-     * Turns the {@code parent} parameter into a content path. A value that starts with {@code /} is a content path already, anything else
-     * is a content id that has to be looked up. An unknown id makes the query match nothing rather than fail, which is how a query with a
-     * parent that does not exist behaves when the parent is given as a path.
+     * The {@code parent} parameter takes the same key as {@code getChildren}: a value that starts with {@code /} is a content path,
+     * anything else is a content id.
      */
-    private ContentPath resolveParentPath()
+    private void applyParent( final ContentQuery.Builder queryBuilder )
     {
-        if ( parent == null )
+        if ( parent != null )
         {
-            return null;
-        }
-        else if ( parent.startsWith( "/" ) )
-        {
-            return ContentPath.from( parent );
-        }
-        else
-        {
-            return contentService.getById( ContentId.from( parent ) ).getPath();
+            if ( parent.startsWith( "/" ) )
+            {
+                queryBuilder.parentPath( ContentPath.from( parent ) );
+            }
+            else
+            {
+                queryBuilder.parentId( ContentId.from( parent ) );
+            }
         }
     }
 
