@@ -29,6 +29,7 @@ import com.enonic.xp.repo.impl.branch.BranchService;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
+import com.enonic.xp.repo.impl.branch.storage.NodeBranchVersionFactory;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.BranchAlreadyExistsException;
@@ -49,6 +50,7 @@ import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.UpdateRepositoryParams;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
@@ -63,6 +65,13 @@ public class RepositoryServiceImpl
 
     private final NodeSearchService nodeSearchService;
 
+    /**
+     * The storage SPI, for the branch-entry listing surface (Phase 4 decision D2,
+     * nodb/BUILD-PHASE-4.md). Nullable: a null store keeps the legacy {@code NodeBranchQuery}
+     * whole-branch listing, which is what the ES backend does.
+     */
+    private final NodeStore nodeStore;
+
     private final BranchService branchService;
 
     private final RepositoryCreator repositoryCreator;
@@ -71,13 +80,14 @@ public class RepositoryServiceImpl
 
     public RepositoryServiceImpl( final RepositoryEntryService repositoryEntryService, final NodeRepositoryService nodeRepositoryService,
                                   final NodeStorageService nodeStorageService, final NodeSearchService nodeSearchService,
-                                  final BranchService branchService,
+                                  final NodeStore nodeStore, final BranchService branchService,
                                   final Supplier<RepositoryAuditLogSupport> repositoryAuditLogSupport )
     {
         this.repositoryEntryService = repositoryEntryService;
         this.nodeRepositoryService = nodeRepositoryService;
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
+        this.nodeStore = nodeStore;
         this.branchService = branchService;
         this.repositoryCreator = new RepositoryCreator( nodeRepositoryService, nodeStorageService, repositoryEntryService );
         this.repositoryAuditLogSupport = repositoryAuditLogSupport;
@@ -293,6 +303,28 @@ public class RepositoryServiceImpl
         }
 
         //Deletes all nodes in the branch
+        final NodeBranchEntries nodeBranchEntries = listBranchEntries( repositoryId, branch );
+
+        this.nodeStorageService.delete( nodeBranchEntries.getSet(), branchContext );
+        this.nodeRepositoryService.refresh( repositoryId );
+
+        return asRepository( entry, Branches.from( branches.stream().filter( b -> !b.equals( branch ) ).toList() ) );
+    }
+
+    /**
+     * Whole-branch listing for {@code deleteBranch} (Phase 4 decision D2, nodb/BUILD-PHASE-4.md):
+     * one of the three former {@code NodeBranchQuery} reads of the ES {@code storage-<repo>} index.
+     * A backend that can answer it from its own system of record does so; every other backend keeps
+     * the search-index query below verbatim, including its up-front refresh (a near-real-time index
+     * would otherwise leave nodes behind in a branch it reports as deleted).
+     */
+    private NodeBranchEntries listBranchEntries( final RepositoryId repositoryId, final Branch branch )
+    {
+        if ( this.nodeStore != null && this.nodeStore.supportsBranchEntryQueries() )
+        {
+            return NodeBranchVersionFactory.fromListing( this.nodeStore.listBranchEntries( repositoryId, branch ) );
+        }
+
         this.nodeRepositoryService.refresh( repositoryId );
         final NodeBranchQuery queryAll = NodeBranchQuery.create()
             .size( NodeSearchService.GET_ALL_SIZE_FLAG )
@@ -302,13 +334,7 @@ public class RepositoryServiceImpl
                                  .build() )
             .build();
 
-        final NodeBranchEntries nodeBranchEntries =
-            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( queryAll, repositoryId ) );
-
-        this.nodeStorageService.delete( nodeBranchEntries.getSet(), branchContext );
-        this.nodeRepositoryService.refresh( repositoryId );
-
-        return asRepository( entry, Branches.from( branches.stream().filter( b -> !b.equals( branch ) ).toList() ) );
+        return NodeBranchQueryResultFactory.create( this.nodeSearchService.query( queryAll, repositoryId ) );
     }
 
     @Override

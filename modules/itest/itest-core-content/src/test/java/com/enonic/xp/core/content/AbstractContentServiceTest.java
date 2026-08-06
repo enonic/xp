@@ -308,14 +308,14 @@ public abstract class AbstractContentServiceTest
 
         NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
-        indexService = new IndexServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
+        indexService = new IndexServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService, nodeStore, nodeDao, repositoryEntryService );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex );
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, nodeStore, branchService,
                                        () -> null );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )

@@ -170,15 +170,15 @@ public final class Bootstrap
         final NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         final IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeStore, nodeDao, repositoryEntryService );
 
         final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
 
         final RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, nodeStore, branchService,
                                        () -> null );
 
         SystemRepoInitializer.create()

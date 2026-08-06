@@ -196,11 +196,15 @@ def nodbCorpusTest = { Test t, String mode ->
         showStandardStreams = true
     }
 
-    // Same mode forwarding as integrationTest above: a future nodb-mode diff run needs
-    // -Dxp.itest.storage=nodb to reach the forked JVM.
+    // Same mode forwarding as integrationTest above: a nodb-mode diff run needs
+    // -Dxp.itest.storage=nodb AND -Dxp.itest.opensearch=true to reach the forked JVM.
     if ( System.getProperty( 'xp.itest.storage' ) != null )
     {
         t.systemProperty 'xp.itest.storage', System.getProperty( 'xp.itest.storage' )
+    }
+    if ( System.getProperty( 'xp.itest.opensearch' ) != null )
+    {
+        t.systemProperty 'xp.itest.opensearch', System.getProperty( 'xp.itest.opensearch' )
     }
     // Lets a run diff against (or record to) a baseline other than the committed one -- used to
     // negative-test the comparator, and by Gates C/D/E to keep a nodb-mode recording side by side
@@ -208,6 +212,18 @@ def nodbCorpusTest = { Test t, String mode ->
     if ( System.getProperty( 'xp.nodb.corpus.baseline' ) != null )
     {
         t.systemProperty 'xp.nodb.corpus.baseline', System.getProperty( 'xp.nodb.corpus.baseline' )
+    }
+    // Phase 4 Gate C: subset selectors. A full corpus run is ~45 minutes, so the per-batch
+    // verification Gates C/D/E do runs a family (or a tag, or a single id) at a time -- e.g.
+    //   ./gradlew :itest:itest-core:diffNodbCorpus -Dxp.itest.storage=nodb \
+    //       -Dxp.nodb.corpus.families=term,compare,in,like,range
+    // A filtered diff compares only the rows it executed; a filtered record MERGES into the
+    // committed baseline rather than truncating it (see NodbGoldenCorpusTest#selected).
+    [ 'xp.nodb.corpus.families', 'xp.nodb.corpus.acceptance', 'xp.nodb.corpus.ids', 'xp.nodb.corpus.exclude' ].each { name ->
+        if ( System.getProperty( name ) != null )
+        {
+            t.systemProperty name, System.getProperty( name )
+        }
     }
     def dockerDesktopSock = file( "${System.getProperty( 'user.home' )}/.docker/run/docker.sock" )
     if ( System.getenv( 'DOCKER_HOST' ) == null && dockerDesktopSock.exists() )

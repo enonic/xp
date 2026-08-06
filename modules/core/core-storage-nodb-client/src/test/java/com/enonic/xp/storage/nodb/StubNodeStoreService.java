@@ -18,6 +18,7 @@ import com.google.protobuf.ByteString;
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.ActiveVersion;
 import com.enonic.nodb.proto.v1.BranchEntry;
+import com.enonic.nodb.proto.v1.BranchEntryOrder;
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
@@ -39,6 +40,8 @@ import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetPayloadRequest;
 import com.enonic.nodb.proto.v1.GetPayloadsRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
+import com.enonic.nodb.proto.v1.ListBranchEntriesRequest;
+import com.enonic.nodb.proto.v1.ListBranchEntriesResponse;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.Payload;
 import com.enonic.nodb.proto.v1.PayloadRef;
@@ -201,6 +204,63 @@ final class StubNodeStoreService
             .skip( request.getFrom() )
             .limit( size )
             .forEach( entry -> responseObserver.onNext( joinHashes( request.getRepoId(), entry ) ) );
+        responseObserver.onCompleted();
+    }
+
+    /**
+     * Mirrors {@code BranchStore.listEntries} (Phase 4 decision D2): keyset page over
+     * {@code (lower(node_path), node_id)}, optional strict-subtree prefix, total on the first
+     * page only, and one row probed beyond the page to answer {@code has_more}.
+     */
+    @Override
+    public void listBranchEntries( final ListBranchEntriesRequest request,
+                                   final StreamObserver<ListBranchEntriesResponse> responseObserver )
+    {
+        if ( !requireRepo( request.getRepoId(), responseObserver ) )
+        {
+            return;
+        }
+        final String prefix = request.getPathPrefix().isEmpty()
+            ? null
+            : request.getPathPrefix().toLowerCase( java.util.Locale.ROOT ) + "/";
+        final boolean descending = request.getOrder() == BranchEntryOrder.BRANCH_ENTRY_ORDER_PATH_DESC;
+        final int pageSize = request.getPageSize() > 0 ? request.getPageSize() : 100;
+
+        final Comparator<BranchEntry> byKeyset =
+            Comparator.comparing( ( BranchEntry e ) -> e.getNodePath().toLowerCase( java.util.Locale.ROOT ) )
+                .thenComparing( BranchEntry::getNodeId );
+
+        final List<BranchEntry> matching = state.branchEntriesById.entrySet()
+            .stream()
+            .filter( e -> e.getKey().startsWith( request.getRepoId() + "|" + request.getBranch() + "|" ) )
+            .map( Map.Entry::getValue )
+            .filter( entry -> prefix == null || entry.getNodePath().toLowerCase( java.util.Locale.ROOT ).startsWith( prefix ) )
+            .sorted( descending ? byKeyset.reversed() : byKeyset )
+            .toList();
+
+        final boolean firstPage = request.getAfterPath().isEmpty();
+        final List<BranchEntry> remaining = matching.stream().filter( entry -> {
+            if ( firstPage )
+            {
+                return true;
+            }
+            final int cmp = byKeyset.compare( entry, BranchEntry.newBuilder()
+                .setNodePath( request.getAfterPath() )
+                .setNodeId( request.getAfterNodeId() )
+                .build() );
+            return descending ? cmp < 0 : cmp > 0;
+        } ).toList();
+
+        final ListBranchEntriesResponse.Builder builder = ListBranchEntriesResponse.newBuilder()
+            .setTotalHits( firstPage ? matching.size() : -1 )
+            .setHasMore( remaining.size() > pageSize );
+        for ( final BranchEntry entry : remaining.stream().limit( pageSize ).toList() )
+        {
+            builder.addEntries( joinHashes( request.getRepoId(), entry ) );
+            builder.setNextAfterPath( entry.getNodePath().toLowerCase( java.util.Locale.ROOT ) );
+            builder.setNextAfterNodeId( entry.getNodeId() );
+        }
+        responseObserver.onNext( builder.build() );
         responseObserver.onCompleted();
     }
 

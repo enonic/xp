@@ -269,6 +269,18 @@ class FindNodesByMultiRepoQueryCommandTest
         runInContext( runUser, repoId, MASTER_BRANCH, runnable );
     }
 
+    /**
+     * Runs {@code runnable} in the repository's own context and then refreshes THAT repository.
+     * <p>
+     * The per-repository refresh matters as of Phase 4 Gate C (nodb/BUILD-PHASE-4.md). The
+     * {@code refresh()} each test still calls is {@code AbstractElasticsearchIntegrationTest}'s
+     * GLOBAL, Elasticsearch-client-level refresh -- it knows nothing about a NoDB/OpenSearch search
+     * backend, so in nodb mode with a real search backend every one of these multi-repo queries read
+     * an unrefreshed index and returned zero hits. {@code nodeService.refresh} goes through the
+     * search SPI instead, which is backend-agnostic, but refreshes only the CURRENT context's
+     * repository -- hence here, per repo, rather than once at the end. Harmless in default mode
+     * (a second refresh of an already-refreshed index).
+     */
     private void runInContext( final User runUser, final RepositoryId repoId, final Branch branch, final Runnable runnable )
     {
         ContextBuilder.create()
@@ -276,7 +288,10 @@ class FindNodesByMultiRepoQueryCommandTest
             .branch( branch )
             .authInfo( AuthenticationInfo.create().user( runUser ).build() )
             .build()
-            .runWith( runnable );
+            .runWith( () -> {
+                runnable.run();
+                nodeService.refresh( com.enonic.xp.node.RefreshMode.ALL );
+            } );
     }
 
     private <T> T callInContext( final User runUser, final RepositoryId repoId, final Branch branch, final Callable<T> callable )

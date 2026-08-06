@@ -15,6 +15,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.protobuf.ByteString;
 
 import com.enonic.nodb.proto.v1.ActiveVersion;
+import com.enonic.nodb.proto.v1.BranchEntryOrder;
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
@@ -34,6 +35,8 @@ import com.enonic.nodb.proto.v1.GetBranchesWithNodeRequest;
 import com.enonic.nodb.proto.v1.GetChildrenRequest;
 import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
+import com.enonic.nodb.proto.v1.ListBranchEntriesRequest;
+import com.enonic.nodb.proto.v1.ListBranchEntriesResponse;
 import com.enonic.nodb.proto.v1.PayloadRef;
 import com.enonic.nodb.proto.v1.StoreBranchEntryRequest;
 import com.enonic.nodb.proto.v1.StoreCommitRequest;
@@ -43,6 +46,7 @@ import com.enonic.nodb.proto.v1.WriteBatchResponse;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.storage.spi.BranchEntryListing;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 import com.enonic.xp.storage.spi.CommitRecord;
 import com.enonic.xp.storage.spi.NodeSegments;
@@ -81,6 +85,13 @@ import com.enonic.xp.storage.spi.VersionRecord;
 public class NodbNodeStore
     implements NodeStore
 {
+    /**
+     * Page size of a branch-entry walk ({@link #listChildEntries}/{@link #listBranchEntries}).
+     * Large enough that an ordinary subtree or small branch finishes in one round trip, small
+     * enough that a million-node branch never materializes on either side.
+     */
+    private static final int BRANCH_ENTRY_PAGE_SIZE = 1000;
+
     private final NodbStorageClient client;
 
     @Activate
@@ -215,6 +226,124 @@ public class NodbNodeStore
             entries.forEachRemaining( entry -> result.add( RecordMapper.toSpiBranchEntry( entry ) ) );
         } );
         return result;
+    }
+
+    // --- branch-entry listing (Phase 4 decision D2, nodb/BUILD-PHASE-4.md) ---
+
+    /**
+     * Capability probe (see {@link NodeStore#supportsBranchEntryQueries}): NoDB answers the
+     * delete cascade's and reindex's branch-entry walks from {@code branch_entry} in Postgres,
+     * so those commands route here instead of querying the ES storage index nodb mode never
+     * creates.
+     */
+    @Override
+    public boolean supportsBranchEntryQueries()
+    {
+        return true;
+    }
+
+    @Override
+    public BranchEntryListing listChildEntries( final RepositoryId repositoryId, final Branch branch, final String pathPrefix )
+    {
+        return listing( repositoryId, branch, pathPrefix, BranchEntryOrder.BRANCH_ENTRY_ORDER_PATH_DESC );
+    }
+
+    @Override
+    public BranchEntryListing listBranchEntries( final RepositoryId repositoryId, final Branch branch )
+    {
+        return listing( repositoryId, branch, null, BranchEntryOrder.BRANCH_ENTRY_ORDER_PATH_ASC );
+    }
+
+    /**
+     * Fetches the FIRST page eagerly and the rest lazily.
+     * <p>
+     * The first round trip is unavoidable: it is the one that carries {@code total_hits}, and
+     * {@link BranchEntryListing#totalHits} is needed before iteration starts (the reindex listener
+     * reports it up front). Every later page is fetched only when the consumer's iterator walks
+     * off the end of the current one, which is what makes a whole-branch walk O(page) in memory on
+     * both sides -- a reindex loop does substantial work per entry, so a design that held one gRPC
+     * stream and one server transaction open for the entire walk would be the wrong shape.
+     */
+    private BranchEntryListing listing( final RepositoryId repositoryId, final Branch branch, final @Nullable String pathPrefix,
+                                         final BranchEntryOrder order )
+    {
+        final ListBranchEntriesResponse first = page( repositoryId, branch, pathPrefix, order, "", "" );
+        return new BranchEntryListing( first.getTotalHits(),
+                                        () -> new PagingIterator( repositoryId, branch, pathPrefix, order, first ) );
+    }
+
+    private ListBranchEntriesResponse page( final RepositoryId repositoryId, final Branch branch, final @Nullable String pathPrefix,
+                                             final BranchEntryOrder order, final String afterPath, final String afterNodeId )
+    {
+        final ListBranchEntriesRequest.Builder builder = ListBranchEntriesRequest.newBuilder()
+            .setRepoId( repositoryId.toString() )
+            .setBranch( branch.getValue() )
+            .setOrder( order )
+            .setAfterPath( afterPath )
+            .setAfterNodeId( afterNodeId )
+            .setPageSize( BRANCH_ENTRY_PAGE_SIZE );
+        if ( pathPrefix != null )
+        {
+            builder.setPathPrefix( pathPrefix );
+        }
+        return NodbStatusMapper.repoScoped( () -> client.nodeStore().listBranchEntries( builder.build() ) );
+    }
+
+    /**
+     * Keyset walk over {@code (lower(node_path), node_id)}. The cursor is the server's own
+     * {@code next_after_*} pair, never a value this side derives from a returned path: the
+     * predicate is evaluated by PostgreSQL's {@code lower()} under the database collation, and a
+     * second lowercasing here is how a walk would silently skip or repeat rows.
+     */
+    private final class PagingIterator
+        implements Iterator<BranchEntryRecord>
+    {
+        private final RepositoryId repositoryId;
+
+        private final Branch branch;
+
+        private final @Nullable String pathPrefix;
+
+        private final BranchEntryOrder order;
+
+        private ListBranchEntriesResponse current;
+
+        private int index;
+
+        private PagingIterator( final RepositoryId repositoryId, final Branch branch, final @Nullable String pathPrefix,
+                                 final BranchEntryOrder order, final ListBranchEntriesResponse first )
+        {
+            this.repositoryId = repositoryId;
+            this.branch = branch;
+            this.pathPrefix = pathPrefix;
+            this.order = order;
+            this.current = first;
+        }
+
+        @Override
+        public boolean hasNext()
+        {
+            while ( index >= current.getEntriesCount() )
+            {
+                if ( !current.getHasMore() )
+                {
+                    return false;
+                }
+                current = page( repositoryId, branch, pathPrefix, order, current.getNextAfterPath(), current.getNextAfterNodeId() );
+                index = 0;
+            }
+            return true;
+        }
+
+        @Override
+        public BranchEntryRecord next()
+        {
+            if ( !hasNext() )
+            {
+                throw new java.util.NoSuchElementException();
+            }
+            return RecordMapper.toSpiBranchEntry( current.getEntries( index++ ) );
+        }
     }
 
     // --- versions ---

@@ -136,10 +136,10 @@ class SecurityServiceImplTest
         this.eventPublisher = mock( EventPublisher.class );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, nodeStore, branchService,
                                        () -> null );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )
@@ -152,7 +152,7 @@ class SecurityServiceImplTest
         this.nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeStore, nodeDao, repositoryEntryService );
 
         AuditLogConfig auditLogConfig = mock( AuditLogConfig.class );
         Mockito.when( auditLogConfig.isEnabled() ).thenReturn( true );

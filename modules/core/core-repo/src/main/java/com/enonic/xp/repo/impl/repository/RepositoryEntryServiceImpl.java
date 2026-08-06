@@ -29,6 +29,7 @@ import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
@@ -50,6 +51,8 @@ public class RepositoryEntryServiceImpl
 
     private final NodeSearchService nodeSearchService;
 
+    private final NodeStore nodeStore;
+
     private final EventPublisher eventPublisher;
 
     private final BinaryService binaryService;
@@ -58,13 +61,14 @@ public class RepositoryEntryServiceImpl
     public RepositoryEntryServiceImpl( @Reference final RepositoryStorageAdmin repositoryStorageAdmin,
                                        @Reference final NodeSearchIndex nodeSearchIndex,
                                        @Reference final NodeStorageService nodeStorageService,
-                                       @Reference final NodeSearchService nodeSearchService, @Reference final EventPublisher eventPublisher,
-                                       @Reference final BinaryService binaryService )
+                                       @Reference final NodeSearchService nodeSearchService, @Reference final NodeStore nodeStore,
+                                       @Reference final EventPublisher eventPublisher, @Reference final BinaryService binaryService )
     {
         this.repositoryStorageAdmin = repositoryStorageAdmin;
         this.nodeSearchIndex = nodeSearchIndex;
         this.nodeStorageService = nodeStorageService;
         this.nodeSearchService = nodeSearchService;
+        this.nodeStore = nodeStore;
         this.eventPublisher = eventPublisher;
         this.binaryService = binaryService;
     }
@@ -156,6 +160,7 @@ public class RepositoryEntryServiceImpl
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
             .build()
             .execute() );
 

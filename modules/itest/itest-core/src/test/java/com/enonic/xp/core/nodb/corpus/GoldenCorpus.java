@@ -32,6 +32,7 @@ import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.query.suggester.TermSuggestionQuery;
 
 import static com.enonic.xp.core.nodb.corpus.Acceptance.EXACT;
+import static com.enonic.xp.core.nodb.corpus.Acceptance.FIXED;
 import static com.enonic.xp.core.nodb.corpus.Acceptance.ICU_DOCUMENTED;
 import static com.enonic.xp.core.nodb.corpus.Acceptance.SET;
 import static com.enonic.xp.core.nodb.corpus.SourceKind.ADMIN;
@@ -106,14 +107,14 @@ final class GoldenCorpus
         // ---------------------------------------------------------------- in / like
         q( rows, "IN-01-string", "in", EXACT, "IN over strings: N should-term clauses, NOT a terms query", //
            () -> noql( "category IN ('c1','c3')" ) );
-        q( rows, "GAP-G2-in-number", "in", EXACT,
-           "G-2, the widest case: IN with NUMERIC values. IN resolves to the base STRING field but ValueHelper still converts the value to a Double, so the ES term is 700000.0 against a string field -- matches NOTHING. The gap is NOT limited to dates and geo points",
+        q( rows, "GAP-G2-in-number", "in", FIXED,
+           "G-2, the widest case: IN with NUMERIC values. IN resolved to the base STRING field while ValueHelper still converted the value to a Double, so the ES term was 700000.0 against a string field -- matching NOTHING; the gap was never limited to dates and geo points. RULED FIXED by D4: the port resolves the sub-field per value type, so the baseline's zero hits are the recorded bug",
            true, () -> noql( "population IN (280000, 700000)" ) );
         q( rows, "IN-02b-number-as-string", "in", EXACT,
            "the same IN written with STRING literals DOES match: proof that only the value conversion is broken, not the field resolution",
            () -> noql( "population IN ('280000', '700000')" ) );
-        q( rows, "GAP-G2-in-dated", "in", EXACT,
-           "G-2: IN with a dated value. IN forces the base string field, so this is expected to match NOTHING today -- a latent bug the team must rule on",
+        q( rows, "GAP-G2-in-dated", "in", FIXED,
+           "G-2: IN with a dated value, matching NOTHING in ES because IN forced the base string field. RULED FIXED by D4 -- see GAP-G2-in-number",
            true, () -> noql( "founded IN (instant('2020-01-15T00:00:00Z'))" ) );
         q( rows, "GAP-G2-in-geo", "in", EXACT,
            "G-2 contrast: IN with geo points written as STRING literals. These DO match, because a quoted NoQL literal never becomes a geo-typed Value -- which is exactly why the existing geoPoint itest passes and the gap stayed invisible. Note the literal must be GeoPoint#toString's canonical form (trailing zeros stripped)",
@@ -134,8 +135,8 @@ final class GoldenCorpus
            () -> noql( "range('founded', instant('2020-01-01T00:00:00Z'), instant('2021-01-01T00:00:00Z'))" ) );
         q( rows, "RANGE-03-string-lowercase", "range", EXACT, "range() over lowercase string bounds (what today's itests all do)",
            () -> noql( "range('_name', 'city-a', 'city-z')" ) );
-        q( rows, "GAP-G4-range-raw-case", "range", EXACT,
-           "G-4: range() string bounds are used RAW while the DSL normalizes them. Upper-case bounds are invisible in current itests -- this row pins whichever behavior ships",
+        q( rows, "GAP-G4-range-raw-case", "range", FIXED,
+           "G-4: range() used its string bounds RAW while the DSL normalized them, so upper-case bounds matched nothing. RULED FIXED by D4: the port normalizes them like every other string value",
            true, () -> noql( "range('title', 'Bergen', 'Oslo')" ) );
         q( rows, "RANGE-04-open-upper", "range", EXACT, "range() with an empty upper bound (half-open)", //
            () -> noql( "range('population', 500000, '')" ) );
@@ -519,6 +520,21 @@ final class GoldenCorpus
         q( rows, "SOURCE-02-multi-repo-one-denied", "multiRepo", EXACT,
            "same two sources, but source 2's principals cannot read in repo B: proves the ACL filter is applied PER INDEX, not globally",
            MULTI_REPO_ONE_DENIED, false, () -> NodeQuery.create().parent( com.enonic.xp.node.NodePath.ROOT ).size( SIZE ).build() );
+        // Gate 0(b)+(c) item 4's companion row. SortQueryBuilderFactory hardcodes
+        // UNMAPPED_TYPE = "long" and applies it to every field sort, while every ._orderby field
+        // holds a lexi-encoded STRING. That is invisible whenever the field is mapped in all
+        // searched indices, and invisible again when it is mapped in none (every doc is "missing"
+        // and `missing` defaults to _last regardless of type). It bites on exactly this shape: a
+        // MULTI-INDEX sort where one repo has the property mapped and the other has never seen it,
+        // which modern OpenSearch rejects as mixed types across indices. This row passes in ES and
+        // would fail on OpenSearch without the unmapped_type: keyword fix; `onlyInRepoA` is seeded
+        // in repo A only, on purpose.
+        q( rows, "SOURCE-03-multi-repo-sort-unmapped-field", "multiRepo", FIXED,
+           "multi-repo sort on a field present in only ONE of the repositories. MEASURED: ES 2.4 ERRORS on it -- the hardcoded unmapped_type long against a string ._orderby field is not merely a latent OpenSearch problem, it is already broken. nodb must SUCCEED (unmapped_type keyword)",
+           MULTI_REPO_BOTH_ALLOWED, true, () -> multiRepoSort( "onlyInRepoA" ) );
+        q( rows, "SOURCE-04-multi-repo-sort-unmapped-everywhere", "multiRepo", EXACT,
+           "the control that isolates SOURCE-03's cause: the same multi-repo sort on a field NO repository has. Gate 0 item 4 predicts this one is fine -- every document is 'missing' so the unmapped type is never merged against a real mapping -- which makes the mixed case the culprit rather than multi-index sorting as such",
+           MULTI_REPO_BOTH_ALLOWED, false, () -> multiRepoSort( "inNoRepoAtAll" ) );
 
         return List.copyOf( rows );
     }
@@ -558,6 +574,17 @@ final class GoldenCorpus
     private static NodeQuery dslQuery( final String json )
     {
         return NodeQuery.create().query( QueryExpr.from( dsl( json ) ) ).size( SIZE ).withPath( true ).build();
+    }
+
+    /** The multi-repo sort shape both SOURCE-03 and its SOURCE-04 control use. */
+    private static NodeQuery multiRepoSort( final String field )
+    {
+        return NodeQuery.create()
+            .parent( com.enonic.xp.node.NodePath.ROOT )
+            .addOrderBy( com.enonic.xp.query.expr.FieldOrderExpr.create( com.enonic.xp.index.IndexPath.from( field ),
+                                                                         com.enonic.xp.query.expr.OrderExpr.Direction.ASC ) )
+            .size( SIZE )
+            .build();
     }
 
     private static NodeQuery pageQuery( final int from, final int size )

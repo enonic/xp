@@ -27,6 +27,7 @@ import com.enonic.xp.storage.spi.IndexMapping;
 import com.enonic.xp.storage.spi.IndexSettings;
 import com.enonic.xp.storage.spi.IndexSettingsMerger;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
+import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.storage.spi.UpdateIndexSettings;
 
@@ -48,6 +49,8 @@ public class IndexServiceImpl
 
     private final NodeSearchService nodeSearchService;
 
+    private final NodeStore nodeStore;
+
     private final NodeVersionService nodeVersionService;
 
     private final RepositoryEntryService repositoryEntryService;
@@ -56,7 +59,8 @@ public class IndexServiceImpl
     public IndexServiceImpl( @Reference final IndexServiceInternal indexServiceInternal,
                              @Reference final RepositoryStorageAdmin repositoryStorageAdmin, @Reference final NodeSearchIndex nodeSearchIndex,
                              @Reference final IndexDataService indexDataService,
-                             @Reference final NodeSearchService nodeSearchService, @Reference final NodeVersionService nodeVersionService,
+                             @Reference final NodeSearchService nodeSearchService, @Reference final NodeStore nodeStore,
+                             @Reference final NodeVersionService nodeVersionService,
                              @Reference final RepositoryEntryService repositoryEntryService )
     {
         this.indexServiceInternal = indexServiceInternal;
@@ -64,6 +68,7 @@ public class IndexServiceImpl
         this.nodeSearchIndex = nodeSearchIndex;
         this.indexDataService = indexDataService;
         this.nodeSearchService = nodeSearchService;
+        this.nodeStore = nodeStore;
         this.nodeVersionService = nodeVersionService;
         this.repositoryEntryService = repositoryEntryService;
     }
@@ -81,6 +86,7 @@ public class IndexServiceImpl
             .repositoryId( params.getRepositoryId() )
             .indexDataService( this.indexDataService )
             .nodeSearchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
             .nodeVersionService( this.nodeVersionService )
             .listener( params.getListener() )
             .build()

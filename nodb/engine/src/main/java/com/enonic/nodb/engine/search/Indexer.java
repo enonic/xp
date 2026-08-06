@@ -159,12 +159,24 @@ public final class Indexer
 
         if ( entries.isEmpty() )
         {
-            // Nothing readable, but there may be UNREADABLE rows: OutboxStore.next inner-joins
-            // `repository`, so rows whose repo has been dropped never come back. Advancing to the
-            // outbox's max seq is what stops the checkpoint stalling forever behind such an
-            // orphan — and it is safe precisely because those rows can have no index effect.
-            long max = Tx.inTenantTx( dataSource, tenant, OutboxStore::maxSeq );
-            return max > checkpoint ? publishCheckpoint( max ) : checkpoint;
+            // Nothing to do, so the checkpoint does not move. It MUST NOT move here.
+            //
+            // This branch used to advance the checkpoint to `OutboxStore.maxSeq()` in order to step
+            // over rows the old inner-joined `next` could not see (rows whose repository had been
+            // dropped). That was a silent LOST WRITE: `next` and `maxSeq` ran in two separate
+            // transactions, so any write committing in the window between them was invisible to the
+            // first and visible to the second, and the checkpoint jumped straight past it. `next`
+            // only ever reads rows ABOVE the checkpoint, so the row was then unreachable forever —
+            // a document permanently absent from the search index, with no error anywhere.
+            //
+            // Observed as exactly that: one arbitrary node (a different one each run) missing from
+            // the Gate C corpus, because the row lost was the node's IndexDocuments row — the one
+            // carrying its document — while its earlier branch-entry row had already been applied
+            // and skipped for a not-yet-shipped document.
+            //
+            // The fix is upstream: `next` LEFT-joins now and returns orphan rows itself, so the
+            // indexer can see and skip them, and nothing has to guess at what it could not see.
+            return checkpoint;
         }
 
         long highestSeq = entries.get( entries.size() - 1 ).seq();
@@ -198,6 +210,16 @@ public final class Indexer
 
         for ( OutboxStore.OutboxEntry entry : entries )
         {
+            if ( entry.repoId() == null )
+            {
+                // An ORPHAN: the row outlived its `repository` row (no FK, by design — DELETE_REPO
+                // has to survive the drop). There is nothing to apply, and the index is already gone
+                // (repo delete is index-then-Postgres). Skipping it HERE, having seen it, is what
+                // lets the checkpoint move past it without the blind maxSeq jump that used to lose
+                // writes — see applyNextBatch.
+                LOG.debug( "Skipping outbox row {} (op {}): its repository is gone", entry.seq(), entry.op() );
+                continue;
+            }
             switch ( entry.op() )
             {
                 case OutboxStore.OP_INDEX, OutboxStore.OP_DELETE ->

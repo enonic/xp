@@ -42,14 +42,22 @@ public final class OutboxStore
     }
 
     /**
-     * The next batch strictly after {@code afterSeq}, in seq order.
+     * The next batch strictly after {@code afterSeq}, in seq order — EVERY row, readable or not.
      *
      * <p>Joined to {@code repository} so the indexer gets the external repo id (index names are
-     * built from it) without a second query per row, and so a row whose repo has already been
-     * dropped is skipped rather than crashing the loop — an inner join is doing real work here,
-     * not just saving a round trip: {@code outbox} deliberately has no FK to {@code repository}
-     * (it must survive a repo drop long enough to carry the DELETE_REPO row), so orphaned rows
-     * are an expected state, not corruption.
+     * built from it) without a second query per row. The join is a <b>LEFT</b> join, and that is a
+     * correctness requirement rather than a style choice. {@code outbox} deliberately has no FK to
+     * {@code repository} (it must survive a repo drop long enough to carry the DELETE_REPO row), so
+     * a row whose repository is gone is an expected state; under an INNER join such a row was
+     * INVISIBLE here, which meant the indexer's checkpoint would stall behind it forever, which in
+     * turn forced {@link #maxSeq}-based "jump past whatever I cannot see" logic in the indexer —
+     * and that logic could not distinguish an orphan from a row that had merely committed a
+     * microsecond too late, so it silently dropped writes (see {@code Indexer#applyNextBatch}).
+     *
+     * <p>With a LEFT join every row is returned, {@code repoId} is {@code null} for an orphan, and
+     * the indexer skips it explicitly. The checkpoint therefore only ever advances over rows this
+     * query actually returned — which is precisely the invariant the at-least-once delivery
+     * argument depends on.
      */
     public static List<OutboxEntry> next( Connection connection, long afterSeq, int limit )
         throws SQLException
@@ -57,7 +65,7 @@ public final class OutboxStore
         try (PreparedStatement statement = connection.prepareStatement( """
             SELECT o.seq, o.repo_key, r.repo_id, o.branch, o.node_id, o.version_id, o.op
             FROM outbox o
-            JOIN repository r ON r.repo_key = o.repo_key
+            LEFT JOIN repository r ON r.repo_key = o.repo_key
             WHERE o.seq > ?
             ORDER BY o.seq
             LIMIT ?
@@ -80,10 +88,15 @@ public final class OutboxStore
     }
 
     /**
-     * The highest seq in the outbox, regardless of repo. Used to answer "is there anything left
-     * to do" without fetching rows, and — crucially — to let the indexer skip past rows whose
-     * repository is gone: {@link #next} filters those out, so a checkpoint that only ever
-     * advances to the max seq of RETURNED rows would stall forever behind an orphan.
+     * The highest seq in the outbox, regardless of repo — an observation about the queue, useful to
+     * tests and to lag reporting.
+     *
+     * <p><b>Never use this to advance the checkpoint.</b> It once served exactly that purpose (to
+     * let the indexer step over rows {@link #next}'s inner join hid) and it was a lost-write bug:
+     * {@code next} and this method run in two separate transactions, so a write committing in the
+     * window between them is seen HERE but not THERE, and advancing the checkpoint to this value
+     * silently buries it below the watermark forever. {@link #next} now returns orphan rows itself,
+     * so nothing needs to guess what it could not see.
      */
     public static long maxSeq( Connection connection )
         throws SQLException

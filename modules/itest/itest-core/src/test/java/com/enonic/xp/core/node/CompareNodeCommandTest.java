@@ -85,6 +85,7 @@ class CompareNodeCommandTest
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
+            .nodeStore( this.nodeStore )
             .build()
             .execute();
 

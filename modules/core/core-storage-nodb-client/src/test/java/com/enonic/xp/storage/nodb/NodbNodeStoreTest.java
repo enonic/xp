@@ -26,6 +26,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.storage.spi.BranchEntryListing;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 import com.enonic.xp.storage.spi.CommitRecord;
 import com.enonic.xp.storage.spi.NodeSegments;
@@ -347,6 +348,58 @@ class NodbNodeStoreTest
 
         assertNull( nodeStore.getVersion( REPO, "v-shared", null ) );
         assertEquals( "/p2-b", nodeStore.getVersion( repoB, "v-shared", null ).nodePath() );
+    }
+
+    @Test
+    void supportsBranchEntryQueries_capabilityProbeIsTrue()
+    {
+        assertTrue( nodeStore.supportsBranchEntryQueries(),
+                    "capability probe must be true so the delete cascade and reindex can route without a config lookup" );
+    }
+
+    /**
+     * Phase 4 decision D2: the listing is a keyset-paged iterable behind an up-front total. What
+     * this asserts is the CLIENT half of that — that the iterator keeps fetching pages until the
+     * server says there are no more, and that {@code totalHits} is available before any entry is
+     * consumed. The page size is 1000, so the fixture cannot cross a real page boundary; the
+     * boundary arithmetic itself is covered against a real database by the engine's
+     * {@code BranchEntryListingTest}.
+     */
+    @Test
+    void listChildEntries_isPathDescendingSubtreeWithAnUpFrontTotal()
+    {
+        storeEntry( BRANCH, "n-content", "v-content", "/content" );
+        storeEntry( BRANCH, "n-a", "v-a", "/content/a" );
+        storeEntry( BRANCH, "n-deep", "v-deep", "/content/a/deep" );
+        storeEntry( BRANCH, "n-b", "v-b", "/content/b" );
+        storeEntry( BRANCH, "n-sibling", "v-sibling", "/content-sibling" );
+
+        final BranchEntryListing listing = nodeStore.listChildEntries( REPO, BRANCH, "/content" );
+
+        assertEquals( 3, listing.totalHits(), "the total must be known before the first entry is consumed" );
+        assertEquals( List.of( "/content/b", "/content/a/deep", "/content/a" ), paths( listing ) );
+    }
+
+    @Test
+    void listBranchEntries_isTheWholeBranchAscendingAndPerBranch()
+    {
+        final Branch draft = Branch.from( "draft" );
+        storeEntry( BRANCH, "n-content", "v-content", "/content" );
+        storeEntry( BRANCH, "n-a", "v-a", "/content/a" );
+        storeEntry( draft, "n-draft-only", "v-draft-only", "/content/draft-only" );
+
+        final BranchEntryListing listing = nodeStore.listBranchEntries( REPO, BRANCH );
+        assertEquals( 2, listing.totalHits() );
+        assertEquals( List.of( "/content", "/content/a" ), paths( listing ) );
+
+        assertEquals( List.of( "/content/draft-only" ), paths( nodeStore.listBranchEntries( REPO, draft ) ) );
+    }
+
+    private static List<String> paths( final BranchEntryListing listing )
+    {
+        final List<String> paths = new java.util.ArrayList<>();
+        listing.entries().forEach( entry -> paths.add( entry.nodePath() ) );
+        return paths;
     }
 
     @Test

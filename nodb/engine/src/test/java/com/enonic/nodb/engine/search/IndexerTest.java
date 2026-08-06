@@ -449,6 +449,127 @@ class IndexerTest
     // --------------------------------------------------------------------------------- helpers
 
     /** Ships one XP-shaped document the way {@code NodeSearchService.indexDocuments} does. */
+    // ------------------------------------------------------- the lost-write window (Gate C regression)
+
+    /**
+     * A write that commits while a pass is observing an EMPTY queue must never end up below the
+     * checkpoint. Regression test for a silent lost write found by the Gate C corpus.
+     *
+     * <p><b>The defect.</b> {@code applyNextBatch} used to react to "no rows to read" by advancing
+     * the checkpoint to {@code OutboxStore.maxSeq()}, so that it could step over rows the then
+     * inner-joined {@code next} could not see (rows whose repository had been dropped). But
+     * {@code next} and {@code maxSeq} run in two SEPARATE transactions, hence two separate snapshots.
+     * A write committing in the window between them is invisible to the first and visible to the
+     * second — so the checkpoint jumped straight past a row that had never been applied, and since
+     * {@code next} only ever reads ABOVE the checkpoint, that row became unreachable forever. No
+     * error, no retry: a document permanently missing from the search index.
+     *
+     * <p><b>Why it needed provoking rather than waiting for.</b> Without concurrency the branch is
+     * harmless — if a readable row above the checkpoint exists, {@code next} returns it and the
+     * branch is not taken at all. The bug is reachable ONLY through that inter-transaction window,
+     * which is why it surfaced as an occasional single missing node (a different one each run)
+     * instead of a reproducible failure. So the window is opened deliberately here: the connection
+     * pool is wrapped, and the late write is committed at the exact moment {@code next}'s
+     * transaction closes — the instant the old code was about to ask for {@code maxSeq}.
+     *
+     * <p>Both halves are asserted, because they fail for different reasons: the checkpoint invariant
+     * ("never advance past a row this pass did not return") is the defect itself, and the document's
+     * eventual searchability is the consequence a user would experience.
+     */
+    @Test
+    void aWriteCommittingWhileAPassSeesAnEmptyQueueIsNeverBuriedBelowTheCheckpoint()
+        throws Exception
+    {
+        final String repoId = SearchTestFixture.createRepo( acme, "lostwrite" );
+        admin.createIndex( acme, repoId );
+        final String alias = SearchIndexNames.alias( acme, repoId );
+
+        // Start from a settled checkpoint, so the pass under test genuinely sees an empty queue.
+        final Indexer settle = indexer( acme );
+        settle.drain();
+        final long before = settle.checkpoint();
+
+        final long[] lateSeq = {0};
+        // Committed at the exact instant the outbox READ's transaction closes -- the moment the old
+        // code was about to ask a SECOND transaction for maxSeq. Keyed on the query rather than on a
+        // connection ordinal so that adding or removing an unrelated round trip cannot silently move
+        // the hook out of the window and turn this into a test that proves nothing.
+        final javax.sql.DataSource hooked = hookedAfterOutboxReadCommits( dataSource, () -> {
+            lateSeq[0] = shipDocument( acme, repoId, "master", "late-node", "Committed In The Window" );
+            return null;
+        } );
+
+        final Indexer racing = new Indexer( hooked, acme, client, admin );
+        racing.drain();
+
+        assertTrue( lateSeq[0] > 0, "the hook must have committed the late write; otherwise this test proves nothing" );
+        assertTrue( racing.checkpoint() < lateSeq[0],
+                    "the checkpoint advanced past outbox seq " + lateSeq[0] + " without ever reading it -- that row is now unreachable" );
+
+        // And the consequence: the write is still there to be applied, and awaitRefresh delivers it.
+        racing.awaitRefresh( lateSeq[0], List.of( repoId ), 30_000 );
+        assertEquals( 1, hits( alias, term( "_name._text", "late-node" ) ), "the late write must reach the index, not vanish" );
+    }
+
+    /**
+     * A {@link javax.sql.DataSource} that runs {@code hook} exactly once, immediately after the
+     * transaction that READ THE OUTBOX has committed and closed.
+     *
+     * <p>A reflection proxy rather than a hand-written delegate: the point is to observe two methods
+     * ({@code prepareStatement}, {@code close}) on connections the code under test opens, and
+     * {@code Connection} has ~60 others this test has no opinion about.
+     *
+     * <p>Keyed on the outbox query, not on "the Nth connection". An ordinal was the obvious first
+     * attempt and it was wrong -- {@code drain()} reads the checkpoint before delegating to
+     * {@code applyNextBatch}, which reads it again, so the ordinal that looked like the outbox read
+     * was one round trip too early and the late write landed BEFORE the read instead of after it.
+     * The test then passed while proving nothing at all. Matching the statement makes the hook land
+     * where it is meant to regardless of how many other queries the pass happens to make.
+     */
+    private static javax.sql.DataSource hookedAfterOutboxReadCommits( final javax.sql.DataSource delegate, final Callable<Void> hook )
+    {
+        final java.util.concurrent.atomic.AtomicBoolean fired = new java.util.concurrent.atomic.AtomicBoolean();
+        return (javax.sql.DataSource) java.lang.reflect.Proxy.newProxyInstance( IndexerTest.class.getClassLoader(),
+                                                                               new Class<?>[]{javax.sql.DataSource.class},
+                                                                               ( dsProxy, dsMethod, dsArgs ) -> {
+                                                                                   if ( !"getConnection".equals( dsMethod.getName() ) )
+                                                                                   {
+                                                                                       return dsMethod.invoke( delegate, dsArgs );
+                                                                                   }
+                                                                                   final java.sql.Connection real =
+                                                                                       (java.sql.Connection) dsMethod.invoke( delegate,
+                                                                                                                              dsArgs );
+                                                                                   final boolean[] readOutbox = {false};
+                                                                                   return java.lang.reflect.Proxy.newProxyInstance(
+                                                                                       IndexerTest.class.getClassLoader(),
+                                                                                       new Class<?>[]{java.sql.Connection.class},
+                                                                                       ( cProxy, cMethod, cArgs ) -> {
+                                                                                           if ( "prepareStatement".equals(
+                                                                                               cMethod.getName() ) && cArgs != null &&
+                                                                                               cArgs.length > 0 &&
+                                                                                               isOutboxRead( String.valueOf( cArgs[0] ) ) )
+                                                                                           {
+                                                                                               readOutbox[0] = true;
+                                                                                           }
+                                                                                           final Object result =
+                                                                                               cMethod.invoke( real, cArgs );
+                                                                                           if ( "close".equals( cMethod.getName() ) &&
+                                                                                               readOutbox[0] &&
+                                                                                               fired.compareAndSet( false, true ) )
+                                                                                           {
+                                                                                               hook.call();
+                                                                                           }
+                                                                                           return result;
+                                                                                       } );
+                                                                               } );
+    }
+
+    /** {@code OutboxStore.next}'s query specifically -- not {@code maxSeq}, which also reads the table. */
+    private static boolean isOutboxRead( final String sql )
+    {
+        return sql.contains( "FROM outbox" ) && sql.contains( "ORDER BY o.seq" );
+    }
+
     private static long shipDocument( TenantContext tenant, String repoId, String branch, String nodeId, String title )
         throws SQLException
     {

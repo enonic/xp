@@ -1,7 +1,7 @@
 {
   "formatVersion" : 1,
   "mode" : "es",
-  "queryCount" : 127,
+  "queryCount" : 129,
   "queries" : [ {
     "id" : "ACL-01-default-user",
     "family" : "acl",
@@ -1226,9 +1226,9 @@
   }, {
     "id" : "GAP-G2-in-dated",
     "family" : "in",
-    "acceptance" : "EXACT",
+    "acceptance" : "FIXED",
     "source" : "DEFAULT_USER",
-    "intent" : "G-2: IN with a dated value. IN forces the base string field, so this is expected to match NOTHING today -- a latent bug the team must rule on",
+    "intent" : "G-2: IN with a dated value, matching NOTHING in ES because IN forced the base string field. RULED FIXED by D4 -- see GAP-G2-in-number",
     "error" : null,
     "totalHits" : 0,
     "maxScore" : "NaN",
@@ -1266,9 +1266,9 @@
   }, {
     "id" : "GAP-G2-in-number",
     "family" : "in",
-    "acceptance" : "EXACT",
+    "acceptance" : "FIXED",
     "source" : "DEFAULT_USER",
-    "intent" : "G-2, the widest case: IN with NUMERIC values. IN resolves to the base STRING field but ValueHelper still converts the value to a Double, so the ES term is 700000.0 against a string field -- matches NOTHING. The gap is NOT limited to dates and geo points",
+    "intent" : "G-2, the widest case: IN with NUMERIC values. IN resolved to the base STRING field while ValueHelper still converted the value to a Double, so the ES term was 700000.0 against a string field -- matching NOTHING; the gap was never limited to dates and geo points. RULED FIXED by D4: the port resolves the sub-field per value type, so the baseline's zero hits are the recorded bug",
     "error" : null,
     "totalHits" : 0,
     "maxScore" : "NaN",
@@ -1330,9 +1330,9 @@
   }, {
     "id" : "GAP-G4-range-raw-case",
     "family" : "range",
-    "acceptance" : "EXACT",
+    "acceptance" : "FIXED",
     "source" : "DEFAULT_USER",
-    "intent" : "G-4: range() string bounds are used RAW while the DSL normalizes them. Upper-case bounds are invisible in current itests -- this row pins whichever behavior ships",
+    "intent" : "G-4: range() used its string bounds RAW while the DSL normalized them, so upper-case bounds matched nothing. RULED FIXED by D4: the port normalizes them like every other string value",
     "error" : null,
     "totalHits" : 0,
     "maxScore" : "NaN",
@@ -5853,6 +5853,46 @@
       "index" : "search-corpus-repo-a",
       "type" : "master",
       "sort" : [ ],
+      "highlight" : [ ]
+    } ],
+    "aggregations" : [ ],
+    "suggestions" : [ ]
+  }, {
+    "id" : "SOURCE-03-multi-repo-sort-unmapped-field",
+    "family" : "multiRepo",
+    "acceptance" : "FIXED",
+    "source" : "MULTI_REPO_BOTH_ALLOWED",
+    "intent" : "multi-repo sort on a field present in only ONE of the repositories. MEASURED: ES 2.4 ERRORS on it -- the hardcoded unmapped_type long against a string ._orderby field is not merely a latent OpenSearch problem, it is already broken. nodb must SUCCEED (unmapped_type keyword)",
+    "error" : "com.enonic.xp.repository.IndexException: Search request failed,",
+    "totalHits" : -1,
+    "maxScore" : "NaN",
+    "hits" : [ ],
+    "aggregations" : [ ],
+    "suggestions" : [ ]
+  }, {
+    "id" : "SOURCE-04-multi-repo-sort-unmapped-everywhere",
+    "family" : "multiRepo",
+    "acceptance" : "EXACT",
+    "source" : "MULTI_REPO_BOTH_ALLOWED",
+    "intent" : "the control that isolates SOURCE-03's cause: the same multi-repo sort on a field NO repository has. Gate 0 item 4 predicts this one is fine -- every document is 'missing' so the unmapped type is never merged against a real mapping -- which makes the mixed case the culprit rather than multi-index sorting as such",
+    "error" : null,
+    "totalHits" : 2,
+    "maxScore" : "NaN",
+    "hits" : [ {
+      "id" : "repo-a-node",
+      "path" : null,
+      "score" : "NaN",
+      "index" : "search-corpus-repo-a",
+      "type" : "master",
+      "sort" : [ "9223372036854775807" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "repo-b-node",
+      "path" : null,
+      "score" : "NaN",
+      "index" : "search-corpus-repo-b",
+      "type" : "master",
+      "sort" : [ "9223372036854775807" ],
       "highlight" : [ ]
     } ],
     "aggregations" : [ ],

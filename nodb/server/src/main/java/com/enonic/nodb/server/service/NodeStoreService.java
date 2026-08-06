@@ -10,6 +10,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 
 import com.enonic.nodb.engine.Tx;
+import com.enonic.nodb.engine.model.BranchEntryPage;
 import com.enonic.nodb.engine.model.Page;
 import com.enonic.nodb.engine.model.RepoRef;
 import com.enonic.nodb.engine.store.BranchStore;
@@ -21,6 +22,7 @@ import com.enonic.nodb.engine.store.WriteService;
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.ActiveVersion;
 import com.enonic.nodb.proto.v1.BranchEntry;
+import com.enonic.nodb.proto.v1.BranchEntryOrder;
 import com.enonic.nodb.proto.v1.BranchRef;
 import com.enonic.nodb.proto.v1.Commit;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
@@ -42,6 +44,8 @@ import com.enonic.nodb.proto.v1.GetCommitRequest;
 import com.enonic.nodb.proto.v1.GetPayloadRequest;
 import com.enonic.nodb.proto.v1.GetPayloadsRequest;
 import com.enonic.nodb.proto.v1.GetVersionRequest;
+import com.enonic.nodb.proto.v1.ListBranchEntriesRequest;
+import com.enonic.nodb.proto.v1.ListBranchEntriesResponse;
 import com.enonic.nodb.proto.v1.NodeStoreGrpc;
 import com.enonic.nodb.proto.v1.Payload;
 import com.enonic.nodb.proto.v1.PutPayloadRequest;
@@ -313,6 +317,47 @@ public final class NodeStoreService
             {
                 responseObserver.onNext( ProtoMapper.fromEngineBranchEntry( entry ) );
             }
+            responseObserver.onCompleted();
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( mapSqlException( e ) );
+        }
+    }
+
+    /**
+     * Branch-entry listing (Phase 4 decision D2): one keyset page of a subtree or of a whole
+     * branch. Empty {@code path_prefix} means the whole branch; a cursor-less request also
+     * returns the walk's total (see {@code BranchStore.listEntries}).
+     */
+    @Override
+    public void listBranchEntries( ListBranchEntriesRequest request, StreamObserver<ListBranchEntriesResponse> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
+        String pathPrefix = request.getPathPrefix().isEmpty() ? null : request.getPathPrefix();
+        boolean descending = request.getOrder() == BranchEntryOrder.BRANCH_ENTRY_ORDER_PATH_DESC;
+        int pageSize = request.getPageSize() > 0 ? request.getPageSize() : DEFAULT_PAGE_SIZE;
+        boolean firstPage = request.getAfterPath().isEmpty();
+
+        try
+        {
+            BranchEntryPage page = Tx.inTenantTx( dataSource, principal.tenantContext(),
+                                                   connection -> BranchStore.listEntries( connection, repo, request.getBranch(), pathPrefix,
+                                                                                           descending, request.getAfterPath(),
+                                                                                           request.getAfterNodeId(), pageSize,
+                                                                                           firstPage ) );
+
+            ListBranchEntriesResponse.Builder builder = ListBranchEntriesResponse.newBuilder()
+                .setTotalHits( page.totalHits() )
+                .setNextAfterPath( page.nextAfterPath() )
+                .setNextAfterNodeId( page.nextAfterNodeId() )
+                .setHasMore( page.hasMore() );
+            for ( com.enonic.nodb.engine.model.BranchEntryRecord entry : page.entries() )
+            {
+                builder.addEntries( ProtoMapper.fromEngineBranchEntry( entry ) );
+            }
+            responseObserver.onNext( builder.build() );
             responseObserver.onCompleted();
         }
         catch ( SQLException e )

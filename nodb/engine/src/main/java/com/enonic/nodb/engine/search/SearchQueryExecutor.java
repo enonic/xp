@@ -35,6 +35,9 @@ public final class SearchQueryExecutor
 
     private static final int GET_ALL = -1;
 
+    /** Same 60s the Elasticsearch scroll used, extended on every page. */
+    private static final java.time.Duration PIT_KEEP_ALIVE = java.time.Duration.ofSeconds( 60 );
+
     private final OpenSearchClient client;
 
     public SearchQueryExecutor( OpenSearchClient client )
@@ -68,40 +71,110 @@ public final class SearchQueryExecutor
     }
 
     /**
-     * {@code size = -1} (XP's GET_ALL) is paged with {@code from}/{@code size} up to
-     * OpenSearch's result window. Beyond it this throws rather than silently truncating: real
-     * deep paging is {@code search_after} over a point-in-time with a total order appended,
-     * which belongs with the structured-query batch that also owns cursor semantics.
+     * {@code size = -1} (XP's GET_ALL) — {@code search_after} over a point in time, the
+     * replacement for ES 2.4's scroll.
+     *
+     * <p><b>A total order is mandatory.</b> {@code search_after} resumes from the previous page's
+     * sort values, so if two documents can tie on every sort key the walk may skip or repeat them.
+     * {@code _shard_doc} is appended as the final tiebreaker: it is unique per document within a
+     * PIT and is only available with one, which is the other reason this path needs a PIT rather
+     * than plain paging.
+     *
+     * <p><b>{@code track_total_hits} is always true</b> (in {@link #body}). OpenSearch otherwise
+     * stops counting at 10 000 and reports {@code "relation": "gte"}; the corpus compares totals
+     * EXACTLY, so an approximate total is a failed row.
+     *
+     * <p><b>Two quirks of the scroll path are reproduced, not fixed.</b> Elasticsearch read
+     * {@code totalHits} and {@code maxScore} from the FINAL, EMPTY page of a scroll, so every
+     * GET_ALL query has always reported {@code maxScore = NaN} — callers read it that way, and
+     * Gate 0(e) recorded it in the baseline. And {@code explain} was never set on the scroll path,
+     * so it is dropped here too ({@link #body} only honours it for a windowed search). Both are
+     * deliberate deltas-that-are-not-deltas: matching the baseline is the requirement.
+     *
+     * <p><b>{@code from} is ignored on this path</b>, as it was on the scroll path — a scroll has no
+     * offset, and {@code search_after} has none either. Every GET_ALL caller in XP passes 0.
      */
     private Result executeAll( String target, SearchQuery query )
     {
         int page = query.batchSize() > 0 ? Math.min( query.batchSize(), MAX_RESULT_WINDOW ) : MAX_RESULT_WINDOW;
 
-        List<Hit> hits = new ArrayList<>();
-        long totalHits = 0;
-        float maxScore = Float.NaN;
-        int from = query.from();
-
-        while ( true )
+        String pitId = client.openPit( target, PIT_KEEP_ALIVE );
+        try
         {
-            Result batch = decode( client.search( target, body( query, from, page ) ), query );
-            totalHits = batch.totalHits();
-            maxScore = hits.isEmpty() ? batch.maxScore() : maxScore;
-            hits.addAll( batch.hits() );
+            List<Hit> hits = new ArrayList<>();
+            long totalHits = 0;
+            JsonNode searchAfter = null;
 
-            if ( batch.hits().size() < page || hits.size() >= totalHits )
+            while ( true )
             {
-                break;
+                ObjectNode body = body( query, 0, page );
+                // Never on the scroll path, exactly as the Elasticsearch scroll never set it.
+                body.remove( "explain" );
+                body.set( "pit", OpenSearchClient.mapper()
+                    .createObjectNode()
+                    .put( "id", pitId )
+                    .put( "keep_alive", PIT_KEEP_ALIVE.toSeconds() + "s" ) );
+                totalOrder( body );
+                if ( searchAfter != null )
+                {
+                    body.set( "search_after", searchAfter );
+                }
+
+                JsonNode response = client.searchPit( body );
+                Result batch = decode( response, query );
+                totalHits = batch.totalHits();
+                batch.hits().forEach( hit -> hits.add( withoutTiebreaker( hit ) ) );
+
+                JsonNode last = lastHit( response );
+                if ( last == null || batch.hits().size() < page )
+                {
+                    break;
+                }
+                searchAfter = last.path( "sort" );
             }
-            from += page;
-            if ( from + page > MAX_RESULT_WINDOW )
-            {
-                throw new QueryDslTranslator.UnsupportedQueryException(
-                    "A GET_ALL query matched more than " + MAX_RESULT_WINDOW + " hits; deep paging over a point-in-time is not implemented" );
-            }
+
+            return new Result( hits, totalHits, Float.NaN );
         }
+        finally
+        {
+            client.closePit( pitId );
+        }
+    }
 
-        return new Result( hits, totalHits, maxScore );
+    /**
+     * Appends {@code _shard_doc} to the sort array, creating it when the caller gave no sorts —
+     * mirroring the scroll path's "adds {@code sort: _doc} only when the caller gave no sorts",
+     * except that the tiebreaker is now needed in BOTH cases: a caller-supplied field sort is not
+     * a total order either.
+     */
+    private static void totalOrder( ObjectNode body )
+    {
+        ArrayNode sort = body.has( "sort" ) ? (ArrayNode) body.get( "sort" ) : body.putArray( "sort" );
+        sort.add( "_shard_doc" );
+    }
+
+    /**
+     * Drops the {@code _shard_doc} value {@link #totalOrder} appended.
+     *
+     * <p>The tiebreaker is this executor's own paging mechanism, not part of the caller's query: a
+     * caller that sorted by one field must see one sort value, exactly as it did on the scroll path.
+     * The cursor is taken from the RAW response before this, so stripping it cannot affect the walk.
+     */
+    private static Hit withoutTiebreaker( Hit hit )
+    {
+        List<String> values = hit.sortValues();
+        if ( values.isEmpty() )
+        {
+            return hit;
+        }
+        return new Hit( hit.id(), hit.repoId(), hit.branch(), hit.score(), hit.returnValues(),
+                        List.copyOf( values.subList( 0, values.size() - 1 ) ) );
+    }
+
+    private static JsonNode lastHit( JsonNode response )
+    {
+        JsonNode hits = response.path( "hits" ).path( "hits" );
+        return hits.isEmpty() ? null : hits.get( hits.size() - 1 );
     }
 
     private String target( TenantContext tenant, SearchQuery query )
@@ -116,16 +189,17 @@ public final class SearchQueryExecutor
 
     ObjectNode body( SearchQuery query, int from, int size )
     {
+        QueryDslTranslator translator = translator( query );
         ObjectNode body = OpenSearchClient.mapper().createObjectNode();
 
         ObjectNode bool = OpenSearchClient.mapper().createObjectNode();
-        bool.set( "must", OpenSearchClient.mapper().createArrayNode().add( QueryDslTranslator.translateQuery( parse( query.query() ) ) ) );
+        bool.set( "must", OpenSearchClient.mapper().createArrayNode().add( translator.translateQuery( parse( query.query() ) ) ) );
 
         ArrayNode filter = OpenSearchClient.mapper().createArrayNode();
         filter.add( sourceFilter( query ) );
         for ( String queryFilter : query.queryFilters() )
         {
-            filter.add( QueryDslTranslator.translateFilter( parse( queryFilter ) ) );
+            filter.add( translator.translateFilter( parse( queryFilter ) ) );
         }
         bool.set( "filter", filter );
 
@@ -133,7 +207,7 @@ public final class SearchQueryExecutor
 
         if ( !query.postFilters().isEmpty() )
         {
-            body.set( "post_filter", combine( query.postFilters() ) );
+            body.set( "post_filter", combine( translator, query.postFilters() ) );
         }
 
         if ( !query.sort().isEmpty() )
@@ -141,7 +215,7 @@ public final class SearchQueryExecutor
             ArrayNode sort = OpenSearchClient.mapper().createArrayNode();
             for ( String element : query.sort() )
             {
-                sort.add( QueryDslTranslator.translateSort( parse( element ) ) );
+                sort.add( translator.translateSort( parse( element ) ) );
             }
             body.set( "sort", sort );
         }
@@ -224,16 +298,34 @@ public final class SearchQueryExecutor
             .set( "term", OpenSearchClient.mapper().createObjectNode().put( field, value ) );
     }
 
-    private JsonNode combine( List<String> filters )
+    /**
+     * The translator is per-request, not a static utility: resolving an {@code _id} predicate needs
+     * the request's source branches, because the document id is the composite
+     * {@code <nodeId>@<branch>} (D10) and the bare node id is not a field.
+     */
+    private static QueryDslTranslator translator( SearchQuery query )
+    {
+        List<String> branches = new ArrayList<>();
+        for ( SearchQuery.Source source : query.sources() )
+        {
+            if ( !branches.contains( source.branch() ) )
+            {
+                branches.add( source.branch() );
+            }
+        }
+        return new QueryDslTranslator( branches );
+    }
+
+    private JsonNode combine( QueryDslTranslator translator, List<String> filters )
     {
         if ( filters.size() == 1 )
         {
-            return QueryDslTranslator.translateFilter( parse( filters.get( 0 ) ) );
+            return translator.translateFilter( parse( filters.get( 0 ) ) );
         }
         ArrayNode must = OpenSearchClient.mapper().createArrayNode();
         for ( String filter : filters )
         {
-            must.add( QueryDslTranslator.translateFilter( parse( filter ) ) );
+            must.add( translator.translateFilter( parse( filter ) ) );
         }
         return OpenSearchClient.mapper().createObjectNode().set( "bool", OpenSearchClient.mapper().createObjectNode().set( "must", must ) );
     }

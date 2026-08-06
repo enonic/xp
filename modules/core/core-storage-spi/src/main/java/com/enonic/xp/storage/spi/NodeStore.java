@@ -87,6 +87,62 @@ public interface NodeStore
             "getChildren is not supported by this NodeStore implementation; children listing goes through NodeSearchIndex instead (see this method's javadoc)" );
     }
 
+    // --- branch-entry listing (Phase 4 decision D2, nodb/BUILD-PHASE-4.md) ---
+    //
+    // The three NodeBranchQuery call sites (DeleteNodeCommand's delete cascade,
+    // RepositoryServiceImpl#deleteBranch, ReindexExecutor) asked a STORAGE question with a
+    // query DSL: they read the ES storage-<repo> index, which a non-ES backend never creates.
+    // D2 rules them a storage surface rather than a search one, for three reasons recorded in
+    // the work order: (1) reindex must not read the index it is rebuilding — otherwise Gate G's
+    // rebuild drill is impossible by construction; (2) serving them from search would mean
+    // write-amplifying every search document with the three payload hashes callers consume
+    // (BranchIndexPath.entryFields()), i.e. re-creating storage-in-search; (3) DeleteNodeCommand
+    // forces a refresh before listing children, which against an asynchronously indexed search
+    // backend would make a destructive operation either block on indexer lag or run against an
+    // incomplete subtree.
+    //
+    // Same hook pattern as the version family: default methods throw, and commands route here
+    // only when supportsBranchEntryQueries() says so. No ACL filtering (parity: the storage
+    // source never filtered by ACL either).
+
+    /**
+     * Capability probe for the branch-entry listing surface: {@code true} means
+     * {@link #listChildEntries} and {@link #listBranchEntries} are implemented and commands may
+     * route to them instead of issuing a {@code NodeBranchQuery} against the storage index. A
+     * probe on the injected instance, deliberately not a configuration lookup.
+     */
+    default boolean supportsBranchEntryQueries()
+    {
+        return false;
+    }
+
+    /**
+     * Every branch entry whose path is BELOW {@code pathPrefix} (the whole subtree, excluding
+     * {@code pathPrefix} itself), ordered by path DESCENDING — deepest-last-first, the order the
+     * delete cascade relies on so a child is always deleted before its parent.
+     *
+     * <p>Reproduces {@code DeleteNodeCommand}'s query exactly: a {@code like} on the lowercased
+     * path index with the value {@code <path>/*}, ordered {@code _path DESC}, {@code GET_ALL}.
+     * Path comparison is CASE-INSENSITIVE, matching both the lowercased ES path field and
+     * {@code NodePath}'s own case-insensitive equality.
+     */
+    default BranchEntryListing listChildEntries( RepositoryId repositoryId, Branch branch, String pathPrefix )
+    {
+        throw new UnsupportedOperationException(
+            "listChildEntries is not supported by this NodeStore implementation; the delete cascade lists children through the storage index instead (see this method's javadoc)" );
+    }
+
+    /**
+     * Every branch entry in {@code branch}, ordered by path ASCENDING (parents before children —
+     * the natural order for a reindex, and the order {@code RepositoryServiceImpl#deleteBranch}
+     * is indifferent to since it materializes and hands the whole set to a batched delete).
+     */
+    default BranchEntryListing listBranchEntries( RepositoryId repositoryId, Branch branch )
+    {
+        throw new UnsupportedOperationException(
+            "listBranchEntries is not supported by this NodeStore implementation; whole-branch listing goes through the storage index instead (see this method's javadoc)" );
+    }
+
     // --- versions (VERSION document equivalent) ---
 
     /**

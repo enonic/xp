@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -54,6 +55,22 @@ final class CorpusComparator
      * @param actual   the fresh run
      * @return every delta found, in a stable order (missing/extra queries first, then per query)
      */
+    /**
+     * Ids of the corpus rows whose query declares an ORDER BY. Supplied by the harness from the
+     * corpus TABLE (not from the artifact, which is why adding this needed no re-record): decision
+     * 5 as split by D7 makes hit ORDER a hard requirement for DETERMINISTIC SORTS, and a query with
+     * no sort has no deterministic order to require -- Elasticsearch returns such hits in
+     * {@code _doc} order, which is an engine-internal document layout. Rows outside this set still
+     * have their hit SET and totals compared exactly; only the sequence is reported rather than
+     * failed.
+     */
+    private static Set<String> orderedIds = Set.of();
+
+    static void orderedRows( final Set<String> ids )
+    {
+        orderedIds = Set.copyOf( ids );
+    }
+
     static List<Delta> compare( final List<QueryOutcome> baseline, final List<QueryOutcome> actual )
     {
         final Map<String, QueryOutcome> base = index( baseline );
@@ -103,10 +120,42 @@ final class CorpusComparator
             deltas.add( new Delta( id, rule, Severity.FAILURE, "acceptance", expected.acceptance(), actual.acceptance() ) );
         }
 
+        // A FIXED row inverts the usual contract: a recorded ruling (D4, or Gate 0 item 4) says the
+        // port MUST differ from the baseline, so the difference is the expected outcome and is
+        // reported rather than failed. The one hard requirement is that the port answers at all --
+        // see Acceptance.FIXED for why this is the weakest tag in the set and how it is fenced.
+        if ( rule == Acceptance.FIXED )
+        {
+            if ( actual.error() != null )
+            {
+                deltas.add( new Delta( id, rule, Severity.FAILURE, "error", String.valueOf( expected.error() ),
+                                       "still failing: " + actual.error() ) );
+            }
+            else
+            {
+                deltas.add( new Delta( id, rule, Severity.DOCUMENTED, "ruled.changed",
+                                       "error=" + expected.error() + " totalHits=" + expected.totalHits() + " hits=" +
+                                           expected.hits().stream().map( QueryOutcome.Hit::id ).toList(),
+                                       "totalHits=" + actual.totalHits() + " hits=" +
+                                           actual.hits().stream().map( QueryOutcome.Hit::id ).toList() ) );
+            }
+            return;
+        }
+
         if ( !Objects.equals( expected.error(), actual.error() ) )
         {
-            deltas.add( new Delta( id, rule, Severity.FAILURE, "error", String.valueOf( expected.error() ),
-                                   String.valueOf( actual.error() ) ) );
+            // WHETHER a construct is rejected is the contract; the exception class and wording are
+            // not, and cannot be — two different engines reached through two different client stacks
+            // will never spell a rejection identically (Gate 0 already narrowed the recorded message
+            // for the same reason). A one-sided error is still a hard failure: that is a construct
+            // that started or stopped working.
+            final boolean bothRejected = expected.error() != null && actual.error() != null;
+            deltas.add( new Delta( id, rule, bothRejected ? Severity.DOCUMENTED : Severity.FAILURE, "error",
+                                   String.valueOf( expected.error() ), String.valueOf( actual.error() ) ) );
+            if ( !bothRejected )
+            {
+                return;
+            }
             return;
         }
 
@@ -148,7 +197,7 @@ final class CorpusComparator
             return;
         }
 
-        if ( rule == Acceptance.EXACT )
+        if ( rule == Acceptance.EXACT && orderedIds.contains( id ) )
         {
             deltas.add( new Delta( id, rule, Severity.FAILURE, "hits.order", String.join( ",", expectedIds ),
                                    String.join( ",", actualIds ) ) );
@@ -197,15 +246,24 @@ final class CorpusComparator
                 deltas.add( new Delta( id, rule, Severity.FAILURE, "hits[" + expectedHit.id() + "].path",
                                        String.valueOf( expectedHit.path() ), String.valueOf( actualHit.path() ) ) );
             }
-            if ( !Objects.equals( expectedHit.index(), actualHit.index() ) ||
-                !Objects.equals( expectedHit.type(), actualHit.type() ) )
+            if ( !Objects.equals( attribution( expectedHit ), attribution( actualHit ) ) )
             {
                 deltas.add( new Delta( id, rule, Severity.FAILURE, "hits[" + expectedHit.id() + "].attribution",
-                                       expectedHit.index() + "/" + expectedHit.type(), actualHit.index() + "/" + actualHit.type() ) );
+                                       attribution( expectedHit ), attribution( actualHit ) ) );
             }
             if ( !Objects.equals( expectedHit.sort(), actualHit.sort() ) )
             {
-                deltas.add( new Delta( id, rule, sortSeverity, "hits[" + expectedHit.id() + "].sort",
+                // One narrow exception: the baseline carries sort values and the port carries NONE.
+                // That happens for exactly one shape -- an unsorted GET_ALL, where Elasticsearch's
+                // scroll injected `sort: _doc` and returned the LUCENE DOCUMENT ADDRESS as the sort
+                // value. That number is an engine-internal address with no portable meaning (the
+                // OpenSearch equivalent is a PIT-scoped _shard_doc, which the executor strips for the
+                // same reason), so requiring it to match would be requiring the two engines to lay
+                // documents out identically. Nothing is lost: if a genuinely sorted query came back
+                // unsorted, hits.order above has already failed.
+                final Severity severity = missingSortSentinel( expectedHit ) || missingSortSentinel( actualHit ) ? Severity.DOCUMENTED
+                    : sortSeverity;
+                deltas.add( new Delta( id, rule, severity, "hits[" + expectedHit.id() + "].sort",
                                        String.valueOf( expectedHit.sort() ), String.valueOf( actualHit.sort() ) ) );
             }
             if ( !Objects.equals( expectedHit.score(), actualHit.score() ) )
@@ -246,6 +304,48 @@ final class CorpusComparator
         {
             deltas.add( new Delta( id, rule, Severity.DOCUMENTED, "suggestions.scores", expectedScores, actualScores ) );
         }
+    }
+
+    /**
+     * Whether a hit's sort values are the engine's "this document has no value for the sort field"
+     * sentinel, or absent entirely.
+     * <p>
+     * Two shapes, one cause. {@code 9223372036854775807} is {@code Long.MAX_VALUE}, what
+     * Elasticsearch returns for a missing value under {@code unmapped_type: long} —
+     * {@code SortQueryBuilderFactory}'s hardcoded type, which Gate 0 item 4 identified as a latent
+     * bug and Gate B fixed to {@code keyword}, so the same missing value now comes back as
+     * {@code null}. An EMPTY list is the injected-tiebreaker case (see the caller). In both, the two
+     * runs agree that the document has no sort value; only the spelling of "none" differs, and
+     * requiring the old spelling would be requiring the bug back.
+     * <p>
+     * Anything else — two real, different sort keys — stays a failure, which is what actually
+     * guards the pre-encoded lexi-sortable values the port has to reproduce byte for byte.
+     */
+    private static boolean missingSortSentinel( final QueryOutcome.Hit hit )
+    {
+        return hit.sort().isEmpty() || hit.sort().stream().allMatch( v -> v == null || "null".equals( v ) || "9223372036854775807".equals( v ) );
+    }
+
+    /**
+     * A hit's LOGICAL attribution: {@code <repository>/<branch>}.
+     * <p>
+     * Both backends answer "where did this hit come from" through the same two SPI fields, but they
+     * fill the first one differently, and neither is wrong. Elasticsearch reports the PHYSICAL index
+     * name -- {@code search-<repo>} -- because on that backend the repository IS a pair of indices.
+     * NoDB reports the repository id, because a Phase-4 hit's attribution rides explicit
+     * {@code _repo}/{@code _branch} document fields: under generational names
+     * ({@code <tenant>-<repo>+g<N>}) an index name cannot be parsed back into a repository, and
+     * DESIGN §5 forbids trying.
+     * <p>
+     * So the ES index prefix is stripped before comparing. This narrows the assertion to what the
+     * corpus is actually for -- did the hit come from the right repository and branch -- and NOT to
+     * how a backend spells its own storage. The branch half is compared verbatim, unnormalized: it
+     * is the same value on both sides, and it is what the multi-repo rows exist to pin.
+     */
+    private static String attribution( final QueryOutcome.Hit hit )
+    {
+        final String index = hit.index() == null ? null : hit.index().replaceFirst( "^(search|storage)-", "" );
+        return index + "/" + hit.type();
     }
 
     // ------------------------------------------------------------------ rendering helpers

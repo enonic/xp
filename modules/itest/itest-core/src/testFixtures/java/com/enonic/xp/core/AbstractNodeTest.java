@@ -151,7 +151,7 @@ public abstract class AbstractNodeTest
 
     protected IndexServiceInternalImpl indexServiceInternal;
 
-    protected NodeSearchIndexImpl nodeSearchIndex;
+    protected NodeSearchIndex nodeSearchIndex;
 
     protected NodeStorageServiceImpl storageService;
 
@@ -322,7 +322,21 @@ public abstract class AbstractNodeTest
 
         this.commitService = new CommitServiceImpl( nodeStore );
 
-        this.nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+        // Phase 4 Gate C (nodb/BUILD-PHASE-4.md): the SEARCH half moves to NoDB/OpenSearch when --
+        // and only when -- the shared cluster was started with a search backend
+        // (-Dxp.itest.opensearch=true, Gate B decision 8's opt-in). Until Gate C there was nothing
+        // to move to: the Search RPC answered UNIMPLEMENTED, so the comment above described the
+        // whole truth. It no longer does, and leaving it that way would make the golden-query
+        // corpus diff "nodb mode" while every query it measures still ran on embedded
+        // Elasticsearch -- a green gate that proves nothing, which is the one outcome this phase's
+        // acceptance rules exist to prevent.
+        //
+        // Still opt-in, not automatic: without the flag every nodb-mode itest keeps the hybrid
+        // (nodb storage + ES search) wiring it has had since Phase 1. Gate F is where the flag
+        // stops being optional and embedded ES leaves nodb mode altogether.
+        this.nodeSearchIndex = NodbTestCluster.isSearchEnabled()
+            ? nodbTenant.nodeSearchIndex()
+            : new NodeSearchIndexImpl( client, searchDao, storageDao );
 
         this.indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
@@ -333,11 +347,11 @@ public abstract class AbstractNodeTest
         this.nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex );
 
         this.repositoryEntryService =
-            new RepositoryEntryServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, eventPublisher,
+            new RepositoryEntryServiceImpl( this.repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher,
                                             binaryService );
 
         this.repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, branchService,
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, nodeStore, branchService,
                                        () -> null );
 
         this.nodeService =
@@ -346,6 +360,7 @@ public abstract class AbstractNodeTest
 
         this.indexService =
             new IndexServiceImpl( indexServiceInternal, this.repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService,
+                                  nodeStore,
                                   nodeDao, repositoryEntryService );
 
         bootstrap();
@@ -555,6 +570,7 @@ public abstract class AbstractNodeTest
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
+            .nodeStore( this.nodeStore )
             .build()
             .execute();
 

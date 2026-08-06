@@ -24,6 +24,7 @@ import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.storage.spi.NodeStore;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,6 +60,9 @@ class RepositoryServiceActivatorTest
     private NodeSearchService nodeSearchService;
 
     @Mock(stubOnly = true)
+    private NodeStore nodeStore;
+
+    @Mock(stubOnly = true)
     private BranchService branchService;
 
     @Mock(stubOnly = true)
@@ -86,7 +90,7 @@ class RepositoryServiceActivatorTest
     {
         final RepositoryServiceActivator activator =
             new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
-                                            nodeSearchService, branchService );
+                                            nodeSearchService, nodeStore, branchService );
         activator.setRepositoryAuditLogSupport( repositoryAuditLogSupport );
 
         doReturn( service ).when( bundleContext )
@@ -105,7 +109,7 @@ class RepositoryServiceActivatorTest
     {
         final RepositoryServiceActivator activator =
             new RepositoryServiceActivator( repositoryEntryService, indexServiceInternal, nodeRepositoryService, nodeStorageService,
-                                            nodeSearchService, branchService );
+                                            nodeSearchService, nodeStore, branchService );
 
         doReturn( service ).when( bundleContext )
             .registerService(

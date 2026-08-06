@@ -240,6 +240,47 @@ public final class OpenSearchClient
     }
 
     /**
+     * A point-in-time search: the target rides INSIDE the body ({@code pit.id}), so the path
+     * carries no index at all. Passing both would be an error — a PIT already pins the exact set
+     * of shards the search runs against, which is the property that makes {@code search_after}
+     * paging consistent while documents are being written.
+     */
+    public JsonNode searchPit( ObjectNode body )
+    {
+        return requestJson( "POST", "/_search", body );
+    }
+
+    /**
+     * Opens a point in time over {@code target}, returning its id. The replacement for ES 2.4's
+     * scroll (removed): a scroll held a materialized result set server-side, a PIT holds only the
+     * shard readers, and paging is done by the client with {@code search_after}.
+     */
+    public String openPit( String target, java.time.Duration keepAlive )
+    {
+        return requestJson( "POST", "/" + encode( target ) + "/_search/point_in_time?keep_alive=" + keepAlive.toSeconds() + "s",
+                            null ).path( "pit_id" ).asText();
+    }
+
+    /**
+     * Closes a point in time. Best effort by design: a PIT expires on its own {@code keep_alive},
+     * so failing a caller's query because the cleanup call failed would turn a resource nicety
+     * into an outage.
+     */
+    public void closePit( String pitId )
+    {
+        try
+        {
+            ObjectNode body = MAPPER.createObjectNode();
+            body.put( "pit_id", pitId );
+            requestJson( "DELETE", "/_search/point_in_time", body );
+        }
+        catch ( RuntimeException e )
+        {
+            LOG.debug( "Closing point-in-time {} failed; it will expire on its keep_alive", pitId, e );
+        }
+    }
+
+    /**
      * {@code _delete_by_query}. {@code conflicts=proceed} because a concurrent reindex of the same
      * document is a version conflict, not a failure to delete: the outbox replays, and the
      * alternative (abort the whole request) would leave a branch half-deleted.

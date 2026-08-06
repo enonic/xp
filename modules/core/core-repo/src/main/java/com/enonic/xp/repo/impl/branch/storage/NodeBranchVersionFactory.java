@@ -7,8 +7,10 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.NodeVersionKey;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.storage.spi.ReturnValues;
+import com.enonic.xp.storage.spi.BranchEntryListing;
 import com.enonic.xp.storage.spi.BranchEntryRecord;
 
 public class NodeBranchVersionFactory
@@ -44,6 +46,37 @@ public class NodeBranchVersionFactory
                                        entry.getNodeVersionKey().getNodeBlobKey().toString(),
                                        entry.getNodeVersionKey().getIndexConfigBlobKey().toString(),
                                        entry.getNodeVersionKey().getAccessControlBlobKey().toString(), entry.getTimestamp() );
+    }
+
+    /**
+     * Adapts a storage-side branch-entry listing ({@code NodeStore#listChildEntries}/
+     * {@code listBranchEntries}, Phase 4 decision D2) onto {@link NodeBranchEntries} — the type
+     * the three former {@code NodeBranchQuery} call sites already consume, so nothing above them
+     * changes shape.
+     * <p>
+     * Stays lazy: {@code totalHits} becomes {@code getSize()} and the records are converted one at
+     * a time as the consumer iterates, which is the whole point of the listing being an
+     * {@link Iterable} rather than a {@code List}.
+     */
+    public static NodeBranchEntries fromListing( final BranchEntryListing listing )
+    {
+        return NodeBranchEntries.lazy( Math.toIntExact( listing.totalHits() ),
+                                        () -> new java.util.Iterator<NodeBranchEntry>()
+                                        {
+                                            private final java.util.Iterator<BranchEntryRecord> records = listing.entries().iterator();
+
+                                            @Override
+                                            public boolean hasNext()
+                                            {
+                                                return records.hasNext();
+                                            }
+
+                                            @Override
+                                            public NodeBranchEntry next()
+                                            {
+                                                return fromRecord( records.next() );
+                                            }
+                                        } );
     }
 
     /** Inverse of {@link #toRecord}, for consumers of {@code NodeStore} rebuilding the domain object. */

@@ -33,5 +33,31 @@ enum Acceptance
      * as documented diffs, exactly like today's four {@code FindNodesByQueryCommandTest_icuSort}
      * cases.
      */
-    ICU_DOCUMENTED
+    ICU_DOCUMENTED,
+
+    /**
+     * A construct whose Elasticsearch behaviour a RECORDED RULING deliberately changes, so the port
+     * is required to DIFFER from the baseline (Phase 4 Gate C).
+     * <p>
+     * The other three tags all say "match the baseline". This one says the opposite, for the two
+     * enumerated cases the phase's own decisions created:
+     * <ul>
+     * <li><b>D4</b> ruled gaps G-2 and G-4 be FIXED rather than preserved — {@code IN} with a
+     * dated/numeric value and {@code range()} with upper-case string bounds matched NOTHING in ES,
+     * and are meant to match now. The baseline's zero hits are the bug, recorded.</li>
+     * <li>a construct ES 2.4 <b>errors</b> on and the port must answer (the multi-repo sort on a
+     * field mapped in only one index — Gate 0 item 4).</li>
+     * </ul>
+     * The rule is therefore: <b>the port must not error, and the difference is reported as a
+     * documented delta.</b> It exists because Gate 0's discipline is to MEASURE rather than reason,
+     * and measuring occasionally shows that the behaviour a work order asked us to preserve was
+     * never correct — pretending otherwise means either a permanently red gate or a silently
+     * deleted row.
+     * <p>
+     * Deliberately narrow, and the weakest tag in the set: it cannot detect a WRONG new answer, only
+     * an absent one. A row may carry it only with the ruling named in {@link GoldenQuery#intent}, the
+     * actual result is always printed so a reviewer sees what shipped, and the comparator still fails
+     * the row if the port errors — so it cannot become a way to quiet an inconvenient failure.
+     */
+    FIXED
 }

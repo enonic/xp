@@ -8,7 +8,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
+import com.enonic.nodb.engine.model.BranchEntryPage;
 import com.enonic.nodb.engine.model.BranchEntryRecord;
 import com.enonic.nodb.engine.model.Page;
 import com.enonic.nodb.engine.model.RepoRef;
@@ -37,6 +39,39 @@ public final class BranchStore
         FROM branch_entry be
         JOIN node_version nv ON nv.repo_key = be.repo_key AND nv.version_id = be.version_id
         """;
+
+    /**
+     * {@link #JOINED_SELECT} plus the keyset column. {@code lower(node_path)} is returned by the
+     * server rather than recomputed by the caller on purpose: the cursor must be compared by
+     * PostgreSQL's {@code lower()} under the database's collation, and having Java produce it with
+     * {@code toLowerCase} would put a second, subtly different lowercasing on the critical path of
+     * a paging predicate — the classic way a walk skips or repeats rows.
+     */
+    private static final String LISTING_SELECT = """
+        SELECT be.branch, be.node_id, be.version_id, be.node_path, be.ts,
+               nv.node_data_hash, nv.index_config_hash, nv.acl_hash,
+               lower(be.node_path) AS path_key
+        FROM branch_entry be
+        JOIN node_version nv ON nv.repo_key = be.repo_key AND nv.version_id = be.version_id
+        """;
+
+    /**
+     * The listing's sort/keyset key: the lowercased path in {@code "C"} (byte) collation.
+     *
+     * <p>{@code COLLATE "C"} is load-bearing twice over. <b>Parity:</b> the ES path field these
+     * listings replace was a lowercased keyword, sorted byte-lexicographically — while this
+     * database's default collation is {@code en_US.utf8}, which sorts punctuation at a secondary
+     * level and would order {@code /content-sibling} between {@code /content/a} and
+     * {@code /content/b} rather than before both. <b>Index:</b> {@code branch_entry_path_lower} is
+     * a {@code text_pattern_ops} index (migration 002), i.e. byte-ordered, so this is the only
+     * collation under which one index serves the prefix scan AND the ordered keyset walk.
+     *
+     * <p>The one property the delete cascade actually depends on — a node's descendants sorting
+     * after it, hence BEFORE it when descending — holds in any collation, since a strict prefix
+     * always compares less than its extensions. The collation choice is about matching ES's
+     * observable order, not about correctness of the cascade.
+     */
+    private static final String PATH_KEY = "lower(be.node_path) COLLATE \"C\"";
 
     private BranchStore()
     {
@@ -286,6 +321,134 @@ public final class BranchStore
                     result.add( map( resultSet ) );
                 }
                 return List.copyOf( result );
+            }
+        }
+    }
+
+    /**
+     * Branch-entry LISTING (Phase 4 decision D2, nodb/BUILD-PHASE-4.md): one keyset page of a
+     * subtree or of a whole branch.
+     *
+     * <p>Reproduces what the three {@code NodeBranchQuery} call sites used to ask the ES storage
+     * index. {@code pathPrefix} {@code null} means the whole branch; otherwise the STRICT subtree
+     * below it ({@code lower(node_path) LIKE lower(prefix) || '/%'} — the prefix row itself is
+     * excluded, which is exactly what {@code DeleteNodeCommand}'s {@code like '<path>/*'} means;
+     * that command adds the node itself back separately).
+     *
+     * <p><b>Everything is evaluated on {@code lower(node_path)}</b>, for two reasons that
+     * coincide: parity (the ES path field is lowercased and {@code NodePath} equality ignores
+     * case) and the index — {@code branch_entry_path_lower (repo_key, branch,
+     * lower(node_path) text_pattern_ops)}, added by migration 002, is the only index that can
+     * serve both the prefix scan and the ordered keyset walk. The DB collation is
+     * {@code en_US.utf8} with no {@code text_pattern_ops} on the unique path index, so ordering
+     * by the raw column would neither use that index nor sort like the ES field did.
+     *
+     * <p>The keyset is {@code (lower(node_path), node_id)} — a total order even if two rows ever
+     * collided on the lowercased path — and it is EXCLUSIVE: a page resumes strictly after
+     * {@code afterPath}/{@code afterNodeId}. One row beyond {@code pageSize} is fetched to
+     * answer {@code hasMore} without an extra empty round trip.
+     */
+    public static BranchEntryPage listEntries( Connection connection, RepoRef repo, String branch, String pathPrefix, boolean descending,
+                                                String afterPath, String afterNodeId, int pageSize, boolean withTotal )
+        throws SQLException
+    {
+        return listEntries( connection, RepoKeys.resolve( connection, repo ), branch, pathPrefix, descending, afterPath, afterNodeId,
+                             pageSize, withTotal );
+    }
+
+    public static BranchEntryPage listEntries( Connection connection, long repoKey, String branch, String pathPrefix, boolean descending,
+                                                String afterPath, String afterNodeId, int pageSize, boolean withTotal )
+        throws SQLException
+    {
+        String prefixPattern = pathPrefix == null ? null : escapeLike( pathPrefix.toLowerCase( Locale.ROOT ) ) + "/%";
+
+        long totalHits = withTotal ? countEntries( connection, repoKey, branch, prefixPattern ) : BranchEntryPage.NO_TOTAL;
+
+        String direction = descending ? "DESC" : "ASC";
+        String comparison = descending ? "<" : ">";
+        StringBuilder sql = new StringBuilder( LISTING_SELECT ).append( " WHERE be.repo_key = ? AND be.branch = ?" );
+        if ( prefixPattern != null )
+        {
+            sql.append( " AND lower(be.node_path) LIKE ?" );
+        }
+        if ( afterPath != null && !afterPath.isEmpty() )
+        {
+            sql.append( " AND (" )
+                .append( PATH_KEY )
+                .append( ' ' )
+                .append( comparison )
+                .append( " ? OR (lower(be.node_path) = ? AND be.node_id COLLATE \"C\" " )
+                .append( comparison )
+                .append( " ?))" );
+        }
+        sql.append( " ORDER BY " )
+            .append( PATH_KEY )
+            .append( ' ' )
+            .append( direction )
+            .append( ", be.node_id COLLATE \"C\" " )
+            .append( direction )
+            .append( " LIMIT ?" );
+
+        try (PreparedStatement statement = connection.prepareStatement( sql.toString() ))
+        {
+            int index = 1;
+            statement.setLong( index++, repoKey );
+            statement.setString( index++, branch );
+            if ( prefixPattern != null )
+            {
+                statement.setString( index++, prefixPattern );
+            }
+            if ( afterPath != null && !afterPath.isEmpty() )
+            {
+                statement.setString( index++, afterPath );
+                statement.setString( index++, afterPath );
+                statement.setString( index++, afterNodeId == null ? "" : afterNodeId );
+            }
+            statement.setInt( index, pageSize + 1 );
+
+            List<BranchEntryRecord> entries = new ArrayList<>();
+            String nextPath = "";
+            String nextNodeId = "";
+            boolean hasMore = false;
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                while ( resultSet.next() )
+                {
+                    if ( entries.size() == pageSize )
+                    {
+                        hasMore = true;
+                        break;
+                    }
+                    entries.add( map( resultSet ) );
+                    nextPath = resultSet.getString( "path_key" );
+                    nextNodeId = resultSet.getString( "node_id" );
+                }
+            }
+            return new BranchEntryPage( entries, nextPath, nextNodeId, hasMore, totalHits );
+        }
+    }
+
+    /**
+     * The up-front total the listing's consumers need before iterating
+     * ({@code ReindexListener#branch(repositoryId, branch, size)} reports it, and the ES path
+     * read it off the search response). A plain indexed count on the same predicate as the walk.
+     */
+    private static long countEntries( Connection connection, long repoKey, String branch, String prefixPattern )
+        throws SQLException
+    {
+        String sql = "SELECT count(*) FROM branch_entry WHERE repo_key = ? AND branch = ?" +
+            ( prefixPattern == null ? "" : " AND lower(node_path) LIKE ?" );
+        try (PreparedStatement statement = connection.prepareStatement( sql ))
+        {
+            statement.setLong( 1, repoKey );
+            statement.setString( 2, branch );
+            if ( prefixPattern != null )
+            {
+                statement.setString( 3, prefixPattern );
+            }
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                return resultSet.next() ? resultSet.getLong( 1 ) : 0;
             }
         }
     }

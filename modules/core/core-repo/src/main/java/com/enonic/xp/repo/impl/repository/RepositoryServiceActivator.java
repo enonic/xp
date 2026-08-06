@@ -16,6 +16,7 @@ import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
+import com.enonic.xp.storage.spi.NodeStore;
 
 @Component(immediate = true)
 public class RepositoryServiceActivator
@@ -30,6 +31,8 @@ public class RepositoryServiceActivator
 
     private final NodeSearchService nodeSearchService;
 
+    private final NodeStore nodeStore;
+
     private final BranchService branchService;
 
     private volatile RepositoryAuditLogSupport repositoryAuditLogSupport;
@@ -41,7 +44,7 @@ public class RepositoryServiceActivator
                                        @Reference final IndexServiceInternal indexServiceInternal,
                                        @Reference final NodeRepositoryService nodeRepositoryService,
                                        @Reference final NodeStorageService nodeStorageService,
-                                       @Reference final NodeSearchService nodeSearchService,
+                                       @Reference final NodeSearchService nodeSearchService, @Reference final NodeStore nodeStore,
                                        @Reference final BranchService branchService )
     {
         this.indexServiceInternal = indexServiceInternal;
@@ -49,6 +52,7 @@ public class RepositoryServiceActivator
         this.repositoryEntryService = repositoryEntryService;
         this.nodeRepositoryService = nodeRepositoryService;
         this.nodeSearchService = nodeSearchService;
+        this.nodeStore = nodeStore;
         this.branchService = branchService;
     }
 
@@ -56,7 +60,7 @@ public class RepositoryServiceActivator
     public void activate( final BundleContext context )
     {
         final RepositoryServiceImpl repositoryService =
-            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, nodeStorageService, nodeSearchService,
+            new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, nodeStorageService, nodeSearchService, nodeStore,
                                        branchService, () -> repositoryAuditLogSupport );
         SystemRepoInitializer.create()
             .setIndexServiceInternal( indexServiceInternal )

@@ -386,6 +386,92 @@ reached from a second direction. No workaround was added: papering over teardown
 the one thing D2 exists to fix. **Gate C must land D2 before content-level itests can be
 green**, which sharpens Gate C's ordering.
 
+## GATE C DONE (2026-08-06) — D2 SQL surface, structured translation, corpus green
+
+nodb **233 tests / 23 suites**, core-repo **461**, client **54**, all zero failures under
+forced rerun. Corpus batch-1 in nodb mode: **0 FAILURE**, deltas all DOCUMENTED, and
+**deterministic across repeated runs** (verified independently by the orchestrator).
+
+### 🔴 A SILENT LOST WRITE, found by the corpus and fixed
+
+The corpus failed non-deterministically — one arbitrary node (a different one each run)
+missing from the index. First filed as "couldn't reproduce, probably went away"; the
+orchestrator reproduced it on the first attempt, which is why it was chased instead of
+re-run. Root cause in `Indexer.applyNextBatch`'s empty-queue branch:
+```java
+entries = Tx.inTenantTx(... OutboxStore.next(conn, checkpoint, batchSize));  // TX 1
+if (entries.isEmpty()) {
+    long max = Tx.inTenantTx(... OutboxStore::maxSeq);                       // TX 2
+    return max > checkpoint ? publishCheckpoint(max) : checkpoint;           // jumps past unseen rows
+}
+```
+`Tx.inTenantTx` opens and commits its own connection, so those are **two transactions, two
+snapshots**: a write committing in the window is invisible to TX 1 and visible to TX 2, and
+the checkpoint advances past a row that was never applied. Since `next` only reads *above*
+the checkpoint, that row is **unreachable forever** — no error, no retry, no lag signal.
+A document permanently absent from the search index in production.
+The blind jump existed only because `next` INNER-joined `repository`, hiding rows whose repo
+had been dropped and stalling the checkpoint behind them. **Fix: `next` LEFT-joins**, orphans
+come back with a null `repoId` and are skipped explicitly, and the empty branch returns the
+checkpoint unchanged — restoring the invariant the whole at-least-once argument rests on:
+*the checkpoint never advances past a row the pass did not return.*
+Regression test `IndexerTest.aWriteCommittingWhileAPassSeesAnEmptyQueueIsNeverBuriedBelow
+TheCheckpoint` **provokes** the window (a proxied `DataSource` commits the late write at the
+instant the outbox read's transaction closes) rather than waiting for it, and asserts both
+the checkpoint invariant and the document's eventual searchability. **Orchestrator negative
+control:** re-introducing the `maxSeq` jump makes it fail with *"the checkpoint advanced past
+outbox seq 5 without ever reading it"*; restoring the fix makes it pass. The test is not
+vacuous.
+
+### The corpus was measuring ES against ES — caught and fixed
+
+`AbstractNodeTest` wired `nodeSearchIndex` to embedded ES unconditionally, so the first
+"nodb-mode" corpus run compared ES with itself: a green gate proving nothing. Now routed to
+NoDB when `-Dxp.itest.opensearch=true`. Worth remembering as the failure mode this phase's
+acceptance rules exist to prevent.
+
+### D2 landed — the last storage-index consumer is retired
+
+SPI mirrors the version-family pattern (capability probe + default-throws):
+`listChildEntries` / `listBranchEntries` return an up-front `totalHits` (one indexed count)
+plus a lazily keyset-paged `Iterable` behind `NodeBranchEntries`, so `ReindexExecutor` needed
+no reshaping. Keyset is `(lower(node_path) COLLATE "C", node_id)` — `COLLATE "C"` is
+load-bearing twice: byte order matching the lowercased ES path keyword, and the only
+collation under which migration 002's `text_pattern_ops` index serves both the prefix scan
+and the ordered walk. **All five previously-excluded delete-cascade classes now pass** in
+nodb mode: `ContentServiceImplTest_getById` 6/6 bodies AND teardowns,
+`FindNodesWithVersionDifferenceCommandTest` 10/10 (was 8/10), `CompareNodeCommandTest` 8/8,
+`CompareNodesCommandTest` 1/1, `DeleteNodeByPathCommandTest` 1/1.
+
+### The multi-repo-sort premise was wrong — measured, not assumed
+
+Item 4 predicted the row would "pass in ES and fail on OpenSearch". **ES 2.4 ERRORS on it**
+(`IndexException: Search request failed`); nodb returns 2 hits. `SOURCE-04` was added as the
+control (same sort on a field in *no* repo — succeeds in ES), isolating the mixed mapping as
+the cause exactly as predicted. So the `unmapped_type` issue is not latent, it is already
+broken. Required a new **`FIXED`** acceptance tag (the port must not error; the difference is
+documented) — also now carrying D4's G-2/G-4 rulings.
+
+### Production bug found on the way
+
+`FindNodesByMultiRepoQueryResultFactory` sliced 7 characters off `_index` to recover the repo
+id and threw `StringIndexOutOfBoundsException` for any repo id shorter than `search-`. Fixed.
+This is precisely Gate 0(b)'s "nothing correctness-relevant ever parses a name back" finding,
+reached from the other direction.
+
+### Open, carried to Gate F
+
+- `FindNodesByMultiRepoQueryCommandTest` cannot pass as a **class** in nodb mode: every method
+  creates fixed-name `repo1`/`repo2` and relies on `super(true)`'s per-method ES wipe, while
+  the nodb tenant is class-scoped. Per-method it passes. **Gate F needs per-method nodb
+  tenants** — the same fixture-granularity asymmetry that excludes `VersionTableVacuumTaskTest`.
+- `PushNodesCommandTest` 15/16 — DESIGN risk #8 (intra-push rename vs `unique(repo_key,
+  branch, node_path)`), still needing `DEFERRABLE` unique or equivalent.
+- Comparator narrowings recorded in code: hit ORDER is a hard requirement only for rows
+  declaring an ORDER BY (D7's actual wording); cross-engine exception *text* is documented
+  while a one-sided error still fails; a sort-value delta is documented only when one side is
+  a missing sentinel.
+
 ## Gate 0(a) results — DSL completeness (2026-08-05)
 
 **STOP CONDITION NOT TRIGGERED.** Every NoQL construct renders as DSL: all 10 comparison

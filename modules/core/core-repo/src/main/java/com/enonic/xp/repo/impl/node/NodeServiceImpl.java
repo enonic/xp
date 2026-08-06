@@ -520,6 +520,7 @@ public class NodeServiceImpl
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
+            .nodeStore( this.nodeStore )
             .build()
             .execute();
 

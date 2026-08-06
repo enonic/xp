@@ -5,10 +5,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -67,6 +72,30 @@ class NodbGoldenCorpusTest
 
     private static final String BASELINE_PROPERTY = "xp.nodb.corpus.baseline";
 
+    /**
+     * Subset selectors (Gate 0(e)'s recorded follow-up: a full run is ~45 minutes, which is too
+     * slow for the per-batch verification Gates C/D/E actually need).
+     * <p>
+     * {@code families} and {@code acceptance} are comma-separated, case-insensitive, and AND
+     * together; {@code ids} names exact query ids and wins over both. An unmatched selector fails
+     * the run rather than silently executing nothing — a gate that "passes" because a typo
+     * selected zero rows is worse than no gate.
+     */
+    private static final String FAMILIES_PROPERTY = "xp.nodb.corpus.families";
+
+    private static final String ACCEPTANCE_PROPERTY = "xp.nodb.corpus.acceptance";
+
+    private static final String IDS_PROPERTY = "xp.nodb.corpus.ids";
+
+    /**
+     * Ids to drop from whatever the other selectors chose. Needed because a family is not the same
+     * thing as a translation batch: a handful of rows live in a batch-1 family while exercising a
+     * later batch's construct ({@code FILTER-06-post-filter} carries an AGGREGATION, the two
+     * {@code SORT-0[89]-geodistance} rows are geo sorts). Naming them explicitly is how a
+     * batch-1 run stays a batch-1 run without re-labelling the corpus around the gate schedule.
+     */
+    private static final String EXCLUDE_PROPERTY = "xp.nodb.corpus.exclude";
+
     private static final String DEFAULT_BASELINE = "src/test/resources/nodb/corpus/es-baseline.json";
 
     private static final Path REPORT_DIR = Path.of( "build", "nodb-corpus" );
@@ -103,7 +132,7 @@ class NodbGoldenCorpusTest
         throws IOException
     {
         final String mode = System.getProperty( MODE_PROPERTY, "diff" );
-        final List<GoldenQuery> corpus = GoldenCorpus.all();
+        final List<GoldenQuery> corpus = selected();
         final List<QueryOutcome> outcomes = run( corpus );
 
         Files.createDirectories( REPORT_DIR );
@@ -121,13 +150,64 @@ class NodbGoldenCorpusTest
         }
     }
 
+    // ------------------------------------------------------------------ selection
+
+    /**
+     * The corpus rows this run executes. A filtered run is a SUBSET operation on both sides: the
+     * diff compares only the selected ids (see {@link #diff}) and a filtered record MERGES into the
+     * committed baseline instead of replacing it, so adding one row costs one short ES-mode run
+     * rather than a 45-minute full re-record.
+     */
+    private static List<GoldenQuery> selected()
+    {
+        final Set<String> ids = csv( IDS_PROPERTY );
+        final Set<String> families = csv( FAMILIES_PROPERTY );
+        final Set<String> acceptances = csv( ACCEPTANCE_PROPERTY );
+        final Set<String> excluded = csv( EXCLUDE_PROPERTY );
+
+        final List<GoldenQuery> all = GoldenCorpus.all();
+        if ( ids.isEmpty() && families.isEmpty() && acceptances.isEmpty() && excluded.isEmpty() )
+        {
+            return all;
+        }
+
+        final List<GoldenQuery> selected = all.stream()
+            .filter( q -> ids.isEmpty() ? matches( q, families, acceptances ) : ids.contains( q.id().toLowerCase( Locale.ROOT ) ) )
+            .filter( q -> !excluded.contains( q.id().toLowerCase( Locale.ROOT ) ) )
+            .toList();
+
+        assertTrue( !selected.isEmpty(), "the corpus filter selected NO rows (ids=" + ids + " families=" + families + " acceptance=" +
+            acceptances + " exclude=" + excluded + ") -- a gate that runs zero queries is not a gate" );
+
+        System.out.println( "[corpus] filter selected " + selected.size() + " of " + all.size() + " rows (ids=" + ids + " families=" +
+                                families + " acceptance=" + acceptances + " exclude=" + excluded + ")" );
+        return selected;
+    }
+
+    private static boolean matches( final GoldenQuery query, final Set<String> families, final Set<String> acceptances )
+    {
+        return ( families.isEmpty() || families.contains( query.family().toLowerCase( Locale.ROOT ) ) ) &&
+            ( acceptances.isEmpty() || acceptances.contains( query.acceptance().name().toLowerCase( Locale.ROOT ) ) );
+    }
+
+    private static Set<String> csv( final String property )
+    {
+        final String value = System.getProperty( property );
+        if ( value == null || value.isBlank() )
+        {
+            return Set.of();
+        }
+        return Arrays.stream( value.split( "," ) ).map( String::trim ).filter( s -> !s.isEmpty() ).map( s -> s.toLowerCase( Locale.ROOT ) ).collect(
+            Collectors.toUnmodifiableSet() );
+    }
+
     // ------------------------------------------------------------------ modes
 
     private void record( final List<QueryOutcome> outcomes )
         throws IOException
     {
         final Path baseline = baselinePath();
-        CorpusArtifact.write( baseline, "es", outcomes );
+        CorpusArtifact.write( baseline, "es", merged( baseline, outcomes ) );
         System.out.println( "[corpus] recorded " + outcomes.size() + " queries to " + baseline.toAbsolutePath() );
 
         // Recording is not a licence to record nothing: a query that silently returns no hits, no
@@ -144,6 +224,26 @@ class NodbGoldenCorpusTest
             "allowEmpty -- fix the fixture or the query: " + empty );
     }
 
+    /**
+     * A filtered record must not truncate the committed baseline. Rows the run did not execute are
+     * carried over verbatim; rows it did execute replace their previous recording.
+     */
+    private static List<QueryOutcome> merged( final Path baseline, final List<QueryOutcome> outcomes )
+        throws IOException
+    {
+        if ( !Files.exists( baseline ) )
+        {
+            return outcomes;
+        }
+        final Map<String, QueryOutcome> byId = new LinkedHashMap<>();
+        CorpusArtifact.read( baseline ).forEach( outcome -> byId.put( outcome.id(), outcome ) );
+        final int carried = byId.size();
+        outcomes.forEach( outcome -> byId.put( outcome.id(), outcome ) );
+        System.out.println(
+            "[corpus] merged " + outcomes.size() + " recorded row(s) into " + carried + " existing baseline row(s) -> " + byId.size() );
+        return List.copyOf( byId.values() );
+    }
+
     private void diff( final List<QueryOutcome> outcomes )
         throws IOException
     {
@@ -153,7 +253,20 @@ class NodbGoldenCorpusTest
             fail( "no baseline at " + baseline.toAbsolutePath() + " -- run `./gradlew :itest:itest-core:recordNodbCorpus` first" );
         }
 
-        final List<CorpusComparator.Delta> deltas = CorpusComparator.compare( CorpusArtifact.read( baseline ), outcomes );
+        // A filtered run diffs only what it executed: comparing against the whole baseline would
+        // report every unselected row as "missing from this run" and drown the real deltas.
+        final Set<String> executed = outcomes.stream().map( QueryOutcome::id ).collect( Collectors.toSet() );
+        final List<QueryOutcome> expected =
+            CorpusArtifact.read( baseline ).stream().filter( outcome -> executed.contains( outcome.id() ) ).toList();
+
+        // Which rows declare an ORDER BY -- read from the corpus TABLE, not from the artifact, so
+        // teaching the comparator D7's "EXACT applies to DETERMINISTIC SORTS" needed no re-record.
+        CorpusComparator.orderedRows( selected().stream()
+                                          .filter( q -> !q.query().get().getOrderBys().isEmpty() )
+                                          .map( GoldenQuery::id )
+                                          .collect( Collectors.toSet() ) );
+
+        final List<CorpusComparator.Delta> deltas = CorpusComparator.compare( expected, outcomes );
 
         final List<CorpusComparator.Delta> failures =
             deltas.stream().filter( d -> d.severity() == CorpusComparator.Severity.FAILURE ).toList();
@@ -270,8 +383,14 @@ class NodbGoldenCorpusTest
         createRepo( REPO_A, USER_A );
         createRepo( REPO_B, USER_B );
 
-        createNodeAs( USER_A, REPO_A, "repo-a-node" );
-        createNodeAs( USER_B, REPO_B, "repo-b-node" );
+        // `onlyInRepoA` exists in repo A and in NO other repository -- that asymmetry is the whole
+        // point of SOURCE-03: a multi-index sort on a field one index has never seen is exactly
+        // where the hardcoded unmapped_type: long becomes a real failure (Gate 0 item 4).
+        final PropertyTree repoAData = new PropertyTree();
+        repoAData.addString( "onlyInRepoA", "aaa" );
+
+        createNodeAs( USER_A, REPO_A, "repo-a-node", repoAData );
+        createNodeAs( USER_B, REPO_B, "repo-b-node", new PropertyTree() );
     }
 
     private void createRepo( final RepositoryId repositoryId, final User owner )
@@ -295,7 +414,7 @@ class NodbGoldenCorpusTest
      * return zero hits. Keeping the refresh context-scoped (rather than reaching for the ES-only
      * global {@code refresh()}) is also what keeps the harness usable in nodb mode later.
      */
-    private void createNodeAs( final User user, final RepositoryId repositoryId, final String nodeId )
+    private void createNodeAs( final User user, final RepositoryId repositoryId, final String nodeId, final PropertyTree data )
     {
         ContextBuilder.create()
             .repositoryId( repositoryId )
@@ -307,6 +426,7 @@ class NodbGoldenCorpusTest
                                 .setNodeId( NodeId.from( nodeId ) )
                                 .name( nodeId )
                                 .parent( NodePath.ROOT )
+                                .data( data )
                                 .build() );
                 nodeService.refresh( RefreshMode.ALL );
             } );
