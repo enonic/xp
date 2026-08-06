@@ -555,6 +555,10 @@ table — not attempted here to avoid clobbering that branch's own bookkeeping.
 
 ## 10. Risk register (self-review 2026-07-17)
 
+Cross-cutting findings surfaced while building (fixed defects whose class deserves an
+audit, plus open questions needing a decision or measurement) are collected in
+[`FINDINGS.md`](FINDINGS.md).
+
 1. **Protocol atomicity (BUG)**: SPI promises atomic version+branch+outbox writes; proto
    has only per-record RPCs. Add a `WriteBatch` RPC (one transaction, one Ack/seq).
    **Resolved (engine layer) 2026-07-17**: `com.enonic.nodb.engine.store.WriteService.write`

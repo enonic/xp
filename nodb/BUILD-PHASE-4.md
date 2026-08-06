@@ -491,9 +491,11 @@ collation keys (D8) is what does it.
 plugin called `Collator.getInstance()` — i.e. **`Locale.getDefault()`**. Measured: on an
 `nb_NO` machine that produces byte-for-byte the `no` ordering (and byte-for-byte the recorded
 ES baseline), while `ULocale.ROOT` produces what nodb returns. So XP's DUCET fallback **and
-every unmapped-locale `COLLATE` sort has been environment-dependent** — the same locale
-sorted differently on a Norwegian developer's box and a UTC server, silently. NoDB pins
-`ULocale.ROOT` (real DUCET), deterministic everywhere. This is Gate 0(d)'s
+every unmapped-locale `COLLATE` sort has depended on `Locale.getDefault()`** — the JVM's
+default locale, a deployment property: `nb_NO` on a Norwegian developer's machine, typically
+`en_US` in a Linux container, or a `C`/`POSIX` fallback when `LANG` is unset. Same data, same
+query, different order, silently. NoDB pins `ULocale.ROOT` (real DUCET), deterministic
+everywhere. This is Gate 0(d)'s
 environment-dependent-sort hazard reached from the opposite direction, and it is a
 behaviour *fix*, recorded as corpus deltas on `ICU-05`/`ICU-06`. ICU-01..04 show **no** order
 delta — the per-locale collators agree with ES exactly.
