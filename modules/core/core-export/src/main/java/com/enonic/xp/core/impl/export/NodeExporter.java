@@ -203,7 +203,7 @@ public class NodeExporter
                                                                                .parent( node.path() )
                                                                                .setOrderExpressions(
                                                                                    node.getChildOrder().getOrderExpressions() )
-                                                                               .withPath( true )
+                                                                               .returnFields( NodeIndexPath.PATH )
                                                                                .size( -1 )
                                                                                .build() );
 

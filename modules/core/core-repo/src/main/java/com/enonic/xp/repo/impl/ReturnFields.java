@@ -32,6 +32,16 @@ public class ReturnFields
         return new ReturnFields( ImmutableSet.<String>builder().addAll( this.indexPaths ).add( indexPath.getPath() ).build() );
     }
 
+    public ReturnFields addAll( final Iterable<IndexPath> indexPaths )
+    {
+        final ImmutableSet.Builder<String> builder = ImmutableSet.<String>builder().addAll( this.indexPaths );
+        for ( final IndexPath indexPath : indexPaths )
+        {
+            builder.add( indexPath.getPath() );
+        }
+        return new ReturnFields( builder.build() );
+    }
+
     public String[] getReturnFieldNames()
     {
         return this.indexPaths.toArray( String[]::new );

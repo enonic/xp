@@ -5,6 +5,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentPathsByQueryResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeQuery;
 
 import static java.util.Objects.requireNonNull;
@@ -43,7 +44,7 @@ final class FindContentPathsByQueryCommand
 
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.contentQuery, parent ).
             addQueryFilters( createFilters() ).
-            withPath( true ).
+            returnFields( NodeIndexPath.PATH ).
             build();
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
