@@ -22,9 +22,11 @@ import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.webapp.WebappService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -47,6 +49,8 @@ public abstract class AbstractPortalUrlServiceImplTest
     protected StyleDescriptorService styleDescriptorService;
 
     protected RedirectChecksumService redirectChecksumService;
+
+    protected SiteService siteService;
 
     protected VirtualHost virtualHost;
 
@@ -82,11 +86,14 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.redirectChecksumService = mock( RedirectChecksumService.class );
 
-        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl();
+        this.siteService = mock( SiteService.class );
+
+        PortalUrlGeneratorService portalUrlGeneratorService =
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
-                                      this.redirectChecksumService, this.projectService, portalUrlGeneratorService );
+                                      this.redirectChecksumService, this.projectService, portalUrlGeneratorService, this.siteService );
 
         PortalRequestAccessor.set( this.portalRequest );
 

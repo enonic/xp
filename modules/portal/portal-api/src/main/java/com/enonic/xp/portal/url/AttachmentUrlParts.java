@@ -1,0 +1,20 @@
+package com.enonic.xp.portal.url;
+
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+/**
+ * Parts of an attachment URL, for building the full URL from segments:
+ * {@code url = <baseUrl> + path + queryString}. All values are URL-escaped as they appear in the URL.
+ *
+ * @param path        the full media API path with a leading slash: {@code /media:attachment/<context>/<id>:<fingerprint>/<name>}
+ * @param queryString URL-escaped query string prefixed with {@code ?}; empty when there are no parameters
+ * @param context     project context segment: {@code <project>} on the master branch, {@code <project>:<branch>} otherwise
+ * @param id          content id
+ * @param fingerprint media fingerprint; joined with the id as {@code <id>:<fingerprint>} in the path
+ * @param name        URL-escaped attachment file name segment
+ */
+@NullMarked
+public record AttachmentUrlParts(String path, String queryString, String context, String id, @Nullable String fingerprint, String name)
+{
+}

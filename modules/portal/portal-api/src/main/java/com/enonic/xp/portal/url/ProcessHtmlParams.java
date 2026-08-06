@@ -27,6 +27,12 @@ public final class ProcessHtmlParams
 
     private String baseUrl;
 
+    private String imageBaseUrl;
+
+    private String attachmentBaseUrl;
+
+    private String pageBaseUrl;
+
     public String getValue()
     {
         return this.value;
@@ -98,9 +104,67 @@ public final class ProcessHtmlParams
         return baseUrl;
     }
 
+    /**
+     * Base URL of a mount where media URLs generated for the processed HTML live under
+     * the "_" endpoint segment: {@code <baseUrl>/_/media:image/...}. Despite its generic
+     * name it only affects media URLs - content links are not affected.
+     * Trailing slash is appended if missing. Empty value is treated as unspecified.
+     *
+     * @deprecated use {@link #imageBaseUrl(String)} and {@link #attachmentBaseUrl(String)}
+     * for media URLs (append {@code /_} to the value to keep the mount form produced by
+     * this method) and {@link #pageBaseUrl(String)} for content links.
+     */
+    @Deprecated
     public ProcessHtmlParams baseUrl( final String baseUrl )
     {
-        this.baseUrl = baseUrl;
+        this.baseUrl = Strings.emptyToNull( baseUrl );
+        return this;
+    }
+
+    public String getImageBaseUrl()
+    {
+        return imageBaseUrl;
+    }
+
+    /**
+     * Base URL used verbatim as the API root of image URLs generated for the processed HTML:
+     * {@code <imageBaseUrl>/media:image/...} - no "_" endpoint segment is added.
+     * Takes precedence over {@code baseUrl}, which points at a mount where APIs
+     * live under the "_" endpoint segment: {@code <baseUrl>/_/media:image/...}.
+     * <p>
+     * Image and attachment bases are separate because the two media APIs can be
+     * mounted (and therefore served) at different locations.
+     */
+    public ProcessHtmlParams imageBaseUrl( final String imageBaseUrl )
+    {
+        this.imageBaseUrl = Strings.emptyToNull( imageBaseUrl );
+        return this;
+    }
+
+    public String getAttachmentBaseUrl()
+    {
+        return attachmentBaseUrl;
+    }
+
+    /**
+     * Base URL used verbatim as the API root of attachment URLs generated for the processed
+     * HTML: {@code <attachmentBaseUrl>/media:attachment/...} - no "_" endpoint segment is added.
+     * Takes precedence over {@code baseUrl}.
+     */
+    public ProcessHtmlParams attachmentBaseUrl( final String attachmentBaseUrl )
+    {
+        this.attachmentBaseUrl = Strings.emptyToNull( attachmentBaseUrl );
+        return this;
+    }
+
+    public String getPageBaseUrl()
+    {
+        return pageBaseUrl;
+    }
+
+    public ProcessHtmlParams pageBaseUrl( final String pageBaseUrl )
+    {
+        this.pageBaseUrl = Strings.emptyToNull( pageBaseUrl );
         return this;
     }
 

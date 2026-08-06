@@ -15,6 +15,8 @@ public final class PageUrlParams
 
     private String branch;
 
+    private String baseUrl;
+
     public String getId()
     {
         return this.id;
@@ -33,6 +35,11 @@ public final class PageUrlParams
     public String getBranch()
     {
         return branch;
+    }
+
+    public String getBaseUrl()
+    {
+        return baseUrl;
     }
 
     public PageUrlParams id( final String value )
@@ -59,6 +66,19 @@ public final class PageUrlParams
         return this;
     }
 
+    /**
+     * Base URL used verbatim as the prefix of the generated URL, followed by the content
+     * path relative to the nearest site (the full content path when there is no site):
+     * {@code <baseUrl>/<site-relative path>}. When set, base URL resolution from
+     * configuration and from the current request is skipped.
+     * Empty value is treated as unspecified.
+     */
+    public PageUrlParams baseUrl( final String value )
+    {
+        this.baseUrl = Strings.emptyToNull( value );
+        return this;
+    }
+
     @Override
     public String toString()
     {
@@ -70,6 +90,7 @@ public final class PageUrlParams
         helper.add( "path", this.path );
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
+        helper.add( "baseUrl", this.baseUrl );
         return helper.toString();
     }
 }

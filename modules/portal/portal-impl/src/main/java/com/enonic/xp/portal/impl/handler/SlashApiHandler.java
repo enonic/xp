@@ -8,6 +8,7 @@ import java.util.regex.MatchResult;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
@@ -23,6 +24,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.controller.ControllerScript;
 import com.enonic.xp.portal.controller.ControllerScriptFactory;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandler;
 import com.enonic.xp.portal.impl.api.DynamicUniversalApiHandlerRegistry;
@@ -51,7 +53,7 @@ import com.enonic.xp.web.websocket.WebSocketEndpoint;
 import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.webapp.WebappService;
 
-@Component(service = SlashApiHandler.class)
+@Component(service = SlashApiHandler.class, configurationPid = "com.enonic.xp.portal")
 public class SlashApiHandler
 {
     private final ControllerScriptFactory controllerScriptFactory;
@@ -68,6 +70,8 @@ public class SlashApiHandler
 
     private final SseManager sseManager;
 
+    private volatile boolean mediaApiAutoMount = true;
+
     @Activate
     public SlashApiHandler( @Reference final ControllerScriptFactory controllerScriptFactory,
                             @Reference final ApiDescriptorService apiDescriptorService, @Reference final SiteService siteService,
@@ -83,6 +87,13 @@ public class SlashApiHandler
         this.adminToolDescriptorService = adminToolDescriptorService;
         this.universalApiHandlerRegistry = universalApiHandlerRegistry;
         this.sseManager = sseManager;
+    }
+
+    @Activate
+    @Modified
+    public void activate( final PortalConfig config )
+    {
+        this.mediaApiAutoMount = config.legacy_mediaApiAutoMount_enabled();
     }
 
     public WebResponse handle( final WebRequest webRequest )
@@ -250,7 +261,7 @@ public class SlashApiHandler
             return false;
         }
 
-        if ( ApplicationKey.MEDIA_MOD.equals( descriptorKey.getApplicationKey() ) )
+        if ( mediaApiAutoMount && ApplicationKey.MEDIA_MOD.equals( descriptorKey.getApplicationKey() ) )
         {
             return true;
         }

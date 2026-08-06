@@ -32,9 +32,9 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         this.projectService = requireNonNull( projectService );
     }
 
-    BaseUrlMetadata extract( final BaseUrlParams params )
+    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl )
     {
-        final boolean noExplicitContext = params.getProjectName() == null && params.getBranch() == null;
+        final boolean noExplicitContext = baseUrl == null && params.getProjectName() == null && params.getBranch() == null;
 
         final ProjectName projectName = ContentProjectResolver.create()
             .setProjectName( params.getProjectName() )
@@ -52,7 +52,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( noExplicitContext && PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
@@ -66,7 +66,9 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             final Context context =
                 ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
 
-            final Content content = context.callWith( () -> getContent( requireNonNullElse( params.getId(), params.getPath() ) ) );
+            final Content content = params.getContent() != null
+                ? context.callWith( () -> params.getContent().get() )
+                : context.callWith( () -> getContent( requireNonNullElse( params.getId(), params.getPath() ) ) );
 
             builder.setContent( content );
 
@@ -80,23 +82,31 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
                 site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
             }
 
-            final SiteConfigs siteConfigs;
-            if ( site != null )
-            {
-                siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
-            }
-            else
-            {
-                final Project resolvedProject = resolveProject( projectName, portalRequest );
-                siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
-            }
-
             if ( site != null )
             {
                 builder.setNearestSite( site );
             }
 
-            builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
+            if ( baseUrl != null )
+            {
+                builder.setBaseUrl( baseUrl );
+            }
+            else
+            {
+                final SiteConfigs siteConfigs;
+                if ( site != null )
+                {
+                    siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
+                }
+                else
+                {
+                    final Project resolvedProject = resolveProject( projectName, portalRequest );
+                    siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
+                }
+
+                builder.setSiteConfigs( siteConfigs );
+                builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
+            }
         }
 
         return builder.build();

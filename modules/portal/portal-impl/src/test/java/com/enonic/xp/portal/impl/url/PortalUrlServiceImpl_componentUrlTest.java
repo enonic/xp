@@ -168,7 +168,8 @@ class PortalUrlServiceImpl_componentUrlTest
             .build()
             .callWith( () -> this.service.componentUrl( params ) );
 
-        assertEquals( "/b/mycontent?k=v", url );
+        // the configured Base URL is used verbatim: urlType only applies to request-anchored URLs
+        assertEquals( "https://cdn.company.com/b/mycontent?k=v", url );
     }
 
     @Test

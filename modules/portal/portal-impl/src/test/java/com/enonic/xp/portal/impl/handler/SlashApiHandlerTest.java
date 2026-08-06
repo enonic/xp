@@ -24,6 +24,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.controller.ControllerScript;
@@ -921,6 +922,123 @@ class SlashApiHandlerTest
         request.setContentPath( ContentPath.from( "/mysite/path" ) );
         request.setRawPath( "/site/repo/branch/mysite/path/_/media:image/id/scale/name" );
         request.setMode( RenderMode.LIVE );
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    @Test
+    void testMediaAutoMountDisabledNotMountedOnSite()
+        throws Exception
+    {
+        activateMediaApiAutoMount( false );
+
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+
+        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        request.setRawPath( "/site/repo/branch/path/_/media:image/id/scale/name" );
+        request.setMode( RenderMode.LIVE );
+
+        assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
+            .extracting( WebException::getStatus )
+            .isEqualTo( HttpStatus.NOT_FOUND );
+    }
+
+    @Test
+    void testMediaAutoMountDisabledMountedOnSite()
+        throws Exception
+    {
+        activateMediaApiAutoMount( false );
+
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+
+        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "com.enonic.app.myapp" );
+
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/path" ) );
+        mockDataWithSiteConfig( applicationKey, site );
+        when( site.getPermissions() ).thenReturn(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+        request.setSite( site );
+        request.setContentPath( ContentPath.from( "/path" ) );
+
+        when( siteService.getDescriptor( eq( applicationKey ) ) ).thenReturn( SiteDescriptor.create()
+                                                                                  .applicationKey( applicationKey )
+                                                                                  .apiMounts( DescriptorKeys.from( apiDescriptorKey ) )
+                                                                                  .build() );
+
+        request.setRawPath( "/site/repo/branch/path/_/media:image/id/scale/name" );
+        request.setMode( RenderMode.LIVE );
+
+        WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
+    private void activateMediaApiAutoMount( final boolean enabled )
+    {
+        final PortalConfig config = mock( PortalConfig.class );
+        when( config.legacy_mediaApiAutoMount_enabled() ).thenReturn( enabled );
+        this.handler.activate( config );
+    }
+
+    @Test
+    void testMediaOnAdminToolWithToolMounts()
+        throws Exception
+    {
+        activateMediaApiAutoMount( false );
+
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        final DescriptorKey toolKey = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.contentstudio" ), "site" );
+        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
+            .title( "Site" )
+            .key( toolKey )
+            .addAllowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .apiMounts(
+                DescriptorKeys.from( DescriptorKey.from( "media:image" ), DescriptorKey.from( "media:attachment" ) ) )
+            .build();
+        when( adminToolDescriptorService.getByKey( eq( toolKey ) ) ).thenReturn( toolDescriptor );
+
+        request.setRawPath( "/admin/com.enonic.app.contentstudio/site/_/media:image/repo/id/scale/name" );
+        when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
+
+        // media anchored at the tool base is served through the tool's own mounts,
+        // within the admin session
+        WebResponse response = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+    }
+
+    @Test
+    void testMediaOnAdminToolWithoutToolMounts()
+    {
+        // media APIs are never auto-mounted on admin tools, regardless of the legacy flag
+
+        final DescriptorKey apiDescriptorKey = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+        final ApiDescriptor apiDescriptor =
+            ApiDescriptor.create().key( apiDescriptorKey ).allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) ).build();
+        when( apiDescriptorService.getByKey( eq( apiDescriptorKey ) ) ).thenReturn( apiDescriptor );
+
+        final DescriptorKey toolKey = DescriptorKey.from( ApplicationKey.from( "com.enonic.app.contentstudio" ), "site" );
+        final AdminToolDescriptor toolDescriptor = AdminToolDescriptor.create()
+            .title( "Site" )
+            .key( toolKey )
+            .addAllowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .build();
+        when( adminToolDescriptorService.getByKey( eq( toolKey ) ) ).thenReturn( toolDescriptor );
+
+        request.setRawPath( "/admin/com.enonic.app.contentstudio/site/_/media:image/repo/id/scale/name" );
+        when( servletRequestMock.isUserInRole( any() ) ).thenReturn( true );
+
         assertThatThrownBy( () -> this.handler.handle( request ) ).asInstanceOf( type( WebException.class ) )
             .extracting( WebException::getStatus )
             .isEqualTo( HttpStatus.NOT_FOUND );

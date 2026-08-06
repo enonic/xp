@@ -165,9 +165,17 @@ public class RichTextProcessor
         } );
 
         this.imageBaseUrlSupplier = Suppliers.memoize( () -> {
+            final String imageBaseUrl =
+                PortalUrlGeneratorServiceImpl.resolveMediaBaseUrl( params.getImageBaseUrl(), params.getBaseUrl() );
+            if ( imageBaseUrl != null )
+            {
+                // the image base points directly at the API root: no "_" endpoint segment is added
+                final StringBuilder url = new StringBuilder( imageBaseUrl );
+                UrlBuilderHelper.appendPart( url, MEDIA_IMAGE_API_DESCRIPTOR_KEY.toString() );
+                return url.toString();
+            }
             final ApiUrlGeneratorParams apiParams = ApiUrlGeneratorParams.create()
                 .setUrlType( params.getType() )
-                .setBaseUrl( params.getBaseUrl() )
                 .setDescriptorKey( MEDIA_IMAGE_API_DESCRIPTOR_KEY )
                 .build();
             return portalUrlGeneratorService.apiUrl( apiParams );
@@ -200,9 +208,10 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final PageUrlParams pageUrlParams = new PageUrlParams().type( params.getType() ).id( id );
+        final String rawPageUrl =
+            portalUrlService.pageUrl( new PageUrlParams().type( params.getType() ).id( id ).baseUrl( params.getPageBaseUrl() ) );
 
-        final String pageUrl = addQueryParamsIfPresent( portalUrlService.pageUrl( pageUrlParams ), urlParamsString );
+        final String pageUrl = addQueryParamsIfPresent( rawPageUrl, urlParamsString );
 
         element.setAttribute( getLinkAttribute( element ), pageUrl );
 
@@ -264,6 +273,7 @@ public class RichTextProcessor
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
         final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().baseUrl( params.getBaseUrl() )
+            .mediaBaseUrl( params.getAttachmentBaseUrl() )
             .type( params.getType() )
             .id( id )
             .download( DOWNLOAD_MODE.equals( mode ) );
@@ -285,6 +295,7 @@ public class RichTextProcessor
             callback.process( element, properties );
         }
     }
+
 
     private String getLinkValue( final HtmlElement element )
     {
