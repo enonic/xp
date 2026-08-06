@@ -89,3 +89,17 @@ const httpFilterController4 = {
     },
 };
 expectAssignable<HttpFilterController>(httpFilterController4);
+
+// ────────────────────────────────────────────────────────────────────────────
+// Filter re-routing rendering to another content
+// ────────────────────────────────────────────────────────────────────────────
+const httpFilterController5 = {
+    filter: function (req: Request, next: HttpFilterNext<SerializableRequest<Request>, Response>) {
+        if (req.cookies.experiment === 'b') {
+            // contentPath is settable: the site service re-resolves content from it
+            req.contentPath = `${req.contentPath}/variant-b`;
+        }
+        return next(req) as unknown as Response;
+    },
+};
+expectAssignable<HttpFilterController<Request, Response, Response>>(httpFilterController5);
