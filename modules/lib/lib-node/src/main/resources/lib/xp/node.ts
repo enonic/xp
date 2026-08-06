@@ -139,6 +139,7 @@ export interface NodeQueryResultHit {
     score: number;
     explanation?: Explanation;
     highlight?: HighlightResult;
+    fields?: Record<string, unknown>;
 }
 
 export interface SuggestionResult {
@@ -400,6 +401,9 @@ export interface SortNodeResult<NodeData> {
 export interface QueryNodeParams<AggregationInput extends Aggregations = never> {
     start?: number;
     count?: number;
+    parent?: string;
+    recursive?: boolean;
+    returns?: string[];
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
@@ -413,6 +417,12 @@ interface QueryNodeHandlerParams {
     setStart(value: number | null): void;
 
     setCount(value: number | null): void;
+
+    setParent(value: string | null): void;
+
+    setRecursive(value: boolean): void;
+
+    setReturns(value: string[] | null): void;
 
     setQuery(value: ScriptValue | null): void;
 
@@ -462,6 +472,9 @@ export interface GetActiveVersionParams {
     key: string;
 }
 
+/**
+ * @deprecated Use {@link QueryNodeParams} with `parent` instead.
+ */
 export interface FindChildrenParams {
     parentKey: string;
     start?: number | null;
@@ -727,6 +740,9 @@ export interface RepoConnection {
 
     getActiveVersion(params: GetActiveVersionParams): NodeVersion | null;
 
+    /**
+     * @deprecated Use {@link RepoConnection.query} with `parent` instead.
+     */
     findChildren(params: FindChildrenParams): FindNodesByParentResult;
 
     refresh(mode?: RefreshMode): void;
@@ -1005,6 +1021,11 @@ class RepoConnectionImpl
      * @param {object} params JSON with the parameters.
      * @param {number} [params.start=0] Start index (used for paging).
      * @param {number} [params.count=10] Number of contents to fetch.
+     * @param {string} [params.parent] Path or id of a node to restrict the query to the direct children of. When `sort` is not
+     * specified, the children come back in the child order of the parent. A parent that does not exist matches nothing.
+     * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
+     * @param {string[]} [params.returns] Index fields to fetch for every hit, available as `fields` on the hit. Values come back as the
+     * index stores them; single values as scalars, multi-valued fields as arrays.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1019,6 +1040,9 @@ class RepoConnectionImpl
         const {
             start = 0,
             count = 10,
+            parent,
+            recursive = false,
+            returns,
             query,
             sort,
             aggregations,
@@ -1032,6 +1056,9 @@ class RepoConnectionImpl
 
         handlerParams.setStart(start);
         handlerParams.setCount(count);
+        handlerParams.setParent(__.nullOrValue(parent));
+        handlerParams.setRecursive(recursive);
+        handlerParams.setReturns(__.nullOrValue(returns));
         handlerParams.setQuery(__.toScriptValue((query)));
         handlerParams.setSort(__.toScriptValue(sort));
         handlerParams.setAggregations(__.toScriptValue(aggregations));
@@ -1104,6 +1131,10 @@ class RepoConnectionImpl
      * Get children for given node.
      *
      * @example-ref examples/node/findChildren.js
+     *
+     * @deprecated Use {@link RepoConnection.query} with `parent` instead. It accepts the same path or id, falls back to the same child
+     * order of the parent when `sort` is left out, covers `recursive`, and additionally supports every other constraint and return shape
+     * of a query. A count is a query with `count: 0` reading `total`.
      *
      * @param {object} params JSON with the parameters.
      * @param {string} params.parentKey path or id of parent to get children of
@@ -1280,6 +1311,12 @@ class MultiRepoConnectionImpl
      * @param {object} params JSON with the parameters.
      * @param {number} [params.start=0] Start index (used for paging).
      * @param {number} [params.count=10] Number of contents to fetch.
+     * @param {string} [params.parent] Path of a node to restrict the query to the direct children of, applied in every repository of the
+     * connection. An id cannot name one node across several repositories, so unlike the single-repo query only a path is accepted, and no
+     * child order is inherited - pass `sort` when the order matters.
+     * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
+     * @param {string[]} [params.returns] Index fields to fetch for every hit, available as `fields` on the hit. Values come back as the
+     * index stores them; single values as scalars, multi-valued fields as arrays.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1294,6 +1331,9 @@ class MultiRepoConnectionImpl
         const {
             start = 0,
             count = 10,
+            parent,
+            recursive = false,
+            returns,
             query,
             sort,
             aggregations,
@@ -1307,6 +1347,9 @@ class MultiRepoConnectionImpl
 
         handlerParams.setStart(start);
         handlerParams.setCount(count);
+        handlerParams.setParent(__.nullOrValue(parent));
+        handlerParams.setRecursive(recursive);
+        handlerParams.setReturns(__.nullOrValue(returns));
         handlerParams.setQuery(__.toScriptValue((query)));
         handlerParams.setSort(__.toScriptValue(sort));
         handlerParams.setAggregations(__.toScriptValue(aggregations));
