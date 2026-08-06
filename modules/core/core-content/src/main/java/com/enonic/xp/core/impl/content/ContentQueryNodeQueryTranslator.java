@@ -9,6 +9,7 @@ import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -46,7 +47,8 @@ class ContentQueryNodeQueryTranslator
             .addQueryFilter( contentCollectionFilter )
             .highlight( contentQuery.getHighlight() );
 
-        if ( parent != null )
+        // a recursive parent is matched by the path prefix built into the query expression instead, see buildNodeQueryExpr
+        if ( parent != null && !contentQuery.isRecursive() )
         {
             builder.parent( parent.nodePath() );
         }
@@ -93,12 +95,15 @@ class ContentQueryNodeQueryTranslator
     private static QueryExpr buildNodeQueryExpr( final ContentQuery contentQuery, final ContentQueryParent parent )
     {
         final QueryExpr queryExpr = contentQuery.getQueryExpr();
-        final CompareExpr contentPathRootExpr =
-            CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string( ContentNodeHelper.getContentRoot() + "/*" ) );
+
+        // every content lives below the content root, and a recursive parent is simply a narrower prefix of that same path constraint
+        final NodePath pathPrefix =
+            parent != null && contentQuery.isRecursive() ? parent.nodePath() : ContentNodeHelper.getContentRoot();
+        final CompareExpr pathPrefixExpr = CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( pathPrefix + "/*" ) );
 
         final ConstraintExpr constraintExpr = queryExpr != null && queryExpr.getConstraint() != null
-            ? LogicalExpr.and( queryExpr.getConstraint(), contentPathRootExpr )
-            : contentPathRootExpr;
+            ? LogicalExpr.and( queryExpr.getConstraint(), pathPrefixExpr )
+            : pathPrefixExpr;
 
         // the child order of the parent is resolved only when the query brings no order expressions of its own
         final Iterable<OrderExpr> orderList;

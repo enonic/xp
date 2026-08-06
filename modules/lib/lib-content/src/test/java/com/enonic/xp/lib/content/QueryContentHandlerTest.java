@@ -110,6 +110,19 @@ class QueryContentHandlerTest
         final ContentQuery query = capturedQuery();
         Assertions.assertEquals( ContentPath.from( "/a/b" ), query.getParentPath() );
         Assertions.assertNull( query.getParentId() );
+        Assertions.assertFalse( query.isRecursive() );
+    }
+
+    @Test
+    void parentRecursive()
+    {
+        setupQuery( 3, false, false );
+
+        runFunction( "/test/QueryContentHandlerTest_parent.js", "parentRecursive" );
+
+        final ContentQuery query = capturedQuery();
+        Assertions.assertEquals( ContentPath.from( "/a/b" ), query.getParentPath() );
+        Assertions.assertTrue( query.isRecursive() );
     }
 
     @Test

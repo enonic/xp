@@ -70,17 +70,26 @@ public interface ContentService
     Contents getByPaths( ContentPaths paths );
 
     /**
-     * Finds direct children of a content and fetches every one of them.
+     * Finds children of a content and fetches every one of them.
      *
      * @deprecated Hides a {@link #getByIds(GetContentByIdsParams)} call per page of children behind what looks like a search, so a caller
-     * that only needs ids, paths or a count pays for full content resolution anyway. Search with
-     * {@link #findIdsByParent(FindContentByParentParams)} or with {@link #find(ContentQuery)} and
+     * that only needs ids, paths or a count pays for full content resolution anyway. Search with {@link #find(ContentQuery)} and
      * {@link ContentQuery.Builder#parentPath(ContentPath)} / {@link ContentQuery.Builder#parentId(ContentId)}, then resolve only the ids
      * actually needed. Scheduled for removal.
      */
     @Deprecated
     FindContentByParentResult findByParent( FindContentByParentParams params );
 
+    /**
+     * Finds the ids of the children of a content.
+     *
+     * @deprecated Searching by parent is what {@link #find(ContentQuery)} with
+     * {@link ContentQuery.Builder#parentPath(ContentPath)} / {@link ContentQuery.Builder#parentId(ContentId)} does, and it accepts every
+     * other constraint a search can carry - a query expression, content types, aggregations, highlighting - while this takes filters
+     * alone. Child order is inherited from the parent there too, and {@link ContentQuery.Builder#recursive(boolean)} covers
+     * {@link FindContentByParentParams.Builder#recursive(Boolean)}. Scheduled for removal.
+     */
+    @Deprecated
     FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
 
     FindContentIdsByQueryResult find( ContentQuery query );

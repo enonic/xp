@@ -3,8 +3,10 @@ package com.enonic.xp.content;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ContentQueryTest
 {
@@ -42,6 +44,27 @@ class ContentQueryTest
             ContentQuery.create().parentPath( ContentPath.from( "/mysite" ) ).parentId( ContentId.from( "content-id" ) );
 
         assertEquals( "expected either parentPath or parentId, but not both",
+                      assertThrows( IllegalArgumentException.class, builder::build ).getMessage() );
+    }
+
+    @Test
+    void not_recursive_by_default()
+    {
+        assertFalse( ContentQuery.create().parentPath( ContentPath.from( "/mysite" ) ).build().isRecursive() );
+    }
+
+    @Test
+    void recursive()
+    {
+        assertTrue( ContentQuery.create().parentId( ContentId.from( "content-id" ) ).recursive( true ).build().isRecursive() );
+    }
+
+    @Test
+    void recursive_expects_a_parent()
+    {
+        final ContentQuery.Builder builder = ContentQuery.create().recursive( true );
+
+        assertEquals( "recursive expects a parentPath or a parentId",
                       assertThrows( IllegalArgumentException.class, builder::build ).getMessage() );
     }
 }

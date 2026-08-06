@@ -23,6 +23,8 @@ public final class ContentQuery
 
     private final ContentId parentId;
 
+    private final boolean recursive;
+
     private final ContentTypeNames contentTypeNames;
 
     private final ContentIds filterContentIds;
@@ -41,9 +43,12 @@ public final class ContentQuery
     {
         Preconditions.checkArgument( builder.parentPath == null || builder.parentId == null,
                                      "expected either parentPath or parentId, but not both" );
+        Preconditions.checkArgument( !builder.recursive || builder.parentPath != null || builder.parentId != null,
+                                     "recursive expects a parentPath or a parentId" );
         this.queryExpr = builder.queryExpr;
         this.parentPath = builder.parentPath;
         this.parentId = builder.parentId;
+        this.recursive = builder.recursive;
         this.contentTypeNames = builder.contentTypeNamesBuilder.build();
         this.filterContentIds = builder.filterContentIds;
         this.from = builder.from;
@@ -83,6 +88,17 @@ public final class ContentQuery
     public ContentId getParentId()
     {
         return parentId;
+    }
+
+    /**
+     * Whether the parent restriction reaches every descendant instead of the direct children only. Always {@code false} when the query is
+     * not restricted to a parent.
+     *
+     * @since 8.1.0
+     */
+    public boolean isRecursive()
+    {
+        return recursive;
     }
 
     public ContentTypeNames getContentTypes()
@@ -128,6 +144,8 @@ public final class ContentQuery
 
         private ContentId parentId;
 
+        private boolean recursive;
+
         private final ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
         private ContentIds filterContentIds;
@@ -154,11 +172,11 @@ public final class ContentQuery
 
         /**
          * Restricts the query to the direct children of the content at the given path. Combines with every other constraint of the query,
-         * so paging, filters, content types, aggregations and highlighting apply as usual. Descendants deeper than one level are not
-         * matched, and a parent that does not exist matches nothing.
+         * so paging, filters, content types, aggregations and highlighting apply as usual. Deeper descendants are matched only with
+         * {@link #recursive(boolean)}, and a parent that does not exist matches nothing.
          * <p>
-         * When the query itself specifies no order expressions, results come back in the child order of the parent, the same order
-         * {@link ContentService#findIdsByParent(FindContentByParentParams)} uses. Specify order expressions to sort otherwise.
+         * When the query itself specifies no order expressions, results come back in the child order of the parent. Specify order
+         * expressions to sort otherwise.
          * <p>
          * Mutually exclusive with {@link #parentId(ContentId)}.
          *
@@ -181,6 +199,21 @@ public final class ContentQuery
         public Builder parentId( final ContentId parentId )
         {
             this.parentId = parentId;
+            return this;
+        }
+
+        /**
+         * Widens the parent restriction from the direct children to every descendant of the parent, at any depth. Expects a parent to be
+         * set, by either {@link #parentPath(ContentPath)} or {@link #parentId(ContentId)}.
+         * <p>
+         * Note that the child order of a parent orders its own children, so it rarely says anything meaningful about a whole subtree:
+         * specify order expressions when ordering a recursive result matters.
+         *
+         * @since 8.1.0
+         */
+        public Builder recursive( final boolean recursive )
+        {
+            this.recursive = recursive;
             return this;
         }
 

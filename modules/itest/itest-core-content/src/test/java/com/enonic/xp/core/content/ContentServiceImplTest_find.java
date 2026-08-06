@@ -117,6 +117,39 @@ class ContentServiceImplTest_find
     }
 
     @Test
+    void parent_recursive()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        final Content grandchild = createContent( child1.getPath(), "d" );
+        final Content outside = createContent( ContentPath.ROOT, "e" );
+
+        final FindContentIdsByQueryResult byPath =
+            contentService.find( ContentQuery.create().parentPath( site.getPath() ).recursive( true ).size( -1 ).build() );
+
+        assertThat( byPath.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId(), grandchild.getId() )
+            .doesNotContain( site.getId(), outside.getId() );
+
+        final FindContentIdsByQueryResult byId =
+            contentService.find( ContentQuery.create().parentId( site.getId() ).recursive( true ).size( -1 ).build() );
+
+        assertThat( byId.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId(), grandchild.getId() );
+    }
+
+    @Test
+    void parent_recursive_from_root_matches_every_content()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child = createContent( site.getPath(), "b" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().parentPath( ContentPath.ROOT ).recursive( true ).size( -1 ).build() );
+
+        assertThat( result.getContentIds() ).contains( site.getId(), child.getId() );
+    }
+
+    @Test
     void parent_root()
     {
         final Content site = createContent( ContentPath.ROOT, "a" );

@@ -589,6 +589,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     @Traced("content.findIdsByParent")
     public FindContentIdsByParentResult findIdsByParent( final FindContentByParentParams params )
     {

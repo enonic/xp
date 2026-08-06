@@ -52,6 +52,8 @@ public final class QueryContentHandler
 
     private String parent;
 
+    private Boolean recursive;
+
     @Override
     protected Object doExecute()
     {
@@ -153,6 +155,7 @@ public final class QueryContentHandler
             {
                 queryBuilder.parentId( ContentId.from( parent ) );
             }
+            queryBuilder.recursive( Boolean.TRUE.equals( recursive ) );
         }
     }
 
@@ -195,6 +198,11 @@ public final class QueryContentHandler
     public void setParent( final String parent )
     {
         this.parent = parent;
+    }
+
+    public void setRecursive( final Boolean recursive )
+    {
+        this.recursive = recursive;
     }
 
     public void setQuery( final ScriptValue query )

@@ -697,6 +697,7 @@ export interface QueryContentParams<AggregationInput extends Aggregations = neve
     start?: number;
     count?: number;
     parent?: string;
+    recursive?: boolean;
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
@@ -711,6 +712,8 @@ interface QueryContentHandler {
     setCount(value: number | null): void;
 
     setParent(value: string | null): void;
+
+    setRecursive(value: boolean | null): void;
 
     setQuery(value: ScriptValue | null): void;
 
@@ -741,6 +744,8 @@ interface QueryContentHandler {
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} [params.parent] Path or id of a content to restrict the query to the direct children of. When `sort` is not specified,
  * the children come back in the child order of the parent. A parent that does not exist matches nothing.
+ * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Since the child order
+ * of a parent orders its own children, specify `sort` when the order of a recursive result matters.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.
@@ -760,6 +765,7 @@ export function query<
     bean.setStart(__.nullOrValue(params.start));
     bean.setCount(__.nullOrValue(params.count));
     bean.setParent(__.nullOrValue(params.parent));
+    bean.setRecursive(__.nullOrValue(params.recursive));
     bean.setQuery(__.toScriptValue((params.query)));
     bean.setSort(__.toScriptValue(params.sort));
     bean.setAggregations(__.toScriptValue(params.aggregations));

@@ -23,3 +23,15 @@ exports.parentById = function () {
     assert.assertEquals(20, result.total);
     assert.assertEquals(3, result.count);
 };
+
+exports.parentRecursive = function () {
+
+    var result = content.query({
+        'count': 10,
+        'parent': '/a/b',
+        'recursive': true
+    });
+
+    assert.assertEquals(20, result.total);
+    assert.assertEquals(3, result.count);
+};

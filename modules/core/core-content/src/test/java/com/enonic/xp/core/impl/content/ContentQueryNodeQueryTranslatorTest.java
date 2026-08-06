@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentConstants;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
@@ -56,6 +57,20 @@ class ContentQueryNodeQueryTranslatorTest
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( ContentQuery.create().build(), parent ).build();
 
         assertEquals( new NodePath( "/content/mysite/articles" ), nodeQuery.getParent() );
+        assertEquals( "_path LIKE '/content/*'", nodeQuery.getQuery().getConstraint().toString() );
+    }
+
+    @Test
+    void translate_recursive_parent()
+    {
+        final ContentQueryParent parent = new ContentQueryParent( new NodePath( "/content/mysite/articles" ), null );
+
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate(
+            ContentQuery.create().parentPath( ContentPath.from( "/mysite/articles" ) ).recursive( true ).build(), parent ).build();
+
+        // matched by a path prefix instead of the _parentPath term filter, so descendants at any depth are included
+        assertNull( nodeQuery.getParent() );
+        assertEquals( "_path LIKE '/content/mysite/articles/*'", nodeQuery.getQuery().getConstraint().toString() );
     }
 
     @Test
