@@ -266,11 +266,7 @@ public class LayersContentService
 
     public ContentIds findAllChildren( final ContentPath contentPath )
     {
-        final ContentQuery query = ContentQuery.create()
-            .queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPath.PARENT_PATH ), ValueExpr.string(
-                ContentNodeHelper.translateContentPathToNodePath( contentPath ).toString() ) ) ) )
-            .size( -1 )
-            .build();
+        final ContentQuery query = ContentQuery.create().parent( contentPath ).size( -1 ).build();
         return find( query ).getContentIds();
     }
 

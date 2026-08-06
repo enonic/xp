@@ -18,6 +18,8 @@ public final class ContentQuery
 
     private final QueryExpr queryExpr;
 
+    private final ContentPath parent;
+
     private final ContentTypeNames contentTypeNames;
 
     private final ContentIds filterContentIds;
@@ -35,6 +37,7 @@ public final class ContentQuery
     public ContentQuery( final Builder builder )
     {
         this.queryExpr = builder.queryExpr;
+        this.parent = builder.parent;
         this.contentTypeNames = builder.contentTypeNamesBuilder.build();
         this.filterContentIds = builder.filterContentIds;
         this.from = builder.from;
@@ -52,6 +55,16 @@ public final class ContentQuery
     public QueryExpr getQueryExpr()
     {
         return queryExpr;
+    }
+
+    /**
+     * Path of the content whose direct children the query is restricted to, or {@code null} when the query is not restricted to a parent.
+     *
+     * @since 8.1.0
+     */
+    public ContentPath getParent()
+    {
+        return parent;
     }
 
     public ContentTypeNames getContentTypes()
@@ -93,6 +106,8 @@ public final class ContentQuery
     {
         private QueryExpr queryExpr;
 
+        private ContentPath parent;
+
         private final ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
         private ContentIds filterContentIds;
@@ -114,6 +129,22 @@ public final class ContentQuery
         public Builder queryExpr( final QueryExpr queryExpr )
         {
             this.queryExpr = queryExpr;
+            return this;
+        }
+
+        /**
+         * Restricts the query to the direct children of the given content path. Combines with every other constraint of the query, so
+         * ordering, paging, filters, content types and aggregations apply as usual. Descendants deeper than one level are not matched.
+         * <p>
+         * Unlike {@link ContentService#findIdsByParent(FindContentByParentParams)}, the order of the parent is not applied implicitly:
+         * pass explicit order expressions when the child order matters.
+         *
+         * @param parent path of the parent content, {@link ContentPath#ROOT} for the top level of the content tree.
+         * @since 8.1.0
+         */
+        public Builder parent( final ContentPath parent )
+        {
+            this.parent = parent;
             return this;
         }
 

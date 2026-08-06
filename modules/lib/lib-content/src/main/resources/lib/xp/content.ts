@@ -506,6 +506,9 @@ export interface ContentsResult<
     highlight?: Record<string, HighlightResult>;
 }
 
+/**
+ * @deprecated Use {@link QueryContentParams} with `parent` instead.
+ */
 export interface GetChildContentParams {
     key: string;
     start?: number;
@@ -532,6 +535,10 @@ interface GetChildContentHandler {
  * This function fetches children of a content.
  *
  * @example-ref examples/content/getChildren.js
+ *
+ * @deprecated Use {@link query} with `parent` instead. It accepts the same path or id, and additionally supports filters, content types,
+ * aggregations and highlighting. Note that `query` does not inherit the child order of the parent, so pass `sort` explicitly when the
+ * order matters — `sort: '_manualordervalue DESC'` for manually ordered children.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the parent content.
@@ -690,6 +697,7 @@ export function create<
 export interface QueryContentParams<AggregationInput extends Aggregations = never> {
     start?: number;
     count?: number;
+    parent?: string;
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
@@ -702,6 +710,8 @@ interface QueryContentHandler {
     setStart(value: number | null): void;
 
     setCount(value: number | null): void;
+
+    setParent(value: string | null): void;
 
     setQuery(value: ScriptValue | null): void;
 
@@ -725,10 +735,14 @@ interface QueryContentHandler {
  * This command queries content.
  *
  * @example-ref examples/content/query.js
+ * @example-ref examples/content/queryChildren.js
  *
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {string} [params.parent] Path or id of a content to restrict the query to the direct children of. Children of a parent that
+ * does not exist is an empty result, not an error. Unlike `getChildren`, the child order of the parent is not applied implicitly: pass
+ * `sort` when the order matters.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.
@@ -747,6 +761,7 @@ export function query<
 
     bean.setStart(__.nullOrValue(params.start));
     bean.setCount(__.nullOrValue(params.count));
+    bean.setParent(__.nullOrValue(params.parent));
     bean.setQuery(__.toScriptValue((params.query)));
     bean.setSort(__.toScriptValue(params.sort));
     bean.setAggregations(__.toScriptValue(params.aggregations));

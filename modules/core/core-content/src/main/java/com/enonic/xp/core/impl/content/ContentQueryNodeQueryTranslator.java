@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentIndexPath;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
@@ -38,10 +39,21 @@ class ContentQueryNodeQueryTranslator
             .addQueryFilter( contentCollectionFilter )
             .highlight( contentQuery.getHighlight() );
 
+        processParent( contentQuery, builder );
         processContentTypesNames( contentQuery, builder );
         processReferenceIds( contentQuery, builder );
 
         return builder;
+    }
+
+    private static void processParent( final ContentQuery contentQuery, final NodeQuery.Builder builder )
+    {
+        final ContentPath parent = contentQuery.getParent();
+
+        if ( parent != null )
+        {
+            builder.parent( ContentNodeHelper.translateContentPathToNodePath( parent ) );
+        }
     }
 
     private static void processContentTypesNames( final ContentQuery contentQuery, final NodeQuery.Builder builder )

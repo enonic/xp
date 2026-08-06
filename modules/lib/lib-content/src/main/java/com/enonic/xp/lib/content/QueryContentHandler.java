@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
@@ -48,9 +51,21 @@ public final class QueryContentHandler
 
     private List<Map<String, Object>> filters;
 
+    private String parent;
+
     @Override
     protected Object doExecute()
     {
+        final ContentPath parentPath;
+        try
+        {
+            parentPath = resolveParentPath();
+        }
+        catch ( ContentNotFoundException e )
+        {
+            return new ContentsResultMapper( Contents.empty(), 0 );
+        }
+
         final ContentTypeNames contentTypeNames = getContentTypeNames();
 
         final QueryExpr queryExpr = QueryExpr.from( buildConstraintExpr(), buildOrderExpr() );
@@ -65,6 +80,7 @@ public final class QueryContentHandler
             .aggregationQueries( aggregations )
             .highlight( highlight )
             .addContentTypeNames( contentTypeNames )
+            .parent( parentPath )
             .queryExpr( queryExpr );
 
         if ( start != null )
@@ -131,6 +147,27 @@ public final class QueryContentHandler
         throw new IllegalArgumentException( "query must be a String or JSON object" );
     }
 
+    /**
+     * Turns the {@code parent} parameter into a content path. A value that starts with {@code /} is a content path already, anything else
+     * is a content id that has to be looked up. An unknown id makes the query match nothing rather than fail, which is how a query with a
+     * parent that does not exist behaves when the parent is given as a path.
+     */
+    private ContentPath resolveParentPath()
+    {
+        if ( parent == null )
+        {
+            return null;
+        }
+        else if ( parent.startsWith( "/" ) )
+        {
+            return ContentPath.from( parent );
+        }
+        else
+        {
+            return contentService.getById( ContentId.from( parent ) ).getPath();
+        }
+    }
+
     private ContentTypeNames getContentTypeNames()
     {
         if ( this.contentTypes == null )
@@ -165,6 +202,11 @@ public final class QueryContentHandler
     public void setCount( final Integer count )
     {
         this.count = count;
+    }
+
+    public void setParent( final String parent )
+    {
+        this.parent = parent;
     }
 
     public void setQuery( final ScriptValue query )

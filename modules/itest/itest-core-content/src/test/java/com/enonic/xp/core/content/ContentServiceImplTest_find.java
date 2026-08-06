@@ -86,6 +86,75 @@ class ContentServiceImplTest_find
     }
 
     @Test
+    void parent()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        createContent( child1.getPath(), "grandchild" );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parent( site.getPath() ).build() );
+
+        assertEquals( 2, result.getTotalHits() );
+        assertThat( result.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId() );
+    }
+
+    @Test
+    void parent_root()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        createContent( site.getPath(), "b" );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parent( ContentPath.ROOT ).build() );
+
+        assertThat( result.getContentIds() ).containsExactly( site.getId() );
+    }
+
+    @Test
+    void parent_that_does_not_exist()
+    {
+        createContent( ContentPath.ROOT, "a" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().parent( ContentPath.from( "/no-such-content" ) ).build() );
+
+        assertEquals( 0, result.getTotalHits() );
+        assertTrue( result.getContentIds().isEmpty() );
+    }
+
+    @Test
+    void parent_combined_with_query_and_order()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        createContent( site.getPath(), "d", new PropertyTree(), ContentTypeName.unknownMedia() );
+        createContent( ContentPath.ROOT, "e" );
+
+        final ContentQuery query = ContentQuery.create()
+            .parent( site.getPath() )
+            .addContentTypeName( ContentTypeName.folder() )
+            .queryExpr( QueryParser.parse( "order by _path desc" ) )
+            .build();
+
+        assertOrder( contentService.find( query ).getContentIds(), child2, child1 );
+    }
+
+    @Test
+    void parent_records_trace_attribute()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        createContent( site.getPath(), "b" );
+
+        final TestTrace trace = TestTrace.of( "content.find" );
+        final FindContentIdsByQueryResult result =
+            Tracer.trace( trace, () -> this.contentService.find( ContentQuery.create().parent( site.getPath() ).build() ) );
+
+        assertEquals( 1L, result.getTotalHits() );
+        assertEquals( "/a", trace.get( "parent" ) );
+    }
+
+    @Test
     void test_pending_publish_master()
     {
         ctxMaster().callWith( () -> {

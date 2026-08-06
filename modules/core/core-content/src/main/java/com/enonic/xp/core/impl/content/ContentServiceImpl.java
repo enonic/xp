@@ -557,6 +557,7 @@ public class ContentServiceImpl
     }
 
     @Override
+    @Deprecated
     @Traced("content.findByParent")
     public FindContentByParentResult findByParent( final FindContentByParentParams params )
     {
@@ -704,6 +705,10 @@ public class ContentServiceImpl
         Tracer.withCurrent( trace -> {
             trace.attribute( "query", Objects.toString( query.getQueryExpr(), null ) );
             trace.attribute( "filter", Objects.toString( query.getQueryFilters(), null ) );
+            if ( query.getParent() != null )
+            {
+                trace.attribute( "parent", query.getParent().toString() );
+            }
             trace.attribute( "from", query.getFrom() );
             trace.attribute( "size", query.getSize() );
         } );
