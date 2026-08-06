@@ -1,6 +1,11 @@
 package com.enonic.xp.content;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.Test;
+
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.NodeIndexPath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -57,6 +62,18 @@ class ContentQueryTest
     void recursive()
     {
         assertTrue( ContentQuery.create().parentId( ContentId.from( "content-id" ) ).recursive( true ).build().isRecursive() );
+    }
+
+    @Test
+    void return_fields_accumulate_and_deduplicate()
+    {
+        final ContentQuery query = ContentQuery.create()
+            .returnFields( NodeIndexPath.PATH, NodeIndexPath.NAME )
+            .returnFields( IndexPath.from( "_PATH" ) )
+            .build();
+
+        assertEquals( Set.of( NodeIndexPath.PATH, NodeIndexPath.NAME ), query.getReturnFields() );
+        assertTrue( ContentQuery.create().build().getReturnFields().isEmpty() );
     }
 
     @Test

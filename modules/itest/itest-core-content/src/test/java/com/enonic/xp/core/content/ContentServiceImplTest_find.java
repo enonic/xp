@@ -22,6 +22,9 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.FieldValues;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
@@ -260,6 +263,40 @@ class ContentServiceImplTest_find
             .build();
 
         assertOrder( contentService.find( query ).getContentIds(), child2, child1 );
+    }
+
+    @Test
+    void return_fields_with_content_path_translation()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addDouble( "priority", 42.0 );
+
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child = createContent( site.getPath(), "b", data );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create()
+                                                                            .parentPath( site.getPath() )
+                                                                            .returnFields( NodeIndexPath.PATH, NodeIndexPath.PARENT_PATH,
+                                                                                           IndexPath.from( "data.priority._number" ) )
+                                                                            .build() );
+
+        final FieldValues fields = result.getFields().get( child.getId() );
+
+        // path values come back as content paths, not the node paths the index stores
+        assertEquals( List.of( child.getPath().toString() ), fields.getValues( NodeIndexPath.PATH ) );
+        assertEquals( List.of( site.getPath().toString() ), fields.getValues( NodeIndexPath.PARENT_PATH ) );
+        assertEquals( List.of( 42.0 ), fields.getValues( "data.priority._number" ) );
+    }
+
+    @Test
+    void no_return_fields_no_field_values()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().queryExpr( QueryParser.parse( "_id = '" + content.getId() + "'" ) ).build() );
+
+        assertTrue( result.getFields().isEmpty() );
     }
 
     @Test

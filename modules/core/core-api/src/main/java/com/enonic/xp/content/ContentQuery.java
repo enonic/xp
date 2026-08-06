@@ -1,8 +1,12 @@
 package com.enonic.xp.content;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -24,6 +28,8 @@ public final class ContentQuery
     private final ContentId parentId;
 
     private final boolean recursive;
+
+    private final ImmutableSet<IndexPath> returnFields;
 
     private final ContentTypeNames contentTypeNames;
 
@@ -49,6 +55,7 @@ public final class ContentQuery
         this.parentPath = builder.parentPath;
         this.parentId = builder.parentId;
         this.recursive = builder.recursive;
+        this.returnFields = ImmutableSet.copyOf( builder.returnFields );
         this.contentTypeNames = builder.contentTypeNamesBuilder.build();
         this.filterContentIds = builder.filterContentIds;
         this.from = builder.from;
@@ -101,6 +108,16 @@ public final class ContentQuery
         return recursive;
     }
 
+    /**
+     * Index fields to fetch for every hit, available per id through {@link FindContentIdsByQueryResult#getFields()}.
+     *
+     * @since 8.1.0
+     */
+    public Set<IndexPath> getReturnFields()
+    {
+        return returnFields;
+    }
+
     public ContentTypeNames getContentTypes()
     {
         return contentTypeNames;
@@ -145,6 +162,8 @@ public final class ContentQuery
         private ContentId parentId;
 
         private boolean recursive;
+
+        private final Set<IndexPath> returnFields = new LinkedHashSet<>();
 
         private final ContentTypeNames.Builder contentTypeNamesBuilder = ContentTypeNames.create();
 
@@ -214,6 +233,23 @@ public final class ContentQuery
         public Builder recursive( final boolean recursive )
         {
             this.recursive = recursive;
+            return this;
+        }
+
+        /**
+         * Adds index fields to fetch for every hit, exactly as the search index stores them: every field as a list, values in their
+         * string form unless a typed variant like {@code ._number} (double) or {@code ._datetime} is requested, absent when the index
+         * holds nothing for the hit. The only translation applied is that {@code _path} and {@code _parentPath} values come back as
+         * content paths rather than the node paths the index stores.
+         *
+         * @since 8.1.0
+         */
+        public Builder returnFields( final IndexPath... fields )
+        {
+            for ( final IndexPath field : fields )
+            {
+                this.returnFields.add( field );
+            }
             return this;
         }
 
