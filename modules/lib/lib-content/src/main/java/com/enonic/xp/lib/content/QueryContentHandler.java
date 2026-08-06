@@ -14,7 +14,9 @@ import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.lib.common.JsonToFilterMapper;
+import com.enonic.xp.lib.content.mapper.ContentHitsResultMapper;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -25,6 +27,7 @@ import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.Filters;
 import com.enonic.xp.query.highlight.HighlightQuery;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
@@ -53,6 +56,8 @@ public final class QueryContentHandler
     private String parent;
 
     private Boolean recursive;
+
+    private ScriptValue returns;
 
     @Override
     protected Object doExecute()
@@ -89,9 +94,61 @@ public final class QueryContentHandler
             queryBuilder.queryFilter( filter );
         }
 
+        final ReturnShape shape = resolveReturnShape( queryBuilder );
+
         final FindContentIdsByQueryResult queryResult = contentService.find( queryBuilder.build() );
 
-        return convert( queryResult );
+        switch ( shape )
+        {
+            case IDS:
+                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.IDS );
+            case PATHS:
+                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.PATHS );
+            case FIELDS:
+                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.FIELDS );
+            default:
+                return convert( queryResult );
+        }
+    }
+
+    private enum ReturnShape
+    {
+        CONTENTS, IDS, PATHS, FIELDS
+    }
+
+    /**
+     * The {@code returns} parameter picks the shape of the hits: full contents (the default), bare ids, ids with paths, or ids with the
+     * values of the index fields named by an array. Everything but the default skips reading the contents entirely.
+     */
+    private ReturnShape resolveReturnShape( final ContentQuery.Builder queryBuilder )
+    {
+        if ( returns == null )
+        {
+            return ReturnShape.CONTENTS;
+        }
+        else if ( returns.isValue() )
+        {
+            final String value = returns.getValue( String.class );
+            switch ( value )
+            {
+                case "contents":
+                    return ReturnShape.CONTENTS;
+                case "ids":
+                    return ReturnShape.IDS;
+                case "paths":
+                    queryBuilder.returnFields( NodeIndexPath.PATH );
+                    return ReturnShape.PATHS;
+                default:
+                    throw new IllegalArgumentException( "returns must be 'contents', 'ids', 'paths' or an array of index field names" );
+            }
+        }
+        else if ( returns.isArray() )
+        {
+            queryBuilder.returnFields( returns.getArray( String.class ).stream().map( IndexPath::from ).toArray( IndexPath[]::new ) );
+            return ReturnShape.FIELDS;
+        }
+
+        throw new IllegalArgumentException( "returns must be 'contents', 'ids', 'paths' or an array of index field names" );
     }
 
     private List<OrderExpr> buildOrderExpr()
@@ -203,6 +260,11 @@ public final class QueryContentHandler
     public void setRecursive( final Boolean recursive )
     {
         this.recursive = recursive;
+    }
+
+    public void setReturns( final ScriptValue returns )
+    {
+        this.returns = returns;
     }
 
     public void setQuery( final ScriptValue query )

@@ -1024,8 +1024,8 @@ class RepoConnectionImpl
      * @param {string} [params.parent] Path or id of a node to restrict the query to the direct children of. When `sort` is not
      * specified, the children come back in the child order of the parent. A parent that does not exist matches nothing.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * @param {string[]} [params.returns] Index fields to fetch for every hit, available as `fields` on the hit. Values come back as the
-     * index stores them; single values as scalars, multi-valued fields as arrays.
+     * @param {string[]} [params.returns] Index fields to fetch for every hit, available as `fields` on the hit keyed by lowercase index
+     * path. Values come back as the index stores them; single values as scalars, multi-valued fields as arrays.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1315,8 +1315,8 @@ class MultiRepoConnectionImpl
      * connection. An id cannot name one node across several repositories, so unlike the single-repo query only a path is accepted, and no
      * child order is inherited - pass `sort` when the order matters.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * @param {string[]} [params.returns] Index fields to fetch for every hit, available as `fields` on the hit. Values come back as the
-     * index stores them; single values as scalars, multi-valued fields as arrays.
+     * @param {string[]} [params.returns] Index fields to fetch for every hit, available as `fields` on the hit keyed by lowercase index
+     * path. Values come back as the index stores them; single values as scalars, multi-valued fields as arrays.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
