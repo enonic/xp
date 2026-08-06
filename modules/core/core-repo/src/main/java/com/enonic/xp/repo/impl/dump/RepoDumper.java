@@ -25,14 +25,15 @@ import com.enonic.xp.dump.DumpError;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpListener;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
 import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
 import com.enonic.xp.node.NodeVersionId;
@@ -123,8 +124,13 @@ public class RepoDumper
             final BranchDumpResult.Builder branchDumpResult = branchResults.get( branch );
             try
             {
-                final FindNodesByParentResult children = this.nodeService.findByParent(
-                    FindNodesByParentParams.create().parentId( NodeId.ROOT ).recursive( true ).childOrder( ChildOrder.path() ).build() );
+                final FindNodesByQueryResult children = this.nodeService.findByQuery( NodeQuery.create()
+                                                                                         .parent( NodePath.ROOT )
+                                                                                         .recursive( true )
+                                                                                         .setOrderExpressions(
+                                                                                             ChildOrder.path().getOrderExpressions() )
+                                                                                         .size( NodeQuery.ALL_RESULTS_SIZE_FLAG )
+                                                                                         .build() );
 
                 final NodeIds branchNodes = nodeIds != null
                     ? children.getNodeIds().stream().filter( nodeIds::contains ).collect( NodeIds.collector() )

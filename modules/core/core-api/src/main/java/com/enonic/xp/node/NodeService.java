@@ -38,6 +38,16 @@ public interface NodeService
 
     DuplicateNodeResult duplicate( DuplicateNodeParams params );
 
+    /**
+     * Finds the ids of the children of a node.
+     *
+     * @deprecated Searching by parent is what {@link #findByQuery(NodeQuery)} with {@link NodeQuery.Builder#parent(NodePath)} does, and it
+     * accepts every constraint and return shape a query can carry while this takes filters alone and returns ids alone. Child order is
+     * inherited from the parent there too, {@link NodeQuery.Builder#recursive(boolean)} covers
+     * {@link FindNodesByParentParams.Builder#recursive(boolean)}, and a count is a query of size 0. A parent given by id has to be
+     * resolved to its path first. Scheduled for removal.
+     */
+    @Deprecated
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );

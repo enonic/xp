@@ -3,6 +3,7 @@ package com.enonic.xp.node;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.index.IndexPath;
@@ -14,6 +15,8 @@ public final class NodeQuery
 
     private final NodePath parent;
 
+    private final boolean recursive;
+
     private final boolean withPath;
 
     private final ImmutableSet<IndexPath> returnFields;
@@ -21,7 +24,9 @@ public final class NodeQuery
     private NodeQuery( final Builder builder )
     {
         super( builder );
+        Preconditions.checkArgument( !builder.recursive || builder.parent != null, "recursive expects a parent" );
         this.parent = builder.parent;
+        this.recursive = builder.recursive;
         this.withPath = builder.withPath;
         this.returnFields = ImmutableSet.copyOf( builder.returnFields );
     }
@@ -29,6 +34,17 @@ public final class NodeQuery
     public NodePath getParent()
     {
         return parent;
+    }
+
+    /**
+     * Whether the parent restriction reaches every descendant instead of the direct children only. Always {@code false} when the query is
+     * not restricted to a parent.
+     *
+     * @since 8.1.0
+     */
+    public boolean isRecursive()
+    {
+        return recursive;
     }
 
     /**
@@ -72,6 +88,8 @@ public final class NodeQuery
     {
         private NodePath parent;
 
+        private boolean recursive = false;
+
         private boolean withPath = false;
 
         private final Set<IndexPath> returnFields = new LinkedHashSet<>();
@@ -85,13 +103,33 @@ public final class NodeQuery
         {
             super( source );
             this.parent = source.parent;
+            this.recursive = source.recursive;
             this.withPath = source.withPath;
             this.returnFields.addAll( source.returnFields );
         }
 
+        /**
+         * Restricts the query to the direct children of the node at the given path, or with {@link #recursive(boolean)} to every
+         * descendant. Combines with every other constraint of the query. When the query specifies no order expressions, results come back
+         * in the child order of the parent.
+         */
         public Builder parent( final NodePath parent )
         {
             this.parent = parent;
+            return this;
+        }
+
+        /**
+         * Widens the {@link #parent(NodePath)} restriction from the direct children to every descendant, at any depth. Expects a parent.
+         * <p>
+         * Note that the child order of a parent orders its own children, so it rarely says anything meaningful about a whole subtree:
+         * specify order expressions when ordering a recursive result matters.
+         *
+         * @since 8.1.0
+         */
+        public Builder recursive( final boolean recursive )
+        {
+            this.recursive = recursive;
             return this;
         }
 

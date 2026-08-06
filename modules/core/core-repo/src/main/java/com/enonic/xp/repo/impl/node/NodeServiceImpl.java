@@ -21,6 +21,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
@@ -312,6 +313,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     @Traced("node.findByParent")
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
@@ -379,12 +381,30 @@ public class NodeServiceImpl
     private FindNodesByQueryResult executeFindByQuery( final NodeQuery nodeQuery )
     {
         return FindNodesByQueryCommand.create()
-            .query( nodeQuery )
+            .query( applyChildOrderOfParent( nodeQuery ) )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
             .execute();
+    }
+
+    /**
+     * A query restricted to a parent and carrying no order expressions of its own comes back in the child order of the parent, the same
+     * order findByParent used. Resolving the order costs a read of the parent, so it is skipped whenever the query orders explicitly or
+     * fetches no hits at all.
+     */
+    private NodeQuery applyChildOrderOfParent( final NodeQuery nodeQuery )
+    {
+        if ( nodeQuery.getParent() == null || !nodeQuery.getOrderBys().isEmpty() || nodeQuery.getSize() == 0 )
+        {
+            return nodeQuery;
+        }
+
+        final Node parentNode = NodeHelper.runAsAdmin( () -> doGetByPath( nodeQuery.getParent() ) );
+        final ChildOrder childOrder = parentNode != null ? parentNode.getChildOrder() : ChildOrder.defaultOrder();
+
+        return NodeQuery.create( nodeQuery ).setOrderExpressions( childOrder.getOrderExpressions() ).build();
     }
 
     @Override
