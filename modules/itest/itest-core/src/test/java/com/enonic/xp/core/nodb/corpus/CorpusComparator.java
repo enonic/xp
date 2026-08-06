@@ -71,6 +71,36 @@ final class CorpusComparator
         orderedIds = Set.copyOf( ids );
     }
 
+    /**
+     * Ids of the rows whose sort VALUE is computed by the engine rather than pre-encoded by XP —
+     * today exactly the {@code geoDistance} sorts. Supplied by the harness from the corpus table,
+     * like {@link #orderedRows}.
+     *
+     * <p>A third narrowing of decision 5, and Gate D measured the need for it. The rule that EXACT
+     * rows must match sort values verbatim is justified by WHAT those values are: order-by fields
+     * hold pre-encoded lexi-sortable ASCII that {@code OrderByValueResolver} produced on the XP
+     * side, so they port bit-for-bit or something is wrong. A geo distance is not one of those —
+     * XP ships a {@code geo_point} and the ENGINE computes metres from it, which puts the value in
+     * the same category as {@code _score}: engine arithmetic, already documented-only for exactly
+     * this reason.
+     *
+     * <p>The measurement: ES 2.4 defaulted to {@code sloppy_arc} (a deliberate approximation),
+     * OpenSearch defaults to {@code arc}, and XP never set {@code distance_type} on either — so the
+     * distances differ by ~0.13% while the ORDER is identical. It cannot be pinned back, because
+     * {@code sloppy_arc} was removed from the engine. Failing the row would mean requiring two
+     * engines to approximate the earth identically.
+     *
+     * <p>Deliberately narrow: only the sort VALUE relaxes. Hit ORDER on these rows is still EXACT
+     * (they are in {@link #orderedRows} too), which is what actually protects the sort — a geo sort
+     * that silently stopped sorting still fails.
+     */
+    private static Set<String> engineComputedSortIds = Set.of();
+
+    static void engineComputedSortRows( final Set<String> ids )
+    {
+        engineComputedSortIds = Set.copyOf( ids );
+    }
+
     static List<Delta> compare( final List<QueryOutcome> baseline, final List<QueryOutcome> actual )
     {
         final Map<String, QueryOutcome> base = index( baseline );
@@ -230,8 +260,10 @@ final class CorpusComparator
 
         // Sort values on an EXACT row are the pre-encoded lexi-sortable keys and must port
         // verbatim; on an ICU row they are collation keys from a specific ICU/CLDR version and are
-        // expected to differ.
-        final Severity sortSeverity = rule == Acceptance.EXACT ? Severity.FAILURE : Severity.DOCUMENTED;
+        // expected to differ; and on a geo-distance row the value is engine arithmetic rather than
+        // an XP-side encoding at all (see engineComputedSortIds).
+        final Severity sortSeverity =
+            rule == Acceptance.EXACT && !engineComputedSortIds.contains( id ) ? Severity.FAILURE : Severity.DOCUMENTED;
 
         for ( final QueryOutcome.Hit expectedHit : expected.hits() )
         {

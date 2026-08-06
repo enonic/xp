@@ -81,8 +81,6 @@ class FindNodesByQueryCommandTest_func_fulltext
 
         nodeService.refresh( RefreshMode.ALL );
 
-        printContentRepoIndex();
-
         final NodeQuery query = NodeQuery.create()
             .query( QueryExpr.from( new DynamicConstraintExpr(
                 FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "æ" ),
@@ -125,8 +123,6 @@ class FindNodesByQueryCommandTest_func_fulltext
                                           .build() );
 
         nodeService.refresh( RefreshMode.ALL );
-
-        printContentRepoIndex();
 
         final NodeQuery query = NodeQuery.create()
             .query( QueryExpr.from( new DynamicConstraintExpr(
@@ -247,7 +243,6 @@ class FindNodesByQueryCommandTest_func_fulltext
         assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
-
     @Test
     void fulltext_fuzzy_2()
     {
@@ -292,7 +287,6 @@ class FindNodesByQueryCommandTest_func_fulltext
         assertTrue( result.getNodeIds().contains( node2.id() ) );
     }
 
-
     @Test
     void negate()
     {
@@ -334,7 +328,6 @@ class FindNodesByQueryCommandTest_func_fulltext
         assertEquals( 1, result.getNodeIds().getSize() );
         assertTrue( result.getNodeIds().contains( node.id() ) );
     }
-
 
     @Test
     void boost_field()
@@ -458,7 +451,6 @@ class FindNodesByQueryCommandTest_func_fulltext
         queryAndAssert( "fulltext('title', 'levenshteins-algorithm', 'AND')", 1 );
     }
 
-
     @Test
     void word_delimiter_testing_underscore()
     {
@@ -500,6 +492,5 @@ class FindNodesByQueryCommandTest_func_fulltext
         queryAndAssert( "fulltext('title', 'testing', 'AND')", 1 );
         queryAndAssert( "fulltext('title', 'delimiter', 'AND')", 1 );
     }
-
 
 }

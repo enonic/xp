@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -40,6 +44,10 @@ import com.enonic.xp.storage.spi.SearchPreference;
 import com.enonic.xp.storage.spi.SearchRequest;
 import com.enonic.xp.storage.spi.SearchResult;
 import com.enonic.xp.storage.spi.UpdateIndexSettings;
+import com.enonic.xp.suggester.Suggestions;
+import com.enonic.xp.suggester.TermSuggestion;
+import com.enonic.xp.suggester.TermSuggestionEntry;
+import com.enonic.xp.suggester.TermSuggestionOption;
 
 /**
  * gRPC-backed {@link NodeSearchIndex}: the search half of the nodb backend. Registered with
@@ -59,6 +67,9 @@ public class NodbNodeSearchIndex
     implements NodeSearchIndex
 {
     private static final Logger LOG = LoggerFactory.getLogger( NodbNodeSearchIndex.class );
+
+    /** Reads the response's suggest section; the request side has its own in the serializer. */
+    private static final ObjectMapper SUGGEST_JSON = new ObjectMapper();
 
     private final NodbStorageClient client;
 
@@ -246,7 +257,58 @@ public class NodbNodeSearchIndex
             .hits( hits )
             .totalHits( result.getTotalHits() )
             .maxScore( result.getMaxScore() )
+            .suggestions( decodeSuggestions( result.getSuggestions() ) )
             .build();
+    }
+
+    /**
+     * The suggest section, {@code {"<name>": [{text, offset, length, options:[{text, score, freq}]}]}},
+     * into the shape {@code SuggestionsFactory} builds on the Elasticsearch path.
+     *
+     * <p>A transcription rather than a mapping: the server already emits exactly the five field
+     * names XP's result classes carry, so there is no vocabulary to reconcile here. Only
+     * {@code TermSuggestion} exists — XP defines no other suggester type — so the shape is
+     * unambiguous and an unrecognised member is dropped rather than guessed at.
+     */
+    private static Suggestions decodeSuggestions( final String json )
+    {
+        if ( json == null || json.isEmpty() )
+        {
+            return Suggestions.empty();
+        }
+
+        final JsonNode root;
+        try
+        {
+            root = SUGGEST_JSON.readTree( json );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new NodbClientException( "Cannot decode the suggest section of a search response", e );
+        }
+
+        final Suggestions.Builder suggestions = Suggestions.create();
+        root.properties().forEach( named -> {
+            final TermSuggestion.Builder suggestion = TermSuggestion.create( named.getKey() );
+            for ( final JsonNode entry : named.getValue() )
+            {
+                final TermSuggestionEntry.Builder builder = TermSuggestionEntry.create()
+                    .text( entry.path( "text" ).asText() )
+                    .offset( entry.path( "offset" ).asInt() )
+                    .length( entry.path( "length" ).asInt() );
+                for ( final JsonNode option : entry.path( "options" ) )
+                {
+                    builder.addSuggestionOption( TermSuggestionOption.create()
+                                                     .freq( option.has( "freq" ) ? option.path( "freq" ).asInt() : null )
+                                                     .text( option.path( "text" ).asText() )
+                                                     .score( (float) option.path( "score" ).asDouble() )
+                                                     .build() );
+                }
+                suggestion.addSuggestionEntry( builder.build() );
+            }
+            suggestions.add( suggestion.build() );
+        } );
+        return suggestions.build();
     }
 
     private static SearchHit decode( final com.enonic.nodb.proto.v1.SearchHit hit )

@@ -29,6 +29,21 @@ public final class SearchDsl
 
     private final List<Map<String, Object>> sort;
 
+    /**
+     * The canonical suggest config, {@code {"<name>": {"text": .., "term": {..}}}}, empty when the
+     * query requested none. One document rather than a list because a suggest section is a MAP
+     * keyed by suggester name — and because XP's own {@code SuggestionQueries} is a set whose
+     * iteration order varies per JVM, the renderer sorts it into a total order before it gets here.
+     */
+    private final Map<String, Object> suggest;
+
+    /**
+     * The canonical highlight config, {@code {settings: {..}, properties: [{name, settings}]}},
+     * empty when the query requested none. Field names carry no sub-field postfixes: the backend
+     * owns the three-field expansion, exactly as it owns postfix resolution everywhere else.
+     */
+    private final Map<String, Object> highlight;
+
     private final int from;
 
     private final int size;
@@ -45,6 +60,8 @@ public final class SearchDsl
         this.queryFilters = builder.queryFilters.build();
         this.postFilters = builder.postFilters.build();
         this.sort = builder.sort.build();
+        this.suggest = builder.suggest.build();
+        this.highlight = builder.highlight.build();
         this.from = builder.from;
         this.size = builder.size;
         this.batchSize = builder.batchSize;
@@ -75,6 +92,16 @@ public final class SearchDsl
     public List<Map<String, Object>> getSort()
     {
         return sort;
+    }
+
+    public Map<String, Object> getSuggest()
+    {
+        return suggest;
+    }
+
+    public Map<String, Object> getHighlight()
+    {
+        return highlight;
     }
 
     public int getFrom()
@@ -112,6 +139,10 @@ public final class SearchDsl
 
         private final ImmutableList.Builder<Map<String, Object>> sort = ImmutableList.builder();
 
+        private final ImmutableMap.Builder<String, Object> suggest = ImmutableMap.builder();
+
+        private final ImmutableMap.Builder<String, Object> highlight = ImmutableMap.builder();
+
         private int from;
 
         private int size;
@@ -147,6 +178,19 @@ public final class SearchDsl
         public Builder addSort( final Map<String, Object> sort )
         {
             this.sort.add( ImmutableMap.copyOf( sort ) );
+            return this;
+        }
+
+        /** One suggester, keyed by its name. Called in sorted order so the wire is order-stable. */
+        public Builder addSuggester( final String name, final Map<String, Object> suggester )
+        {
+            this.suggest.put( name, ImmutableMap.copyOf( suggester ) );
+            return this;
+        }
+
+        public Builder highlight( final Map<String, Object> highlight )
+        {
+            this.highlight.putAll( highlight );
             return this;
         }
 

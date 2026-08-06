@@ -14,6 +14,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.repo.impl.node.NodeConstants;
@@ -46,7 +47,7 @@ class FindNodesByQueryCommandTest_func_stemmed
                 build() ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         queryAndAssert( node, "stemmed('_allText', 'grønnsake*', 'AND', 'no')", 1 );
     }

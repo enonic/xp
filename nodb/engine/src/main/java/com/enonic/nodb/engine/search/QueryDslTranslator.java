@@ -16,10 +16,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * <p><b>Gate C covers the structured families</b> — {@code term}, {@code in}, {@code like},
  * {@code range}, {@code exists}, {@code boolean} (incl. the bare-{@code NOT} form),
  * {@code matchAll}, the whole filter vocabulary ({@code values}, {@code ids}, {@code exists},
- * {@code range}, {@code boolean}) and field sorts. Everything else throws
- * {@link UnsupportedQueryException}: text/geo (Gate D) and aggregations/suggest/highlight
- * (Gate E) are the next batches, and a half-translated construct that silently returns the
- * wrong hits is the one failure mode this port cannot afford.
+ * {@code range}, {@code boolean}) and field sorts. <b>Gate D adds the text family</b> —
+ * {@code fulltext}, {@code ngram}, {@code stemmed} (one {@code simple_query_string} base, three
+ * field/analyzer resolutions) and {@code pathMatch} — plus geo-distance and {@code COLLATE}
+ * sorts. Aggregations remain Gate E and still throw {@link UnsupportedQueryException}: a
+ * half-translated construct that silently returns the wrong hits is the one failure mode this
+ * port cannot afford.
  *
  * <h2>Field-name resolution — the six rules (Gate 0(b)+(c))</h2>
  * <ol>
@@ -36,8 +38,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * XP's own {@code ValueHelper} always widened); strings bound for the text variant are
  * {@code trim().toLowerCase()}, exactly as the projection writes them.</li>
  * <li><b>Order-by.</b> {@code _score}/{@code _id}/{@code _doc} pass through unmodified;
- * everything else resolves to {@code ._orderby}. The locale-qualified
- * {@code ._orderby_<loc>} form is Gate D and fails loudly here.</li>
+ * everything else resolves to {@code ._orderby}, or to the locale-qualified
+ * {@code ._orderby_<loc>} when the sort carries a {@code language} — resolved by
+ * {@link IndexLanguages}, which must agree with the indexer field for field. A geo-distance
+ * sort is the one form that is not an order-by field at all.</li>
  * <li><b>The store resolver ignores value type entirely.</b> It has no Phase-4 role: decision
  * D2 moved the branch/storage queries to SQL, so nothing reaches this translator with
  * store-mode field names — which is why there is no {@code fieldResolution} flag on the
@@ -94,6 +98,45 @@ public final class QueryDslTranslator
     private static final String DOC_FIELD = "_doc";
 
     /**
+     * The analyzed sub-field, in CANONICAL (XP) spelling — {@link IndexFields#physicalName} turns
+     * it into {@code _fulltext}. Written this way rather than as the physical name so the D1b
+     * rename lives in exactly one place.
+     */
+    private static final String FULLTEXT_POSTFIX = IndexFields.FULLTEXT_POSTFIX;
+
+    private static final String NGRAM_POSTFIX = "_ngram";
+
+    /** {@code NodeConstants.DEFAULT_FULLTEXT_SEARCH_ANALYZER}, and a real analyzer in the template. */
+    private static final String FULLTEXT_SEARCH_ANALYZER = "fulltext_search_default";
+
+    /** {@code NodeConstants.DEFAULT_NGRAM_SEARCH_ANALYZER}. */
+    private static final String NGRAM_SEARCH_ANALYZER = "ngram_search_default";
+
+    /**
+     * The path-hierarchy analyzer, named EXPLICITLY on the {@code pathMatch} query.
+     *
+     * <p>Discovered by measurement, and the reason this constant exists rather than being inherited
+     * from the mapping: the template gives {@code *._path} an {@code analyzer} and no
+     * {@code search_analyzer}, which on ES 2.4 meant the field's own analyzer ran at search time
+     * too — so {@code pathMatch('/tree/a/b/c/d')} tokenized into every prefix and matched every
+     * ancestor (corpus row {@code PATH-01}: 7 hits). On OpenSearch 3.7 the index-level analyzer
+     * named {@code default_search} wins over a field's {@code analyzer} at search time, so the same
+     * query analyzed to ONE keyword token and matched only the exact path. Zero error, wrong hits —
+     * the failure shape this gate is built to catch.
+     *
+     * <p>Fixed on the QUERY side rather than by adding {@code search_analyzer} to the template,
+     * because that puts all four text constructs on one rule — <b>the translator names the search
+     * analyzer and never inherits one</b> — which is what {@code fulltext}, {@code ngram} and
+     * {@code stemmed} already did (they pass theirs explicitly, which is why they were unaffected
+     * and why only {@code pathMatch} broke). It also needs no mapping change, and therefore no
+     * {@code +g(N+1)} rebuild for a difference that is purely about how a query is parsed.
+     */
+    private static final String PATH_ANALYZER = "path_analyzer";
+
+    /** The sort {@code type} the wire uses for a geo-distance order (Gate B's {@code OrderDslRenderer}). */
+    private static final String GEO_DISTANCE = "geoDistance";
+
+    /**
      * Branch names of the request's sources, case-preserved. Needed only to expand {@code _id}
      * predicates into composite document ids; every other construct is branch-agnostic because
      * the source filter carries the branch term.
@@ -136,8 +179,10 @@ public final class QueryDslTranslator
             case "range" -> range( expression );
             case "exists" -> exists( expression );
             case "boolean" -> bool( expression );
-            case "fulltext", "ngram", "stemmed", "pathMatch" -> throw new UnsupportedQueryException(
-                "Query type '" + name + "' is not translated yet (text and geo families are the next translation batch)" );
+            case "fulltext" -> fulltext( expression );
+            case "ngram" -> ngram( expression );
+            case "stemmed" -> stemmed( expression );
+            case "pathMatch" -> pathMatch( expression );
             default -> throw new UnsupportedQueryException( "Query type '" + name + "' is not supported" );
         };
     }
@@ -270,6 +315,245 @@ public final class QueryDslTranslator
         }
         applyBoost( body, expression );
         return wrap( "bool", body );
+    }
+
+    // --- the text family -------------------------------------------------------------
+
+    /**
+     * {@code fulltext} — the analyzed variant, {@code ._fulltext} here and {@code ._analyzed} in
+     * XP's vocabulary (D1b).
+     *
+     * <p><b>An empty query string is {@code match_all}</b>, not an empty
+     * {@code simple_query_string}. That is XP's own recorded behaviour and it is a short-circuit,
+     * not a degenerate case: {@code FulltextFunction} returns {@code MatchAllQueryBuilder} before
+     * it even resolves the field names. The renderer already applies the same rule for the NoQL
+     * form, so this branch exists for the DSL form — where {@code FulltextQueryBuilder} does NOT
+     * short-circuit and instead emits {@code "query": null}. Reproducing the null would mean
+     * sending OpenSearch a query it rejects, so the fulltext rule is applied uniformly here and
+     * recorded as the one place the two XP builder families are reconciled rather than mirrored.
+     *
+     * <p>{@code ngram} and {@code stemmed} deliberately do NOT get this treatment — neither
+     * {@code NGramFunction} nor {@code StemmedFunction} short-circuits, so an empty query string
+     * stays an empty query string and matches nothing.
+     */
+    private ObjectNode fulltext( JsonNode expression )
+    {
+        String query = text( expression, "query" );
+        if ( query == null || query.isEmpty() )
+        {
+            return wrap( "match_all", boosted( object(), expression ) );
+        }
+        return simpleQueryString( expression, FULLTEXT_POSTFIX, analyzer( expression, FULLTEXT_SEARCH_ANALYZER ) );
+    }
+
+    /** {@code ngram} — the edge-ngram variant. Same base, {@code ._ngram} and its own analyzer. */
+    private ObjectNode ngram( JsonNode expression )
+    {
+        return simpleQueryString( expression, NGRAM_POSTFIX, analyzer( expression, NGRAM_SEARCH_ANALYZER ) );
+    }
+
+    /**
+     * {@code stemmed} — the language variant. The 4th NoQL argument is a LANGUAGE TAG, not an
+     * analyzer name: both the analyzer ({@code norwegian}) and the field postfix
+     * ({@code ._stemmed_nb}) are derived from it by {@link IndexLanguages}, and a language with
+     * no stemmer fails loudly there rather than querying an unanalyzed field.
+     *
+     * <p>The G-3 {@code analyzer} override does not apply here — XP has no form for it, because
+     * the argument slot it would occupy is already the language.
+     */
+    private ObjectNode stemmed( JsonNode expression )
+    {
+        String language = text( expression, "language" );
+        return simpleQueryString( expression, IndexLanguages.stemmedPostfix( language ),
+                                  IndexLanguages.stemmedAnalyzer( language ) );
+    }
+
+    /**
+     * The shared {@code simple_query_string} base of all three.
+     *
+     * <p>Every parameter XP sets, and only those: {@code query}, the weighted {@code fields},
+     * {@code analyzer}, {@code default_operator} (lower-cased, defaulting to {@code or}) and
+     * {@code analyze_wildcard: true}. {@code flags}, {@code lenient},
+     * {@code minimum_should_match} and {@code _name} are never emitted by XP and are not emitted
+     * here — an unset parameter is the engine's default on both sides, whereas a spelled-out
+     * default is a value this port would then own.
+     */
+    private ObjectNode simpleQueryString( JsonNode expression, String postfix, String analyzer )
+    {
+        JsonNode fields = require( expression, "fields", "simple query string" );
+        String query = text( expression, "query" );
+        if ( query == null )
+        {
+            throw new UnsupportedQueryException( "A text query needs a 'query' string" );
+        }
+
+        ArrayNode resolved = OpenSearchClient.mapper().createArrayNode();
+        for ( JsonNode field : elements( fields ) )
+        {
+            resolved.add( weightedField( field.asText(), postfix ) );
+        }
+        if ( resolved.isEmpty() )
+        {
+            throw new UnsupportedQueryException( "A text query needs at least one field" );
+        }
+
+        ObjectNode body = object();
+        body.put( "query", query );
+        body.set( "fields", resolved );
+        body.put( "analyzer", analyzer );
+        body.put( "default_operator", operator( expression ) );
+        body.put( "analyze_wildcard", true );
+        applyBoost( body, expression );
+
+        return wrap( "simple_query_string", body );
+    }
+
+    /**
+     * {@code data.title^5} → {@code data.title._fulltext^5.0}: the postfix is inserted BEFORE the
+     * weight, because {@code ^} is {@code simple_query_string}'s own per-field boost syntax and a
+     * postfix appended after it would become part of the number.
+     *
+     * <p>The weight is re-rendered through {@code Float.toString} rather than passed through as
+     * written, which is what XP's builder did (its {@code fields} map holds a {@code Float}) —
+     * so {@code ^5} and {@code ^5.0} are one query rather than two spellings of it. XP's
+     * validation is reproduced too: a non-finite or negative weight is rejected rather than
+     * silently reinterpreted by the engine.
+     */
+    private static String weightedField( String entry, String postfix )
+    {
+        int caret = entry.indexOf( '^' );
+        if ( caret < 0 )
+        {
+            return physicalTextField( entry, postfix );
+        }
+
+        float weight;
+        try
+        {
+            weight = Float.parseFloat( entry.substring( caret + 1 ) );
+        }
+        catch ( NumberFormatException e )
+        {
+            throw new UnsupportedQueryException( "Invalid field weight in '" + entry + "'" );
+        }
+        if ( !Float.isFinite( weight ) || weight < 0 )
+        {
+            throw new UnsupportedQueryException( "Invalid field weight in '" + entry + "'" );
+        }
+        return physicalTextField( entry.substring( 0, caret ), postfix ) + "^" + Float.toString( weight );
+    }
+
+    /**
+     * A text-family field name.
+     *
+     * <p>A trailing {@code *} is a WILDCARD over field names ({@code descri*}, corpus row
+     * {@code TEXT-07}), which {@code simple_query_string} expands itself. Appending a postfix
+     * after the star would produce {@code descri*._fulltext} — a pattern no field matches,
+     * because the star already swallowed the rest of the name. XP had the same shape and the same
+     * consequence; the wildcard is therefore moved to the END, so the pattern reaches every
+     * matching field's analyzed sub-field.
+     */
+    private static String physicalTextField( String field, String postfix )
+    {
+        String logical = field.trim().toLowerCase( Locale.ROOT );
+        if ( logical.isEmpty() )
+        {
+            throw new UnsupportedQueryException( "'fields' cannot contain an empty field name" );
+        }
+        if ( logical.endsWith( "*" ) )
+        {
+            return logical.substring( 0, logical.length() - 1 ) + "*." + postfix;
+        }
+        return logical + "." + postfix;
+    }
+
+    /** {@code AND}/{@code OR}, lower-cased for the wire exactly as XP's builder serialized it. */
+    private static String operator( JsonNode expression )
+    {
+        String operator = text( expression, "operator" );
+        if ( operator == null || operator.isBlank() )
+        {
+            return "or";
+        }
+        String normalized = operator.trim().toUpperCase( Locale.ROOT );
+        if ( !"AND".equals( normalized ) && !"OR".equals( normalized ) )
+        {
+            throw new UnsupportedQueryException( "Invalid operator '" + operator + "' (expected AND or OR)" );
+        }
+        return normalized.toLowerCase( Locale.ROOT );
+    }
+
+    /** G-3: the optional analyzer override, which Gate B's renderer emits as a wire-superset field. */
+    private static String analyzer( JsonNode expression, String defaultAnalyzer )
+    {
+        String analyzer = text( expression, "analyzer" );
+        return analyzer == null || analyzer.isBlank() ? defaultAnalyzer : analyzer;
+    }
+
+    /**
+     * {@code pathMatch} — {@code PathMatchFunction}'s exact shape, on {@code ._path}.
+     *
+     * <p>A plain {@code match} against the {@code path_hierarchy}-analyzed field: the query text
+     * tokenizes into every prefix of the path, so a document scores by HOW MANY path segments it
+     * shares with the argument — which is what makes "most-matching first" the natural order and
+     * why the row is a SET row rather than an EXACT one.
+     *
+     * <p>{@code minimumMatch > 1} adds a second clause under {@code bool.must}: a {@code term} on
+     * the path truncated to that many segments, which is a hard floor on the shared prefix rather
+     * than a scoring hint. The truncation is {@code split("/")} then {@code limit(n + 1)} — the
+     * {@code + 1} is not an off-by-one, it accounts for the empty leading element a
+     * leading-slash path produces. Neither clause carries a boost, and the value is passed
+     * through UNNORMALIZED: XP does not lower-case it either, and the field's own analyzer chain
+     * is what makes that work.
+     */
+    private ObjectNode pathMatch( JsonNode expression )
+    {
+        String field = IndexFields.physicalName( logicalField( expression ) + "._path" );
+        JsonNode pathNode = require( expression, "path", "pathMatch" );
+        String path = pathNode.asText();
+
+        ObjectNode match =
+            wrap( "match", object().set( field, object().put( "query", path ).put( "analyzer", PATH_ANALYZER ) ) );
+
+        int minimumMatch = minimumMatch( expression );
+        if ( minimumMatch <= 1 )
+        {
+            ObjectNode body = (ObjectNode) match.get( "match" ).get( field );
+            applyBoost( body, expression );
+            return match;
+        }
+
+        String[] segments = path.split( "/" );
+        String minimumPath = String.join( "/", List.of( segments ).subList( 0, Math.min( segments.length, minimumMatch + 1 ) ) );
+
+        ArrayNode must = OpenSearchClient.mapper().createArrayNode();
+        must.add( wrap( "term", object().set( field, object().put( "value", minimumPath ) ) ) );
+        must.add( match );
+
+        // No boost: PathMatchFunction's minimumMatch branch returns the bool without one, and the
+        // DSL builder drops it on that branch too. Reproduced rather than improved.
+        return wrap( "bool", object().set( "must", must ) );
+    }
+
+    private static int minimumMatch( JsonNode expression )
+    {
+        JsonNode node = expression.get( "minimumMatch" );
+        if ( node == null || node.isNull() )
+        {
+            return 1;
+        }
+        if ( node.isNumber() )
+        {
+            return (int) node.doubleValue();
+        }
+        try
+        {
+            return (int) Double.parseDouble( node.asText() );
+        }
+        catch ( NumberFormatException e )
+        {
+            throw new UnsupportedQueryException( "'minimumMatch' must be a number, got '" + node.asText() + "'" );
+        }
     }
 
     // --- filters ---------------------------------------------------------------------
@@ -429,16 +713,15 @@ public final class QueryDslTranslator
         String field = logicalField( dsl );
         String type = text( dsl, "type" );
         String direction = text( dsl, "direction" );
+        String language = text( dsl, "language" );
 
-        if ( type != null )
+        if ( type != null && !GEO_DISTANCE.equals( type ) )
         {
-            throw new UnsupportedQueryException(
-                "Sort type '" + type + "' is not translated yet (geo-distance sorting is the next translation batch)" );
+            throw new UnsupportedQueryException( "Not valid sort function: '" + type + "'" );
         }
-        if ( text( dsl, "language" ) != null )
+        if ( GEO_DISTANCE.equals( type ) || dsl.get( "location" ) != null )
         {
-            throw new UnsupportedQueryException(
-                "Language-aware (COLLATE) sorting is not translated yet; it arrives with the text family" );
+            return geoDistanceSort( dsl, field, direction );
         }
 
         ObjectNode body = object();
@@ -450,7 +733,66 @@ public final class QueryDslTranslator
         }
 
         body.put( "unmapped_type", "keyword" );
-        return object().set( IndexFields.physicalName( field + "._orderby" ), body );
+        return object().set( IndexFields.physicalName( field + "." + orderByPostfix( language ) ), body );
+    }
+
+    /**
+     * Rule 5's locale-qualified order-by, and D8's whole point: this is an ORDINARY KEYWORD SORT.
+     *
+     * <p>ES 2.4 mapped {@code *._orderby_<loc>} as an analyzed string with an
+     * {@code icu_sort_<loc>} analyzer and sorted on it directly, so the collation contract lived
+     * in the engine's ICU. Here {@link CollationKeyResolver} computed a hex collation key at index
+     * time with a pinned icu4j and the field is a plain {@code keyword} — so the sort side has no
+     * collation feature to configure, and there is nothing here that a numeric or date sort does
+     * not also do. The only language-aware step left is picking WHICH field, which is
+     * {@link IndexLanguages}' job and must agree with the indexer exactly.
+     */
+    private static String orderByPostfix( String language )
+    {
+        return language == null || language.isBlank() ? "_orderby" : IndexLanguages.orderByPostfix( language );
+    }
+
+    /**
+     * {@code {"_geo_distance": {"<field>._geopoint": [{"lat":..,"lon":..}], "unit":.., "order":..}}}
+     * — the shape ES 2.4's {@code GeoDistanceSortBuilder} serialized, which OpenSearch still
+     * accepts verbatim. The builder API changed; the JSON did not, which is exactly why this
+     * translator emits JSON rather than driving a typed client.
+     *
+     * <p>{@code order} is always written. ES 2.4 omitted it for {@code asc} (its builder only
+     * emitted the non-default), but the wire always carries an explicit direction and {@code asc}
+     * is also OpenSearch's default, so spelling it out is the same query and one less implicit
+     * value. {@code distance_type} is NOT set — XP never set it either; note that means the
+     * default moved from ES 2.4's {@code sloppy_arc} to OpenSearch's {@code arc}, i.e. distances
+     * are now computed exactly rather than approximately. That changes the sort VALUES in their
+     * low-order digits while leaving the ORDER identical, and is recorded as a documented delta
+     * rather than pinned: {@code sloppy_arc} no longer exists to pin it to.
+     */
+    private ObjectNode geoDistanceSort( JsonNode dsl, String field, String direction )
+    {
+        JsonNode location = dsl.get( "location" );
+        if ( location == null || location.get( "lat" ) == null || location.get( "lon" ) == null )
+        {
+            throw new UnsupportedQueryException( "A geoDistance sort needs a 'location' with 'lat' and 'lon'" );
+        }
+        if ( isPseudoField( field ) )
+        {
+            throw new UnsupportedQueryException( "'" + field + "' cannot be sorted by geo distance" );
+        }
+
+        ObjectNode point = object();
+        point.put( "lat", location.get( "lat" ).doubleValue() );
+        point.put( "lon", location.get( "lon" ).doubleValue() );
+
+        ObjectNode body = object();
+        body.set( IndexFields.physicalName( field + "._geopoint" ), OpenSearchClient.mapper().createArrayNode().add( point ) );
+        String unit = text( dsl, "unit" );
+        if ( unit != null && !unit.isBlank() )
+        {
+            body.put( "unit", unit );
+        }
+        body.put( "order", direction == null ? "asc" : direction.toLowerCase( Locale.ROOT ) );
+
+        return wrap( "_geo_distance", body );
     }
 
     private static boolean isPseudoField( String field )

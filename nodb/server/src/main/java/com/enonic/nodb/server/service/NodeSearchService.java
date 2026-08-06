@@ -109,6 +109,7 @@ public final class NodeSearchService
 
             SearchResult.Builder response =
                 SearchResult.newBuilder().setTotalHits( result.totalHits() ).setMaxScore( result.maxScore() );
+            response.setSuggestions( result.suggestions() );
             for ( SearchQueryExecutor.Hit hit : result.hits() )
             {
                 response.addHits( toProto( hit ) );
@@ -141,16 +142,19 @@ public final class NodeSearchService
             sources.add( new SearchQuery.Source( source.getRepoId(), source.getBranch(), List.copyOf( source.getPrincipalsList() ) ) );
         }
 
-        if ( !request.getAggregations().isEmpty() || !request.getSuggest().isEmpty() || !request.getHighlight().isEmpty() )
+        // Gate E's fence, and it is asserted rather than assumed: suggest and highlight are now
+        // translated (Gate D), aggregations are still not, and an aggregation must keep failing
+        // LOUDLY rather than being silently dropped from the response.
+        if ( !request.getAggregations().isEmpty() )
         {
             throw new QueryDslTranslator.UnsupportedQueryException(
-                "Aggregations, suggesters and highlighting are not translated yet; they arrive with the later translation batches" );
+                "Aggregations are not translated yet; they arrive with the last translation batch" );
         }
 
         return new SearchQuery( sources, request.getQuery(), List.copyOf( request.getQueryFiltersList() ),
-                                List.copyOf( request.getPostFiltersList() ), List.copyOf( request.getSortList() ), request.getFrom(),
-                                request.getSize(), request.getBatchSize(), request.getExplain(), request.getSearchOptimizer(),
-                                List.copyOf( request.getReturnFieldsList() ) );
+                                List.copyOf( request.getPostFiltersList() ), List.copyOf( request.getSortList() ), request.getSuggest(),
+                                request.getHighlight(), request.getFrom(), request.getSize(), request.getBatchSize(), request.getExplain(),
+                                request.getSearchOptimizer(), List.copyOf( request.getReturnFieldsList() ) );
     }
 
     private static SearchHit toProto( SearchQueryExecutor.Hit hit )
@@ -165,6 +169,11 @@ public final class NodeSearchService
             builder.setBranch( hit.branch() );
         }
         builder.addAllSortValues( hit.sortValues() );
+
+        // Names are already canonical: the postfix strip happens in HighlightTranslator, because
+        // the physical postfixes are the server's vocabulary and the client is a decoder.
+        hit.highlights().forEach( ( name, fragments ) -> builder.addHighlights(
+            com.enonic.nodb.proto.v1.HighlightedProperty.newBuilder().setName( name ).addAllFragments( fragments ).build() ) );
 
         hit.returnValues().forEach( ( name, values ) -> {
             ReturnValue.Builder value = ReturnValue.newBuilder().setName( name );

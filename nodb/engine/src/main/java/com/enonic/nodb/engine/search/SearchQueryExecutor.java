@@ -46,11 +46,17 @@ public final class SearchQueryExecutor
     }
 
     public record Hit(String id, String repoId, String branch, float score, Map<String, List<Object>> returnValues,
-                      List<String> sortValues)
+                      List<String> sortValues, Map<String, List<String>> highlights)
     {
     }
 
-    public record Result(List<Hit> hits, long totalHits, float maxScore)
+    /**
+     * @param suggestions the canonical suggest section as JSON text, empty when none was requested.
+     *                    Carried as JSON rather than a typed structure for the same reason the
+     *                    query is: the wire slot is one opaque document, and a typed model here
+     *                    would be a second suggester vocabulary to keep in step with XP's.
+     */
+    public record Result(List<Hit> hits, long totalHits, float maxScore, String suggestions)
     {
     }
 
@@ -103,6 +109,10 @@ public final class SearchQueryExecutor
         {
             List<Hit> hits = new ArrayList<>();
             long totalHits = 0;
+            // Suggestions and aggregations come from the FIRST page, exactly as the Elasticsearch
+            // scroll path read them: they describe the whole result set, so a later page's copy is
+            // redundant and the final EMPTY page carries none at all.
+            String suggestions = "";
             JsonNode searchAfter = null;
 
             while ( true )
@@ -123,6 +133,10 @@ public final class SearchQueryExecutor
                 JsonNode response = client.searchPit( body );
                 Result batch = decode( response, query );
                 totalHits = batch.totalHits();
+                if ( suggestions.isEmpty() )
+                {
+                    suggestions = batch.suggestions();
+                }
                 batch.hits().forEach( hit -> hits.add( withoutTiebreaker( hit ) ) );
 
                 JsonNode last = lastHit( response );
@@ -133,7 +147,7 @@ public final class SearchQueryExecutor
                 searchAfter = last.path( "sort" );
             }
 
-            return new Result( hits, totalHits, Float.NaN );
+            return new Result( hits, totalHits, Float.NaN, suggestions );
         }
         finally
         {
@@ -168,7 +182,7 @@ public final class SearchQueryExecutor
             return hit;
         }
         return new Hit( hit.id(), hit.repoId(), hit.branch(), hit.score(), hit.returnValues(),
-                        List.copyOf( values.subList( 0, values.size() - 1 ) ) );
+                        List.copyOf( values.subList( 0, values.size() - 1 ) ), hit.highlights() );
     }
 
     private static JsonNode lastHit( JsonNode response )
@@ -218,6 +232,24 @@ public final class SearchQueryExecutor
                 sort.add( translator.translateSort( parse( element ) ) );
             }
             body.set( "sort", sort );
+        }
+
+        if ( !query.suggest().isEmpty() )
+        {
+            ObjectNode suggest = SuggestTranslator.translate( parse( query.suggest() ) );
+            if ( suggest != null )
+            {
+                body.set( "suggest", suggest );
+            }
+        }
+
+        if ( !query.highlight().isEmpty() )
+        {
+            ObjectNode highlight = HighlightTranslator.translate( parse( query.highlight() ) );
+            if ( highlight != null )
+            {
+                body.set( "highlight", highlight );
+            }
         }
 
         body.put( "from", Math.max( from, 0 ) );
@@ -346,7 +378,7 @@ public final class SearchQueryExecutor
             hits.add( decodeHit( hit, query ) );
         }
 
-        return new Result( hits, totalHits, maxScore );
+        return new Result( hits, totalHits, maxScore, SuggestTranslator.decode( response ) );
     }
 
     private Hit decodeHit( JsonNode hit, SearchQuery query )
@@ -372,7 +404,8 @@ public final class SearchQueryExecutor
         JsonNode score = hit.get( "_score" );
 
         return new Hit( nodeId( hit ), single( extract( source, IndexFields.REPO ) ), single( extract( source, IndexFields.BRANCH ) ),
-                        score == null || score.isNull() ? Float.NaN : (float) score.asDouble(), returnValues, sortValues );
+                        score == null || score.isNull() ? Float.NaN : (float) score.asDouble(), returnValues, sortValues,
+                        HighlightTranslator.decode( hit ) );
     }
 
     /**

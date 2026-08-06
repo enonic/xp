@@ -84,6 +84,19 @@ final class SearchEnvelopeSerializer
             builder.addSort( toJson( sort ) );
         }
 
+        // One opaque document each, not a repeated field: a suggest section is a map keyed by
+        // suggester name and a highlight block is a single settings-plus-fields object. Left as the
+        // proto default (empty string) when absent, which is how the server tells "not requested"
+        // from "requested empty" without a presence flag.
+        if ( !dsl.getSuggest().isEmpty() )
+        {
+            builder.setSuggest( toJson( dsl.getSuggest() ) );
+        }
+        if ( !dsl.getHighlight().isEmpty() )
+        {
+            builder.setHighlight( toJson( dsl.getHighlight() ) );
+        }
+
         return builder.setFrom( dsl.getFrom() )
             .setSize( dsl.getSize() )
             .setBatchSize( dsl.getBatchSize() )

@@ -56,7 +56,6 @@ class FindNodesByQueryCommandTest_order
     @Test
     void testByLongSorting()
     {
-        printContentRepoIndex();
         final FindNodesByQueryResult result = sort( FIELD_LONG + " " + ORDER_DESC );
 
         assertThat( result.getNodeIds() ).containsExactly( NodeId.from( "node2" ), NodeId.from( "node3" ), NodeId.from( "node1" ) );
@@ -160,6 +159,5 @@ class FindNodesByQueryCommandTest_order
 
         return doFindByQuery( query );
     }
-
 
 }

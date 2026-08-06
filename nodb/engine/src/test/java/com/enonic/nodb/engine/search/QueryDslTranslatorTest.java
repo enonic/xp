@@ -240,34 +240,191 @@ class QueryDslTranslatorTest
         }
     }
 
-    // ---- the Gate D / Gate E fences -------------------------------------------------
+    // ---- Gate D: the text family ----------------------------------------------------
+
+    @Test
+    void fulltextTargetsTheFulltextSubFieldWithItsOwnAnalyzer()
+    {
+        assertEquals( "{\"simple_query_string\":{\"query\":\"fisk laks\",\"fields\":[\"data.description._fulltext\"]," +
+                          "\"analyzer\":\"fulltext_search_default\",\"default_operator\":\"and\",\"analyze_wildcard\":true}}",
+                      query( "{\"fields\":[\"data.description\"],\"query\":\"fisk laks\",\"operator\":\"AND\"}", "fulltext" ) );
+    }
+
+    @Test
+    void anAbsentOperatorDefaultsToOrLowerCased()
+    {
+        assertTrue( query( "{\"fields\":[\"a\"],\"query\":\"x\"}", "fulltext" ).contains( "\"default_operator\":\"or\"" ) );
+    }
 
     /**
-     * The text/geo family must keep failing loudly. A fence that is not tested is a fence that
-     * quietly becomes a half-translation, which is the one failure mode this port cannot afford:
-     * {@code fulltext} silently returning term-query hits would pass a smoke test and corrupt a
-     * corpus baseline.
+     * {@code FulltextFunction} returns {@code MatchAllQueryBuilder} before it even resolves the
+     * field names. The renderer already applies the rule for the NoQL form, so this covers the DSL
+     * form — where XP's own builder would emit {@code "query": null} instead, which OpenSearch
+     * rejects outright.
      */
     @Test
-    void theTextAndGeoFamiliesStillFailLoudly()
+    void anEmptyFulltextQueryStringIsMatchAll()
     {
-        for ( String type : List.of( "fulltext", "ngram", "stemmed", "pathMatch" ) )
-        {
-            QueryDslTranslator.UnsupportedQueryException e = assertThrows( QueryDslTranslator.UnsupportedQueryException.class,
-                                                                           () -> translator.translateQuery( parse(
-                                                                               "{\"" + type + "\":{\"fields\":[\"a\"],\"query\":\"x\"}}" ) ) );
-            assertTrue( e.getMessage().contains( type ) );
-        }
+        assertEquals( "{\"match_all\":{}}", query( "{\"fields\":[\"a\"],\"query\":\"\"}", "fulltext" ) );
+    }
+
+    /** …and ngram/stemmed deliberately do NOT short-circuit, because neither XP function does. */
+    @Test
+    void anEmptyNgramQueryStringIsNotMatchAll()
+    {
+        assertTrue( query( "{\"fields\":[\"a\"],\"query\":\"\"}", "ngram" ).startsWith( "{\"simple_query_string\"" ) );
     }
 
     @Test
-    void geoDistanceAndCollateSortsStillFailLoudly()
+    void perFieldWeightsSurviveThePostfixInsertion()
+    {
+        // The postfix goes BEFORE the caret: `title._fulltext^5.0`, never `title^5._fulltext`.
+        assertEquals( "{\"simple_query_string\":{\"query\":\"bergen\",\"fields\":[\"title._fulltext^5.0\",\"description._fulltext\"]," +
+                          "\"analyzer\":\"fulltext_search_default\",\"default_operator\":\"or\",\"analyze_wildcard\":true}}",
+                      query( "{\"fields\":[\"title^5\",\"description\"],\"query\":\"bergen\"}", "fulltext" ) );
+    }
+
+    @Test
+    void aFieldWildcardKeepsTheStarLast()
+    {
+        // `descri*._fulltext` would match nothing: the star already swallowed the rest of the name.
+        assertTrue( query( "{\"fields\":[\"descri*\"],\"query\":\"fisk\"}", "fulltext" ).contains( "\"descri*._fulltext\"" ) );
+    }
+
+    @Test
+    void anInvalidWeightIsRejectedRatherThanReinterpretedByTheEngine()
+    {
+        assertThrows( QueryDslTranslator.UnsupportedQueryException.class,
+                      () -> query( "{\"fields\":[\"a^-1\"],\"query\":\"x\"}", "fulltext" ) );
+        assertThrows( QueryDslTranslator.UnsupportedQueryException.class,
+                      () -> query( "{\"fields\":[\"a^abc\"],\"query\":\"x\"}", "fulltext" ) );
+    }
+
+    @Test
+    void theG3AnalyzerOverrideWins()
+    {
+        assertTrue( query( "{\"fields\":[\"a\"],\"query\":\"x\",\"analyzer\":\"norwegian\"}", "fulltext" ).contains(
+            "\"analyzer\":\"norwegian\"" ) );
+    }
+
+    @Test
+    void ngramTargetsTheNgramSubFieldWithItsOwnAnalyzer()
+    {
+        assertEquals( "{\"simple_query_string\":{\"query\":\"fis lak\",\"fields\":[\"description._ngram\"]," +
+                          "\"analyzer\":\"ngram_search_default\",\"default_operator\":\"and\",\"analyze_wildcard\":true}}",
+                      query( "{\"fields\":[\"description\"],\"query\":\"fis lak\",\"operator\":\"AND\"}", "ngram" ) );
+    }
+
+    /**
+     * The 4th {@code stemmed} argument is a LANGUAGE, and both the field postfix and the analyzer
+     * are derived from it — {@code no} folds onto Bokmål for the field ({@code ._stemmed_nb}) and
+     * onto the {@code norwegian} analyzer.
+     */
+    @Test
+    void stemmedDerivesBothTheFieldAndTheAnalyzerFromTheLanguage()
+    {
+        assertEquals( "{\"simple_query_string\":{\"query\":\"fisker\",\"fields\":[\"description._stemmed_nb\"]," +
+                          "\"analyzer\":\"norwegian\",\"default_operator\":\"or\",\"analyze_wildcard\":true}}",
+                      query( "{\"fields\":[\"description\"],\"query\":\"fisker\",\"language\":\"no\"}", "stemmed" ) );
+    }
+
+    @Test
+    void stemmedRejectsALanguageWithNoStemmer()
+    {
+        // `pl` has a collation but no analyzer, so XP raises rather than querying an unanalyzed field.
+        assertThrows( QueryDslTranslator.UnsupportedQueryException.class,
+                      () -> query( "{\"fields\":[\"a\"],\"query\":\"x\",\"language\":\"pl\"}", "stemmed" ) );
+    }
+
+    @Test
+    void pathMatchIsAMatchOnThePathSubField()
+    {
+        assertEquals( "{\"match\":{\"_path._path\":{\"query\":\"/tree/a/b/c/d\",\"analyzer\":\"path_analyzer\"}}}",
+                      query( "{\"field\":\"_path\",\"path\":\"/tree/a/b/c/d\"}", "pathMatch" ) );
+    }
+
+    /**
+     * {@code minimumMatch} adds a hard prefix floor. The {@code + 1} in the truncation is not an
+     * off-by-one: {@code "/tree/a/b/c/d".split("/")} has an empty leading element.
+     */
+    @Test
+    void pathMatchWithAMinimumMatchAddsTheTruncatedPathTerm()
+    {
+        assertEquals( "{\"bool\":{\"must\":[{\"term\":{\"_path._path\":{\"value\":\"/tree/a/b\"}}}," +
+                          "{\"match\":{\"_path._path\":{\"query\":\"/tree/a/b/c/d\",\"analyzer\":\"path_analyzer\"}}}]}}",
+                      query( "{\"field\":\"_path\",\"path\":\"/tree/a/b/c/d\",\"minimumMatch\":3.0}", "pathMatch" ) );
+    }
+
+    @Test
+    void pathMatchWithAMinimumMatchLongerThanThePathTruncatesToThePath()
+    {
+        assertTrue( query( "{\"field\":\"_path\",\"path\":\"/tree\",\"minimumMatch\":3.0}", "pathMatch" ).contains(
+            "\"value\":\"/tree\"" ) );
+    }
+
+    // ---- Gate D: geo-distance and COLLATE sorts --------------------------------------
+
+    @Test
+    void aGeoDistanceSortTargetsTheGeopointSubField()
+    {
+        assertEquals( "{\"_geo_distance\":{\"location._geopoint\":[{\"lat\":59.91273,\"lon\":10.74609}],\"order\":\"desc\"}}",
+                      translator.translateSort( parse(
+                          "{\"field\":\"location\",\"type\":\"geoDistance\",\"location\":{\"lat\":59.91273,\"lon\":10.74609}," +
+                              "\"direction\":\"DESC\"}" ) ).toString() );
+    }
+
+    @Test
+    void aGeoDistanceSortCarriesTheUnitWhenGiven()
+    {
+        assertTrue( translator.translateSort( parse(
+            "{\"field\":\"location\",\"type\":\"geoDistance\",\"location\":{\"lat\":1.0,\"lon\":2.0},\"unit\":\"km\"," +
+                "\"direction\":\"ASC\"}" ) ).toString().contains( "\"unit\":\"km\"" ) );
+    }
+
+    @Test
+    void aGeoDistanceSortWithoutALocationFailsLoudly()
     {
         assertThrows( QueryDslTranslator.UnsupportedQueryException.class, () -> translator.translateSort(
-            parse( "{\"field\":\"a\",\"type\":\"geoDistance\",\"direction\":\"ASC\"}" ) ) );
-        assertThrows( QueryDslTranslator.UnsupportedQueryException.class,
-                      () -> translator.translateSort( parse( "{\"field\":\"a\",\"language\":\"nb\",\"direction\":\"ASC\"}" ) ) );
+            parse( "{\"field\":\"location\",\"type\":\"geoDistance\",\"direction\":\"ASC\"}" ) ) );
     }
+
+    @Test
+    void anUnknownSortTypeIsStillRejected()
+    {
+        assertThrows( QueryDslTranslator.UnsupportedQueryException.class,
+                      () -> translator.translateSort( parse( "{\"field\":\"a\",\"type\":\"somethingElse\",\"direction\":\"ASC\"}" ) ) );
+    }
+
+    /**
+     * D8, and the whole point of it: a COLLATE sort is an ORDINARY KEYWORD SORT on a field holding
+     * a precomputed hex ICU collation key. No collation feature is configured here, because there
+     * is none to configure.
+     */
+    @Test
+    void aCollateSortIsAPlainKeywordSortOnTheLocaleQualifiedOrderByField()
+    {
+        assertEquals( "{\"word._orderby_no\":{\"order\":\"asc\",\"unmapped_type\":\"keyword\"}}",
+                      translator.translateSort( parse( "{\"field\":\"word\",\"language\":\"nb\",\"direction\":\"ASC\"}" ) ).toString() );
+    }
+
+    @Test
+    void collateNoAndNbResolveToTheSameField()
+    {
+        assertEquals( translator.translateSort( parse( "{\"field\":\"word\",\"language\":\"nb\",\"direction\":\"ASC\"}" ) ).toString(),
+                      translator.translateSort( parse( "{\"field\":\"word\",\"language\":\"no\",\"direction\":\"ASC\"}" ) ).toString() );
+    }
+
+    /** A language with no collation entry sorts by DUCET — {@code de} is the recorded example. */
+    @Test
+    void aLanguageWithNoCollationSortsByDucet()
+    {
+        assertTrue( translator.translateSort( parse( "{\"field\":\"word\",\"language\":\"de\",\"direction\":\"ASC\"}" ) ).toString()
+                        .contains( "word._orderby_ducet" ) );
+        assertTrue( translator.translateSort( parse( "{\"field\":\"word\",\"language\":\"xx\",\"direction\":\"ASC\"}" ) ).toString()
+                        .contains( "word._orderby_ducet" ) );
+    }
+
+    // ---- the Gate E fence -----------------------------------------------------------
 
     @Test
     void anUnknownQueryOrFilterTypeIsNeverSilentlyDropped()

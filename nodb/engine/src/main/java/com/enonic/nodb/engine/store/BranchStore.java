@@ -200,8 +200,22 @@ public final class BranchStore
     }
 
     /**
-     * Multi-get by node_id (mirrors spi.NodeStore#getBranchEntries): returns only the
-     * entries found — missing ids are simply absent, in no particular order.
+     * Multi-get by node_id (mirrors spi.NodeStore#getBranchEntries): returns only the entries found
+     * — missing ids are simply absent — <b>in the order the ids were asked for</b>.
+     *
+     * <p>The ordering is not a nicety, and it was found by Gate D rather than reasoned about. XP's
+     * {@code BranchServiceImpl.get(Iterable&lt;NodeId&gt;)} passes this result straight through to
+     * {@code Nodes}, and Elasticsearch's multi-get answers in the REQUESTED order — so
+     * {@code nodeService.getByIds} has always been order-preserving, and callers depend on it.
+     * The obvious ones are the itests that take a query's ordered {@code getNodeIds()} and then
+     * assert the order of {@code getNodes(ids)}: without this clause a perfectly correct sort comes
+     * back scrambled, which is what made all 16 {@code FindNodesByQueryCommandTest_icuSort} cases
+     * fail while the corpus's ICU rows — which read hit ids straight off the search result — passed.
+     * A plain {@code = ANY} returns heap/index order, which for generated node ids looks random and
+     * differs run to run: a silent reordering, not an error.
+     *
+     * <p>{@code array_position} over the same array the predicate uses: the set is already bounded
+     * by the {@code IN}-list, so the sort is over a handful of rows and needs no index.
      */
     public static List<BranchEntryRecord> getByNodeIds( Connection connection, long repoKey, String branch, Collection<String> nodeIds )
         throws SQLException
@@ -212,11 +226,13 @@ public final class BranchStore
         }
         try (PreparedStatement statement = connection.prepareStatement( JOINED_SELECT + """
             WHERE be.repo_key = ? AND be.branch = ? AND be.node_id = ANY(?)
+            ORDER BY array_position(?, be.node_id)
             """ ))
         {
             statement.setLong( 1, repoKey );
             statement.setString( 2, branch );
             statement.setArray( 3, connection.createArrayOf( "text", nodeIds.toArray( new String[0] ) ) );
+            statement.setArray( 4, connection.createArrayOf( "text", nodeIds.toArray( new String[0] ) ) );
             try (ResultSet resultSet = statement.executeQuery())
             {
                 List<BranchEntryRecord> result = new ArrayList<>();

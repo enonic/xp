@@ -472,6 +472,96 @@ reached from the other direction.
   while a one-sided error still fails; a sort-value delta is documented only when one side is
   a missing sentinel.
 
+## GATE D DONE (2026-08-06) — text, geo, ICU sorts, suggesters, highlighting
+
+nodb **286 tests / 25 suites**, core-repo **470 / 97**, client 54, zero failures. Corpus
+text families **26 rows, 0 FAILURE, 158 documented** (verified independently). Fences held:
+`git status` empty under `elasticsearch/`, `factory/*`, core-repo resources.
+
+### 🏆 The four long-failing `icuSort` tests now PASS
+
+**nodb mode 16/16; ES mode 12/16** — and the four ES failures are exactly the four **German**
+cases (`[aal, ähnlich, opa, über, zug]`), verified by the orchestrator in both directions.
+Gate 0 predicted a modern pinned ICU might fix them; it does. icu4j 78.3 with server-computed
+collation keys (D8) is what does it.
+
+### 🔴 ES 2.4's "DUCET" was never DUCET — it was the JVM default locale
+
+`icu_collation_ducet` is literally `{"type":"icu_collation"}` with **no `language`**, so the
+plugin called `Collator.getInstance()` — i.e. **`Locale.getDefault()`**. Measured: on an
+`nb_NO` machine that produces byte-for-byte the `no` ordering (and byte-for-byte the recorded
+ES baseline), while `ULocale.ROOT` produces what nodb returns. So XP's DUCET fallback **and
+every unmapped-locale `COLLATE` sort has been environment-dependent** — the same locale
+sorted differently on a Norwegian developer's box and a UTC server, silently. NoDB pins
+`ULocale.ROOT` (real DUCET), deterministic everywhere. This is Gate 0(d)'s
+environment-dependent-sort hazard reached from the opposite direction, and it is a
+behaviour *fix*, recorded as corpus deltas on `ICU-05`/`ICU-06`. ICU-01..04 show **no** order
+delta — the per-locale collators agree with ES exactly.
+
+### 🔴 Pre-existing nodb storage bug, found not caused: multi-get lost its order
+
+`BranchStore.getByNodeIds` documented itself as returning rows "in no particular order", but
+`BranchServiceImpl.get(Iterable<NodeId>)` feeds that list straight into `Nodes`, and ES's
+multi-get has always answered in the **requested** order — so `nodeService.getByIds` is an
+order-preserving API callers depend on. A correct sort therefore came back scrambled,
+differently each run (generated ids → heap order), with no error. Fixed with
+`ORDER BY array_position(...)`; the store test asserts a reversed request yields a reversed
+answer so heap order cannot accidentally satisfy it. Also fixed
+`FindNodesByQueryCommandTest_order` (7/8 → 8/8).
+
+### My highlighting-trap note in Gate 0(c) was WRONG — corrected by measurement
+
+The inventory claimed XP expands highlight properties as `name_analyzed`/`name_ngram`
+(underscore, no dot). It does not: `INDEX_VALUE_TYPE_SEPARATOR` is `"."` and the postfix
+constants already start with `_`, so the ES path emits `title`, `title._analyzed`,
+`title._ngram` — dotted, consistent with the templates, and asserted by XP's own
+`ElasticHighlightQueryBuilderFactoryTest`. There was never a mismatch. The nodb path expands
+to `title._text`, `title._fulltext`, `title._ngram`, with one list driving both expansion and
+stripping so they cannot drift.
+
+### Two more silent-wrong-answer traps caught by measuring
+
+1. **`pathMatch` needed an explicit analyzer.** On ES 2.4 the field analyzer also ran at
+   search time, tokenizing the path into every prefix. On OpenSearch 3.7 the **index-level**
+   `default_search` wins over a field's `analyzer`, so the same query became one keyword token
+   and matched only the exact path — **zero error, wrong hits**. Fixed query-side
+   (`"analyzer": "path_analyzer"`), which puts all four text constructs on one rule — *the
+   translator names the search analyzer, never inherits one* — and needs no generation rebuild.
+2. **Highlight fragments: one variant wins, not merged.** Merging looked strictly better and
+   is wrong: the string variant is normalized at index time, so `._text` highlights
+   `<em>oslo</em>` while `._fulltext` highlights `<em>Oslo</em>`, and a merge returns two
+   fragments for one match. Precedence `_fulltext > _ngram > _text` — deterministic, and it
+   picks the document's own text over a normalizer artifact. (XP's ES path also kept one, but
+   by `HashMap` order.)
+
+### Comparator narrowing, made after measuring rather than before
+
+`SORT-08/09` geo rows are EXACT but their sort *values* are geo distances differing ~0.13%
+(ES 2.4 defaulted `sloppy_arc`, OpenSearch `arc`; XP never set `distance_type` and
+`sloppy_arc` no longer exists to pin back). The EXACT-sort-values rule is justified by *what
+those values are* — pre-encoded lexi-sortable keys — and a geo distance is engine arithmetic,
+the same category as `_score`. So `engineComputedSortRows` relaxes the **value** only; hit
+**order** stays EXACT and passed both directions.
+
+### Open item carried to Gate F
+
+`FindNodesByQueryCommandTest_func_fulltext` 13/14 in nodb (14/14 ES): `boost_field` returns
+`[3,2,1]` where ES returns `[3,1,2]` — a long boosted description outscores an unboosted
+title match under BM25 length normalization but not under TF-IDF. Same shape as corpus rows
+`TEXT-03`/`TEXT-04`, which are SET rows and passed with documented order deltas. A relevance
+delta decision 5 explicitly tolerates and which cannot be pinned back (`classic` similarity
+is gone) — Gate F's disposition question, like the icuSort tests were.
+
+### Also settled
+
+Suggesters carry **XP's vocabulary on the wire** (`suggestMode`, `jarowinkler`,
+`numOfFragments`) with the server owning every rename to the engine's — same rule as
+`_text`/`_fulltext`. `require_field_match` is always sent explicitly (default `false`);
+OpenSearch's flipped default would have dismantled the three-field expansion silently.
+`suggest`/`highlight` ride as opaque JSON in proto slots Gate B already reserved, so **no
+proto change and no `format_version` bump**. Suggesters are sorted by name before
+serialization (`SuggestionQueries` is a set; element order is part of the format).
+
 ## Gate 0(a) results — DSL completeness (2026-08-05)
 
 **STOP CONDITION NOT TRIGGERED.** Every NoQL construct renders as DSL: all 10 comparison

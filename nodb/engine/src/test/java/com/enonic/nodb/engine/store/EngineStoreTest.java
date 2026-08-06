@@ -368,8 +368,16 @@ class EngineStoreTest
         assertFalse( wrongBranch, "must not exist under a branch it was never stored into" );
     }
 
+    /**
+     * The multi-get's ORDER is part of its contract, discovered at Gate D: XP's
+     * {@code BranchServiceImpl.get(Iterable<NodeId>)} hands this list straight to {@code Nodes},
+     * and Elasticsearch's multi-get always answered in the REQUESTED order -- so
+     * {@code nodeService.getByIds} has always been order-preserving and callers depend on it. A
+     * plain {@code = ANY} returns heap order, which for generated node ids looks random and varies
+     * run to run: a query's ordered result silently comes back scrambled, with no error anywhere.
+     */
     @Test
-    void getByNodeIdsReturnsOnlyFoundEntriesInNoParticularOrder()
+    void getByNodeIdsReturnsOnlyFoundEntriesInTheOrderTheyWereAskedFor()
         throws SQLException
     {
         TenantContext acme = new TenantContext( "acme" );
@@ -393,7 +401,15 @@ class EngineStoreTest
                                                                                                   List.of( nodeId1, nodeId2,
                                                                                                            missingNodeId ) ) );
         assertEquals( 2, found.size(), "the missing id must simply be absent, not an error" );
-        assertEquals( Set.of( nodeId1, nodeId2 ), found.stream().map( BranchEntryRecord::nodeId ).collect( Collectors.toSet() ) );
+        assertEquals( List.of( nodeId1, nodeId2 ), found.stream().map( BranchEntryRecord::nodeId ).toList() );
+
+        // Reversed request, reversed answer -- otherwise the assertion above could be satisfied by
+        // heap order that happens to agree, which is exactly how this went unnoticed.
+        List<BranchEntryRecord> reversed = Tx.inTenantTx( dataSource, acme,
+                                                           connection -> BranchStore.getByNodeIds( connection, repoKey, "master",
+                                                                                                    List.of( missingNodeId, nodeId2,
+                                                                                                             nodeId1 ) ) );
+        assertEquals( List.of( nodeId2, nodeId1 ), reversed.stream().map( BranchEntryRecord::nodeId ).toList() );
         // Phase 1 Gate C N+1 fix: getByNodeIds' JOINED_SELECT must recover each entry's
         // node_version hash columns in the same query, per entry -- not just for a single get.
         BranchEntryRecord entry1 =

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.search.dsl;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.AbstractQuery;
@@ -11,6 +12,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.query.suggester.SuggestionQuery;
 import com.enonic.xp.storage.spi.SearchDsl;
 
 /**
@@ -21,8 +23,8 @@ import com.enonic.xp.storage.spi.SearchDsl;
  * backend, so that exactly one component in the system knows the query language. A backend
  * receiving a {@link SearchDsl} is a serializer.
  * <p>
- * Aggregations, suggesters and highlighting are deliberately NOT rendered here: they are
- * owned by later gates and fail loudly rather than being shipped half-translated.
+ * Suggesters and highlighting are rendered from Gate D. Aggregations are still not: they are
+ * owned by the last translation batch and fail loudly rather than being shipped half-translated.
  */
 public final class SearchDslRenderer
 {
@@ -61,6 +63,21 @@ public final class SearchDslRenderer
         for ( final OrderExpr orderExpr : query.getOrderBys() )
         {
             builder.addSort( OrderDslRenderer.render( orderExpr ) );
+        }
+
+        // Sorted by suggester name: SuggestionQueries is backed by a set whose iteration order
+        // varies across JVM runs, and element order is part of the wire format (Gate 0(c) item 5).
+        final Map<String, SuggestionQuery> suggesters = new TreeMap<>();
+        for ( final SuggestionQuery suggestionQuery : query.getSuggestionQueries() )
+        {
+            suggesters.put( suggestionQuery.getName(), suggestionQuery );
+        }
+        suggesters.forEach( ( name, suggestionQuery ) -> builder.addSuggester( name, SuggestDslRenderer.render( suggestionQuery ) ) );
+
+        final Map<String, Object> highlight = HighlightDslRenderer.render( query.getHighlight() );
+        if ( highlight != null )
+        {
+            builder.highlight( highlight );
         }
 
         rejectUnrenderable( query );
@@ -107,14 +124,6 @@ public final class SearchDslRenderer
         if ( !query.getAggregationQueries().isEmpty() )
         {
             throw new DslRenderException( "Aggregations have no wire form yet; they are not supported by this storage backend" );
-        }
-        if ( !query.getSuggestionQueries().isEmpty() )
-        {
-            throw new DslRenderException( "Suggesters have no wire form yet; they are not supported by this storage backend" );
-        }
-        if ( query.getHighlight() != null )
-        {
-            throw new DslRenderException( "Highlighting has no wire form yet; it is not supported by this storage backend" );
         }
     }
 }

@@ -61,7 +61,7 @@ class FindNodesByQueryCommandTest
             parent( node1.path() ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create().parent( NodePath.ROOT ).build();
         FindNodesByQueryResult result = doFindByQuery( query );
@@ -90,7 +90,7 @@ class FindNodesByQueryCommandTest
             parent( node1.path() ).
             build() );
 
-        refresh();
+        nodeService.refresh( RefreshMode.ALL );
 
         final NodeQuery query = NodeQuery.create()
             .query( QueryExpr.from( null ) )

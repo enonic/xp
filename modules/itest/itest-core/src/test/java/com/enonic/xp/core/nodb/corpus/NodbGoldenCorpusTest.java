@@ -266,6 +266,18 @@ class NodbGoldenCorpusTest
                                           .map( GoldenQuery::id )
                                           .collect( Collectors.toSet() ) );
 
+        // …and which of those sort by a value the ENGINE computes rather than one XP pre-encoded.
+        // Same source and same reason: the comparator narrowing is about what the value IS, and
+        // that is a property of the corpus row's query, not of the recording.
+        CorpusComparator.engineComputedSortRows( selected().stream()
+                                                     .filter( q -> q.query()
+                                                         .get()
+                                                         .getOrderBys()
+                                                         .stream()
+                                                         .anyMatch( NodbGoldenCorpusTest::isGeoDistanceOrder ) )
+                                                     .map( GoldenQuery::id )
+                                                     .collect( Collectors.toSet() ) );
+
         final List<CorpusComparator.Delta> deltas = CorpusComparator.compare( expected, outcomes );
 
         final List<CorpusComparator.Delta> failures =
@@ -289,6 +301,20 @@ class NodbGoldenCorpusTest
             fail( failures.size() + " corpus acceptance violation(s):\n" +
                       failures.stream().map( CorpusComparator.Delta::toString ).reduce( "", ( a, b ) -> a + b + "\n\n" ) );
         }
+    }
+
+    /** Both order-by forms a {@code geoDistance} sort can arrive in: the NoQL function and the DSL. */
+    private static boolean isGeoDistanceOrder( final com.enonic.xp.query.expr.OrderExpr order )
+    {
+        if ( order instanceof com.enonic.xp.query.expr.DynamicOrderExpr dynamic )
+        {
+            return "geoDistance".equals( dynamic.getFunction().getName() );
+        }
+        if ( order instanceof com.enonic.xp.query.expr.DslOrderExpr dsl )
+        {
+            return "geoDistance".equals( dsl.getType() ) || dsl.getLat() != null;
+        }
+        return false;
     }
 
     private void summarize( final List<GoldenQuery> corpus, final List<QueryOutcome> outcomes )

@@ -504,12 +504,206 @@ class NodeSearchServiceIntegrationTest
         assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
             searchRequest( repoId ).setFormatVersion( 99 ).setQuery( "{\"matchAll\":{}}" ).build() ) ) );
 
-        assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search( searchRequest( repoId ).setQuery(
-            "{\"fulltext\":{\"fields\":[\"data.title\"],\"query\":\"x\",\"operator\":\"OR\"}}" ).build() ) ),
+        assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
+                          searchRequest( repoId ).setQuery( "{\"somethingNew\":{\"field\":\"data.title\"}}" ).build() ) ),
                       "an untranslated construct must fail loudly, never return plausible wrong hits" );
 
+        // Gate E's fence, asserted rather than assumed: suggest and highlight are translated now,
+        // aggregations are not, and an aggregation must keep erroring instead of being dropped.
         assertEquals( Status.Code.INVALID_ARGUMENT, statusOf( () -> nodeSearch().search(
             searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).setAggregations( "{\"x\":{}}" ).build() ) ) );
+    }
+
+    // ---------------------------------------------------------------------------- Gate D: text
+
+    /**
+     * The text family end to end against a real OpenSearch: the analyzers the template declares,
+     * the physical sub-fields the projection wrote, and the {@code simple_query_string} shape the
+     * translator emits all have to agree, and none of that is provable by inspecting JSON. A wrong
+     * physical name here returns zero hits with no error — the failure mode this gate exists to
+     * exclude — so every assertion is a non-zero count on a query that must match.
+     */
+    @Test
+    void theTextFamilyRunsAgainstTheRealAnalyzers()
+    {
+        String repoId = createRepo( "querytext" );
+        indexAndRefresh( repoId, textDocument( "node-fisk", "Fisk og grønnsaker i Bergen", "/tree/a/b/c/d" ) );
+
+        assertEquals( 1, textHits( repoId, "{\"fulltext\":{\"fields\":[\"data.description\"],\"query\":\"fisk bergen\"," +
+            "\"operator\":\"AND\"}}" ), "fulltext AND over the analyzed sub-field" );
+
+        // asciifolding is in the analyzer chain, so fulltext() IS accent-insensitive -- while the
+        // raw _text keyword is NOT. That asymmetry is behaviour (Gate 0(e), UNTYPED-05).
+        assertEquals( 1, textHits( repoId, "{\"fulltext\":{\"fields\":[\"data.description\"],\"query\":\"gronnsaker\"}}" ),
+                      "asciifolding: 'gronnsaker' must find 'grønnsaker'" );
+        assertEquals( 0, textHits( repoId, "{\"term\":{\"field\":\"data.description\",\"value\":\"gronnsaker\"}}" ),
+                      "…and the raw text variant must NOT fold" );
+
+        assertEquals( 1, textHits( repoId, "{\"fulltext\":{\"fields\":[\"data.descri*\"],\"query\":\"fisk\"}}" ),
+                      "a field wildcard must keep the star last or it matches nothing" );
+
+        assertEquals( 1, textHits( repoId, "{\"ngram\":{\"fields\":[\"data.description\"],\"query\":\"fis ber\"," +
+            "\"operator\":\"AND\"}}" ), "edge-ngram prefixes" );
+
+        assertEquals( 1, textHits( repoId,
+                                   "{\"stemmed\":{\"fields\":[\"data.description\"],\"query\":\"fisker\",\"language\":\"no\"}}" ),
+                      "the Norwegian stemmer must reach ._stemmed_nb with the 'norwegian' analyzer" );
+
+        assertEquals( 1, textHits( repoId, "{\"pathMatch\":{\"field\":\"_path\",\"path\":\"/tree/a/b/c/d\"}}" ) );
+        assertEquals( 1, textHits( repoId, "{\"pathMatch\":{\"field\":\"_path\",\"path\":\"/tree/a/b/c/d\",\"minimumMatch\":3.0}}" ),
+                      "minimumMatch adds a hard prefix floor, not a scoring hint" );
+        assertEquals( 0, textHits( repoId, "{\"pathMatch\":{\"field\":\"_path\",\"path\":\"/other/x/y/z\",\"minimumMatch\":3.0}}" ),
+                      "…and the floor must actually exclude" );
+
+        assertEquals( 1, textHits( repoId, "{\"fulltext\":{\"fields\":[\"data.description\"],\"query\":\"\"}}" ),
+                      "an empty fulltext query string is match_all" );
+
+        // A TRAILING WILDCARD on a stemmed field. The query text is analyzed by the same stemmer as
+        // the field, so `grønnsake*` stems to `grønnsak` before becoming a prefix -- which is what
+        // makes it match the indexed `grønnsak`. Asserted because the alternative (prefixing the
+        // RAW text) silently matches nothing: `grønnsake` is longer than the stem it should match.
+        assertEquals( 1, textHits( repoId,
+                                   "{\"stemmed\":{\"fields\":[\"data.description\"],\"query\":\"grønnsake*\",\"operator\":\"AND\"," +
+                                       "\"language\":\"no\"}}" ), "a wildcard must be stemmed before it becomes a prefix" );
+    }
+
+    /**
+     * D8 end to end. The sort is an ordinary keyword sort; what makes it a LANGUAGE sort is that the
+     * indexed value is a hex ICU collation key computed by {@code CollationKeyResolver}. Norwegian
+     * orders {@code æ < ø < å}, which is not the order the raw strings have — so this fails if the
+     * sort silently fell back to {@code ._orderby} or to a field nobody wrote.
+     */
+    @Test
+    void aCollateSortOrdersByThePrecomputedCollationKey()
+    {
+        String repoId = createRepo( "querycollate" );
+        indexAndRefresh( repoId, collationDocument( "node-aa", "ånd" ) );
+        indexAndRefresh( repoId, collationDocument( "node-ae", "ærlig" ) );
+        indexAndRefresh( repoId, collationDocument( "node-oe", "øre" ) );
+
+        assertEquals( List.of( "node-ae", "node-oe", "node-aa" ), sortedIds( repoId, "no", "ASC" ),
+                      "Norwegian collation is æ < ø < å" );
+        assertEquals( List.of( "node-aa", "node-oe", "node-ae" ), sortedIds( repoId, "no", "DESC" ) );
+        assertEquals( sortedIds( repoId, "no", "ASC" ), sortedIds( repoId, "nb", "ASC" ),
+                      "COLLATE no and COLLATE nb resolve to the same field" );
+
+        // DUCET orders these differently from Norwegian, which is what proves the locale is really
+        // selecting a field rather than being ignored: the root collation decomposes the letters
+        // (æ→"ae", å→"a"+ring, ø→"o"), so it sorts ærlig < ånd < øre where Norwegian sorts them
+        // ærlig < øre < ånd. The two orders share no adjacency, so neither can be the other by luck.
+        assertEquals( List.of( "node-ae", "node-aa", "node-oe" ), sortedIds( repoId, "de", "ASC" ),
+                      "German's order-by is DUCET, not ._orderby_de" );
+        assertEquals( sortedIds( repoId, "de", "ASC" ), sortedIds( repoId, "xx", "ASC" ),
+                      "an unmapped locale falls back to the same DUCET field" );
+    }
+
+    @Test
+    void aGeoDistanceSortOrdersByDistanceFromThePoint()
+    {
+        String repoId = createRepo( "querygeo" );
+        indexAndRefresh( repoId, geoDocument( "node-oslo", 59.91273, 10.74609 ) );
+        indexAndRefresh( repoId, geoDocument( "node-bergen", 60.39299, 5.32415 ) );
+        indexAndRefresh( repoId, geoDocument( "node-berlin", 52.52001, 13.40495 ) );
+
+        String sort = "{\"field\":\"data.location\",\"type\":\"geoDistance\"," +
+            "\"location\":{\"lat\":59.91273,\"lon\":10.74609},\"direction\":\"ASC\"}";
+        SearchResult result =
+            nodeSearch().search( searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).addSort( sort ).build() );
+
+        assertEquals( List.of( "node-oslo", "node-bergen", "node-berlin" ),
+                      result.getHitsList().stream().map( SearchHit::getId ).toList() );
+        assertEquals( "0.0", result.getHits( 0 ).getSortValues( 0 ), "the point itself is at distance zero" );
+    }
+
+    /**
+     * Suggesters and highlighting on the wire. Both are opaque JSON slots in the envelope, and both
+     * come back in a shape XP's client transcribes rather than maps — so the assertion that matters
+     * is that the SERVER stripped the physical postfix, since the client does not.
+     */
+    @Test
+    void suggestAndHighlightComeBackOnTheWire()
+    {
+        String repoId = createRepo( "querysuggest" );
+        indexAndRefresh( repoId, textDocument( "node-fisk", "Fisk og laks i Oslo", "/tree/a" ) );
+
+        SearchResult suggested = nodeSearch().search( searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).setSuggest(
+            "{\"descSuggest\":{\"text\":\"fisl\",\"term\":{\"field\":\"data.description\",\"suggestMode\":\"always\"," +
+                "\"stringDistance\":\"jarowinkler\"}}}" ).build() );
+
+        assertTrue( suggested.getSuggestions().contains( "\"descSuggest\"" ), suggested.getSuggestions() );
+        assertTrue( suggested.getSuggestions().contains( "\"fisk\"" ),
+                    "the term suggester must reach the analyzed sub-field and propose 'fisk': " + suggested.getSuggestions() );
+
+        SearchResult highlighted = nodeSearch().search( searchRequest( repoId ).setQuery(
+                "{\"fulltext\":{\"fields\":[\"data.description\"],\"query\":\"fisk\"}}" )
+                                                           .setHighlight(
+                                                               "{\"properties\":[{\"name\":\"data.description\"," +
+                                                                   "\"settings\":{\"numOfFragments\":2}}]}" )
+                                                           .build() );
+
+        assertEquals( 1, highlighted.getHitsCount() );
+        assertEquals( 1, highlighted.getHits( 0 ).getHighlightsCount(),
+                      "the three expanded fields must collapse onto ONE canonical property name" );
+        assertEquals( "data.description", highlighted.getHits( 0 ).getHighlights( 0 ).getName() );
+        assertTrue( highlighted.getHits( 0 ).getHighlights( 0 ).getFragments( 0 ).contains( "<em>" ),
+                    highlighted.getHits( 0 ).getHighlights( 0 ).getFragmentsList().toString() );
+    }
+
+    private static long textHits( String repoId, String query )
+    {
+        return nodeSearch().search( searchRequest( repoId ).setQuery( query ).build() ).getTotalHits();
+    }
+
+    private static List<String> sortedIds( String repoId, String language, String direction )
+    {
+        String sort = "{\"field\":\"data.word\",\"language\":\"" + language + "\",\"direction\":\"" + direction + "\"}";
+        return nodeSearch().search( searchRequest( repoId ).setQuery( "{\"matchAll\":{}}" ).addSort( sort ).build() )
+            .getHitsList()
+            .stream()
+            .map( SearchHit::getId )
+            .toList();
+    }
+
+    /** Every text sub-field XP's index config produces for one string property, plus a path. */
+    private static IndexDoc textDocument( String nodeId, String description, String path )
+    {
+        return IndexDoc.newBuilder()
+            .setId( nodeId )
+            .addFields( textField( "data.description", description ) )
+            .addFields( textField( "data.description._analyzed", description ) )
+            .addFields( textField( "data.description._ngram", description ) )
+            .addFields( textField( "data.description._stemmed_nb", description ) )
+            .addFields( textField( "_path", path ) )
+            .addFields( textField( "_path._path", path ) )
+            .addFields( textField( IndexFields.PERMISSIONS_READ, "role:system.everyone" ) )
+            .build();
+    }
+
+    /**
+     * The {@code ._orderby_<loc>} variants XP emits for a collated property: the SAME
+     * already-lowercased order-by value on every locale field, which the projection then replaces
+     * with that locale's collation key.
+     */
+    private static IndexDoc collationDocument( String nodeId, String word )
+    {
+        return IndexDoc.newBuilder()
+            .setId( nodeId )
+            .addFields( textField( "data.word", word ) )
+            .addFields( textField( "data.word._orderby", word ) )
+            .addFields( textField( "data.word._orderby_no", word ) )
+            .addFields( textField( "data.word._orderby_ducet", word ) )
+            .addFields( textField( IndexFields.PERMISSIONS_READ, "role:system.everyone" ) )
+            .build();
+    }
+
+    private static IndexDoc geoDocument( String nodeId, double lat, double lon )
+    {
+        return IndexDoc.newBuilder()
+            .setId( nodeId )
+            .addFields( textField( "data.location", lat + "," + lon ) )
+            .addFields( textField( "data.location._geopoint", lat + "," + lon ) )
+            .addFields( textField( IndexFields.PERMISSIONS_READ, "role:system.everyone" ) )
+            .build();
     }
 
     private static Status.Code statusOf( Runnable call )
