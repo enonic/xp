@@ -1,6 +1,7 @@
 import type {
     Context,
     ContextAttributeValue,
+    ContextParams,
 } from '../lib-context/src/main/resources/lib/xp/context';
 
 import {
@@ -36,3 +37,11 @@ expectAssignable<ContextAttributeValue>({nested: ['deep']});
 // setCustomLocalAttribute rejects anything that is not JSON-like
 expectNotAssignable<ContextAttributeValue>(() => 'a function');
 expectNotAssignable<ContextAttributeValue>(new Date());
+
+// Scenario: attributes read from one context can be carried into another. One type for both
+// directions keeps this assignable - see the round-trip note on ContextAttributes.
+const carriedForward: ContextParams = {
+    branch: 'master',
+    attributes: contextWithCustomAttributes.attributes,
+};
+expectAssignable<ContextParams>(carriedForward);
