@@ -445,6 +445,34 @@ application audit (core-audit) stays tenant content, unchanged — complementary
 with runtime-level trust. Fleet-wide security monitoring is a log stream to the
 observability stack, not a store.
 
+*Application-audit alignment (modelled now, adopted later — research 2026-08-07).*
+The table is deliberately shaped so XP's application audit CAN later piggyback on it
+without reshaping the platform rows, because core-audit's contract is already exactly
+append-only read+create (`Create`/`Find`/retention-`CleanUp`; no update, no per-entry
+delete — verified against the code). The model that keeps the two trust streams
+complementary inside one table:
+- **`scope` is the trust band, and the SERVER assigns it** from the authenticated
+  context — never from the request payload. Application entries get
+  `scope='application'`; a runtime structurally cannot mint `operator`/`control-plane`
+  rows. Each row states its epistemic status honestly: "NoDB observed runtime *svc:xp*
+  claim that user *U* did *content.publish*."
+- **Additive columns only** when adoption happens (new ordered migration under the P3
+  discipline): `source` (app), `object_uris text[]` + GIN, an external `id uuid` (the
+  API's `AuditLogId`; `seq` stays the ordering), asserted user in `detail` or a
+  `user_key` column. The mapping is otherwise 1:1 (`type`→`action`, `time`→`ts`,
+  `data`→`detail`).
+- **Hash-chain per band, not per table**: chain the platform bands (low volume, high
+  integrity value); leave the high-volume application band unchained — chaining
+  serializes writes.
+- Payoff when adopted: one `INSERT` replaces the full node write path (version + payload
+  refs + branch entry + outbox + search doc + OpenSearch indexing), retention becomes
+  `DELETE WHERE ts <`, and the `system.auditlog` repo + its search index disappear
+  (catalog-pressure relief, risk #6). The sanctioned surface (`lib-audit`) ports 1:1;
+  anything reaching the repo via the node API is the compat break to scan for.
+Adoption itself — rewriting core-audit's storage — is a SEPARATE, deliberately unscoped
+issue; Phase 6's management plane builds the audit read RPC either way, which is why the
+alignment is recorded against that phase.
+
 **Posture.** Postgres/OpenSearch/S3 sit on a network segment reachable only by NoDB;
 tenant runtimes reach only NoDB's gRPC port. Admin operations are audit-logged per
 tenant; metering counters are keyed by the authenticated tenant, never by claimed ids.
@@ -535,7 +563,7 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 | **2** | OpenSearch index + translator port; outbox/indexer; refresh checkpoint | Full core-repo + itest suites green; golden-query corpus diffed against ES backend | **DONE 2026-08-07** — branch `nodb-phase4-opensearch` (tracked as `BUILD-PHASE-4.md`, gates 0/A–G). DSL-on-the-wire (NoQL→DSL renderer in core, server-side translator), XP-shipped index documents via outbox/indexer/`awaitRefresh` (§3.3 live), per-repo alias→`+gN` generations, ICU keys computed in NoDB (icu4j 78.3 pinned, stock OpenSearch 3.7.0 image). Gate F: full itest-core + itest-core-content green in BOTH modes, 129-query corpus 0 FAILURE, zero embedded ES in itests. Gate G: production `backend=nodb` boot starts zero Elasticsearch (config-gated ES activator + nodb `IndexServiceInternal` + nodb-aware liveness probe), live CS smoke + restart persistence, rebuild drill green (`POST /admin/rebuild-search-index` replays `search_document`), PG+OpenSearch baseline recorded in `bench/RESULTS.md`. Main deferral: server-side document derivation from payloads (docs are XP-shipped, stored, replayable). |
 | **3** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
 | **3.5** | Storage-index query family → SQL (`BUILD-PHASE-3.5.md`): version history, branch diff / resolve-sync-work, commit get/find served from `node_version`/`branch_entry`/`node_commit` in nodb mode; repo-scoped version identity (absorbs Phase 4 prerequisite P2); three new indexes via tenant migration 002 | Curated itest list green in both modes (both-backend diff corpus identical); live Content Studio publish/version/compare smoke clean on the hybrid stack | **DONE 2026-08-05** — branch `nodb-phase35-version-sql` |
-| **4** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
+| **4** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm; management-plane audit READ RPC — **and the application-audit alignment adoption point** (§7.2: scope banding, additive columns, per-band hash chain; adopting it in core-audit is a separate issue) | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
 | **5** | Migration tooling, dual-run validation, embedded-ES deprecation | Pilot tenant migrated |
 
 Phase 2 is the long pole. Phases 0–1 are low-risk and independently valuable
