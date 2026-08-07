@@ -13,7 +13,6 @@ const url = portalLib.apiUrl({
         b: 2
     },
     path: ['segment1', 'segment2'],
-    baseUrl: 'https://example.com',
 });
 
 const apiUrlWithPathSegments = portalLib.apiUrl({
@@ -25,9 +24,8 @@ const apiUrl = portalLib.apiUrl({
     api: 'com.enonic.app.myapp:myapi',
 });
 
-const apiUrlWithBaseUrl = portalLib.apiUrl({
+const apiUrlAppRelative = portalLib.apiUrl({
     api: 'myapi',
-    baseUrl: 'https://example.com',
 });
 
 // END
@@ -35,4 +33,4 @@ const apiUrlWithBaseUrl = portalLib.apiUrl({
 assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi?%C3%A5=a&%C3%B8=o&%C3%A6=a&%C3%A6=e&empty=&a=1&b=2', url);
 assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrlWithPathSegments);
 assert.assertEquals('/site/mocksite/_/api/com.enonic.app.myapp:myapi', apiUrl);
-assert.assertEquals('/site/mocksite/_/api/myapplication:myapi', apiUrlWithBaseUrl);
+assert.assertEquals('/site/mocksite/_/api/myapplication:myapi', apiUrlAppRelative);

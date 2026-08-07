@@ -22,6 +22,8 @@ public final class ApiUrlParams
 
     private final String baseUrl;
 
+    private final String apiBaseUrl;
+
     private final Map<String, List<String>> queryParams;
 
     private ApiUrlParams( final Builder builder )
@@ -31,6 +33,7 @@ public final class ApiUrlParams
         this.path = builder.path;
         this.pathSegments = builder.pathSegments;
         this.baseUrl = builder.baseUrl;
+        this.apiBaseUrl = builder.apiBaseUrl;
         this.queryParams = builder.queryParams.build();
 
         if ( this.path != null && this.pathSegments != null )
@@ -64,6 +67,11 @@ public final class ApiUrlParams
         return baseUrl;
     }
 
+    public String getApiBaseUrl()
+    {
+        return apiBaseUrl;
+    }
+
     public Map<String, List<String>> getQueryParams()
     {
         return queryParams;
@@ -83,6 +91,8 @@ public final class ApiUrlParams
         private List<String> pathSegments;
 
         private String baseUrl;
+
+        private String apiBaseUrl;
 
         private DescriptorKey api;
 
@@ -119,9 +129,28 @@ public final class ApiUrlParams
             return this;
         }
 
+        /**
+         * Base URL of a mount where the API lives under the "_" endpoint segment:
+         * {@code <baseUrl>/_/<application>:<api>/...}.
+         *
+         * @deprecated expose the API location as a vhost mapping instead, or use
+         * {@link #setApiBaseUrl(String)} when the API root is known.
+         */
+        @Deprecated
         public Builder setBaseUrl( final String baseUrl )
         {
             this.baseUrl = baseUrl;
+            return this;
+        }
+
+        /**
+         * The root where this API is exposed, used verbatim: no "_" endpoint segment and no
+         * API descriptor are appended - only the path and query parameters follow. Takes
+         * precedence over {@code baseUrl}.
+         */
+        public Builder setApiBaseUrl( final String apiBaseUrl )
+        {
+            this.apiBaseUrl = apiBaseUrl;
             return this;
         }
 
@@ -154,6 +183,7 @@ public final class ApiUrlParams
         helper.add( "path", this.path );
         helper.add( "pathSegments", this.pathSegments );
         helper.add( "baseUrl", this.baseUrl );
+        helper.add( "apiBaseUrl", this.apiBaseUrl );
         return helper.toString();
     }
 }

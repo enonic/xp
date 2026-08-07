@@ -64,6 +64,10 @@ public final class ApiUrlHandler
         this.type = value;
     }
 
+    /**
+     * @deprecated kept for the deprecated {@code baseUrl} parameter of the JS API
+     */
+    @Deprecated
     public void setBaseUrl( final String baseUrl )
     {
         this.baseUrl = baseUrl;

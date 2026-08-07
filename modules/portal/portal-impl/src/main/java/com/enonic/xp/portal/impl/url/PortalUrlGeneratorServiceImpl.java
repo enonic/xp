@@ -238,6 +238,7 @@ public class PortalUrlGeneratorServiceImpl
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
             .setBaseUrl( ApiUrlBaseUrlResolver.create()
                              .setBaseUrl( params.getBaseUrl() )
+                             .setApiBaseUrl( params.getApiBaseUrl() )
                              .setDescriptorKey( params.getDescriptorKey() )
                              .setUrlType( params.getUrlType() )
                              .setDefaultMediaBaseUrl( defaultMediaBaseUrl )
