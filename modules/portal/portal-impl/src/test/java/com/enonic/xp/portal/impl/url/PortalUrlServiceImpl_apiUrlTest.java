@@ -49,7 +49,8 @@ class PortalUrlServiceImpl_apiUrlTest
     @BeforeEach
     void setUp()
     {
-        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        PortalUrlGeneratorService portalUrlGeneratorService =
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
         this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
@@ -160,6 +161,82 @@ class PortalUrlServiceImpl_apiUrlTest
 
         final String url = this.service.apiUrl( params );
         assertEquals( "https://myapi.example.com", url );
+    }
+
+    private void mockVirtualHostContext( final Map<String, String> context )
+    {
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/" );
+        when( virtualHost.getContext() ).thenReturn( context );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+    }
+
+    private void setupApiRequest()
+    {
+        portalRequest.setBaseUri( "/api/com.enonic.app.guillotine:graphql" );
+        portalRequest.setRawPath( "/api/com.enonic.app.guillotine:graphql" );
+    }
+
+    @Test
+    void testApiRequestWithBulkApiBaseUrlContext()
+    {
+        setupApiRequest();
+        mockVirtualHostContext( Map.of( "apiBaseUrl", "https://apis.example.com" ) );
+
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
+
+        // the bulk entry is the root of the full API set: the descriptor is appended
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path", this.service.apiUrl( params ) );
+    }
+
+    @Test
+    void testApiRequestSingleApiContextWinsOverBulk()
+    {
+        setupApiRequest();
+        mockVirtualHostContext( Map.of( "apiBaseUrl", "https://apis.example.com",
+                                        "apiBaseUrl.com.enonic.app.myapp:myapi", "https://myapi.example.com" ) );
+
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
+
+        // a single-API entry is the root of that API alone, used verbatim
+        assertEquals( "https://myapi.example.com/path", this.service.apiUrl( params ) );
+    }
+
+    @Test
+    void testApiRequestSingleApiContextOfOtherApiIsIgnored()
+    {
+        setupApiRequest();
+        mockVirtualHostContext( Map.of( "apiBaseUrl.com.enonic.app.other:api", "https://other.example.com" ) );
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        // no location declared for this API: the sibling rule applies as before
+        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+    }
+
+    @Test
+    void testApiRequestApiBaseUrlContextWithTrailingSlash()
+    {
+        setupApiRequest();
+        mockVirtualHostContext( Map.of( "apiBaseUrl", "https://apis.example.com/" ) );
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+    }
+
+    @Test
+    void testApiRequestWithoutVirtualHostContext()
+    {
+        setupApiRequest();
+        mockVirtualHostContext( Map.of() );
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
     }
 
     @Test

@@ -554,6 +554,26 @@ class PortalUrlServiceImpl_imageUrlTest
     }
 
     @Test
+    void testWithSiteRequestAutoMountDisabledVhostContextOutranksDefaultMediaBaseUrl()
+    {
+        activateMediaApiAutoMountDisabled( "https://media.example.com" );
+
+        setupSiteRequest( SiteConfigs.empty() );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getContext() ).thenReturn( java.util.Map.of( "apiBaseUrl", "https://apis.example.com" ) );
+        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final ImageUrlParams params = new ImageUrlParams().scale( "max(300)" );
+
+        // an API location declared on the matched vhost mapping wins over the
+        // instance-wide default media base
+        assertEquals(
+            "https://apis.example.com/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            this.service.imageUrl( params ) );
+    }
+
+    @Test
     void testWithSiteRequestAutoMountDisabledWithoutMountsWithDefaultMediaBaseUrl()
     {
         activateMediaApiAutoMountDisabled( "https://media.example.com" );

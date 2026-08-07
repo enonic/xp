@@ -152,6 +152,14 @@ final class ApiUrlBaseUrlResolver
 
         if ( baseUri.startsWith( "/api/" ) )
         {
+            // an API location declared on the matched vhost mapping wins over the default
+            // media base and over the sibling assumption
+            final String vhostLocation = vhostApiLocation( portalRequest );
+            if ( vhostLocation != null )
+            {
+                return vhostLocation;
+            }
+
             if ( mediaApi && defaultMediaBaseUrl != null )
             {
                 return defaultMediaBaseUrlForm();
@@ -182,21 +190,43 @@ final class ApiUrlBaseUrlResolver
                 return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, url.toString() );
             }
 
+            final String vhostLocation = vhostApiLocation( portalRequest );
+            if ( vhostLocation != null )
+            {
+                return vhostLocation;
+            }
+
             return defaultMediaBaseUrl != null ? defaultMediaBaseUrlForm() : apiForm();
         }
 
         // admin mounts always keep "_"-anchored media URLs: that is how they stay within the
         // authenticated admin session. Only a webapp that does not mount the media APIs diverts
-        // to the default media base, when one is configured.
-        if ( mediaApi && defaultMediaBaseUrl != null && !PortalRequestHelper.isSiteBase( portalRequest ) &&
-            baseUri.startsWith( "/webapp/" ) && !isMountedOnWebapp( baseUri ) )
+        // to a location declared on the matched vhost mapping or to the default media base;
+        // without either, the webapp "_" form is kept.
+        if ( mediaApi && !PortalRequestHelper.isSiteBase( portalRequest ) && baseUri.startsWith( "/webapp/" ) &&
+            !isMountedOnWebapp( baseUri ) )
         {
-            return defaultMediaBaseUrlForm();
+            final String vhostLocation = vhostApiLocation( portalRequest );
+            if ( vhostLocation != null )
+            {
+                return vhostLocation;
+            }
+
+            if ( defaultMediaBaseUrl != null )
+            {
+                return defaultMediaBaseUrlForm();
+            }
         }
 
         final StringBuilder url = new StringBuilder( generateBaseUrlPrefix( portalRequest ) );
         UrlBuilderHelper.appendPart( url, descriptorKey.toString() );
         return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, url.toString() );
+    }
+
+    private String vhostApiLocation( final PortalRequest portalRequest )
+    {
+        // declared on the vhost mapping that matched the request; used verbatim
+        return VirtualHostApiLocationResolver.resolve( portalRequest.getRawRequest(), descriptorKey );
     }
 
     private String defaultMediaBaseUrlForm()
