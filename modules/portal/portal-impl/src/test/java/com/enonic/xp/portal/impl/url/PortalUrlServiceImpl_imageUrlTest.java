@@ -567,7 +567,7 @@ class PortalUrlServiceImpl_imageUrlTest
         assertEquals(
             "https://apis.example.com/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             ContextBuilder.copyOf( com.enonic.xp.context.ContextAccessor.current() )
-                .attribute( "apiBaseUrl", "https://apis.example.com" )
+                .attribute( "portal.apiBaseUrl", "https://apis.example.com" )
                 .build()
                 .callWith( () -> this.service.imageUrl( params ) ) );
     }
@@ -870,7 +870,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // context wins over the instance-wide default media base
         assertEquals(
             "https://apis.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "apiBaseUrl", "https://apis.example.com" ) ) );
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
     }
 
     @Test
@@ -881,7 +881,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // a single-API attribute is the root of that API alone: nothing is appended
         assertEquals(
             "https://images.example.com/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "apiBaseUrl.media:image", "https://images.example.com" ) ) );
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
     }
 
     @Test

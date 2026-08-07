@@ -187,7 +187,7 @@ class PortalUrlServiceImpl_apiUrlTest
 
         // the bulk attribute is the root of the full API set: the descriptor is appended
         assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path",
-                      apiUrlWithAttributes( Map.of( "apiBaseUrl", "https://apis.example.com" ), params ) );
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ), params ) );
     }
 
     @Test
@@ -200,7 +200,7 @@ class PortalUrlServiceImpl_apiUrlTest
 
         // a single-API attribute is the root of that API alone, used verbatim
         assertEquals( "https://myapi.example.com/path", apiUrlWithAttributes(
-            Map.of( "apiBaseUrl", "https://apis.example.com", "apiBaseUrl.com.enonic.app.myapp:myapi", "https://myapi.example.com" ),
+            Map.of( "portal.apiBaseUrl", "https://apis.example.com", "portal.apiBaseUrl.com.enonic.app.myapp:myapi", "https://myapi.example.com" ),
             params ) );
     }
 
@@ -213,7 +213,7 @@ class PortalUrlServiceImpl_apiUrlTest
 
         // no location declared for this API: the sibling rule applies as before
         assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes(
-            Map.of( "apiBaseUrl.com.enonic.app.other:api", "https://other.example.com" ), params ) );
+            Map.of( "portal.apiBaseUrl.com.enonic.app.other:api", "https://other.example.com" ), params ) );
     }
 
     @Test
@@ -224,7 +224,7 @@ class PortalUrlServiceImpl_apiUrlTest
         final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
         assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi",
-                      apiUrlWithAttributes( Map.of( "apiBaseUrl", "https://apis.example.com/" ), params ) );
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com/" ), params ) );
     }
 
     @Test
@@ -245,7 +245,7 @@ class PortalUrlServiceImpl_apiUrlTest
         final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
         // an empty value declares nothing
-        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes( Map.of( "apiBaseUrl", "" ), params ) );
+        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "" ), params ) );
     }
 
     @Test
@@ -258,7 +258,7 @@ class PortalUrlServiceImpl_apiUrlTest
 
         // a declared location applies without a request too: a task can establish it
         assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path",
-                      apiUrlWithAttributes( Map.of( "apiBaseUrl", "https://apis.example.com" ), params ) );
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ), params ) );
     }
 
     @Test
