@@ -554,7 +554,7 @@ class PortalUrlServiceImpl_imageUrlTest
     }
 
     @Test
-    void testWithSiteRequestAutoMountDisabledDeclaredLocationOutranksDefaultMediaBaseUrl()
+    void testWithSiteRequestAutoMountDisabledSingleApiAttributeOutranksDefaultMediaBaseUrl()
     {
         activateMediaApiAutoMountDisabled( "https://media.example.com" );
 
@@ -562,12 +562,11 @@ class PortalUrlServiceImpl_imageUrlTest
 
         final ImageUrlParams params = new ImageUrlParams().scale( "max(300)" );
 
-        // an API location declared for the current context wins over the instance-wide
-        // default media base
+        // an attribute naming the API itself outranks the default media base
         assertEquals(
-            "https://apis.example.com/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "https://images.example.com/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             ContextBuilder.copyOf( com.enonic.xp.context.ContextAccessor.current() )
-                .attribute( "portal.apiBaseUrl", "https://apis.example.com" )
+                .attribute( "portal.apiBaseUrl.media:image", "https://images.example.com" )
                 .build()
                 .callWith( () -> this.service.imageUrl( params ) ) );
     }
@@ -860,14 +859,38 @@ class PortalUrlServiceImpl_imageUrlTest
     }
 
     @Test
-    void testWithWebappRequestWithoutMediaApiMountsDeclaredLocationOutranksDefaultMediaBaseUrl()
+    void testWithWebappRequestWithoutMediaApiMountsDefaultMediaBaseUrlOutranksBulkAttribute()
     {
         activateDefaultMediaBaseUrl( "https://media.example.com" );
 
         setupWebappRequest();
 
-        // the webapp does not mount the media APIs: the location declared for the current
-        // context wins over the instance-wide default media base
+        // the default media base names the media APIs, the bulk attribute names any API:
+        // the more specific declaration wins, so exposing APIs elsewhere leaves media alone
+        assertEquals(
+            "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsSingleApiAttributeOutranksDefaultMediaBaseUrl()
+    {
+        activateDefaultMediaBaseUrl( "https://media.example.com" );
+
+        setupWebappRequest();
+
+        // an attribute naming the API itself is more specific than the default media base
+        assertEquals(
+            "https://images.example.com/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsBulkAttributeWithoutDefaultMediaBaseUrl()
+    {
+        setupWebappRequest();
+
+        // nothing more specific is declared: the bulk attribute applies
         assertEquals(
             "https://apis.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );

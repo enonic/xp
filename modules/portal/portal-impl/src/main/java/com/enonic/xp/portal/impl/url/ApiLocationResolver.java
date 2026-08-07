@@ -16,7 +16,9 @@ import static com.google.common.base.Strings.emptyToNull;
  * portal.apiBaseUrl.&lt;application&gt;:&lt;api&gt;   root of that API alone, used verbatim
  * </pre>
  *
- * The single-API attribute wins over the bulk one. Values are used verbatim, so they decide
+ * The attributes are consulted in order of how specifically they name the API: the one naming
+ * the API itself first, the bulk one last - with the {@code media.defaultBaseUrl} configuration,
+ * which names the media APIs, ranking between them. Values are used verbatim, so they decide
  * the URL form themselves: another host, another path on the same host, or a relative root.
  * <p>
  * Attributes of the vhost mapping that matched the request are copied into the context, so a
@@ -39,25 +41,29 @@ final class ApiLocationResolver
     {
     }
 
-    static String resolve( final DescriptorKey api )
+    /**
+     * @return the root declared for this API alone, used verbatim, or {@code null}
+     */
+    static String resolveSingle( final DescriptorKey api )
     {
-        final Context context = ContextAccessor.current();
+        final String single = attribute( ContextAccessor.current(), API_BASE_URL_ATTRIBUTE + "." + api );
+        return single == null ? null : removeTrailingSlash( single );
+    }
 
-        final String single = attribute( context, API_BASE_URL_ATTRIBUTE + "." + api );
-        if ( single != null )
+    /**
+     * @return the root declared for any API, with the descriptor appended, or {@code null}
+     */
+    static String resolveBulk( final DescriptorKey api )
+    {
+        final String bulk = attribute( ContextAccessor.current(), API_BASE_URL_ATTRIBUTE );
+        if ( bulk == null )
         {
-            return removeTrailingSlash( single );
+            return null;
         }
 
-        final String bulk = attribute( context, API_BASE_URL_ATTRIBUTE );
-        if ( bulk != null )
-        {
-            final StringBuilder url = new StringBuilder( removeTrailingSlash( bulk ) );
-            UrlBuilderHelper.appendPart( url, api.toString() );
-            return url.toString();
-        }
-
-        return null;
+        final StringBuilder url = new StringBuilder( removeTrailingSlash( bulk ) );
+        UrlBuilderHelper.appendPart( url, api.toString() );
+        return url.toString();
     }
 
     private static String attribute( final Context context, final String key )

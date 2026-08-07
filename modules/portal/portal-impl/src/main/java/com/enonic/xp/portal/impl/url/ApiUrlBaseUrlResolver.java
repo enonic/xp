@@ -145,30 +145,19 @@ final class ApiUrlBaseUrlResolver
 
         if ( portalRequest == null || portalRequest.getBaseUri() == null || portalRequest.getBaseUri().isEmpty() )
         {
-            final String declaredLocation = declaredApiLocation();
-            if ( declaredLocation != null )
-            {
-                return declaredLocation;
-            }
-
-            return mediaApi && defaultMediaBaseUrl != null ? defaultMediaBaseUrlForm() : apiForm();
+            final String declaredLocation = declaredApiLocation( mediaApi );
+            return declaredLocation != null ? declaredLocation : apiForm();
         }
 
         final String baseUri = portalRequest.getBaseUri();
 
         if ( baseUri.startsWith( "/api/" ) )
         {
-            // an API location declared for the current context wins over the default media
-            // base and over the sibling assumption
-            final String declaredLocation = declaredApiLocation();
+            // an API location declared for the current context wins over the sibling assumption
+            final String declaredLocation = declaredApiLocation( mediaApi );
             if ( declaredLocation != null )
             {
                 return declaredLocation;
-            }
-
-            if ( mediaApi && defaultMediaBaseUrl != null )
-            {
-                return defaultMediaBaseUrlForm();
             }
 
             // APIs are expected to be mounted next to the current endpoint: resolve the public
@@ -196,31 +185,21 @@ final class ApiUrlBaseUrlResolver
                 return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, url.toString() );
             }
 
-            final String declaredLocation = declaredApiLocation();
-            if ( declaredLocation != null )
-            {
-                return declaredLocation;
-            }
-
-            return defaultMediaBaseUrl != null ? defaultMediaBaseUrlForm() : apiForm();
+            final String declaredLocation = declaredApiLocation( true );
+            return declaredLocation != null ? declaredLocation : apiForm();
         }
 
         // admin mounts always keep "_"-anchored media URLs: that is how they stay within the
         // authenticated admin session. Only a webapp that does not mount the media APIs diverts
         // to a location declared for the current context or to the default media base;
-        // without either, the webapp "_" form is kept.
+        // without any of those, the webapp "_" form is kept.
         if ( mediaApi && !PortalRequestHelper.isSiteBase( portalRequest ) && baseUri.startsWith( "/webapp/" ) &&
             !isMountedOnWebapp( baseUri ) )
         {
-            final String declaredLocation = declaredApiLocation();
+            final String declaredLocation = declaredApiLocation( true );
             if ( declaredLocation != null )
             {
                 return declaredLocation;
-            }
-
-            if ( defaultMediaBaseUrl != null )
-            {
-                return defaultMediaBaseUrlForm();
             }
         }
 
@@ -229,11 +208,26 @@ final class ApiUrlBaseUrlResolver
         return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), urlType, url.toString() );
     }
 
-    private String declaredApiLocation()
+    /**
+     * Locations declared for the current context - by the matched vhost mapping, or by whatever
+     * else established the attributes - and the media default, consulted in order of how
+     * specifically they name this API: the attribute naming the API itself, then the media
+     * default that names the media APIs, then the attribute that names any API.
+     */
+    private String declaredApiLocation( final boolean mediaApi )
     {
-        // declared for the current context - by the matched vhost mapping, or by whatever
-        // else established the attributes; used verbatim
-        return ApiLocationResolver.resolve( descriptorKey );
+        final String single = ApiLocationResolver.resolveSingle( descriptorKey );
+        if ( single != null )
+        {
+            return single;
+        }
+
+        if ( mediaApi && defaultMediaBaseUrl != null )
+        {
+            return defaultMediaBaseUrlForm();
+        }
+
+        return ApiLocationResolver.resolveBulk( descriptorKey );
     }
 
     private String defaultMediaBaseUrlForm()

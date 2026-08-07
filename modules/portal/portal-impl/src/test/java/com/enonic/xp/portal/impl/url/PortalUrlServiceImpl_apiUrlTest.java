@@ -249,6 +249,18 @@ class PortalUrlServiceImpl_apiUrlTest
     }
 
     @Test
+    void testApiRequestBulkAttributeAppliesToNonMediaApiRegardlessOfDefaultMediaBaseUrl()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        // the default media base names the media APIs only: it never diverts another API
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi",
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ), params ) );
+    }
+
+    @Test
     void testNoRequestWithApiBaseUrlAttribute()
     {
         PortalRequestAccessor.set( null );
