@@ -119,6 +119,9 @@ export type ImageUrlParams = IdXorPath & {
         | 'full';
     project?: string;
     branch?: string;
+    /**
+     * @deprecated Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
+     */
     baseUrl?: string;
 };
 
@@ -166,7 +169,7 @@ interface ImageUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
- * @param {string} [params.baseUrl] Custom baseUrl.
+ * @param {string} [params.baseUrl] Deprecated. Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
@@ -250,6 +253,9 @@ export interface AttachmentUrlParams {
     params?: object;
     project?: string;
     branch?: string;
+    /**
+     * @deprecated Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
+     */
     baseUrl?: string
 }
 
@@ -291,7 +297,7 @@ interface AttachmentUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
- * @param {string} [params.baseUrl] Custom baseUrl.
+ * @param {string} [params.baseUrl] Deprecated. Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL.
@@ -842,6 +848,9 @@ export interface ApiUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
     params?: Record<string, string | string[]>;
     path?: string | string[];
+    /**
+     * @deprecated Expose the API location as a vhost mapping instead.
+     */
     baseUrl?: string;
 }
 
@@ -869,7 +878,7 @@ interface ApiUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`. Ignored when a base URL applies.
  * @param {string|string[]} [params.path] Path(s) to be appended to the base URL following the api segment to complete request URL.
  * @param {object} [params.params] Custom query parameters to append to the URL.
- * @param {string} [params.baseUrl] Custom baseUrl.
+ * @param {string} [params.baseUrl] Deprecated. Expose the API location as a vhost mapping instead.
  *
  * @returns {string} The generated URL.
  */

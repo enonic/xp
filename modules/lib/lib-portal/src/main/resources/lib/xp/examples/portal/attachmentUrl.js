@@ -6,7 +6,6 @@ var url = portalLib.attachmentUrl({
     name: '1234.pdf',
     project: 'myproject',
     branch: 'mybranch',
-    baseUrl: 'mybaseUrl',
     download: true,
 });
 // END

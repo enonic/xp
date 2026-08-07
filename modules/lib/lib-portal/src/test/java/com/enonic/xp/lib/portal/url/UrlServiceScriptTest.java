@@ -37,6 +37,19 @@ class UrlServiceScriptTest
 {
     private PortalUrlService portalUrlService;
 
+    private static String buildApiPath( final ApiUrlParams params )
+    {
+        if ( params.getPathSegments() != null )
+        {
+            return params.getPathSegments().stream().collect( Collectors.joining( "/", "/", "" ) );
+        }
+        if ( params.getPath() != null )
+        {
+            return params.getPath().startsWith( "/" ) ? params.getPath() : "/" + params.getPath();
+        }
+        return "";
+    }
+
     private String buildQueryString( final Multimap<String, String> params )
     {
         if ( params == null || params.isEmpty() )
@@ -139,7 +152,7 @@ class UrlServiceScriptTest
             final ApiUrlParams params = invocation.getArgument( 0, ApiUrlParams.class );
             final Multimap<String, String> queryParams = LinkedListMultimap.create();
             params.getQueryParams().forEach( queryParams::putAll );
-            return "/site/mocksite/_/api/" + params.getApi() + buildQueryString( queryParams );
+            return "/site/mocksite/_/" + params.getApi() + buildApiPath( params ) + buildQueryString( queryParams );
         } );
 
         when( portalUrlService.baseUrl( any( BaseUrlParams.class ) ) ).thenAnswer( invocation -> "/site/mocksite" );
