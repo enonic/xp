@@ -48,8 +48,9 @@ rows it is read with (one round trip, one transaction, PITR-coherent backups, re
 in the tenant `payload` table, FK-verified, dedup observed) and confirms the file BlobStore
 is idle for these segments. Binaries (row 4) were realized earlier, in
 `nodb/BUILD-PHASE-2.md`'s Gate D. Branch/version/commit (row 1) has been realized since
-`nodb/BUILD-PHASE-1.md`. Only search documents (row 3) remain ES-served (Phase 4, not yet
-started on this execution track — see the phase-numbering note under §9 below).
+`nodb/BUILD-PHASE-1.md`. Search documents (row 3) are realized as of `nodb/BUILD-PHASE-4.md`
+(2026-08-07): OpenSearch behind NoDB, documents stored durably in `search_document` and
+replayable — see the phase-numbering note under §9 below.
 
 ## 3. The SPI
 
@@ -531,7 +532,7 @@ off OSGi, NoDB and the data plane are outside the blast radius.
 |---|---|---|
 | **0** | SPI module in XP; current embedded-ES code refactored to implement it | Full XP test suite green, no behavior change; ships in an 8.x | **DONE 2026-07-18** — branch `storage-spi-phase0`, gates 0/A–D green (full build 729 tasks + both itest suites; only pre-existing icuSort failures). `core-storage-spi` created; StorageDao/SearchDao zero consumers outside the ES package; `storage.backend=elasticsearch` selection property in place; arch test enforces both boundary directions. Gate E (module extraction) deliberately deferred. |
 | **1** | NoDB engine + gRPC server + `nodb-client`; `NodeStore` on Postgres, binaries on S3; tenant model END-TO-END (token→TenantContext as the only entry, trivial dev issuer; schema-per-tenant + SET LOCAL ROLE) | Storage-level itests green against NoDB, run DUAL-TENANT with cross-tenant isolation assertions |
-| **2** | OpenSearch index + translator port; outbox/indexer; refresh checkpoint | Full core-repo + itest suites green; golden-query corpus diffed against ES backend |
+| **2** | OpenSearch index + translator port; outbox/indexer; refresh checkpoint | Full core-repo + itest suites green; golden-query corpus diffed against ES backend | **DONE 2026-08-07** — branch `nodb-phase4-opensearch` (tracked as `BUILD-PHASE-4.md`, gates 0/A–G). DSL-on-the-wire (NoQL→DSL renderer in core, server-side translator), XP-shipped index documents via outbox/indexer/`awaitRefresh` (§3.3 live), per-repo alias→`+gN` generations, ICU keys computed in NoDB (icu4j 78.3 pinned, stock OpenSearch 3.7.0 image). Gate F: full itest-core + itest-core-content green in BOTH modes, 129-query corpus 0 FAILURE, zero embedded ES in itests. Gate G: production `backend=nodb` boot starts zero Elasticsearch (config-gated ES activator + nodb `IndexServiceInternal` + nodb-aware liveness probe), live CS smoke + restart persistence, rebuild drill green (`POST /admin/rebuild-search-index` replays `search_document`), PG+OpenSearch baseline recorded in `bench/RESULTS.md`. Main deferral: server-side document derivation from payloads (docs are XP-shipped, stored, replayable). |
 | **3** | Snapshots, vacuum, dump/load verified; retention policies | Ops parity + dump-based migration round-trip test |
 | **3.5** | Storage-index query family → SQL (`BUILD-PHASE-3.5.md`): version history, branch diff / resolve-sync-work, commit get/find served from `node_version`/`branch_entry`/`node_commit` in nodb mode; repo-scoped version identity (absorbs Phase 4 prerequisite P2); three new indexes via tenant migration 002 | Curated itest list green in both modes (both-backend diff corpus identical); live Content Studio publish/version/compare smoke clean on the hybrid stack | **DONE 2026-08-05** — branch `nodb-phase35-version-sql` |
 | **4** | Control-plane integration (real issuer, membership, break-glass policy), metering/QoS by scope, external ingress, Docker/compose, Helm | Quota/QoS tests; issuance-to-audit attribution verified end-to-end |
@@ -549,7 +550,8 @@ numbers do **not** map 1:1 onto the table's Phase 1–5 (e.g. this table's "Phas
 vacuum, dump/load" is downstream of, and distinct from, `BUILD-PHASE-3.md`'s payload work).
 As of this note: `BUILD-PHASE-0/1/2/3.md` are all gate-complete (Gate D green in each) —
 this table's row 1 (NodeStore on Postgres + binaries on S3 + tenant model) is functionally
-done; row 2 (OpenSearch) has not been started on this track. Reconcile phase numbering with
+done; row 2 (OpenSearch) is done as of 2026-08-07 (`BUILD-PHASE-4.md`, see the row above;
+`BUILD-PHASE-3.5.md` delivered the version-history SQL slice between them). Reconcile phase numbering with
 the `nodb-design` tracking branch's risk register (#12/#13 there) before renumbering this
 table — not attempted here to avoid clobbering that branch's own bookkeeping.
 

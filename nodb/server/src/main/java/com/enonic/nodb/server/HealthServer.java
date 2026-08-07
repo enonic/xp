@@ -3,10 +3,13 @@ package com.enonic.nodb.server;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BooleanSupplier;
 import javax.sql.DataSource;
 
@@ -54,6 +57,12 @@ public final class HealthServer
     public static HealthServer start( int port, DataSource dataSource, BooleanSupplier searchReady )
         throws IOException
     {
+        return start( port, dataSource, searchReady, null );
+    }
+
+    public static HealthServer start( int port, DataSource dataSource, BooleanSupplier searchReady, SearchIndexRebuild rebuild )
+        throws IOException
+    {
         HttpServer server = HttpServer.create( new InetSocketAddress( port ), 0 );
         server.createContext( "/health/live", exchange -> respond( exchange, 200, "{\"status\":\"UP\"}" ) );
         server.createContext( "/health/ready", exchange -> {
@@ -75,10 +84,80 @@ public final class HealthServer
                 respond( exchange, 503, "{\"status\":\"DOWN\",\"failed\":[\"" + String.join( "\",\"", failures ) + "\"]}" );
             }
         } );
+        if ( rebuild != null )
+        {
+            server.createContext( "/admin/rebuild-search-index", exchange -> {
+                if ( !"POST".equalsIgnoreCase( exchange.getRequestMethod() ) )
+                {
+                    respond( exchange, 405, "{\"error\":\"POST only\"}" );
+                    return;
+                }
+                Map<String, String> params = queryParams( exchange.getRequestURI().getRawQuery() );
+                String tenant = params.get( "tenant" );
+                String repo = params.get( "repo" );
+                if ( tenant == null || tenant.isBlank() || repo == null || repo.isBlank() )
+                {
+                    respond( exchange, 400, "{\"error\":\"required query parameters: tenant, repo\"}" );
+                    return;
+                }
+                try
+                {
+                    long startedAt = System.nanoTime();
+                    int replayed = rebuild.rebuild( tenant, repo );
+                    long tookMillis = ( System.nanoTime() - startedAt ) / 1_000_000;
+                    LOG.info( "Rebuilt search index of tenant {} repo {}: {} documents replayed in {} ms", tenant, repo, replayed,
+                              tookMillis );
+                    respond( exchange, 200,
+                             "{\"tenant\":\"" + tenant + "\",\"repo\":\"" + repo + "\",\"replayed\":" + replayed + ",\"tookMillis\":" +
+                                 tookMillis + "}" );
+                }
+                catch ( IllegalArgumentException | IllegalStateException e )
+                {
+                    respond( exchange, 409, "{\"error\":\"" + jsonEscape( e.getMessage() ) + "\"}" );
+                }
+                catch ( Exception e )
+                {
+                    LOG.warn( "Search index rebuild failed for tenant {} repo {}", tenant, repo, e );
+                    respond( exchange, 500, "{\"error\":\"" + jsonEscape( e.getMessage() ) + "\"}" );
+                }
+            } );
+        }
         server.setExecutor( null );
         server.start();
-        LOG.info( "Health endpoints on port {} (/health/live, /health/ready)", port );
+        LOG.info( "Health endpoints on port {} (/health/live, /health/ready{})", port,
+                  rebuild != null ? ", /admin/rebuild-search-index" : "" );
         return new HealthServer( server );
+    }
+
+    @FunctionalInterface
+    public interface SearchIndexRebuild
+    {
+        int rebuild( String tenantId, String repoId )
+            throws Exception;
+    }
+
+    private static Map<String, String> queryParams( String rawQuery )
+    {
+        Map<String, String> params = new LinkedHashMap<>();
+        if ( rawQuery == null || rawQuery.isBlank() )
+        {
+            return params;
+        }
+        for ( String pair : rawQuery.split( "&" ) )
+        {
+            int eq = pair.indexOf( '=' );
+            if ( eq > 0 )
+            {
+                params.put( URLDecoder.decode( pair.substring( 0, eq ), StandardCharsets.UTF_8 ),
+                            URLDecoder.decode( pair.substring( eq + 1 ), StandardCharsets.UTF_8 ) );
+            }
+        }
+        return params;
+    }
+
+    private static String jsonEscape( String message )
+    {
+        return message == null ? "" : message.replace( "\\", "\\\\" ).replace( "\"", "\\\"" );
     }
 
     public int getPort()

@@ -18,4 +18,6 @@ public interface OSGIStateChecks
 
     Set<String> LIVE_SERVICE_NAMES =
         Set.of( "org.elasticsearch.client.Client", "org.elasticsearch.client.AdminClient", "org.elasticsearch.client.ClusterAdminClient" );
+
+    Set<String> NODB_LIVE_SERVICE_NAMES = Set.of( "com.enonic.xp.storage.nodb.NodbStorageClient" );
 }

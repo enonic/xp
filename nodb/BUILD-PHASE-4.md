@@ -187,6 +187,68 @@ retyping ever, additive-only changes, `reserved` ranges for every removed field 
 name, new semantics behind new fields rather than redefined ones, and a per-connection
 negotiated protocol version (the search envelope's `format_version` is the precedent).
 
+## ✅ PHASE 4 COMPLETE (2026-08-07)
+
+All gates green: P1 · P3 · 0 · A · B · C · D · E · F · G (P2 was delivered by Phase 3.5).
+**Definition of done, checked:** nodb mode runs zero embedded ES — proven mechanically in
+itests (Gate F probe, 153 classes) AND against the live production JVM (Gate G: 0
+`elasticsearch[` threads of 83, no ES data dir, 0 `org.elasticsearch.*` OSGi services);
+full itest suites green in nodb mode (697 + 385 tests) and byte-identical in ES mode;
+129-row corpus green under the documented acceptance rules; refresh contract proven live
+(query-your-write immediately after create); index rebuild drill green (out-of-band index
+delete → replay from `search_document` → byte-identical fingerprint); cross-host-path
+baseline recorded in `bench/RESULTS.md` (100k docs; headline `refresh(SEARCH)` p50 14.6 ms;
+labelled baseline-not-SLO, loopback-caveated); RUNNING.md rewritten and DESIGN.md §9
+updated. Branch: `nodb-phase4-opensearch`.
+
+## GATE G DONE (2026-08-07) — production no-ES boot, live smoke, rebuild drill, baseline
+
+**Item A took three pieces, and two of them were real defects:** (1) `ElasticsearchActivator`
+gated on `backend=nodb`; (2) **ConfigAdmin location binding** — `ConfigInstallerImpl` created
+configs bound to the first consuming bundle, so core-elasticsearch could not SEE the nodb
+config at all; fixed with the OSGi multi-location `"?"` (default-mode neutral; persisted CM
+stores in pre-existing homes keep the old binding — XP_HOME is disposable, noted); (3) a
+**Felix SCR multi-PID quirk** — the merged config is only delivered when the FIRST listed PID
+has a real config, so the activator also reads the nodb PID imperatively, keeping the
+declared PID for restart-on-late-config. Plus `NodbIndexServiceInternal` as a production
+provider in core-repo (config-gated like `NodbStorageClient`; cannot live in the client
+bundle because core-repo exports nothing), and `/health` liveness accepting the nodb client
+as the alternative to the three ES services.
+
+**Live smoke** (evidence in scratchpad, repeatable via NEW `nodb/smoke.sh`, orchestrator
+re-ran it green): clean `start --build` from empty Docker; create → query-your-write (§3.3
+live) → update → markAsReady → resolve → publish (master row in PG) → fulltext → terms
+aggregation → version history → compare → restart persistence (doc count stable, 0 ES
+threads on the restarted JVM).
+
+**Rebuild drill:** physical index deleted straight at OpenSearch (alias 404s), rebuilt via
+NEW `POST :7701/admin/rebuild-search-index` — sha256 fingerprint over sorted `(_id,_source)`
+**byte-identical** before/after; 9–17 docs in 142–330 ms. Recorded: deleteIndex wipes
+`search_index` metadata so the fresh generation is `+g1` again — the zero-downtime
+BUILDING-generation + alias-flip driver remains future work (RUNNING.md notes it).
+
+**Baseline** (`bench/RESULTS.md`, 100k nodes+docs, p50/p95 µs): getBranchEntry 1147/1693 ·
+term query 1971/3363 · fulltext 27783/35699 (documented match-everything worst case) ·
+aggregation 803/1389 · writeBatch 1765/2159 · **refresh(SEARCH) 14564/22603 — the §7.1
+headline** · awaitRefresh floor 2573/2866. **FINDINGS #7 settled by data: `plain` is ~6%
+FASTER than `unified`** at 150-word bodies → keep `type: plain`; re-measure at multi-KB
+before reconsidering.
+
+**Isolation requirement (mid-gate, from the user):** XP moved to 18080/14848/12609
+(`XP_WEB_PORT` etc.), all stop/start process matching scoped to OUR instance
+(`$XP_HOME_DIR` / `$NODB_DIST` in the cmdline), port-busy guard retargeted.
+⚠️ **Before the requirement landed, the old broad `pkill` killed the user's
+`site_market_react` sandbox once** — the new scoping makes that structurally impossible;
+verified live with the sandbox running as the negative control (sandbox owns 8080, stack
+answers 18080, two cleanly separated XP processes).
+
+**Decisions:** `WITH_OPENSEARCH` now defaults ON (post-Gate-F a nodb stack without OpenSearch
+has no search at all); rebuild endpoint on the unauthenticated ops port (reachable=trusted,
+like `/health`; Phase 6 owns operator AuthN); bench keeps the production 1 s
+`refresh_interval`. **Not exercised, noted:** the 3.5→4 tenant upgrade path (re-provision +
+reindex of an existing tenant) — fresh volumes only; worth a note before anyone upgrades a
+long-lived dev tenant.
+
 ## GATE 0 COMPLETE (2026-08-05) — decisions awaiting a ruling
 
 All five items delivered (a: DSL completeness · b: envelope · c: translator surface ·

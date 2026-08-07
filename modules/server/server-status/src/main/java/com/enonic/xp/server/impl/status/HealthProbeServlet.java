@@ -21,7 +21,7 @@ public final class HealthProbeServlet
     @Activate
     public HealthProbeServlet( final BundleContext bundleContext )
     {
-        super( new OSGIStateCheck( bundleContext, OSGIStateChecks.LIVE_SERVICE_NAMES ) );
+        super( new OSGIStateCheck( bundleContext, OSGIStateChecks.LIVE_SERVICE_NAMES, OSGIStateChecks.NODB_LIVE_SERVICE_NAMES ) );
     }
 
     @Deactivate

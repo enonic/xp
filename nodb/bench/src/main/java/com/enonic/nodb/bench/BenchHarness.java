@@ -35,10 +35,16 @@ public final class BenchHarness
                        + "expect this to take a few minutes.", BenchConfig.full().nodeCount() );
         try (BenchEnvironment env = BenchEnvironment.start())
         {
-            BenchResult result = BenchRunner.run( env.client(), env.repoId(), BenchConfig.full() );
-            LOG.info( "Seeded {} nodes in {} ms ({} nodes/sec)", result.seedNodeCount(), result.seedWallMillis(),
-                       String.format( "%.0f", result.nodesPerSecond() ) );
+            BenchResult result = BenchRunner.run( env, BenchConfig.full() );
+            LOG.info( "Seeded {} nodes in {} ms ({} nodes/sec); {} search documents, index drain {} ms", result.seedNodeCount(),
+                       result.seedWallMillis(), String.format( "%.0f", result.nodesPerSecond() ), result.searchDocCount(),
+                       result.indexDrainMillis() );
             for ( LatencyStats stats : result.opStats() )
+            {
+                LOG.info( "{}: p50={}us p95={}us p99={}us mean={}us n={}", stats.operation(), stats.p50Micros(), stats.p95Micros(),
+                           stats.p99Micros(), stats.meanMicros(), stats.count() );
+            }
+            for ( LatencyStats stats : result.highlightStats() )
             {
                 LOG.info( "{}: p50={}us p95={}us p99={}us mean={}us n={}", stats.operation(), stats.p50Micros(), stats.p95Micros(),
                            stats.p99Micros(), stats.meanMicros(), stats.count() );

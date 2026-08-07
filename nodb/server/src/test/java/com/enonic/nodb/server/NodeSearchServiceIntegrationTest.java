@@ -120,6 +120,8 @@ class NodeSearchServiceIntegrationTest
 
     private static OpenSearchClient openSearchClient;
 
+    private static NodeSearchService nodeSearchService;
+
     @BeforeAll
     static void setUp()
         throws Exception
@@ -146,17 +148,16 @@ class NodeSearchServiceIntegrationTest
         TenantAuthInterceptor authInterceptor =
             new TenantAuthInterceptor( new JwtVerifier( (RSAPublicKey) issuerKeyPair.getPublic() ) );
 
+        nodeSearchService = new NodeSearchService( dataSource, tenant -> new Indexer( dataSource, tenant, openSearchClient,
+                                                                                     searchIndexAdmin ),
+                                                   new SearchQueryExecutor( openSearchClient ), searchIndexAdmin );
+
         String serverName = InProcessServerBuilder.generateName();
         grpcServer = InProcessServerBuilder.forName( serverName )
             .directExecutor()
             .addService( ServerInterceptors.intercept( new NodeStoreService( dataSource ), authInterceptor ) )
             .addService( ServerInterceptors.intercept( new RepositoryAdminService( dataSource, searchIndexAdmin ), authInterceptor ) )
-            .addService( ServerInterceptors.intercept( new NodeSearchService( dataSource, tenant -> new Indexer( dataSource, tenant,
-                                                                                                                openSearchClient,
-                                                                                                                searchIndexAdmin ),
-                                                                             new SearchQueryExecutor( openSearchClient ),
-                                                                             searchIndexAdmin ),
-                                                        authInterceptor ) )
+            .addService( ServerInterceptors.intercept( nodeSearchService, authInterceptor ) )
             .build()
             .start();
         channel = InProcessChannelBuilder.forName( serverName ).directExecutor().build();
@@ -363,6 +364,72 @@ class NodeSearchServiceIntegrationTest
                 java.net.http.HttpRequest.newBuilder( java.net.URI.create( "http://localhost:" + port + path ) ).build(),
                 java.net.http.HttpResponse.BodyHandlers.discarding() ).statusCode();
         }
+    }
+
+    @Test
+    void theOpsRebuildEndpointRestoresAnOutOfBandDeletedIndexIdentically()
+        throws Exception
+    {
+        String repoId = createRepo( "opsrebuild" );
+        String alias = SearchIndexNames.alias( new TenantContext( "acme" ), repoId );
+
+        indexAndRefresh( repoId, document( "node-1", "alpha" ) );
+        indexAndRefresh( repoId, document( "node-2", "beta" ) );
+
+        assertEquals( 2, count( alias ) );
+        String fingerprintBefore = sourcesIn( alias );
+
+        for ( String physical : openSearchClient.indicesForAlias( alias ) )
+        {
+            openSearchClient.deleteIndex( physical );
+        }
+        assertFalse( openSearchClient.aliasExists( alias ), "out-of-band delete must really have removed the index" );
+        assertEquals( 2, storedDocumentCount( repoId ), "the stored documents are what makes the index disposable" );
+
+        try (HealthServer health = HealthServer.start( 0, dataSource, () -> true, ( tenant, repo ) -> nodeSearchService
+            .rebuildSearchIndex( new TenantContext( tenant ), repo ) ))
+        {
+            java.net.http.HttpResponse<String> response = httpPost( health.getPort(),
+                                                                    "/admin/rebuild-search-index?tenant=acme&repo=" + repoId );
+            assertEquals( 200, response.statusCode(), response.body() );
+            assertTrue( response.body().contains( "\"replayed\":2" ), response.body() );
+
+            assertEquals( 405, httpStatus( health.getPort(), "/admin/rebuild-search-index?tenant=acme&repo=" + repoId ) );
+            assertEquals( 400, httpPost( health.getPort(), "/admin/rebuild-search-index?tenant=acme" ).statusCode() );
+            assertEquals( 409, httpPost( health.getPort(), "/admin/rebuild-search-index?tenant=acme&repo=no.such.repo" ).statusCode() );
+        }
+
+        assertTrue( openSearchClient.aliasExists( alias ) );
+        assertEquals( 2, count( alias ) );
+        assertEquals( fingerprintBefore, sourcesIn( alias ), "the rebuilt index must be byte-identical in content" );
+        assertEquals( 1, hits( alias, "data.title._text", "alpha" ) );
+        assertEquals( 1, hits( alias, "data.title._text", "beta" ) );
+    }
+
+    private static java.net.http.HttpResponse<String> httpPost( int port, String path )
+        throws Exception
+    {
+        try (java.net.http.HttpClient httpClient = java.net.http.HttpClient.newHttpClient())
+        {
+            return httpClient.send( java.net.http.HttpRequest.newBuilder( java.net.URI.create( "http://localhost:" + port + path ) )
+                                        .POST( java.net.http.HttpRequest.BodyPublishers.noBody() )
+                                        .build(), java.net.http.HttpResponse.BodyHandlers.ofString() );
+        }
+    }
+
+    private static String sourcesIn( String target )
+    {
+        ObjectNode body = OpenSearchClient.mapper().createObjectNode();
+        body.put( "size", 1000 );
+        body.putArray( "sort" ).add( "_id" );
+        JsonNode hits = openSearchClient.search( target, body ).path( "hits" ).path( "hits" );
+
+        StringBuilder fingerprint = new StringBuilder();
+        for ( JsonNode hit : hits )
+        {
+            fingerprint.append( hit.path( "_id" ).asText() ).append( '=' ).append( hit.path( "_source" ) ).append( '\n' );
+        }
+        return fingerprint.toString();
     }
 
     /**

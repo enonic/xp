@@ -3,6 +3,7 @@ package com.enonic.xp.server.impl.status.check;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -63,6 +64,39 @@ class OSGICheckTest
         assertThat( result.getErrorMessages() ).containsOnly( "[org.elasticsearch.client.AdminClient] service in not available",
                                                               "[org.elasticsearch.client.Client] service in not available",
                                                               "[org.elasticsearch.client.ClusterAdminClient] service in not available" );
+    }
+
+    @Test
+    void testNotAliveWithNodbAlternativeAbsent()
+    {
+        final OSGIStateCheck healthCheck =
+            new OSGIStateCheck( bundleContext, OSGIStateChecks.LIVE_SERVICE_NAMES, OSGIStateChecks.NODB_LIVE_SERVICE_NAMES );
+        final StateCheckResult result = healthCheck.check();
+
+        assertThat( result.getErrorMessages() ).containsOnly( "[org.elasticsearch.client.AdminClient] service in not available",
+                                                              "[org.elasticsearch.client.Client] service in not available",
+                                                              "[org.elasticsearch.client.ClusterAdminClient] service in not available" );
+    }
+
+    @Test
+    void testAliveViaNodbAlternative()
+        throws Exception
+    {
+        for ( String s : OSGIStateChecks.NODB_LIVE_SERVICE_NAMES )
+        {
+            final ServiceReference<Object> serviceMock = mock( ServiceReference.class );
+
+            Mockito.lenient()
+                .when( bundleContext.getServiceReferences( eq( s ), isNull() ) )
+                .thenReturn( new ServiceReference<?>[]{serviceMock} );
+            Mockito.lenient().when( bundleContext.getService( serviceMock ) ).thenReturn( mock( Object.class ) );
+        }
+
+        final OSGIStateCheck healthCheck =
+            new OSGIStateCheck( bundleContext, OSGIStateChecks.LIVE_SERVICE_NAMES, OSGIStateChecks.NODB_LIVE_SERVICE_NAMES );
+        final StateCheckResult result = healthCheck.check();
+
+        assertTrue( result.getErrorMessages().isEmpty() );
     }
 
     @Test

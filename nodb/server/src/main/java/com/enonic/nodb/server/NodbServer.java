@@ -2,6 +2,7 @@ package com.enonic.nodb.server;
 
 import java.nio.file.Path;
 import java.security.interfaces.RSAPublicKey;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -142,6 +143,16 @@ public final class NodbServer
     public OpenSearchClient openSearchClient()
     {
         return openSearchClient;
+    }
+
+    public int rebuildSearchIndex( String tenantId, String repoId )
+        throws SQLException
+    {
+        if ( nodeSearchService == null )
+        {
+            throw new IllegalStateException( "No search backend configured (NODB_OPENSEARCH_URL unset); nothing to rebuild" );
+        }
+        return nodeSearchService.rebuildSearchIndex( new TenantContext( tenantId ), repoId );
     }
 
     /**
@@ -289,7 +300,8 @@ public final class NodbServer
 
         int healthPort = Integer.parseInt( env( "NODB_OPS_PORT", Integer.toString( HealthServer.DEFAULT_PORT ) ) );
         HealthServer healthServer = HealthServer.start( healthPort, dataSource,
-                                                       nodbServer.openSearchClient() == null ? null : nodbServer::isSearchReady );
+                                                       nodbServer.openSearchClient() == null ? null : nodbServer::isSearchReady,
+                                                       nodbServer.openSearchClient() == null ? null : nodbServer::rebuildSearchIndex );
 
         Runtime.getRuntime().addShutdownHook( new Thread( () -> {
             LOG.info( "Shutting down NoDB server" );

@@ -117,7 +117,7 @@ public final class ConfigInstallerImpl
             return oldConfiguration;
         }
 
-        return this.configurationAdmin.getConfiguration( pid, null );
+        return this.configurationAdmin.getConfiguration( pid, "?" );
     }
 
     private Configuration findExistingConfiguration( String fileName )

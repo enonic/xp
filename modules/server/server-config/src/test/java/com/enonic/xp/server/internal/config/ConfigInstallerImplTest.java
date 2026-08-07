@@ -39,7 +39,7 @@ class ConfigInstallerImplTest
         throws Exception
     {
         final Configuration config = Mockito.mock( Configuration.class );
-        Mockito.when( this.configurationAdmin.getConfiguration( "com.foo.bar", null ) ).thenReturn( config );
+        Mockito.when( this.configurationAdmin.getConfiguration( "com.foo.bar", "?" ) ).thenReturn( config );
         return config;
     }
 

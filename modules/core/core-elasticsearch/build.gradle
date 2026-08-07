@@ -8,6 +8,7 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.dataformat', module: 'jackson-dataformat-smile'
     }
     implementation libs.elasticsearch.icu
+    implementation libs.osgi.service.cm
     runtimeOnly libs.jackson.dataformat.smile
     runtimeOnly libs.jackson.dataformat.cbor
     runtimeOnly libs.jackson.dataformat.yaml

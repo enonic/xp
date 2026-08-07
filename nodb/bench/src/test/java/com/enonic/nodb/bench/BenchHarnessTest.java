@@ -29,11 +29,16 @@ class BenchHarnessTest
 
         try (BenchEnvironment env = BenchEnvironment.start())
         {
-            BenchResult result = BenchRunner.run( env.client(), env.repoId(), config );
+            BenchResult result = BenchRunner.run( env, config );
 
             assertEquals( config.nodeCount(), result.seedNodeCount(), "every seeded node should be counted as written" );
             assertTrue( result.seedWallMillis() >= 0 );
-            assertEquals( 5, result.opStats().size(), "getBranchEntry(id), getBranchEntry(path), getChildren, getVersion, writeBatch" );
+            assertEquals( config.nodeCount(), result.searchDocCount(), "every seeded node should also ship a search document" );
+            assertTrue( result.indexDrainMillis() >= 0 );
+            assertEquals( 12, result.opStats().size(),
+                          "getBranchEntry(id), getBranchEntry(path), getChildren, getVersion, writeBatch, term, fulltext, " +
+                              "aggregation, highlight-via-NoDB, indexDocuments, index+awaitRefresh, awaitRefresh-noop" );
+            assertEquals( 2, result.highlightStats().size(), "FINDINGS #7: plain vs unified" );
             for ( LatencyStats stats : result.opStats() )
             {
                 assertEquals( config.measuredOps(), stats.count(), stats.operation() + ": all measured (post-warmup) ops should land" );

@@ -19,17 +19,27 @@ import org.elasticsearch.plugin.analysis.icu.AnalysisICUPlugin;
 import org.elasticsearch.transport.TransportService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.core.internal.Condition;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.elasticsearch")
+@Component(immediate = true, configurationPid = {"com.enonic.xp.elasticsearch", "com.enonic.xp.storage.nodb"})
 public final class ElasticsearchActivator
 {
+    private static final Logger LOG = LoggerFactory.getLogger( ElasticsearchActivator.class );
+
+    private static final String NODB_BACKEND_VALUE = "nodb";
+
+    private static final String NODB_CONFIG_PID = "com.enonic.xp.storage.nodb";
+
     private Node node;
 
     private ServiceRegistration<Node> nodeReg;
@@ -46,21 +56,30 @@ public final class ElasticsearchActivator
 
     private final ClusterConfig clusterConfig;
 
+    private final ConfigurationAdmin configurationAdmin;
+
     @Reference(target = "(" + Condition.CONDITION_ID + "=HazelcastActivatorActivated)")
     @SuppressWarnings("unused")
     private Condition condition;
 
     @Activate
-    public ElasticsearchActivator( @Reference final ClusterConfig clusterConfig )
+    public ElasticsearchActivator( @Reference final ClusterConfig clusterConfig, @Reference final ConfigurationAdmin configurationAdmin )
     {
         ESLoggerFactory.setDefaultFactory( new Slf4jESLoggerFactory() );
         this.clusterConfig = clusterConfig;
+        this.configurationAdmin = configurationAdmin;
     }
 
     @Activate
     @SuppressWarnings("WeakerAccess")
     public void activate( final BundleContext context, final Map<String, String> map )
     {
+        if ( nodbBackendConfigured( map ) )
+        {
+            LOG.info( "storage backend is nodb (com.enonic.xp.storage.nodb backend=nodb): embedded Elasticsearch node not started" );
+            return;
+        }
+
         final Settings settings = new NodeSettingsBuilder( context, this.clusterConfig ).
             buildSettings( map );
 
@@ -82,10 +101,43 @@ public final class ElasticsearchActivator
         this.clusterAdminClientReg = context.registerService( ClusterAdminClient.class, this.node.client().admin().cluster(), null );
     }
 
+    private boolean nodbBackendConfigured( final Map<String, String> map )
+    {
+        if ( NODB_BACKEND_VALUE.equals( map.get( "backend" ) ) )
+        {
+            return true;
+        }
+        try
+        {
+            final Configuration[] configurations =
+                this.configurationAdmin.listConfigurations( "(service.pid=" + NODB_CONFIG_PID + ")" );
+            if ( configurations != null )
+            {
+                for ( final Configuration configuration : configurations )
+                {
+                    final java.util.Dictionary<String, Object> properties = configuration.getProperties();
+                    if ( properties != null && NODB_BACKEND_VALUE.equals( properties.get( "backend" ) ) )
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        catch ( final Exception e )
+        {
+            LOG.warn( "Could not inspect [{}] configuration; assuming embedded Elasticsearch is wanted", NODB_CONFIG_PID, e );
+        }
+        return false;
+    }
+
     @Deactivate
     @SuppressWarnings("WeakerAccess")
     public void deactivate()
     {
+        if ( this.node == null )
+        {
+            return;
+        }
         this.nodeReg.unregister();
         this.transportServiceReg.unregister();
         this.clusterServiceReg.unregister();

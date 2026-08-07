@@ -13,16 +13,31 @@ public final class OSGIStateCheck
 
     private final Map<String, ServiceTracker<?, ?>> trackers;
 
+    private final Map<String, ServiceTracker<?, ?>> alternativeTrackers;
+
     public OSGIStateCheck( final BundleContext bundleContext, final Set<String> servicesToTrack )
+    {
+        this( bundleContext, servicesToTrack, Set.of() );
+    }
+
+    public OSGIStateCheck( final BundleContext bundleContext, final Set<String> servicesToTrack, final Set<String> alternativeServices )
     {
         this.trackers = servicesToTrack.stream()
             .collect( Collectors.toMap( Function.identity(), service -> new ServiceTracker<>( bundleContext, service, null ) ) );
+        this.alternativeTrackers = alternativeServices.stream()
+            .collect( Collectors.toMap( Function.identity(), service -> new ServiceTracker<>( bundleContext, service, null ) ) );
 
         this.trackers.values().forEach( ServiceTracker::open );
+        this.alternativeTrackers.values().forEach( ServiceTracker::open );
     }
 
     public StateCheckResult check()
     {
+        if ( !alternativeTrackers.isEmpty() && alternativeTrackers.values().stream().noneMatch( ServiceTracker::isEmpty ) )
+        {
+            return StateCheckResult.create().build();
+        }
+
         final StateCheckResult.Builder result = StateCheckResult.create();
 
         trackers.entrySet()
@@ -36,5 +51,6 @@ public final class OSGIStateCheck
     public void deactivate()
     {
         trackers.values().forEach( ServiceTracker::close );
+        alternativeTrackers.values().forEach( ServiceTracker::close );
     }
 }

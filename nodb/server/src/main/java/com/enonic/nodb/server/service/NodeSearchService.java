@@ -378,6 +378,19 @@ public final class NodeSearchService
         }
     }
 
+    public int rebuildSearchIndex( TenantContext tenant, String repoId )
+        throws SQLException
+    {
+        Long repoKey = Tx.inTenantTx( dataSource, tenant, connection -> RepoKeys.tryResolve( connection, new RepoRef( repoId ) ) );
+        if ( repoKey == null )
+        {
+            throw new IllegalArgumentException( "Unknown repo id: " + repoId );
+        }
+        searchIndexAdmin.deleteIndex( tenant, repoId );
+        searchIndexAdmin.createIndex( tenant, repoId );
+        return indexer( tenant ).reindexFromDocuments( repoId );
+    }
+
     private synchronized Indexer indexer( TenantContext tenant )
     {
         return cache.computeIfAbsent( tenant.tenantId(), id -> indexers.apply( tenant ) );

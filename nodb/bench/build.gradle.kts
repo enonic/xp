@@ -29,6 +29,11 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.testcontainers.postgresql)
     implementation(libs.slf4j.api)
+    // Phase 4 Gate G: the search bench builds a raw NodeSearchGrpc stub in MAIN source
+    // (NodbClient still has no search passthroughs) and hand-assembles OpenSearch JSON
+    // bodies for the FINDINGS #7 highlight comparison via engine's OpenSearchClient.
+    implementation(libs.bundles.grpc.server)
+    implementation(libs.jackson.databind)
 
     testImplementation(libs.slf4j.simple)
     testImplementation(libs.junit.jupiter)

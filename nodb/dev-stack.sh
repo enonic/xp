@@ -11,19 +11,20 @@
 # nodb-minio-data). XP_HOME is disposable by design — config, token and apps are
 # regenerated on every start.
 #
-# OPT-IN: OpenSearch (Phase 4). Search still runs on embedded ES until Phase 4 Gate F,
-# so the OpenSearch container is OFF by default and nothing else changes when it is off:
+# OpenSearch is ON by default since Phase 4 Gate G: in nodb mode search runs on OpenSearch
+# (XP boots ZERO embedded Elasticsearch), so a stack without it has no search at all — every
+# NodeSearch RPC answers UNIMPLEMENTED and Content Studio is unusable. Opt OUT only for
+# storage-only debugging:
 #
-#   WITH_OPENSEARCH=1 nodb/dev-stack.sh start     also start OpenSearch on $OS_PORT
+#   WITH_OPENSEARCH=0 nodb/dev-stack.sh start     skip the OpenSearch container
 #
 # Uses the STOCK opensearchproject/opensearch image (Gate A / decision D8): NoDB computes ICU
 # collation keys itself, which was analysis-icu's only consumer, so no derived image is needed
 # and there is no managed-service plugin-parity risk. nodb/docker/opensearch/Dockerfile stays
 # in the tree as the record of WHY it is unnecessary.
 #
-# When the flag is set, NODB_OPENSEARCH_URL is passed to the NoDB server, which then registers
+# When OpenSearch is on, NODB_OPENSEARCH_URL is passed to the NoDB server, which then registers
 # the NodeSearch RPCs, creates a per-repo index on repo create, and runs the outbox indexer.
-# Unset, NoDB starts with no search backend at all and NodeSearch answers UNIMPLEMENTED.
 # Data lives in the named volume nodb-os-data. `clean` removes the container (volume preserved)
 # whether or not the flag is set.
 
@@ -43,11 +44,17 @@ MINIO_CONSOLE_PORT=19001
 OS_PORT=19200
 NODB_PORT=7700
 NODB_OPS_PORT=7701
+# XP ports deliberately OFF the standard 8080/4848/2609 (same 1xxxx offset style as
+# PG/MinIO/OpenSearch above): this stack must never collide with a developer's own XP
+# sandboxes on the same machine.
+XP_WEB_PORT="${XP_WEB_PORT:-18080}"
+XP_MGMT_PORT="${XP_MGMT_PORT:-14848}"
+XP_STATS_PORT="${XP_STATS_PORT:-12609}"
 XP_LOG=/tmp/xp-nodb.log
 NODB_LOG=/tmp/nodb-server.log
 
-# OpenSearch (Phase 4) — opt-in until Gate A has something that talks to it.
-WITH_OPENSEARCH="${WITH_OPENSEARCH:-0}"
+# OpenSearch (Phase 4) — default ON since Gate G; WITH_OPENSEARCH=0 opts out (no search).
+WITH_OPENSEARCH="${WITH_OPENSEARCH:-1}"
 OS_VERSION=3.7.0
 # STOCK image (D8) -- pinned to the exact minor AWS OpenSearch Service runs (3.7; it adopts
 # every other minor, so the next legitimate bump is 3.9). NOT the floating ':3' tag, which
@@ -99,6 +106,29 @@ wait_for() { # wait_for <seconds> <description> <command...>
     sleep 1
   done
   die "Timed out waiting for $desc (see logs)"
+}
+
+# OUR XP only, never a developer's sandbox: every XP launcher's command line matches
+# com.enonic.xp.launcher, so pgrep/pkill on that pattern alone would hit ANY XP on the
+# machine. Discriminate on the XP home path, which server.sh puts on the command line
+# (-Djava.io.tmpdir=$XP_HOME/work).
+xp_pids() {
+  local p
+  for p in $(pgrep -f com.enonic.xp.launcher 2>/dev/null); do
+    if ps -o command= -p "$p" 2>/dev/null | grep -q -- "$XP_HOME_DIR"; then
+      echo "$p"
+    fi
+  done
+}
+
+# OUR NoDB only, same reasoning (the classpath carries the install dir).
+nodb_pids() {
+  local p
+  for p in $(pgrep -f com.enonic.nodb.server 2>/dev/null); do
+    if ps -o command= -p "$p" 2>/dev/null | grep -q -- "$NODB_DIST"; then
+      echo "$p"
+    fi
+  done
 }
 
 # ---- steps -------------------------------------------------------------------
@@ -170,7 +200,7 @@ start_containers() {
 }
 
 start_nodb() {
-  if pgrep -f com.enonic.nodb.server >/dev/null; then
+  if [ -n "$(nodb_pids)" ]; then
     log "NoDB server already running"
     return
   fi
@@ -229,6 +259,12 @@ nodbEndpoint=localhost:$NODB_PORT
 nodbToken=${NODB_TOKEN}
 EOF
 
+  cat > "$XP_HOME_DIR/config/com.enonic.xp.web.jetty.cfg" <<EOF
+http.web.port=$XP_WEB_PORT
+http.management.port=$XP_MGMT_PORT
+http.statistics.port=$XP_STATS_PORT
+EOF
+
   local su_hash
   su_hash=$(printf '%s' "$SU_PASS" | shasum -a 256 | awk '{print $1}')
   cat > "$XP_HOME_DIR/config/system.properties" <<EOF
@@ -249,18 +285,20 @@ download_apps() {
 }
 
 start_xp() {
-  if pgrep -f com.enonic.xp.launcher >/dev/null; then
-    warn "XP already running — restarting it to pick up the fresh token"
-    pkill -f com.enonic.xp.launcher || true
+  local pids
+  pids=$(xp_pids)
+  if [ -n "$pids" ]; then
+    warn "This stack's XP already running — restarting it to pick up the fresh token"
+    kill $pids 2>/dev/null || true
     sleep 3
   fi
-  if nc -z localhost 8080 2>/dev/null; then
-    die "Port 8080 is taken by something else — stop it or set jetty ports in $XP_HOME_DIR/config"
+  if nc -z localhost "$XP_WEB_PORT" 2>/dev/null; then
+    die "Our web port $XP_WEB_PORT is busy (something else has it) — free it or override XP_WEB_PORT"
   fi
-  log "Starting XP (log $XP_LOG)"
+  log "Starting XP (log $XP_LOG, web port $XP_WEB_PORT)"
   JAVA_HOME="$JAVA_HOME_RUN" XP_HOME="$XP_HOME_DIR" \
     nohup "$XP_DIST/bin/server.sh" > "$XP_LOG" 2>&1 &
-  wait_for 120 "XP on :8080" bash -c "curl -s -o /dev/null localhost:8080"
+  wait_for 120 "XP on :$XP_WEB_PORT" bash -c "curl -s -o /dev/null localhost:$XP_WEB_PORT"
 }
 
 verify() {
@@ -274,12 +312,13 @@ verify() {
   blobs=$(find "$XP_HOME_DIR/repo/blob" -type f 2>/dev/null | wc -l | tr -d ' ')
   echo "  local blobstore files: $blobs (0 = all data in NoDB, as designed)"
   echo
-  log "Ready:  http://localhost:8080/admin   (su / $SU_PASS)"
+  log "Ready:  http://localhost:$XP_WEB_PORT/admin   (su / $SU_PASS)"
+  echo "        (off-standard XP ports web=$XP_WEB_PORT mgmt=$XP_MGMT_PORT stats=$XP_STATS_PORT — your own sandboxes on 8080 are untouched)"
   echo "        MinIO console: http://localhost:$MINIO_CONSOLE_PORT (nodb / nodb-secret)"
   [ "$WITH_OPENSEARCH" = 1 ] && echo "        OpenSearch:    http://localhost:$OS_PORT (wired into NoDB: indexer + per-repo indices)"
   echo "        NoDB health:   http://localhost:$NODB_OPS_PORT/health/ready"
   echo "        Logs: $XP_LOG  $NODB_LOG"
-  echo "        Note: publish/version-history/compare work since Phase 3.5; search/aggregations stay on embedded ES until Phase 4."
+  echo "        Note: search/aggregations run on OpenSearch via NoDB since Phase 4; nodb mode boots zero embedded Elasticsearch."
 }
 
 # ---- commands ----------------------------------------------------------------
@@ -299,14 +338,15 @@ cmd_start() {
 }
 
 cmd_stop() {
-  log "Stopping XP + NoDB (containers left running)"
-  pkill -f com.enonic.xp.launcher 2>/dev/null || true
-  pkill -f com.enonic.nodb.server 2>/dev/null || true
+  log "Stopping this stack's XP + NoDB (containers left running; other XP instances untouched)"
+  local pids
+  pids=$(xp_pids);   [ -n "$pids" ] && kill $pids 2>/dev/null || true
+  pids=$(nodb_pids); [ -n "$pids" ] && kill $pids 2>/dev/null || true
 }
 
 cmd_status() {
-  pgrep -f com.enonic.xp.launcher   >/dev/null && echo "XP:       running" || echo "XP:       stopped"
-  pgrep -f com.enonic.nodb.server   >/dev/null && echo "NoDB:     running" || echo "NoDB:     stopped"
+  [ -n "$(xp_pids)" ]   && echo "XP:       running (this stack; web port $XP_WEB_PORT)" || echo "XP:       stopped"
+  [ -n "$(nodb_pids)" ] && echo "NoDB:     running" || echo "NoDB:     stopped"
   docker inspect -f 'Postgres: {{.State.Status}}' nodb-pg 2>/dev/null    || echo "Postgres: absent"
   docker inspect -f 'MinIO:    {{.State.Status}}' nodb-minio 2>/dev/null || echo "MinIO:    absent"
   if docker inspect nodb-os >/dev/null 2>&1; then
@@ -314,7 +354,7 @@ cmd_status() {
     curl -s "localhost:$OS_PORT/_cluster/health" 2>/dev/null | \
       sed -n 's/.*"status":"\([a-z]*\)".*/          cluster health: \1/p'
   else
-    echo "OpenSrch: absent (opt-in: WITH_OPENSEARCH=1 $0 start)"
+    echo "OpenSrch: absent (default ON; was this stack started with WITH_OPENSEARCH=0?)"
   fi
   if docker exec nodb-pg pg_isready -U nodb >/dev/null 2>&1; then
     docker exec nodb-pg psql -U nodb -d nodb -c \

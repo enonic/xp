@@ -5,16 +5,30 @@ import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.time.Duration;
+import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import io.grpc.CallCredentials;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
+
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 import com.enonic.nodb.client.NodbClient;
 import com.enonic.nodb.engine.TenantContext;
 import com.enonic.nodb.engine.TenantProvisioner;
+import com.enonic.nodb.engine.binary.BinaryStore;
+import com.enonic.nodb.engine.search.OpenSearchClient;
+import com.enonic.nodb.engine.search.OpenSearchConfig;
+import com.enonic.nodb.engine.search.SearchIndexNames;
 import com.enonic.nodb.proto.v1.CreateRepositoryRequest;
+import com.enonic.nodb.proto.v1.NodeSearchGrpc;
 import com.enonic.nodb.server.NodbServer;
 import com.enonic.nodb.server.auth.DevKeys;
 import com.enonic.nodb.server.auth.JwtIssuer;
@@ -29,11 +43,23 @@ import com.enonic.nodb.server.auth.Scope;
  * bench is an honest network+serialization+DB round-trip number, so it has to go over a
  * real socket), a repo+master branch, and a connected {@link NodbClient} holding a runtime
  * token. {@link #close()} tears all of it down in reverse order.
+ *
+ * <p>Phase 4 Gate G: also starts an OpenSearch 3.7.0 container (stock image, D8) and
+ * configures the server with it (5-arg {@link NodbServer#create}), so the COMPLETE
+ * PG + OpenSearch path exists: {@code CreateRepository} makes the per-repo index, the
+ * outbox indexer runs, and the {@code NodeSearch} RPCs answer. The production default
+ * {@code refresh_interval} (1s) is kept deliberately — this bench records what a
+ * deployment would see, unlike the engine tests which pin {@code -1} so a missing
+ * {@code awaitRefresh} fails deterministically.
  */
 final class BenchEnvironment
     implements AutoCloseable
 {
+    static final String OPENSEARCH_IMAGE = "opensearchproject/opensearch:3.7.0";
+
     private final PostgreSQLContainer<?> postgres;
+
+    private final GenericContainer<?> opensearch;
 
     private final HikariDataSource dataSource;
 
@@ -41,18 +67,33 @@ final class BenchEnvironment
 
     private final NodbClient client;
 
+    private final ManagedChannel searchChannel;
+
+    private final NodeSearchGrpc.NodeSearchBlockingStub nodeSearch;
+
+    private final OpenSearchClient openSearchClient;
+
     private final String repoId;
+
+    private final String searchAlias;
 
     private final String runtimeToken;
 
-    private BenchEnvironment( PostgreSQLContainer<?> postgres, HikariDataSource dataSource, NodbServer server, NodbClient client,
-                               String repoId, String runtimeToken )
+    private BenchEnvironment( PostgreSQLContainer<?> postgres, GenericContainer<?> opensearch, HikariDataSource dataSource,
+                               NodbServer server, NodbClient client, ManagedChannel searchChannel,
+                               NodeSearchGrpc.NodeSearchBlockingStub nodeSearch, OpenSearchClient openSearchClient, String repoId,
+                               String searchAlias, String runtimeToken )
     {
         this.postgres = postgres;
+        this.opensearch = opensearch;
         this.dataSource = dataSource;
         this.server = server;
         this.client = client;
+        this.searchChannel = searchChannel;
+        this.nodeSearch = nodeSearch;
+        this.openSearchClient = openSearchClient;
         this.repoId = repoId;
+        this.searchAlias = searchAlias;
         this.runtimeToken = runtimeToken;
     }
 
@@ -61,6 +102,17 @@ final class BenchEnvironment
     {
         PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>( "postgres:17" );
         postgres.start();
+
+        GenericContainer<?> opensearch = new GenericContainer<>( OPENSEARCH_IMAGE ).withExposedPorts( 9200 )
+            .withEnv( "discovery.type", "single-node" )
+            .withEnv( "DISABLE_SECURITY_PLUGIN", "true" )
+            .withEnv( "DISABLE_INSTALL_DEMO_CONFIG", "true" )
+            .withEnv( "OPENSEARCH_JAVA_OPTS", "-Xms512m -Xmx512m" )
+            .waitingFor( Wait.forHttp( "/_cluster/health?wait_for_status=yellow&timeout=30s" )
+                             .forPort( 9200 )
+                             .forStatusCode( 200 )
+                             .withStartupTimeout( Duration.ofMinutes( 4 ) ) );
+        opensearch.start();
 
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl( postgres.getJdbcUrl() );
@@ -72,8 +124,12 @@ final class BenchEnvironment
         String tenantId = "bench";
         new TenantProvisioner( dataSource, postgres.getUsername() ).provision( new TenantContext( tenantId ) );
 
+        OpenSearchConfig openSearchConfig =
+            OpenSearchConfig.of( "http://" + opensearch.getHost() + ":" + opensearch.getMappedPort( 9200 ) );
+
         KeyPair issuerKeyPair = DevKeys.loadOrGenerate( Files.createTempDirectory( "nodb-bench-dev-keys" ) );
-        NodbServer server = NodbServer.create( 0, dataSource, (RSAPublicKey) issuerKeyPair.getPublic() );
+        NodbServer server =
+            NodbServer.create( 0, dataSource, (RSAPublicKey) issuerKeyPair.getPublic(), BinaryStore.fromEnv(), openSearchConfig );
 
         String operatorToken = JwtIssuer.mint( (RSAPrivateKey) issuerKeyPair.getPrivate(), (RSAPublicKey) issuerKeyPair.getPublic(),
                                                  tenantId, Scope.OPERATOR, "bench-operator", Duration.ofHours( 2 ) );
@@ -86,7 +142,15 @@ final class BenchEnvironment
         adminClient.close();
 
         NodbClient client = NodbClient.connect( "localhost", server.getPort(), runtimeToken );
-        return new BenchEnvironment( postgres, dataSource, server, client, repoId, runtimeToken );
+
+        ManagedChannel searchChannel = ManagedChannelBuilder.forAddress( "localhost", server.getPort() ).usePlaintext().build();
+        NodeSearchGrpc.NodeSearchBlockingStub nodeSearch =
+            NodeSearchGrpc.newBlockingStub( searchChannel ).withCallCredentials( bearerToken( runtimeToken ) );
+
+        String searchAlias = SearchIndexNames.alias( new TenantContext( tenantId ), repoId );
+
+        return new BenchEnvironment( postgres, opensearch, dataSource, server, client, searchChannel, nodeSearch,
+                                     new OpenSearchClient( openSearchConfig ), repoId, searchAlias, runtimeToken );
     }
 
     NodbClient client()
@@ -97,6 +161,21 @@ final class BenchEnvironment
     String repoId()
     {
         return repoId;
+    }
+
+    NodeSearchGrpc.NodeSearchBlockingStub nodeSearch()
+    {
+        return nodeSearch;
+    }
+
+    OpenSearchClient openSearchClient()
+    {
+        return openSearchClient;
+    }
+
+    String searchAlias()
+    {
+        return searchAlias;
     }
 
     /**
@@ -120,12 +199,43 @@ final class BenchEnvironment
         return runtimeToken;
     }
 
+    private static CallCredentials bearerToken( String token )
+    {
+        Metadata.Key<String> authorizationKey = Metadata.Key.of( "authorization", Metadata.ASCII_STRING_MARSHALLER );
+        String headerValue = "Bearer " + token;
+        return new CallCredentials()
+        {
+            @Override
+            public void applyRequestMetadata( RequestInfo requestInfo, Executor appExecutor, MetadataApplier applier )
+            {
+                Metadata headers = new Metadata();
+                headers.put( authorizationKey, headerValue );
+                applier.apply( headers );
+            }
+        };
+    }
+
     @Override
     public void close()
     {
         client.close();
+        searchChannel.shutdown();
+        try
+        {
+            if ( !searchChannel.awaitTermination( 5, TimeUnit.SECONDS ) )
+            {
+                searchChannel.shutdownNow();
+            }
+        }
+        catch ( InterruptedException e )
+        {
+            searchChannel.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+        openSearchClient.close();
         server.shutdown();
         dataSource.close();
         postgres.stop();
+        opensearch.stop();
     }
 }

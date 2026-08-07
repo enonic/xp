@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterNodeId;
@@ -42,6 +43,9 @@ class ElasticsearchActivatorTest
 
     @Mock(stubOnly = true, answer = Answers.RETURNS_DEEP_STUBS)
     private ClusterConfig clusterConfig;
+
+    @Mock(stubOnly = true)
+    private ConfigurationAdmin configurationAdmin;
 
     private ElasticsearchActivator activator;
 
@@ -71,7 +75,7 @@ class ElasticsearchActivatorTest
         when( clusterConfig.networkHost() ).thenReturn( "127.0.0.1" );
         when( clusterConfig.networkPublishHost() ).thenReturn( "127.0.0.1" );
 
-        this.activator = new ElasticsearchActivator( clusterConfig );
+        this.activator = new ElasticsearchActivator( clusterConfig, configurationAdmin );
 
         final Path homeDir = Files.createDirectory( this.temporaryFolder.resolve( "home" ) ).toAbsolutePath();
         System.setProperty( "xp.home", homeDir.toString() );
