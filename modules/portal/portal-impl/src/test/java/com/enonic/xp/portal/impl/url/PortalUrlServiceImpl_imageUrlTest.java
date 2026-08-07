@@ -554,23 +554,22 @@ class PortalUrlServiceImpl_imageUrlTest
     }
 
     @Test
-    void testWithSiteRequestAutoMountDisabledVhostContextOutranksDefaultMediaBaseUrl()
+    void testWithSiteRequestAutoMountDisabledDeclaredLocationOutranksDefaultMediaBaseUrl()
     {
         activateMediaApiAutoMountDisabled( "https://media.example.com" );
 
         setupSiteRequest( SiteConfigs.empty() );
 
-        final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getContext() ).thenReturn( java.util.Map.of( "apiBaseUrl", "https://apis.example.com" ) );
-        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-
         final ImageUrlParams params = new ImageUrlParams().scale( "max(300)" );
 
-        // an API location declared on the matched vhost mapping wins over the
-        // instance-wide default media base
+        // an API location declared for the current context wins over the instance-wide
+        // default media base
         assertEquals(
             "https://apis.example.com/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            this.service.imageUrl( params ) );
+            ContextBuilder.copyOf( com.enonic.xp.context.ContextAccessor.current() )
+                .attribute( "apiBaseUrl", "https://apis.example.com" )
+                .build()
+                .callWith( () -> this.service.imageUrl( params ) ) );
     }
 
     @Test
@@ -831,15 +830,6 @@ class PortalUrlServiceImpl_imageUrlTest
             url );
     }
 
-    private void mockVirtualHostContext( final java.util.Map<String, String> context )
-    {
-        final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/" );
-        when( virtualHost.getContext() ).thenReturn( context );
-        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-    }
-
     private void setupWebappRequest()
     {
         portalRequest.setMode( null );
@@ -854,63 +844,65 @@ class PortalUrlServiceImpl_imageUrlTest
 
     private String webappImageUrl()
     {
+        return webappImageUrl( java.util.Map.of() );
+    }
+
+    private String webappImageUrl( final java.util.Map<String, Object> attributes )
+    {
         final ImageUrlParams params = new ImageUrlParams().id( "123456" ).scale( "max(300)" );
 
-        return ContextBuilder.create()
+        final ContextBuilder contextBuilder = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
-            .branch( Branch.from( "context-branch" ) )
-            .build()
-            .callWith( () -> this.service.imageUrl( params ) );
+            .branch( Branch.from( "context-branch" ) );
+        attributes.forEach( contextBuilder::attribute );
+
+        return contextBuilder.build().callWith( () -> this.service.imageUrl( params ) );
     }
 
     @Test
-    void testWithWebappRequestWithoutMediaApiMountsVhostContextOutranksDefaultMediaBaseUrl()
+    void testWithWebappRequestWithoutMediaApiMountsDeclaredLocationOutranksDefaultMediaBaseUrl()
     {
         activateDefaultMediaBaseUrl( "https://media.example.com" );
 
         setupWebappRequest();
-        mockVirtualHostContext( java.util.Map.of( "apiBaseUrl", "https://apis.example.com" ) );
 
-        // the webapp does not mount the media APIs: the location declared on the matched
-        // vhost mapping wins over the instance-wide default media base
+        // the webapp does not mount the media APIs: the location declared for the current
+        // context wins over the instance-wide default media base
         assertEquals(
             "https://apis.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl() );
+            webappImageUrl( java.util.Map.of( "apiBaseUrl", "https://apis.example.com" ) ) );
     }
 
     @Test
-    void testWithWebappRequestWithoutMediaApiMountsSingleApiVhostContext()
+    void testWithWebappRequestWithoutMediaApiMountsSingleApiAttribute()
     {
         setupWebappRequest();
-        mockVirtualHostContext( java.util.Map.of( "apiBaseUrl.media:image", "https://images.example.com" ) );
 
-        // a single-API entry is the root of that API alone: nothing is appended
+        // a single-API attribute is the root of that API alone: nothing is appended
         assertEquals(
             "https://images.example.com/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl() );
+            webappImageUrl( java.util.Map.of( "apiBaseUrl.media:image", "https://images.example.com" ) ) );
     }
 
     @Test
-    void testWithWebappRequestWithoutMediaApiMountsWithoutVhostContextEntry()
+    void testWithWebappRequestWithoutMediaApiMountsWithoutDeclaredLocation()
     {
         setupWebappRequest();
-        mockVirtualHostContext( java.util.Map.of( "someOtherContextKey", "value" ) );
 
         // no API location declared and no default media base: the webapp "_" form is kept
         assertEquals(
             "/webapp/myapp/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl() );
+            webappImageUrl( java.util.Map.of( "someOtherAttribute", "value" ) ) );
     }
 
     @Test
-    void testWithWebappRequestWithoutMediaApiMountsWithoutVirtualHost()
+    void testWithWebappRequestWithoutMediaApiMountsFallsBackToDefaultMediaBaseUrl()
     {
         activateDefaultMediaBaseUrl( "https://media.example.com" );
 
         setupWebappRequest();
-        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( null );
 
-        // no matched mapping to consult: the default media base applies
+        // nothing declared for the current context: the default media base applies
         assertEquals(
             "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             webappImageUrl() );

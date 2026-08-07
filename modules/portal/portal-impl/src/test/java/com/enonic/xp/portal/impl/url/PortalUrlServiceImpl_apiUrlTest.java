@@ -13,6 +13,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
@@ -163,103 +164,101 @@ class PortalUrlServiceImpl_apiUrlTest
         assertEquals( "https://myapi.example.com", url );
     }
 
-    private void mockVirtualHostContext( final Map<String, String> context )
-    {
-        final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/" );
-        when( virtualHost.getContext() ).thenReturn( context );
-        when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-    }
-
     private void setupApiRequest()
     {
         portalRequest.setBaseUri( "/api/com.enonic.app.guillotine:graphql" );
         portalRequest.setRawPath( "/api/com.enonic.app.guillotine:graphql" );
     }
 
+    private String apiUrlWithAttributes( final Map<String, Object> attributes, final ApiUrlParams params )
+    {
+        final ContextBuilder contextBuilder = ContextBuilder.copyOf( ContextAccessor.current() );
+        attributes.forEach( contextBuilder::attribute );
+        return contextBuilder.build().callWith( () -> this.service.apiUrl( params ) );
+    }
+
     @Test
-    void testApiRequestWithBulkApiBaseUrlContext()
+    void testApiRequestWithBulkApiBaseUrlAttribute()
     {
         setupApiRequest();
-        mockVirtualHostContext( Map.of( "apiBaseUrl", "https://apis.example.com" ) );
 
         final ApiUrlParams params =
             ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
 
-        // the bulk entry is the root of the full API set: the descriptor is appended
-        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path", this.service.apiUrl( params ) );
+        // the bulk attribute is the root of the full API set: the descriptor is appended
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path",
+                      apiUrlWithAttributes( Map.of( "apiBaseUrl", "https://apis.example.com" ), params ) );
     }
 
     @Test
-    void testApiRequestSingleApiContextWinsOverBulk()
+    void testApiRequestSingleApiAttributeWinsOverBulk()
     {
         setupApiRequest();
-        mockVirtualHostContext( Map.of( "apiBaseUrl", "https://apis.example.com",
-                                        "apiBaseUrl.com.enonic.app.myapp:myapi", "https://myapi.example.com" ) );
 
         final ApiUrlParams params =
             ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
 
-        // a single-API entry is the root of that API alone, used verbatim
-        assertEquals( "https://myapi.example.com/path", this.service.apiUrl( params ) );
+        // a single-API attribute is the root of that API alone, used verbatim
+        assertEquals( "https://myapi.example.com/path", apiUrlWithAttributes(
+            Map.of( "apiBaseUrl", "https://apis.example.com", "apiBaseUrl.com.enonic.app.myapp:myapi", "https://myapi.example.com" ),
+            params ) );
     }
 
     @Test
-    void testApiRequestSingleApiContextOfOtherApiIsIgnored()
+    void testApiRequestSingleApiAttributeOfOtherApiIsIgnored()
     {
         setupApiRequest();
-        mockVirtualHostContext( Map.of( "apiBaseUrl.com.enonic.app.other:api", "https://other.example.com" ) );
 
         final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
         // no location declared for this API: the sibling rule applies as before
-        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes(
+            Map.of( "apiBaseUrl.com.enonic.app.other:api", "https://other.example.com" ), params ) );
     }
 
     @Test
-    void testApiRequestApiBaseUrlContextWithTrailingSlash()
+    void testApiRequestApiBaseUrlAttributeWithTrailingSlash()
     {
         setupApiRequest();
-        mockVirtualHostContext( Map.of( "apiBaseUrl", "https://apis.example.com/" ) );
 
         final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
-        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi",
+                      apiUrlWithAttributes( Map.of( "apiBaseUrl", "https://apis.example.com/" ), params ) );
     }
 
     @Test
-    void testApiRequestWithoutVirtualHostContext()
+    void testApiRequestWithoutApiBaseUrlAttribute()
     {
         setupApiRequest();
-        mockVirtualHostContext( Map.of() );
 
         final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
-        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes( Map.of( "someOtherAttribute", "value" ), params ) );
     }
 
     @Test
-    void testApiRequestWithNullVirtualHostContext()
+    void testApiRequestWithEmptyApiBaseUrlAttribute()
     {
         setupApiRequest();
-        mockVirtualHostContext( null );
-
-        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
-
-        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
-    }
-
-    @Test
-    void testApiRequestWithEmptyApiBaseUrlContextValue()
-    {
-        setupApiRequest();
-        mockVirtualHostContext( Map.of( "apiBaseUrl", "" ) );
 
         final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
 
         // an empty value declares nothing
-        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes( Map.of( "apiBaseUrl", "" ), params ) );
+    }
+
+    @Test
+    void testNoRequestWithApiBaseUrlAttribute()
+    {
+        PortalRequestAccessor.set( null );
+
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
+
+        // a declared location applies without a request too: a task can establish it
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path",
+                      apiUrlWithAttributes( Map.of( "apiBaseUrl", "https://apis.example.com" ), params ) );
     }
 
     @Test
