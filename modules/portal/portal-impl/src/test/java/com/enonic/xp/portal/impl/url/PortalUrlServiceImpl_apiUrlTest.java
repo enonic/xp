@@ -13,6 +13,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
@@ -49,7 +50,8 @@ class PortalUrlServiceImpl_apiUrlTest
     @BeforeEach
     void setUp()
     {
-        PortalUrlGeneratorService portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        PortalUrlGeneratorService portalUrlGeneratorService =
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
         this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
@@ -160,6 +162,115 @@ class PortalUrlServiceImpl_apiUrlTest
 
         final String url = this.service.apiUrl( params );
         assertEquals( "https://myapi.example.com", url );
+    }
+
+    private void setupApiRequest()
+    {
+        portalRequest.setBaseUri( "/api/com.enonic.app.guillotine:graphql" );
+        portalRequest.setRawPath( "/api/com.enonic.app.guillotine:graphql" );
+    }
+
+    private String apiUrlWithAttributes( final Map<String, Object> attributes, final ApiUrlParams params )
+    {
+        final ContextBuilder contextBuilder = ContextBuilder.copyOf( ContextAccessor.current() );
+        attributes.forEach( contextBuilder::attribute );
+        return contextBuilder.build().callWith( () -> this.service.apiUrl( params ) );
+    }
+
+    @Test
+    void testApiRequestWithBulkApiBaseUrlAttribute()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
+
+        // the bulk attribute is the root of the full API set: the descriptor is appended
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path",
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ), params ) );
+    }
+
+    @Test
+    void testApiRequestSingleApiAttributeWinsOverBulk()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
+
+        // a single-API attribute is the root of that API alone, used verbatim
+        assertEquals( "https://myapi.example.com/path", apiUrlWithAttributes(
+            Map.of( "portal.apiBaseUrl", "https://apis.example.com", "portal.apiBaseUrl.com.enonic.app.myapp:myapi", "https://myapi.example.com" ),
+            params ) );
+    }
+
+    @Test
+    void testApiRequestSingleApiAttributeOfOtherApiIsIgnored()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        // no location declared for this API: the sibling rule applies as before
+        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes(
+            Map.of( "portal.apiBaseUrl.com.enonic.app.other:api", "https://other.example.com" ), params ) );
+    }
+
+    @Test
+    void testApiRequestApiBaseUrlAttributeWithTrailingSlash()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi",
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com/" ), params ) );
+    }
+
+    @Test
+    void testApiRequestWithoutApiBaseUrlAttribute()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes( Map.of( "someOtherAttribute", "value" ), params ) );
+    }
+
+    @Test
+    void testApiRequestWithEmptyApiBaseUrlAttribute()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        // an empty value declares nothing
+        assertEquals( "/api/com.enonic.app.myapp:myapi", apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "" ), params ) );
+    }
+
+    @Test
+    void testApiRequestBulkAttributeAppliesToNonMediaApiRegardlessOfDefaultMediaBaseUrl()
+    {
+        setupApiRequest();
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        // the default media base names the media APIs only: it never diverts another API
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi",
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ), params ) );
+    }
+
+    @Test
+    void testNoRequestWithApiBaseUrlAttribute()
+    {
+        PortalRequestAccessor.set( null );
+
+        final ApiUrlParams params =
+            ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).setPath( "path" ).build();
+
+        // a declared location applies without a request too: a task can establish it
+        assertEquals( "https://apis.example.com/com.enonic.app.myapp:myapi/path",
+                      apiUrlWithAttributes( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ), params ) );
     }
 
     @Test

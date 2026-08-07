@@ -554,6 +554,24 @@ class PortalUrlServiceImpl_imageUrlTest
     }
 
     @Test
+    void testWithSiteRequestAutoMountDisabledSingleApiAttributeOutranksDefaultMediaBaseUrl()
+    {
+        activateMediaApiAutoMountDisabled( "https://media.example.com" );
+
+        setupSiteRequest( SiteConfigs.empty() );
+
+        final ImageUrlParams params = new ImageUrlParams().scale( "max(300)" );
+
+        // an attribute naming the API itself outranks the default media base
+        assertEquals(
+            "https://images.example.com/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            ContextBuilder.copyOf( com.enonic.xp.context.ContextAccessor.current() )
+                .attribute( "portal.apiBaseUrl.media:image", "https://images.example.com" )
+                .build()
+                .callWith( () -> this.service.imageUrl( params ) ) );
+    }
+
+    @Test
     void testWithSiteRequestAutoMountDisabledWithoutMountsWithDefaultMediaBaseUrl()
     {
         activateMediaApiAutoMountDisabled( "https://media.example.com" );
@@ -809,6 +827,108 @@ class PortalUrlServiceImpl_imageUrlTest
         assertEquals(
             "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
             url );
+    }
+
+    private void setupWebappRequest()
+    {
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/webapp/myapp" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/webapp/myapp/path" );
+
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
+    }
+
+    private String webappImageUrl()
+    {
+        return webappImageUrl( java.util.Map.of() );
+    }
+
+    private String webappImageUrl( final java.util.Map<String, Object> attributes )
+    {
+        final ImageUrlParams params = new ImageUrlParams().id( "123456" ).scale( "max(300)" );
+
+        final ContextBuilder contextBuilder = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) );
+        attributes.forEach( contextBuilder::attribute );
+
+        return contextBuilder.build().callWith( () -> this.service.imageUrl( params ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsDefaultMediaBaseUrlOutranksBulkAttribute()
+    {
+        activateDefaultMediaBaseUrl( "https://media.example.com" );
+
+        setupWebappRequest();
+
+        // the default media base names the media APIs, the bulk attribute names any API:
+        // the more specific declaration wins, so exposing APIs elsewhere leaves media alone
+        assertEquals(
+            "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsSingleApiAttributeOutranksDefaultMediaBaseUrl()
+    {
+        activateDefaultMediaBaseUrl( "https://media.example.com" );
+
+        setupWebappRequest();
+
+        // an attribute naming the API itself is more specific than the default media base
+        assertEquals(
+            "https://images.example.com/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsBulkAttributeWithoutDefaultMediaBaseUrl()
+    {
+        setupWebappRequest();
+
+        // nothing more specific is declared: the bulk attribute applies
+        assertEquals(
+            "https://apis.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsSingleApiAttribute()
+    {
+        setupWebappRequest();
+
+        // a single-API attribute is the root of that API alone: nothing is appended
+        assertEquals(
+            "https://images.example.com/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsWithoutDeclaredLocation()
+    {
+        setupWebappRequest();
+
+        // no API location declared and no default media base: the webapp "_" form is kept
+        assertEquals(
+            "/webapp/myapp/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl( java.util.Map.of( "someOtherAttribute", "value" ) ) );
+    }
+
+    @Test
+    void testWithWebappRequestWithoutMediaApiMountsFallsBackToDefaultMediaBaseUrl()
+    {
+        activateDefaultMediaBaseUrl( "https://media.example.com" );
+
+        setupWebappRequest();
+
+        // nothing declared for the current context: the default media base applies
+        assertEquals(
+            "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            webappImageUrl() );
     }
 
     @Test
