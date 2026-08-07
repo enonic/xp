@@ -16,7 +16,6 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.CommitNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.MoveNodeException;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
@@ -28,6 +27,7 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeVersionIds;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
@@ -83,7 +83,8 @@ final class ArchiveContentCommand
         validateLocation( originalNode );
 
         final NodeIds descendants =
-            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentPath( originalNode.path() ).build() )
+            nodeService.findByQuery(
+                    NodeQuery.create().parent( originalNode.path() ).recursive( true ).size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).build() )
                 .getNodeIds();
 
         final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );

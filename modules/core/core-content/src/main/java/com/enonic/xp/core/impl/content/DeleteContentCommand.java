@@ -11,12 +11,12 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 
 import static java.util.Objects.requireNonNull;
@@ -69,19 +69,21 @@ final class DeleteContentCommand
 
         verifyNotProtectedRoot( nodeToDelete.path() );
 
-        return doDeleteContent( ContentId.from( nodeToDelete.id() ) );
+        return doDeleteContent( nodeToDelete );
     }
 
-    private DeleteContentsResult doDeleteContent( ContentId nodeToDelete )
+    private DeleteContentsResult doDeleteContent( final Node nodeToDelete )
     {
         final DeleteContentsResult.Builder result = DeleteContentsResult.create();
 
-        final NodeId nodeId = NodeId.from( nodeToDelete );
+        final NodeId nodeId = nodeToDelete.id();
+        final ContentId contentId = ContentId.from( nodeId );
 
-        final NodeIds descendants =
-            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() ).getNodeIds();
+        final NodeIds descendants = nodeService.findByQuery(
+                NodeQuery.create().parent( nodeToDelete.path() ).recursive( true ).size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).build() )
+            .getNodeIds();
 
-        final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
+        final ContentIds unpublishedContents = unpublish( contentId, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );
 
         final DeleteNodeParams.Builder builder = DeleteNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH );

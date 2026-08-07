@@ -28,6 +28,12 @@ public class QueryNodeHandlerParams
 
     private boolean explain;
 
+    private String parent;
+
+    private boolean recursive;
+
+    private List<String> returns;
+
     List<Map<String, Object>> getFilters()
     {
         return filters;
@@ -71,6 +77,39 @@ public class QueryNodeHandlerParams
     Integer getStart()
     {
         return start;
+    }
+
+    String getParent()
+    {
+        return parent;
+    }
+
+    @SuppressWarnings("unused")
+    public void setParent( final String parent )
+    {
+        this.parent = parent;
+    }
+
+    boolean isRecursive()
+    {
+        return recursive;
+    }
+
+    @SuppressWarnings("unused")
+    public void setRecursive( final boolean recursive )
+    {
+        this.recursive = recursive;
+    }
+
+    List<String> getReturns()
+    {
+        return returns;
+    }
+
+    @SuppressWarnings("unused")
+    public void setReturns( final String[] returns )
+    {
+        this.returns = returns != null ? List.of( returns ) : null;
     }
 
     public boolean isExplain()

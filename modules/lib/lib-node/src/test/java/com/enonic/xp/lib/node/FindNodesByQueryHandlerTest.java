@@ -1,6 +1,11 @@
 package com.enonic.xp.lib.node;
 
+import java.util.List;
+import java.util.Set;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.aggregation.Aggregation;
@@ -10,9 +15,14 @@ import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.FieldValues;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.suggester.Suggestions;
 import com.enonic.xp.suggester.TermSuggestion;
@@ -235,4 +245,77 @@ class FindNodesByQueryHandlerTest
         runFunction( "/test/FindNodesByQueryHandlerTest.js", "queryNull" );
     }
 
+    @Test
+    void parentByPath()
+    {
+        Mockito.doReturn( twoHits() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
+
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "parentByPath" );
+
+        final NodeQuery query = capturedQuery();
+        Assertions.assertEquals( new NodePath( "/parent" ), query.getParent() );
+        Assertions.assertFalse( query.isRecursive() );
+        Mockito.verify( this.nodeService, Mockito.never() ).getById( Mockito.any() );
+    }
+
+    @Test
+    void parentById()
+    {
+        Mockito.doReturn( createNode( new NodePath( "/grandparent" ), NodeName.from( "parent" ) ) )
+            .when( this.nodeService )
+            .getById( NodeId.from( "parent-id" ) );
+        Mockito.doReturn( twoHits() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
+
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "parentById" );
+
+        final NodeQuery query = capturedQuery();
+        Assertions.assertEquals( new NodePath( "/grandparent/parent" ), query.getParent() );
+        Assertions.assertTrue( query.isRecursive() );
+    }
+
+    @Test
+    void parentNotFound()
+    {
+        Mockito.doThrow( new NodeNotFoundException( "not found" ) ).when( this.nodeService ).getById( NodeId.from( "unknown-id" ) );
+
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "parentNotFound" );
+
+        Mockito.verify( this.nodeService, Mockito.never() ).findByQuery( Mockito.isA( NodeQuery.class ) );
+    }
+
+    @Test
+    void returnFields()
+    {
+        Mockito.doReturn( FindNodesByQueryResult.create()
+                              .totalHits( 1 )
+                              .addNodeHit( NodeHit.create()
+                                               .nodeId( NodeId.from( "node-id" ) )
+                                               .score( 1.0f )
+                                               .fields( FieldValues.create()
+                                                            .add( "_path", List.of( "/my-node" ) )
+                                                            .add( "_references", List.of( "ref-a", "ref-b" ) )
+                                                            .build() )
+                                               .build() )
+                              .build() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
+
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "returnFields" );
+
+        Assertions.assertEquals( Set.of( IndexPath.from( "_path" ), IndexPath.from( "_references" ) ), capturedQuery().getReturnFields() );
+    }
+
+    private FindNodesByQueryResult twoHits()
+    {
+        return FindNodesByQueryResult.create()
+            .totalHits( 2 )
+            .addNodeHit( NodeHit.create().nodeId( NodeId.from( "a" ) ).score( 1.0f ).build() )
+            .addNodeHit( NodeHit.create().nodeId( NodeId.from( "b" ) ).score( 1.0f ).build() )
+            .build();
+    }
+
+    private NodeQuery capturedQuery()
+    {
+        final ArgumentCaptor<NodeQuery> captor = ArgumentCaptor.forClass( NodeQuery.class );
+        Mockito.verify( this.nodeService ).findByQuery( captor.capture() );
+        return captor.getValue();
+    }
 }

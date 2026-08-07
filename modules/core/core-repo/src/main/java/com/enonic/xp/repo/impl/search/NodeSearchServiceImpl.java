@@ -50,12 +50,19 @@ public class NodeSearchServiceImpl
         return doQuery( query, returnFields, source );
     }
 
+    @SuppressWarnings("deprecation")
     private SearchResult doQuery( final NodeQuery query, final ReturnFields returnFields, final SearchSource source )
     {
+        ReturnFields merged = returnFields.addAll( query.getReturnFields() );
+        if ( query.isWithPath() )
+        {
+            merged = merged.add( NodeIndexPath.PATH );
+        }
+
         final SearchRequest searchRequest = SearchRequest.create()
             .searchSource( source )
             .query( query )
-            .returnFields( query.isWithPath() ? returnFields.add( NodeIndexPath.PATH ) : returnFields )
+            .returnFields( merged )
             .build();
 
         return searchDao.search( searchRequest );

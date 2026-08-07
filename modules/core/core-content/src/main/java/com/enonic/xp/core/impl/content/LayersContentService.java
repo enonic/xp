@@ -266,6 +266,8 @@ public class LayersContentService
 
     public ContentIds findAllChildren( final ContentPath contentPath )
     {
+        // deliberately not ContentQuery.parentPath: syncing does not care about the order children come back in, and does not want to pay
+        // for the read of the parent that resolving its child order would cost on every level of the tree
         final ContentQuery query = ContentQuery.create()
             .queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPath.PARENT_PATH ), ValueExpr.string(
                 ContentNodeHelper.translateContentPathToNodePath( contentPath ).toString() ) ) ) )

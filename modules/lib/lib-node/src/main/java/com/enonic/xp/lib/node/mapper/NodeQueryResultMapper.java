@@ -46,6 +46,7 @@ public final class NodeQueryResultMapper
             gen.value( "score", Float.isNaN( nodeHit.getScore() ) ? 0.0 : nodeHit.getScore() );
             serialize( gen, nodeHit.getExplanation() );
             serialize( gen, nodeHit.getHighlight() );
+            serialize( gen, nodeHit.getFields() );
             gen.end();
         }
         gen.end();

@@ -48,6 +48,7 @@ public final class NodeMultiRepoQueryResultMapper
             gen.value( "branch", nodeHit.getBranch().getValue() );
             serialize( gen, nodeHit.getExplanation() );
             serialize( gen, nodeHit.getHighlight() );
+            serialize( gen, nodeHit.getFields() );
             gen.end();
         }
         gen.end();

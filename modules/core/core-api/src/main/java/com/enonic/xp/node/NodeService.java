@@ -38,7 +38,28 @@ public interface NodeService
 
     DuplicateNodeResult duplicate( DuplicateNodeParams params );
 
+    /**
+     * Finds the ids of the children of a node.
+     *
+     * @deprecated Searching by parent is what {@link #findByQuery(NodeQuery)} with {@link NodeQuery.Builder#parent(NodePath)} does, and it
+     * accepts every constraint and return shape a query can carry while this takes filters alone and returns ids alone. Child order is
+     * inherited from the parent there too, {@link NodeQuery.Builder#recursive(boolean)} covers
+     * {@link FindNodesByParentParams.Builder#recursive(boolean)}, and a count is a query of size 0. A parent given by id has to be
+     * resolved to its path first. Scheduled for removal.
+     */
+    @Deprecated
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
+
+    /**
+     * Enumerates the children of a node - or with {@link ListNodesByParentParams.Builder#recursive(boolean)} its whole subtree - from the
+     * branch storage alone. Unlike a {@link #findByQuery(NodeQuery)} search this needs no search-index refresh, so it always sees the
+     * latest writes, and it reads no nodes: entries carry only what the branch holds (id, path, timestamp), permission-checked per entry.
+     * Everything readable is returned, ordered by path - an enumeration takes no paging, no filters and no ordering choice; use a query
+     * when any of those matter.
+     *
+     * @since 8.1.0
+     */
+    ListNodesByParentResult list( ListNodesByParentParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 

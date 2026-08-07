@@ -33,6 +33,8 @@ final class FindNodeBranchEntriesByParentCommand
 {
     private final NodePath parentPath;
 
+    private final boolean recursive;
+
     private final OrderExpr.Direction pathOrder;
 
     private final Permission requiredPermission;
@@ -43,9 +45,15 @@ final class FindNodeBranchEntriesByParentCommand
     {
         super( builder );
         this.parentPath = builder.parentPath;
+        this.recursive = builder.recursive;
         this.pathOrder = builder.pathOrder;
         this.requiredPermission = builder.requiredPermission;
         this.refreshStorage = builder.refreshStorage;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
     }
 
     static Builder create( final AbstractNodeCommand source )
@@ -75,7 +83,26 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries entries =
             NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query, context.getRepositoryId() ) );
 
-        return filterByPermission( entries, context );
+        return filterByPermission( filterDirectChildren( entries ), context );
+    }
+
+    // the branch index carries no parentPath field, so the query matches the whole subtree and direct children are kept afterwards
+    private NodeBranchEntries filterDirectChildren( final NodeBranchEntries entries )
+    {
+        if ( recursive )
+        {
+            return entries;
+        }
+
+        final NodeBranchEntries.Builder filtered = NodeBranchEntries.create();
+        for ( final NodeBranchEntry entry : entries )
+        {
+            if ( parentPath.equals( entry.getNodePath().getParentPath() ) )
+            {
+                filtered.add( entry );
+            }
+        }
+        return filtered.build();
     }
 
     private CompareExpr createParentExpr()
@@ -109,11 +136,18 @@ final class FindNodeBranchEntriesByParentCommand
     {
         private NodePath parentPath;
 
+        private boolean recursive = true;
+
         private OrderExpr.Direction pathOrder = OrderExpr.Direction.ASC;
 
         private Permission requiredPermission;
 
         private boolean refreshStorage = true;
+
+        private Builder()
+        {
+            super();
+        }
 
         private Builder( final AbstractNodeCommand source )
         {
@@ -123,6 +157,12 @@ final class FindNodeBranchEntriesByParentCommand
         Builder parentPath( final NodePath parentPath )
         {
             this.parentPath = parentPath;
+            return this;
+        }
+
+        Builder recursive( final boolean recursive )
+        {
+            this.recursive = recursive;
             return this;
         }
 

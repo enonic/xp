@@ -10,6 +10,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
 import com.enonic.xp.node.NodeQuery;
@@ -84,7 +85,7 @@ class FindNodePathsByQueryTest
     private void queryAndExpect( final String queryString, final NodePaths expected )
     {
         final NodeQuery query = NodeQuery.create().query( QueryParser.parse( queryString ) ).
-            withPath( true ).
+            returnFields( NodeIndexPath.PATH ).
             build();
 
         final FindNodesByQueryResult result = this.nodeService.findByQuery( query );

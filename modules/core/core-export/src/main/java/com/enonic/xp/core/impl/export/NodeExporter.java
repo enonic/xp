@@ -15,7 +15,6 @@ import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
@@ -203,7 +202,7 @@ public class NodeExporter
                                                                                .parent( node.path() )
                                                                                .setOrderExpressions(
                                                                                    node.getChildOrder().getOrderExpressions() )
-                                                                               .withPath( true )
+                                                                               .returnFields( NodeIndexPath.PATH )
                                                                                .size( -1 )
                                                                                .build() );
 
@@ -231,8 +230,7 @@ public class NodeExporter
     private int getRecursiveNodeCountByParentPath( final NodePath nodePath )
     {
         return Math.toIntExact(
-            nodeService.findByParent( FindNodesByParentParams.create().countOnly( true ).parentPath( nodePath ).recursive( true ).build() )
-                .getTotalHits() );
+            nodeService.findByQuery( NodeQuery.create().parent( nodePath ).recursive( true ).size( 0 ).build() ).getTotalHits() );
     }
 
     private Path resolveNodeDataFolder( final Node node )

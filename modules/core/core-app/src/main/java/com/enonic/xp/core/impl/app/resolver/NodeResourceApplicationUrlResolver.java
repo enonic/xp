@@ -12,6 +12,7 @@ import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -43,7 +44,8 @@ public final class NodeResourceApplicationUrlResolver
             "/" + applicationKey + "/" + VirtualAppConstants.CMS_ROOT_NAME + "/*/*/*" ) ) );
 
         return VirtualAppContext.createContext().callWith( () -> {
-            final FindNodesByQueryResult nodes = this.nodeService.findByQuery( NodeQuery.create().query( query ).withPath( true ).build() );
+            final FindNodesByQueryResult nodes =
+                this.nodeService.findByQuery( NodeQuery.create().query( query ).returnFields( NodeIndexPath.PATH ).build() );
 
             return nodes.getNodeHits()
                 .stream()

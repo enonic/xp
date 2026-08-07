@@ -47,6 +47,11 @@ public class ReturnValues
         return this.returnValues.get( key.getPath() );
     }
 
+    public Map<String, ReturnValue> asMap()
+    {
+        return Collections.unmodifiableMap( this.returnValues );
+    }
+
     public static final class Builder
     {
         final Map<String, ReturnValue> returnValues = new HashMap<>();

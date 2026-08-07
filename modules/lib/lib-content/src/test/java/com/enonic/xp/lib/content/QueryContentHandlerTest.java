@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -30,8 +32,11 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
+import com.enonic.xp.node.FieldValues;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.PrincipalKey;
@@ -90,6 +95,140 @@ class QueryContentHandlerTest
     {
         setupQuery( 2, true, true );
         runScript( "/lib/xp/examples/content/query.js" );
+    }
+
+    @Test
+    void testQueryChildrenExample()
+    {
+        setupQuery( 2, false, false );
+        runScript( "/lib/xp/examples/content/queryChildren.js" );
+    }
+
+    @Test
+    void parentByPath()
+    {
+        setupQuery( 3, false, false );
+
+        runFunction( "/test/QueryContentHandlerTest_parent.js", "parentByPath" );
+
+        final ContentQuery query = capturedQuery();
+        Assertions.assertEquals( ContentPath.from( "/a/b" ), query.getParentPath() );
+        Assertions.assertNull( query.getParentId() );
+        Assertions.assertFalse( query.isRecursive() );
+    }
+
+    @Test
+    void parentRecursive()
+    {
+        setupQuery( 3, false, false );
+
+        runFunction( "/test/QueryContentHandlerTest_parent.js", "parentRecursive" );
+
+        final ContentQuery query = capturedQuery();
+        Assertions.assertEquals( ContentPath.from( "/a/b" ), query.getParentPath() );
+        Assertions.assertTrue( query.isRecursive() );
+    }
+
+    @Test
+    void parentById()
+    {
+        setupQuery( 3, false, false );
+
+        runFunction( "/test/QueryContentHandlerTest_parent.js", "parentById" );
+
+        final ContentQuery query = capturedQuery();
+        Assertions.assertEquals( ContentId.from( "123456" ), query.getParentId() );
+        Assertions.assertNull( query.getParentPath() );
+    }
+
+    @Test
+    void noParent()
+    {
+        setupQuery( 3, true, false );
+
+        runFunction( "/test/QueryContentHandlerTest.js", "query" );
+
+        final ContentQuery query = capturedQuery();
+        Assertions.assertNull( query.getParentPath() );
+        Assertions.assertNull( query.getParentId() );
+    }
+
+    private ContentQuery capturedQuery()
+    {
+        final ArgumentCaptor<ContentQuery> captor = ArgumentCaptor.forClass( ContentQuery.class );
+        Mockito.verify( contentService ).find( captor.capture() );
+        return captor.getValue();
+    }
+
+    @Test
+    void returnsIds()
+    {
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( FindContentIdsByQueryResult.create()
+                                                                                                 .totalHits( 2 )
+                                                                                                 .contents( ContentIds.from( "id1", "id2" ) )
+                                                                                                 .score( Map.of( ContentId.from( "id1" ), 1.0f,
+                                                                                                                 ContentId.from( "id2" ), 0.5f ) )
+                                                                                                 .build() );
+
+        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsIds" );
+
+        // the whole point of the ids shape: no content is ever read
+        Mockito.verify( contentService, Mockito.never() ).getByIds( Mockito.any() );
+    }
+
+    @Test
+    void returnsPaths()
+    {
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( FindContentIdsByQueryResult.create()
+                                                                                                 .totalHits( 2 )
+                                                                                                 .contents( ContentIds.from( "id1", "id2" ) )
+                                                                                                 .fields( Map.of( ContentId.from( "id1" ),
+                                                                                                                  FieldValues.create()
+                                                                                                                      .add( "_path", List.of(
+                                                                                                                          "/a/b/one" ) )
+                                                                                                                      .build(),
+                                                                                                                  ContentId.from( "id2" ),
+                                                                                                                  FieldValues.create()
+                                                                                                                      .add( "_path", List.of(
+                                                                                                                          "/a/b/two" ) )
+                                                                                                                      .build() ) )
+                                                                                                 .build() );
+
+        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsPaths" );
+
+        Assertions.assertEquals( Set.of( NodeIndexPath.PATH ), capturedQuery().getReturnFields() );
+        Mockito.verify( contentService, Mockito.never() ).getByIds( Mockito.any() );
+    }
+
+    @Test
+    void returnsFields()
+    {
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( FindContentIdsByQueryResult.create()
+                                                                                                 .totalHits( 2 )
+                                                                                                 .contents( ContentIds.from( "id1", "id2" ) )
+                                                                                                 .score( Map.of( ContentId.from( "id1" ), 1.0f,
+                                                                                                                 ContentId.from( "id2" ), 0.5f ) )
+                                                                                                 .fields( Map.of( ContentId.from( "id1" ),
+                                                                                                                  FieldValues.create()
+                                                                                                                      .add( "_name",
+                                                                                                                            List.of( "one" ) )
+                                                                                                                      .add( "_references",
+                                                                                                                            List.of( "ref-a", "ref-b" ) )
+                                                                                                                      .build() ) )
+                                                                                                 .build() );
+
+        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsFields" );
+
+        Assertions.assertEquals( Set.of( IndexPath.from( "_name" ), IndexPath.from( "_references" ) ),
+                                 capturedQuery().getReturnFields() );
+    }
+
+    @Test
+    void returnsInvalid()
+    {
+        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsInvalid" );
+
+        Mockito.verify( contentService, Mockito.never() ).find( Mockito.any( ContentQuery.class ) );
     }
 
     @Test
