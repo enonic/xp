@@ -278,6 +278,13 @@ export interface DefaultRequestHeaders
 export interface RequestConstructorParams {
     body?: string;
     branch?: LiteralUnion<RequestBranch>;
+    /**
+     * Path of the content being rendered. Set by the site service.
+     *
+     * Assigning it in a site mapping filter, on the request passed to `next`, re-routes rendering to
+     * that content: the requested URL is unchanged, but content, site and context path are re-resolved.
+     */
+    contentPath?: string;
     contentType?: string;
     contextPath?: string;
     cookies: RequestCookies;
