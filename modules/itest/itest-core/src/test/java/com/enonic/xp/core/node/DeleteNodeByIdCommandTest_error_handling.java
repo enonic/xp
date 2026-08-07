@@ -10,6 +10,7 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.client.Client;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.AbstractNodeTest;
@@ -24,6 +25,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): disabled in nodb mode because the test IS the
+ * fault-injection mechanism, not the behaviour. It swaps a {@code FailDeleteOnIdsProxy} into
+ * {@code StorageDaoImpl#setClient} -- an Elasticsearch {@code Client} decorator that makes one
+ * document's {@code DeleteRequest} throw -- and there is no such seam in the nodb path: the
+ * equivalent would be making one row's DELETE fail inside a PostgreSQL transaction, which is a
+ * different failure model (the whole {@code WriteBatch} rolls back rather than leaving a partly
+ * deleted subtree) and would therefore be a different test asserting a different contract, not
+ * this one ported. Writing it belongs with nodb's own transactional-failure coverage in
+ * {@code nodb/engine}, where the transaction boundary lives.
+ */
+@DisabledIfSystemProperty(named = "xp.itest.storage", matches = "nodb",
+    disabledReason = "injects a failing Elasticsearch Client into StorageDaoImpl; the nodb path has no such seam " +
+        "and fails a batch transactionally instead -- a different contract, not this test ported")
 class DeleteNodeByIdCommandTest_error_handling
     extends AbstractNodeTest
 {

@@ -54,6 +54,38 @@ final class NodbStatusMapper
     }
 
     /**
+     * Runs an IDEMPOTENT delete: NOT_FOUND means the thing is already gone, which is success, not a
+     * failure. Anything else translates as usual.
+     * <p>
+     * <b>This matches the Elasticsearch backend, and XP depends on it.</b>
+     * {@code IndexServiceInternalImpl#doDeleteIndex} catches every {@code ElasticsearchException}
+     * and logs a WARN, so deleting an index that is not there has always been a no-op on the ES
+     * side — and {@code DumpServiceImpl}'s load path leans on exactly that: it deletes every
+     * repository listed by {@code findRepositoryEntryIds()} and then deletes the system
+     * repositories by name, so a repository the caller already removed is deleted a second time on
+     * every load. Phase 4 Gate F: on nodb that second delete was a hard
+     * {@code StorageIndexNotFoundException} and it failed 18 of {@code DumpServiceImplTest}'s
+     * methods. Making the SPI's delete idempotent (rather than making the server answer OK for an
+     * unknown repo) keeps the wire's status contract truthful — the repository genuinely is not
+     * there — while the adapter decides, for a delete, that this is not an error.
+     */
+    static void idempotentDelete( final Runnable call )
+    {
+        try
+        {
+            call.run();
+        }
+        catch ( StatusRuntimeException e )
+        {
+            if ( e.getStatus().getCode() == Status.Code.NOT_FOUND )
+            {
+                return;
+            }
+            throw translate( e );
+        }
+    }
+
+    /**
      * Runs a point-get call (GetBranchEntry/GetVersion/GetCommit/GetPayload): NOT_FOUND
      * means "no such row", translated to {@code null} per the SPI's {@code @Nullable}
      * return contract, not an exception -- regardless of whether the underlying cause was

@@ -19,6 +19,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.VirtualAppInitializer;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogRepoInitializer;
+import com.enonic.xp.core.nodb.NodbIndexServiceInternal;
+import com.enonic.xp.core.nodb.NodbItestSearchIndex;
 import com.enonic.xp.core.nodb.NodbTenant;
 import com.enonic.xp.core.nodb.NodbTestCluster;
 import com.enonic.xp.data.PropertyTree;
@@ -54,6 +56,7 @@ import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
 import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
 import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
@@ -149,7 +152,19 @@ public abstract class AbstractNodeTest
 
     protected CommitServiceImpl commitService;
 
-    protected IndexServiceInternalImpl indexServiceInternal;
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): typed as the INTERFACE, not
+     * {@code IndexServiceInternalImpl}. That is deliberate and it is the change that found a
+     * problem: {@code IndexServiceInternalImpl} implements both {@link IndexServiceInternal} and
+     * {@code RepositoryStorageAdmin}, so 17 itest classes were quietly passing this field into
+     * {@code .repositoryStorageAdmin(...)} on their command builders -- reaching PAST
+     * {@link #repositoryStorageAdmin}'s mode branch straight into the concrete Elasticsearch
+     * admin, in nodb mode too. Narrowing the type made the compiler enumerate all 55 call sites
+     * instead of leaving them to be noticed one failing test at a time; the same family as
+     * Gate C's "the corpus compared ES with itself" and Gate E's eight aggregation classes
+     * refreshing the wrong cluster (nodb/FINDINGS.md).
+     */
+    protected IndexServiceInternal indexServiceInternal;
 
     protected NodeSearchIndex nodeSearchIndex;
 
@@ -261,6 +276,31 @@ public abstract class AbstractNodeTest
         BLOB_STORE.clear();
     }
 
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): whether this class needs a FRESH nodb tenant per test
+     * METHOD instead of the shared per-class one. Override and return {@code true} only for a class
+     * that reuses fixed repository ids across its methods, which is the case
+     * {@code NodbTestCluster}'s class-scoped tenant cannot serve (the second method finds the first
+     * method's repository already there). Two classes need it, both recorded in nodb/FINDINGS.md:
+     * {@code FindNodesByMultiRepoQueryCommandTest} (fixed {@code repo1}/{@code repo2}) and
+     * {@code VersionTableVacuumTaskTest}.
+     * <p>
+     * <b>Deliberately NOT tied to {@code clearBeforeEach}</b>, which was the first attempt. Wiring
+     * every {@code super(true)} class to a per-method tenant looks like the faithful translation of
+     * "wipe the indices between methods", and it wedged the suite: a tenant is not just a Postgres
+     * schema, it is also a server-side {@code Indexer} — one polling thread, cached for the life of
+     * the server, competing for the itest cluster's 16-connection pool. At ~80 tenants in one JVM
+     * the pool starved and {@code awaitRefresh} stopped returning. The cheap reset most classes
+     * actually need is a per-class tenant plus their own fresh repository per method, which they
+     * already have (`testRepoId` carries a timestamp). Worth remembering beyond the itests: NoDB's
+     * per-tenant indexer is a thread and a pooled connection PER TENANT, which is a shared-cell
+     * scaling property, not a test artifact.
+     */
+    protected boolean nodbTenantPerMethod()
+    {
+        return clearBeforeEach;
+    }
+
     @BeforeEach
     void setUpAbstractNodeTest()
     {
@@ -276,40 +316,51 @@ public abstract class AbstractNodeTest
 
         HomeDirSupport.set( temporaryFolder.toFile().toPath() );
 
-        this.storageDao = new StorageDaoImpl( client );
-
-        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
-
-        this.indexServiceInternal = new IndexServiceInternalImpl( client );
-
         // Phase 1 Gate C (nodb/BUILD-PHASE-1.md): xp.itest.storage=nodb swaps the STORAGE
         // side (NodeStore + RepositoryStorageAdmin) for the gate-B gRPC client against a
-        // real NoDB server; the SEARCH side (nodeSearchIndex below) stays on embedded ES
-        // unconditionally -- hybrid mode is the Phase 1 scope, not a full nodb backend.
-        // this.indexServiceInternal remains the concrete ES admin regardless of mode: it is
-        // also used for IndexServiceInternal-typed params below (search-<repo> index
-        // lifecycle/health), which never move to nodb.
+        // real NoDB server.
         //
         // Phase 2 Gate C (nodb/BUILD-PHASE-2.md): nodb mode also resolves nodbTenant here,
         // BEFORE binaryService/nodeDao are built below, so this.blobStore can wrap BLOB_STORE
         // with a NodbBinaryBlobStore against this exact tenant's gRPC client -- the binary
         // segment routes to NoDB/MinIO, every other segment still goes straight to BLOB_STORE.
+        //
+        // Phase 4 Gate F (nodb/BUILD-PHASE-4.md): nodb mode now constructs NOTHING
+        // Elasticsearch-backed. storageDao/searchDao/IndexServiceInternalImpl all take an ES
+        // Client, and there is no client to give them -- no embedded node boots. They stay null
+        // (or, for the two roles someone actually needs, get a nodb answer), so a path that
+        // still expects Elasticsearch fails loudly here rather than reading an empty index
+        // somewhere far away.
         if ( NodbTestCluster.isEnabled() )
         {
-            this.nodbTenant = NodbTestCluster.get().tenantForClass( this.getClass() );
+            this.nodbTenant = nodbTenantPerMethod()
+                ? NodbTestCluster.get().perMethodTenant()
+                : NodbTestCluster.get().tenantForClass( this.getClass() );
             this.nodeStore = nodbTenant.nodeStore();
             this.repositoryStorageAdmin = nodbTenant.repositoryStorageAdmin();
             this.blobStore = new NodbBinaryBlobStore( BLOB_STORE, nodbTenant.client() );
+            this.indexServiceInternal = new NodbIndexServiceInternal();
+            // Phase 4 Gate F: the SEARCH half. Gate C moved it behind the (then opt-in)
+            // -Dxp.itest.opensearch flag because until then the Search RPC answered UNIMPLEMENTED;
+            // nodb mode now implies it (NodbTestCluster#isSearchEnabled), so the only remaining
+            // branch is the storage-only escape hatch, which has no search index to offer and says
+            // so instead of silently handing back the ES one.
+            this.nodeSearchIndex = NodbItestSearchIndex.of( nodbTenant );
         }
         else
         {
+            this.storageDao = new StorageDaoImpl( client );
+            final SearchDaoImpl searchDao = new SearchDaoImpl( client );
+            final IndexServiceInternalImpl esIndexServiceInternal = new IndexServiceInternalImpl( client );
+            this.indexServiceInternal = esIndexServiceInternal;
             // Phase 3 Gate B (nodb/BUILD-PHASE-3.md): ElasticsearchNodeStore now persists the
             // node/index-config/ACL payload segments itself (relocated from
             // NodeVersionServiceImpl), so it needs a BlobStore reference too -- BLOB_STORE
             // directly, same instance this.blobStore is set to just below.
             this.nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, BLOB_STORE );
-            this.repositoryStorageAdmin = this.indexServiceInternal;
+            this.repositoryStorageAdmin = esIndexServiceInternal;
             this.blobStore = BLOB_STORE;
+            this.nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
         }
 
         this.binaryService = new BinaryServiceImpl( blobStore );
@@ -321,22 +372,6 @@ public abstract class AbstractNodeTest
         this.versionService = new VersionServiceImpl( nodeStore );
 
         this.commitService = new CommitServiceImpl( nodeStore );
-
-        // Phase 4 Gate C (nodb/BUILD-PHASE-4.md): the SEARCH half moves to NoDB/OpenSearch when --
-        // and only when -- the shared cluster was started with a search backend
-        // (-Dxp.itest.opensearch=true, Gate B decision 8's opt-in). Until Gate C there was nothing
-        // to move to: the Search RPC answered UNIMPLEMENTED, so the comment above described the
-        // whole truth. It no longer does, and leaving it that way would make the golden-query
-        // corpus diff "nodb mode" while every query it measures still ran on embedded
-        // Elasticsearch -- a green gate that proves nothing, which is the one outcome this phase's
-        // acceptance rules exist to prevent.
-        //
-        // Still opt-in, not automatic: without the flag every nodb-mode itest keeps the hybrid
-        // (nodb storage + ES search) wiring it has had since Phase 1. Gate F is where the flag
-        // stops being optional and embedded ES leaves nodb mode altogether.
-        this.nodeSearchIndex = NodbTestCluster.isSearchEnabled()
-            ? nodbTenant.nodeSearchIndex()
-            : new NodeSearchIndexImpl( client, searchDao, storageDao );
 
         this.indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
@@ -372,9 +407,16 @@ public abstract class AbstractNodeTest
     void tearDownAbstractNodeTest()
     {
         ContextAccessorSupport.getInstance().set( initialContext );
-        // nodbTenant (nodb mode only) is intentionally NOT closed here -- it is shared
-        // across this class's test methods (NodbTestCluster#tenantForClass); see its
-        // field javadoc.
+        // A class-scoped nodbTenant is intentionally NOT closed here -- it is shared across this
+        // class's test methods (NodbTestCluster#tenantForClass); see its field javadoc. A
+        // per-METHOD tenant (Phase 4 Gate F, {@link #nodbTenantPerMethod}) is the opposite case and
+        // MUST be closed: nothing else will, and one unreleased gRPC channel per test method across
+        // the suite is a resource leak with no upper bound.
+        if ( nodbTenantPerMethod() && nodbTenant != null )
+        {
+            NodbTestCluster.get().release( nodbTenant );
+            nodbTenant = null;
+        }
     }
 
     protected void bootstrap()

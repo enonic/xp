@@ -11,8 +11,8 @@ import com.enonic.xp.core.nodb.NodbTestCluster;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.storage.spi.IndexSettings;
 import com.enonic.xp.storage.spi.StorageIndexExistsException;
-import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.fail;
  *   {@link StorageIndexExistsException} directly ({@code NodbStatusMapper}). Both honor
  *   the SPI contract (the exception type appears somewhere in the cause chain) -- asserted
  *   via {@link #assertCausedBy} rather than an exact type match.</li>
- *   <li>Delete-of-unknown-repo: ES's {@code doDeleteIndex} catches and logs, a silent
- *   no-op ({@code IndexServiceInternalImpl}); nodb throws
- *   {@link StorageIndexNotFoundException} (a real {@code UnknownRepoException} ->
- *   {@code NOT_FOUND} mapping, BUILD-PHASE-1.md's Gate A bug fix). Asserted per-mode.</li>
+ *   <li>Delete-of-unknown-repo: WAS an asymmetry (ES silently no-op, nodb
+ *   {@code StorageIndexNotFoundException}). <b>Resolved at Phase 4 Gate F</b> -- both backends are
+ *   now a silent no-op, because XP's dump/load path depends on it. See
+ *   {@link #deleteOfAnUnknownRepositoryIsASilentNoOpOnBothBackends}.</li>
  * </ul>
  * <p>
  * The cross-tenant spot check (Gate C task 4, nodb mode only -- two tenants on one shared
@@ -68,25 +68,29 @@ class RepositoryLifecycleStorageTest
         assertFalse( repositoryStorageAdmin.indexExists( repoId ), "must not exist after deletion" );
     }
 
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md) turned this from a documented ASYMMETRY into a shared
+     * contract, and it is now the same assertion in both modes: deleting a repository that is not
+     * there is a successful, silent no-op.
+     * <p>
+     * Before, ES swallowed it ({@code IndexServiceInternalImpl#doDeleteIndex} catches every
+     * {@code ElasticsearchException} and logs) while nodb mapped {@code UnknownRepoException} to
+     * NOT_FOUND and threw {@code StorageIndexNotFoundException}. The asymmetry was recorded here
+     * rather than resolved -- until the full suite showed that XP DEPENDS on the ES behaviour:
+     * {@code DumpServiceImpl}'s load path deletes every repository the entry query lists and then
+     * deletes the system repositories by name, so a repository the caller already removed is deleted
+     * twice on every load, and 18 of {@code DumpServiceImplTest}'s methods failed on it. The wire
+     * still answers NOT_FOUND -- the repository genuinely is gone -- and the SPI adapter decides that
+     * for a DELETE this is success ({@code NodbStatusMapper#idempotentDelete}); a non-delete
+     * repo-scoped op on an unknown repository still throws.
+     */
     @Test
-    void deleteOfAnUnknownRepositoryIsHandledPerBackendContract()
+    void deleteOfAnUnknownRepositoryIsASilentNoOpOnBothBackends()
     {
         final RepositoryId unknown = RepositoryId.from( "never-created-lifecycle-repo-" + System.nanoTime() );
 
-        if ( NodbTestCluster.isEnabled() )
-        {
-            // nodb: RepositoryLifecycle.deleteRepository -> UnknownRepoException -> NOT_FOUND
-            // -> StorageIndexNotFoundException (a real, structural mapping -- Gate A bug fix).
-            final Exception thrown = assertThrows( Exception.class, () -> repositoryStorageAdmin.deleteIndex( unknown ) );
-            assertCausedBy( thrown, StorageIndexNotFoundException.class );
-        }
-        else
-        {
-            // ES: IndexServiceInternalImpl#doDeleteIndex catches ElasticsearchException and
-            // only logs -- a silent no-op, not a throw. Asserting that explicitly (rather
-            // than ignoring the case) so this documented asymmetry stays visible.
-            repositoryStorageAdmin.deleteIndex( unknown );
-        }
+        assertDoesNotThrow( () -> repositoryStorageAdmin.deleteIndex( unknown ) );
+        assertFalse( repositoryStorageAdmin.indexExists( unknown ), "an idempotent delete must not have created anything" );
     }
 
     /** Gate C task 4's cross-tenant spot check -- see class javadoc. nodb mode only. */

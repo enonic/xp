@@ -39,12 +39,12 @@ class DuplicateNodeCommandPerformanceTest
 
         final NodeQuery query = NodeQuery.create().size( 0 ).build();
 
-        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().query( query ).searchService( this.searchService ).storageService( this.storageService ).repositoryStorageAdmin( this.indexServiceInternal )
+        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().query( query ).searchService( this.searchService ).storageService( this.storageService ).repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex ).build().execute();
 
         final Stopwatch started = Stopwatch.createStarted();
 
-        DuplicateNodeCommand.create().params( DuplicateNodeParams.create().nodeId( rootNode.id() ).build() ).repositoryStorageAdmin( this.indexServiceInternal )
+        DuplicateNodeCommand.create().params( DuplicateNodeParams.create().nodeId( rootNode.id() ).build() ).repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex ).storageService( this.storageService ).searchService( this.searchService ).binaryService( this.binaryService ).build().execute();
 
         started.stop();

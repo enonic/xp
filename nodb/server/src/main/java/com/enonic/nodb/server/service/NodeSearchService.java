@@ -23,9 +23,12 @@ import com.enonic.nodb.engine.search.SearchQuery;
 import com.enonic.nodb.engine.search.SearchQueryExecutor;
 import com.enonic.nodb.engine.search.SearchDocument;
 import com.enonic.nodb.engine.search.SearchDocumentStore;
+import com.enonic.nodb.engine.search.SearchIndexAdmin;
 import com.enonic.nodb.engine.store.RepoKeys;
 import com.enonic.nodb.proto.v1.Ack;
 import com.enonic.nodb.proto.v1.AwaitRefreshRequest;
+import com.enonic.nodb.proto.v1.CreateSearchIndexRequest;
+import com.enonic.nodb.proto.v1.DeleteSearchIndexRequest;
 import com.enonic.nodb.proto.v1.DeleteDocumentsRequest;
 import com.enonic.nodb.proto.v1.IndexAck;
 import com.enonic.nodb.proto.v1.IndexDoc;
@@ -81,13 +84,18 @@ public final class NodeSearchService
 
     private final SearchQueryExecutor executor;
 
+    /** Phase 4 Gate F: the search index's own lifecycle (create/delete/purge). */
+    private final SearchIndexAdmin searchIndexAdmin;
+
     private final Map<String, Indexer> cache = new LinkedHashMap<>();
 
-    public NodeSearchService( DataSource dataSource, Function<TenantContext, Indexer> indexerFactory, SearchQueryExecutor executor )
+    public NodeSearchService( DataSource dataSource, Function<TenantContext, Indexer> indexerFactory, SearchQueryExecutor executor,
+                              SearchIndexAdmin searchIndexAdmin )
     {
         this.dataSource = dataSource;
         this.indexers = indexerFactory;
         this.executor = executor;
+        this.searchIndexAdmin = searchIndexAdmin;
     }
 
     @Override
@@ -307,9 +315,95 @@ public final class NodeSearchService
         }
     }
 
+    /**
+     * Phase 4 Gate F: idempotent create of a repository's search index -- see the RPC's comment in
+     * nodb.proto for why one idempotent pair serves both the repository-lifecycle caller (for which
+     * this is a no-op, the index already exists) and the PURGE caller (for which it is the real
+     * thing).
+     */
+    @Override
+    public void createSearchIndex( CreateSearchIndexRequest request, StreamObserver<Ack> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        try
+        {
+            searchIndexAdmin.createIndex( principal.tenantContext(), request.getRepoId() );
+            responseObserver.onNext( Ack.newBuilder().build() );
+            responseObserver.onCompleted();
+        }
+        catch ( OpenSearchException e )
+        {
+            responseObserver.onError( Status.UNAVAILABLE.withDescription( e.getMessage() ).asRuntimeException() );
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( NodeStoreService.mapSqlException( e ) );
+        }
+    }
+
+    /**
+     * Phase 4 Gate F: drops every generation of the repository's search index AND its stored
+     * documents, in that order. The documents matter: leaving them behind would let a later
+     * rebuild-from-documents resurrect exactly what the purge removed. Idempotent -- an absent index
+     * or an already-dropped repository row is a successful delete.
+     */
+    @Override
+    public void deleteSearchIndex( DeleteSearchIndexRequest request, StreamObserver<Ack> responseObserver )
+    {
+        TenantPrincipal principal = currentPrincipal();
+        RepoRef repo = new RepoRef( request.getRepoId() );
+        try
+        {
+            searchIndexAdmin.deleteIndex( principal.tenantContext(), request.getRepoId() );
+
+            Tx.inTenantTx( dataSource, principal.tenantContext(), connection -> {
+                Long repoKey = RepoKeys.tryResolve( connection, repo );
+                if ( repoKey != null )
+                {
+                    SearchDocumentStore.deleteAll( connection, repoKey );
+                }
+                return null;
+            } );
+
+            responseObserver.onNext( Ack.newBuilder().build() );
+            responseObserver.onCompleted();
+        }
+        catch ( OpenSearchException e )
+        {
+            responseObserver.onError( Status.UNAVAILABLE.withDescription( e.getMessage() ).asRuntimeException() );
+        }
+        catch ( SQLException e )
+        {
+            responseObserver.onError( NodeStoreService.mapSqlException( e ) );
+        }
+    }
+
     private synchronized Indexer indexer( TenantContext tenant )
     {
         return cache.computeIfAbsent( tenant.tenantId(), id -> indexers.apply( tenant ) );
+    }
+
+    /**
+     * Stops and forgets {@code tenantId}'s indexer, returning it so the caller can drop it from its
+     * own registry; {@code null} if this tenant never had one.
+     * <p>
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md). An indexer is a polling thread plus a share of the
+     * connection pool, created on a tenant's first search write and — until now — kept for the life
+     * of the process. That is right for the one-tenant-per-install case and wrong for a cell that
+     * sees many tenants: the itest suite reached ~80 live indexers on a 16-connection pool and
+     * {@code awaitRefresh} stopped returning, which is the same shape a shared cell would hit with
+     * churning tenants. Releasing an idle tenant is the missing half of the lifecycle, not a test
+     * hook (Phase 6 owns the policy for WHEN to release — idle timeout, eviction; this is the
+     * mechanism it needs).
+     */
+    public synchronized Indexer releaseTenant( String tenantId )
+    {
+        Indexer indexer = cache.remove( tenantId );
+        if ( indexer != null )
+        {
+            indexer.close();
+        }
+        return indexer;
     }
 
     static SearchDocument toEngineDocument( IndexDoc doc )

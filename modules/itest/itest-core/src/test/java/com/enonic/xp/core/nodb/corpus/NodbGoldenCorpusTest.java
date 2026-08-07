@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.core.nodb.NodbTestCluster;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.NodeId;
@@ -136,7 +137,9 @@ class NodbGoldenCorpusTest
         final List<QueryOutcome> outcomes = run( corpus );
 
         Files.createDirectories( REPORT_DIR );
-        CorpusArtifact.write( REPORT_DIR.resolve( "actual.json" ), "es", outcomes );
+        // The mode is what actually ran, not a constant: this artifact is the run's report, and
+        // labelling a nodb-mode run "es" is exactly the kind of harness lie this phase kept finding.
+        CorpusArtifact.write( REPORT_DIR.resolve( "actual.json" ), NodbTestCluster.isSearchEnabled() ? "nodb" : "es", outcomes );
 
         summarize( corpus, outcomes );
 
@@ -277,6 +280,10 @@ class NodbGoldenCorpusTest
                                                          .anyMatch( NodbGoldenCorpusTest::isGeoDistanceOrder ) )
                                                      .map( GoldenQuery::id )
                                                      .collect( Collectors.toSet() ) );
+
+        // An ES-mode run diffs the ES baseline against itself; only a nodb-mode run is a PORT
+        // comparison, and only there does the FIXED tag's "must differ" inversion apply.
+        CorpusComparator.selfDiff( !NodbTestCluster.isSearchEnabled() );
 
         final List<CorpusComparator.Delta> deltas = CorpusComparator.compare( expected, outcomes );
 

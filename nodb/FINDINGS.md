@@ -62,9 +62,17 @@ The ES baseline was recorded on an `nb_NO` machine, which is precisely why `ICU-
 `ICU-06` show order deltas. Re-recorded in the Docker image or CI (`en_US`) they would match
 nodb's ROOT ordering exactly. **Action: re-record the baseline in a controlled locale**, or
 pin `-Duser.language`/`-Duser.country` for corpus runs, so the corpus stops carrying the
-recording host's locale. (Note this is *separate* from the four German `icuSort` failures:
-those name `de` explicitly and used `icu_collation_de`, so they are an ES-2.4-CLDR-vintage
-issue, not a default-locale one.)
+recording host's locale. **CORRECTED 2026-08-07 (Gate F):** an earlier note here claimed the four German `icuSort`
+failures were an ES-2.4-CLDR-vintage issue rather than a default-locale one. **That was
+wrong.** Pinning the suite to `en_US` makes all 16 cases pass **in ES mode too** — verified in
+both modes. So those failures were environment-dependent all along, and Gate D's headline
+("a pinned icu4j fixed them") is overstated: the locale pin fixes them on either backend.
+D8's genuine contribution is different and still stands — nodb's collation no longer depends
+on the host locale at all, and is computed against a version NoDB pins deliberately rather
+than whatever the engine or the host supplies. The mechanism by which the JVM default locale
+reached an explicitly-`de` collation is **not established** and is worth a look: it means the
+"long-standing icuSort failures" story was really "these tests fail on machines whose default
+locale is not `en`".
 
 **Research remaining:** (a) a self-hosted install on a non-`en` host will see unmapped-locale
 sorts change at cutover — worth a release note and a migration check. (b) Should the ES path

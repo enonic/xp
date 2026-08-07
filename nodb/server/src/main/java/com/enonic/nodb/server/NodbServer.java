@@ -20,6 +20,7 @@ import com.enonic.nodb.engine.binary.BinaryStore;
 import com.enonic.nodb.engine.search.Indexer;
 import com.enonic.nodb.engine.search.OpenSearchClient;
 import com.enonic.nodb.engine.search.OpenSearchConfig;
+import com.enonic.nodb.engine.TenantContext;
 import com.enonic.nodb.engine.search.SearchIndexAdmin;
 import com.enonic.nodb.engine.search.SearchQueryExecutor;
 import com.enonic.nodb.server.auth.DevKeys;
@@ -72,19 +73,69 @@ public final class NodbServer
     /** One per tenant that has issued a NodeSearch RPC; empty when there is no search backend. */
     private final List<Indexer> indexers;
 
+    /** {@code null} when there is no search backend; owns the per-tenant indexer registry. */
+    private final NodeSearchService nodeSearchService;
+
+    /** {@code null} when there is no search backend; owns index lifecycle, including tenant teardown. */
+    private final SearchIndexAdmin searchIndexAdmin;
+
     NodbServer( Server server, HikariDataSource dataSource, BinaryStore binaryStore )
     {
-        this( server, dataSource, binaryStore, null, new CopyOnWriteArrayList<>() );
+        this( server, dataSource, binaryStore, null, new CopyOnWriteArrayList<>(), null, null );
     }
 
     NodbServer( Server server, HikariDataSource dataSource, BinaryStore binaryStore, OpenSearchClient openSearchClient,
-                List<Indexer> indexers )
+                List<Indexer> indexers, NodeSearchService nodeSearchService, SearchIndexAdmin searchIndexAdmin )
     {
         this.server = server;
         this.dataSource = dataSource;
         this.binaryStore = binaryStore;
         this.openSearchClient = openSearchClient;
         this.indexers = indexers;
+        this.nodeSearchService = nodeSearchService;
+        this.searchIndexAdmin = searchIndexAdmin;
+    }
+
+    /**
+     * Releases the resources this server holds for {@code tenantId}: stops its outbox indexer (a
+     * polling thread and its share of the connection pool) and forgets it, so a later RPC from that
+     * tenant starts a fresh one. A no-op when there is no search backend or the tenant never wrote.
+     * <p>
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md) added this because an indexer was previously created
+     * on first use and kept for the life of the process: correct for one tenant per install, a leak
+     * for a cell that sees many. See {@link NodeSearchService#releaseTenant}.
+     */
+    public void releaseTenant( String tenantId )
+    {
+        if ( nodeSearchService == null )
+        {
+            return;
+        }
+        Indexer released = nodeSearchService.releaseTenant( tenantId );
+        if ( released != null )
+        {
+            indexers.remove( released );
+        }
+    }
+
+    /**
+     * Deletes every OpenSearch index of {@code tenantId} -- what {@code dropTenant} does for the
+     * PostgreSQL side. Stops the tenant's indexer first, so nothing writes into an index that is
+     * being removed. A no-op when there is no search backend.
+     * <p>
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): without this a dropped tenant leaked its indices
+     * forever, and index metadata is heap -- the itest suite hit OpenSearch's parent circuit breaker
+     * (HTTP 429, 512 MB heap) once it began provisioning a tenant per test method. Not a test
+     * concern: tenant teardown on a shared cell has the same shape.
+     */
+    public void dropTenant( String tenantId )
+    {
+        if ( nodeSearchService == null || searchIndexAdmin == null )
+        {
+            return;
+        }
+        releaseTenant( tenantId );
+        searchIndexAdmin.deleteTenantIndices( new TenantContext( tenantId ) );
     }
 
     /** {@code null} when no search backend is configured. Exposed for the readiness probe and tests. */
@@ -153,15 +204,17 @@ public final class NodbServer
         // Shared with the NodeSearchService's indexer factory below and with the NodbServer this
         // method returns, so the readiness probe and shutdown both see every started indexer.
         List<Indexer> indexers = new CopyOnWriteArrayList<>();
+        NodeSearchService nodeSearchService = null;
 
         if ( openSearchClient != null )
         {
-            builder.addService( ServerInterceptors.intercept( new NodeSearchService( dataSource, tenant -> {
+            nodeSearchService = new NodeSearchService( dataSource, tenant -> {
                 Indexer indexer = new Indexer( dataSource, tenant, openSearchClient, searchIndexAdmin );
                 indexer.start();
                 indexers.add( indexer );
                 return indexer;
-            }, new SearchQueryExecutor( openSearchClient ) ), authInterceptor ) );
+            }, new SearchQueryExecutor( openSearchClient ), searchIndexAdmin );
+            builder.addService( ServerInterceptors.intercept( nodeSearchService, authInterceptor ) );
             LOG.info( "Search backend enabled: {}", openSearchConfig.baseUrl() );
         }
         else
@@ -169,7 +222,9 @@ public final class NodbServer
             LOG.info( "No search backend configured (NODB_OPENSEARCH_URL unset); NodeSearch RPCs answer UNIMPLEMENTED" );
         }
 
-        NodbServer nodbServer = new NodbServer( builder.build().start(), dataSource, binaryStore, openSearchClient, indexers );
+        NodbServer nodbServer =
+            new NodbServer( builder.build().start(), dataSource, binaryStore, openSearchClient, indexers, nodeSearchService,
+                            searchIndexAdmin );
 
         // Log the actual bound port, not the requested one: callers may pass 0 (OS-assigned
         // ephemeral port, e.g. the bench harness), in which case `port` itself is useless.

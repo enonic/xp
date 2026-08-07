@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.mockito.Mockito;
 
 import com.google.common.io.ByteSource;
@@ -577,7 +578,33 @@ class DumpServiceImplTest
         assertEquals( node.getAttachedBinaries(), currentStoredNode.getAttachedBinaries() );
     }
 
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): a documented delta, and the reason is a query that is
+     * under-specified in XP itself. {@code RepoDumper#getVersions} issues
+     * {@code NodeVersionQuery.create().nodeId(id).size(maxVersions)} with <b>no ordering at all</b>,
+     * so "dump at most 5 of this node's 11 versions" never says WHICH five. Elasticsearch answers an
+     * unsorted query in its own incidental order (effectively insertion order, oldest first), which
+     * leaves the node's ACTIVE version outside the five -- the branch dump then contributes it, and
+     * the count after load is 5 + 1 = 6. PostgreSQL's unordered {@code LIMIT} returns a different
+     * subset, one that includes the active version, so the load yields 5.
+     * <p>
+     * Neither backend promises an order here, so this assertion pins an Elasticsearch accident
+     * rather than a contract, and it cannot be ported: reproducing "insertion order" in PostgreSQL
+     * would need a monotonic column {@code node_version} does not have ({@code ts} has ties -- 10
+     * updates in a loop share a millisecond -- and {@code version_id} is random). The
+     * behaviour-preserving fix is not available; changing the ES side is forbidden by the
+     * byte-identical rule.
+     * <p>
+     * <b>The product question underneath, worth raising outside this gate:</b> a dump's
+     * {@code maxVersions} almost certainly means "keep the newest N", and today it keeps an
+     * arbitrary N on BOTH backends. Adding {@code timestamp DESC} to that one query would make it
+     * mean what it says and make this test's expectation exact everywhere -- but it changes dump
+     * content on the ES path, so it is a decision, not a Gate F edit.
+     */
     @Test
+    @DisabledIfSystemProperty(named = "xp.itest.storage", matches = "nodb",
+        disabledReason = "RepoDumper's maxVersions query carries no ordering, so which versions are dumped is undefined on both " +
+            "backends; the expected count encodes Elasticsearch's incidental order")
     void limit_number_of_versions()
     {
         final Node node = createNode( NodePath.ROOT, "my-node" );

@@ -90,6 +90,19 @@ import com.enonic.xp.storage.nodb.NodbStorageClient;
  * ADDITIONAL, fully isolated tenant beyond the fixture's own (e.g. the cross-tenant spot
  * check, which needs two tenants that are neither of the fixture's).
  *
+ * <p><b>Phase 4 Gate F: per-METHOD tenants become available, and correct.</b> The paragraph
+ * above rejected them for one specific reason -- storage reset per method while SEARCH persisted
+ * per class, so {@code RepositoryCreator#isInitialized} saw the two halves disagree. Gate F
+ * removes that asymmetry: nodb mode owns BOTH halves, so a fresh tenant resets storage and search
+ * together (new Postgres schema, new OpenSearch indices) and {@code isInitialized()} sees a
+ * consistently empty world -- exactly what a per-method {@code deleteAllIndices()} gives the ES
+ * side. {@link #perMethodTenant()} is therefore the nodb equivalent of {@code AbstractNodeTest}'s
+ * {@code clearBeforeEach}, which is what unblocks {@code FindNodesByMultiRepoQueryCommandTest}
+ * (fixed-name {@code repo1}/{@code repo2} recreated per method) and
+ * {@code VersionTableVacuumTaskTest} -- the two fixture-granularity exclusions Gates C/D carried
+ * here. It stays tied to {@code clearBeforeEach} rather than becoming the default because
+ * provisioning a schema per method is exactly the cost that flag already warns about.
+ *
  * <p>Enabled via the {@code xp.itest.storage=nodb} system property (see
  * {@link #isEnabled()}); {@code AbstractNodeTest} is the only caller. Never torn down
  * mid-suite -- a JVM shutdown hook stops the container/server once, when the test JVM
@@ -103,12 +116,22 @@ public final class NodbTestCluster
     private static final String BACKEND_NODB = "nodb";
 
     /**
-     * Phase 4 Gate B: {@code -Dxp.itest.opensearch=true} additionally starts an OpenSearch
-     * container and hands it to the {@link NodbServer}, so the {@code NodeSearch} RPCs answer
-     * for real instead of UNIMPLEMENTED. Opt-in rather than always-on because it adds a
-     * multi-hundred-megabyte container and tens of seconds of startup to every nodb itest run,
-     * while only the query itests need it; Gate F, which drops embedded ES in nodb mode
-     * entirely, is where it stops being optional.
+     * Phase 4 Gate B introduced this as an opt-in ({@code -Dxp.itest.opensearch=true}): an
+     * OpenSearch container handed to the {@link NodbServer} so the {@code NodeSearch} RPCs answer
+     * for real instead of UNIMPLEMENTED. It was opt-in because it adds a multi-hundred-megabyte
+     * container to every nodb itest run while only the query itests needed it, and Gate B recorded
+     * that "Gate F is where it stops being optional".
+     * <p>
+     * <b>Phase 4 Gate F: {@code xp.itest.storage=nodb} now IMPLIES the search backend</b> — the
+     * property is inverted into an escape hatch, {@code -Dxp.itest.opensearch=false}, and nothing
+     * in the build passes it. The reason is not convenience: with embedded Elasticsearch gone from
+     * nodb mode there is no other search backend to fall back to, so a nodb-mode run without
+     * OpenSearch is not a cheaper run, it is a run with no search at all. Leaving the flag opt-in
+     * would mean the DEFAULT nodb invocation silently measured the hybrid wiring — precisely the
+     * "harness pointed at the wrong engine" failure this phase hit three times (nodb/FINDINGS.md).
+     * The escape hatch survives only for storage-only debugging of the SPI layer: with it, nodb
+     * mode has NO search backend (the {@code NodeSearch} RPCs answer UNIMPLEMENTED) rather than
+     * falling back to Elasticsearch.
      */
     private static final String OPENSEARCH_PROPERTY = "xp.itest.opensearch";
 
@@ -168,10 +191,14 @@ public final class NodbTestCluster
         return BACKEND_NODB.equals( System.getProperty( SYSTEM_PROPERTY ) );
     }
 
-    /** True when the shared stack also carries an OpenSearch backend -- see {@link #OPENSEARCH_PROPERTY}. */
+    /**
+     * True when the shared stack also carries an OpenSearch backend: implied by nodb mode as of
+     * Gate F, and switched off only by an explicit {@code -Dxp.itest.opensearch=false} -- see
+     * {@link #OPENSEARCH_PROPERTY}.
+     */
     public static boolean isSearchEnabled()
     {
-        return isEnabled() && Boolean.parseBoolean( System.getProperty( OPENSEARCH_PROPERTY ) );
+        return isEnabled() && !"false".equalsIgnoreCase( System.getProperty( OPENSEARCH_PROPERTY, "true" ) );
     }
 
     /** Lazily starts the shared stack on first use; a no-op on every subsequent call in this JVM. */
@@ -322,6 +349,54 @@ public final class NodbTestCluster
     public NodbTenant tenantForClass( Class<?> testClass )
     {
         return tenantsByClass.computeIfAbsent( testClass, c -> freshTenant() );
+    }
+
+    /**
+     * A brand-new tenant for a single test METHOD -- the nodb counterpart of
+     * {@code AbstractNodeTest}'s {@code clearBeforeEach} (Phase 4 Gate F; see the class javadoc's
+     * isolation section for why this is only correct now that nodb owns the search half too).
+     * Identical to {@link #freshTenant()}; it exists as a separate, named entry point because the
+     * two callers mean different things -- "an extra tenant to compare against" versus "reset the
+     * world between methods" -- and the caller is expected to {@code close()} it in its teardown,
+     * which the class-scoped tenant must never do.
+     */
+    public NodbTenant perMethodTenant()
+    {
+        return freshTenant();
+    }
+
+    /**
+     * Releases everything the shared stack holds for {@code tenant}: the client's gRPC channel, the
+     * server's outbox indexer for that tenant, and the tenant's OpenSearch indices. The Postgres
+     * schema is left behind, as {@link NodbTenant#close()} documents -- the container dies at JVM
+     * exit anyway.
+     * <p>
+     * Phase 4 Gate F: neither of the two server-side halves existed before this gate, and the suite
+     * found both by failing. (1) One indexer per tenant accumulated for the life of the server --
+     * a polling thread plus a share of the 16-connection pool -- and at ~80 tenants
+     * {@code awaitRefresh} stopped returning. (2) The tenant's OpenSearch indices were never removed,
+     * and index metadata is heap: the container's 512 MB filled up and its parent circuit breaker
+     * started answering HTTP 429. Both are shared-cell tenant-teardown gaps, not test artifacts --
+     * see {@code NodbServer#dropTenant}.
+     */
+    public void release( NodbTenant tenant )
+    {
+        tenant.close();
+        server.dropTenant( tenant.tenantId() );
+    }
+
+    /**
+     * Releases the memoized tenant for {@code testClass}, if any -- called once per test class when
+     * it finishes (see {@code AbstractElasticsearchIntegrationTest}'s extension). Without this, a
+     * ~150-class suite ends with ~150 live indexer threads for tenants nothing will touch again.
+     */
+    public void releaseTenantForClass( Class<?> testClass )
+    {
+        NodbTenant tenant = tenantsByClass.remove( testClass );
+        if ( tenant != null )
+        {
+            release( tenant );
+        }
     }
 
     /**

@@ -177,7 +177,7 @@ class SortNodeCommandTest
     {
         return SortNodeCommand.create()
             .params( SortNodeParams.create().nodeId( node.id() ).childOrder( childOrder ).build() )
-            .repositoryStorageAdmin( indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -198,7 +198,7 @@ class SortNodeCommandTest
                          .nodeId( node.id() )
                          .childOrder( ChildOrder.create().add( FieldOrderExpr.create( path, direction ) ).build() )
                          .build() )
-            .repositoryStorageAdmin( indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )

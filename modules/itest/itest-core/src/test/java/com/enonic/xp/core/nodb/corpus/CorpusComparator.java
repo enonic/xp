@@ -101,6 +101,26 @@ final class CorpusComparator
         engineComputedSortIds = Set.copyOf( ids );
     }
 
+    /**
+     * True when the run's backend is the SAME one the baseline was recorded on — i.e. an ES-mode run
+     * diffing against the ES baseline, which is a self-diff, not a port comparison.
+     *
+     * <p>Phase 4 Gate F found this by running the full suites in BOTH modes, which is the one thing
+     * that exposes it. The {@link Acceptance#FIXED} tag INVERTS the contract: a recorded ruling says
+     * the port must differ from the baseline, so "still failing" is a FAILURE. That is exactly right
+     * for nodb and exactly wrong for Elasticsearch, where the row must still error because it is the
+     * behaviour the ruling is measured against — so {@code SOURCE-03-multi-repo-sort-unmapped-field}
+     * failed the ES-mode suite, and had been failing it since Gate C introduced the tag, unnoticed
+     * because the full ES suite had not been run since. On a self-diff a FIXED row is compared like
+     * any other row: it must reproduce the baseline exactly, errors included.
+     */
+    private static boolean selfDiff;
+
+    static void selfDiff( final boolean value )
+    {
+        selfDiff = value;
+    }
+
     static List<Delta> compare( final List<QueryOutcome> baseline, final List<QueryOutcome> actual )
     {
         final Map<String, QueryOutcome> base = index( baseline );
@@ -154,7 +174,9 @@ final class CorpusComparator
         // port MUST differ from the baseline, so the difference is the expected outcome and is
         // reported rather than failed. The one hard requirement is that the port answers at all --
         // see Acceptance.FIXED for why this is the weakest tag in the set and how it is fenced.
-        if ( rule == Acceptance.FIXED )
+        // The inversion applies to a PORT comparison only: on a self-diff (see #selfDiff) the
+        // baseline's own behaviour, error included, is what must be reproduced.
+        if ( rule == Acceptance.FIXED && !selfDiff )
         {
             if ( actual.error() != null )
             {

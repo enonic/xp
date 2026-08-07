@@ -51,7 +51,9 @@ import com.enonic.nodb.proto.v1.AwaitRefreshRequest;
 import com.enonic.nodb.proto.v1.BranchEntry;
 import com.enonic.nodb.proto.v1.CreateRepositoryRequest;
 import com.enonic.nodb.proto.v1.DeleteBranchEntriesRequest;
+import com.enonic.nodb.proto.v1.CreateSearchIndexRequest;
 import com.enonic.nodb.proto.v1.DeleteDocumentsRequest;
+import com.enonic.nodb.proto.v1.DeleteSearchIndexRequest;
 import com.enonic.nodb.proto.v1.IndexAck;
 import com.enonic.nodb.proto.v1.IndexDoc;
 import com.enonic.nodb.proto.v1.IndexDocumentsRequest;
@@ -76,7 +78,9 @@ import com.enonic.nodb.server.service.NodeSearchService;
 import com.enonic.nodb.server.service.NodeStoreService;
 import com.enonic.nodb.server.service.RepositoryAdminService;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -150,7 +154,8 @@ class NodeSearchServiceIntegrationTest
             .addService( ServerInterceptors.intercept( new NodeSearchService( dataSource, tenant -> new Indexer( dataSource, tenant,
                                                                                                                 openSearchClient,
                                                                                                                 searchIndexAdmin ),
-                                                                             new SearchQueryExecutor( openSearchClient ) ),
+                                                                             new SearchQueryExecutor( openSearchClient ),
+                                                                             searchIndexAdmin ),
                                                         authInterceptor ) )
             .build()
             .start();
@@ -246,6 +251,83 @@ class NodeSearchServiceIntegrationTest
         nodeSearch().awaitRefresh( AwaitRefreshRequest.newBuilder().setSeq( deleted.getOutboxSeq() ).addRepoIds( repoId ).build() );
 
         assertEquals( 0, count( alias ) );
+    }
+
+    /**
+     * Phase 4 Gate F: purge = {@code DeleteSearchIndex} then {@code CreateSearchIndex}, which is what
+     * XP's {@code IndexService.reindex(initialize = true)} issues. Asserts the three things that make
+     * it a purge rather than a no-op: the documents are gone from OpenSearch, the STORED documents
+     * are gone from {@code search_document} (leaving them would let a rebuild-from-documents
+     * resurrect exactly what the purge removed), and a live alias exists again afterwards so the
+     * reindex has somewhere to write.
+     */
+    @Test
+    void purgingTheSearchIndexDropsTheDocumentsAndLeavesAFreshAlias()
+        throws Exception
+    {
+        String repoId = createRepo( "wirepurge" );
+        String alias = SearchIndexNames.alias( new TenantContext( "acme" ), repoId );
+
+        IndexAck indexed = nodeSearch().indexDocuments( IndexDocumentsRequest.newBuilder()
+                                                            .setRepoId( repoId )
+                                                            .setBranch( "master" )
+                                                            .addDocuments( document( "node-1", "stale" ) )
+                                                            .build() );
+        nodeSearch().awaitRefresh( AwaitRefreshRequest.newBuilder().setSeq( indexed.getOutboxSeq() ).addRepoIds( repoId ).build() );
+        assertEquals( 1, count( alias ) );
+        assertEquals( 1, storedDocumentCount( repoId ) );
+
+        nodeSearch().deleteSearchIndex( DeleteSearchIndexRequest.newBuilder().setRepoId( repoId ).build() );
+        assertFalse( openSearchClient.aliasExists( alias ), "the alias must be gone after the purge's delete half" );
+        assertEquals( 0, storedDocumentCount( repoId ), "the stored documents must go with the index, or a rebuild resurrects them" );
+
+        nodeSearch().createSearchIndex( CreateSearchIndexRequest.newBuilder().setRepoId( repoId ).build() );
+        assertTrue( openSearchClient.aliasExists( alias ) );
+        assertEquals( 0, count( alias ), "a purged index starts empty" );
+    }
+
+    /**
+     * Idempotence is what lets ONE pair of RPCs serve both the repository lifecycle (where the index
+     * already exists / is already gone, because the storage admin ran first) and the purge (where the
+     * calls must really happen). Without it, every repository create would race on ALREADY_EXISTS and
+     * every repository delete would fail on NOT_FOUND.
+     */
+    @Test
+    void searchIndexCreateAndDeleteAreIdempotent()
+    {
+        String repoId = createRepo( "wireidem" );
+        String alias = SearchIndexNames.alias( new TenantContext( "acme" ), repoId );
+
+        // createRepo already made it; a second create is a no-op, not a failure.
+        assertTrue( openSearchClient.aliasExists( alias ) );
+        assertDoesNotThrow( () -> nodeSearch().createSearchIndex( CreateSearchIndexRequest.newBuilder().setRepoId( repoId ).build() ) );
+        assertTrue( openSearchClient.aliasExists( alias ) );
+
+        nodeSearch().deleteSearchIndex( DeleteSearchIndexRequest.newBuilder().setRepoId( repoId ).build() );
+        assertDoesNotThrow( () -> nodeSearch().deleteSearchIndex( DeleteSearchIndexRequest.newBuilder().setRepoId( repoId ).build() ) );
+
+        // A repository that never existed at all: still a successful delete, never NOT_FOUND.
+        assertDoesNotThrow(
+            () -> nodeSearch().deleteSearchIndex( DeleteSearchIndexRequest.newBuilder().setRepoId( "no-such-repo" ).build() ) );
+    }
+
+    private static int storedDocumentCount( String repoId )
+        throws Exception
+    {
+        try (java.sql.Connection connection = dataSource.getConnection())
+        {
+            connection.createStatement().execute( "SET search_path TO \"acme\"" );
+            try (java.sql.PreparedStatement statement = connection.prepareStatement(
+                "SELECT count(*) FROM search_document sd JOIN repository r ON r.repo_key = sd.repo_key WHERE r.repo_id = ?" ))
+            {
+                statement.setString( 1, repoId );
+                try (java.sql.ResultSet resultSet = statement.executeQuery())
+                {
+                    resultSet.next();
+                    return resultSet.getInt( 1 );
+                }
+            }
+        }
     }
 
     /**

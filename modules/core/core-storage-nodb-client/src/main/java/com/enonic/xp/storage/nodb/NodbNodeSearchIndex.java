@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.enonic.nodb.proto.v1.AwaitRefreshRequest;
+import com.enonic.nodb.proto.v1.CreateSearchIndexRequest;
+import com.enonic.nodb.proto.v1.DeleteSearchIndexRequest;
 import com.enonic.nodb.proto.v1.DeleteDocumentsRequest;
 import com.enonic.nodb.proto.v1.Explanation;
 import com.enonic.nodb.proto.v1.HighlightedProperty;
@@ -55,12 +57,14 @@ import com.enonic.xp.suggester.TermSuggestionOption;
  * core-repo consumers rebind to it — the same selection mechanism {@link NodbStorageClient}
  * documents for the storage half.
  * <p>
- * <b>Index lifecycle is not this class's job.</b> {@code RepositoryAdmin.CreateRepository}
- * already creates the repository's OpenSearch index and alias, and
- * {@code NodeRepositoryServiceImpl} calls the storage admin first, so by the time
- * {@link #createIndex} runs the index exists. Making it a second create would either race or
- * fail on ALREADY_EXISTS; it is therefore a documented no-op, as is {@link #deleteIndex}
- * (deletion is index-then-Postgres inside {@code DeleteRepository}).
+ * <b>Index lifecycle (Phase 4 Gate F).</b> {@code RepositoryAdmin.CreateRepository} creates the
+ * repository's OpenSearch index and alias, and {@code NodeRepositoryServiceImpl} calls the storage
+ * admin first, so by the time {@link #createIndex} runs the index already exists. Gate B therefore
+ * made {@link #createIndex}/{@link #deleteIndex} client-side no-ops. Gate F turned them into real
+ * IDEMPOTENT calls instead, because the repository lifecycle is not their only caller:
+ * {@code IndexServiceImpl#doPurgeSearchIndex} -- XP's {@code IndexService.reindex(initialize=true)}
+ * -- calls delete-then-create meaning it, and a no-op made that reindex leave every stale document
+ * in place. Idempotence on the server serves both callers with one pair of RPCs.
  */
 @Component(service = NodeSearchIndex.class, property = { "storage.backend=nodb", "service.ranking:Integer=100" })
 public class NodbNodeSearchIndex
@@ -156,20 +160,37 @@ public class NodbNodeSearchIndex
         NodbStatusMapper.repoScopedVoid( () -> client.nodeSearch().awaitRefresh( request ) );
     }
 
-    /** No-op: {@code RepositoryAdmin.CreateRepository} already created the index — see class javadoc. */
+    /**
+     * Phase 4 Gate F: a real, IDEMPOTENT create, no longer a client-side no-op.
+     * <p>
+     * Gate B made this a no-op because {@code NodeRepositoryServiceImpl#create} calls the storage
+     * admin first, so {@code CreateRepository} had already made the index and a second create would
+     * race. That reasoning holds for the repository-lifecycle caller and is now honoured where it
+     * belongs -- the server answers OK for an index that already exists -- because there is a SECOND
+     * caller that means it literally: {@code IndexServiceImpl#doPurgeSearchIndex}, i.e. XP's
+     * {@code IndexService.reindex(initialize = true)}, calls delete-then-create with no
+     * storage-admin call around it. As a client-side no-op that purge silently did nothing, so a
+     * reindex left every stale document in place -- precisely what an administrator runs a reindex to
+     * get rid of. {@code settings}/{@code mapping} are dropped: the index template is NoDB's own
+     * (Gate A's mapping port), versioned per generation, never something a caller supplies.
+     */
     @Override
     public void createIndex( final RepositoryId repositoryId, final IndexSettings settings, final IndexMapping mapping )
     {
-        LOG.debug( "createIndex is a no-op for the nodb backend (repository [{}]): the search index is created with the repository",
-                   repositoryId );
+        final CreateSearchIndexRequest request = CreateSearchIndexRequest.newBuilder().setRepoId( repositoryId.toString() ).build();
+        NodbStatusMapper.repoScopedVoid( () -> client.nodeSearch().createSearchIndex( request ) );
     }
 
-    /** No-op: {@code RepositoryAdmin.DeleteRepository} already deleted the index. */
+    /**
+     * Phase 4 Gate F: a real, IDEMPOTENT delete -- drops every generation of the index AND the
+     * stored documents (leaving those would let a rebuild-from-documents resurrect a purged branch).
+     * See {@link #createIndex} for why this stopped being a no-op.
+     */
     @Override
     public void deleteIndex( final RepositoryId repositoryId )
     {
-        LOG.debug( "deleteIndex is a no-op for the nodb backend (repository [{}]): the search index dies with the repository",
-                   repositoryId );
+        final DeleteSearchIndexRequest request = DeleteSearchIndexRequest.newBuilder().setRepoId( repositoryId.toString() ).build();
+        NodbStatusMapper.idempotentDelete( () -> client.nodeSearch().deleteSearchIndex( request ) );
     }
 
     @Override

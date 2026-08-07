@@ -40,7 +40,7 @@ class PushNodesCommandPerformanceTest
         final ResolveSyncWorkResult syncWork = ResolveSyncWorkCommand.create()
             .nodeId( rootNode.id() )
             .target( WS_OTHER )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -52,7 +52,7 @@ class PushNodesCommandPerformanceTest
 
         final PushNodesResult result = PushNodesCommand.create()
             .params( PushNodeParams.create().ids( syncWork.getNodeComparisons().getNodeIds() ).target( WS_OTHER ).build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )

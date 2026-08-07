@@ -60,7 +60,18 @@ public class MemoryBlobStore
         throws BlobStoreException
     {
         final Map<BlobKey, BlobRecord> segmentStore = this.store.get( segment );
-        segmentStore.remove( key );
+
+        // A segment that was never written to has nothing to remove. getRecord above already
+        // treats an unknown segment as "not there"; this method threw a NullPointerException
+        // instead -- an inconsistency inside one class, invisible while every caller happened to
+        // have written the segment first. Phase 4 Gate F reaches it: in nodb mode a node's payload
+        // segments live in PostgreSQL, not in a blob store, so VersionTableVacuumCommand's
+        // transient-repository branch asks this store to free a node blob it never held.
+        // (Reclaiming the PostgreSQL payload row is payload GC, explicitly deferred to Phase 5.)
+        if ( segmentStore != null )
+        {
+            segmentStore.remove( key );
+        }
     }
 
     @Override

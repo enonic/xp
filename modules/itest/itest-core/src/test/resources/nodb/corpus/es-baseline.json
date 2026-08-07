@@ -1883,6 +1883,70 @@
     "totalHits" : 10,
     "maxScore" : "NaN",
     "hits" : [ {
+      "id" : "coll-01",
+      "path" : "/collation/coll-01",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖕ偀⃠ၰ\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-04",
+      "path" : "/collation/coll-04",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖙ双栠ᜀ䀎ᝌ฀\u0001" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-02",
+      "path" : "/collation/coll-02",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖜ児❥玐ਬ堨Ș\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-06",
+      "path" : "/collation/coll-06",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖦ䁑㉀倐㠀\u0001" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-07",
+      "path" : "/collation/coll-07",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖦ䳀⢲⁠ࡀ\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-08",
+      "path" : "/collation/coll-08",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖦ偎曠ᑙ぀Ш\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-09",
+      "path" : "/collation/coll-09",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "⎠䁑㋀倐㠀\u0001" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-05",
+      "path" : "/collation/coll-05",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "⎠䁑㏀倐㠀\u0001" ],
+      "highlight" : [ ]
+    }, {
       "id" : "coll-10",
       "path" : "/collation/coll-10",
       "score" : "NaN",
@@ -1897,70 +1961,6 @@
       "index" : "search-<testrepo>",
       "type" : "draft",
       "sort" : [ "⺩偔怡\u0010䀀\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-02",
-      "path" : "/collation/coll-02",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䂎⢨Ꮂ秈Ԙᐂ଀\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-08",
-      "path" : "/collation/coll-08",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䂓⠧㍰ਰ ሀ\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-04",
-      "path" : "/collation/coll-04",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䂓晨တ䀈 \u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-05",
-      "path" : "/collation/coll-05",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䃐†怐　\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-09",
-      "path" : "/collation/coll-09",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䃐 恐࠰\u0000\u0000" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-01",
-      "path" : "/collation/coll-01",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䄐 恐࠰\u0000\u0000" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-06",
-      "path" : "/collation/coll-06",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䄓†怐　\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-07",
-      "path" : "/collation/coll-07",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䄓♠ၰ࠸\u0000\u0000" ],
       "highlight" : [ ]
     } ],
     "aggregations" : [ ],
@@ -1975,6 +1975,70 @@
     "totalHits" : 10,
     "maxScore" : "NaN",
     "hits" : [ {
+      "id" : "coll-01",
+      "path" : "/collation/coll-01",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖕ偀⃠ၰ\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-04",
+      "path" : "/collation/coll-04",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖙ双栠ᜀ䀎ᝌ฀\u0001" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-02",
+      "path" : "/collation/coll-02",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖜ児❥玐ਬ堨Ș\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-06",
+      "path" : "/collation/coll-06",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖦ䁑㉀倐㠀\u0001" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-07",
+      "path" : "/collation/coll-07",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖦ䳀⢲⁠ࡀ\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-08",
+      "path" : "/collation/coll-08",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "ᖦ偎曠ᑙ぀Ш\u0000\u0000" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-09",
+      "path" : "/collation/coll-09",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "⎠䁑㋀倐㠀\u0001" ],
+      "highlight" : [ ]
+    }, {
+      "id" : "coll-05",
+      "path" : "/collation/coll-05",
+      "score" : "NaN",
+      "index" : "search-<testrepo>",
+      "type" : "draft",
+      "sort" : [ "⎠䁑㏀倐㠀\u0001" ],
+      "highlight" : [ ]
+    }, {
       "id" : "coll-10",
       "path" : "/collation/coll-10",
       "score" : "NaN",
@@ -1989,70 +2053,6 @@
       "index" : "search-<testrepo>",
       "type" : "draft",
       "sort" : [ "⺩偔怡\u0010䀀\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-02",
-      "path" : "/collation/coll-02",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䂎⢨Ꮂ秈Ԙᐂ଀\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-08",
-      "path" : "/collation/coll-08",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䂓⠧㍰ਰ ሀ\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-04",
-      "path" : "/collation/coll-04",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䂓晨တ䀈 \u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-05",
-      "path" : "/collation/coll-05",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䃐†怐　\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-09",
-      "path" : "/collation/coll-09",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䃐 恐࠰\u0000\u0000" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-01",
-      "path" : "/collation/coll-01",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䄐 恐࠰\u0000\u0000" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-06",
-      "path" : "/collation/coll-06",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䄓†怐　\u0001" ],
-      "highlight" : [ ]
-    }, {
-      "id" : "coll-07",
-      "path" : "/collation/coll-07",
-      "score" : "NaN",
-      "index" : "search-<testrepo>",
-      "type" : "draft",
-      "sort" : [ "⼼䄓♠ၰ࠸\u0000\u0000" ],
       "highlight" : [ ]
     } ],
     "aggregations" : [ ],

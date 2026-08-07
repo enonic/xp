@@ -32,12 +32,8 @@ import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
-import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
-import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -55,9 +51,9 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.core.nodb.NodbItestWiring;
 import com.enonic.xp.core.nodb.NodbTenant;
 import com.enonic.xp.core.nodb.NodbTestCluster;
-import com.enonic.xp.storage.nodb.NodbBinaryBlobStore;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
@@ -100,6 +96,9 @@ public abstract class AbstractIssueServiceTest
      */
     private NodbTenant nodbTenant;
 
+    /** Phase 4 Gate F: mode-correct storage AND search wiring, per method -- see {@link NodbItestWiring}. */
+    private NodbItestWiring wiring;
+
     @BeforeEach
     void setUpAbstractIssueServiceTest()
     {
@@ -115,32 +114,23 @@ public abstract class AbstractIssueServiceTest
 
         final MemoryBlobStore memoryBlobStore = new MemoryBlobStore();
 
-        final StorageDaoImpl storageDao = new StorageDaoImpl( client );
-
         final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
-        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
+        // Phase 4 Gate F (nodb/BUILD-PHASE-4.md): the search half joins the mode branch. Gate B
+        // wired this fixture's tenant per METHOD (its @BeforeEach wipes the indices) but left
+        // `new NodeSearchIndexImpl( client, ... )` unconditional, so nodb-mode issue queries ran
+        // on embedded Elasticsearch. See NodbItestWiring's javadoc.
+        this.wiring = NodbItestWiring.perMethod( client, memoryBlobStore );
 
-        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+        final NodeSearchIndex nodeSearchIndex = wiring.nodeSearchIndex();
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
+        final IndexServiceInternal indexServiceInternal = wiring.indexServiceInternal();
 
-        final NodeStore nodeStore;
-        final RepositoryStorageAdmin repositoryStorageAdmin;
-        final BlobStore blobStore;
-        if ( NodbTestCluster.isEnabled() )
-        {
-            this.nodbTenant = NodbTestCluster.get().freshTenant();
-            nodeStore = nodbTenant.nodeStore();
-            repositoryStorageAdmin = nodbTenant.repositoryStorageAdmin();
-            blobStore = new NodbBinaryBlobStore( memoryBlobStore, nodbTenant.client() );
-        }
-        else
-        {
-            nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, memoryBlobStore );
-            repositoryStorageAdmin = indexServiceInternal;
-            blobStore = memoryBlobStore;
-        }
+        this.nodbTenant = wiring.tenant();
+
+        final NodeStore nodeStore = wiring.nodeStore();
+        final RepositoryStorageAdmin repositoryStorageAdmin = wiring.repositoryStorageAdmin();
+        final BlobStore blobStore = wiring.blobStore();
 
         final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 
@@ -215,6 +205,8 @@ public abstract class AbstractIssueServiceTest
     {
         ContextAccessorSupport.getInstance().set( initialContext );
         executorService.shutdownNow();
+        // Phase 4 Gate F: a per-METHOD nodb tenant owns a gRPC channel nothing else releases.
+        wiring.close();
     }
 
     protected Issue createIssue( CreateIssueParams.Builder builder )

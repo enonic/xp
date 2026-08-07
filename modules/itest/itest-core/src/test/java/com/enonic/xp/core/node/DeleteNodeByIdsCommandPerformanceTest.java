@@ -36,13 +36,13 @@ class DeleteNodeByIdsCommandPerformanceTest
 
         final NodeQuery query = NodeQuery.create().size( 0 ).build();
 
-        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().query( query ).searchService( this.searchService ).storageService( this.storageService ).repositoryStorageAdmin( this.indexServiceInternal )
+        final FindNodesByQueryResult result = FindNodesByQueryCommand.create().query( query ).searchService( this.searchService ).storageService( this.storageService ).repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex ).build().execute();
 
         final Stopwatch started = Stopwatch.createStarted();
 
         DeleteNodeCommand.create().nodeId( rootNode.id() ).searchService( this.searchService )
-            .nodeStore( this.nodeStore ).storageService( this.storageService ).repositoryStorageAdmin( this.indexServiceInternal )
+            .nodeStore( this.nodeStore ).storageService( this.storageService ).repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex ).build().execute();
 
         started.stop();

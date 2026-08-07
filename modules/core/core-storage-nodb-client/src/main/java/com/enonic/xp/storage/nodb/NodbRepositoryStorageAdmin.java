@@ -71,11 +71,16 @@ public class NodbRepositoryStorageAdmin
         NodbStatusMapper.repoScopedVoid( () -> client.repositoryAdmin().createRepository( builder.build() ) );
     }
 
+    /**
+     * Idempotent: a repository that is already gone is a successful delete, matching the
+     * Elasticsearch backend's long-standing behaviour that {@code DumpServiceImpl} relies on --
+     * see {@link NodbStatusMapper#idempotentDelete}.
+     */
     @Override
     public void deleteIndex( final RepositoryId repositoryId )
     {
         final DeleteRepositoryRequest request = DeleteRepositoryRequest.newBuilder().setRepoId( repositoryId.toString() ).build();
-        NodbStatusMapper.repoScopedVoid( () -> client.repositoryAdmin().deleteRepository( request ) );
+        NodbStatusMapper.idempotentDelete( () -> client.repositoryAdmin().deleteRepository( request ) );
     }
 
     @Override

@@ -651,6 +651,132 @@ throw" would take · the calendar-vs-fixed rule lives in NoDB, not the renderer:
 property of the target engine, like a field postfix, so the wire carries XP's untyped string
 verbatim.
 
+## GATE F DONE (2026-08-07) — THE PHASE GATE: zero embedded ES, full suites green
+
+**Verified by the orchestrator on runs watched to completion, counting only result files
+written after each run started** (see the process note at the end — stale-result tallying
+caught me once here):
+
+| Check | nodb mode | ES mode (byte-identical path) |
+|---|---|---|
+| `itest-core` | **104 classes / 697 tests / 0 failures** | 104 / 697 / **0** (4 chunks) |
+| `itest-core-content` | **49 classes / 385 tests / 0 failures** (3 chunks) | 49 / 385 / **0** (3 chunks) |
+| Full corpus (129 rows) | **0 FAILURE**, 578 DOCUMENTED | self-diff 0/0 |
+| No-embedded-ES probe | passes | **fires** (negative control) |
+
+**ES mode now has ZERO pre-existing failures** — the four German `icuSort` cases included.
+
+### The positive proof that no ES node boots
+
+`-Dxp.itest.storage=nodb` now **implies** the search backend; Gate B's
+`-Dxp.itest.opensearch=true` is inverted into an escape hatch (`=false` gives nodb mode with
+*no* search rather than an ES fallback), and nothing in the build passes it.
+`NoEmbeddedElasticsearchProbe` asserts **four independent mechanical observations, three of
+them against artifacts Elasticsearch's own code produces**, from the JUnit callback that used
+to boot the node — i.e. once per class across all 153 classes in both suites: (1) no live
+thread named `elasticsearch*` (ES 2.4's `EsExecutors` naming); (2)
+`System.getProperty("mapper.allow_dots_in_name") == null` — `EmbeddedElasticsearchServer`
+sets it as its first statement; (3) no `elasticsearchFixture*` temp dir created after JVM
+start; (4) the ES `client` field is null. **Not vacuous:** the test writes and queries nodes
+first, then asserts the probe is silent in nodb mode **and that it fires in ES mode**.
+
+### 🔴 Gates B–E's content-suite greens had been running on embedded ES
+
+`AbstractContentServiceTest` and `AbstractIssueServiceTest` branched *storage* to nodb but
+wired `new NodeSearchIndexImpl(client, …)` **unconditionally** — so every content query,
+sort and aggregation those gates reported green in nodb mode actually executed against ES.
+**Fourth instance of one pattern this phase** (after the corpus comparing ES with itself,
+`AbstractNodeTest`'s unconditional search wiring, and the eight aggregation classes
+refreshing the wrong engine). Two more of the same shape found here: `SecurityServiceImplTest`
+and `DynamicSchemaServiceImplTest` had **no mode branch at all**, and **25 classes / 55 call
+sites** passed `indexServiceInternal` where `repositoryStorageAdmin` was wanted — found by
+narrowing the field to the interface so the compiler enumerated them. **This is why the gate
+demanded a positive probe rather than an absence of failures.**
+
+### Real defects the full-suite run exposed
+
+- **Stale documents survived a reindex**: `reindex(initialize=true)`'s purge was a client-side
+  no-op. Added idempotent `CreateSearchIndex`/`DeleteSearchIndex` (delete also drops
+  `search_document`).
+- **`deleteIndex` was not idempotent**, breaking dump/load (ES swallows every exception there,
+  so dump deletes each repo twice).
+- **An unknown repo was reported as an unknown *branch***.
+- **`exists` on a PropertySet matched nothing** — modern `_field_names` holds leaves only, so
+  it must name the object path.
+- `DslRenderException` now extends `IllegalArgumentException` (XP's contract).
+- `MemoryBlobStore.removeRecord` NPE'd on an unwritten segment (payloads live in PG now).
+
+### Per-method tenants exposed two PRODUCTION gaps
+
+Implemented `nodbTenantPerMethod()`, unblocking the two classes deferred since Phase 1
+(`FindNodesByMultiRepoQueryCommandTest`, `VersionTableVacuumTaskTest`). Two attempts wedged
+the suite first, and both causes were production gaps rather than test artifacts:
+**one indexer thread per tenant, cached for process life** → at ~80 tenants the 16-connection
+pool starved and `awaitRefresh` stopped returning (added `releaseTenant`); and **a dropped
+tenant never released its OpenSearch indices** → index metadata is heap, the container's
+512 MB filled, and the parent circuit breaker answered HTTP 429 (added
+`deleteTenantIndices`/`dropTenant`). PostgreSQL had `dropTenant`; OpenSearch had nothing.
+
+### Risk #8 — measured, and deliberately NOT landed
+
+On `postgres:17` a LIST-partitioned table **does** accept `UNIQUE(...) DEFERRABLE INITIALLY
+DEFERRED`, a path swap inside one transaction then succeeds, and a genuine duplicate still
+fails at COMMIT. **It still does not apply**: `NodeStorageService#push` calls
+`branchService.push` once per node — one RPC, one NoDB transaction per node — so deferring to
+end-of-transaction defers to exactly where the collision already is. Landing it alone would
+move error reporting to COMMIT and fix nothing. The prerequisite is a **batched branch-entry
+write** (all entries of one push in one transaction), which also changes push failure
+granularity (`PushNodesResult#getFailed` exists because pushes fail per node today). It costs
+**3** test methods, not 1.
+
+### ⚠️ CORRECTION to Gate D's headline and FINDINGS #2
+
+The four German `icuSort` cases were an **environment-dependent default-locale** problem, not
+an ES-2.4-ICU-vintage one. Pinning the suite to `en_US` makes them pass **in ES mode too**
+(16/16, verified in both modes by the orchestrator). So Gate D's "a pinned icu4j fixed them"
+is **overstated** — the locale pin fixes them, on either backend. D8's genuine contribution
+stands and is different: nodb's collation no longer depends on the host locale at all, and is
+computed against a version NoDB pins deliberately. FINDINGS #2's parenthetical claiming the
+German cases were vintage-related is wrong and is corrected there.
+
+### Locale pinned, baseline re-recorded — exactly two rows changed
+
+`-Duser.language=en -Duser.country=US` on `integrationTest` and the corpus tasks (`en_US`
+because the official Docker image sets it and ICU's `en` == ROOT/DUCET, which is what NoDB
+pins). Baseline re-recorded under it: **exactly two rows changed of 129** —
+`ICU-05-collate-de-ducet` and `ICU-06-collate-unknown-locale`, precisely as FINDINGS #2
+predicted. Their order deltas are gone; only collation-key byte deltas remain.
+
+**Harness defect found by running ES mode at all:** the `FIXED` tag inverts the contract ("the
+port must differ"), which is wrong for a **self-diff** — `SOURCE-03` had been failing the ES
+suite since Gate C, unnoticed because nobody had run the full ES suite. Added
+`CorpusComparator.selfDiff`; also stopped `actual.json` labelling nodb runs `"es"`.
+
+### Dispositions (no class excluded to make the gate green)
+
+Documented/ruled: `DumpServiceImplTest#limit_number_of_versions` (`RepoDumper` issues a
+size-limited version query with **no ordering** — undefined on *both* backends; disabled with
+a product note) · `IndexServiceImplTest#getIndexSettings` (`number_of_replicas`, a documented
+no-op since Phase 1) · `FindNodesByQueryCommandTest_func_fulltext#boost_field` (BM25 vs
+TF-IDF, decision 5) · `SnapshotServiceImplTest` ×11 (snapshot/restore never crossed the SPI
+by design; NoDB's counterpart is Phase 5) · `DeleteNodeByIdCommandTest_error_handling` ×2 (the
+test *is* an ES-`Client` fault injector; nodb's failure model is transactional) · risk #8 ×3.
+
+### Recorded, not fixed
+
+**Production nodb mode still boots embedded ES**: there is no `IndexServiceInternal` provider
+other than the ES component, so a real `backend=nodb` install still starts a node. "No ES in
+itests" is proven; **"no ES bundle in the distro" is Gate G / bundle-removal work.**
+
+### Process note (orchestrator)
+
+I claimed the content suite verified when I had actually tallied XML files from the agent's run
+four hours earlier — the backgrounded Gradle task had been killed before writing anything and
+I did not check timestamps. Retracted and redone. Every run since records a start epoch and
+counts only files newer than it. **Fifth instance of this phase's pattern, committed by the
+orchestrator rather than an agent** — which is the argument for making freshness assertions
+standard in the corpus/CI harness rather than a habit.
+
 ## Gate 0(a) results — DSL completeness (2026-08-05)
 
 **STOP CONDITION NOT TRIGGERED.** Every NoQL construct renders as DSL: all 10 comparison

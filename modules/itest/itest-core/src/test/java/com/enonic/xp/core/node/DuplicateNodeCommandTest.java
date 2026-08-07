@@ -254,7 +254,7 @@ class DuplicateNodeCommandTest
                          .childOrder( ChildOrder.manualOrder() )
                          .addManualOrder( ReorderChildNodeParams.create().nodeId( childNode1.id() ).moveBefore( childNode3.id() ).build() )
                          .build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )
@@ -428,7 +428,7 @@ class DuplicateNodeCommandTest
     {
         return DuplicateNodeCommand.create()
             .params( DuplicateNodeParams.create().nodeId( node1.id() ).duplicateListener( duplicateNodeListener ).build() )
-            .repositoryStorageAdmin( indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( nodeSearchIndex )
             .binaryService( this.binaryService )
             .storageService( this.storageService )

@@ -89,12 +89,8 @@ import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
-import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
-import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -118,9 +114,9 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsService;
 import com.enonic.xp.blob.BlobStore;
+import com.enonic.xp.core.nodb.NodbItestWiring;
 import com.enonic.xp.core.nodb.NodbTenant;
 import com.enonic.xp.core.nodb.NodbTestCluster;
-import com.enonic.xp.storage.nodb.NodbBinaryBlobStore;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
 import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
@@ -156,10 +152,16 @@ public abstract class AbstractContentServiceTest
      */
     private NodbTenant nodbTenant;
 
+    /**
+     * Phase 4 Gate F: the mode-correct storage AND search wiring (see {@link NodbItestWiring}).
+     * Class-scoped, like {@link #nodbTenant}, so it is deliberately not closed in teardown.
+     */
+    private NodbItestWiring wiring;
+
     /** {@code ElasticsearchNodeStore} in default mode, the nodb gRPC client in nodb mode. */
     protected NodeStore nodeStore;
 
-    /** The swappable {@code RepositoryStorageAdmin} slot; {@code indexServiceInternal} stays ES. */
+    /** The swappable {@code RepositoryStorageAdmin} slot. */
     protected RepositoryStorageAdmin repositoryStorageAdmin;
 
     /** {@link #BLOB_STORE}, wrapped by a {@code NodbBinaryBlobStore} in nodb mode. */
@@ -263,33 +265,25 @@ public abstract class AbstractContentServiceTest
         initialContext = ContextAccessor.current();
         ContextAccessorSupport.getInstance().set( ctxDraft() );
 
-        final StorageDaoImpl storageDao = new StorageDaoImpl( client );
-
         this.eventPublisher = new EventPublisherImpl( executorService );
 
-        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
+        // Phase 4 Gate F (nodb/BUILD-PHASE-4.md): the one mode branch, now including the SEARCH
+        // half. Gate B branched storage here but built `new NodeSearchIndexImpl( client, ... )`
+        // unconditionally, so every content-level query, sort and aggregation this suite called
+        // "green in nodb mode" through Gates B-E was in fact answered by embedded Elasticsearch --
+        // the same wrong-engine harness error as Gate C's corpus and Gate E's aggregation classes
+        // (nodb/FINDINGS.md #6). NodbItestWiring owns the decision for all four hand-rolled
+        // graphs so it cannot be made differently in four places again.
+        this.wiring = NodbItestWiring.perClass( this.getClass(), client, BLOB_STORE );
 
-        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+        final NodeSearchIndex nodeSearchIndex = wiring.nodeSearchIndex();
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
+        final IndexServiceInternal indexServiceInternal = wiring.indexServiceInternal();
 
-        // The one mode branch, same shape and same role split as AbstractNodeTest: nodb owns the
-        // STORAGE side (NodeStore + RepositoryStorageAdmin + the binary blob segment), the SEARCH
-        // side stays on embedded ES. indexServiceInternal remains the concrete ES admin either
-        // way -- it also fills the IndexServiceInternal-typed parameters below, which never move.
-        if ( NodbTestCluster.isEnabled() )
-        {
-            this.nodbTenant = NodbTestCluster.get().tenantForClass( this.getClass() );
-            this.nodeStore = nodbTenant.nodeStore();
-            this.repositoryStorageAdmin = nodbTenant.repositoryStorageAdmin();
-            this.blobStore = new NodbBinaryBlobStore( BLOB_STORE, nodbTenant.client() );
-        }
-        else
-        {
-            this.nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, BLOB_STORE );
-            this.repositoryStorageAdmin = indexServiceInternal;
-            this.blobStore = BLOB_STORE;
-        }
+        this.nodbTenant = wiring.tenant();
+        this.nodeStore = wiring.nodeStore();
+        this.repositoryStorageAdmin = wiring.repositoryStorageAdmin();
+        this.blobStore = wiring.blobStore();
 
         final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 

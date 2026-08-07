@@ -3,14 +3,17 @@ package com.enonic.xp.core.security;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
+import com.enonic.xp.core.nodb.NodbItestWiring;
 import com.enonic.xp.core.impl.security.PasswordSecurityService;
 import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
@@ -23,12 +26,8 @@ import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
-import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
-import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -73,6 +72,7 @@ import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 
 import static com.enonic.xp.security.acl.IdProviderAccess.ADMINISTRATOR;
 import static com.enonic.xp.security.acl.IdProviderAccess.CREATE_USERS;
@@ -98,21 +98,36 @@ class SecurityServiceImplTest
 
     private NodeServiceImpl nodeService;
 
+    /** Phase 4 Gate F: mode-correct storage/search wiring, per method -- released in {@link #tearDown()}. */
+    private NodbItestWiring wiring;
+
+    @AfterEach
+    void tearDown()
+    {
+        wiring.close();
+    }
+
     @BeforeEach
     void setUp()
     {
         deleteAllIndices();
-        final MemoryBlobStore blobStore = new MemoryBlobStore();
+        final MemoryBlobStore memoryBlobStore = new MemoryBlobStore();
+
+        // Phase 4 Gate F (nodb/BUILD-PHASE-4.md): this class had NO mode branch at all, so a
+        // nodb-mode run built a fully Elasticsearch graph and proved nothing about the nodb
+        // backend. One shared factory now owns the branch -- see NodbItestWiring's javadoc.
+        // Per-method, matching the deleteAllIndices() above.
+        this.wiring = NodbItestWiring.perMethod( client, memoryBlobStore );
+
+        final BlobStore blobStore = wiring.blobStore();
 
         final BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
 
-        final StorageDaoImpl storageDao = new StorageDaoImpl( client );
+        final NodeSearchIndex nodeSearchIndex = wiring.nodeSearchIndex();
 
-        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
+        final NodeStore nodeStore = wiring.nodeStore();
 
-        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
-
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, blobStore );
+        final RepositoryStorageAdmin repositoryStorageAdmin = wiring.repositoryStorageAdmin();
 
         final BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 
@@ -122,7 +137,7 @@ class SecurityServiceImplTest
 
         final NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
+        final IndexServiceInternal indexServiceInternal = wiring.indexServiceInternal();
 
         final NodeSearchServiceImpl searchService = new NodeSearchServiceImpl( nodeSearchIndex );
 
@@ -131,12 +146,12 @@ class SecurityServiceImplTest
         final NodeStorageServiceImpl storageService =
             new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, repositoryStorageAdmin, nodeSearchIndex );
 
         this.eventPublisher = mock( EventPublisher.class );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, nodeStore, branchService,
@@ -149,10 +164,10 @@ class SecurityServiceImplTest
             .build()
             .initialize();
 
-        this.nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
+        this.nodeService = new NodeServiceImpl( repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeStore, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService, nodeStore, nodeDao, repositoryEntryService );
 
         AuditLogConfig auditLogConfig = mock( AuditLogConfig.class );
         Mockito.when( auditLogConfig.isEnabled() ).thenReturn( true );

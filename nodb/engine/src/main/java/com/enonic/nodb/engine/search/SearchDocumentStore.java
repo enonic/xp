@@ -55,6 +55,23 @@ public final class SearchDocumentStore
         }
     }
 
+    /**
+     * Drops every stored document of a repository, all branches. Phase 4 Gate F: this is the other
+     * half of purging a repository's search index ({@code IndexService.reindex(initialize = true)},
+     * XP's own "rebuild from scratch"). Dropping only the OpenSearch index would leave the shipped
+     * documents behind, and a later rebuild-from-documents would resurrect exactly the branches the
+     * purge removed -- the same trap Gate A recorded for per-op deletes.
+     */
+    public static int deleteAll( Connection connection, long repoKey )
+        throws SQLException
+    {
+        try (PreparedStatement statement = connection.prepareStatement( "DELETE FROM search_document WHERE repo_key = ?" ))
+        {
+            statement.setLong( 1, repoKey );
+            return statement.executeUpdate();
+        }
+    }
+
     public static void delete( Connection connection, long repoKey, String branch, Collection<String> nodeIds )
         throws SQLException
     {

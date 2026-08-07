@@ -55,6 +55,17 @@ class VersionTableVacuumTaskTest
         super( true );
     }
 
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): this class creates fixed-name repositories in every
+     * method and relies on {@code super(true)}'s per-method index wipe, which a class-scoped nodb
+     * tenant cannot give it -- the recorded fixture-granularity exclusion (nodb/FINDINGS.md #8).
+     */
+    @Override
+    protected boolean nodbTenantPerMethod()
+    {
+        return true;
+    }
+
     @BeforeEach
     void setUp()
     {

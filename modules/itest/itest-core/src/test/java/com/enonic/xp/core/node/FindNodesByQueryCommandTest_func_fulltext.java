@@ -2,6 +2,7 @@ package com.enonic.xp.core.node;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertySet;
@@ -329,7 +330,26 @@ class FindNodesByQueryCommandTest_func_fulltext
         assertTrue( result.getNodeIds().contains( node.id() ) );
     }
 
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): the relevance delta Gate D carried here for a ruling,
+     * and the ruling is that decision 5 already covers it. Under ES 2.4's {@code classic} (TF-IDF)
+     * similarity a boosted match in the long {@code description} loses to an unboosted {@code title}
+     * match; under OpenSearch's BM25, length normalisation flips the two, so nodb answers
+     * {@code [3, 2, 1]} where ES answers {@code [3, 1, 2]} -- the same hits and the same total, a
+     * different ORDER. Decision 5's split (Gate 0 D7) makes score-ordered fulltext results a SET
+     * match with documented order deltas, and corpus rows {@code TEXT-03}/{@code TEXT-04}/
+     * {@code TEXT-14} are the same shape and pass that way. It cannot be pinned back: {@code classic}
+     * similarity no longer exists in the engine.
+     * <p>
+     * Recorded as a PRODUCT question rather than a defect (nodb/FINDINGS.md #4): XP's documented
+     * boost semantics, and the default field weights in Content Studio search and {@code lib-content},
+     * were tuned against TF-IDF and deserve re-measuring on real content under BM25. Disabled here
+     * rather than relaxed to a set comparison, because the assertion's whole point is the order.
+     */
     @Test
+    @DisabledIfSystemProperty(named = "xp.itest.storage", matches = "nodb",
+        disabledReason = "BM25 vs TF-IDF: a boosted long-field match outscores an unboosted short-field one, so the ORDER differs " +
+            "(same hits, same total). Tolerated by the phase's scoring-parity rule; classic similarity cannot be pinned back")
     void boost_field()
     {
         createWithTitleAndDescription( "1", "fish", "fash" );

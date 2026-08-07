@@ -124,6 +124,20 @@ tasks.register( 'integrationTest', Test ) {
     systemProperty 'java.awt.headless', 'true'
     maxHeapSize = '2G'
 
+    // Phase 4 Gate F (nodb/BUILD-PHASE-4.md), closing nodb/FINDINGS.md #2's action item: pin the
+    // JVM locale. ES 2.4's `icu_collation_ducet` filter carries no `language`, so the ICU plugin
+    // called Collator.getInstance() -- i.e. Locale.getDefault() -- which made XP's DUCET fallback
+    // and every COLLATE sort naming an unmapped locale depend on the HOST's locale. This suite
+    // includes the golden corpus (NodbGoldenCorpusTest runs in diff mode here), so without a pin
+    // the ES-mode baseline and the run that diffs against it silently disagree whenever they
+    // happen on machines with different LANG. en_US is deliberate rather than arbitrary: it is
+    // what the official XP Docker image sets (LANG/LC_ALL=en_US.UTF-8), and ICU's `en` carries no
+    // collation tailoring, so en_US collation is byte-identical to ROOT/DUCET -- the same ordering
+    // NoDB pins server-side. Verified not to change the icuSort classes' outcomes (still exactly
+    // the 4 German cases failing in ES mode), because those name `de` explicitly.
+    systemProperty 'user.language', 'en'
+    systemProperty 'user.country', 'US'
+
     // Phase 1 Gate C (nodb/BUILD-PHASE-1.md): -Dxp.itest.storage=nodb on the gradlew
     // invocation is a system property of the GRADLE JVM, not automatically visible to the
     // forked test JVM this Test task spawns -- same forwarding pattern nodb/bench uses for
@@ -183,6 +197,10 @@ def nodbCorpusTest = { Test t, String mode ->
     t.classpath = sourceSets.test.runtimeClasspath
 
     t.systemProperty 'java.awt.headless', 'true'
+    // Same locale pin as integrationTest above, and for the same reason -- the baseline must stop
+    // carrying its recording host's locale (nodb/FINDINGS.md #2).
+    t.systemProperty 'user.language', 'en'
+    t.systemProperty 'user.country', 'US'
     t.systemProperty 'xp.nodb.corpus.mode', mode
     t.maxHeapSize = '2G'
     t.outputs.upToDateWhen { false }

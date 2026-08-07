@@ -461,7 +461,7 @@ class ApplyNodePermissionsCommandTest
                                            .add( AccessControlEntry.create().principal( TEST_DEFAULT_USER.getKey() ).allowAll().build() )
                                            .build() )
                          .build() )
-            .repositoryStorageAdmin( this.indexServiceInternal )
+            .repositoryStorageAdmin( this.repositoryStorageAdmin )
             .nodeSearchIndex( this.nodeSearchIndex )
             .storageService( this.storageService )
             .searchService( this.searchService )

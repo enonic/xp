@@ -155,6 +155,31 @@ public final class SearchIndexAdmin
         return client.listIndices().stream().filter( name -> name.startsWith( prefix ) ).toList();
     }
 
+    /**
+     * Deletes every index of one tenant, all repositories and all generations, and returns how many
+     * were removed. Phase 4 Gate F: a tenant that goes away must take its search indices with it.
+     * PostgreSQL already had this ({@code dropTenant} drops the schema); OpenSearch did not, so every
+     * dropped tenant leaked its indices -- and index metadata is heap. The itest suite proved it the
+     * hard way: provisioning a tenant per test method filled the container's 512 MB heap until the
+     * parent circuit breaker rejected requests with HTTP 429. Deliberately driven off the
+     * {@code <tenant>-} prefix rather than off {@code search_index}, because this must work when the
+     * tenant's SCHEMA is already gone -- which is exactly when it is needed.
+     */
+    public int deleteTenantIndices( TenantContext tenant )
+    {
+        int deleted = 0;
+        for ( String indexName : listTenantIndices( tenant ) )
+        {
+            client.deleteIndex( indexName );
+            deleted++;
+        }
+        if ( deleted > 0 )
+        {
+            LOG.info( "Deleted {} search index(es) of tenant {}", deleted, tenant.tenantId() );
+        }
+        return deleted;
+    }
+
     private int nextGeneration( TenantContext tenant, long repoKey )
         throws SQLException
     {

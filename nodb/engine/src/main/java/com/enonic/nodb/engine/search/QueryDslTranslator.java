@@ -275,13 +275,17 @@ public final class QueryDslTranslator
         return wrap( "range", object().set( fieldName( expression, type, reference ), body ) );
     }
 
-    /** {@code ExistsFilter} forces the base string field regardless of value type (rule 3's exception). */
+    /**
+     * Names the OBJECT path, not a typed leaf -- see {@link IndexFields#existsFieldName}. XP's
+     * {@code ExistsFilter} forces the base string field (rule 3's exception), but resolving that to
+     * {@code <field>._text} would silently miss every PropertySet, which ES 2.4 matched.
+     */
     private ObjectNode exists( JsonNode expression )
     {
         rejectIdField( expression, "exists" );
 
         ObjectNode body = object();
-        body.put( "field", baseFieldName( expression ) );
+        body.put( "field", IndexFields.existsFieldName( logicalField( expression ) ) );
         return wrap( "exists", body );
     }
 

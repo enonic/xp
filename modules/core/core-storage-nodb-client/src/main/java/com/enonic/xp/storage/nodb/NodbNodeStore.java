@@ -123,6 +123,20 @@ public class NodbNodeStore
         NodbStatusMapper.repoScopedVoid( () -> client.nodeStore().deleteBranchEntries( request ) );
     }
 
+    /**
+     * {@code false} means "no such node in this branch"; an unknown REPOSITORY is a
+     * {@code StorageIndexNotFoundException}, not {@code false}.
+     * <p>
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md) changed this from {@code existsCheck} (which collapsed
+     * NOT_FOUND into {@code false}) because XP reads the two apart and reports different errors:
+     * {@code NodeServiceImpl#verifyBranchExists} probes the ROOT node and answers
+     * {@code RepositoryNotFoundException} when the storage index is missing, else
+     * {@code BranchNotFoundException} when the root is simply absent. Collapsing them made a query
+     * against a non-existent repository report a non-existent BRANCH -- a misleading error for an
+     * operator, and asserted the other way round by {@code NodeServiceImplTest}. The distinction is
+     * already on the wire: the server answers NOT_FOUND only for an unknown repo id (via
+     * {@code UnknownRepoException}) and OK({@code false}) for a missing node.
+     */
     @Override
     public boolean existsBranchEntry( final RepositoryId repositoryId, final Branch branch, final String nodeId,
                                        final @Nullable SearchPreference searchPreference )
@@ -132,7 +146,7 @@ public class NodbNodeStore
             .setBranch( branch.getValue() )
             .setNodeId( nodeId )
             .build();
-        return NodbStatusMapper.existsCheck( () -> client.nodeStore().existsBranchEntry( request ).getExists() );
+        return NodbStatusMapper.repoScoped( () -> client.nodeStore().existsBranchEntry( request ).getExists() );
     }
 
     @Override

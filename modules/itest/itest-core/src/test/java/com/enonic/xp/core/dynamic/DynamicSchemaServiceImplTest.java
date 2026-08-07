@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.felix.framework.Felix;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,12 +74,9 @@ import com.enonic.xp.repo.impl.binary.BinaryServiceImpl;
 import com.enonic.xp.repo.impl.branch.storage.BranchServiceImpl;
 import com.enonic.xp.repo.impl.commit.CommitServiceImpl;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
-import com.enonic.xp.repo.impl.elasticsearch.IndexServiceInternalImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.SearchDaoImpl;
-import com.enonic.xp.repo.impl.elasticsearch.search.NodeSearchIndexImpl;
-import com.enonic.xp.repo.impl.elasticsearch.storage.ElasticsearchNodeStore;
-import com.enonic.xp.repo.impl.elasticsearch.storage.StorageDaoImpl;
+import com.enonic.xp.core.nodb.NodbItestWiring;
 import com.enonic.xp.repo.impl.index.IndexServiceImpl;
+import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.NodeServiceImpl;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionServiceImpl;
 import com.enonic.xp.repo.impl.repository.NodeRepositoryServiceImpl;
@@ -118,6 +116,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.storage.spi.NodeSearchIndex;
 import com.enonic.xp.storage.spi.NodeStore;
+import com.enonic.xp.storage.spi.RepositoryStorageAdmin;
 import com.enonic.xp.style.StyleDescriptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -164,6 +163,15 @@ class DynamicSchemaServiceImplTest
             .build();
     }
 
+    /** Phase 4 Gate F: mode-correct storage/search wiring, per method -- released in {@link #closeWiring()}. */
+    private NodbItestWiring wiring;
+
+    @AfterEach
+    void closeWiring()
+    {
+        wiring.close();
+    }
+
     @BeforeEach
     void initService()
         throws Exception
@@ -174,17 +182,19 @@ class DynamicSchemaServiceImplTest
 
         final MemoryBlobStore blobStore = new MemoryBlobStore();
 
-        BinaryServiceImpl binaryService = new BinaryServiceImpl( blobStore );
-
-        final StorageDaoImpl storageDao = new StorageDaoImpl( client );
-
         final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
 
-        final SearchDaoImpl searchDao = new SearchDaoImpl( client );
+        // Phase 4 Gate F (nodb/BUILD-PHASE-4.md): this class had NO mode branch at all, so a
+        // nodb-mode run built a fully Elasticsearch graph and proved nothing about the nodb
+        // backend. One shared factory now owns the branch -- see NodbItestWiring's javadoc.
+        // Per-method, matching the deleteAllIndices() above.
+        this.wiring = NodbItestWiring.perMethod( client, blobStore );
 
-        final NodeSearchIndex nodeSearchIndex = new NodeSearchIndexImpl( client, searchDao, storageDao );
+        final NodeSearchIndex nodeSearchIndex = wiring.nodeSearchIndex();
 
-        final NodeStore nodeStore = new ElasticsearchNodeStore( storageDao, searchDao, blobStore );
+        final NodeStore nodeStore = wiring.nodeStore();
+
+        final RepositoryStorageAdmin repositoryStorageAdmin = wiring.repositoryStorageAdmin();
 
         BranchServiceImpl branchService = new BranchServiceImpl( nodeStore );
 
@@ -192,9 +202,11 @@ class DynamicSchemaServiceImplTest
 
         CommitServiceImpl commitService = new CommitServiceImpl( nodeStore );
 
-        IndexServiceInternalImpl indexServiceInternal = new IndexServiceInternalImpl( client );
+        final IndexServiceInternal indexServiceInternal = wiring.indexServiceInternal();
 
-        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( blobStore, new RepoConfiguration( Map.of() ) );
+        BinaryServiceImpl binaryService = new BinaryServiceImpl( wiring.blobStore() );
+
+        NodeVersionServiceImpl nodeDao = new NodeVersionServiceImpl( wiring.blobStore(), new RepoConfiguration( Map.of() ) );
 
         IndexDataServiceImpl indexedDataService = new IndexDataServiceImpl( nodeSearchIndex );
 
@@ -204,12 +216,12 @@ class DynamicSchemaServiceImplTest
             new NodeStorageServiceImpl( versionService, branchService, commitService, nodeDao, indexedDataService );
 
         final RepositoryEntryServiceImpl repositoryEntryService =
-            new RepositoryEntryServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
+            new RepositoryEntryServiceImpl( repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         IndexServiceImpl indexService =
-            new IndexServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex, indexedDataService, searchService, nodeStore, nodeDao, repositoryEntryService );
+            new IndexServiceImpl( indexServiceInternal, repositoryStorageAdmin, nodeSearchIndex, indexedDataService, searchService, nodeStore, nodeDao, repositoryEntryService );
 
-        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, indexServiceInternal, nodeSearchIndex );
+        final NodeRepositoryServiceImpl nodeRepositoryService = new NodeRepositoryServiceImpl( indexServiceInternal, repositoryStorageAdmin, nodeSearchIndex );
 
         RepositoryServiceImpl repositoryService =
             new RepositoryServiceImpl( repositoryEntryService, nodeRepositoryService, storageService, searchService, nodeStore, branchService,
@@ -222,7 +234,7 @@ class DynamicSchemaServiceImplTest
             .build()
             .initialize();
 
-        nodeService = new NodeServiceImpl( indexServiceInternal, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
+        nodeService = new NodeServiceImpl( repositoryStorageAdmin, nodeSearchIndex, storageService, searchService, nodeStore, eventPublisher, binaryService );
 
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 

@@ -42,7 +42,7 @@ class FindNodesDependenciesCommandTest
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).
@@ -63,7 +63,7 @@ class FindNodesDependenciesCommandTest
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).searchService( this.searchService )
             .storageService( this.storageService )
             .filter( nodeIds -> {
@@ -96,7 +96,7 @@ class FindNodesDependenciesCommandTest
 
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).
@@ -120,7 +120,7 @@ class FindNodesDependenciesCommandTest
         final NodeIds dependants = FindNodesDependenciesCommand.create().
             nodeIds( NodeIds.from( node1.id() ) ).
             excludedIds( NodeIds.from( node1_1.id() ) ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.context.Context;
@@ -119,7 +120,7 @@ class IndexServiceImplTest
             build() );
 
         PushNodesCommand.create().params( PushNodeParams.create().ids( NodeIds.from( node.id() ) ).target( WS_OTHER ).build() ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -210,7 +211,7 @@ class IndexServiceImplTest
     {
         return FindNodesByQueryCommand.create().
             query( NodeQuery.create().build() ).
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             searchService( this.searchService ).
             storageService( this.storageService ).
@@ -221,7 +222,7 @@ class IndexServiceImplTest
     private Node queryForNode( final NodeId nodeId )
     {
         final FindNodesByQueryResult result = FindNodesByQueryCommand.create().
-            repositoryStorageAdmin( this.indexServiceInternal ).
+            repositoryStorageAdmin( this.repositoryStorageAdmin ).
             nodeSearchIndex( this.nodeSearchIndex ).
             storageService( this.storageService ).
             searchService( this.searchService ).
@@ -254,7 +255,20 @@ class IndexServiceImplTest
         assertNull( indexSettings.get( "index.invalid_path" ) );
     }
 
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md): a delta already ruled on in Phase 1 Gate B, not a new
+     * gap. {@code number_of_replicas} is an Elasticsearch index setting;
+     * {@code NodbRepositoryStorageAdmin#updateSettings} and {@code #getIndexSettings} are
+     * documented no-ops returning {@code Map.of()} because Postgres partitions are static DDL, not
+     * tunable per-repository settings, and the search index's replica count is the search
+     * backend's own concern ({@code NodbNodeSearchIndex#updateSettings}). Asserting a replica count
+     * came back would be asserting that nodb reimplemented Elasticsearch's settings API.
+     * {@code getIndexSettings_empty} above still runs in both modes and is the half of this
+     * contract that survives: an unknown setting is absent.
+     */
     @Test
+    @DisabledIfSystemProperty(named = "xp.itest.storage", matches = "nodb",
+        disabledReason = "ES index settings (number_of_replicas) have no nodb equivalent -- documented no-op since Phase 1 Gate B")
     void getIndexSettings()
     {
         this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().

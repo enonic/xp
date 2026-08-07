@@ -15,7 +15,6 @@ import com.enonic.xp.index.IndexType;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.storage.spi.IndexSettings;
 import com.enonic.xp.storage.spi.StorageIndexExistsException;
-import com.enonic.xp.storage.spi.StorageIndexNotFoundException;
 import com.enonic.xp.storage.spi.UpdateIndexSettings;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -78,10 +77,21 @@ class NodbRepositoryStorageAdminTest
         assertThrows( StorageIndexExistsException.class, () -> admin.createIndex( REPO, IndexSettings.from( Map.of() ), Map.of() ) );
     }
 
+    /**
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md) reversed this assertion, deliberately. Deleting a
+     * repository that is not there is a successful delete, matching what the Elasticsearch backend
+     * has always done -- {@code IndexServiceInternalImpl#doDeleteIndex} catches every
+     * {@code ElasticsearchException} and logs a WARN -- and XP's {@code DumpServiceImpl} actively
+     * depends on it: its load path deletes every repository the entry query lists and then deletes
+     * the system repositories by name, so a repository the caller already removed is deleted twice
+     * on every load. A hard NOT_FOUND here failed 18 of {@code DumpServiceImplTest}'s methods in
+     * nodb mode. The wire still answers NOT_FOUND (the repository genuinely is gone) -- the
+     * idempotence is the SPI adapter's decision, see {@code NodbStatusMapper#idempotentDelete}.
+     */
     @Test
-    void deleteIndex_unknownRepo_throwsStorageIndexNotFoundException()
+    void deleteIndex_unknownRepo_isIdempotent()
     {
-        assertThrows( StorageIndexNotFoundException.class, () -> admin.deleteIndex( RepositoryId.from( "no-such-repo" ) ) );
+        assertDoesNotThrow( () -> admin.deleteIndex( RepositoryId.from( "no-such-repo" ) ) );
     }
 
     @Test

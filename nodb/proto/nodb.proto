@@ -127,6 +127,24 @@ service NodeSearch {
   // emits DELETE outbox rows -- both halves, or a rebuild would resurrect deleted nodes.
   rpc DeleteDocuments (DeleteDocumentsRequest) returns (IndexAck);
   rpc AwaitRefresh (AwaitRefreshRequest) returns (Ack); // RefreshMode.SEARCH
+  // Phase 4 Gate F. Mirrors spi.NodeSearchIndex#createIndex / #deleteIndex, and both are
+  // IDEMPOTENT — which is what lets ONE pair of RPCs serve two callers that mean different things:
+  //
+  //   * repository lifecycle (NodeRepositoryServiceImpl#create/#delete) calls the storage admin
+  //     FIRST, so CreateRepository/DeleteRepository has already made or dropped the index by the
+  //     time the search half is called. Idempotence turns that second call into a no-op instead of
+  //     an ALREADY_EXISTS race (Gate B decision 6 made it a client-side no-op for exactly this
+  //     reason, which is why the purge below then had nothing to purge with).
+  //   * PURGE (IndexServiceImpl#doPurgeSearchIndex, i.e. XP's IndexService.reindex(initialize=true))
+  //     calls delete-then-create with NO storage-admin call around it, and here the two must really
+  //     happen: dropping the index generation, dropping the stored documents (or a later
+  //     rebuild-from-documents resurrects what the purge removed), and creating a fresh generation
+  //     that the reindex then fills.
+  //
+  // DeleteSearchIndex answers OK for a repository that has no index, and for one whose repository
+  // row is already gone (repo delete drops it, cascading search_index away).
+  rpc CreateSearchIndex (CreateSearchIndexRequest) returns (Ack);
+  rpc DeleteSearchIndex (DeleteSearchIndexRequest) returns (Ack);
   rpc Reindex (ReindexRequest) returns (TaskHandle);
 }
 
@@ -760,6 +778,12 @@ message AwaitRefreshRequest {
   uint64 seq = 1;
   repeated string repo_ids = 2;
   int64 timeout_millis = 3;
+}
+message CreateSearchIndexRequest {
+  string repo_id = 1;
+}
+message DeleteSearchIndexRequest {
+  string repo_id = 1;
 }
 message ReindexRequest {}
 message TaskHandle {}

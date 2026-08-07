@@ -111,9 +111,19 @@ class QueryDslTranslatorTest
     }
 
     @Test
-    void existsForcesTheBaseTextFieldRegardlessOfValueType()
+    void existsNamesTheObjectPathSoAPropertySetMatchesToo()
     {
-        assertEquals( "{\"exists\":{\"field\":\"data.location._text\"}}", query( "{\"field\":\"data.location\"}", "exists" ) );
+        // Phase 4 Gate F: the OBJECT path, not `data.location._text`. ES 2.4 answered exists from a
+        // _field_names that contained object paths, so exists on a PropertySet matched any document
+        // with a leaf inside it; naming a typed leaf matched no set at all, silently. In the nodb
+        // layout a scalar is only ever stored as its typed sub-fields, so the object path covers both
+        // shapes -- see IndexFields#existsFieldName.
+        assertEquals( "{\"exists\":{\"field\":\"data.location\"}}", query( "{\"field\":\"data.location\"}", "exists" ) );
+        // An explicitly postfixed name IS a leaf and stays resolved.
+        assertEquals( "{\"exists\":{\"field\":\"data.location._fulltext\"}}",
+                      query( "{\"field\":\"data.location._analyzed\"}", "exists" ) );
+        // A server-injected leaf stays a leaf.
+        assertEquals( "{\"exists\":{\"field\":\"_branch\"}}", query( "{\"field\":\"_branch\"}", "exists" ) );
     }
 
     // ---- range / boolean / matchAll -------------------------------------------------
@@ -209,7 +219,7 @@ class QueryDslTranslatorTest
     @Test
     void aBooleanFilterTranslatesItsClausesAsFiltersNotAsQueries()
     {
-        assertEquals( "{\"bool\":{\"must\":[{\"terms\":{\"a._text\":[\"1\"]}}],\"must_not\":[{\"exists\":{\"field\":\"b._text\"}}]}}",
+        assertEquals( "{\"bool\":{\"must\":[{\"terms\":{\"a._text\":[\"1\"]}}],\"must_not\":[{\"exists\":{\"field\":\"b\"}}]}}",
                       translator.translateFilter( parse( "{\"boolean\":{\"must\":[{\"values\":{\"field\":\"a\",\"values\":[\"1\"]}}]," +
                                                              "\"mustNot\":[{\"exists\":{\"field\":\"b\"}}]}}" ) ).toString() );
     }

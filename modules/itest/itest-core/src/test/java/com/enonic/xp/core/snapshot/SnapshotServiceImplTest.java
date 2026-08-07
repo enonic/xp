@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import org.elasticsearch.cluster.metadata.RepositoryMetaData;
 import org.elasticsearch.snapshots.SnapshotInfo;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -33,6 +34,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * <b>Phase 4 Gate F (nodb/BUILD-PHASE-4.md): the one class disabled in nodb mode, and not to keep
+ * the gate green.</b> {@code SnapshotServiceImpl} takes a raw Elasticsearch {@code Client} in its
+ * constructor and drives {@code prepareGetRepositories}/{@code prepareCreateSnapshot}/
+ * {@code prepareRestoreSnapshot} directly -- it is the one XP service that never went behind the
+ * storage SPI at all, by design (see {@code IndexServiceInternal}'s javadoc: cluster health,
+ * master election and snapshot/restore were explicitly left as backend-internal Elasticsearch
+ * vocabulary in Phase 0 Gate C). There is therefore nothing to point at a nodb backend: NoDB's
+ * equivalent of a snapshot is a PostgreSQL backup plus a rebuildable index, which is Phase 5
+ * operations work, not a translation this gate could do. Running it in nodb mode would only assert
+ * that Elasticsearch snapshots Elasticsearch.
+ */
+@DisabledIfSystemProperty(named = "xp.itest.storage", matches = "nodb",
+    disabledReason = "snapshot/restore is raw Elasticsearch and deliberately never crossed the storage SPI; " +
+        "NoDB's counterpart is a Postgres backup + index rebuild (Phase 5 operations)")
 class SnapshotServiceImplTest
     extends AbstractNodeTest
 {
@@ -74,7 +90,7 @@ class SnapshotServiceImplTest
         }
 
         final NodeRepositoryServiceImpl nodeRepositoryService =
-            new NodeRepositoryServiceImpl( this.indexServiceInternal, this.indexServiceInternal, this.nodeSearchIndex );
+            new NodeRepositoryServiceImpl( this.indexServiceInternal, this.repositoryStorageAdmin, this.nodeSearchIndex );
 
         this.repositoryService =
             new RepositoryServiceImpl( this.repositoryEntryService, nodeRepositoryService, this.storageService, this.searchService,
@@ -224,7 +240,7 @@ class SnapshotServiceImplTest
             this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
 
             assertAll( () -> assertFalse( this.repositoryService.isInitialized( newRepoId ) ),
-                       () -> assertFalse( indexServiceInternal.indexExists( newRepoId ) ),
+                       () -> assertFalse( this.repositoryStorageAdmin.indexExists( newRepoId ) ),
                        () -> assertFalse( nodeSearchIndex.indexExists( newRepoId ) ) );
         } );
     }
@@ -250,10 +266,10 @@ class SnapshotServiceImplTest
             this.snapshotService.restore( RestoreParams.create().snapshotName( "my-snapshot" ).build() );
 
             assertAll( () -> assertNull( this.repositoryEntryService.getRepositoryEntry( newRepoId ) ),
-                       () -> assertFalse( indexServiceInternal.indexExists( newRepoId ) ),
+                       () -> assertFalse( this.repositoryStorageAdmin.indexExists( newRepoId ) ),
                        () -> assertFalse( nodeSearchIndex.indexExists( newRepoId ) ) );
             assertAll( () -> assertFalse( this.repositoryService.isInitialized( newRepoAfterSnapshotId ) ), () -> assertFalse(
-                           indexServiceInternal.indexExists( newRepoAfterSnapshotId ) ),
+                           this.repositoryStorageAdmin.indexExists( newRepoAfterSnapshotId ) ),
                        () -> assertFalse(
                            nodeSearchIndex.indexExists( newRepoAfterSnapshotId ) ) );
         } );

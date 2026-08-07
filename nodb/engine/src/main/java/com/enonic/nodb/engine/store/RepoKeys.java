@@ -21,6 +21,24 @@ public final class RepoKeys
     {
     }
 
+    /**
+     * The repo key, or {@code null} when the repository does not exist. Phase 4 Gate F: for callers
+     * whose operation is idempotent, where an unknown repository means "nothing to do" rather than
+     * an error (dropping a search index for a repository whose row is already gone).
+     */
+    public static Long tryResolve( Connection connection, RepoRef repo )
+        throws SQLException
+    {
+        try (PreparedStatement statement = connection.prepareStatement( "SELECT repo_key FROM repository WHERE repo_id = ?" ))
+        {
+            statement.setString( 1, repo.repoId() );
+            try (ResultSet resultSet = statement.executeQuery())
+            {
+                return resultSet.next() ? resultSet.getLong( 1 ) : null;
+            }
+        }
+    }
+
     public static long resolve( Connection connection, RepoRef repo )
         throws SQLException
     {

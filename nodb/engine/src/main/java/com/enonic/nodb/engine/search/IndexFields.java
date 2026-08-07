@@ -149,6 +149,40 @@ public final class IndexFields
      * it a leaf under an object of the same name — blocker 1, re-created by the very code meant
      * to fix it.
      */
+    /**
+     * The field an {@code exists} check must name: the OBJECT path, not a typed leaf.
+     * <p>
+     * Phase 4 Gate F (nodb/BUILD-PHASE-4.md). ES 2.4 answered {@code exists} from
+     * {@code _field_names}, which contained OBJECT paths, so {@code exists(data.myField)} matched a
+     * document whose {@code myField} is a PropertySet with any leaf inside it. Modern
+     * {@code _field_names} holds leaves only, so resolving the name to {@code data.myfield._text}
+     * (which is what the base-text rule does, and what {@code like} still needs) matched nothing at
+     * all for a set -- silently, no error, the family of failure this phase keeps finding.
+     * <p>
+     * Naming the object path restores the ES-2.4 semantics exactly, for BOTH shapes, because of how
+     * the nodb layout is built: a scalar {@code data.title} is stored only as its typed sub-fields
+     * ({@code ._text}, {@code ._fulltext}, ...), so {@code data.title} is itself an object node, and
+     * OpenSearch's {@code exists} on an object expands to "any leaf below it". A set with no leaves
+     * has no such fields and correctly does not match. Server-injected leaves ({@code _branch},
+     * {@code _repo}) and an explicitly postfixed name are passed through {@link #physicalName}
+     * unchanged -- they ARE leaves.
+     */
+    public static String existsFieldName( String canonicalName )
+    {
+        String physical = physicalName( canonicalName );
+        if ( isNodbInjected( canonicalName ) )
+        {
+            return physical;
+        }
+        int lastDot = canonicalName.lastIndexOf( '.' );
+        String lastSegment = lastDot < 0 ? canonicalName : canonicalName.substring( lastDot + 1 );
+        if ( XP_FULLTEXT_POSTFIX.equals( lastSegment ) || isPostfix( lastSegment ) )
+        {
+            return physical;
+        }
+        return canonicalName;
+    }
+
     public static String physicalName( String canonicalName )
     {
         if ( canonicalName == null || canonicalName.isEmpty() )

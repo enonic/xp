@@ -44,6 +44,11 @@ tasks.register( 'integrationTest', Test ) {
     systemProperty 'java.awt.headless', 'true'
     maxHeapSize = '2G'
 
+    // Phase 4 Gate F: same locale pin as itest-core's integrationTest -- ES 2.4's DUCET fallback
+    // resolves to Locale.getDefault(), so an unpinned suite is host-dependent (nodb/FINDINGS.md #2).
+    systemProperty 'user.language', 'en'
+    systemProperty 'user.country', 'US'
+
     // Phase 4 Gate B: -Dxp.itest.storage=nodb is a system property of the GRADLE JVM and is not
     // automatically visible to the forked test JVM this task spawns. Only set when actually
     // passed, so a plain `integrationTest` run stays byte-identical to before this gate.

@@ -69,10 +69,11 @@ public final class NodbTenant
     }
 
     /**
-     * Phase 4 Gate B: the search half. Only useful when the shared stack was started with an
-     * OpenSearch backend ({@link NodbTestCluster#isSearchEnabled()}); without one the
-     * {@code NodeSearch} RPCs answer UNIMPLEMENTED, which is why {@code AbstractNodeTest} still
-     * leaves the search side on embedded Elasticsearch.
+     * Phase 4 Gate B: the search half. As of Gate F this is what every nodb-mode itest searches
+     * through -- there is no embedded Elasticsearch left to fall back to. Only the storage-only
+     * escape hatch ({@code -Dxp.itest.opensearch=false}, see
+     * {@link NodbTestCluster#isSearchEnabled()}) leaves the {@code NodeSearch} RPCs answering
+     * UNIMPLEMENTED. Wrapped by {@link NodbItestSearchIndex} in the fixtures.
      */
     public NodeSearchIndex nodeSearchIndex()
     {
