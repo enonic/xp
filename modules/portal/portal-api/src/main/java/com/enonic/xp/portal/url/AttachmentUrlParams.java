@@ -114,6 +114,15 @@ public final class AttachmentUrlParams
         return this;
     }
 
+    /**
+     * Base URL of a mount where the generated media URL lives under the "_" endpoint segment:
+     * {@code <baseUrl>/_/media:attachment/...}.
+     *
+     * @deprecated configure {@code media.defaultBaseUrl} in {@code com.enonic.xp.portal.cfg},
+     * or a Base URL on the site, instead. Use {@link #mediaBaseUrl(String)} to address the media
+     * API root directly.
+     */
+    @Deprecated
     public AttachmentUrlParams baseUrl( final String baseUrl )
     {
         this.baseUrl = Strings.emptyToNull( baseUrl );
