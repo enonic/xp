@@ -210,16 +210,16 @@ class QueryContentHandlerTest
                                                                                                                  ContentId.from( "id2" ), 0.5f ) )
                                                                                                  .fields( Map.of( ContentId.from( "id1" ),
                                                                                                                   FieldValues.create()
-                                                                                                                      .add( "displayName",
-                                                                                                                            List.of( "One" ) )
-                                                                                                                      .add( "data.tags",
-                                                                                                                            List.of( "a", "b" ) )
+                                                                                                                      .add( "_name",
+                                                                                                                            List.of( "one" ) )
+                                                                                                                      .add( "_references",
+                                                                                                                            List.of( "ref-a", "ref-b" ) )
                                                                                                                       .build() ) )
                                                                                                  .build() );
 
         runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsFields" );
 
-        Assertions.assertEquals( Set.of( IndexPath.from( "displayName" ), IndexPath.from( "data.tags" ) ),
+        Assertions.assertEquals( Set.of( IndexPath.from( "_name" ), IndexPath.from( "_references" ) ),
                                  capturedQuery().getReturnFields() );
     }
 

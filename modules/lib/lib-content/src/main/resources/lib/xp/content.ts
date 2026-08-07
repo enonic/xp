@@ -824,9 +824,10 @@ interface QueryContentHandler {
  * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Since the child order
  * of a parent orders its own children, specify `sort` when the order of a recursive result matters.
  * @param {string|string[]} [params.returns='contents'] Shape of the hits: `'contents'` (full contents, the default), `'ids'` (id and
- * score only), `'paths'` (id and path), or an array of index field names, fetched per hit as `fields` keyed by
- * lowercase index path - single values as scalars, multi-valued fields as arrays, `_path`/`_parentPath` values as content paths. Every shape but the default skips reading the contents
- * entirely.
+ * score only), `'paths'` (id and path), or an array of system field names - `_path`, `_parentPath`, `_name`, `_nodeType`, `_ts`,
+ * `_versionKey`, `_references` - fetched per hit as `fields` keyed by lowercase field name: single values as scalars, multi-valued
+ * fields as arrays, `_path`/`_parentPath` values as content paths. Any other field name is an error. Every shape but the default skips
+ * reading the contents entirely.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.

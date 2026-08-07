@@ -268,16 +268,13 @@ class ContentServiceImplTest_find
     @Test
     void return_fields_with_content_path_translation()
     {
-        final PropertyTree data = new PropertyTree();
-        data.addDouble( "priority", 42.0 );
-
         final Content site = createContent( ContentPath.ROOT, "a" );
-        final Content child = createContent( site.getPath(), "b", data );
+        final Content child = createContent( site.getPath(), "b" );
 
         final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create()
                                                                             .parentPath( site.getPath() )
                                                                             .returnFields( NodeIndexPath.PATH, NodeIndexPath.PARENT_PATH,
-                                                                                           IndexPath.from( "data.priority._number" ) )
+                                                                                           NodeIndexPath.NAME )
                                                                             .build() );
 
         final FieldValues fields = result.getFields().get( child.getId() );
@@ -285,7 +282,17 @@ class ContentServiceImplTest_find
         // path values come back as content paths, not the node paths the index stores
         assertEquals( List.of( child.getPath().toString() ), fields.getValues( NodeIndexPath.PATH ) );
         assertEquals( List.of( site.getPath().toString() ), fields.getValues( NodeIndexPath.PARENT_PATH ) );
-        assertEquals( List.of( 42.0 ), fields.getValues( "data.priority._number" ) );
+        assertEquals( List.of( "b" ), fields.getValues( NodeIndexPath.NAME ) );
+    }
+
+    @Test
+    void return_fields_outside_the_supported_set_are_rejected()
+    {
+        final ContentQuery.Builder builder = ContentQuery.create();
+
+        assertEquals( "unsupported return field: displayname",
+                      assertThrows( IllegalArgumentException.class,
+                                    () -> builder.returnFields( IndexPath.from( "displayName" ) ) ).getMessage() );
     }
 
     @Test

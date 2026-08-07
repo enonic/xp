@@ -13,6 +13,17 @@ public final class NodeQuery
 {
     public static final int ALL_RESULTS_SIZE_FLAG = -1;
 
+    /**
+     * The index fields a query may ask back per hit. Deliberately limited to node metadata with stable, documented string values - how
+     * the index lays out property fields and their typed variants stays private, so the set can widen later without ever breaking a
+     * caller.
+     *
+     * @since 8.1.0
+     */
+    public static final Set<IndexPath> SUPPORTED_RETURN_FIELDS =
+        Set.of( NodeIndexPath.PATH, NodeIndexPath.PARENT_PATH, NodeIndexPath.NAME, NodeIndexPath.NODE_TYPE, NodeIndexPath.TIMESTAMP,
+                NodeIndexPath.VERSION, NodeIndexPath.REFERENCE );
+
     private final NodePath parent;
 
     private final boolean recursive;
@@ -144,17 +155,18 @@ public final class NodeQuery
         }
 
         /**
-         * Adds index fields to fetch for every hit. The values arrive per hit in {@link NodeHit#getFields()}, exactly as the search index
-         * stores them: every field as a list, values in their string form unless a typed variant like {@code ._number} (double) or
-         * {@code ._datetime} is requested. A field the index does not hold for a hit is absent rather than empty; a field indexed with
-         * none of its variants matching cannot come back at all.
+         * Adds index fields to fetch for every hit, from {@link #SUPPORTED_RETURN_FIELDS} only. The values arrive per hit in
+         * {@link NodeHit#getFields()}: every field as a list of strings ({@code _ts} in ISO-8601 form, {@code _references} one node id
+         * per value), and a field the index does not hold for a hit is absent rather than empty.
          *
+         * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
          */
         public Builder returnFields( final IndexPath... fields )
         {
             for ( final IndexPath field : fields )
             {
+                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.contains( field ), "unsupported return field: %s", field );
                 this.returnFields.add( field );
             }
             return this;

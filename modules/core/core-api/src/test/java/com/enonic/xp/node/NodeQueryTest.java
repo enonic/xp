@@ -12,6 +12,7 @@ import com.enonic.xp.query.filter.ExistsFilter;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NodeQueryTest
@@ -31,6 +32,17 @@ class NodeQueryTest
             .build();
 
         assertEquals( Set.of( NodeIndexPath.PATH, NodeIndexPath.NAME ), query.getReturnFields() );
+    }
+
+    @Test
+    void return_fields_are_limited_to_the_supported_set()
+    {
+        final NodeQuery.Builder builder = NodeQuery.create();
+
+        assertEquals( "unsupported return field: data.myfield",
+                      assertThrows( IllegalArgumentException.class,
+                                    () -> builder.returnFields( IndexPath.from( "data.myField" ) ) ).getMessage() );
+        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( IndexPath.from( "_manualordervalue" ) ) );
     }
 
     @Test

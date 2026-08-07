@@ -42,7 +42,7 @@ exports.returnsFields = function () {
     var result = content.query({
         count: 10,
         query: '_name = "one"',
-        returns: ['displayName', 'data.tags']
+        returns: ['_name', '_references']
     });
 
     assert.assertJsonEquals({
@@ -53,9 +53,9 @@ exports.returnsFields = function () {
                 id: 'id1',
                 score: 1.0,
                 fields: {
-                    // field keys are lowercase index paths
-                    displayname: 'One',
-                    'data.tags': ['a', 'b']
+                    // field keys are lowercase
+                    _name: 'one',
+                    '_references': ['ref-a', 'ref-b']
                 }
             },
             {
