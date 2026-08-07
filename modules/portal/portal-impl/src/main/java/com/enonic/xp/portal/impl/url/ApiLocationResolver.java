@@ -19,10 +19,17 @@ import static com.google.common.base.Strings.emptyToNull;
  * The single-API attribute wins over the bulk one. Values are used verbatim, so they decide
  * the URL form themselves: another host, another path on the same host, or a relative root.
  * <p>
- * Attributes of the vhost mapping that matched the request are copied into the context, so
- * {@code mapping.<name>.context.portal.apiBaseUrl} declares locations per host - but that is only
- * one way to set them: anything that establishes the attributes, including a controller or
- * a task running in its own context, declares them just as well.
+ * Attributes of the vhost mapping that matched the request are copied into the context, so a
+ * vhost mapping declares locations per host - the colon of an API descriptor has to be escaped
+ * in the configuration file, as any key of a properties file:
+ *
+ * <pre>
+ * mapping.example.context.portal.apiBaseUrl = https://apis.example.com
+ * mapping.example.context.portal.apiBaseUrl.media\:image = https://images.example.com
+ * </pre>
+ *
+ * A vhost mapping is only one way to set the attributes: anything that establishes them,
+ * including a controller or a task running in its own context, declares locations just as well.
  */
 final class ApiLocationResolver
 {
