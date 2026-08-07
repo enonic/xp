@@ -240,6 +240,29 @@ class PortalUrlServiceImpl_apiUrlTest
     }
 
     @Test
+    void testApiRequestWithNullVirtualHostContext()
+    {
+        setupApiRequest();
+        mockVirtualHostContext( null );
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+    }
+
+    @Test
+    void testApiRequestWithEmptyApiBaseUrlContextValue()
+    {
+        setupApiRequest();
+        mockVirtualHostContext( Map.of( "apiBaseUrl", "" ) );
+
+        final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) ).build();
+
+        // an empty value declares nothing
+        assertEquals( "/api/com.enonic.app.myapp:myapi", this.service.apiUrl( params ) );
+    }
+
+    @Test
     void testSiteRequest()
     {
         final ContentPath contentPath = ContentPath.from( "sitePath" );
