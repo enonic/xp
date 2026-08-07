@@ -22,12 +22,32 @@ export interface AuthInfo {
     principals?: PrincipalKey[];
 }
 
-export type ContextAttributes = Record<string, number | string | boolean | Record<string, unknown>>;
+/**
+ * A JSON-like context attribute value.
+ */
+export type ContextAttributeValue = string | number | boolean | ContextAttributeValue[] | {
+    [key: string]: ContextAttributeValue;
+};
+
+/**
+ * Context attributes, keyed by name.
+ *
+ * Note what survives a round trip. A value passed to `run` is stored on the context and reaches Java
+ * consumers, but `get()` returns only the scalars among them - an array or object set that way is not
+ * part of its output. Values stored with `setCustomLocalAttribute` come back from `get()` in full,
+ * keyed `custom.<name>`.
+ */
+export type ContextAttributes = Record<string, ContextAttributeValue>;
 
 export interface Context {
     branch?: string;
     repository?: string;
     authInfo?: AuthInfo;
+    /**
+     * Attributes visible in the current context: those set on it, those stored in its local scope with
+     * `setCustomLocalAttribute` (keyed `custom.<name>`), and any session attributes, merged in that
+     * order of precedence.
+     */
     attributes: ContextAttributes;
 }
 
@@ -60,9 +80,10 @@ interface ContextRunParams {
     setCallback<T>(fn: () => T): void;
 }
 
-export type CustomAttributeValue = string | number | boolean | CustomAttributeValue[] | {
-    [key: string]: CustomAttributeValue;
-};
+/**
+ * Value accepted by {@link setCustomLocalAttribute}.
+ */
+export type CustomAttributeValue = ContextAttributeValue;
 
 interface ContextHandler {
     get(): Context;
