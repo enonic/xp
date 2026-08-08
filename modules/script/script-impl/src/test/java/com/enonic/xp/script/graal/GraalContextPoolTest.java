@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.graalvm.polyglot.Engine;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,14 @@ class GraalContextPoolTest
 
     private ResourceService resourceService;
 
+    /**
+     * One engine for every context these tests build, as an installation has. Contexts on a shared
+     * engine must present an equal host access configuration, so a per-context one keeps the second
+     * context from opening at all — a whole class of defect that only exists in this configuration
+     * and that a per-context engine hides completely.
+     */
+    private Engine engine;
+
     @BeforeEach
     void setUp()
     {
@@ -74,13 +83,15 @@ class GraalContextPoolTest
             return new UrlResource( resourceKey, resourceUrl );
         } );
 
+        this.engine = Engine.newBuilder().build();
         this.scriptExecutor = newExecutor( 2, GraalContextBudget.unlimited() );
         this.threads = Executors.newFixedThreadPool( 2 );
     }
 
     private ScriptExecutor newExecutor( final int capacity, final GraalContextBudget budget )
     {
-        return new GraalScriptExecutor( new GraalJSContextFactory(), getClass().getClassLoader(),
+        return new GraalScriptExecutor( new GraalJSContextFactory( getClass().getClassLoader(), () -> engine ),
+                                        getClass().getClassLoader(),
                                         ScriptSettings.create().build(), new ServiceRegistryImpl( bundleContext ), resourceService,
                                         application, capacity, budget );
     }
@@ -91,6 +102,7 @@ class GraalContextPoolTest
     {
         this.threads.shutdownNow();
         ( (Closeable) this.scriptExecutor ).close();
+        this.engine.close();
     }
 
     @Test
