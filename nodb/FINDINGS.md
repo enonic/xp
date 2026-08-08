@@ -164,6 +164,21 @@ document and querying it, never by inspection.
 **Research:** each is bug-for-bug parity today. Decide per item whether GA keeps it, fixes it
 with a release note, or exposes it as an option.
 
+## 9. Cross-repo binary delete: XP's per-repo used-by check vs NoDB's per-tenant dedup (OPEN — Gate C fixes)
+
+**Observed (Phase 5 Gate 0 inventory, 2026-08-08):** `VersionTableVacuumCommand`'s
+transient-repo path deletes binaries via `NodbBinaryBlobStore.removeRecord` → `DeleteBinary`
+after an `IsBlobUsedByVersionCommand` check that is scoped to ONE repository
+(`AbstractBlobVacuumCommand` pins the context to the segment's repo) — while NoDB dedups
+binaries per-TENANT (one S3 object per hash per tenant). Two repos sharing bytes → vacuum
+in repo A can delete an object repo B still references. Live hazard in current nodb mode,
+reachable through `/system/vacuum`.
+
+**Fix (Phase 5 Gate C):** binary `removeRecord` becomes mark-only (or a no-op) in nodb
+mode; the engine's tenant-wide mark/sweep — with the horizon rule and mark-clear-on-
+reference — is the only deleter. General rule: **any delete decision must be scoped to the
+dedup domain of the store it deletes from.**
+
 ## 8. Smaller items worth a look
 
 - **`returnFields` is never exposed to applications** (zero occurrences in `modules/lib/` or

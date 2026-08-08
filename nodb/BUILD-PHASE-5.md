@@ -124,6 +124,79 @@ tenant) and the rollback posture (every step idempotent; bootstrap atomic).
 management surface), and pre-existing repos have a query-outage window between XP boot
 and their per-repo reindex.
 
+## GATE 0 DONE (2026-08-08) — inventory, spikes, and eight ratified decisions
+
+Full report in the Gate 0 agent record; the ratified decisions and load-bearing findings:
+
+**RATIFIED (all eight, by the orchestrator, with the report's evidence):**
+1. **Snapshot bytes live in S3** (`<tenant>/snapshot/<id>/` — COPY streams + hash manifest,
+   gzip multipart); PG holds only the registry row. PG-table storage rejected (WAL/base-
+   backup bloat, no bucket-replication DR).
+2. **Hash manifest = full sorted list** per snapshot (~1.1 MB at 100k versions with real
+   sha256) — deltas buy nothing and complicate mid-chain deletes; `parent_snapshot_id` is
+   lineage only.
+3. **`search_document` rows are part of the snapshot row set** — they are the system of
+   record for search content until decision-3's swap, and P2 proved a doc-less repo cannot
+   rebuild NoDB-side.
+4. **Horizon by arithmetic + the write-path rule**: sweep requires
+   `marked_at < now() − GREATEST(snapshot_horizon, gc_grace)` AND a single-statement
+   re-verify — and `WriteService.write`/`PutBinary` DELETE `gc_mark` rows for every hash
+   they (re)reference, in the same transaction. The report's counterexample (dedup
+   re-reference between mark and snapshot, version retention before sweep) is what forces
+   mark-clear-on-reference; with it, any re-reference resets the clock and the horizon
+   claim holds. O(refs) PK deletes on an almost-always-empty table.
+5. **Outbox trim = cursor registry**: `index_checkpoint` already IS one (one row per
+   consumer); floor = `min(seq)` over all rows, held back by
+   `retention_policy.outbox_retention` (default 7d). Forward-compatible with Phase 6's
+   multi-consumer/TTL/resync plans — same table, same rule.
+6. **Side-by-side restore DDL = staging `(LIKE parent INCLUDING ALL)` + COPY + CHECK +
+   ATTACH; never `CREATE ... PARTITION OF` against a live parent; detach/drop become
+   `DETACH ... CONCURRENTLY`.** Spike-proven on PG 17 with concurrent writers:
+   `PARTITION OF` takes ACCESS EXCLUSIVE and queues the whole tenant behind an open
+   writer; ATTACH takes SHARE UPDATE EXCLUSIVE + SRE on FK-linked tables — readers pass
+   (68–74 ms), new writers pass during concurrent-detach waits (78–85 ms). **No
+   maintenance window needed**; bounded stall = longest in-flight write txn; run attach
+   with `lock_timeout` + retry. `INCLUDING ALL` is mandatory (generated `parent_path`);
+   attach order forced (`node_version_N` before `branch_entry_N`).
+7. **Cross-repo binary-delete hazard (LIVE BUG, now FINDINGS #9)**: XP's per-repo used-by
+   check vs NoDB's per-tenant dedup — vacuum in repo A can delete an object repo B still
+   references. Gate C: binary `removeRecord` becomes mark-only; the tenant-wide
+   mark/sweep is the only deleter.
+8. **`limit_number_of_versions` rule = newest-N by `(ts DESC, version_id ASC)`** — one
+   `addOrderBy` at the single call site; expected count becomes 5 on BOTH backends; pin
+   via the re-enabled itest, no corpus row (baseline frozen). ES-mode dumps with
+   `maxVersions` change content (oldest-N incidental → newest-N): **release-note item**.
+
+**Spike numbers (dev-laptop, relative guidance):** 100k-version repo — all COPYs + outbox
+capture 277 ms (versions 19 MB, heads 0.6 MB, manifest 0.6 MB); mid-COPY commits proven
+invisible under `Tx.inTenantSnapshot`; restore staging COPY ~97k rows/s; ATTACH with rows
+loaded 46 ms (and it validates the payload FKs — a restore referencing a swept payload
+fails loudly right there). pgJDBC `CopyManager` works through Hikari inside the snapshot
+helper; COPY takes no bind parameters (validated-identifier interpolation, the
+`partitionSuffix` posture).
+
+**Other load-bearing findings:** the restore state machine (in-place 7 steps, side-by-side
+with the DEFERRABLE `repo_id` swap — why draft-004 makes that unique deferrable) and the
+repo-level `repository.status` (READY|RESTORING|INDEXING) — `search_index.state` alone
+cannot distinguish zero-downtime-rebuild-BUILDING from restore-BUILDING; **P1's two
+HAZARDOUS-DEFERRED rows close by construction** (generations from an `index_generation`
+table, never reused; delete-then-recreate disappears for every caller incl. the Gate G
+endpoint). `/system/vacuum` `tasks` bug root-caused: `PropertyTreeMapper.serializeList`
+collapses single-element lists to scalars → JS gets a String where the bean wants List;
+fix at the vacuum boundary (`[].concat(params.tasks)`), NOT in the mapper (the collapse is
+load-bearing elsewhere). The GC interleaving table (H1–H6) names each race and its
+invariant. Dump enumeration verified to run entirely on the 3.5/4 SQL surfaces; binaries
+stream (never materialised); **unknowns for Gate D recorded honestly**: the actual
+cross-backend zip round trip has never been executed, legacy pre-model-9/non-sha256 dumps
+are an open question needing a real artifact, and `search_document` COPY volume is
+unmeasured (Gate A measures it).
+
+Draft migration at `nodb/schema/draft/004_snapshot_gc.sql` (inert; Gate A moves it into
+the manifest under P3 discipline): `retention_policy`, `snapshot` registry (no FK to
+repository — must survive repo drop; `expires_at` stamped at creation), `gc_mark`,
+`repository.status`, deferrable `repository_repo_id_key`, `index_generation` (table not
+sequence — provisioning grants default privileges on tables only).
+
 ## Gates
 
 | Gate | Deliverable | Verification (all must hold) | Est. |
