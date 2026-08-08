@@ -80,6 +80,50 @@ measured property.
 | **P1** | **Single-snapshot audit (FINDINGS #1).** Enumerate every consecutive-`Tx.inTenantTx` pair on vacuum/GC/dump paths; classify each as safe or hazardous; add the checked one-snapshot read helper to the engine and convert hazardous sites. | Audit table recorded in this file; helper exists with tests; zero hazardous pairs remain on the paths this phase touches. | ~120k |
 | **P2** | **The 3.5→4 upgrade path, proven** (Gate G residue). A tenant provisioned at Phase-3.5 schema (migrations 001–002, real content) upgrades in place: bootstrap applies 003, search index created, rebuild replays, smoke queries answer. | Scripted test from a 3.5-shaped volume; documented as the upgrade recipe in RUNNING.md. | ~100k |
 
+## P1 DONE (2026-08-08) — single-snapshot audit
+
+**334 tests / 28 suites / 0 failures** under a clean forced rerun (verified with fresh
+timestamps; P2's test included). Audit covered 19 sites; full table in the P1 report,
+essentials here:
+
+- **One live hazard found and converted**: `Indexer.reindexFromDocuments(repoId)` read
+  repo key, live index name and the document set in THREE transactions — a repo
+  drop+recreate landing between them paired the dead incarnation's key with the live
+  index, replayed the cascade-emptied dead set, and **reported a silently empty rebuild
+  as success**. Now one `Tx.inTenantSnapshot`. Regression test carries its negative
+  control INSIDE the test: the pre-conversion shape is reintroduced first and must
+  produce the torn result, then the converted path must not, under identical provocation.
+- **The helper**: `Tx.inTenantSnapshot` — repeatable read, doubly read-only (JDBC +
+  `SET TRANSACTION READ ONLY`, so a write dies in Postgres with SQLSTATE 25006), same
+  tenant-role conventions as `inTenantTx`. Proven: mid-callback commits are invisible to
+  the second read (provoked with the proxied-DataSource machinery, now generalized).
+- **Two HAZARDOUS-DEFERRED rows, both Gate B's**: `deleteIndex`'s name-reuse hazard
+  (generations restart at 1 per incarnation, so pre/post-swap deletes are
+  indistinguishable — a snapshot asserts nothing; the fix is "generation counter never
+  reuses a number" + the alias-flip driver) and the rebuild window (indexer skips
+  "no-index" rows during delete→recreate — index-completeness loss, durable in
+  `search_document`; removed by the BUILDING-generation design).
+- **Guidance row for Gate C**: keyset pagination across `findVersions` calls is
+  cross-snapshot BY DESIGN for clients — any GC computing an "unreferenced" set while
+  paging MUST run inside `inTenantSnapshot` or behind the persisted grace window.
+- The Gate C checkpoint fix re-audited: no sibling hazards in the drain loop; the
+  invariant holds structurally (`GREATEST`, advance only to returned rows).
+
+## P2 DONE (2026-08-08) — the 3.5→4 upgrade path, proven
+
+`Phase35To4UpgradeTest` green: provision at the true 3.5 shape (001+002, checksum rows
+deleted), real content through `WriteService.write`, upgrade, verify. **The wrinkle
+resolved truthfully: the Gate G rebuild endpoint CANNOT upgrade a pre-Phase-4 tenant** —
+it replays `search_document`, and a 3.5 tenant has zero rows (asserted: `replayed: 0`).
+The real mechanism is XP's `IndexService.reindex(initialize=true)`: the purge drives the
+idempotent delete+create that CREATES the index for a pre-003 repo, then `ReindexExecutor`
+re-ships every document over the D2 SQL surface. Four-step operator recipe in RUNNING.md
+§8, incl. the verbatim adopt-on-first-run log lines (that rule exists for exactly this
+tenant) and the rollback posture (every step idempotent; bootstrap atomic).
+**Gaps recorded, not hidden**: no one-shot tenant-wide upgrade action (→ Gate E's
+management surface), and pre-existing repos have a query-outage window between XP boot
+and their per-repo reindex.
+
 ## Gates
 
 | Gate | Deliverable | Verification (all must hold) | Est. |

@@ -355,7 +355,35 @@ public final class Indexer
     {
         List<SearchDocumentStore.BranchDocument> documents =
             Tx.inTenantTx( dataSource, tenant, connection -> SearchDocumentStore.listAll( connection, repoKey ) );
+        return replay( documents, repoId, indexName );
+    }
 
+    /**
+     * Convenience for the rebuild drill: resolve the repo and replay into its live index.
+     *
+     * <p>Repo key, live index record and document set are ONE decision, so they are read in ONE
+     * repeatable-read snapshot ({@link Tx#inTenantSnapshot}, FINDINGS #1 / Phase 5 P1). Read in
+     * separate transactions — the pre-P1 shape — a repo drop+recreate committing between the reads
+     * resolved one incarnation's key and listed another incarnation's (empty) document set, and the
+     * replay reported an empty rebuild as success.
+     */
+    public int reindexFromDocuments( String repoId )
+        throws SQLException
+    {
+        ReplaySources sources = Tx.inTenantSnapshot( dataSource, tenant, connection -> {
+            long repoKey = RepoKeys.resolve( connection, new RepoRef( repoId ) );
+            return new ReplaySources( SearchIndexStore.live( connection, repoKey ),
+                                      SearchDocumentStore.listAll( connection, repoKey ) );
+        } );
+        if ( sources.live() == null )
+        {
+            throw new IllegalStateException( "Repository " + repoId + " has no live search index" );
+        }
+        return replay( sources.documents(), repoId, sources.live().indexName() );
+    }
+
+    private int replay( List<SearchDocumentStore.BranchDocument> documents, String repoId, String indexName )
+    {
         BulkRequest bulk = new BulkRequest();
         for ( SearchDocumentStore.BranchDocument stored : documents )
         {
@@ -371,17 +399,8 @@ public final class Indexer
         return documents.size();
     }
 
-    /** Convenience for the rebuild drill: resolve the repo and replay into its live index. */
-    public int reindexFromDocuments( String repoId )
-        throws SQLException
+    private record ReplaySources(SearchIndexStore.SearchIndexRecord live, List<SearchDocumentStore.BranchDocument> documents)
     {
-        long repoKey = Tx.inTenantTx( dataSource, tenant, connection -> RepoKeys.resolve( connection, new RepoRef( repoId ) ) );
-        String indexName = admin.liveIndexName( tenant, repoId );
-        if ( indexName == null )
-        {
-            throw new IllegalStateException( "Repository " + repoId + " has no live search index" );
-        }
-        return reindexFromDocuments( repoKey, repoId, indexName );
     }
 
     // ------------------------------------------------------------------------- refresh(SEARCH)

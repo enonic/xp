@@ -528,6 +528,20 @@ class IndexerTest
      */
     private static javax.sql.DataSource hookedAfterOutboxReadCommits( final javax.sql.DataSource delegate, final Callable<Void> hook )
     {
+        return hookedAfterQueryCommits( delegate, IndexerTest::isOutboxRead, hook );
+    }
+
+    /**
+     * The generalised machinery behind {@link #hookedAfterOutboxReadCommits}: {@code hook} runs
+     * exactly once, immediately after the first transaction whose statements matched {@code query}
+     * has committed and closed. Every P1 lost-write regression in this class provokes its window
+     * with this — keyed on the query, never on a connection ordinal, for the reason documented
+     * above.
+     */
+    private static javax.sql.DataSource hookedAfterQueryCommits( final javax.sql.DataSource delegate,
+                                                                 final java.util.function.Predicate<String> query,
+                                                                 final Callable<Void> hook )
+    {
         final java.util.concurrent.atomic.AtomicBoolean fired = new java.util.concurrent.atomic.AtomicBoolean();
         return (javax.sql.DataSource) java.lang.reflect.Proxy.newProxyInstance( IndexerTest.class.getClassLoader(),
                                                                                new Class<?>[]{javax.sql.DataSource.class},
@@ -547,7 +561,7 @@ class IndexerTest
                                                                                            if ( "prepareStatement".equals(
                                                                                                cMethod.getName() ) && cArgs != null &&
                                                                                                cArgs.length > 0 &&
-                                                                                               isOutboxRead( String.valueOf( cArgs[0] ) ) )
+                                                                                               query.test( String.valueOf( cArgs[0] ) ) )
                                                                                            {
                                                                                                readOutbox[0] = true;
                                                                                            }
@@ -568,6 +582,131 @@ class IndexerTest
     private static boolean isOutboxRead( final String sql )
     {
         return sql.contains( "FROM outbox" ) && sql.contains( "ORDER BY o.seq" );
+    }
+
+    // ------------------------------------------- the torn rebuild window (Phase 5 P1 regression)
+
+    /**
+     * P1 regression (FINDINGS #1): a repo drop+recreate committing between "resolve the repo key"
+     * and "list the stored documents" must never produce a silently empty replay.
+     *
+     * <p><b>The hazard.</b> {@code reindexFromDocuments(repoId)} used to resolve the repo key in
+     * one transaction and {@code listAll} the documents in another. A drop+recreate of the same
+     * repoId committing in the window leaves the first read holding the DEAD incarnation's key, so
+     * the second read lists that incarnation's (cascade-emptied) document set — and the rebuild
+     * replays nothing, reports success, and the live incarnation's documents never reach the
+     * index. Post-P1 the key, the live index record and the document set come from ONE
+     * repeatable-read snapshot ({@code Tx.inTenantSnapshot}), so the replay is always internally
+     * consistent with exactly one incarnation.
+     *
+     * <p><b>Negative control, run first and in the same test.</b> The pre-conversion shape is
+     * reintroduced verbatim (resolve in its own {@code Tx.inTenantTx}, then the replay primitive
+     * in another) against the same provocation, and the torn result — zero documents replayed
+     * while the store demonstrably holds three — is asserted. That is the proof this test detects
+     * the defect it guards against; if the old shape ever stops tearing here, the provocation has
+     * rotted and the positive half proves nothing.
+     */
+    @Test
+    void aRepoSwapDuringRebuildNeverProducesASilentlyEmptyReplay()
+        throws Exception
+    {
+        // ---- negative control: the pre-P1 two-transaction shape exhibits the defect ----
+        final String tornRepo = SearchTestFixture.createRepo( acme, "swaptorn" );
+        admin.createIndex( acme, tornRepo );
+        shipDocument( acme, tornRepo, "master", "old-1", "old one" );
+        shipDocument( acme, tornRepo, "master", "old-2", "old two" );
+        final String tornIndexName = liveIndexName( tornRepo );
+
+        final javax.sql.DataSource tornHooked = hookedAfterQueryCommits( dataSource, IndexerTest::isRepoResolve, () -> {
+            swapRepoIncarnation( tornRepo, tornIndexName );
+            return null;
+        } );
+
+        final long staleKey = Tx.inTenantTx( tornHooked, acme, connection -> com.enonic.nodb.engine.store.RepoKeys.resolve( connection,
+                                                                                                                            new RepoRef(
+                                                                                                                                tornRepo ) ) );
+        final int torn;
+        try (Indexer tornIndexer = new Indexer( tornHooked, acme, client, admin ))
+        {
+            torn = tornIndexer.reindexFromDocuments( staleKey, tornRepo, liveIndexName( tornRepo ) );
+        }
+
+        assertEquals( 3, storedDocumentCount( tornRepo ), "the live incarnation holds three documents throughout" );
+        assertEquals( 0, torn, "negative control: the two-transaction shape must reproduce the silent empty replay -- "
+            + "if it no longer does, the provocation has rotted and the positive half below proves nothing" );
+
+        // ---- the converted path: same provocation, one snapshot, no torn replay ----
+        final String repoId = SearchTestFixture.createRepo( acme, "swap" );
+        admin.createIndex( acme, repoId );
+        shipDocument( acme, repoId, "master", "old-1", "old one" );
+        shipDocument( acme, repoId, "master", "old-2", "old two" );
+        final String indexName = liveIndexName( repoId );
+
+        final boolean[] swapped = {false};
+        final javax.sql.DataSource hooked = hookedAfterQueryCommits( dataSource, IndexerTest::isRepoResolve, () -> {
+            swapRepoIncarnation( repoId, indexName );
+            swapped[0] = true;
+            return null;
+        } );
+
+        final int replayed;
+        try (Indexer racing = new Indexer( hooked, acme, client, admin ))
+        {
+            replayed = racing.reindexFromDocuments( repoId );
+        }
+
+        assertTrue( swapped[0], "the swap must have run; otherwise this test proves nothing" );
+        assertEquals( 2, replayed, "one snapshot: the replay is exactly the incarnation it resolved (its two documents), "
+            + "never the torn empty set" );
+    }
+
+    /** {@code RepoKeys.resolve/tryResolve}'s lookup -- the first read of the pair the P1 test tears. */
+    private static boolean isRepoResolve( final String sql )
+    {
+        return sql.contains( "SELECT repo_key FROM repository" );
+    }
+
+    /**
+     * The provocation: drop {@code repoId} and recreate it under a NEW {@code repo_key} carrying
+     * THREE stored documents and a live {@code search_index} row (pointing at the same physical
+     * index -- generation names are reused across incarnations until Gate B's never-reuse rule).
+     * Runs on the UN-hooked pool, exactly like the Gate C hook's late write.
+     */
+    private static void swapRepoIncarnation( String repoId, String indexName )
+        throws SQLException
+    {
+        Tx.inTenantSchema( dataSource, acme, connection -> {
+            com.enonic.nodb.engine.store.RepositoryLifecycle.deleteRepository( connection, new RepoRef( repoId ) );
+            long newKey = com.enonic.nodb.engine.store.RepositoryLifecycle.createRepository( connection, repoId, null );
+            com.enonic.nodb.engine.store.RepositoryLifecycle.createBranch( connection, newKey, "master" );
+            return null;
+        } );
+        long newKey = SearchTestFixture.repoKey( acme, repoId );
+        Tx.inTenantTx( dataSource, acme, connection -> {
+            SearchIndexStore.record( connection, newKey,
+                                     new SearchIndexStore.SearchIndexRecord( 1, SearchIndexNames.alias( acme, repoId ), indexName, 1,
+                                                                             IndexDocumentProjection.VERSION,
+                                                                             SearchIndexStore.STATE_LIVE ) );
+            return null;
+        } );
+        shipDocument( acme, repoId, "master", "new-1", "new one" );
+        shipDocument( acme, repoId, "master", "new-2", "new two" );
+        shipDocument( acme, repoId, "master", "new-3", "new three" );
+    }
+
+    private static String liveIndexName( String repoId )
+        throws SQLException
+    {
+        String indexName = admin.liveIndexName( acme, repoId );
+        assertNotNull( indexName, "fixture: repo " + repoId + " must have a live index" );
+        return indexName;
+    }
+
+    private static long storedDocumentCount( String repoId )
+        throws SQLException
+    {
+        long repoKey = SearchTestFixture.repoKey( acme, repoId );
+        return Tx.inTenantTx( dataSource, acme, connection -> (long) SearchDocumentStore.listAll( connection, repoKey ).size() );
     }
 
     private static long shipDocument( TenantContext tenant, String repoId, String branch, String nodeId, String title )
