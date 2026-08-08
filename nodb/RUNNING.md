@@ -263,7 +263,115 @@ Notes:
   that is the recorded Phase 4 deferral (decision 3) — so after a projection-version bump
   the replay applies the CURRENT projection to the stored documents.
 
-## 8. Shutdown / cleanup
+## 8. Upgrading a pre-Phase-4 tenant (3.5-era → 4)
+
+Applies to a tenant provisioned and used BEFORE Phase 4 (the path Gate G explicitly did not
+exercise — its smoke ran on fresh volumes only; proven by `Phase35To4UpgradeTest`,
+BUILD-PHASE-5.md gate P2). Such a tenant has `template_version = 2`, no rows in
+`nodb_system.tenant_migration` (the checksum table arrived with Phase 4 gate P3), none of
+003's tables (`search_document`, `search_index`), no per-repo OpenSearch indices — and,
+crucially, **no `search_document` rows for its existing content**, because XP never shipped
+index documents before Phase 4. That last fact decides the shape of the whole recipe: the
+§7 rebuild endpoint replays `search_document` and therefore **cannot** populate the index
+for pre-Phase-4 content — it would answer `{"replayed":0}` over an empty index. The only
+mechanism that (re)creates the documents is XP itself re-shipping them, which is exactly
+what `IndexService.reindex(initialize=true)` does. So the sequence is: **provision → start
+NoDB with OpenSearch → boot XP → XP-driven reindex per repo.**
+
+```bash
+# 0. Stop XP (keep Postgres up). If the old stack has no OpenSearch container, create one
+#    now — §2's docker run for nodb-os, §3's NODB_OPENSEARCH_URL will point at it.
+
+# 1. Re-run the bootstrap tool — the same command as §4, idempotent:
+java -cp "$CP" com.enonic.nodb.server.tools.TenantBootstrapTool \
+  --tenant myxp \
+  --pg-url "jdbc:postgresql://localhost:55432/nodb" \
+  --pg-user nodb --pg-password nodb
+```
+
+The run applies migration 003 and records its checksum, all in ONE transaction — a failed
+run leaves the tenant exactly at 3.5; just re-run it. Because a 3.5-era tenant predates the
+checksum table, expect one **adopt line per already-applied migration** (once, on this
+first run only — the pre-GA adopt-on-first-run rule):
+
+```
+Adopting migration 001_init.sql (version 1) as the recorded baseline for tenant myxp: applied before checksums existed (pre-GA adopt-on-first-run rule)
+Adopting migration 002_version_query_indexes.sql (version 2) as the recorded baseline for tenant myxp: applied before checksums existed (pre-GA adopt-on-first-run rule)
+```
+
+```bash
+# Verify: template_version 3, and three checksummed rows:
+PGPASSWORD=nodb psql -h localhost -p 55432 -U nodb -d nodb -c \
+  "SELECT template_version FROM nodb_system.tenant WHERE tenant_id = 'myxp';
+   SELECT version, name, checksum FROM nodb_system.tenant_migration
+     WHERE tenant_id = 'myxp' ORDER BY version;"
+
+# 2. Start (or restart) NoDB WITH NODB_OPENSEARCH_URL set — §3 verbatim. A 3.5-era stack
+#    ran without it; without it there is no search backend at all.
+
+# 3. Boot XP — §5 verbatim.
+```
+
+⚠ **Between XP boot and step 4, queries against pre-existing repos fail** (their index does
+not exist yet) — Content Studio is not usable on them. Writes are safe throughout: they
+commit to Postgres, their documents land in `search_document`, and the indexer skips them
+until the repo has an index; step 4's purge-and-reship sweeps them in.
+
+```bash
+# 4. Reindex EVERY pre-existing repo through XP's management API, initialize=true.
+#    List the repos and their branches:
+PGPASSWORD=nodb psql -h localhost -p 55432 -U nodb -d nodb -c \
+  "SELECT r.repo_id, string_agg(b.branch, ',') AS branches
+     FROM myxp.repository r JOIN myxp.branch b USING (repo_key) GROUP BY r.repo_id;"
+
+#    Then per repo (su credentials; the endpoint requires the admin role):
+curl -s -u su:password123 -X POST 'http://localhost:14848/repo/index/reindex' \
+  -H 'Content-Type: application/json' \
+  -d '{"repository":"com.enonic.cms.default","branches":"draft,master","initialize":true}'
+# → {"repositoryId":"com.enonic.cms.default", ..., "numberReindexed": <N>, ...}
+```
+
+`initialize=true` is load-bearing, twice over: it drives NoDB's idempotent
+delete-then-create index pair — which is what CREATES the index, alias and `search_index`
+row for a repo that predates migration 003 (NoDB log:
+`Created search index myxp-<repo>+g1 behind alias myxp-<repo> (template vN, projection vM)`)
+— and the reindex walk then re-ships every node's document through the normal
+IndexDocuments path (`search_document` upsert + outbox row, one transaction per document),
+which the indexer applies to OpenSearch. Without `initialize` the index is never created
+and the shipped documents sit inert in `search_document`.
+
+```bash
+# 5. Verify — same ground truth as §6:
+curl -s 'localhost:19200/_cat/aliases/myxp-*?h=alias,index'      # one alias per repo, +g1
+curl -s 'localhost:19200/myxp-com.enonic.cms.default/_count'     # > 0
+nodb/smoke.sh   # the full editing flow incl. fulltext, history, compare, rebuild drill
+```
+
+Version history, branch listing and compare need no migration step — 003 is purely
+additive (two new, initially empty tables) and never touches the 3.5 storage rows; the P2
+test asserts the pre-upgrade surfaces answer identically after the upgrade.
+
+**If the upgrade half-completes (rollback posture):** every step is idempotent and
+re-runnable in order, and no step destroys 3.5 data — there is nothing to roll back TO.
+Specifically:
+
+- **Bootstrap fails mid-run** → the single transaction rolled back; the tenant is still
+  bit-for-bit at 3.5. Re-run it.
+- **Reindex of a repo interrupted** → re-run that repo's reindex with `initialize=true`
+  (it purges and starts over). Repos upgrade independently; the others are unaffected.
+- **OpenSearch dies after documents were shipped** → they are durable in
+  `search_document`; the §7 rebuild endpoint can now finish that repo without XP.
+- **Binary rollback**: a pre-Phase-4 NoDB server still serves the upgraded tenant's
+  storage surfaces (it never reads the two new tables), but re-provisioning from the old
+  binary fails loudly with the forward-only error — the schema is never downgraded, by
+  design.
+
+Residual gap, owned forward: there is no single "upgrade tenant" action — one bootstrap
+run plus one reindex call per repo are separate operator steps, and the reindex requires a
+booted XP. A one-shot tenant-wide trigger belongs on the Phase 5 Gate E management-plane
+ops surface.
+
+## 9. Shutdown / cleanup
 
 ```bash
 pkill -f 'com.enonic.xp.launcher'      # XP
