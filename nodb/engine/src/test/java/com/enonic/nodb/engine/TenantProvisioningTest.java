@@ -38,7 +38,10 @@ class TenantProvisioningTest
                 "audit_log",
                 // 003_search_index.sql (Phase 4 Gate A): the XP-shipped index documents the outbox
                 // indexer applies, and the authoritative alias->generation map.
-                "search_document", "search_index" );
+                "search_document", "search_index",
+                // 004_snapshot_gc.sql (Phase 5 Gate A): retention policy + snapshot registry
+                // (consumed by Gate A) and GC mark / index generation (inert until Gates B/C).
+                "retention_policy", "snapshot", "gc_mark", "index_generation" );
 
     private static HikariDataSource dataSource;
 
@@ -143,8 +146,8 @@ class TenantProvisioningTest
     {
         provisioner.provision( new TenantContext( "acme" ) );
 
-        assertEquals( 3, templateVersion( "acme" ),
-                      "001_init + 002_version_query_indexes + 003_search_index must all apply on fresh provisioning" );
+        assertEquals( 4, templateVersion( "acme" ),
+                      "001_init + 002_version_query_indexes + 003_search_index + 004_snapshot_gc must all apply on fresh provisioning" );
 
         Set<String> indexes = indexesIn( "acme" );
         assertTrue( indexes.contains( "branch_entry_path_lower" ), "002's diff-scope index must exist" );
@@ -153,6 +156,8 @@ class TenantProvisioningTest
         assertFalse( indexes.contains( "node_version_by_node" ), "002 must drop the index it replaces" );
         assertTrue( indexes.contains( "search_document_replay" ), "003's rebuild-replay index must exist" );
         assertTrue( indexes.contains( "search_index_live" ), "003's live-generation index must exist" );
+        assertTrue( indexes.contains( "snapshot_by_repo" ), "004's snapshot registry index must exist" );
+        assertTrue( indexes.contains( "gc_mark_sweepable" ), "004's GC sweep index must exist" );
     }
 
     private static Set<String> indexesIn( String schema )

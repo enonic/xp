@@ -3,3 +3,4 @@
 001_init.sql
 002_version_query_indexes.sql
 003_search_index.sql
+004_snapshot_gc.sql

@@ -1,9 +1,11 @@
--- DRAFT (Phase 5 Gate 0 deliverable) — snapshot registry + GC bookkeeping + restore status.
+-- Phase 5 Gate A (nodb/BUILD-PHASE-5.md): snapshot registry + GC bookkeeping + restore status.
 --
--- NOT SHIPPED: this file lives under nodb/schema/draft/ and is NOT listed in
--- engine/src/main/resources/nodb/migrations/tenant/manifest.txt. Gate A moves it to
--- migrations/tenant/004_snapshot_gc.sql and appends it to the manifest (P3 discipline:
--- applied migrations are immutable and checksummed; new schema lands as a NEW migration).
+-- Moved from nodb/schema/draft/004_snapshot_gc.sql under P3 discipline (applied migrations
+-- are immutable and checksummed; new schema lands as a NEW migration). Gate A consumes
+-- `retention_policy` and `snapshot`; `gc_mark` (Gate C), `repository.status` and the
+-- deferrable `repository_repo_id_key` (Gate B) and `index_generation` (Gate B) are created
+-- now so the phase ships ONE migration rather than one per gate — they land as inert
+-- schema, no code writes them until their gate.
 --
 -- Everything here is per-tenant (applied with search_path = tenant schema), like 001–003.
 
@@ -38,10 +40,11 @@ CREATE TABLE retention_policy (
 INSERT INTO retention_policy DEFAULT VALUES;
 
 -- ---------------------------------------------------------------------------------------
--- 2. Snapshot registry. The manifest BYTES (row COPY streams + the full sorted hash list)
---    live in object storage under <tenant>/snapshot/<snapshot_id>/ — see Gate 0(b) report;
---    Postgres holds only this registry row. Deliberately NO FK to repository: a snapshot
---    must survive the repo it was taken from (restoring after a repo delete is the point).
+-- 2. Snapshot registry. The snapshot BYTES (row COPY streams + the FULL sorted hash
+--    manifest — Gate 0 ratified decisions 1 and 2) live in object storage under
+--    <tenant>/snapshot/<snapshot_id>/; Postgres holds only this registry row. Deliberately
+--    NO FK to repository: a snapshot must survive the repo it was taken from (restoring
+--    after a repo delete is the point).
 CREATE TABLE snapshot (
     snapshot_id     text PRIMARY KEY,                    -- uuid, minted at create
     scope           text NOT NULL CHECK (scope IN ('REPO', 'TENANT')),
@@ -55,10 +58,11 @@ CREATE TABLE snapshot (
     -- Outbox position captured inside the snapshot transaction (§3.3): the seq this
     -- snapshot is consistent with. Recorded for lag forensics and for change-feed
     -- consumers; restore does NOT replay outbox (search is rebuilt from the restored
-    -- search_document rows).
+    -- search_document rows). 0 while state = 'CREATING' (captured as the snapshot
+    -- transaction's first statement, stamped by the COMPLETE update).
     outbox_seq      bigint NOT NULL,
     state           text NOT NULL DEFAULT 'CREATING' CHECK (state IN ('CREATING', 'COMPLETE', 'FAILED')),
-    -- Object-storage location prefix of the manifest artifacts (row streams + hash list).
+    -- Object-storage location prefix of the snapshot artifacts (row streams + hash lists).
     location        text NOT NULL,
     format_version  int NOT NULL DEFAULT 1,
     -- Verification + sizing (counts/bytes of the captured row sets and hash set).
@@ -68,15 +72,16 @@ CREATE TABLE snapshot (
     document_count  bigint,
     hash_count      bigint,
     total_bytes     bigint,
-    manifest_sha256 text                                 -- hash over the manifest artifacts, for restore integrity
+    manifest_sha256 text                                 -- hash over the manifest artifact, for restore integrity
 );
 CREATE INDEX snapshot_by_repo ON snapshot (repo_id, created_at DESC);
 
 -- ---------------------------------------------------------------------------------------
 -- 3. GC mark table (decision 1: mark phase and sweep phase with an explicit, PERSISTED
---    grace window between them; decision 2 via time arithmetic — see Gate 0(d) report for
---    the soundness argument, including WHY WriteService must delete marks for every hash
---    it (re-)references in the same write transaction).
+--    grace window between them; decision 2 via time arithmetic — see the Gate 0(d) report
+--    for the soundness argument, including WHY WriteService must delete marks for every
+--    hash it (re-)references in the same write transaction). Lands EMPTY here; Gate C owns
+--    the mark/sweep logic and the mark-clear-on-reference write-path change.
 --    Sweep rule, evaluated in ONE transaction with the delete (payloads) or with the mark
 --    row delete (binaries):
 --      marked_at < now() - GREATEST(snapshot_horizon, gc_grace)
@@ -93,7 +98,7 @@ CREATE TABLE gc_mark (
 CREATE INDEX gc_mark_sweepable ON gc_mark (kind, marked_at);
 
 -- ---------------------------------------------------------------------------------------
--- 4. Repo lifecycle status for restore (Gate 0(c) state machine).
+-- 4. Repo lifecycle status for restore (Gate 0(c) state machine; consumed by Gate B).
 --    READY     — normal operation.
 --    RESTORING — row load in progress or partitions absent: ALL reads/writes for this repo
 --                fail loudly (never silently empty).
@@ -104,10 +109,10 @@ ALTER TABLE repository ADD COLUMN status text NOT NULL DEFAULT 'READY'
     CHECK (status IN ('READY', 'RESTORING', 'INDEXING'));
 
 -- ---------------------------------------------------------------------------------------
--- 5. Side-by-side swap support: the atomic swap updates two repository.repo_id values in
---    one transaction; a non-deferrable UNIQUE rejects the intermediate state depending on
---    row order, so the constraint becomes deferrable (checked at commit inside the swap
---    transaction via SET CONSTRAINTS ... DEFERRED).
+-- 5. Side-by-side swap support (Gate B): the atomic swap updates two repository.repo_id
+--    values in one transaction; a non-deferrable UNIQUE rejects the intermediate state
+--    depending on row order, so the constraint becomes deferrable (checked at commit
+--    inside the swap transaction via SET CONSTRAINTS ... DEFERRED).
 ALTER TABLE repository DROP CONSTRAINT repository_repo_id_key;
 ALTER TABLE repository ADD CONSTRAINT repository_repo_id_key UNIQUE (repo_id)
     DEFERRABLE INITIALLY IMMEDIATE;
@@ -119,14 +124,13 @@ ALTER TABLE repository ADD CONSTRAINT repository_repo_id_key UNIQUE (repo_id)
 --    sequence: generation numbers are unique across all repos and all incarnations of a
 --    repo, so a physical index name <tenant>-<repoId>+g<N> can never collide with a
 --    half-deleted predecessor. A plain single-row table rather than a SEQUENCE because
---    TenantProvisioner's ALTER DEFAULT PRIVILEGES grant covers TABLES only
---    (TenantProvisioner.java:74-75) — a sequence would need a per-tenant USAGE grant the
---    provisioning machinery does not do. Allocation is
---    UPDATE index_generation SET last = last + 1 RETURNING last (atomic, serialized by
---    the row lock — correct under concurrent rebuilds by construction).
---    SearchIndexAdmin.nextGeneration switches to this; deleteIndex stops deleting history
---    (rows become state=RETIRED instead), and search_index.deleteAll remains only for
---    repo drop (ON DELETE CASCADE already handles that). Seeded past any generation an
+--    TenantProvisioner's ALTER DEFAULT PRIVILEGES grant covers TABLES only — a sequence
+--    would need a per-tenant USAGE grant the provisioning machinery does not do.
+--    Allocation is UPDATE index_generation SET last = last + 1 RETURNING last (atomic,
+--    serialized by the row lock — correct under concurrent rebuilds by construction).
+--    Gate B switches SearchIndexAdmin.nextGeneration to this; deleteIndex stops deleting
+--    history (rows become state=RETIRED instead), and search_index.deleteAll remains only
+--    for repo drop (ON DELETE CASCADE already handles that). Seeded past any generation an
 --    existing pre-004 tenant can plausibly have reached.
 CREATE TABLE index_generation (
     singleton boolean PRIMARY KEY DEFAULT true CHECK (singleton),

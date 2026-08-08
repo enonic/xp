@@ -1,6 +1,7 @@
--- NoDB Postgres schema, v0.4 (draft) — the summed content of the ordered tenant
--- migrations (001_init.sql + 002_version_query_indexes.sql); kept content-identical
--- with them by hand.
+-- NoDB Postgres schema, v0.5 (draft) — the summed content of the ordered tenant
+-- migrations (001_init.sql + 002_version_query_indexes.sql + 004_snapshot_gc.sql;
+-- 003_search_index.sql's search tables are documented in that migration file); kept
+-- content-identical with them by hand.
 --
 -- Tenancy model:
 --   * One SCHEMA per tenant (never one database per tenant: PG connection pools are
@@ -21,10 +22,15 @@
 
 CREATE TABLE repository (
     repo_key   bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    repo_id    text NOT NULL UNIQUE,   -- external name; rename/swap = update this row
+    repo_id    text NOT NULL,          -- external name; rename/swap = update this row
     settings   jsonb NOT NULL DEFAULT '{}',
     data       jsonb NOT NULL DEFAULT '{}',
-    created_at timestamptz NOT NULL DEFAULT now()
+    created_at timestamptz NOT NULL DEFAULT now(),
+    -- 004: repo lifecycle status for restore (Gate 0(c) state machine, consumed Gate B).
+    status     text NOT NULL DEFAULT 'READY' CHECK (status IN ('READY', 'RESTORING', 'INDEXING')),
+    -- 004: deferrable so the side-by-side swap can update two repo_id rows in one
+    -- transaction (SET CONSTRAINTS ... DEFERRED) regardless of row order.
+    CONSTRAINT repository_repo_id_key UNIQUE (repo_id) DEFERRABLE INITIALLY IMMEDIATE
 );
 
 CREATE TABLE branch (
@@ -169,3 +175,61 @@ CREATE TABLE audit_log (
     detail    jsonb,
     prev_hash text                    -- optional hash chain: makes deletion provable
 );
+
+-- --- 004_snapshot_gc.sql (Phase 5 Gate A) ---------------------------------------------
+-- Full rationale in the migration file; the summed final state:
+
+-- Per-tenant retention policy (Phase 5 decision 2: the horizon is an explicit setting
+-- with a stated default). Single row, seeded at provisioning.
+CREATE TABLE retention_policy (
+    singleton          boolean PRIMARY KEY DEFAULT true CHECK (singleton),
+    snapshot_horizon   interval NOT NULL DEFAULT '30 days',
+    gc_grace           interval NOT NULL DEFAULT '24 hours',
+    version_age_floor  interval,                          -- NULL = keep all versions
+    version_keep_min   int NOT NULL DEFAULT 1 CHECK (version_keep_min >= 1),
+    outbox_retention   interval NOT NULL DEFAULT '7 days',
+    updated_at         timestamptz NOT NULL DEFAULT now()
+);
+INSERT INTO retention_policy DEFAULT VALUES;
+
+-- Snapshot registry. Snapshot BYTES (COPY streams + the FULL sorted hash manifest) live
+-- in object storage under <tenant>/snapshot/<snapshot_id>/; Postgres holds only this row.
+-- No FK to repository: a snapshot must survive the repo it was taken from.
+CREATE TABLE snapshot (
+    snapshot_id     text PRIMARY KEY,
+    scope           text NOT NULL CHECK (scope IN ('REPO', 'TENANT')),
+    repo_id         text,                                 -- NULL for TENANT scope
+    repo_key        bigint,                               -- informational, never resolved on restore
+    created_at      timestamptz NOT NULL DEFAULT now(),
+    expires_at      timestamptz NOT NULL,                 -- created_at + snapshot_horizon AT CREATION
+    outbox_seq      bigint NOT NULL,                      -- 0 while CREATING; stamped by COMPLETE
+    state           text NOT NULL DEFAULT 'CREATING' CHECK (state IN ('CREATING', 'COMPLETE', 'FAILED')),
+    location        text NOT NULL,                        -- object-storage prefix of the artifacts
+    format_version  int NOT NULL DEFAULT 1,
+    version_count   bigint,
+    head_count      bigint,
+    commit_count    bigint,
+    document_count  bigint,
+    hash_count      bigint,
+    total_bytes     bigint,
+    manifest_sha256 text
+);
+CREATE INDEX snapshot_by_repo ON snapshot (repo_id, created_at DESC);
+
+-- GC mark table (mark phase / sweep phase with a persisted grace window; empty until
+-- Gate C lands the mark/sweep logic and the mark-clear-on-reference write-path rule).
+CREATE TABLE gc_mark (
+    kind      text NOT NULL CHECK (kind IN ('PAYLOAD', 'BINARY')),
+    hash      text NOT NULL,
+    marked_at timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (kind, hash)
+);
+CREATE INDEX gc_mark_sweepable ON gc_mark (kind, marked_at);
+
+-- Index generation counter that never reuses a number (Gate B consumes it). A table, not
+-- a SEQUENCE: provisioning's default-privilege grants cover tables only.
+CREATE TABLE index_generation (
+    singleton boolean PRIMARY KEY DEFAULT true CHECK (singleton),
+    last      int NOT NULL
+);
+INSERT INTO index_generation (last) VALUES (1000);

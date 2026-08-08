@@ -389,6 +389,24 @@ public final class BinaryStore
 
     // ---- shared helpers ---------------------------------------------------------------------
 
+    /**
+     * The underlying S3 client — shared with {@code SnapshotObjectStore} (Phase 5 Gate A):
+     * snapshot artifacts live in the SAME bucket under {@code <tenant>/snapshot/...}, one
+     * prefix over from {@code <tenant>/binary/...}, so the server reuses this one client
+     * (one credential set, one endpoint config) rather than building a second from the same
+     * env vars. Lifecycle stays here: {@link #close()} closes it.
+     */
+    public S3Client s3Client()
+    {
+        return s3;
+    }
+
+    /** See {@link #s3Client()}. */
+    public String bucket()
+    {
+        return bucket;
+    }
+
     private String objectKey( TenantContext tenant, String hash )
     {
         String hex = hash.startsWith( "sha256:" ) ? hash.substring( "sha256:".length() ) : hash;

@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.nodb.engine.binary.BinaryStore;
 import com.enonic.nodb.engine.search.Indexer;
+import com.enonic.nodb.engine.snapshot.SnapshotObjectStore;
+import com.enonic.nodb.engine.snapshot.SnapshotService;
 import com.enonic.nodb.engine.search.OpenSearchClient;
 import com.enonic.nodb.engine.search.OpenSearchConfig;
 import com.enonic.nodb.engine.TenantContext;
@@ -31,15 +33,17 @@ import com.enonic.nodb.server.service.BinariesService;
 import com.enonic.nodb.server.service.NodeSearchService;
 import com.enonic.nodb.server.service.NodeStoreService;
 import com.enonic.nodb.server.service.RepositoryAdminService;
+import com.enonic.nodb.server.service.SnapshotsService;
 
 /**
  * The standalone {@code enonic/nodb} server binding (DESIGN.md §7): engine + gRPC, no
  * OSGi/Spring. Wires a Postgres pool, the JWT auth interceptor (trivial dev issuer's
  * public key — see {@link com.enonic.nodb.server.auth.NodbTokenTool}), and the service
  * impls implemented so far: NodeStore's data-plane RPCs, RepositoryAdmin's management-
- * plane RPCs (slice 1), and Binaries' data-plane RPCs over S3 (Phase 2 Gate A,
- * BUILD-PHASE-2.md). NodeSearch/ChangeFeed/BulkTransfer/Snapshots are out of scope so far
- * and are simply never registered on this server.
+ * plane RPCs (slice 1), Binaries' data-plane RPCs over S3 (Phase 2 Gate A,
+ * BUILD-PHASE-2.md), and Snapshots' create/list/delete (Phase 5 Gate A, BUILD-PHASE-5.md —
+ * Restore is Gate B). ChangeFeed/BulkTransfer are out of scope so far and are simply never
+ * registered on this server.
  *
  * <p>Configuration is env-var only (no config file yet, matching this slice's scope):
  * <ul>
@@ -207,10 +211,15 @@ public final class NodbServer
         OpenSearchClient openSearchClient = openSearchConfig.isConfigured() ? new OpenSearchClient( openSearchConfig ) : null;
         SearchIndexAdmin searchIndexAdmin = openSearchClient == null ? null : new SearchIndexAdmin( dataSource, openSearchClient );
 
+        // Snapshot artifacts share the Binaries S3 client/bucket (one credential set, one
+        // endpoint config; <tenant>/snapshot/... one prefix over from <tenant>/binary/...).
+        SnapshotService snapshotService = new SnapshotService( dataSource, SnapshotObjectStore.sharing( binaryStore ) );
+
         ServerBuilder<?> builder = ServerBuilder.forPort( port )
             .addService( ServerInterceptors.intercept( new NodeStoreService( dataSource ), authInterceptor ) )
             .addService( ServerInterceptors.intercept( new RepositoryAdminService( dataSource, searchIndexAdmin ), authInterceptor ) )
-            .addService( ServerInterceptors.intercept( new BinariesService( binaryStore ), authInterceptor ) );
+            .addService( ServerInterceptors.intercept( new BinariesService( binaryStore ), authInterceptor ) )
+            .addService( ServerInterceptors.intercept( new SnapshotsService( snapshotService ), authInterceptor ) );
 
         // Shared with the NodeSearchService's indexer factory below and with the NodbServer this
         // method returns, so the readiness probe and shutdown both see every started indexer.

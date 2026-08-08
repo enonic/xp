@@ -82,6 +82,7 @@ class MigrationIntegrityTest
         assertEquals( "001_init.sql", recordedName( "p3fresh", 1 ) );
         assertEquals( "002_version_query_indexes.sql", recordedName( "p3fresh", 2 ) );
         assertEquals( "003_search_index.sql", recordedName( "p3fresh", 3 ) );
+        assertEquals( "004_snapshot_gc.sql", recordedName( "p3fresh", 4 ) );
         assertTrue( recordedChecksum( "p3fresh", 1 ).startsWith( "sha256:" ) );
     }
 

@@ -210,6 +210,42 @@ sequence — provisioning grants default privileges on tables only).
 
 Total ≈ **3.2M** output tokens (P1+P2 ~220k, gates ~3.0M).
 
+## GATE A DONE (2026-08-08) — manifest snapshots
+
+**350 tests / 31 suites / 0 failures** under clean forced rerun (P1 baseline +16 new);
+XP client builds against the reshaped proto. Migration **004** shipped under P3
+discipline (draft deleted, manifest appended, schema.sql → v0.5); `gc_mark`,
+`repository.status`, the deferrable `repo_id` unique and `index_generation` land inert
+for Gates B/C.
+
+**As built:** `<tenant>/snapshot/<uuid>/` → per-repo `{branches,versions,heads,commits,
+documents}.copy.gz` (deterministic ORDER BY, repo_key excluded) + full sorted DISTINCT
+hash lists + `MANIFEST.json` written LAST (per-artifact rows/bytes/sha256 — the registry's
+`manifest_sha256` covers the set transitively and doubles as an operator-readable table of
+contents). Registry states CREATING → COMPLETE | FAILED; the outbox seq is the snapshot
+transaction's FIRST statement, pinning the repeatable-read snapshot and recording the
+consistency point in one act; tenant scope reads ALL repos in that one transaction — the
+cross-repo consistent point §6 promises, proven by
+`perTenantSnapshotCapturesEveryRepoAtOneConsistentPoint` and the concurrent-writer test
+(mid-create commits to two repos plus a brand-new repo: seq, counts and manifest all equal
+the pre-commit state).
+
+**Delete ordering: registry row first, prefix second** — the two deletes cannot be
+atomic; row-first can only leave an orphan prefix, identifiable garbage swept by
+re-running delete, while prefix-first could leave a COMPLETE row that LOOKS restorable
+and is not.
+
+**Gate 0 unknown #4 measured:** `search_document` COPY volume ≈ **2.9 KB/row raw**
+(600 corpus-shaped rows, 33.6× gzip on synthetic text — treat the raw number as the
+sizing figure; extrapolate ~2.9 GB raw per 1M docs).
+
+**Recorded deviations:** `manifest_sha256` over MANIFEST.json rather than a raw
+concatenation (same property, better operability); CREATING rows carry `outbox_seq=0`
+until COMPLETE (non-COMPLETE is never trusted); the concurrency hook fires around the
+COPY (CopyManager bypasses the JDBC proxy — mid-COPY invisibility is separately proven by
+TxSnapshotTest and the Gate 0 spike); the hard-crash CREATING state is reconstructed
+after a real injected-S3-outage failure rather than a JVM kill.
+
 ## Key risks carried into the gates
 
 - **GC is the first code that can destroy data.** Every prior phase only added. The

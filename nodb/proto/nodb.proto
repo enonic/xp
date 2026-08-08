@@ -179,11 +179,28 @@ service BulkTransfer {
   rpc ImportBranch (stream ExportChunk) returns (Ack);
 }
 
+// Phase 5 Gate A (nodb/BUILD-PHASE-5.md): manifest snapshots. A snapshot is the repo's
+// narrow rows (branches, versions, heads, commits) + the stored search_document rows +
+// the FULL sorted hash manifest (payload hashes + binary keys) + the outbox position,
+// captured in ONE repeatable-read transaction; the bytes live in object storage under
+// <tenant>/snapshot/<snapshot-id>/ and Postgres holds only the registry row these RPCs
+// move. Restore is Gate B and remains an empty placeholder.
+//
+// AUTHZ POSTURE (interim, stated not accidental -- the same note the Gate G rebuild
+// endpoint carried): these RPCs are served with the SAME interceptor posture as the
+// existing services (runtime or operator scope accepted; TenantAuthInterceptor's
+// MANAGEMENT_METHODS set is still empty). Gate E owns the management-plane move, where
+// snapshot ops join the operator-scoped surface per the scope model above.
 service Snapshots {
-  rpc Snapshot (SnapshotRequest) returns (SnapshotInfo);
-  rpc Restore (RestoreRequest) returns (Ack);
-  rpc List (ListSnapshotsRequest) returns (stream SnapshotInfo);
-  rpc Delete (DeleteSnapshotsRequest) returns (Ack);
+  // repo_id set = REPO scope; empty = TENANT scope (ALL repos captured inside one
+  // transaction -- the cross-repo consistent point DESIGN 6 promises).
+  rpc CreateSnapshot (CreateSnapshotRequest) returns (SnapshotInfo);
+  rpc ListSnapshots (ListSnapshotsRequest) returns (stream SnapshotInfo);
+  // Refuses nothing (operator delete is always allowed; expiry is enforced by RESTORE,
+  // honoured by GC). Registry row first, then the S3 prefix -- and the prefix sweep runs
+  // even when no row exists, so re-issuing a delete recovers its own crash window.
+  rpc DeleteSnapshot (DeleteSnapshotRequest) returns (DeleteSnapshotResponse);
+  rpc Restore (RestoreRequest) returns (Ack);  // Gate B; unimplemented placeholder
 }
 
 // Phase 2 Gate A (BUILD-PHASE-2.md): binaries are content-addressed opaque blobs on S3,
@@ -221,8 +238,10 @@ service Binaries {
 // Phase 3.5 Gate A (BUILD-PHASE-3.5.md) adds the storage-index query family — FindVersions
 // (its empty placeholder filled in, now unary), DiffBranches, GetActiveVersions,
 // FindCommits — and repo-scopes GetCommit.
+// Phase 5 Gate A (nodb/BUILD-PHASE-5.md) fills in Snapshots.CreateSnapshot/ListSnapshots/
+// DeleteSnapshot (Snapshots.Restore stays a Gate B placeholder).
 // Still left as empty placeholders (out of scope entirely, not merely
-// deferred): NodeSearch, ChangeFeed, BulkTransfer, Snapshots,
+// deferred): ChangeFeed, BulkTransfer, Snapshots.Restore,
 // RepositoryAdmin.ListRepositories/Stats — grpc-java's generated *ImplBase returns
 // UNIMPLEMENTED for any method the server class does not override, so leaving those
 // messages empty and simply not overriding the method is sufficient. Tenant id is NEVER a
@@ -852,8 +871,39 @@ message DumpRequest {}
 message DumpChunk {}
 message ExportRequest {}
 message ExportChunk {}
-message SnapshotRequest {}
 message RestoreRequest {}
+
+// --- Snapshots (Phase 5 Gate A) --------------------------------------------------------
+message CreateSnapshotRequest {
+  string repo_id = 1;               // empty = TENANT scope
+}
 message ListSnapshotsRequest {}
-message SnapshotInfo {}
-message DeleteSnapshotsRequest {}
+message DeleteSnapshotRequest {
+  string snapshot_id = 1;
+}
+// deleted = false when no registry row existed for the id (the S3 prefix sweep still ran;
+// delete is idempotent and doubles as recovery for its own crash window).
+message DeleteSnapshotResponse {
+  bool deleted = 1;
+}
+// Mirrors engine.snapshot.SnapshotRecord / the `snapshot` registry row (migration 004).
+// Count/size/manifest fields are 0/empty while state is CREATING or FAILED -- they are
+// stamped only by the COMPLETE transition, after every artifact is durably written.
+message SnapshotInfo {
+  string snapshot_id = 1;
+  string scope = 2;                 // REPO | TENANT
+  string repo_id = 3;               // empty for TENANT scope
+  int64 created_at_millis = 4;
+  // created_at + retention_policy.snapshot_horizon AT CREATION TIME; a later policy
+  // change never moves an existing snapshot's expiry (decision 2).
+  int64 expires_at_millis = 5;
+  uint64 outbox_seq = 6;            // the seq this snapshot is consistent with
+  string state = 7;                 // CREATING | COMPLETE | FAILED; only COMPLETE is restorable
+  int64 version_count = 8;
+  int64 head_count = 9;
+  int64 commit_count = 10;
+  int64 document_count = 11;
+  int64 hash_count = 12;            // distinct payload hashes + binary keys in the manifest
+  int64 total_bytes = 13;           // stored artifact bytes (gzipped), incl. MANIFEST.json
+  string manifest_sha256 = 14;      // over MANIFEST.json, which lists every artifact's own sha256
+}
