@@ -16,7 +16,7 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.ListNodesByParentParams;
 import com.enonic.xp.node.RefreshMode;
 
 import static java.util.Objects.requireNonNull;
@@ -79,9 +79,9 @@ final class DeleteContentCommand
         final NodeId nodeId = nodeToDelete.id();
         final ContentId contentId = ContentId.from( nodeId );
 
-        final NodeIds descendants = nodeService.findByQuery(
-                NodeQuery.create().parent( nodeToDelete.path() ).recursive( true ).size( NodeQuery.ALL_RESULTS_SIZE_FLAG ).build() )
-            .getNodeIds();
+        // enumerated, not searched: everything below has to be unpublished, including what a search has not indexed yet
+        final NodeIds descendants =
+            nodeService.list( ListNodesByParentParams.create().parentPath( nodeToDelete.path() ).recursive( true ).build() ).getNodeIds();
 
         final ContentIds unpublishedContents = unpublish( contentId, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );

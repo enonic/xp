@@ -38,13 +38,9 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.ListNodesByParentParams;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
 import com.enonic.xp.schema.content.ContentTypeService;
@@ -266,24 +262,29 @@ public class LayersContentService
 
     public ContentIds findAllChildren( final ContentPath contentPath )
     {
-        // deliberately not ContentQuery.parentPath: syncing does not care about the order children come back in, and does not want to pay
-        // for the read of the parent that resolving its child order would cost on every level of the tree
-        final ContentQuery query = ContentQuery.create()
-            .queryExpr( QueryExpr.from( CompareExpr.eq( FieldExpr.from( NodeIndexPath.PARENT_PATH ), ValueExpr.string(
-                ContentNodeHelper.translateContentPathToNodePath( contentPath ).toString() ) ) ) )
-            .size( -1 )
-            .build();
-        return find( query ).getContentIds();
+        return list( contentPath, false );
     }
 
     public ContentIds findAllByParent( final ContentPath contentPath )
     {
-        final ContentQuery query = ContentQuery.create()
-            .queryExpr( QueryExpr.from( CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string(
-                ContentNodeHelper.translateContentPathToNodePath( contentPath ) + "/*" ) ) ) )
-            .size( -1 )
-            .build();
-        return find( query ).getContentIds();
+        return list( contentPath, true );
+    }
+
+    /**
+     * Enumerated rather than searched: syncing has to see every content that exists right now, including one written a moment ago that a
+     * search would not find yet, and it has no use for the ordering or the constraints a search would spend that freshness on.
+     */
+    private ContentIds list( final ContentPath contentPath, final boolean recursive )
+    {
+        return callOnPrimary( () -> nodeService.list( ListNodesByParentParams.create()
+                                                          .parentPath(
+                                                              ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
+                                                          .recursive( recursive )
+                                                          .build() )
+                                  .getEntries()
+                                  .stream()
+                                  .map( entry -> ContentId.from( entry.nodeId() ) )
+                                  .collect( ContentIds.collector() ) );
     }
 
     private <T> T callOnPrimary( final Supplier<T> supplier )

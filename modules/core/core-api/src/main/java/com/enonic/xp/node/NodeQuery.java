@@ -101,7 +101,7 @@ public final class NodeQuery
     {
         private NodePath parent;
 
-        private boolean recursive = false;
+        private boolean recursive;
 
         private boolean withPath = false;
 

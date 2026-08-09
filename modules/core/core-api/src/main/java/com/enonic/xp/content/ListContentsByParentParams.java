@@ -54,7 +54,7 @@ public final class ListContentsByParentParams
 
         private ContentId parentId;
 
-        private boolean recursive = false;
+        private boolean recursive;
 
         private Builder()
         {

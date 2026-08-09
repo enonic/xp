@@ -171,7 +171,7 @@ abstract class AbstractFindNodesQueryHandler
 
         private String parent;
 
-        private boolean recursive = false;
+        private boolean recursive;
 
         private List<String> returns;
 

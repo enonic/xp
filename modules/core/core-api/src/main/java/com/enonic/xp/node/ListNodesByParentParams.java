@@ -38,7 +38,7 @@ public final class ListNodesByParentParams
     {
         private NodePath parentPath;
 
-        private boolean recursive = false;
+        private boolean recursive;
 
         private Builder()
         {
