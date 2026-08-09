@@ -627,9 +627,9 @@ interface ListContentHandler {
  * @example-ref examples/content/list.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.parent Path or id of the content to enumerate the children of. A path is relative to the content root of the
- * calling context, which the same API serves the archive through, so the very same path names a different content depending on the
- * context; an id below a different root than the context lists nothing.
+ * @param {string} params.parent Path or id of the content to list the children of. A path is relative to the content root of the calling
+ * context, which the same API serves the archive through, so the very same path names a different content depending on the context; an
+ * id belonging to another root lists nothing.
  * @param {boolean} [params.recursive=false] List every descendant instead of the direct children only.
  *
  * @returns {object} `count` and `hits` of `{id, path}` entries, ordered by path.
@@ -827,11 +827,11 @@ interface QueryContentHandler {
  * depending on the context.
  * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Since the child order
  * of a parent orders its own children, specify `sort` when the order of a recursive result matters.
- * @param {string|string[]} [params.returns='contents'] Shape of the hits: `'contents'` (full contents, the default), `'ids'` (id and
- * score only), `'paths'` (id and path), or an array of content field names - `_name`, `_path`, `displayName`, `type`, `creator`,
- * `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` - fetched per hit as `fields` keyed by lowercase field name, with
- * `_path` as a content path. These are the fields a fetched content shows anyway; any other name, including node-level fields a content
- * does not expose, is an error. Every shape but the default skips reading the contents entirely.
+ * @param {string|string[]} [params.returns='contents'] What each hit should carry: `'contents'` (the whole content, the default),
+ * `'ids'` (id and score), `'paths'` (id and path), or a list of content field names - `_name`, `_path`, `displayName`, `type`,
+ * `creator`, `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` - delivered as `fields` on the hit. Any other name is an
+ * error. Only the fields a content shows are available, so a hit answers exactly what the content would; every shape but the default
+ * answers without reading the contents at all.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.

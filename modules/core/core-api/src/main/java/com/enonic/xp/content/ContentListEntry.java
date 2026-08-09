@@ -3,7 +3,7 @@ package com.enonic.xp.content;
 import static java.util.Objects.requireNonNull;
 
 /**
- * One content in a {@link ListContentsByParentResult}: its id and path, without reading the content itself.
+ * One content in a {@link ListContentsByParentResult}, identified without reading the content itself.
  *
  * @since 8.1.0
  */

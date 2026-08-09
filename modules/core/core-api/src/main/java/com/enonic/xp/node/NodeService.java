@@ -41,21 +41,22 @@ public interface NodeService
     /**
      * Finds the ids of the children of a node.
      *
-     * @deprecated Searching by parent is what {@link #findByQuery(NodeQuery)} with {@link NodeQuery.Builder#parent(NodePath)} does, and it
-     * accepts every constraint and return shape a query can carry while this takes filters alone and returns ids alone. Child order is
-     * inherited from the parent there too, {@link NodeQuery.Builder#recursive(boolean)} covers
-     * {@link FindNodesByParentParams.Builder#recursive(boolean)}, and a count is a query of size 0. A parent given by id has to be
-     * resolved to its path first. Scheduled for removal.
+     * @deprecated Use {@link #findByQuery(NodeQuery)} with {@link NodeQuery.Builder#parent(NodePath)}, which answers the same question
+     * and accepts every constraint and return shape a query can carry, where this takes filters alone and answers with ids alone. It
+     * inherits the child order of the parent the same way, {@link NodeQuery.Builder#recursive(boolean)} replaces
+     * {@link FindNodesByParentParams.Builder#recursive(boolean)}, and a count is a query of size 0. Resolve a parent given by id to its
+     * path first. Scheduled for removal.
      */
     @Deprecated
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     /**
-     * Enumerates the children of a node - or with {@link ListNodesByParentParams.Builder#recursive(boolean)} its whole subtree - from the
-     * branch storage alone. Unlike a {@link #findByQuery(NodeQuery)} search this needs no search-index refresh, so it always sees the
-     * latest writes, and it reads no nodes: entries carry only what the branch holds (id, path, timestamp), permission-checked per entry.
-     * Everything readable is returned, ordered by path - an enumeration takes no paging, no filters and no ordering choice; use a query
-     * when any of those matter.
+     * Lists the children of a node, or with {@link ListNodesByParentParams.Builder#recursive(boolean)} its whole subtree.
+     * <p>
+     * Every node the caller may read is listed, ordered by path, as an id, a path and a timestamp - never the node itself. A node written
+     * a moment ago is listed, where {@link #findByQuery(NodeQuery)} may not find it until the search index catches up.
+     * <p>
+     * There is no paging, no filtering and no choice of order: ask a query when any of those matter.
      *
      * @since 8.1.0
      */

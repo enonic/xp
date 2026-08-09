@@ -16,11 +16,10 @@ public final class NodeQuery
     public static final int ALL_RESULTS_SIZE_FLAG = -1;
 
     /**
-     * The index fields a query may ask back per hit, mapped to the name a fetched {@link Node} shows them by. Exactly those a node shows
-     * anyway: nothing the index keeps for its own purposes - parent paths, reference collections, analyzed or sortable variants - is
-     * reachable, so asking for fields is a cheaper way to read what is already public rather than a window into how the index is laid out.
+     * The fields a query may ask back per hit, mapped to the name a {@link Node} shows each of them by. Only fields a node shows are
+     * available, so asking for them is a cheaper way to read what a node would tell anyway, never a way to reach anything else.
      * <p>
-     * The keys are index paths and therefore lowercase; the values are the mixed-case names the node exposes, which is what callers see.
+     * Keys are index paths, and therefore lowercase; values are the names callers see on a hit.
      *
      * @since 8.1.0
      */
@@ -63,9 +62,8 @@ public final class NodeQuery
     }
 
     /**
-     * @deprecated Requesting the node path is just requesting one particular index field, and
-     * {@link Builder#returnFields(IndexPath...)} with {@link NodeIndexPath#PATH} does exactly that - {@link NodeHit#getNodePath()} is
-     * populated whenever the path is among the requested fields. Scheduled for removal.
+     * @deprecated Ask for {@link NodeIndexPath#PATH} through {@link Builder#returnFields(IndexPath...)} instead;
+     * {@link NodeHit#getNodePath()} answers whenever the path was asked for. Scheduled for removal.
      */
     @Deprecated
     public boolean isWithPath()
@@ -74,7 +72,7 @@ public final class NodeQuery
     }
 
     /**
-     * Index fields to fetch for every hit, available per hit through {@link NodeHit#getFields()}.
+     * The fields asked to come back with every hit, delivered through {@link NodeHit#getFields()}.
      *
      * @since 8.1.0
      */
@@ -159,9 +157,9 @@ public final class NodeQuery
         }
 
         /**
-         * Adds index fields to fetch for every hit, from {@link #SUPPORTED_RETURN_FIELDS} only. The values arrive per hit in
-         * {@link NodeHit#getFields()}: every field as a list of strings, {@code _ts} in ISO-8601 form, and a field the index does not hold
-         * for a hit is absent rather than empty.
+         * Asks for fields to come back with every hit, from {@link #SUPPORTED_RETURN_FIELDS} only, in {@link NodeHit#getFields()}.
+         * Each field arrives as a list of strings - {@code _ts} in ISO-8601 form - and a field a hit has no value for is absent rather
+         * than empty.
          *
          * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
@@ -177,9 +175,8 @@ public final class NodeQuery
         }
 
         /**
-         * Adds return fields already checked against the supported set of an API layered on top of nodes - the content API answers for
-         * content field names, which are not node field names. Not for general use: {@link #returnFields(IndexPath...)} is the entry
-         * point that states what a node query supports.
+         * Asks for fields an API built on top of nodes has already checked against its own supported set, such as the content API
+         * answering for content field names. Callers stating node fields want {@link #returnFields(IndexPath...)}, which checks them.
          *
          * @since 8.1.0
          */

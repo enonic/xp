@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Result of {@link NodeService#list(ListNodesByParentParams)}: every listed node as a lightweight entry, ordered by path.
+ * Answer of {@link NodeService#list(ListNodesByParentParams)}: every node the caller may read, ordered by path.
  *
  * @since 8.1.0
  */

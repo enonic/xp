@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Result of {@link ContentService#list(ListContentsByParentParams)}: every listed content as a lightweight entry, ordered by path.
+ * Answer of {@link ContentService#list(ListContentsByParentParams)}: every content the caller may read, ordered by path.
  *
  * @since 8.1.0
  */

@@ -72,10 +72,10 @@ public interface ContentService
     /**
      * Finds children of a content and fetches every one of them.
      *
-     * @deprecated Hides a {@link #getByIds(GetContentByIdsParams)} call per page of children behind what looks like a search, so a caller
-     * that only needs ids, paths or a count pays for full content resolution anyway. Search with {@link #find(ContentQuery)} and
-     * {@link ContentQuery.Builder#parentPath(ContentPath)} / {@link ContentQuery.Builder#parentId(ContentId)}, then resolve only the ids
-     * actually needed. Scheduled for removal.
+     * @deprecated Answers with every child resolved in full, so a caller that needs only ids, paths or a count pays for contents it
+     * never uses. Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#parentPath(ContentPath)} /
+     * {@link ContentQuery.Builder#parentId(ContentId)}, then {@link #getByIds(GetContentByIdsParams)} for the ids actually needed.
+     * Scheduled for removal.
      */
     @Deprecated
     FindContentByParentResult findByParent( FindContentByParentParams params );
@@ -83,24 +83,24 @@ public interface ContentService
     /**
      * Finds the ids of the children of a content.
      *
-     * @deprecated Searching by parent is what {@link #find(ContentQuery)} with
-     * {@link ContentQuery.Builder#parentPath(ContentPath)} / {@link ContentQuery.Builder#parentId(ContentId)} does, and it accepts every
-     * other constraint a search can carry - a query expression, content types, aggregations, highlighting - while this takes filters
-     * alone. Child order is inherited from the parent there too, and {@link ContentQuery.Builder#recursive(boolean)} covers
+     * @deprecated Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#parentPath(ContentPath)} /
+     * {@link ContentQuery.Builder#parentId(ContentId)}, which answers the same question and accepts every other constraint a search can
+     * carry - a query expression, content types, aggregations, highlighting - where this takes filters alone. It inherits the child order
+     * of the parent the same way, and {@link ContentQuery.Builder#recursive(boolean)} replaces
      * {@link FindContentByParentParams.Builder#recursive(Boolean)}. Scheduled for removal.
      */
     @Deprecated
     FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
 
     /**
-     * Enumerates the children of a content - or with {@link ListContentsByParentParams.Builder#recursive(boolean)} its whole subtree -
-     * from the branch storage alone. Unlike a {@link #find(ContentQuery)} search this needs no search-index refresh, so it always sees
-     * the latest writes, and it reads no contents: entries carry only id and path, permission-checked per entry. Everything readable is
-     * returned, ordered by path - an enumeration takes no paging, no filters and no ordering choice; use a search when any of those
-     * matter.
+     * Lists the children of a content, or with {@link ListContentsByParentParams.Builder#recursive(boolean)} its whole subtree.
      * <p>
-     * Storage-only also means storage-only semantics: publish times are not evaluated, so on the master branch entries include contents
-     * whose publish window a search would filter out.
+     * Every content the caller may read is listed, ordered by path, as an id and a path - never the content itself. A content written a
+     * moment ago is listed, where {@link #find(ContentQuery)} may not find it until the search index catches up.
+     * <p>
+     * Publish times are not applied: on the master branch this lists contents that a search would leave out because their publish window
+     * has not opened or has closed. There is no paging, no filtering and no choice of order either, so ask a search when any of that
+     * matters.
      *
      * @since 8.1.0
      */

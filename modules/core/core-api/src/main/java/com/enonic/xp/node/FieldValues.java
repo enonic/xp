@@ -11,9 +11,8 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.index.IndexPath;
 
 /**
- * Values of the index fields a query asked for, one instance per hit. Keyed by index path, so lookups normalize the way index paths do,
- * and carrying what the search index stores: every field is a list even when single-valued, and a field the index does not hold for the
- * hit is simply absent.
+ * The fields a query asked for, as they came back for one hit. Lookups accept any casing an index path accepts. Every field is a list,
+ * single-valued or not, and a field the hit has no value for is absent rather than empty.
  *
  * @see NodeQuery.Builder#returnFields(IndexPath...)
  * @since 8.1.0
@@ -46,7 +45,7 @@ public record FieldValues(Map<String, List<Object>> asMap)
     }
 
     /**
-     * Index paths present for this hit, in lowercase index-path form.
+     * The fields present for this hit, in lowercase index-path form.
      */
     public Set<String> getFields()
     {

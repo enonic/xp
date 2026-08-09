@@ -25,11 +25,11 @@ public final class ContentQuery
     public static final int DEFAULT_FETCH_SIZE = 10;
 
     /**
-     * The index fields a content query may ask back per hit, mapped to the name a fetched {@link Content} shows them by. Exactly those a
-     * content shows anyway: node-level fields a content never exposes - {@code _ts}, {@code _versionKey}, {@code _nodeType},
-     * {@code _parentPath} - are not among them, and neither is anything the index keeps for its own purposes.
+     * The fields a content query may ask back per hit, mapped to the name a {@link Content} shows each of them by. Only fields a content
+     * shows are available: node-level fields a content never exposes, such as {@code _ts}, {@code _versionKey} and {@code _nodeType},
+     * are not among them.
      * <p>
-     * The keys are index paths and therefore lowercase; the values are the mixed-case names the content exposes.
+     * Keys are index paths, and therefore lowercase; values are the names callers see on a hit.
      *
      * @since 8.1.0
      */
@@ -127,7 +127,7 @@ public final class ContentQuery
     }
 
     /**
-     * Index fields to fetch for every hit, available per id through {@link FindContentIdsByQueryResult#getFields()}.
+     * The fields asked to come back with every hit, delivered per id through {@link FindContentIdsByQueryResult#getFields()}.
      *
      * @since 8.1.0
      */
@@ -258,10 +258,9 @@ public final class ContentQuery
         }
 
         /**
-         * Adds index fields to fetch for every hit, from {@link #SUPPORTED_RETURN_FIELDS} only: every field as a list of strings, absent
-         * when the index holds nothing for the hit. The only translation applied is that {@code _path} values come back as content paths
-         * rather than the node paths the index stores - relative to the content root of the calling context, so a query run against the
-         * archive answers with paths inside the archive.
+         * Asks for fields to come back with every hit, from {@link #SUPPORTED_RETURN_FIELDS} only. Each field arrives as a list of
+         * strings, and a field a hit has no value for is absent rather than empty. {@code _path} answers with a content path, relative to
+         * the content root of the calling context, so a query run against the archive answers with paths inside the archive.
          *
          * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0

@@ -69,8 +69,8 @@ public final class FindContentIdsByQueryResult
     }
 
     /**
-     * Values of the index fields the query asked for via {@link ContentQuery.Builder#returnFields(com.enonic.xp.index.IndexPath...)},
-     * keyed by content id. A hit the index holds none of the requested fields for has no entry.
+     * The fields the query asked for through {@link ContentQuery.Builder#returnFields(com.enonic.xp.index.IndexPath...)}, keyed by
+     * content id. A hit with no value for any of them has no entry.
      *
      * @since 8.1.0
      */
