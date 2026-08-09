@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeVersionId;

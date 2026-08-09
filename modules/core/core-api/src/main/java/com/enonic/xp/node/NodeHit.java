@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 

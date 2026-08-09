@@ -2,7 +2,7 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.Map;
 
-import com.enonic.xp.node.FieldValues;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;

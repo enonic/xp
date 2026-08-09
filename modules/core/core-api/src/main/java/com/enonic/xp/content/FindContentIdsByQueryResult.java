@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.highlight.HighlightedProperties;
-import com.enonic.xp.node.FieldValues;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
 import static java.util.Objects.requireNonNull;

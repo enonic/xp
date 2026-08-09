@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.elasticsearch.action.get.GetResponse;
 
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.ReturnValues;
 import com.enonic.xp.repo.impl.storage.GetResult;

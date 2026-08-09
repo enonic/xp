@@ -1,4 +1,4 @@
-package com.enonic.xp.node;
+package com.enonic.xp.index;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.index.IndexPath;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -31,7 +30,7 @@ class FieldValuesTest
             FieldValues.create().add( "_name", List.of( "my-node" ) ).add( "data.tags", List.of( "a", "b" ) ).build();
 
         assertEquals( Set.of( "_name", "data.tags" ), fields.getFields() );
-        assertEquals( List.of( "my-node" ), fields.getValues( NodeIndexPath.NAME ) );
+        assertEquals( List.of( "my-node" ), fields.getValues( IndexPath.from( "_name" ) ) );
         assertEquals( Optional.of( "a" ), fields.getSingleValue( "data.tags" ) );
         assertEquals( List.of( "a", "b" ), fields.getValues( "data.tags" ) );
     }

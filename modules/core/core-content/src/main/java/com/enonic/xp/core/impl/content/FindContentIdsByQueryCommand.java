@@ -11,7 +11,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
-import com.enonic.xp.node.FieldValues;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;

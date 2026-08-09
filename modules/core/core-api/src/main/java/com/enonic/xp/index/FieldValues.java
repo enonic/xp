@@ -1,4 +1,4 @@
-package com.enonic.xp.node;
+package com.enonic.xp.index;
 
 import java.util.List;
 import java.util.Map;
@@ -8,13 +8,11 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import com.enonic.xp.index.IndexPath;
-
 /**
  * The fields a query asked for, as they came back for one hit. Lookups accept any casing an index path accepts. Every field is a list,
  * single-valued or not, and a field the hit has no value for is absent rather than empty.
  *
- * @see NodeQuery.Builder#returnFields(IndexPath...)
+ * @see com.enonic.xp.node.NodeQuery.Builder#returnFields(IndexPath...)
  * @since 8.1.0
  */
 public record FieldValues(Map<String, List<Object>> asMap)

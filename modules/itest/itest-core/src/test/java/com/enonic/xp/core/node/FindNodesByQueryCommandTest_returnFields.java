@@ -8,9 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.FieldValues;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
