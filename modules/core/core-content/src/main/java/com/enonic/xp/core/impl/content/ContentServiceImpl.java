@@ -1,8 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
