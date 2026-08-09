@@ -32,8 +32,8 @@ class ContentServiceImplTest_list
         final ListContentsByParentResult result =
             contentService.list( ListContentsByParentParams.create().parentPath( parent.getPath() ).build() );
 
-        assertThat( result.getEntries() ).extracting( ContentListEntry::getId ).containsExactly( childA.getId(), childB.getId() );
-        assertThat( result.getEntries() ).extracting( ContentListEntry::getPath )
+        assertThat( result.getEntries() ).extracting( ContentListEntry::id ).containsExactly( childA.getId(), childB.getId() );
+        assertThat( result.getEntries() ).extracting( ContentListEntry::path )
             .containsExactly( childA.getPath(), childB.getPath() );
     }
 
@@ -46,7 +46,7 @@ class ContentServiceImplTest_list
         final ListContentsByParentResult result =
             contentService.list( ListContentsByParentParams.create().parentId( parent.getId() ).build() );
 
-        assertThat( result.getEntries() ).extracting( ContentListEntry::getId ).containsExactly( child.getId() );
+        assertThat( result.getEntries() ).extracting( ContentListEntry::id ).containsExactly( child.getId() );
     }
 
     @Test
@@ -60,7 +60,7 @@ class ContentServiceImplTest_list
         final ListContentsByParentResult result =
             contentService.list( ListContentsByParentParams.create().parentPath( parent.getPath() ).recursive( true ).build() );
 
-        assertThat( result.getEntries() ).extracting( ContentListEntry::getId )
+        assertThat( result.getEntries() ).extracting( ContentListEntry::id )
             .containsExactly( childA.getId(), grandchild.getId(), childB.getId() );
     }
 
@@ -73,7 +73,7 @@ class ContentServiceImplTest_list
         final ListContentsByParentResult result =
             contentService.list( ListContentsByParentParams.create().parentPath( ContentPath.ROOT ).build() );
 
-        assertThat( result.getEntries() ).extracting( ContentListEntry::getId ).containsExactly( top.getId() );
+        assertThat( result.getEntries() ).extracting( ContentListEntry::id ).containsExactly( top.getId() );
     }
 
     @Test
@@ -99,7 +99,7 @@ class ContentServiceImplTest_list
             // ...but an enumeration reads branch storage only and does not evaluate publish times
             final ListContentsByParentResult listed =
                 contentService.list( ListContentsByParentParams.create().parentPath( ContentPath.ROOT ).build() );
-            assertThat( listed.getEntries() ).extracting( ContentListEntry::getId ).contains( pending.getId() );
+            assertThat( listed.getEntries() ).extracting( ContentListEntry::id ).contains( pending.getId() );
         } );
     }
 }

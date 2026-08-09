@@ -23,8 +23,8 @@ public final class ContentListResultMapper
         for ( final ContentListEntry entry : result.getEntries() )
         {
             gen.map();
-            gen.value( "id", entry.getId() );
-            gen.value( "path", entry.getPath() );
+            gen.value( "id", entry.id() );
+            gen.value( "path", entry.path() );
             gen.end();
         }
         gen.end();

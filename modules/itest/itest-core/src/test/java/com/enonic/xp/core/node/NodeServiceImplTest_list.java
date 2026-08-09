@@ -41,8 +41,8 @@ class NodeServiceImplTest_list
         final ListNodesByParentResult result =
             nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).build() );
 
-        assertThat( result.getEntries() ).extracting( NodeListEntry::getNodeId ).containsExactly( childA.id(), childB.id() );
-        assertThat( result.getEntries() ).extracting( NodeListEntry::getNodePath )
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodePath )
             .containsExactly( childA.path(), childB.path() );
     }
 
@@ -57,7 +57,7 @@ class NodeServiceImplTest_list
         final ListNodesByParentResult result =
             nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).recursive( true ).build() );
 
-        assertThat( result.getEntries() ).extracting( NodeListEntry::getNodeId )
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId )
             .containsExactly( childA.id(), grandchild.id(), childB.id() );
     }
 
@@ -71,7 +71,7 @@ class NodeServiceImplTest_list
         final ListNodesByParentResult result =
             nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).build() );
 
-        assertThat( result.getEntries() ).extracting( NodeListEntry::getNodeId ).containsExactly( child.id() );
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( child.id() );
     }
 
     @Test
@@ -87,7 +87,7 @@ class NodeServiceImplTest_list
 
         final ListNodesByParentParams params = ListNodesByParentParams.create().parentPath( parent.path() ).build();
 
-        assertThat( nodeService.list( params ).getEntries() ).extracting( NodeListEntry::getNodeId )
+        assertThat( nodeService.list( params ).getEntries() ).extracting( NodeListEntry::nodeId )
             .containsExactly( visible.id() );
         assertEquals( 2, NodeHelper.runAsAdmin( () -> nodeService.list( params ) ).getSize() );
     }
@@ -114,7 +114,7 @@ class NodeServiceImplTest_list
 
         final ListNodesByParentResult result = nodeService.list( ListNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
 
-        assertThat( result.getEntries() ).extracting( NodeListEntry::getNodeId ).contains( top.id() );
-        assertThat( result.getEntries() ).extracting( NodeListEntry::getNodePath ).allMatch( path -> path.getParentPath().isRoot() );
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).contains( top.id() );
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodePath ).allMatch( path -> path.getParentPath().isRoot() );
     }
 }

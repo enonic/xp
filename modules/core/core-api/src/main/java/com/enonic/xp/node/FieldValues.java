@@ -11,21 +11,23 @@ import com.google.common.collect.ImmutableMap;
 import com.enonic.xp.index.IndexPath;
 
 /**
- * Values of the index fields a query asked for, one instance per hit. Keyed by lowercase index path, and carrying what the search index
- * stores: every field is a list even when single-valued, and a field the index does not hold for the hit is simply absent.
+ * Values of the index fields a query asked for, one instance per hit. Keyed by index path, so lookups normalize the way index paths do,
+ * and carrying what the search index stores: every field is a list even when single-valued, and a field the index does not hold for the
+ * hit is simply absent.
  *
  * @see NodeQuery.Builder#returnFields(IndexPath...)
  * @since 8.1.0
  */
-public final class FieldValues
+public record FieldValues(Map<String, List<Object>> asMap)
 {
     private static final FieldValues EMPTY = new FieldValues( ImmutableMap.of() );
 
-    private final ImmutableMap<String, ImmutableList<Object>> values;
-
-    private FieldValues( final ImmutableMap<String, ImmutableList<Object>> values )
+    public FieldValues
     {
-        this.values = values;
+        asMap = asMap.entrySet()
+            .stream()
+            .collect( ImmutableMap.toImmutableMap( entry -> IndexPath.from( entry.getKey() ).getPath(),
+                                                   entry -> ImmutableList.copyOf( entry.getValue() ) ) );
     }
 
     public static FieldValues empty()
@@ -40,7 +42,7 @@ public final class FieldValues
 
     public boolean isEmpty()
     {
-        return values.isEmpty();
+        return asMap.isEmpty();
     }
 
     /**
@@ -48,7 +50,7 @@ public final class FieldValues
      */
     public Set<String> getFields()
     {
-        return values.keySet();
+        return asMap.keySet();
     }
 
     /**
@@ -56,7 +58,7 @@ public final class FieldValues
      */
     public List<Object> getValues( final IndexPath field )
     {
-        return values.getOrDefault( field.getPath(), ImmutableList.of() );
+        return asMap.getOrDefault( field.getPath(), List.of() );
     }
 
     public List<Object> getValues( final String field )
@@ -69,8 +71,8 @@ public final class FieldValues
      */
     public Optional<Object> getSingleValue( final IndexPath field )
     {
-        final List<Object> list = getValues( field );
-        return list.isEmpty() ? Optional.empty() : Optional.of( list.get( 0 ) );
+        final List<Object> values = getValues( field );
+        return values.isEmpty() ? Optional.empty() : Optional.of( values.get( 0 ) );
     }
 
     public Optional<Object> getSingleValue( final String field )
@@ -78,27 +80,9 @@ public final class FieldValues
         return getSingleValue( IndexPath.from( field ) );
     }
 
-    @Override
-    public boolean equals( final Object o )
-    {
-        return this == o || o instanceof FieldValues && values.equals( ( (FieldValues) o ).values );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return values.hashCode();
-    }
-
-    @Override
-    public String toString()
-    {
-        return values.toString();
-    }
-
     public static final class Builder
     {
-        private final ImmutableMap.Builder<String, ImmutableList<Object>> values = ImmutableMap.builder();
+        private final ImmutableMap.Builder<String, List<Object>> values = ImmutableMap.builder();
 
         private Builder()
         {
@@ -112,16 +96,8 @@ public final class FieldValues
 
         public FieldValues build()
         {
-            final ImmutableMap<String, ImmutableList<Object>> built = values.buildKeepingLast();
+            final Map<String, List<Object>> built = values.buildKeepingLast();
             return built.isEmpty() ? EMPTY : new FieldValues( built );
         }
-    }
-
-    /**
-     * Values keyed by index path.
-     */
-    public Map<String, ? extends List<Object>> asMap()
-    {
-        return values;
     }
 }

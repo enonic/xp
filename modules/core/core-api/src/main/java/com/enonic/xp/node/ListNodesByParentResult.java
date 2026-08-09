@@ -30,7 +30,7 @@ public final class ListNodesByParentResult
 
     public NodeIds getNodeIds()
     {
-        return entries.stream().map( NodeListEntry::getNodeId ).collect( NodeIds.collector() );
+        return entries.stream().map( NodeListEntry::nodeId ).collect( NodeIds.collector() );
     }
 
     public int getSize()

@@ -717,10 +717,8 @@ public class ContentServiceImpl
 
             for ( final NodeListEntry entry : nodes.getEntries() )
             {
-                result.addEntry( ContentListEntry.create()
-                                     .id( ContentId.from( entry.getNodeId() ) )
-                                     .path( ContentNodeHelper.translateNodePathToContentPath( entry.getNodePath() ) )
-                                     .build() );
+                result.addEntry( new ContentListEntry( ContentId.from( entry.nodeId() ),
+                                                       ContentNodeHelper.translateNodePathToContentPath( entry.nodePath() ) ) );
             }
         }
 

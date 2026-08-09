@@ -19,8 +19,8 @@ class ListContentHandlerTest
     {
         Mockito.when( contentService.list( Mockito.isA( ListContentsByParentParams.class ) ) ).thenReturn(
             ListContentsByParentResult.create()
-                .addEntry( ContentListEntry.create().id( ContentId.from( "id1" ) ).path( ContentPath.from( "/path/to/a" ) ).build() )
-                .addEntry( ContentListEntry.create().id( ContentId.from( "id2" ) ).path( ContentPath.from( "/path/to/b" ) ).build() )
+                .addEntry( new ContentListEntry( ContentId.from( "id1" ), ContentPath.from( "/path/to/a" ) ) )
+                .addEntry( new ContentListEntry( ContentId.from( "id2" ), ContentPath.from( "/path/to/b" ) ) )
                 .build() );
 
         runScript( "/lib/xp/examples/content/list.js" );

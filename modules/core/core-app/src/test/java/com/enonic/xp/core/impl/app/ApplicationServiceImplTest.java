@@ -235,11 +235,10 @@ class ApplicationServiceImplTest
         final NodeIds ids = NodeIds.from( virtualAppNodeId );
 
         when( nodeService.list( isA( ListNodesByParentParams.class ) ) ).thenReturn( ListNodesByParentResult.create()
-                                                                                         .addEntry( NodeListEntry.create()
-                                                                                                        .nodeId( virtualAppNodeId )
-                                                                                                        .nodePath( new NodePath( "/app3" ) )
-                                                                                                        .timestamp( Instant.EPOCH )
-                                                                                                        .build() )
+                                                                                         .addEntry( new NodeListEntry( virtualAppNodeId,
+                                                                                                                       new NodePath(
+                                                                                                                           "/app3" ),
+                                                                                                                       Instant.EPOCH ) )
                                                                                          .build() );
 
         when( nodeService.getByIds( ids ) ).thenReturn(

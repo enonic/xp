@@ -385,11 +385,7 @@ public class NodeServiceImpl
         final ListNodesByParentResult.Builder result = ListNodesByParentResult.create();
         for ( final NodeBranchEntry entry : entries )
         {
-            result.addEntry( NodeListEntry.create()
-                                 .nodeId( entry.getNodeId() )
-                                 .nodePath( entry.getNodePath() )
-                                 .timestamp( entry.getTimestamp() )
-                                 .build() );
+            result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
         }
 
         final ListNodesByParentResult listResult = result.build();

@@ -30,7 +30,7 @@ public final class ListContentsByParentResult
 
     public ContentIds getContentIds()
     {
-        return entries.stream().map( ContentListEntry::getId ).collect( ContentIds.collector() );
+        return entries.stream().map( ContentListEntry::id ).collect( ContentIds.collector() );
     }
 
     public int getSize()
