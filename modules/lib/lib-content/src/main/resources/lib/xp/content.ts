@@ -507,18 +507,24 @@ export interface ContentsResult<
 }
 
 /**
- * @deprecated Use {@link QueryContentParams} with `parent` instead.
+ * A hit of {@link query} asked for with `returns: 'ids'`.
  */
 export interface ContentIdHit {
     id: string;
     score: number;
 }
 
+/**
+ * A hit of {@link query} asked for with `returns: 'paths'`.
+ */
 export interface ContentPathHit {
     id: string;
     path: string;
 }
 
+/**
+ * A hit of {@link query} asked for with `returns` naming content fields, which arrive in `fields`.
+ */
 export interface ContentFieldsHit {
     id: string;
     score: number;
@@ -536,6 +542,9 @@ export interface ContentHitsResult<
     highlight?: Record<string, HighlightResult>;
 }
 
+/**
+ * @deprecated Use {@link QueryContentParams} with `parent` instead.
+ */
 export interface GetChildContentParams {
     key: string;
     start?: number;
