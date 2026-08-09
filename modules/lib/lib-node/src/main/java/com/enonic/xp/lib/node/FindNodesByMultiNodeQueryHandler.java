@@ -33,6 +33,11 @@ class FindNodesByMultiNodeQueryHandler
 
             nodeQuery = NodeQuery.create( nodeQuery ).parent( parentKey.getAsPath() ).recursive( isRecursive() ).build();
         }
+        else if ( isRecursive() )
+        {
+            // recursive widens a parent restriction, so without a parent it would silently do nothing
+            throw new IllegalArgumentException( "recursive expects a parent" );
+        }
 
         final MultiRepoNodeQuery multiRepoNodeQuery = new MultiRepoNodeQuery( this.searchTargets, nodeQuery );
 

@@ -777,8 +777,9 @@ interface QueryContentHandler {
  * the children come back in the child order of the parent. A parent that does not exist matches nothing. A path is relative to the
  * content root of the calling context, which the same API serves the archive through, so the very same path names a different content
  * depending on the context.
- * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Since the child order
- * of a parent orders its own children, specify `sort` when the order of a recursive result matters.
+ * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Expects `parent`,
+ * since it has nothing to widen without one. Since the child order of a parent orders its own children, specify `sort` when the order of
+ * a recursive result matters.
  * @param {string|string[]} [params.returns='contents'] What each hit should carry: `'contents'` (the whole content, the default),
  * `'ids'` (id and score), or a list of content field names - `_name`, `_path`, `displayName`, `type`,
  * `creator`, `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` - delivered as `fields` on the hit. Any other name is an

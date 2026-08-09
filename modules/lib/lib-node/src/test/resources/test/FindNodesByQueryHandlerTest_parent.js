@@ -100,3 +100,18 @@ exports.returnsEmptyArray = function () {
 
     throw {message: 'Expected exception'};
 };
+
+exports.recursiveWithoutParent = function () {
+
+    try {
+        repo.query({
+            count: 10,
+            recursive: true
+        });
+    } catch (e) {
+        assert.assertEquals('recursive expects a parent', e.getMessage());
+        return;
+    }
+
+    throw {message: 'Expected exception'};
+};

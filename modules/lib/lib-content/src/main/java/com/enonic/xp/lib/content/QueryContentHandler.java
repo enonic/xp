@@ -216,6 +216,11 @@ public final class QueryContentHandler
             }
             queryBuilder.recursive( Boolean.TRUE.equals( recursive ) );
         }
+        else if ( Boolean.TRUE.equals( recursive ) )
+        {
+            // recursive widens a parent restriction, so without a parent it would silently do nothing
+            throw new IllegalArgumentException( "recursive expects a parent" );
+        }
     }
 
     private ContentTypeNames getContentTypeNames()

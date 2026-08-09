@@ -322,6 +322,14 @@ class FindNodesByQueryHandlerTest
     }
 
     @Test
+    void recursiveWithoutParent()
+    {
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "recursiveWithoutParent" );
+
+        Mockito.verify( this.nodeService, Mockito.never() ).findByQuery( Mockito.isA( NodeQuery.class ) );
+    }
+
+    @Test
     void returnsEmptyArray()
     {
         runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "returnsEmptyArray" );

@@ -35,3 +35,18 @@ exports.parentRecursive = function () {
     assert.assertEquals(20, result.total);
     assert.assertEquals(3, result.count);
 };
+
+exports.recursiveWithoutParent = function () {
+
+    try {
+        content.query({
+            count: 10,
+            recursive: true
+        });
+    } catch (e) {
+        assert.assertEquals('recursive expects a parent', e.getMessage());
+        return;
+    }
+
+    throw {message: 'Expected exception'};
+};

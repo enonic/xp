@@ -8,6 +8,8 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * The fields a query asked for, as they came back for one hit. Lookups accept any casing an index path accepts. Every field is a list,
  * single-valued or not, and a field the hit has no value for is absent rather than empty.
@@ -21,6 +23,7 @@ public record FieldValues(Map<String, List<Object>> asMap)
 
     public FieldValues
     {
+        requireNonNull( asMap, "asMap is required" );
         asMap = asMap.entrySet()
             .stream()
             .collect( ImmutableMap.toImmutableMap( entry -> IndexPath.from( entry.getKey() ).getPath(),

@@ -232,6 +232,14 @@ class QueryContentHandlerTest
     }
 
     @Test
+    void recursiveWithoutParent()
+    {
+        runFunction( "/test/QueryContentHandlerTest_parent.js", "recursiveWithoutParent" );
+
+        Mockito.verify( contentService, Mockito.never() ).find( Mockito.any() );
+    }
+
+    @Test
     void returnsEmptyArray()
     {
         runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsEmptyArray" );
