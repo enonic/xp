@@ -273,16 +273,19 @@ class ContentServiceImplTest_find
 
         final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create()
                                                                             .parentPath( site.getPath() )
-                                                                            .returnFields( NodeIndexPath.PATH, NodeIndexPath.PARENT_PATH,
-                                                                                           NodeIndexPath.NAME )
+                                                                            .returnFields( NodeIndexPath.PATH, NodeIndexPath.NAME,
+                                                                                           IndexPath.from( "displayName" ),
+                                                                                           IndexPath.from( "type" ) )
                                                                             .build() );
 
         final FieldValues fields = result.getFields().get( child.getId() );
 
         // path values come back as content paths, not the node paths the index stores
         assertEquals( List.of( child.getPath().toString() ), fields.getValues( NodeIndexPath.PATH ) );
-        assertEquals( List.of( site.getPath().toString() ), fields.getValues( NodeIndexPath.PARENT_PATH ) );
         assertEquals( List.of( "b" ), fields.getValues( NodeIndexPath.NAME ) );
+        // content fields, under the names a fetched content shows them by
+        assertEquals( List.of( child.getDisplayName() ), fields.getValues( "displayName" ) );
+        assertEquals( List.of( child.getType().toString() ), fields.getValues( "type" ) );
     }
 
     @Test
@@ -290,9 +293,13 @@ class ContentServiceImplTest_find
     {
         final ContentQuery.Builder builder = ContentQuery.create();
 
-        assertEquals( "unsupported return field: displayname",
+        // node fields a content never shows are not content fields
+        assertEquals( "unsupported return field: _ts",
                       assertThrows( IllegalArgumentException.class,
-                                    () -> builder.returnFields( IndexPath.from( "displayName" ) ) ).getMessage() );
+                                    () -> builder.returnFields( NodeIndexPath.TIMESTAMP ) ).getMessage() );
+        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( NodeIndexPath.VERSION ) );
+        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( NodeIndexPath.PARENT_PATH ) );
+        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( IndexPath.from( "data.priority" ) ) );
     }
 
     @Test

@@ -105,7 +105,7 @@ final class FindContentIdsByQueryCommand
     private static FieldValues translatePathValues( final FieldValues fields )
     {
         final Set<String> fieldNames = fields.getFields();
-        if ( !fieldNames.contains( NodeIndexPath.PATH.getPath() ) && !fieldNames.contains( NodeIndexPath.PARENT_PATH.getPath() ) )
+        if ( !fieldNames.contains( NodeIndexPath.PATH.getPath() ) )
         {
             return fields;
         }
@@ -113,7 +113,7 @@ final class FindContentIdsByQueryCommand
         final FieldValues.Builder translated = FieldValues.create();
         for ( final String field : fieldNames )
         {
-            if ( field.equals( NodeIndexPath.PATH.getPath() ) || field.equals( NodeIndexPath.PARENT_PATH.getPath() ) )
+            if ( field.equals( NodeIndexPath.PATH.getPath() ) )
             {
                 translated.add( field, fields.getValues( field )
                     .stream()

@@ -42,7 +42,7 @@ exports.returnsFields = function () {
     var result = content.query({
         count: 10,
         query: '_name = "one"',
-        returns: ['_name', '_references']
+        returns: ['_name', 'displayName']
     });
 
     assert.assertJsonEquals({
@@ -53,9 +53,9 @@ exports.returnsFields = function () {
                 id: 'id1',
                 score: 1.0,
                 fields: {
-                    // field keys are lowercase
+                    // fields come back under the names a content shows them by
                     _name: 'one',
-                    '_references': ['ref-a', 'ref-b']
+                    displayName: 'One'
                 }
             },
             {

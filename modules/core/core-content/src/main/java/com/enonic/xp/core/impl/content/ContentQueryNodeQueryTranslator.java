@@ -48,7 +48,8 @@ class ContentQueryNodeQueryTranslator
             .addQueryFilter( contentCollectionFilter )
             .highlight( contentQuery.getHighlight() );
 
-        builder.returnFields( contentQuery.getReturnFields().toArray( IndexPath[]::new ) );
+        // already checked against ContentQuery.SUPPORTED_RETURN_FIELDS, which names content fields rather than node fields
+        builder.checkedReturnFields( contentQuery.getReturnFields() );
 
         // a recursive parent is matched by the path prefix built into the query expression instead, see buildNodeQueryExpr
         if ( parent != null && !contentQuery.isRecursive() )

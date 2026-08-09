@@ -1,6 +1,8 @@
 package com.enonic.xp.node;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -14,15 +16,17 @@ public final class NodeQuery
     public static final int ALL_RESULTS_SIZE_FLAG = -1;
 
     /**
-     * The index fields a query may ask back per hit. Deliberately limited to node metadata with stable, documented string values - how
-     * the index lays out property fields and their typed variants stays private, so the set can widen later without ever breaking a
-     * caller.
+     * The index fields a query may ask back per hit, mapped to the name a fetched {@link Node} shows them by. Exactly those a node shows
+     * anyway: nothing the index keeps for its own purposes - parent paths, reference collections, analyzed or sortable variants - is
+     * reachable, so asking for fields is a cheaper way to read what is already public rather than a window into how the index is laid out.
+     * <p>
+     * The keys are index paths and therefore lowercase; the values are the mixed-case names the node exposes, which is what callers see.
      *
      * @since 8.1.0
      */
-    public static final Set<IndexPath> SUPPORTED_RETURN_FIELDS =
-        Set.of( NodeIndexPath.PATH, NodeIndexPath.PARENT_PATH, NodeIndexPath.NAME, NodeIndexPath.NODE_TYPE, NodeIndexPath.TIMESTAMP,
-                NodeIndexPath.VERSION, NodeIndexPath.REFERENCE );
+    public static final Map<IndexPath, String> SUPPORTED_RETURN_FIELDS =
+        Map.of( NodeIndexPath.NAME, "_name", NodeIndexPath.PATH, "_path", NodeIndexPath.NODE_TYPE, "_nodeType", NodeIndexPath.VERSION,
+                "_versionKey", NodeIndexPath.TIMESTAMP, "_ts" );
 
     private final NodePath parent;
 
@@ -156,8 +160,8 @@ public final class NodeQuery
 
         /**
          * Adds index fields to fetch for every hit, from {@link #SUPPORTED_RETURN_FIELDS} only. The values arrive per hit in
-         * {@link NodeHit#getFields()}: every field as a list of strings ({@code _ts} in ISO-8601 form, {@code _references} one node id
-         * per value), and a field the index does not hold for a hit is absent rather than empty.
+         * {@link NodeHit#getFields()}: every field as a list of strings, {@code _ts} in ISO-8601 form, and a field the index does not hold
+         * for a hit is absent rather than empty.
          *
          * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
@@ -166,9 +170,22 @@ public final class NodeQuery
         {
             for ( final IndexPath field : fields )
             {
-                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.contains( field ), "unsupported return field: %s", field );
+                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.containsKey( field ), "unsupported return field: %s", field );
                 this.returnFields.add( field );
             }
+            return this;
+        }
+
+        /**
+         * Adds return fields already checked against the supported set of an API layered on top of nodes - the content API answers for
+         * content field names, which are not node field names. Not for general use: {@link #returnFields(IndexPath...)} is the entry
+         * point that states what a node query supports.
+         *
+         * @since 8.1.0
+         */
+        public Builder checkedReturnFields( final Collection<IndexPath> fields )
+        {
+            this.returnFields.addAll( fields );
             return this;
         }
 

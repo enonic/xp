@@ -1024,9 +1024,9 @@ class RepoConnectionImpl
      * @param {string} [params.parent] Path or id of a node to restrict the query to the direct children of. When `sort` is not
      * specified, the children come back in the child order of the parent. A parent that does not exist matches nothing.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * @param {string[]} [params.returns] System fields to fetch for every hit - `_path`, `_parentPath`, `_name`, `_nodeType`, `_ts`,
-     * `_versionKey`, `_references` - available as `fields` on the hit keyed by lowercase field name. Single values come back as
-     * scalars, multi-valued fields as arrays. Any other field name is an error.
+     * @param {string[]} [params.returns] Node fields to fetch for every hit - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
+     * available as `fields` on the hit keyed by lowercase field name. These are the fields a fetched node shows anyway; any other name,
+     * including index-internal ones, is an error.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1316,9 +1316,9 @@ class MultiRepoConnectionImpl
      * connection. An id cannot name one node across several repositories, so unlike the single-repo query only a path is accepted, and no
      * child order is inherited - pass `sort` when the order matters.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * @param {string[]} [params.returns] System fields to fetch for every hit - `_path`, `_parentPath`, `_name`, `_nodeType`, `_ts`,
-     * `_versionKey`, `_references` - available as `fields` on the hit keyed by lowercase field name. Single values come back as
-     * scalars, multi-valued fields as arrays. Any other field name is an error.
+     * @param {string[]} [params.returns] Node fields to fetch for every hit - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
+     * available as `fields` on the hit keyed by lowercase field name. These are the fields a fetched node shows anyway; any other name,
+     * including index-internal ones, is an error.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.

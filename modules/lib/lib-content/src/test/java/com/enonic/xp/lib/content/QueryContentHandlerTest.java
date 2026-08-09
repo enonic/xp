@@ -212,14 +212,14 @@ class QueryContentHandlerTest
                                                                                                                   FieldValues.create()
                                                                                                                       .add( "_name",
                                                                                                                             List.of( "one" ) )
-                                                                                                                      .add( "_references",
-                                                                                                                            List.of( "ref-a", "ref-b" ) )
+                                                                                                                      .add( "displayName",
+                                                                                                                            List.of( "One" ) )
                                                                                                                       .build() ) )
                                                                                                  .build() );
 
         runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsFields" );
 
-        Assertions.assertEquals( Set.of( IndexPath.from( "_name" ), IndexPath.from( "_references" ) ),
+        Assertions.assertEquals( Set.of( IndexPath.from( "_name" ), IndexPath.from( "displayName" ) ),
                                  capturedQuery().getReturnFields() );
     }
 

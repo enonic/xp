@@ -293,14 +293,14 @@ class FindNodesByQueryHandlerTest
                                                .score( 1.0f )
                                                .fields( FieldValues.create()
                                                             .add( "_path", List.of( "/my-node" ) )
-                                                            .add( "_references", List.of( "ref-a", "ref-b" ) )
+                                                            .add( "_nodeType", List.of( "default" ) )
                                                             .build() )
                                                .build() )
                               .build() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
 
         runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "returnFields" );
 
-        Assertions.assertEquals( Set.of( IndexPath.from( "_path" ), IndexPath.from( "_references" ) ), capturedQuery().getReturnFields() );
+        Assertions.assertEquals( Set.of( IndexPath.from( "_path" ), IndexPath.from( "_nodeType" ) ), capturedQuery().getReturnFields() );
     }
 
     private FindNodesByQueryResult twoHits()

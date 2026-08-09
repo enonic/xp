@@ -1,13 +1,15 @@
 package com.enonic.xp.content;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.AggregationQueries;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -21,6 +23,21 @@ import com.enonic.xp.schema.content.ContentTypeNames;
 public final class ContentQuery
 {
     public static final int DEFAULT_FETCH_SIZE = 10;
+
+    /**
+     * The index fields a content query may ask back per hit, mapped to the name a fetched {@link Content} shows them by. Exactly those a
+     * content shows anyway: node-level fields a content never exposes - {@code _ts}, {@code _versionKey}, {@code _nodeType},
+     * {@code _parentPath} - are not among them, and neither is anything the index keeps for its own purposes.
+     * <p>
+     * The keys are index paths and therefore lowercase; the values are the mixed-case names the content exposes.
+     *
+     * @since 8.1.0
+     */
+    public static final Map<IndexPath, String> SUPPORTED_RETURN_FIELDS =
+        Stream.of( "_name", "_path", ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.TYPE, ContentPropertyNames.CREATOR,
+                   ContentPropertyNames.MODIFIER, ContentPropertyNames.CREATED_TIME, ContentPropertyNames.MODIFIED_TIME,
+                   ContentPropertyNames.OWNER, ContentPropertyNames.LANGUAGE )
+            .collect( Collectors.toUnmodifiableMap( IndexPath::from, name -> name ) );
 
     private final QueryExpr queryExpr;
 
@@ -238,18 +255,18 @@ public final class ContentQuery
         }
 
         /**
-         * Adds index fields to fetch for every hit, from {@link NodeQuery#SUPPORTED_RETURN_FIELDS} only: every field as a list of
-         * strings, absent when the index holds nothing for the hit. The only translation applied is that {@code _path} and
-         * {@code _parentPath} values come back as content paths rather than the node paths the index stores.
+         * Adds index fields to fetch for every hit, from {@link #SUPPORTED_RETURN_FIELDS} only: every field as a list of strings, absent
+         * when the index holds nothing for the hit. The only translation applied is that {@code _path} values come back as content paths
+         * rather than the node paths the index stores.
          *
-         * @throws IllegalArgumentException for a field outside {@link NodeQuery#SUPPORTED_RETURN_FIELDS}.
+         * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
          */
         public Builder returnFields( final IndexPath... fields )
         {
             for ( final IndexPath field : fields )
             {
-                Preconditions.checkArgument( NodeQuery.SUPPORTED_RETURN_FIELDS.contains( field ), "unsupported return field: %s", field );
+                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.containsKey( field ), "unsupported return field: %s", field );
                 this.returnFields.add( field );
             }
             return this;

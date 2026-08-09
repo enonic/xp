@@ -44,7 +44,7 @@ exports.returnFields = function () {
     var result = repo.query({
         count: 10,
         query: '_name = "my-node"',
-        returns: ['_path', '_references']
+        returns: ['_path', '_nodeType']
     });
 
     assert.assertJsonEquals({
@@ -56,7 +56,7 @@ exports.returnFields = function () {
                 score: 1.0,
                 fields: {
                     '_path': '/my-node',
-                    '_references': ['ref-a', 'ref-b']
+                    '_nodeType': 'default'
                 }
             }
         ]
