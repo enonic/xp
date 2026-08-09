@@ -627,7 +627,9 @@ interface ListContentHandler {
  * @example-ref examples/content/list.js
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.parent Path or id of the content to enumerate the children of.
+ * @param {string} params.parent Path or id of the content to enumerate the children of. A path is relative to the content root of the
+ * calling context, which the same API serves the archive through, so the very same path names a different content depending on the
+ * context; an id below a different root than the context lists nothing.
  * @param {boolean} [params.recursive=false] List every descendant instead of the direct children only.
  *
  * @returns {object} `count` and `hits` of `{id, path}` entries, ordered by path.
@@ -820,7 +822,9 @@ interface QueryContentHandler {
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
  * @param {string} [params.parent] Path or id of a content to restrict the query to the direct children of. When `sort` is not specified,
- * the children come back in the child order of the parent. A parent that does not exist matches nothing.
+ * the children come back in the child order of the parent. A parent that does not exist matches nothing. A path is relative to the
+ * content root of the calling context, which the same API serves the archive through, so the very same path names a different content
+ * depending on the context.
  * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Since the child order
  * of a parent orders its own children, specify `sort` when the order of a recursive result matters.
  * @param {string|string[]} [params.returns='contents'] Shape of the hits: `'contents'` (full contents, the default), `'ids'` (id and

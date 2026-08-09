@@ -4,6 +4,10 @@ import com.google.common.base.Preconditions;
 
 /**
  * Parameters for {@link ContentService#list(ListContentsByParentParams)}. The parent is given by path or by id, not both.
+ * <p>
+ * A {@link ContentPath} is relative to the content root of the calling context, which the same API serves the archive through: the very
+ * same path names a different content depending on whether the context roots it at the content tree or at the archive. A parent given by
+ * id is only listed when it lives below the content root of the context, so listing never reaches from one into the other.
  *
  * @since 8.1.0
  */

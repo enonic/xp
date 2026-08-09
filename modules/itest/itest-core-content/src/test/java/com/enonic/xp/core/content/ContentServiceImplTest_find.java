@@ -11,13 +11,18 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
+import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
@@ -25,6 +30,7 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.FieldValues;
 import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
@@ -801,6 +807,38 @@ class ContentServiceImplTest_find
             ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
 
         assertOrder( contentService.find( queryDsl ).getContentIds(), child2 );
+    }
+
+    @Test
+    void archive_context_queries_below_the_archive_root()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        final Content child = createContent( parent.getPath(), "child" );
+
+        contentService.archive( ArchiveContentParams.create().contentId( parent.getId() ).build() );
+
+        archiveContext().runWith( () -> {
+            final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create()
+                                                                                .parentPath( parent.getPath() )
+                                                                                .returnFields( NodeIndexPath.PATH )
+                                                                                .build() );
+
+            assertThat( result.getContentIds() ).containsExactly( child.getId() );
+
+            // the path comes back relative to the content root of the context, which here is the archive
+            assertEquals( List.of( child.getPath().toString() ),
+                          result.getFields().get( child.getId() ).getValues( NodeIndexPath.PATH ) );
+        } );
+
+        // the same query outside the archive context matches nothing, the content no longer being below /content
+        assertEquals( 0, contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() ).getTotalHits() );
+    }
+
+    private Context archiveContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() )
+            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            .build();
     }
 
     private Content createParentWithChildOrder( final ChildOrder childOrder )

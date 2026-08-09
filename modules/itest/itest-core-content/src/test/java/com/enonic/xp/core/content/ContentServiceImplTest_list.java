@@ -5,13 +5,19 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentListEntry;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ListContentsByParentParams;
 import com.enonic.xp.content.ListContentsByParentResult;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.node.NodePath;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -101,5 +107,53 @@ class ContentServiceImplTest_list
                 contentService.list( ListContentsByParentParams.create().parentPath( ContentPath.ROOT ).build() );
             assertThat( listed.getEntries() ).extracting( ContentListEntry::id ).contains( pending.getId() );
         } );
+    }
+
+    @Test
+    void archive_context_lists_below_the_archive_root()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        final Content child = createContent( parent.getPath(), "child" );
+
+        contentService.archive( ArchiveContentParams.create().contentId( parent.getId() ).build() );
+
+        archiveContext().runWith( () -> {
+            // a content path means whatever the content root of the context says it means, here /archive rather than /content
+            final ListContentsByParentResult archived =
+                contentService.list( ListContentsByParentParams.create().parentPath( ContentPath.ROOT ).recursive( true ).build() );
+
+            assertThat( archived.getContentIds() ).contains( parent.getId(), child.getId() );
+            assertThat( archived.getEntries() ).extracting( ContentListEntry::path )
+                .allSatisfy( path -> assertTrue( path.toString().startsWith( "/" ) ) );
+        } );
+
+        // the same listing outside the archive context sees nothing of it
+        assertTrue( contentService.list( ListContentsByParentParams.create().parentPath( ContentPath.ROOT ).recursive( true ).build() )
+                        .getContentIds()
+                        .stream()
+                        .noneMatch( id -> id.equals( parent.getId() ) ) );
+    }
+
+    @Test
+    void a_parent_id_outside_the_content_root_of_the_context_lists_nothing()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        createContent( parent.getPath(), "child" );
+
+        contentService.archive( ArchiveContentParams.create().contentId( parent.getId() ).build() );
+
+        // the id still resolves, but it now lives under /archive - listing it from the content context must not reach across
+        assertTrue( contentService.list( ListContentsByParentParams.create().parentId( parent.getId() ).build() ).isEmpty() );
+
+        archiveContext().runWith(
+            () -> assertThat( contentService.list( ListContentsByParentParams.create().parentId( parent.getId() ).build() )
+                                  .getEntries() ).isNotEmpty() );
+    }
+
+    private Context archiveContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() )
+            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            .build();
     }
 }

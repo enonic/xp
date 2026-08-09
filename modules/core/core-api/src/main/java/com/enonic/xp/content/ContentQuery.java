@@ -215,6 +215,9 @@ public final class ContentQuery
          * When the query itself specifies no order expressions, results come back in the child order of the parent. Specify order
          * expressions to sort otherwise.
          * <p>
+         * The path is relative to the content root of the calling context, which the same API serves the archive through: the very same
+         * path names a different content depending on whether the context roots it at the content tree or at the archive.
+         * <p>
          * Mutually exclusive with {@link #parentId(ContentId)}.
          *
          * @param parentPath path of the parent content, {@link ContentPath#ROOT} for the top level of the content tree.
@@ -257,7 +260,8 @@ public final class ContentQuery
         /**
          * Adds index fields to fetch for every hit, from {@link #SUPPORTED_RETURN_FIELDS} only: every field as a list of strings, absent
          * when the index holds nothing for the hit. The only translation applied is that {@code _path} values come back as content paths
-         * rather than the node paths the index stores.
+         * rather than the node paths the index stores - relative to the content root of the calling context, so a query run against the
+         * archive answers with paths inside the archive.
          *
          * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
