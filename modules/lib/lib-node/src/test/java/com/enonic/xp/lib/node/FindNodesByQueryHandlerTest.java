@@ -303,6 +303,24 @@ class FindNodesByQueryHandlerTest
         Assertions.assertEquals( Set.of( IndexPath.from( "_path" ), IndexPath.from( "_nodeType" ) ), capturedQuery().getReturnFields() );
     }
 
+    @Test
+    void multiValuedReturnField()
+    {
+        // no field in the whitelist carries more than one value today, but index values are lists and the whitelist can widen
+        Mockito.doReturn( FindNodesByQueryResult.create()
+                              .totalHits( 1 )
+                              .addNodeHit( NodeHit.create()
+                                               .nodeId( NodeId.from( "node-id" ) )
+                                               .score( 1.0f )
+                                               .fields( FieldValues.create()
+                                                            .add( "_path", List.of( "/my-node", "/my-other-node" ) )
+                                                            .build() )
+                                               .build() )
+                              .build() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
+
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "multiValuedReturnField" );
+    }
+
     private FindNodesByQueryResult twoHits()
     {
         return FindNodesByQueryResult.create()

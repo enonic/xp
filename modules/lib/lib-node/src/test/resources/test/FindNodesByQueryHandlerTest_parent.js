@@ -62,3 +62,26 @@ exports.returnFields = function () {
         ]
     }, result);
 };
+
+exports.multiValuedReturnField = function () {
+
+    var result = repo.query({
+        count: 10,
+        query: '_name = "my-node"',
+        returns: ['_path']
+    });
+
+    assert.assertJsonEquals({
+        total: 1,
+        count: 1,
+        hits: [
+            {
+                id: 'node-id',
+                score: 1.0,
+                fields: {
+                    '_path': ['/my-node', '/my-other-node']
+                }
+            }
+        ]
+    }, result);
+};
