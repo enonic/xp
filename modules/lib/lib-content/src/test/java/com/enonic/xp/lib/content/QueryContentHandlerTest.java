@@ -177,7 +177,7 @@ class QueryContentHandlerTest
     }
 
     @Test
-    void returnsPaths()
+    void returnsPathField()
     {
         Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) ).thenReturn( FindContentIdsByQueryResult.create()
                                                                                                  .totalHits( 2 )
@@ -194,7 +194,7 @@ class QueryContentHandlerTest
                                                                                                                       .build() ) )
                                                                                                  .build() );
 
-        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsPaths" );
+        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsPathField" );
 
         Assertions.assertEquals( Set.of( NodeIndexPath.PATH ), capturedQuery().getReturnFields() );
         Mockito.verify( contentService, Mockito.never() ).getByIds( Mockito.any() );

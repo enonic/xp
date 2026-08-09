@@ -19,20 +19,20 @@ exports.returnsIds = function () {
     }, result);
 };
 
-exports.returnsPaths = function () {
+exports.returnsPathField = function () {
 
     var result = content.query({
         count: 10,
         parent: '/a/b',
-        returns: 'paths'
+        returns: ['_path']
     });
 
     assert.assertJsonEquals({
         total: 2,
         count: 2,
         hits: [
-            {id: 'id1', path: '/a/b/one'},
-            {id: 'id2', path: '/a/b/two'}
+            {id: 'id1', score: 0, fields: {_path: '/a/b/one'}},
+            {id: 'id2', score: 0, fields: {_path: '/a/b/two'}}
         ]
     }, result);
 };
@@ -74,7 +74,7 @@ exports.returnsInvalid = function () {
             returns: 'everything'
         });
     } catch (e) {
-        assert.assertEquals('returns must be \'contents\', \'ids\', \'paths\' or an array of index field names', e.getMessage());
+        assert.assertEquals('returns must be \'contents\', \'ids\' or an array of index field names', e.getMessage());
         return;
     }
 

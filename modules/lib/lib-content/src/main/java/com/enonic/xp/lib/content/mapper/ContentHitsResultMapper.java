@@ -10,19 +10,18 @@ import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 /**
- * The lightweight result shapes of a content query: hits carrying ids, paths or requested index-field values instead of full contents.
+ * The lightweight result shapes of a content query: hits carrying ids, or the requested index-field values, instead of full contents.
  */
 public final class ContentHitsResultMapper
     implements MapSerializable
 {
     public enum Shape
     {
-        IDS, PATHS, FIELDS
+        IDS, FIELDS
     }
 
     private final FindContentIdsByQueryResult result;
@@ -47,18 +46,8 @@ public final class ContentHitsResultMapper
             gen.map();
             gen.value( "id", contentId );
 
-            if ( shape == Shape.PATHS )
-            {
-                result.getFields()
-                    .getOrDefault( contentId, FieldValues.empty() )
-                    .getSingleValue( NodeIndexPath.PATH )
-                    .ifPresent( path -> gen.value( "path", path ) );
-            }
-            else
-            {
-                final Float score = result.getScore() != null ? result.getScore().get( contentId ) : null;
-                gen.value( "score", score == null || Float.isNaN( score ) ? 0.0 : score );
-            }
+            final Float score = result.getScore() != null ? result.getScore().get( contentId ) : null;
+            gen.value( "score", score == null || Float.isNaN( score ) ? 0.0 : score );
 
             if ( shape == Shape.FIELDS )
             {

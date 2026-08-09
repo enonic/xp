@@ -18,7 +18,6 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.lib.common.JsonToFilterMapper;
 import com.enonic.xp.lib.content.mapper.ContentHitsResultMapper;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
-import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.DslExpr;
@@ -102,8 +101,6 @@ public final class QueryContentHandler
         {
             case IDS:
                 return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.IDS );
-            case PATHS:
-                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.PATHS );
             case FIELDS:
                 return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.FIELDS );
             default:
@@ -113,7 +110,7 @@ public final class QueryContentHandler
 
     private enum ReturnShape
     {
-        CONTENTS, IDS, PATHS, FIELDS
+        CONTENTS, IDS, FIELDS
     }
 
     /**
@@ -135,11 +132,8 @@ public final class QueryContentHandler
                     return ReturnShape.CONTENTS;
                 case "ids":
                     return ReturnShape.IDS;
-                case "paths":
-                    queryBuilder.returnFields( NodeIndexPath.PATH );
-                    return ReturnShape.PATHS;
                 default:
-                    throw new IllegalArgumentException( "returns must be 'contents', 'ids', 'paths' or an array of index field names" );
+                    throw new IllegalArgumentException( "returns must be 'contents', 'ids' or an array of index field names" );
             }
         }
         else if ( returns.isArray() )
@@ -148,7 +142,7 @@ public final class QueryContentHandler
             return ReturnShape.FIELDS;
         }
 
-        throw new IllegalArgumentException( "returns must be 'contents', 'ids', 'paths' or an array of index field names" );
+        throw new IllegalArgumentException( "returns must be 'contents', 'ids' or an array of index field names" );
     }
 
     private List<OrderExpr> buildOrderExpr()

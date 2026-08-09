@@ -515,14 +515,6 @@ export interface ContentIdHit {
 }
 
 /**
- * A hit of {@link query} asked for with `returns: 'paths'`.
- */
-export interface ContentPathHit {
-    id: string;
-    path: string;
-}
-
-/**
  * A hit of {@link query} asked for with `returns` naming content fields, which arrive in `fields`.
  */
 export interface ContentFieldsHit {
@@ -734,7 +726,7 @@ export interface QueryContentParams<AggregationInput extends Aggregations = neve
     count?: number;
     parent?: string;
     recursive?: boolean;
-    returns?: 'contents' | 'ids' | 'paths' | string[];
+    returns?: 'contents' | 'ids' | string[];
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
@@ -788,7 +780,7 @@ interface QueryContentHandler {
  * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Since the child order
  * of a parent orders its own children, specify `sort` when the order of a recursive result matters.
  * @param {string|string[]} [params.returns='contents'] What each hit should carry: `'contents'` (the whole content, the default),
- * `'ids'` (id and score), `'paths'` (id and path), or a list of content field names - `_name`, `_path`, `displayName`, `type`,
+ * `'ids'` (id and score), or a list of content field names - `_name`, `_path`, `displayName`, `type`,
  * `creator`, `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` - delivered as `fields` on the hit. Any other name is an
  * error. Only the fields a content shows are available, so a hit answers exactly what the content would; every shape but the default
  * answers without reading the contents at all.
@@ -809,10 +801,6 @@ export function query<
 export function query<
     Hit extends Content<unknown> = Content,
     AggregationInput extends Aggregations = never
->(params: QueryContentParams<AggregationInput> & {returns: 'paths'}): ContentHitsResult<ContentPathHit, AggregationsToAggregationResults<AggregationInput>>;
-export function query<
-    Hit extends Content<unknown> = Content,
-    AggregationInput extends Aggregations = never
 >(params: QueryContentParams<AggregationInput> & {returns: string[]}): ContentHitsResult<ContentFieldsHit, AggregationsToAggregationResults<AggregationInput>>;
 export function query<
     Hit extends Content<unknown> = Content,
@@ -823,7 +811,7 @@ export function query<
     AggregationInput extends Aggregations = never
 >(params: QueryContentParams<AggregationInput>):
     ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>>
-    | ContentHitsResult<ContentIdHit | ContentPathHit | ContentFieldsHit, AggregationsToAggregationResults<AggregationInput>> {
+    | ContentHitsResult<ContentIdHit | ContentFieldsHit, AggregationsToAggregationResults<AggregationInput>> {
     const bean: QueryContentHandler = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
 
     bean.setStart(__.nullOrValue(params.start));
