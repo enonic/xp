@@ -16,14 +16,13 @@ import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.node.CreateRootNodeCommand;
-import com.enonic.xp.repo.impl.node.FindNodeIdsByParentCommand;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FindNodeIdsByParentCommandTest
+class NodeServiceImplTest_findByParent
     extends AbstractNodeTest
 {
 
@@ -49,14 +48,8 @@ class FindNodeIdsByParentCommandTest
 
         nodeService.refresh( RefreshMode.ALL );
 
-        final FindNodesByParentResult result = FindNodeIdsByParentCommand.create()
-            .parentPath( root.path() )
-            .recursive( true )
-            .searchService( this.searchService )
-            .storageService( this.storageService )
-            .indexServiceInternal( this.indexServiceInternal )
-            .build()
-            .execute();
+        final FindNodesByParentResult result =
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( root.path() ).recursive( true ).build() );
 
         assertEquals( 2, result.getNodeIds().getSize() );
     }
@@ -83,14 +76,8 @@ class FindNodeIdsByParentCommandTest
 
         nodeService.refresh( RefreshMode.SEARCH );
 
-        final FindNodesByParentResult children = FindNodeIdsByParentCommand.create()
-            .parentPath( node.path() )
-            .recursive( true )
-            .searchService( this.searchService )
-            .storageService( this.storageService )
-            .indexServiceInternal( this.indexServiceInternal )
-            .build()
-            .execute();
+        final FindNodesByParentResult children =
+            nodeService.findByParent( FindNodesByParentParams.create().parentPath( node.path() ).recursive( true ).build() );
 
         assertEquals( 0, children.getNodeIds().getSize() );
     }
@@ -324,32 +311,12 @@ class FindNodeIdsByParentCommandTest
 
     private FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
-        return FindNodeIdsByParentCommand.create()
-            .parentId( params.getParentId() )
-            .parentPath( params.getParentPath() )
-            .recursive( params.isRecursive() )
-            .queryFilters( params.getQueryFilters() )
-            .from( params.getFrom() )
-            .size( params.getSize() )
-            .countOnly( params.isCountOnly() )
-            .childOrder( params.getChildOrder() )
-            .indexServiceInternal( indexServiceInternal )
-            .storageService( this.storageService )
-            .searchService( this.searchService )
-            .build()
-            .execute();
+        return nodeService.findByParent( params );
     }
 
     private FindNodesByParentResult getByParentRecursive( final NodeId nodeId )
     {
-        return FindNodeIdsByParentCommand.create()
-            .parentId( nodeId )
-            .recursive( true )
-            .searchService( this.searchService )
-            .storageService( this.storageService )
-            .indexServiceInternal( this.indexServiceInternal )
-            .build()
-            .execute();
+        return nodeService.findByParent( FindNodesByParentParams.create().parentId( nodeId ).recursive( true ).build() );
     }
 
 }

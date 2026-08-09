@@ -1,14 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentByParentParams;
 import com.enonic.xp.content.FindContentIdsByParentResult;
+import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.index.ChildOrder;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
-import com.enonic.xp.query.filter.Filters;
+import com.enonic.xp.query.expr.QueryExpr;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,35 +27,40 @@ final class FindContentIdsByParentCommand
         return new Builder( params );
     }
 
+    /**
+     * The deprecated findIdsByParent expressed as the query it always was, so there is one implementation of searching by parent rather
+     * than two that can drift apart. Reading the parent up front is what keeps this answering with ContentNotFoundException for one that
+     * does not exist, where a query answers with nothing.
+     */
     FindContentIdsByParentResult execute()
-    {
-        final FindNodesByParentResult result = nodeService.findByParent( createFindNodesByParentParams() );
-
-        final ContentIds contentIds = ContentNodeHelper.toContentIds( result.getNodeIds() );
-
-        return FindContentIdsByParentResult.create().contentIds( contentIds ).totalHits( result.getTotalHits() ).build();
-    }
-
-    private FindNodesByParentParams createFindNodesByParentParams()
     {
         final Content parentContent = getParentContent();
 
-        final FindNodesByParentParams.Builder builder =
-            FindNodesByParentParams.create().parentPath( ContentNodeHelper.translateContentPathToNodePath( parentContent.getPath() ) );
-
-        ChildOrder childOrder = params.getChildOrder();
-        if ( childOrder == null )
-        {
-            childOrder = parentContent.getChildOrder();
-        }
-        childOrder = ContentChildOrder.withLanguage( childOrder, parentContent.getLanguage() );
-
-        return builder.queryFilters( Filters.create().addAll( createFilters() ).addAll( params.getQueryFilters() ).build() )
-            .from( params.getFrom() )
-            .size( params.getSize() )
-            .childOrder( childOrder )
+        final ContentQuery.Builder query = ContentQuery.create()
+            .parentPath( parentContent.getPath() )
             .recursive( params.isRecursive() )
-            .build();
+            .from( params.getFrom() )
+            .size( params.getSize() );
+
+        params.getQueryFilters().forEach( query::queryFilter );
+
+        final ChildOrder childOrder = ContentChildOrder.withLanguage(
+            params.getChildOrder() != null ? params.getChildOrder() : parentContent.getChildOrder(), parentContent.getLanguage() );
+
+        if ( childOrder != null && !childOrder.isEmpty() )
+        {
+            query.queryExpr( QueryExpr.from( null, childOrder.getOrderExpressions() ) );
+        }
+
+        final FindContentIdsByQueryResult result = FindContentIdsByQueryCommand.create()
+            .query( query.build() )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
+
+        return FindContentIdsByParentResult.create().contentIds( result.getContentIds() ).totalHits( result.getTotalHits() ).build();
     }
 
     private Content getParentContent()

@@ -57,7 +57,6 @@ import com.enonic.xp.repo.impl.index.IndexServiceImpl;
 import com.enonic.xp.repo.impl.node.CreateNodeCommand;
 import com.enonic.xp.repo.impl.node.CreateRootNodeCommand;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
-import com.enonic.xp.repo.impl.node.FindNodeIdsByParentCommand;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
 import com.enonic.xp.repo.impl.node.GetNodeByIdCommand;
 import com.enonic.xp.repo.impl.node.GetNodeByPathCommand;
@@ -411,13 +410,7 @@ public abstract class AbstractNodeTest
 
     protected FindNodesByParentResult findByParent( final NodePath parentPath )
     {
-        return FindNodeIdsByParentCommand.create()
-            .parentPath( parentPath )
-            .indexServiceInternal( indexServiceInternal )
-            .storageService( this.storageService )
-            .searchService( this.searchService )
-            .build()
-            .execute();
+        return nodeService.findByParent( FindNodesByParentParams.create().parentPath( parentPath ).build() );
     }
 
     public FindNodesByQueryResult doFindByQuery( final NodeQuery query )

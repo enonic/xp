@@ -343,22 +343,47 @@ public class NodeServiceImpl
         return result;
     }
 
+    /**
+     * The deprecated findByParent expressed as the query it always was, so there is one implementation of searching by parent rather than
+     * two that can drift apart.
+     */
     private FindNodesByParentResult executeFindByParent( final FindNodesByParentParams params )
     {
-        return FindNodeIdsByParentCommand.create()
-            .parentId( params.getParentId() )
-            .parentPath( params.getParentPath() )
+        final NodePath parentPath = resolveFindByParentPath( params );
+        if ( parentPath == null )
+        {
+            return FindNodesByParentResult.create().nodeIds( NodeIds.empty() ).build();
+        }
+
+        final boolean countOnly = params.isCountOnly();
+
+        final NodeQuery.Builder query = NodeQuery.create()
+            .parent( parentPath )
             .recursive( params.isRecursive() )
-            .queryFilters( params.getQueryFilters() )
-            .from( params.getFrom() )
-            .size( params.getSize() )
-            .countOnly( params.isCountOnly() )
-            .childOrder( params.getChildOrder() )
-            .indexServiceInternal( this.indexServiceInternal )
-            .searchService( this.nodeSearchService )
-            .storageService( this.nodeStorageService )
-            .build()
-            .execute();
+            .addQueryFilters( params.getQueryFilters() )
+            .from( countOnly ? 0 : params.getFrom() )
+            .size( countOnly ? 0 : params.getSize() );
+
+        // an unset child order is resolved from the parent by the query itself
+        final ChildOrder childOrder = params.getChildOrder();
+        if ( childOrder != null && !childOrder.isEmpty() )
+        {
+            query.setOrderExpressions( childOrder.getOrderExpressions() );
+        }
+
+        final FindNodesByQueryResult result = executeFindByQuery( query.build() );
+
+        return FindNodesByParentResult.create().nodeIds( result.getNodeIds() ).totalHits( result.getTotalHits() ).build();
+    }
+
+    private @Nullable NodePath resolveFindByParentPath( final FindNodesByParentParams params )
+    {
+        if ( params.getParentPath() != null )
+        {
+            return params.getParentPath();
+        }
+        final Node parent = doGetById( params.getParentId() );
+        return parent == null ? null : parent.path();
     }
 
     @Override
