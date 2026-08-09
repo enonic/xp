@@ -435,6 +435,9 @@ public class NodeServiceImpl
      * A query restricted to a parent and carrying no order expressions of its own comes back in the child order of the parent, the same
      * order findByParent used. Resolving the order costs a read of the parent, so it is skipped whenever the query orders explicitly or
      * fetches no hits at all.
+     * <p>
+     * The read is done with elevated privileges because the child order never reaches the caller - it only sorts hits the caller was
+     * already permitted to see.
      */
     private NodeQuery applyChildOrderOfParent( final NodeQuery nodeQuery )
     {

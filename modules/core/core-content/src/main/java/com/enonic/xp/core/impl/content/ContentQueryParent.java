@@ -20,8 +20,11 @@ record ContentQueryParent( NodePath nodePath, ChildOrder childOrder )
     /**
      * Resolves the parent named by the query. Reading the parent is what makes its child order and, for a parent given by id, its path
      * available - so it is skipped when neither is needed, keeping a query that names a parent by path and sorts explicitly down to a
-     * single search. The read is done with elevated privileges: which order children come back in is not something to hide from a caller
-     * that is allowed to see them, and the children themselves stay subject to the permissions of the caller.
+     * single search.
+     * <p>
+     * The read is done with elevated privileges because nothing the parent holds reaches the caller: the path only builds the filter and
+     * the child order only sorts, so a caller who may read a child but not its parent gets that child either way, and one who may read
+     * neither still gets nothing. Ordering by a parent nobody can see is the same query the path form already answers without any read.
      *
      * @return the resolved parent, or {@code null} when the query names a parent that does not exist, in which case the query cannot match
      * anything.
