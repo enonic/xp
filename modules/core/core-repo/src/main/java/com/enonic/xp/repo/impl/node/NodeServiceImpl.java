@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.elasticsearch.index.IndexNotFoundException;
@@ -74,7 +73,6 @@ import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.SyncWorkResolverParams;

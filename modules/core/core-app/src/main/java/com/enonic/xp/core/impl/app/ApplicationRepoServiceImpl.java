@@ -2,7 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.ListNodesByParentParams;
