@@ -232,6 +232,14 @@ class QueryContentHandlerTest
     }
 
     @Test
+    void returnsEmptyArray()
+    {
+        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsEmptyArray" );
+
+        Mockito.verify( contentService, Mockito.never() ).find( Mockito.any() );
+    }
+
+    @Test
     void filterArray()
     {
         setupQuery( 2, false, false );

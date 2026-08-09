@@ -782,8 +782,8 @@ interface QueryContentHandler {
  * @param {string|string[]} [params.returns='contents'] What each hit should carry: `'contents'` (the whole content, the default),
  * `'ids'` (id and score), or a list of content field names - `_name`, `_path`, `displayName`, `type`,
  * `creator`, `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` - delivered as `fields` on the hit. Any other name is an
- * error. Only the fields a content shows are available, so a hit answers exactly what the content would; every shape but the default
- * answers without reading the contents at all.
+ * error, as is an empty list - ask for `'ids'` when no fields are wanted. Only the fields a content shows are available, so a hit
+ * answers exactly what the content would; every shape but the default answers without reading the contents at all.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.

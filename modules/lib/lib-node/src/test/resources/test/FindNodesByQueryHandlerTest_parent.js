@@ -85,3 +85,18 @@ exports.multiValuedReturnField = function () {
         ]
     }, result);
 };
+
+exports.returnsEmptyArray = function () {
+
+    try {
+        repo.query({
+            count: 10,
+            returns: []
+        });
+    } catch (e) {
+        assert.assertEquals('returns must name at least one index field', e.getMessage());
+        return;
+    }
+
+    throw {message: 'Expected exception'};
+};

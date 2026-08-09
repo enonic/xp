@@ -114,8 +114,11 @@ public final class QueryContentHandler
     }
 
     /**
-     * The {@code returns} parameter picks the shape of the hits: full contents (the default), bare ids, ids with paths, or ids with the
-     * values of the index fields named by an array. Everything but the default skips reading the contents entirely.
+     * The {@code returns} parameter picks the shape of the hits: full contents (the default), bare ids, or ids with the values of the
+     * index fields named by an array. Everything but the default skips reading the contents entirely.
+     * <p>
+     * An empty array is refused rather than treated as 'ids': it would answer the same hits under a second spelling, and a field list
+     * built at runtime would silently change shape on the day it comes out empty.
      */
     private ReturnShape resolveReturnShape( final ContentQuery.Builder queryBuilder )
     {
@@ -138,7 +141,12 @@ public final class QueryContentHandler
         }
         else if ( returns.isArray() )
         {
-            queryBuilder.returnFields( returns.getArray( String.class ).stream().map( IndexPath::from ).toArray( IndexPath[]::new ) );
+            final IndexPath[] fields = returns.getArray( String.class ).stream().map( IndexPath::from ).toArray( IndexPath[]::new );
+            if ( fields.length == 0 )
+            {
+                throw new IllegalArgumentException( "returns must name at least one index field, or be 'contents' or 'ids'" );
+            }
+            queryBuilder.returnFields( fields );
             return ReturnShape.FIELDS;
         }
 

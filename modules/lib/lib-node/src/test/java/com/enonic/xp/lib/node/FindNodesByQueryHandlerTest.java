@@ -321,6 +321,14 @@ class FindNodesByQueryHandlerTest
         runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "multiValuedReturnField" );
     }
 
+    @Test
+    void returnsEmptyArray()
+    {
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "returnsEmptyArray" );
+
+        Mockito.verify( this.nodeService, Mockito.never() ).findByQuery( Mockito.isA( NodeQuery.class ) );
+    }
+
     private FindNodesByQueryResult twoHits()
     {
         return FindNodesByQueryResult.create()

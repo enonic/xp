@@ -1025,8 +1025,8 @@ class RepoConnectionImpl
      * specified, the children come back in the child order of the parent. A parent that does not exist matches nothing.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
      * @param {string[]} [params.returns] Node fields each hit should carry - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
-     * delivered as `fields` on the hit. Any other name is an error. Only the fields a node shows are available, so a hit answers exactly
-     * what the node would.
+     * delivered as `fields` on the hit. Any other name is an error, as is an empty list - leave `returns` out when no fields are
+     * wanted. Only the fields a node shows are available, so a hit answers exactly what the node would.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1317,8 +1317,8 @@ class MultiRepoConnectionImpl
      * child order is inherited - pass `sort` when the order matters.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
      * @param {string[]} [params.returns] Node fields each hit should carry - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
-     * delivered as `fields` on the hit. Any other name is an error. Only the fields a node shows are available, so a hit answers exactly
-     * what the node would.
+     * delivered as `fields` on the hit. Any other name is an error, as is an empty list - leave `returns` out when no fields are
+     * wanted. Only the fields a node shows are available, so a hit answers exactly what the node would.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.

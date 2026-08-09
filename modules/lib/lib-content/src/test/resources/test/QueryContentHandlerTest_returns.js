@@ -80,3 +80,18 @@ exports.returnsInvalid = function () {
 
     throw {message: 'Expected exception'};
 };
+
+exports.returnsEmptyArray = function () {
+
+    try {
+        content.query({
+            count: 10,
+            returns: []
+        });
+    } catch (e) {
+        assert.assertEquals('returns must name at least one index field, or be \'contents\' or \'ids\'', e.getMessage());
+        return;
+    }
+
+    throw {message: 'Expected exception'};
+};

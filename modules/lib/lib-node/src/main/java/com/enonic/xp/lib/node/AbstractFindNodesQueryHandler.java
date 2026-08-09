@@ -99,6 +99,11 @@ abstract class AbstractFindNodesQueryHandler
 
         if ( this.returns != null )
         {
+            // an empty list asks for nothing, which is what leaving returns out already means - almost always a mistake worth reporting
+            if ( this.returns.isEmpty() )
+            {
+                throw new IllegalArgumentException( "returns must name at least one index field" );
+            }
             nodeQuery.returnFields( this.returns.stream().map( IndexPath::from ).toArray( IndexPath[]::new ) );
         }
 
