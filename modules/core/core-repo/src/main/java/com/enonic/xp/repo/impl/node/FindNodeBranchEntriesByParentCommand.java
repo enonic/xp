@@ -5,8 +5,11 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.LogicalExpr;
+import com.enonic.xp.query.expr.NotExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -83,33 +86,31 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries entries =
             NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query, context.getRepositoryId() ) );
 
-        return filterByPermission( filterDirectChildren( entries ), context );
+        return filterByPermission( entries, context );
     }
 
-    // the branch index carries no parentPath field, so the query matches the whole subtree and direct children are kept afterwards
-    private NodeBranchEntries filterDirectChildren( final NodeBranchEntries entries )
+    /**
+     * The branch index carries no parentPath field, so a parent is matched by path prefix. Direct children are everything below the
+     * parent that is not below one of its children in turn - excluding the deeper level in the query keeps a non-recursive listing from
+     * hauling a whole subtree back only to discard it.
+     */
+    private ConstraintExpr createParentExpr()
     {
+        final String prefix = parentPath.isRoot() ? "" : parentPath.toString();
+
+        final ConstraintExpr belowParent = parentPath.isRoot()
+            ? CompareExpr.neq( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( NodePath.ROOT.toString() ) )
+            : CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( prefix + "/*" ) );
+
         if ( recursive )
         {
-            return entries;
+            return belowParent;
         }
 
-        final NodeBranchEntries.Builder filtered = NodeBranchEntries.create();
-        for ( final NodeBranchEntry entry : entries )
-        {
-            if ( parentPath.equals( entry.getNodePath().getParentPath() ) )
-            {
-                filtered.add( entry );
-            }
-        }
-        return filtered.build();
-    }
+        final CompareExpr belowAChild =
+            CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( prefix + "/*/*" ) );
 
-    private CompareExpr createParentExpr()
-    {
-        return parentPath.isRoot()
-            ? CompareExpr.neq( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( NodePath.ROOT.toString() ) )
-            : CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( parentPath + "/*" ) );
+        return LogicalExpr.and( belowParent, new NotExpr( belowAChild ) );
     }
 
     private NodeBranchEntries filterByPermission( final NodeBranchEntries entries, final InternalContext context )
