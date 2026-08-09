@@ -603,55 +603,6 @@ export function getChildren<
     return __.toNativeObject(bean.execute<Hit, AggregationOutput>());
 }
 
-export interface ListContentParams {
-    parent: string;
-    recursive?: boolean;
-}
-
-export interface ContentListEntry {
-    id: string;
-    path: string;
-}
-
-export interface ContentListResult {
-    count: number;
-    hits: ContentListEntry[];
-}
-
-interface ListContentHandler {
-    setParent(value: string): void;
-
-    setRecursive(value: boolean): void;
-
-    execute(): ContentListResult;
-}
-
-/**
- * Enumerates the children of a content - or with `recursive` its whole subtree - from the branch storage alone. Unlike `query` this
- * needs no search-index refresh, so it always sees the latest writes, and it reads no contents: entries carry only id and path,
- * permission-checked per entry. Everything readable is returned, ordered by path - an enumeration takes no paging, no filters and no
- * ordering choice; use `query` when any of those matter. Publish times are not evaluated, so on the master branch entries include
- * contents whose publish window a query would filter out.
- *
- * @example-ref examples/content/list.js
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.parent Path or id of the content to list the children of. A path is relative to the content root of the calling
- * context, which the same API serves the archive through, so the very same path names a different content depending on the context; an
- * id belonging to another root lists nothing.
- * @param {boolean} [params.recursive=false] List every descendant instead of the direct children only.
- *
- * @returns {object} `count` and `hits` of `{id, path}` entries, ordered by path.
- */
-export function list(params: ListContentParams): ContentListResult {
-    const parent = checkRequired(params, 'parent');
-
-    const bean: ListContentHandler = __.newBean<ListContentHandler>('com.enonic.xp.lib.content.ListContentHandler');
-    bean.setParent(parent);
-    bean.setRecursive(params.recursive ?? false);
-    return __.toNativeObject(bean.execute());
-}
-
 export type IdGeneratorSupplier = (value: string) => string;
 
 export interface CreateContentParams<Data, Type extends string, _Component extends (

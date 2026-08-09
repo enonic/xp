@@ -92,20 +92,6 @@ public interface ContentService
     @Deprecated
     FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
 
-    /**
-     * Lists the children of a content, or with {@link ListContentsByParentParams.Builder#recursive(boolean)} its whole subtree.
-     * <p>
-     * Every content the caller may read is listed, ordered by path, as an id and a path - never the content itself. A content written a
-     * moment ago is listed, where {@link #find(ContentQuery)} may not find it until the search index catches up.
-     * <p>
-     * Publish times are not applied: on the master branch this lists contents that a search would leave out because their publish window
-     * has not opened or has closed. There is no paging, no filtering and no choice of order either, so ask a search when any of that
-     * matters.
-     *
-     * @since 8.1.0
-     */
-    ListContentsByParentResult list( ListContentsByParentParams params );
-
     FindContentIdsByQueryResult find( ContentQuery query );
 
     FindContentPathsByQueryResult findPaths( ContentQuery query );

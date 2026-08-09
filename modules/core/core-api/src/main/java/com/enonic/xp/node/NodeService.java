@@ -53,8 +53,11 @@ public interface NodeService
     /**
      * Lists the children of a node, or with {@link ListNodesByParentParams.Builder#recursive(boolean)} its whole subtree.
      * <p>
-     * Every node the caller may read is listed, ordered by path, as an id, a path and a timestamp - never the node itself. A node written
-     * a moment ago is listed, where {@link #findByQuery(NodeQuery)} may not find it until the search index catches up.
+     * Every node the caller may read is listed, ordered by path, as an id, a path and a timestamp - never the node itself.
+     * <p>
+     * The listing reads branch storage, so a node stored with {@link RefreshMode#STORAGE} or {@link RefreshMode#ALL} is listed at once,
+     * where {@link #findByQuery(NodeQuery)} finds it only once the search index has caught up. Like every read, this one refreshes
+     * nothing itself: a write that asked for no refresh is visible to neither.
      * <p>
      * There is no paging, no filtering and no choice of order: ask a query when any of those matter.
      *

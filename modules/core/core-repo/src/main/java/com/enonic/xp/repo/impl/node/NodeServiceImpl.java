@@ -401,6 +401,8 @@ public class NodeServiceImpl
             .parentPath( params.getParentPath() )
             .recursive( params.isRecursive() )
             .requiredPermission( Permission.READ )
+            // a read does not refresh: writes decide when they become visible, and every write through the content API already does
+            .refreshStorage( false )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )

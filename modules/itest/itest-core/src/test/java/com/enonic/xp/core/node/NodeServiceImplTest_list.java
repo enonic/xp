@@ -10,6 +10,7 @@ import com.enonic.xp.node.ListNodesByParentResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -37,6 +38,7 @@ class NodeServiceImplTest_list
         final Node childA = createNode( parent.path(), "a" );
         createNode( childA.path(), "grandchild" );
         createNode( NodePath.ROOT, "outside" );
+        nodeService.refresh( RefreshMode.STORAGE );
 
         final ListNodesByParentResult result =
             nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).build() );
@@ -53,6 +55,7 @@ class NodeServiceImplTest_list
         final Node childA = createNode( parent.path(), "a" );
         final Node childB = createNode( parent.path(), "b" );
         final Node grandchild = createNode( childA.path(), "grandchild" );
+        nodeService.refresh( RefreshMode.STORAGE );
 
         final ListNodesByParentResult result =
             nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).recursive( true ).build() );
@@ -62,11 +65,12 @@ class NodeServiceImplTest_list
     }
 
     @Test
-    void sees_writes_without_refresh()
+    void sees_writes_that_refreshed_storage_alone()
     {
         final Node parent = createNode( NodePath.ROOT, "parent" );
-        // no refresh between create and list: the listing reads branch storage and must not depend on the search index
-        final Node child = createNode( CreateNodeParams.create().name( "just-created" ).parent( parent.path() ).build() );
+        // storage refresh only - no search refresh anywhere, so a query would still be blind to this node
+        final Node child = createNode(
+            CreateNodeParams.create().name( "just-created" ).parent( parent.path() ).refresh( RefreshMode.STORAGE ).build() );
 
         final ListNodesByParentResult result =
             nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).build() );
@@ -84,6 +88,7 @@ class NodeServiceImplTest_list
                         .parent( parent.path() )
                         .permissions( denyReadForPrincipal( TEST_DEFAULT_USER.getKey() ) )
                         .build() );
+        nodeService.refresh( RefreshMode.STORAGE );
 
         final ListNodesByParentParams params = ListNodesByParentParams.create().parentPath( parent.path() ).build();
 
@@ -111,6 +116,7 @@ class NodeServiceImplTest_list
     {
         final Node top = createNode( NodePath.ROOT, "top" );
         createNode( top.path(), "below" );
+        nodeService.refresh( RefreshMode.STORAGE );
 
         final ListNodesByParentResult result = nodeService.list( ListNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
 
