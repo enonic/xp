@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -90,6 +91,7 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.media.MediaInfoService;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
@@ -727,13 +729,26 @@ public class ContentServiceImpl
     {
         requireReadAccess();
 
-        return FindContentPathsByQueryCommand.create()
-            .contentQuery( query )
+        final FindContentIdsByQueryResult result = FindContentIdsByQueryCommand.create()
+            .query( query )
+            .extraReturnFields( NodeIndexPath.PATH )
             .nodeService( this.nodeService )
             .contentTypeService( this.contentTypeService )
             .eventPublisher( this.eventPublisher )
             .build()
             .execute();
+
+        return FindContentPathsByQueryResult.create()
+            .contentPaths( result.getContentIds()
+                               .stream()
+                               .map( contentId -> result.getFields().get( contentId ) )
+                               .filter( Objects::nonNull )
+                               .map( fields -> fields.getSingleValue( NodeIndexPath.PATH ) )
+                               .flatMap( Optional::stream )
+                               .map( path -> ContentPath.from( path.toString() ) )
+                               .collect( ContentPaths.collector() ) )
+            .totalHits( result.getTotalHits() )
+            .build();
     }
 
     @Override

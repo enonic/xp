@@ -12,6 +12,7 @@ import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.index.FieldValues;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
@@ -25,10 +26,13 @@ final class FindContentIdsByQueryCommand
 {
     private final ContentQuery query;
 
+    private final IndexPath[] extraReturnFields;
+
     private FindContentIdsByQueryCommand( final Builder builder )
     {
         super( builder );
         this.query = builder.query;
+        this.extraReturnFields = builder.extraReturnFields;
     }
 
     public static Builder create()
@@ -57,6 +61,7 @@ final class FindContentIdsByQueryCommand
 
         final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.query, parent ).
             addQueryFilters( createFilters() ).
+            returnFields( this.extraReturnFields ).
             build();
 
         final Map<ContentId, HighlightedProperties> highlight = new LinkedHashMap<>();
@@ -133,6 +138,8 @@ final class FindContentIdsByQueryCommand
     {
         private ContentQuery query;
 
+        private IndexPath[] extraReturnFields = new IndexPath[0];
+
         private Builder()
         {
         }
@@ -140,6 +147,16 @@ final class FindContentIdsByQueryCommand
         public Builder query( final ContentQuery query )
         {
             this.query = query;
+            return this;
+        }
+
+        /**
+         * Fields to fetch on top of the ones the query itself asks for, for a caller that shapes the result out of them rather than
+         * handing them back as they are.
+         */
+        public Builder extraReturnFields( final IndexPath... extraReturnFields )
+        {
+            this.extraReturnFields = extraReturnFields;
             return this;
         }
 

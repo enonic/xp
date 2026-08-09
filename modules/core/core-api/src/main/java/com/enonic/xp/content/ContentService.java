@@ -8,6 +8,7 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
@@ -94,6 +95,14 @@ public interface ContentService
 
     FindContentIdsByQueryResult find( ContentQuery query );
 
+    /**
+     * Finds the paths of the contents matching a query.
+     *
+     * @deprecated Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#returnFields(IndexPath...)} naming {@code _path},
+     * which runs the very same search and answers with the very same paths, already relative to the content root of the calling context.
+     * The hits keep their ids, which this drops, so a caller that needs both no longer has to search twice. Scheduled for removal.
+     */
+    @Deprecated
     FindContentPathsByQueryResult findPaths( ContentQuery query );
 
     CompareContentResults compare( CompareContentsParams params );
