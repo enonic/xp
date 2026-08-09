@@ -1,7 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeHit;
 import com.enonic.xp.node.NodeId;
