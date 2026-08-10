@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Comparator;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -26,6 +28,7 @@ import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SearchPreference;
@@ -146,6 +149,8 @@ public class RepositoryEntryServiceImpl
         // the branch index holds no parent, so the prefix reaches any depth; an entry is a direct child of the storage parent
         return entries.stream()
             .filter( entry -> RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH.equals( entry.getNodePath().getParentPath() ) )
+            // most recently stored first, the order the search this replaced returned, which the project graph orders siblings by
+            .sorted( Comparator.comparing( NodeBranchEntry::getTimestamp, Comparator.nullsLast( Comparator.reverseOrder() ) ) )
             .map( entry -> RepositoryId.from( entry.getNodeId().toString() ) )
             .collect( RepositoryIds.collector() );
     }
