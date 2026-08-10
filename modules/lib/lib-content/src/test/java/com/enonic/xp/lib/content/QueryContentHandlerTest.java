@@ -240,6 +240,21 @@ class QueryContentHandlerTest
     }
 
     @Test
+    void returnsFieldAbsentFromHit()
+    {
+        // a field the hit has no value for is left out rather than answered as an empty list
+        Mockito.when( contentService.find( Mockito.isA( ContentQuery.class ) ) )
+            .thenReturn( FindContentIdsByQueryResult.create()
+                             .totalHits( 1 )
+                             .contents( ContentIds.from( "id1" ) )
+                             .fields( Map.of( ContentId.from( "id1" ),
+                                              FieldValues.create().add( "_name", List.of( "one" ) ).build() ) )
+                             .build() );
+
+        runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsFieldAbsentFromHit" );
+    }
+
+    @Test
     void returnsEmptyArray()
     {
         runFunction( "/test/QueryContentHandlerTest_returns.js", "returnsEmptyArray" );

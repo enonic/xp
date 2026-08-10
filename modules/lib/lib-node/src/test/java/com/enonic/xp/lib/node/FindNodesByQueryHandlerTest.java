@@ -330,6 +330,22 @@ class FindNodesByQueryHandlerTest
     }
 
     @Test
+    void returnsFieldAbsentFromHit()
+    {
+        // a field the hit has no value for is left out rather than answered as an empty list
+        Mockito.doReturn( FindNodesByQueryResult.create()
+                              .totalHits( 1 )
+                              .addNodeHit( NodeHit.create()
+                                               .nodeId( NodeId.from( "node-id" ) )
+                                               .score( 1.0f )
+                                               .fields( FieldValues.create().add( "_path", List.of( "/my-node" ) ).build() )
+                                               .build() )
+                              .build() ).when( this.nodeService ).findByQuery( Mockito.isA( NodeQuery.class ) );
+
+        runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "returnsFieldAbsentFromHit" );
+    }
+
+    @Test
     void returnsEmptyArray()
     {
         runFunction( "/test/FindNodesByQueryHandlerTest_parent.js", "returnsEmptyArray" );

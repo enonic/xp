@@ -115,3 +115,26 @@ exports.recursiveWithoutParent = function () {
 
     throw {message: 'Expected exception'};
 };
+
+exports.returnsFieldAbsentFromHit = function () {
+
+    var result = repo.query({
+        count: 10,
+        query: '_name = "my-node"',
+        returns: ['_path', '_nodeType']
+    });
+
+    assert.assertJsonEquals({
+        total: 1,
+        count: 1,
+        hits: [
+            {
+                id: 'node-id',
+                score: 1.0,
+                fields: {
+                    '_path': '/my-node'
+                }
+            }
+        ]
+    }, result);
+};

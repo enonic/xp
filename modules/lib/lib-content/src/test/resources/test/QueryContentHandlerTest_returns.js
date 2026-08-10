@@ -95,3 +95,26 @@ exports.returnsEmptyArray = function () {
 
     throw {message: 'Expected exception'};
 };
+
+exports.returnsFieldAbsentFromHit = function () {
+
+    var result = content.query({
+        count: 10,
+        query: '_name = "one"',
+        returns: ['_name', 'language']
+    });
+
+    assert.assertJsonEquals({
+        total: 1,
+        count: 1,
+        hits: [
+            {
+                id: 'id1',
+                score: 0,
+                fields: {
+                    '_name': 'one'
+                }
+            }
+        ]
+    }, result);
+};
