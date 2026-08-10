@@ -76,7 +76,7 @@ class FindNodesByQueryCommandTest_returnFields
     }
 
     @Test
-    void fields_beyond_the_documented_ones()
+    void unsupported_field_is_not_rejected()
     {
         final PropertyTree data = new PropertyTree();
         data.addString( "myField", "my-value" );
@@ -96,11 +96,11 @@ class FindNodesByQueryCommandTest_returnFields
                                                                                 NodeIndexPath.PARENT_PATH )
                                                                  .build() );
 
-        // the node API answers for any indexed field, not only the documented ones
+        // only the five documented fields are supported, but an unsupported one is passed to the index rather than rejected
         final FieldValues fields = result.getNodeHits().first().getFields();
         assertEquals( List.of( "my-value" ), fields.getValues( IndexPath.from( "myField" ) ) );
         assertEquals( List.of( "/" ), fields.getValues( NodeIndexPath.PARENT_PATH ) );
-        // an undocumented field answers with the indexed value, which for a number is not the form the node exposes
+        // and answers with the indexed value, which for a number is not the form the node exposes - hence unsupported
         assertEquals( List.of( "42.0" ), fields.getValues( IndexPath.from( "myNumber" ) ) );
     }
 

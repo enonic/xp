@@ -1028,9 +1028,7 @@ class RepoConnectionImpl
      * `sort` where the order of a recursive result is significant.
      * @param {string[]} [params.returns] Index fields each hit is to carry, supplied as `fields` on the hit. An empty list is an
      * error; omit `returns` where no fields are required. The supported fields are `_name`, `_path`, `_nodeType`, `_versionKey` and
-     * `_ts`, which are returned in the form a node exposes them. Any other indexed field may also be requested, including data fields,
-     * but those are the layout of the index rather than API: their names, presence and value form may change between versions, and the
-     * value returned is the indexed one, which for a number or a date is not the form the node exposes.
+     * `_ts`, which are returned in the form a node exposes them. Other fields are not supported.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1324,9 +1322,7 @@ class MultiRepoConnectionImpl
      * `sort` where the order of a recursive result is significant.
      * @param {string[]} [params.returns] Index fields each hit is to carry, supplied as `fields` on the hit. An empty list is an
      * error; omit `returns` where no fields are required. The supported fields are `_name`, `_path`, `_nodeType`, `_versionKey` and
-     * `_ts`, which are returned in the form a node exposes them. Any other indexed field may also be requested, including data fields,
-     * but those are the layout of the index rather than API: their names, presence and value form may change between versions, and the
-     * value returned is the indexed one, which for a number or a date is not the form the node exposes.
+     * `_ts`, which are returned in the form a node exposes them. Other fields are not supported.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.

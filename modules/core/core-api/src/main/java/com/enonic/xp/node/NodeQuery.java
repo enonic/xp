@@ -157,10 +157,7 @@ public final class NodeQuery
          * <li>{@link NodeIndexPath#VERSION} - {@code _versionKey}</li>
          * <li>{@link NodeIndexPath#TIMESTAMP} - {@code _ts}, in ISO-8601 form</li>
          * </ul>
-         * Any other indexed field may also be requested, including data fields and the typed variants the index maintains for its own
-         * purposes, such as {@code ._number} and {@code ._orderby}. Those are the layout of the index rather than API: their names,
-         * presence and value form are not guaranteed to survive an upgrade, and the value returned is the indexed one, which for a
-         * number or a date is not the form the node exposes.
+         * Other fields are not supported.
          *
          * @since 8.1.0
          */
