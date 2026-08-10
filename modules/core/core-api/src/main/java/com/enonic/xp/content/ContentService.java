@@ -73,10 +73,10 @@ public interface ContentService
     /**
      * Finds children of a content and fetches every one of them.
      *
-     * @deprecated Answers with every child resolved in full, so a caller that needs only ids, paths or a count pays for contents it
-     * never uses. Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#parentPath(ContentPath)} /
-     * {@link ContentQuery.Builder#parentId(ContentId)}, then {@link #getByIds(GetContentByIdsParams)} for the ids actually needed.
-     * Scheduled for removal.
+     * @deprecated Every child is resolved in full, so a caller requiring only ids, paths or a count pays for contents it does not use.
+     * Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#parentPath(ContentPath)} /
+     * {@link ContentQuery.Builder#parentId(ContentId)}, followed by {@link #getByIds(GetContentByIdsParams)} for the ids actually
+     * required. Scheduled for removal.
      */
     @Deprecated
     FindContentByParentResult findByParent( FindContentByParentParams params );
@@ -85,10 +85,11 @@ public interface ContentService
      * Finds the ids of the children of a content.
      *
      * @deprecated Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#parentPath(ContentPath)} /
-     * {@link ContentQuery.Builder#parentId(ContentId)}, which answers the same question and accepts every other constraint a search can
-     * carry - a query expression, content types, aggregations, highlighting - where this takes filters alone. It inherits the child order
-     * of the parent the same way, and {@link ContentQuery.Builder#recursive(boolean)} replaces
-     * {@link FindContentByParentParams.Builder#recursive(Boolean)}. Scheduled for removal.
+     * {@link ContentQuery.Builder#parentId(ContentId)}. The query form answers the same question and additionally accepts every other
+     * constraint a search supports, including a query expression, content types, aggregations and highlighting, whereas this method
+     * accepts filters only. It inherits the child order of the parent in the same way, and
+     * {@link ContentQuery.Builder#recursive(boolean)} replaces {@link FindContentByParentParams.Builder#recursive(Boolean)}. Scheduled
+     * for removal.
      */
     @Deprecated
     FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
@@ -98,9 +99,9 @@ public interface ContentService
     /**
      * Finds the paths of the contents matching a query.
      *
-     * @deprecated Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#returnFields(IndexPath...)} naming {@code _path},
-     * which runs the very same search and answers with the very same paths, already relative to the content root of the calling context.
-     * The hits keep their ids, which this drops, so a caller that needs both no longer has to search twice. Scheduled for removal.
+     * @deprecated Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#returnFields(IndexPath...)} naming {@code _path}.
+     * The query form runs the same search and returns the same paths, already relative to the content root of the calling context, and
+     * retains the ids that this method discards, so a caller requiring both no longer has to search twice. Scheduled for removal.
      */
     @Deprecated
     FindContentPathsByQueryResult findPaths( ContentQuery query );

@@ -56,7 +56,7 @@ public final class ListNodesParams
         }
 
         /**
-         * Lists every descendant of the parent instead of the direct children only. Entries come back ordered by path either way.
+         * Lists every descendant of the parent rather than the direct children only. Entries are ordered by path in either case.
          */
         public Builder recursive( final boolean recursive )
         {

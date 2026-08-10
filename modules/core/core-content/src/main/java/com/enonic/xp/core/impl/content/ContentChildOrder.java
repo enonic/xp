@@ -18,8 +18,8 @@ final class ContentChildOrder
     }
 
     /**
-     * Makes ordering by display name follow the collation rules of the language of the content the children belong to. Every other order
-     * expression is kept as is.
+     * Makes ordering by display name follow the collation rules of the language of the content the children belong to. All other order
+     * expressions are retained unchanged.
      */
     static @Nullable ChildOrder withLanguage( final @Nullable ChildOrder childOrder, final @Nullable Locale language )
     {

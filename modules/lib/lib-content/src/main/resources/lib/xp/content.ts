@@ -507,7 +507,7 @@ export interface ContentsResult<
 }
 
 /**
- * A hit of {@link query} asked for with `returns: 'ids'`.
+ * A hit returned by {@link query} when `returns: 'ids'` is requested.
  */
 export interface ContentIdHit {
     id: string;
@@ -515,7 +515,7 @@ export interface ContentIdHit {
 }
 
 /**
- * A hit of {@link query} asked for with `returns` naming content fields, which arrive in `fields`.
+ * A hit returned by {@link query} when `returns` names content fields, which are supplied in `fields`.
  */
 export interface ContentFieldsHit {
     id: string;
@@ -564,8 +564,8 @@ interface GetChildContentHandler {
  *
  * @example-ref examples/content/getChildren.js
  *
- * @deprecated Use {@link query} with `parent` instead. It accepts the same path or id, falls back to the same child order of the parent
- * when `sort` is left out, and additionally supports filters, content types, aggregations and highlighting.
+ * @deprecated Use {@link query} with `parent` instead. It accepts the same path or id, applies the same child order of the parent where
+ * `sort` is omitted, and additionally supports filters, content types, aggregations and highlighting.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the parent content.
@@ -773,18 +773,18 @@ interface QueryContentHandler {
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
- * @param {string} [params.parent] Path or id of a content to restrict the query to the direct children of. When `sort` is not specified,
- * the children come back in the child order of the parent. A parent that does not exist matches nothing. A path is relative to the
- * content root of the calling context, which the same API serves the archive through, so the very same path names a different content
+ * @param {string} [params.parent] Path or id of a content to whose direct children the query is restricted. Where `sort` is not
+ * specified, the children are returned in the child order of the parent. A parent that does not exist matches nothing. A path is relative
+ * to the content root of the calling context; as the same API also serves the archive, an identical path denotes a different content
  * depending on the context.
- * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only. Expects `parent`,
- * since it has nothing to widen without one. The child order of the parent is not applied to a subtree - it orders siblings, not levels
- * against each other - so specify `sort` when the order of a recursive result matters.
- * @param {string|string[]} [params.returns='contents'] What each hit should carry: `'contents'` (the whole content, the default),
- * `'ids'` (id and score), or a list of content field names - `_name`, `_path`, `displayName`, `type`,
- * `creator`, `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` - delivered as `fields` on the hit. Any other name is an
- * error, as is an empty list - ask for `'ids'` when no fields are wanted. Only the fields a content shows are available, so a hit
- * answers exactly what the content would; every shape but the default answers without reading the contents at all.
+ * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
+ * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify `sort`
+ * where the order of a recursive result is significant.
+ * @param {string|string[]} [params.returns='contents'] Determines what each hit carries: `'contents'` for the whole content, which is
+ * the default, `'ids'` for id and score, or a list of content field names — `_name`, `_path`, `displayName`, `type`, `creator`,
+ * `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` — supplied as `fields` on the hit. Any other name is an error, as is an
+ * empty list; request `'ids'` where no fields are required. Only fields a content exposes are available, so a hit returns exactly what
+ * the content would return. Every shape other than the default is answered without reading the contents at all.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.

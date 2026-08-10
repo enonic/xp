@@ -10,8 +10,9 @@ import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodePath;
 
 /**
- * The parent a {@link ContentQuery} is restricted to, resolved into the node path to filter children on and the child order to sort them
- * by. The child order is {@code null} when the query brings its own order expressions and the parent's order must not be applied.
+ * The parent a {@link ContentQuery} is restricted to, resolved into the node path used to filter children and the child order used to
+ * sort them. The child order is {@code null} where the query supplies its own order expressions and the order of the parent must not be
+ * applied.
  */
 @NullMarked
 record ContentQueryParent( NodePath nodePath, @Nullable ChildOrder childOrder )
@@ -22,16 +23,17 @@ record ContentQueryParent( NodePath nodePath, @Nullable ChildOrder childOrder )
     }
 
     /**
-     * Resolves the parent named by the query. Reading the parent is what makes its child order and, for a parent given by id, its path
-     * available - so it is skipped when neither is needed, keeping a query that names a parent by path and sorts explicitly down to a
-     * single search.
+     * Resolves the parent named by the query. Reading the parent is what makes its child order available, and its path where the parent
+     * is given by id, so the read is skipped where neither is required; a query that names a parent by path and sorts explicitly is
+     * therefore served by a single search.
      * <p>
-     * The read is done with elevated privileges because nothing the parent holds reaches the caller: the path only builds the filter and
-     * the child order only sorts, so a caller who may read a child but not its parent gets that child either way, and one who may read
-     * neither still gets nothing. Ordering by a parent nobody can see is the same query the path form already answers without any read.
+     * The read is performed with elevated privileges because nothing the parent holds is exposed to the caller: the path is used only to
+     * build the filter and the child order only to sort. A caller permitted to read a child but not its parent therefore receives that
+     * child, and one permitted to read neither still receives nothing. Ordering by a parent the caller cannot see yields the same query
+     * that the path form already answers without any read.
      *
-     * @return the resolved parent, or {@code null} when the query names a parent that does not exist, in which case the query cannot match
-     * anything.
+     * @return the resolved parent, or {@code null} where the query names a parent that does not exist, in which case the query cannot
+     * match anything.
      */
     static @Nullable ContentQueryParent resolve( final ContentQuery query, final AbstractContentCommand command )
     {

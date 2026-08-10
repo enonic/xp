@@ -7,7 +7,7 @@ import org.jspecify.annotations.NullMarked;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Answer of {@link NodeService#list(ListNodesParams)}: every node the caller may read, ordered by path.
+ * Result of {@link NodeService#list(ListNodesParams)}, holding every node the caller is permitted to read, ordered by path.
  *
  * @since 8.1.0
  */

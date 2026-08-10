@@ -68,8 +68,8 @@ public final class NodeHit
     }
 
     /**
-     * Values of the index fields the query asked for via {@link NodeQuery.Builder#returnFields(com.enonic.xp.index.IndexPath...)},
-     * {@link FieldValues#empty()} when none were requested.
+     * Values of the index fields requested through {@link NodeQuery.Builder#returnFields(com.enonic.xp.index.IndexPath...)}, or
+     * {@link FieldValues#empty()} where none were requested.
      *
      * @since 8.1.0
      */

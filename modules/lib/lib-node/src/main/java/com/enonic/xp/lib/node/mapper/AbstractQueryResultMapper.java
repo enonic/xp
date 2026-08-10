@@ -25,8 +25,8 @@ abstract class AbstractQueryResultMapper
     }
 
     /**
-     * Writes the requested fields under the very names they were requested by. The values are keyed by index path and therefore
-     * lowercase, so walking the request rather than the answer is what lets a hit read back the way it was asked for.
+     * Writes the requested fields under the names by which they were requested. The values are keyed by index path and are therefore
+     * lowercase, so the request is traversed rather than the result in order that a hit reads back as it was requested.
      */
     void serialize( final MapGenerator gen, final FieldValues fields, final List<String> returns )
     {

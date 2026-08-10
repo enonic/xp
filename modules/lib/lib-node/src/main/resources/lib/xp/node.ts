@@ -1021,14 +1021,14 @@ class RepoConnectionImpl
      * @param {object} params JSON with the parameters.
      * @param {number} [params.start=0] Start index (used for paging).
      * @param {number} [params.count=10] Number of contents to fetch.
-     * @param {string} [params.parent] Path or id of a node to restrict the query to the direct children of. When `sort` is not
-     * specified, the children come back in the child order of the parent. A parent that does not exist matches nothing.
-     * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * Expects `parent`, since it has nothing to widen without one. The child order of the parent is not applied to a subtree - it orders
-     * siblings, not levels against each other - so specify `sort` when the order of a recursive result matters.
-     * @param {string[]} [params.returns] Node fields each hit should carry - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
-     * delivered as `fields` on the hit. Any other name is an error, as is an empty list - leave `returns` out when no fields are
-     * wanted. Only the fields a node shows are available, so a hit answers exactly what the node would.
+     * @param {string} [params.parent] Path or id of a node to whose direct children the query is restricted. Where `sort` is not
+     * specified, the children are returned in the child order of the parent. A parent that does not exist matches nothing.
+     * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
+     * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify
+     * `sort` where the order of a recursive result is significant.
+     * @param {string[]} [params.returns] Node fields each hit is to carry — `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` —
+     * supplied as `fields` on the hit. Any other name is an error, as is an empty list; omit `returns` where no fields are required.
+     * Only fields a node exposes are available, so a hit returns exactly what the node would return.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1135,9 +1135,9 @@ class RepoConnectionImpl
      *
      * @example-ref examples/node/findChildren.js
      *
-     * @deprecated Use {@link RepoConnection.query} with `parent` instead. It accepts the same path or id, falls back to the same child
-     * order of the parent when `sort` is left out, covers `recursive`, and additionally supports every other constraint and return shape
-     * of a query. A count is a query with `count: 0` reading `total`.
+     * @deprecated Use {@link RepoConnection.query} with `parent` instead. It accepts the same path or id, applies the same child order
+     * of the parent where `sort` is omitted, covers `recursive`, and additionally supports every other constraint and return shape of a
+     * query. A count is expressed as a query with `count: 0`, reading `total`.
      *
      * @param {object} params JSON with the parameters.
      * @param {string} params.parentKey path or id of parent to get children of
@@ -1314,15 +1314,15 @@ class MultiRepoConnectionImpl
      * @param {object} params JSON with the parameters.
      * @param {number} [params.start=0] Start index (used for paging).
      * @param {number} [params.count=10] Number of contents to fetch.
-     * @param {string} [params.parent] Path of a node to restrict the query to the direct children of, applied in every repository of the
-     * connection. An id cannot name one node across several repositories, so unlike the single-repo query only a path is accepted, and no
-     * child order is inherited - pass `sort` when the order matters.
-     * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * Expects `parent`, since it has nothing to widen without one. The child order of the parent is not applied to a subtree - it orders
-     * siblings, not levels against each other - so specify `sort` when the order of a recursive result matters.
-     * @param {string[]} [params.returns] Node fields each hit should carry - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
-     * delivered as `fields` on the hit. Any other name is an error, as is an empty list - leave `returns` out when no fields are
-     * wanted. Only the fields a node shows are available, so a hit answers exactly what the node would.
+     * @param {string} [params.parent] Path of a node to whose direct children the query is restricted, applied in every repository of
+     * the connection. An id cannot denote one node across several repositories, so unlike the single-repository query only a path is
+     * accepted, and no child order is inherited; specify `sort` where the order is significant.
+     * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
+     * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify
+     * `sort` where the order of a recursive result is significant.
+     * @param {string[]} [params.returns] Node fields each hit is to carry — `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` —
+     * supplied as `fields` on the hit. Any other name is an error, as is an empty list; omit `returns` where no fields are required.
+     * Only fields a node exposes are available, so a hit returns exactly what the node would return.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.

@@ -14,7 +14,8 @@ import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
 /**
- * The lightweight result shapes of a content query: hits carrying ids, or the requested index-field values, instead of full contents.
+ * The lightweight result shapes of a content query, in which hits carry ids, or the requested index field values, rather than full
+ * contents.
  */
 @NullMarked
 public final class ContentHitsResultMapper
@@ -72,8 +73,8 @@ public final class ContentHitsResultMapper
     }
 
     /**
-     * Writes the requested fields under the very names they were requested by. The values are keyed by index path and therefore
-     * lowercase, so walking the request rather than the answer is what lets a hit read back the way it was asked for.
+     * Writes the requested fields under the names by which they were requested. The values are keyed by index path and are therefore
+     * lowercase, so the request is traversed rather than the result in order that a hit reads back as it was requested.
      */
     private static void serializeFields( final MapGenerator gen, final FieldValues fields, final List<String> returns )
     {

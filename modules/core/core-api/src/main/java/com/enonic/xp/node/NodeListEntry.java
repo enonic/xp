@@ -7,7 +7,7 @@ import org.jspecify.annotations.NullMarked;
 import static java.util.Objects.requireNonNull;
 
 /**
- * One node in a {@link ListNodesResult}, identified without reading the node itself.
+ * A single node in a {@link ListNodesResult}, identified without the node itself being read.
  *
  * @since 8.1.0
  */

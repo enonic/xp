@@ -13,10 +13,10 @@ import com.google.common.collect.ImmutableMap;
 import static java.util.Objects.requireNonNull;
 
 /**
- * The fields a query asked for, as they came back for one hit. Lookups accept any casing an index path accepts. Every field is a list,
- * single-valued or not, and a field the hit has no value for is absent rather than empty.
+ * The fields requested by a query, as returned for a single hit. Lookups accept any casing that an index path accepts. Every field is
+ * held as a list, whether or not it is single-valued, and a field for which the hit holds no value is absent rather than empty.
  * <p>
- * Which fields may be asked for is the answering API's business: each one publishes the set it supports.
+ * Which fields may be requested is determined by the API being queried; each one publishes the set it supports.
  *
  * @since 8.1.0
  */

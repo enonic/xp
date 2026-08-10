@@ -41,25 +41,26 @@ public interface NodeService
     /**
      * Finds the ids of the children of a node.
      *
-     * @deprecated Use {@link #findByQuery(NodeQuery)} with {@link NodeQuery.Builder#parent(NodePath)}, which answers the same question
-     * and accepts every constraint and return shape a query can carry, where this takes filters alone and answers with ids alone. It
-     * inherits the child order of the parent the same way, {@link NodeQuery.Builder#recursive(boolean)} replaces
-     * {@link FindNodesByParentParams.Builder#recursive(boolean)}, and a count is a query of size 0. Resolve a parent given by id to its
-     * path first. Scheduled for removal.
+     * @deprecated Use {@link #findByQuery(NodeQuery)} with {@link NodeQuery.Builder#parent(NodePath)}. The query form answers the same
+     * question and additionally accepts any constraint and return shape a query supports, whereas this method accepts filters only and
+     * answers with ids only. It inherits the child order of the parent in the same way;
+     * {@link NodeQuery.Builder#recursive(boolean)} replaces {@link FindNodesByParentParams.Builder#recursive(boolean)}, and a count is
+     * expressed as a query of size 0. A parent given by id must be resolved to its path first. Scheduled for removal.
      */
     @Deprecated
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     /**
-     * Lists the children of a node, or with {@link ListNodesParams.Builder#recursive(boolean)} its whole subtree.
+     * Lists the children of a node, or its entire subtree when {@link ListNodesParams.Builder#recursive(boolean)} is set.
      * <p>
-     * Every node the caller may read is listed, ordered by path, as an id, a path and a timestamp - never the node itself.
+     * Every node the caller is permitted to read is listed, ordered by path, and is represented by its id, path and timestamp. The nodes
+     * themselves are not read.
      * <p>
-     * The listing reads branch storage, so a node stored with {@link RefreshMode#STORAGE} or {@link RefreshMode#ALL} is listed at once,
-     * where {@link #findByQuery(NodeQuery)} finds it only once the search index has caught up. Like every read, this one refreshes
-     * nothing itself: a write that asked for no refresh is visible to neither.
+     * The listing is served from storage rather than from the search index. A node stored with {@link RefreshMode#STORAGE} or
+     * {@link RefreshMode#ALL} is therefore listed immediately, whereas {@link #findByQuery(NodeQuery)} returns it only once the search
+     * index has been refreshed. This method performs no refresh of its own; a node stored without a refresh is visible to neither.
      * <p>
-     * There is no paging, no filtering and no choice of order: ask a query when any of those matter.
+     * Paging, filtering and ordering are not supported. Use a query where any of them is required.
      *
      * @since 8.1.0
      */

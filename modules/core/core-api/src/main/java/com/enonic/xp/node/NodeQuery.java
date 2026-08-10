@@ -15,8 +15,8 @@ public final class NodeQuery
     public static final int ALL_RESULTS_SIZE_FLAG = -1;
 
     /**
-     * The fields a query may ask back per hit. Only fields a node shows are available, so asking for them is a cheaper way to read what
-     * a node would tell anyway, never a way to reach anything else.
+     * The fields that may be requested per hit. The set is limited to fields a {@link Node} exposes, so requesting them is a less
+     * expensive way of reading values the node itself would supply, and grants access to nothing further.
      *
      * @since 8.1.0
      */
@@ -118,9 +118,9 @@ public final class NodeQuery
         }
 
         /**
-         * Restricts the query to the direct children of the node at the given path, or with {@link #recursive(boolean)} to every
-         * descendant. Combines with every other constraint of the query. When the query specifies no order expressions, results come back
-         * in the child order of the parent.
+         * Restricts the query to the direct children of the node at the given path, or to every descendant when
+         * {@link #recursive(boolean)} is set. The restriction combines with all other constraints of the query. Where the query specifies
+         * no order expressions, the results are returned in the child order of the parent.
          */
         public Builder parent( final NodePath parent )
         {
@@ -129,10 +129,12 @@ public final class NodeQuery
         }
 
         /**
-         * Widens the {@link #parent(NodePath)} restriction from the direct children to every descendant, at any depth. Expects a parent.
+         * Widens the {@link #parent(NodePath)} restriction from the direct children to every descendant, at any depth. A parent is
+         * required.
          * <p>
-         * A parent orders its own children, so its child order is not applied to a subtree - it would sort levels against each other by
-         * a value only siblings can be compared on. Specify order expressions when the order of a recursive result matters.
+         * The child order of the parent is not applied to a subtree, since it orders siblings and would otherwise sort levels against
+         * each other by a value that is comparable between siblings only. Specify order expressions where the order of a recursive
+         * result is significant.
          *
          * @since 8.1.0
          */
@@ -153,9 +155,9 @@ public final class NodeQuery
         }
 
         /**
-         * Asks for fields to come back with every hit, from {@link #SUPPORTED_RETURN_FIELDS} only, in {@link NodeHit#getFields()}.
-         * Each field arrives as a list of strings - {@code _ts} in ISO-8601 form - and a field a hit has no value for is absent rather
-         * than empty.
+         * Requests fields to be returned with every hit, in {@link NodeHit#getFields()}. Only fields in
+         * {@link #SUPPORTED_RETURN_FIELDS} may be requested. Each field is returned as a list of strings, {@code _ts} in ISO-8601 form,
+         * and a field for which a hit holds no value is absent rather than empty.
          *
          * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
@@ -171,8 +173,9 @@ public final class NodeQuery
         }
 
         /**
-         * Asks for fields an API built on top of nodes has already checked against its own supported set, such as the content API
-         * answering for content field names. Callers stating node fields want {@link #returnFields(IndexPath...)}, which checks them.
+         * Requests fields that an API layered on nodes has already validated against its own supported set, such as the content API
+         * validating content field names. Callers naming node fields should use {@link #returnFields(IndexPath...)}, which validates
+         * them.
          *
          * @since 8.1.0
          */

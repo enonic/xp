@@ -24,7 +24,7 @@ public final class ContentQuery
     public static final int DEFAULT_FETCH_SIZE = 10;
 
     /**
-     * The fields a content query may ask back per hit. A content answers only for what it shows, so anything outside this set is
+     * The fields that may be requested per hit. A content answers only for the values it exposes, so a field outside this set is
      * rejected rather than fetched.
      *
      * @since 8.1.0
@@ -205,15 +205,15 @@ public final class ContentQuery
         }
 
         /**
-         * Restricts the query to the direct children of the content at the given path. Combines with every other constraint of the query,
-         * so paging, filters, content types, aggregations and highlighting apply as usual. Deeper descendants are matched only with
-         * {@link #recursive(boolean)}, and a parent that does not exist matches nothing.
+         * Restricts the query to the direct children of the content at the given path. The restriction combines with all other
+         * constraints of the query, so paging, filters, content types, aggregations and highlighting apply as usual. Deeper descendants
+         * are matched only when {@link #recursive(boolean)} is set, and a parent that does not exist matches nothing.
          * <p>
-         * When the query itself specifies no order expressions, results come back in the child order of the parent. Specify order
-         * expressions to sort otherwise.
+         * Where the query specifies no order expressions, the results are returned in the child order of the parent. Specify order
+         * expressions to impose a different order.
          * <p>
-         * The path is relative to the content root of the calling context, which the same API serves the archive through: the very same
-         * path names a different content depending on whether the context roots it at the content tree or at the archive.
+         * The path is relative to the content root of the calling context. As the same API also serves the archive, an identical path
+         * denotes a different content depending on whether the context is rooted at the content tree or at the archive.
          * <p>
          * Mutually exclusive with {@link #parentId(ContentId)}.
          *
@@ -240,11 +240,12 @@ public final class ContentQuery
         }
 
         /**
-         * Widens the parent restriction from the direct children to every descendant of the parent, at any depth. Expects a parent to be
-         * set, by either {@link #parentPath(ContentPath)} or {@link #parentId(ContentId)}.
+         * Widens the parent restriction from the direct children to every descendant of the parent, at any depth. A parent must be set,
+         * by either {@link #parentPath(ContentPath)} or {@link #parentId(ContentId)}.
          * <p>
-         * A parent orders its own children, so its child order is not applied to a subtree - it would sort levels against each other by
-         * a value only siblings can be compared on. Specify order expressions when the order of a recursive result matters.
+         * The child order of the parent is not applied to a subtree, since it orders siblings and would otherwise sort levels against
+         * each other by a value that is comparable between siblings only. Specify order expressions where the order of a recursive
+         * result is significant.
          *
          * @since 8.1.0
          */
@@ -255,9 +256,10 @@ public final class ContentQuery
         }
 
         /**
-         * Asks for fields to come back with every hit, from {@link #SUPPORTED_RETURN_FIELDS} only. Each field arrives as a list of
-         * strings, and a field a hit has no value for is absent rather than empty. {@code _path} answers with a content path, relative to
-         * the content root of the calling context, so a query run against the archive answers with paths inside the archive.
+         * Requests fields to be returned with every hit. Only fields in {@link #SUPPORTED_RETURN_FIELDS} may be requested. Each field is
+         * returned as a list of strings, and a field for which a hit holds no value is absent rather than empty. {@code _path} is
+         * returned as a content path relative to the content root of the calling context, so a query run against the archive returns
+         * paths within the archive.
          *
          * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
