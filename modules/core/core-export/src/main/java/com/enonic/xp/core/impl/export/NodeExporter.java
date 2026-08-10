@@ -1,7 +1,9 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,25 +17,16 @@ import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
-import com.enonic.xp.query.parser.QueryParser;
 import com.enonic.xp.util.BinaryReference;
 
 import static java.util.Objects.requireNonNull;
@@ -41,6 +34,15 @@ import static java.util.Objects.requireNonNull;
 public class NodeExporter
 {
     private static final String LINE_SEPARATOR = System.lineSeparator();
+
+    /**
+     * The order a manually ordered parent gives its children: by the value an editor assigned, highest first, and by modification time
+     * where a sibling was never assigned one. It mirrors {@link com.enonic.xp.index.ChildOrder#manualOrder()}, which the index applies
+     * when the same listing is answered by a query.
+     */
+    private static final Comparator<Node> MANUAL_ORDER =
+        Comparator.comparing( Node::getManualOrderValue, Comparator.nullsLast( Comparator.reverseOrder() ) )
+            .thenComparing( Node::getTimestamp, Comparator.nullsLast( Comparator.reverseOrder() ) );
 
     private final NodePath sourceNodePath;
 
@@ -73,19 +75,14 @@ public class NodeExporter
 
     public NodeExportResult execute()
     {
-        nodeService.refresh( RefreshMode.ALL );
+        // every node an export reads is now resolved from storage, so the search index has nothing to contribute to it
+        nodeService.refresh( RefreshMode.STORAGE );
 
         final Node rootNode = this.nodeService.getByPath( this.sourceNodePath );
 
         if ( rootNode != null )
         {
-            if ( nodeExportListener != null )
-            {
-                final int childNodeCount = getRecursiveNodeCountByParentPath( sourceNodePath );
-                nodeExportListener.nodeResolved( childNodeCount + 1 );
-            }
-
-            doExportNodes( rootNode.path() );
+            doExportNodes( rootNode );
         }
         else
         {
@@ -125,21 +122,20 @@ public class NodeExporter
         exportNodeBinaries( relativeNode, baseFolder );
     }
 
-    private void doExportNodes( final NodePath parentPath )
+    private void doExportNodes( final Node rootNode )
     {
-        final QueryExpr nodesQuery = parentPath.isRoot() ? QueryExpr.from( QueryParser.parseCostraintExpression( "" ) )
-            : QueryExpr.from(
-                LogicalExpr.or( CompareExpr.eq( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( parentPath.toString() ) ),
-                                CompareExpr.like( FieldExpr.from( NodeIndexPath.PATH ), ValueExpr.string( parentPath + "/*" ) ) ) );
+        // enumerated from storage, so an export covers the subtree the repository holds rather than the one the search index has caught
+        // up with; the entries arrive ordered by path, and the listing excludes the node the export was asked for
+        final ListNodesResult descendants =
+            nodeService.list( ListNodesParams.create().parentPath( rootNode.path() ).recursive( true ).build() );
 
-        final FindNodesByQueryResult nodeIds = nodeService.findByQuery( NodeQuery.create()
-                                                                            .query( nodesQuery )
-                                                                            .addOrderBy( FieldOrderExpr.create( NodeIndexPath.PATH,
-                                                                                                                OrderExpr.Direction.ASC ) )
-                                                                            .size( -1 )
-                                                                            .build() );
+        if ( nodeExportListener != null )
+        {
+            nodeExportListener.nodeResolved( descendants.getSize() + 1 );
+        }
 
-        final Iterator<NodeId> iterator = nodeIds.getNodeIds().iterator();
+        final Iterator<NodeId> iterator =
+            Stream.concat( Stream.of( rootNode.id() ), descendants.getEntries().stream().map( NodeListEntry::nodeId ) ).iterator();
 
         while ( iterator.hasNext() )
         {
@@ -196,20 +192,16 @@ public class NodeExporter
             return;
         }
 
+        // a manually ordered set is the handful of siblings an editor arranged by hand, so the children are read and ordered here
+        // rather than through the search index, which leaves the export reading storage alone
+        final ListNodesResult children = nodeService.list( ListNodesParams.create().parentPath( node.path() ).build() );
+
         final StringBuilder builder = new StringBuilder();
 
-        final FindNodesByQueryResult findResult = nodeService.findByQuery( NodeQuery.create()
-                                                                               .parent( node.path() )
-                                                                               .setOrderExpressions(
-                                                                                   node.getChildOrder().getOrderExpressions() )
-                                                                               .returnFields( NodeIndexPath.PATH )
-                                                                               .size( -1 )
-                                                                               .build() );
-
-        for ( final NodeHit child : findResult.getNodeHits() )
-        {
-            builder.append( child.getNodePath().getName().toString() ).append( LINE_SEPARATOR );
-        }
+        nodeService.getByIds( children.getNodeIds() )
+            .stream()
+            .sorted( MANUAL_ORDER )
+            .forEach( child -> builder.append( child.name().toString() ).append( LINE_SEPARATOR ) );
 
         if ( builder.isEmpty() )
         {
@@ -225,12 +217,6 @@ public class NodeExporter
     {
         final Path exportPropertiesPath = this.targetDirectory.resolve( NodeExportPathResolver.EXPORT_PROPERTIES_NAME );
         exportWriter.writeElement( exportPropertiesPath, "xp.version = " + xpVersion );
-    }
-
-    private int getRecursiveNodeCountByParentPath( final NodePath nodePath )
-    {
-        return Math.toIntExact(
-            nodeService.findByQuery( NodeQuery.create().parent( nodePath ).recursive( true ).size( 0 ).build() ).getTotalHits() );
     }
 
     private Path resolveNodeDataFolder( final Node node )

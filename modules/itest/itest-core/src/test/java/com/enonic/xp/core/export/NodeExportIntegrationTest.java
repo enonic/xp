@@ -1,10 +1,16 @@
 package com.enonic.xp.core.export;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +29,7 @@ import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
@@ -31,6 +38,7 @@ import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NodeExportIntegrationTest
@@ -252,6 +260,35 @@ class NodeExportIntegrationTest
 
         assertZipEntryExists( EXPORT_NAME + "/root/_/node.xml" );
         assertZipEntryExists( EXPORT_NAME + "/root/_/manualChildOrder.txt" );
+    }
+
+    @Test
+    void writerOrderListHoldsTheManualOrder()
+        throws IOException
+    {
+        final Node root =
+            Node.create().name( NodeName.from( "root" ) ).parentPath( NodePath.ROOT ).childOrder( ChildOrder.manualOrder() ).build();
+
+        createNode( CreateNodeParams.from( root ).build() );
+
+        createChildWithOrderValue( root.path(), "last", 1L );
+        createChildWithOrderValue( root.path(), "first", 3L );
+        createChildWithOrderValue( root.path(), "middle", 2L );
+
+        try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
+        {
+            NodeExporter.create()
+                .nodeService( this.nodeService )
+                .nodeExportWriter( exportWriter )
+                .sourceNodePath( NodePath.ROOT )
+                .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
+                .xpVersion( "1.0.0" )
+                .build()
+                .execute();
+        }
+
+        // the order the editor assigned, highest value first, rather than the order the children happened to be created in
+        assertEquals( List.of( "first", "middle", "last" ), readZipEntryLines( EXPORT_NAME + "/root/_/manualChildOrder.txt" ) );
     }
 
 
@@ -482,6 +519,34 @@ class NodeExportIntegrationTest
     {
         final Set<String> entries = getZipEntries();
         assertTrue( entries.contains( entryPath ), "Expected entry '" + entryPath + "' not found in zip. Entries: " + entries );
+    }
+
+    private void createChildWithOrderValue( final NodePath parent, final String name, final Long manualOrderValue )
+    {
+        // MANUAL is what makes the given value stick; the other strategies have the create command resolve one of its own
+        createNode( CreateNodeParams.create()
+                        .name( name )
+                        .parent( parent )
+                        .insertManualStrategy( InsertManualStrategy.MANUAL )
+                        .manualOrderValue( manualOrderValue )
+                        .build() );
+    }
+
+    private List<String> readZipEntryLines( final String entryPath )
+        throws IOException
+    {
+        final Path zipPath = temporaryFolder.resolve( EXPORT_NAME + ".zip" );
+        try (ZipFile zipFile = new ZipFile( zipPath.toFile() ))
+        {
+            final ZipEntry entry = zipFile.getEntry( entryPath );
+            assertNotNull( entry, "Expected entry '" + entryPath + "' not found in zip" );
+
+            try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader( zipFile.getInputStream( entry ), StandardCharsets.UTF_8 ) ))
+            {
+                return reader.lines().collect( Collectors.toList() );
+            }
+        }
     }
 
     private Set<String> getZipEntries()
