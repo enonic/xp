@@ -1,6 +1,7 @@
 package com.enonic.xp.node;
 
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
@@ -18,6 +19,8 @@ public final class NodeHit
 
     private final SortValuesProperty sort;
 
+    private final FieldValues fields;
+
     private NodeHit( final Builder builder )
     {
         nodeId = builder.nodeId;
@@ -26,6 +29,7 @@ public final class NodeHit
         explanation = builder.explanation;
         highlight = builder.highlight.build();
         sort = builder.sort;
+        fields = builder.fields;
     }
 
     public static Builder create()
@@ -63,6 +67,17 @@ public final class NodeHit
         return sort;
     }
 
+    /**
+     * Values of the index fields requested through {@link NodeQuery.Builder#returnFields(com.enonic.xp.index.IndexPath...)}, or
+     * {@link FieldValues#empty()} where none were requested.
+     *
+     * @since 8.1.0
+     */
+    public FieldValues getFields()
+    {
+        return fields;
+    }
+
     public static final class Builder
     {
         private NodeId nodeId;
@@ -76,6 +91,8 @@ public final class NodeHit
         private HighlightedProperties.Builder highlight = HighlightedProperties.create();
 
         private SortValuesProperty sort;
+
+        private FieldValues fields = FieldValues.empty();
 
         private Builder()
         {
@@ -114,6 +131,15 @@ public final class NodeHit
         public Builder sort( final SortValuesProperty sortValues )
         {
             this.sort = sortValues;
+            return this;
+        }
+
+        /**
+         * @since 8.1.0
+         */
+        public Builder fields( final FieldValues fields )
+        {
+            this.fields = fields != null ? fields : FieldValues.empty();
             return this;
         }
 

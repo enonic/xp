@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
 import static java.util.Objects.requireNonNull;
@@ -22,6 +23,8 @@ public final class FindContentIdsByQueryResult
 
     private final ImmutableMap<ContentId, Float> score;
 
+    private final ImmutableMap<ContentId, FieldValues> fields;
+
     private final long totalHits;
 
     private FindContentIdsByQueryResult( final Builder builder )
@@ -32,6 +35,7 @@ public final class FindContentIdsByQueryResult
         this.highlight = builder.highlight != null ? ImmutableMap.copyOf( builder.highlight ) : null;
         this.sort = builder.sort != null ? ImmutableMap.copyOf( builder.sort ) : null;
         this.score = builder.score != null ? ImmutableMap.copyOf( builder.score ) : null;
+        this.fields = ImmutableMap.copyOf( builder.fields );
     }
 
     public static Builder create()
@@ -64,6 +68,17 @@ public final class FindContentIdsByQueryResult
         return score;
     }
 
+    /**
+     * The fields requested through {@link ContentQuery.Builder#returnFields(com.enonic.xp.index.IndexPath...)}, keyed by content id.
+     * A hit that holds no value for any of them has no entry.
+     *
+     * @since 8.1.0
+     */
+    public Map<ContentId, FieldValues> getFields()
+    {
+        return fields;
+    }
+
     public long getTotalHits()
     {
         return totalHits;
@@ -80,6 +95,8 @@ public final class FindContentIdsByQueryResult
         private Map<ContentId, SortValuesProperty> sort;
 
         private Map<ContentId, Float> score;
+
+        private Map<ContentId, FieldValues> fields = Map.of();
 
         private long totalHits;
 
@@ -120,6 +137,15 @@ public final class FindContentIdsByQueryResult
         public Builder score( final Map<ContentId, Float> score )
         {
             this.score = score;
+            return this;
+        }
+
+        /**
+         * @since 8.1.0
+         */
+        public Builder fields( final Map<ContentId, FieldValues> fields )
+        {
+            this.fields = fields;
             return this;
         }
 

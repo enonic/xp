@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node.mapper;
 
+import java.util.List;
+
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
@@ -18,8 +20,11 @@ public final class NodeQueryResultMapper
 
     private final Suggestions suggestions;
 
-    public NodeQueryResultMapper( final FindNodesByQueryResult result )
+    private final List<String> returns;
+
+    public NodeQueryResultMapper( final FindNodesByQueryResult result, final List<String> returns )
     {
+        this.returns = returns;
         this.nodeHits = result.getNodeHits();
         this.total = result.getTotalHits();
         this.aggregations = result.getAggregations();
@@ -46,6 +51,7 @@ public final class NodeQueryResultMapper
             gen.value( "score", Float.isNaN( nodeHit.getScore() ) ? 0.0 : nodeHit.getScore() );
             serialize( gen, nodeHit.getExplanation() );
             serialize( gen, nodeHit.getHighlight() );
+            serialize( gen, nodeHit.getFields(), this.returns );
             gen.end();
         }
         gen.end();

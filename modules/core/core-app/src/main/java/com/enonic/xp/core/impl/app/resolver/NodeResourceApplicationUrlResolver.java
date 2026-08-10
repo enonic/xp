@@ -9,17 +9,13 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.NodeValueResource;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
-import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeHit;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.query.expr.CompareExpr;
-import com.enonic.xp.query.expr.FieldExpr;
-import com.enonic.xp.query.expr.QueryExpr;
-import com.enonic.xp.query.expr.ValueExpr;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 
@@ -39,18 +35,31 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        final QueryExpr query = QueryExpr.from( CompareExpr.like( FieldExpr.from( "_path" ), ValueExpr.string(
-            "/" + applicationKey + "/" + VirtualAppConstants.CMS_ROOT_NAME + "/*/*/*" ) ) );
+        final NodePath cmsPath = NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+            .addElement( applicationKey.toString() )
+            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
+            .build();
 
         return VirtualAppContext.createContext().callWith( () -> {
-            final FindNodesByQueryResult nodes = this.nodeService.findByQuery( NodeQuery.create().query( query ).withPath( true ).build() );
+            final ListNodesResult nodes =
+                this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).recursive( true ).build() );
 
-            return nodes.getNodeHits()
+            return nodes.getEntries()
                 .stream()
-                .map( NodeHit::getNodePath )
+                .map( NodeListEntry::nodePath )
+                .filter( nodePath -> isResource( cmsPath, nodePath ) )
                 .map( nodePath -> nodePath.toString().substring( nodePath.toString().indexOf( '/', 1 ) ) )
                 .collect( Collectors.toCollection( LinkedHashSet::new ) );
         } );
+    }
+
+    /**
+     * A resource is a leaf three levels below the cms root - {@code <resource root>/<name>/<file>}. The listing walks the whole subtree,
+     * so the folders on the way there are skipped here.
+     */
+    private static boolean isResource( final NodePath cmsPath, final NodePath nodePath )
+    {
+        return cmsPath.equals( nodePath.getParentPath().getParentPath().getParentPath() );
     }
 
     @Override

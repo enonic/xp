@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.lib.common.JsonToFilterMapper;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.aggregation.AggregationQueries;
@@ -40,6 +41,12 @@ abstract class AbstractFindNodesQueryHandler
 
     private final boolean explain;
 
+    private final String parent;
+
+    private final boolean recursive;
+
+    private final List<String> returns;
+
     AbstractFindNodesQueryHandler( final Builder builder )
     {
         super( builder );
@@ -52,6 +59,24 @@ abstract class AbstractFindNodesQueryHandler
         this.suggestions = builder.suggestions;
         this.highlight = builder.highlight;
         this.explain = builder.explain;
+        this.parent = builder.parent;
+        this.recursive = builder.recursive;
+        this.returns = builder.returns;
+    }
+
+    String getParent()
+    {
+        return parent;
+    }
+
+    List<String> getReturns()
+    {
+        return returns;
+    }
+
+    boolean isRecursive()
+    {
+        return recursive;
     }
 
     NodeQuery createNodeQuery()
@@ -67,7 +92,7 @@ abstract class AbstractFindNodesQueryHandler
 
         final HighlightQuery highlight = new QueryHighlightParams().getHighlightQuery( this.highlight );
 
-        return NodeQuery.create()
+        final NodeQuery.Builder nodeQuery = NodeQuery.create()
             .from( start )
             .size( count )
             .addAggregationQueries( aggregations )
@@ -75,8 +100,19 @@ abstract class AbstractFindNodesQueryHandler
             .highlight( highlight )
             .query( queryExpr )
             .addQueryFilters( filters )
-            .explain( this.explain )
-            .build();
+            .explain( this.explain );
+
+        if ( this.returns != null )
+        {
+            // an empty list asks for nothing, which is what leaving returns out already means - almost always a mistake worth reporting
+            if ( this.returns.isEmpty() )
+            {
+                throw new IllegalArgumentException( "returns must name at least one index field" );
+            }
+            nodeQuery.returnFields( this.returns.stream().map( IndexPath::from ).toArray( IndexPath[]::new ) );
+        }
+
+        return nodeQuery.build();
     }
 
     private ConstraintExpr buildConstraintExpr()
@@ -143,8 +179,35 @@ abstract class AbstractFindNodesQueryHandler
 
         private boolean explain = false;
 
+        private String parent;
+
+        private boolean recursive;
+
+        private List<String> returns;
+
         Builder()
         {
+        }
+
+        @SuppressWarnings("unchecked")
+        public B parent( final String val )
+        {
+            parent = val;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B recursive( final boolean val )
+        {
+            recursive = val;
+            return (B) this;
+        }
+
+        @SuppressWarnings("unchecked")
+        public B returns( final List<String> val )
+        {
+            returns = val;
+            return (B) this;
         }
 
         @SuppressWarnings("unchecked")

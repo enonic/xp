@@ -11,8 +11,8 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -36,8 +36,8 @@ public class VirtualAppService
     public List<Application> list()
     {
         return VirtualAppContext.createContext().callWith( () -> {
-            final FindNodesByParentResult result =
-                this.nodeService.findByParent( FindNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
+            final ListNodesResult result =
+                this.nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() );
 
             final Nodes nodes = nodeService.getByIds( result.getNodeIds() );
 

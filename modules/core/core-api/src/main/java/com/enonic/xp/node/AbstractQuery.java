@@ -165,6 +165,30 @@ public class AbstractQuery
         {
         }
 
+        /**
+         * Copies every setting of an already built query, so a single setting can be changed without reassembling the rest.
+         *
+         * @since 8.1.0
+         */
+        protected Builder( final AbstractQuery source )
+        {
+            this.query = source.query;
+            this.postFilters.addAll( source.postFilters );
+            this.queryFilters.addAll( source.queryFilters );
+            this.aggregationQueries.addAll( source.aggregationQueries );
+            this.suggestionQueries.addAll( source.suggestionQueries );
+            this.highlight = source.highlight;
+            this.from = source.from;
+            this.size = source.size;
+            this.batchSize = source.batchSize;
+            this.searchOptimizer = source.searchOptimizer;
+            this.explain = source.explain;
+            // the built order list is the query expression's own orders followed by the builder-added ones;
+            // carry over only the latter, or rebuilding would duplicate the expression's orders
+            final int queryOrders = source.query != null ? source.query.getOrderList().size() : 0;
+            this.orderBys.addAll( source.orderBys.subList( queryOrders, source.orderBys.size() ) );
+        }
+
         @SuppressWarnings("unchecked")
         public B query( QueryExpr query )
         {

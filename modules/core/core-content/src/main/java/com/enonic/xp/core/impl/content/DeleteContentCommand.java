@@ -11,7 +11,7 @@ import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.FindNodesByParentParams;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
@@ -69,19 +69,21 @@ final class DeleteContentCommand
 
         verifyNotProtectedRoot( nodeToDelete.path() );
 
-        return doDeleteContent( ContentId.from( nodeToDelete.id() ) );
+        return doDeleteContent( nodeToDelete );
     }
 
-    private DeleteContentsResult doDeleteContent( ContentId nodeToDelete )
+    private DeleteContentsResult doDeleteContent( final Node nodeToDelete )
     {
         final DeleteContentsResult.Builder result = DeleteContentsResult.create();
 
-        final NodeId nodeId = NodeId.from( nodeToDelete );
+        final NodeId nodeId = nodeToDelete.id();
+        final ContentId contentId = ContentId.from( nodeId );
 
+        // enumerated, not searched: everything below has to be unpublished, including what a search has not indexed yet
         final NodeIds descendants =
-            nodeService.findByParent( FindNodesByParentParams.create().recursive( true ).parentId( nodeId ).build() ).getNodeIds();
+            nodeService.list( ListNodesParams.create().parentPath( nodeToDelete.path() ).recursive( true ).build() ).getNodeIds();
 
-        final ContentIds unpublishedContents = unpublish( nodeToDelete, ContentNodeHelper.toContentIds( descendants ) );
+        final ContentIds unpublishedContents = unpublish( contentId, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );
 
         final DeleteNodeParams.Builder builder = DeleteNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH );

@@ -4,21 +4,33 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.aggregation.BucketAggregation;
 import com.enonic.xp.aggregation.Buckets;
+import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.ChildOrder;
+import com.enonic.xp.index.FieldValues;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.query.aggregation.TermsAggregationQuery;
 import com.enonic.xp.query.expr.DslExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
@@ -83,6 +95,280 @@ class ContentServiceImplTest_find
         final ContentQuery queryOrderDesc = ContentQuery.create().queryExpr( QueryParser.parse( "order by _path desc" ) ).build();
 
         assertOrder( contentService.find( queryOrderDesc ).getContentIds(), child3, child2, child1, site );
+    }
+
+    @Test
+    void parent_path()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        createContent( child1.getPath(), "grandchild" );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentPath( site.getPath() ).build() );
+
+        assertEquals( 2, result.getTotalHits() );
+        assertThat( result.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId() );
+    }
+
+    @Test
+    void parent_id()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        createContent( child1.getPath(), "grandchild" );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentId( site.getId() ).build() );
+
+        assertEquals( 2, result.getTotalHits() );
+        assertThat( result.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId() );
+    }
+
+    @Test
+    void parent_recursive()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        final Content grandchild = createContent( child1.getPath(), "d" );
+        final Content outside = createContent( ContentPath.ROOT, "e" );
+
+        final FindContentIdsByQueryResult byPath =
+            contentService.find( ContentQuery.create().parentPath( site.getPath() ).recursive( true ).size( -1 ).build() );
+
+        assertThat( byPath.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId(), grandchild.getId() )
+            .doesNotContain( site.getId(), outside.getId() );
+
+        final FindContentIdsByQueryResult byId =
+            contentService.find( ContentQuery.create().parentId( site.getId() ).recursive( true ).size( -1 ).build() );
+
+        assertThat( byId.getContentIds() ).containsExactlyInAnyOrder( child1.getId(), child2.getId(), grandchild.getId() );
+    }
+
+    @Test
+    void parent_recursive_from_root_matches_every_content()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child = createContent( site.getPath(), "b" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().parentPath( ContentPath.ROOT ).recursive( true ).size( -1 ).build() );
+
+        assertThat( result.getContentIds() ).contains( site.getId(), child.getId() );
+    }
+
+    @Test
+    void parent_root()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        createContent( site.getPath(), "b" );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentPath( ContentPath.ROOT ).build() );
+
+        assertThat( result.getContentIds() ).containsExactly( site.getId() );
+    }
+
+    @Test
+    void parent_path_that_does_not_exist()
+    {
+        createContent( ContentPath.ROOT, "a" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().parentPath( ContentPath.from( "/no-such-content" ) ).build() );
+
+        assertEquals( 0, result.getTotalHits() );
+        assertTrue( result.getContentIds().isEmpty() );
+    }
+
+    @Test
+    void parent_id_that_does_not_exist()
+    {
+        createContent( ContentPath.ROOT, "a" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().parentId( ContentId.from( "no-such-content" ) ).build() );
+
+        assertEquals( 0, result.getTotalHits() );
+        assertTrue( result.getContentIds().isEmpty() );
+    }
+
+    @Test
+    void parent_applies_child_order_of_parent()
+    {
+        final Content parent = createParentWithChildOrder( ChildOrder.from( "_name DESC" ) );
+        final Content child1 = createContent( parent.getPath(), "b" );
+        final Content child2 = createContent( parent.getPath(), "c" );
+        final Content child3 = createContent( parent.getPath(), "d" );
+
+        assertOrder( contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() ).getContentIds(), child3, child2,
+                     child1 );
+
+        assertOrder( contentService.find( ContentQuery.create().parentId( parent.getId() ).build() ).getContentIds(), child3, child2,
+                     child1 );
+    }
+
+    @Test
+    void parent_recursive_does_not_apply_child_order_of_parent()
+    {
+        final Content parent = createParentWithChildOrder( ChildOrder.from( "_name DESC" ) );
+        final Content child1 = createContent( parent.getPath(), "b" );
+        final Content child2 = createContent( parent.getPath(), "c" );
+        final Content grandchild = createContent( child1.getPath(), "a" );
+
+        // the direct-children query still comes back in the order the parent arranged
+        assertOrder( contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() ).getContentIds(), child2, child1 );
+
+        // recursive answers for a whole subtree, which that order says nothing about, so it takes the order the query asks for
+        assertOrder( contentService.find( ContentQuery.create()
+                                              .parentPath( parent.getPath() )
+                                              .recursive( true )
+                                              .size( -1 )
+                                              .queryExpr( QueryParser.parse( "order by _name ASC" ) )
+                                              .build() ).getContentIds(), grandchild, child1, child2 );
+    }
+
+    @Test
+    void parent_applies_language_of_parent_to_child_order_by_display_name()
+    {
+        final Content parent = contentService.create( CreateContentParams.create()
+                                                          .displayName( "parent" )
+                                                          .parent( ContentPath.ROOT )
+                                                          .contentData( new PropertyTree() )
+                                                          .type( ContentTypeName.folder() )
+                                                          .language( Locale.forLanguageTag( "nb" ) )
+                                                          .childOrder( ChildOrder.from( "displayName ASC" ) )
+                                                          .build() );
+
+        // Norwegian ICU collation: æ < ø < å
+        for ( final String displayName : List.of( "år", "øl", "æsel", "alfa" ) )
+        {
+            contentService.create( CreateContentParams.create()
+                                       .displayName( displayName )
+                                       .parent( parent.getPath() )
+                                       .contentData( new PropertyTree() )
+                                       .type( ContentTypeName.folder() )
+                                       .build() );
+        }
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() );
+
+        assertThat( result.getContentIds() ).extracting( contentService::getById )
+            .extracting( Content::getDisplayName )
+            .containsExactly( "alfa", "æsel", "øl", "år" );
+    }
+
+    @Test
+    void parent_own_order_wins_over_child_order_of_parent()
+    {
+        final Content parent = createParentWithChildOrder( ChildOrder.from( "_name DESC" ) );
+        final Content child1 = createContent( parent.getPath(), "b" );
+        final Content child2 = createContent( parent.getPath(), "c" );
+
+        final ContentQuery query = ContentQuery.create()
+            .parentPath( parent.getPath() )
+            .queryExpr( QueryParser.parse( "order by _path asc" ) )
+            .build();
+
+        assertOrder( contentService.find( query ).getContentIds(), child1, child2 );
+    }
+
+    @Test
+    void parent_combined_with_query_and_order()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child1 = createContent( site.getPath(), "b" );
+        final Content child2 = createContent( site.getPath(), "c" );
+        createContent( site.getPath(), "d", new PropertyTree(), ContentTypeName.unknownMedia() );
+        createContent( ContentPath.ROOT, "e" );
+
+        final ContentQuery query = ContentQuery.create()
+            .parentPath( site.getPath() )
+            .addContentTypeName( ContentTypeName.folder() )
+            .queryExpr( QueryParser.parse( "order by _path desc" ) )
+            .build();
+
+        assertOrder( contentService.find( query ).getContentIds(), child2, child1 );
+    }
+
+    @Test
+    void return_fields_with_content_path_translation()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        final Content child = createContent( site.getPath(), "b" );
+
+        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create()
+                                                                            .parentPath( site.getPath() )
+                                                                            .returnFields( NodeIndexPath.PATH, NodeIndexPath.NAME,
+                                                                                           IndexPath.from( "displayName" ),
+                                                                                           IndexPath.from( "type" ) )
+                                                                            .build() );
+
+        final FieldValues fields = result.getFields().get( child.getId() );
+
+        // path values come back as content paths, not the node paths the index stores
+        assertEquals( List.of( child.getPath().toString() ), fields.getValues( NodeIndexPath.PATH ) );
+        assertEquals( List.of( "b" ), fields.getValues( NodeIndexPath.NAME ) );
+        // content fields, under the names a fetched content shows them by
+        assertEquals( List.of( child.getDisplayName() ), fields.getValues( "displayName" ) );
+        assertEquals( List.of( child.getType().toString() ), fields.getValues( "type" ) );
+    }
+
+    @Test
+    void return_field_value_keeps_the_casing_it_was_stored_with()
+    {
+        final Content content = createContent( ContentPath.ROOT, "MiXeD Display Name" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().returnFields( IndexPath.from( "displayName" ) ).build() );
+
+        // the index lowercases what it matches on, but a returned value comes from the stored document, so text an editor typed
+        // comes back as they typed it
+        assertEquals( List.of( "MiXeD Display Name" ), result.getFields().get( content.getId() ).getValues( "displayName" ) );
+    }
+
+    @Test
+    void return_fields_outside_the_supported_set_are_rejected()
+    {
+        final ContentQuery.Builder builder = ContentQuery.create();
+
+        // node fields a content never shows are not content fields
+        assertEquals( "unsupported return field: _ts",
+                      assertThrows( IllegalArgumentException.class,
+                                    () -> builder.returnFields( NodeIndexPath.TIMESTAMP ) ).getMessage() );
+        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( NodeIndexPath.VERSION ) );
+        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( NodeIndexPath.PARENT_PATH ) );
+        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( IndexPath.from( "data.priority" ) ) );
+    }
+
+    @Test
+    void no_return_fields_no_field_values()
+    {
+        final Content content = createContent( ContentPath.ROOT, "a" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().queryExpr( QueryParser.parse( "_id = '" + content.getId() + "'" ) ).build() );
+
+        assertTrue( result.getFields().isEmpty() );
+    }
+
+    @Test
+    void parent_records_trace_attribute()
+    {
+        final Content site = createContent( ContentPath.ROOT, "a" );
+        createContent( site.getPath(), "b" );
+
+        final TestTrace pathTrace = TestTrace.of( "content.find" );
+        final FindContentIdsByQueryResult byPath =
+            Tracer.trace( pathTrace, () -> this.contentService.find( ContentQuery.create().parentPath( site.getPath() ).build() ) );
+
+        assertEquals( 1L, byPath.getTotalHits() );
+        assertEquals( "/a", pathTrace.get( "parent" ) );
+
+        final TestTrace idTrace = TestTrace.of( "content.find" );
+        Tracer.trace( idTrace, () -> this.contentService.find( ContentQuery.create().parentId( site.getId() ).build() ) );
+
+        assertEquals( site.getId().toString(), idTrace.get( "parent" ) );
     }
 
     @Test
@@ -554,6 +840,49 @@ class ContentServiceImplTest_find
             ContentQuery.create().queryExpr( QueryExpr.from( DslExpr.from( request ), DslOrderExpr.from( order ) ) ).build();
 
         assertOrder( contentService.find( queryDsl ).getContentIds(), child2 );
+    }
+
+    @Test
+    void archive_context_queries_below_the_archive_root()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        final Content child = createContent( parent.getPath(), "child" );
+
+        contentService.archive( ArchiveContentParams.create().contentId( parent.getId() ).build() );
+
+        archiveContext().runWith( () -> {
+            final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create()
+                                                                                .parentPath( parent.getPath() )
+                                                                                .returnFields( NodeIndexPath.PATH )
+                                                                                .build() );
+
+            assertThat( result.getContentIds() ).containsExactly( child.getId() );
+
+            // the path comes back relative to the content root of the context, which here is the archive
+            assertEquals( List.of( child.getPath().toString() ),
+                          result.getFields().get( child.getId() ).getValues( NodeIndexPath.PATH ) );
+        } );
+
+        // the same query outside the archive context matches nothing, the content no longer being below /content
+        assertEquals( 0, contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() ).getTotalHits() );
+    }
+
+    private Context archiveContext()
+    {
+        return ContextBuilder.from( ContextAccessor.current() )
+            .attribute( ContentConstants.CONTENT_ROOT_PATH_ATTRIBUTE, new NodePath( "/archive" ) )
+            .build();
+    }
+
+    private Content createParentWithChildOrder( final ChildOrder childOrder )
+    {
+        return contentService.create( CreateContentParams.create()
+                                          .displayName( "a" )
+                                          .parent( ContentPath.ROOT )
+                                          .contentData( new PropertyTree() )
+                                          .type( ContentTypeName.folder() )
+                                          .childOrder( childOrder )
+                                          .build() );
     }
 
     private FindContentIdsByQueryResult findContent( final ContentId contentId )

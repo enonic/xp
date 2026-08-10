@@ -59,7 +59,7 @@ class CreateNodeCommand_path_integrity_test
         refresh();
 
         final FindNodesByQueryResult result = doFindByQuery( NodeQuery.create()
-                                                                 .withPath( true )
+                                                                 .returnFields( NodeIndexPath.PATH )
                                                                  .addQueryFilter( ValueFilter.create()
                                                                                       .fieldName( NodeIndexPath.PATH.getPath() )
                                                                                       .addValue( ValueFactory.newString(

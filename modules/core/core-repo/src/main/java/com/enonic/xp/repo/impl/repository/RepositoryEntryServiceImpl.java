@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.repository;
 
+import java.util.Comparator;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -9,26 +11,34 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.BinaryAttachment;
 import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.FieldExpr;
+import com.enonic.xp.query.expr.FieldOrderExpr;
+import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.query.expr.QueryExpr;
+import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.NodeEvents;
 import com.enonic.xp.repo.impl.RepositoryEvents;
 import com.enonic.xp.repo.impl.SearchPreference;
-import com.enonic.xp.repo.impl.SingleRepoSearchSource;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
+import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
+import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.NodeStorageService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryConstants;
@@ -121,15 +131,28 @@ public class RepositoryEntryServiceImpl
     @Override
     public RepositoryIds findRepositoryEntryIds()
     {
-        final SearchResult searchResult = this.nodeSearchService.query( NodeQuery.create()
-                                                                            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-                                                                            .parent( RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH )
-                                                                            .setOrderExpressions(
-                                                                                ChildOrder.defaultOrder().getOrderExpressions() )
-                                                                            .build(),
-                                                                        SingleRepoSearchSource.from( createInternalContext() ) );
+        // enumerated from storage: an entry is listed as soon as it is stored, without the search index having to catch up first
+        final NodeBranchQuery query = NodeBranchQuery.create()
+            .query( QueryExpr.from( CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string(
+                RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH + "/*" ) ) ) )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                 .addValue( ValueFactory.newString( SystemConstants.BRANCH_SYSTEM.getValue() ) )
+                                 .build() )
+            .addOrderBy( FieldOrderExpr.create( BranchIndexPath.PATH, OrderExpr.Direction.ASC ) )
+            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
+            .build();
 
-        return searchResult.getHits().stream().map( hit -> RepositoryId.from( hit.getId() ) ).collect( RepositoryIds.collector() );
+        final NodeBranchEntries entries =
+            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query, SystemConstants.SYSTEM_REPO_ID ) );
+
+        // the branch index holds no parent, so the prefix reaches any depth; an entry is a direct child of the storage parent
+        return entries.stream()
+            .filter( entry -> RepositoryConstants.REPOSITORY_STORAGE_PARENT_PATH.equals( entry.getNodePath().getParentPath() ) )
+            // most recently stored first, the order the search this replaced returned, which the project graph orders siblings by
+            .sorted( Comparator.comparing( NodeBranchEntry::getTimestamp, Comparator.nullsLast( Comparator.reverseOrder() ) ) )
+            .map( entry -> RepositoryId.from( entry.getNodeId().toString() ) )
+            .collect( RepositoryIds.collector() );
     }
 
     @Override

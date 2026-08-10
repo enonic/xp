@@ -23,9 +23,8 @@ import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -116,12 +115,9 @@ public final class SecurityServiceImpl
     @Override
     public IdProviders getIdProviders()
     {
-        final FindNodesByParentParams findByParent =
-            FindNodesByParentParams.create().parentPath( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH ).build();
-        final Nodes nodes = callWithContext( () -> {
-            final FindNodesByParentResult result = this.nodeService.findByParent( findByParent );
-            return this.nodeService.getByIds( result.getNodeIds() );
-        } );
+        final ListNodesParams listParams =
+            ListNodesParams.create().parentPath( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH ).build();
+        final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( this.nodeService.list( listParams ).getNodeIds() ) );
 
         return IdProviderNodeTranslator.fromNodes( nodes );
     }

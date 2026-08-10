@@ -13,7 +13,6 @@ import org.osgi.framework.Bundle;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.server.RunMode;
 
 @ExtendWith(MockitoExtension.class)
 public class ApplicationFactoryServiceMock

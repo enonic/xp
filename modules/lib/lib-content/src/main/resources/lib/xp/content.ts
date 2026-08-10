@@ -506,6 +506,37 @@ export interface ContentsResult<
     highlight?: Record<string, HighlightResult>;
 }
 
+/**
+ * A hit returned by {@link query} when `returns: 'ids'` is requested.
+ */
+export interface ContentIdHit {
+    id: string;
+    score: number;
+}
+
+/**
+ * A hit returned by {@link query} when `returns` names content fields, which are supplied in `fields`.
+ */
+export interface ContentFieldsHit {
+    id: string;
+    score: number;
+    fields?: Record<string, unknown>;
+}
+
+export interface ContentHitsResult<
+    Hit,
+    AggregationOutput extends Record<string, AggregationsResult> | undefined = undefined
+> {
+    total: number;
+    count: number;
+    hits: Hit[];
+    aggregations: AggregationOutput;
+    highlight?: Record<string, HighlightResult>;
+}
+
+/**
+ * @deprecated Use {@link QueryContentParams} with `parent` instead.
+ */
 export interface GetChildContentParams {
     key: string;
     start?: number;
@@ -532,6 +563,9 @@ interface GetChildContentHandler {
  * This function fetches children of a content.
  *
  * @example-ref examples/content/getChildren.js
+ *
+ * @deprecated Use {@link query} with `parent` instead. It accepts the same path or id, applies the same child order of the parent where
+ * `sort` is omitted, and additionally supports filters, content types, aggregations and highlighting.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Path or id to the parent content.
@@ -690,6 +724,9 @@ export function create<
 export interface QueryContentParams<AggregationInput extends Aggregations = never> {
     start?: number;
     count?: number;
+    parent?: string;
+    recursive?: boolean;
+    returns?: 'contents' | 'ids' | string[];
     query?: QueryDsl | string;
     sort?: string | SortDsl | SortDsl[];
     filters?: Filter | Filter[];
@@ -702,6 +739,12 @@ interface QueryContentHandler {
     setStart(value: number | null): void;
 
     setCount(value: number | null): void;
+
+    setParent(value: string | null): void;
+
+    setRecursive(value: boolean | null): void;
+
+    setReturns(value: ScriptValue | null): void;
 
     setQuery(value: ScriptValue | null): void;
 
@@ -725,10 +768,23 @@ interface QueryContentHandler {
  * This command queries content.
  *
  * @example-ref examples/content/query.js
+ * @example-ref examples/content/queryChildren.js
  *
  * @param {object} params JSON with the parameters.
  * @param {number} [params.start=0] Start index (used for paging).
  * @param {number} [params.count=10] Number of contents to fetch.
+ * @param {string} [params.parent] Path or id of a content to whose direct children the query is restricted. Where `sort` is not
+ * specified, the children are returned in the child order of the parent. A parent that does not exist matches nothing. A path is relative
+ * to the content root of the calling context; as the same API also serves the archive, an identical path denotes a different content
+ * depending on the context.
+ * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
+ * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify `sort`
+ * where the order of a recursive result is significant.
+ * @param {string|string[]} [params.returns='contents'] Determines what each hit carries: `'contents'` for the whole content, which is
+ * the default, `'ids'` for id and score, or a list of content field names — `_name`, `_path`, `displayName`, `type`, `creator`,
+ * `modifier`, `createdTime`, `modifiedTime`, `owner`, `language` — supplied as `fields` on the hit. Any other name is an error, as is an
+ * empty list; request `'ids'` where no fields are required. Only fields a content exposes are available, so a hit returns exactly what
+ * the content would return. Every shape other than the default is answered without reading the contents at all.
  * @param {string|object} [params.query] Query expression.
  * @param {object|object[]} [params.filters] Filters to apply to query result
  * @param {string|object|object[]} [params.sort] Sorting expression.
@@ -742,11 +798,28 @@ interface QueryContentHandler {
 export function query<
     Hit extends Content<unknown> = Content,
     AggregationInput extends Aggregations = never
->(params: QueryContentParams<AggregationInput>): ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>> {
+>(params: QueryContentParams<AggregationInput> & {returns: 'ids'}): ContentHitsResult<ContentIdHit, AggregationsToAggregationResults<AggregationInput>>;
+export function query<
+    Hit extends Content<unknown> = Content,
+    AggregationInput extends Aggregations = never
+>(params: QueryContentParams<AggregationInput> & {returns: string[]}): ContentHitsResult<ContentFieldsHit, AggregationsToAggregationResults<AggregationInput>>;
+export function query<
+    Hit extends Content<unknown> = Content,
+    AggregationInput extends Aggregations = never
+>(params: QueryContentParams<AggregationInput>): ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>>;
+export function query<
+    Hit extends Content<unknown> = Content,
+    AggregationInput extends Aggregations = never
+>(params: QueryContentParams<AggregationInput>):
+    ContentsResult<Hit, AggregationsToAggregationResults<AggregationInput>>
+    | ContentHitsResult<ContentIdHit | ContentFieldsHit, AggregationsToAggregationResults<AggregationInput>> {
     const bean: QueryContentHandler = __.newBean<QueryContentHandler>('com.enonic.xp.lib.content.QueryContentHandler');
 
     bean.setStart(__.nullOrValue(params.start));
     bean.setCount(__.nullOrValue(params.count));
+    bean.setParent(__.nullOrValue(params.parent));
+    bean.setRecursive(__.nullOrValue(params.recursive));
+    bean.setReturns(__.toScriptValue(params.returns));
     bean.setQuery(__.toScriptValue((params.query)));
     bean.setSort(__.toScriptValue(params.sort));
     bean.setAggregations(__.toScriptValue(params.aggregations));

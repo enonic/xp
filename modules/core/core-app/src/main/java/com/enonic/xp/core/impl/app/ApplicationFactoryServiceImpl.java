@@ -21,7 +21,6 @@ import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.server.RunMode;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.app")
 public class ApplicationFactoryServiceImpl

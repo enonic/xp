@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.scheduler.ScheduledJob;
 
@@ -30,9 +30,7 @@ public class ListScheduledJobsCommand
 
     private List<ScheduledJob> doExecute()
     {
-        final FindNodesByParentResult result = nodeService.findByParent( FindNodesByParentParams.create().
-            parentPath( NodePath.ROOT ).
-            build() );
+        final ListNodesResult result = nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() );
 
         return nodeService.getByIds( result.getNodeIds() ).
             stream().

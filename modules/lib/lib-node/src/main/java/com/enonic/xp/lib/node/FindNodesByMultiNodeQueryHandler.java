@@ -20,7 +20,24 @@ class FindNodesByMultiNodeQueryHandler
     @Override
     public Object execute()
     {
-        final NodeQuery nodeQuery = createNodeQuery();
+        NodeQuery nodeQuery = createNodeQuery();
+
+        if ( getParent() != null )
+        {
+            // an id cannot name one node across several repositories, so only a path parent makes sense here
+            final NodeKey parentKey = NodeKey.from( getParent() );
+            if ( parentKey.isId() )
+            {
+                throw new IllegalArgumentException( "parent must be a path in a multi-repo query" );
+            }
+
+            nodeQuery = NodeQuery.create( nodeQuery ).parent( parentKey.getAsPath() ).recursive( isRecursive() ).build();
+        }
+        else if ( isRecursive() )
+        {
+            // recursive widens a parent restriction, so without a parent it would silently do nothing
+            throw new IllegalArgumentException( "recursive expects a parent" );
+        }
 
         final MultiRepoNodeQuery multiRepoNodeQuery = new MultiRepoNodeQuery( this.searchTargets, nodeQuery );
 
@@ -31,7 +48,7 @@ class FindNodesByMultiNodeQueryHandler
 
     private NodeMultiRepoQueryResultMapper convert( final FindNodesByMultiRepoQueryResult result )
     {
-        return new NodeMultiRepoQueryResultMapper( result );
+        return new NodeMultiRepoQueryResultMapper( result, getReturns() );
     }
 
     public static Builder create()

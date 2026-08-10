@@ -36,12 +36,13 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.FindNodesByParentParams;
-import com.enonic.xp.node.FindNodesByParentResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -233,8 +234,12 @@ class ApplicationServiceImplTest
 
         final NodeIds ids = NodeIds.from( virtualAppNodeId );
 
-        when( nodeService.findByParent( isA( FindNodesByParentParams.class ) ) ).thenReturn(
-            FindNodesByParentResult.create().totalHits( 1L ).nodeIds( ids ).build() );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create()
+                                                                                         .addEntry( new NodeListEntry( virtualAppNodeId,
+                                                                                                                       new NodePath(
+                                                                                                                           "/app3" ),
+                                                                                                                       Instant.EPOCH ) )
+                                                                                         .build() );
 
         when( nodeService.getByIds( ids ) ).thenReturn(
             Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );

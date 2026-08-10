@@ -1,10 +1,14 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.Map;
+
+import com.enonic.xp.index.FieldValues;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.ReturnValue;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 
@@ -24,7 +28,8 @@ class FindNodesByQueryResultFactory
                 score( hit.getScore() ).
                 explanation( hit.getExplanation() ).
                 highlight( hit.getHighlightedProperties() ).
-                sort( hit.getSortValues() );
+                sort( hit.getSortValues() ).
+                fields( toFieldValues( hit ) );
 
             final NodePath nodePath = hit.getReturnValues()
                 .getOptional( NodeIndexPath.PATH )
@@ -39,5 +44,17 @@ class FindNodesByQueryResultFactory
         }
 
         return resultBuilder.build();
+    }
+
+    static FieldValues toFieldValues( final SearchHit hit )
+    {
+        final Map<String, ReturnValue> returnValues = hit.getReturnValues().asMap();
+        if ( returnValues.isEmpty() )
+        {
+            return FieldValues.empty();
+        }
+        final FieldValues.Builder fields = FieldValues.create();
+        returnValues.forEach( ( field, value ) -> fields.add( field, value.getValues() ) );
+        return fields.build();
     }
 }

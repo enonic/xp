@@ -6,13 +6,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.lib.common.JsonToFilterMapper;
+import com.enonic.xp.lib.content.mapper.ContentHitsResultMapper;
 import com.enonic.xp.lib.content.mapper.ContentsResultMapper;
 import com.enonic.xp.query.aggregation.AggregationQuery;
 import com.enonic.xp.query.expr.ConstraintExpr;
@@ -48,6 +52,12 @@ public final class QueryContentHandler
 
     private List<Map<String, Object>> filters;
 
+    private String parent;
+
+    private Boolean recursive;
+
+    private ScriptValue returns;
+
     @Override
     protected Object doExecute()
     {
@@ -67,6 +77,8 @@ public final class QueryContentHandler
             .addContentTypeNames( contentTypeNames )
             .queryExpr( queryExpr );
 
+        applyParent( queryBuilder );
+
         if ( start != null )
         {
             queryBuilder.from( start );
@@ -81,9 +93,65 @@ public final class QueryContentHandler
             queryBuilder.queryFilter( filter );
         }
 
+        final ReturnShape shape = resolveReturnShape( queryBuilder );
+
         final FindContentIdsByQueryResult queryResult = contentService.find( queryBuilder.build() );
 
-        return convert( queryResult );
+        switch ( shape )
+        {
+            case IDS:
+                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.IDS );
+            case FIELDS:
+                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.FIELDS,
+                                                    returns.getArray( String.class ) );
+            default:
+                return convert( queryResult );
+        }
+    }
+
+    private enum ReturnShape
+    {
+        CONTENTS, IDS, FIELDS
+    }
+
+    /**
+     * The {@code returns} parameter picks the shape of the hits: full contents (the default), bare ids, or ids with the values of the
+     * index fields named by an array. Everything but the default skips reading the contents entirely.
+     * <p>
+     * An empty array is refused rather than treated as 'ids': it would answer the same hits under a second spelling, and a field list
+     * built at runtime would silently change shape on the day it comes out empty.
+     */
+    private ReturnShape resolveReturnShape( final ContentQuery.Builder queryBuilder )
+    {
+        if ( returns == null )
+        {
+            return ReturnShape.CONTENTS;
+        }
+        else if ( returns.isValue() )
+        {
+            final String value = returns.getValue( String.class );
+            switch ( value )
+            {
+                case "contents":
+                    return ReturnShape.CONTENTS;
+                case "ids":
+                    return ReturnShape.IDS;
+                default:
+                    throw new IllegalArgumentException( "returns must be 'contents', 'ids' or an array of index field names" );
+            }
+        }
+        else if ( returns.isArray() )
+        {
+            final IndexPath[] fields = returns.getArray( String.class ).stream().map( IndexPath::from ).toArray( IndexPath[]::new );
+            if ( fields.length == 0 )
+            {
+                throw new IllegalArgumentException( "returns must name at least one index field, or be 'contents' or 'ids'" );
+            }
+            queryBuilder.returnFields( fields );
+            return ReturnShape.FIELDS;
+        }
+
+        throw new IllegalArgumentException( "returns must be 'contents', 'ids' or an array of index field names" );
     }
 
     private List<OrderExpr> buildOrderExpr()
@@ -131,6 +199,31 @@ public final class QueryContentHandler
         throw new IllegalArgumentException( "query must be a String or JSON object" );
     }
 
+    /**
+     * The {@code parent} parameter takes the same key as {@code getChildren}: a value that starts with {@code /} is a content path,
+     * anything else is a content id.
+     */
+    private void applyParent( final ContentQuery.Builder queryBuilder )
+    {
+        if ( parent != null )
+        {
+            if ( parent.startsWith( "/" ) )
+            {
+                queryBuilder.parentPath( ContentPath.from( parent ) );
+            }
+            else
+            {
+                queryBuilder.parentId( ContentId.from( parent ) );
+            }
+            queryBuilder.recursive( Boolean.TRUE.equals( recursive ) );
+        }
+        else if ( Boolean.TRUE.equals( recursive ) )
+        {
+            // recursive widens a parent restriction, so without a parent it would silently do nothing
+            throw new IllegalArgumentException( "recursive expects a parent" );
+        }
+    }
+
     private ContentTypeNames getContentTypeNames()
     {
         if ( this.contentTypes == null )
@@ -165,6 +258,21 @@ public final class QueryContentHandler
     public void setCount( final Integer count )
     {
         this.count = count;
+    }
+
+    public void setParent( final String parent )
+    {
+        this.parent = parent;
+    }
+
+    public void setRecursive( final Boolean recursive )
+    {
+        this.recursive = recursive;
+    }
+
+    public void setReturns( final ScriptValue returns )
+    {
+        this.returns = returns;
     }
 
     public void setQuery( final ScriptValue query )

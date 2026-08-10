@@ -5,6 +5,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
+import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
@@ -33,6 +34,8 @@ final class FindNodeBranchEntriesByParentCommand
 {
     private final NodePath parentPath;
 
+    private final boolean recursive;
+
     private final OrderExpr.Direction pathOrder;
 
     private final Permission requiredPermission;
@@ -43,9 +46,15 @@ final class FindNodeBranchEntriesByParentCommand
     {
         super( builder );
         this.parentPath = builder.parentPath;
+        this.recursive = builder.recursive;
         this.pathOrder = builder.pathOrder;
         this.requiredPermission = builder.requiredPermission;
         this.refreshStorage = builder.refreshStorage;
+    }
+
+    static Builder create()
+    {
+        return new Builder();
     }
 
     static Builder create( final AbstractNodeCommand source )
@@ -63,7 +72,7 @@ final class FindNodeBranchEntriesByParentCommand
         }
 
         final NodeBranchQuery query = NodeBranchQuery.create()
-            .query( QueryExpr.from( createParentExpr() ) )
+            .query( QueryExpr.from( createBelowParentExpr() ) )
             .addQueryFilter( ValueFilter.create()
                                  .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
                                  .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
@@ -75,19 +84,31 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries entries =
             NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query, context.getRepositoryId() ) );
 
-        return filterByPermission( entries, context );
+        return filter( entries, context );
     }
 
-    private CompareExpr createParentExpr()
+    /**
+     * The branch index carries no parentPath field, so a parent is matched by a path prefix, which the index answers by seeking its term
+     * dictionary once and scanning the subtree from there. Narrowing that to the direct children would take a wildcard with an inner
+     * {@code *}, which no longer reduces to a prefix and makes the index run an automaton over every term of the subtree instead, so the
+     * deeper levels are dropped in {@link #filter} rather than here.
+     */
+    private ConstraintExpr createBelowParentExpr()
     {
         return parentPath.isRoot()
             ? CompareExpr.neq( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( NodePath.ROOT.toString() ) )
             : CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( parentPath + "/*" ) );
     }
 
-    private NodeBranchEntries filterByPermission( final NodeBranchEntries entries, final InternalContext context )
+    /**
+     * Drops the descendants a non-recursive listing did not ask for, and the entries the caller may not read. Depth is settled first,
+     * since it costs a path comparison whereas a permission decision costs a stored read of the access control list of the entry.
+     */
+    private NodeBranchEntries filter( final NodeBranchEntries entries, final InternalContext context )
     {
-        if ( requiredPermission == null || context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )
+        final boolean checkPermission = requiredPermission != null && !context.getPrincipalKeys().contains( RoleKeys.ADMIN );
+
+        if ( recursive && !checkPermission )
         {
             return entries;
         }
@@ -95,11 +116,21 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries.Builder filtered = NodeBranchEntries.create();
         for ( final NodeBranchEntry entry : entries )
         {
-            final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
-            if ( NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
+            if ( !recursive && !parentPath.equals( entry.getNodePath().getParentPath() ) )
             {
-                filtered.add( entry );
+                continue;
             }
+
+            if ( checkPermission )
+            {
+                final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
+                if ( !NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
+                {
+                    continue;
+                }
+            }
+
+            filtered.add( entry );
         }
         return filtered.build();
     }
@@ -109,11 +140,18 @@ final class FindNodeBranchEntriesByParentCommand
     {
         private NodePath parentPath;
 
+        private boolean recursive = true;
+
         private OrderExpr.Direction pathOrder = OrderExpr.Direction.ASC;
 
         private Permission requiredPermission;
 
         private boolean refreshStorage = true;
+
+        private Builder()
+        {
+            super();
+        }
 
         private Builder( final AbstractNodeCommand source )
         {
@@ -123,6 +161,12 @@ final class FindNodeBranchEntriesByParentCommand
         Builder parentPath( final NodePath parentPath )
         {
             this.parentPath = parentPath;
+            return this;
+        }
+
+        Builder recursive( final boolean recursive )
+        {
+            this.recursive = recursive;
             return this;
         }
 

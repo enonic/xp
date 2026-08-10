@@ -8,6 +8,7 @@ import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.util.BinaryReference;
@@ -69,12 +70,40 @@ public interface ContentService
 
     Contents getByPaths( ContentPaths paths );
 
+    /**
+     * Finds children of a content and fetches every one of them.
+     *
+     * @deprecated Every child is resolved in full, so a caller requiring only ids, paths or a count pays for contents it does not use.
+     * Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#parentPath(ContentPath)} /
+     * {@link ContentQuery.Builder#parentId(ContentId)}, followed by {@link #getByIds(GetContentByIdsParams)} for the ids actually
+     * required. Scheduled for removal.
+     */
+    @Deprecated
     FindContentByParentResult findByParent( FindContentByParentParams params );
 
+    /**
+     * Finds the ids of the children of a content.
+     *
+     * @deprecated Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#parentPath(ContentPath)} /
+     * {@link ContentQuery.Builder#parentId(ContentId)}. The query form answers the same question and additionally accepts every other
+     * constraint a search supports, including a query expression, content types, aggregations and highlighting, whereas this method
+     * accepts filters only. It inherits the child order of the parent in the same way, and
+     * {@link ContentQuery.Builder#recursive(boolean)} replaces {@link FindContentByParentParams.Builder#recursive(Boolean)}. Scheduled
+     * for removal.
+     */
+    @Deprecated
     FindContentIdsByParentResult findIdsByParent( FindContentByParentParams params );
 
     FindContentIdsByQueryResult find( ContentQuery query );
 
+    /**
+     * Finds the paths of the contents matching a query.
+     *
+     * @deprecated Use {@link #find(ContentQuery)} with {@link ContentQuery.Builder#returnFields(IndexPath...)} naming {@code _path}.
+     * The query form runs the same search and returns the same paths, already relative to the content root of the calling context, and
+     * retains the ids that this method discards, so a caller requiring both no longer has to search twice. Scheduled for removal.
+     */
+    @Deprecated
     FindContentPathsByQueryResult findPaths( ContentQuery query );
 
     CompareContentResults compare( CompareContentsParams params );

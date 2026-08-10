@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.elasticsearch.index.IndexNotFoundException;
@@ -21,6 +20,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
@@ -41,6 +41,8 @@ import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -53,6 +55,7 @@ import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodePaths;
@@ -70,7 +73,6 @@ import com.enonic.xp.node.PushNodeParams;
 import com.enonic.xp.node.PushNodesResult;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.ResolveSyncWorkResult;
-import com.enonic.xp.node.SearchTarget;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.node.SortNodeResult;
 import com.enonic.xp.node.SyncWorkResolverParams;
@@ -88,6 +90,7 @@ import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -312,6 +315,7 @@ public class NodeServiceImpl
     }
 
     @Override
+    @Deprecated
     @Traced("node.findByParent")
     public FindNodesByParentResult findByParent( final FindNodesByParentParams params )
     {
@@ -337,22 +341,83 @@ public class NodeServiceImpl
         return result;
     }
 
+    /**
+     * The deprecated findByParent expressed as the query it always was, so there is one implementation of searching by parent rather than
+     * two that can drift apart.
+     */
     private FindNodesByParentResult executeFindByParent( final FindNodesByParentParams params )
     {
-        return FindNodeIdsByParentCommand.create()
-            .parentId( params.getParentId() )
+        final NodePath parentPath = resolveFindByParentPath( params );
+        if ( parentPath == null )
+        {
+            return FindNodesByParentResult.create().nodeIds( NodeIds.empty() ).build();
+        }
+
+        final boolean countOnly = params.isCountOnly();
+
+        final NodeQuery.Builder query = NodeQuery.create()
+            .parent( parentPath )
+            .recursive( params.isRecursive() )
+            .addQueryFilters( params.getQueryFilters() )
+            .from( countOnly ? 0 : params.getFrom() )
+            .size( countOnly ? 0 : params.getSize() );
+
+        // an unset child order is resolved from the parent by the query itself
+        final ChildOrder childOrder = params.getChildOrder();
+        if ( childOrder != null && !childOrder.isEmpty() )
+        {
+            query.setOrderExpressions( childOrder.getOrderExpressions() );
+        }
+
+        final FindNodesByQueryResult result = executeFindByQuery( query.build() );
+
+        return FindNodesByParentResult.create().nodeIds( result.getNodeIds() ).totalHits( result.getTotalHits() ).build();
+    }
+
+    private @Nullable NodePath resolveFindByParentPath( final FindNodesByParentParams params )
+    {
+        if ( params.getParentPath() != null )
+        {
+            return params.getParentPath();
+        }
+        final Node parent = doGetById( params.getParentId() );
+        return parent == null ? null : parent.path();
+    }
+
+    @Override
+    @Traced("node.list")
+    public ListNodesResult list( final ListNodesParams params )
+    {
+        verifyContext();
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "parent", params.getParentPath().toString() );
+            trace.attribute( "repo", Objects.toString( ContextAccessor.current().getRepositoryId(), null ) );
+            trace.attribute( "branch", Objects.toString( ContextAccessor.current().getBranch(), null ) );
+        } );
+
+        final NodeBranchEntries entries = FindNodeBranchEntriesByParentCommand.create()
             .parentPath( params.getParentPath() )
             .recursive( params.isRecursive() )
-            .queryFilters( params.getQueryFilters() )
-            .from( params.getFrom() )
-            .size( params.getSize() )
-            .countOnly( params.isCountOnly() )
-            .childOrder( params.getChildOrder() )
+            .requiredPermission( Permission.READ )
+            // a read does not refresh: writes decide when they become visible, and every write through the content API already does
+            .refreshStorage( false )
             .indexServiceInternal( this.indexServiceInternal )
-            .searchService( this.nodeSearchService )
             .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService )
             .build()
             .execute();
+
+        final ListNodesResult.Builder result = ListNodesResult.create();
+        for ( final NodeBranchEntry entry : entries )
+        {
+            result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
+        }
+
+        final ListNodesResult listResult = result.build();
+
+        Tracer.attribute( "hits", (long) listResult.getSize() );
+
+        return listResult;
     }
 
     @Override
@@ -379,12 +444,39 @@ public class NodeServiceImpl
     private FindNodesByQueryResult executeFindByQuery( final NodeQuery nodeQuery )
     {
         return FindNodesByQueryCommand.create()
-            .query( nodeQuery )
+            .query( applyChildOrderOfParent( nodeQuery ) )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
             .execute();
+    }
+
+    /**
+     * A query restricted to a parent and carrying no order expressions of its own comes back in the child order of the parent, the same
+     * order findByParent used. Resolving the order costs a read of the parent, so it is skipped whenever the query orders explicitly or
+     * fetches no hits at all.
+     * <p>
+     * The read is done with elevated privileges because the child order never reaches the caller - it only sorts hits the caller was
+     * already permitted to see.
+     */
+    /**
+     * A parent orders its own children, so its child order answers a query for them and nothing else: applied to a whole subtree it
+     * would sort levels against each other by a value only siblings can be compared on. A recursive query is therefore left to the
+     * order it asks for, and the parent is not read at all.
+     */
+    private NodeQuery applyChildOrderOfParent( final NodeQuery nodeQuery )
+    {
+        if ( nodeQuery.getParent() == null || nodeQuery.isRecursive() || !nodeQuery.getOrderBys().isEmpty() ||
+            nodeQuery.getSize() == 0 )
+        {
+            return nodeQuery;
+        }
+
+        final Node parentNode = NodeHelper.runAsAdmin( () -> doGetByPath( nodeQuery.getParent() ) );
+        final ChildOrder childOrder = parentNode != null ? parentNode.getChildOrder() : ChildOrder.defaultOrder();
+
+        return NodeQuery.create( nodeQuery ).setOrderExpressions( childOrder.getOrderExpressions() ).build();
     }
 
     @Override

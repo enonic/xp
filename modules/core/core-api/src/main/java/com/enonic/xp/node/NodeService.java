@@ -38,7 +38,33 @@ public interface NodeService
 
     DuplicateNodeResult duplicate( DuplicateNodeParams params );
 
+    /**
+     * Finds the ids of the children of a node.
+     *
+     * @deprecated Use {@link #findByQuery(NodeQuery)} with {@link NodeQuery.Builder#parent(NodePath)}. The query form answers the same
+     * question and additionally accepts any constraint and return shape a query supports, whereas this method accepts filters only and
+     * answers with ids only. It inherits the child order of the parent in the same way;
+     * {@link NodeQuery.Builder#recursive(boolean)} replaces {@link FindNodesByParentParams.Builder#recursive(boolean)}, and a count is
+     * expressed as a query of size 0. A parent given by id must be resolved to its path first. Scheduled for removal.
+     */
+    @Deprecated
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
+
+    /**
+     * Lists the children of a node, or its entire subtree when {@link ListNodesParams.Builder#recursive(boolean)} is set.
+     * <p>
+     * Every node the caller is permitted to read is listed, ordered by path, and is represented by its id, path and timestamp. The nodes
+     * themselves are not read.
+     * <p>
+     * The listing is served from storage rather than from the search index. A node stored with {@link RefreshMode#STORAGE} or
+     * {@link RefreshMode#ALL} is therefore listed immediately, whereas {@link #findByQuery(NodeQuery)} returns it only once the search
+     * index has been refreshed. This method performs no refresh of its own; a node stored without a refresh is visible to neither.
+     * <p>
+     * Paging, filtering and ordering are not supported. Use a query where any of them is required.
+     *
+     * @since 8.1.0
+     */
+    ListNodesResult list( ListNodesParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 

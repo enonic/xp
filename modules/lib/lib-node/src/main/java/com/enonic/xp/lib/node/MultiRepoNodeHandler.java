@@ -41,6 +41,9 @@ public class MultiRepoNodeHandler
                                           .sort( params.getSort() )
                                           .filters( params.getFilters() )
                                           .explain( params.isExplain() )
+                                          .parent( params.getParent() )
+                                          .recursive( params.isRecursive() )
+                                          .returns( params.getReturns() )
                                           .nodeService( this.nodeService )
                                           .build()::execute );
     }

@@ -34,9 +34,15 @@ public class SearchHitsFactory
 
     public static ReturnValues createReturnValues( final org.elasticsearch.search.SearchHit hit, final ReturnFields returnFields )
     {
-        final Map<String, Object> hitFieldMap = hit.sourceAsMap();
-
         final ReturnValues.Builder builder = ReturnValues.create();
+
+        // when no fields were requested the search ran without fetching _source, so there is nothing to read
+        if ( returnFields.isEmpty() )
+        {
+            return builder.build();
+        }
+
+        final Map<String, Object> hitFieldMap = hit.sourceAsMap();
 
         for ( String returnFieldName : returnFields.getReturnFieldNames() )
         {

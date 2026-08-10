@@ -2,11 +2,20 @@ package com.enonic.xp.core.impl.content;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
+import com.enonic.xp.index.FieldValues;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.NodeIndexPath;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.sortvalues.SortValuesProperty;
 
@@ -17,10 +26,13 @@ final class FindContentIdsByQueryCommand
 {
     private final ContentQuery query;
 
+    private final IndexPath[] extraReturnFields;
+
     private FindContentIdsByQueryCommand( final Builder builder )
     {
         super( builder );
         this.query = builder.query;
+        this.extraReturnFields = builder.extraReturnFields;
     }
 
     public static Builder create()
@@ -30,8 +42,26 @@ final class FindContentIdsByQueryCommand
 
     FindContentIdsByQueryResult execute()
     {
-        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.query ).
+        final ContentQueryParent parent;
+        if ( this.query.getParentPath() != null || this.query.getParentId() != null )
+        {
+            parent = ContentQueryParent.resolve( this.query, this );
+            if ( parent == null )
+            {
+                return FindContentIdsByQueryResult.create()
+                    .contents( ContentIds.empty() )
+                    .aggregations( Aggregations.empty() )
+                    .build();
+            }
+        }
+        else
+        {
+            parent = null;
+        }
+
+        final NodeQuery nodeQuery = ContentQueryNodeQueryTranslator.translate( this.query, parent ).
             addQueryFilters( createFilters() ).
+            returnFields( this.extraReturnFields ).
             build();
 
         final Map<ContentId, HighlightedProperties> highlight = new LinkedHashMap<>();
@@ -39,6 +69,8 @@ final class FindContentIdsByQueryCommand
         final Map<ContentId, SortValuesProperty> sortValues = new LinkedHashMap<>();
 
         final Map<ContentId, Float> scoreValues = new LinkedHashMap<>();
+
+        final Map<ContentId, FieldValues> fields = new LinkedHashMap<>();
 
         final FindNodesByQueryResult result = nodeService.findByQuery( nodeQuery );
 
@@ -56,6 +88,11 @@ final class FindContentIdsByQueryCommand
             {
                 sortValues.put( contentId, nodeHit.getSort() );
             }
+
+            if ( !nodeHit.getFields().isEmpty() )
+            {
+                fields.put( contentId, translatePathValues( nodeHit.getFields() ) );
+            }
         } );
 
         return FindContentIdsByQueryResult.create().
@@ -64,14 +101,44 @@ final class FindContentIdsByQueryCommand
             highlight( highlight ).
             sort( sortValues ).
             score( scoreValues ).
+            fields( fields ).
             totalHits( result.getTotalHits() ).
             build();
+    }
+
+    // the index stores node paths; at the content level path fields come back as content paths, like everywhere else in this API
+    private static FieldValues translatePathValues( final FieldValues fields )
+    {
+        final Set<String> fieldNames = fields.getFields();
+        if ( !fieldNames.contains( NodeIndexPath.PATH.getPath() ) )
+        {
+            return fields;
+        }
+
+        final FieldValues.Builder translated = FieldValues.create();
+        for ( final String field : fieldNames )
+        {
+            if ( field.equals( NodeIndexPath.PATH.getPath() ) )
+            {
+                translated.add( field, fields.getValues( field )
+                    .stream()
+                    .map( value -> ContentNodeHelper.translateNodePathToContentPath( new NodePath( value.toString() ) ).toString() )
+                    .collect( Collectors.toList() ) );
+            }
+            else
+            {
+                translated.add( field, fields.getValues( field ) );
+            }
+        }
+        return translated.build();
     }
 
     public static final class Builder
         extends AbstractContentCommand.Builder<Builder>
     {
         private ContentQuery query;
+
+        private IndexPath[] extraReturnFields = new IndexPath[0];
 
         private Builder()
         {
@@ -80,6 +147,16 @@ final class FindContentIdsByQueryCommand
         public Builder query( final ContentQuery query )
         {
             this.query = query;
+            return this;
+        }
+
+        /**
+         * Fields to fetch on top of the ones the query itself asks for, for a caller that shapes the result out of them rather than
+         * handing them back as they are.
+         */
+        public Builder extraReturnFields( final IndexPath... extraReturnFields )
+        {
+            this.extraReturnFields = extraReturnFields;
             return this;
         }
 

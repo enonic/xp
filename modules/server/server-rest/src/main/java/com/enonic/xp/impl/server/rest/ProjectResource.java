@@ -85,6 +85,7 @@ public final class ProjectResource
 
         final ContentQuery query = ContentQuery.create()
             .queryFilter( ValueFilter.create().fieldName( "type" ).addValue( ValueFactory.newString( "portal:site" ) ).build() )
+            .size( -1 )
             .build();
 
         final FindContentIdsByQueryResult result = context.callWith( () -> contentService.find( query ) );
