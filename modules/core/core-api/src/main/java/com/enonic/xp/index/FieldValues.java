@@ -13,8 +13,9 @@ import static java.util.Objects.requireNonNull;
 /**
  * The fields a query asked for, as they came back for one hit. Lookups accept any casing an index path accepts. Every field is a list,
  * single-valued or not, and a field the hit has no value for is absent rather than empty.
+ * <p>
+ * Which fields may be asked for is the answering API's business: each one publishes the set it supports.
  *
- * @see com.enonic.xp.node.NodeQuery.Builder#returnFields(IndexPath...)
  * @since 8.1.0
  */
 public record FieldValues(Map<String, List<Object>> asMap)

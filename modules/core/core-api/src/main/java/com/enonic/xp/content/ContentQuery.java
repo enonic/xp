@@ -25,9 +25,8 @@ public final class ContentQuery
     public static final int DEFAULT_FETCH_SIZE = 10;
 
     /**
-     * The fields a content query may ask back per hit, mapped to the name a {@link Content} shows each of them by. Only fields a content
-     * shows are available: node-level fields a content never exposes, such as {@code _ts}, {@code _versionKey} and {@code _nodeType},
-     * are not among them.
+     * The fields a content query may ask back per hit, mapped to the name a {@link Content} shows each of them by. A content answers
+     * only for what it shows, so anything outside this set is rejected rather than fetched.
      * <p>
      * Keys are index paths, and therefore lowercase; values are the names callers see on a hit.
      *
