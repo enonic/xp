@@ -32,7 +32,8 @@ class XContentBuilderFactory
         final String analyzer = doc.analyzer();
         if ( !isNullOrEmpty( analyzer ) )
         {
-            addField( builder, IndexConstants.ANALYZER_VALUE_FIELD, analyzer );
+            // the analyzer is named rather than stored, so it is normalized to the form the index matches by
+            addField( builder, IndexConstants.ANALYZER_VALUE_FIELD, IndexValueNormalizer.normalize( analyzer ) );
         }
 
         for ( final var entry : doc.data().asValuesMap().entrySet() )
@@ -42,17 +43,16 @@ class XContentBuilderFactory
         return builder.endObject();
     }
 
+    /**
+     * Writes a field as it was given. Values are not normalized here: the document written is what {@code _source} returns, so a value
+     * keeps the form it was stored with, and it is the mapping that decides the lowercased token the field is matched by.
+     */
     private static void addField( XContentBuilder result, String name, Object value )
         throws IOException
     {
         if ( value == null )
         {
             return;
-        }
-
-        if ( value instanceof String )
-        {
-            value = IndexValueNormalizer.normalize( (String) value );
         }
 
         result.field( name, value );
