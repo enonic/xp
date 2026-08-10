@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node.mapper;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,7 +39,7 @@ class NodeMultiRepoQueryResultMapperTest
                 RepositoryId.from( "repo" ) ).explanation( QueryExplanation.create().description( "myDescription" ).value( 123L ).addDetail(
                 QueryExplanation.create().description( "myDescription" ).value( 123L ).build() ).build() ).build() ).build();
 
-        final NodeMultiRepoQueryResultMapper mapper = new NodeMultiRepoQueryResultMapper( result );
+        final NodeMultiRepoQueryResultMapper mapper = new NodeMultiRepoQueryResultMapper( result, List.of() );
 
         final JsonMapGenerator gen = new JsonMapGenerator();
 

@@ -48,7 +48,7 @@ class FindNodesByMultiNodeQueryHandler
 
     private NodeMultiRepoQueryResultMapper convert( final FindNodesByMultiRepoQueryResult result )
     {
-        return new NodeMultiRepoQueryResultMapper( result );
+        return new NodeMultiRepoQueryResultMapper( result, getReturns() );
     }
 
     public static Builder create()

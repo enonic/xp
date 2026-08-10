@@ -2,7 +2,6 @@ package com.enonic.xp.node;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -16,16 +15,13 @@ public final class NodeQuery
     public static final int ALL_RESULTS_SIZE_FLAG = -1;
 
     /**
-     * The fields a query may ask back per hit, mapped to the name a {@link Node} shows each of them by. Only fields a node shows are
-     * available, so asking for them is a cheaper way to read what a node would tell anyway, never a way to reach anything else.
-     * <p>
-     * Keys are index paths, and therefore lowercase; values are the names callers see on a hit.
+     * The fields a query may ask back per hit. Only fields a node shows are available, so asking for them is a cheaper way to read what
+     * a node would tell anyway, never a way to reach anything else.
      *
      * @since 8.1.0
      */
-    public static final Map<IndexPath, String> SUPPORTED_RETURN_FIELDS =
-        Map.of( NodeIndexPath.NAME, "_name", NodeIndexPath.PATH, "_path", NodeIndexPath.NODE_TYPE, "_nodeType", NodeIndexPath.VERSION,
-                "_versionKey", NodeIndexPath.TIMESTAMP, "_ts" );
+    public static final Set<IndexPath> SUPPORTED_RETURN_FIELDS =
+        Set.of( NodeIndexPath.NAME, NodeIndexPath.PATH, NodeIndexPath.NODE_TYPE, NodeIndexPath.VERSION, NodeIndexPath.TIMESTAMP );
 
     private final NodePath parent;
 
@@ -168,7 +164,7 @@ public final class NodeQuery
         {
             for ( final IndexPath field : fields )
             {
-                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.containsKey( field ), "unsupported return field: %s", field );
+                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.contains( field ), "unsupported return field: %s", field );
                 this.returnFields.add( field );
             }
             return this;

@@ -5,11 +5,9 @@ import java.util.Map;
 
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.index.FieldValues;
-import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
@@ -28,10 +26,18 @@ public final class ContentHitsResultMapper
 
     private final Shape shape;
 
+    private final List<String> returns;
+
     public ContentHitsResultMapper( final FindContentIdsByQueryResult result, final Shape shape )
+    {
+        this( result, shape, List.of() );
+    }
+
+    public ContentHitsResultMapper( final FindContentIdsByQueryResult result, final Shape shape, final List<String> returns )
     {
         this.result = result;
         this.shape = shape;
+        this.returns = returns;
     }
 
     @Override
@@ -51,7 +57,7 @@ public final class ContentHitsResultMapper
 
             if ( shape == Shape.FIELDS )
             {
-                serializeFields( gen, result.getFields().getOrDefault( contentId, FieldValues.empty() ) );
+                serializeFields( gen, result.getFields().getOrDefault( contentId, FieldValues.empty() ), this.returns );
             }
 
             gen.end();
@@ -62,18 +68,24 @@ public final class ContentHitsResultMapper
         serialize( gen, result.getHighlight() );
     }
 
-    private static void serializeFields( final MapGenerator gen, final FieldValues fields )
+    /**
+     * Writes the requested fields under the very names they were requested by. The values are keyed by index path and therefore
+     * lowercase, so walking the request rather than the answer is what lets a hit read back the way it was asked for.
+     */
+    private static void serializeFields( final MapGenerator gen, final FieldValues fields, final List<String> returns )
     {
-        if ( fields.isEmpty() )
+        if ( fields.isEmpty() || returns.isEmpty() )
         {
             return;
         }
         gen.map( "fields" );
-        for ( final String field : fields.getFields() )
+        for ( final String name : returns )
         {
-            // the index keys are lowercase; hits show the field under the name a content shows it by
-            final String name = ContentQuery.SUPPORTED_RETURN_FIELDS.getOrDefault( IndexPath.from( field ), field );
-            final List<Object> values = fields.getValues( field );
+            final List<Object> values = fields.getValues( name );
+            if ( values.isEmpty() )
+            {
+                continue;
+            }
             if ( values.size() == 1 )
             {
                 // single values come back as scalars, like property values do everywhere else in the JS API

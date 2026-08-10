@@ -76,7 +76,7 @@ public final class FindNodesByQueryHandler
 
     private NodeQueryResultMapper convert( final FindNodesByQueryResult findQueryResult )
     {
-        return new NodeQueryResultMapper( findQueryResult );
+        return new NodeQueryResultMapper( findQueryResult, getReturns() );
     }
 
     public static final class Builder

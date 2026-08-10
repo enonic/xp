@@ -69,6 +69,11 @@ abstract class AbstractFindNodesQueryHandler
         return parent;
     }
 
+    List<String> getReturns()
+    {
+        return returns;
+    }
+
     boolean isRecursive()
     {
         return recursive;

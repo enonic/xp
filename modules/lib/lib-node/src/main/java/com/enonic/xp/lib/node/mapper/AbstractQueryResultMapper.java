@@ -6,8 +6,6 @@ import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.highlight.HighlightedProperties;
 import com.enonic.xp.highlight.HighlightedProperty;
 import com.enonic.xp.index.FieldValues;
-import com.enonic.xp.index.IndexPath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.query.QueryExplanation;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -26,33 +24,41 @@ abstract class AbstractQueryResultMapper
         }
     }
 
-    void serialize( final MapGenerator gen, final FieldValues fields )
+    /**
+     * Writes the requested fields under the very names they were requested by. The values are keyed by index path and therefore
+     * lowercase, so walking the request rather than the answer is what lets a hit read back the way it was asked for.
+     */
+    void serialize( final MapGenerator gen, final FieldValues fields, final List<String> returns )
     {
-        if ( fields != null && !fields.isEmpty() )
+        if ( fields == null || fields.isEmpty() || returns == null || returns.isEmpty() )
         {
-            gen.map( "fields" );
-            for ( final String field : fields.getFields() )
-            {
-                // the index keys are lowercase; hits show the field under the name a node shows it by
-                final String name = NodeQuery.SUPPORTED_RETURN_FIELDS.getOrDefault( IndexPath.from( field ), field );
-                final List<Object> values = fields.getValues( field );
-                if ( values.size() == 1 )
-                {
-                    // single values come back as scalars, like property values do everywhere else in the JS API
-                    gen.value( name, values.get( 0 ) );
-                }
-                else
-                {
-                    gen.array( name );
-                    for ( final Object value : values )
-                    {
-                        gen.value( value );
-                    }
-                    gen.end();
-                }
-            }
-            gen.end();
+            return;
         }
+
+        gen.map( "fields" );
+        for ( final String name : returns )
+        {
+            final List<Object> values = fields.getValues( name );
+            if ( values.isEmpty() )
+            {
+                continue;
+            }
+            if ( values.size() == 1 )
+            {
+                // single values come back as scalars, like property values do everywhere else in the JS API
+                gen.value( name, values.get( 0 ) );
+            }
+            else
+            {
+                gen.array( name );
+                for ( final Object value : values )
+                {
+                    gen.value( value );
+                }
+                gen.end();
+            }
+        }
+        gen.end();
     }
 
     void serialize( final MapGenerator gen, final HighlightedProperties highlightedProperties )

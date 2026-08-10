@@ -1,7 +1,6 @@
 package com.enonic.xp.content;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,18 +24,17 @@ public final class ContentQuery
     public static final int DEFAULT_FETCH_SIZE = 10;
 
     /**
-     * The fields a content query may ask back per hit, mapped to the name a {@link Content} shows each of them by. A content answers
-     * only for what it shows, so anything outside this set is rejected rather than fetched.
-     * <p>
-     * Keys are index paths, and therefore lowercase; values are the names callers see on a hit.
+     * The fields a content query may ask back per hit. A content answers only for what it shows, so anything outside this set is
+     * rejected rather than fetched.
      *
      * @since 8.1.0
      */
-    public static final Map<IndexPath, String> SUPPORTED_RETURN_FIELDS =
+    public static final Set<IndexPath> SUPPORTED_RETURN_FIELDS =
         Stream.of( "_name", "_path", ContentPropertyNames.DISPLAY_NAME, ContentPropertyNames.TYPE, ContentPropertyNames.CREATOR,
                    ContentPropertyNames.MODIFIER, ContentPropertyNames.CREATED_TIME, ContentPropertyNames.MODIFIED_TIME,
                    ContentPropertyNames.OWNER, ContentPropertyNames.LANGUAGE )
-            .collect( Collectors.toUnmodifiableMap( IndexPath::from, name -> name ) );
+            .map( IndexPath::from )
+            .collect( Collectors.toUnmodifiableSet() );
 
     private final QueryExpr queryExpr;
 
@@ -268,7 +266,7 @@ public final class ContentQuery
         {
             for ( final IndexPath field : fields )
             {
-                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.containsKey( field ), "unsupported return field: %s", field );
+                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.contains( field ), "unsupported return field: %s", field );
                 this.returnFields.add( field );
             }
             return this;

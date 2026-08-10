@@ -102,7 +102,8 @@ public final class QueryContentHandler
             case IDS:
                 return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.IDS );
             case FIELDS:
-                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.FIELDS );
+                return new ContentHitsResultMapper( queryResult, ContentHitsResultMapper.Shape.FIELDS,
+                                                    returns.getArray( String.class ) );
             default:
                 return convert( queryResult );
         }

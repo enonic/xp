@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.node.mapper;
 
+import java.util.List;
+
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.MultiRepoNodeHit;
@@ -18,8 +20,11 @@ public final class NodeMultiRepoQueryResultMapper
 
     private final Suggestions suggestions;
 
-    public NodeMultiRepoQueryResultMapper( final FindNodesByMultiRepoQueryResult result )
+    private final List<String> returns;
+
+    public NodeMultiRepoQueryResultMapper( final FindNodesByMultiRepoQueryResult result, final List<String> returns )
     {
+        this.returns = returns;
         this.nodeHits = result.getNodeHits();
         this.total = result.getTotalHits();
         this.aggregations = result.getAggregations();
@@ -48,7 +53,7 @@ public final class NodeMultiRepoQueryResultMapper
             gen.value( "branch", nodeHit.getBranch().getValue() );
             serialize( gen, nodeHit.getExplanation() );
             serialize( gen, nodeHit.getHighlight() );
-            serialize( gen, nodeHit.getFields() );
+            serialize( gen, nodeHit.getFields(), this.returns );
             gen.end();
         }
         gen.end();
