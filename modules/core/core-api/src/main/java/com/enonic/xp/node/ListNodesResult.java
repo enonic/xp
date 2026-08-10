@@ -26,21 +26,33 @@ public final class ListNodesResult
         return new Builder();
     }
 
+    /**
+     * Every listed node, ordered by path.
+     */
     public List<NodeListEntry> getEntries()
     {
         return entries;
     }
 
+    /**
+     * The ids of the listed nodes, in the order the entries hold, for passing on to a method that reads nodes by id.
+     */
     public NodeIds getNodeIds()
     {
         return entries.stream().map( NodeListEntry::nodeId ).collect( NodeIds.collector() );
     }
 
+    /**
+     * The number of nodes listed. A listing is never paged, so this is the total.
+     */
     public int getSize()
     {
         return entries.size();
     }
 
+    /**
+     * Whether the parent has no children the caller is permitted to read.
+     */
     public boolean isEmpty()
     {
         return entries.isEmpty();
@@ -54,18 +66,12 @@ public final class ListNodesResult
         {
         }
 
-        /**
-         * Appends an entry. Entries are expected to be added in path order, which is the order the result is documented to hold.
-         */
         public Builder addEntry( final NodeListEntry entry )
         {
             this.entries.add( entry );
             return this;
         }
 
-        /**
-         * @return a result holding the entries added so far, in the order they were added.
-         */
         public ListNodesResult build()
         {
             return new ListNodesResult( this );

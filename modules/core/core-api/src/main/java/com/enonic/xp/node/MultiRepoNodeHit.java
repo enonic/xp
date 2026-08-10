@@ -136,8 +136,6 @@ public final class MultiRepoNodeHit
         }
 
         /**
-         * Sets the values of the index fields requested by the query. Defaults to {@link FieldValues#empty()}.
-         *
          * @since 8.1.0
          */
         public Builder fields( final FieldValues fields )

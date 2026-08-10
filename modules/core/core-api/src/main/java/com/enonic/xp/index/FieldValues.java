@@ -18,6 +18,7 @@ import static java.util.Objects.requireNonNull;
  * <p>
  * Which fields may be requested is determined by the API being queried; each one publishes the set it supports.
  *
+ * @param asMap every field held, keyed by its lowercase index-path form. Prefer the lookup methods, which accept any casing.
  * @since 8.1.0
  */
 @NullMarked
@@ -34,6 +35,9 @@ public record FieldValues(Map<String, List<Object>> asMap)
                                                    entry -> ImmutableList.copyOf( entry.getValue() ) ) );
     }
 
+    /**
+     * The instance holding no field at all, returned wherever a query requested none.
+     */
     public static FieldValues empty()
     {
         return EMPTY;
@@ -44,6 +48,9 @@ public record FieldValues(Map<String, List<Object>> asMap)
         return new Builder();
     }
 
+    /**
+     * Whether no requested field held a value for this hit.
+     */
     public boolean isEmpty()
     {
         return asMap.isEmpty();
@@ -58,20 +65,26 @@ public record FieldValues(Map<String, List<Object>> asMap)
     }
 
     /**
-     * All values of a field, or an empty list when the field is absent.
+     * All values of a field, in index order, or an empty list where the field is absent.
      */
     public List<Object> getValues( final IndexPath field )
     {
         return asMap.getOrDefault( field.getPath(), List.of() );
     }
 
+    /**
+     * All values of a field named as a string, in any casing an index path accepts.
+     *
+     * @see #getValues(IndexPath)
+     */
     public List<Object> getValues( final String field )
     {
         return getValues( IndexPath.from( field ) );
     }
 
     /**
-     * The first value of a field, or empty when the field is absent.
+     * The first value of a field, or empty where the field is absent. Use it for a field known to be single-valued;
+     * {@link #getValues(IndexPath)} answers for one that may hold several.
      */
     public Optional<Object> getSingleValue( final IndexPath field )
     {
@@ -79,6 +92,11 @@ public record FieldValues(Map<String, List<Object>> asMap)
         return values.isEmpty() ? Optional.empty() : Optional.of( values.get( 0 ) );
     }
 
+    /**
+     * The first value of a field named as a string, in any casing an index path accepts.
+     *
+     * @see #getSingleValue(IndexPath)
+     */
     public Optional<Object> getSingleValue( final String field )
     {
         return getSingleValue( IndexPath.from( field ) );
@@ -92,22 +110,12 @@ public record FieldValues(Map<String, List<Object>> asMap)
         {
         }
 
-        /**
-         * Adds the values of one field. The field name is normalised as an index path, so any casing accepted there may be used, and
-         * adding the same field twice retains the values added last.
-         *
-         * @param field name of the field.
-         * @param fieldValues values held for the field, empty where the hit holds none.
-         */
         public Builder add( final String field, final Iterable<?> fieldValues )
         {
             this.values.put( IndexPath.from( field ).getPath(), ImmutableList.copyOf( fieldValues ) );
             return this;
         }
 
-        /**
-         * @return the fields added so far, or {@link #empty()} where none were added.
-         */
         public FieldValues build()
         {
             final Map<String, List<Object>> built = values.buildKeepingLast();
