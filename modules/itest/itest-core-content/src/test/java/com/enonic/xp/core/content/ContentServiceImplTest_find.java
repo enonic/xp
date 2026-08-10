@@ -315,6 +315,19 @@ class ContentServiceImplTest_find
     }
 
     @Test
+    void return_field_value_keeps_the_casing_it_was_stored_with()
+    {
+        final Content content = createContent( ContentPath.ROOT, "MiXeD Display Name" );
+
+        final FindContentIdsByQueryResult result =
+            contentService.find( ContentQuery.create().returnFields( IndexPath.from( "displayName" ) ).build() );
+
+        // the index lowercases what it matches on, but a returned value comes from the stored document, so text an editor typed
+        // comes back as they typed it
+        assertEquals( List.of( "MiXeD Display Name" ), result.getFields().get( content.getId() ).getValues( "displayName" ) );
+    }
+
+    @Test
     void return_fields_outside_the_supported_set_are_rejected()
     {
         final ContentQuery.Builder builder = ContentQuery.create();

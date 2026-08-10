@@ -105,6 +105,30 @@ class FindNodesByQueryCommandTest_returnFields
     }
 
     @Test
+    void value_is_returned_as_it_was_stored()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myField", "  MiXeD Case Value  " );
+        createNode( CreateNodeParams.create()
+                        .name( "my-node" )
+                        .parent( NodePath.ROOT )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+                        .build() );
+        nodeService.refresh( RefreshMode.ALL );
+
+        final FindNodesByQueryResult result = doFindByQuery( NodeQuery.create()
+                                                                 .query( QueryParser.parse( "_name = 'my-node'" ) )
+                                                                 .returnFields( IndexPath.from( "myField" ) )
+                                                                 .build() );
+
+        // the index lowercases and trims what it matches on, but a returned value comes from the stored document and keeps its casing
+        // and its surrounding space - callers are handed what they wrote, not what the index searches by
+        assertEquals( List.of( "  MiXeD Case Value  " ),
+                      result.getNodeHits().first().getFields().getValues( IndexPath.from( "myField" ) ) );
+    }
+
+    @Test
     void absent_field_is_not_present()
     {
         nodeService.refresh( RefreshMode.ALL );
