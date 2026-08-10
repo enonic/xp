@@ -245,8 +245,8 @@ public final class ContentQuery
          * Widens the parent restriction from the direct children to every descendant of the parent, at any depth. Expects a parent to be
          * set, by either {@link #parentPath(ContentPath)} or {@link #parentId(ContentId)}.
          * <p>
-         * Note that the child order of a parent orders its own children, so it rarely says anything meaningful about a whole subtree:
-         * specify order expressions when ordering a recursive result matters.
+         * A parent orders its own children, so its child order is not applied to a subtree - it would sort levels against each other by
+         * a value only siblings can be compared on. Specify order expressions when the order of a recursive result matters.
          *
          * @since 8.1.0
          */

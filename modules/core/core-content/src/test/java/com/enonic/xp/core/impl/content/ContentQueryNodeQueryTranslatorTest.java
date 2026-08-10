@@ -19,6 +19,7 @@ import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.parser.QueryParser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -83,6 +84,18 @@ class ContentQueryNodeQueryTranslatorTest
 
         assertEquals( List.copyOf( ChildOrder.from( "_manualordervalue DESC" ).getOrderExpressions().getList() ),
                       nodeQuery.getQuery().getOrderList() );
+    }
+
+    @Test
+    void resolve_recursive_takes_no_child_order_from_the_parent()
+    {
+        // a parent orders its own children only, so a recursive query wants none of it - and the resolver then never reads the parent,
+        // which is why a null command suffices here
+        final ContentQueryParent parent = ContentQueryParent.resolve(
+            ContentQuery.create().parentPath( ContentPath.from( "/mysite" ) ).recursive( true ).build(), null );
+
+        assertNotNull( parent );
+        assertNull( parent.childOrder() );
     }
 
     @Test

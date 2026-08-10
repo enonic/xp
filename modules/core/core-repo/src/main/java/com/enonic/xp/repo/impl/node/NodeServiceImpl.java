@@ -460,9 +460,15 @@ public class NodeServiceImpl
      * The read is done with elevated privileges because the child order never reaches the caller - it only sorts hits the caller was
      * already permitted to see.
      */
+    /**
+     * A parent orders its own children, so its child order answers a query for them and nothing else: applied to a whole subtree it
+     * would sort levels against each other by a value only siblings can be compared on. A recursive query is therefore left to the
+     * order it asks for, and the parent is not read at all.
+     */
     private NodeQuery applyChildOrderOfParent( final NodeQuery nodeQuery )
     {
-        if ( nodeQuery.getParent() == null || !nodeQuery.getOrderBys().isEmpty() || nodeQuery.getSize() == 0 )
+        if ( nodeQuery.getParent() == null || nodeQuery.isRecursive() || !nodeQuery.getOrderBys().isEmpty() ||
+            nodeQuery.getSize() == 0 )
         {
             return nodeQuery;
         }

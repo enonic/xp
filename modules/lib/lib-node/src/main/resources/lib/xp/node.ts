@@ -1024,7 +1024,8 @@ class RepoConnectionImpl
      * @param {string} [params.parent] Path or id of a node to restrict the query to the direct children of. When `sort` is not
      * specified, the children come back in the child order of the parent. A parent that does not exist matches nothing.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * Expects `parent`, since it has nothing to widen without one.
+     * Expects `parent`, since it has nothing to widen without one. The child order of the parent is not applied to a subtree - it orders
+     * siblings, not levels against each other - so specify `sort` when the order of a recursive result matters.
      * @param {string[]} [params.returns] Node fields each hit should carry - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
      * delivered as `fields` on the hit. Any other name is an error, as is an empty list - leave `returns` out when no fields are
      * wanted. Only the fields a node shows are available, so a hit answers exactly what the node would.
@@ -1317,7 +1318,8 @@ class MultiRepoConnectionImpl
      * connection. An id cannot name one node across several repositories, so unlike the single-repo query only a path is accepted, and no
      * child order is inherited - pass `sort` when the order matters.
      * @param {boolean} [params.recursive=false] Match every descendant of `parent` instead of its direct children only.
-     * Expects `parent`, since it has nothing to widen without one.
+     * Expects `parent`, since it has nothing to widen without one. The child order of the parent is not applied to a subtree - it orders
+     * siblings, not levels against each other - so specify `sort` when the order of a recursive result matters.
      * @param {string[]} [params.returns] Node fields each hit should carry - `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` -
      * delivered as `fields` on the hit. Any other name is an error, as is an empty list - leave `returns` out when no fields are
      * wanted. Only the fields a node shows are available, so a hit answers exactly what the node would.

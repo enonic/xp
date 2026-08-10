@@ -32,7 +32,9 @@ record ContentQueryParent( NodePath nodePath, ChildOrder childOrder )
     static ContentQueryParent resolve( final ContentQuery query, final AbstractContentCommand command )
     {
         final ContentPath parentPath = query.getParentPath();
-        final boolean orderFromParent = query.getQueryExpr() == null || query.getQueryExpr().getOrderList().isEmpty();
+        // a parent orders its own children, so its order says nothing about a subtree - a recursive query keeps the order it asks for
+        final boolean orderFromParent =
+            !query.isRecursive() && ( query.getQueryExpr() == null || query.getQueryExpr().getOrderList().isEmpty() );
 
         if ( parentPath != null && !orderFromParent )
         {

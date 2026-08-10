@@ -209,6 +209,26 @@ class ContentServiceImplTest_find
     }
 
     @Test
+    void parent_recursive_does_not_apply_child_order_of_parent()
+    {
+        final Content parent = createParentWithChildOrder( ChildOrder.from( "_name DESC" ) );
+        final Content child1 = createContent( parent.getPath(), "b" );
+        final Content child2 = createContent( parent.getPath(), "c" );
+        final Content grandchild = createContent( child1.getPath(), "a" );
+
+        // the direct-children query still comes back in the order the parent arranged
+        assertOrder( contentService.find( ContentQuery.create().parentPath( parent.getPath() ).build() ).getContentIds(), child2, child1 );
+
+        // recursive answers for a whole subtree, which that order says nothing about, so it takes the order the query asks for
+        assertOrder( contentService.find( ContentQuery.create()
+                                              .parentPath( parent.getPath() )
+                                              .recursive( true )
+                                              .size( -1 )
+                                              .queryExpr( QueryParser.parse( "order by _name ASC" ) )
+                                              .build() ).getContentIds(), grandchild, child1, child2 );
+    }
+
+    @Test
     void parent_applies_language_of_parent_to_child_order_by_display_name()
     {
         final Content parent = contentService.create( CreateContentParams.create()
