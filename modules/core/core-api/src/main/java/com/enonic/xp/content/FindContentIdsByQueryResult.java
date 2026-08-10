@@ -140,6 +140,12 @@ public final class FindContentIdsByQueryResult
             return this;
         }
 
+        /**
+         * Sets the values of the fields requested by the query, keyed by content id. Contents absent from the map hold no value for any
+         * requested field.
+         *
+         * @since 8.1.0
+         */
         public Builder fields( final Map<ContentId, FieldValues> fields )
         {
             this.fields = fields;

@@ -54,12 +54,18 @@ public final class ListNodesResult
         {
         }
 
+        /**
+         * Appends an entry. Entries are expected to be added in path order, which is the order the result is documented to hold.
+         */
         public Builder addEntry( final NodeListEntry entry )
         {
             this.entries.add( entry );
             return this;
         }
 
+        /**
+         * @return a result holding the entries added so far, in the order they were added.
+         */
         public ListNodesResult build()
         {
             return new ListNodesResult( this );

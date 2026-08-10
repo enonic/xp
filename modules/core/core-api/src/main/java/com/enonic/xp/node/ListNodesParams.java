@@ -49,6 +49,11 @@ public final class ListNodesParams
         {
         }
 
+        /**
+         * Sets the node whose children are listed. Required.
+         *
+         * @param parentPath path of the parent node, {@link NodePath#ROOT} for the top level of the tree.
+         */
         public Builder parentPath( final NodePath parentPath )
         {
             this.parentPath = parentPath;
@@ -64,6 +69,9 @@ public final class ListNodesParams
             return this;
         }
 
+        /**
+         * @throws NullPointerException where no parent path has been set.
+         */
         public ListNodesParams build()
         {
             return new ListNodesParams( this );

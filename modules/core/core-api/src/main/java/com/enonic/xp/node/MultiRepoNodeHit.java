@@ -135,6 +135,11 @@ public final class MultiRepoNodeHit
             return this;
         }
 
+        /**
+         * Sets the values of the index fields requested by the query. Defaults to {@link FieldValues#empty()}.
+         *
+         * @since 8.1.0
+         */
         public Builder fields( final FieldValues fields )
         {
             this.fields = fields != null ? fields : FieldValues.empty();

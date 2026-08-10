@@ -92,12 +92,22 @@ public record FieldValues(Map<String, List<Object>> asMap)
         {
         }
 
+        /**
+         * Adds the values of one field. The field name is normalised as an index path, so any casing accepted there may be used, and
+         * adding the same field twice retains the values added last.
+         *
+         * @param field name of the field.
+         * @param fieldValues values held for the field, empty where the hit holds none.
+         */
         public Builder add( final String field, final Iterable<?> fieldValues )
         {
             this.values.put( IndexPath.from( field ).getPath(), ImmutableList.copyOf( fieldValues ) );
             return this;
         }
 
+        /**
+         * @return the fields added so far, or {@link #empty()} where none were added.
+         */
         public FieldValues build()
         {
             final Map<String, List<Object>> built = values.buildKeepingLast();
