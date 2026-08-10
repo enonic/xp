@@ -8,8 +8,6 @@ import com.enonic.xp.query.expr.CompareExpr;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.LogicalExpr;
-import com.enonic.xp.query.expr.NotExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
@@ -74,7 +72,7 @@ final class FindNodeBranchEntriesByParentCommand
         }
 
         final NodeBranchQuery query = NodeBranchQuery.create()
-            .query( QueryExpr.from( createParentExpr() ) )
+            .query( QueryExpr.from( createBelowParentExpr() ) )
             .addQueryFilter( ValueFilter.create()
                                  .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
                                  .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
@@ -86,36 +84,31 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries entries =
             NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query, context.getRepositoryId() ) );
 
-        return filterByPermission( entries, context );
+        return filter( entries, context );
     }
 
     /**
-     * The branch index carries no parentPath field, so a parent is matched by path prefix. Direct children are everything below the
-     * parent that is not below one of its children in turn - excluding the deeper level in the query keeps a non-recursive listing from
-     * hauling a whole subtree back only to discard it.
+     * The branch index carries no parentPath field, so a parent is matched by a path prefix, which the index answers by seeking its term
+     * dictionary once and scanning the subtree from there. Narrowing that to the direct children would take a wildcard with an inner
+     * {@code *}, which no longer reduces to a prefix and makes the index run an automaton over every term of the subtree instead, so the
+     * deeper levels are dropped in {@link #filter} rather than here.
      */
-    private ConstraintExpr createParentExpr()
+    private ConstraintExpr createBelowParentExpr()
     {
-        final String prefix = parentPath.isRoot() ? "" : parentPath.toString();
-
-        final ConstraintExpr belowParent = parentPath.isRoot()
+        return parentPath.isRoot()
             ? CompareExpr.neq( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( NodePath.ROOT.toString() ) )
-            : CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( prefix + "/*" ) );
-
-        if ( recursive )
-        {
-            return belowParent;
-        }
-
-        final CompareExpr belowAChild =
-            CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( prefix + "/*/*" ) );
-
-        return LogicalExpr.and( belowParent, new NotExpr( belowAChild ) );
+            : CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( parentPath + "/*" ) );
     }
 
-    private NodeBranchEntries filterByPermission( final NodeBranchEntries entries, final InternalContext context )
+    /**
+     * Drops the descendants a non-recursive listing did not ask for, and the entries the caller may not read. Depth is settled first,
+     * since it costs a path comparison whereas a permission decision costs a stored read of the access control list of the entry.
+     */
+    private NodeBranchEntries filter( final NodeBranchEntries entries, final InternalContext context )
     {
-        if ( requiredPermission == null || context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )
+        final boolean checkPermission = requiredPermission != null && !context.getPrincipalKeys().contains( RoleKeys.ADMIN );
+
+        if ( recursive && !checkPermission )
         {
             return entries;
         }
@@ -123,11 +116,21 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries.Builder filtered = NodeBranchEntries.create();
         for ( final NodeBranchEntry entry : entries )
         {
-            final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
-            if ( NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
+            if ( !recursive && !parentPath.equals( entry.getNodePath().getParentPath() ) )
             {
-                filtered.add( entry );
+                continue;
             }
+
+            if ( checkPermission )
+            {
+                final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
+                if ( !NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
+                {
+                    continue;
+                }
+            }
+
+            filtered.add( entry );
         }
         return filtered.build();
     }
