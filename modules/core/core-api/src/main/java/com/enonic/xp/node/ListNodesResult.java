@@ -5,15 +5,15 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Answer of {@link NodeService#list(ListNodesByParentParams)}: every node the caller may read, ordered by path.
+ * Answer of {@link NodeService#list(ListNodesParams)}: every node the caller may read, ordered by path.
  *
  * @since 8.1.0
  */
-public final class ListNodesByParentResult
+public final class ListNodesResult
 {
     private final ImmutableList<NodeListEntry> entries;
 
-    private ListNodesByParentResult( final Builder builder )
+    private ListNodesResult( final Builder builder )
     {
         this.entries = builder.entries.build();
     }
@@ -57,9 +57,9 @@ public final class ListNodesByParentResult
             return this;
         }
 
-        public ListNodesByParentResult build()
+        public ListNodesResult build()
         {
-            return new ListNodesByParentResult( this );
+            return new ListNodesResult( this );
         }
     }
 }

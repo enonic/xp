@@ -3,17 +3,17 @@ package com.enonic.xp.node;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Parameters for {@link NodeService#list(ListNodesByParentParams)}.
+ * Parameters for {@link NodeService#list(ListNodesParams)}.
  *
  * @since 8.1.0
  */
-public final class ListNodesByParentParams
+public final class ListNodesParams
 {
     private final NodePath parentPath;
 
     private final boolean recursive;
 
-    private ListNodesByParentParams( final Builder builder )
+    private ListNodesParams( final Builder builder )
     {
         this.parentPath = requireNonNull( builder.parentPath, "parentPath is required" );
         this.recursive = builder.recursive;
@@ -59,9 +59,9 @@ public final class ListNodesByParentParams
             return this;
         }
 
-        public ListNodesByParentParams build()
+        public ListNodesParams build()
         {
-            return new ListNodesByParentParams( this );
+            return new ListNodesParams( this );
         }
     }
 }

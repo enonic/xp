@@ -11,8 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.node.ListNodesByParentParams;
-import com.enonic.xp.node.ListNodesByParentResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
@@ -47,7 +47,7 @@ class NodeResourceApplicationUrlResolverTest
 
         this.resolver.findFiles();
 
-        final ArgumentCaptor<ListNodesByParentParams> params = ArgumentCaptor.forClass( ListNodesByParentParams.class );
+        final ArgumentCaptor<ListNodesParams> params = ArgumentCaptor.forClass( ListNodesParams.class );
         verify( this.nodeService ).list( params.capture() );
 
         assertEquals( new NodePath( "/myapp/cms" ), params.getValue().getParentPath() );
@@ -72,9 +72,9 @@ class NodeResourceApplicationUrlResolverTest
         assertEquals( Set.of( "/cms/content-types/mytype/content-types" ), this.resolver.findFiles() );
     }
 
-    private static ListNodesByParentResult result( final String... paths )
+    private static ListNodesResult result( final String... paths )
     {
-        final ListNodesByParentResult.Builder builder = ListNodesByParentResult.create();
+        final ListNodesResult.Builder builder = ListNodesResult.create();
         for ( final String path : paths )
         {
             builder.addEntry( new NodeListEntry( new NodeId(), new NodePath( path ), Instant.now() ) );

@@ -37,8 +37,8 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.ListNodesByParentParams;
-import com.enonic.xp.node.ListNodesByParentResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -234,7 +234,7 @@ class ApplicationServiceImplTest
 
         final NodeIds ids = NodeIds.from( virtualAppNodeId );
 
-        when( nodeService.list( isA( ListNodesByParentParams.class ) ) ).thenReturn( ListNodesByParentResult.create()
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create()
                                                                                          .addEntry( new NodeListEntry( virtualAppNodeId,
                                                                                                                        new NodePath(
                                                                                                                            "/app3" ),

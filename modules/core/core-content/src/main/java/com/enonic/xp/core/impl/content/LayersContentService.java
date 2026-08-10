@@ -38,7 +38,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.ListNodesByParentParams;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -276,7 +276,7 @@ public class LayersContentService
      */
     private ContentIds list( final ContentPath contentPath, final boolean recursive )
     {
-        return callOnPrimary( () -> nodeService.list( ListNodesByParentParams.create()
+        return callOnPrimary( () -> nodeService.list( ListNodesParams.create()
                                                           .parentPath(
                                                               ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
                                                           .recursive( recursive )

@@ -51,7 +51,7 @@ public interface NodeService
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     /**
-     * Lists the children of a node, or with {@link ListNodesByParentParams.Builder#recursive(boolean)} its whole subtree.
+     * Lists the children of a node, or with {@link ListNodesParams.Builder#recursive(boolean)} its whole subtree.
      * <p>
      * Every node the caller may read is listed, ordered by path, as an id, a path and a timestamp - never the node itself.
      * <p>
@@ -63,7 +63,7 @@ public interface NodeService
      *
      * @since 8.1.0
      */
-    ListNodesByParentResult list( ListNodesByParentParams params );
+    ListNodesResult list( ListNodesParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 

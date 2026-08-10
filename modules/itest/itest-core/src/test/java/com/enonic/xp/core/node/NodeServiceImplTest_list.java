@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.ListNodesByParentParams;
-import com.enonic.xp.node.ListNodesByParentResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
@@ -40,8 +40,8 @@ class NodeServiceImplTest_list
         createNode( NodePath.ROOT, "outside" );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final ListNodesByParentResult result =
-            nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).build() );
+        final ListNodesResult result =
+            nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() );
 
         assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
         assertThat( result.getEntries() ).extracting( NodeListEntry::nodePath )
@@ -57,8 +57,8 @@ class NodeServiceImplTest_list
         final Node grandchild = createNode( childA.path(), "grandchild" );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final ListNodesByParentResult result =
-            nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).recursive( true ).build() );
+        final ListNodesResult result =
+            nodeService.list( ListNodesParams.create().parentPath( parent.path() ).recursive( true ).build() );
 
         assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId )
             .containsExactly( childA.id(), grandchild.id(), childB.id() );
@@ -72,8 +72,8 @@ class NodeServiceImplTest_list
         final Node child = createNode(
             CreateNodeParams.create().name( "just-created" ).parent( parent.path() ).refresh( RefreshMode.STORAGE ).build() );
 
-        final ListNodesByParentResult result =
-            nodeService.list( ListNodesByParentParams.create().parentPath( parent.path() ).build() );
+        final ListNodesResult result =
+            nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() );
 
         assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( child.id() );
     }
@@ -90,7 +90,7 @@ class NodeServiceImplTest_list
                         .build() );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final ListNodesByParentParams params = ListNodesByParentParams.create().parentPath( parent.path() ).build();
+        final ListNodesParams params = ListNodesParams.create().parentPath( parent.path() ).build();
 
         assertThat( nodeService.list( params ).getEntries() ).extracting( NodeListEntry::nodeId )
             .containsExactly( visible.id() );
@@ -105,8 +105,8 @@ class NodeServiceImplTest_list
     @Test
     void parent_that_does_not_exist_lists_nothing()
     {
-        final ListNodesByParentResult result =
-            nodeService.list( ListNodesByParentParams.create().parentPath( new NodePath( "/no-such-parent" ) ).build() );
+        final ListNodesResult result =
+            nodeService.list( ListNodesParams.create().parentPath( new NodePath( "/no-such-parent" ) ).build() );
 
         assertTrue( result.isEmpty() );
     }
@@ -118,7 +118,7 @@ class NodeServiceImplTest_list
         createNode( top.path(), "below" );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final ListNodesByParentResult result = nodeService.list( ListNodesByParentParams.create().parentPath( NodePath.ROOT ).build() );
+        final ListNodesResult result = nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() );
 
         assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).contains( top.id() );
         assertThat( result.getEntries() ).extracting( NodeListEntry::nodePath ).allMatch( path -> path.getParentPath().isRoot() );

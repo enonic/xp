@@ -41,8 +41,8 @@ import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
-import com.enonic.xp.node.ListNodesByParentParams;
-import com.enonic.xp.node.ListNodesByParentResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -386,7 +386,7 @@ public class NodeServiceImpl
 
     @Override
     @Traced("node.list")
-    public ListNodesByParentResult list( final ListNodesByParentParams params )
+    public ListNodesResult list( final ListNodesParams params )
     {
         verifyContext();
         Tracer.withCurrent( trace -> {
@@ -407,13 +407,13 @@ public class NodeServiceImpl
             .build()
             .execute();
 
-        final ListNodesByParentResult.Builder result = ListNodesByParentResult.create();
+        final ListNodesResult.Builder result = ListNodesResult.create();
         for ( final NodeBranchEntry entry : entries )
         {
             result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
         }
 
-        final ListNodesByParentResult listResult = result.build();
+        final ListNodesResult listResult = result.build();
 
         Tracer.attribute( "hits", (long) listResult.getSize() );
 

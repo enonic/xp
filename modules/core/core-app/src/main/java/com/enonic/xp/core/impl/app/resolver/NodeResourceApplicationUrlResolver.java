@@ -9,8 +9,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.NodeValueResource;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
-import com.enonic.xp.node.ListNodesByParentParams;
-import com.enonic.xp.node.ListNodesByParentResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
@@ -41,8 +41,8 @@ public final class NodeResourceApplicationUrlResolver
             .build();
 
         return VirtualAppContext.createContext().callWith( () -> {
-            final ListNodesByParentResult nodes =
-                this.nodeService.list( ListNodesByParentParams.create().parentPath( cmsPath ).recursive( true ).build() );
+            final ListNodesResult nodes =
+                this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).recursive( true ).build() );
 
             return nodes.getEntries()
                 .stream()

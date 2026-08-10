@@ -5,7 +5,7 @@ import java.time.Instant;
 import static java.util.Objects.requireNonNull;
 
 /**
- * One node in a {@link ListNodesByParentResult}, identified without reading the node itself.
+ * One node in a {@link ListNodesResult}, identified without reading the node itself.
  *
  * @since 8.1.0
  */

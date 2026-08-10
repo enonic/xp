@@ -24,7 +24,7 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.ListNodesByParentParams;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -115,8 +115,8 @@ public final class SecurityServiceImpl
     @Override
     public IdProviders getIdProviders()
     {
-        final ListNodesByParentParams listParams =
-            ListNodesByParentParams.create().parentPath( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH ).build();
+        final ListNodesParams listParams =
+            ListNodesParams.create().parentPath( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH ).build();
         final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( this.nodeService.list( listParams ).getNodeIds() ) );
 
         return IdProviderNodeTranslator.fromNodes( nodes );
