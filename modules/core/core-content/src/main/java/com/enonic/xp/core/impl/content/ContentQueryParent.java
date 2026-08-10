@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.content;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentQuery;
@@ -10,7 +13,8 @@ import com.enonic.xp.node.NodePath;
  * The parent a {@link ContentQuery} is restricted to, resolved into the node path to filter children on and the child order to sort them
  * by. The child order is {@code null} when the query brings its own order expressions and the parent's order must not be applied.
  */
-record ContentQueryParent( NodePath nodePath, ChildOrder childOrder )
+@NullMarked
+record ContentQueryParent( NodePath nodePath, @Nullable ChildOrder childOrder )
 {
     static boolean isSpecifiedIn( final ContentQuery query )
     {
@@ -29,7 +33,7 @@ record ContentQueryParent( NodePath nodePath, ChildOrder childOrder )
      * @return the resolved parent, or {@code null} when the query names a parent that does not exist, in which case the query cannot match
      * anything.
      */
-    static ContentQueryParent resolve( final ContentQuery query, final AbstractContentCommand command )
+    static @Nullable ContentQueryParent resolve( final ContentQuery query, final AbstractContentCommand command )
     {
         final ContentPath parentPath = query.getParentPath();
         // a parent orders its own children, so its order says nothing about a subtree - a recursive query keeps the order it asks for
@@ -53,7 +57,7 @@ record ContentQueryParent( NodePath nodePath, ChildOrder childOrder )
             : null );
     }
 
-    private static Content doGetParent( final ContentQuery query, final AbstractContentCommand command )
+    private static @Nullable Content doGetParent( final ContentQuery query, final AbstractContentCommand command )
     {
         final ContentPath parentPath = query.getParentPath();
 

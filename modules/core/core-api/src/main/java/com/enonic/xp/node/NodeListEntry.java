@@ -2,6 +2,8 @@ package com.enonic.xp.node;
 
 import java.time.Instant;
 
+import org.jspecify.annotations.NullMarked;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -9,6 +11,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 8.1.0
  */
+@NullMarked
 public record NodeListEntry(NodeId nodeId, NodePath nodePath, Instant timestamp)
 {
     public NodeListEntry

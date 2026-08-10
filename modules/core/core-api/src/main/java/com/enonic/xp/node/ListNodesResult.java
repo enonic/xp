@@ -2,6 +2,8 @@ package com.enonic.xp.node;
 
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -9,6 +11,7 @@ import com.google.common.collect.ImmutableList;
  *
  * @since 8.1.0
  */
+@NullMarked
 public final class ListNodesResult
 {
     private final ImmutableList<NodeListEntry> entries;

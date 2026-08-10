@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -7,6 +10,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 8.1.0
  */
+@NullMarked
 public final class ListNodesParams
 {
     private final NodePath parentPath;
@@ -36,6 +40,7 @@ public final class ListNodesParams
 
     public static final class Builder
     {
+        @Nullable
         private NodePath parentPath;
 
         private boolean recursive;

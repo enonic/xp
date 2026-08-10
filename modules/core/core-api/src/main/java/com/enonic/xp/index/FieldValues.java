@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -18,6 +20,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 8.1.0
  */
+@NullMarked
 public record FieldValues(Map<String, List<Object>> asMap)
 {
     private static final FieldValues EMPTY = new FieldValues( ImmutableMap.of() );

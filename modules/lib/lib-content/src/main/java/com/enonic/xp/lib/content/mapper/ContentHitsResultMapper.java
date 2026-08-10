@@ -3,6 +3,8 @@ package com.enonic.xp.lib.content.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.jspecify.annotations.NullMarked;
+
 import com.enonic.xp.aggregation.Aggregations;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
@@ -14,6 +16,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 /**
  * The lightweight result shapes of a content query: hits carrying ids, or the requested index-field values, instead of full contents.
  */
+@NullMarked
 public final class ContentHitsResultMapper
     implements MapSerializable
 {
