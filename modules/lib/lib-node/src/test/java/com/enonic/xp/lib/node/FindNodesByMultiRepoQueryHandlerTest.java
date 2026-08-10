@@ -61,6 +61,16 @@ class FindNodesByMultiRepoQueryHandlerTest
     }
 
     @Test
+    void recursiveWithoutParent()
+    {
+        final ResourceProblemException e = assertThrows( ResourceProblemException.class, () -> runFunction(
+            "/test/FindNodesByMultiRepoQueryHandlerTest_parent.js", "recursiveWithoutParent" ) );
+        assertEquals( "recursive expects a parent", e.getMessage() );
+
+        Mockito.verify( this.nodeService, Mockito.never() ).findByQuery( Mockito.isA( MultiRepoNodeQuery.class ) );
+    }
+
+    @Test
     void parentById()
     {
         // one id cannot name a node across several repositories, so a multi-repo query takes a path parent only

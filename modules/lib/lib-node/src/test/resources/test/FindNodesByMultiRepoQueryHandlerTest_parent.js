@@ -34,3 +34,11 @@ exports.parentById = function () {
         parent: 'parent-id'
     });
 };
+
+exports.recursiveWithoutParent = function () {
+
+    multiRepoConnection.query({
+        count: 10,
+        recursive: true
+    });
+};
