@@ -1026,9 +1026,11 @@ class RepoConnectionImpl
      * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
      * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify
      * `sort` where the order of a recursive result is significant.
-     * @param {string[]} [params.returns] Node fields each hit is to carry — `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` —
-     * supplied as `fields` on the hit. Any other name is an error, as is an empty list; omit `returns` where no fields are required.
-     * Only fields a node exposes are available, so a hit returns exactly what the node would return.
+     * @param {string[]} [params.returns] Index fields each hit is to carry, supplied as `fields` on the hit. An empty list is an
+     * error; omit `returns` where no fields are required. The supported fields are `_name`, `_path`, `_nodeType`, `_versionKey` and
+     * `_ts`, which are returned in the form a node exposes them. Any other indexed field may also be requested, including data fields,
+     * but those are the layout of the index rather than API: their names, presence and value form may change between versions, and the
+     * value returned is the indexed one, which for a number or a date is not the form the node exposes.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.
@@ -1320,9 +1322,11 @@ class MultiRepoConnectionImpl
      * @param {boolean} [params.recursive=false] Matches every descendant of `parent` rather than its direct children only. Requires
      * `parent`. The child order of the parent is not applied to a subtree, since it orders siblings rather than levels, so specify
      * `sort` where the order of a recursive result is significant.
-     * @param {string[]} [params.returns] Node fields each hit is to carry — `_name`, `_path`, `_nodeType`, `_versionKey`, `_ts` —
-     * supplied as `fields` on the hit. Any other name is an error, as is an empty list; omit `returns` where no fields are required.
-     * Only fields a node exposes are available, so a hit returns exactly what the node would return.
+     * @param {string[]} [params.returns] Index fields each hit is to carry, supplied as `fields` on the hit. An empty list is an
+     * error; omit `returns` where no fields are required. The supported fields are `_name`, `_path`, `_nodeType`, `_versionKey` and
+     * `_ts`, which are returned in the form a node exposes them. Any other indexed field may also be requested, including data fields,
+     * but those are the layout of the index rather than API: their names, presence and value form may change between versions, and the
+     * value returned is the indexed one, which for a number or a date is not the form the node exposes.
      * @param {string|object} [params.query] Query expression.
      * @param {object} [params.filters] Query filters
      * @param {string|object|object[]} [params.sort='_score DESC'] Sorting expression.

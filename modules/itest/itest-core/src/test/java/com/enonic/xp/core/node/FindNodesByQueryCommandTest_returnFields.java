@@ -8,8 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.FieldValues;
+import com.enonic.xp.index.IndexConfig;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
@@ -74,19 +77,32 @@ class FindNodesByQueryCommandTest_returnFields
     }
 
     @Test
-    void fields_outside_the_supported_set_are_rejected()
+    void fields_beyond_the_documented_ones()
     {
-        final NodeQuery.Builder builder = NodeQuery.create();
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myField", "my-value" );
+        data.addDouble( "myNumber", 42.0 );
+        createNode( CreateNodeParams.create()
+                        .name( "my-node" )
+                        .parent( NodePath.ROOT )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create().defaultConfig( IndexConfig.BY_TYPE ).build() )
+                        .build() );
+        nodeService.refresh( RefreshMode.ALL );
 
-        assertEquals( "unsupported return field: displayname",
-                      assertThrows( IllegalArgumentException.class,
-                                    () -> builder.returnFields( IndexPath.from( "displayName" ) ) ).getMessage() );
-        // typed index variants are internal layout, not API
-        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( IndexPath.from( "_ts._datetime" ) ) );
-        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( IndexPath.from( "_name._orderby" ) ) );
-        // a fetched node shows neither of these, so a query cannot ask for them either
-        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( NodeIndexPath.PARENT_PATH ) );
-        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( NodeIndexPath.REFERENCE ) );
+        final FindNodesByQueryResult result = doFindByQuery( NodeQuery.create()
+                                                                 .query( QueryParser.parse( "_name = 'my-node'" ) )
+                                                                 .returnFields( IndexPath.from( "myField" ),
+                                                                                IndexPath.from( "myNumber" ),
+                                                                                NodeIndexPath.PARENT_PATH )
+                                                                 .build() );
+
+        // the node API answers for any indexed field, not only the documented ones
+        final FieldValues fields = result.getNodeHits().first().getFields();
+        assertEquals( List.of( "my-value" ), fields.getValues( IndexPath.from( "myField" ) ) );
+        assertEquals( List.of( "/" ), fields.getValues( NodeIndexPath.PARENT_PATH ) );
+        // an undocumented field answers with the indexed value, which for a number is not the form the node exposes
+        assertEquals( List.of( "42.0" ), fields.getValues( IndexPath.from( "myNumber" ) ) );
     }
 
     @Test

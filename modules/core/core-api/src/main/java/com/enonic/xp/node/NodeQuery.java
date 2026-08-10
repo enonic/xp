@@ -1,7 +1,7 @@
 package com.enonic.xp.node;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -13,15 +13,6 @@ public final class NodeQuery
     extends AbstractQuery
 {
     public static final int ALL_RESULTS_SIZE_FLAG = -1;
-
-    /**
-     * The fields that may be requested per hit. The set is limited to fields a {@link Node} exposes, so requesting them is a less
-     * expensive way of reading values the node itself would supply, and grants access to nothing further.
-     *
-     * @since 8.1.0
-     */
-    public static final Set<IndexPath> SUPPORTED_RETURN_FIELDS =
-        Set.of( NodeIndexPath.NAME, NodeIndexPath.PATH, NodeIndexPath.NODE_TYPE, NodeIndexPath.VERSION, NodeIndexPath.TIMESTAMP );
 
     private final NodePath parent;
 
@@ -155,33 +146,27 @@ public final class NodeQuery
         }
 
         /**
-         * Requests fields to be returned with every hit, in {@link NodeHit#getFields()}. Only fields in
-         * {@link #SUPPORTED_RETURN_FIELDS} may be requested. Each field is returned as a list of strings, {@code _ts} in ISO-8601 form,
+         * Requests fields to be returned with every hit, in {@link NodeHit#getFields()}. Each field is returned as a list of strings,
          * and a field for which a hit holds no value is absent rather than empty.
+         * <p>
+         * The following fields are supported, and are returned in the form a {@link Node} exposes them:
+         * <ul>
+         * <li>{@link NodeIndexPath#NAME} - {@code _name}</li>
+         * <li>{@link NodeIndexPath#PATH} - {@code _path}</li>
+         * <li>{@link NodeIndexPath#NODE_TYPE} - {@code _nodeType}</li>
+         * <li>{@link NodeIndexPath#VERSION} - {@code _versionKey}</li>
+         * <li>{@link NodeIndexPath#TIMESTAMP} - {@code _ts}, in ISO-8601 form</li>
+         * </ul>
+         * Any other indexed field may also be requested, including data fields and the typed variants the index maintains for its own
+         * purposes, such as {@code ._number} and {@code ._orderby}. Those are the layout of the index rather than API: their names,
+         * presence and value form are not guaranteed to survive an upgrade, and the value returned is the indexed one, which for a
+         * number or a date is not the form the node exposes.
          *
-         * @throws IllegalArgumentException for a field outside {@link #SUPPORTED_RETURN_FIELDS}.
          * @since 8.1.0
          */
         public Builder returnFields( final IndexPath... fields )
         {
-            for ( final IndexPath field : fields )
-            {
-                Preconditions.checkArgument( SUPPORTED_RETURN_FIELDS.contains( field ), "unsupported return field: %s", field );
-                this.returnFields.add( field );
-            }
-            return this;
-        }
-
-        /**
-         * Requests fields that an API layered on nodes has already validated against its own supported set, such as the content API
-         * validating content field names. Callers naming node fields should use {@link #returnFields(IndexPath...)}, which validates
-         * them.
-         *
-         * @since 8.1.0
-         */
-        public Builder checkedReturnFields( final Collection<IndexPath> fields )
-        {
-            this.returnFields.addAll( fields );
+            this.returnFields.addAll( List.of( fields ) );
             return this;
         }
 

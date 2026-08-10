@@ -8,6 +8,7 @@ import com.enonic.xp.content.ContentIndexPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
@@ -48,7 +49,7 @@ class ContentQueryNodeQueryTranslator
             .highlight( contentQuery.getHighlight() );
 
         // already checked against ContentQuery.SUPPORTED_RETURN_FIELDS, which names content fields rather than node fields
-        builder.checkedReturnFields( contentQuery.getReturnFields() );
+        builder.returnFields( contentQuery.getReturnFields().toArray( IndexPath[]::new ) );
 
         // a recursive parent is matched by the path prefix built into the query expression instead, see buildNodeQueryExpr
         if ( parent != null && !contentQuery.isRecursive() )

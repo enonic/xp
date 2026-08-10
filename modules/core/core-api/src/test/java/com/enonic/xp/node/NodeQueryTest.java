@@ -35,14 +35,14 @@ class NodeQueryTest
     }
 
     @Test
-    void return_fields_are_limited_to_the_supported_set()
+    void return_fields_are_not_limited_to_the_documented_ones()
     {
-        final NodeQuery.Builder builder = NodeQuery.create();
+        // the node API indexes what it is given and answers for it; only the content API curates a set
+        final NodeQuery query = NodeQuery.create()
+            .returnFields( IndexPath.from( "data.myField" ), IndexPath.from( "_manualordervalue" ) )
+            .build();
 
-        assertEquals( "unsupported return field: data.myfield",
-                      assertThrows( IllegalArgumentException.class,
-                                    () -> builder.returnFields( IndexPath.from( "data.myField" ) ) ).getMessage() );
-        assertThrows( IllegalArgumentException.class, () -> builder.returnFields( IndexPath.from( "_manualordervalue" ) ) );
+        assertEquals( Set.of( IndexPath.from( "data.myfield" ), IndexPath.from( "_manualordervalue" ) ), query.getReturnFields() );
     }
 
     @Test
