@@ -43,7 +43,7 @@ final class FindContentIdsByQueryCommand
     FindContentIdsByQueryResult execute()
     {
         final ContentQueryParent parent;
-        if ( ContentQueryParent.isSpecifiedIn( this.query ) )
+        if ( this.query.getParentPath() != null || this.query.getParentId() != null )
         {
             parent = ContentQueryParent.resolve( this.query, this );
             if ( parent == null )

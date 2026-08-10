@@ -17,15 +17,10 @@ import com.enonic.xp.node.NodePath;
 @NullMarked
 record ContentQueryParent( NodePath nodePath, @Nullable ChildOrder childOrder )
 {
-    static boolean isSpecifiedIn( final ContentQuery query )
-    {
-        return query.getParentPath() != null || query.getParentId() != null;
-    }
-
     /**
-     * Resolves the parent named by the query. Reading the parent is what makes its child order available, and its path where the parent
-     * is given by id, so the read is skipped where neither is required; a query that names a parent by path and sorts explicitly is
-     * therefore served by a single search.
+     * Resolves the parent named by the query, which must name one either by path or by id. Reading the parent is what makes its child
+     * order available, and its path where the parent is given by id, so the read is skipped where neither is required; a query that names
+     * a parent by path and sorts explicitly is therefore served by a single search.
      * <p>
      * The read is performed with elevated privileges because nothing the parent holds is exposed to the caller: the path is used only to
      * build the filter and the child order only to sort. A caller permitted to read a child but not its parent therefore receives that
