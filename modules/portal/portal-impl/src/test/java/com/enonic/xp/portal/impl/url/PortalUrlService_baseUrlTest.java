@@ -19,6 +19,8 @@ import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -786,5 +788,82 @@ class PortalUrlService_baseUrlTest
 
         // the anchor is taken from the supplier: no content lookup is made
         assertEquals( "https://cdn.company.com/_", url );
+    }
+
+    private void mockProjectWithBaseUrl( final String baseUrl )
+    {
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", baseUrl );
+
+        final Project project = Project.create()
+            .name( ProjectName.from( "myproject" ) )
+            .addSiteConfig( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
+            .build();
+
+        when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
+    }
+
+    private String projectRootBaseUrl( final DescriptorKey api )
+    {
+        return ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .callWith( () -> this.service.baseUrl(
+                BaseUrlParams.create().setPath( "/" ).setProjectName( "myproject" ).setBranch( "draft" ).setApi( api ).build() ) );
+    }
+
+    @Test
+    void testProjectRootAnchorWithConfiguredBaseUrl()
+    {
+        PortalRequestAccessor.set( null );
+
+        mockProjectWithBaseUrl( "https://cdn.company.com" );
+
+        // the root of a project holds no content: the URL is resolved from the project configuration
+        assertEquals( "https://cdn.company.com", projectRootBaseUrl( null ) );
+    }
+
+    @Test
+    void testProjectRootAnchorWithoutConfiguredBaseUrl()
+    {
+        PortalRequestAccessor.set( null );
+
+        assertEquals( "/site/myproject/draft", projectRootBaseUrl( null ) );
+    }
+
+    @Test
+    void testProjectRootAnchorApiBaseUrlWithConfiguredBaseUrl()
+    {
+        PortalRequestAccessor.set( null );
+
+        mockProjectWithBaseUrl( "https://cdn.company.com" );
+
+        // media APIs are auto-mounted by default, so they live under the "_" endpoint of the base
+        assertEquals( "https://cdn.company.com/_", projectRootBaseUrl( DescriptorKey.from( "media:image" ) ) );
+    }
+
+    @Test
+    void testProjectRootAnchorApiBaseUrlWithoutConfiguredBaseUrl()
+    {
+        PortalRequestAccessor.set( null );
+
+        assertNull( projectRootBaseUrl( DescriptorKey.from( "media:image" ) ) );
+    }
+
+    @Test
+    void testAnchorWithoutContentKey()
+    {
+        PortalRequestAccessor.set( null );
+
+        mockProjectWithBaseUrl( "https://cdn.company.com" );
+
+        // no content key at all anchors at the project, like the root path does
+        assertEquals( "https://cdn.company.com", ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .callWith( () -> this.service.baseUrl(
+                BaseUrlParams.create().setProjectName( "myproject" ).setBranch( "draft" ).build() ) ) );
     }
 }
