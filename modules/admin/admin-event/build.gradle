@@ -1,4 +1,5 @@
 dependencies {
+    implementation project( ':admin:admin-api' )
     implementation project( ':portal:portal-api' )
     implementation project( ':core:core-internal' )
 

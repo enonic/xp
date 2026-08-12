@@ -160,3 +160,70 @@ export function extensionUrl(params: ExtensionUrlParams): string {
 
     return bean.createUrl();
 }
+
+interface CreateTopicHandler {
+    setName(value: string): void;
+
+    setAllow(value: ScriptValue | null): void;
+
+    execute(): void;
+}
+
+interface SendToTopicHandler {
+    setName(value: string): void;
+
+    setMessage(value: ScriptValue | null): void;
+
+    execute(): void;
+}
+
+export interface CreateTopicParams {
+    name: string;
+    allow: string[];
+}
+
+/**
+ * Creates an admin events topic owned by this application.
+ *
+ * Admin clients subscribe to the topic over the shared admin events websocket, and only
+ * principals listed in `allow` may subscribe (an empty list means administrators only). Topic
+ * names are free-form - prefixing with the application key is the recommended convention - and
+ * the first application to create a name owns it: only the owner can send to it, and the topic
+ * is removed when the application stops. Call from `main.js`, so the topic exists for the life
+ * of the application.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Topic name. Prefix with the application key by convention.
+ * @param {string[]} params.allow Principal keys allowed to subscribe.
+ */
+export function createTopic(params: CreateTopicParams): void {
+    const name = checkRequired(params, 'name');
+
+    const bean: CreateTopicHandler = __.newBean<CreateTopicHandler>('com.enonic.xp.lib.admin.CreateTopicHandler');
+
+    bean.setName(name);
+    bean.setAllow(__.toScriptValue(params.allow));
+    bean.execute();
+}
+
+/**
+ * Sends a message to an admin events topic owned by this application.
+ *
+ * The message reaches, on every cluster node, the sockets holding an acknowledged subscription
+ * to the topic, stamped with a per-topic sequence number so subscribers can count lost messages.
+ * Delivery is not guaranteed.
+ *
+ * @param {string} name Topic name, as passed to `createTopic`.
+ * @param {object} [message] Message data. Must be serializable to JSON.
+ */
+export function sendToTopic(name: string, message?: object): void {
+    if (name == null) {
+        throw new Error(`Parameter 'name' is required`);
+    }
+
+    const bean: SendToTopicHandler = __.newBean<SendToTopicHandler>('com.enonic.xp.lib.admin.SendToTopicHandler');
+
+    bean.setName(name);
+    bean.setMessage(__.toScriptValue(message));
+    bean.execute();
+}
