@@ -82,13 +82,16 @@ class NodeEventsTest
     void testDuplicated()
     {
         final Node duplicated = createNode( "duplicated", new NodePath( "/mynode1/child1" ), "myid" );
+        final Node duplicatedChild = createNode( "child", new NodePath( "/mynode1/child1/duplicated" ), "mychildid" );
 
-        Event event = NodeEvents.duplicated( duplicated, InternalContext.from( createContext( "draft" ) ) );
+        Event event =
+            NodeEvents.duplicated( List.of( duplicated, duplicatedChild ), InternalContext.from( createContext( "draft" ) ) );
 
         assertNotNull( event );
         assertTrue( event.isDistributed() );
         assertEquals( NodeEvents.NODE_DUPLICATED_EVENT, event.getType() );
-        assertEquals( "[{id=myid, path=/mynode1/child1/duplicated, branch=draft, repo=com.enonic.cms.myproject}]",
+        assertEquals( "[{id=myid, path=/mynode1/child1/duplicated, branch=draft, repo=com.enonic.cms.myproject}, " +
+                          "{id=mychildid, path=/mynode1/child1/duplicated/child, branch=draft, repo=com.enonic.cms.myproject}]",
                       event.getValue( EventConstants.NODES_FIELD ).get().toString() );
     }
 

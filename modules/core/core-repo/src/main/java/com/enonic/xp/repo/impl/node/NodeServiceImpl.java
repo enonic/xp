@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.elasticsearch.index.IndexNotFoundException;
@@ -696,8 +697,9 @@ public class NodeServiceImpl
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        this.eventPublisher.publish( NodeEvents.duplicated( result.getNode(), internalContext ) );
-        result.getChildren().forEach( child -> this.eventPublisher.publish( NodeEvents.created( child, internalContext ) ) );
+        // the duplicated node and its duplicated children are reported in a single event, parents before children
+        this.eventPublisher.publish( NodeEvents.duplicated(
+            Stream.concat( Stream.of( result.getNode() ), result.getChildren().stream() ).toList(), internalContext ) );
 
         return result;
     }

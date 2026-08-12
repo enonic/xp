@@ -23,6 +23,7 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventConstants;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
@@ -32,6 +33,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
+import com.enonic.xp.node.DuplicateNodeResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -488,6 +490,45 @@ class NodeServiceImplTest
         final Node node_1_2_3_dup = this.nodeService.getById( node_1_2_3_dup_id );
 
         assertEquals( node_1_2_3.name(), node_1_2_3_dup.name() );
+    }
+
+    @Test
+    void duplicate_shouldPublishSingleEventWithAllDuplicatedNodes()
+    {
+        final PropertyTree data = new PropertyTree();
+
+        final Node node_1 =
+            this.nodeService.create( CreateNodeParams.create().name( "parent" ).parent( NodePath.ROOT ).data( data ).build() );
+
+        final Node node_1_1 =
+            this.nodeService.create( CreateNodeParams.create().name( "child" ).parent( node_1.path() ).data( data ).build() );
+
+        this.nodeService.create( CreateNodeParams.create().name( "child_of_child" ).parent( node_1_1.path() ).data( data ).build() );
+
+        this.nodeService.refresh( RefreshMode.SEARCH );
+
+        Mockito.clearInvocations( eventPublisher );
+
+        final DuplicateNodeResult result =
+            this.nodeService.duplicate( DuplicateNodeParams.create().nodeId( node_1.id() ).refresh( RefreshMode.SEARCH ).build() );
+
+        final ArgumentCaptor<Event> captor = ArgumentCaptor.forClass( Event.class );
+
+        verify( eventPublisher, times( 1 ) ).publish( captor.capture() );
+
+        final Event event = captor.getValue();
+
+        assertEquals( NodeEvents.NODE_DUPLICATED_EVENT, event.getType() );
+
+        final List<Map<String, String>> nodes = (List<Map<String, String>>) event.getData().get( EventConstants.NODES_FIELD );
+
+        // the duplicated node comes first, and every child comes after its parent
+        assertEquals( List.of( "/parent-copy", "/parent-copy/child", "/parent-copy/child/child_of_child" ),
+                      nodes.stream().map( node -> node.get( "path" ) ).toList() );
+
+        assertEquals( result.getNode().id().toString(), nodes.get( 0 ).get( "id" ) );
+        assertEquals( result.getChildren().stream().map( node -> node.id().toString() ).collect( Collectors.toSet() ),
+                      nodes.stream().skip( 1 ).map( node -> node.get( "id" ) ).collect( Collectors.toSet() ) );
     }
 
     @Test

@@ -53,9 +53,10 @@ public final class NodeEvents
         return buildEvent( NODE_DELETED_EVENT, deletedNodes.stream(), internalContext, node -> nodeToMap( node, internalContext ) );
     }
 
-    public static Event duplicated( final Node duplicatedNode, final InternalContext internalContext )
+    public static Event duplicated( final Collection<Node> duplicatedNodes, final InternalContext internalContext )
     {
-        return event( NODE_DUPLICATED_EVENT, duplicatedNode, internalContext );
+        return buildEvent( NODE_DUPLICATED_EVENT, duplicatedNodes.stream(), internalContext,
+                           node -> nodeToMap( node, internalContext ) );
     }
 
     public static Event updated( final Node updatedNode, final InternalContext internalContext )
