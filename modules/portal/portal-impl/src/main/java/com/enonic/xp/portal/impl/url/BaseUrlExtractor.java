@@ -22,7 +22,6 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElse;
 
 record BaseUrlExtractor(ContentService contentService, ProjectService projectService)
 {
@@ -66,9 +65,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             final Context context =
                 ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
 
-            final Content content = params.getContent() != null
-                ? context.callWith( () -> params.getContent().get() )
-                : context.callWith( () -> getContent( requireNonNullElse( params.getId(), params.getPath() ) ) );
+            final Content content = context.callWith( () -> resolveContentAnchor( params ) );
 
             builder.setContent( content );
 
@@ -77,7 +74,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             {
                 site = (Site) content;
             }
-            else if ( !content.getPath().isRoot() )
+            else if ( content != null && !content.getPath().isRoot() )
             {
                 site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
             }
@@ -135,15 +132,29 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         return null;
     }
 
-    private Content getContent( final String contentKey )
+    /**
+     * @return the content the URL is anchored to, or {@code null} when it is anchored at the
+     * project itself: the root of a project holds no content, so the URL is then resolved from
+     * the configuration of the project rather than of a site
+     */
+    private Content resolveContentAnchor( final BaseUrlParams params )
     {
-        if ( contentKey.startsWith( "/" ) )
+        if ( params.getContent() != null )
         {
-            return contentService.getByPath( ContentPath.from( contentKey ) );
+            return params.getContent().get();
         }
-        else
+
+        if ( params.getId() != null )
         {
-            return contentService.getById( ContentId.from( contentKey ) );
+            return contentService.getById( ContentId.from( params.getId() ) );
         }
+
+        if ( params.getPath() != null )
+        {
+            final ContentPath path = ContentPath.from( params.getPath() );
+            return path.isRoot() ? null : contentService.getByPath( path );
+        }
+
+        return null;
     }
 }
