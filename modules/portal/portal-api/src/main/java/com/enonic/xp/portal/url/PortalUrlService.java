@@ -13,6 +13,10 @@ public interface PortalUrlService
      * instead: {@code <baseUrl>/_} when a Base URL is configured and the API is mounted on the
      * anchored site, the {@code media.defaultBaseUrl} configuration for media APIs when set,
      * or {@code null} when URLs should stay request-based.
+     * <p>
+     * Never returns an error URL: failures are reported to the caller.
+     *
+     * @throws com.enonic.xp.content.ContentNotFoundException if the anchor does not exist
      */
     String baseUrl( BaseUrlParams params );
 

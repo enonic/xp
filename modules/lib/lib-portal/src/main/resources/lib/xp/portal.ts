@@ -928,6 +928,8 @@ interface BaseUrlHandler {
 /**
  * This function generates a baseURL.
  *
+ * Never returns an error URL: raises an error when the content does not exist.
+ *
  * @example-ref examples/portal/baseUrl.js
  *
  * @param {object} params Input parameters as JSON.

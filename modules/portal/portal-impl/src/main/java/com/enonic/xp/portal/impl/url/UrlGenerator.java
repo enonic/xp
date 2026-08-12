@@ -35,7 +35,7 @@ final class UrlGenerator
         }
     }
 
-    private static String removeTrailingSlash( final String path )
+    static String removeTrailingSlash( final String path )
     {
         if ( isNullOrEmpty( path ) )
         {

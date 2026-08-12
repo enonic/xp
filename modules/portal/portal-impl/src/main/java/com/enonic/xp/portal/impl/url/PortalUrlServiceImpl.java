@@ -146,8 +146,11 @@ public final class PortalUrlServiceImpl
             return runWithAdminRole( () -> resolveApiBaseUrl( params ) );
         }
 
-        final Supplier<String> baseUrlStrategy = new ContentBaseUrlSupplier( contentService, projectService, params );
-        return portalUrlGeneratorService.generateUrl( UrlGeneratorParams.create().setBaseUrl( baseUrlStrategy ).build() );
+        // a base URL is a prefix of other URLs, so a failure is reported to the caller instead
+        // of being encoded into the result: an error URL used as a base would silently prefix
+        // every URL built from it
+        return runWithAdminRole( () -> UrlGenerator.removeTrailingSlash(
+            new ContentBaseUrlSupplier( contentService, projectService, params ).get() ) );
     }
 
     private String resolveApiBaseUrl( final BaseUrlParams params )
