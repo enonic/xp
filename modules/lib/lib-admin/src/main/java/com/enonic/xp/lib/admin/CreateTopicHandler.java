@@ -32,17 +32,17 @@ public final class CreateTopicHandler
         this.allow = allow != null ? allow.getArray( String.class ) : List.of();
     }
 
-    public void execute()
+    public String execute()
     {
         final PrincipalKeys allowedPrincipals = PrincipalKeys.from( this.allow.stream().map( PrincipalKey::from ).toList() );
-        this.adminEventHub.get().registerTopic( this.name, allowedPrincipals, this.applicationKey );
+        return this.adminEventHub.get().registerTopic( this.name, allowedPrincipals, this.applicationKey );
     }
 
     @Override
     public void initialize( final BeanContext context )
     {
-        // the calling application owns the topic: the owner is taken from the bean context, never
-        // from script input, so one application cannot register on behalf of another
+        // the owner half of the canonical topic name comes from the bean context, never from
+        // script input: an application cannot register, or later address, another's topic
         this.applicationKey = context.getApplicationKey();
         this.adminEventHub = context.getService( AdminEventHub.class );
     }

@@ -53,10 +53,15 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
  * at subscribe and a per-topic, per-node sequence stamped on every delivered message so
  * subscribers can count socket-leg loss.
  * <p>
+ * Topics live under their canonical name {@code <application-key>:<name>}, qualified here from
+ * the owning application - never parsed out of caller input - so ownership is structural: no
+ * application can register, publish to, or take over another's topic, and equal local names of
+ * different applications are simply different topics.
+ * <p>
  * Publishes travel as distributed {@code admin.topic} events, so each node's hub instance fans out
  * to its own sockets. Script publishers cannot forge them: lib-event prefixes everything
  * script-sent with {@code custom.}, and the only other way in - {@link AdminEventHub#publish} -
- * verifies topic ownership.
+ * resolves the topic under the calling application's own key.
  * <p>
  * One instance serves every connection, so all per-connection state is keyed by session id.
  * Principals are captured when the socket opens (they are frozen at the upgrade handshake anyway)
@@ -76,6 +81,8 @@ public final class AdminEventHubImpl
     private static final String WS_PROTOCOL = "json";
 
     private static final String GROUP_PREFIX = "admin.event.topic/";
+
+    private static final char QUALIFIER = ':';
 
     private static final int MAX_TOPIC_NAME_LENGTH = 255;
 
@@ -231,14 +238,14 @@ public final class AdminEventHubImpl
             return;
         }
 
-        final TopicRegistration registration = state != null ? state.registration : null;
-        if ( registration == null )
+        final PrincipalKeys allow = state != null ? state.allow : null;
+        if ( allow == null )
         {
             // no server-side pending state: the client keeps its wanted-set and retries
             send( id, denyFrame( topic, "unknown" ) );
             return;
         }
-        if ( !isAllowed( clientSession.principals, registration.allow() ) )
+        if ( !isAllowed( clientSession.principals, allow ) )
         {
             send( id, denyFrame( topic, "forbidden" ) );
             return;
@@ -248,7 +255,7 @@ public final class AdminEventHubImpl
         {
             // membership, counter read and ack are atomic against this topic's stamp-and-send,
             // so ack.seq is exact: the first delivered event is seq+1, any jump is countable loss
-            if ( state.registration == null )
+            if ( state.allow == null )
             {
                 send( id, denyFrame( topic, "unknown" ) );
                 return;
@@ -293,7 +300,7 @@ public final class AdminEventHubImpl
             return;
         }
         final TopicState state = topics.get( topic );
-        if ( state == null || state.registration == null )
+        if ( state == null || state.allow == null )
         {
             send( id, errorFrame( "unknown", topic ) );
             return;
@@ -328,7 +335,7 @@ public final class AdminEventHubImpl
             return;
         }
         final TopicState state = topics.get( name );
-        if ( state == null || state.registration == null )
+        if ( state == null || state.allow == null )
         {
             return;
         }
@@ -342,51 +349,35 @@ public final class AdminEventHubImpl
     }
 
     @Override
-    public void registerTopic( final String name, final PrincipalKeys allow, final ApplicationKey owner )
+    public String registerTopic( final String name, final PrincipalKeys allow, final ApplicationKey owner )
     {
-        Objects.requireNonNull( owner, "owner is required" );
-        if ( name == null || name.isBlank() || name.length() > MAX_TOPIC_NAME_LENGTH || name.chars().anyMatch( Character::isWhitespace ) )
-        {
-            throw new IllegalArgumentException( "Invalid topic name [" + name + "]" );
-        }
+        final String topic = qualify( owner, name );
         final PrincipalKeys effectiveAllow = allow != null ? allow : PrincipalKeys.empty();
 
-        final TopicState state = topics.computeIfAbsent( name, key -> new TopicState() );
+        final TopicState state = topics.computeIfAbsent( topic, key -> new TopicState() );
         synchronized ( state.lock )
         {
-            final TopicRegistration existing = state.registration;
-            if ( existing != null && !existing.owner().equals( owner ) )
-            {
-                throw new IllegalArgumentException(
-                    "Topic [" + name + "] is already registered by application [" + existing.owner() + "]" );
-            }
-            if ( existing == null && state.lastOwner != null && !state.lastOwner.equals( owner ) )
-            {
-                // names are convention-only, so a name changing hands is legal - but worth a trace
-                LOG.warn( "Topic [{}] changes owner from [{}] to [{}]", name, state.lastOwner, owner );
-            }
-            state.registration = new TopicRegistration( owner, effectiveAllow );
-            state.lastOwner = owner;
+            state.allow = effectiveAllow;
 
             // re-evaluation doubles as revocation: subscribers failing the new allow get denied
             sessions.forEach( ( id, clientSession ) -> {
-                if ( clientSession.topics.contains( name ) && !isAllowed( clientSession.principals, effectiveAllow ) )
+                if ( clientSession.topics.contains( topic ) && !isAllowed( clientSession.principals, effectiveAllow ) )
                 {
-                    clientSession.topics.remove( name );
-                    webSocketManager.removeFromGroup( group( name ), id );
-                    send( id, denyFrame( name, "forbidden" ) );
+                    clientSession.topics.remove( topic );
+                    webSocketManager.removeFromGroup( group( topic ), id );
+                    send( id, denyFrame( topic, "forbidden" ) );
                 }
             } );
         }
+        return topic;
     }
 
     @Override
     public void publish( final ApplicationKey caller, final String name, final Map<String, ?> message )
     {
-        Objects.requireNonNull( caller, "caller is required" );
-        final TopicState state = name != null ? topics.get( name ) : null;
-        final TopicRegistration registration = state != null ? state.registration : null;
-        if ( registration == null || !registration.owner().equals( caller ) )
+        final String topic = qualify( caller, name );
+        final TopicState state = topics.get( topic );
+        if ( state == null || state.allow == null )
         {
             throw new IllegalArgumentException( "Topic [" + name + "] is not registered by application [" + caller + "]" );
         }
@@ -405,7 +396,22 @@ public final class AdminEventHubImpl
         }
 
         eventPublisher.publish(
-            Event.create( TOPIC_EVENT_TYPE ).distributed( true ).value( "name", name ).value( "data", data ).build() );
+            Event.create( TOPIC_EVENT_TYPE ).distributed( true ).value( "name", topic ).value( "data", data ).build() );
+    }
+
+    /**
+     * The canonical topic name: the owner key is baked in here, from the authenticated caller -
+     * changing ownership is not a restricted operation, it is an unrepresentable one.
+     */
+    private static String qualify( final ApplicationKey owner, final String name )
+    {
+        Objects.requireNonNull( owner, "owner is required" );
+        if ( name == null || name.isBlank() || name.length() > MAX_TOPIC_NAME_LENGTH ||
+            name.indexOf( QUALIFIER ) >= 0 || name.chars().anyMatch( Character::isWhitespace ) )
+        {
+            throw new IllegalArgumentException( "Invalid topic name [" + name + "]" );
+        }
+        return owner + String.valueOf( QUALIFIER ) + name;
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -416,15 +422,15 @@ public final class AdminEventHubImpl
 
     public void removeApplication( final Application application )
     {
-        final ApplicationKey key = application.getKey();
-        topics.forEach( ( name, state ) -> {
-            synchronized ( state.lock )
+        final String prefix = application.getKey() + String.valueOf( QUALIFIER );
+        topics.forEach( ( topic, state ) -> {
+            if ( topic.startsWith( prefix ) )
             {
-                if ( state.registration != null && state.registration.owner().equals( key ) )
+                synchronized ( state.lock )
                 {
-                    // ownership clears, the counter stays: sequence numbers never reset for the
-                    // life of this hub instance, so a redeploy does not corrupt gap counting
-                    state.registration = null;
+                    // the registration clears, the counter stays: sequence numbers never reset for
+                    // the life of this hub instance, so a redeploy does not corrupt gap counting
+                    state.allow = null;
                 }
             }
         } );
@@ -544,19 +550,15 @@ public final class AdminEventHubImpl
         return node.toString();
     }
 
-    private record TopicRegistration(ApplicationKey owner, PrincipalKeys allow)
-    {
-    }
-
     private static final class TopicState
     {
         final Object lock = new Object();
 
         final AtomicLong seq = new AtomicLong();
 
-        volatile TopicRegistration registration;
-
-        volatile ApplicationKey lastOwner;
+        // the subscribe ACL; null while no live registration holds the topic. The owner needs no
+        // field: it is the prefix of the map key.
+        volatile PrincipalKeys allow;
     }
 
     private static final class ClientSession
