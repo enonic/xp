@@ -65,7 +65,7 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
  * subscription time; the first delivered event carries a higher one.
  */
 @Component(immediate = true, service = {AdminEventHub.class, UniversalApiHandler.class, EventListener.class}, property = {
-    "key=" + AdminEventHubImpl.API_KEY, "allowedPrincipals=role:system.admin.login", "mount=web"})
+    "key=" + AdminEventHubImpl.API_KEY, "allowedPrincipals=role:system.admin.login"})
 public final class AdminEventHubImpl
     implements AdminEventHub, UniversalApiHandler, EventListener
 {
