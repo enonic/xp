@@ -1,5 +1,6 @@
 package com.enonic.xp.admin.event.impl;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,10 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 import com.enonic.xp.web.websocket.WebSocketEventType;
 
@@ -35,6 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -338,6 +344,211 @@ class AdminEventHubImplTest
         assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, "with space", PrincipalKeys.empty() ) );
         assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, "with:colon", PrincipalKeys.empty() ) );
         assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, "x".repeat( 256 ), PrincipalKeys.empty() ) );
+    }
+
+    @Test
+    void handleUpgradesWebSocketRequests()
+    {
+        final WebRequest request = new WebRequest();
+        request.setRawPath( "/path/_/admin:events" );
+        request.setWebSocketContext( mock( WebSocketContext.class ) );
+
+        final WebResponse response = hub.handle( request );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( List.of( "json" ), response.getWebSocket().getSubProtocols() );
+    }
+
+    @Test
+    void handleRejectsSubPathsAndPlainRequests()
+    {
+        final WebRequest subPath = new WebRequest();
+        subPath.setRawPath( "/path/_/admin:events/extra" );
+        assertEquals( HttpStatus.NOT_FOUND, hub.handle( subPath ).getStatus() );
+
+        final WebRequest plain = new WebRequest();
+        plain.setRawPath( "/path/_/admin:events" );
+        assertEquals( HttpStatus.BAD_REQUEST, hub.handle( plain ).getStatus() );
+    }
+
+    @Test
+    void framesWithoutSessionAreIgnored()
+    {
+        final Session session = mock( Session.class );
+        when( session.getId() ).thenReturn( "ghost" );
+        socketEvent( WebSocketEvent.create().type( WebSocketEventType.MESSAGE ).session( session ).message( "{}" ), ALLOWED_ROLE );
+
+        verify( webSocketManager, never() ).send( anyString(), anyString() );
+    }
+
+    @Test
+    void closeForgetsTheSession()
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        socketEvent( WebSocketEvent.create().type( WebSocketEventType.CLOSE ).session( session ), ALLOWED_ROLE );
+
+        message( session, "{\"type\":\"ping\"}", ALLOWED_ROLE );
+        verify( webSocketManager, never() ).send( anyString(), anyString() );
+    }
+
+    @Test
+    void blankTopicsAreBadFrames()
+    {
+        open( "s1", ALLOWED_ROLE );
+        final Session session = sessionOf( "s1" );
+
+        message( session, "{\"type\":\"subscribe\"}", ALLOWED_ROLE );
+        message( session, "{\"type\":\"unsubscribe\",\"topic\":\" \"}", ALLOWED_ROLE );
+        message( session, "{\"type\":\"pub\"}", ALLOWED_ROLE );
+
+        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
+        verify( webSocketManager, times( 3 ) ).send( eq( "s1" ), frames.capture() );
+        frames.getAllValues().forEach( frame -> assertEquals( "badFrame", parse( frame ).path( "code" ).asText() ) );
+    }
+
+    @Test
+    void unsubscribeWithoutSubscriptionIsANoop()
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, "{\"type\":\"unsubscribe\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
+
+        verify( webSocketManager, never() ).removeFromGroup( anyString(), anyString() );
+    }
+
+    @Test
+    void oversizedFramesAreRejectedAndRepeatedViolationsClose()
+        throws Exception
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        final String huge = "{\"type\":\"ping\",\"pad\":\"" + "x".repeat( 66_000 ) + "\"}";
+
+        for ( int i = 0; i < 5; i++ )
+        {
+            message( session, huge, ALLOWED_ROLE );
+        }
+
+        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
+        verify( webSocketManager, times( 5 ) ).send( eq( "s1" ), frames.capture() );
+        assertEquals( "tooLarge", parse( frames.getAllValues().get( 0 ) ).path( "code" ).asText() );
+        verify( session ).close( any( CloseReason.class ) );
+    }
+
+    @Test
+    void subscriptionsPerSocketAreCapped()
+    {
+        for ( int i = 0; i < 65; i++ )
+        {
+            hub.registerTopic( OWNER, "topic" + i, PrincipalKeys.empty() );
+        }
+
+        final Session session = open( "s1", RoleKeys.ADMIN );
+        for ( int i = 0; i < 65; i++ )
+        {
+            message( session, "{\"type\":\"subscribe\",\"topic\":\"" + OWNER + ":topic" + i + "\"}", RoleKeys.ADMIN );
+        }
+
+        assertEquals( "subLimit", lastSentTo( "s1" ).path( "code" ).asText() );
+        verify( webSocketManager, times( 64 ) ).addToGroup( anyString(), eq( "s1" ) );
+    }
+
+    @Test
+    void publishRejectsOversizedMessages()
+    {
+        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+
+        assertThrows( IllegalArgumentException.class, () -> hub.publish( OWNER, NAME, Map.of( "pad", "x".repeat( 100_001 ) ) ) );
+        verify( eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
+    void inboundToAnUnregisteredTopicIsAnError()
+    {
+        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( OWNER );
+        hub.removeApplication( application );
+
+        message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
+
+        assertEquals( "unknown", lastSentTo( "s1" ).path( "code" ).asText() );
+        verify( eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
+    void onEventIgnoresForeignTypesAndMissingNames()
+    {
+        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+
+        hub.onEvent( Event.create( "node.updated" ).value( "name", TOPIC ).build() );
+        hub.onEvent( Event.create( "admin.topic" ).value( "data", Map.of() ).build() );
+
+        verify( webSocketManager, never() ).sendToGroup( anyString(), anyString() );
+    }
+
+    @Test
+    void deactivateSurvivesCloseFailures()
+        throws Exception
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        doThrow( new IOException( "boom" ) ).when( session ).close( any( CloseReason.class ) );
+
+        hub.deactivate();
+
+        verify( session ).close( any( CloseReason.class ) );
+    }
+
+    @Test
+    void subscribeAfterOwnerStopsIsDeniedRetryable()
+    {
+        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( OWNER );
+        hub.addApplication( application );
+        hub.removeApplication( application );
+
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+
+        final JsonNode deny = lastSentTo( "s1" );
+        assertEquals( "deny", deny.path( "type" ).asText() );
+        assertEquals( "unknown", deny.path( "reason" ).asText() );
+        verify( webSocketManager, never() ).addToGroup( anyString(), anyString() );
+    }
+
+    @Test
+    void publishRejectsNonSerializableMessages()
+    {
+        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+
+        assertThrows( IllegalArgumentException.class, () -> hub.publish( OWNER, NAME, Map.of( "data", new Object() ) ) );
+        verify( eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
+    void violationCloseFailuresAreSwallowed()
+        throws Exception
+    {
+        final Session session = open( "s1", ALLOWED_ROLE );
+        doThrow( new IOException( "boom" ) ).when( session ).close( any( CloseReason.class ) );
+
+        final String huge = "{\"type\":\"ping\",\"pad\":\"" + "x".repeat( 66_000 ) + "\"}";
+        for ( int i = 0; i < 5; i++ )
+        {
+            message( session, huge, ALLOWED_ROLE );
+        }
+
+        verify( session ).close( any( CloseReason.class ) );
+    }
+
+    private Session sessionOf( final String id )
+    {
+        final Session session = mock( Session.class );
+        when( session.getId() ).thenReturn( id );
+        return session;
     }
 
     private String subscribeFrame()
