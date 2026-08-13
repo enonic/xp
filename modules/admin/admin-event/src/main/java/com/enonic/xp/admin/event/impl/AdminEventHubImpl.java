@@ -48,24 +48,21 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
 /**
- * The admin events hub (<a href="https://github.com/enonic/xp/issues/12253">#12253</a>): one
- * websocket endpoint multiplexing app-registered topics, with the topic's {@code allow} enforced
- * at subscribe and a per-topic, per-node sequence stamped on every delivered message so
- * subscribers can count socket-leg loss.
+ * Admin events hub: the {@code admin:events} websocket API, the {@link AdminEventHub} service,
+ * and the fan-out of distributed {@code admin.topic} events to subscribed local sockets.
  * <p>
- * Topics live under their canonical name {@code <application-key>:<name>}, qualified here from
- * the owning application - never parsed out of caller input - so ownership is structural: no
- * application can register, publish to, or take over another's topic, and equal local names of
- * different applications are simply different topics.
+ * Wire protocol, JSON text frames. Client: {@code subscribe {topic}}, {@code unsubscribe {topic}},
+ * {@code pub {topic, data}}, {@code ping}. Server: {@code ack {topic, seq, epoch}},
+ * {@code deny {topic, reason}}, {@code event {topic, seq, data}}, {@code error {code, topic?}},
+ * {@code pong}. Topics are addressed by canonical name. Subscribe is checked against the topic's
+ * {@code allow} with the principals captured at the websocket handshake; {@code deny.reason} is
+ * {@code unknown} for an unregistered topic, {@code forbidden} for a failed check. {@code pub}
+ * requires an acknowledged subscription and is republished node-locally as an
+ * {@code admin.topic.in.<topic>} event carrying the verified user and socket id.
  * <p>
- * Publishes travel as distributed {@code admin.topic} events, so each node's hub instance fans out
- * to its own sockets. Script publishers cannot forge them: lib-event prefixes everything
- * script-sent with {@code custom.}, and the only other way in - {@link AdminEventHub#publish} -
- * resolves the topic under the calling application's own key.
- * <p>
- * One instance serves every connection, so all per-connection state is keyed by session id.
- * Principals are captured when the socket opens (they are frozen at the upgrade handshake anyway)
- * so that re-registrations can re-evaluate subscribers without a socket context at hand.
+ * Sequence numbers are per topic and per node, monotonic for the lifetime of this instance;
+ * {@code epoch} identifies the instance. {@code ack.seq} is the last sequence stamped at
+ * subscription time; the first delivered event carries a higher one.
  */
 @Component(immediate = true, service = {AdminEventHub.class, UniversalApiHandler.class, EventListener.class}, property = {
     "key=" + AdminEventHubImpl.API_KEY, "allowedPrincipals=role:system.admin.login", "mount=web"})
@@ -108,8 +105,8 @@ public final class AdminEventHubImpl
 
     private final EventPublisher eventPublisher;
 
-    // one epoch per hub incarnation: sequence numbers are comparable within it and meaningless
-    // across it, and deactivate closes every socket so an epoch cannot change mid-connection
+    // sequence numbers are comparable only within one hub instance; deactivate closes every
+    // socket, so a connection never observes two epochs
     private final String epoch = UUID.randomUUID().toString();
 
     private final ConcurrentMap<String, TopicState> topics = new ConcurrentHashMap<>();
@@ -126,7 +123,6 @@ public final class AdminEventHubImpl
     @Deactivate
     public void deactivate()
     {
-        // memberships and counters of this incarnation die here; clients reconnect and see a new epoch
         this.sessions.values().forEach( clientSession -> quietClose( clientSession.session ) );
         this.sessions.clear();
     }
@@ -147,8 +143,7 @@ public final class AdminEventHubImpl
 
         final WebSocketConfig webSocketConfig = new WebSocketConfig();
         webSocketConfig.setSubProtocols( List.of( WS_PROTOCOL ) );
-        // defaults are load-bearing: terminateOnSessionExit keeps logout closing the socket, and
-        // sessionAccess stays off so client pings never extend the login
+        // defaults kept: terminateOnSessionExit=true, sessionAccess=false
 
         return responseBuilder.webSocket( webSocketConfig ).build();
     }
@@ -161,8 +156,7 @@ public final class AdminEventHubImpl
             case OPEN -> onOpen( event );
             case MESSAGE -> onMessage( event );
             case CLOSE -> sessions.remove( event.getSession().getId() );
-            // ERROR is not terminal in the websocket layer (and also fires on handler exceptions):
-            // close, so the one teardown path - CLOSE - runs
+            // ERROR is not terminal in the websocket layer; close so teardown runs on CLOSE
             case ERROR -> quietClose( event.getSession() );
             default ->
             {
@@ -227,7 +221,7 @@ public final class AdminEventHubImpl
 
         if ( clientSession.topics.contains( topic ) )
         {
-            // idempotent re-ack: doubles as a cheap resync probe for the client
+            // idempotent re-ack
             send( id, ackFrame( topic, state != null ? state.seq.get() : 0 ) );
             return;
         }
@@ -241,7 +235,6 @@ public final class AdminEventHubImpl
         final PrincipalKeys allow = state != null ? state.allow : null;
         if ( allow == null )
         {
-            // no server-side pending state: the client keeps its wanted-set and retries
             send( id, denyFrame( topic, "unknown" ) );
             return;
         }
@@ -253,8 +246,7 @@ public final class AdminEventHubImpl
 
         synchronized ( state.lock )
         {
-            // membership, counter read and ack are atomic against this topic's stamp-and-send,
-            // so ack.seq is exact: the first delivered event is seq+1, any jump is countable loss
+            // atomic against this topic's stamp-and-send: ack.seq is exact
             if ( state.allow == null )
             {
                 send( id, denyFrame( topic, "unknown" ) );
@@ -293,7 +285,6 @@ public final class AdminEventHubImpl
             send( id, errorFrame( "rateLimit", topic ) );
             return;
         }
-        // membership-is-authorization, reused: inbound needs the same acked subscription
         if ( !clientSession.topics.contains( topic ) )
         {
             send( id, errorFrame( "notSubscribed", topic ) );
@@ -312,8 +303,7 @@ public final class AdminEventHubImpl
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         final String user = authInfo.getUser() != null ? authInfo.getUser().getKey().toString() : null;
 
-        // node-local on purpose: the producer app instance on this node handles it, exactly like a
-        // socket of its own would; identity fields are hub-set, never taken from the frame
+        // identity values are hub-set; client-supplied ones are ignored
         eventPublisher.publish( Event.create( INBOUND_EVENT_TYPE_PREFIX + topic )
                                     .distributed( false )
                                     .value( "topic", topic )
@@ -342,7 +332,7 @@ public final class AdminEventHubImpl
 
         synchronized ( state.lock )
         {
-            // stamped whether or not anyone is subscribed on this node: ack.seq stays truthful
+            // stamped regardless of local subscribers
             final long seq = state.seq.incrementAndGet();
             webSocketManager.sendToGroup( group( name ), eventFrame( name, seq, event.getData().get( "data" ) ) );
         }
@@ -359,7 +349,7 @@ public final class AdminEventHubImpl
         {
             state.allow = effectiveAllow;
 
-            // re-evaluation doubles as revocation: subscribers failing the new allow get denied
+            // re-evaluate current subscribers against the new allow
             sessions.forEach( ( id, clientSession ) -> {
                 if ( clientSession.topics.contains( topic ) && !isAllowed( clientSession.principals, effectiveAllow ) )
                 {
@@ -399,10 +389,6 @@ public final class AdminEventHubImpl
             Event.create( TOPIC_EVENT_TYPE ).distributed( true ).value( "name", topic ).value( "data", data ).build() );
     }
 
-    /**
-     * The canonical topic name: the owner key is baked in here, from the authenticated caller -
-     * changing ownership is not a restricted operation, it is an unrepresentable one.
-     */
     private static String qualify( final ApplicationKey owner, final String name )
     {
         Objects.requireNonNull( owner, "owner is required" );
@@ -417,7 +403,7 @@ public final class AdminEventHubImpl
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addApplication( final Application application )
     {
-        // registrations arrive through registerTopic; tracking exists for the teardown below
+        // tracked only for removeApplication
     }
 
     public void removeApplication( final Application application )
@@ -428,8 +414,7 @@ public final class AdminEventHubImpl
             {
                 synchronized ( state.lock )
                 {
-                    // the registration clears, the counter stays: sequence numbers never reset for
-                    // the life of this hub instance, so a redeploy does not corrupt gap counting
+                    // registration clears; the sequence counter is kept
                     state.allow = null;
                 }
             }
@@ -497,8 +482,6 @@ public final class AdminEventHubImpl
 
     private static String group( final String topic )
     {
-        // the group registry is one flat namespace per node, shared with application code - the
-        // prefix keeps hub topics out of anyone else's way
         return GROUP_PREFIX + topic;
     }
 
@@ -556,8 +539,7 @@ public final class AdminEventHubImpl
 
         final AtomicLong seq = new AtomicLong();
 
-        // the subscribe ACL; null while no live registration holds the topic. The owner needs no
-        // field: it is the prefix of the map key.
+        // subscribe ACL; null while unregistered
         volatile PrincipalKeys allow;
     }
 

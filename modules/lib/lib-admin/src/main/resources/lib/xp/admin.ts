@@ -183,20 +183,18 @@ export interface CreateTopicParams {
 }
 
 /**
- * Creates an admin events topic owned by this application.
+ * Creates or updates an admin events topic owned by this application.
  *
- * The topic's canonical name is `<application-key>:<name>` - the returned value - with the
- * application key half supplied by the platform, so applications can neither collide on a name
- * nor take one over. Admin clients subscribe by the canonical name over the shared admin events
- * websocket, and only principals listed in `allow` may subscribe (an empty list means
- * administrators only). The topic is removed when the application stops; call from `main.js`,
- * so it exists for the life of the application.
+ * The topic's canonical name is `<application-key>:<name>`. Subscribers address the topic by the
+ * canonical name over the `admin:events` websocket API. Only principals listed in `allow` may
+ * subscribe; an empty list allows administrators only. Updating re-evaluates current subscribers
+ * against the new `allow`. The topic is removed when the application stops.
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.name Local topic name. Must not contain `:` or whitespace.
+ * @param {string} params.name Local topic name: 1-255 characters, no `:`, no whitespace.
  * @param {string[]} params.allow Principal keys allowed to subscribe.
  *
- * @returns {string} The canonical topic name subscribers use.
+ * @returns {string} The canonical topic name.
  */
 export function createTopic(params: CreateTopicParams): string {
     const name = checkRequired(params, 'name');
@@ -209,12 +207,11 @@ export function createTopic(params: CreateTopicParams): string {
 }
 
 /**
- * Sends a message to an admin events topic owned by this application.
+ * Publishes a message to an admin events topic owned by this application.
  *
- * The topic is resolved under this application's key, so only own topics are addressable. The
- * message reaches, on every cluster node, the sockets holding an acknowledged subscription to
- * the topic, stamped with a per-topic sequence number so subscribers can count lost messages.
- * Delivery is not guaranteed.
+ * On every cluster node the message is delivered to the sockets holding an acknowledged
+ * subscription to the topic, stamped with a per-topic sequence number. Delivery is not
+ * guaranteed.
  *
  * @param {string} name Local topic name, as passed to `createTopic`.
  * @param {object} [message] Message data. Must be serializable to JSON.
