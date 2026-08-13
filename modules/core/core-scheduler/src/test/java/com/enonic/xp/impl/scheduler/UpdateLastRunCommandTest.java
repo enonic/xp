@@ -1,8 +1,8 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
+import java.util.Set;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -12,16 +12,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.node.EditableNode;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.task.TaskId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,24 +36,22 @@ class UpdateLastRunCommandTest
     private NodeService nodeService;
 
     @Captor
-    private ArgumentCaptor<UpdateNodeParams> captor;
-
-    @BeforeEach
-    void setUp()
-    {
-
-    }
+    private ArgumentCaptor<ApplyVersionAttributesParams> captor;
 
     @Test
-    void testCreateJob()
+    void updateLastRunAttributes()
     {
         final TaskId lastTaskId = TaskId.from( "task-id" );
         final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
 
         final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+        node.data().setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun.minusSeconds( 1 ) );
+        node.data().setString( ScheduledJobPropertyNames.LAST_TASK_ID, "old-task-id" );
+        when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( node );
+        when( nodeService.applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) ) ).thenAnswer(
+            invocation -> invocation.<ApplyVersionAttributesParams>getArgument( 0 ).getAddAttributes() );
 
-        UpdateLastRunCommand.create().
+        final ScheduledJob scheduledJob = UpdateLastRunCommand.create().
             name( ScheduledJobName.from( "job" ) ).
             lastTaskId( lastTaskId ).
             lastRun( lastRun ).
@@ -58,14 +59,42 @@ class UpdateLastRunCommandTest
             build().
             execute();
 
-        verify( nodeService ).update( captor.capture() );
+        verify( nodeService ).applyVersionAttributes( captor.capture() );
 
-        final EditableNode editableNode = new EditableNode( node );
+        final ApplyVersionAttributesParams params = captor.getValue();
+        assertEquals( node.getNodeVersionId(), params.getNodeVersionId() );
+        assertEquals( lastRun.toString(), params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_RUN ).asString() );
+        assertEquals( lastTaskId.toString(), params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_TASK_ID ).asString() );
+        assertTrue( params.getRemoveAttributes().isEmpty() );
+        assertEquals( lastRun, scheduledJob.getLastRun() );
+        assertEquals( lastTaskId, scheduledJob.getLastTaskId() );
+    }
 
-        captor.getValue().getEditor().edit( editableNode );
+    @Test
+    void removeLastTaskIdWhenMissing()
+    {
+        final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
 
-        assertEquals( lastRun, editableNode.data.getProperty( ScheduledJobPropertyNames.LAST_RUN ).getInstant() );
-        assertEquals( lastTaskId.toString(), editableNode.data.getProperty( ScheduledJobPropertyNames.LAST_TASK_ID ).getString() );
+        final Node node = mockNode();
+        node.data().setString( ScheduledJobPropertyNames.LAST_TASK_ID, "old-task-id" );
+        when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( node );
+        when( nodeService.applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) ) ).thenAnswer(
+            invocation -> invocation.<ApplyVersionAttributesParams>getArgument( 0 ).getAddAttributes() );
+
+        final ScheduledJob scheduledJob = UpdateLastRunCommand.create().
+            name( ScheduledJobName.from( "job" ) ).
+            lastRun( lastRun ).
+            nodeService( nodeService ).
+            build().
+            execute();
+
+        verify( nodeService ).applyVersionAttributes( captor.capture() );
+
+        final ApplyVersionAttributesParams params = captor.getValue();
+        assertNull( params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_TASK_ID ) );
+        assertEquals( Set.of( ScheduledJobPropertyNames.LAST_TASK_ID ), params.getRemoveAttributes() );
+        assertEquals( lastRun, scheduledJob.getLastRun() );
+        assertNull( scheduledJob.getLastTaskId() );
     }
 
     private Node mockNode()
@@ -90,6 +119,7 @@ class UpdateLastRunCommandTest
             name( "test" ).
             parentPath( NodePath.ROOT ).
             data( jobData ).
+            nodeVersionId( new NodeVersionId() ).
             build();
 
     }

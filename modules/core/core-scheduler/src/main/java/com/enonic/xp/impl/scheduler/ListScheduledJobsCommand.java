@@ -3,7 +3,6 @@ package com.enonic.xp.impl.scheduler;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.NodePath;
@@ -34,7 +33,7 @@ public class ListScheduledJobsCommand
 
         return nodeService.getByIds( result.getNodeIds() ).
             stream().
-            map( SchedulerSerializer::fromNode ).
+            map( this::toScheduledJob ).
             collect( Collectors.toList() );
     }
 

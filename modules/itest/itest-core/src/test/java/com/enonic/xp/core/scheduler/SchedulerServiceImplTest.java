@@ -28,7 +28,9 @@ import com.enonic.xp.impl.scheduler.SchedulerExecutorServiceImpl;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
+import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.NodeAccessException;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
@@ -339,7 +341,7 @@ class SchedulerServiceImplTest
     }
 
     @Test
-    void modifyClearLastRun()
+    void updateLastRunWithoutCreatingVersionAndPreserveOnModify()
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
@@ -353,6 +355,11 @@ class SchedulerServiceImplTest
                                                                     .config( new PropertyTree() )
                                                                     .build() ) );
 
+        final GetNodeVersionsParams versionsParams =
+            GetNodeVersionsParams.create().nodeId( NodeId.from( name.getValue() ) ).build();
+        final long versionsBeforeUpdate =
+            adminContext().callWith( () -> nodeService.getVersions( versionsParams ).getTotalHits() );
+
         final TaskId lastTaskId = TaskId.from( "task-id" );
         final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
 
@@ -364,18 +371,25 @@ class SchedulerServiceImplTest
             .build()
             .execute() );
 
+        assertEquals( versionsBeforeUpdate,
+                      adminContext().callWith( () -> nodeService.getVersions( versionsParams ).getTotalHits() ) );
+
         final ScheduledJob runJob = adminContext().callWith( () -> schedulerService.get( name ) );
 
         assertEquals( lastRun, runJob.getLastRun() );
         assertEquals( lastTaskId, runJob.getLastTaskId() );
+
+        final ScheduledJob listedJob = adminContext().callWith( () -> schedulerService.list() ).getFirst();
+        assertEquals( lastRun, listedJob.getLastRun() );
+        assertEquals( lastTaskId, listedJob.getLastTaskId() );
 
         final ScheduledJob modifiedJob =
             adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().name( name ).editor( edit -> {
                 edit.enabled = true;
             } ).build() ) );
 
-        assertNull( modifiedJob.getLastRun() );
-        assertNull( modifiedJob.getLastTaskId() );
+        assertEquals( lastRun, modifiedJob.getLastRun() );
+        assertEquals( lastTaskId, modifiedJob.getLastTaskId() );
     }
 
     @Test

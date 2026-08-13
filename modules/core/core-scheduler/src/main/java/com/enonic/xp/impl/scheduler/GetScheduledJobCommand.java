@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.scheduler;
 
-import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -35,7 +34,7 @@ public class GetScheduledJobCommand
         final Node node = nodeService.getByPath( new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) ) );
         if ( node != null )
         {
-            return SchedulerSerializer.fromNode( node );
+            return toScheduledJob( node );
         }
 
         return null;
