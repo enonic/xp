@@ -8,16 +8,17 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.admin.event.AdminEventHub;
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.admin.event.PublishMessageParams;
+import com.enonic.xp.admin.event.RegisterTopicParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.testing.ScriptTestSupport;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,29 +47,29 @@ class LibAdminTest
     @Test
     void createTopic()
     {
-        when( adminEventHub.registerTopic( any(), any(), any() ) ).thenReturn( "myapplication:myTopic" );
+        when( adminEventHub.registerTopic( any() ) ).thenReturn( "myapplication:myTopic" );
 
         runFunction( "/test/admin-test.js", "createTopic" );
 
-        ArgumentCaptor<PrincipalKeys> allow = ArgumentCaptor.forClass( PrincipalKeys.class );
-        ArgumentCaptor<ApplicationKey> owner = ArgumentCaptor.forClass( ApplicationKey.class );
-        verify( adminEventHub ).registerTopic( owner.capture(), eq( "myTopic" ), allow.capture() );
+        ArgumentCaptor<RegisterTopicParams> params = ArgumentCaptor.forClass( RegisterTopicParams.class );
+        verify( adminEventHub ).registerTopic( params.capture() );
 
-        assertEquals( PrincipalKeys.from( "role:system.admin.login" ), allow.getValue() );
-        assertEquals( "myapplication", owner.getValue().toString() );
+        assertEquals( "myapplication", params.getValue().getOwner().toString() );
+        assertEquals( "myTopic", params.getValue().getName() );
+        assertEquals( PrincipalKeys.from( "role:system.admin.login" ), params.getValue().getAllow() );
     }
 
     @Test
     void createTopicWithoutAllow()
     {
-        when( adminEventHub.registerTopic( any(), any(), any() ) ).thenReturn( "myapplication:myTopic" );
+        when( adminEventHub.registerTopic( any() ) ).thenReturn( "myapplication:myTopic" );
 
         runFunction( "/test/admin-test.js", "createTopicWithoutAllow" );
 
-        ArgumentCaptor<PrincipalKeys> allow = ArgumentCaptor.forClass( PrincipalKeys.class );
-        verify( adminEventHub ).registerTopic( any(), eq( "myTopic" ), allow.capture() );
+        ArgumentCaptor<RegisterTopicParams> params = ArgumentCaptor.forClass( RegisterTopicParams.class );
+        verify( adminEventHub ).registerTopic( params.capture() );
 
-        assertEquals( PrincipalKeys.empty(), allow.getValue() );
+        assertEquals( PrincipalKeys.empty(), params.getValue().getAllow() );
     }
 
     @Test
@@ -76,12 +77,12 @@ class LibAdminTest
     {
         runFunction( "/test/admin-test.js", "sendToTopic" );
 
-        ArgumentCaptor<ApplicationKey> caller = ArgumentCaptor.forClass( ApplicationKey.class );
-        ArgumentCaptor<Map<String, ?>> message = ArgumentCaptor.forClass( Map.class );
-        verify( adminEventHub ).publish( caller.capture(), eq( "myTopic" ), message.capture() );
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
 
-        assertEquals( "myapplication", caller.getValue().toString() );
-        assertEquals( 42.0, ( (Number) message.getValue().get( "count" ) ).doubleValue() );
+        assertEquals( "myapplication", params.getValue().getCaller().toString() );
+        assertEquals( "myTopic", params.getValue().getName() );
+        assertEquals( 42, params.getValue().getMessage().property( "count" ).asInteger() );
     }
 
     @Test
@@ -89,10 +90,10 @@ class LibAdminTest
     {
         runFunction( "/test/admin-test.js", "sendToTopicWithoutMessage" );
 
-        ArgumentCaptor<Map<String, ?>> message = ArgumentCaptor.forClass( Map.class );
-        verify( adminEventHub ).publish( any(), eq( "myTopic" ), message.capture() );
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
 
-        assertEquals( Map.of(), message.getValue() );
+        assertEquals( GenericValue.newObject().build(), params.getValue().getMessage() );
     }
 
     @Test

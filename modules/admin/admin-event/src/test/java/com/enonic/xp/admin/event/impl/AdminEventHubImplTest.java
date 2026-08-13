@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;
 
+import com.enonic.xp.admin.event.PublishMessageParams;
+import com.enonic.xp.admin.event.RegisterTopicParams;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
@@ -25,6 +27,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -92,13 +95,13 @@ class AdminEventHubImplTest
     @Test
     void registerTopicReturnsCanonicalName()
     {
-        assertEquals( TOPIC, hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() ) );
+        assertEquals( TOPIC, hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) ) );
     }
 
     @Test
     void subscribeChecksAllow()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
         final Session forbidden = open( "s1", PrincipalKey.ofRole( "some.other.role" ) );
         message( forbidden, subscribeFrame(), PrincipalKey.ofRole( "some.other.role" ) );
@@ -116,7 +119,7 @@ class AdminEventHubImplTest
     @Test
     void systemAdminBypassesAllow()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) );
 
         final Session admin = open( "s1", RoleKeys.ADMIN );
         message( admin, subscribeFrame(), RoleKeys.ADMIN );
@@ -127,7 +130,7 @@ class AdminEventHubImplTest
     @Test
     void fanOutStampsIncreasingSequence()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
         hub.onEvent( topicEvent( Map.of( "n", 1 ) ) );
         hub.onEvent( topicEvent( Map.of( "n", 2 ) ) );
@@ -158,14 +161,14 @@ class AdminEventHubImplTest
     @Test
     void publishResolvesUnderTheCallersKey()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) );
 
         // OTHER has no topic of this name - the canonical name embeds the caller, so publishing
         // into someone else's topic is not forbidden, it is unaddressable
-        assertThrows( IllegalArgumentException.class, () -> hub.publish( OTHER, NAME, Map.of() ) );
-        assertThrows( IllegalArgumentException.class, () -> hub.publish( OWNER, "unregistered", Map.of() ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OTHER, NAME ) ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, "unregistered" ) ) );
 
-        hub.publish( OWNER, NAME, Map.of( "k", "v" ) );
+        hub.publish( publishParams( OWNER, NAME, GenericValue.newObject().put( "k", "v" ).build() ) );
 
         final ArgumentCaptor<Event> events = ArgumentCaptor.forClass( Event.class );
         verify( eventPublisher ).publish( events.capture() );
@@ -177,8 +180,8 @@ class AdminEventHubImplTest
     @Test
     void equalLocalNamesOfDifferentApplicationsAreDifferentTopics()
     {
-        assertEquals( OWNER + ":" + NAME, hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() ) );
-        assertEquals( OTHER + ":" + NAME, hub.registerTopic( OTHER, NAME, PrincipalKeys.empty() ) );
+        assertEquals( OWNER + ":" + NAME, hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) ) );
+        assertEquals( OTHER + ":" + NAME, hub.registerTopic( registerParams( OTHER, NAME, PrincipalKeys.empty() ) ) );
 
         hub.onEvent( Event.create( "admin.topic" ).value( "name", OTHER + ":" + NAME ).value( "data", Map.of() ).build() );
 
@@ -189,13 +192,13 @@ class AdminEventHubImplTest
     @Test
     void reRegistrationRevokesSubscribersFailingNewAllow()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
         assertEquals( "ack", lastSentTo( "s1" ).path( "type" ).asText() );
 
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( PrincipalKey.ofRole( "another.role" ) ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( PrincipalKey.ofRole( "another.role" ) ) ) );
 
         final JsonNode deny = lastSentTo( "s1" );
         assertEquals( "deny", deny.path( "type" ).asText() );
@@ -206,17 +209,17 @@ class AdminEventHubImplTest
     @Test
     void applicationStopClearsOwnershipButKeepsSequence()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) );
         hub.onEvent( topicEvent( Map.of() ) );
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( OWNER );
         hub.removeApplication( application );
 
-        assertThrows( IllegalArgumentException.class, () -> hub.publish( OWNER, NAME, Map.of() ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, NAME ) ) );
 
         // re-registration continues the numbering: gap counting survives the redeploy
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) );
         hub.onEvent( topicEvent( Map.of() ) );
 
         final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
@@ -227,7 +230,7 @@ class AdminEventHubImplTest
     @Test
     void inboundRequiresAckedSubscription()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\",\"data\":{\"a\":1}}", ALLOWED_ROLE );
@@ -251,7 +254,7 @@ class AdminEventHubImplTest
     @Test
     void duplicateSubscribeReAcks()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
@@ -266,7 +269,7 @@ class AdminEventHubImplTest
     @Test
     void unsubscribeLeavesGroup()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
@@ -298,7 +301,7 @@ class AdminEventHubImplTest
     @Test
     void inboundIsRateLimited()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
@@ -339,11 +342,11 @@ class AdminEventHubImplTest
     @Test
     void invalidTopicNamesAreRejected()
     {
-        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, null, PrincipalKeys.empty() ) );
-        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, "  ", PrincipalKeys.empty() ) );
-        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, "with space", PrincipalKeys.empty() ) );
-        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, "with:colon", PrincipalKeys.empty() ) );
-        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( OWNER, "x".repeat( 256 ), PrincipalKeys.empty() ) );
+        assertThrows( NullPointerException.class, () -> registerParams( OWNER, null, PrincipalKeys.empty() ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( registerParams( OWNER, "  ", PrincipalKeys.empty() ) ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( registerParams( OWNER, "with space", PrincipalKeys.empty() ) ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( registerParams( OWNER, "with:colon", PrincipalKeys.empty() ) ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.registerTopic( registerParams( OWNER, "x".repeat( 256 ), PrincipalKeys.empty() ) ) );
     }
 
     @Test
@@ -438,7 +441,7 @@ class AdminEventHubImplTest
     {
         for ( int i = 0; i < 65; i++ )
         {
-            hub.registerTopic( OWNER, "topic" + i, PrincipalKeys.empty() );
+            hub.registerTopic( registerParams( OWNER, "topic" + i, PrincipalKeys.empty() ) );
         }
 
         final Session session = open( "s1", RoleKeys.ADMIN );
@@ -454,16 +457,16 @@ class AdminEventHubImplTest
     @Test
     void publishRejectsOversizedMessages()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) );
 
-        assertThrows( IllegalArgumentException.class, () -> hub.publish( OWNER, NAME, Map.of( "pad", "x".repeat( 100_001 ) ) ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, NAME, GenericValue.newObject().put( "pad", "x".repeat( 100_001 ) ).build() ) ) );
         verify( eventPublisher, never() ).publish( any() );
     }
 
     @Test
     void inboundToAnUnregisteredTopicIsAnError()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
@@ -480,7 +483,7 @@ class AdminEventHubImplTest
     @Test
     void onEventIgnoresForeignTypesAndMissingNames()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) );
 
         hub.onEvent( Event.create( "node.updated" ).value( "name", TOPIC ).build() );
         hub.onEvent( Event.create( "admin.topic" ).value( "data", Map.of() ).build() );
@@ -503,7 +506,7 @@ class AdminEventHubImplTest
     @Test
     void subscribeAfterOwnerStopsIsDeniedRetryable()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( OWNER );
@@ -520,11 +523,42 @@ class AdminEventHubImplTest
     }
 
     @Test
-    void publishRejectsNonSerializableMessages()
+    void publishWithoutMessageSendsEmptyObject()
     {
-        hub.registerTopic( OWNER, NAME, PrincipalKeys.empty() );
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.empty() ) );
 
-        assertThrows( IllegalArgumentException.class, () -> hub.publish( OWNER, NAME, Map.of( "data", new Object() ) ) );
+        hub.publish( publishParams( OWNER, NAME ) );
+
+        final ArgumentCaptor<Event> events = ArgumentCaptor.forClass( Event.class );
+        verify( eventPublisher ).publish( events.capture() );
+        assertEquals( Map.of(), events.getValue().getData().get( "data" ) );
+    }
+
+    @Test
+    void inboundNullDataIsAnEmptyObject()
+    {
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+
+        message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\",\"data\":null}", ALLOWED_ROLE );
+
+        final ArgumentCaptor<Event> events = ArgumentCaptor.forClass( Event.class );
+        verify( eventPublisher ).publish( events.capture() );
+        assertEquals( Map.of(), events.getValue().getData().get( "data" ) );
+    }
+
+    @Test
+    void inboundDataMustBeRepresentable()
+    {
+        hub.registerTopic( registerParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+
+        message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\",\"data\":{\"n\":123456789012345678901234567890}}",
+                 ALLOWED_ROLE );
+
+        assertEquals( "badFrame", lastSentTo( "s1" ).path( "code" ).asText() );
         verify( eventPublisher, never() ).publish( any() );
     }
 
@@ -542,6 +576,32 @@ class AdminEventHubImplTest
         }
 
         verify( session ).close( any( CloseReason.class ) );
+    }
+
+    @Test
+    void registrationWithoutAllowIsAdminOnly()
+    {
+        hub.registerTopic( RegisterTopicParams.create().owner( OWNER ).name( NAME ).build() );
+
+        final Session other = open( "s1", ALLOWED_ROLE );
+        message( other, subscribeFrame(), ALLOWED_ROLE );
+
+        assertEquals( "forbidden", lastSentTo( "s1" ).path( "reason" ).asText() );
+    }
+
+    private static RegisterTopicParams registerParams( final ApplicationKey owner, final String name, final PrincipalKeys allow )
+    {
+        return RegisterTopicParams.create().owner( owner ).name( name ).allow( allow ).build();
+    }
+
+    private static PublishMessageParams publishParams( final ApplicationKey caller, final String name )
+    {
+        return PublishMessageParams.create().caller( caller ).name( name ).build();
+    }
+
+    private static PublishMessageParams publishParams( final ApplicationKey caller, final String name, final GenericValue message )
+    {
+        return PublishMessageParams.create().caller( caller ).name( name ).message( message ).build();
     }
 
     private Session sessionOf( final String id )

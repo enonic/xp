@@ -1,9 +1,8 @@
 package com.enonic.xp.admin.event.impl;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +28,8 @@ import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;
 
 import com.enonic.xp.admin.event.AdminEventHub;
+import com.enonic.xp.admin.event.PublishMessageParams;
+import com.enonic.xp.admin.event.RegisterTopicParams;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
@@ -41,6 +42,7 @@ import com.enonic.xp.portal.websocket.WebSocketManager;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.GenericValue;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -298,20 +300,38 @@ public final class AdminEventHubImpl
             return;
         }
 
-        final JsonNode dataNode = frame.get( "data" );
-        final Object data = dataNode == null || dataNode.isNull() ? Map.of() : MAPPER.convertValue( dataNode, Object.class );
-
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final String user = authInfo.getUser() != null ? authInfo.getUser().getKey().toString() : null;
+        final GenericValue data;
+        try
+        {
+            data = inboundData( frame.get( "data" ) );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            send( id, errorFrame( "badFrame", topic ) );
+            return;
+        }
 
         // identity values are hub-set; client-supplied ones are ignored
         eventPublisher.publish( Event.create( INBOUND_EVENT_TYPE_PREFIX + topic )
                                     .distributed( false )
                                     .value( "topic", topic )
-                                    .value( "data", data )
-                                    .value( "user", user )
+                                    .value( "data", data.toRawJava() )
+                                    .value( "user", currentUserKey() )
                                     .value( "socketId", id )
                                     .build() );
+    }
+
+    private static GenericValue inboundData( final JsonNode dataNode )
+    {
+        return dataNode == null || dataNode.isNull()
+            ? GenericValue.newObject().build()
+            : GenericValue.fromRawJava( MAPPER.convertValue( dataNode, Object.class ) );
+    }
+
+    private static String currentUserKey()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        return authInfo.getUser() != null ? authInfo.getUser().getKey().toString() : null;
     }
 
     @Override
@@ -344,10 +364,10 @@ public final class AdminEventHubImpl
     }
 
     @Override
-    public String registerTopic( final ApplicationKey owner, final String name, final PrincipalKeys allow )
+    public String registerTopic( final RegisterTopicParams params )
     {
-        final String topic = qualify( owner, name );
-        final PrincipalKeys effectiveAllow = allow != null ? allow : PrincipalKeys.empty();
+        final String topic = qualify( params.getOwner(), params.getName() );
+        final PrincipalKeys effectiveAllow = params.getAllow();
 
         final TopicState state = topics.computeIfAbsent( topic, key -> new TopicState() );
         synchronized ( state.lock )
@@ -368,37 +388,42 @@ public final class AdminEventHubImpl
     }
 
     @Override
-    public void publish( final ApplicationKey caller, final String name, final Map<String, ?> message )
+    public void publish( final PublishMessageParams params )
     {
-        final String topic = qualify( caller, name );
+        final String name = params.getName();
+        final String topic = qualify( params.getCaller(), name );
         final TopicState state = topics.get( topic );
         if ( state == null || state.allow == null )
         {
-            throw new IllegalArgumentException( "Topic [" + name + "] is not registered by application [" + caller + "]" );
+            throw new IllegalArgumentException( "Topic [" + name + "] is not registered by application [" + params.getCaller() + "]" );
         }
 
-        final Map<String, ?> data = message != null ? message : Map.of();
-        try
+        final Object data = params.getMessage().toRawJava();
+        if ( toJson( data ).length() > MAX_PUBLISH_JSON_CHARS )
         {
-            if ( MAPPER.writeValueAsString( data ).length() > MAX_PUBLISH_JSON_CHARS )
-            {
-                throw new IllegalArgumentException( "Message for topic [" + name + "] exceeds " + MAX_PUBLISH_JSON_CHARS + " characters" );
-            }
-        }
-        catch ( JsonProcessingException e )
-        {
-            throw new IllegalArgumentException( "Message for topic [" + name + "] is not serializable", e );
+            throw new IllegalArgumentException( "Message for topic [" + name + "] exceeds " + MAX_PUBLISH_JSON_CHARS + " characters" );
         }
 
         eventPublisher.publish(
             Event.create( TOPIC_EVENT_TYPE ).distributed( true ).value( "name", topic ).value( "data", data ).build() );
     }
 
+    private static String toJson( final Object data )
+    {
+        try
+        {
+            return MAPPER.writeValueAsString( data );
+        }
+        catch ( JsonProcessingException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
     private static String qualify( final ApplicationKey owner, final String name )
     {
-        Objects.requireNonNull( owner, "owner is required" );
-        if ( name == null || name.isBlank() || name.length() > MAX_TOPIC_NAME_LENGTH ||
-            name.indexOf( QUALIFIER ) >= 0 || name.chars().anyMatch( Character::isWhitespace ) )
+        if ( name.isBlank() || name.length() > MAX_TOPIC_NAME_LENGTH || name.indexOf( QUALIFIER ) >= 0 ||
+            name.chars().anyMatch( Character::isWhitespace ) )
         {
             throw new IllegalArgumentException( "Invalid topic name [" + name + "]" );
         }

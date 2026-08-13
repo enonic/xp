@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.enonic.xp.admin.event.AdminEventHub;
+import com.enonic.xp.admin.event.RegisterTopicParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -34,8 +35,12 @@ public final class CreateTopicHandler
 
     public String execute()
     {
-        final PrincipalKeys allowedPrincipals = PrincipalKeys.from( this.allow.stream().map( PrincipalKey::from ).toList() );
-        return this.adminEventHub.get().registerTopic( this.applicationKey, this.name, allowedPrincipals );
+        return this.adminEventHub.get()
+            .registerTopic( RegisterTopicParams.create()
+                                .owner( this.applicationKey )
+                                .name( this.name )
+                                .allow( PrincipalKeys.from( this.allow.stream().map( PrincipalKey::from ).toList() ) )
+                                .build() );
     }
 
     @Override

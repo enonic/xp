@@ -1,13 +1,14 @@
 package com.enonic.xp.lib.admin;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.admin.event.AdminEventHub;
+import com.enonic.xp.admin.event.PublishMessageParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.util.GenericValue;
 
 public final class SendToTopicHandler
     implements ScriptBean
@@ -18,7 +19,7 @@ public final class SendToTopicHandler
 
     private String name;
 
-    private Map<String, Object> message = Map.of();
+    private GenericValue message = GenericValue.newObject().build();
 
     public void setName( final String name )
     {
@@ -27,13 +28,19 @@ public final class SendToTopicHandler
 
     public void setMessage( final ScriptValue message )
     {
-        this.message = message != null && message.isObject() ? message.getMap() : Map.of();
+        this.message =
+            message != null && message.isObject() ? GenericValue.fromRawJava( message.getMap() ) : GenericValue.newObject().build();
     }
 
     public void execute()
     {
         // the caller is the bean context's application: ownership is verified by the hub
-        this.adminEventHub.get().publish( this.applicationKey, this.name, this.message );
+        this.adminEventHub.get()
+            .publish( PublishMessageParams.create()
+                          .caller( this.applicationKey )
+                          .name( this.name )
+                          .message( this.message )
+                          .build() );
     }
 
     @Override
