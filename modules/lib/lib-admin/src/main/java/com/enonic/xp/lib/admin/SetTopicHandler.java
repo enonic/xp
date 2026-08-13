@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.enonic.xp.admin.event.AdminEventHub;
-import com.enonic.xp.admin.event.RegisterTopicParams;
+import com.enonic.xp.admin.event.SetTopicParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -12,7 +12,7 @@ import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 
-public final class CreateTopicHandler
+public final class SetTopicHandler
     implements ScriptBean
 {
     private Supplier<AdminEventHub> adminEventHub;
@@ -36,11 +36,11 @@ public final class CreateTopicHandler
     public String execute()
     {
         return this.adminEventHub.get()
-            .registerTopic( RegisterTopicParams.create()
-                                .owner( this.applicationKey )
-                                .name( this.name )
-                                .allow( PrincipalKeys.from( this.allow.stream().map( PrincipalKey::from ).toList() ) )
-                                .build() );
+            .setTopic( SetTopicParams.create()
+                           .owner( this.applicationKey )
+                           .name( this.name )
+                           .allow( PrincipalKeys.from( this.allow.stream().map( PrincipalKey::from ).toList() ) )
+                           .build() );
     }
 
     @Override

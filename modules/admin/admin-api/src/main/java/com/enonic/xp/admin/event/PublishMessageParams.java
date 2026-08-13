@@ -39,7 +39,7 @@ public final class PublishMessageParams
     }
 
     /**
-     * Returns the local topic name, as passed to {@link AdminEventHub#registerTopic}.
+     * Returns the local topic name, as passed to {@link AdminEventHub#setTopic}.
      */
     public String getName()
     {
@@ -93,7 +93,7 @@ public final class PublishMessageParams
         /**
          * Sets the local topic name.
          *
-         * @param name local topic name, as passed to {@link AdminEventHub#registerTopic}
+         * @param name local topic name, as passed to {@link AdminEventHub#setTopic}
          * @return the Builder instance for chaining
          */
         public Builder name( final String name )

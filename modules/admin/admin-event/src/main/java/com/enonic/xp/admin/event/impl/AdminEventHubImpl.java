@@ -29,7 +29,7 @@ import jakarta.websocket.Session;
 
 import com.enonic.xp.admin.event.AdminEventHub;
 import com.enonic.xp.admin.event.PublishMessageParams;
-import com.enonic.xp.admin.event.RegisterTopicParams;
+import com.enonic.xp.admin.event.SetTopicParams;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
@@ -364,19 +364,34 @@ public final class AdminEventHubImpl
     }
 
     @Override
-    public String registerTopic( final RegisterTopicParams params )
+    public String setTopic( final SetTopicParams params )
     {
         final String topic = qualify( params.getOwner(), params.getName() );
-        final PrincipalKeys effectiveAllow = params.getAllow();
+        final PrincipalKeys allow = params.getAllow();
+
+        if ( allow.isEmpty() )
+        {
+            // clears the registration like an application stop: no revocation, memberships and
+            // the sequence counter persist, delivery resumes on the next non-empty set
+            final TopicState state = topics.get( topic );
+            if ( state != null )
+            {
+                synchronized ( state.lock )
+                {
+                    state.allow = null;
+                }
+            }
+            return topic;
+        }
 
         final TopicState state = topics.computeIfAbsent( topic, key -> new TopicState() );
         synchronized ( state.lock )
         {
-            state.allow = effectiveAllow;
+            state.allow = allow;
 
             // re-evaluate current subscribers against the new allow
             sessions.forEach( ( id, clientSession ) -> {
-                if ( clientSession.topics.contains( topic ) && !isAllowed( clientSession.principals, effectiveAllow ) )
+                if ( clientSession.topics.contains( topic ) && !isAllowed( clientSession.principals, allow ) )
                 {
                     clientSession.topics.remove( topic );
                     webSocketManager.removeFromGroup( group( topic ), id );

@@ -7,13 +7,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.PrincipalKeys;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElse;
 
 /**
- * Parameters for {@link AdminEventHub#registerTopic}.
+ * Parameters for {@link AdminEventHub#setTopic}.
  */
 @NullMarked
-public final class RegisterTopicParams
+public final class SetTopicParams
 {
     private final ApplicationKey owner;
 
@@ -21,11 +20,11 @@ public final class RegisterTopicParams
 
     private final PrincipalKeys allow;
 
-    private RegisterTopicParams( final Builder builder )
+    private SetTopicParams( final Builder builder )
     {
         this.owner = requireNonNull( builder.owner, "owner is required" );
         this.name = requireNonNull( builder.name, "name is required" );
-        this.allow = requireNonNullElse( builder.allow, PrincipalKeys.empty() );
+        this.allow = requireNonNull( builder.allow, "allow is required" );
     }
 
     /**
@@ -61,8 +60,7 @@ public final class RegisterTopicParams
     }
 
     /**
-     * Builder for {@link RegisterTopicParams}. {@code owner} and {@code name} are required;
-     * {@code allow} defaults to {@link PrincipalKeys#empty()}.
+     * Builder for {@link SetTopicParams}. All fields are required.
      */
     public static final class Builder
     {
@@ -103,7 +101,7 @@ public final class RegisterTopicParams
         /**
          * Sets the principals allowed to subscribe.
          *
-         * @param allow principals allowed to subscribe; empty allows administrators only
+         * @param allow principals allowed to subscribe; empty clears the topic registration
          * @return the Builder instance for chaining
          */
         public Builder allow( final PrincipalKeys allow )
@@ -113,13 +111,13 @@ public final class RegisterTopicParams
         }
 
         /**
-         * Builds the RegisterTopicParams.
+         * Builds the SetTopicParams.
          *
-         * @return RegisterTopicParams instance
+         * @return SetTopicParams instance
          */
-        public RegisterTopicParams build()
+        public SetTopicParams build()
         {
-            return new RegisterTopicParams( this );
+            return new SetTopicParams( this );
         }
     }
 }

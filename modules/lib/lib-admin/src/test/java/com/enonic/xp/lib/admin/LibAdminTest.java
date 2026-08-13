@@ -9,7 +9,7 @@ import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.admin.event.AdminEventHub;
 import com.enonic.xp.admin.event.PublishMessageParams;
-import com.enonic.xp.admin.event.RegisterTopicParams;
+import com.enonic.xp.admin.event.SetTopicParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -18,8 +18,10 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,14 +47,14 @@ class LibAdminTest
     }
 
     @Test
-    void createTopic()
+    void setTopic()
     {
-        when( adminEventHub.registerTopic( any() ) ).thenReturn( "myapplication:myTopic" );
+        when( adminEventHub.setTopic( any() ) ).thenReturn( "myapplication:myTopic" );
 
-        runFunction( "/test/admin-test.js", "createTopic" );
+        runFunction( "/test/admin-test.js", "setTopic" );
 
-        ArgumentCaptor<RegisterTopicParams> params = ArgumentCaptor.forClass( RegisterTopicParams.class );
-        verify( adminEventHub ).registerTopic( params.capture() );
+        ArgumentCaptor<SetTopicParams> params = ArgumentCaptor.forClass( SetTopicParams.class );
+        verify( adminEventHub ).setTopic( params.capture() );
 
         assertEquals( "myapplication", params.getValue().getOwner().toString() );
         assertEquals( "myTopic", params.getValue().getName() );
@@ -60,16 +62,24 @@ class LibAdminTest
     }
 
     @Test
-    void createTopicWithoutAllow()
+    void setTopicWithEmptyAllow()
     {
-        when( adminEventHub.registerTopic( any() ) ).thenReturn( "myapplication:myTopic" );
+        when( adminEventHub.setTopic( any() ) ).thenReturn( "myapplication:myTopic" );
 
-        runFunction( "/test/admin-test.js", "createTopicWithoutAllow" );
+        runFunction( "/test/admin-test.js", "setTopicWithEmptyAllow" );
 
-        ArgumentCaptor<RegisterTopicParams> params = ArgumentCaptor.forClass( RegisterTopicParams.class );
-        verify( adminEventHub ).registerTopic( params.capture() );
+        ArgumentCaptor<SetTopicParams> params = ArgumentCaptor.forClass( SetTopicParams.class );
+        verify( adminEventHub ).setTopic( params.capture() );
 
         assertEquals( PrincipalKeys.empty(), params.getValue().getAllow() );
+    }
+
+    @Test
+    void setTopicWithoutAllow()
+    {
+        assertThrows( RuntimeException.class, () -> runFunction( "/test/admin-test.js", "setTopicWithoutAllow" ) );
+
+        verify( adminEventHub, never() ).setTopic( any() );
     }
 
     @Test

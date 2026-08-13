@@ -48,8 +48,8 @@ exports.getHomeToolUrl = function () {
     t.assertEquals("generated_url", result);
 };
 
-exports.createTopic = function () {
-    const result = adminLib.createTopic({
+exports.setTopic = function () {
+    const result = adminLib.setTopic({
         name: 'myTopic',
         allow: ['role:system.admin.login']
     });
@@ -57,8 +57,15 @@ exports.createTopic = function () {
     t.assertEquals('myapplication:myTopic', result);
 };
 
-exports.createTopicWithoutAllow = function () {
-    adminLib.createTopic({
+exports.setTopicWithEmptyAllow = function () {
+    adminLib.setTopic({
+        name: 'myTopic',
+        allow: []
+    });
+};
+
+exports.setTopicWithoutAllow = function () {
+    adminLib.setTopic({
         name: 'myTopic'
     });
 };
