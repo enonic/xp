@@ -11,8 +11,10 @@ import com.enonic.xp.security.PrincipalKeys;
  * A topic is identified by its canonical name {@code <application-key>:<name>}: the key of the
  * owning application, {@code ':'}, and the local name given at registration. Registration and
  * publishing resolve the canonical name from the supplied application key and local name.
- * Subscribers address topics by the canonical name. A topic exists from registration until the
- * owning application stops.
+ * Subscribers address topics by the canonical name. The registration is cleared when the owning
+ * application stops: publishing then fails and new subscriptions are denied, while existing
+ * subscriptions and the topic's sequence numbering persist and resume when the topic is
+ * registered again.
  */
 public interface AdminEventHub
 {
@@ -28,6 +30,7 @@ public interface AdminEventHub
      * @throws IllegalArgumentException if {@code name} is invalid
      */
     String registerTopic( String name, PrincipalKeys allow, ApplicationKey owner );
+
 
     /**
      * Publishes a message to the topic {@code caller + ":" + name}. On every cluster node the

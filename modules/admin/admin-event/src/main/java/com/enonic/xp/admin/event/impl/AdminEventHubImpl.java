@@ -232,24 +232,25 @@ public final class AdminEventHubImpl
             return;
         }
 
-        final PrincipalKeys allow = state != null ? state.allow : null;
-        if ( allow == null )
+        if ( state == null )
         {
             send( id, denyFrame( topic, "unknown" ) );
-            return;
-        }
-        if ( !isAllowed( clientSession.principals, allow ) )
-        {
-            send( id, denyFrame( topic, "forbidden" ) );
             return;
         }
 
         synchronized ( state.lock )
         {
-            // atomic against this topic's stamp-and-send: ack.seq is exact
-            if ( state.allow == null )
+            // evaluated and joined under the topic lock: atomic against re-registration and
+            // against stamp-and-send, so ack.seq is exact
+            final PrincipalKeys allow = state.allow;
+            if ( allow == null )
             {
                 send( id, denyFrame( topic, "unknown" ) );
+                return;
+            }
+            if ( !isAllowed( clientSession.principals, allow ) )
+            {
+                send( id, denyFrame( topic, "forbidden" ) );
                 return;
             }
             webSocketManager.addToGroup( group( topic ), id );
@@ -332,6 +333,10 @@ public final class AdminEventHubImpl
 
         synchronized ( state.lock )
         {
+            if ( state.allow == null )
+            {
+                return;
+            }
             // stamped regardless of local subscribers
             final long seq = state.seq.incrementAndGet();
             webSocketManager.sendToGroup( group( name ), eventFrame( name, seq, event.getData().get( "data" ) ) );

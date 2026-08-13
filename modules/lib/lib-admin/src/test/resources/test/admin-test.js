@@ -47,3 +47,28 @@ exports.getHomeToolUrl = function () {
     });
     t.assertEquals("generated_url", result);
 };
+
+exports.createTopic = function () {
+    const result = adminLib.createTopic({
+        name: 'myTopic',
+        allow: ['role:system.admin.login']
+    });
+
+    t.assertEquals('myapplication:myTopic', result);
+};
+
+exports.createTopicWithoutAllow = function () {
+    adminLib.createTopic({
+        name: 'myTopic'
+    });
+};
+
+exports.sendToTopic = function () {
+    adminLib.sendToTopic('myTopic', {
+        count: 42
+    });
+};
+
+exports.sendToTopicWithoutMessage = function () {
+    adminLib.sendToTopic('myTopic');
+};

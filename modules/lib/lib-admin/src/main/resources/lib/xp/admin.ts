@@ -179,7 +179,7 @@ interface SendToTopicHandler {
 
 export interface CreateTopicParams {
     name: string;
-    allow: string[];
+    allow?: string[];
 }
 
 /**
@@ -188,11 +188,13 @@ export interface CreateTopicParams {
  * The topic's canonical name is `<application-key>:<name>`. Subscribers address the topic by the
  * canonical name over the `admin:events` websocket API. Only principals listed in `allow` may
  * subscribe; an empty list allows administrators only. Updating re-evaluates current subscribers
- * against the new `allow`. The topic is removed when the application stops.
+ * against the new `allow`. The registration is cleared when the application stops; existing
+ * subscriptions persist and resume when the topic is registered again.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Local topic name: 1-255 characters, no `:`, no whitespace.
- * @param {string[]} params.allow Principal keys allowed to subscribe.
+ * @param {string[]} [params.allow] Principal keys allowed to subscribe. Omitted or empty allows
+ * administrators only.
  *
  * @returns {string} The canonical topic name.
  */
@@ -202,7 +204,7 @@ export function createTopic(params: CreateTopicParams): string {
     const bean: CreateTopicHandler = __.newBean<CreateTopicHandler>('com.enonic.xp.lib.admin.CreateTopicHandler');
 
     bean.setName(name);
-    bean.setAllow(__.toScriptValue(params.allow));
+    bean.setAllow(__.toScriptValue(params.allow ?? []));
     return bean.execute();
 }
 
