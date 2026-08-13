@@ -52,7 +52,7 @@ class LibAdminTest
 
         ArgumentCaptor<PrincipalKeys> allow = ArgumentCaptor.forClass( PrincipalKeys.class );
         ArgumentCaptor<ApplicationKey> owner = ArgumentCaptor.forClass( ApplicationKey.class );
-        verify( adminEventHub ).registerTopic( eq( "myTopic" ), allow.capture(), owner.capture() );
+        verify( adminEventHub ).registerTopic( owner.capture(), eq( "myTopic" ), allow.capture() );
 
         assertEquals( PrincipalKeys.from( "role:system.admin.login" ), allow.getValue() );
         assertEquals( "myapplication", owner.getValue().toString() );
@@ -66,7 +66,7 @@ class LibAdminTest
         runFunction( "/test/admin-test.js", "createTopicWithoutAllow" );
 
         ArgumentCaptor<PrincipalKeys> allow = ArgumentCaptor.forClass( PrincipalKeys.class );
-        verify( adminEventHub ).registerTopic( eq( "myTopic" ), allow.capture(), any() );
+        verify( adminEventHub ).registerTopic( any(), eq( "myTopic" ), allow.capture() );
 
         assertEquals( PrincipalKeys.empty(), allow.getValue() );
     }

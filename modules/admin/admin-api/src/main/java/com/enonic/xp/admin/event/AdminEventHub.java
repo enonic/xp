@@ -23,13 +23,13 @@ public interface AdminEventHub
      * when already registered. On update, current subscribers are re-evaluated against the new
      * {@code allow}; subscribers no longer allowed are denied and removed.
      *
+     * @param owner owning application
      * @param name  local topic name: 1-255 characters, no {@code ':'}, no whitespace
      * @param allow principals allowed to subscribe; empty allows administrators only
-     * @param owner owning application
      * @return the canonical topic name
      * @throws IllegalArgumentException if {@code name} is invalid
      */
-    String registerTopic( String name, PrincipalKeys allow, ApplicationKey owner );
+    String registerTopic( ApplicationKey owner, String name, PrincipalKeys allow );
 
 
     /**

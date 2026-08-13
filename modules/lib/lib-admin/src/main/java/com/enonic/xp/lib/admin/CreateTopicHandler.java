@@ -35,7 +35,7 @@ public final class CreateTopicHandler
     public String execute()
     {
         final PrincipalKeys allowedPrincipals = PrincipalKeys.from( this.allow.stream().map( PrincipalKey::from ).toList() );
-        return this.adminEventHub.get().registerTopic( this.name, allowedPrincipals, this.applicationKey );
+        return this.adminEventHub.get().registerTopic( this.applicationKey, this.name, allowedPrincipals );
     }
 
     @Override

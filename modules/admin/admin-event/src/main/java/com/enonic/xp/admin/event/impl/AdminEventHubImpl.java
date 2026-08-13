@@ -344,7 +344,7 @@ public final class AdminEventHubImpl
     }
 
     @Override
-    public String registerTopic( final String name, final PrincipalKeys allow, final ApplicationKey owner )
+    public String registerTopic( final ApplicationKey owner, final String name, final PrincipalKeys allow )
     {
         final String topic = qualify( owner, name );
         final PrincipalKeys effectiveAllow = allow != null ? allow : PrincipalKeys.empty();
