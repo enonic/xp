@@ -33,6 +33,7 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
@@ -49,8 +50,9 @@ class PortalUrlService_baseUrlTest
 
         final BaseUrlParams params = BaseUrlParams.create().setId( "contentid" ).build();
 
-        final String url = ContextBuilder.create().build().callWith( () -> this.service.baseUrl( params ) );
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        // a base URL is a prefix of other URLs: a failure is reported, never encoded into it
+        assertThatThrownBy( () -> ContextBuilder.create().build().callWith( () -> this.service.baseUrl( params ) ) ).isInstanceOf(
+            IllegalArgumentException.class ).hasMessageContaining( "RepositoryId must be set" );
     }
 
     @Test
@@ -60,12 +62,12 @@ class PortalUrlService_baseUrlTest
 
         final BaseUrlParams params = BaseUrlParams.create().setId( "contentid" ).build();
 
-        final String url = ContextBuilder.create()
+        assertThatThrownBy( () -> ContextBuilder.create()
             .repositoryId( RepositoryId.from( "non.content.project" ) )
             .branch( Branch.from( "branch" ) )
             .build()
-            .callWith( () -> this.service.baseUrl( params ) );
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+            .callWith( () -> this.service.baseUrl( params ) ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "not a content repository" );
     }
 
     @Test
@@ -75,11 +77,11 @@ class PortalUrlService_baseUrlTest
 
         final BaseUrlParams params = BaseUrlParams.create().setId( "contentid" ).build();
 
-        final String url = ContextBuilder.create()
+        assertThatThrownBy( () -> ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .build()
-            .callWith( () -> this.service.baseUrl( params ) );
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+            .callWith( () -> this.service.baseUrl( params ) ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "Branch not set" );
     }
 
     @Test
@@ -97,13 +99,13 @@ class PortalUrlService_baseUrlTest
 
         final BaseUrlParams params = BaseUrlParams.create().setId( contentId.toString() ).build();
 
-        final String url = ContextBuilder.create()
+        // the anchor does not exist: the caller is told, instead of receiving an error URL
+        // that would silently prefix every URL built from it
+        assertThatThrownBy( () -> ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .branch( Branch.from( "draft" ) )
             .build()
-            .callWith( () -> this.service.baseUrl( params ) );
-
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found" );
+            .callWith( () -> this.service.baseUrl( params ) ) ).isInstanceOf( ContentNotFoundException.class );
     }
 
     private static void mockDataWithSiteConfig( final SiteConfigs siteConfigs, final Site site )
