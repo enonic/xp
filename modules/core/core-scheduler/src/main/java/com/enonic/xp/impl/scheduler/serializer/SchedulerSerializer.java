@@ -122,31 +122,39 @@ public class SchedulerSerializer
         {
             builder.addAll( originalAttributes.entrySet()
                                 .stream()
-                                .filter( entry -> !ScheduledJobPropertyNames.LAST_RUN.equals( entry.getKey() ) &&
-                                    !ScheduledJobPropertyNames.LAST_TASK_ID.equals( entry.getKey() ) )
+                                .filter( entry -> !ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE.equals( entry.getKey() ) )
                                 .toList() );
         }
         if ( job.getLastRun() != null )
         {
-            builder.attribute( ScheduledJobPropertyNames.LAST_RUN, GenericValue.stringValue( job.getLastRun().toString() ) );
-        }
-        if ( job.getLastTaskId() != null )
-        {
-            builder.attribute( ScheduledJobPropertyNames.LAST_TASK_ID,
-                               GenericValue.stringValue( job.getLastTaskId().toString() ) );
+            builder.addAll( toLastRunAttributes( job.getLastRun(), job.getLastTaskId() ).entrySet() );
         }
         return builder.build();
+    }
+
+    public static Attributes toLastRunAttributes( final Instant lastRun, final TaskId lastTaskId )
+    {
+        final GenericValue.ObjectBuilder builder = GenericValue.newObject().
+            put( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY, lastRun.toString() );
+        if ( lastTaskId != null )
+        {
+            builder.put( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY, lastTaskId.toString() );
+        }
+        return Attributes.create().
+            attribute( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE, builder.build() ).
+            build();
     }
 
     public static ScheduledJob fromNode( final Node node, final Attributes attributes )
     {
         final PropertySet data = node.data().getRoot();
-        final GenericValue lastRunAttribute = attributes != null ? attributes.get( ScheduledJobPropertyNames.LAST_RUN ) : null;
+        final GenericValue lastRunAttribute =
+            attributes != null ? attributes.get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE ) : null;
         final Instant lastRun = lastRunAttribute != null
-            ? Instant.parse( lastRunAttribute.asString() )
+            ? Instant.parse( lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ).asString() )
             : data.getInstant( ScheduledJobPropertyNames.LAST_RUN );
         final TaskId lastTaskId = lastRunAttribute != null
-            ? Optional.ofNullable( attributes.get( ScheduledJobPropertyNames.LAST_TASK_ID ) )
+            ? lastRunAttribute.optional( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY )
                 .map( GenericValue::asString )
                 .map( TaskId::from )
                 .orElse( null )

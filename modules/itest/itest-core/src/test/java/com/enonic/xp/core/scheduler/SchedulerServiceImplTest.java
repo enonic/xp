@@ -25,10 +25,13 @@ import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
 import com.enonic.xp.impl.scheduler.SchedulerConfig;
 import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
 import com.enonic.xp.impl.scheduler.SchedulerExecutorServiceImpl;
+import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.GetNodeVersionsParams;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
@@ -48,6 +51,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -373,6 +377,19 @@ class SchedulerServiceImplTest
 
         assertEquals( versionsBeforeUpdate,
                       adminContext().callWith( () -> nodeService.getVersions( versionsParams ).getTotalHits() ) );
+
+        final Attributes attributes = adminContext().callWith( () -> {
+            final Node node = nodeService.getById( NodeId.from( name.getValue() ) );
+            return nodeService.getVersion( node.id(), node.getNodeVersionId() ).getAttributes();
+        } );
+        final GenericValue lastRunAttribute = attributes.get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE );
+        assertEquals( GenericValue.Type.OBJECT, lastRunAttribute.getType() );
+        assertEquals( lastRun.toString(),
+                      lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ).asString() );
+        assertEquals( lastTaskId.toString(),
+                      lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY ).asString() );
+        assertNull( attributes.get( ScheduledJobPropertyNames.LAST_RUN ) );
+        assertNull( attributes.get( ScheduledJobPropertyNames.LAST_TASK_ID ) );
 
         final ScheduledJob runJob = adminContext().callWith( () -> schedulerService.get( name ) );
 

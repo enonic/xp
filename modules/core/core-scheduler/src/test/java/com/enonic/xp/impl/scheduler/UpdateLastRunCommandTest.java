@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
-import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +20,7 @@ import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -63,8 +63,11 @@ class UpdateLastRunCommandTest
 
         final ApplyVersionAttributesParams params = captor.getValue();
         assertEquals( node.getNodeVersionId(), params.getNodeVersionId() );
-        assertEquals( lastRun.toString(), params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_RUN ).asString() );
-        assertEquals( lastTaskId.toString(), params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_TASK_ID ).asString() );
+        final GenericValue lastRunAttribute = params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE );
+        assertEquals( lastRun.toString(),
+                      lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ).asString() );
+        assertEquals( lastTaskId.toString(),
+                      lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY ).asString() );
         assertTrue( params.getRemoveAttributes().isEmpty() );
         assertEquals( lastRun, scheduledJob.getLastRun() );
         assertEquals( lastTaskId, scheduledJob.getLastTaskId() );
@@ -91,8 +94,11 @@ class UpdateLastRunCommandTest
         verify( nodeService ).applyVersionAttributes( captor.capture() );
 
         final ApplyVersionAttributesParams params = captor.getValue();
-        assertNull( params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_TASK_ID ) );
-        assertEquals( Set.of( ScheduledJobPropertyNames.LAST_TASK_ID ), params.getRemoveAttributes() );
+        final GenericValue lastRunAttribute = params.getAddAttributes().get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE );
+        assertEquals( lastRun.toString(),
+                      lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ).asString() );
+        assertTrue( lastRunAttribute.optional( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY ).isEmpty() );
+        assertTrue( params.getRemoveAttributes().isEmpty() );
         assertEquals( lastRun, scheduledJob.getLastRun() );
         assertNull( scheduledJob.getLastTaskId() );
     }

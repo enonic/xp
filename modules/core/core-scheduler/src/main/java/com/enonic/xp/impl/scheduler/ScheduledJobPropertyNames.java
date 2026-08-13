@@ -24,6 +24,12 @@ public class ScheduledJobPropertyNames
 
     public static final String LAST_TASK_ID = "lastTaskId";
 
+    public static final String LAST_RUN_ATTRIBUTE = "scheduler.lastRun";
+
+    public static final String LAST_RUN_TIME_PROPERTY = "time";
+
+    public static final String LAST_RUN_TASK_ID_PROPERTY = "taskId";
+
     public static final String CALENDAR = "calendar";
 
     public static final String CALENDAR_VALUE = "value";

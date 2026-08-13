@@ -1,7 +1,6 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
-import java.util.Set;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
@@ -13,7 +12,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.task.TaskId;
-import com.enonic.xp.util.GenericValue;
 
 import static java.util.Objects.requireNonNull;
 
@@ -53,17 +51,9 @@ public class UpdateLastRunCommand
             throw new NodeNotFoundException( "Node not found: " + path );
         }
 
-        final Attributes.Builder attributes = Attributes.create().
-            attribute( ScheduledJobPropertyNames.LAST_RUN, GenericValue.stringValue( lastRun.toString() ) );
-        if ( lastTaskId != null )
-        {
-            attributes.attribute( ScheduledJobPropertyNames.LAST_TASK_ID, GenericValue.stringValue( lastTaskId.toString() ) );
-        }
-
         final Attributes updatedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create().
             nodeVersionId( node.getNodeVersionId() ).
-            addAttributes( attributes.build() ).
-            removeAttributes( lastTaskId == null ? Set.of( ScheduledJobPropertyNames.LAST_TASK_ID ) : Set.of() ).
+            addAttributes( SchedulerSerializer.toLastRunAttributes( lastRun, lastTaskId ) ).
             build() );
 
         return SchedulerSerializer.fromNode( node, updatedAttributes );
