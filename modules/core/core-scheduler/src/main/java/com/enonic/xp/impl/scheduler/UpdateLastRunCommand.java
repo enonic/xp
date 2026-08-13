@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
+import java.util.Set;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
@@ -54,6 +55,7 @@ public class UpdateLastRunCommand
         final Attributes updatedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create().
             nodeVersionId( node.getNodeVersionId() ).
             addAttributes( SchedulerSerializer.toLastRunAttributes( lastRun, lastTaskId ) ).
+            removeAttributes( Set.of( ScheduledJobPropertyNames.LAST_RUN, ScheduledJobPropertyNames.LAST_TASK_ID ) ).
             build() );
 
         return SchedulerSerializer.fromNode( node, updatedAttributes );

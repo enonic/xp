@@ -43,8 +43,6 @@ public class ModifyScheduledJobCommand
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
             path( new NodePath( NodePath.ROOT, NodeName.from( params.getName().getValue() ) ) ).
             editor( toBeEdited -> toBeEdited.data = SchedulerSerializer.toUpdateNodeData( params, original ) ).
-            versionAttributesResolver(
-                ( editedNode, originalNode, branch, attributes ) -> SchedulerSerializer.toVersionAttributes( original, attributes ) ).
             refresh( RefreshMode.ALL ).
             build();
 

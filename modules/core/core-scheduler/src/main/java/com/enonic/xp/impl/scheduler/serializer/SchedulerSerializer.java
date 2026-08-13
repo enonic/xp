@@ -3,6 +3,7 @@ package com.enonic.xp.impl.scheduler.serializer;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.enonic.xp.context.Context;
@@ -115,23 +116,6 @@ public class SchedulerSerializer
         return fromNode( node, null );
     }
 
-    public static Attributes toVersionAttributes( final ScheduledJob job, final Attributes originalAttributes )
-    {
-        final Attributes.Builder builder = Attributes.create();
-        if ( originalAttributes != null )
-        {
-            builder.addAll( originalAttributes.entrySet()
-                                .stream()
-                                .filter( entry -> !ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE.equals( entry.getKey() ) )
-                                .toList() );
-        }
-        if ( job.getLastRun() != null )
-        {
-            builder.addAll( toLastRunAttributes( job.getLastRun(), job.getLastTaskId() ).entrySet() );
-        }
-        return builder.build();
-    }
-
     public static Attributes toLastRunAttributes( final Instant lastRun, final TaskId lastTaskId )
     {
         final GenericValue.ObjectBuilder builder = GenericValue.newObject().
@@ -148,17 +132,27 @@ public class SchedulerSerializer
     public static ScheduledJob fromNode( final Node node, final Attributes attributes )
     {
         final PropertySet data = node.data().getRoot();
+
+        final Optional<Instant> legacyAttributeLastRun = attributes != null
+            ? parseAttribute( attributes.get( ScheduledJobPropertyNames.LAST_RUN ), Instant::parse )
+            : Optional.empty();
+        final Instant legacyLastRun = legacyAttributeLastRun.orElse( data.getInstant( ScheduledJobPropertyNames.LAST_RUN ) );
+        final TaskId legacyLastTaskId = legacyAttributeLastRun.isPresent()
+            ? parseAttribute( attributes.get( ScheduledJobPropertyNames.LAST_TASK_ID ), TaskId::from ).orElse( null )
+            : Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).map( TaskId::from ).orElse( null );
+
         final GenericValue lastRunAttribute =
             attributes != null ? attributes.get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE ) : null;
-        final Instant lastRun = lastRunAttribute != null
-            ? Instant.parse( lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ).asString() )
-            : data.getInstant( ScheduledJobPropertyNames.LAST_RUN );
-        final TaskId lastTaskId = lastRunAttribute != null
+        final Optional<Instant> attributeLastRun = lastRunAttribute != null
+            ? lastRunAttribute.optional( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY )
+                .flatMap( value -> parseAttribute( value, Instant::parse ) )
+            : Optional.empty();
+        final Instant lastRun = attributeLastRun.orElse( legacyLastRun );
+        final TaskId lastTaskId = attributeLastRun.isPresent()
             ? lastRunAttribute.optional( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY )
-                .map( GenericValue::asString )
-                .map( TaskId::from )
+                .flatMap( value -> parseAttribute( value, TaskId::from ) )
                 .orElse( null )
-            : Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).map( TaskId::from ).orElse( null );
+            : legacyLastTaskId;
 
         return ScheduledJob.create()
             .name( ScheduledJobName.from( node.name().toString() ) )
@@ -181,6 +175,22 @@ public class SchedulerSerializer
             .modifiedTime(
                 Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIED_TIME ) ).map( Instant::parse ).orElse( null ) )
             .build();
+    }
+
+    private static <T> Optional<T> parseAttribute( final GenericValue value, final Function<String, T> parser )
+    {
+        if ( value == null )
+        {
+            return Optional.empty();
+        }
+        try
+        {
+            return Optional.of( parser.apply( value.asString() ) );
+        }
+        catch ( RuntimeException e )
+        {
+            return Optional.empty();
+        }
     }
 
     private static ScheduledJob editScheduledJob( final ScheduledJobEditor editor, final ScheduledJob original )

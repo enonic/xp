@@ -29,6 +29,7 @@ import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
 import com.enonic.xp.impl.scheduler.UpdateLastRunCommand;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.GetNodeVersionsParams;
 import com.enonic.xp.node.Node;
@@ -345,7 +346,7 @@ class SchedulerServiceImplTest
     }
 
     @Test
-    void updateLastRunWithoutCreatingVersionAndPreserveOnModify()
+    void updateLastRunWithoutCreatingVersionAndClearOnCronModify()
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
@@ -405,8 +406,101 @@ class SchedulerServiceImplTest
                 edit.enabled = true;
             } ).build() ) );
 
-        assertEquals( lastRun, modifiedJob.getLastRun() );
-        assertEquals( lastTaskId, modifiedJob.getLastTaskId() );
+        assertNull( modifiedJob.getLastRun() );
+        assertNull( modifiedJob.getLastTaskId() );
+
+        final Attributes modifiedAttributes = adminContext().callWith( () -> {
+            final Node node = nodeService.getById( NodeId.from( name.getValue() ) );
+            return nodeService.getVersion( node.id(), node.getNodeVersionId() ).getAttributes();
+        } );
+        assertNull( modifiedAttributes );
+    }
+
+    @Test
+    void modifyRearmsOneTimeJob()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.oneTime(
+                                                                        Instant.parse( "2021-02-25T10:44:33Z" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
+
+        adminContext().runWith( () -> UpdateLastRunCommand.create()
+            .name( name )
+            .lastTaskId( TaskId.from( "task-id" ) )
+            .lastRun( Instant.parse( "2021-02-25T10:44:34Z" ) )
+            .nodeService( nodeService )
+            .build()
+            .execute() );
+
+        final Instant nextRun = Instant.parse( "2021-02-25T10:45:33Z" );
+        final ScheduledJob modifiedJob =
+            adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create().name( name ).editor( edit -> {
+                edit.calendar = calendarService.oneTime( nextRun );
+            } ).build() ) );
+
+        assertEquals( nextRun, ( (OneTimeCalendar) modifiedJob.getCalendar() ).getValue() );
+        assertNull( modifiedJob.getLastRun() );
+        assertNull( modifiedJob.getLastTaskId() );
+    }
+
+    @Test
+    void readLegacyRunAttributesAndIgnoreMalformedCompound()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.cron( "* * * * *",
+                                                                                                     TimeZone.getTimeZone( "GMT+5:30" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
+
+        final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
+        final TaskId lastTaskId = TaskId.from( "task-id" );
+        final Node node = adminContext().callWith( () -> nodeService.getById( NodeId.from( name.getValue() ) ) );
+
+        adminContext().runWith( () -> nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+            .nodeVersionId( node.getNodeVersionId() )
+            .addAttributes( Attributes.create()
+                                .attribute( ScheduledJobPropertyNames.LAST_RUN, GenericValue.stringValue( lastRun.toString() ) )
+                                .attribute( ScheduledJobPropertyNames.LAST_TASK_ID,
+                                            GenericValue.stringValue( lastTaskId.toString() ) )
+                                .build() )
+            .build() ) );
+
+        assertRunMetadata( name, lastRun, lastTaskId );
+
+        adminContext().runWith( () -> nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+            .nodeVersionId( node.getNodeVersionId() )
+            .addAttributes( Attributes.create()
+                                .attribute( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE,
+                                            GenericValue.stringValue( lastRun.toString() ) )
+                                .build() )
+            .build() ) );
+
+        assertRunMetadata( name, lastRun, lastTaskId );
+
+        adminContext().runWith( () -> nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create()
+            .nodeVersionId( node.getNodeVersionId() )
+            .addAttributes( Attributes.create()
+                                .attribute( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE,
+                                            GenericValue.newObject()
+                                                .put( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY, "not-an-instant" )
+                                                .build() )
+                                .build() )
+            .build() ) );
+
+        assertRunMetadata( name, lastRun, lastTaskId );
     }
 
     @Test
@@ -560,5 +654,16 @@ class SchedulerServiceImplTest
                                                                     .build() ) );
 
         assertEquals( 2, adminContext().callWith( () -> schedulerService.list() ).size() );
+    }
+
+    private void assertRunMetadata( final ScheduledJobName name, final Instant lastRun, final TaskId lastTaskId )
+    {
+        final ScheduledJob fetchedJob = adminContext().callWith( () -> schedulerService.get( name ) );
+        assertEquals( lastRun, fetchedJob.getLastRun() );
+        assertEquals( lastTaskId, fetchedJob.getLastTaskId() );
+
+        final ScheduledJob listedJob = adminContext().callWith( () -> schedulerService.list() ).getFirst();
+        assertEquals( lastRun, listedJob.getLastRun() );
+        assertEquals( lastTaskId, listedJob.getLastTaskId() );
     }
 }

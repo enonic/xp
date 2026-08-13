@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +69,8 @@ class UpdateLastRunCommandTest
                       lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ).asString() );
         assertEquals( lastTaskId.toString(),
                       lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY ).asString() );
-        assertTrue( params.getRemoveAttributes().isEmpty() );
+        assertEquals( Set.of( ScheduledJobPropertyNames.LAST_RUN, ScheduledJobPropertyNames.LAST_TASK_ID ),
+                      params.getRemoveAttributes() );
         assertEquals( lastRun, scheduledJob.getLastRun() );
         assertEquals( lastTaskId, scheduledJob.getLastTaskId() );
     }
@@ -98,7 +100,8 @@ class UpdateLastRunCommandTest
         assertEquals( lastRun.toString(),
                       lastRunAttribute.property( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ).asString() );
         assertTrue( lastRunAttribute.optional( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY ).isEmpty() );
-        assertTrue( params.getRemoveAttributes().isEmpty() );
+        assertEquals( Set.of( ScheduledJobPropertyNames.LAST_RUN, ScheduledJobPropertyNames.LAST_TASK_ID ),
+                      params.getRemoveAttributes() );
         assertEquals( lastRun, scheduledJob.getLastRun() );
         assertNull( scheduledJob.getLastTaskId() );
     }
