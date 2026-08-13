@@ -78,24 +78,47 @@ public final class PublishMessageParams
         {
         }
 
+        /**
+         * Sets the publishing application.
+         *
+         * @param caller publishing application
+         * @return the Builder instance for chaining
+         */
         public Builder caller( final ApplicationKey caller )
         {
             this.caller = caller;
             return this;
         }
 
+        /**
+         * Sets the local topic name.
+         *
+         * @param name local topic name, as passed to {@link AdminEventHub#registerTopic}
+         * @return the Builder instance for chaining
+         */
         public Builder name( final String name )
         {
             this.name = name;
             return this;
         }
 
+        /**
+         * Sets the message data.
+         *
+         * @param message message data
+         * @return the Builder instance for chaining
+         */
         public Builder message( final GenericValue message )
         {
             this.message = message;
             return this;
         }
 
+        /**
+         * Builds the PublishMessageParams.
+         *
+         * @return PublishMessageParams instance
+         */
         public PublishMessageParams build()
         {
             return new PublishMessageParams( this );

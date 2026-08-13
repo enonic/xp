@@ -76,24 +76,47 @@ public final class RegisterTopicParams
         {
         }
 
+        /**
+         * Sets the owning application.
+         *
+         * @param owner owning application
+         * @return the Builder instance for chaining
+         */
         public Builder owner( final ApplicationKey owner )
         {
             this.owner = owner;
             return this;
         }
 
+        /**
+         * Sets the local topic name.
+         *
+         * @param name local topic name: 1-255 characters, no {@code ':'}, no whitespace
+         * @return the Builder instance for chaining
+         */
         public Builder name( final String name )
         {
             this.name = name;
             return this;
         }
 
+        /**
+         * Sets the principals allowed to subscribe.
+         *
+         * @param allow principals allowed to subscribe; empty allows administrators only
+         * @return the Builder instance for chaining
+         */
         public Builder allow( final PrincipalKeys allow )
         {
             this.allow = allow;
             return this;
         }
 
+        /**
+         * Builds the RegisterTopicParams.
+         *
+         * @return RegisterTopicParams instance
+         */
         public RegisterTopicParams build()
         {
             return new RegisterTopicParams( this );
