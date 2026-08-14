@@ -130,6 +130,9 @@ public final class SchedulerServiceActivator
         {
             ticker.shutdownNow();
         }
-        schedulerServiceReg.unregister();
+        if ( schedulerServiceReg != null )
+        {
+            schedulerServiceReg.unregister();
+        }
     }
 }

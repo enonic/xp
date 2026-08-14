@@ -128,8 +128,11 @@ class SchedulingCoordinatorImplTest
         assertNull( coordinator.nextRun( JOB ) );
 
         coordinator.nextRun( JOB, NEXT_RUN );
-        coordinator.retain( Set.of() );
+        final ScheduledJobName other = ScheduledJobName.from( "other" );
+        coordinator.nextRun( other, NEXT_RUN );
+        coordinator.retain( Set.of( other ) );
         assertNull( coordinator.nextRun( JOB ) );
+        assertEquals( NEXT_RUN, coordinator.nextRun( other ) );
 
         coordinator.nextRun( JOB, NEXT_RUN );
         coordinator.nextRun( JOB, null );

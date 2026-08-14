@@ -41,6 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -169,6 +170,10 @@ class SchedulerServiceActivatorTest
         when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenThrow( new RuntimeException() );
 
         assertThrows( RuntimeException.class, () -> activator.activate( bundleContext ) );
+
+        // a failed activation registers nothing and starts no ticker - deactivate has nothing to clean up
+        activator.deactivate();
+        verify( service, never() ).unregister();
     }
 
     private void mockNode( final CreateScheduledJobParams params )
