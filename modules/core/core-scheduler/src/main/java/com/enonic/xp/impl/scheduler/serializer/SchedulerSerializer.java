@@ -133,25 +133,26 @@ public class SchedulerSerializer
     {
         final PropertySet data = node.data().getRoot();
 
-        final Optional<Instant> legacyAttributeLastRun = attributes != null
-            ? parseAttribute( attributes.get( ScheduledJobPropertyNames.LAST_RUN ), Instant::parse )
-            : Optional.empty();
+        final Optional<Instant> legacyAttributeLastRun = Optional.ofNullable( attributes )
+            .flatMap( value -> parseAttribute( value.get( ScheduledJobPropertyNames.LAST_RUN ), Instant::parse ) );
+        final Optional<TaskId> legacyAttributeLastTaskId = Optional.ofNullable( attributes )
+            .flatMap( value -> parseAttribute( value.get( ScheduledJobPropertyNames.LAST_TASK_ID ), TaskId::from ) );
         final Instant legacyLastRun = legacyAttributeLastRun.orElse( data.getInstant( ScheduledJobPropertyNames.LAST_RUN ) );
         final TaskId legacyLastTaskId = legacyAttributeLastRun.isPresent()
-            ? parseAttribute( attributes.get( ScheduledJobPropertyNames.LAST_TASK_ID ), TaskId::from ).orElse( null )
+            ? legacyAttributeLastTaskId.orElse( null )
             : Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).map( TaskId::from ).orElse( null );
 
-        final GenericValue lastRunAttribute =
-            attributes != null ? attributes.get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE ) : null;
-        final Optional<Instant> attributeLastRun = lastRunAttribute != null
-            ? lastRunAttribute.optional( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY )
-                .flatMap( value -> parseAttribute( value, Instant::parse ) )
-            : Optional.empty();
+        final Optional<GenericValue> lastRunAttribute = Optional.ofNullable( attributes )
+            .map( value -> value.get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE ) );
+        final Optional<Instant> attributeLastRun = lastRunAttribute
+            .flatMap( value -> value.optional( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ) )
+            .flatMap( value -> parseAttribute( value, Instant::parse ) );
+        final Optional<TaskId> attributeLastTaskId = lastRunAttribute
+            .flatMap( value -> value.optional( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY ) )
+            .flatMap( value -> parseAttribute( value, TaskId::from ) );
         final Instant lastRun = attributeLastRun.orElse( legacyLastRun );
         final TaskId lastTaskId = attributeLastRun.isPresent()
-            ? lastRunAttribute.optional( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY )
-                .flatMap( value -> parseAttribute( value, TaskId::from ) )
-                .orElse( null )
+            ? attributeLastTaskId.orElse( null )
             : legacyLastTaskId;
 
         return ScheduledJob.create()
