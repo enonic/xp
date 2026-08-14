@@ -93,6 +93,26 @@ class SchedulingCoordinatorImplTest
         coordinator.nextRun( JOB, NEXT_RUN );
         coordinator.retain( Set.of( ScheduledJobName.from( "other" ) ) );
         assertNull( coordinator.nextRun( JOB ) );
+
+        coordinator.nextRun( JOB, NEXT_RUN );
+        coordinator.nextRun( JOB, null );
+        assertNull( coordinator.nextRun( JOB ) );
+    }
+
+    @Test
+    void unbindClearsOnlyTheBoundInstance()
+    {
+        final SchedulingCoordinatorImpl coordinator = coordinator( true, true );
+
+        coordinator.nextRun( JOB, NEXT_RUN );
+        assertEquals( NEXT_RUN, coordinator.nextRun( JOB ) );
+
+        // a greedy rebind unbinds the previous instance after the new one is already bound
+        coordinator.unsetHazelcastInstance( mock( HazelcastInstance.class ) );
+        assertEquals( NEXT_RUN, coordinator.nextRun( JOB ) );
+
+        coordinator.unsetHazelcastInstance( hazelcastInstance );
+        assertNull( coordinator.nextRun( JOB ) );
     }
 
     @Test

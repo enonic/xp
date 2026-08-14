@@ -416,6 +416,28 @@ class RescheduleTaskTest
         verify( schedulerService, times( 10 ) ).list();
     }
 
+    @Test
+    void tickErrorDoesNotPropagate()
+    {
+        when( schedulerService.list() ).thenThrow( new Error() );
+
+        task.run();
+
+        verify( schedulerService, times( 1 ) ).list();
+    }
+
+    @Test
+    void neverRunCronJobWithoutModifiedTimeNotDue()
+    {
+        final ScheduledJob job = jobBuilder( "job1", cronCalendar( "* * * * *" ) ).modifiedTime( null ).createdTime( null ).build();
+
+        when( schedulerService.list() ).thenReturn( List.of( job ) );
+
+        task.run();
+
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
     private void mockJobs()
     {
         final ScheduledJob job1 = cronJob( "task1", "* * * * *", null );
