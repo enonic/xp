@@ -14,15 +14,15 @@ public class SchedulerServiceImpl
 {
     private final NodeService nodeService;
 
-    private final SchedulerExecutorService schedulerExecutorService;
+    private final SchedulingCoordinator schedulingCoordinator;
 
     private final ScheduleAuditLogSupport auditLogSupport;
 
     public SchedulerServiceImpl( final NodeService nodeService,
-                                 final SchedulerExecutorService schedulerExecutorService, final ScheduleAuditLogSupport auditLogSupport )
+                                 final SchedulingCoordinator schedulingCoordinator, final ScheduleAuditLogSupport auditLogSupport )
     {
         this.nodeService = nodeService;
-        this.schedulerExecutorService = schedulerExecutorService;
+        this.schedulingCoordinator = schedulingCoordinator;
         this.auditLogSupport = auditLogSupport;
     }
 
@@ -43,17 +43,13 @@ public class SchedulerServiceImpl
     @Override
     public ScheduledJob modify( final ModifyScheduledJobParams params )
     {
-        UnscheduleJobCommand.create().
-            schedulerExecutorService( schedulerExecutorService ).
-            name( params.getName() ).
-            build().
-            execute();
-
         final ScheduledJob job = ModifyScheduledJobCommand.create().
             nodeService( nodeService ).
             params( params ).
             build().
             execute();
+
+        schedulingCoordinator.forget( params.getName() );
 
         auditLogSupport.modify( params, job );
 
@@ -63,17 +59,13 @@ public class SchedulerServiceImpl
     @Override
     public boolean delete( final ScheduledJobName name )
     {
-        UnscheduleJobCommand.create().
-            schedulerExecutorService( schedulerExecutorService ).
-            name( name ).
-            build().
-            execute();
-
         final boolean result = DeleteScheduledJobCommand.create().
             nodeService( nodeService ).
             name( name ).
             build().
             execute();
+
+        schedulingCoordinator.forget( name );
 
         auditLogSupport.delete( name, result );
 

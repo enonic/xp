@@ -19,12 +19,10 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
-import com.enonic.xp.impl.scheduler.LocalSystemScheduler;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogExecutorImpl;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
 import com.enonic.xp.impl.scheduler.SchedulerConfig;
-import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
-import com.enonic.xp.impl.scheduler.SchedulerExecutorServiceImpl;
+import com.enonic.xp.impl.scheduler.SchedulingCoordinatorImpl;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
@@ -104,10 +102,8 @@ class SchedulerServiceImplTest
         final ScheduleAuditLogSupportImpl auditLogSupport =
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
 
-        final SchedulerExecutorService schedulerExecutorService =
-            new SchedulerExecutorServiceImpl( new LocalSystemScheduler(), mock( ClusterConfig.class ) );
-
-        schedulerService = new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
+        schedulerService =
+            new SchedulerServiceImpl( nodeService, new SchedulingCoordinatorImpl( mock( ClusterConfig.class ) ), auditLogSupport );
 
         adminContext().runWith( () -> SchedulerRepoInitializer.create()
             .setIndexService( indexService )
