@@ -1,12 +1,15 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
+import java.util.Set;
+
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.task.TaskId;
@@ -42,18 +45,20 @@ public class UpdateLastRunCommand
 
     private ScheduledJob doExecute()
     {
-        final UpdateNodeParams updateNodeParams = UpdateNodeParams.create().
-            path( new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) ) ).
-            editor( toBeEdited -> {
-                toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun );
-            toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_TASK_ID, lastTaskId != null ? lastTaskId.toString() : null );
-            } ).
-            refresh( RefreshMode.ALL ).
-            build();
+        final NodePath path = new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) );
+        final Node node = nodeService.getByPath( path );
+        if ( node == null )
+        {
+            throw new NodeNotFoundException( "Node not found: " + path );
+        }
 
-        final Node updatedNode = nodeService.update( updateNodeParams );
+        final Attributes updatedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create().
+            nodeVersionId( node.getNodeVersionId() ).
+            addAttributes( SchedulerSerializer.toLastRunAttributes( lastRun, lastTaskId ) ).
+            removeAttributes( Set.of( ScheduledJobPropertyNames.LAST_RUN, ScheduledJobPropertyNames.LAST_TASK_ID ) ).
+            build() );
 
-        return SchedulerSerializer.fromNode( updatedNode );
+        return SchedulerSerializer.fromNode( node, updatedAttributes );
     }
 
     public static final class Builder

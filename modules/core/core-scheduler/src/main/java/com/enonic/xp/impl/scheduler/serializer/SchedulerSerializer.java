@@ -3,6 +3,7 @@ package com.enonic.xp.impl.scheduler.serializer;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.enonic.xp.context.Context;
@@ -14,6 +15,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
+import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
@@ -27,6 +29,7 @@ import com.enonic.xp.scheduler.ScheduledJobEditor;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.util.GenericValue;
 
 public class SchedulerSerializer
 {
@@ -110,7 +113,47 @@ public class SchedulerSerializer
 
     public static ScheduledJob fromNode( final Node node )
     {
+        return fromNode( node, null );
+    }
+
+    public static Attributes toLastRunAttributes( final Instant lastRun, final TaskId lastTaskId )
+    {
+        final GenericValue.ObjectBuilder builder = GenericValue.newObject().
+            put( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY, lastRun.toString() );
+        if ( lastTaskId != null )
+        {
+            builder.put( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY, lastTaskId.toString() );
+        }
+        return Attributes.create().
+            attribute( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE, builder.build() ).
+            build();
+    }
+
+    public static ScheduledJob fromNode( final Node node, final Attributes attributes )
+    {
         final PropertySet data = node.data().getRoot();
+
+        final Optional<Instant> legacyAttributeLastRun = Optional.ofNullable( attributes )
+            .flatMap( value -> parseAttribute( value.get( ScheduledJobPropertyNames.LAST_RUN ), Instant::parse ) );
+        final Optional<TaskId> legacyAttributeLastTaskId = Optional.ofNullable( attributes )
+            .flatMap( value -> parseAttribute( value.get( ScheduledJobPropertyNames.LAST_TASK_ID ), TaskId::from ) );
+        final Instant legacyLastRun = legacyAttributeLastRun.orElse( data.getInstant( ScheduledJobPropertyNames.LAST_RUN ) );
+        final TaskId legacyLastTaskId = legacyAttributeLastRun.isPresent()
+            ? legacyAttributeLastTaskId.orElse( null )
+            : Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).map( TaskId::from ).orElse( null );
+
+        final Optional<GenericValue> lastRunAttribute = Optional.ofNullable( attributes )
+            .map( value -> value.get( ScheduledJobPropertyNames.LAST_RUN_ATTRIBUTE ) );
+        final Optional<Instant> attributeLastRun = lastRunAttribute
+            .flatMap( value -> value.optional( ScheduledJobPropertyNames.LAST_RUN_TIME_PROPERTY ) )
+            .flatMap( value -> parseAttribute( value, Instant::parse ) );
+        final Optional<TaskId> attributeLastTaskId = lastRunAttribute
+            .flatMap( value -> value.optional( ScheduledJobPropertyNames.LAST_RUN_TASK_ID_PROPERTY ) )
+            .flatMap( value -> parseAttribute( value, TaskId::from ) );
+        final Instant lastRun = attributeLastRun.orElse( legacyLastRun );
+        final TaskId lastTaskId = attributeLastRun.isPresent()
+            ? attributeLastTaskId.orElse( null )
+            : legacyLastTaskId;
 
         return ScheduledJob.create()
             .name( ScheduledJobName.from( node.name().toString() ) )
@@ -123,9 +166,8 @@ public class SchedulerSerializer
                 Optional.ofNullable( data.getString( ScheduledJobPropertyNames.DESCRIPTOR ) ).map( DescriptorKey::from ).orElse( null ) )
             .config( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CONFIG ) ).map( PropertySet::toTree ).orElse( null ) )
             .user( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.USER ) ).map( PrincipalKey::from ).orElse( null ) )
-            .lastRun( Optional.ofNullable( data.getInstant( ScheduledJobPropertyNames.LAST_RUN ) ).orElse( null ) )
-            .lastTaskId(
-                Optional.ofNullable( data.getString( ScheduledJobPropertyNames.LAST_TASK_ID ) ).map( TaskId::from ).orElse( null ) )
+            .lastRun( lastRun )
+            .lastTaskId( lastTaskId )
             .creator( Optional.ofNullable( data.getString( ScheduledJobPropertyNames.CREATOR ) ).map( PrincipalKey::from ).orElse( null ) )
             .modifier(
                 Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIER ) ).map( PrincipalKey::from ).orElse( null ) )
@@ -134,6 +176,22 @@ public class SchedulerSerializer
             .modifiedTime(
                 Optional.ofNullable( data.getString( ScheduledJobPropertyNames.MODIFIED_TIME ) ).map( Instant::parse ).orElse( null ) )
             .build();
+    }
+
+    private static <T> Optional<T> parseAttribute( final GenericValue value, final Function<String, T> parser )
+    {
+        if ( value == null )
+        {
+            return Optional.empty();
+        }
+        try
+        {
+            return Optional.of( parser.apply( value.asString() ) );
+        }
+        catch ( RuntimeException e )
+        {
+            return Optional.empty();
+        }
     }
 
     private static ScheduledJob editScheduledJob( final ScheduledJobEditor editor, final ScheduledJob original )

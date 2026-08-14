@@ -28,11 +28,12 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
+import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
@@ -108,6 +109,7 @@ class RescheduleTaskTest
         when( bundleContext.getService( taskReference ) ).thenReturn( taskService );
         when( bundleContext.getService( schedulerReference ) ).thenReturn( schedulerService );
         when( bundleContext.getService( securityReference ) ).thenReturn( securityService );
+        when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( mockNode() );
     }
 
     @AfterEach
@@ -121,9 +123,6 @@ class RescheduleTaskTest
     {
         mockJobs();
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "123" ) );
-
-        final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
 
         createAndRunTask();
 
@@ -147,9 +146,6 @@ class RescheduleTaskTest
             .thenReturn( TaskId.from( "2" ) )
             .thenReturn( TaskId.from( "3" ) );
 
-        final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
-
         createAndRunTask();
 
         verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
@@ -168,9 +164,6 @@ class RescheduleTaskTest
         ScheduledJob job2 = mockOneTimeJob( "job2", now );
 
         when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
-
-        final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
 
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( RuntimeException.class )
             .thenReturn( TaskId.from( "1" ) );
@@ -207,9 +200,6 @@ class RescheduleTaskTest
 
         when( schedulerService.list() ).thenReturn( List.of( job1 ) );
 
-        final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
-
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new Error() ).thenReturn( TaskId.from( "1" ) );
 
         createAndRunTask();
@@ -231,9 +221,6 @@ class RescheduleTaskTest
 
         when( schedulerService.list() ).thenReturn( List.of( job1 ) );
 
-        final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
-
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new RuntimeException() );
 
         for ( int i = 0; i <= 10; i++ )
@@ -241,7 +228,7 @@ class RescheduleTaskTest
             createAndRunTask();
         }
         verify( taskService, times( 11 ) ).submitTask( taskCaptor.capture() );
-        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
+        verify( nodeService, times( 1 ) ).applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) );
     }
 
     @Test
@@ -253,9 +240,6 @@ class RescheduleTaskTest
         ScheduledJob job1 = mockOneTimeJob( "job1", now.minus( 1, ChronoUnit.SECONDS ), user );
 
         when( schedulerService.list() ).thenReturn( List.of( job1 ) );
-
-        final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
 
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
         when( securityService.authenticate( tokenCaptor.capture() ) ).thenReturn( mock( AuthenticationInfo.class ) );
@@ -273,9 +257,6 @@ class RescheduleTaskTest
         ScheduledJob job2 = mockCronJob( "job2", "* * * * *", Instant.now() );
 
         when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
-
-        final Node node = mockNode();
-        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
 
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) ).thenReturn( TaskId.from( "2" ) );
         when( securityService.authenticate( tokenCaptor.capture() ) ).thenReturn( mock( AuthenticationInfo.class ) );
@@ -447,7 +428,13 @@ class RescheduleTaskTest
         jobData.setString( ScheduledJobPropertyNames.CREATED_TIME, "2021-02-26T10:44:33.170079900Z" );
         jobData.setString( ScheduledJobPropertyNames.MODIFIED_TIME, "2021-03-26T10:44:33.170079900Z" );
 
-        return Node.create().id( NodeId.from( "abc" ) ).name( "test" ).parentPath( NodePath.ROOT ).data( jobData ).build();
+        return Node.create()
+            .id( NodeId.from( "abc" ) )
+            .name( "test" )
+            .parentPath( NodePath.ROOT )
+            .data( jobData )
+            .nodeVersionId( new NodeVersionId() )
+            .build();
 
     }
 

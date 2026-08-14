@@ -48,7 +48,7 @@ public class ModifyScheduledJobCommand
 
         final Node updatedNode = nodeService.update( updateNodeParams );
 
-        return SchedulerSerializer.fromNode( updatedNode );
+        return toScheduledJob( updatedNode );
     }
 
     public static final class Builder
