@@ -51,6 +51,17 @@ public class ClusterServiceImpl
         return clusterService.isLeader( applicationKey );
     }
 
+    @Override
+    public boolean hasApplication( final @NonNull ApplicationKey applicationKey )
+    {
+        final ClusterService clusterService = resolveClusterService();
+        if ( clusterService == null )
+        {
+            return false;
+        }
+        return clusterService.hasApplication( applicationKey );
+    }
+
     private ClusterService resolveClusterService()
     {
         final ClusterService clusterService = clusteredClusterServiceRef.getNow( null );

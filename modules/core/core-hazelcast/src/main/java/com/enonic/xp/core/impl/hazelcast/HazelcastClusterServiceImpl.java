@@ -56,6 +56,25 @@ public class HazelcastClusterServiceImpl
     }
 
     @Override
+    public boolean hasApplication( final @NonNull ApplicationKey applicationKey )
+    {
+        final ReplicatedMap<UUID, Map<String, String>> attributes = hazelcastInstance.getReplicatedMap( ClusterAttributesApplier.MAP_NAME );
+
+        final String appAttributeKey = ClusterAttributesApplier.APPLICATION_ATTRIBUTE_PREFIX + applicationKey;
+
+        for ( final Member member : hazelcastInstance.getCluster().getMembers() )
+        {
+            final Map<String, String> memberAttributes = attributes.get( member.getUuid() );
+            if ( memberAttributes != null && Boolean.TRUE.toString().equals( memberAttributes.get( appAttributeKey ) ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean isLeader( final @NonNull ApplicationKey applicationKey )
     {
         final UUID localMemberUuid = hazelcastInstance.getCluster().getLocalMember().getUuid();

@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +33,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
@@ -54,6 +56,8 @@ public final class RescheduleTask
 
     private final TaskService taskService;
 
+    private final TaskDescriptorService taskDescriptorService;
+
     private final SecurityService securityService;
 
     private final ClusterService clusterService;
@@ -66,17 +70,20 @@ public final class RescheduleTask
 
     private final Map<ScheduledJobName, RunState> runStates = new HashMap<>();
 
+    private final Set<ScheduledJobName> dormantJobs = new HashSet<>();
+
     private Set<ScheduledJobName> knownJobs = Set.of();
 
     private int failedTicks;
 
     public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
-                           final SecurityService securityService, final ClusterService clusterService,
-                           final SchedulingCoordinator schedulingCoordinator, final Clock clock )
+                           final TaskDescriptorService taskDescriptorService, final SecurityService securityService,
+                           final ClusterService clusterService, final SchedulingCoordinator schedulingCoordinator, final Clock clock )
     {
         this.schedulerService = schedulerService;
         this.nodeService = nodeService;
         this.taskService = taskService;
+        this.taskDescriptorService = taskDescriptorService;
         this.securityService = securityService;
         this.clusterService = clusterService;
         this.schedulingCoordinator = schedulingCoordinator;
@@ -129,6 +136,7 @@ public final class RescheduleTask
             knownJobs = jobNames;
         }
         runStates.keySet().retainAll( jobNames );
+        dormantJobs.retainAll( jobNames );
         failedSubmits.keySet()
             .retainAll( entries.stream().map( ScheduledJobEntry::job ).filter( ScheduledJob::isEnabled ).map( ScheduledJob::getName )
                             .collect( Collectors.toSet() ) );
@@ -190,6 +198,26 @@ public final class RescheduleTask
     private void submit( final ScheduledJobEntry entry, final Instant now )
     {
         final ScheduledJob job = entry.job();
+
+        // the descriptor may exist only on another member - applications can be installed per node,
+        // and the task is routed to a member that runs the application
+        if ( taskDescriptorService.getTask( job.getDescriptor() ) == null &&
+            !clusterService.hasApplication( job.getDescriptor().getApplicationKey() ) )
+        {
+            // the application is not started (yet) or no longer provides the task - the job lies
+            // dormant without failing and fires as soon as the descriptor is available again
+            if ( dormantJobs.add( job.getName() ) )
+            {
+                LOG.warn( "Task descriptor [{}] of job [{}] not found - the job is dormant until an application provides it",
+                          job.getDescriptor(), job.getName() );
+            }
+            return;
+        }
+        if ( dormantJobs.remove( job.getName() ) )
+        {
+            LOG.info( "Task descriptor [{}] of job [{}] is available again", job.getDescriptor(), job.getName() );
+        }
+
         final String previousTaskId = previousTaskId( entry );
 
         if ( previousTaskId != null && !previousTaskDone( previousTaskId ) )

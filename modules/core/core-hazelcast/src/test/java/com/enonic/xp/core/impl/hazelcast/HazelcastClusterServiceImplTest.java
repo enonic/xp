@@ -143,6 +143,44 @@ class HazelcastClusterServiceImplTest
         assertTrue( clusterService.isLeader( appKey ) );
     }
 
+    @Test
+    void hasApplication_someMemberHasApp()
+    {
+        final UUID member1Uuid = UUID.randomUUID();
+        final UUID member2Uuid = UUID.randomUUID();
+
+        final Member member1 = mockMember( member1Uuid );
+        final Member member2 = mockMember( member2Uuid );
+
+        when( hazelcastInstance.getCluster().getMembers() ).thenReturn( orderedSet( member1, member2 ) );
+
+        final ApplicationKey appKey = ApplicationKey.from( "com.example.myapp" );
+        final ReplicatedMap<UUID, Map<String, String>> replicatedMap = mockReplicatedMap();
+        when( replicatedMap.get( member1Uuid ) ).thenReturn( null );
+        when( replicatedMap.get( member2Uuid ) ).thenReturn( Map.of( "application-com.example.myapp", "true" ) );
+
+        assertTrue( clusterService.hasApplication( appKey ) );
+    }
+
+    @Test
+    void hasApplication_noMemberHasApp()
+    {
+        final UUID member1Uuid = UUID.randomUUID();
+        final UUID member2Uuid = UUID.randomUUID();
+
+        final Member member1 = mockMember( member1Uuid );
+        final Member member2 = mockMember( member2Uuid );
+
+        when( hazelcastInstance.getCluster().getMembers() ).thenReturn( orderedSet( member1, member2 ) );
+
+        final ApplicationKey appKey = ApplicationKey.from( "com.example.myapp" );
+        final ReplicatedMap<UUID, Map<String, String>> replicatedMap = mockReplicatedMap();
+        when( replicatedMap.get( member1Uuid ) ).thenReturn( Map.of( "application-com.example.otherapp", "true" ) );
+        when( replicatedMap.get( member2Uuid ) ).thenReturn( null );
+
+        assertFalse( clusterService.hasApplication( appKey ) );
+    }
+
     @SuppressWarnings("unchecked")
     private ReplicatedMap<UUID, Map<String, String>> mockReplicatedMap()
     {

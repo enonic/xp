@@ -48,6 +48,8 @@ import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.impl.scheduler.distributed.FixedDelayCalendarImpl;
 import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskDescriptor;
+import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
@@ -84,6 +86,9 @@ class RescheduleTaskTest
     private TaskService taskService;
 
     @Mock
+    private TaskDescriptorService taskDescriptorService;
+
+    @Mock
     private NodeService nodeService;
 
     @Mock
@@ -103,10 +108,11 @@ class RescheduleTaskTest
     {
         clock = new MutableClock( NOW );
         schedulingCoordinator = new SchedulingCoordinatorImpl( mock( ClusterConfig.class ) );
-        task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
-                                   clock );
+        task = new RescheduleTask( schedulerService, nodeService, taskService, taskDescriptorService, securityService, clusterService,
+                                   schedulingCoordinator, clock );
 
         when( clusterService.isLeader() ).thenReturn( true );
+        when( taskDescriptorService.getTask( isA( DescriptorKey.class ) ) ).thenReturn( mock( TaskDescriptor.class ) );
         when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( mockNode() );
         when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( mockNode() );
     }
@@ -517,6 +523,41 @@ class RescheduleTaskTest
 
         assertEquals( 1, seenAttributes.size() );
         assertNull( seenAttributes.get( 0 ) );
+    }
+
+    @Test
+    void jobDormantWhileDescriptorMissing()
+    {
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+        when( taskDescriptorService.getTask( isA( DescriptorKey.class ) ) ).thenReturn( null );
+
+        task.run();
+        task.run();
+
+        // no submission, no failure, nothing recorded - the occurrence stays pending
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+        assertNull( schedulingCoordinator.plannedRun( ScheduledJobName.from( "job1" ) ) );
+
+        // the application arrives - the pending occurrence fires
+        when( taskDescriptorService.getTask( isA( DescriptorKey.class ) ) ).thenReturn( mock( TaskDescriptor.class ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void jobNotDormantWhenAnotherMemberRunsTheApplication()
+    {
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+        when( taskDescriptorService.getTask( isA( DescriptorKey.class ) ) ).thenReturn( null );
+        when( clusterService.hasApplication( isA( ApplicationKey.class ) ) ).thenReturn( true );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
     }
 
     @Test

@@ -30,6 +30,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
@@ -44,6 +45,8 @@ public final class SchedulerServiceActivator
     private final NodeService nodeService;
 
     private final TaskService taskService;
+
+    private final TaskDescriptorService taskDescriptorService;
 
     private final SecurityService securityService;
 
@@ -62,7 +65,9 @@ public final class SchedulerServiceActivator
     @Activate
     public SchedulerServiceActivator( @Reference final InternalRepositoryService repositoryService,
                                       @Reference final IndexService indexService, @Reference final NodeService nodeService,
-                                      @Reference final TaskService taskService, @Reference final SecurityService securityService,
+                                      @Reference final TaskService taskService,
+                                      @Reference final TaskDescriptorService taskDescriptorService,
+                                      @Reference final SecurityService securityService,
                                       @Reference(target = "(local=true)") final ClusterService clusterService,
                                       @Reference final SchedulingCoordinator schedulingCoordinator,
                                       @Reference final SchedulerConfig schedulerConfig,
@@ -72,6 +77,7 @@ public final class SchedulerServiceActivator
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.taskService = taskService;
+        this.taskDescriptorService = taskDescriptorService;
         this.securityService = securityService;
         this.clusterService = clusterService;
         this.schedulingCoordinator = schedulingCoordinator;
@@ -102,8 +108,8 @@ public final class SchedulerServiceActivator
 
         ticker = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryImpl( "system-scheduler-thread-%d" ) );
         ticker.scheduleWithFixedDelay(
-            new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
-                                Clock.systemUTC() ), 0, 1, TimeUnit.SECONDS );
+            new RescheduleTask( schedulerService, nodeService, taskService, taskDescriptorService, securityService, clusterService,
+                                schedulingCoordinator, Clock.systemUTC() ), 0, 1, TimeUnit.SECONDS );
     }
 
     private void createConfigJobs( final SchedulerService schedulerService )
