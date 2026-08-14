@@ -7,6 +7,8 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +39,6 @@ import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
-import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
@@ -72,7 +73,7 @@ class RescheduleTaskTest
     ArgumentCaptor<AuthenticationToken> tokenCaptor;
 
     @Mock
-    private SchedulerService schedulerService;
+    private SchedulerServiceImpl schedulerService;
 
     @Mock
     private TaskService taskService;
@@ -104,10 +105,22 @@ class RescheduleTaskTest
         when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( mockNode() );
     }
 
+    private void mockJobs( final ScheduledJob... jobs )
+    {
+        final List<ScheduledJobEntry> entries =
+            Stream.of( jobs ).map( job -> new ScheduledJobEntry( job, new NodeVersionId() ) ).collect( Collectors.toList() );
+        when( schedulerService.listEntries() ).thenReturn( entries );
+        for ( final ScheduledJob job : jobs )
+        {
+            when( schedulerService.get( job.getName() ) ).thenReturn( job );
+        }
+    }
+
     @Test
     void submitOldOneTimeTask()
     {
-        mockJobs();
+        mockJobs( cronJob( "task1", "* * * * *", null ), cronJob( "task2", "* * * * *", null ),
+                  oneTimeJob( "task3", NOW.minusSeconds( 1 ) ), cronJob( "task4", "* * * * *", null ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "123" ) );
 
         task.run();
@@ -119,11 +132,7 @@ class RescheduleTaskTest
     @Test
     void submitInOrder()
     {
-        final ScheduledJob job1 = oneTimeJob( "job-1", NOW.minusSeconds( 2 ) );
-        final ScheduledJob job2 = oneTimeJob( "job-2", NOW );
-        final ScheduledJob job3 = oneTimeJob( "job-3", NOW.minusSeconds( 1 ) );
-
-        when( schedulerService.list() ).thenReturn( List.of( job1, job2, job3 ) );
+        mockJobs( oneTimeJob( "job-1", NOW.minusSeconds( 2 ) ), oneTimeJob( "job-2", NOW ), oneTimeJob( "job-3", NOW.minusSeconds( 1 ) ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) )
             .thenReturn( TaskId.from( "2" ) )
             .thenReturn( TaskId.from( "3" ) );
@@ -140,10 +149,7 @@ class RescheduleTaskTest
     @Test
     void jobSubmitFailedButRetried()
     {
-        final ScheduledJob job1 = oneTimeJob( "job1", NOW.minusSeconds( 1 ) );
-        final ScheduledJob job2 = oneTimeJob( "job2", NOW );
-
-        when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ), oneTimeJob( "job2", NOW ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( RuntimeException.class )
             .thenReturn( TaskId.from( "1" ) )
             .thenReturn( TaskId.from( "2" ) );
@@ -152,9 +158,7 @@ class RescheduleTaskTest
 
         verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
 
-        // job2 has run; job1 is still due and is retried on the next tick
-        when( schedulerService.list() ).thenReturn( List.of( job1, oneTimeJob( "job2", NOW, NOW ) ) );
-
+        // job2 has run and is marked in the coordinator; job1 is still due and is retried on the next tick
         task.run();
 
         verify( taskService, times( 3 ) ).submitTask( taskCaptor.capture() );
@@ -166,9 +170,7 @@ class RescheduleTaskTest
     @Test
     void jobSubmitFailedWithError()
     {
-        final ScheduledJob job1 = oneTimeJob( "job1", NOW.minusSeconds( 1 ) );
-
-        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new Error() ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
@@ -185,9 +187,7 @@ class RescheduleTaskTest
     @Test
     void retryFailedMultipleTimes()
     {
-        final ScheduledJob job1 = oneTimeJob( "job1", NOW.minusSeconds( 1 ) );
-
-        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new RuntimeException() );
 
         for ( int i = 0; i <= 10; i++ )
@@ -207,9 +207,8 @@ class RescheduleTaskTest
     void submitJobAsUser()
     {
         final PrincipalKey user = PrincipalKey.ofUser( IdProviderKey.system(), "my-user" );
-        final ScheduledJob job1 = oneTimeJob( "job1", NOW.minusSeconds( 1 ), null, user );
 
-        when( schedulerService.list() ).thenReturn( List.of( job1 ) );
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ), null, user ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
         when( securityService.authenticate( tokenCaptor.capture() ) ).thenReturn( mock( AuthenticationInfo.class ) );
 
@@ -222,10 +221,8 @@ class RescheduleTaskTest
     @Test
     void submitCronJob()
     {
-        final ScheduledJob job1 = cronJob( "job1", "* * * * *", Instant.parse( "2021-02-26T10:44:33.170079900Z" ) );
-        final ScheduledJob job2 = cronJob( "job2", "* * * * *", NOW );
-
-        when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
+        mockJobs( cronJob( "job1", "* * * * *", Instant.parse( "2021-02-26T10:44:33.170079900Z" ) ),
+                  cronJob( "job2", "* * * * *", NOW ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
@@ -237,17 +234,14 @@ class RescheduleTaskTest
     @Test
     void jobWasRemoved()
     {
-        final ScheduledJob job1 = cronJob( "job1", "* * * * *", null );
-        final ScheduledJob job2 = cronJob( "job2", "* * * * *", null );
-
-        when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
+        mockJobs( cronJob( "job1", "* * * * *", null ), cronJob( "job2", "* * * * *", null ) );
 
         task.run();
 
         verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
 
         clock.plusSeconds( 61 );
-        when( schedulerService.list() ).thenReturn( List.of( job2 ) );
+        mockJobs( cronJob( "job2", "* * * * *", null ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
@@ -259,17 +253,15 @@ class RescheduleTaskTest
     @Test
     void jobWasModified()
     {
-        final ScheduledJob job = cronJob( "job1", "1 1 1 1 1", null );
-
-        when( schedulerService.list() ).thenReturn( List.of( job ) );
+        mockJobs( cronJob( "job1", "1 1 1 1 1", null ) );
 
         task.run();
 
         verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
 
-        // modify clears lastRun and bumps modifiedTime; the coordinator forgets the planned run
-        schedulingCoordinator.forget( job.getName() );
-        when( schedulerService.list() ).thenReturn( List.of( cronJob( "job1", "* * * * *", null ) ) );
+        // modify clears lastRun and creates a new node version; the coordinator forgets the planned run
+        schedulingCoordinator.forget( ScheduledJobName.from( "job1" ) );
+        mockJobs( cronJob( "job1", "* * * * *", null ) );
 
         task.run();
 
@@ -291,7 +283,7 @@ class RescheduleTaskTest
 
         task.run();
 
-        verify( schedulerService, never() ).list();
+        verify( schedulerService, never() ).listEntries();
     }
 
     @Test
@@ -312,7 +304,7 @@ class RescheduleTaskTest
 
         final ScheduledJob job = jobBuilder( "job1", calendar ).modifiedTime( modifiedTime ).build();
 
-        when( schedulerService.list() ).thenReturn( List.of( job ) );
+        mockJobs( job );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
@@ -332,7 +324,7 @@ class RescheduleTaskTest
         final ScheduledJob neverRan =
             jobBuilder( "never-ran", cronCalendar( "0 * * * *" ) ).modifiedTime( Instant.parse( "2026-01-01T10:30:00Z" ) ).build();
 
-        when( schedulerService.list() ).thenReturn( List.of( ranBefore, neverRan ) );
+        mockJobs( ranBefore, neverRan );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
@@ -345,10 +337,17 @@ class RescheduleTaskTest
     {
         clock.set( Instant.parse( "2026-01-01T10:45:00Z" ) );
 
-        final ScheduledJob neverRan =
-            jobBuilder( "never-ran", cronCalendar( "0 * * * *" ) ).modifiedTime( Instant.parse( "2026-01-01T10:30:00Z" ) ).build();
+        mockJobs( jobBuilder( "never-ran", cronCalendar( "0 * * * *" ) ).modifiedTime( Instant.parse( "2026-01-01T10:30:00Z" ) ).build() );
 
-        when( schedulerService.list() ).thenReturn( List.of( neverRan ) );
+        task.run();
+
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void neverRunCronJobWithoutModifiedTimeNotDue()
+    {
+        mockJobs( jobBuilder( "job1", cronCalendar( "* * * * *" ) ).modifiedTime( null ).createdTime( null ).build() );
 
         task.run();
 
@@ -358,9 +357,7 @@ class RescheduleTaskTest
     @Test
     void oneTimeJobNotResubmittedWhenRecordingRunFails()
     {
-        final ScheduledJob job = oneTimeJob( "job1", NOW.minusSeconds( 1 ) );
-
-        when( schedulerService.list() ).thenReturn( List.of( job ) );
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
         when( nodeService.applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) ) ).thenThrow( new RuntimeException() );
 
@@ -373,14 +370,25 @@ class RescheduleTaskTest
     @Test
     void disabledJobNotSubmitted()
     {
-        final ScheduledJob job = jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() )
-            .enabled( false )
-            .build();
-
-        when( schedulerService.list() ).thenReturn( List.of( job ) );
+        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).enabled( false ).build() );
 
         task.run();
 
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void runStateFetchedOncePerJobVersion()
+    {
+        final ScheduledJob job = cronJob( "job1", "* * * * *", NOW );
+
+        mockJobs( job );
+
+        task.run();
+        task.run();
+        task.run();
+
+        verify( schedulerService, times( 1 ) ).get( job.getName() );
         verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
     }
 
@@ -406,56 +414,29 @@ class RescheduleTaskTest
     @Test
     void schedulerServiceFailureDoesNotStopTicking()
     {
-        when( schedulerService.list() ).thenThrow( new RuntimeException() );
+        when( schedulerService.listEntries() ).thenThrow( new RuntimeException() );
 
         for ( int i = 0; i < 10; i++ )
         {
             task.run();
         }
 
-        verify( schedulerService, times( 10 ) ).list();
+        verify( schedulerService, times( 10 ) ).listEntries();
     }
 
     @Test
     void tickErrorDoesNotPropagate()
     {
-        when( schedulerService.list() ).thenThrow( new Error() );
+        when( schedulerService.listEntries() ).thenThrow( new Error() );
 
         task.run();
 
-        verify( schedulerService, times( 1 ) ).list();
-    }
-
-    @Test
-    void neverRunCronJobWithoutModifiedTimeNotDue()
-    {
-        final ScheduledJob job = jobBuilder( "job1", cronCalendar( "* * * * *" ) ).modifiedTime( null ).createdTime( null ).build();
-
-        when( schedulerService.list() ).thenReturn( List.of( job ) );
-
-        task.run();
-
-        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
-    }
-
-    private void mockJobs()
-    {
-        final ScheduledJob job1 = cronJob( "task1", "* * * * *", null );
-        final ScheduledJob job2 = cronJob( "task2", "* * * * *", null );
-        final ScheduledJob job3 = oneTimeJob( "task3", NOW.minusSeconds( 1 ) );
-        final ScheduledJob job4 = cronJob( "task4", "* * * * *", null );
-
-        when( schedulerService.list() ).thenReturn( List.of( job1, job2, job3, job4 ) );
+        verify( schedulerService, times( 1 ) ).listEntries();
     }
 
     private ScheduledJob oneTimeJob( final String name, final Instant value )
     {
         return oneTimeJob( name, value, null, null );
-    }
-
-    private ScheduledJob oneTimeJob( final String name, final Instant value, final Instant lastRun )
-    {
-        return oneTimeJob( name, value, lastRun, null );
     }
 
     private ScheduledJob oneTimeJob( final String name, final Instant value, final Instant lastRun, final PrincipalKey user )

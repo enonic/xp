@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,12 +19,12 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
-import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
@@ -44,7 +45,7 @@ public final class RescheduleTask
 
     private static final int FAILED_TICKS_TO_WARN = 10;
 
-    private final SchedulerService schedulerService;
+    private final SchedulerServiceImpl schedulerService;
 
     private final NodeService nodeService;
 
@@ -60,11 +61,13 @@ public final class RescheduleTask
 
     private final Map<ScheduledJobName, Integer> failedSubmits = new HashMap<>();
 
+    private final Map<ScheduledJobName, RunState> runStates = new HashMap<>();
+
     private Set<ScheduledJobName> knownJobs = Set.of();
 
     private int failedTicks;
 
-    public RescheduleTask( final SchedulerService schedulerService, final NodeService nodeService, final TaskService taskService,
+    public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
                            final SecurityService securityService, final ClusterService clusterService,
                            final SchedulingCoordinator schedulingCoordinator, final Clock clock )
     {
@@ -111,41 +114,66 @@ public final class RescheduleTask
     {
         final Instant now = Instant.now( clock );
 
-        final List<ScheduledJob> jobs = adminContext().callWith( schedulerService::list );
+        // run state (lastRun) is deliberately not fetched here: the coordinator and the version-keyed
+        // run-state memo make one version read per job suffice, instead of one per job every tick
+        final List<ScheduledJobEntry> entries = adminContext().callWith( schedulerService::listEntries );
 
-        final Set<ScheduledJobName> jobNames = jobs.stream().map( ScheduledJob::getName ).collect( Collectors.toSet() );
+        final Set<ScheduledJobName> jobNames =
+            entries.stream().map( entry -> entry.job().getName() ).collect( Collectors.toSet() );
         if ( !jobNames.equals( knownJobs ) )
         {
             schedulingCoordinator.retain( jobNames );
             knownJobs = jobNames;
         }
+        runStates.keySet().retainAll( jobNames );
         failedSubmits.keySet()
-            .retainAll( jobs.stream().filter( ScheduledJob::isEnabled ).map( ScheduledJob::getName ).collect( Collectors.toSet() ) );
+            .retainAll( entries.stream().map( ScheduledJobEntry::job ).filter( ScheduledJob::isEnabled ).map( ScheduledJob::getName )
+                            .collect( Collectors.toSet() ) );
 
-        jobs.stream()
-            .filter( ScheduledJob::isEnabled )
-            .flatMap( job -> dueTime( job, now ).map( dueTime -> Map.entry( dueTime, job ) ).stream() )
+        entries.stream()
+            .filter( entry -> entry.job().isEnabled() )
+            .flatMap( entry -> dueTime( entry, now ).map( dueTime -> Map.entry( dueTime, entry ) ).stream() )
             .sorted( Map.Entry.comparingByKey() )
             .forEach( entry -> submit( entry.getValue(), now ) );
     }
 
-    private Optional<Instant> dueTime( final ScheduledJob job, final Instant now )
+    private Optional<Instant> dueTime( final ScheduledJobEntry entry, final Instant now )
     {
+        final ScheduledJob job = entry.job();
         final Instant dueTime;
         if ( job.getCalendar().getType() == ScheduleCalendarType.ONE_TIME )
         {
-            dueTime = job.getLastRun() == null && schedulingCoordinator.nextRun( job.getName() ) == null
+            dueTime = schedulingCoordinator.nextRun( job.getName() ) == null && lastRun( entry ) == null
                 ? ( (OneTimeCalendar) job.getCalendar() ).getValue()
                 : null;
         }
         else
         {
             final Instant plannedNextRun = schedulingCoordinator.nextRun( job.getName() );
-            dueTime = plannedNextRun != null ? plannedNextRun : job.getCalendar()
-                .nextExecution( job.getLastRun() != null ? job.getLastRun() : baseline( job, now ) )
-                .orElse( null );
+            if ( plannedNextRun != null )
+            {
+                dueTime = plannedNextRun;
+            }
+            else
+            {
+                final Instant lastRun = lastRun( entry );
+                dueTime = job.getCalendar().nextExecution( lastRun != null ? lastRun : baseline( job, now ) ).orElse( null );
+            }
         }
         return dueTime != null && !dueTime.isAfter( now ) ? Optional.of( dueTime ) : Optional.empty();
+    }
+
+    private Instant lastRun( final ScheduledJobEntry entry )
+    {
+        final ScheduledJobName name = entry.job().getName();
+        RunState runState = runStates.get( name );
+        if ( runState == null || !Objects.equals( runState.versionId(), entry.versionId() ) )
+        {
+            final ScheduledJob fetched = adminContext().callWith( () -> schedulerService.get( name ) );
+            runState = new RunState( entry.versionId(), fetched != null ? fetched.getLastRun() : null );
+            runStates.put( name, runState );
+        }
+        return runState.lastRun();
     }
 
     private static Instant baseline( final ScheduledJob job, final Instant now )
@@ -153,8 +181,9 @@ public final class RescheduleTask
         return job.getModifiedTime() != null ? job.getModifiedTime() : now;
     }
 
-    private void submit( final ScheduledJob job, final Instant now )
+    private void submit( final ScheduledJobEntry entry, final Instant now )
     {
+        final ScheduledJob job = entry.job();
         final TaskId taskId;
         try
         {
@@ -167,7 +196,7 @@ public final class RescheduleTask
             if ( attempts > MAX_SUBMIT_ATTEMPTS )
             {
                 failedSubmits.remove( job.getName() );
-                recordRun( job, now, null );
+                recordRun( entry, now, null );
                 LOG.error( "Error while running job [{}], no further attempts will be made", job.getName(), e );
             }
             else
@@ -179,21 +208,23 @@ public final class RescheduleTask
         catch ( Throwable e )
         {
             failedSubmits.remove( job.getName() );
-            recordRun( job, now, null );
+            recordRun( entry, now, null );
             LOG.error( "Error while running job [{}], no further attempts will be made", job.getName(), e );
             return;
         }
 
         failedSubmits.remove( job.getName() );
-        recordRun( job, now, taskId );
+        recordRun( entry, now, taskId );
     }
 
-    private void recordRun( final ScheduledJob job, final Instant now, final TaskId taskId )
+    private void recordRun( final ScheduledJobEntry entry, final Instant now, final TaskId taskId )
     {
+        final ScheduledJob job = entry.job();
         // for cron jobs the shared value plans the next execution; for one-time jobs it marks the only execution as submitted
         schedulingCoordinator.nextRun( job.getName(), job.getCalendar().getType() == ScheduleCalendarType.CRON
             ? nextExecutionAfter( job.getCalendar(), now )
             : now );
+        runStates.put( job.getName(), new RunState( entry.versionId(), now ) );
         try
         {
             adminContext().runWith( () -> UpdateLastRunCommand.create()
@@ -240,5 +271,9 @@ public final class RescheduleTask
             securityService.authenticate( new VerifiedUsernameAuthToken( user.getIdProviderKey(), user.getId() ) );
 
         return ContextBuilder.from( ContextAccessor.current() ).authInfo( authInfo ).build();
+    }
+
+    private record RunState(NodeVersionId versionId, Instant lastRun)
+    {
     }
 }

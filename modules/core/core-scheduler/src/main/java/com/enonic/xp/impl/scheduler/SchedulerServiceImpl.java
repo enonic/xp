@@ -90,4 +90,17 @@ public class SchedulerServiceImpl
             build().
             execute();
     }
+
+    /**
+     * Lists jobs without fetching run metadata from node versions.
+     * Used by the scheduling tick, which tracks run state via {@link SchedulingCoordinator}
+     * and a per-job memo keyed by the returned node version id.
+     */
+    List<ScheduledJobEntry> listEntries()
+    {
+        return ListScheduledJobEntriesCommand.create().
+            nodeService( nodeService ).
+            build().
+            execute();
+    }
 }
