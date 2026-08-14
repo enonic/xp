@@ -173,9 +173,9 @@ class RescheduleTaskTest
 
         task.run();
 
+        // the run is recorded right away, without retries
         verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
-
-        when( schedulerService.list() ).thenReturn( List.of( oneTimeJob( "job1", NOW.minusSeconds( 1 ), NOW ) ) );
+        verify( nodeService, times( 1 ) ).applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) );
 
         task.run();
 
@@ -198,9 +198,9 @@ class RescheduleTaskTest
         verify( taskService, times( 11 ) ).submitTask( isA( SubmitTaskParams.class ) );
         verify( nodeService, times( 1 ) ).applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) );
 
-        // the run is recorded, but the mocked job still reports no lastRun, so a new retry round starts
+        // the give-up is recorded - no further attempts even though the job list still reports no lastRun
         task.run();
-        verify( taskService, times( 12 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        verify( taskService, times( 11 ) ).submitTask( isA( SubmitTaskParams.class ) );
     }
 
     @Test
@@ -353,6 +353,21 @@ class RescheduleTaskTest
         task.run();
 
         verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void oneTimeJobNotResubmittedWhenRecordingRunFails()
+    {
+        final ScheduledJob job = oneTimeJob( "job1", NOW.minusSeconds( 1 ) );
+
+        when( schedulerService.list() ).thenReturn( List.of( job ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+        when( nodeService.applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) ) ).thenThrow( new RuntimeException() );
+
+        task.run();
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
     }
 
     @Test

@@ -14,6 +14,7 @@ public interface SchedulingCoordinator
     /**
      * Planned time of the next execution of a job, or null when not known
      * (never run since the coordinator state was created, or state was lost).
+     * For a one-time job a non-null value means its only execution was already submitted.
      */
     Instant nextRun( ScheduledJobName name );
 

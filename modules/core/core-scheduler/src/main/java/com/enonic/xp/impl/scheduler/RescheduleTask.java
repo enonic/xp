@@ -126,7 +126,9 @@ public final class RescheduleTask
         final Instant dueTime;
         if ( job.getCalendar().getType() == ScheduleCalendarType.ONE_TIME )
         {
-            dueTime = job.getLastRun() == null ? ( (OneTimeCalendar) job.getCalendar() ).getValue() : null;
+            dueTime = job.getLastRun() == null && schedulingCoordinator.nextRun( job.getName() ) == null
+                ? ( (OneTimeCalendar) job.getCalendar() ).getValue()
+                : null;
         }
         else
         {
@@ -168,6 +170,8 @@ public final class RescheduleTask
         }
         catch ( Throwable e )
         {
+            failedSubmits.remove( job.getName() );
+            recordRun( job, now, null );
             LOG.error( "Error while running job [{}], no further attempts will be made", job.getName(), e );
             return;
         }
@@ -178,10 +182,10 @@ public final class RescheduleTask
 
     private void recordRun( final ScheduledJob job, final Instant now, final TaskId taskId )
     {
-        if ( job.getCalendar().getType() == ScheduleCalendarType.CRON )
-        {
-            schedulingCoordinator.nextRun( job.getName(), nextExecutionAfter( job.getCalendar(), now ) );
-        }
+        // for cron jobs the shared value plans the next execution; for one-time jobs it marks the only execution as submitted
+        schedulingCoordinator.nextRun( job.getName(), job.getCalendar().getType() == ScheduleCalendarType.CRON
+            ? nextExecutionAfter( job.getCalendar(), now )
+            : now );
         try
         {
             adminContext().runWith( () -> UpdateLastRunCommand.create()
