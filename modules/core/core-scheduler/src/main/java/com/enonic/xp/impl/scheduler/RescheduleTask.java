@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -59,6 +60,8 @@ public final class RescheduleTask
 
     private final Map<ScheduledJobName, Integer> failedSubmits = new HashMap<>();
 
+    private Set<ScheduledJobName> knownJobs = Set.of();
+
     private int failedTicks;
 
     public RescheduleTask( final SchedulerService schedulerService, final NodeService nodeService, final TaskService taskService,
@@ -110,7 +113,12 @@ public final class RescheduleTask
 
         final List<ScheduledJob> jobs = adminContext().callWith( schedulerService::list );
 
-        schedulingCoordinator.retain( jobs.stream().map( ScheduledJob::getName ).collect( Collectors.toSet() ) );
+        final Set<ScheduledJobName> jobNames = jobs.stream().map( ScheduledJob::getName ).collect( Collectors.toSet() );
+        if ( !jobNames.equals( knownJobs ) )
+        {
+            schedulingCoordinator.retain( jobNames );
+            knownJobs = jobNames;
+        }
         failedSubmits.keySet()
             .retainAll( jobs.stream().filter( ScheduledJob::isEnabled ).map( ScheduledJob::getName ).collect( Collectors.toSet() ) );
 

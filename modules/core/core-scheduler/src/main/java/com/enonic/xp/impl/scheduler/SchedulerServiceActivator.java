@@ -96,9 +96,9 @@ public final class SchedulerServiceActivator
 
         SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
-
         createConfigJobs( schedulerService );
+
+        this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 
         ticker = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryImpl( "system-scheduler-thread-%d" ) );
         ticker.scheduleWithFixedDelay(
