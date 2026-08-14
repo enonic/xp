@@ -13,11 +13,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
+import com.enonic.xp.node.EditableNode;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.task.TaskId;
@@ -27,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,13 +43,16 @@ class UpdateLastRunCommandTest
     @Captor
     private ArgumentCaptor<ApplyVersionAttributesParams> captor;
 
+    @Captor
+    private ArgumentCaptor<UpdateNodeParams> updateCaptor;
+
     @Test
     void updateLastRunAttributes()
     {
         final TaskId lastTaskId = TaskId.from( "task-id" );
         final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
 
-        final Node node = mockNode();
+        final Node node = mockNode( ScheduleCalendarType.CRON );
         node.data().setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun.minusSeconds( 1 ) );
         node.data().setString( ScheduledJobPropertyNames.LAST_TASK_ID, "old-task-id" );
         when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( node );
@@ -80,7 +87,7 @@ class UpdateLastRunCommandTest
     {
         final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
 
-        final Node node = mockNode();
+        final Node node = mockNode( ScheduleCalendarType.CRON );
         node.data().setString( ScheduledJobPropertyNames.LAST_TASK_ID, "old-task-id" );
         when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( node );
         when( nodeService.applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) ) ).thenAnswer(
@@ -106,13 +113,46 @@ class UpdateLastRunCommandTest
         assertNull( scheduledJob.getLastTaskId() );
     }
 
-    private Node mockNode()
+    @Test
+    void oneTimeLastRunStoredInNodeData()
+    {
+        final TaskId lastTaskId = TaskId.from( "task-id" );
+        final Instant lastRun = Instant.parse( "2021-02-25T10:44:33.170079900Z" );
+
+        final Node node = mockNode( ScheduleCalendarType.ONE_TIME );
+        when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( node );
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( node );
+
+        UpdateLastRunCommand.create().
+            name( ScheduledJobName.from( "job" ) ).
+            lastTaskId( lastTaskId ).
+            lastRun( lastRun ).
+            nodeService( nodeService ).
+            build().
+            execute();
+
+        verify( nodeService ).update( updateCaptor.capture() );
+        verify( nodeService, never() ).applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) );
+
+        final EditableNode editableNode = new EditableNode( node );
+        updateCaptor.getValue().getEditor().edit( editableNode );
+
+        assertEquals( lastRun, editableNode.data.getProperty( ScheduledJobPropertyNames.LAST_RUN ).getInstant() );
+        assertEquals( lastTaskId.toString(), editableNode.data.getProperty( ScheduledJobPropertyNames.LAST_TASK_ID ).getString() );
+    }
+
+    private Node mockNode( final ScheduleCalendarType calendarType )
     {
         final PropertyTree jobData = new PropertyTree();
 
         final PropertySet calendar = jobData.newSet();
-        calendar.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, "ONE_TIME" );
-        calendar.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, "2021-02-25T10:44:33.170079900Z" );
+        calendar.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, calendarType.name() );
+        calendar.addString( ScheduledJobPropertyNames.CALENDAR_VALUE,
+                            calendarType == ScheduleCalendarType.CRON ? "* * * * *" : "2021-02-25T10:44:33.170079900Z" );
+        if ( calendarType == ScheduleCalendarType.CRON )
+        {
+            calendar.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, "UTC" );
+        }
 
         jobData.addString( ScheduledJobPropertyNames.DESCRIPTOR, "app:key" );
         jobData.addBoolean( ScheduledJobPropertyNames.ENABLED, true );

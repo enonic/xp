@@ -3,6 +3,7 @@ package com.enonic.xp.impl.scheduler;
 import java.time.Instant;
 import java.util.Set;
 
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.Attributes;
@@ -10,6 +11,9 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.task.TaskId;
@@ -52,6 +56,23 @@ public class UpdateLastRunCommand
             throw new NodeNotFoundException( "Node not found: " + path );
         }
 
+        if ( isOneTime( node ) )
+        {
+            // a one-time job's lastRun is a tombstone that must survive node version changes
+            // (export/import, direct node edits), so it is stored in node data; the job runs
+            // once, so the single node version this creates causes no version churn (#12271)
+            final Node updatedNode = nodeService.update( UpdateNodeParams.create().
+                id( node.id() ).
+                editor( toBeEdited -> {
+                    toBeEdited.data.setInstant( ScheduledJobPropertyNames.LAST_RUN, lastRun );
+                    toBeEdited.data.setString( ScheduledJobPropertyNames.LAST_TASK_ID, lastTaskId != null ? lastTaskId.toString() : null );
+                } ).
+                refresh( RefreshMode.ALL ).
+                build() );
+
+            return SchedulerSerializer.fromNode( updatedNode );
+        }
+
         final Attributes updatedAttributes = nodeService.applyVersionAttributes( ApplyVersionAttributesParams.create().
             nodeVersionId( node.getNodeVersionId() ).
             addAttributes( SchedulerSerializer.toLastRunAttributes( lastRun, lastTaskId ) ).
@@ -59,6 +80,13 @@ public class UpdateLastRunCommand
             build() );
 
         return SchedulerSerializer.fromNode( node, updatedAttributes );
+    }
+
+    private static boolean isOneTime( final Node node )
+    {
+        final PropertySet calendar = node.data().getRoot().getSet( ScheduledJobPropertyNames.CALENDAR );
+        return calendar != null &&
+            ScheduleCalendarType.ONE_TIME.name().equals( calendar.getString( ScheduledJobPropertyNames.CALENDAR_TYPE ) );
     }
 
     public static final class Builder

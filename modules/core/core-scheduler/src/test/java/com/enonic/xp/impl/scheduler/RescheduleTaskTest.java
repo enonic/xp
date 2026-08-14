@@ -28,12 +28,12 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
-import com.enonic.xp.node.ApplyVersionAttributesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -103,6 +103,7 @@ class RescheduleTaskTest
 
         when( clusterService.isLeader() ).thenReturn( true );
         when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( mockNode() );
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( mockNode() );
     }
 
     private void mockJobs( final ScheduledJob... jobs )
@@ -177,7 +178,7 @@ class RescheduleTaskTest
 
         // the run is recorded right away, without retries
         verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
-        verify( nodeService, times( 1 ) ).applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) );
+        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
 
         task.run();
 
@@ -196,7 +197,7 @@ class RescheduleTaskTest
         }
 
         verify( taskService, times( 11 ) ).submitTask( isA( SubmitTaskParams.class ) );
-        verify( nodeService, times( 1 ) ).applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) );
+        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
 
         // the give-up is recorded - no further attempts even though the job list still reports no lastRun
         task.run();
@@ -359,7 +360,7 @@ class RescheduleTaskTest
     {
         mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
-        when( nodeService.applyVersionAttributes( isA( ApplyVersionAttributesParams.class ) ) ).thenThrow( new RuntimeException() );
+        when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenThrow( new RuntimeException() );
 
         task.run();
         task.run();
@@ -374,6 +375,18 @@ class RescheduleTaskTest
 
         task.run();
 
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void cronJobToleratesMissingRunStateFetch()
+    {
+        final ScheduledJob job = cronJob( "job1", "* * * * *", null );
+        when( schedulerService.listEntries() ).thenReturn( List.of( new ScheduledJobEntry( job, new NodeVersionId() ) ) );
+
+        task.run();
+
+        verify( schedulerService, times( 1 ) ).get( job.getName() );
         verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
     }
 

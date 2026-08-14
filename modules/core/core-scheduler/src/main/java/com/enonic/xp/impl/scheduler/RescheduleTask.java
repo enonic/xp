@@ -143,7 +143,9 @@ public final class RescheduleTask
         final Instant dueTime;
         if ( job.getCalendar().getType() == ScheduleCalendarType.ONE_TIME )
         {
-            dueTime = schedulingCoordinator.nextRun( job.getName() ) == null && lastRun( entry ) == null
+            // a one-time job's lastRun tombstone lives in node data (#12271), so the listed job
+            // carries it; the coordinator covers the window until the tombstone is persisted
+            dueTime = schedulingCoordinator.nextRun( job.getName() ) == null && job.getLastRun() == null
                 ? ( (OneTimeCalendar) job.getCalendar() ).getValue()
                 : null;
         }
@@ -221,10 +223,12 @@ public final class RescheduleTask
     {
         final ScheduledJob job = entry.job();
         // for cron jobs the shared value plans the next execution; for one-time jobs it marks the only execution as submitted
-        schedulingCoordinator.nextRun( job.getName(), job.getCalendar().getType() == ScheduleCalendarType.CRON
-            ? nextExecutionAfter( job.getCalendar(), now )
-            : now );
-        runStates.put( job.getName(), new RunState( entry.versionId(), now ) );
+        final boolean cron = job.getCalendar().getType() == ScheduleCalendarType.CRON;
+        schedulingCoordinator.nextRun( job.getName(), cron ? nextExecutionAfter( job.getCalendar(), now ) : now );
+        if ( cron )
+        {
+            runStates.put( job.getName(), new RunState( entry.versionId(), now ) );
+        }
         try
         {
             adminContext().runWith( () -> UpdateLastRunCommand.create()

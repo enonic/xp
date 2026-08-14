@@ -35,6 +35,8 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
@@ -410,6 +412,51 @@ class SchedulerServiceImplTest
             return nodeService.getVersion( node.id(), node.getNodeVersionId() ).getAttributes();
         } );
         assertNull( modifiedAttributes );
+    }
+
+    @Test
+    void oneTimeRunStateSurvivesNodeVersionChanges()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.oneTime(
+                                                                        Instant.parse( "2021-02-25T10:44:33Z" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
+
+        final GetNodeVersionsParams versionsParams = GetNodeVersionsParams.create().nodeId( NodeId.from( name.getValue() ) ).build();
+        final long versionsBeforeUpdate = adminContext().callWith( () -> nodeService.getVersions( versionsParams ).getTotalHits() );
+
+        final TaskId lastTaskId = TaskId.from( "task-id" );
+        final Instant lastRun = Instant.parse( "2021-02-25T10:44:34Z" );
+
+        adminContext().runWith( () -> UpdateLastRunCommand.create()
+            .name( name )
+            .lastTaskId( lastTaskId )
+            .lastRun( lastRun )
+            .nodeService( nodeService )
+            .build()
+            .execute() );
+
+        // a one-time job's run state is a tombstone in node data: it creates one node version...
+        assertEquals( versionsBeforeUpdate + 1,
+                      adminContext().callWith( () -> nodeService.getVersions( versionsParams ).getTotalHits() ) );
+
+        // ...and survives further node versions created outside the scheduler API
+        adminContext().callWith( () -> nodeService.update( UpdateNodeParams.create()
+                                                               .id( NodeId.from( name.getValue() ) )
+                                                               .editor( toBeEdited -> toBeEdited.data.setString( "unrelated", "value" ) )
+                                                               .refresh( RefreshMode.ALL )
+                                                               .build() ) );
+
+        final ScheduledJob job = adminContext().callWith( () -> schedulerService.get( name ) );
+        assertEquals( lastRun, job.getLastRun() );
+        assertEquals( lastTaskId, job.getLastTaskId() );
     }
 
     @Test
