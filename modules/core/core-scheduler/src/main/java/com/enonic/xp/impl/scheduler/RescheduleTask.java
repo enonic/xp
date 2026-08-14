@@ -162,7 +162,7 @@ public final class RescheduleTask
             }
             else
             {
-                LOG.warn( "Error while running job [{}], will try to run once more", job.getName() );
+                LOG.warn( "Error while running job [{}], will try to run once more", job.getName(), e );
             }
             return;
         }

@@ -45,7 +45,10 @@ public class SchedulingCoordinatorImpl
 
     public void unsetHazelcastInstance( final HazelcastInstance hazelcastInstance )
     {
-        this.hazelcastInstance = null;
+        if ( this.hazelcastInstance == hazelcastInstance )
+        {
+            this.hazelcastInstance = null;
+        }
     }
 
     @Override
