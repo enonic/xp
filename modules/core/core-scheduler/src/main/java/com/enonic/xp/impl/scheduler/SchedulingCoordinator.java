@@ -1,27 +1,27 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.time.Instant;
 import java.util.Set;
 
 import com.enonic.xp.scheduler.ScheduledJobName;
 
 /**
- * Shares planned job execution times between cluster members, so a job is not submitted
- * twice for the same occurrence and planned occurrences survive a scheduler failover.
+ * Shares planned job executions between cluster members, so a job is not submitted
+ * twice for the same occurrence, planned occurrences survive a scheduler failover,
+ * and the task of the previous run is known when the next run is due.
  */
 public interface SchedulingCoordinator
 {
     /**
-     * Planned time of the next execution of a job, or null when not known
+     * Planned execution of a job, or null when not known
      * (never run since the coordinator state was created, or state was lost).
      * For a one-time job a non-null value means its only execution was already submitted.
      */
-    Instant nextRun( ScheduledJobName name );
+    PlannedRun plannedRun( ScheduledJobName name );
 
     /**
-     * Records the planned time of the next execution of a job.
+     * Records the planned execution of a job.
      */
-    void nextRun( ScheduledJobName name, Instant value );
+    void plannedRun( ScheduledJobName name, PlannedRun value );
 
     /**
      * Discards the planned execution of a job, e.g. when the job is modified or deleted.

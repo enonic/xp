@@ -33,6 +33,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.trace.Traced;
 
@@ -44,6 +45,8 @@ public final class RescheduleTask
     private static final int MAX_SUBMIT_ATTEMPTS = 10;
 
     private static final int FAILED_TICKS_TO_WARN = 10;
+
+    static final String SCHEDULE_LAST_TASK_ID_ATTRIBUTE = "schedule.lastTaskId";
 
     private final SchedulerServiceImpl schedulerService;
 
@@ -145,37 +148,38 @@ public final class RescheduleTask
         {
             // a one-time job's lastRun tombstone lives in node data (#12271), so the listed job
             // carries it; the coordinator covers the window until the tombstone is persisted
-            dueTime = schedulingCoordinator.nextRun( job.getName() ) == null && job.getLastRun() == null
+            dueTime = schedulingCoordinator.plannedRun( job.getName() ) == null && job.getLastRun() == null
                 ? ( (OneTimeCalendar) job.getCalendar() ).getValue()
                 : null;
         }
         else
         {
-            final Instant plannedNextRun = schedulingCoordinator.nextRun( job.getName() );
-            if ( plannedNextRun != null )
+            final PlannedRun plannedRun = schedulingCoordinator.plannedRun( job.getName() );
+            if ( plannedRun != null )
             {
-                dueTime = plannedNextRun;
+                dueTime = plannedRun.nextRun();
             }
             else
             {
-                final Instant lastRun = lastRun( entry );
+                final Instant lastRun = runState( entry ).lastRun();
                 dueTime = job.getCalendar().nextExecution( lastRun != null ? lastRun : baseline( job, now ) ).orElse( null );
             }
         }
         return dueTime != null && !dueTime.isAfter( now ) ? Optional.of( dueTime ) : Optional.empty();
     }
 
-    private Instant lastRun( final ScheduledJobEntry entry )
+    private RunState runState( final ScheduledJobEntry entry )
     {
         final ScheduledJobName name = entry.job().getName();
         RunState runState = runStates.get( name );
         if ( runState == null || !Objects.equals( runState.versionId(), entry.versionId() ) )
         {
             final ScheduledJob fetched = adminContext().callWith( () -> schedulerService.get( name ) );
-            runState = new RunState( entry.versionId(), fetched != null ? fetched.getLastRun() : null );
+            runState = new RunState( entry.versionId(), fetched != null ? fetched.getLastRun() : null,
+                                     fetched != null && fetched.getLastTaskId() != null ? fetched.getLastTaskId().toString() : null );
             runStates.put( name, runState );
         }
-        return runState.lastRun();
+        return runState;
     }
 
     private static Instant baseline( final ScheduledJob job, final Instant now )
@@ -186,10 +190,25 @@ public final class RescheduleTask
     private void submit( final ScheduledJobEntry entry, final Instant now )
     {
         final ScheduledJob job = entry.job();
+        final String previousTaskId = previousTaskId( entry );
+
+        if ( previousTaskId != null && !previousTaskDone( previousTaskId ) )
+        {
+            // non-overlapping execution (#12272): the previous run is still in flight
+            if ( job.getCalendar().getType() == ScheduleCalendarType.CRON )
+            {
+                // cron occurrences are calendar positions - a blocked one is skipped
+                schedulingCoordinator.plannedRun( job.getName(),
+                                                  new PlannedRun( nextExecutionAfter( job.getCalendar(), now ), previousTaskId ) );
+            }
+            // a fixed-delay run holds: it stays due and fires once the previous task finishes
+            return;
+        }
+
         final TaskId taskId;
         try
         {
-            taskId = taskContext( job.getUser() ).callWith( () -> taskService.submitTask(
+            taskId = taskContext( job.getUser(), previousTaskId ).callWith( () -> taskService.submitTask(
                 SubmitTaskParams.create().descriptorKey( job.getDescriptor() ).data( job.getConfig() ).build() ) );
         }
         catch ( Exception e )
@@ -222,12 +241,22 @@ public final class RescheduleTask
     private void recordRun( final ScheduledJobEntry entry, final Instant now, final TaskId taskId )
     {
         final ScheduledJob job = entry.job();
-        // for cron jobs the shared value plans the next execution; for one-time jobs it marks the only execution as submitted
-        final boolean cron = job.getCalendar().getType() == ScheduleCalendarType.CRON;
-        schedulingCoordinator.nextRun( job.getName(), cron ? nextExecutionAfter( job.getCalendar(), now ) : now );
-        if ( cron )
+        final ScheduleCalendarType type = job.getCalendar().getType();
+        // the shared value plans the next execution; for a one-time job it marks the only execution as submitted
+        schedulingCoordinator.plannedRun( job.getName(),
+                                          new PlannedRun( type == ScheduleCalendarType.ONE_TIME
+                                                              ? now
+                                                              : nextExecutionAfter( job.getCalendar(), now ),
+                                                          taskId != null ? taskId.toString() : null ) );
+        if ( type == ScheduleCalendarType.CRON )
         {
-            runStates.put( job.getName(), new RunState( entry.versionId(), now ) );
+            runStates.put( job.getName(),
+                           new RunState( entry.versionId(), now, taskId != null ? taskId.toString() : null ) );
+        }
+        if ( type == ScheduleCalendarType.FIXED_DELAY )
+        {
+            // fixed-delay jobs persist no run state (#12271): executions simply follow one another
+            return;
         }
         try
         {
@@ -243,6 +272,22 @@ public final class RescheduleTask
         {
             LOG.warn( "Failed to store last run of job [{}]", job.getName(), e );
         }
+    }
+
+    private String previousTaskId( final ScheduledJobEntry entry )
+    {
+        if ( entry.job().getCalendar().getType() == ScheduleCalendarType.ONE_TIME )
+        {
+            return null;
+        }
+        final PlannedRun plannedRun = schedulingCoordinator.plannedRun( entry.job().getName() );
+        return plannedRun != null ? plannedRun.lastTaskId() : runState( entry ).lastTaskId();
+    }
+
+    private boolean previousTaskDone( final String previousTaskId )
+    {
+        final TaskInfo taskInfo = taskService.getTaskInfo( TaskId.from( previousTaskId ) );
+        return taskInfo == null || taskInfo.isDone();
     }
 
     static Instant nextExecutionAfter( final ScheduleCalendar calendar, final Instant now )
@@ -264,20 +309,21 @@ public final class RescheduleTask
             .build();
     }
 
-    private Context taskContext( final PrincipalKey user )
+    private Context taskContext( final PrincipalKey user, final String previousTaskId )
     {
-        if ( user == null )
+        final AuthenticationInfo authInfo = user == null
+            ? AuthenticationInfo.unAuthenticated()
+            : securityService.authenticate( new VerifiedUsernameAuthToken( user.getIdProviderKey(), user.getId() ) );
+
+        final ContextBuilder context = ContextBuilder.from( ContextAccessor.current() ).authInfo( authInfo );
+        if ( previousTaskId != null )
         {
-            return ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.unAuthenticated() ).build();
+            context.attribute( SCHEDULE_LAST_TASK_ID_ATTRIBUTE, previousTaskId );
         }
-
-        final AuthenticationInfo authInfo =
-            securityService.authenticate( new VerifiedUsernameAuthToken( user.getIdProviderKey(), user.getId() ) );
-
-        return ContextBuilder.from( ContextAccessor.current() ).authInfo( authInfo ).build();
+        return context.build();
     }
 
-    private record RunState(NodeVersionId versionId, Instant lastRun)
+    private record RunState(NodeVersionId versionId, Instant lastRun, String lastTaskId)
     {
     }
 }

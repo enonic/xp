@@ -1,6 +1,5 @@
 package com.enonic.xp.impl.scheduler;
 
-import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,7 +26,7 @@ public class SchedulingCoordinatorImpl
 
     private final boolean clusterEnabled;
 
-    private final ConcurrentMap<String, Instant> localNextRuns = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, PlannedRun> localNextRuns = new ConcurrentHashMap<>();
 
     private volatile HazelcastInstance hazelcastInstance;
 
@@ -52,18 +51,18 @@ public class SchedulingCoordinatorImpl
     }
 
     @Override
-    public Instant nextRun( final ScheduledJobName name )
+    public PlannedRun plannedRun( final ScheduledJobName name )
     {
         if ( !clusterEnabled )
         {
             return localNextRuns.get( name.getValue() );
         }
         final HazelcastInstance hazelcast = this.hazelcastInstance;
-        return hazelcast != null ? hazelcast.<String, Instant>getMap( NEXT_RUN_MAP_NAME ).get( name.getValue() ) : null;
+        return hazelcast != null ? hazelcast.<String, PlannedRun>getMap( NEXT_RUN_MAP_NAME ).get( name.getValue() ) : null;
     }
 
     @Override
-    public void nextRun( final ScheduledJobName name, final Instant value )
+    public void plannedRun( final ScheduledJobName name, final PlannedRun value )
     {
         if ( value == null )
         {
@@ -78,7 +77,7 @@ public class SchedulingCoordinatorImpl
         final HazelcastInstance hazelcast = this.hazelcastInstance;
         if ( hazelcast != null )
         {
-            hazelcast.<String, Instant>getMap( NEXT_RUN_MAP_NAME ).set( name.getValue(), value );
+            hazelcast.<String, PlannedRun>getMap( NEXT_RUN_MAP_NAME ).set( name.getValue(), value );
         }
     }
 
@@ -93,7 +92,7 @@ public class SchedulingCoordinatorImpl
         final HazelcastInstance hazelcast = this.hazelcastInstance;
         if ( hazelcast != null )
         {
-            hazelcast.<String, Instant>getMap( NEXT_RUN_MAP_NAME ).delete( name.getValue() );
+            hazelcast.<String, PlannedRun>getMap( NEXT_RUN_MAP_NAME ).delete( name.getValue() );
         }
     }
 
@@ -109,7 +108,7 @@ public class SchedulingCoordinatorImpl
         final HazelcastInstance hazelcast = this.hazelcastInstance;
         if ( hazelcast != null )
         {
-            final IMap<String, Instant> nextRuns = hazelcast.getMap( NEXT_RUN_MAP_NAME );
+            final IMap<String, PlannedRun> nextRuns = hazelcast.getMap( NEXT_RUN_MAP_NAME );
             nextRuns.keySet().stream().filter( key -> !keys.contains( key ) ).forEach( nextRuns::delete );
         }
     }

@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -44,11 +45,15 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.impl.scheduler.distributed.FixedDelayCalendarImpl;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
@@ -313,7 +318,7 @@ class RescheduleTaskTest
         task.run();
 
         verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
-        assertEquals( nextMinute, schedulingCoordinator.nextRun( job.getName() ) );
+        assertEquals( nextMinute, schedulingCoordinator.plannedRun( job.getName() ).nextRun() );
     }
 
     @Test
@@ -406,6 +411,115 @@ class RescheduleTaskTest
     }
 
     @Test
+    void cronSkipsOccurrenceWhilePreviousTaskRuns()
+    {
+        mockJobs( cronJob( "job1", "* * * * *", NOW.minusSeconds( 90 ) ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+
+        final TaskInfo running = mock( TaskInfo.class );
+        when( running.isDone() ).thenReturn( false );
+        when( taskService.getTaskInfo( TaskId.from( "1" ) ) ).thenReturn( running );
+
+        // next occurrence is due, but the previous task is still in flight - the occurrence is skipped
+        clock.plusSeconds( 61 );
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        final PlannedRun skipped = schedulingCoordinator.plannedRun( ScheduledJobName.from( "job1" ) );
+        assertEquals( "1", skipped.lastTaskId() );
+        assertTrue( skipped.nextRun().isAfter( clock.instant() ) );
+
+        // the previous task finished - the following occurrence runs
+        when( running.isDone() ).thenReturn( true );
+        clock.plusSeconds( 61 );
+        task.run();
+
+        verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void fixedDelayHoldsWhilePreviousTaskRuns()
+    {
+        final ScheduledJob job = jobBuilder( "job1", FixedDelayCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() ).build();
+
+        mockJobs( job );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) ).thenReturn( TaskId.from( "2" ) );
+
+        // never run: first execution is due one interval after the modification time
+        task.run();
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+
+        clock.plusSeconds( 61 );
+        task.run();
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+
+        final TaskInfo running = mock( TaskInfo.class );
+        when( running.isDone() ).thenReturn( false );
+        when( taskService.getTaskInfo( TaskId.from( "1" ) ) ).thenReturn( running );
+
+        // due again, but the previous task still runs - the run holds and the plan does not advance
+        final Instant plannedBefore = schedulingCoordinator.plannedRun( job.getName() ).nextRun();
+        clock.plusSeconds( 61 );
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        assertEquals( plannedBefore, schedulingCoordinator.plannedRun( job.getName() ).nextRun() );
+
+        // the previous task finished - the held run fires on the next tick
+        when( running.isDone() ).thenReturn( true );
+        task.run();
+
+        verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
+
+        // fixed-delay jobs persist no run state
+        verify( nodeService, never() ).update( isA( UpdateNodeParams.class ) );
+        verify( nodeService, never() ).getByPath( isA( NodePath.class ) );
+    }
+
+    @Test
+    void previousTaskIdPassedToSubmittedTask()
+    {
+        mockJobs( cronJob( "job1", "* * * * *", NOW.minusSeconds( 90 ), TaskId.from( "prev-task" ) ) );
+
+        final List<Object> seenAttributes = new java.util.ArrayList<>();
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenAnswer( invocation -> {
+            seenAttributes.add( ContextAccessor.current().getAttribute( RescheduleTask.SCHEDULE_LAST_TASK_ID_ATTRIBUTE ) );
+            return TaskId.from( "1" );
+        } );
+
+        task.run();
+
+        assertEquals( List.of( "prev-task" ), seenAttributes );
+
+        // the next run receives the task submitted by this run
+        clock.plusSeconds( 61 );
+        task.run();
+
+        assertEquals( List.of( "prev-task", "1" ), seenAttributes );
+    }
+
+    @Test
+    void firstRunHasNoPreviousTaskId()
+    {
+        mockJobs( cronJob( "job1", "* * * * *", NOW.minusSeconds( 90 ) ) );
+
+        final List<Object> seenAttributes = new java.util.ArrayList<>();
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenAnswer( invocation -> {
+            seenAttributes.add( ContextAccessor.current().getAttribute( RescheduleTask.SCHEDULE_LAST_TASK_ID_ATTRIBUTE ) );
+            return TaskId.from( "1" );
+        } );
+
+        task.run();
+
+        assertEquals( 1, seenAttributes.size() );
+        assertNull( seenAttributes.get( 0 ) );
+    }
+
+    @Test
     void nextExecutionAfterIsStrictlyAfter()
     {
         assertEquals( Instant.parse( "2026-01-01T10:31:00Z" ),
@@ -460,6 +574,11 @@ class RescheduleTaskTest
     private ScheduledJob cronJob( final String name, final String cron, final Instant lastRun )
     {
         return jobBuilder( name, cronCalendar( cron ) ).lastRun( lastRun ).build();
+    }
+
+    private ScheduledJob cronJob( final String name, final String cron, final Instant lastRun, final TaskId lastTaskId )
+    {
+        return jobBuilder( name, cronCalendar( cron ) ).lastRun( lastRun ).lastTaskId( lastTaskId ).build();
     }
 
     private static CronCalendarImpl cronCalendar( final String cron )

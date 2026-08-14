@@ -20,12 +20,15 @@ public final class TaskContext
 
     private final NodePath contentRootPath;
 
+    private final String scheduleLastTaskId;
+
     private TaskContext( final Builder builder )
     {
         this.branch = builder.branch;
         this.repo = builder.repo;
         this.authInfo = builder.authInfo;
         this.contentRootPath = builder.contentRootPath;
+        this.scheduleLastTaskId = builder.scheduleLastTaskId;
     }
 
     public static Builder create()
@@ -53,6 +56,11 @@ public final class TaskContext
         return contentRootPath;
     }
 
+    public String getScheduleLastTaskId()
+    {
+        return scheduleLastTaskId;
+    }
+
     public static final class Builder
     {
         private Branch branch;
@@ -62,6 +70,8 @@ public final class TaskContext
         private AuthenticationInfo authInfo;
 
         private NodePath contentRootPath;
+
+        private String scheduleLastTaskId;
 
         public Builder setBranch( final Branch branch )
         {
@@ -84,6 +94,12 @@ public final class TaskContext
         public Builder setContentRootPath( final NodePath contentRootPath )
         {
             this.contentRootPath = contentRootPath;
+            return this;
+        }
+
+        public Builder setScheduleLastTaskId( final String scheduleLastTaskId )
+        {
+            this.scheduleLastTaskId = scheduleLastTaskId;
             return this;
         }
 

@@ -35,6 +35,9 @@ public final class TaskServiceImpl
 {
     private static final Logger LOG = LoggerFactory.getLogger( TaskServiceImpl.class );
 
+    // keep in sync with RescheduleTask.SCHEDULE_LAST_TASK_ID_ATTRIBUTE in core-scheduler
+    private static final String SCHEDULE_LAST_TASK_ID_ATTRIBUTE = "schedule.lastTaskId";
+
     private final TaskManager localTaskManager;
 
     private final DynamicReference<TaskManager> clusteredTaskManagerRef = new DynamicReference<>();
@@ -105,6 +108,7 @@ public final class TaskServiceImpl
             .setRepo( userContext.getRepositoryId() )
             .setAuthInfo( userContext.getAuthInfo() )
             .setContentRootPath( (NodePath) userContext.getAttribute( CONTENT_ROOT_PATH_ATTRIBUTE ) )
+            .setScheduleLastTaskId( (String) userContext.getAttribute( SCHEDULE_LAST_TASK_ID_ATTRIBUTE ) )
             .build();
     }
 

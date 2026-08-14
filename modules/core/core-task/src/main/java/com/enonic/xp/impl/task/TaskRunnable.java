@@ -19,6 +19,9 @@ final class TaskRunnable
 {
     private static final Logger LOG = LoggerFactory.getLogger( TaskRunnable.class );
 
+    // keep in sync with RescheduleTask.SCHEDULE_LAST_TASK_ID_ATTRIBUTE in core-scheduler
+    private static final String SCHEDULE_LAST_TASK_ID_ATTRIBUTE = "schedule.lastTaskId";
+
     private final DescribedTask runnableTask;
 
     private final InternalProgressReporter progressReporter;
@@ -93,6 +96,10 @@ final class TaskRunnable
         if ( taskContext.getContentRootPath() != null )
         {
             context.attribute( CONTENT_ROOT_PATH_ATTRIBUTE, taskContext.getContentRootPath() );
+        }
+        if ( taskContext.getScheduleLastTaskId() != null )
+        {
+            context.attribute( SCHEDULE_LAST_TASK_ID_ATTRIBUTE, taskContext.getScheduleLastTaskId() );
         }
 
         return context.build();

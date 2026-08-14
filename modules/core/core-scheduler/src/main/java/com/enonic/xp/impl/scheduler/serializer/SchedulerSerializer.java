@@ -14,12 +14,14 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
+import com.enonic.xp.impl.scheduler.distributed.FixedDelayCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.EditableScheduledJob;
+import com.enonic.xp.scheduler.FixedDelayCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
@@ -224,6 +226,12 @@ public class SchedulerSerializer
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
+            case FIXED_DELAY:
+                final FixedDelayCalendar fixedDelayCalendar = ( (FixedDelayCalendar) calendar );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, fixedDelayCalendar.getDuration().toString() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.FIXED_DELAY.name() );
+                break;
+
             default:
                 throw new IllegalStateException( String.format( "invalid calendar type: '%s'", calendar.getType() ) );
         }
@@ -244,6 +252,8 @@ public class SchedulerSerializer
                 return CronCalendarImpl.create().value( value ).timeZone( TimeZone.getTimeZone( timeZone ) ).build();
             case ONE_TIME:
                 return OneTimeCalendarImpl.create().value( Instant.parse( value ) ).build();
+            case FIXED_DELAY:
+                return FixedDelayCalendarImpl.create().duration( java.time.Duration.parse( value ) ).build();
             default:
                 throw new IllegalArgumentException( String.format( "can't parse [%s] calendar type.", type ) );
         }

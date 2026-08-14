@@ -1,5 +1,6 @@
 package com.enonic.xp.core.scheduler;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.TimeZone;
 
@@ -39,6 +40,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
+import com.enonic.xp.scheduler.FixedDelayCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
@@ -412,6 +414,27 @@ class SchedulerServiceImplTest
             return nodeService.getVersion( node.id(), node.getNodeVersionId() ).getAttributes();
         } );
         assertNull( modifiedAttributes );
+    }
+
+    @Test
+    void createFixedDelayJob()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.fixedDelay( Duration.ofMinutes( 5 ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .enabled( true )
+                                                                    .build() ) );
+
+        final ScheduledJob job = adminContext().callWith( () -> schedulerService.get( name ) );
+
+        assertEquals( ScheduleCalendarType.FIXED_DELAY, job.getCalendar().getType() );
+        assertEquals( Duration.ofMinutes( 5 ), ( (FixedDelayCalendar) job.getCalendar() ).getDuration() );
     }
 
     @Test

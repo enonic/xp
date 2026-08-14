@@ -33,7 +33,7 @@ class SchedulingCoordinatorImplTest
 {
     private static final ScheduledJobName JOB = ScheduledJobName.from( "job" );
 
-    private static final Instant NEXT_RUN = Instant.parse( "2026-01-01T10:31:00Z" );
+    private static final PlannedRun NEXT_RUN = new PlannedRun( Instant.parse( "2026-01-01T10:31:00Z" ), "task-1" );
 
     @Mock
     private ClusterConfig clusterConfig;
@@ -41,13 +41,13 @@ class SchedulingCoordinatorImplTest
     @Mock
     private HazelcastInstance hazelcastInstance;
 
-    private final Map<String, Instant> nextRuns = new ConcurrentHashMap<>();
+    private final Map<String, PlannedRun> nextRuns = new ConcurrentHashMap<>();
 
     @BeforeEach
     void setUp()
     {
-        final IMap<String, Instant> map = mapOf( nextRuns );
-        when( hazelcastInstance.<String, Instant>getMap( "com.enonic.xp.scheduler.nextRun" ) ).thenReturn( map );
+        final IMap<String, PlannedRun> map = mapOf( nextRuns );
+        when( hazelcastInstance.<String, PlannedRun>getMap( "com.enonic.xp.scheduler.nextRun" ) ).thenReturn( map );
     }
 
     @SuppressWarnings("unchecked")
@@ -83,20 +83,20 @@ class SchedulingCoordinatorImplTest
     {
         final SchedulingCoordinatorImpl coordinator = coordinator( false, false );
 
-        assertNull( coordinator.nextRun( JOB ) );
-        coordinator.nextRun( JOB, NEXT_RUN );
-        assertEquals( NEXT_RUN, coordinator.nextRun( JOB ) );
+        assertNull( coordinator.plannedRun( JOB ) );
+        coordinator.plannedRun( JOB, NEXT_RUN );
+        assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
 
         coordinator.forget( JOB );
-        assertNull( coordinator.nextRun( JOB ) );
+        assertNull( coordinator.plannedRun( JOB ) );
 
-        coordinator.nextRun( JOB, NEXT_RUN );
+        coordinator.plannedRun( JOB, NEXT_RUN );
         coordinator.retain( Set.of( ScheduledJobName.from( "other" ) ) );
-        assertNull( coordinator.nextRun( JOB ) );
+        assertNull( coordinator.plannedRun( JOB ) );
 
-        coordinator.nextRun( JOB, NEXT_RUN );
-        coordinator.nextRun( JOB, null );
-        assertNull( coordinator.nextRun( JOB ) );
+        coordinator.plannedRun( JOB, NEXT_RUN );
+        coordinator.plannedRun( JOB, null );
+        assertNull( coordinator.plannedRun( JOB ) );
     }
 
     @Test
@@ -104,15 +104,15 @@ class SchedulingCoordinatorImplTest
     {
         final SchedulingCoordinatorImpl coordinator = coordinator( true, true );
 
-        coordinator.nextRun( JOB, NEXT_RUN );
-        assertEquals( NEXT_RUN, coordinator.nextRun( JOB ) );
+        coordinator.plannedRun( JOB, NEXT_RUN );
+        assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
 
         // a greedy rebind unbinds the previous instance after the new one is already bound
         coordinator.unsetHazelcastInstance( mock( HazelcastInstance.class ) );
-        assertEquals( NEXT_RUN, coordinator.nextRun( JOB ) );
+        assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
 
         coordinator.unsetHazelcastInstance( hazelcastInstance );
-        assertNull( coordinator.nextRun( JOB ) );
+        assertNull( coordinator.plannedRun( JOB ) );
     }
 
     @Test
@@ -120,23 +120,23 @@ class SchedulingCoordinatorImplTest
     {
         final SchedulingCoordinatorImpl coordinator = coordinator( true, true );
 
-        coordinator.nextRun( JOB, NEXT_RUN );
-        assertEquals( NEXT_RUN, coordinator.nextRun( JOB ) );
+        coordinator.plannedRun( JOB, NEXT_RUN );
+        assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
         assertEquals( NEXT_RUN, nextRuns.get( JOB.getValue() ) );
 
         coordinator.forget( JOB );
-        assertNull( coordinator.nextRun( JOB ) );
+        assertNull( coordinator.plannedRun( JOB ) );
 
-        coordinator.nextRun( JOB, NEXT_RUN );
+        coordinator.plannedRun( JOB, NEXT_RUN );
         final ScheduledJobName other = ScheduledJobName.from( "other" );
-        coordinator.nextRun( other, NEXT_RUN );
+        coordinator.plannedRun( other, NEXT_RUN );
         coordinator.retain( Set.of( other ) );
-        assertNull( coordinator.nextRun( JOB ) );
-        assertEquals( NEXT_RUN, coordinator.nextRun( other ) );
+        assertNull( coordinator.plannedRun( JOB ) );
+        assertEquals( NEXT_RUN, coordinator.plannedRun( other ) );
 
-        coordinator.nextRun( JOB, NEXT_RUN );
-        coordinator.nextRun( JOB, null );
-        assertNull( coordinator.nextRun( JOB ) );
+        coordinator.plannedRun( JOB, NEXT_RUN );
+        coordinator.plannedRun( JOB, null );
+        assertNull( coordinator.plannedRun( JOB ) );
     }
 
     @Test
@@ -144,8 +144,8 @@ class SchedulingCoordinatorImplTest
     {
         final SchedulingCoordinatorImpl coordinator = coordinator( true, false );
 
-        coordinator.nextRun( JOB, NEXT_RUN );
-        assertNull( coordinator.nextRun( JOB ) );
+        coordinator.plannedRun( JOB, NEXT_RUN );
+        assertNull( coordinator.plannedRun( JOB ) );
 
         coordinator.forget( JOB );
         coordinator.retain( Set.of() );

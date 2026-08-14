@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.scheduler;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
@@ -44,6 +45,8 @@ public abstract class BaseSchedulerHandler
                                                            TimeZone.getTimeZone( calendarScriptValue.get( "timeZone" ) ) );
                     case ONE_TIME:
                         return calendarService.get().oneTime( Instant.parse( calendarScriptValue.get( "value" ) ) );
+                    case FIXED_DELAY:
+                        return calendarService.get().fixedDelay( Duration.parse( calendarScriptValue.get( "value" ) ) );
                     default:
                         throw new IllegalArgumentException( String.format( "invalid calendar type: %s", type ) );
                 }
