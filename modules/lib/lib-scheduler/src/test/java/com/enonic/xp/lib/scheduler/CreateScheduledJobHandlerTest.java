@@ -26,6 +26,13 @@ class CreateScheduledJobHandlerTest
     }
 
     @Test
+    void createFixedDelayJob()
+    {
+        mockFixedDelayCalendar();
+        runFunction( "/test/CreateScheduledJobHandlerTest.js", "createFixedDelayJob" );
+    }
+
+    @Test
     void createCronJob()
     {
         mockCronCalendar();

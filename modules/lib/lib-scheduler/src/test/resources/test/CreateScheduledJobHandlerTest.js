@@ -52,6 +52,32 @@ exports.createOneTimeJob = function () {
     assert.assertJsonEquals(createOneTimeJobExpected, result);
 };
 
+var createFixedDelayJobExpected = {
+    'name': 'myjob',
+    'descriptor': 'appKey:task',
+    'enabled': true,
+    'config': {},
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
+        'value': 'PT5M',
+        'type': 'FIXED_DELAY'
+    }
+};
+
+exports.createFixedDelayJob = function () {
+    var result = scheduler.create({
+        name: 'myjob',
+        descriptor: 'appKey:task',
+        enabled: true,
+        schedule: {type: 'FIXED_DELAY', value: 'PT5M'}
+    });
+
+    assert.assertJsonEquals(createFixedDelayJobExpected, result);
+};
+
 var createCronJobExpected = {
     'name': 'myjob',
     'descriptor': 'appKey:task',

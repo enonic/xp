@@ -134,6 +134,19 @@ public abstract class BaseScheduledJobHandlerTest
         } );
     }
 
+    protected void mockFixedDelayCalendar()
+    {
+        Mockito.when( calendarService.fixedDelay( Mockito.isA( java.time.Duration.class ) ) ).thenAnswer( invocation -> {
+            final com.enonic.xp.scheduler.FixedDelayCalendar fixedDelay =
+                Mockito.mock( com.enonic.xp.scheduler.FixedDelayCalendar.class );
+
+            Mockito.when( fixedDelay.getType() ).thenReturn( ScheduleCalendarType.FIXED_DELAY );
+            Mockito.when( fixedDelay.getDuration() ).thenReturn( invocation.getArgument( 0 ) );
+
+            return fixedDelay;
+        } );
+    }
+
     protected void updateLastRun( final ScheduledJobName name )
     {
         final ScheduledJob existJob = jobs.get( name );
