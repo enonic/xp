@@ -19,7 +19,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
-import com.enonic.xp.scheduler.FixedDelayCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -180,10 +180,10 @@ public class ScheduleAuditLogSupportImpl
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
-            case FIXED_DELAY:
-                final FixedDelayCalendar fixedDelayCalendar = ( (FixedDelayCalendar) calendar );
-                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, fixedDelayCalendar.getDuration().toString() );
-                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.FIXED_DELAY.name() );
+            case FIXED_RATE:
+                final FixedRateCalendar fixedRateCalendar = ( (FixedRateCalendar) calendar );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, fixedRateCalendar.getDuration().toString() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.FIXED_RATE.name() );
                 break;
 
             default:

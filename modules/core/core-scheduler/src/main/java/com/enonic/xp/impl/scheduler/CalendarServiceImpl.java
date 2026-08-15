@@ -7,11 +7,11 @@ import java.util.TimeZone;
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
-import com.enonic.xp.impl.scheduler.distributed.FixedDelayCalendarImpl;
+import com.enonic.xp.impl.scheduler.distributed.FixedRateCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CronCalendar;
-import com.enonic.xp.scheduler.FixedDelayCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 
 @Component(immediate = true)
@@ -48,9 +48,9 @@ public class CalendarServiceImpl
     }
 
     @Override
-    public FixedDelayCalendar fixedDelay( final Duration duration )
+    public FixedRateCalendar fixedRate( final Duration duration )
     {
-        return FixedDelayCalendarImpl.create().
+        return FixedRateCalendarImpl.create().
             duration( duration ).
             build();
     }

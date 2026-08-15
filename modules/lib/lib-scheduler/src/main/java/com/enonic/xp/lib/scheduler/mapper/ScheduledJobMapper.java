@@ -3,7 +3,7 @@ package com.enonic.xp.lib.scheduler.mapper;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.scheduler.CronCalendar;
-import com.enonic.xp.scheduler.FixedDelayCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -75,8 +75,8 @@ public final class ScheduledJobMapper
             case CRON:
                 new CronCalendarMapper( (CronCalendar) calendar ).serialize( gen );
                 break;
-            case FIXED_DELAY:
-                new FixedDelayCalendarMapper( (FixedDelayCalendar) calendar ).serialize( gen );
+            case FIXED_RATE:
+                new FixedRateCalendarMapper( (FixedRateCalendar) calendar ).serialize( gen );
                 break;
             default:
                 throw new IllegalArgumentException( String.format( "invalid calendar type: [%s]", calendar.getType() ) );

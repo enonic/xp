@@ -33,10 +33,11 @@ public interface CalendarService
     OneTimeCalendar oneTime( Instant value, boolean deleteAfterRun );
 
     /**
-     * A schedule that runs repeatedly, one duration apart.
+     * A schedule that runs repeatedly, the given duration apart, measured between the starts of two
+     * consecutive executions - see {@link FixedRateCalendar} for what happens when one overruns.
      *
      * @throws IllegalArgumentException if the duration is not positive
      */
-    FixedDelayCalendar fixedDelay( Duration duration );
+    FixedRateCalendar fixedRate( Duration duration );
 
 }

@@ -46,7 +46,7 @@ import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.impl.scheduler.distributed.FixedDelayCalendarImpl;
+import com.enonic.xp.impl.scheduler.distributed.FixedRateCalendarImpl;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskDescriptor;
 import com.enonic.xp.task.TaskDescriptorService;
@@ -503,9 +503,9 @@ class RescheduleTaskTest
     }
 
     @Test
-    void fixedDelayHoldsWhilePreviousTaskRuns()
+    void fixedRateHoldsWhilePreviousTaskRuns()
     {
-        final ScheduledJob job = jobBuilder( "job1", FixedDelayCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() ).build();
+        final ScheduledJob job = jobBuilder( "job1", FixedRateCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() ).build();
 
         mockJobs( job );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) ).thenReturn( TaskId.from( "2" ) );
@@ -536,7 +536,7 @@ class RescheduleTaskTest
 
         verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
 
-        // fixed-delay jobs persist no run state
+        // fixed-rate jobs persist no run state
         verify( nodeService, never() ).update( isA( UpdateNodeParams.class ) );
         verify( nodeService, never() ).getByPath( isA( NodePath.class ) );
     }

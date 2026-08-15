@@ -229,7 +229,7 @@ public final class RescheduleTask
                 schedulingCoordinator.plannedRun( job.getName(),
                                                   new PlannedRun( nextExecutionAfter( job.getCalendar(), now ), previousTaskId ) );
             }
-            // a fixed-delay run holds: it stays due and fires once the previous task finishes
+            // a fixed-rate run holds: it stays due and fires once the previous task finishes
             return;
         }
 
@@ -281,9 +281,9 @@ public final class RescheduleTask
             runStates.put( job.getName(),
                            new RunState( entry.versionId(), now, taskId != null ? taskId.toString() : null ) );
         }
-        if ( type == ScheduleCalendarType.FIXED_DELAY )
+        if ( type == ScheduleCalendarType.FIXED_RATE )
         {
-            // fixed-delay jobs persist no run state (#12271): executions simply follow one another
+            // fixed-rate jobs persist no run state (#12271): executions simply follow one another
             return;
         }
         if ( job.getCalendar() instanceof OneTimeCalendar oneTime && oneTime.isDeleteAfterRun() && taskId != null &&

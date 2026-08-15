@@ -34,7 +34,7 @@ export interface CreateScheduledJobParams<Config extends Record<string, unknown>
     description?: string;
     descriptor: string;
     config?: Config;
-    schedule: OneTimeSchedule | CronSchedule | FixedDelaySchedule;
+    schedule: OneTimeSchedule | CronSchedule | FixedRateSchedule;
     user?: UserKey;
     enabled: boolean;
 }
@@ -51,8 +51,8 @@ export interface CronSchedule {
     timeZone: string;
 }
 
-export interface FixedDelaySchedule {
-    type: 'FIXED_DELAY';
+export interface FixedRateSchedule {
+    type: 'FIXED_RATE';
     value: string;
 }
 
@@ -69,13 +69,13 @@ export interface ScheduledJob<Config extends Record<string, unknown> = Record<st
     modifiedTime: string;
     lastRun?: string | null;
     lastTaskId?: string | null;
-    schedule: OneTimeSchedule | CronSchedule | FixedDelaySchedule;
+    schedule: OneTimeSchedule | CronSchedule | FixedRateSchedule;
 }
 
 interface CreateScheduledJobHandler<Config extends Record<string, unknown>> {
     setName(value: string): void;
 
-    setSchedule(value: OneTimeSchedule | CronSchedule | FixedDelaySchedule): void;
+    setSchedule(value: OneTimeSchedule | CronSchedule | FixedRateSchedule): void;
 
     setDescriptor(value: string): void;
 
@@ -102,7 +102,7 @@ interface CreateScheduledJobHandler<Config extends Record<string, unknown>> {
  * @param {object} [params.config] config of the task to be scheduled.
  * @param {object} params.schedule task time run config.
  * @param {string} params.schedule.value schedule value according to its type.
- * @param {string} params.schedule.type schedule type (CRON | ONE_TIME | FIXED_DELAY).
+ * @param {string} params.schedule.type schedule type (CRON | ONE_TIME | FIXED_RATE).
  * @param {string} [params.schedule.timeZone] time zone of cron scheduling. Only applies when type is `CRON`.
  * @param {boolean} [params.schedule.deleteAfterRun] delete the job once it has run, instead of keeping a record of its last run. Only applies when type is `ONE_TIME`.
  * @param {string} [params.user] key of the user that submitted the task.

@@ -40,7 +40,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
-import com.enonic.xp.scheduler.FixedDelayCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
@@ -417,7 +417,7 @@ class SchedulerServiceImplTest
     }
 
     @Test
-    void createFixedDelayJob()
+    void createFixedRateJob()
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
@@ -426,15 +426,15 @@ class SchedulerServiceImplTest
                                                                     .descriptor(
                                                                         DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
                                                                                             "task1" ) )
-                                                                    .calendar( calendarService.fixedDelay( Duration.ofMinutes( 5 ) ) )
+                                                                    .calendar( calendarService.fixedRate( Duration.ofMinutes( 5 ) ) )
                                                                     .config( new PropertyTree() )
                                                                     .enabled( true )
                                                                     .build() ) );
 
         final ScheduledJob job = adminContext().callWith( () -> schedulerService.get( name ) );
 
-        assertEquals( ScheduleCalendarType.FIXED_DELAY, job.getCalendar().getType() );
-        assertEquals( Duration.ofMinutes( 5 ), ( (FixedDelayCalendar) job.getCalendar() ).getDuration() );
+        assertEquals( ScheduleCalendarType.FIXED_RATE, job.getCalendar().getType() );
+        assertEquals( Duration.ofMinutes( 5 ), ( (FixedRateCalendar) job.getCalendar() ).getDuration() );
     }
 
     @Test

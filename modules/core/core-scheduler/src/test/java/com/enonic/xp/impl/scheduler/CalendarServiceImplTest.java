@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.scheduler.CronCalendar;
-import com.enonic.xp.scheduler.FixedDelayCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 
@@ -86,21 +86,21 @@ class CalendarServiceImplTest
 
 
     @Test
-    void fixedDelay()
+    void fixedRate()
     {
-        final FixedDelayCalendar calendar = calendarService.fixedDelay( Duration.ofMinutes( 5 ) );
+        final FixedRateCalendar calendar = calendarService.fixedRate( Duration.ofMinutes( 5 ) );
 
         final Instant now = Instant.parse( "2026-01-01T10:30:00Z" );
         assertEquals( now.plus( Duration.ofMinutes( 5 ) ), calendar.nextExecution( now ).get() );
         assertEquals( Duration.ofMinutes( 5 ), calendar.getDuration() );
-        assertEquals( ScheduleCalendarType.FIXED_DELAY, calendar.getType() );
+        assertEquals( ScheduleCalendarType.FIXED_RATE, calendar.getType() );
     }
 
     @Test
-    void fixedDelayInvalid()
+    void fixedRateInvalid()
     {
-        assertThrows( NullPointerException.class, () -> calendarService.fixedDelay( null ) );
-        assertThrows( IllegalArgumentException.class, () -> calendarService.fixedDelay( Duration.ZERO ) );
-        assertThrows( IllegalArgumentException.class, () -> calendarService.fixedDelay( Duration.ofSeconds( -1 ) ) );
+        assertThrows( NullPointerException.class, () -> calendarService.fixedRate( null ) );
+        assertThrows( IllegalArgumentException.class, () -> calendarService.fixedRate( Duration.ZERO ) );
+        assertThrows( IllegalArgumentException.class, () -> calendarService.fixedRate( Duration.ofSeconds( -1 ) ) );
     }
 }

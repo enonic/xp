@@ -47,8 +47,8 @@ public abstract class BaseSchedulerHandler
                         return calendarService.get()
                             .oneTime( Instant.parse( string( calendarScriptValue, "value" ) ),
                                       Boolean.parseBoolean( string( calendarScriptValue, "deleteAfterRun" ) ) );
-                    case FIXED_DELAY:
-                        return calendarService.get().fixedDelay( Duration.parse( string( calendarScriptValue, "value" ) ) );
+                    case FIXED_RATE:
+                        return calendarService.get().fixedRate( Duration.parse( string( calendarScriptValue, "value" ) ) );
                     default:
                         throw new IllegalArgumentException( String.format( "invalid calendar type: %s", type ) );
                 }

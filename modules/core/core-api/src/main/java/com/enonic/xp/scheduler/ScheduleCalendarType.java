@@ -18,8 +18,9 @@ public enum ScheduleCalendarType
     ONE_TIME,
 
     /**
-     * Runs repeatedly, one duration apart, waiting for the previous execution to finish rather than
-     * skipping.
+     * Runs repeatedly at a fixed interval between starts. An execution that is still running when
+     * the next falls due delays it rather than being joined by it, and the periods missed while it
+     * runs are dropped rather than replayed.
      */
-    FIXED_DELAY
+    FIXED_RATE
 }
