@@ -215,7 +215,7 @@ export function setTopic(params: SetTopicParams): string {
  * Publishes a message to an admin events topic owned by this application.
  *
  * The message is delivered to the sockets on this node holding an acknowledged subscription to the
- * topic, stamped with a per-topic sequence number. Delivery is not guaranteed.
+ * topic, stamped with a per-topic sequence number. Delivery is best effort.
  *
  * The message is not distributed over the cluster. Subscribers on other nodes receive it only if
  * the application publishes on those nodes too.
