@@ -6,7 +6,6 @@ var createOneTimeJobExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,
@@ -25,6 +24,7 @@ var createOneTimeJobExpected = {
     'modifiedTime': '2016-11-02T10:36:00Z',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': false,
         'type': 'ONE_TIME'
     }
 };
@@ -57,7 +57,6 @@ var createFixedDelayJobExpected = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'enabled': true,
-    'deleteAfterRun': false,
     'config': {},
     'creator': 'user:system:creator',
     'modifier': 'user:system:creator',
@@ -85,7 +84,6 @@ var createCronJobExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,
@@ -183,7 +181,6 @@ var withoutUserExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'deleteAfterRun': false,
     'config': {
         'a': 1
     },
@@ -219,7 +216,6 @@ var withoutConfigExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'deleteAfterRun': false,
     'config': {},
     'user': 'user:system:user',
     'creator': 'user:system:creator',
@@ -252,7 +248,6 @@ var createEphemeralOneTimeJobExpected = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'enabled': true,
-    'deleteAfterRun': true,
     'config': {},
     'creator': 'user:system:creator',
     'modifier': 'user:system:creator',
@@ -260,6 +255,7 @@ var createEphemeralOneTimeJobExpected = {
     'modifiedTime': '2016-11-02T10:36:00Z',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': true,
         'type': 'ONE_TIME'
     }
 };
@@ -269,8 +265,7 @@ exports.createEphemeralOneTimeJob = function () {
         name: 'myjob',
         descriptor: 'appKey:task',
         enabled: true,
-        deleteAfterRun: true,
-        schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z'}
+        schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z', deleteAfterRun: true}
     });
 
     assert.assertJsonEquals(createEphemeralOneTimeJobExpected, result);

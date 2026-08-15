@@ -15,9 +15,12 @@ public final class OneTimeCalendarImpl
 
     private final Instant value;
 
+    private final boolean deleteAfterRun;
+
     private OneTimeCalendarImpl( final Builder builder )
     {
         this.value = builder.value;
+        this.deleteAfterRun = builder.deleteAfterRun;
     }
 
     public static Builder create()
@@ -29,6 +32,12 @@ public final class OneTimeCalendarImpl
     public Instant getValue()
     {
         return value;
+    }
+
+    @Override
+    public boolean isDeleteAfterRun()
+    {
+        return deleteAfterRun;
     }
 
     @Override
@@ -47,9 +56,17 @@ public final class OneTimeCalendarImpl
     {
         private Instant value;
 
+        private boolean deleteAfterRun;
+
         public Builder value( final Instant value )
         {
             this.value = value;
+            return this;
+        }
+
+        public Builder deleteAfterRun( final boolean deleteAfterRun )
+        {
+            this.deleteAfterRun = deleteAfterRun;
             return this;
         }
 

@@ -47,7 +47,6 @@ public class SchedulerSerializer
 
         data.resetString( ScheduledJobPropertyNames.DESCRIPTION, params.getDescription() );
         data.setBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
-        data.setBoolean( ScheduledJobPropertyNames.DELETE_AFTER_RUN, params.isDeleteAfterRun() );
 
         addCalendar( params::getCalendar, data );
 
@@ -84,7 +83,6 @@ public class SchedulerSerializer
 
         data.setString( ScheduledJobPropertyNames.DESCRIPTION, modifiedJob.getDescription() );
         data.setBoolean( ScheduledJobPropertyNames.ENABLED, modifiedJob.isEnabled() );
-        data.setBoolean( ScheduledJobPropertyNames.DELETE_AFTER_RUN, modifiedJob.isDeleteAfterRun() );
 
         addCalendar( modifiedJob::getCalendar, data );
 
@@ -163,7 +161,6 @@ public class SchedulerSerializer
             .name( ScheduledJobName.from( node.name().toString() ) )
             .description( data.getString( ScheduledJobPropertyNames.DESCRIPTION ) )
             .enabled( data.getBoolean( ScheduledJobPropertyNames.ENABLED ) )
-            .deleteAfterRun( Boolean.TRUE.equals( data.getBoolean( ScheduledJobPropertyNames.DELETE_AFTER_RUN ) ) )
             .calendar( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CALENDAR ) )
                            .map( SchedulerSerializer::createCalendar )
                            .orElse( null ) )
@@ -226,6 +223,7 @@ public class SchedulerSerializer
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) calendar );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
+                calendarSet.setBoolean( ScheduledJobPropertyNames.CALENDAR_DELETE_AFTER_RUN, oneTimeCalendar.isDeleteAfterRun() );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
@@ -254,7 +252,11 @@ public class SchedulerSerializer
             case CRON:
                 return CronCalendarImpl.create().value( value ).timeZone( TimeZone.getTimeZone( timeZone ) ).build();
             case ONE_TIME:
-                return OneTimeCalendarImpl.create().value( Instant.parse( value ) ).build();
+                return OneTimeCalendarImpl.create()
+                    .value( Instant.parse( value ) )
+                    .deleteAfterRun(
+                        Boolean.TRUE.equals( data.getBoolean( ScheduledJobPropertyNames.CALENDAR_DELETE_AFTER_RUN ) ) )
+                    .build();
             case FIXED_DELAY:
                 return FixedDelayCalendarImpl.create().duration( java.time.Duration.parse( value ) ).build();
             default:

@@ -24,8 +24,6 @@ public final class ScheduledJob
 
     private final boolean enabled;
 
-    private final boolean deleteAfterRun;
-
     private final DescriptorKey descriptor;
 
     private final PropertyTree config;
@@ -50,7 +48,6 @@ public final class ScheduledJob
         this.description = builder.description;
         this.calendar = builder.calendar;
         this.enabled = builder.enabled;
-        this.deleteAfterRun = builder.deleteAfterRun;
         this.descriptor = builder.descriptor;
         this.config = builder.config;
         this.user = builder.user;
@@ -85,16 +82,6 @@ public final class ScheduledJob
     public boolean isEnabled()
     {
         return enabled;
-    }
-
-    /**
-     * Whether the job is deleted once it has run, instead of keeping a record of its last run.
-     * Only applies to {@link ScheduleCalendarType#ONE_TIME} jobs, and is ignored for any other
-     * calendar type.
-     */
-    public boolean isDeleteAfterRun()
-    {
-        return deleteAfterRun;
     }
 
     public DescriptorKey getDescriptor()
@@ -152,8 +139,6 @@ public final class ScheduledJob
 
         private boolean enabled;
 
-        private boolean deleteAfterRun;
-
         private DescriptorKey descriptor;
 
         private PropertyTree config = new PropertyTree();
@@ -197,12 +182,6 @@ public final class ScheduledJob
         public Builder enabled( final boolean enabled )
         {
             this.enabled = enabled;
-            return this;
-        }
-
-        public Builder deleteAfterRun( final boolean deleteAfterRun )
-        {
-            this.deleteAfterRun = deleteAfterRun;
             return this;
         }
 

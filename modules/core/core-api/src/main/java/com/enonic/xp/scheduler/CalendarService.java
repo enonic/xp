@@ -11,6 +11,8 @@ public interface CalendarService
 
     OneTimeCalendar oneTime( Instant value );
 
+    OneTimeCalendar oneTime( Instant value, boolean deleteAfterRun );
+
     FixedDelayCalendar fixedDelay( Duration duration );
 
 }

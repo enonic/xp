@@ -7,7 +7,6 @@ var result1Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
-        'deleteAfterRun': false,
         'config': {
             'a': 1
         },
@@ -18,6 +17,7 @@ var result1Expected = [
         'modifiedTime': '2016-11-02T10:36:00Z',
         'schedule': {
             'value': '2012-01-01T00:00:00Z',
+            'deleteAfterRun': false,
             'type': 'ONE_TIME'
         }
     }
@@ -29,7 +29,6 @@ var result2Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
-        'deleteAfterRun': false,
         'config': {
             'a': 1
         },
@@ -49,7 +48,6 @@ var result2Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
-        'deleteAfterRun': false,
         'config': {
             'a': 1
         },
@@ -60,6 +58,7 @@ var result2Expected = [
         'modifiedTime': '2016-11-02T10:36:00Z',
         'schedule': {
             'value': '2012-01-01T00:00:00Z',
+            'deleteAfterRun': false,
             'type': 'ONE_TIME'
         }
     }

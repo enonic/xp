@@ -18,6 +18,7 @@ public class OneTimeCalendarMapper
     public void serialize( final MapGenerator gen )
     {
         gen.value( "value", calendar.getValue().toString() );
+        gen.value( "deleteAfterRun", calendar.isDeleteAfterRun() );
         gen.value( "type", calendar.getType() );
     }
 }

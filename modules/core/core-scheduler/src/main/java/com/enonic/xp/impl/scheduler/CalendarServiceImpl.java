@@ -35,8 +35,15 @@ public class CalendarServiceImpl
     @Override
     public OneTimeCalendar oneTime( final Instant value )
     {
+        return oneTime( value, false );
+    }
+
+    @Override
+    public OneTimeCalendar oneTime( final Instant value, final boolean deleteAfterRun )
+    {
         return OneTimeCalendarImpl.create().
             value( value ).
+            deleteAfterRun( deleteAfterRun ).
             build();
     }
 

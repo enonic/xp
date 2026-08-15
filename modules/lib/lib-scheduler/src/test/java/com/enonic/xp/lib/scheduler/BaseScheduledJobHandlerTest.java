@@ -55,7 +55,6 @@ public abstract class BaseScheduledJobHandlerTest
                 calendar( params.getCalendar() ).
                 config( params.getConfig() ).
                 enabled( params.isEnabled() ).
-                deleteAfterRun( params.isDeleteAfterRun() ).
                 user( params.getUser() ).
                 creator( PrincipalKey.from( "user:system:creator" ) ).
                 modifier( PrincipalKey.from( "user:system:creator" ) ).
@@ -82,7 +81,6 @@ public abstract class BaseScheduledJobHandlerTest
                 description( modifiedJob.getDescription() ).
                 calendar( modifiedJob.getCalendar() ).
                 enabled( modifiedJob.isEnabled() ).
-                deleteAfterRun( modifiedJob.isDeleteAfterRun() ).
                 descriptor( modifiedJob.getDescriptor() ).
                 config( modifiedJob.getConfig() ).
                 user( modifiedJob.getUser() ).
@@ -113,11 +111,12 @@ public abstract class BaseScheduledJobHandlerTest
 
     protected void mockOneTimeCalendar()
     {
-        Mockito.when( calendarService.oneTime( Mockito.isA( Instant.class ) ) ).thenAnswer( invocation -> {
+        Mockito.when( calendarService.oneTime( Mockito.isA( Instant.class ), Mockito.anyBoolean() ) ).thenAnswer( invocation -> {
             final OneTimeCalendar oneTime = Mockito.mock( OneTimeCalendar.class );
 
             Mockito.when( oneTime.getType() ).thenReturn( ScheduleCalendarType.ONE_TIME );
             Mockito.when( oneTime.getValue() ).thenReturn( invocation.getArgument( 0 ) );
+            Mockito.when( oneTime.isDeleteAfterRun() ).thenReturn( invocation.getArgument( 1 ) );
 
             return oneTime;
         } );

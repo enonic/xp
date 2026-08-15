@@ -286,7 +286,8 @@ public final class RescheduleTask
             // fixed-delay jobs persist no run state (#12271): executions simply follow one another
             return;
         }
-        if ( type == ScheduleCalendarType.ONE_TIME && job.isDeleteAfterRun() && taskId != null && deleteAfterRun( job.getName() ) )
+        if ( job.getCalendar() instanceof OneTimeCalendar oneTime && oneTime.isDeleteAfterRun() && taskId != null &&
+            deleteAfterRun( job.getName() ) )
         {
             // an ephemeral one-time job (#12274) is removed instead of leaving a tombstone behind; a job
             // that never ran is kept, since nothing else in the system would record that it failed

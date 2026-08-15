@@ -382,7 +382,7 @@ class RescheduleTaskTest
     @Test
     void ephemeralOneTimeJobDeletedAfterRun()
     {
-        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).deleteAfterRun( true ).build() );
+        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).deleteAfterRun( true ).build() ).build() );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
@@ -396,7 +396,7 @@ class RescheduleTaskTest
     @Test
     void ephemeralOneTimeJobKeptWhenSubmissionNeverSucceeds()
     {
-        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).deleteAfterRun( true ).build() );
+        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).deleteAfterRun( true ).build() ).build() );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new RuntimeException() );
 
         for ( int i = 0; i <= 11; i++ )
@@ -412,7 +412,7 @@ class RescheduleTaskTest
     @Test
     void ephemeralOneTimeJobRecordsRunWhenDeleteFails()
     {
-        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).deleteAfterRun( true ).build() );
+        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).deleteAfterRun( true ).build() ).build() );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
         when( schedulerService.delete( isA( ScheduledJobName.class ) ) ).thenThrow( new RuntimeException() );
 
@@ -423,9 +423,9 @@ class RescheduleTaskTest
     }
 
     @Test
-    void deleteAfterRunIgnoredForCronJobs()
+    void cronJobsAreNeverDeletedAfterRun()
     {
-        mockJobs( jobBuilder( "job1", cronCalendar( "* * * * *" ) ).lastRun( NOW.minusSeconds( 90 ) ).deleteAfterRun( true ).build() );
+        mockJobs( jobBuilder( "job1", cronCalendar( "* * * * *" ) ).lastRun( NOW.minusSeconds( 90 ) ).build() );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();

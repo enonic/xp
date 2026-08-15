@@ -6,7 +6,6 @@ var resultExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
-    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,
@@ -27,6 +26,7 @@ var resultExpected = {
     'lastTaskId': 'task-id',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': false,
         'type': 'ONE_TIME'
     }
 };

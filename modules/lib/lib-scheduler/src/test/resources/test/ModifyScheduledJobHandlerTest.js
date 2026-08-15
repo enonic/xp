@@ -6,7 +6,6 @@ var resultExpected = {
     'descriptor': 'appKey:new-task',
     'description': 'new job description',
     'enabled': false,
-    'deleteAfterRun': false,
     'config': {
         'a1': 3
     },
@@ -70,7 +69,6 @@ var modifyJobWithNullResultExpected = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'enabled': true,
-    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,
@@ -88,6 +86,7 @@ var modifyJobWithNullResultExpected = {
     'modifiedTime': '2021-02-25T10:44:33.170Z',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': false,
         'type': 'ONE_TIME'
     }
 };

@@ -26,8 +26,6 @@ public final class CreateScheduledJobHandler
 
     private boolean enabled;
 
-    private boolean deleteAfterRun;
-
     private DescriptorKey descriptor;
 
     private PropertyTree config;
@@ -52,7 +50,6 @@ public final class CreateScheduledJobHandler
             .description( description )
             .config( config )
             .enabled( enabled )
-            .deleteAfterRun( deleteAfterRun )
             .user( user )
             .build();
     }
@@ -80,7 +77,7 @@ public final class CreateScheduledJobHandler
         this.description = value;
     }
 
-    public void setSchedule( final Map<String, String> value )
+    public void setSchedule( final Map<String, Object> value )
     {
         this.schedule = buildCalendar( value );
     }
@@ -94,11 +91,6 @@ public final class CreateScheduledJobHandler
     public void setEnabled( final boolean value )
     {
         this.enabled = value;
-    }
-
-    public void setDeleteAfterRun( final boolean value )
-    {
-        this.deleteAfterRun = value;
     }
 
     public void setUser( final String value )

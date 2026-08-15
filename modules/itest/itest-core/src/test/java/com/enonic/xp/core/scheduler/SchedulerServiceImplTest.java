@@ -438,7 +438,7 @@ class SchedulerServiceImplTest
     }
 
     @Test
-    void deleteAfterRunPersistedAndEditable()
+    void deleteAfterRunPersistedOnCalendar()
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );
 
@@ -447,19 +447,23 @@ class SchedulerServiceImplTest
                                                                     .descriptor(
                                                                         DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
                                                                                             "task1" ) )
-                                                                    .calendar( calendarService.oneTime( Instant.parse(
-                                                                        "2021-02-25T10:44:33.170079900Z" ) ) )
+                                                                    .calendar( calendarService.oneTime(
+                                                                        Instant.parse( "2021-02-25T10:44:33.170079900Z" ), true ) )
                                                                     .config( new PropertyTree() )
                                                                     .enabled( true )
-                                                                    .deleteAfterRun( true )
                                                                     .build() ) );
 
-        assertTrue( adminContext().callWith( () -> schedulerService.get( name ) ).isDeleteAfterRun() );
+        assertTrue(
+            ( (OneTimeCalendar) adminContext().callWith( () -> schedulerService.get( name ) ).getCalendar() ).isDeleteAfterRun() );
 
-        adminContext().callWith( () -> schedulerService.modify(
-            ModifyScheduledJobParams.create().name( name ).editor( edit -> edit.deleteAfterRun = false ).build() ) );
+        adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create()
+                                                                   .name( name )
+                                                                   .editor( edit -> edit.calendar = calendarService.oneTime(
+                                                                       Instant.parse( "2021-02-25T10:44:33.170079900Z" ), false ) )
+                                                                   .build() ) );
 
-        assertFalse( adminContext().callWith( () -> schedulerService.get( name ) ).isDeleteAfterRun() );
+        assertFalse(
+            ( (OneTimeCalendar) adminContext().callWith( () -> schedulerService.get( name ) ).getCalendar() ).isDeleteAfterRun() );
     }
 
     @Test

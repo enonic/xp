@@ -37,12 +37,12 @@ export interface CreateScheduledJobParams<Config extends Record<string, unknown>
     schedule: OneTimeSchedule | CronSchedule | FixedDelaySchedule;
     user?: UserKey;
     enabled: boolean;
-    deleteAfterRun?: boolean;
 }
 
 export interface OneTimeSchedule {
     type: 'ONE_TIME';
     value: string;
+    deleteAfterRun?: boolean;
 }
 
 export interface CronSchedule {
@@ -61,7 +61,6 @@ export interface ScheduledJob<Config extends Record<string, unknown> = Record<st
     descriptor: string;
     description?: string | null;
     enabled: boolean;
-    deleteAfterRun: boolean;
     config?: Config | null;
     user?: UserKey | null;
     creator: UserKey;
@@ -74,8 +73,6 @@ export interface ScheduledJob<Config extends Record<string, unknown> = Record<st
 }
 
 interface CreateScheduledJobHandler<Config extends Record<string, unknown>> {
-    setDeleteAfterRun(value: boolean): void;
-
     setName(value: string): void;
 
     setSchedule(value: OneTimeSchedule | CronSchedule | FixedDelaySchedule): void;
@@ -107,9 +104,9 @@ interface CreateScheduledJobHandler<Config extends Record<string, unknown>> {
  * @param {string} params.schedule.value schedule value according to its type.
  * @param {string} params.schedule.type schedule type (CRON | ONE_TIME | FIXED_DELAY).
  * @param {string} [params.schedule.timeZone] time zone of cron scheduling. Only applies when type is `CRON`.
+ * @param {boolean} [params.schedule.deleteAfterRun] delete the job once it has run, instead of keeping a record of its last run. Only applies when type is `ONE_TIME`.
  * @param {string} [params.user] key of the user that submitted the task.
  * @param {boolean} params.enabled job is active or not.
- * @param {boolean} [params.deleteAfterRun] delete the job once it has run, instead of keeping a record of its last run. Only applies when schedule type is `ONE_TIME`.
  */
 export function create<Config extends Record<string, unknown> = Record<string, unknown>>(params: CreateScheduledJobParams<Config>): ScheduledJob<Config> {
     const name = checkRequired(params, 'name');
@@ -127,7 +124,6 @@ export function create<Config extends Record<string, unknown> = Record<string, u
     bean.setDescription(__.nullOrValue(params.description));
     bean.setConfig(__.toScriptValue(params.config));
     bean.setUser(__.nullOrValue(params.user));
-    bean.setDeleteAfterRun(params.deleteAfterRun ?? false);
 
     return __.toNativeObject(bean.execute());
 }
