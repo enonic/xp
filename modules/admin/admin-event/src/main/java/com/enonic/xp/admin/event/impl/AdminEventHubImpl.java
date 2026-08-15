@@ -1,14 +1,8 @@
 package com.enonic.xp.admin.event.impl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HexFormat;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,9 +21,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import com.google.common.net.HttpHeaders;
-import com.google.common.net.MediaType;
 
 import jakarta.websocket.CloseReason;
 import jakarta.websocket.Session;
@@ -91,13 +82,6 @@ public final class AdminEventHubImpl
 
     static final char QUALIFIER = ':';
 
-    private static final String CLIENT_PATH = "/client.js";
-
-    private static final String CLIENT_RESOURCE = "/admin/event/client.js";
-
-    // revalidated rather than cached outright: the url is stable across upgrades
-    private static final String CLIENT_CACHE_CONTROL = "no-cache";
-
     private static final int MAX_TOPIC_NAME_LENGTH = 255;
 
     private static final int MAX_SUBSCRIPTIONS_PER_SOCKET = 64;
@@ -128,9 +112,7 @@ public final class AdminEventHubImpl
 
     private final ConcurrentMap<String, ClientSession> sessions = new ConcurrentHashMap<>();
 
-    private final String client = readClient();
-
-    private final String clientEtag = etagOf( client );
+    private final AdminEventClient client = new AdminEventClient();
 
     @Activate
     public AdminEventHubImpl( @Reference final WebSocketManager webSocketManager, @Reference final EventPublisher eventPublisher,
@@ -156,9 +138,9 @@ public final class AdminEventHubImpl
         final WebResponse.Builder<?> responseBuilder = WebResponse.create();
 
         final String apiPath = WebHandlerHelper.findApiPath( request, API_KEY );
-        if ( CLIENT_PATH.equals( apiPath ) )
+        if ( AdminEventClient.PATH.equals( apiPath ) )
         {
-            return client( request );
+            return client.handle( request );
         }
         if ( !apiPath.isEmpty() )
         {
@@ -174,19 +156,6 @@ public final class AdminEventHubImpl
         // defaults kept: terminateOnSessionExit=true, sessionAccess=false
 
         return responseBuilder.webSocket( webSocketConfig ).build();
-    }
-
-    private WebResponse client( final WebRequest request )
-    {
-        final WebResponse.Builder<?> responseBuilder =
-            WebResponse.create().header( HttpHeaders.ETAG, clientEtag ).header( HttpHeaders.CACHE_CONTROL, CLIENT_CACHE_CONTROL );
-
-        if ( clientEtag.equals( request.getHeaders().get( HttpHeaders.IF_NONE_MATCH ) ) )
-        {
-            return responseBuilder.status( HttpStatus.NOT_MODIFIED ).build();
-        }
-
-        return responseBuilder.status( HttpStatus.OK ).contentType( MediaType.JAVASCRIPT_UTF_8 ).body( client ).build();
     }
 
     @Override
@@ -470,31 +439,6 @@ public final class AdminEventHubImpl
             final long seq = state.seq.incrementAndGet();
             final String frame = eventFrame( topic, seq, data );
             state.subscribers.forEach( id -> send( id, frame ) );
-        }
-    }
-
-    private static String readClient()
-    {
-        try (InputStream in = AdminEventHubImpl.class.getResourceAsStream( CLIENT_RESOURCE ))
-        {
-            return new String( Objects.requireNonNull( in, CLIENT_RESOURCE ).readAllBytes(), StandardCharsets.UTF_8 );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
-    }
-
-    private static String etagOf( final String content )
-    {
-        try
-        {
-            final byte[] digest = MessageDigest.getInstance( "SHA-256" ).digest( content.getBytes( StandardCharsets.UTF_8 ) );
-            return "\"" + HexFormat.of().formatHex( digest, 0, 16 ) + "\"";
-        }
-        catch ( NoSuchAlgorithmException e )
-        {
-            throw new IllegalStateException( e );
         }
     }
 

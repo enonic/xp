@@ -11,7 +11,6 @@ import org.mockito.ArgumentCaptor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import jakarta.websocket.CloseReason;
@@ -40,7 +39,6 @@ import com.enonic.xp.web.websocket.WebSocketEventType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -408,7 +406,7 @@ class AdminEventHubImplTest
     }
 
     @Test
-    void handleServesTheClientScript()
+    void handleRoutesTheClientPathToTheClient()
     {
         final WebRequest request = new WebRequest();
         request.setRawPath( "/path/_/admin:events/client.js" );
@@ -417,27 +415,6 @@ class AdminEventHubImplTest
 
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertEquals( MediaType.JAVASCRIPT_UTF_8, response.getContentType() );
-        assertTrue( response.getBody().toString().contains( "AdminEventsSocket" ) );
-        assertFalse( response.getHeaders().get( HttpHeaders.ETAG ).isEmpty() );
-        assertEquals( "no-cache", response.getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
-    }
-
-    @Test
-    void theClientScriptIsRevalidated()
-    {
-        final WebRequest first = new WebRequest();
-        first.setRawPath( "/path/_/admin:events/client.js" );
-        final String etag = hub.handle( first ).getHeaders().get( HttpHeaders.ETAG );
-
-        final WebRequest second = new WebRequest();
-        second.setRawPath( "/path/_/admin:events/client.js" );
-        second.getHeaders().put( HttpHeaders.IF_NONE_MATCH, etag );
-
-        final WebResponse response = hub.handle( second );
-
-        assertEquals( HttpStatus.NOT_MODIFIED, response.getStatus() );
-        assertNull( response.getBody() );
-        assertEquals( etag, response.getHeaders().get( HttpHeaders.ETAG ) );
     }
 
     @Test
