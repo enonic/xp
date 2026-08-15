@@ -380,6 +380,61 @@ class RescheduleTaskTest
     }
 
     @Test
+    void ephemeralOneTimeJobDeletedAfterRun()
+    {
+        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).deleteAfterRun( true ).build() );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        verify( schedulerService, times( 1 ) ).delete( ScheduledJobName.from( "job1" ) );
+        // deleted instead of leaving a tombstone behind
+        verify( nodeService, never() ).update( isA( UpdateNodeParams.class ) );
+    }
+
+    @Test
+    void ephemeralOneTimeJobKeptWhenSubmissionNeverSucceeds()
+    {
+        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).deleteAfterRun( true ).build() );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new RuntimeException() );
+
+        for ( int i = 0; i <= 11; i++ )
+        {
+            task.run();
+        }
+
+        // a job that never ran is evidence of the failure - it stays, and records the give-up
+        verify( schedulerService, never() ).delete( isA( ScheduledJobName.class ) );
+        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
+    }
+
+    @Test
+    void ephemeralOneTimeJobRecordsRunWhenDeleteFails()
+    {
+        mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).deleteAfterRun( true ).build() );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+        when( schedulerService.delete( isA( ScheduledJobName.class ) ) ).thenThrow( new RuntimeException() );
+
+        task.run();
+
+        // a failed cleanup must not become a re-run, so the tombstone is written instead
+        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
+    }
+
+    @Test
+    void deleteAfterRunIgnoredForCronJobs()
+    {
+        mockJobs( jobBuilder( "job1", cronCalendar( "* * * * *" ) ).lastRun( NOW.minusSeconds( 90 ) ).deleteAfterRun( true ).build() );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        verify( schedulerService, never() ).delete( isA( ScheduledJobName.class ) );
+    }
+
+    @Test
     void disabledJobNotSubmitted()
     {
         mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).enabled( false ).build() );

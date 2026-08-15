@@ -55,6 +55,7 @@ public abstract class BaseScheduledJobHandlerTest
                 calendar( params.getCalendar() ).
                 config( params.getConfig() ).
                 enabled( params.isEnabled() ).
+                deleteAfterRun( params.isDeleteAfterRun() ).
                 user( params.getUser() ).
                 creator( PrincipalKey.from( "user:system:creator" ) ).
                 modifier( PrincipalKey.from( "user:system:creator" ) ).
@@ -81,6 +82,7 @@ public abstract class BaseScheduledJobHandlerTest
                 description( modifiedJob.getDescription() ).
                 calendar( modifiedJob.getCalendar() ).
                 enabled( modifiedJob.isEnabled() ).
+                deleteAfterRun( modifiedJob.isDeleteAfterRun() ).
                 descriptor( modifiedJob.getDescriptor() ).
                 config( modifiedJob.getConfig() ).
                 user( modifiedJob.getUser() ).

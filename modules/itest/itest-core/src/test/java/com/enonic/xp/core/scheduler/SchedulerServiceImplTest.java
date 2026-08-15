@@ -438,6 +438,31 @@ class SchedulerServiceImplTest
     }
 
     @Test
+    void deleteAfterRunPersistedAndEditable()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.oneTime( Instant.parse(
+                                                                        "2021-02-25T10:44:33.170079900Z" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .enabled( true )
+                                                                    .deleteAfterRun( true )
+                                                                    .build() ) );
+
+        assertTrue( adminContext().callWith( () -> schedulerService.get( name ) ).isDeleteAfterRun() );
+
+        adminContext().callWith( () -> schedulerService.modify(
+            ModifyScheduledJobParams.create().name( name ).editor( edit -> edit.deleteAfterRun = false ).build() ) );
+
+        assertFalse( adminContext().callWith( () -> schedulerService.get( name ) ).isDeleteAfterRun() );
+    }
+
+    @Test
     void oneTimeRunStateSurvivesNodeVersionChanges()
     {
         final ScheduledJobName name = ScheduledJobName.from( "test" );

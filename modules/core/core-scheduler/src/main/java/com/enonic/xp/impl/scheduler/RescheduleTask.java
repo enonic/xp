@@ -286,6 +286,12 @@ public final class RescheduleTask
             // fixed-delay jobs persist no run state (#12271): executions simply follow one another
             return;
         }
+        if ( type == ScheduleCalendarType.ONE_TIME && job.isDeleteAfterRun() && taskId != null && deleteAfterRun( job.getName() ) )
+        {
+            // an ephemeral one-time job (#12274) is removed instead of leaving a tombstone behind; a job
+            // that never ran is kept, since nothing else in the system would record that it failed
+            return;
+        }
         try
         {
             adminContext().runWith( () -> UpdateLastRunCommand.create()
@@ -299,6 +305,21 @@ public final class RescheduleTask
         catch ( Exception e )
         {
             LOG.warn( "Failed to store last run of job [{}]", job.getName(), e );
+        }
+    }
+
+    private boolean deleteAfterRun( final ScheduledJobName name )
+    {
+        try
+        {
+            adminContext().runWith( () -> schedulerService.delete( name ) );
+            return true;
+        }
+        catch ( Exception e )
+        {
+            // fall back to recording the run, so that a failed cleanup can never become a re-run
+            LOG.warn( "Failed to delete job [{}] after its run, the last run is recorded instead", name, e );
+            return false;
         }
     }
 

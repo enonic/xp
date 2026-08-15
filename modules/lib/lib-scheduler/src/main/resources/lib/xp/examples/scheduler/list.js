@@ -33,6 +33,7 @@ var expected = [
         'descriptor': 'appKey:task2',
         'description': 'job description',
         'enabled': true,
+        'deleteAfterRun': false,
         'config': {
             'a': 1
         },
@@ -50,6 +51,7 @@ var expected = [
         'name': 'myjob1',
         'descriptor': 'appKey:task1',
         'enabled': false,
+        'deleteAfterRun': false,
         'config': {},
         'creator': 'user:system:creator',
         'modifier': 'user:system:creator',

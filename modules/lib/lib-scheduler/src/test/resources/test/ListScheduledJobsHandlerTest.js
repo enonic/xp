@@ -7,6 +7,7 @@ var result1Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
+        'deleteAfterRun': false,
         'config': {
             'a': 1
         },
@@ -28,6 +29,7 @@ var result2Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
+        'deleteAfterRun': false,
         'config': {
             'a': 1
         },
@@ -47,6 +49,7 @@ var result2Expected = [
         'descriptor': 'appKey:task',
         'description': 'job description',
         'enabled': true,
+        'deleteAfterRun': false,
         'config': {
             'a': 1
         },

@@ -39,6 +39,7 @@ var expected = {
     'descriptor': 'appKey:new-task',
     'description': 'new job description',
     'enabled': false,
+    'deleteAfterRun': false,
     'config': {
         'a1': 3
     },

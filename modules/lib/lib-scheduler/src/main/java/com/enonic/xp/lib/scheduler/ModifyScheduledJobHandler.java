@@ -55,6 +55,7 @@ public final class ModifyScheduledJobHandler
         updateConfig( target, params );
         updateCalendar( target, params );
         updateIsEnabled( target, params );
+        updateDeleteAfterRun( target, params );
         updateDescription( target, params );
         updateUser( target, params );
     }
@@ -108,6 +109,19 @@ public final class ModifyScheduledJobHandler
                 throw new IllegalArgumentException( "enabled cannot be null" );
             }
             target.enabled = value.getValue( boolean.class );
+        }
+    }
+
+    private void updateDeleteAfterRun( final EditableScheduledJob target, final ScriptValue params )
+    {
+        if ( params.getKeys().contains( "deleteAfterRun" ) )
+        {
+            final ScriptValue value = params.getMember( "deleteAfterRun" );
+            if ( value == null )
+            {
+                throw new IllegalArgumentException( "deleteAfterRun cannot be null" );
+            }
+            target.deleteAfterRun = value.getValue( boolean.class );
         }
     }
 

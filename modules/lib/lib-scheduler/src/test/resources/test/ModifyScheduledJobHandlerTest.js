@@ -6,6 +6,7 @@ var resultExpected = {
     'descriptor': 'appKey:new-task',
     'description': 'new job description',
     'enabled': false,
+    'deleteAfterRun': false,
     'config': {
         'a1': 3
     },
@@ -69,6 +70,7 @@ var modifyJobWithNullResultExpected = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'enabled': true,
+    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,

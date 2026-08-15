@@ -47,6 +47,7 @@ public class SchedulerSerializer
 
         data.resetString( ScheduledJobPropertyNames.DESCRIPTION, params.getDescription() );
         data.setBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
+        data.setBoolean( ScheduledJobPropertyNames.DELETE_AFTER_RUN, params.isDeleteAfterRun() );
 
         addCalendar( params::getCalendar, data );
 
@@ -83,6 +84,7 @@ public class SchedulerSerializer
 
         data.setString( ScheduledJobPropertyNames.DESCRIPTION, modifiedJob.getDescription() );
         data.setBoolean( ScheduledJobPropertyNames.ENABLED, modifiedJob.isEnabled() );
+        data.setBoolean( ScheduledJobPropertyNames.DELETE_AFTER_RUN, modifiedJob.isDeleteAfterRun() );
 
         addCalendar( modifiedJob::getCalendar, data );
 
@@ -161,6 +163,7 @@ public class SchedulerSerializer
             .name( ScheduledJobName.from( node.name().toString() ) )
             .description( data.getString( ScheduledJobPropertyNames.DESCRIPTION ) )
             .enabled( data.getBoolean( ScheduledJobPropertyNames.ENABLED ) )
+            .deleteAfterRun( Boolean.TRUE.equals( data.getBoolean( ScheduledJobPropertyNames.DELETE_AFTER_RUN ) ) )
             .calendar( Optional.ofNullable( data.getSet( ScheduledJobPropertyNames.CALENDAR ) )
                            .map( SchedulerSerializer::createCalendar )
                            .orElse( null ) )

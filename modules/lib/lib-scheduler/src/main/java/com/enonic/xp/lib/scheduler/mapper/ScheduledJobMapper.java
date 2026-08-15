@@ -44,6 +44,7 @@ public final class ScheduledJobMapper
         gen.value( "descriptor", job.getDescriptor().toString() );
         gen.value( "description", job.getDescription() );
         gen.value( "enabled", job.isEnabled() );
+        gen.value( "deleteAfterRun", job.isDeleteAfterRun() );
         gen.value( "config", job.getConfig() );
         gen.value( "user", job.getUser() != null ? job.getUser().toString() : null );
         gen.value( "creator", job.getCreator() != null ? job.getCreator().toString() : null );

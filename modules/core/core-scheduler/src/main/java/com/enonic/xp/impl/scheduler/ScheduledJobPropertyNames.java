@@ -6,6 +6,8 @@ public class ScheduledJobPropertyNames
 
     public static final String ENABLED = "enabled";
 
+    public static final String DELETE_AFTER_RUN = "deleteAfterRun";
+
     public static final String DESCRIPTOR = "descriptor";
 
     public static final String CONFIG = "config";

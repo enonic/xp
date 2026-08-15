@@ -16,6 +16,7 @@ var expectedOneTimeJob = {
     'name': 'my-project',
     'descriptor': 'appKey:task',
     'enabled': true,
+    'deleteAfterRun': false,
     'config': {},
     'creator': 'user:system:creator',
     'modifier': 'user:system:creator',
@@ -59,6 +60,7 @@ var expectedExtendedOneTimeJob = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
+    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,
@@ -100,6 +102,7 @@ var expectedSimpleCronJob = {
     'name': 'myjob',
     'descriptor': 'appKey:task',
     'enabled': true,
+    'deleteAfterRun': false,
     'config': {},
     'creator': 'user:system:creator',
     'modifier': 'user:system:creator',
@@ -144,6 +147,7 @@ var expectedExtendedCronJob = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
+    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,

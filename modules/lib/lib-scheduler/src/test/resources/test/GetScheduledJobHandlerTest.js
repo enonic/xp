@@ -6,6 +6,7 @@ var resultExpected = {
     'descriptor': 'appKey:task',
     'description': 'job description',
     'enabled': true,
+    'deleteAfterRun': false,
     'config': {
         'a': 1,
         'b': 2,

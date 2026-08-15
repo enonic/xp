@@ -17,6 +17,8 @@ public final class EditableScheduledJob
 
     public boolean enabled;
 
+    public boolean deleteAfterRun;
+
     public DescriptorKey descriptor;
 
     public PropertyTree config;
@@ -33,6 +35,7 @@ public final class EditableScheduledJob
         this.description = source.getDescription();
         this.calendar = source.getCalendar();
         this.enabled = source.isEnabled();
+        this.deleteAfterRun = source.isDeleteAfterRun();
         this.descriptor = source.getDescriptor();
         this.user = source.getUser();
         this.config = source.getConfig().copy();
@@ -47,6 +50,7 @@ public final class EditableScheduledJob
             .description( description )
             .calendar( calendar )
             .enabled( enabled )
+            .deleteAfterRun( deleteAfterRun )
             .descriptor( descriptor )
             .config( config )
             .user( user )
