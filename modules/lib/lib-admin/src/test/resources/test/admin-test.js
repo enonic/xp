@@ -57,6 +57,15 @@ exports.setTopic = function () {
     t.assertEquals('myapplication:myTopic', result);
 };
 
+exports.setTopicWithSingleAllow = function () {
+    const result = adminLib.setTopic({
+        name: 'myTopic',
+        allow: 'role:system.admin.login'
+    });
+
+    t.assertEquals('myapplication:myTopic', result);
+};
+
 exports.setTopicWithEmptyAllow = function () {
     adminLib.setTopic({
         name: 'myTopic',

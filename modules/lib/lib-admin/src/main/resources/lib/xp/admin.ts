@@ -179,7 +179,7 @@ interface SendToTopicHandler {
 
 export interface SetTopicParams {
     name: string;
-    allow: string[];
+    allow: string | string[];
 }
 
 /**
@@ -195,8 +195,8 @@ export interface SetTopicParams {
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Local topic name: 1-255 characters, no `:`, no whitespace.
- * @param {string[]} params.allow Principal keys allowed to subscribe, in addition to
- * `role:system.admin`. Empty clears the topic registration.
+ * @param {string|string[]} params.allow Principal key, or keys, allowed to subscribe, in addition
+ * to `role:system.admin`. An empty array clears the topic registration.
  *
  * @returns {string} The canonical topic name.
  */
@@ -207,7 +207,7 @@ export function setTopic(params: SetTopicParams): string {
     const bean: SetTopicHandler = __.newBean<SetTopicHandler>('com.enonic.xp.lib.admin.SetTopicHandler');
 
     bean.setName(name);
-    bean.setAllow(__.toScriptValue(allow));
+    bean.setAllow(__.toScriptValue(([] as string[]).concat(allow)));
     return bean.execute();
 }
 

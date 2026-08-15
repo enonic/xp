@@ -62,6 +62,19 @@ class LibAdminTest
     }
 
     @Test
+    void setTopicWithSingleAllow()
+    {
+        when( adminEventHub.setTopic( any() ) ).thenReturn( "myapplication:myTopic" );
+
+        runFunction( "/test/admin-test.js", "setTopicWithSingleAllow" );
+
+        ArgumentCaptor<SetTopicParams> params = ArgumentCaptor.forClass( SetTopicParams.class );
+        verify( adminEventHub ).setTopic( params.capture() );
+
+        assertEquals( PrincipalKeys.from( "role:system.admin.login" ), params.getValue().getAllow() );
+    }
+
+    @Test
     void setTopicWithEmptyAllow()
     {
         when( adminEventHub.setTopic( any() ) ).thenReturn( "myapplication:myTopic" );
