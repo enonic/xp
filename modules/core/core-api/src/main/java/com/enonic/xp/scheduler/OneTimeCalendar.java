@@ -2,10 +2,18 @@ package com.enonic.xp.scheduler;
 
 import java.time.Instant;
 
+import org.jspecify.annotations.NullMarked;
 
+/**
+ * A schedule that runs once, at a fixed point in time.
+ */
+@NullMarked
 public interface OneTimeCalendar
     extends ScheduleCalendar
 {
+    /**
+     * The instant the job runs at.
+     */
     Instant getValue();
 
     /**
