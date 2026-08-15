@@ -52,14 +52,14 @@ public class ClusterServiceImpl
     }
 
     @Override
-    public boolean hasApplication( final @NonNull ApplicationKey applicationKey )
+    public boolean inCluster( final @NonNull ApplicationKey applicationKey )
     {
         final ClusterService clusterService = resolveClusterService();
         if ( clusterService == null )
         {
             return false;
         }
-        return clusterService.hasApplication( applicationKey );
+        return clusterService.inCluster( applicationKey );
     }
 
     private ClusterService resolveClusterService()

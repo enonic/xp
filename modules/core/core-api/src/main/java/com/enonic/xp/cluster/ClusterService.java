@@ -11,8 +11,9 @@ public interface ClusterService
     boolean isLeader( @NonNull ApplicationKey applicationKey );
 
     /**
-     * Whether the application is currently started on any cluster member.
-     * In a non-clustered installation always returns false - combine with local knowledge.
+     * Whether the application is started on some member of the cluster.
+     * A non-clustered installation has no cluster, so the answer there is always false -
+     * callers pair this with local knowledge.
      */
-    boolean hasApplication( @NonNull ApplicationKey applicationKey );
+    boolean inCluster( @NonNull ApplicationKey applicationKey );
 }

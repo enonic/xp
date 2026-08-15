@@ -118,25 +118,25 @@ class ClusterServiceImplTest
     }
 
     @Test
-    void hasApplication_noClusteredService()
+    void inCluster_noClusteredService()
     {
         final ClusterServiceImpl clusterService = new ClusterServiceImpl();
-        assertFalse( clusterService.hasApplication( ApplicationKey.from( "com.example.myapp" ) ) );
+        assertFalse( clusterService.inCluster( ApplicationKey.from( "com.example.myapp" ) ) );
     }
 
     @Test
-    void hasApplication_delegatesToClusteredService()
+    void inCluster_delegatesToClusteredService()
     {
         final ClusterServiceImpl clusterService = new ClusterServiceImpl();
         clusterService.setClusteredClusterService( clusteredClusterService );
 
         final ApplicationKey appKey = ApplicationKey.from( "com.example.myapp" );
 
-        when( clusteredClusterService.hasApplication( appKey ) ).thenReturn( false );
-        assertFalse( clusterService.hasApplication( appKey ) );
+        when( clusteredClusterService.inCluster( appKey ) ).thenReturn( false );
+        assertFalse( clusterService.inCluster( appKey ) );
 
-        when( clusteredClusterService.hasApplication( appKey ) ).thenReturn( true );
-        assertTrue( clusterService.hasApplication( appKey ) );
+        when( clusteredClusterService.inCluster( appKey ) ).thenReturn( true );
+        assertTrue( clusterService.inCluster( appKey ) );
     }
 
     @Test

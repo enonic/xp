@@ -56,7 +56,7 @@ public class HazelcastClusterServiceImpl
     }
 
     @Override
-    public boolean hasApplication( final @NonNull ApplicationKey applicationKey )
+    public boolean inCluster( final @NonNull ApplicationKey applicationKey )
     {
         final ReplicatedMap<UUID, Map<String, String>> attributes = hazelcastInstance.getReplicatedMap( ClusterAttributesApplier.MAP_NAME );
 

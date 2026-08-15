@@ -202,7 +202,7 @@ public final class RescheduleTask
         // the descriptor may exist only on another member - applications can be installed per node,
         // and the task is routed to a member that runs the application
         if ( taskDescriptorService.getTask( job.getDescriptor() ) == null &&
-            !clusterService.hasApplication( job.getDescriptor().getApplicationKey() ) )
+            !clusterService.inCluster( job.getDescriptor().getApplicationKey() ) )
         {
             // the application is not started (yet) or no longer provides the task - the job lies
             // dormant without failing and fires as soon as the descriptor is available again

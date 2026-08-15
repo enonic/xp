@@ -144,7 +144,7 @@ class HazelcastClusterServiceImplTest
     }
 
     @Test
-    void hasApplication_someMemberHasApp()
+    void inCluster_someMemberHasApp()
     {
         final UUID member1Uuid = UUID.randomUUID();
         final UUID member2Uuid = UUID.randomUUID();
@@ -159,11 +159,11 @@ class HazelcastClusterServiceImplTest
         when( replicatedMap.get( member1Uuid ) ).thenReturn( null );
         when( replicatedMap.get( member2Uuid ) ).thenReturn( Map.of( "application-com.example.myapp", "true" ) );
 
-        assertTrue( clusterService.hasApplication( appKey ) );
+        assertTrue( clusterService.inCluster( appKey ) );
     }
 
     @Test
-    void hasApplication_noMemberHasApp()
+    void inCluster_noMemberHasApp()
     {
         final UUID member1Uuid = UUID.randomUUID();
         final UUID member2Uuid = UUID.randomUUID();
@@ -178,7 +178,7 @@ class HazelcastClusterServiceImplTest
         when( replicatedMap.get( member1Uuid ) ).thenReturn( Map.of( "application-com.example.otherapp", "true" ) );
         when( replicatedMap.get( member2Uuid ) ).thenReturn( null );
 
-        assertFalse( clusterService.hasApplication( appKey ) );
+        assertFalse( clusterService.inCluster( appKey ) );
     }
 
     @SuppressWarnings("unchecked")

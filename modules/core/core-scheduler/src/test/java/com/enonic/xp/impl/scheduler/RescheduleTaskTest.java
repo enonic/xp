@@ -552,7 +552,7 @@ class RescheduleTaskTest
     {
         mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
         when( taskDescriptorService.getTask( isA( DescriptorKey.class ) ) ).thenReturn( null );
-        when( clusterService.hasApplication( isA( ApplicationKey.class ) ) ).thenReturn( true );
+        when( clusterService.inCluster( isA( ApplicationKey.class ) ) ).thenReturn( true );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
