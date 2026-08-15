@@ -57,8 +57,9 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
  * {@code pub {topic, data}}, {@code ping}. Server: {@code ack {topic, seq, epoch}},
  * {@code deny {topic, reason}}, {@code event {topic, seq, data}}, {@code error {code, topic?}},
  * {@code pong}. Topics are addressed by canonical name. Subscribe is checked against the topic's
- * {@code allow} with the principals captured at the websocket handshake; {@code deny.reason} is
- * {@code unknown} for an unregistered topic, {@code forbidden} for a failed check. {@code pub}
+ * {@code allow}, plus {@code role:system.admin}, with the principals captured at the websocket
+ * handshake; {@code deny.reason} is {@code unknown} for an unregistered topic,
+ * {@code forbidden} for a failed check. {@code pub}
  * requires an acknowledged subscription and is republished node-locally as an
  * {@code admin.topic.in.<topic>} event carrying the verified user and socket id.
  * <p>

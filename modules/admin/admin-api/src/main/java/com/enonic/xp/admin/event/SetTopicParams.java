@@ -101,7 +101,8 @@ public final class SetTopicParams
         /**
          * Sets the principals allowed to subscribe.
          *
-         * @param allow principals allowed to subscribe; empty clears the topic registration
+         * @param allow principals allowed to subscribe, in addition to {@code role:system.admin};
+         *              empty clears the topic registration
          * @return the Builder instance for chaining
          */
         public Builder allow( final PrincipalKeys allow )

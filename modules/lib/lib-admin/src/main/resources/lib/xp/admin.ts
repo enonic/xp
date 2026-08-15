@@ -187,15 +187,16 @@ export interface SetTopicParams {
  *
  * The topic's canonical name is `<application-key>:<name>`. Subscribers address the topic by the
  * canonical name over the `admin:events` websocket API. A non-empty `allow` registers the topic
- * or updates its `allow`; only listed principals may subscribe, and updating re-evaluates current
- * subscribers against the new list. An empty `allow` clears the registration, with the same
+ * or updates its `allow`; the principals in `allow` and `role:system.admin` may subscribe, and
+ * updating re-evaluates current subscribers against the new list. An empty `allow` clears the
+ * registration, with the same
  * effect as the application stopping: publishing fails and new subscriptions are denied, while
  * existing subscriptions persist and resume when the topic is set again.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Local topic name: 1-255 characters, no `:`, no whitespace.
- * @param {string[]} params.allow Principal keys allowed to subscribe. Empty clears the topic
- * registration.
+ * @param {string[]} params.allow Principal keys allowed to subscribe, in addition to
+ * `role:system.admin`. Empty clears the topic registration.
  *
  * @returns {string} The canonical topic name.
  */
