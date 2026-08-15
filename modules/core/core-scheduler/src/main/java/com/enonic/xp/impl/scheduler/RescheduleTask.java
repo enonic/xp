@@ -25,6 +25,7 @@ import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
+import com.enonic.xp.impl.scheduler.distributed.PlannedRun;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -156,9 +157,15 @@ public final class RescheduleTask
         {
             // a one-time job's lastRun tombstone lives in node data (#12271), so the listed job
             // carries it; the coordinator covers the window until the tombstone is persisted
-            dueTime = schedulingCoordinator.plannedRun( job.getName() ) == null && job.getLastRun() == null
-                ? ( (OneTimeCalendar) job.getCalendar() ).getValue()
-                : null;
+            if ( schedulingCoordinator.plannedRun( job.getName() ) != null || job.getLastRun() != null )
+            {
+                return Optional.empty();
+            }
+            final Instant value = ( (OneTimeCalendar) job.getCalendar() ).getValue();
+            // a tombstone left as a version attribute by an earlier version is invisible to the
+            // listing, so confirm with a full read rather than run the job a second time - only
+            // once the job is otherwise about to run, and memoized on its version
+            return !value.isAfter( now ) && runState( entry ).lastRun() == null ? Optional.of( value ) : Optional.empty();
         }
         else
         {
@@ -226,8 +233,7 @@ public final class RescheduleTask
             if ( job.getCalendar().getType() == ScheduleCalendarType.CRON )
             {
                 // cron occurrences are calendar positions - a blocked one is skipped
-                schedulingCoordinator.plannedRun( job.getName(),
-                                                  new PlannedRun( nextExecutionAfter( job.getCalendar(), now ), previousTaskId ) );
+                planNextRun( job.getName(), nextExecutionAfter( job.getCalendar(), now ), previousTaskId );
             }
             // a fixed-rate run holds: it stays due and fires once the previous task finishes
             return;
@@ -271,11 +277,8 @@ public final class RescheduleTask
         final ScheduledJob job = entry.job();
         final ScheduleCalendarType type = job.getCalendar().getType();
         // the shared value plans the next execution; for a one-time job it marks the only execution as submitted
-        schedulingCoordinator.plannedRun( job.getName(),
-                                          new PlannedRun( type == ScheduleCalendarType.ONE_TIME
-                                                              ? now
-                                                              : nextExecutionAfter( job.getCalendar(), now ),
-                                                          taskId != null ? taskId.toString() : null ) );
+        planNextRun( job.getName(), type == ScheduleCalendarType.ONE_TIME ? now : nextExecutionAfter( job.getCalendar(), now ),
+                     taskId != null ? taskId.toString() : null );
         if ( type == ScheduleCalendarType.CRON )
         {
             runStates.put( job.getName(),
@@ -306,6 +309,28 @@ public final class RescheduleTask
         catch ( Exception e )
         {
             LOG.warn( "Failed to store last run of job [{}]", job.getName(), e );
+        }
+    }
+
+    private void planNextRun( final ScheduledJobName name, final Instant nextRun, final String lastTaskId )
+    {
+        try
+        {
+            if ( nextRun != null )
+            {
+                schedulingCoordinator.plannedRun( name, new PlannedRun( nextRun, lastTaskId ) );
+            }
+            else
+            {
+                // the calendar has no further occurrence - drop the plan instead of keeping a stale one
+                schedulingCoordinator.forget( name );
+            }
+        }
+        catch ( Exception e )
+        {
+            // the persisted run state still bounds the next execution, so recording it is worth
+            // attempting even when the shared plan could not be written
+            LOG.warn( "Failed to share the planned run of job [{}]", name, e );
         }
     }
 

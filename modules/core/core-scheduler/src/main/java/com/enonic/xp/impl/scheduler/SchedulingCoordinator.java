@@ -16,6 +16,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 
 import com.enonic.xp.cluster.ClusterConfig;
+import com.enonic.xp.impl.scheduler.distributed.PlannedRun;
 import com.enonic.xp.scheduler.ScheduledJobName;
 
 /**

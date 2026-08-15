@@ -39,6 +39,7 @@ import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
+import com.enonic.xp.impl.scheduler.distributed.PlannedRun;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
@@ -59,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -432,6 +434,40 @@ class RescheduleTaskTest
 
         verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
         verify( schedulerService, never() ).delete( isA( ScheduledJobName.class ) );
+    }
+
+    @Test
+    void oneTimeJobNotRerunWhenTombstoneIsAVersionAttribute()
+    {
+        // the listing carries no version attributes, so the job looks as if it had never run
+        final ScheduledJob listed = oneTimeJob( "job1", NOW.minusSeconds( 1 ) );
+        final ScheduledJob stored = jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).lastRun(
+            NOW.minusSeconds( 30 ) ).build();
+
+        when( schedulerService.listEntries() ).thenReturn( List.of( new ScheduledJobEntry( listed, new NodeVersionId() ) ) );
+        when( schedulerService.get( listed.getName() ) ).thenReturn( stored );
+
+        task.run();
+
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void runIsRecordedWhenTheSharedPlanCannotBeWritten()
+    {
+        final SchedulingCoordinator failing = mock( SchedulingCoordinator.class );
+        doThrow( new RuntimeException() ).when( failing ).plannedRun( isA( ScheduledJobName.class ), isA( PlannedRun.class ) );
+        task = new RescheduleTask( schedulerService, nodeService, taskService, taskDescriptorService, securityService, clusterService,
+                                   failing, clock );
+
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        // the tombstone is what keeps the job from running again, so it is written regardless
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.scheduler;
+package com.enonic.xp.impl.scheduler.distributed;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -12,11 +12,14 @@ import static java.util.Objects.requireNonNull;
  * the previous run submitted. For a one-time job {@code nextRun} marks the only
  * execution as submitted. {@code lastTaskId} is null when no submitted task is known,
  * e.g. after giving up on a failing job.
+ * <p>
+ * Instances are shared through Hazelcast, which deserializes them with its own bundle's
+ * class loader - hence this package, which the bundle exports.
  */
-record PlannedRun(Instant nextRun, @Nullable String lastTaskId)
+public record PlannedRun(Instant nextRun, @Nullable String lastTaskId)
     implements Serializable
 {
-    PlannedRun
+    public PlannedRun
     {
         requireNonNull( nextRun, "nextRun is required" );
     }

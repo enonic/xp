@@ -112,6 +112,9 @@ public class ClusterServiceImpl
 
     public void unsetClusterConfig( final ClusterConfig clusterConfig )
     {
-        this.clusterConfig = null;
+        if ( this.clusterConfig == clusterConfig )
+        {
+            this.clusterConfig = null;
+        }
     }
 }
