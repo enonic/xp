@@ -215,9 +215,10 @@ export function setTopic(params: SetTopicParams): string {
  * Publishes a message to an admin events topic owned by this application.
  *
  * The message is delivered to the sockets on this node holding an acknowledged subscription to the
- * topic, stamped with a per-topic sequence number. Delivery is not guaranteed. Reaching subscribers
- * on other nodes is the application's own: it sends a distributed event and publishes from every
- * node, which is what a listener registered in `main.js` does.
+ * topic, stamped with a per-topic sequence number. Delivery is not guaranteed.
+ *
+ * The message is not distributed over the cluster. Subscribers on other nodes receive it only if
+ * the application publishes on those nodes too.
  *
  * @param {string} name Local topic name, as passed to `setTopic`.
  * @param {object} [message] Message data. Must be serializable to JSON and must not contain null

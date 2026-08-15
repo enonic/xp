@@ -62,8 +62,7 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
  * check. {@code pub} requires an acknowledged subscription and is republished node-locally as an
  * {@code admin.topic.in.<topic>} event carrying the verified user and socket id.
  * <p>
- * Publishing delivers to the sockets on this node. An application whose message concerns the whole
- * cluster distributes an event of its own and publishes from every node.
+ * Publishing delivers to the sockets on this node and does not distribute over the cluster.
  * <p>
  * Sequence numbers are per topic and per node, monotonic for the lifetime of the registry;
  * {@code epoch} identifies it. {@code ack.seq} is the last sequence stamped at subscription time;

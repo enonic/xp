@@ -36,8 +36,10 @@ public interface AdminEventHub
     /**
      * Publishes a message to the topic {@code caller + ":" + name}, delivering it to the sockets on
      * this node that hold an acknowledged subscription to the topic, stamped with this node's
-     * per-topic sequence number. Delivery is not guaranteed. Reaching subscribers on other nodes is
-     * the caller's own: it distributes an event and publishes from every node.
+     * per-topic sequence number. Delivery is not guaranteed.
+     * <p>
+     * The message is not distributed over the cluster. Subscribers on other nodes receive it only
+     * if the caller publishes on those nodes too.
      *
      * @param params publish parameters
      * @throws IllegalArgumentException if the topic is not registered by {@code caller}, or the
