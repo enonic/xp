@@ -31,7 +31,6 @@ import com.enonic.xp.admin.event.SetTopicParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
-import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
@@ -47,8 +46,7 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketEvent;
 
 /**
- * Admin events hub: the {@code admin:events} websocket API, the {@link AdminEventHub} service,
- * and the fan-out of distributed {@code admin.topic} events to subscribed local sockets.
+ * Admin events hub: the {@code admin:events} websocket API and the {@link AdminEventHub} service.
  * <p>
  * Wire protocol, JSON text frames. Client: {@code subscribe {topic}}, {@code unsubscribe {topic}},
  * {@code pub {topic, data}}, {@code ping}. Server: {@code ack {topic, seq, epoch}},
@@ -64,18 +62,20 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
  * check. {@code pub} requires an acknowledged subscription and is republished node-locally as an
  * {@code admin.topic.in.<topic>} event carrying the verified user and socket id.
  * <p>
- * Sequence numbers are per topic and per node, monotonic for the lifetime of this instance;
- * {@code epoch} identifies the instance. {@code ack.seq} is the last sequence stamped at
- * subscription time; the first delivered event carries a higher one.
+ * Publishing delivers to the sockets on this node. An application whose message concerns the whole
+ * cluster distributes an event of its own and publishes from every node.
+ * <p>
+ * Sequence numbers are per topic and per node, monotonic for the lifetime of the registry;
+ * {@code epoch} identifies it. {@code ack.seq} is the last sequence stamped at subscription time;
+ * the first delivered event carries a higher one. A gap between them counts messages lost on the
+ * socket leg, not messages this node never published.
  */
-@Component(immediate = true, service = {AdminEventHub.class, UniversalApiHandler.class, EventListener.class}, property = {
+@Component(immediate = true, service = {AdminEventHub.class, UniversalApiHandler.class}, property = {
     "key=" + AdminEventHubImpl.API_KEY, "allowedPrincipals=role:system.admin.login"})
 public final class AdminEventHubImpl
-    implements AdminEventHub, UniversalApiHandler, EventListener
+    implements AdminEventHub, UniversalApiHandler
 {
     static final String API_KEY = "admin:events";
-
-    static final String TOPIC_EVENT_TYPE = "admin.topic";
 
     static final String INBOUND_EVENT_TYPE_PREFIX = "admin.topic.in.";
 
@@ -362,36 +362,6 @@ public final class AdminEventHubImpl
     }
 
     @Override
-    public void onEvent( final Event event )
-    {
-        if ( !TOPIC_EVENT_TYPE.equals( event.getType() ) )
-        {
-            return;
-        }
-        if ( !( event.getData().get( "name" ) instanceof String name ) )
-        {
-            return;
-        }
-        final TopicState state = topics.find( name );
-        if ( state == null || state.allow == null )
-        {
-            return;
-        }
-
-        synchronized ( state.lock )
-        {
-            if ( state.allow == null )
-            {
-                return;
-            }
-            // stamped regardless of local subscribers
-            final long seq = state.seq.incrementAndGet();
-            final String frame = eventFrame( name, seq, event.getData().get( "data" ) );
-            state.subscribers.forEach( id -> send( id, frame ) );
-        }
-    }
-
-    @Override
     public String setTopic( final SetTopicParams params )
     {
         final String topic = qualify( params.getOwner(), params.getName() );
@@ -452,8 +422,18 @@ public final class AdminEventHubImpl
             throw new IllegalArgumentException( "Message for topic [" + name + "] exceeds " + MAX_PUBLISH_JSON_CHARS + " characters" );
         }
 
-        eventPublisher.publish(
-            Event.create( TOPIC_EVENT_TYPE ).distributed( true ).value( "name", topic ).value( "data", data ).build() );
+        synchronized ( state.lock )
+        {
+            if ( state.allow == null )
+            {
+                throw new IllegalArgumentException(
+                    "Topic [" + name + "] is not registered by application [" + params.getCaller() + "]" );
+            }
+            // stamped regardless of local subscribers
+            final long seq = state.seq.incrementAndGet();
+            final String frame = eventFrame( topic, seq, data );
+            state.subscribers.forEach( id -> send( id, frame ) );
+        }
     }
 
     private static String toJson( final Object data )

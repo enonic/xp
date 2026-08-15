@@ -126,7 +126,7 @@ class AdminEventHubImplTest
         assertFalse( ack.path( "epoch" ).asText().isEmpty() );
 
         // the ack is what joins delivery, so the next event reaches s2 and not the denied s1
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
         assertEquals( "event", lastSentTo( "s2" ).path( "type" ).asText() );
         assertEquals( "deny", lastSentTo( "s1" ).path( "type" ).asText() );
     }
@@ -149,8 +149,8 @@ class AdminEventHubImplTest
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
-        hub.onEvent( topicEvent( Map.of( "n", 1 ) ) );
-        hub.onEvent( topicEvent( Map.of( "n", 2 ) ) );
+        hub.publish( publishParams( OWNER, NAME, GenericValue.newObject().put( "n", 1 ).build() ) );
+        hub.publish( publishParams( OWNER, NAME, GenericValue.newObject().put( "n", 2 ).build() ) );
 
         final List<JsonNode> events = eventsTo( "s1" );
         assertEquals( 2, events.size() );
@@ -165,13 +165,6 @@ class AdminEventHubImplTest
     }
 
     @Test
-    void eventsForUnregisteredTopicsAreNotStamped()
-    {
-        hub.onEvent( topicEvent( Map.of() ) );
-        verify( webSocketManager, never() ).send( anyString(), anyString() );
-    }
-
-    @Test
     void publishResolvesUnderTheCallersKey()
     {
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
@@ -181,13 +174,16 @@ class AdminEventHubImplTest
         assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OTHER, NAME ) ) );
         assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, "unregistered" ) ) );
 
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
         hub.publish( publishParams( OWNER, NAME, GenericValue.newObject().put( "k", "v" ).build() ) );
 
-        final ArgumentCaptor<Event> events = ArgumentCaptor.forClass( Event.class );
-        verify( eventPublisher ).publish( events.capture() );
-        assertEquals( "admin.topic", events.getValue().getType() );
-        assertTrue( events.getValue().isDistributed() );
-        assertEquals( TOPIC, events.getValue().getData().get( "name" ) );
+        final JsonNode event = lastSentTo( "s1" );
+        assertEquals( "event", event.path( "type" ).asText() );
+        assertEquals( TOPIC, event.path( "topic" ).asText() );
+        assertEquals( "v", event.path( "data" ).path( "k" ).asText() );
+        // delivery no longer travels the event bus
+        verify( eventPublisher, never() ).publish( any() );
     }
 
     @Test
@@ -201,7 +197,7 @@ class AdminEventHubImplTest
         final Session theirs = open( "s2", ALLOWED_ROLE );
         message( theirs, "{\"type\":\"subscribe\",\"topic\":\"" + OTHER + ":" + NAME + "\"}", ALLOWED_ROLE );
 
-        hub.onEvent( Event.create( "admin.topic" ).value( "name", OTHER + ":" + NAME ).value( "data", Map.of() ).build() );
+        hub.publish( publishParams( OTHER, NAME ) );
 
         assertEquals( 1, eventsTo( "s2" ).size() );
         assertEquals( 0, eventsTo( "s1" ).size() );
@@ -222,7 +218,7 @@ class AdminEventHubImplTest
         assertEquals( "deny", deny.path( "type" ).asText() );
         assertEquals( "forbidden", deny.path( "reason" ).asText() );
 
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
         assertEquals( 0, eventsTo( "s1" ).size() );
     }
 
@@ -232,7 +228,7 @@ class AdminEventHubImplTest
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( OWNER );
@@ -242,7 +238,7 @@ class AdminEventHubImplTest
 
         // re-registration continues the numbering: gap counting survives the redeploy
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
 
         final List<JsonNode> events = eventsTo( "s1" );
         assertEquals( 2, events.size() );
@@ -280,8 +276,8 @@ class AdminEventHubImplTest
 
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
-        hub.onEvent( topicEvent( Map.of() ) );
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
+        hub.publish( publishParams( OWNER, NAME ) );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
         final JsonNode reAck = lastSentTo( "s1" );
@@ -290,7 +286,7 @@ class AdminEventHubImplTest
         assertEquals( 2, reAck.path( "seq" ).asLong() );
 
         // subscribing twice does not deliver twice
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
         assertEquals( 3, eventsTo( "s1" ).size() );
     }
 
@@ -303,7 +299,7 @@ class AdminEventHubImplTest
         message( session, subscribeFrame(), ALLOWED_ROLE );
         message( session, "{\"type\":\"unsubscribe\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
 
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
         assertEquals( 0, eventsTo( "s1" ).size() );
     }
 
@@ -436,7 +432,7 @@ class AdminEventHubImplTest
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
         socketEvent( WebSocketEvent.create().type( WebSocketEventType.CLOSE ).session( session ), ALLOWED_ROLE );
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
 
         assertEquals( 0, eventsTo( "s1" ).size() );
     }
@@ -448,7 +444,7 @@ class AdminEventHubImplTest
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
         final String epoch = lastSentTo( "s1" ).path( "epoch" ).asText();
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
 
         // the socket-facing half restarts; the registry it references does not
         hub.deactivate();
@@ -464,7 +460,7 @@ class AdminEventHubImplTest
         assertEquals( 1, ack.path( "seq" ).asLong() );
         assertEquals( epoch, ack.path( "epoch" ).asText() );
 
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
         assertEquals( 2, lastSentTo( "s2" ).path( "seq" ).asLong() );
         // the sockets of the previous instance are gone from delivery
         assertEquals( 1, eventsTo( "s1" ).size() );
@@ -579,17 +575,6 @@ class AdminEventHubImplTest
     }
 
     @Test
-    void onEventIgnoresForeignTypesAndMissingNames()
-    {
-        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
-
-        hub.onEvent( Event.create( "node.updated" ).value( "name", TOPIC ).build() );
-        hub.onEvent( Event.create( "admin.topic" ).value( "data", Map.of() ).build() );
-
-        verify( webSocketManager, never() ).send( anyString(), anyString() );
-    }
-
-    @Test
     void deactivateSurvivesCloseFailures()
         throws Exception
     {
@@ -624,12 +609,15 @@ class AdminEventHubImplTest
     void publishWithoutMessageSendsEmptyObject()
     {
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
 
         hub.publish( publishParams( OWNER, NAME ) );
 
-        final ArgumentCaptor<Event> events = ArgumentCaptor.forClass( Event.class );
-        verify( eventPublisher ).publish( events.capture() );
-        assertEquals( Map.of(), events.getValue().getData().get( "data" ) );
+        final JsonNode event = lastSentTo( "s1" );
+        assertEquals( "event", event.path( "type" ).asText() );
+        assertTrue( event.path( "data" ).isObject() );
+        assertTrue( event.path( "data" ).isEmpty() );
     }
 
     @Test
@@ -704,7 +692,7 @@ class AdminEventHubImplTest
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
 
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.empty() ) );
 
@@ -717,7 +705,7 @@ class AdminEventHubImplTest
 
         // setting the topic again continues the numbering
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
-        hub.onEvent( topicEvent( Map.of() ) );
+        hub.publish( publishParams( OWNER, NAME ) );
         final List<JsonNode> events = eventsTo( "s1" );
         assertEquals( 2, events.size() );
         assertEquals( 2, events.get( 1 ).path( "seq" ).asLong() );
@@ -728,7 +716,7 @@ class AdminEventHubImplTest
     {
         assertEquals( TOPIC, hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.empty() ) ) );
 
-        hub.onEvent( topicEvent( Map.of() ) );
+        assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, NAME ) ) );
         verify( webSocketManager, never() ).send( anyString(), anyString() );
     }
 
@@ -776,11 +764,6 @@ class AdminEventHubImplTest
     private String subscribeFrame()
     {
         return "{\"type\":\"subscribe\",\"topic\":\"" + TOPIC + "\"}";
-    }
-
-    private static Event topicEvent( final Map<String, ?> data )
-    {
-        return Event.create( "admin.topic" ).distributed( true ).value( "name", TOPIC ).value( "data", data ).build();
     }
 
     private Session open( final String id, final PrincipalKey... principals )
