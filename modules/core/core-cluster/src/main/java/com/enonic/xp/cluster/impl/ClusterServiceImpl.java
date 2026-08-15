@@ -3,7 +3,8 @@ package com.enonic.xp.cluster.impl;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -20,6 +21,7 @@ import com.enonic.xp.core.internal.concurrent.DynamicReference;
 
 @Component
 @Local
+@NullMarked
 public class ClusterServiceImpl
     implements ClusterService
 {
@@ -27,7 +29,7 @@ public class ClusterServiceImpl
 
     private final DynamicReference<ClusterService> clusteredClusterServiceRef = new DynamicReference<>();
 
-    private volatile ClusterConfig clusterConfig;
+    private volatile @Nullable ClusterConfig clusterConfig;
 
     @Override
     public boolean isLeader()
@@ -41,7 +43,7 @@ public class ClusterServiceImpl
     }
 
     @Override
-    public boolean isLeader( final @NonNull ApplicationKey applicationKey )
+    public boolean isLeader( final ApplicationKey applicationKey )
     {
         final ClusterService clusterService = resolveClusterService();
         if ( clusterService == null )
@@ -52,7 +54,7 @@ public class ClusterServiceImpl
     }
 
     @Override
-    public boolean inCluster( final @NonNull ApplicationKey applicationKey )
+    public boolean inCluster( final ApplicationKey applicationKey )
     {
         final ClusterService clusterService = resolveClusterService();
         if ( clusterService == null )
@@ -62,7 +64,7 @@ public class ClusterServiceImpl
         return clusterService.inCluster( applicationKey );
     }
 
-    private ClusterService resolveClusterService()
+    private @Nullable ClusterService resolveClusterService()
     {
         final ClusterService clusterService = clusteredClusterServiceRef.getNow( null );
         if ( clusterService != null )
