@@ -88,8 +88,6 @@ public final class AdminEventHubImpl
 
     private static final int MAX_SUBSCRIPTIONS_PER_SOCKET = 64;
 
-    private static final int MAX_INBOUND_FRAME_CHARS = 65_536;
-
     private static final int MAX_PUBLISH_JSON_CHARS = 100_000;
 
     private static final long INBOUND_WINDOW_NANOS = 10_000_000_000L;
@@ -180,13 +178,6 @@ public final class AdminEventHubImpl
         final String message = event.getMessage();
         if ( clientSession == null || message == null )
         {
-            return;
-        }
-
-        if ( message.length() > MAX_INBOUND_FRAME_CHARS )
-        {
-            send( id, errorFrame( "tooLarge", null ) );
-            registerViolation( clientSession );
             return;
         }
 

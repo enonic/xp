@@ -419,20 +419,20 @@ class AdminEventHubImplTest
     }
 
     @Test
-    void oversizedFramesAreRejectedAndRepeatedViolationsClose()
+    void repeatedViolationsCloseTheSocket()
         throws Exception
     {
+        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         final Session session = open( "s1", ALLOWED_ROLE );
-        final String huge = "{\"type\":\"ping\",\"pad\":\"" + "x".repeat( 66_000 ) + "\"}";
+        message( session, subscribeFrame(), ALLOWED_ROLE );
 
-        for ( int i = 0; i < 5; i++ )
+        // 30 pubs fit the window; each of the next 5 is a violation
+        for ( int i = 0; i < 35; i++ )
         {
-            message( session, huge, ALLOWED_ROLE );
+            message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
         }
 
-        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
-        verify( webSocketManager, times( 5 ) ).send( eq( "s1" ), frames.capture() );
-        assertEquals( "tooLarge", parse( frames.getAllValues().get( 0 ) ).path( "code" ).asText() );
+        assertEquals( "rateLimit", lastSentTo( "s1" ).path( "code" ).asText() );
         verify( session ).close( any( CloseReason.class ) );
     }
 
@@ -566,13 +566,14 @@ class AdminEventHubImplTest
     void violationCloseFailuresAreSwallowed()
         throws Exception
     {
+        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
         doThrow( new IOException( "boom" ) ).when( session ).close( any( CloseReason.class ) );
 
-        final String huge = "{\"type\":\"ping\",\"pad\":\"" + "x".repeat( 66_000 ) + "\"}";
-        for ( int i = 0; i < 5; i++ )
+        for ( int i = 0; i < 35; i++ )
         {
-            message( session, huge, ALLOWED_ROLE );
+            message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
         }
 
         verify( session ).close( any( CloseReason.class ) );
