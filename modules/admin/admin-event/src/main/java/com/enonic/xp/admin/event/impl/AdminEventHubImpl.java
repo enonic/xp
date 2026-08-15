@@ -297,8 +297,11 @@ public final class AdminEventHubImpl
         {
             data = inboundData( frame.get( "data" ) );
         }
-        catch ( IllegalArgumentException e )
+        catch ( RuntimeException e )
         {
+            // data the message model cannot carry, null members among it: the frame is refused,
+            // the connection is not
+            LOG.debug( "Rejected inbound data for topic [{}]", topic, e );
             send( id, errorFrame( "badFrame", topic ) );
             return;
         }

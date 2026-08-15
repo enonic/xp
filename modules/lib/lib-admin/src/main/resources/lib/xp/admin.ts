@@ -219,7 +219,8 @@ export function setTopic(params: SetTopicParams): string {
  * guaranteed.
  *
  * @param {string} name Local topic name, as passed to `setTopic`.
- * @param {object} [message] Message data. Must be serializable to JSON.
+ * @param {object} [message] Message data. Must be serializable to JSON and must not contain null
+ * values.
  */
 export function sendToTopic(name: string, message?: object): void {
     if (name == null) {

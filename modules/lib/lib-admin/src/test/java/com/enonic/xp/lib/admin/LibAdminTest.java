@@ -109,6 +109,14 @@ class LibAdminTest
     }
 
     @Test
+    void sendToTopicWithNull()
+    {
+        assertThrows( RuntimeException.class, () -> runFunction( "/test/admin-test.js", "sendToTopicWithNull" ) );
+
+        verify( adminEventHub, never() ).publish( any() );
+    }
+
+    @Test
     void sendToTopicWithoutMessage()
     {
         runFunction( "/test/admin-test.js", "sendToTopicWithoutMessage" );

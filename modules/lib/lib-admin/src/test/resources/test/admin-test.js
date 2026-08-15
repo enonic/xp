@@ -85,6 +85,13 @@ exports.sendToTopic = function () {
     });
 };
 
+exports.sendToTopicWithNull = function () {
+    adminLib.sendToTopic('myTopic', {
+        count: 42,
+        label: null
+    });
+};
+
 exports.sendToTopicWithoutMessage = function () {
     adminLib.sendToTopic('myTopic');
 };

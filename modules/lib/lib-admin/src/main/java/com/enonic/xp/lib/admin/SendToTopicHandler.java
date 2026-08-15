@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.admin;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.admin.event.AdminEventHub;
@@ -19,7 +20,7 @@ public final class SendToTopicHandler
 
     private String name;
 
-    private GenericValue message = GenericValue.newObject().build();
+    private Map<String, Object> message = Map.of();
 
     public void setName( final String name )
     {
@@ -28,8 +29,7 @@ public final class SendToTopicHandler
 
     public void setMessage( final ScriptValue message )
     {
-        this.message =
-            message != null && message.isObject() ? GenericValue.fromRawJava( message.getMap() ) : GenericValue.newObject().build();
+        this.message = message != null && message.isObject() ? message.getMap() : Map.of();
     }
 
     public void execute()
@@ -39,8 +39,21 @@ public final class SendToTopicHandler
             .publish( PublishMessageParams.create()
                           .caller( this.applicationKey )
                           .name( this.name )
-                          .message( this.message )
+                          .message( toMessage() )
                           .build() );
+    }
+
+    private GenericValue toMessage()
+    {
+        try
+        {
+            return GenericValue.fromRawJava( this.message );
+        }
+        catch ( RuntimeException e )
+        {
+            throw new IllegalArgumentException(
+                "Message for topic [" + this.name + "] contains null or unsupported values", e );
+        }
     }
 
     @Override

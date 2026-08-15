@@ -549,6 +549,21 @@ class AdminEventHubImplTest
     }
 
     @Test
+    void inboundNullInsideDataIsRejectedWithoutClosing()
+        throws Exception
+    {
+        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+
+        message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\",\"data\":{\"a\":null}}", ALLOWED_ROLE );
+
+        assertEquals( "badFrame", lastSentTo( "s1" ).path( "code" ).asText() );
+        verify( eventPublisher, never() ).publish( any() );
+        verify( session, never() ).close( any( CloseReason.class ) );
+    }
+
+    @Test
     void inboundDataMustBeRepresentable()
     {
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
