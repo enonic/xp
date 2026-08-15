@@ -1,17 +1,22 @@
 /**
  * Client for the admin events hub, served by the hub itself at `<admin:events>/client.js`.
  *
- * Imported by a page, it exports `AdminEventsSocket`. Started as a shared worker from the same
- * url, it holds one socket for every admin page of the browser and forwards what arrives to each
- * connected port. The url is what makes a shared worker shared, so every admin tool must load
- * this one rather than a copy of its own.
+ * A page imports it and calls `connect`, which subscribes through a shared worker started from
+ * this same url, or over a socket of the page's own where shared workers are unavailable. The url
+ * is what makes a shared worker shared, so an admin tool that loads this one shares a socket with
+ * every other admin page of the browser, while a copy of its own would not.
  *
- * Port protocol. To the worker: `{type: 'subscribe', topic}`. From the worker:
- * `{type: 'event', topic, data}` and `{type: 'loss', topic, count}`, where `count` is null when
- * the number of missed messages cannot be known.
+ *     const {connect} = await import(`${eventsUrl}/client.js`);
+ *     connect({onEvent: e => ..., onLoss: l => ...}).subscribe(topic);
+ *
+ * `onLoss` reports how many messages were missed, or null when that cannot be known. The topics a
+ * connection did not subscribe to are not delivered to it, whatever else the worker carries.
  */
 
 const WS_PROTOCOL = 'json';
+
+// a shared worker is shared by script url and name, so both are part of what admin tools agree on
+const WORKER_NAME = 'xp-admin-events-socket';
 
 const CONNECTION_TIMEOUT = 60000;
 const PING_INTERVAL = 50000;
@@ -258,9 +263,85 @@ export class AdminEventsSocket {
  * api it upgrades, so whatever path and host reached the script reaches the socket.
  */
 export function socketUrl() {
-    const href = self.location.href;
+    const href = import.meta.url;
     const base = href.substring(0, href.lastIndexOf('/'));
     return base.replace(/^http/, 'ws');
+}
+
+/**
+ * Subscribes to topics of the hub, through a shared worker when the browser has them and over a
+ * socket of this page's own when it does not.
+ *
+ * @param handlers `{onEvent, onLoss}`, called only for the topics this connection subscribed to
+ * @returns `{subscribe(topic)}`
+ */
+export function connect(handlers) {
+    const topics = new Set();
+
+    const deliver = message => {
+        if (!topics.has(message.topic)) {
+            return;
+        }
+        if (message.type === 'event') {
+            handlers.onEvent({topic: message.topic, data: message.data});
+        } else if (message.type === 'loss') {
+            handlers.onLoss({topic: message.topic, count: message.count});
+        }
+    };
+
+    let port = null;
+    let socket = null;
+
+    const startSocket = () => {
+        if (socket) {
+            return;
+        }
+        socket = new AdminEventsSocket(socketUrl(), {
+            onEvent: event => deliver({type: 'event', topic: event.topic, data: event.data}),
+            onLoss: loss => deliver({type: 'loss', topic: loss.topic, count: loss.count}),
+        });
+        socket.connect();
+        topics.forEach(topic => socket.subscribe(topic));
+    };
+
+    if (typeof SharedWorker !== 'undefined') {
+        try {
+            const worker = new SharedWorker(import.meta.url, {type: 'module', name: WORKER_NAME});
+            worker.onerror = () => {
+                // a browser with shared workers but without module ones ends up here
+                port = null;
+                startSocket();
+            };
+            worker.port.onmessage = e => {
+                if (e.data && typeof e.data.topic === 'string') {
+                    deliver(e.data);
+                }
+            };
+            worker.port.start();
+            port = worker.port;
+        }
+        catch (e) {
+            startSocket();
+        }
+    }
+    else {
+        startSocket();
+    }
+
+    return {
+        subscribe(topic) {
+            if (topics.has(topic)) {
+                return;
+            }
+            topics.add(topic);
+            if (port) {
+                port.postMessage({type: 'subscribe', topic});
+            }
+            if (socket) {
+                socket.subscribe(topic);
+            }
+        },
+    };
 }
 
 function startSharedWorker() {
