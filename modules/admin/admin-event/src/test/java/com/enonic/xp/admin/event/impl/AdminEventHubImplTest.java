@@ -65,13 +65,13 @@ class AdminEventHubImplTest
 
     private static final String TOPIC = OWNER + ":" + NAME;
 
-    private static final String GROUP = "admin.event.topic/" + TOPIC;
-
     private WebSocketManager webSocketManager;
 
     private EventPublisher eventPublisher;
 
     private AdminEventHubImpl hub;
+
+    private AdminEventTopics topicRegistry;
 
     private long clock;
 
@@ -80,7 +80,8 @@ class AdminEventHubImplTest
     {
         webSocketManager = mock( WebSocketManager.class );
         eventPublisher = mock( EventPublisher.class );
-        hub = new AdminEventHubImpl( webSocketManager, eventPublisher );
+        topicRegistry = new AdminEventTopics();
+        hub = new AdminEventHubImpl( webSocketManager, eventPublisher, topicRegistry );
         AdminEventHubImpl.nanoTime = () -> clock;
     }
 
@@ -99,7 +100,7 @@ class AdminEventHubImplTest
         final JsonNode deny = lastSentTo( "s1" );
         assertEquals( "deny", deny.path( "type" ).asText() );
         assertEquals( "unknown", deny.path( "reason" ).asText() );
-        verify( webSocketManager, never() ).addToGroup( anyString(), anyString() );
+        assertEquals( 1, framesTo( "s1" ).size() );
     }
 
     @Test
@@ -123,7 +124,11 @@ class AdminEventHubImplTest
         assertEquals( "ack", ack.path( "type" ).asText() );
         assertEquals( 0, ack.path( "seq" ).asLong() );
         assertFalse( ack.path( "epoch" ).asText().isEmpty() );
-        verify( webSocketManager ).addToGroup( GROUP, "s2" );
+
+        // the ack is what joins delivery, so the next event reaches s2 and not the denied s1
+        hub.onEvent( topicEvent( Map.of() ) );
+        assertEquals( "event", lastSentTo( "s2" ).path( "type" ).asText() );
+        assertEquals( "deny", lastSentTo( "s1" ).path( "type" ).asText() );
     }
 
     @Test
@@ -141,31 +146,29 @@ class AdminEventHubImplTest
     void fanOutStampsIncreasingSequence()
     {
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
 
         hub.onEvent( topicEvent( Map.of( "n", 1 ) ) );
         hub.onEvent( topicEvent( Map.of( "n", 2 ) ) );
 
-        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
-        verify( webSocketManager, times( 2 ) ).sendToGroup( eq( GROUP ), frames.capture() );
-
-        final JsonNode first = parse( frames.getAllValues().get( 0 ) );
-        final JsonNode second = parse( frames.getAllValues().get( 1 ) );
-        assertEquals( "event", first.path( "type" ).asText() );
-        assertEquals( 1, first.path( "seq" ).asLong() );
-        assertEquals( 2, second.path( "seq" ).asLong() );
-        assertEquals( 2, second.path( "data" ).path( "n" ).asInt() );
+        final List<JsonNode> events = eventsTo( "s1" );
+        assertEquals( 2, events.size() );
+        assertEquals( 1, events.get( 0 ).path( "seq" ).asLong() );
+        assertEquals( 2, events.get( 1 ).path( "seq" ).asLong() );
+        assertEquals( 2, events.get( 1 ).path( "data" ).path( "n" ).asInt() );
 
         // a subscriber acked after two publishes is told seq=2, so its first event is 3
-        final Session session = open( "s1", ALLOWED_ROLE );
-        message( session, subscribeFrame(), ALLOWED_ROLE );
-        assertEquals( 2, lastSentTo( "s1" ).path( "seq" ).asLong() );
+        final Session late = open( "s2", ALLOWED_ROLE );
+        message( late, subscribeFrame(), ALLOWED_ROLE );
+        assertEquals( 2, lastSentTo( "s2" ).path( "seq" ).asLong() );
     }
 
     @Test
     void eventsForUnregisteredTopicsAreNotStamped()
     {
         hub.onEvent( topicEvent( Map.of() ) );
-        verify( webSocketManager, never() ).sendToGroup( anyString(), anyString() );
+        verify( webSocketManager, never() ).send( anyString(), anyString() );
     }
 
     @Test
@@ -193,10 +196,15 @@ class AdminEventHubImplTest
         assertEquals( OWNER + ":" + NAME, hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) ) );
         assertEquals( OTHER + ":" + NAME, hub.setTopic( setParams( OTHER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) ) );
 
+        final Session ours = open( "s1", ALLOWED_ROLE );
+        message( ours, subscribeFrame(), ALLOWED_ROLE );
+        final Session theirs = open( "s2", ALLOWED_ROLE );
+        message( theirs, "{\"type\":\"subscribe\",\"topic\":\"" + OTHER + ":" + NAME + "\"}", ALLOWED_ROLE );
+
         hub.onEvent( Event.create( "admin.topic" ).value( "name", OTHER + ":" + NAME ).value( "data", Map.of() ).build() );
 
-        verify( webSocketManager ).sendToGroup( eq( "admin.event.topic/" + OTHER + ":" + NAME ), anyString() );
-        verify( webSocketManager, never() ).sendToGroup( eq( GROUP ), anyString() );
+        assertEquals( 1, eventsTo( "s2" ).size() );
+        assertEquals( 0, eventsTo( "s1" ).size() );
     }
 
     @Test
@@ -213,18 +221,22 @@ class AdminEventHubImplTest
         final JsonNode deny = lastSentTo( "s1" );
         assertEquals( "deny", deny.path( "type" ).asText() );
         assertEquals( "forbidden", deny.path( "reason" ).asText() );
-        verify( webSocketManager ).removeFromGroup( GROUP, "s1" );
+
+        hub.onEvent( topicEvent( Map.of() ) );
+        assertEquals( 0, eventsTo( "s1" ).size() );
     }
 
     @Test
     void applicationStopClearsOwnershipButKeepsSequence()
     {
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
         hub.onEvent( topicEvent( Map.of() ) );
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( OWNER );
-        hub.removeApplication( application );
+        topicRegistry.removeApplication( application );
 
         assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, NAME ) ) );
 
@@ -232,9 +244,9 @@ class AdminEventHubImplTest
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         hub.onEvent( topicEvent( Map.of() ) );
 
-        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
-        verify( webSocketManager, times( 2 ) ).sendToGroup( eq( GROUP ), frames.capture() );
-        assertEquals( 2, parse( frames.getAllValues().get( 1 ) ).path( "seq" ).asLong() );
+        final List<JsonNode> events = eventsTo( "s1" );
+        assertEquals( 2, events.size() );
+        assertEquals( 2, events.get( 1 ).path( "seq" ).asLong() );
     }
 
     @Test
@@ -272,17 +284,18 @@ class AdminEventHubImplTest
         hub.onEvent( topicEvent( Map.of() ) );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
-        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
-        verify( webSocketManager, times( 2 ) ).send( eq( "s1" ), frames.capture() );
-        final JsonNode reAck = parse( frames.getAllValues().get( 1 ) );
+        final JsonNode reAck = lastSentTo( "s1" );
         assertEquals( "ack", reAck.path( "type" ).asText() );
         // the re-ack reports the sequence stamped so far, so the next event is the one after it
         assertEquals( 2, reAck.path( "seq" ).asLong() );
-        verify( webSocketManager, times( 1 ) ).addToGroup( GROUP, "s1" );
+
+        // subscribing twice does not deliver twice
+        hub.onEvent( topicEvent( Map.of() ) );
+        assertEquals( 3, eventsTo( "s1" ).size() );
     }
 
     @Test
-    void unsubscribeLeavesGroup()
+    void unsubscribeStopsDelivery()
     {
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
 
@@ -290,7 +303,8 @@ class AdminEventHubImplTest
         message( session, subscribeFrame(), ALLOWED_ROLE );
         message( session, "{\"type\":\"unsubscribe\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
 
-        verify( webSocketManager ).removeFromGroup( GROUP, "s1" );
+        hub.onEvent( topicEvent( Map.of() ) );
+        assertEquals( 0, eventsTo( "s1" ).size() );
     }
 
     @Test
@@ -415,6 +429,49 @@ class AdminEventHubImplTest
     }
 
     @Test
+    void closeStopsDelivery()
+    {
+        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+
+        socketEvent( WebSocketEvent.create().type( WebSocketEventType.CLOSE ).session( session ), ALLOWED_ROLE );
+        hub.onEvent( topicEvent( Map.of() ) );
+
+        assertEquals( 0, eventsTo( "s1" ).size() );
+    }
+
+    @Test
+    void registrationsAndNumberingOutliveTheSocketHalf()
+    {
+        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+        final String epoch = lastSentTo( "s1" ).path( "epoch" ).asText();
+        hub.onEvent( topicEvent( Map.of() ) );
+
+        // the socket-facing half restarts, as a configuration change to an unrelated component
+        // makes it; the registry it references does not
+        hub.deactivate();
+        hub = new AdminEventHubImpl( webSocketManager, eventPublisher, topicRegistry );
+
+        final Session reconnected = open( "s2", ALLOWED_ROLE );
+        message( reconnected, subscribeFrame(), ALLOWED_ROLE );
+
+        final JsonNode ack = lastSentTo( "s2" );
+        assertEquals( "ack", ack.path( "type" ).asText() );
+        // the registration is still there, the numbering continues, and the epoch holds, so a
+        // subscriber counts gaps across the restart
+        assertEquals( 1, ack.path( "seq" ).asLong() );
+        assertEquals( epoch, ack.path( "epoch" ).asText() );
+
+        hub.onEvent( topicEvent( Map.of() ) );
+        assertEquals( 2, lastSentTo( "s2" ).path( "seq" ).asLong() );
+        // the sockets of the previous instance are gone from delivery
+        assertEquals( 1, eventsTo( "s1" ).size() );
+    }
+
+    @Test
     void blankTopicsAreBadFrames()
     {
         open( "s1", ALLOWED_ROLE );
@@ -435,7 +492,7 @@ class AdminEventHubImplTest
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, "{\"type\":\"unsubscribe\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
 
-        verify( webSocketManager, never() ).removeFromGroup( anyString(), anyString() );
+        verify( webSocketManager, never() ).send( anyString(), anyString() );
     }
 
     @Test
@@ -493,7 +550,7 @@ class AdminEventHubImplTest
         }
 
         assertEquals( "subLimit", lastSentTo( "s1" ).path( "code" ).asText() );
-        verify( webSocketManager, times( 64 ) ).addToGroup( anyString(), eq( "s1" ) );
+        assertEquals( 64, framesTo( "s1" ).stream().filter( f -> "ack".equals( f.path( "type" ).asText() ) ).count() );
     }
 
     @Test
@@ -514,7 +571,7 @@ class AdminEventHubImplTest
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( OWNER );
-        hub.removeApplication( application );
+        topicRegistry.removeApplication( application );
 
         message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
 
@@ -530,7 +587,7 @@ class AdminEventHubImplTest
         hub.onEvent( Event.create( "node.updated" ).value( "name", TOPIC ).build() );
         hub.onEvent( Event.create( "admin.topic" ).value( "data", Map.of() ).build() );
 
-        verify( webSocketManager, never() ).sendToGroup( anyString(), anyString() );
+        verify( webSocketManager, never() ).send( anyString(), anyString() );
     }
 
     @Test
@@ -552,8 +609,8 @@ class AdminEventHubImplTest
 
         final Application application = mock( Application.class );
         when( application.getKey() ).thenReturn( OWNER );
-        hub.addApplication( application );
-        hub.removeApplication( application );
+        topicRegistry.addApplication( application );
+        topicRegistry.removeApplication( application );
 
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
@@ -561,7 +618,7 @@ class AdminEventHubImplTest
         final JsonNode deny = lastSentTo( "s1" );
         assertEquals( "deny", deny.path( "type" ).asText() );
         assertEquals( "unknown", deny.path( "reason" ).asText() );
-        verify( webSocketManager, never() ).addToGroup( anyString(), anyString() );
+        assertEquals( 1, framesTo( "s1" ).size() );
     }
 
     @Test
@@ -652,8 +709,8 @@ class AdminEventHubImplTest
 
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.empty() ) );
 
-        // clearing is not revocation: the subscriber is neither denied nor removed
-        verify( webSocketManager, never() ).removeFromGroup( anyString(), anyString() );
+        // clearing is not revocation: the subscriber is neither denied nor dropped
+        assertTrue( framesTo( "s1" ).stream().noneMatch( f -> "deny".equals( f.path( "type" ).asText() ) ) );
         assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, NAME ) ) );
         final Session late = open( "s2", ALLOWED_ROLE );
         message( late, subscribeFrame(), ALLOWED_ROLE );
@@ -662,9 +719,9 @@ class AdminEventHubImplTest
         // setting the topic again continues the numbering
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         hub.onEvent( topicEvent( Map.of() ) );
-        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
-        verify( webSocketManager, times( 2 ) ).sendToGroup( eq( GROUP ), frames.capture() );
-        assertEquals( 2, parse( frames.getAllValues().get( 1 ) ).path( "seq" ).asLong() );
+        final List<JsonNode> events = eventsTo( "s1" );
+        assertEquals( 2, events.size() );
+        assertEquals( 2, events.get( 1 ).path( "seq" ).asLong() );
     }
 
     @Test
@@ -673,7 +730,7 @@ class AdminEventHubImplTest
         assertEquals( TOPIC, hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.empty() ) ) );
 
         hub.onEvent( topicEvent( Map.of() ) );
-        verify( webSocketManager, never() ).sendToGroup( anyString(), anyString() );
+        verify( webSocketManager, never() ).send( anyString(), anyString() );
     }
 
     private static SetTopicParams setParams( final ApplicationKey owner, final String name, final PrincipalKeys allow )
@@ -744,6 +801,24 @@ class AdminEventHubImplTest
     {
         final AuthenticationInfo authInfo = AuthenticationInfo.create().user( User.anonymous() ).principals( principals ).build();
         ContextBuilder.create().authInfo( authInfo ).build().runWith( () -> hub.onSocketEvent( event.build() ) );
+    }
+
+    private List<JsonNode> framesTo( final String id )
+    {
+        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
+        verify( webSocketManager, atLeastOnce() ).send( eq( id ), frames.capture() );
+        return frames.getAllValues().stream().map( AdminEventHubImplTest::parse ).toList();
+    }
+
+    private List<JsonNode> eventsTo( final String id )
+    {
+        final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
+        verify( webSocketManager, atLeastOnce() ).send( eq( id ), frames.capture() );
+        return frames.getAllValues()
+            .stream()
+            .map( AdminEventHubImplTest::parse )
+            .filter( f -> "event".equals( f.path( "type" ).asText() ) )
+            .toList();
     }
 
     private JsonNode lastSentTo( final String id )

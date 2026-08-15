@@ -4,19 +4,15 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongSupplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +28,6 @@ import jakarta.websocket.Session;
 import com.enonic.xp.admin.event.AdminEventHub;
 import com.enonic.xp.admin.event.PublishMessageParams;
 import com.enonic.xp.admin.event.SetTopicParams;
-import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.event.Event;
@@ -86,9 +81,7 @@ public final class AdminEventHubImpl
 
     private static final String WS_PROTOCOL = "json";
 
-    private static final String GROUP_PREFIX = "admin.event.topic/";
-
-    private static final char QUALIFIER = ':';
+    static final char QUALIFIER = ':';
 
     private static final int MAX_TOPIC_NAME_LENGTH = 255;
 
@@ -116,19 +109,17 @@ public final class AdminEventHubImpl
 
     private final EventPublisher eventPublisher;
 
-    // sequence numbers are comparable only within one hub instance; deactivate closes every
-    // socket, so a connection never observes two epochs
-    private final String epoch = UUID.randomUUID().toString();
-
-    private final ConcurrentMap<String, TopicState> topics = new ConcurrentHashMap<>();
+    private final AdminEventTopics topics;
 
     private final ConcurrentMap<String, ClientSession> sessions = new ConcurrentHashMap<>();
 
     @Activate
-    public AdminEventHubImpl( @Reference final WebSocketManager webSocketManager, @Reference final EventPublisher eventPublisher )
+    public AdminEventHubImpl( @Reference final WebSocketManager webSocketManager, @Reference final EventPublisher eventPublisher,
+                              @Reference final AdminEventTopics topics )
     {
         this.webSocketManager = webSocketManager;
         this.eventPublisher = eventPublisher;
+        this.topics = topics;
     }
 
     @Deactivate
@@ -136,6 +127,8 @@ public final class AdminEventHubImpl
     {
         this.sessions.values().forEach( clientSession -> quietClose( clientSession.session ) );
         this.sessions.clear();
+        // the sockets go with this instance; the registrations and their numbering do not
+        this.topics.forgetAllSubscribers();
     }
 
     @Override
@@ -166,12 +159,31 @@ public final class AdminEventHubImpl
         {
             case OPEN -> onOpen( event );
             case MESSAGE -> onMessage( event );
-            case CLOSE -> sessions.remove( event.getSession().getId() );
+            case CLOSE -> onClose( event );
             // ERROR is not terminal in the websocket layer; close so teardown runs on CLOSE
             case ERROR -> quietClose( event.getSession() );
             default ->
             {
             }
+        }
+    }
+
+    private void onClose( final WebSocketEvent event )
+    {
+        final String id = event.getSession().getId();
+        final ClientSession clientSession = sessions.remove( id );
+        if ( clientSession != null )
+        {
+            clientSession.topics.forEach( topic -> forget( topic, id ) );
+        }
+    }
+
+    private void forget( final String topic, final String id )
+    {
+        final TopicState state = topics.find( topic );
+        if ( state != null )
+        {
+            state.subscribers.remove( id );
         }
     }
 
@@ -221,7 +233,7 @@ public final class AdminEventHubImpl
             return;
         }
 
-        final TopicState state = topics.get( topic );
+        final TopicState state = topics.find( topic );
 
         if ( clientSession.topics.contains( topic ) )
         {
@@ -266,7 +278,7 @@ public final class AdminEventHubImpl
                 send( id, denyFrame( topic, "forbidden" ) );
                 return;
             }
-            webSocketManager.addToGroup( group( topic ), id );
+            state.subscribers.add( id );
             clientSession.topics.add( topic );
             send( id, ackFrame( topic, state.seq.get() ) );
         }
@@ -282,7 +294,7 @@ public final class AdminEventHubImpl
         }
         if ( clientSession.topics.remove( topic ) )
         {
-            webSocketManager.removeFromGroup( group( topic ), id );
+            forget( topic, id );
         }
     }
 
@@ -305,7 +317,7 @@ public final class AdminEventHubImpl
             send( id, errorFrame( "notSubscribed", topic ) );
             return;
         }
-        final TopicState state = topics.get( topic );
+        final TopicState state = topics.find( topic );
         if ( state == null || state.allow == null )
         {
             send( id, errorFrame( "unknown", topic ) );
@@ -360,7 +372,7 @@ public final class AdminEventHubImpl
         {
             return;
         }
-        final TopicState state = topics.get( name );
+        final TopicState state = topics.find( name );
         if ( state == null || state.allow == null )
         {
             return;
@@ -374,7 +386,8 @@ public final class AdminEventHubImpl
             }
             // stamped regardless of local subscribers
             final long seq = state.seq.incrementAndGet();
-            webSocketManager.sendToGroup( group( name ), eventFrame( name, seq, event.getData().get( "data" ) ) );
+            final String frame = eventFrame( name, seq, event.getData().get( "data" ) );
+            state.subscribers.forEach( id -> send( id, frame ) );
         }
     }
 
@@ -388,7 +401,7 @@ public final class AdminEventHubImpl
         {
             // clears the registration like an application stop: no revocation, memberships and
             // the sequence counter persist, delivery resumes on the next non-empty set
-            final TopicState state = topics.get( topic );
+            final TopicState state = topics.find( topic );
             if ( state != null )
             {
                 synchronized ( state.lock )
@@ -399,19 +412,24 @@ public final class AdminEventHubImpl
             return topic;
         }
 
-        final TopicState state = topics.computeIfAbsent( topic, key -> new TopicState() );
+        final TopicState state = topics.findOrCreate( topic );
         synchronized ( state.lock )
         {
             state.allow = allow;
 
             // re-evaluate current subscribers against the new allow
-            sessions.forEach( ( id, clientSession ) -> {
-                if ( clientSession.topics.contains( topic ) && !isAllowed( clientSession.principals, allow ) )
+            state.subscribers.removeIf( id -> {
+                final ClientSession clientSession = sessions.get( id );
+                if ( clientSession != null && isAllowed( clientSession.principals, allow ) )
+                {
+                    return false;
+                }
+                if ( clientSession != null )
                 {
                     clientSession.topics.remove( topic );
-                    webSocketManager.removeFromGroup( group( topic ), id );
                     send( id, denyFrame( topic, "forbidden" ) );
                 }
+                return true;
             } );
         }
         return topic;
@@ -422,7 +440,7 @@ public final class AdminEventHubImpl
     {
         final String name = params.getName();
         final String topic = qualify( params.getCaller(), name );
-        final TopicState state = topics.get( topic );
+        final TopicState state = topics.find( topic );
         if ( state == null || state.allow == null )
         {
             throw new IllegalArgumentException( "Topic [" + name + "] is not registered by application [" + params.getCaller() + "]" );
@@ -458,27 +476,6 @@ public final class AdminEventHubImpl
             throw new IllegalArgumentException( "Invalid topic name [" + name + "]" );
         }
         return owner + String.valueOf( QUALIFIER ) + name;
-    }
-
-    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-    public void addApplication( final Application application )
-    {
-        // tracked only for removeApplication
-    }
-
-    public void removeApplication( final Application application )
-    {
-        final String prefix = application.getKey() + String.valueOf( QUALIFIER );
-        topics.forEach( ( topic, state ) -> {
-            if ( topic.startsWith( prefix ) )
-            {
-                synchronized ( state.lock )
-                {
-                    // registration clears; the sequence counter is kept
-                    state.allow = null;
-                }
-            }
-        } );
     }
 
     private InboundVerdict allowInbound( final ClientSession clientSession )
@@ -555,18 +552,13 @@ public final class AdminEventHubImpl
         }
     }
 
-    private static String group( final String topic )
-    {
-        return GROUP_PREFIX + topic;
-    }
-
     private String ackFrame( final String topic, final long seq )
     {
         final ObjectNode node = FACTORY.objectNode();
         node.put( "type", "ack" );
         node.put( "topic", topic );
         node.put( "seq", seq );
-        node.put( "epoch", epoch );
+        node.put( "epoch", topics.epoch() );
         return node.toString();
     }
 
@@ -616,16 +608,6 @@ public final class AdminEventHubImpl
         final ObjectNode node = FACTORY.objectNode();
         node.put( "type", "pong" );
         return node.toString();
-    }
-
-    private static final class TopicState
-    {
-        final Object lock = new Object();
-
-        final AtomicLong seq = new AtomicLong();
-
-        // subscribe ACL; null while unregistered
-        volatile PrincipalKeys allow;
     }
 
     private static final class ClientSession
