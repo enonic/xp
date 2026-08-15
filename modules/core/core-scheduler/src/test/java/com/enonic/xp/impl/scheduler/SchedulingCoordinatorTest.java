@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class SchedulingCoordinatorImplTest
+class SchedulingCoordinatorTest
 {
     private static final ScheduledJobName JOB = ScheduledJobName.from( "job" );
 
@@ -67,10 +67,10 @@ class SchedulingCoordinatorImplTest
         return map;
     }
 
-    private SchedulingCoordinatorImpl coordinator( final boolean clustered, final boolean hazelcastAvailable )
+    private SchedulingCoordinator coordinator( final boolean clustered, final boolean hazelcastAvailable )
     {
         when( clusterConfig.isEnabled() ).thenReturn( clustered );
-        final SchedulingCoordinatorImpl coordinator = new SchedulingCoordinatorImpl( clusterConfig );
+        final SchedulingCoordinator coordinator = new SchedulingCoordinator( clusterConfig );
         if ( hazelcastAvailable )
         {
             coordinator.setHazelcastInstance( hazelcastInstance );
@@ -81,7 +81,7 @@ class SchedulingCoordinatorImplTest
     @Test
     void localMode()
     {
-        final SchedulingCoordinatorImpl coordinator = coordinator( false, false );
+        final SchedulingCoordinator coordinator = coordinator( false, false );
 
         assertNull( coordinator.plannedRun( JOB ) );
         coordinator.plannedRun( JOB, NEXT_RUN );
@@ -102,7 +102,7 @@ class SchedulingCoordinatorImplTest
     @Test
     void unbindClearsOnlyTheBoundInstance()
     {
-        final SchedulingCoordinatorImpl coordinator = coordinator( true, true );
+        final SchedulingCoordinator coordinator = coordinator( true, true );
 
         coordinator.plannedRun( JOB, NEXT_RUN );
         assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
@@ -118,7 +118,7 @@ class SchedulingCoordinatorImplTest
     @Test
     void clusteredMode()
     {
-        final SchedulingCoordinatorImpl coordinator = coordinator( true, true );
+        final SchedulingCoordinator coordinator = coordinator( true, true );
 
         coordinator.plannedRun( JOB, NEXT_RUN );
         assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
@@ -142,7 +142,7 @@ class SchedulingCoordinatorImplTest
     @Test
     void clusteredModeWithoutHazelcast()
     {
-        final SchedulingCoordinatorImpl coordinator = coordinator( true, false );
+        final SchedulingCoordinator coordinator = coordinator( true, false );
 
         coordinator.plannedRun( JOB, NEXT_RUN );
         assertNull( coordinator.plannedRun( JOB ) );

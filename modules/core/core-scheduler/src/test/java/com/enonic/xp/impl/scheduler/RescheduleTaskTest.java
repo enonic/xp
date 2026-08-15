@@ -107,7 +107,7 @@ class RescheduleTaskTest
     void setUp()
     {
         clock = new MutableClock( NOW );
-        schedulingCoordinator = new SchedulingCoordinatorImpl( mock( ClusterConfig.class ) );
+        schedulingCoordinator = new SchedulingCoordinator( mock( ClusterConfig.class ) );
         task = new RescheduleTask( schedulerService, nodeService, taskService, taskDescriptorService, securityService, clusterService,
                                    schedulingCoordinator, clock );
 

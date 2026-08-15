@@ -23,7 +23,7 @@ import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogExecutorImpl;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
 import com.enonic.xp.impl.scheduler.SchedulerConfig;
-import com.enonic.xp.impl.scheduler.SchedulingCoordinatorImpl;
+import com.enonic.xp.impl.scheduler.SchedulingCoordinator;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
@@ -107,7 +107,7 @@ class SchedulerServiceImplTest
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
 
         schedulerService =
-            new SchedulerServiceImpl( nodeService, new SchedulingCoordinatorImpl( mock( ClusterConfig.class ) ), auditLogSupport );
+            new SchedulerServiceImpl( nodeService, new SchedulingCoordinator( mock( ClusterConfig.class ) ), auditLogSupport );
 
         adminContext().runWith( () -> SchedulerRepoInitializer.create()
             .setIndexService( indexService )
