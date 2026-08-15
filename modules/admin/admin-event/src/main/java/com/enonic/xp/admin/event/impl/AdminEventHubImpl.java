@@ -7,7 +7,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.LongSupplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -56,11 +58,15 @@ import com.enonic.xp.web.websocket.WebSocketEvent;
  * Wire protocol, JSON text frames. Client: {@code subscribe {topic}}, {@code unsubscribe {topic}},
  * {@code pub {topic, data}}, {@code ping}. Server: {@code ack {topic, seq, epoch}},
  * {@code deny {topic, reason}}, {@code event {topic, seq, data}}, {@code error {code, topic?}},
- * {@code pong}. Topics are addressed by canonical name. Subscribe is checked against the topic's
- * {@code allow}, plus {@code role:system.admin}, with the principals captured at the websocket
- * handshake; {@code deny.reason} is {@code unknown} for an unregistered topic,
- * {@code forbidden} for a failed check. {@code pub}
- * requires an acknowledged subscription and is republished node-locally as an
+ * {@code pong}. Inbound {@code pub} is capped per socket; over the cap the frame is answered with
+ * {@code error {code: rateLimit, topic, retryAfter}}, where {@code retryAfter} is the milliseconds
+ * until the cap lifts, and the socket is closed with {@code 1008} once five capped windows pass
+ * without an intervening window inside the cap.
+ * <p>
+ * Topics are addressed by canonical name. Subscribe is checked against the topic's {@code allow},
+ * plus {@code role:system.admin}, with the principals captured at the websocket handshake;
+ * {@code deny.reason} is {@code unknown} for an unregistered topic, {@code forbidden} for a failed
+ * check. {@code pub} requires an acknowledged subscription and is republished node-locally as an
  * {@code admin.topic.in.<topic>} event carrying the verified user and socket id.
  * <p>
  * Sequence numbers are per topic and per node, monotonic for the lifetime of this instance;
@@ -95,6 +101,10 @@ public final class AdminEventHubImpl
     private static final int MAX_INBOUND_PER_WINDOW = 30;
 
     private static final int MAX_VIOLATIONS = 5;
+
+    private static final InboundVerdict ALLOWED = new InboundVerdict( true, 0 );
+
+    static LongSupplier nanoTime = System::nanoTime;
 
     private static final Logger LOG = LoggerFactory.getLogger( AdminEventHubImpl.class );
 
@@ -284,9 +294,10 @@ public final class AdminEventHubImpl
             send( id, errorFrame( "badFrame", null ) );
             return;
         }
-        if ( !allowInbound( clientSession ) )
+        final InboundVerdict verdict = allowInbound( clientSession );
+        if ( !verdict.allowed() )
         {
-            send( id, errorFrame( "rateLimit", topic ) );
+            send( id, rateLimitFrame( topic, verdict.retryAfterMillis() ) );
             return;
         }
         if ( !clientSession.topics.contains( topic ) )
@@ -470,23 +481,38 @@ public final class AdminEventHubImpl
         } );
     }
 
-    private boolean allowInbound( final ClientSession clientSession )
+    private InboundVerdict allowInbound( final ClientSession clientSession )
     {
         synchronized ( clientSession )
         {
-            final long now = System.nanoTime();
+            final long now = nanoTime.getAsLong();
             if ( now - clientSession.inboundWindowStart > INBOUND_WINDOW_NANOS )
             {
+                if ( !clientSession.violatedInWindow )
+                {
+                    clientSession.violations = 0;
+                }
+                clientSession.violatedInWindow = false;
                 clientSession.inboundWindowStart = now;
                 clientSession.inboundCount = 0;
             }
             if ( ++clientSession.inboundCount > MAX_INBOUND_PER_WINDOW )
             {
-                registerViolation( clientSession );
-                return false;
+                if ( !clientSession.violatedInWindow )
+                {
+                    // one violation per window, however many frames overshoot it
+                    clientSession.violatedInWindow = true;
+                    registerViolation( clientSession );
+                }
+                final long remaining = INBOUND_WINDOW_NANOS - ( now - clientSession.inboundWindowStart );
+                return new InboundVerdict( false, TimeUnit.NANOSECONDS.toMillis( remaining ) );
             }
-            return true;
+            return ALLOWED;
         }
+    }
+
+    private record InboundVerdict( boolean allowed, long retryAfterMillis )
+    {
     }
 
     private void registerViolation( final ClientSession clientSession )
@@ -563,6 +589,16 @@ public final class AdminEventHubImpl
         return node.toString();
     }
 
+    private static String rateLimitFrame( final String topic, final long retryAfterMillis )
+    {
+        final ObjectNode node = FACTORY.objectNode();
+        node.put( "type", "error" );
+        node.put( "code", "rateLimit" );
+        node.put( "topic", topic );
+        node.put( "retryAfter", retryAfterMillis );
+        return node.toString();
+    }
+
     private static String errorFrame( final String code, final String topic )
     {
         final ObjectNode node = FACTORY.objectNode();
@@ -603,6 +639,8 @@ public final class AdminEventHubImpl
         long inboundWindowStart;
 
         int inboundCount;
+
+        boolean violatedInWindow;
 
         int violations;
 

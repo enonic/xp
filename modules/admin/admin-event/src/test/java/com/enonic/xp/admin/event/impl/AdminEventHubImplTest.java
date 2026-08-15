@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -72,12 +73,21 @@ class AdminEventHubImplTest
 
     private AdminEventHubImpl hub;
 
+    private long clock;
+
     @BeforeEach
     void setUp()
     {
         webSocketManager = mock( WebSocketManager.class );
         eventPublisher = mock( EventPublisher.class );
         hub = new AdminEventHubImpl( webSocketManager, eventPublisher );
+        AdminEventHubImpl.nanoTime = () -> clock;
+    }
+
+    @AfterEach
+    void tearDown()
+    {
+        AdminEventHubImpl.nanoTime = System::nanoTime;
     }
 
     @Test
@@ -305,19 +315,24 @@ class AdminEventHubImplTest
 
     @Test
     void inboundIsRateLimited()
+        throws Exception
     {
         hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
-        for ( int i = 0; i < 31; i++ )
+        for ( int i = 0; i < 35; i++ )
         {
             message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
         }
 
-        // 30 accepted pubs became inbound events; the 31st was rejected with an error frame
+        // 30 accepted pubs became inbound events; the rest were rejected with an error frame
         verify( eventPublisher, times( 30 ) ).publish( any() );
-        assertEquals( "rateLimit", lastSentTo( "s1" ).path( "code" ).asText() );
+        final JsonNode error = lastSentTo( "s1" );
+        assertEquals( "rateLimit", error.path( "code" ).asText() );
+        assertTrue( error.path( "retryAfter" ).asLong() > 0 );
+        // a single burst costs one violation, so the socket stays open
+        verify( session, never() ).close( any( CloseReason.class ) );
     }
 
     @Test
@@ -431,14 +446,36 @@ class AdminEventHubImplTest
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
-        // 30 pubs fit the window; each of the next 5 is a violation
-        for ( int i = 0; i < 35; i++ )
+        for ( int window = 0; window < 5; window++ )
         {
-            message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
+            exceedTheCap( session );
         }
 
-        assertEquals( "rateLimit", lastSentTo( "s1" ).path( "code" ).asText() );
         verify( session ).close( any( CloseReason.class ) );
+    }
+
+    @Test
+    void aWindowInsideTheCapClearsTheViolations()
+        throws Exception
+    {
+        hub.setTopic( setParams( OWNER, NAME, PrincipalKeys.from( ALLOWED_ROLE ) ) );
+        final Session session = open( "s1", ALLOWED_ROLE );
+        message( session, subscribeFrame(), ALLOWED_ROLE );
+
+        for ( int window = 0; window < 4; window++ )
+        {
+            exceedTheCap( session );
+        }
+
+        // one window inside the cap, and the next window starts the count over
+        nextWindow();
+        message( session, pubFrame(), ALLOWED_ROLE );
+        for ( int window = 0; window < 4; window++ )
+        {
+            exceedTheCap( session );
+        }
+
+        verify( session, never() ).close( any( CloseReason.class ) );
     }
 
     @Test
@@ -591,9 +628,9 @@ class AdminEventHubImplTest
         message( session, subscribeFrame(), ALLOWED_ROLE );
         doThrow( new IOException( "boom" ) ).when( session ).close( any( CloseReason.class ) );
 
-        for ( int i = 0; i < 35; i++ )
+        for ( int window = 0; window < 5; window++ )
         {
-            message( session, "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}", ALLOWED_ROLE );
+            exceedTheCap( session );
         }
 
         verify( session ).close( any( CloseReason.class ) );
@@ -659,6 +696,25 @@ class AdminEventHubImplTest
         final Session session = mock( Session.class );
         when( session.getId() ).thenReturn( id );
         return session;
+    }
+
+    private void exceedTheCap( final Session session )
+    {
+        nextWindow();
+        for ( int i = 0; i < 31; i++ )
+        {
+            message( session, pubFrame(), ALLOWED_ROLE );
+        }
+    }
+
+    private void nextWindow()
+    {
+        clock += 11_000_000_000L;
+    }
+
+    private String pubFrame()
+    {
+        return "{\"type\":\"pub\",\"topic\":\"" + TOPIC + "\"}";
     }
 
     private String subscribeFrame()
