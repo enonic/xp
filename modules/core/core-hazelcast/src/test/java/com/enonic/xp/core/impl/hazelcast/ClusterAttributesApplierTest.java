@@ -12,22 +12,20 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 import com.hazelcast.cluster.Member;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.replicatedmap.ReplicatedMap;
 
-import com.enonic.xp.core.internal.Dictionaries;
+import com.enonic.xp.app.Application;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 @ExtendWith(MockitoExtension.class)
 class ClusterAttributesApplierTest
@@ -55,45 +53,24 @@ class ClusterAttributesApplierTest
     }
 
     @Test
-    void addingBundle_application()
+    void addingService()
     {
-        final Bundle bundle = mock( Bundle.class, withSettings().defaultAnswer( Answers.RETURNS_DEEP_STUBS ) );
-        when( bundle.getHeaders().get( "X-Bundle-Type" ) ).thenReturn( "application" );
-        when( bundle.getSymbolicName() ).thenReturn( "com.example.myapp" );
-
         final ClusterAttributesApplier applier = new ClusterAttributesApplier( bundleContext, hazelcastInstance );
 
-        final Boolean result = applier.addingBundle( bundle, null );
+        final String result = applier.addingService( mockReference( "com.example.myapp" ) );
 
-        assertTrue( result );
+        assertEquals( "application-com.example.myapp", result );
         verify( replicatedMap ).put( uuid, Map.of( "application-com.example.myapp", "true" ) );
     }
 
     @Test
-    void addingBundle_nonApplication()
+    void removedService()
     {
-        final Bundle bundle = mock( Bundle.class );
-        when( bundle.getHeaders() ).thenReturn( Dictionaries.of() );
-
         final ClusterAttributesApplier applier = new ClusterAttributesApplier( bundleContext, hazelcastInstance );
 
-        final Boolean result = applier.addingBundle( bundle, null );
+        final ServiceReference<Application> reference = mockReference( "com.example.myapp" );
 
-        assertNull( result );
-        verifyNoInteractions( replicatedMap );
-    }
-
-    @Test
-    void removedBundle()
-    {
-        final Bundle bundle = mock( Bundle.class, withSettings().defaultAnswer( Answers.RETURNS_DEEP_STUBS ) );
-        when( bundle.getHeaders().get( "X-Bundle-Type" ) ).thenReturn( "application" );
-        when( bundle.getSymbolicName() ).thenReturn( "com.example.myapp" );
-
-        final ClusterAttributesApplier applier = new ClusterAttributesApplier( bundleContext, hazelcastInstance );
-
-        applier.addingBundle( bundle, null );
-        applier.removedBundle( bundle, null, true );
+        applier.removedService( reference, applier.addingService( reference ) );
 
         final InOrder inOrder = inOrder( replicatedMap );
         inOrder.verify( replicatedMap ).put( uuid, Map.of( "application-com.example.myapp", "true" ) );
@@ -103,22 +80,26 @@ class ClusterAttributesApplierTest
     @Test
     void multipleApplications()
     {
-        final Bundle bundle1 = mock( Bundle.class, withSettings().defaultAnswer( Answers.RETURNS_DEEP_STUBS ) );
-        when( bundle1.getHeaders().get( "X-Bundle-Type" ) ).thenReturn( "application" );
-        when( bundle1.getSymbolicName() ).thenReturn( "com.example.app1" );
-
-        final Bundle bundle2 = mock( Bundle.class, withSettings().defaultAnswer( Answers.RETURNS_DEEP_STUBS ) );
-        when( bundle2.getHeaders().get( "X-Bundle-Type" ) ).thenReturn( "application" );
-        when( bundle2.getSymbolicName() ).thenReturn( "com.example.app2" );
-
         final ClusterAttributesApplier applier = new ClusterAttributesApplier( bundleContext, hazelcastInstance );
 
-        applier.addingBundle( bundle1, null );
-        applier.addingBundle( bundle2, null );
+        applier.addingService( mockReference( "com.example.app1" ) );
+        applier.addingService( mockReference( "com.example.app2" ) );
 
         final InOrder inOrder = inOrder( replicatedMap );
         inOrder.verify( replicatedMap ).put( uuid, Map.of( "application-com.example.app1", "true" ) );
         inOrder.verify( replicatedMap )
             .put( uuid, Map.of( "application-com.example.app1", "true", "application-com.example.app2", "true" ) );
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ServiceReference<Application> mockReference( final String symbolicName )
+    {
+        final Bundle bundle = mock( Bundle.class );
+        when( bundle.getSymbolicName() ).thenReturn( symbolicName );
+
+        final ServiceReference<Application> reference = mock( ServiceReference.class );
+        when( reference.getBundle() ).thenReturn( bundle );
+
+        return reference;
     }
 }
