@@ -85,6 +85,14 @@ exports.sendToTopic = function () {
     });
 };
 
+exports.sendToTopicWithArray = function () {
+    adminLib.sendToTopic('myTopic', [1, 2, 3]);
+};
+
+exports.sendToTopicWithString = function () {
+    adminLib.sendToTopic('myTopic', 'hello');
+};
+
 exports.sendToTopicWithNull = function () {
     adminLib.sendToTopic('myTopic', {
         count: 42,

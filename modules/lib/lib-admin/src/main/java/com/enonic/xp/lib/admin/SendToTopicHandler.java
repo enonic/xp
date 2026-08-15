@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.admin;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.admin.event.AdminEventHub;
@@ -14,13 +13,15 @@ import com.enonic.xp.util.GenericValue;
 public final class SendToTopicHandler
     implements ScriptBean
 {
+    private static final GenericValue EMPTY_MESSAGE = GenericValue.newObject().build();
+
     private Supplier<AdminEventHub> adminEventHub;
 
     private ApplicationKey applicationKey;
 
     private String name;
 
-    private Map<String, Object> message = Map.of();
+    private ScriptValue message;
 
     public void setName( final String name )
     {
@@ -29,7 +30,7 @@ public final class SendToTopicHandler
 
     public void setMessage( final ScriptValue message )
     {
-        this.message = message != null && message.isObject() ? message.getMap() : Map.of();
+        this.message = message;
     }
 
     public void execute()
@@ -45,15 +46,31 @@ public final class SendToTopicHandler
 
     private GenericValue toMessage()
     {
+        if ( this.message == null )
+        {
+            return EMPTY_MESSAGE;
+        }
         try
         {
-            return GenericValue.fromRawJava( this.message );
+            // isObject, isArray and isValue are exclusive: an array is not an object here
+            if ( this.message.isObject() )
+            {
+                return GenericValue.fromRawJava( this.message.getMap() );
+            }
+            if ( this.message.isArray() )
+            {
+                return GenericValue.fromRawJava( this.message.getList() );
+            }
+            if ( this.message.isValue() )
+            {
+                return GenericValue.fromRawJava( this.message.getValue() );
+            }
         }
         catch ( RuntimeException e )
         {
-            throw new IllegalArgumentException(
-                "Message for topic [" + this.name + "] contains null or unsupported values", e );
+            throw new IllegalArgumentException( "Message for topic [" + this.name + "] contains null or unsupported values", e );
         }
+        throw new IllegalArgumentException( "Message for topic [" + this.name + "] must be an object, an array or a primitive value" );
     }
 
     @Override

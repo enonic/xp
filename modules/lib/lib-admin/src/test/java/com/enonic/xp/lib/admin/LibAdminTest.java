@@ -109,6 +109,31 @@ class LibAdminTest
     }
 
     @Test
+    void sendToTopicWithArray()
+    {
+        runFunction( "/test/admin-test.js", "sendToTopicWithArray" );
+
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
+
+        GenericValue message = params.getValue().getMessage();
+        assertEquals( GenericValue.Type.LIST, message.getType() );
+        assertEquals( 3, message.values().size() );
+        assertEquals( 2, message.values().get( 1 ).asInteger() );
+    }
+
+    @Test
+    void sendToTopicWithString()
+    {
+        runFunction( "/test/admin-test.js", "sendToTopicWithString" );
+
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
+
+        assertEquals( "hello", params.getValue().getMessage().asString() );
+    }
+
+    @Test
     void sendToTopicWithNull()
     {
         assertThrows( RuntimeException.class, () -> runFunction( "/test/admin-test.js", "sendToTopicWithNull" ) );

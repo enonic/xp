@@ -221,10 +221,10 @@ export function setTopic(params: SetTopicParams): string {
  * the application publishes on those nodes too.
  *
  * @param {string} name Local topic name, as passed to `setTopic`.
- * @param {object} [message] Message data. Must be serializable to JSON and must not contain null
- * values.
+ * @param {*} [message] Message data: an object, an array or a primitive value. Must be
+ * serializable to JSON and must not contain null values.
  */
-export function sendToTopic(name: string, message?: object): void {
+export function sendToTopic(name: string, message?: object | string | number | boolean): void {
     if (name == null) {
         throw new Error(`Parameter 'name' is required`);
     }
