@@ -258,11 +258,16 @@ class AdminEventHubImplTest
 
         final Session session = open( "s1", ALLOWED_ROLE );
         message( session, subscribeFrame(), ALLOWED_ROLE );
+        hub.onEvent( topicEvent( Map.of() ) );
+        hub.onEvent( topicEvent( Map.of() ) );
         message( session, subscribeFrame(), ALLOWED_ROLE );
 
         final ArgumentCaptor<String> frames = ArgumentCaptor.forClass( String.class );
         verify( webSocketManager, times( 2 ) ).send( eq( "s1" ), frames.capture() );
-        assertEquals( "ack", parse( frames.getAllValues().get( 1 ) ).path( "type" ).asText() );
+        final JsonNode reAck = parse( frames.getAllValues().get( 1 ) );
+        assertEquals( "ack", reAck.path( "type" ).asText() );
+        // the re-ack reports the sequence stamped so far, so the next event is the one after it
+        assertEquals( 2, reAck.path( "seq" ).asLong() );
         verify( webSocketManager, times( 1 ) ).addToGroup( GROUP, "s1" );
     }
 

@@ -215,8 +215,17 @@ public final class AdminEventHubImpl
 
         if ( clientSession.topics.contains( topic ) )
         {
-            // idempotent re-ack
-            send( id, ackFrame( topic, state != null ? state.seq.get() : 0 ) );
+            // idempotent re-ack, under the topic lock for the same reason as a fresh one: the
+            // sequence must not advance between reading it and sending the frame
+            if ( state == null )
+            {
+                send( id, ackFrame( topic, 0 ) );
+                return;
+            }
+            synchronized ( state.lock )
+            {
+                send( id, ackFrame( topic, state.seq.get() ) );
+            }
             return;
         }
 
