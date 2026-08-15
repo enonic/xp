@@ -13,14 +13,11 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 
 /**
- * The admin event topic registry: what applications registered, and how far each topic's sequence
- * has advanced.
+ * The admin event topic registry: what applications registered, how far each topic's sequence has
+ * advanced, and which sockets hold an acknowledged subscription.
  * <p>
- * Held apart from the socket-facing half of the hub, and referencing nothing that can be restarted
- * beneath it, because registrations arrive from {@code main.js} and an application is bootstrapped
- * once: state lost here is not registered again until every owning application restarts
- * (enonic/xp#12273). Sequence numbering and {@link #epoch} share this lifetime, so subscribers
- * count gaps across a restart of the socket-facing half.
+ * Holds no reference that can restart it, so registrations, sequence numbering and {@link #epoch}
+ * outlive the socket-facing half of the hub.
  */
 @Component(service = AdminEventTopics.class)
 public final class AdminEventTopics

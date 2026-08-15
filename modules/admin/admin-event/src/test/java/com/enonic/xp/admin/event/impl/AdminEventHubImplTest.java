@@ -450,8 +450,7 @@ class AdminEventHubImplTest
         final String epoch = lastSentTo( "s1" ).path( "epoch" ).asText();
         hub.onEvent( topicEvent( Map.of() ) );
 
-        // the socket-facing half restarts, as a configuration change to an unrelated component
-        // makes it; the registry it references does not
+        // the socket-facing half restarts; the registry it references does not
         hub.deactivate();
         hub = new AdminEventHubImpl( webSocketManager, eventPublisher, topicRegistry );
 
