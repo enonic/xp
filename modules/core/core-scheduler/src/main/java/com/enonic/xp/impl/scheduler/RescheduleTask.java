@@ -222,7 +222,14 @@ public final class RescheduleTask
             else
             {
                 final Instant lastRun = runState( entry ).lastRun();
-                dueTime = job.getCalendar().nextExecution( lastRun != null ? lastRun : baseline( job, now ) ).orElse( null );
+                // rebuilding a lost plan needs the same guard the plan itself is built with: asked
+                // for what follows a run it already made, a calendar may answer with that very
+                // instant (#10854) and the occurrence would be submitted a second time
+                dueTime = lastRun != null
+                    ? nextExecutionAfter( job.getCalendar(), lastRun )
+                    // a job that has never run catches up from when it was last modified (#10125),
+                    // where an occurrence falling on that instant is the first one, not a repeat
+                    : job.getCalendar().nextExecution( baseline( job, now ) ).orElse( null );
             }
         }
         return dueTime != null && !dueTime.isAfter( now ) ? Optional.of( dueTime ) : Optional.empty();

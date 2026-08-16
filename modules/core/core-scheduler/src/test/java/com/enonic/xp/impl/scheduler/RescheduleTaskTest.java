@@ -630,6 +630,28 @@ class RescheduleTaskTest
     }
 
     @Test
+    void cronOccurrenceNotRepeatedWhenRebuildingALostPlan()
+    {
+        // models cron-utils returning an execution time that is not strictly after the input (#10854)
+        final Instant lastRun = Instant.parse( "2026-01-01T10:30:00Z" );
+        final Instant nextMinute = Instant.parse( "2026-01-01T10:31:00Z" );
+
+        final CronCalendar calendar = mock( CronCalendar.class );
+        when( calendar.getType() ).thenReturn( ScheduleCalendarType.CRON );
+        when( calendar.nextExecution( any( Instant.class ) ) ).thenAnswer( invocation -> {
+            final Instant from = invocation.getArgument( 0 );
+            return Optional.of( from.equals( lastRun ) ? lastRun : nextMinute );
+        } );
+
+        // the job has run, and its plan is gone - a restore, or a Hazelcast restart
+        mockJobs( jobBuilder( "job1", calendar ).lastRun( lastRun ).build() );
+
+        task.run();
+
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
     void disabledJobNotSubmitted()
     {
         mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).enabled( false ).build() );
