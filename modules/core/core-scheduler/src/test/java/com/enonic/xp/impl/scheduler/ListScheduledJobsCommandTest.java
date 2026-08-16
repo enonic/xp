@@ -20,6 +20,10 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.node.NodeVersion;
+import com.enonic.xp.scheduler.ScheduledJob;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +33,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ListScheduledJobEntriesCommandTest
+class ListScheduledJobsCommandTest
 {
     @Mock
     private NodeService nodeService;
@@ -64,6 +68,31 @@ class ListScheduledJobEntriesCommandTest
         assertEquals( oneTimeNode.getNodeVersionId(), oneTimeEntry.versionId() );
         // a one-time job's lastRun tombstone lives in node data and is part of the listing
         assertEquals( Instant.parse( "2026-01-01T10:00:00Z" ), oneTimeEntry.job().getLastRun() );
+    }
+
+    @Test
+    void listWithRunState()
+    {
+        final Node cronNode = jobNode( "cron-job", ScheduleCalendarType.CRON, null );
+
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn(
+            ListNodesResult.create().addEntry( listEntry( cronNode ) ).build() );
+        when( nodeService.getByIds( isA( NodeIds.class ) ) ).thenReturn( Nodes.from( cronNode ) );
+
+        final NodeVersion version = mock( NodeVersion.class );
+        when( version.getAttributes() ).thenReturn(
+            SchedulerSerializer.toLastRunAttributes( Instant.parse( "2026-01-01T11:00:00Z" ), TaskId.from( "task-1" ) ) );
+        when( nodeService.getVersion( cronNode.id(), cronNode.getNodeVersionId() ) ).thenReturn( version );
+
+        final SchedulerServiceImpl schedulerService =
+            new SchedulerServiceImpl( nodeService, mock( SchedulingCoordinator.class ), mock( ScheduleAuditLogSupport.class ) );
+
+        final List<ScheduledJob> jobs = schedulerService.list();
+
+        // the same listing, one version read per job richer: run state a cron job keeps in attributes
+        assertEquals( 1, jobs.size() );
+        assertEquals( Instant.parse( "2026-01-01T11:00:00Z" ), jobs.get( 0 ).getLastRun() );
+        assertEquals( TaskId.from( "task-1" ), jobs.get( 0 ).getLastTaskId() );
     }
 
     private static NodeListEntry listEntry( final Node node )

@@ -3,18 +3,20 @@ package com.enonic.xp.impl.scheduler;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.scheduler.ScheduledJob;
 
 public class ListScheduledJobsCommand
     extends AbstractSchedulerCommand
 {
+    private final boolean withRunState;
 
     private ListScheduledJobsCommand( final Builder builder )
     {
         super( builder );
+        this.withRunState = builder.withRunState;
     }
 
     public static Builder create()
@@ -22,26 +24,39 @@ public class ListScheduledJobsCommand
         return new Builder();
     }
 
-    public List<ScheduledJob> execute()
+    public List<ScheduledJobEntry> execute()
     {
         return SchedulerContext.createContext().callWith( this::doExecute );
     }
 
-    private List<ScheduledJob> doExecute()
+    private List<ScheduledJobEntry> doExecute()
     {
         final ListNodesResult result = nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() );
 
         return nodeService.getByIds( result.getNodeIds() ).
             stream().
-            map( this::toScheduledJob ).
+            map( node -> new ScheduledJobEntry( withRunState ? toScheduledJob( node ) : SchedulerSerializer.fromNode( node ),
+                                                node.getNodeVersionId() ) ).
             collect( Collectors.toList() );
     }
 
     public static final class Builder
         extends AbstractSchedulerCommand.Builder<Builder>
     {
+        private boolean withRunState;
+
         private Builder()
         {
+        }
+
+        /**
+         * Whether to read each job's run state, which costs a version read per job. The scheduling
+         * tick goes without, keeping track of run state itself.
+         */
+        public Builder withRunState( final boolean withRunState )
+        {
+            this.withRunState = withRunState;
+            return this;
         }
 
         @Override

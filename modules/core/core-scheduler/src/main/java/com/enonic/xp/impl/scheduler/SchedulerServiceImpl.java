@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,18 +97,22 @@ public class SchedulerServiceImpl
     {
         return ListScheduledJobsCommand.create().
             nodeService( nodeService ).
+            withRunState( true ).
             build().
-            execute();
+            execute().
+            stream().
+            map( ScheduledJobEntry::job ).
+            collect( Collectors.toList() );
     }
 
     /**
-     * Lists jobs without fetching run metadata from node versions.
+     * Lists jobs without fetching run metadata from node versions, saving a version read per job.
      * Used by the scheduling tick, which tracks run state via {@link SchedulingCoordinator}
      * and a per-job memo keyed by the returned node version id.
      */
     List<ScheduledJobEntry> listEntries()
     {
-        return ListScheduledJobEntriesCommand.create().
+        return ListScheduledJobsCommand.create().
             nodeService( nodeService ).
             build().
             execute();
