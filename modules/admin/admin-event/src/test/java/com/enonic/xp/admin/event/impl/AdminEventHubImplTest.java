@@ -24,6 +24,11 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.portal.websocket.WebSocketManager;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -82,7 +87,7 @@ class AdminEventHubImplTest
         webSocketManager = mock( WebSocketManager.class );
         eventPublisher = mock( EventPublisher.class );
         topicRegistry = new AdminEventTopics();
-        hub = new AdminEventHubImpl( webSocketManager, eventPublisher, topicRegistry );
+        hub = new AdminEventHubImpl( webSocketManager, eventPublisher, topicRegistry, resourceService() );
         AdminEventHubImpl.nanoTime = () -> clock;
     }
 
@@ -461,7 +466,7 @@ class AdminEventHubImplTest
 
         // the socket-facing half restarts; the registry it references does not
         hub.deactivate();
-        hub = new AdminEventHubImpl( webSocketManager, eventPublisher, topicRegistry );
+        hub = new AdminEventHubImpl( webSocketManager, eventPublisher, topicRegistry, resourceService() );
 
         final Session reconnected = open( "s2", ALLOWED_ROLE );
         message( reconnected, subscribeFrame(), ALLOWED_ROLE );
@@ -731,6 +736,20 @@ class AdminEventHubImplTest
 
         assertThrows( IllegalArgumentException.class, () -> hub.publish( publishParams( OWNER, NAME ) ) );
         verify( webSocketManager, never() ).send( anyString(), anyString() );
+    }
+
+    private static ResourceService resourceService()
+    {
+        final ResourceKey key = ResourceKey.from( ApplicationKey.SYSTEM, "/admin/event/client.js" );
+        final Resource resource = new UrlResource( key, AdminEventHubImplTest.class.getResource( "/admin/event/client.js" ) );
+
+        final ResourceService resourceService = mock( ResourceService.class );
+        when( resourceService.getResource( key ) ).thenReturn( resource );
+        when( resourceService.processResource( any() ) ).thenAnswer( invocation -> {
+            final ResourceProcessor<?, ?> processor = invocation.getArgument( 0 );
+            return processor.process( resource );
+        } );
+        return resourceService;
     }
 
     private static SetTopicParams setParams( final ApplicationKey owner, final String name, final PrincipalKeys allow )

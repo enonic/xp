@@ -11,7 +11,8 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.UrlResource;
+import com.enonic.xp.resource.ResourceProcessor;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -21,38 +22,55 @@ import com.enonic.xp.web.WebResponse;
  * script reaches the socket by the host and path that reached the script.
  * <p>
  * Answered with an entity tag of the content and {@code no-cache}: the url does not change with
- * the content, so a client revalidates and is told the script is unchanged. The script is a
- * resource of this bundle, which cannot change while the bundle runs, so the tag is taken once.
+ * the content, so a client revalidates and is told the script is unchanged. The tag is held by the
+ * resource service, which discards it when the resource changes.
  */
 final class AdminEventClient
 {
     static final String PATH = "/client.js";
 
-    private static final String RESOURCE = "/admin/event/client.js";
+    private static final ResourceKey RESOURCE = ResourceKey.from( ApplicationKey.SYSTEM, "/admin/event/client.js" );
+
+    private static final String ETAG_SEGMENT = "adminEventClientEtag";
 
     private static final String CACHE_CONTROL = "no-cache";
 
-    private final Resource script;
+    private final ResourceService resourceService;
 
-    private final String etag;
-
-    AdminEventClient()
+    AdminEventClient( final ResourceService resourceService )
     {
-        this.script = new UrlResource( ResourceKey.from( ApplicationKey.SYSTEM, RESOURCE ), AdminEventClient.class.getResource( RESOURCE ) );
-        this.etag = etagOf( this.script );
+        this.resourceService = resourceService;
     }
 
     WebResponse handle( final WebRequest request )
     {
-        final WebResponse.Builder<?> responseBuilder =
-            WebResponse.create().header( HttpHeaders.ETAG, this.etag ).header( HttpHeaders.CACHE_CONTROL, CACHE_CONTROL );
+        final String etag = etag();
+        if ( etag == null )
+        {
+            return WebResponse.create().status( HttpStatus.NOT_FOUND ).build();
+        }
 
-        if ( this.etag.equals( request.getHeaders().get( HttpHeaders.IF_NONE_MATCH ) ) )
+        final WebResponse.Builder<?> responseBuilder =
+            WebResponse.create().header( HttpHeaders.ETAG, etag ).header( HttpHeaders.CACHE_CONTROL, CACHE_CONTROL );
+
+        if ( etag.equals( request.getHeaders().get( HttpHeaders.IF_NONE_MATCH ) ) )
         {
             return responseBuilder.status( HttpStatus.NOT_MODIFIED ).build();
         }
 
-        return responseBuilder.status( HttpStatus.OK ).contentType( MediaType.JAVASCRIPT_UTF_8 ).body( this.script ).build();
+        return responseBuilder.status( HttpStatus.OK )
+            .contentType( MediaType.JAVASCRIPT_UTF_8 )
+            .body( this.resourceService.getResource( RESOURCE ) )
+            .build();
+    }
+
+    private String etag()
+    {
+        return this.resourceService.processResource( new ResourceProcessor.Builder<ResourceKey, String>().key( RESOURCE )
+                                                         .segment( ETAG_SEGMENT )
+                                                         .keyTranslator( key -> key )
+                                                         .processor( AdminEventClient::etagOf )
+                                                         .build() );
     }
 
     private static String etagOf( final Resource resource )

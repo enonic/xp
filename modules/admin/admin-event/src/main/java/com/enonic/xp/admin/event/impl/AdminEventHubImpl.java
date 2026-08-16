@@ -35,6 +35,7 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.portal.websocket.WebSocketManager;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -112,15 +113,16 @@ public final class AdminEventHubImpl
 
     private final ConcurrentMap<String, ClientSession> sessions = new ConcurrentHashMap<>();
 
-    private final AdminEventClient client = new AdminEventClient();
+    private final AdminEventClient client;
 
     @Activate
     public AdminEventHubImpl( @Reference final WebSocketManager webSocketManager, @Reference final EventPublisher eventPublisher,
-                              @Reference final AdminEventTopics topics )
+                              @Reference final AdminEventTopics topics, @Reference final ResourceService resourceService )
     {
         this.webSocketManager = webSocketManager;
         this.eventPublisher = eventPublisher;
         this.topics = topics;
+        this.client = new AdminEventClient( resourceService );
     }
 
     @Deactivate
