@@ -9,7 +9,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -33,26 +32,18 @@ public class SchedulingCoordinator
 
     private final ConcurrentMap<String, PlannedRun> localNextRuns = new ConcurrentHashMap<>();
 
-    private volatile HazelcastInstance hazelcastInstance;
+    private final HazelcastInstance hazelcastInstance;
 
     @Activate
-    public SchedulingCoordinator( @Reference final ClusterConfig clusterConfig )
+    public SchedulingCoordinator( @Reference final ClusterConfig clusterConfig,
+                                  @Reference(cardinality = ReferenceCardinality.OPTIONAL,
+                                      policyOption = ReferencePolicyOption.GREEDY) final HazelcastInstance hazelcastInstance )
     {
+        // whether this installation is clustered does not change while it runs, and a clustered one
+        // has Hazelcast shortly after it starts - so this is taken once, the way the rest of the
+        // cluster-dependent components take it, rather than tracked as it comes and goes
         this.clusterEnabled = clusterConfig.isEnabled();
-    }
-
-    @Reference(cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
-    public void setHazelcastInstance( final HazelcastInstance hazelcastInstance )
-    {
         this.hazelcastInstance = hazelcastInstance;
-    }
-
-    public void unsetHazelcastInstance( final HazelcastInstance hazelcastInstance )
-    {
-        if ( this.hazelcastInstance == hazelcastInstance )
-        {
-            this.hazelcastInstance = null;
-        }
     }
 
     /**
@@ -117,13 +108,13 @@ public class SchedulingCoordinator
 
     private IMap<String, PlannedRun> nextRuns()
     {
-        final HazelcastInstance hazelcast = this.hazelcastInstance;
-        if ( hazelcast == null )
+        if ( hazelcastInstance == null )
         {
-            // a clustered installation coordinates through Hazelcast or not at all: carrying on
-            // without it would let each member schedule as though it were alone
+            // only reachable before Hazelcast has started: a clustered installation coordinates
+            // through it or not at all, since carrying on without it would let each member schedule
+            // as though it were alone
             throw new IllegalStateException( "Cannot resolve Hazelcast to coordinate scheduling" );
         }
-        return hazelcast.getMap( NEXT_RUN_MAP_NAME );
+        return hazelcastInstance.getMap( NEXT_RUN_MAP_NAME );
     }
 }

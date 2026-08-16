@@ -72,12 +72,7 @@ class SchedulingCoordinatorTest
     private SchedulingCoordinator coordinator( final boolean clustered, final boolean hazelcastAvailable )
     {
         when( clusterConfig.isEnabled() ).thenReturn( clustered );
-        final SchedulingCoordinator coordinator = new SchedulingCoordinator( clusterConfig );
-        if ( hazelcastAvailable )
-        {
-            coordinator.setHazelcastInstance( hazelcastInstance );
-        }
-        return coordinator;
+        return new SchedulingCoordinator( clusterConfig, hazelcastAvailable ? hazelcastInstance : null );
     }
 
     @Test
@@ -99,22 +94,6 @@ class SchedulingCoordinatorTest
         coordinator.plannedRun( JOB, NEXT_RUN );
         coordinator.plannedRun( JOB, null );
         assertNull( coordinator.plannedRun( JOB ) );
-    }
-
-    @Test
-    void unbindClearsOnlyTheBoundInstance()
-    {
-        final SchedulingCoordinator coordinator = coordinator( true, true );
-
-        coordinator.plannedRun( JOB, NEXT_RUN );
-        assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
-
-        // a greedy rebind unbinds the previous instance after the new one is already bound
-        coordinator.unsetHazelcastInstance( mock( HazelcastInstance.class ) );
-        assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
-
-        coordinator.unsetHazelcastInstance( hazelcastInstance );
-        assertThrows( IllegalStateException.class, () -> coordinator.plannedRun( JOB ) );
     }
 
     @Test
