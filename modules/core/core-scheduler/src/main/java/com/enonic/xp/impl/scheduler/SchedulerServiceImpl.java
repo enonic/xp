@@ -2,6 +2,9 @@ package com.enonic.xp.impl.scheduler;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
@@ -16,6 +19,8 @@ import com.enonic.xp.scheduler.SchedulerService;
 public class SchedulerServiceImpl
     implements SchedulerService
 {
+    private static final Logger LOG = LoggerFactory.getLogger( SchedulerServiceImpl.class );
+
     private final NodeService nodeService;
 
     private final SchedulingCoordinator schedulingCoordinator;
@@ -53,7 +58,7 @@ public class SchedulerServiceImpl
             build().
             execute();
 
-        schedulingCoordinator.forget( params.getName() );
+        forgetPlan( params.getName() );
 
         auditLogSupport.modify( params, job );
 
@@ -69,7 +74,7 @@ public class SchedulerServiceImpl
             build().
             execute();
 
-        schedulingCoordinator.forget( name );
+        forgetPlan( name );
 
         auditLogSupport.delete( name, result );
 
@@ -106,6 +111,24 @@ public class SchedulerServiceImpl
             nodeService( nodeService ).
             build().
             execute();
+    }
+
+    /**
+     * Discards a job's planned run, tolerating a coordinator that cannot be reached. The job has
+     * already changed in storage by this point, so failing the call would report as failed an
+     * operation that in fact happened. A plan left behind for a deleted job is dropped by the next
+     * tick that lists jobs; one left behind for a modified job is corrected when it next runs.
+     */
+    private void forgetPlan( final ScheduledJobName name )
+    {
+        try
+        {
+            schedulingCoordinator.forget( name );
+        }
+        catch ( Exception e )
+        {
+            LOG.warn( "Failed to discard the planned run of job [{}]", name, e );
+        }
     }
 
     /**
