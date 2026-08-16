@@ -177,6 +177,7 @@ public class ScheduleAuditLogSupportImpl
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) calendar );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
+                calendarSet.setBoolean( ScheduledJobPropertyNames.CALENDAR_DELETE_AFTER_RUN, oneTimeCalendar.isDeleteAfterRun() );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
                 break;
 
