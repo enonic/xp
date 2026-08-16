@@ -64,7 +64,7 @@ public final class RescheduleTask
 
     private final Clock clock;
 
-    private final Map<ScheduledJobName, Integer> failedSubmits = new HashMap<>();
+    private final Map<ScheduledJobName, FailedSubmits> failedSubmits = new HashMap<>();
 
     private final Map<ScheduledJobName, RunState> runStates = new HashMap<>();
 
@@ -318,7 +318,7 @@ public final class RescheduleTask
         }
         catch ( Exception e )
         {
-            final int attempts = failedSubmits.merge( job.getName(), 1, Integer::sum );
+            final int attempts = countFailedSubmit( entry );
             if ( attempts > MAX_SUBMIT_ATTEMPTS )
             {
                 failedSubmits.remove( job.getName() );
@@ -423,6 +423,18 @@ public final class RescheduleTask
         }
     }
 
+    private int countFailedSubmit( final ScheduledJobEntry entry )
+    {
+        // attempts are counted against the job as it was when they were made: a job that has been
+        // modified starts over, so fixing one that had used up its attempts does not have its very
+        // first failure treated as its last
+        final FailedSubmits previous = failedSubmits.get( entry.job().getName() );
+        final int attempts =
+            previous != null && Objects.equals( previous.versionId(), entry.versionId() ) ? previous.attempts() + 1 : 1;
+        failedSubmits.put( entry.job().getName(), new FailedSubmits( entry.versionId(), attempts ) );
+        return attempts;
+    }
+
     private NodeVersionId currentVersionId( final ScheduledJobName name )
     {
         return adminContext().callWith( () -> schedulerService.versionId( name ) );
@@ -501,6 +513,10 @@ public final class RescheduleTask
     }
 
     private record RunState(NodeVersionId versionId, Instant lastRun, String lastTaskId)
+    {
+    }
+
+    private record FailedSubmits(NodeVersionId versionId, int attempts)
     {
     }
 }

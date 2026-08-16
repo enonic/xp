@@ -75,6 +75,8 @@ class RescheduleTaskTest
 
     private static final TimeZone UTC = TimeZone.getTimeZone( "UTC" );
 
+    private static final int MAX_SUBMIT_ATTEMPTS = 10;
+
     @Captor
     ArgumentCaptor<SubmitTaskParams> taskCaptor;
 
@@ -649,6 +651,30 @@ class RescheduleTaskTest
         task.run();
 
         verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void aModifiedJobStartsItsSubmitAttemptsOver()
+    {
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenThrow( new RuntimeException() );
+
+        for ( int i = 0; i < MAX_SUBMIT_ATTEMPTS; i++ )
+        {
+            task.run();
+        }
+
+        verify( taskService, times( MAX_SUBMIT_ATTEMPTS ) ).submitTask( isA( SubmitTaskParams.class ) );
+        verify( nodeService, never() ).update( isA( UpdateNodeParams.class ) );
+
+        // the job is modified - whatever was wrong with it may well be what was just fixed
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+
+        task.run();
+
+        // its first failure is its first, not the eleventh of the job it replaced
+        verify( taskService, times( MAX_SUBMIT_ATTEMPTS + 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        verify( nodeService, never() ).update( isA( UpdateNodeParams.class ) );
     }
 
     @Test
