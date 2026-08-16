@@ -318,6 +318,17 @@ public final class RescheduleTask
     private void recordRun( final ScheduledJobEntry entry, final Instant now, final TaskId taskId )
     {
         final ScheduledJob job = entry.job();
+
+        // a job can be modified, or deleted and recreated, while one of its runs is in flight.
+        // Whatever schedule is there now owns the plan and the record: modify() has already
+        // discarded the plan of the job this run belonged to, and must not have it written back
+        if ( !Objects.equals( entry.versionId(), currentVersionId( job.getName() ) ) )
+        {
+            LOG.debug( "Job [{}] changed while its run was in flight - the run is not recorded", job.getName() );
+            runStates.remove( job.getName() );
+            return;
+        }
+
         final ScheduleCalendarType type = job.getCalendar().getType();
         // the shared value plans the next execution; for a one-time job it marks the only execution as submitted
         planNextRun( job.getName(), type == ScheduleCalendarType.ONE_TIME ? now : nextExecutionAfter( job.getCalendar(), now ),
@@ -344,6 +355,7 @@ public final class RescheduleTask
             adminContext().runWith( () -> UpdateLastRunCommand.create()
                 .nodeService( nodeService )
                 .name( job.getName() )
+                .expectedVersionId( entry.versionId() )
                 .lastRun( now )
                 .lastTaskId( taskId )
                 .build()
@@ -375,6 +387,11 @@ public final class RescheduleTask
             // attempting even when the shared plan could not be written
             LOG.warn( "Failed to share the planned run of job [{}]", name, e );
         }
+    }
+
+    private NodeVersionId currentVersionId( final ScheduledJobName name )
+    {
+        return adminContext().callWith( () -> schedulerService.versionId( name ) );
     }
 
     private boolean deleteAfterRun( final ScheduledJobName name )

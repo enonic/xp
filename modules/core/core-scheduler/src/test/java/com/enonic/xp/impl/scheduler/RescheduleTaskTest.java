@@ -31,6 +31,7 @@ import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -119,10 +120,19 @@ class RescheduleTaskTest
     {
         final List<ScheduledJobEntry> entries =
             Stream.of( jobs ).map( job -> new ScheduledJobEntry( job, new NodeVersionId() ) ).collect( Collectors.toList() );
+        mockEntries( entries );
+    }
+
+    private void mockEntries( final List<ScheduledJobEntry> entries )
+    {
         when( schedulerService.listEntries() ).thenReturn( entries );
-        for ( final ScheduledJob job : jobs )
+        for ( final ScheduledJobEntry entry : entries )
         {
-            when( schedulerService.get( job.getName() ) ).thenReturn( job );
+            when( schedulerService.get( entry.job().getName() ) ).thenReturn( entry.job() );
+            when( schedulerService.versionId( entry.job().getName() ) ).thenReturn( entry.versionId() );
+            // the stored node is at the version the tick listed, so a run of it is recorded
+            when( nodeService.getByPath( new NodePath( NodePath.ROOT, NodeName.from( entry.job().getName().getValue() ) ) ) ).thenReturn(
+                mockNode( entry.versionId() ) );
         }
     }
 
@@ -440,7 +450,9 @@ class RescheduleTaskTest
         final ScheduledJob stored = jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).lastRun(
             NOW.minusSeconds( 30 ) ).build();
 
-        when( schedulerService.listEntries() ).thenReturn( List.of( new ScheduledJobEntry( listed, new NodeVersionId() ) ) );
+        final ScheduledJobEntry entry = new ScheduledJobEntry( listed, new NodeVersionId() );
+        when( schedulerService.listEntries() ).thenReturn( List.of( entry ) );
+        when( schedulerService.versionId( listed.getName() ) ).thenReturn( entry.versionId() );
         when( schedulerService.get( listed.getName() ) ).thenReturn( stored );
 
         task.run();
@@ -508,13 +520,13 @@ class RescheduleTaskTest
             .modifiedTime( NOW.minusSeconds( 120 ) )
             .build();
         final List<ScheduledJobEntry> entries = List.of( new ScheduledJobEntry( job, new NodeVersionId() ) );
+        mockEntries( entries );
 
         // the tick spends half a minute listing jobs before it gets round to submitting this one
         when( schedulerService.listEntries() ).thenAnswer( invocation -> {
             clock.plusSeconds( 30 );
             return entries;
         } );
-        when( schedulerService.get( job.getName() ) ).thenReturn( job );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
 
         task.run();
@@ -522,6 +534,25 @@ class RescheduleTaskTest
         verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
         // one interval after the run actually started, not after the tick did
         assertEquals( NOW.plusSeconds( 90 ), schedulingCoordinator.plannedRun( job.getName() ).nextRun() );
+    }
+
+    @Test
+    void runOfAJobThatChangedWhileInFlightIsNotRecorded()
+    {
+        final ScheduledJob job = cronJob( "job1", "* * * * *", NOW.minusSeconds( 90 ) );
+        mockJobs( job );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        // the job is modified while the task is being submitted, so the node is at another version
+        // by the time the run would be recorded
+        when( schedulerService.versionId( job.getName() ) ).thenReturn( new NodeVersionId() );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        // neither the plan nor the run state of the job it used to be may be written back
+        assertNull( schedulingCoordinator.plannedRun( job.getName() ) );
+        verify( nodeService, never() ).update( isA( UpdateNodeParams.class ) );
     }
 
     @Test
@@ -538,7 +569,7 @@ class RescheduleTaskTest
     void cronJobToleratesMissingRunStateFetch()
     {
         final ScheduledJob job = cronJob( "job1", "* * * * *", null );
-        when( schedulerService.listEntries() ).thenReturn( List.of( new ScheduledJobEntry( job, new NodeVersionId() ) ) );
+        mockEntries( List.of( new ScheduledJobEntry( job, new NodeVersionId() ) ) );
 
         task.run();
 
@@ -804,6 +835,11 @@ class RescheduleTaskTest
 
     private Node mockNode()
     {
+        return mockNode( new NodeVersionId() );
+    }
+
+    private Node mockNode( final NodeVersionId versionId )
+    {
         final PropertyTree jobData = new PropertyTree();
 
         final PropertySet calendar = jobData.newSet();
@@ -824,7 +860,7 @@ class RescheduleTaskTest
             .name( "test" )
             .parentPath( NodePath.ROOT )
             .data( jobData )
-            .nodeVersionId( new NodeVersionId() )
+            .nodeVersionId( versionId )
             .build();
     }
 

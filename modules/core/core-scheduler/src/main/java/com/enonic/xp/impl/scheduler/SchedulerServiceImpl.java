@@ -2,7 +2,11 @@ package com.enonic.xp.impl.scheduler;
 
 import java.util.List;
 
+import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -102,5 +106,17 @@ public class SchedulerServiceImpl
             nodeService( nodeService ).
             build().
             execute();
+    }
+
+    /**
+     * Version of a job's node, or null if the job is gone. Used by the scheduling tick to tell
+     * whether a job was modified or replaced while one of its runs was in flight.
+     */
+    NodeVersionId versionId( final ScheduledJobName name )
+    {
+        return SchedulerContext.createContext().callWith( () -> {
+            final Node node = nodeService.getByPath( new NodePath( NodePath.ROOT, NodeName.from( name.getValue() ) ) );
+            return node != null ? node.getNodeVersionId() : null;
+        } );
     }
 }
