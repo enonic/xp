@@ -56,6 +56,7 @@ import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -468,6 +469,42 @@ class RescheduleTaskTest
         // the tombstone is what keeps the job from running again, so it is written regardless
         verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
         verify( nodeService, times( 1 ) ).update( isA( UpdateNodeParams.class ) );
+    }
+
+    @Test
+    void suspendedTaskSubmitsNothing()
+    {
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.suspend();
+        task.run();
+
+        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
+
+        task.resume();
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
+    void resumeDiscardsPlansOfJobsThatWereReplaced()
+    {
+        final ScheduledJob job = cronJob( "job1", "* * * * *", NOW.minusSeconds( 90 ) );
+        mockJobs( job );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+        assertNotNull( schedulingCoordinator.plannedRun( job.getName() ) );
+
+        // a restored job of the same name is a different job - its predecessor's plan must not apply
+        task.suspend();
+        task.resume();
+        task.run();
+
+        assertNull( schedulingCoordinator.plannedRun( ScheduledJobName.from( "gone" ) ) );
+        verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
     }
 
     @Test

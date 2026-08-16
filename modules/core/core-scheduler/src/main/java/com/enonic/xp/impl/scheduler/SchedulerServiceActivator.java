@@ -19,6 +19,8 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.ThreadFactoryImpl;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventListener;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeIdExistsException;
@@ -35,8 +37,14 @@ import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
 public final class SchedulerServiceActivator
+    implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( SchedulerServiceActivator.class );
+
+    // core-repo keeps RepositoryEvents to itself, so the event types are named here as elsewhere
+    private static final String RESTORE_INITIALIZED_EVENT_TYPE = "repository.restoreInitialized";
+
+    private static final String RESTORED_EVENT_TYPE = "repository.restored";
 
     private final InternalRepositoryService repositoryService;
 
@@ -59,6 +67,8 @@ public final class SchedulerServiceActivator
     private final ScheduleAuditLogSupport auditLogSupport;
 
     private ServiceRegistration<SchedulerService> schedulerServiceReg;
+
+    private volatile RescheduleTask rescheduleTask;
 
     private ScheduledExecutorService ticker;
 
@@ -106,10 +116,32 @@ public final class SchedulerServiceActivator
 
         this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 
-        ticker = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryImpl( "system-scheduler-thread-%d" ) );
-        ticker.scheduleWithFixedDelay(
+        rescheduleTask =
             new RescheduleTask( schedulerService, nodeService, taskService, taskDescriptorService, securityService, clusterService,
-                                schedulingCoordinator, Clock.systemUTC() ), 0, 1, TimeUnit.SECONDS );
+                                schedulingCoordinator, Clock.systemUTC() );
+
+        ticker = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryImpl( "system-scheduler-thread-%d" ) );
+        ticker.scheduleWithFixedDelay( rescheduleTask, 0, 1, TimeUnit.SECONDS );
+    }
+
+    @Override
+    public void onEvent( final Event event )
+    {
+        // the scheduler repository is deleted and restored underneath us, so nothing should be
+        // submitted from a half-replaced set of jobs
+        final RescheduleTask task = rescheduleTask;
+        if ( task == null )
+        {
+            return;
+        }
+        if ( event.isType( RESTORE_INITIALIZED_EVENT_TYPE ) )
+        {
+            task.suspend();
+        }
+        else if ( event.isType( RESTORED_EVENT_TYPE ) )
+        {
+            task.resume();
+        }
     }
 
     private void createConfigJobs( final SchedulerService schedulerService )

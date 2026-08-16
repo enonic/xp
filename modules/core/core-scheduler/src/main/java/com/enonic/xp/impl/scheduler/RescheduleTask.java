@@ -77,6 +77,10 @@ public final class RescheduleTask
 
     private int failedTicks;
 
+    private volatile boolean suspended;
+
+    private volatile boolean resetPending;
+
     public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
                            final TaskDescriptorService taskDescriptorService, final SecurityService securityService,
                            final ClusterService clusterService, final SchedulingCoordinator schedulingCoordinator, final Clock clock )
@@ -91,11 +95,39 @@ public final class RescheduleTask
         this.clock = clock;
     }
 
+    /**
+     * Stops scheduling until {@link #resume()}, e.g. while a repository restore replaces the
+     * jobs underneath the scheduler.
+     */
+    public void suspend()
+    {
+        suspended = true;
+    }
+
+    /**
+     * Resumes scheduling, discarding everything learned about jobs that may no longer be the
+     * jobs that were there before.
+     */
+    public void resume()
+    {
+        resetPending = true;
+        suspended = false;
+    }
+
     @Override
     public void run()
     {
+        if ( suspended )
+        {
+            return;
+        }
         try
         {
+            if ( resetPending )
+            {
+                resetPending = false;
+                forgetJobs();
+            }
             if ( clusterService.isLeader() )
             {
                 doRun();
@@ -118,6 +150,17 @@ public final class RescheduleTask
         {
             LOG.error( "Problem during tasks scheduling", e );
         }
+    }
+
+    private void forgetJobs()
+    {
+        // restored jobs may share names with the ones they replaced, so neither the shared plans
+        // nor anything memoized about them can be assumed to describe the jobs that are there now
+        runStates.clear();
+        dormantJobs.clear();
+        failedSubmits.clear();
+        knownJobs = Set.of();
+        schedulingCoordinator.retain( Set.of() );
     }
 
     @Traced("system.rescheduleTask")
