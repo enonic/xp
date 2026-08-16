@@ -30,6 +30,7 @@
   },
   {
     "calendar": {
+      "deleteAfterRun": false,
       "type": "ONE_TIME",
       "value": "2016-11-02T10:36:00Z"
     },
