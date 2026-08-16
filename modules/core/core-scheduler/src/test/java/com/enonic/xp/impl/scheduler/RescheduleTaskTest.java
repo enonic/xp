@@ -497,25 +497,6 @@ class RescheduleTaskTest
     }
 
     @Test
-    void resumeDiscardsPlansOfJobsThatWereReplaced()
-    {
-        final ScheduledJob job = cronJob( "job1", "* * * * *", NOW.minusSeconds( 90 ) );
-        mockJobs( job );
-        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
-
-        task.run();
-        assertNotNull( schedulingCoordinator.plannedRun( job.getName() ) );
-
-        // a restored job of the same name is a different job - its predecessor's plan must not apply
-        task.suspend();
-        task.resume();
-        task.run();
-
-        assertNull( schedulingCoordinator.plannedRun( ScheduledJobName.from( "gone" ) ) );
-        verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
-    }
-
-    @Test
     void runIsRecordedFromWhenItStartsNotFromTheStartOfTheTick()
     {
         final ScheduledJob job = jobBuilder( "job1", FixedRateCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() )

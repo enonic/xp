@@ -123,7 +123,10 @@ public final class SchedulerServiceActivator
     public void onEvent( final Event event )
     {
         // the scheduler repository is deleted and restored underneath us, so nothing should be
-        // submitted from a half-replaced set of jobs
+        // submitted from a half-replaced set of jobs. ClusterRestarter in core-repo answers the
+        // same two events by resetting and then restarting the framework, which takes the
+        // scheduler down with everything else - this only has to hold until that happens, and to
+        // stand in for it where that framework lifecycle service is not present
         final RescheduleTask task = rescheduleTask;
         if ( task == null )
         {

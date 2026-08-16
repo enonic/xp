@@ -78,8 +78,6 @@ public final class RescheduleTask
 
     private volatile boolean suspended;
 
-    private volatile boolean resetPending;
-
     public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
                            final SecurityService securityService, final ClusterService clusterService,
                            final SchedulingCoordinator schedulingCoordinator, final Clock clock )
@@ -94,8 +92,14 @@ public final class RescheduleTask
     }
 
     /**
-     * Stops scheduling until {@link #resume()}, e.g. while a repository restore replaces the
-     * jobs underneath the scheduler.
+     * Stops scheduling until {@link #resume()}, while a repository restore replaces the jobs
+     * underneath the scheduler.
+     * <p>
+     * A restore uninstalls every application bundle when it starts and restarts the framework when
+     * it finishes - see {@code ClusterRestarter} in core-repo - so in an ordinary installation the
+     * scheduler is taken down with everything else and this only covers the moment before that
+     * happens. It carries the whole weight only where that framework lifecycle service is absent,
+     * and is what then keeps the scheduler off a repository that is being replaced.
      */
     public void suspend()
     {
@@ -103,12 +107,13 @@ public final class RescheduleTask
     }
 
     /**
-     * Resumes scheduling, discarding everything learned about jobs that may no longer be the
-     * jobs that were there before.
+     * Resumes scheduling. Nothing is discarded on the way back: a restore that took the framework
+     * with it leaves nothing to discard, and everything remembered here is either stamped with the
+     * version of the job it describes - so a job the restore replaced cannot inherit it - or is
+     * about tasks rather than jobs, which a restore does not change.
      */
     public void resume()
     {
-        resetPending = true;
         suspended = false;
     }
 
@@ -121,11 +126,6 @@ public final class RescheduleTask
         }
         try
         {
-            if ( resetPending )
-            {
-                resetPending = false;
-                forgetJobs();
-            }
             if ( clusterService.isLeader() )
             {
                 doRun();
@@ -148,20 +148,6 @@ public final class RescheduleTask
         {
             LOG.error( "Problem during tasks scheduling", e );
         }
-    }
-
-    private void forgetJobs()
-    {
-        // restored jobs may share names with the ones they replaced, so neither the shared plans
-        // nor anything memoized about them can be assumed to describe the jobs that are there now
-        runStates.clear();
-        dormantJobs.clear();
-        failedSubmits.clear();
-        knownJobs = Set.of();
-        schedulingCoordinator.retain( Set.of() );
-        // submittedTaskIds is deliberately kept: those tasks are still running whatever was
-        // restored - a partial restore need not have touched the scheduler at all - and forgetting
-        // them is the one thing here that could let a second copy of a fixed-rate job start
     }
 
     @Traced("system.rescheduleTask")
