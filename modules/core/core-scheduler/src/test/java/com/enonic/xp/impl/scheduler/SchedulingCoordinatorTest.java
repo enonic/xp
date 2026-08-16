@@ -52,9 +52,6 @@ class SchedulingCoordinatorTest
     @Mock
     private ClusterConfig clusterConfig;
 
-    @Mock
-    private SchedulerConfig schedulerConfig;
-
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private HazelcastInstance hazelcastInstance;
 
@@ -109,12 +106,18 @@ class SchedulingCoordinatorTest
     private SchedulingCoordinator coordinator( final boolean clustered, final boolean hazelcastAvailable, final boolean acceptScheduling )
     {
         when( clusterConfig.isEnabled() ).thenReturn( clustered );
-        when( schedulerConfig.acceptScheduling() ).thenReturn( acceptScheduling );
 
         final SchedulingCoordinator coordinator =
-            new SchedulingCoordinator( clusterConfig, schedulerConfig, hazelcastAvailable ? hazelcastInstance : null );
-        coordinator.activate();
+            new SchedulingCoordinator( clusterConfig, hazelcastAvailable ? hazelcastInstance : null );
+        coordinator.activate( schedulingConfig( acceptScheduling ) );
         return coordinator;
+    }
+
+    private SchedulingConfig schedulingConfig( final boolean acceptScheduling )
+    {
+        final SchedulingConfig config = mock( SchedulingConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( config.acceptScheduling() ).thenReturn( acceptScheduling );
+        return config;
     }
 
     private void members( final UUID... uuids )
@@ -272,6 +275,18 @@ class SchedulingCoordinatorTest
         members( LOCAL, OTHER );
         final SchedulingCoordinator coordinator = coordinator( true, true, false );
         accepts( OTHER, false );
+
+        assertFalse( coordinator.isLeader() );
+    }
+
+    @Test
+    void reconfigurationIsAppliedWithoutARestart()
+    {
+        members( LOCAL );
+        final SchedulingCoordinator coordinator = coordinator( true, true );
+        assertTrue( coordinator.isLeader() );
+
+        coordinator.modify( schedulingConfig( false ) );
 
         assertFalse( coordinator.isLeader() );
     }

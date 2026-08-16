@@ -114,7 +114,7 @@ class RescheduleTaskTest
     {
         clock = new MutableClock( NOW );
         // not clustered, so this member ticks the schedule
-        schedulingCoordinator = new SchedulingCoordinator( mock( ClusterConfig.class ), schedulerConfig, null );
+        schedulingCoordinator = new SchedulingCoordinator( mock( ClusterConfig.class ), null );
         task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
                                    schedulerConfig, clock );
 
@@ -311,7 +311,7 @@ class RescheduleTaskTest
 
         // clustered, but Hazelcast has not started - who leads is not known yet
         task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService,
-                                   new SchedulingCoordinator( clusterConfig, schedulerConfig, null ), schedulerConfig, clock );
+                                   new SchedulingCoordinator( clusterConfig, null ), schedulerConfig, clock );
 
         task.run();
 

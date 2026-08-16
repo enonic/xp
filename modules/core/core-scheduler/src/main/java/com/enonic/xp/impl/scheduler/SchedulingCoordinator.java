@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
@@ -32,7 +33,7 @@ import com.enonic.xp.scheduler.ScheduledJobName;
  * <p>
  * Also picks the member that ticks the schedule, among those configured to accept it (#9045).
  */
-@Component(service = SchedulingCoordinator.class, immediate = true)
+@Component(service = SchedulingCoordinator.class, immediate = true, configurationPid = "com.enonic.xp.scheduler")
 public class SchedulingCoordinator
 {
     private static final Logger LOG = LoggerFactory.getLogger( SchedulingCoordinator.class );
@@ -52,8 +53,6 @@ public class SchedulingCoordinator
 
     private final boolean clusterEnabled;
 
-    private final boolean acceptScheduling;
-
     private final ConcurrentMap<String, PlannedRun> localNextRuns = new ConcurrentHashMap<>();
 
     private final HazelcastInstance hazelcastInstance;
@@ -61,7 +60,7 @@ public class SchedulingCoordinator
     private int ticksWithoutLeader;
 
     @Activate
-    public SchedulingCoordinator( @Reference final ClusterConfig clusterConfig, @Reference final SchedulerConfig schedulerConfig,
+    public SchedulingCoordinator( @Reference final ClusterConfig clusterConfig,
                                   @Reference(cardinality = ReferenceCardinality.OPTIONAL,
                                       policyOption = ReferencePolicyOption.GREEDY) final HazelcastInstance hazelcastInstance )
     {
@@ -69,14 +68,25 @@ public class SchedulingCoordinator
         // has Hazelcast shortly after it starts - so this is taken once, the way the rest of the
         // cluster-dependent components take it, rather than tracked as it comes and goes
         this.clusterEnabled = clusterConfig.isEnabled();
-        this.acceptScheduling = schedulerConfig.acceptScheduling();
         this.hazelcastInstance = hazelcastInstance;
     }
 
     @Activate
-    public void activate()
+    public void activate( final SchedulingConfig config )
     {
-        publishAcceptScheduling( acceptScheduling );
+        publishAcceptScheduling( config.acceptScheduling() );
+    }
+
+    /**
+     * Reconfiguration is applied in place, so taking a node out of scheduling - or putting it back
+     * - costs no more than a map write that the other members read on their next tick. The
+     * coordinator itself is not restarted, so the plans it holds survive the edit; the ticker is,
+     * since it follows the configuration of the jobs, which is read afresh when a component starts.
+     */
+    @Modified
+    public void modify( final SchedulingConfig config )
+    {
+        publishAcceptScheduling( config.acceptScheduling() );
     }
 
     @Deactivate

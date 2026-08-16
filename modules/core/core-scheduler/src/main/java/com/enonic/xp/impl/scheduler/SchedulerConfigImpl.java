@@ -74,13 +74,6 @@ public class SchedulerConfigImpl
         return enabled == null || enabled;
     }
 
-    @Override
-    public boolean acceptScheduling()
-    {
-        final Boolean accept = this.config.get( "acceptScheduling", Boolean.class );
-        return accept == null || accept;
-    }
-
     private Set<ScheduledJobName> parseNames( final Configuration jobConfig )
     {
         return jobConfig.asMap().keySet().
