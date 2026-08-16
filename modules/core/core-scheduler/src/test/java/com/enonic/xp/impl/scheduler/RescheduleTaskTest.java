@@ -582,6 +582,28 @@ class RescheduleTaskTest
     }
 
     @Test
+    void modifiedJobIgnoresThePlanOfTheJobItReplaced()
+    {
+        final ScheduledJob job = oneTimeJob( "job1", NOW.minusSeconds( 1 ) );
+        mockJobs( job );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        // the plan marks the single execution of a one-time job as submitted
+        assertNotNull( schedulingCoordinator.plannedRun( job.getName() ) );
+
+        // the job is modified, which re-arms it, but the plan could not be discarded at the time -
+        // Hazelcast was unreachable. The job is at a new version, so the plan no longer describes it
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+
+        task.run();
+
+        verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
     void disabledJobNotSubmitted()
     {
         mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).enabled( false ).build() );

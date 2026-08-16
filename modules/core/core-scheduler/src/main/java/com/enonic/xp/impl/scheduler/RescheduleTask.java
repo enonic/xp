@@ -200,7 +200,7 @@ public final class RescheduleTask
         {
             // a one-time job's lastRun tombstone lives in node data (#12271), so the listed job
             // carries it; the coordinator covers the window until the tombstone is persisted
-            if ( schedulingCoordinator.plannedRun( job.getName() ) != null || job.getLastRun() != null )
+            if ( plannedRun( entry ) != null || job.getLastRun() != null )
             {
                 return Optional.empty();
             }
@@ -212,7 +212,7 @@ public final class RescheduleTask
         }
         else
         {
-            final PlannedRun plannedRun = schedulingCoordinator.plannedRun( job.getName() );
+            final PlannedRun plannedRun = plannedRun( entry );
             if ( plannedRun != null )
             {
                 dueTime = plannedRun.nextRun();
@@ -224,6 +224,21 @@ public final class RescheduleTask
             }
         }
         return dueTime != null && !dueTime.isAfter( now ) ? Optional.of( dueTime ) : Optional.empty();
+    }
+
+    /**
+     * The job's planned run, or null when there is none or when the one there describes a version
+     * of the job that has since been replaced - a modified job re-arms rather than inheriting.
+     */
+    private PlannedRun plannedRun( final ScheduledJobEntry entry )
+    {
+        final PlannedRun plannedRun = schedulingCoordinator.plannedRun( entry.job().getName() );
+        return plannedRun != null && Objects.equals( plannedRun.versionId(), versionOf( entry ) ) ? plannedRun : null;
+    }
+
+    private static String versionOf( final ScheduledJobEntry entry )
+    {
+        return entry.versionId() != null ? entry.versionId().toString() : null;
     }
 
     private RunState runState( final ScheduledJobEntry entry )
@@ -280,7 +295,7 @@ public final class RescheduleTask
             if ( job.getCalendar().getType() == ScheduleCalendarType.CRON )
             {
                 // cron occurrences are calendar positions - a blocked one is skipped
-                planNextRun( job.getName(), nextExecutionAfter( job.getCalendar(), now ), previousTaskId );
+                planNextRun( entry, nextExecutionAfter( job.getCalendar(), now ), previousTaskId );
             }
             // a fixed-rate run holds: it stays due and fires once the previous task finishes
             return;
@@ -336,7 +351,7 @@ public final class RescheduleTask
 
         final ScheduleCalendarType type = job.getCalendar().getType();
         // the shared value plans the next execution; for a one-time job it marks the only execution as submitted
-        planNextRun( job.getName(), type == ScheduleCalendarType.ONE_TIME ? now : nextExecutionAfter( job.getCalendar(), now ),
+        planNextRun( entry, type == ScheduleCalendarType.ONE_TIME ? now : nextExecutionAfter( job.getCalendar(), now ),
                      taskId != null ? taskId.toString() : null );
         if ( type == ScheduleCalendarType.CRON )
         {
@@ -372,13 +387,14 @@ public final class RescheduleTask
         }
     }
 
-    private void planNextRun( final ScheduledJobName name, final Instant nextRun, final String lastTaskId )
+    private void planNextRun( final ScheduledJobEntry entry, final Instant nextRun, final String lastTaskId )
     {
+        final ScheduledJobName name = entry.job().getName();
         try
         {
             if ( nextRun != null )
             {
-                schedulingCoordinator.plannedRun( name, new PlannedRun( nextRun, lastTaskId ) );
+                schedulingCoordinator.plannedRun( name, new PlannedRun( nextRun, lastTaskId, versionOf( entry ) ) );
             }
             else
             {
@@ -421,7 +437,7 @@ public final class RescheduleTask
             return null;
         }
         final ScheduledJobName name = entry.job().getName();
-        final PlannedRun plannedRun = schedulingCoordinator.plannedRun( name );
+        final PlannedRun plannedRun = plannedRun( entry );
         if ( plannedRun != null )
         {
             return plannedRun.lastTaskId();

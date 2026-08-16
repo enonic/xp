@@ -35,7 +35,7 @@ class SchedulingCoordinatorTest
 {
     private static final ScheduledJobName JOB = ScheduledJobName.from( "job" );
 
-    private static final PlannedRun NEXT_RUN = new PlannedRun( Instant.parse( "2026-01-01T10:31:00Z" ), "task-1" );
+    private static final PlannedRun NEXT_RUN = new PlannedRun( Instant.parse( "2026-01-01T10:31:00Z" ), "task-1", "version-1" );
 
     @Mock
     private ClusterConfig clusterConfig;
