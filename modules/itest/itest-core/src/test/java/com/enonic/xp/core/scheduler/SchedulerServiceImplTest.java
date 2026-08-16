@@ -107,7 +107,8 @@ class SchedulerServiceImplTest
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
 
         schedulerService =
-            new SchedulerServiceImpl( nodeService, new SchedulingCoordinator( mock( ClusterConfig.class ), null ), auditLogSupport );
+            new SchedulerServiceImpl( nodeService, new SchedulingCoordinator( mock( ClusterConfig.class ), schedulerConfig, null ),
+                                      auditLogSupport );
 
         adminContext().runWith( () -> SchedulerRepoInitializer.create()
             .setIndexService( indexService )

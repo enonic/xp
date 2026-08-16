@@ -108,11 +108,11 @@ class RescheduleTaskTest
     void setUp()
     {
         clock = new MutableClock( NOW );
-        schedulingCoordinator = new SchedulingCoordinator( mock( ClusterConfig.class ), null );
+        // not clustered, so this member ticks the schedule
+        schedulingCoordinator = new SchedulingCoordinator( mock( ClusterConfig.class ), mock( SchedulerConfig.class ), null );
         task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
                                    clock );
 
-        when( clusterService.isLeader() ).thenReturn( true );
         when( clusterService.inCluster( isA( ApplicationKey.class ) ) ).thenReturn( true );
         when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( mockNode() );
         when( nodeService.update( isA( UpdateNodeParams.class ) ) ).thenReturn( mockNode() );
@@ -301,7 +301,12 @@ class RescheduleTaskTest
     @Test
     void notLeaderDoesNotSchedule()
     {
-        when( clusterService.isLeader() ).thenReturn( false );
+        final ClusterConfig clusterConfig = mock( ClusterConfig.class );
+        when( clusterConfig.isEnabled() ).thenReturn( true );
+
+        // clustered, but Hazelcast has not started - who leads is not known yet
+        task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService,
+                                   new SchedulingCoordinator( clusterConfig, mock( SchedulerConfig.class ), null ), clock );
 
         task.run();
 
@@ -466,6 +471,7 @@ class RescheduleTaskTest
     void runIsRecordedWhenTheSharedPlanCannotBeWritten()
     {
         final SchedulingCoordinator failing = mock( SchedulingCoordinator.class );
+        when( failing.isLeader() ).thenReturn( true );
         doThrow( new RuntimeException() ).when( failing ).plannedRun( isA( ScheduledJobName.class ), isA( PlannedRun.class ) );
         task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, failing, clock );
 

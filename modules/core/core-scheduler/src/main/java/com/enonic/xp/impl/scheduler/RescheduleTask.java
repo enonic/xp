@@ -94,7 +94,7 @@ public final class RescheduleTask
     {
         try
         {
-            if ( clusterService.isLeader() )
+            if ( schedulingCoordinator.isLeader() )
             {
                 doRun();
             }
