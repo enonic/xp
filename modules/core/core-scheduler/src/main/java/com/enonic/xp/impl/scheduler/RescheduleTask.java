@@ -192,11 +192,13 @@ public final class RescheduleTask
             {
                 return Optional.empty();
             }
-            final Instant value = ( (OneTimeCalendar) job.getCalendar() ).getValue();
-            // a tombstone left as a version attribute by an earlier version is invisible to the
-            // listing, so confirm with a full read rather than run the job a second time - only
-            // once the job is otherwise about to run, and memoized on its version
-            return !value.isAfter( now ) && runState( entry ).lastRun() == null ? Optional.of( value ) : Optional.empty();
+            return Optional.of( ( (OneTimeCalendar) job.getCalendar() ).getValue() )
+                .filter( due -> !due.isAfter( now ) )
+                // a tombstone left as a version attribute by an earlier version is invisible to the
+                // listing, so confirm with a full read rather than run the job a second time - the
+                // filter above keeps that to jobs otherwise about to run, and it is memoized on the
+                // job's version
+                .filter( due -> runState( entry ).lastRun() == null );
         }
         else
         {
@@ -218,7 +220,7 @@ public final class RescheduleTask
                     : job.getCalendar().nextExecution( baseline( job, now ) ).orElse( null );
             }
         }
-        return dueTime != null && !dueTime.isAfter( now ) ? Optional.of( dueTime ) : Optional.empty();
+        return Optional.ofNullable( dueTime ).filter( due -> !due.isAfter( now ) );
     }
 
     /**
