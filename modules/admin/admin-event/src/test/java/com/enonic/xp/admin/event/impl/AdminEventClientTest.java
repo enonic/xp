@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -25,8 +26,10 @@ class AdminEventClientTest
 
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertEquals( MediaType.JAVASCRIPT_UTF_8, response.getContentType() );
-        assertTrue( response.getBody().toString().contains( "AdminEventsSocket" ) );
-        assertTrue( response.getBody().toString().contains( "export function connect" ) );
+
+        final String script = ( (Resource) response.getBody() ).readString();
+        assertTrue( script.contains( "AdminEventsSocket" ) );
+        assertTrue( script.contains( "export function connect" ) );
     }
 
     @Test
