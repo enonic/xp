@@ -66,8 +66,7 @@ public class SchedulingCoordinator
         {
             return localNextRuns.get( name.getValue() );
         }
-        final HazelcastInstance hazelcast = this.hazelcastInstance;
-        return hazelcast != null ? hazelcast.<String, PlannedRun>getMap( NEXT_RUN_MAP_NAME ).get( name.getValue() ) : null;
+        return nextRuns().get( name.getValue() );
     }
 
     /**
@@ -85,11 +84,7 @@ public class SchedulingCoordinator
             localNextRuns.put( name.getValue(), value );
             return;
         }
-        final HazelcastInstance hazelcast = this.hazelcastInstance;
-        if ( hazelcast != null )
-        {
-            hazelcast.<String, PlannedRun>getMap( NEXT_RUN_MAP_NAME ).set( name.getValue(), value );
-        }
+        nextRuns().set( name.getValue(), value );
     }
 
     /**
@@ -102,11 +97,7 @@ public class SchedulingCoordinator
             localNextRuns.remove( name.getValue() );
             return;
         }
-        final HazelcastInstance hazelcast = this.hazelcastInstance;
-        if ( hazelcast != null )
-        {
-            hazelcast.<String, PlannedRun>getMap( NEXT_RUN_MAP_NAME ).delete( name.getValue() );
-        }
+        nextRuns().delete( name.getValue() );
     }
 
     /**
@@ -120,11 +111,19 @@ public class SchedulingCoordinator
             localNextRuns.keySet().retainAll( keys );
             return;
         }
+        final IMap<String, PlannedRun> nextRuns = nextRuns();
+        nextRuns.keySet().stream().filter( key -> !keys.contains( key ) ).forEach( nextRuns::delete );
+    }
+
+    private IMap<String, PlannedRun> nextRuns()
+    {
         final HazelcastInstance hazelcast = this.hazelcastInstance;
-        if ( hazelcast != null )
+        if ( hazelcast == null )
         {
-            final IMap<String, PlannedRun> nextRuns = hazelcast.getMap( NEXT_RUN_MAP_NAME );
-            nextRuns.keySet().stream().filter( key -> !keys.contains( key ) ).forEach( nextRuns::delete );
+            // a clustered installation coordinates through Hazelcast or not at all: carrying on
+            // without it would let each member schedule as though it were alone
+            throw new IllegalStateException( "Cannot resolve Hazelcast to coordinate scheduling" );
         }
+        return hazelcast.getMap( NEXT_RUN_MAP_NAME );
     }
 }

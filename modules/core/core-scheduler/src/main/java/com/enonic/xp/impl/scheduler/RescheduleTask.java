@@ -70,6 +70,8 @@ public final class RescheduleTask
 
     private final Set<ScheduledJobName> dormantJobs = new HashSet<>();
 
+    private final Map<ScheduledJobName, String> submittedTaskIds = new HashMap<>();
+
     private Set<ScheduledJobName> knownJobs = Set.of();
 
     private int failedTicks;
@@ -155,6 +157,7 @@ public final class RescheduleTask
         runStates.clear();
         dormantJobs.clear();
         failedSubmits.clear();
+        submittedTaskIds.clear();
         knownJobs = Set.of();
         schedulingCoordinator.retain( Set.of() );
     }
@@ -177,6 +180,7 @@ public final class RescheduleTask
         }
         runStates.keySet().retainAll( jobNames );
         dormantJobs.retainAll( jobNames );
+        submittedTaskIds.keySet().retainAll( jobNames );
         failedSubmits.keySet()
             .retainAll( entries.stream().map( ScheduledJobEntry::job ).filter( ScheduledJob::isEnabled ).map( ScheduledJob::getName )
                             .collect( Collectors.toSet() ) );
@@ -312,6 +316,7 @@ public final class RescheduleTask
         }
 
         failedSubmits.remove( job.getName() );
+        submittedTaskIds.put( job.getName(), taskId.toString() );
         recordRun( entry, now, taskId );
     }
 
@@ -415,8 +420,16 @@ public final class RescheduleTask
         {
             return null;
         }
-        final PlannedRun plannedRun = schedulingCoordinator.plannedRun( entry.job().getName() );
-        return plannedRun != null ? plannedRun.lastTaskId() : runState( entry ).lastTaskId();
+        final ScheduledJobName name = entry.job().getName();
+        final PlannedRun plannedRun = schedulingCoordinator.plannedRun( name );
+        if ( plannedRun != null )
+        {
+            return plannedRun.lastTaskId();
+        }
+        // a fixed-rate job persists no run state, so once a shared plan is lost - a Hazelcast
+        // restart, say - this leader's own memory is all that stands between it and an overlap
+        final String persisted = runState( entry ).lastTaskId();
+        return persisted != null ? persisted : submittedTaskIds.get( name );
     }
 
     private boolean previousTaskDone( final String previousTaskId )

@@ -22,6 +22,7 @@ import com.enonic.xp.scheduler.ScheduledJobName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
@@ -113,7 +114,7 @@ class SchedulingCoordinatorTest
         assertEquals( NEXT_RUN, coordinator.plannedRun( JOB ) );
 
         coordinator.unsetHazelcastInstance( hazelcastInstance );
-        assertNull( coordinator.plannedRun( JOB ) );
+        assertThrows( IllegalStateException.class, () -> coordinator.plannedRun( JOB ) );
     }
 
     @Test
@@ -145,10 +146,10 @@ class SchedulingCoordinatorTest
     {
         final SchedulingCoordinator coordinator = coordinator( true, false );
 
-        coordinator.plannedRun( JOB, NEXT_RUN );
-        assertNull( coordinator.plannedRun( JOB ) );
-
-        coordinator.forget( JOB );
-        coordinator.retain( Set.of() );
+        // scheduling waits for Hazelcast rather than proceeding as though this member were alone
+        assertThrows( IllegalStateException.class, () -> coordinator.plannedRun( JOB ) );
+        assertThrows( IllegalStateException.class, () -> coordinator.plannedRun( JOB, NEXT_RUN ) );
+        assertThrows( IllegalStateException.class, () -> coordinator.forget( JOB ) );
+        assertThrows( IllegalStateException.class, () -> coordinator.retain( Set.of() ) );
     }
 }

@@ -556,6 +556,32 @@ class RescheduleTaskTest
     }
 
     @Test
+    void fixedRateJobDoesNotOverlapAfterTheSharedPlanIsLost()
+    {
+        final ScheduledJob job = jobBuilder( "job1", FixedRateCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() )
+            .modifiedTime( NOW.minusSeconds( 120 ) )
+            .build();
+        mockJobs( job );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+
+        // the plan is gone - a Hazelcast restart, say - and a fixed-rate job persists no run state,
+        // so nothing outside this leader knows a task of it is still running
+        schedulingCoordinator.forget( job.getName() );
+
+        final TaskInfo running = mock( TaskInfo.class );
+        when( running.isDone() ).thenReturn( false );
+        when( taskService.getTaskInfo( TaskId.from( "1" ) ) ).thenReturn( running );
+
+        clock.plusSeconds( 120 );
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    @Test
     void disabledJobNotSubmitted()
     {
         mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).enabled( false ).build() );
