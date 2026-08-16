@@ -480,23 +480,6 @@ class RescheduleTaskTest
     }
 
     @Test
-    void suspendedTaskSubmitsNothing()
-    {
-        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
-        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
-
-        task.suspend();
-        task.run();
-
-        verify( taskService, never() ).submitTask( isA( SubmitTaskParams.class ) );
-
-        task.resume();
-        task.run();
-
-        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
-    }
-
-    @Test
     void runIsRecordedFromWhenItStartsNotFromTheStartOfTheTick()
     {
         final ScheduledJob job = jobBuilder( "job1", FixedRateCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() )
@@ -584,32 +567,6 @@ class RescheduleTaskTest
         task.run();
 
         verify( taskService, times( 2 ) ).submitTask( isA( SubmitTaskParams.class ) );
-    }
-
-    @Test
-    void aRestoreDoesNotLetAFixedRateJobOverlap()
-    {
-        final ScheduledJob job = jobBuilder( "job1", FixedRateCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() )
-            .modifiedTime( NOW.minusSeconds( 120 ) )
-            .build();
-        mockJobs( job );
-        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
-
-        task.run();
-        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
-
-        final TaskInfo running = mock( TaskInfo.class );
-        when( running.isDone() ).thenReturn( false );
-        when( taskService.getTaskInfo( TaskId.from( "1" ) ) ).thenReturn( running );
-
-        // a partial restore cannot contain the scheduler repository, but pauses and resumes the
-        // scheduler all the same - the task submitted before it is still running
-        task.suspend();
-        task.resume();
-        clock.plusSeconds( 120 );
-        task.run();
-
-        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
     }
 
     @Test

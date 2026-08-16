@@ -76,8 +76,6 @@ public final class RescheduleTask
 
     private int failedTicks;
 
-    private volatile boolean suspended;
-
     public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
                            final SecurityService securityService, final ClusterService clusterService,
                            final SchedulingCoordinator schedulingCoordinator, final Clock clock )
@@ -91,39 +89,9 @@ public final class RescheduleTask
         this.clock = clock;
     }
 
-    /**
-     * Stops scheduling until {@link #resume()}, while a repository restore replaces the jobs
-     * underneath the scheduler.
-     * <p>
-     * A restore uninstalls every application bundle when it starts and restarts the framework when
-     * it finishes - see {@code ClusterRestarter} in core-repo - so in an ordinary installation the
-     * scheduler is taken down with everything else and this only covers the moment before that
-     * happens. It carries the whole weight only where that framework lifecycle service is absent,
-     * and is what then keeps the scheduler off a repository that is being replaced.
-     */
-    public void suspend()
-    {
-        suspended = true;
-    }
-
-    /**
-     * Resumes scheduling. Nothing is discarded on the way back: a restore that took the framework
-     * with it leaves nothing to discard, and everything remembered here is either stamped with the
-     * version of the job it describes - so a job the restore replaced cannot inherit it - or is
-     * about tasks rather than jobs, which a restore does not change.
-     */
-    public void resume()
-    {
-        suspended = false;
-    }
-
     @Override
     public void run()
     {
-        if ( suspended )
-        {
-            return;
-        }
         try
         {
             if ( clusterService.isLeader() )

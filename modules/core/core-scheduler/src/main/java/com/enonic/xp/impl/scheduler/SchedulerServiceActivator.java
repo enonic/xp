@@ -19,8 +19,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.ThreadFactoryImpl;
-import com.enonic.xp.event.Event;
-import com.enonic.xp.event.EventListener;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeIdExistsException;
@@ -35,15 +33,14 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
+/**
+ * A repository restore needs no handling here: it uninstalls every application bundle when it
+ * starts and restarts the framework when it finishes - see {@code ClusterRestarter} in core-repo -
+ * so the scheduler is taken down with it and comes back with nothing left over.
+ */
 public final class SchedulerServiceActivator
-    implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( SchedulerServiceActivator.class );
-
-    // core-repo keeps RepositoryEvents to itself, so the event types are named here as elsewhere
-    private static final String RESTORE_INITIALIZED_EVENT_TYPE = "repository.restoreInitialized";
-
-    private static final String RESTORED_EVENT_TYPE = "repository.restored";
 
     private final InternalRepositoryService repositoryService;
 
@@ -64,8 +61,6 @@ public final class SchedulerServiceActivator
     private final ScheduleAuditLogSupport auditLogSupport;
 
     private ServiceRegistration<SchedulerService> schedulerServiceReg;
-
-    private volatile RescheduleTask rescheduleTask;
 
     private ScheduledExecutorService ticker;
 
@@ -111,35 +106,10 @@ public final class SchedulerServiceActivator
 
         this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 
-        rescheduleTask =
-            new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
-                                Clock.systemUTC() );
-
         ticker = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryImpl( "system-scheduler-thread-%d" ) );
-        ticker.scheduleWithFixedDelay( rescheduleTask, 0, 1, TimeUnit.SECONDS );
-    }
-
-    @Override
-    public void onEvent( final Event event )
-    {
-        // the scheduler repository is deleted and restored underneath us, so nothing should be
-        // submitted from a half-replaced set of jobs. ClusterRestarter in core-repo answers the
-        // same two events by resetting and then restarting the framework, which takes the
-        // scheduler down with everything else - this only has to hold until that happens, and to
-        // stand in for it where that framework lifecycle service is not present
-        final RescheduleTask task = rescheduleTask;
-        if ( task == null )
-        {
-            return;
-        }
-        if ( event.isType( RESTORE_INITIALIZED_EVENT_TYPE ) )
-        {
-            task.suspend();
-        }
-        else if ( event.isType( RESTORED_EVENT_TYPE ) )
-        {
-            task.resume();
-        }
+        ticker.scheduleWithFixedDelay(
+            new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
+                                Clock.systemUTC() ), 0, 1, TimeUnit.SECONDS );
     }
 
     private void createConfigJobs( final SchedulerService schedulerService )
