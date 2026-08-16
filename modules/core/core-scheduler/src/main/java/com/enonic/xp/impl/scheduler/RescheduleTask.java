@@ -19,6 +19,8 @@ import com.enonic.xp.cluster.ClusterService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.scheduler.OneTimeCalendar;
@@ -62,6 +64,8 @@ public final class RescheduleTask
 
     private final SchedulingCoordinator schedulingCoordinator;
 
+    private final SchedulerConfig schedulerConfig;
+
     private final Clock clock;
 
     private final Map<ScheduledJobName, FailedSubmits> failedSubmits = new HashMap<>();
@@ -76,9 +80,11 @@ public final class RescheduleTask
 
     private int failedTicks;
 
+    private boolean configuredJobsCreated;
+
     public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
                            final SecurityService securityService, final ClusterService clusterService,
-                           final SchedulingCoordinator schedulingCoordinator, final Clock clock )
+                           final SchedulingCoordinator schedulingCoordinator, final SchedulerConfig schedulerConfig, final Clock clock )
     {
         this.schedulerService = schedulerService;
         this.nodeService = nodeService;
@@ -86,6 +92,7 @@ public final class RescheduleTask
         this.securityService = securityService;
         this.clusterService = clusterService;
         this.schedulingCoordinator = schedulingCoordinator;
+        this.schedulerConfig = schedulerConfig;
         this.clock = clock;
     }
 
@@ -121,6 +128,12 @@ public final class RescheduleTask
     @Traced("system.rescheduleTask")
     private void doRun()
     {
+        if ( !configuredJobsCreated )
+        {
+            createConfiguredJobs();
+            configuredJobsCreated = true;
+        }
+
         final Instant now = Instant.now( clock );
 
         // run state (lastRun) is deliberately not fetched here: the coordinator and the version-keyed
@@ -146,6 +159,32 @@ public final class RescheduleTask
             .flatMap( entry -> dueTime( entry, now ).map( dueTime -> Map.entry( dueTime, entry ) ).stream() )
             .sorted( Map.Entry.comparingByKey() )
             .forEach( entry -> submit( entry.getValue() ) );
+    }
+
+    /**
+     * Creates the jobs this node has in its configuration, on the first tick it leads. Done here
+     * rather than when the bundle starts because the member that schedules is not known that early,
+     * and only the one that does should be writing jobs; a member that never leads never writes its
+     * configured jobs, so which node holds them is a configuration choice like any other.
+     */
+    private void createConfiguredJobs()
+    {
+        adminContext().runWith( () -> schedulerConfig.jobs().forEach( job -> {
+            try
+            {
+                schedulerService.create( job );
+            }
+            catch ( NodeAlreadyExistAtPathException | NodeIdExistsException e )
+            {
+                LOG.debug( "Configured job [{}] already exists", job.getName(), e );
+            }
+            catch ( Exception e )
+            {
+                // one job that cannot be created is not allowed to keep the others from running -
+                // it is reported and left out, the way an invalid job would be at any other time
+                LOG.error( "Failed to create configured job [{}]", job.getName(), e );
+            }
+        } ) );
     }
 
     private Optional<Instant> dueTime( final ScheduledJobEntry entry, final Instant now )

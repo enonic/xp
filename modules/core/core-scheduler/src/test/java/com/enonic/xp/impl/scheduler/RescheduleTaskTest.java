@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -98,6 +100,9 @@ class RescheduleTaskTest
     @Mock
     private ClusterService clusterService;
 
+    @Mock
+    private SchedulerConfig schedulerConfig;
+
     private SchedulingCoordinator schedulingCoordinator;
 
     private MutableClock clock;
@@ -109,9 +114,9 @@ class RescheduleTaskTest
     {
         clock = new MutableClock( NOW );
         // not clustered, so this member ticks the schedule
-        schedulingCoordinator = new SchedulingCoordinator( mock( ClusterConfig.class ), mock( SchedulerConfig.class ), null );
+        schedulingCoordinator = new SchedulingCoordinator( mock( ClusterConfig.class ), schedulerConfig, null );
         task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
-                                   clock );
+                                   schedulerConfig, clock );
 
         when( clusterService.inCluster( isA( ApplicationKey.class ) ) ).thenReturn( true );
         when( nodeService.getByPath( isA( NodePath.class ) ) ).thenReturn( mockNode() );
@@ -306,11 +311,49 @@ class RescheduleTaskTest
 
         // clustered, but Hazelcast has not started - who leads is not known yet
         task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService,
-                                   new SchedulingCoordinator( clusterConfig, mock( SchedulerConfig.class ), null ), clock );
+                                   new SchedulingCoordinator( clusterConfig, schedulerConfig, null ), schedulerConfig, clock );
 
         task.run();
 
         verify( schedulerService, never() ).listEntries();
+        verify( schedulerService, never() ).create( isA( CreateScheduledJobParams.class ) );
+    }
+
+    @Test
+    void configuredJobsAreCreatedOnTheFirstTick()
+    {
+        when( schedulerConfig.jobs() ).thenReturn( Set.of( configuredJob( "configured" ) ) );
+        mockJobs();
+
+        task.run();
+        task.run();
+
+        // written by the member that schedules, and only the once - not on every tick
+        verify( schedulerService, times( 1 ) ).create( isA( CreateScheduledJobParams.class ) );
+    }
+
+    @Test
+    void aConfiguredJobThatCannotBeCreatedDoesNotHoldUpTheRest()
+    {
+        when( schedulerConfig.jobs() ).thenReturn( Set.of( configuredJob( "configured" ) ) );
+        when( schedulerService.create( isA( CreateScheduledJobParams.class ) ) ).thenThrow( new RuntimeException() );
+
+        mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+    }
+
+    private CreateScheduledJobParams configuredJob( final String name )
+    {
+        return CreateScheduledJobParams.create()
+            .name( ScheduledJobName.from( name ) )
+            .descriptor( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ), name ) )
+            .calendar( cronCalendar( "* * * * *" ) )
+            .config( new PropertyTree() )
+            .build();
     }
 
     @Test
@@ -473,7 +516,8 @@ class RescheduleTaskTest
         final SchedulingCoordinator failing = mock( SchedulingCoordinator.class );
         when( failing.isLeader() ).thenReturn( true );
         doThrow( new RuntimeException() ).when( failing ).plannedRun( isA( ScheduledJobName.class ), isA( PlannedRun.class ) );
-        task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, failing, clock );
+        task = new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, failing, schedulerConfig,
+                                   clock );
 
         mockJobs( oneTimeJob( "job1", NOW.minusSeconds( 1 ) ) );
         when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );

@@ -11,25 +11,14 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.cluster.ClusterService;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.concurrent.ThreadFactoryImpl;
 import com.enonic.xp.index.IndexService;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
-import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.scheduler.SchedulerService;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.security.User;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
@@ -40,8 +29,6 @@ import com.enonic.xp.task.TaskService;
  */
 public final class SchedulerServiceActivator
 {
-    private static final Logger LOG = LoggerFactory.getLogger( SchedulerServiceActivator.class );
-
     private final InternalRepositoryService repositoryService;
 
     private final IndexService indexService;
@@ -85,16 +72,6 @@ public final class SchedulerServiceActivator
         this.auditLogSupport = auditLogSupport;
     }
 
-    private static Context adminContext()
-    {
-        return ContextBuilder.from( ContextAccessor.current() )
-            .authInfo( AuthenticationInfo.create()
-                           .principals( RoleKeys.ADMIN )
-                           .user( User.create().key( PrincipalKey.ofSuperUser() ).login( PrincipalKey.ofSuperUser().getId() ).build() )
-                           .build() )
-            .build();
-    }
-
     @Activate
     public void activate( final BundleContext context )
     {
@@ -102,31 +79,14 @@ public final class SchedulerServiceActivator
 
         SchedulerRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
-        createConfigJobs( schedulerService );
-
         this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 
+        // the jobs in this node's configuration are created by the tick, not here: which member
+        // schedules is not known this early, and only that one writes them
         ticker = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryImpl( "system-scheduler-thread-%d" ) );
         ticker.scheduleWithFixedDelay(
             new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
-                                Clock.systemUTC() ), 0, 1, TimeUnit.SECONDS );
-    }
-
-    private void createConfigJobs( final SchedulerService schedulerService )
-    {
-        adminContext().runWith( () -> schedulerConfig.jobs().forEach( job -> {
-            try
-            {
-                if ( indexService.isMaster() )
-                {
-                    schedulerService.create( job );
-                }
-            }
-            catch ( NodeAlreadyExistAtPathException | NodeIdExistsException e )
-            {
-                LOG.debug( String.format( "[%s] job already exist.", job.getName().getValue() ), e );
-            }
-        } ) );
+                                schedulerConfig, Clock.systemUTC() ), 0, 1, TimeUnit.SECONDS );
     }
 
     @Deactivate

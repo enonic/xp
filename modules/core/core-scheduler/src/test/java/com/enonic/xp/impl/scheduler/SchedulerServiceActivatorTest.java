@@ -13,36 +13,25 @@ import org.mockito.quality.Strictness;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import com.enonic.xp.branch.Branch;
 import com.enonic.xp.cluster.ClusterService;
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeAlreadyExistAtPathException;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
-import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.task.TaskService;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -114,7 +103,7 @@ class SchedulerServiceActivatorTest
     }
 
     @Test
-    void initWithJob()
+    void configuredJobsAreNotWrittenOnActivation()
     {
         final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
             .name( ScheduledJobName.from( "name" ) )
@@ -122,86 +111,14 @@ class SchedulerServiceActivatorTest
             .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
             .config( new PropertyTree() )
             .build();
-
-        mockNode( jobParams );
 
         when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
 
         activator.activate( bundleContext );
         activator.deactivate();
 
-        verify( nodeService, times( 1 ) ).create( isA( CreateNodeParams.class ) );
-    }
-
-    @Test
-    void initWithExistJob()
-    {
-        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
-            .name( ScheduledJobName.from( "name" ) )
-            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
-            .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
-            .config( new PropertyTree() )
-            .build();
-
-        when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenThrow(
-            new NodeAlreadyExistAtPathException( new NodePath( NodePath.ROOT, NodeName.from( jobParams.getName().getValue() ) ),
-                                                 RepositoryId.from( "repo" ), Branch.from( "branch" ) ) );
-
-        activator.activate( bundleContext );
-        activator.deactivate();
-
-        verify( nodeService, times( 1 ) ).create( isA( CreateNodeParams.class ) );
-    }
-
-    @Test
-    void initWithInvalidJob()
-    {
-        final CreateScheduledJobParams jobParams = CreateScheduledJobParams.create()
-            .name( ScheduledJobName.from( "name" ) )
-            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
-            .calendar( calendarService.cron( "* * * * *", TimeZone.getDefault() ) )
-            .config( new PropertyTree() )
-            .build();
-
-        when( schedulerConfig.jobs() ).thenReturn( Set.of( jobParams ) );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenThrow( new RuntimeException() );
-
-        assertThrows( RuntimeException.class, () -> activator.activate( bundleContext ) );
-
-        // a failed activation registers nothing and starts no ticker - deactivate has nothing to clean up
-        activator.deactivate();
-        verify( service, never() ).unregister();
-    }
-
-    private void mockNode( final CreateScheduledJobParams params )
-    {
-        final PropertyTree jobData = new PropertyTree();
-
-        final PropertySet calendar = jobData.newSet();
-        calendar.addString( ScheduledJobPropertyNames.CALENDAR_TYPE, params.getCalendar().getType().name() );
-        calendar.addString( ScheduledJobPropertyNames.CALENDAR_VALUE, ( (CronCalendar) params.getCalendar() ).getCronValue() );
-        calendar.addString( ScheduledJobPropertyNames.CALENDAR_TIMEZONE, ( (CronCalendar) params.getCalendar() ).getTimeZone().getID() );
-
-        jobData.addString( ScheduledJobPropertyNames.DESCRIPTOR, params.getDescriptor().toString() );
-        jobData.addBoolean( ScheduledJobPropertyNames.ENABLED, params.isEnabled() );
-        jobData.addSet( ScheduledJobPropertyNames.CALENDAR, calendar );
-        jobData.addSet( ScheduledJobPropertyNames.CONFIG, params.getConfig().getRoot().copy( jobData ) );
-
-        jobData.setString( ScheduledJobPropertyNames.CREATOR, "user:system:creator" );
-        jobData.setString( ScheduledJobPropertyNames.MODIFIER, "user:system:creator" );
-        jobData.setString( ScheduledJobPropertyNames.CREATED_TIME, "2016-11-02T10:36:00Z" );
-        jobData.setString( ScheduledJobPropertyNames.MODIFIED_TIME, "2016-11-02T10:36:00Z" );
-
-        final Node job = Node.create()
-            .id( NodeId.from( "abc" ) )
-            .name( params.getName().getValue() )
-            .parentPath( NodePath.ROOT )
-            .data( jobData )
-            .build();
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( job );
+        // the configured jobs belong to whichever member ends up scheduling, and are written by its
+        // tick - see RescheduleTaskTest
+        verify( nodeService, never() ).create( isA( CreateNodeParams.class ) );
     }
 }
