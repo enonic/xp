@@ -32,7 +32,6 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskService;
 
 @Component(immediate = true)
@@ -54,8 +53,6 @@ public final class SchedulerServiceActivator
 
     private final TaskService taskService;
 
-    private final TaskDescriptorService taskDescriptorService;
-
     private final SecurityService securityService;
 
     private final ClusterService clusterService;
@@ -76,7 +73,6 @@ public final class SchedulerServiceActivator
     public SchedulerServiceActivator( @Reference final InternalRepositoryService repositoryService,
                                       @Reference final IndexService indexService, @Reference final NodeService nodeService,
                                       @Reference final TaskService taskService,
-                                      @Reference final TaskDescriptorService taskDescriptorService,
                                       @Reference final SecurityService securityService,
                                       @Reference(target = "(local=true)") final ClusterService clusterService,
                                       @Reference final SchedulingCoordinator schedulingCoordinator,
@@ -87,7 +83,6 @@ public final class SchedulerServiceActivator
         this.indexService = indexService;
         this.nodeService = nodeService;
         this.taskService = taskService;
-        this.taskDescriptorService = taskDescriptorService;
         this.securityService = securityService;
         this.clusterService = clusterService;
         this.schedulingCoordinator = schedulingCoordinator;
@@ -117,8 +112,8 @@ public final class SchedulerServiceActivator
         this.schedulerServiceReg = context.registerService( SchedulerService.class, schedulerService, null );
 
         rescheduleTask =
-            new RescheduleTask( schedulerService, nodeService, taskService, taskDescriptorService, securityService, clusterService,
-                                schedulingCoordinator, Clock.systemUTC() );
+            new RescheduleTask( schedulerService, nodeService, taskService, securityService, clusterService, schedulingCoordinator,
+                                Clock.systemUTC() );
 
         ticker = Executors.newSingleThreadScheduledExecutor( new ThreadFactoryImpl( "system-scheduler-thread-%d" ) );
         ticker.scheduleWithFixedDelay( rescheduleTask, 0, 1, TimeUnit.SECONDS );

@@ -34,7 +34,6 @@ import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ScheduledJobName;
 import com.enonic.xp.scheduler.SchedulerService;
 import com.enonic.xp.security.SecurityService;
-import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -70,9 +69,6 @@ class SchedulerServiceActivatorTest
     private TaskService taskService;
 
     @Mock(stubOnly = true)
-    private TaskDescriptorService taskDescriptorService;
-
-    @Mock(stubOnly = true)
     private SecurityService securityService;
 
     @Mock(stubOnly = true)
@@ -101,7 +97,7 @@ class SchedulerServiceActivatorTest
         when( schedulerConfig.jobs() ).thenReturn( Set.of() );
 
         activator =
-            new SchedulerServiceActivator( repositoryService, indexService, nodeService, taskService, taskDescriptorService,
+            new SchedulerServiceActivator( repositoryService, indexService, nodeService, taskService,
                                            securityService, clusterService, schedulingCoordinator, schedulerConfig, auditLogSupport );
 
         when( bundleContext.registerService( same( SchedulerService.class ), any( SchedulerService.class ), isNull() ) ).thenReturn(

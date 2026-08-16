@@ -34,7 +34,6 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 import com.enonic.xp.task.SubmitTaskParams;
-import com.enonic.xp.task.TaskDescriptorService;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 import com.enonic.xp.task.TaskService;
@@ -56,8 +55,6 @@ public final class RescheduleTask
     private final NodeService nodeService;
 
     private final TaskService taskService;
-
-    private final TaskDescriptorService taskDescriptorService;
 
     private final SecurityService securityService;
 
@@ -82,13 +79,12 @@ public final class RescheduleTask
     private volatile boolean resetPending;
 
     public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
-                           final TaskDescriptorService taskDescriptorService, final SecurityService securityService,
-                           final ClusterService clusterService, final SchedulingCoordinator schedulingCoordinator, final Clock clock )
+                           final SecurityService securityService, final ClusterService clusterService,
+                           final SchedulingCoordinator schedulingCoordinator, final Clock clock )
     {
         this.schedulerService = schedulerService;
         this.nodeService = nodeService;
         this.taskService = taskService;
-        this.taskDescriptorService = taskDescriptorService;
         this.securityService = securityService;
         this.clusterService = clusterService;
         this.schedulingCoordinator = schedulingCoordinator;
@@ -249,23 +245,22 @@ public final class RescheduleTask
     {
         final ScheduledJob job = entry.job();
 
-        // the descriptor may exist only on another member - applications can be installed per node,
-        // and the task is routed to a member that runs the application
-        if ( taskDescriptorService.getTask( job.getDescriptor() ) == null &&
-            !clusterService.inCluster( job.getDescriptor().getApplicationKey() ) )
+        // only a missing application makes a job dormant. A descriptor missing from an application
+        // that is running is a misconfigured job, and fails loudly rather than lying dormant
+        if ( !clusterService.inCluster( job.getDescriptor().getApplicationKey() ) )
         {
-            // the application is not started (yet) or no longer provides the task - the job lies
-            // dormant without failing and fires as soon as the descriptor is available again
+            // the application has not started yet, or is no longer installed anywhere - the job
+            // waits without failing and fires as soon as the application is back
             if ( dormantJobs.add( job.getName() ) )
             {
-                LOG.warn( "Task descriptor [{}] of job [{}] not found - the job is dormant until an application provides it",
-                          job.getDescriptor(), job.getName() );
+                LOG.warn( "Application [{}] of job [{}] is not started - the job is dormant until it is",
+                          job.getDescriptor().getApplicationKey(), job.getName() );
             }
             return;
         }
         if ( dormantJobs.remove( job.getName() ) )
         {
-            LOG.info( "Task descriptor [{}] of job [{}] is available again", job.getDescriptor(), job.getName() );
+            LOG.info( "Application [{}] of job [{}] is started again", job.getDescriptor().getApplicationKey(), job.getName() );
         }
 
         final String previousTaskId = previousTaskId( entry );

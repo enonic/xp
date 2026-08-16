@@ -1,5 +1,7 @@
 package com.enonic.xp.cluster.impl;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -13,6 +15,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterService;
@@ -28,6 +31,8 @@ public class ClusterServiceImpl
     private static final Logger LOG = LoggerFactory.getLogger( ClusterServiceImpl.class );
 
     private final DynamicReference<ClusterService> clusteredClusterServiceRef = new DynamicReference<>();
+
+    private final Set<ApplicationKey> localApplications = ConcurrentHashMap.newKeySet();
 
     private volatile @Nullable ClusterConfig clusterConfig;
 
@@ -56,12 +61,23 @@ public class ClusterServiceImpl
     @Override
     public boolean inCluster( final ApplicationKey applicationKey )
     {
-        final ClusterService clusterService = resolveClusterService();
-        if ( clusterService == null )
+        if ( localApplications.contains( applicationKey ) )
         {
-            return false;
+            return true;
         }
-        return clusterService.inCluster( applicationKey );
+        final ClusterService clusterService = resolveClusterService();
+        return clusterService != null && clusterService.inCluster( applicationKey );
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addApplication( final Application application )
+    {
+        localApplications.add( application.getKey() );
+    }
+
+    public void removeApplication( final Application application )
+    {
+        localApplications.remove( application.getKey() );
     }
 
     private @Nullable ClusterService resolveClusterService()
