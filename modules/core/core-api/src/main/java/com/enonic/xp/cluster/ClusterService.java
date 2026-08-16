@@ -22,7 +22,8 @@ public interface ClusterService
      * Whether this member leads the members that run the application - of those advertising it, the
      * one that joined first. An application no member runs has no leader anywhere. In a
      * non-clustered installation the single node always leads, whether or not the application is
-     * installed on it, so callers pair this with local knowledge.
+     * installed on it: this answers who leads, and is not a check that the application is there -
+     * {@link #inCluster} is.
      */
     boolean isLeader( ApplicationKey applicationKey );
 

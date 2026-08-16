@@ -157,9 +157,11 @@ public final class RescheduleTask
         runStates.clear();
         dormantJobs.clear();
         failedSubmits.clear();
-        submittedTaskIds.clear();
         knownJobs = Set.of();
         schedulingCoordinator.retain( Set.of() );
+        // submittedTaskIds is deliberately kept: those tasks are still running whatever was
+        // restored - a partial restore need not have touched the scheduler at all - and forgetting
+        // them is the one thing here that could let a second copy of a fixed-rate job start
     }
 
     @Traced("system.rescheduleTask")
@@ -313,7 +315,7 @@ public final class RescheduleTask
             if ( attempts > MAX_SUBMIT_ATTEMPTS )
             {
                 failedSubmits.remove( job.getName() );
-                recordRun( entry, now, null );
+                recordRun( entry, null );
                 LOG.error( "Error while running job [{}], no further attempts will be made", job.getName(), e );
             }
             else
@@ -325,19 +327,23 @@ public final class RescheduleTask
         catch ( Throwable e )
         {
             failedSubmits.remove( job.getName() );
-            recordRun( entry, now, null );
+            recordRun( entry, null );
             LOG.error( "Error while running job [{}], no further attempts will be made", job.getName(), e );
             return;
         }
 
         failedSubmits.remove( job.getName() );
         submittedTaskIds.put( job.getName(), taskId.toString() );
-        recordRun( entry, now, taskId );
+        recordRun( entry, taskId );
     }
 
-    private void recordRun( final ScheduledJobEntry entry, final Instant now, final TaskId taskId )
+    private void recordRun( final ScheduledJobEntry entry, final TaskId taskId )
     {
         final ScheduledJob job = entry.job();
+
+        // timed here rather than when the job's turn came: resolving the application, the previous
+        // task and the user all take time, and a clustered submission can block until it times out
+        final Instant now = Instant.now( clock );
 
         // a job can be modified, or deleted and recreated, while one of its runs is in flight.
         // Whatever schedule is there now owns the plan and the record: modify() has already
