@@ -502,6 +502,29 @@ class RescheduleTaskTest
     }
 
     @Test
+    void runIsRecordedFromWhenItStartsNotFromTheStartOfTheTick()
+    {
+        final ScheduledJob job = jobBuilder( "job1", FixedRateCalendarImpl.create().duration( Duration.ofMinutes( 1 ) ).build() )
+            .modifiedTime( NOW.minusSeconds( 120 ) )
+            .build();
+        final List<ScheduledJobEntry> entries = List.of( new ScheduledJobEntry( job, new NodeVersionId() ) );
+
+        // the tick spends half a minute listing jobs before it gets round to submitting this one
+        when( schedulerService.listEntries() ).thenAnswer( invocation -> {
+            clock.plusSeconds( 30 );
+            return entries;
+        } );
+        when( schedulerService.get( job.getName() ) ).thenReturn( job );
+        when( taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "1" ) );
+
+        task.run();
+
+        verify( taskService, times( 1 ) ).submitTask( isA( SubmitTaskParams.class ) );
+        // one interval after the run actually started, not after the tick did
+        assertEquals( NOW.plusSeconds( 90 ), schedulingCoordinator.plannedRun( job.getName() ).nextRun() );
+    }
+
+    @Test
     void disabledJobNotSubmitted()
     {
         mockJobs( jobBuilder( "job1", OneTimeCalendarImpl.create().value( NOW.minusSeconds( 1 ) ).build() ).enabled( false ).build() );

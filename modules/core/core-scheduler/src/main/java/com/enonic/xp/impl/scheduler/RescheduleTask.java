@@ -185,7 +185,7 @@ public final class RescheduleTask
             .filter( entry -> entry.job().isEnabled() )
             .flatMap( entry -> dueTime( entry, now ).map( dueTime -> Map.entry( dueTime, entry ) ).stream() )
             .sorted( Map.Entry.comparingByKey() )
-            .forEach( entry -> submit( entry.getValue(), now ) );
+            .forEach( entry -> submit( entry.getValue() ) );
     }
 
     private Optional<Instant> dueTime( final ScheduledJobEntry entry, final Instant now )
@@ -241,9 +241,14 @@ public final class RescheduleTask
         return job.getModifiedTime() != null ? job.getModifiedTime() : now;
     }
 
-    private void submit( final ScheduledJobEntry entry, final Instant now )
+    private void submit( final ScheduledJobEntry entry )
     {
         final ScheduledJob job = entry.job();
+
+        // the tick's own instant decides which jobs are due, but a run is recorded and its
+        // successor planned from the moment the run actually starts - by then the tick may have
+        // spent time listing jobs and submitting the ones that sorted earlier
+        final Instant now = Instant.now( clock );
 
         // only a missing application makes a job dormant. A descriptor missing from an application
         // that is running is a misconfigured job, and fails loudly rather than lying dormant
