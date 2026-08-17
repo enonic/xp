@@ -23,6 +23,7 @@ import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -76,11 +77,13 @@ public final class RescheduleTask
 
     private final Map<ScheduledJobName, String> submittedTaskIds = new HashMap<>();
 
+    private final Set<ScheduledJobName> configuredJobsCreated = new HashSet<>();
+
+    private final Set<ScheduledJobName> configuredJobsFailed = new HashSet<>();
+
     private Set<ScheduledJobName> knownJobs = Set.of();
 
     private int failedTicks;
-
-    private boolean configuredJobsCreated;
 
     public RescheduleTask( final SchedulerServiceImpl schedulerService, final NodeService nodeService, final TaskService taskService,
                            final SecurityService securityService, final ClusterService clusterService,
@@ -128,12 +131,6 @@ public final class RescheduleTask
     @Traced("system.rescheduleTask")
     private void doRun()
     {
-        if ( !configuredJobsCreated )
-        {
-            createConfiguredJobs();
-            configuredJobsCreated = true;
-        }
-
         final Instant now = Instant.now( clock );
 
         // run state (lastRun) is deliberately not fetched here: the coordinator and the version-keyed
@@ -147,6 +144,8 @@ public final class RescheduleTask
             schedulingCoordinator.retain( jobNames );
             knownJobs = jobNames;
         }
+        createConfiguredJobs( jobNames );
+
         runStates.keySet().retainAll( jobNames );
         dormantJobs.retainAll( jobNames );
         submittedTaskIds.keySet().retainAll( jobNames );
@@ -162,29 +161,58 @@ public final class RescheduleTask
     }
 
     /**
-     * Creates the jobs this node has in its configuration, on the first tick it leads. Done here
-     * rather than when the bundle starts because the member that schedules is not known that early,
-     * and only the one that does should be writing jobs; a member that never leads never writes its
-     * configured jobs, so which node holds them is a configuration choice like any other.
+     * Creates the jobs this node has in its configuration, from the tick rather than when the bundle
+     * starts: the member that schedules is not known that early, and only the one that does should
+     * be writing jobs. A member that never leads never writes its configured jobs, so which node
+     * holds them is a configuration choice like any other.
+     * <p>
+     * The configuration is read every tick, so a job added to it is created without a restart. Each
+     * name is created once - a job deleted afterwards stays deleted, rather than being put back a
+     * second later by the node that made it. The record of what was created is this member's own, so
+     * a new leader takes one pass to learn that the jobs are already there, and will recreate one
+     * that was deleted in the meantime, as a restart would have.
      */
-    private void createConfiguredJobs()
+    private void createConfiguredJobs( final Set<ScheduledJobName> existingJobs )
     {
-        adminContext().runWith( () -> schedulerConfig.jobs().forEach( job -> {
+        for ( final CreateScheduledJobParams job : schedulerConfig.jobs() )
+        {
+            final ScheduledJobName name = job.getName();
+            if ( configuredJobsCreated.contains( name ) )
+            {
+                continue;
+            }
+            if ( existingJobs.contains( name ) )
+            {
+                configuredJobsCreated.add( name );
+                continue;
+            }
             try
             {
-                schedulerService.create( job );
+                adminContext().runWith( () -> schedulerService.create( job ) );
+                configuredJobsCreated.add( name );
+                configuredJobsFailed.remove( name );
             }
             catch ( NodeAlreadyExistAtPathException | NodeIdExistsException e )
             {
-                LOG.debug( "Configured job [{}] already exists", job.getName(), e );
+                // the listing was taken before the job appeared - another member's last tick, say
+                LOG.debug( "Configured job [{}] already exists", name, e );
+                configuredJobsCreated.add( name );
             }
             catch ( Exception e )
             {
-                // one job that cannot be created is not allowed to keep the others from running -
-                // it is reported and left out, the way an invalid job would be at any other time
-                LOG.error( "Failed to create configured job [{}]", job.getName(), e );
+                // one job that cannot be created is not allowed to keep the others from running. It
+                // is reported once and then retried quietly, so correcting the configuration is
+                // enough to get it created - no restart, and no message every second until then
+                if ( configuredJobsFailed.add( name ) )
+                {
+                    LOG.error( "Failed to create configured job [{}], will keep trying", name, e );
+                }
+                else
+                {
+                    LOG.debug( "Failed to create configured job [{}]", name, e );
+                }
             }
-        } ) );
+        }
     }
 
     private Optional<Instant> dueTime( final ScheduledJobEntry entry, final Instant now )

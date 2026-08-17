@@ -333,6 +333,57 @@ class RescheduleTaskTest
     }
 
     @Test
+    void aConfiguredJobAddedLaterIsCreatedWithoutARestart()
+    {
+        mockJobs();
+
+        task.run();
+        verify( schedulerService, never() ).create( isA( CreateScheduledJobParams.class ) );
+
+        // the configuration is read by the tick, so an entry added to it needs nothing restarted
+        when( schedulerConfig.jobs() ).thenReturn( Set.of( configuredJob( "added" ) ) );
+
+        task.run();
+        verify( schedulerService, times( 1 ) ).create( isA( CreateScheduledJobParams.class ) );
+    }
+
+    @Test
+    void aConfiguredJobThatWasDeletedIsNotPutBack()
+    {
+        when( schedulerConfig.jobs() ).thenReturn( Set.of( configuredJob( "configured" ) ) );
+        mockJobs( cronJob( "configured", "0 5 * * *", null ) );
+
+        task.run();
+
+        // it is gone by the next tick - deleted through the API, say
+        mockEntries( List.of() );
+
+        task.run();
+
+        verify( schedulerService, never() ).create( isA( CreateScheduledJobParams.class ) );
+    }
+
+    @Test
+    void aConfiguredJobThatCouldNotBeCreatedIsRetried()
+    {
+        when( schedulerConfig.jobs() ).thenReturn( Set.of( configuredJob( "configured" ) ) );
+        when( schedulerService.create( isA( CreateScheduledJobParams.class ) ) ).thenThrow( new RuntimeException() )
+            .thenReturn( cronJob( "configured", "0 5 * * *", null ) );
+        mockJobs();
+
+        task.run();
+        task.run();
+
+        // correcting the configuration is enough to get it created, so the attempt is repeated
+        verify( schedulerService, times( 2 ) ).create( isA( CreateScheduledJobParams.class ) );
+
+        task.run();
+
+        // and stops once it is there
+        verify( schedulerService, times( 2 ) ).create( isA( CreateScheduledJobParams.class ) );
+    }
+
+    @Test
     void aConfiguredJobThatCannotBeCreatedDoesNotHoldUpTheRest()
     {
         when( schedulerConfig.jobs() ).thenReturn( Set.of( configuredJob( "configured" ) ) );

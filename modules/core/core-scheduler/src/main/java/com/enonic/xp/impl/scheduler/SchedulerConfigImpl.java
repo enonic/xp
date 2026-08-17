@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,19 +41,31 @@ public class SchedulerConfigImpl
 
     private final CalendarService calendarService;
 
-    private Configuration config;
+    private volatile Configuration config;
 
     @Activate
     public SchedulerConfigImpl( final Map<String, String> map, @Reference final CalendarService calendarService )
     {
         this.calendarService = calendarService;
+        this.config = buildConfig( map );
+    }
 
-        this.config = ConfigBuilder.create().
-            load( getClass(), "default.properties" ).
-            addAll( map ).
-            build();
+    /**
+     * Reconfiguration is applied in place, so nothing that reads this is restarted by an edit. What
+     * reads it must therefore read it when it needs it rather than once at its own start - a job
+     * added to the configuration is picked up by the next tick, and audit logging can be turned off
+     * while jobs are running.
+     */
+    @Modified
+    public void modify( final Map<String, String> map )
+    {
+        this.config = buildConfig( map );
+    }
 
-        this.config = new ConfigInterpolator().interpolate( this.config );
+    private static Configuration buildConfig( final Map<String, String> map )
+    {
+        return new ConfigInterpolator().interpolate(
+            ConfigBuilder.create().load( SchedulerConfigImpl.class, "default.properties" ).addAll( map ).build() );
     }
 
     @Override
