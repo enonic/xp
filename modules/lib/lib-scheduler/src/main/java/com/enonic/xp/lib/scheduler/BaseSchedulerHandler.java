@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.TimeZone;
 import java.util.function.Supplier;
 
-import com.enonic.xp.form.PropertyTreeMarshallerService;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
