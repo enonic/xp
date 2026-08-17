@@ -42,5 +42,19 @@
     "modifiedTime": "2011-02-01T00:00:00Z",
     "modifier": "user:system:creator",
     "name": "test2"
+  },
+  {
+    "calendar": {
+      "duration": "PT5M",
+      "type": "FIXED_RATE"
+    },
+    "config": [],
+    "createdTime": "2010-01-01T00:00:00Z",
+    "creator": "user:system:creator",
+    "descriptor": "com.enonic.app.features:landing",
+    "enabled": false,
+    "modifiedTime": "2011-02-01T00:00:00Z",
+    "modifier": "user:system:creator",
+    "name": "test3"
   }
 ]
