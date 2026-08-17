@@ -30,41 +30,34 @@ public class CalendarJson
 
     public CalendarJson( final ScheduleCalendar calendar )
     {
-        this.type = calendar.getType();
+        String value = null;
+        String cronValue = null;
+        String timeZone = null;
+        String duration = null;
+        Boolean deleteAfterRun = null;
 
         if ( calendar instanceof CronCalendar cron )
         {
-            this.cronValue = cron.getCronValue();
-            this.timeZone = cron.getTimeZone().getID();
-            this.value = null;
-            this.duration = null;
-            this.deleteAfterRun = null;
+            cronValue = cron.getCronValue();
+            timeZone = cron.getTimeZone().getID();
         }
         else if ( calendar instanceof OneTimeCalendar oneTime )
         {
-            this.value = oneTime.getValue().toString();
-            this.deleteAfterRun = oneTime.isDeleteAfterRun();
-            this.cronValue = null;
-            this.timeZone = null;
-            this.duration = null;
+            value = oneTime.getValue().toString();
+            deleteAfterRun = oneTime.isDeleteAfterRun();
         }
         else if ( calendar instanceof FixedRateCalendar fixedRate )
         {
-            this.duration = fixedRate.getDuration().toString();
-            this.value = null;
-            this.cronValue = null;
-            this.timeZone = null;
-            this.deleteAfterRun = null;
+            duration = fixedRate.getDuration().toString();
         }
-        else
-        {
-            // a calendar type this was not written for still reports what it is
-            this.value = null;
-            this.cronValue = null;
-            this.timeZone = null;
-            this.duration = null;
-            this.deleteAfterRun = null;
-        }
+        // a calendar type this was not written for reports what it is and nothing more
+
+        this.type = calendar.getType();
+        this.value = value;
+        this.cronValue = cronValue;
+        this.timeZone = timeZone;
+        this.duration = duration;
+        this.deleteAfterRun = deleteAfterRun;
     }
 
     public ScheduleCalendarType getType()
