@@ -101,7 +101,8 @@ class SchedulerServiceImplTest
         final AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
 
         final SchedulerConfig schedulerConfig = Mockito.mock( SchedulerConfig.class );
-        Mockito.when( schedulerConfig.auditlogEnabled() ).thenReturn( Boolean.TRUE );
+        // asked per audit entry rather than once, so a test that does not change a job never asks
+        Mockito.lenient().when( schedulerConfig.auditlogEnabled() ).thenReturn( Boolean.TRUE );
 
         final ScheduleAuditLogSupportImpl auditLogSupport =
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
