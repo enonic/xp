@@ -7,14 +7,21 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.enonic.xp.admin.event.AdminEventHub;
+import com.enonic.xp.admin.event.PublishMessageParams;
+import com.enonic.xp.admin.event.SetTopicParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.testing.ScriptTestSupport;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,6 +31,8 @@ class LibAdminTest
 
     private PortalUrlService portalUrlService;
 
+    private AdminEventHub adminEventHub;
+
     @Override
     protected void initialize()
         throws Exception
@@ -32,6 +41,115 @@ class LibAdminTest
 
         portalUrlService = mock( PortalUrlService.class );
         addService( PortalUrlService.class, portalUrlService );
+
+        adminEventHub = mock( AdminEventHub.class );
+        addService( AdminEventHub.class, adminEventHub );
+    }
+
+    @Test
+    void setTopic()
+    {
+        when( adminEventHub.setTopic( any() ) ).thenReturn( "myapplication:myTopic" );
+
+        runFunction( "/test/admin-test.js", "setTopic" );
+
+        ArgumentCaptor<SetTopicParams> params = ArgumentCaptor.forClass( SetTopicParams.class );
+        verify( adminEventHub ).setTopic( params.capture() );
+
+        assertEquals( "myapplication", params.getValue().getOwner().toString() );
+        assertEquals( "myTopic", params.getValue().getName() );
+        assertEquals( PrincipalKeys.from( "role:system.admin.login" ), params.getValue().getAllow() );
+    }
+
+    @Test
+    void setTopicWithSingleAllow()
+    {
+        when( adminEventHub.setTopic( any() ) ).thenReturn( "myapplication:myTopic" );
+
+        runFunction( "/test/admin-test.js", "setTopicWithSingleAllow" );
+
+        ArgumentCaptor<SetTopicParams> params = ArgumentCaptor.forClass( SetTopicParams.class );
+        verify( adminEventHub ).setTopic( params.capture() );
+
+        assertEquals( PrincipalKeys.from( "role:system.admin.login" ), params.getValue().getAllow() );
+    }
+
+    @Test
+    void setTopicWithEmptyAllow()
+    {
+        when( adminEventHub.setTopic( any() ) ).thenReturn( "myapplication:myTopic" );
+
+        runFunction( "/test/admin-test.js", "setTopicWithEmptyAllow" );
+
+        ArgumentCaptor<SetTopicParams> params = ArgumentCaptor.forClass( SetTopicParams.class );
+        verify( adminEventHub ).setTopic( params.capture() );
+
+        assertEquals( PrincipalKeys.empty(), params.getValue().getAllow() );
+    }
+
+    @Test
+    void setTopicWithoutAllow()
+    {
+        assertThrows( RuntimeException.class, () -> runFunction( "/test/admin-test.js", "setTopicWithoutAllow" ) );
+
+        verify( adminEventHub, never() ).setTopic( any() );
+    }
+
+    @Test
+    void sendToTopic()
+    {
+        runFunction( "/test/admin-test.js", "sendToTopic" );
+
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
+
+        assertEquals( "myapplication", params.getValue().getCaller().toString() );
+        assertEquals( "myTopic", params.getValue().getName() );
+        assertEquals( 42, params.getValue().getMessage().property( "count" ).asInteger() );
+    }
+
+    @Test
+    void sendToTopicWithArray()
+    {
+        runFunction( "/test/admin-test.js", "sendToTopicWithArray" );
+
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
+
+        GenericValue message = params.getValue().getMessage();
+        assertEquals( GenericValue.Type.LIST, message.getType() );
+        assertEquals( 3, message.values().size() );
+        assertEquals( 2, message.values().get( 1 ).asInteger() );
+    }
+
+    @Test
+    void sendToTopicWithString()
+    {
+        runFunction( "/test/admin-test.js", "sendToTopicWithString" );
+
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
+
+        assertEquals( "hello", params.getValue().getMessage().asString() );
+    }
+
+    @Test
+    void sendToTopicWithNull()
+    {
+        assertThrows( RuntimeException.class, () -> runFunction( "/test/admin-test.js", "sendToTopicWithNull" ) );
+
+        verify( adminEventHub, never() ).publish( any() );
+    }
+
+    @Test
+    void sendToTopicWithoutMessage()
+    {
+        runFunction( "/test/admin-test.js", "sendToTopicWithoutMessage" );
+
+        ArgumentCaptor<PublishMessageParams> params = ArgumentCaptor.forClass( PublishMessageParams.class );
+        verify( adminEventHub ).publish( params.capture() );
+
+        assertEquals( GenericValue.newObject().build(), params.getValue().getMessage() );
     }
 
     @Test

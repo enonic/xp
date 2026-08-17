@@ -47,3 +47,59 @@ exports.getHomeToolUrl = function () {
     });
     t.assertEquals("generated_url", result);
 };
+
+exports.setTopic = function () {
+    const result = adminLib.setTopic({
+        name: 'myTopic',
+        allow: ['role:system.admin.login']
+    });
+
+    t.assertEquals('myapplication:myTopic', result);
+};
+
+exports.setTopicWithSingleAllow = function () {
+    const result = adminLib.setTopic({
+        name: 'myTopic',
+        allow: 'role:system.admin.login'
+    });
+
+    t.assertEquals('myapplication:myTopic', result);
+};
+
+exports.setTopicWithEmptyAllow = function () {
+    adminLib.setTopic({
+        name: 'myTopic',
+        allow: []
+    });
+};
+
+exports.setTopicWithoutAllow = function () {
+    adminLib.setTopic({
+        name: 'myTopic'
+    });
+};
+
+exports.sendToTopic = function () {
+    adminLib.sendToTopic('myTopic', {
+        count: 42
+    });
+};
+
+exports.sendToTopicWithArray = function () {
+    adminLib.sendToTopic('myTopic', [1, 2, 3]);
+};
+
+exports.sendToTopicWithString = function () {
+    adminLib.sendToTopic('myTopic', 'hello');
+};
+
+exports.sendToTopicWithNull = function () {
+    adminLib.sendToTopic('myTopic', {
+        count: 42,
+        label: null
+    });
+};
+
+exports.sendToTopicWithoutMessage = function () {
+    adminLib.sendToTopic('myTopic');
+};

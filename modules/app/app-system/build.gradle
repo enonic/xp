@@ -4,6 +4,8 @@ dependencies {
     compileOnly project( ':core:core-internal' )
 
     testImplementation project( ':tools:testing' )
+    testImplementation project( ':core:core-app' )
+    testImplementation( testFixtures( project( ':core:core-app' ) ) )
 }
 
 jar {

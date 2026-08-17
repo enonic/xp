@@ -160,3 +160,78 @@ export function extensionUrl(params: ExtensionUrlParams): string {
 
     return bean.createUrl();
 }
+
+interface SetTopicHandler {
+    setName(value: string): void;
+
+    setAllow(value: ScriptValue | null): void;
+
+    execute(): string;
+}
+
+interface SendToTopicHandler {
+    setName(value: string): void;
+
+    setMessage(value: ScriptValue | null): void;
+
+    execute(): void;
+}
+
+export interface SetTopicParams {
+    name: string;
+    allow: string | string[];
+}
+
+/**
+ * Sets the state of an admin events topic owned by this application.
+ *
+ * The topic's canonical name is `<application-key>:<name>`. Subscribers address the topic by the
+ * canonical name over the `admin:events` websocket API. A non-empty `allow` registers the topic
+ * or updates its `allow`; the principals in `allow` and `role:system.admin` may subscribe, and
+ * updating re-evaluates current subscribers against the new list. An empty `allow` clears the
+ * registration, with the same
+ * effect as the application stopping: publishing fails and new subscriptions are denied, while
+ * existing subscriptions persist and resume when the topic is set again.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Local topic name: 1-255 characters, no `:`, no whitespace.
+ * @param {string|string[]} params.allow Principal key, or keys, allowed to subscribe, in addition
+ * to `role:system.admin`. An empty array clears the topic registration.
+ *
+ * @returns {string} The canonical topic name.
+ */
+export function setTopic(params: SetTopicParams): string {
+    const name = checkRequired(params, 'name');
+    const allow = checkRequired(params, 'allow');
+
+    const bean: SetTopicHandler = __.newBean<SetTopicHandler>('com.enonic.xp.lib.admin.SetTopicHandler');
+
+    bean.setName(name);
+    bean.setAllow(__.toScriptValue(([] as string[]).concat(allow)));
+    return bean.execute();
+}
+
+/**
+ * Publishes a message to an admin events topic owned by this application.
+ *
+ * The message is delivered to the sockets on this node holding an acknowledged subscription to the
+ * topic, stamped with a per-topic sequence number. Delivery is best effort.
+ *
+ * The message is not distributed over the cluster. Subscribers on other nodes receive it only if
+ * the application publishes on those nodes too.
+ *
+ * @param {string} name Local topic name, as passed to `setTopic`.
+ * @param {*} [message] Message data: an object, an array or a primitive value. Must be
+ * serializable to JSON and must not contain null values.
+ */
+export function sendToTopic(name: string, message?: object | string | number | boolean): void {
+    if (name == null) {
+        throw new Error(`Parameter 'name' is required`);
+    }
+
+    const bean: SendToTopicHandler = __.newBean<SendToTopicHandler>('com.enonic.xp.lib.admin.SendToTopicHandler');
+
+    bean.setName(name);
+    bean.setMessage(__.toScriptValue(message));
+    bean.execute();
+}
