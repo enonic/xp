@@ -21,7 +21,6 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -106,9 +105,8 @@ class SchedulerConfigImplTest
 
         schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
 
-        final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
-        assertEquals( "[invalid] is invalid job property.", ex.getMessage() );
-
+        // the entry is left out rather than taken as a reason to ignore the rest of the file
+        assertThat( jobNames( schedulerConfig ) ).doesNotContain( "landing1" ).contains( "audit-log-cleanup" );
     }
 
     @Test
@@ -122,10 +120,8 @@ class SchedulerConfigImplTest
         properties.put( "init-job.landing1.config", "{'a':'b'}" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
-        final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
 
-        assertThat( ex.getCause().getMessage() ).contains(
-            "Unexpected character (''' (code 39)): was expecting double-quote to start field name" );
+        assertThat( jobNames( schedulerConfig ) ).doesNotContain( "landing1" ).contains( "audit-log-cleanup" );
     }
 
     @Test
