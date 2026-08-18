@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
@@ -11,6 +12,7 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
@@ -18,6 +20,7 @@ import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
+import com.enonic.xp.repo.impl.index.IndexValueNormalizer;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -42,6 +45,10 @@ final class FindNodeBranchEntriesByParentCommand
 
     private final boolean refreshStorage;
 
+    private final int batchSize;
+
+    private final String cursor;
+
     private FindNodeBranchEntriesByParentCommand( final Builder builder )
     {
         super( builder );
@@ -50,6 +57,8 @@ final class FindNodeBranchEntriesByParentCommand
         this.pathOrder = builder.pathOrder;
         this.requiredPermission = builder.requiredPermission;
         this.refreshStorage = builder.refreshStorage;
+        this.batchSize = builder.batchSize;
+        this.cursor = builder.cursor;
     }
 
     static Builder create()
@@ -64,6 +73,16 @@ final class FindNodeBranchEntriesByParentCommand
 
     NodeBranchEntries execute()
     {
+        return executeBatch().entries();
+    }
+
+    /**
+     * One batch of the listing together with the position it stopped at, or the whole listing and no position where no batch size is
+     * set. The cursor is taken from the last entry scanned rather than the last entry kept, so a continuation never revisits ground that
+     * {@link #filter} discarded, and the sequence of batches terminates also where whole batches are filtered away.
+     */
+    Batch executeBatch()
+    {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
         if ( refreshStorage )
@@ -71,20 +90,45 @@ final class FindNodeBranchEntriesByParentCommand
             refresh( RefreshMode.STORAGE );
         }
 
-        final NodeBranchQuery query = NodeBranchQuery.create()
+        final NodeBranchQuery.Builder query = NodeBranchQuery.create()
             .query( QueryExpr.from( createBelowParentExpr() ) )
             .addQueryFilter( ValueFilter.create()
                                  .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
                                  .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
                                  .build() )
             .addOrderBy( FieldOrderExpr.create( BranchIndexPath.PATH, pathOrder ) )
-            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-            .build();
+            .size( batchSize > 0 ? batchSize : NodeSearchService.GET_ALL_SIZE_FLAG );
+
+        if ( cursor != null )
+        {
+            query.addQueryFilter( createAfterCursorFilter() );
+        }
 
         final NodeBranchEntries entries =
-            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query, context.getRepositoryId() ) );
+            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query.build(), context.getRepositoryId() ) );
 
-        return filter( entries, context );
+        final String nextCursor =
+            batchSize > 0 && entries.getSize() == batchSize ? entries.stream().reduce( ( first, last ) -> last ).orElseThrow()
+                .getNodePath()
+                .toString() : null;
+
+        return new Batch( filter( entries, context ), nextCursor );
+    }
+
+    /**
+     * Continues the path-ordered scan strictly after the path the cursor names. The bound is compared against the path tokens of the
+     * index, which are normalized, so the cursor is normalized the same way; a range bound is taken as the index holds it rather than
+     * put through the analyzer of the field.
+     */
+    private RangeFilter createAfterCursorFilter()
+    {
+        final Value bound = ValueFactory.newString( IndexValueNormalizer.normalize( cursor ) );
+        final RangeFilter.Builder afterCursor = RangeFilter.create().fieldName( BranchIndexPath.PATH.getPath() );
+        return ( pathOrder == OrderExpr.Direction.DESC ? afterCursor.lt( bound ) : afterCursor.gt( bound ) ).build();
+    }
+
+    record Batch(NodeBranchEntries entries, String cursor)
+    {
     }
 
     /**
@@ -148,6 +192,10 @@ final class FindNodeBranchEntriesByParentCommand
 
         private boolean refreshStorage = true;
 
+        private int batchSize;
+
+        private String cursor;
+
         private Builder()
         {
             super();
@@ -185,6 +233,18 @@ final class FindNodeBranchEntriesByParentCommand
         Builder refreshStorage( final boolean refreshStorage )
         {
             this.refreshStorage = refreshStorage;
+            return this;
+        }
+
+        Builder batchSize( final int batchSize )
+        {
+            this.batchSize = batchSize;
+            return this;
+        }
+
+        Builder cursor( final String cursor )
+        {
+            this.cursor = cursor;
             return this;
         }
 

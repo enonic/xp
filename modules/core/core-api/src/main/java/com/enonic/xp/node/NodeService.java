@@ -60,7 +60,12 @@ public interface NodeService
      * {@link RefreshMode#ALL} is therefore listed immediately, whereas {@link #findByQuery(NodeQuery)} returns it only once the search
      * index has been refreshed. This method performs no refresh of its own; a node stored without a refresh is visible to neither.
      * <p>
-     * Paging, filtering and ordering are not supported. Use a query where any of them is required.
+     * A listing expected to hold many nodes should be consumed in batches: set {@link ListNodesParams.Builder#batchSize(int)} and repeat
+     * the call with the {@link ListNodesResult#getCursor() cursor} of each batch until a batch answers with none, instead of holding the
+     * whole listing at once. The sequence of batches observes each entry at most once, also when nodes are written or deleted between
+     * batches, although entries a concurrent write places behind the cursor are not observed.
+     * <p>
+     * Filtering and ordering are not supported. Use a query where either is required.
      *
      * @since 8.1.0
      */

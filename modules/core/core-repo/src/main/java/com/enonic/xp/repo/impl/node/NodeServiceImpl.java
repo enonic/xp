@@ -396,9 +396,11 @@ public class NodeServiceImpl
             trace.attribute( "branch", Objects.toString( ContextAccessor.current().getBranch(), null ) );
         } );
 
-        final NodeBranchEntries entries = FindNodeBranchEntriesByParentCommand.create()
+        final FindNodeBranchEntriesByParentCommand.Batch batch = FindNodeBranchEntriesByParentCommand.create()
             .parentPath( params.getParentPath() )
             .recursive( params.isRecursive() )
+            .batchSize( params.getBatchSize() )
+            .cursor( params.getCursor() )
             .requiredPermission( Permission.READ )
             // a read does not refresh: writes decide when they become visible, and every write through the content API already does
             .refreshStorage( false )
@@ -406,10 +408,10 @@ public class NodeServiceImpl
             .storageService( this.nodeStorageService )
             .searchService( this.nodeSearchService )
             .build()
-            .execute();
+            .executeBatch();
 
-        final ListNodesResult.Builder result = ListNodesResult.create();
-        for ( final NodeBranchEntry entry : entries )
+        final ListNodesResult.Builder result = ListNodesResult.create().cursor( batch.cursor() );
+        for ( final NodeBranchEntry entry : batch.entries() )
         {
             result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
         }
