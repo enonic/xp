@@ -190,8 +190,6 @@ class NodeServiceImplTest_list
         final ListNodesResult first = nodeService.list( params.build() );
         assertThat( first.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
 
-        // moving a not-yet-listed node deeper into the subtree changes its path but not its position in the scan, so the continuation
-        // still observes it exactly once - under its new path
         nodeService.move( MoveNodeParams.create().nodeId( childD.id() ).newParentPath( childA.path() ).build() );
         nodeService.refresh( RefreshMode.STORAGE );
 
@@ -208,8 +206,7 @@ class NodeServiceImplTest_list
     @Test
     void deleting_the_listed_entries_does_not_disturb_the_batches()
     {
-        // the vacuum pattern: consume a batch, delete every entry it held, continue with the cursor - without any refresh in between,
-        // since the cursor only moves forward over ground the deletions leave behind
+        // deliberately no refresh between the batches: the cursor only moves forward over ground the deletions leave behind
         final Node parent = createNode( NodePath.ROOT, "parent" );
         for ( int i = 1; i <= 7; i++ )
         {
@@ -233,7 +230,7 @@ class NodeServiceImplTest_list
         while ( cursor != null );
 
         assertEquals( 7, seen.size() );
-        // the deletions above never refreshed, as the contract of list demands of a reader; a check that they all took effect must
+        // the verifying read needs the deletions refreshed; list itself never refreshes
         nodeService.refresh( RefreshMode.STORAGE );
         assertTrue( NodeHelper.runAsAdmin(
             () -> nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() ) ).isEmpty() );

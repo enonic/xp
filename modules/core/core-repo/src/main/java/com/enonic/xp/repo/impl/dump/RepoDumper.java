@@ -55,8 +55,7 @@ public class RepoDumper
     private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
     /**
-     * How many entries one listing batch carries. The most an unscrolled query may ask the index for, so a listing round trip is as
-     * large as it can be.
+     * The most entries an unscrolled query may ask the index for at once.
      */
     private static final int LIST_BATCH_SIZE = 10_000;
 
@@ -131,9 +130,7 @@ public class RepoDumper
             final BranchDumpResult.Builder branchDumpResult = branchResults.get( branch );
             try
             {
-                // enumerated from storage: a dump answers for what the repository holds, not for what the search index has caught up
-                // with. The listing is consumed in batches and only the ids are kept - an entry weighs a whole path where an id is a
-                // few dozen bytes - so the branch never holds more than a batch of entries besides the ids it dumps anyway.
+                // enumerated from storage: a dump answers for what the repository holds, not for what the search index has caught up with
                 long branchNodeCount = 0;
                 String cursor = null;
                 do

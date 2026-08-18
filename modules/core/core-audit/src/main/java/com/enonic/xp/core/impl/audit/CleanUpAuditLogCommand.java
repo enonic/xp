@@ -48,12 +48,9 @@ public class CleanUpAuditLogCommand
     }
 
     /**
-     * Enumerates the audit log from storage in batches and deletes every record older than the age threshold. The repository holds
-     * nothing but audit log records, every record is written once and never modified, and the cursor only moves forward over ground the
-     * deletions leave behind — so one storage refresh up front is the only refresh the whole clean-up needs, where a search would have
-     * had to be refreshed again after every batch to not answer with the nodes it had just deleted.
-     * <p>
-     * A record is aged by its node timestamp, the moment it was written.
+     * Enumerates the audit log from storage in batches and deletes every record older than the age threshold, aged by the moment it was
+     * written. The repository holds nothing but audit log records, and the cursor only moves forward over ground the deletions leave
+     * behind, so one storage refresh up front is the only refresh the whole clean-up needs.
      */
     private CleanUpAuditLogResult doCleanUp()
     {

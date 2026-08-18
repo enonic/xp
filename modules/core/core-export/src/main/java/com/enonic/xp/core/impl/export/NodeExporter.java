@@ -37,8 +37,8 @@ public class NodeExporter
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     /**
-     * How many entries one listing batch carries. The most an unscrolled query may ask the index for, so a listing round trip is as
-     * large as it can be. Unrelated to {@link Builder#batchSize(int)}, which sizes the node reads.
+     * The most entries an unscrolled query may ask the index for at once. Unrelated to {@link Builder#batchSize(int)}, which sizes the
+     * node reads.
      */
     private static final int LIST_BATCH_SIZE = 10_000;
 
@@ -132,10 +132,8 @@ public class NodeExporter
     private void doExportNodes( final Node rootNode )
     {
         // enumerated from storage, so an export covers the subtree the repository holds rather than the one the search index has caught
-        // up with; the listing excludes the node the export was asked for.
-        // The listing is consumed in batches and only the ids are kept - an entry weighs a whole path where an id is a few dozen
-        // bytes - which also keeps the count the progress listener is owed exact, where the index could only offer a count that ignores
-        // what the caller is permitted to read.
+        // up with; the listing excludes the node the export was asked for. The count owed to the progress listener has to come from the
+        // entries - the index alone counts without regard to what the caller is permitted to read.
         final List<NodeId> nodeIds = new ArrayList<>();
         nodeIds.add( rootNode.id() );
 

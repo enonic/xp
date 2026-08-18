@@ -77,14 +77,10 @@ final class FindNodeBranchEntriesByParentCommand
     }
 
     /**
-     * One batch of the listing together with the position it stopped at, or the whole listing and no position where no batch size is
-     * set. The cursor is taken from the last entry scanned rather than the last entry kept, so a continuation never revisits ground that
-     * {@link #filter} discarded, and the sequence of batches terminates also where whole batches are filtered away.
-     * <p>
-     * A batched scan orders by node id rather than by path: an id never changes, so a node moved within the listed subtree between
-     * batches keeps its position in the scan and is neither repeated nor skipped, where a path-ordered scan would let a move carry it
-     * across the cursor. Ids are also held by the index exactly as the node exposes them, so the cursor is compared without any
-     * normalization.
+     * One batch of the listing and the position it stopped at, or the whole listing and no position where no batch size is set. The
+     * cursor is the id of the last entry scanned rather than the last entry kept, so a continuation never revisits ground that
+     * {@link #filter} discarded; a batched scan orders by id rather than by path, so a move between batches cannot carry a node across
+     * the cursor.
      */
     Batch executeBatch()
     {
