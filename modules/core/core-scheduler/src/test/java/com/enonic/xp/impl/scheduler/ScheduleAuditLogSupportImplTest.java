@@ -269,6 +269,52 @@ class ScheduleAuditLogSupportImplTest
     }
 
     @Test
+    void testCreateSelfDeletingJob()
+        throws Exception
+    {
+        final OneTimeCalendarImpl calendar = OneTimeCalendarImpl.create()
+            .value( Instant.parse( "2021-04-25T10:44:33.170079900Z" ) )
+            .deleteAfterRun( true )
+            .build();
+
+        final CreateScheduledJobParams params = CreateScheduledJobParams.create()
+            .name( name )
+            .calendar( calendar )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .enabled( true )
+            .build();
+
+        final ScheduledJob job = ScheduledJob.create()
+            .name( name )
+            .calendar( calendar )
+            .descriptor( DescriptorKey.from( "appKey:descriptorName" ) )
+            .config( new PropertyTree() )
+            .enabled( true )
+            .modifier( PrincipalKey.from( "user:system:creator" ) )
+            .build();
+
+        context.runWith( () -> support.create( params, job ) );
+
+        executor.shutdown();
+        executor.awaitTermination( 1, TimeUnit.MINUTES );
+
+        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 1 ) ).log( argumentCaptor.capture() );
+
+        // the job deletes itself once it has run, so this entry is the only lasting record of it
+        assertEquals( Boolean.TRUE, argumentCaptor.getValue()
+            .getData()
+            .getSet( "params" )
+            .getSet( "calendar" )
+            .getBoolean( "deleteAfterRun" ) );
+        assertEquals( Boolean.TRUE, argumentCaptor.getValue()
+            .getData()
+            .getSet( "result" )
+            .getSet( "calendar" )
+            .getBoolean( "deleteAfterRun" ) );
+    }
+
+    @Test
     void delete()
         throws Exception
     {

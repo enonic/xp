@@ -77,7 +77,7 @@ public final class CreateScheduledJobHandler
         this.description = value;
     }
 
-    public void setSchedule( final Map<String, String> value )
+    public void setSchedule( final Map<String, Object> value )
     {
         this.schedule = buildCalendar( value );
     }

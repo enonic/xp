@@ -10,9 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.scheduler.CronCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
+import com.enonic.xp.scheduler.ScheduleCalendarType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -58,6 +61,14 @@ class CalendarServiceImplTest
 
         assertTrue( Duration.between( now, calendar.nextExecution( now ).get() ).isNegative() );
         assertEquals( Instant.parse( "2014-09-25T10:00:00.00Z" ), calendar.getValue() );
+        assertFalse( calendar.isDeleteAfterRun() );
+    }
+
+    @Test
+    void oneTimeDeleteAfterRun()
+    {
+        assertTrue( calendarService.oneTime( Instant.parse( "2014-09-25T10:00:00.00Z" ), true ).isDeleteAfterRun() );
+        assertFalse( calendarService.oneTime( Instant.parse( "2014-09-25T10:00:00.00Z" ), false ).isDeleteAfterRun() );
     }
 
     @Test
@@ -73,5 +84,23 @@ class CalendarServiceImplTest
     }
 
 
-}
 
+    @Test
+    void fixedRate()
+    {
+        final FixedRateCalendar calendar = calendarService.fixedRate( Duration.ofMinutes( 5 ) );
+
+        final Instant now = Instant.parse( "2026-01-01T10:30:00Z" );
+        assertEquals( now.plus( Duration.ofMinutes( 5 ) ), calendar.nextExecution( now ).get() );
+        assertEquals( Duration.ofMinutes( 5 ), calendar.getDuration() );
+        assertEquals( ScheduleCalendarType.FIXED_RATE, calendar.getType() );
+    }
+
+    @Test
+    void fixedRateInvalid()
+    {
+        assertThrows( NullPointerException.class, () -> calendarService.fixedRate( null ) );
+        assertThrows( IllegalArgumentException.class, () -> calendarService.fixedRate( Duration.ZERO ) );
+        assertThrows( IllegalArgumentException.class, () -> calendarService.fixedRate( Duration.ofSeconds( -1 ) ) );
+    }
+}

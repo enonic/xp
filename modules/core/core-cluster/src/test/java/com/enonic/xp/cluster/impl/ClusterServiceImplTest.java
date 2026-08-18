@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterService;
@@ -12,6 +13,9 @@ import com.enonic.xp.cluster.ClusterService;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -115,6 +119,61 @@ class ClusterServiceImplTest
 
         assertThatThrownBy( () -> clusterService.isLeader( ApplicationKey.from( "com.example.myapp" ) ) ).isInstanceOf(
             IllegalStateException.class ).hasMessage( "Cannot resolve cluster service" );
+    }
+
+    @Test
+    void inCluster_noClusteredService()
+    {
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        assertFalse( clusterService.inCluster( ApplicationKey.from( "com.example.myapp" ) ) );
+    }
+
+    @Test
+    void inCluster_localApplication()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "com.example.myapp" );
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( appKey );
+
+        // an application started here counts without any cluster to ask
+        clusterService.addApplication( application );
+        assertTrue( clusterService.inCluster( appKey ) );
+        assertFalse( clusterService.inCluster( ApplicationKey.from( "com.example.otherapp" ) ) );
+
+        clusterService.removeApplication( application );
+        assertFalse( clusterService.inCluster( appKey ) );
+    }
+
+    @Test
+    void inCluster_localApplicationNotAskedOfTheCluster()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "com.example.myapp" );
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        clusterService.setClusteredClusterService( clusteredClusterService );
+
+        final Application application = mock( Application.class );
+        when( application.getKey() ).thenReturn( appKey );
+        clusterService.addApplication( application );
+
+        assertTrue( clusterService.inCluster( appKey ) );
+        verify( clusteredClusterService, never() ).inCluster( appKey );
+    }
+
+    @Test
+    void inCluster_delegatesToClusteredService()
+    {
+        final ClusterServiceImpl clusterService = new ClusterServiceImpl();
+        clusterService.setClusteredClusterService( clusteredClusterService );
+
+        final ApplicationKey appKey = ApplicationKey.from( "com.example.myapp" );
+
+        when( clusteredClusterService.inCluster( appKey ) ).thenReturn( false );
+        assertFalse( clusterService.inCluster( appKey ) );
+
+        when( clusteredClusterService.inCluster( appKey ) ).thenReturn( true );
+        assertTrue( clusterService.inCluster( appKey ) );
     }
 
     @Test

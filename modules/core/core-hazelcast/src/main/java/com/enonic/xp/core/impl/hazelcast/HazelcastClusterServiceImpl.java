@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -21,6 +21,7 @@ import com.enonic.xp.core.internal.Local;
 
 @Component
 @Local(false)
+@NullMarked
 public class HazelcastClusterServiceImpl
     implements ClusterService
 {
@@ -56,7 +57,26 @@ public class HazelcastClusterServiceImpl
     }
 
     @Override
-    public boolean isLeader( final @NonNull ApplicationKey applicationKey )
+    public boolean inCluster( final ApplicationKey applicationKey )
+    {
+        final ReplicatedMap<UUID, Map<String, String>> attributes = hazelcastInstance.getReplicatedMap( ClusterAttributesApplier.MAP_NAME );
+
+        final String appAttributeKey = ClusterAttributesApplier.APPLICATION_ATTRIBUTE_PREFIX + applicationKey;
+
+        for ( final Member member : hazelcastInstance.getCluster().getMembers() )
+        {
+            final Map<String, String> memberAttributes = attributes.get( member.getUuid() );
+            if ( memberAttributes != null && Boolean.TRUE.toString().equals( memberAttributes.get( appAttributeKey ) ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isLeader( final ApplicationKey applicationKey )
     {
         final UUID localMemberUuid = hazelcastInstance.getCluster().getLocalMember().getUuid();
 

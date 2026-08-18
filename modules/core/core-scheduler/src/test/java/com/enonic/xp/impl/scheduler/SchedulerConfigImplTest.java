@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,6 @@ import com.enonic.xp.security.PrincipalKey;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,9 +105,8 @@ class SchedulerConfigImplTest
 
         schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
 
-        final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
-        assertEquals( "[invalid] is invalid job property.", ex.getMessage() );
-
+        // the entry is left out rather than taken as a reason to ignore the rest of the file
+        assertThat( jobNames( schedulerConfig ) ).doesNotContain( "landing1" ).contains( "audit-log-cleanup" );
     }
 
     @Test
@@ -121,9 +120,38 @@ class SchedulerConfigImplTest
         properties.put( "init-job.landing1.config", "{'a':'b'}" );
 
         schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
-        final RuntimeException ex = assertThrows( RuntimeException.class, () -> schedulerConfig.jobs() );
 
-        assertThat( ex.getCause().getMessage() ).contains(
-            "Unexpected character (''' (code 39)): was expecting double-quote to start field name" );
+        assertThat( jobNames( schedulerConfig ) ).doesNotContain( "landing1" ).contains( "audit-log-cleanup" );
+    }
+
+    @Test
+    void reconfigured()
+    {
+        final Map<String, String> properties = new HashMap<>();
+        properties.put( "init-job.landing1.enabled", "true" );
+        properties.put( "init-job.landing1.descriptor", "com.enonic.app.features:landing" );
+        properties.put( "init-job.landing1.cron", "* * * * *" );
+        properties.put( "auditlog.enabled", "false" );
+
+        final SchedulerConfigImpl schedulerConfig = new SchedulerConfigImpl( properties, calendarService );
+
+        assertThat( jobNames( schedulerConfig ) ).contains( "landing1" ).doesNotContain( "landing2" );
+        assertFalse( schedulerConfig.auditlogEnabled() );
+
+        final Map<String, String> reconfigured = new HashMap<>();
+        reconfigured.put( "init-job.landing2.enabled", "true" );
+        reconfigured.put( "init-job.landing2.descriptor", "com.enonic.app.features:landing" );
+        reconfigured.put( "init-job.landing2.cron", "0 5 * * *" );
+
+        // applied in place, so what reads this sees the new values without being restarted
+        schedulerConfig.modify( reconfigured );
+
+        assertThat( jobNames( schedulerConfig ) ).contains( "landing2" ).doesNotContain( "landing1" );
+        assertTrue( schedulerConfig.auditlogEnabled() );
+    }
+
+    private static Set<String> jobNames( final SchedulerConfig config )
+    {
+        return config.jobs().stream().map( params -> params.getName().getValue() ).collect( Collectors.toSet() );
     }
 }

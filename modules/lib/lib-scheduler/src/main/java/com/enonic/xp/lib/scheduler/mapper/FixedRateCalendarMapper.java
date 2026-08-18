@@ -1,15 +1,15 @@
 package com.enonic.xp.lib.scheduler.mapper;
 
-import com.enonic.xp.scheduler.OneTimeCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 
-public class OneTimeCalendarMapper
+public class FixedRateCalendarMapper
     implements MapSerializable
 {
-    private final OneTimeCalendar calendar;
+    private final FixedRateCalendar calendar;
 
-    public OneTimeCalendarMapper( final OneTimeCalendar calendar )
+    public FixedRateCalendarMapper( final FixedRateCalendar calendar )
     {
         this.calendar = calendar;
     }
@@ -17,8 +17,7 @@ public class OneTimeCalendarMapper
     @Override
     public void serialize( final MapGenerator gen )
     {
-        gen.value( "value", calendar.getValue().toString() );
-        gen.value( "deleteAfterRun", calendar.isDeleteAfterRun() );
+        gen.value( "value", calendar.getDuration().toString() );
         gen.value( "type", calendar.getType() );
     }
 }

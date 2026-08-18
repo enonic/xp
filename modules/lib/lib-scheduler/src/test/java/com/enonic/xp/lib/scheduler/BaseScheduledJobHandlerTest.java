@@ -111,11 +111,12 @@ public abstract class BaseScheduledJobHandlerTest
 
     protected void mockOneTimeCalendar()
     {
-        Mockito.when( calendarService.oneTime( Mockito.isA( Instant.class ) ) ).thenAnswer( invocation -> {
+        Mockito.when( calendarService.oneTime( Mockito.isA( Instant.class ), Mockito.anyBoolean() ) ).thenAnswer( invocation -> {
             final OneTimeCalendar oneTime = Mockito.mock( OneTimeCalendar.class );
 
             Mockito.when( oneTime.getType() ).thenReturn( ScheduleCalendarType.ONE_TIME );
             Mockito.when( oneTime.getValue() ).thenReturn( invocation.getArgument( 0 ) );
+            Mockito.when( oneTime.isDeleteAfterRun() ).thenReturn( invocation.getArgument( 1 ) );
 
             return oneTime;
         } );
@@ -131,6 +132,19 @@ public abstract class BaseScheduledJobHandlerTest
             Mockito.when( cron.getTimeZone() ).thenReturn( invocation.getArgument( 1 ) );
 
             return cron;
+        } );
+    }
+
+    protected void mockFixedRateCalendar()
+    {
+        Mockito.when( calendarService.fixedRate( Mockito.isA( java.time.Duration.class ) ) ).thenAnswer( invocation -> {
+            final com.enonic.xp.scheduler.FixedRateCalendar fixedRate =
+                Mockito.mock( com.enonic.xp.scheduler.FixedRateCalendar.class );
+
+            Mockito.when( fixedRate.getType() ).thenReturn( ScheduleCalendarType.FIXED_RATE );
+            Mockito.when( fixedRate.getDuration() ).thenReturn( invocation.getArgument( 0 ) );
+
+            return fixedRate;
         } );
     }
 

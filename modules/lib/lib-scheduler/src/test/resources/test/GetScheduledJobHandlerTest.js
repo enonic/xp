@@ -26,6 +26,7 @@ var resultExpected = {
     'lastTaskId': 'task-id',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': false,
         'type': 'ONE_TIME'
     }
 };

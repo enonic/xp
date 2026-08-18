@@ -26,6 +26,20 @@ class CreateScheduledJobHandlerTest
     }
 
     @Test
+    void createEphemeralOneTimeJob()
+    {
+        mockOneTimeCalendar();
+        runFunction( "/test/CreateScheduledJobHandlerTest.js", "createEphemeralOneTimeJob" );
+    }
+
+    @Test
+    void createFixedRateJob()
+    {
+        mockFixedRateCalendar();
+        runFunction( "/test/CreateScheduledJobHandlerTest.js", "createFixedRateJob" );
+    }
+
+    @Test
     void createCronJob()
     {
         mockCronCalendar();

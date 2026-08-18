@@ -19,6 +19,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
@@ -29,11 +30,13 @@ import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
-@Component(configurationPid = "com.enonic.xp.scheduler", immediate = true)
+@Component(immediate = true)
 public class ScheduleAuditLogSupportImpl
     implements ScheduleAuditLogSupport
 {
     private static final String SOURCE_CORE_CONTENT = "com.enonic.xp.core-scheduler";
+
+    private final SchedulerConfig config;
 
     private final Executor executor;
 
@@ -44,9 +47,21 @@ public class ScheduleAuditLogSupportImpl
                                         @Reference(service = ScheduleAuditLogExecutor.class) final Executor executor,
                                         final @Reference AuditLogService auditLogService )
     {
-        this.executor = config.auditlogEnabled() ? executor : _ -> {
-        };
+        this.config = config;
+        this.executor = executor;
         this.auditLogService = auditLogService;
+    }
+
+    /**
+     * Whether to log is asked of the configuration each time rather than once at the start, so that
+     * turning audit logging off takes effect without restarting anything.
+     */
+    private void submit( final Runnable entry )
+    {
+        if ( config.auditlogEnabled() )
+        {
+            executor.execute( entry );
+        }
     }
 
     @Override
@@ -54,7 +69,7 @@ public class ScheduleAuditLogSupportImpl
     {
         final Context context = scheduleContext();
 
-        executor.execute( () -> doCreate( params, job, context ) );
+        submit( () -> doCreate( params, job, context ) );
     }
 
     private void doCreate( final CreateScheduledJobParams params, final ScheduledJob job, final Context rootContext )
@@ -74,7 +89,7 @@ public class ScheduleAuditLogSupportImpl
     {
         final Context context = scheduleContext();
 
-        executor.execute( () -> doUpdate( params, job, context ) );
+        submit( () -> doUpdate( params, job, context ) );
     }
 
     private void doUpdate( final ModifyScheduledJobParams params, final ScheduledJob job, final Context rootContext )
@@ -94,7 +109,7 @@ public class ScheduleAuditLogSupportImpl
     {
         final Context context = scheduleContext();
 
-        executor.execute( () -> doDelete( name, result, context ) );
+        submit( () -> doDelete( name, result, context ) );
     }
 
     private void doDelete( final ScheduledJobName name, final boolean result, final Context rootContext )
@@ -176,7 +191,14 @@ public class ScheduleAuditLogSupportImpl
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) calendar );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
+                calendarSet.setBoolean( ScheduledJobPropertyNames.CALENDAR_DELETE_AFTER_RUN, oneTimeCalendar.isDeleteAfterRun() );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
+                break;
+
+            case FIXED_RATE:
+                final FixedRateCalendar fixedRateCalendar = ( (FixedRateCalendar) calendar );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, fixedRateCalendar.getDuration().toString() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.FIXED_RATE.name() );
                 break;
 
             default:

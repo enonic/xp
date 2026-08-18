@@ -14,12 +14,14 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
+import com.enonic.xp.impl.scheduler.distributed.FixedRateCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
 import com.enonic.xp.scheduler.EditableScheduledJob;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
@@ -221,7 +223,14 @@ public class SchedulerSerializer
             case ONE_TIME:
                 final OneTimeCalendar oneTimeCalendar = ( (OneTimeCalendar) calendar );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, oneTimeCalendar.getValue().toString() );
+                calendarSet.setBoolean( ScheduledJobPropertyNames.CALENDAR_DELETE_AFTER_RUN, oneTimeCalendar.isDeleteAfterRun() );
                 calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.ONE_TIME.name() );
+                break;
+
+            case FIXED_RATE:
+                final FixedRateCalendar fixedRateCalendar = ( (FixedRateCalendar) calendar );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_VALUE, fixedRateCalendar.getDuration().toString() );
+                calendarSet.setString( ScheduledJobPropertyNames.CALENDAR_TYPE, ScheduleCalendarType.FIXED_RATE.name() );
                 break;
 
             default:
@@ -243,7 +252,13 @@ public class SchedulerSerializer
             case CRON:
                 return CronCalendarImpl.create().value( value ).timeZone( TimeZone.getTimeZone( timeZone ) ).build();
             case ONE_TIME:
-                return OneTimeCalendarImpl.create().value( Instant.parse( value ) ).build();
+                return OneTimeCalendarImpl.create()
+                    .value( Instant.parse( value ) )
+                    .deleteAfterRun(
+                        Boolean.TRUE.equals( data.getBoolean( ScheduledJobPropertyNames.CALENDAR_DELETE_AFTER_RUN ) ) )
+                    .build();
+            case FIXED_RATE:
+                return FixedRateCalendarImpl.create().duration( java.time.Duration.parse( value ) ).build();
             default:
                 throw new IllegalArgumentException( String.format( "can't parse [%s] calendar type.", type ) );
         }

@@ -78,6 +78,20 @@ class TaskServiceImplTest
     }
 
     @Test
+    void submitTask_carries_schedule_lastTaskId()
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );
+
+        com.enonic.xp.context.ContextBuilder.from( com.enonic.xp.context.ContextAccessor.current() )
+            .attribute( "schedule.lastTaskId", "prev-task" )
+            .build()
+            .runWith( () -> taskService.submitTask( SubmitTaskParams.create().descriptorKey( descriptorKey ).build() ) );
+
+        verify( taskManager ).submitTask( describedTaskCaptor.capture() );
+        assertEquals( "prev-task", describedTaskCaptor.getValue().getTaskContext().getScheduleLastTaskId() );
+    }
+
+    @Test
     void submitTask_DescriptorKey_offload_to_local()
     {
         final DescriptorKey descriptorKey = DescriptorKey.from( "module:my-admin-tool" );

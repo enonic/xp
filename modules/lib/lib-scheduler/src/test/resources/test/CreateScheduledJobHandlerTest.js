@@ -24,6 +24,7 @@ var createOneTimeJobExpected = {
     'modifiedTime': '2016-11-02T10:36:00Z',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': false,
         'type': 'ONE_TIME'
     }
 };
@@ -50,6 +51,32 @@ exports.createOneTimeJob = function () {
     });
 
     assert.assertJsonEquals(createOneTimeJobExpected, result);
+};
+
+var createFixedRateJobExpected = {
+    'name': 'myjob',
+    'descriptor': 'appKey:task',
+    'enabled': true,
+    'config': {},
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
+        'value': 'PT5M',
+        'type': 'FIXED_RATE'
+    }
+};
+
+exports.createFixedRateJob = function () {
+    var result = scheduler.create({
+        name: 'myjob',
+        descriptor: 'appKey:task',
+        enabled: true,
+        schedule: {type: 'FIXED_RATE', value: 'PT5M'}
+    });
+
+    assert.assertJsonEquals(createFixedRateJobExpected, result);
 };
 
 var createCronJobExpected = {
@@ -216,3 +243,30 @@ exports.createWithoutConfig = function () {
 
 };
 
+
+var createEphemeralOneTimeJobExpected = {
+    'name': 'myjob',
+    'descriptor': 'appKey:task',
+    'enabled': true,
+    'config': {},
+    'creator': 'user:system:creator',
+    'modifier': 'user:system:creator',
+    'createdTime': '2016-11-02T10:36:00Z',
+    'modifiedTime': '2016-11-02T10:36:00Z',
+    'schedule': {
+        'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': true,
+        'type': 'ONE_TIME'
+    }
+};
+
+exports.createEphemeralOneTimeJob = function () {
+    var result = scheduler.create({
+        name: 'myjob',
+        descriptor: 'appKey:task',
+        enabled: true,
+        schedule: {type: 'ONE_TIME', value: '2012-01-01T00:00:00.00Z', deleteAfterRun: true}
+    });
+
+    assert.assertJsonEquals(createEphemeralOneTimeJobExpected, result);
+};

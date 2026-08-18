@@ -1,9 +1,12 @@
 package com.enonic.xp.cluster.impl;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -12,6 +15,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.cluster.ClusterConfig;
 import com.enonic.xp.cluster.ClusterService;
@@ -20,6 +24,7 @@ import com.enonic.xp.core.internal.concurrent.DynamicReference;
 
 @Component
 @Local
+@NullMarked
 public class ClusterServiceImpl
     implements ClusterService
 {
@@ -27,7 +32,9 @@ public class ClusterServiceImpl
 
     private final DynamicReference<ClusterService> clusteredClusterServiceRef = new DynamicReference<>();
 
-    private volatile ClusterConfig clusterConfig;
+    private final Set<ApplicationKey> localApplications = ConcurrentHashMap.newKeySet();
+
+    private volatile @Nullable ClusterConfig clusterConfig;
 
     @Override
     public boolean isLeader()
@@ -41,7 +48,7 @@ public class ClusterServiceImpl
     }
 
     @Override
-    public boolean isLeader( final @NonNull ApplicationKey applicationKey )
+    public boolean isLeader( final ApplicationKey applicationKey )
     {
         final ClusterService clusterService = resolveClusterService();
         if ( clusterService == null )
@@ -51,7 +58,29 @@ public class ClusterServiceImpl
         return clusterService.isLeader( applicationKey );
     }
 
-    private ClusterService resolveClusterService()
+    @Override
+    public boolean inCluster( final ApplicationKey applicationKey )
+    {
+        if ( localApplications.contains( applicationKey ) )
+        {
+            return true;
+        }
+        final ClusterService clusterService = resolveClusterService();
+        return clusterService != null && clusterService.inCluster( applicationKey );
+    }
+
+    @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+    public void addApplication( final Application application )
+    {
+        localApplications.add( application.getKey() );
+    }
+
+    public void removeApplication( final Application application )
+    {
+        localApplications.remove( application.getKey() );
+    }
+
+    private @Nullable ClusterService resolveClusterService()
     {
         final ClusterService clusterService = clusteredClusterServiceRef.getNow( null );
         if ( clusterService != null )
@@ -99,6 +128,9 @@ public class ClusterServiceImpl
 
     public void unsetClusterConfig( final ClusterConfig clusterConfig )
     {
-        this.clusterConfig = null;
+        if ( this.clusterConfig == clusterConfig )
+        {
+            this.clusterConfig = null;
+        }
     }
 }

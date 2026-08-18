@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.scheduler.CronCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendarType;
 import com.enonic.xp.scheduler.ScheduledJob;
@@ -89,6 +91,27 @@ class SchedulerResourceTest
             }
         };
 
+        final FixedRateCalendar fixedRateCalendar = new FixedRateCalendar()
+        {
+            @Override
+            public Duration getDuration()
+            {
+                return Duration.ofMinutes( 5 );
+            }
+
+            @Override
+            public ScheduleCalendarType getType()
+            {
+                return ScheduleCalendarType.FIXED_RATE;
+            }
+
+            @Override
+            public Optional<Instant> nextExecution( final Instant instant )
+            {
+                return Optional.empty();
+            }
+        };
+
         final PropertyTree config = new PropertyTree();
         config.addString( "string", "value" );
 
@@ -119,7 +142,17 @@ class SchedulerResourceTest
             modifiedTime( Instant.parse( "2011-02-01T00:00:00.00Z" ) ).
             build();
 
-        Mockito.when( schedulerService.list() ).thenReturn( List.of( job1, job2 ) );
+        final ScheduledJob job3 = ScheduledJob.create().
+            name( ScheduledJobName.from( "test3" ) ).
+            descriptor( descriptor ).
+            calendar( fixedRateCalendar ).
+            creator( PrincipalKey.from( "user:system:creator" ) ).
+            modifier( PrincipalKey.from( "user:system:modifier" ) ).
+            createdTime( Instant.parse( "2010-01-01T00:00:00.00Z" ) ).
+            modifiedTime( Instant.parse( "2011-02-01T00:00:00.00Z" ) ).
+            build();
+
+        Mockito.when( schedulerService.list() ).thenReturn( List.of( job1, job2, job3 ) );
 
         final String result = request().path( "scheduler/list" ).
             get().

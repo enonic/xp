@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.scheduler;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -10,7 +11,10 @@ import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,33 +42,72 @@ public class SchedulerConfigImpl
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
+    private static final Logger LOG = LoggerFactory.getLogger( SchedulerConfigImpl.class );
+
     private final CalendarService calendarService;
 
-    private Configuration config;
+    private volatile Configuration config;
+
+    private volatile Set<CreateScheduledJobParams> jobs;
 
     @Activate
     public SchedulerConfigImpl( final Map<String, String> map, @Reference final CalendarService calendarService )
     {
         this.calendarService = calendarService;
+        apply( map );
+    }
 
-        this.config = ConfigBuilder.create().
-            load( getClass(), "default.properties" ).
-            addAll( map ).
-            build();
+    /**
+     * Reconfiguration is applied in place, so nothing that reads this is restarted by an edit. What
+     * reads it must therefore read it when it needs it rather than once at its own start - a job
+     * added to the configuration is picked up by the next tick, and audit logging can be turned off
+     * while jobs are running.
+     */
+    @Modified
+    public void modify( final Map<String, String> map )
+    {
+        apply( map );
+    }
 
-        this.config = new ConfigInterpolator().interpolate( this.config );
+    private void apply( final Map<String, String> map )
+    {
+        this.config = buildConfig( map );
+        // parsed here rather than on demand: the scheduler asks for the jobs every tick, and a
+        // description it cannot make sense of is a problem with the file, not with that tick
+        this.jobs = parseJobs();
+    }
+
+    private static Configuration buildConfig( final Map<String, String> map )
+    {
+        return new ConfigInterpolator().interpolate(
+            ConfigBuilder.create().load( SchedulerConfigImpl.class, "default.properties" ).addAll( map ).build() );
     }
 
     @Override
     public Set<CreateScheduledJobParams> jobs()
     {
+        return jobs;
+    }
+
+    private Set<CreateScheduledJobParams> parseJobs()
+    {
         final Configuration jobConfig = this.config.subConfig( JOB_PROPERTY_PREFIX );
 
-        final Set<ScheduledJobName> jobNames = parseNames( jobConfig );
-
-        return jobNames.stream().
-            map( name -> parseProperties( name, jobConfig.subConfig( name.getValue() + "." ) ) ).collect( Collectors.toSet() );
-
+        final Set<CreateScheduledJobParams> parsed = new HashSet<>();
+        for ( final ScheduledJobName name : parseNames( jobConfig ) )
+        {
+            try
+            {
+                parsed.add( parseProperties( name, jobConfig.subConfig( name.getValue() + "." ) ) );
+            }
+            catch ( Exception e )
+            {
+                // an entry that cannot be understood is left out with an explanation, rather than
+                // taken as a reason to ignore every other job described in the same file
+                LOG.error( "Invalid configuration of job [{}], it is ignored", name, e );
+            }
+        }
+        return Set.copyOf( parsed );
     }
 
     @Override

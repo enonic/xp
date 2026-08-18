@@ -1,14 +1,17 @@
 package com.enonic.xp.impl.scheduler;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.TimeZone;
 
 import org.osgi.service.component.annotations.Component;
 
 import com.enonic.xp.impl.scheduler.distributed.CronCalendarImpl;
+import com.enonic.xp.impl.scheduler.distributed.FixedRateCalendarImpl;
 import com.enonic.xp.impl.scheduler.distributed.OneTimeCalendarImpl;
 import com.enonic.xp.scheduler.CalendarService;
 import com.enonic.xp.scheduler.CronCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 
 @Component(immediate = true)
@@ -32,8 +35,23 @@ public class CalendarServiceImpl
     @Override
     public OneTimeCalendar oneTime( final Instant value )
     {
+        return oneTime( value, false );
+    }
+
+    @Override
+    public OneTimeCalendar oneTime( final Instant value, final boolean deleteAfterRun )
+    {
         return OneTimeCalendarImpl.create().
             value( value ).
+            deleteAfterRun( deleteAfterRun ).
+            build();
+    }
+
+    @Override
+    public FixedRateCalendar fixedRate( final Duration duration )
+    {
+        return FixedRateCalendarImpl.create().
+            duration( duration ).
             build();
     }
 }

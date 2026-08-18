@@ -1,5 +1,6 @@
 package com.enonic.xp.core.scheduler;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.TimeZone;
 
@@ -19,12 +20,10 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.scheduler.CalendarServiceImpl;
-import com.enonic.xp.impl.scheduler.LocalSystemScheduler;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogExecutorImpl;
 import com.enonic.xp.impl.scheduler.ScheduleAuditLogSupportImpl;
 import com.enonic.xp.impl.scheduler.SchedulerConfig;
-import com.enonic.xp.impl.scheduler.SchedulerExecutorService;
-import com.enonic.xp.impl.scheduler.SchedulerExecutorServiceImpl;
+import com.enonic.xp.impl.scheduler.SchedulingCoordinator;
 import com.enonic.xp.impl.scheduler.ScheduledJobPropertyNames;
 import com.enonic.xp.impl.scheduler.SchedulerRepoInitializer;
 import com.enonic.xp.impl.scheduler.SchedulerServiceImpl;
@@ -37,8 +36,11 @@ import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIdExistsException;
 import com.enonic.xp.node.NodeNotFoundException;
+import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.scheduler.CreateScheduledJobParams;
 import com.enonic.xp.scheduler.CronCalendar;
+import com.enonic.xp.scheduler.FixedRateCalendar;
 import com.enonic.xp.scheduler.ModifyScheduledJobParams;
 import com.enonic.xp.scheduler.OneTimeCalendar;
 import com.enonic.xp.scheduler.ScheduleCalendar;
@@ -99,15 +101,14 @@ class SchedulerServiceImplTest
         final AuditLogService auditLogService = Mockito.mock( AuditLogService.class );
 
         final SchedulerConfig schedulerConfig = Mockito.mock( SchedulerConfig.class );
-        Mockito.when( schedulerConfig.auditlogEnabled() ).thenReturn( Boolean.TRUE );
+        // asked per audit entry rather than once, so a test that does not change a job never asks
+        Mockito.lenient().when( schedulerConfig.auditlogEnabled() ).thenReturn( Boolean.TRUE );
 
         final ScheduleAuditLogSupportImpl auditLogSupport =
             new ScheduleAuditLogSupportImpl( schedulerConfig, new ScheduleAuditLogExecutorImpl(), auditLogService );
 
-        final SchedulerExecutorService schedulerExecutorService =
-            new SchedulerExecutorServiceImpl( new LocalSystemScheduler(), mock( ClusterConfig.class ) );
-
-        schedulerService = new SchedulerServiceImpl( nodeService, schedulerExecutorService, auditLogSupport );
+        schedulerService =
+            new SchedulerServiceImpl( nodeService, new SchedulingCoordinator( mock( ClusterConfig.class ), null ), auditLogSupport );
 
         adminContext().runWith( () -> SchedulerRepoInitializer.create()
             .setIndexService( indexService )
@@ -414,6 +415,101 @@ class SchedulerServiceImplTest
             return nodeService.getVersion( node.id(), node.getNodeVersionId() ).getAttributes();
         } );
         assertNull( modifiedAttributes );
+    }
+
+    @Test
+    void createFixedRateJob()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.fixedRate( Duration.ofMinutes( 5 ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .enabled( true )
+                                                                    .build() ) );
+
+        final ScheduledJob job = adminContext().callWith( () -> schedulerService.get( name ) );
+
+        assertEquals( ScheduleCalendarType.FIXED_RATE, job.getCalendar().getType() );
+        assertEquals( Duration.ofMinutes( 5 ), ( (FixedRateCalendar) job.getCalendar() ).getDuration() );
+    }
+
+    @Test
+    void deleteAfterRunPersistedOnCalendar()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.oneTime(
+                                                                        Instant.parse( "2021-02-25T10:44:33.170079900Z" ), true ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .enabled( true )
+                                                                    .build() ) );
+
+        assertTrue(
+            ( (OneTimeCalendar) adminContext().callWith( () -> schedulerService.get( name ) ).getCalendar() ).isDeleteAfterRun() );
+
+        adminContext().callWith( () -> schedulerService.modify( ModifyScheduledJobParams.create()
+                                                                   .name( name )
+                                                                   .editor( edit -> edit.calendar = calendarService.oneTime(
+                                                                       Instant.parse( "2021-02-25T10:44:33.170079900Z" ), false ) )
+                                                                   .build() ) );
+
+        assertFalse(
+            ( (OneTimeCalendar) adminContext().callWith( () -> schedulerService.get( name ) ).getCalendar() ).isDeleteAfterRun() );
+    }
+
+    @Test
+    void oneTimeRunStateSurvivesNodeVersionChanges()
+    {
+        final ScheduledJobName name = ScheduledJobName.from( "test" );
+
+        adminContext().callWith( () -> schedulerService.create( CreateScheduledJobParams.create()
+                                                                    .name( name )
+                                                                    .descriptor(
+                                                                        DescriptorKey.from( ApplicationKey.from( "com.enonic.app.test" ),
+                                                                                            "task1" ) )
+                                                                    .calendar( calendarService.oneTime(
+                                                                        Instant.parse( "2021-02-25T10:44:33Z" ) ) )
+                                                                    .config( new PropertyTree() )
+                                                                    .build() ) );
+
+        final GetNodeVersionsParams versionsParams = GetNodeVersionsParams.create().nodeId( NodeId.from( name.getValue() ) ).build();
+        final long versionsBeforeUpdate = adminContext().callWith( () -> nodeService.getVersions( versionsParams ).getTotalHits() );
+
+        final TaskId lastTaskId = TaskId.from( "task-id" );
+        final Instant lastRun = Instant.parse( "2021-02-25T10:44:34Z" );
+
+        adminContext().runWith( () -> UpdateLastRunCommand.create()
+            .name( name )
+            .lastTaskId( lastTaskId )
+            .lastRun( lastRun )
+            .nodeService( nodeService )
+            .build()
+            .execute() );
+
+        // a one-time job's run state is a tombstone in node data: it creates one node version...
+        assertEquals( versionsBeforeUpdate + 1,
+                      adminContext().callWith( () -> nodeService.getVersions( versionsParams ).getTotalHits() ) );
+
+        // ...and survives further node versions created outside the scheduler API
+        adminContext().callWith( () -> nodeService.update( UpdateNodeParams.create()
+                                                               .id( NodeId.from( name.getValue() ) )
+                                                               .editor( toBeEdited -> toBeEdited.data.setString( "unrelated", "value" ) )
+                                                               .refresh( RefreshMode.ALL )
+                                                               .build() ) );
+
+        final ScheduledJob job = adminContext().callWith( () -> schedulerService.get( name ) );
+        assertEquals( lastRun, job.getLastRun() );
+        assertEquals( lastTaskId, job.getLastTaskId() );
     }
 
     @Test

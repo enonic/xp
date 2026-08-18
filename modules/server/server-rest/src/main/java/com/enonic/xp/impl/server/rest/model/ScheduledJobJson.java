@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.enonic.xp.data.PropertyArrayJson;
 import com.enonic.xp.data.PropertyTreeJson;
-import com.enonic.xp.scheduler.ScheduleCalendar;
 import com.enonic.xp.scheduler.ScheduledJob;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.task.TaskId;
@@ -17,7 +16,7 @@ public class ScheduledJobJson
 
     private final String description;
 
-    private final ScheduleCalendar calendar;
+    private final CalendarJson calendar;
 
     private final boolean enabled;
 
@@ -44,7 +43,7 @@ public class ScheduledJobJson
         this.name = job.getName().getValue();
         this.description = job.getDescription();
         this.descriptor = job.getDescriptor().toString();
-        this.calendar = job.getCalendar();
+        this.calendar = new CalendarJson( job.getCalendar() );
         this.enabled = job.isEnabled();
         this.config = PropertyTreeJson.toJson( job.getConfig() );
         this.user = Optional.ofNullable( job.getUser() ).map( PrincipalKey::toString ).orElse( null );
@@ -66,7 +65,7 @@ public class ScheduledJobJson
         return description;
     }
 
-    public ScheduleCalendar getCalendar()
+    public CalendarJson getCalendar()
     {
         return calendar;
     }

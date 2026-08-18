@@ -86,6 +86,7 @@ var modifyJobWithNullResultExpected = {
     'modifiedTime': '2021-02-25T10:44:33.170Z',
     'schedule': {
         'value': '2012-01-01T00:00:00Z',
+        'deleteAfterRun': false,
         'type': 'ONE_TIME'
     }
 };

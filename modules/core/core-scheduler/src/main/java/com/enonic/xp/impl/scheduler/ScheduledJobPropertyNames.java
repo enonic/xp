@@ -38,6 +38,8 @@ public class ScheduledJobPropertyNames
 
     public static final String CALENDAR_TYPE = "type";
 
+    public static final String CALENDAR_DELETE_AFTER_RUN = "deleteAfterRun";
+
     private ScheduledJobPropertyNames()
     {
 

@@ -60,6 +60,22 @@ class TaskRunnableTest
     }
 
     @Test
+    void scheduleLastTaskIdExposedToTaskContext()
+    {
+        when( describedTask.getTaskContext() ).thenReturn( TaskContext.create().setScheduleLastTaskId( "prev-task" ).build() );
+
+        final java.util.List<Object> seen = new java.util.ArrayList<>();
+        org.mockito.Mockito.doAnswer( invocation -> {
+            seen.add( com.enonic.xp.context.ContextAccessor.current().getAttribute( "schedule.lastTaskId" ) );
+            return null;
+        } ).when( describedTask ).run( progressReporter );
+
+        new TaskRunnable( describedTask, progressReporter ).run();
+
+        assertEquals( java.util.List.of( "prev-task" ), seen );
+    }
+
+    @Test
     void runRecordsAnonymousUserAndFailure()
     {
         // no auth info in the task context: the trace must fall back to the anonymous principal
