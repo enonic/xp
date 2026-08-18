@@ -107,7 +107,8 @@ public final class ListNodesParams
          * Without a batch size the whole listing is returned at once, so a caller expecting many entries is advised to set one and
          * consume the listing batch by batch.
          *
-         * @param batchSize the most entries a single call returns; a positive number.
+         * @param batchSize the most entries a single call returns; a positive number, or {@code 0}, the default, for the whole listing
+         * at once.
          */
         public Builder batchSize( final int batchSize )
         {

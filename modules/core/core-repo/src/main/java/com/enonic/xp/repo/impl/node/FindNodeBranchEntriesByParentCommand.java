@@ -1,5 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
+import com.google.common.collect.Iterables;
+
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
@@ -108,9 +110,7 @@ final class FindNodeBranchEntriesByParentCommand
             NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query.build(), context.getRepositoryId() ) );
 
         final String nextCursor =
-            batchSize > 0 && entries.getSize() == batchSize ? entries.stream().reduce( ( first, last ) -> last ).orElseThrow()
-                .getNodePath()
-                .toString() : null;
+            batchSize > 0 && entries.getSize() == batchSize ? Iterables.getLast( entries ).getNodePath().toString() : null;
 
         return new Batch( filter( entries, context ), nextCursor );
     }
