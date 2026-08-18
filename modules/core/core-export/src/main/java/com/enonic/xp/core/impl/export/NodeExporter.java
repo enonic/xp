@@ -1,9 +1,10 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.stream.Stream;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,12 @@ import static java.util.Objects.requireNonNull;
 public class NodeExporter
 {
     private static final String LINE_SEPARATOR = System.lineSeparator();
+
+    /**
+     * How many entries one listing batch carries. The most an unscrolled query may ask the index for, so a listing round trip is as
+     * large as it can be. Unrelated to {@link Builder#batchSize(int)}, which sizes the node reads.
+     */
+    private static final int LIST_BATCH_SIZE = 10_000;
 
     /**
      * The order a manually ordered parent gives its children: by the value an editor assigned, highest first, and by modification time
@@ -125,17 +132,36 @@ public class NodeExporter
     private void doExportNodes( final Node rootNode )
     {
         // enumerated from storage, so an export covers the subtree the repository holds rather than the one the search index has caught
-        // up with; the entries arrive ordered by path, and the listing excludes the node the export was asked for
-        final ListNodesResult descendants =
-            nodeService.list( ListNodesParams.create().parentPath( rootNode.path() ).recursive( true ).build() );
+        // up with; the entries arrive ordered by path, and the listing excludes the node the export was asked for.
+        // The listing is consumed in batches and only the ids are kept - an entry weighs a whole path where an id is a few dozen
+        // bytes - which also keeps the count the progress listener is owed exact, where the index could only offer a count that ignores
+        // what the caller is permitted to read.
+        final List<NodeId> nodeIds = new ArrayList<>();
+        nodeIds.add( rootNode.id() );
+
+        String cursor = null;
+        do
+        {
+            final ListNodesResult batch = nodeService.list( ListNodesParams.create()
+                                                                .parentPath( rootNode.path() )
+                                                                .recursive( true )
+                                                                .batchSize( LIST_BATCH_SIZE )
+                                                                .cursor( cursor )
+                                                                .build() );
+            for ( final NodeListEntry entry : batch.getEntries() )
+            {
+                nodeIds.add( entry.nodeId() );
+            }
+            cursor = batch.getCursor();
+        }
+        while ( cursor != null );
 
         if ( nodeExportListener != null )
         {
-            nodeExportListener.nodeResolved( descendants.getSize() + 1 );
+            nodeExportListener.nodeResolved( nodeIds.size() );
         }
 
-        final Iterator<NodeId> iterator =
-            Stream.concat( Stream.of( rootNode.id() ), descendants.getEntries().stream().map( NodeListEntry::nodeId ) ).iterator();
+        final Iterator<NodeId> iterator = nodeIds.iterator();
 
         while ( iterator.hasNext() )
         {

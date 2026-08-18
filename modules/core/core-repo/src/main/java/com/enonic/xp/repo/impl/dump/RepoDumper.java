@@ -32,6 +32,7 @@ import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersion;
@@ -52,6 +53,12 @@ import static java.util.Objects.requireNonNullElse;
 public class RepoDumper
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
+
+    /**
+     * How many entries one listing batch carries. The most an unscrolled query may ask the index for, so a listing round trip is as
+     * large as it can be.
+     */
+    private static final int LIST_BATCH_SIZE = 10_000;
 
     private final RepositoryId repositoryId;
 
@@ -124,19 +131,35 @@ public class RepoDumper
             final BranchDumpResult.Builder branchDumpResult = branchResults.get( branch );
             try
             {
-                // enumerated from storage: a dump answers for what the repository holds, not for what the search index has caught up with
-                final ListNodesResult children =
-                    this.nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).recursive( true ).build() );
+                // enumerated from storage: a dump answers for what the repository holds, not for what the search index has caught up
+                // with. The listing is consumed in batches and only the ids are kept - an entry weighs a whole path where an id is a
+                // few dozen bytes - so the branch never holds more than a batch of entries besides the ids it dumps anyway.
+                long branchNodeCount = 0;
+                String cursor = null;
+                do
+                {
+                    final ListNodesResult batch = this.nodeService.list( ListNodesParams.create()
+                                                                             .parentPath( NodePath.ROOT )
+                                                                             .recursive( true )
+                                                                             .batchSize( LIST_BATCH_SIZE )
+                                                                             .cursor( cursor )
+                                                                             .build() );
+                    for ( final NodeListEntry entry : batch.getEntries() )
+                    {
+                        if ( nodeIds == null || nodeIds.contains( entry.nodeId() ) )
+                        {
+                            nodesToDump.add( entry.nodeId() );
+                            branchNodeCount++;
+                        }
+                    }
+                    cursor = batch.getCursor();
+                }
+                while ( cursor != null );
 
-                final NodeIds branchNodes = nodeIds != null
-                    ? children.getNodeIds().stream().filter( nodeIds::contains ).collect( NodeIds.collector() )
-                    : children.getNodeIds();
-
-                this.listener.dumpingBranch( repositoryId, branch, branchNodes.getSize() + 1 );
+                this.listener.dumpingBranch( repositoryId, branch, branchNodeCount + 1 );
                 LOG.info( "Visiting repository [{}], branch [{}]", repositoryId, branch );
 
                 nodesToDump.add( NodeId.ROOT );
-                branchNodes.forEach( nodesToDump::add );
             }
             catch ( Exception e )
             {
