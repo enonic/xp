@@ -1,3 +1,7 @@
-gradle.sharedServices.registerIfAbsent( "integration", BuildService ) {
+abstract class IntegrationBuildService implements BuildService<org.gradle.api.services.BuildServiceParameters.None>
+{
+}
+
+gradle.sharedServices.registerIfAbsent( "integration", IntegrationBuildService ) {
     maxParallelUsages = 2
 }

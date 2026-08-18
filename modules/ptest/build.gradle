@@ -1,3 +1,7 @@
-gradle.sharedServices.registerIfAbsent( "performance", BuildService ) {
+abstract class PerformanceBuildService implements BuildService<org.gradle.api.services.BuildServiceParameters.None>
+{
+}
+
+gradle.sharedServices.registerIfAbsent( "performance", PerformanceBuildService ) {
     maxParallelUsages = 1
 }
