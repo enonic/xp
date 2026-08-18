@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.audit;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -21,11 +23,14 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
-import com.enonic.xp.node.NodeHits;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -134,11 +139,9 @@ class AuditLogServiceImplTest
     @Test
     void cleanUpOneEmpty()
     {
-        when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
-
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
+        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create().build() );
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
@@ -157,12 +160,8 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        final FindNodesByQueryResult.Builder queryResult = FindNodesByQueryResult.create().totalHits( 3 );
-
-        createHits( 3 ).forEach( queryResult::addNodeHit );
-
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( queryResult.build() )
-            .thenReturn( FindNodesByQueryResult.create().build() );
+        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn(
+            createBatch( 3, Instant.now().minusSeconds( 60 ), null ) );
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
@@ -181,15 +180,9 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        final FindNodesByQueryResult.Builder queryResult1 = FindNodesByQueryResult.create().totalHits( 10500 );
-        createHits( 10000 ).forEach( queryResult1::addNodeHit );
-
-        final FindNodesByQueryResult.Builder queryResult2 = FindNodesByQueryResult.create().totalHits( 10500 );
-        createHits( 500 ).forEach( queryResult2::addNodeHit );
-
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( queryResult1.build() )
-            .thenReturn( queryResult2.build() )
-            .thenReturn( FindNodesByQueryResult.create().build() );
+        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn(
+                createBatch( 10000, Instant.now().minusSeconds( 60 ), "/node-10000" ) )
+            .thenReturn( createBatch( 500, Instant.now().minusSeconds( 60 ), null ) );
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
@@ -201,14 +194,36 @@ class AuditLogServiceImplTest
         verify( listener, times( 1 ) ).finished();
     }
 
-    private NodeHits createHits( final int number )
+    @Test
+    void cleanUpKeepsRecordsNewerThanThreshold()
     {
-        final NodeHits.Builder hits = NodeHits.create();
+        when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
+
+        when( config.ageThreshold() ).thenReturn( "PT1s" );
+
+        final ListNodesResult batch = ListNodesResult.create()
+            .addEntry( new NodeListEntry( NodeId.from( "old-1" ), new NodePath( "/old-1" ), Instant.now().minusSeconds( 60 ) ) )
+            .addEntry( new NodeListEntry( NodeId.from( "new-1" ), new NodePath( "/new-1" ), Instant.now().plusSeconds( 60 ) ) )
+            .addEntry( new NodeListEntry( NodeId.from( "old-2" ), new NodePath( "/old-2" ), Instant.now().minusSeconds( 60 ) ) )
+            .build();
+        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn( batch );
+
+        final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
+
+        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
+
+        assertEquals( 2, result.getDeleted() );
+        verify( listener, times( 2 ) ).processed();
+    }
+
+    private ListNodesResult createBatch( final int number, final Instant timestamp, final String cursor )
+    {
+        final ListNodesResult.Builder batch = ListNodesResult.create().cursor( cursor );
         for ( int i = 1; i <= number; i++ )
         {
-            hits.add( NodeHit.create().nodeId( NodeId.from( "node-id-" + i ) ).build() );
+            batch.addEntry( new NodeListEntry( NodeId.from( "node-id-" + i ), new NodePath( "/node-" + i ), timestamp ) );
         }
-        return hits.build();
+        return batch.build();
     }
 
     private void assertLog( AuditLog log )

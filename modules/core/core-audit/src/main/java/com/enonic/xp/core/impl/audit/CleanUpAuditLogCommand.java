@@ -7,17 +7,12 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogResult;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.DeleteNodeParams;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeHit;
-import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodeQuery;
+import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.filter.RangeFilter;
-import com.enonic.xp.query.filter.ValueFilter;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
@@ -52,59 +47,55 @@ public class CleanUpAuditLogCommand
         return AuditLogContext.createContext().callWith( this::doCleanUp );
     }
 
+    /**
+     * Enumerates the audit log from storage in batches and deletes every record older than the age threshold. The repository holds
+     * nothing but audit log records, every record is written once and never modified, and the cursor only moves forward over ground the
+     * deletions leave behind — so one storage refresh up front is the only refresh the whole clean-up needs, where a search would have
+     * had to be refreshed again after every batch to not answer with the nodes it had just deleted.
+     * <p>
+     * A record is aged by its node timestamp, the moment it was written.
+     */
     private CleanUpAuditLogResult doCleanUp()
     {
         final CleanUpAuditLogResult.Builder result = CleanUpAuditLogResult.create();
 
-        final NodeQuery query = createQuery();
+        nodeService.refresh( RefreshMode.STORAGE );
 
-        nodeService.refresh( RefreshMode.SEARCH );
-        FindNodesByQueryResult nodesToDelete = nodeService.findByQuery( query );
+        boolean started = false;
+        String cursor = null;
 
-        boolean empty = nodesToDelete.getNodeHits().isEmpty();
-
-        if ( empty )
+        do
         {
-            return CleanUpAuditLogResult.create().build();
-        }
+            final ListNodesResult batch = nodeService.list(
+                ListNodesParams.create().parentPath( NodePath.ROOT ).recursive( true ).batchSize( BATCH_SIZE ).cursor( cursor ).build() );
 
-        listener.start( BATCH_SIZE );
-
-        while ( !empty )
-        {
-            for ( NodeHit nodeHit : nodesToDelete.getNodeHits() )
+            for ( final NodeListEntry entry : batch.getEntries() )
             {
-                result.deleted(
-                    nodeService.delete( DeleteNodeParams.create().nodeId( nodeHit.getNodeId() ).build() ).getNodeIds().getSize() );
+                if ( entry.timestamp().isBefore( until ) )
+                {
+                    if ( !started )
+                    {
+                        listener.start( BATCH_SIZE );
+                        started = true;
+                    }
 
-                listener.processed();
+                    result.deleted(
+                        nodeService.delete( DeleteNodeParams.create().nodeId( entry.nodeId() ).build() ).getNodeIds().getSize() );
+
+                    listener.processed();
+                }
             }
-            nodeService.refresh( RefreshMode.SEARCH );
-            nodesToDelete = nodeService.findByQuery( query );
 
-            empty = nodesToDelete.getNodeHits().isEmpty();
+            cursor = batch.getCursor();
         }
+        while ( cursor != null );
 
-        listener.finished();
+        if ( started )
+        {
+            listener.finished();
+        }
 
         return result.build();
-    }
-
-    private NodeQuery createQuery()
-    {
-        final NodeQuery.Builder builder = NodeQuery.create()
-            .addQueryFilter( ValueFilter.create()
-                                 .fieldName( NodeIndexPath.NODE_TYPE.toString() )
-                                 .addValue( ValueFactory.newString( AuditLogConstants.NODE_TYPE.toString() ) )
-                                 .build() );
-
-        final RangeFilter timeToFilter =
-            RangeFilter.create().fieldName( AuditLogConstants.TIME.toString() ).to( ValueFactory.newDateTime( until ) ).build();
-        builder.addQueryFilter( timeToFilter );
-
-        builder.addOrderBy( FieldOrderExpr.create( AuditLogConstants.TIME, OrderExpr.Direction.ASC ) ).size( BATCH_SIZE );
-
-        return builder.build();
     }
 
     public static Builder create()
