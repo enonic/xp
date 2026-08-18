@@ -8,8 +8,9 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Result of {@link NodeService#list(ListNodesParams)}, holding every listed node the caller is permitted to read, ordered by path.
- * Where the listing is consumed in batches, an instance is one batch, and {@link #getCursor()} says whether and where it continues.
+ * Result of {@link NodeService#list(ListNodesParams)}, holding every listed node the caller is permitted to read — ordered by path when
+ * the listing is unbatched. Where the listing is consumed in batches, an instance is one batch whose order carries no meaning, and
+ * {@link #getCursor()} says whether and where it continues.
  *
  * @since 8.1.0
  */

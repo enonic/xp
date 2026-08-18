@@ -62,10 +62,12 @@ public interface NodeService
      * <p>
      * A listing expected to hold many nodes should be consumed in batches: set {@link ListNodesParams.Builder#batchSize(int)} and repeat
      * the call with the {@link ListNodesResult#getCursor() cursor} of each batch until a batch answers with none, instead of holding the
-     * whole listing at once. The sequence of batches observes each entry at most once, also when nodes are written or deleted between
-     * batches, although entries a concurrent write places behind the cursor are not observed.
+     * whole listing at once. The sequence of batches observes each entry at most once — also when nodes are written, deleted or moved
+     * between batches, since the position of an entry in a batched listing does not depend on its path — although entries a concurrent
+     * write places behind the cursor are not observed.
      * <p>
-     * Filtering and ordering are not supported. Use a query where either is required.
+     * An unbatched listing is ordered by path; a batched listing arrives in an order that carries no meaning. Filtering and ordering are
+     * otherwise not supported — use a query where either is required.
      *
      * @since 8.1.0
      */

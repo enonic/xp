@@ -91,7 +91,7 @@ public final class ListNodesParams
         }
 
         /**
-         * Lists every descendant of the parent rather than the direct children only. Entries are ordered by path in either case.
+         * Lists every descendant of the parent rather than the direct children only.
          */
         public Builder recursive( final boolean recursive )
         {
@@ -105,7 +105,8 @@ public final class ListNodesParams
          * next call.
          * <p>
          * Without a batch size the whole listing is returned at once, so a caller expecting many entries is advised to set one and
-         * consume the listing batch by batch.
+         * consume the listing batch by batch. A batched listing arrives in an order that carries no meaning, and in return a node moved
+         * within the listing while it is consumed is still observed exactly once.
          *
          * @param batchSize the most entries a single call returns; a positive number, or {@code 0}, the default, for the whole listing
          * at once.

@@ -132,7 +132,7 @@ public class NodeExporter
     private void doExportNodes( final Node rootNode )
     {
         // enumerated from storage, so an export covers the subtree the repository holds rather than the one the search index has caught
-        // up with; the entries arrive ordered by path, and the listing excludes the node the export was asked for.
+        // up with; the listing excludes the node the export was asked for.
         // The listing is consumed in batches and only the ids are kept - an entry weighs a whole path where an id is a few dozen
         // bytes - which also keeps the count the progress listener is owed exact, where the index could only offer a count that ignores
         // what the caller is permitted to read.

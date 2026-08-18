@@ -13,7 +13,9 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
@@ -113,10 +115,10 @@ class NodeServiceImplTest_list
     @Test
     void batches_add_up_to_the_whole_listing()
     {
+        // a batched listing scans by node id, and the test helper derives each id from the name, so the expected order is by name
         final Node parent = createNode( NodePath.ROOT, "parent" );
         final Node childA = createNode( parent.path(), "a" );
-        // a mixed-case name, so a cursor taken from it only continues the listing when compared the way the index compares paths
-        final Node childB = createNode( CreateNodeParams.create().name( "B-Mixed-Case" ).parent( parent.path() ).build() );
+        final Node childB = createNode( parent.path(), "b" );
         final Node childC = createNode( parent.path(), "c" );
         final Node childD = createNode( parent.path(), "d" );
         final Node childE = createNode( parent.path(), "e" );
@@ -141,8 +143,8 @@ class NodeServiceImplTest_list
     @Test
     void an_empty_batch_still_continues_the_listing()
     {
-        // a parent whose first children hide whole subtrees: a non-recursive listing discards the deeper entries after the scan,
-        // so a small batch may come back with no entries at all while the listing is far from finished
+        // a non-recursive listing discards the deeper entries after the scan, so a small batch may come back with no entries at all
+        // while the listing is far from finished; the grandchild ids sort after the child ids here, so the tail batches hold nothing
         final Node parent = createNode( NodePath.ROOT, "parent" );
         final Node childA = createNode( parent.path(), "a" );
         for ( int i = 1; i <= 5; i++ )
@@ -170,6 +172,37 @@ class NodeServiceImplTest_list
 
         assertThat( collected ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
         assertTrue( emptyBatches > 0, "expected the grandchild-only batches to come back empty" );
+    }
+
+    @Test
+    void a_move_between_batches_neither_hides_nor_repeats_an_entry()
+    {
+        final Node parent = createNode( NodePath.ROOT, "parent" );
+        final Node childA = createNode( parent.path(), "a" );
+        final Node childB = createNode( parent.path(), "b" );
+        final Node childC = createNode( parent.path(), "c" );
+        final Node childD = createNode( parent.path(), "d" );
+        final Node childE = createNode( parent.path(), "e" );
+        nodeService.refresh( RefreshMode.STORAGE );
+
+        final ListNodesParams.Builder params = ListNodesParams.create().parentPath( parent.path() ).recursive( true ).batchSize( 2 );
+
+        final ListNodesResult first = nodeService.list( params.build() );
+        assertThat( first.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
+
+        // moving a not-yet-listed node deeper into the subtree changes its path but not its position in the scan, so the continuation
+        // still observes it exactly once - under its new path
+        nodeService.move( MoveNodeParams.create().nodeId( childD.id() ).newParentPath( childA.path() ).build() );
+        nodeService.refresh( RefreshMode.STORAGE );
+
+        final ListNodesResult second = nodeService.list( params.cursor( first.getCursor() ).build() );
+        assertThat( second.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childC.id(), childD.id() );
+        assertThat( second.getEntries() ).extracting( NodeListEntry::nodePath )
+            .contains( new NodePath( childA.path(), childD.name() ) );
+
+        final ListNodesResult third = nodeService.list( params.cursor( second.getCursor() ).build() );
+        assertThat( third.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childE.id() );
+        assertNull( third.getCursor() );
     }
 
     @Test
@@ -211,7 +244,9 @@ class NodeServiceImplTest_list
     {
         final Node parent = createNode( NodePath.ROOT, "parent" );
         final Node first = createNode( parent.path(), "a-visible" );
+        // the id is what places an entry in a batched scan, so it is set explicitly to put the hidden entry between the visible ones
         createNode( CreateNodeParams.create()
+                        .setNodeId( NodeId.from( "b-hidden" ) )
                         .name( "b-hidden" )
                         .parent( parent.path() )
                         .permissions( denyReadForPrincipal( TEST_DEFAULT_USER.getKey() ) )
