@@ -2,11 +2,8 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
@@ -37,6 +34,12 @@ import static java.util.Objects.requireNonNullElse;
 public class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
 {
+    /**
+     * The stride of the subtree walk: how many nodes are resolved ahead of being applied, bounding both the silent stretch before
+     * progress moves and the versions held in memory at once.
+     */
+    private static final int BATCH_SIZE = 1_000;
+
     private final ApplyNodePermissionsParams params;
 
     private final ApplyPermissionsResult.Builder results;
@@ -82,78 +85,92 @@ public class ApplyNodePermissionsCommand
 
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.READ, persistedNode );
 
-        final List<Map<Branch, NodeVersion>> versionsToApply = findVersionsToApply( persistedNode );
+        final AccessControlList permissions =
+            compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
+                                   params.getRemovePermissions() );
 
-        if ( listener != NoopApplyNodePermissionsListener.INSTANCE )
+        int total = 0;
+
+        if ( ApplyPermissionsScope.SINGLE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
         {
-            final int total = versionsToApply.stream().mapToInt( Map::size ).sum();
-            listener.resolved( total );
-            listener.setTotal( total );
+            total = applyBatch( List.of( params.getNodeId() ), total, permissions );
         }
 
-        doApply( versionsToApply,
-                 compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
-                                        params.getRemovePermissions() ) );
+        if ( ApplyPermissionsScope.SUBTREE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
+        {
+            String cursor = null;
+            do
+            {
+                // the walk never revisits scanned ground, so one storage refresh up front is enough
+                final FindNodeBranchEntriesByParentCommand.Batch batch = FindNodeBranchEntriesByParentCommand.create( this )
+                    .parentPath( persistedNode.path() )
+                    .requiredPermission( Permission.READ )
+                    .batchSize( BATCH_SIZE )
+                    .cursor( cursor )
+                    .refreshStorage( cursor == null )
+                    .build()
+                    .executeBatch();
+
+                total = applyBatch( batch.entries().stream().map( NodeBranchEntry::getNodeId ).toList(), total, permissions );
+
+                cursor = batch.cursor();
+            }
+            while ( cursor != null );
+        }
 
         refresh( RefreshMode.STORAGE );
 
         return results.build();
     }
 
-    private List<Map<Branch, NodeVersion>> findVersionsToApply( final Node persistedNode )
+    /**
+     * Resolves the active versions of one stride of nodes, reports the grown total, and applies the permissions right away, so that
+     * progress moves after each stride rather than after the whole subtree has been resolved. Permissions are read and authorized
+     * from the reference (context) branch, but applied equally on all specified branches, preserving the caller-supplied branch
+     * order, which determines the version origin.
+     */
+    private int applyBatch( final List<NodeId> nodeIds, final int totalSoFar, final AccessControlList permissions )
     {
-        final List<Map<Branch, NodeVersion>> result = new ArrayList<>();
+        final List<Map<Branch, NodeVersion>> versionsToApply = new ArrayList<>( nodeIds.size() );
 
-        if ( ApplyPermissionsScope.SINGLE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
+        int total = totalSoFar;
+        for ( final NodeId nodeId : nodeIds )
         {
-            result.add( getActiveNodes( params.getNodeId() ) );
+            final Map<Branch, NodeVersion> activeNodes = getActiveNodes( nodeId );
+            versionsToApply.add( activeNodes );
+            total += activeNodes.size();
         }
 
-        if ( ApplyPermissionsScope.SUBTREE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
+        if ( total > totalSoFar )
         {
-            FindNodeBranchEntriesByParentCommand.create( this )
-                .parentPath( persistedNode.path() )
-                .requiredPermission( Permission.READ )
-                .build()
-                .execute()
-                .stream()
-                .map( NodeBranchEntry::getNodeId )
-                .map( this::getActiveNodes )
-                .forEach( result::add );
+            listener.resolved( total );
+            listener.setTotal( total );
         }
 
-        return result;
-    }
-
-    private void doApply( List<Map<Branch, NodeVersion>> versionsToApply, final AccessControlList permissions )
-    {
-        // permissions are read/authorized from the reference (context) branch, but applied equally on all specified branches,
-        // preserving the caller-supplied branch order (which determines the version origin)
         final Branch referenceBranch = ContextAccessor.current().getBranch();
 
-        final Set<NodeId> deniedNodes = new HashSet<>();
         for ( final Map<Branch, NodeVersion> versionMap : versionsToApply )
         {
             final NodeVersion referenceVersion = versionMap.get( referenceBranch );
-            if ( referenceVersion != null && !allowedOnReferenceBranch( referenceVersion, referenceBranch ) )
+            final boolean denied = referenceVersion != null && !allowedOnReferenceBranch( referenceVersion, referenceBranch );
+
+            for ( final Branch branch : branches )
             {
-                deniedNodes.add( referenceVersion.getNodeId() );
+                final NodeVersion version = versionMap.get( branch );
+                if ( version != null )
+                {
+                    doApplyOnNode( version, branch, denied, permissions );
+                }
             }
         }
 
-        for ( Branch branch : branches )
-        {
-            versionsToApply.stream()
-                .map( versionMap -> versionMap.get( branch ) )
-                .filter( Objects::nonNull )
-                .forEach( node -> doApplyOnNode( node, branch, deniedNodes, permissions ) );
-        }
+        return total;
     }
 
-    private void doApplyOnNode( final NodeVersion nodeVersion, final Branch branch, final Set<NodeId> deniedNodes,
+    private void doApplyOnNode( final NodeVersion nodeVersion, final Branch branch, final boolean denied,
                                 final AccessControlList permissions )
     {
-        if ( deniedNodes.contains( nodeVersion.getNodeId() ) )
+        if ( denied )
         {
             listener.notEnoughRights( 1 );
             results.addResult( nodeVersion.getNodeId(), branch, null, null );
