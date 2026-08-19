@@ -28,6 +28,7 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
 import com.enonic.xp.repo.impl.search.result.SearchHit;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -108,16 +109,21 @@ final class FindNodeBranchEntriesByParentCommand
                 RangeFilter.create().fieldName( BranchIndexPath.NODE_ID.getPath() ).gt( ValueFactory.newString( cursor ) ).build() );
         }
 
-        final NodeBranchEntries entries =
-            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query.build(), context.getRepositoryId() ) );
+        final SearchResult result = this.nodeSearchService.query( query.build(), context.getRepositoryId() );
+
+        final NodeBranchEntries entries = NodeBranchQueryResultFactory.create( result );
 
         final String nextCursor =
             batchSize > 0 && entries.getSize() == batchSize ? Iterables.getLast( entries ).getNodeId().toString() : null;
 
-        return new Batch( filter( entries, context ), nextCursor );
+        return new Batch( filter( entries, context ), nextCursor, result.getTotalHits() );
     }
 
-    record Batch(NodeBranchEntries entries, String cursor)
+    /**
+     * totalHits counts every raw entry the scan still had in front of it when the batch was cut - the batch itself included, the
+     * depth and permission filtering not - so a walker can project the size of the whole walk from its first batch.
+     */
+    record Batch(NodeBranchEntries entries, String cursor, long totalHits)
     {
     }
 

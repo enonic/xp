@@ -89,15 +89,21 @@ public class ApplyNodePermissionsCommand
             compileNewPermissions( persistedNode.getPermissions(), params.getPermissions(), params.getAddPermissions(),
                                    params.getRemovePermissions() );
 
-        int total = 0;
+        int versions = 0;
+        int reported = 0;
 
         if ( ApplyPermissionsScope.SINGLE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
         {
-            total = applyBatch( List.of( params.getNodeId() ), total, permissions );
+            final List<Map<Branch, NodeVersion>> rootVersions = resolveBatch( List.of( params.getNodeId() ) );
+            versions += countVersions( rootVersions );
+            reported = report( versions, reported );
+            applyBatch( rootVersions, permissions );
         }
 
         if ( ApplyPermissionsScope.SUBTREE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
         {
+            int subtreeNodes = 0;
+            int subtreeVersions = 0;
             String cursor = null;
             do
             {
@@ -111,7 +117,21 @@ public class ApplyNodePermissionsCommand
                     .build()
                     .executeBatch();
 
-                total = applyBatch( batch.entries().stream().map( NodeBranchEntry::getNodeId ).toList(), total, permissions );
+                final List<NodeId> nodeIds = batch.entries().stream().map( NodeBranchEntry::getNodeId ).toList();
+                final List<Map<Branch, NodeVersion>> versionsToApply = resolveBatch( nodeIds );
+
+                final int batchVersions = countVersions( versionsToApply );
+                subtreeNodes += nodeIds.size();
+                subtreeVersions += batchVersions;
+                versions += batchVersions;
+
+                // what the scan still has ahead is projected to weigh as much per node as what it has resolved so far, so the
+                // reported total settles near its final value on the first stride instead of growing by one stride at a time
+                final long ahead = Math.max( 0, batch.totalHits() - BATCH_SIZE );
+                final long projectedAhead = subtreeNodes == 0 ? ahead : ahead * subtreeVersions / subtreeNodes;
+                reported = report( (int) Math.min( Integer.MAX_VALUE, versions + projectedAhead ), reported );
+
+                applyBatch( versionsToApply, permissions );
 
                 cursor = batch.cursor();
             }
@@ -123,30 +143,38 @@ public class ApplyNodePermissionsCommand
         return results.build();
     }
 
-    /**
-     * Resolves the active versions of one stride of nodes, reports the grown total, and applies the permissions right away, so that
-     * progress moves after each stride rather than after the whole subtree has been resolved. Permissions are read and authorized
-     * from the reference (context) branch, but applied equally on all specified branches, preserving the caller-supplied branch
-     * order, which determines the version origin.
-     */
-    private int applyBatch( final List<NodeId> nodeIds, final int totalSoFar, final AccessControlList permissions )
+    private int report( final int total, final int reported )
     {
-        final List<Map<Branch, NodeVersion>> versionsToApply = new ArrayList<>( nodeIds.size() );
-
-        int total = totalSoFar;
-        for ( final NodeId nodeId : nodeIds )
-        {
-            final Map<Branch, NodeVersion> activeNodes = getActiveNodes( nodeId );
-            versionsToApply.add( activeNodes );
-            total += activeNodes.size();
-        }
-
-        if ( total > totalSoFar )
+        if ( total != reported )
         {
             listener.resolved( total );
             listener.setTotal( total );
         }
+        return total;
+    }
 
+    private static int countVersions( final List<Map<Branch, NodeVersion>> versionMaps )
+    {
+        return versionMaps.stream().mapToInt( Map::size ).sum();
+    }
+
+    private List<Map<Branch, NodeVersion>> resolveBatch( final List<NodeId> nodeIds )
+    {
+        final List<Map<Branch, NodeVersion>> versionsToApply = new ArrayList<>( nodeIds.size() );
+        for ( final NodeId nodeId : nodeIds )
+        {
+            versionsToApply.add( getActiveNodes( nodeId ) );
+        }
+        return versionsToApply;
+    }
+
+    /**
+     * Applies the permissions of one resolved stride right away, so that progress moves after each stride rather than after the
+     * whole subtree has been resolved. Permissions are read and authorized from the reference (context) branch, but applied equally
+     * on all specified branches, preserving the caller-supplied branch order, which determines the version origin.
+     */
+    private void applyBatch( final List<Map<Branch, NodeVersion>> versionsToApply, final AccessControlList permissions )
+    {
         final Branch referenceBranch = ContextAccessor.current().getBranch();
 
         for ( final Map<Branch, NodeVersion> versionMap : versionsToApply )
@@ -163,8 +191,6 @@ public class ApplyNodePermissionsCommand
                 }
             }
         }
-
-        return total;
     }
 
     private void doApplyOnNode( final NodeVersion nodeVersion, final Branch branch, final boolean denied,
