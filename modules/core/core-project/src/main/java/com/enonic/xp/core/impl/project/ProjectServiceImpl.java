@@ -541,6 +541,12 @@ public class ProjectServiceImpl
         }
 
         @Override
+        public void resolved( final int count )
+        {
+            delegate.resolved( count );
+        }
+
+        @Override
         public void permissionsApplied( final int count )
         {
             delegate.permissionsApplied( count );

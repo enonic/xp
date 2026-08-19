@@ -86,7 +86,9 @@ public class ApplyNodePermissionsCommand
 
         if ( listener != NoopApplyNodePermissionsListener.INSTANCE )
         {
-            listener.setTotal( versionsToApply.stream().mapToInt( Map::size ).sum() );
+            final int total = versionsToApply.stream().mapToInt( Map::size ).sum();
+            listener.resolved( total );
+            listener.setTotal( total );
         }
 
         doApply( versionsToApply,
@@ -299,11 +301,6 @@ public class ApplyNodePermissionsCommand
         implements ApplyNodePermissionsListener
     {
         INSTANCE;
-
-        @Override
-        public void setTotal( final int count )
-        {
-        }
 
         @Override
         public void permissionsApplied( final int count )

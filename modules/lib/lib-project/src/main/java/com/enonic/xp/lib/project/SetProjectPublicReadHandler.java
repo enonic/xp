@@ -50,10 +50,13 @@ public final class SetProjectPublicReadHandler
         }
 
         @Override
-        public void setTotal( final int count )
+        public void resolved( final int count )
         {
-            this.total = count;
-            this.reporter.progress( ProgressReportParams.create().current( applied ).total( count ).build() );
+            if ( count >= 0 )
+            {
+                this.total = count;
+                this.reporter.progress( ProgressReportParams.create().current( applied ).total( count ).build() );
+            }
         }
 
         @Override
