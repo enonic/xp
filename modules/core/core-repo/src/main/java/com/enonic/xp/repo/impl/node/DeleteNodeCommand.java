@@ -80,6 +80,8 @@ public class DeleteNodeCommand
 
         final NodeBranchEntries nodeBranchEntries = NodeBranchEntries.create().addAll( childrenBranchEntries ).add( node ).build();
 
+        this.deleteNodeListener.resolved( nodeBranchEntries.getSize() );
+
         if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
         {
             for ( NodeBranchEntry branchEntry : nodeBranchEntries )

@@ -136,6 +136,8 @@ public class MoveNodeCommand
         final List<IdAndPath> subTree =
             FindNodeBranchEntriesByParentCommand.create( this ).parentPath( existingNode.path() ).build().executeIdAndPaths();
 
+        moveListener.resolved( subTree.size() + 1 );
+
         doMoveNode( newParentPath, newNodeName, params.getNodeId() );
 
         // entries are ordered by path, so a node is always moved before any of its children

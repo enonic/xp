@@ -133,6 +133,12 @@ final class DuplicateContentCommand
         }
 
         @Override
+        public void resolved( final int count )
+        {
+            delegate.resolved( count );
+        }
+
+        @Override
         public void nodesReferencesUpdated( final int count )
         {
             delegate.contentReferencesUpdated( count );

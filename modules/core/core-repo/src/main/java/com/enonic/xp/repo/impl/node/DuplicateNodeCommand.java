@@ -67,6 +67,9 @@ public final class DuplicateNodeCommand
     public DuplicateNodeResult execute()
     {
         final Node existingNode = getExistingNode();
+
+        listener.resolved( 1 );
+
         final Node duplicatedNode = doDuplicateNode( existingNode );
 
         result.node( duplicatedNode );
@@ -183,6 +186,9 @@ public final class DuplicateNodeCommand
         final List<IdAndPath> subTree =
             FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().executeIdAndPaths();
 
+        int total = subTree.size() + 1;
+        listener.resolved( total );
+
         final NodeIds subTreeIds = subTree.stream().map( IdAndPath::nodeId ).collect( NodeIds.collector() );
 
         // nodes not readable by the caller are not returned, and neither they nor their children are duplicated
@@ -201,6 +207,8 @@ public final class DuplicateNodeCommand
 
             if ( node == null || parent == null )
             {
+                // each entry of a skipped branch is skipped individually, so the walk shrinks by exactly one per pass
+                listener.resolved( --total );
                 continue;
             }
 
