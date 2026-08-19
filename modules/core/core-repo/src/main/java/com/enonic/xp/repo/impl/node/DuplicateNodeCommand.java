@@ -29,9 +29,8 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.NodeBranchEntries;
-import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repo.impl.node.FindNodeBranchEntriesByParentCommand.IdAndPath;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
@@ -181,10 +180,10 @@ public final class DuplicateNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        final NodeBranchEntries subTree =
-            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().execute();
+        final List<IdAndPath> subTree =
+            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().executeIdAndPaths();
 
-        final NodeIds subTreeIds = subTree.stream().map( NodeBranchEntry::getNodeId ).collect( NodeIds.collector() );
+        final NodeIds subTreeIds = subTree.stream().map( IdAndPath::nodeId ).collect( NodeIds.collector() );
 
         // nodes not readable by the caller are not returned, and neither they nor their children are duplicated
         final Map<NodeId, Node> originalNodes = this.nodeStorageService.get( subTreeIds, internalContext )
@@ -195,10 +194,10 @@ public final class DuplicateNodeCommand
         final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
         duplicatedParents.put( originalParent.path(), new DuplicatedParent( originalParent, newParent ) );
 
-        for ( final NodeBranchEntry entry : subTree )
+        for ( final IdAndPath entry : subTree )
         {
-            final Node node = originalNodes.get( entry.getNodeId() );
-            final DuplicatedParent parent = duplicatedParents.get( entry.getNodePath().getParentPath() );
+            final Node node = originalNodes.get( entry.nodeId() );
+            final DuplicatedParent parent = duplicatedParents.get( entry.nodePath().getParentPath() );
 
             if ( node == null || parent == null )
             {

@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.enonic.xp.context.Context;
@@ -20,8 +21,7 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.NodeBranchEntries;
-import com.enonic.xp.repo.impl.NodeBranchEntry;
+import com.enonic.xp.repo.impl.node.FindNodeBranchEntriesByParentCommand.IdAndPath;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
@@ -133,8 +133,8 @@ public class MoveNodeCommand
 
     private void doMoveNodeTree( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
     {
-        final NodeBranchEntries subTree =
-            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( existingNode.path() ).build().execute();
+        final List<IdAndPath> subTree =
+            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( existingNode.path() ).build().executeIdAndPaths();
 
         doMoveNode( newParentPath, newNodeName, params.getNodeId() );
 
@@ -142,15 +142,15 @@ public class MoveNodeCommand
         final Map<NodePath, NodePath> newPaths = new HashMap<>();
         newPaths.put( existingNode.path(), new NodePath( newParentPath, newNodeName ) );
 
-        for ( final NodeBranchEntry entry : subTree )
+        for ( final IdAndPath entry : subTree )
         {
-            final NodePath newChildParentPath = requireNonNull( newPaths.get( entry.getNodePath().getParentPath() ),
-                                                                () -> "Parent of [" + entry.getNodePath() + "] was not moved yet" );
-            final NodeName childName = NodeName.from( entry.getNodePath().getName() );
+            final NodePath newChildParentPath = requireNonNull( newPaths.get( entry.nodePath().getParentPath() ),
+                                                                () -> "Parent of [" + entry.nodePath() + "] was not moved yet" );
+            final NodeName childName = NodeName.from( entry.nodePath().getName() );
 
-            newPaths.put( entry.getNodePath(), new NodePath( newChildParentPath, childName ) );
+            newPaths.put( entry.nodePath(), new NodePath( newChildParentPath, childName ) );
 
-            doMoveNode( newChildParentPath, childName, entry.getNodeId() );
+            doMoveNode( newChildParentPath, childName, entry.nodeId() );
         }
     }
 
