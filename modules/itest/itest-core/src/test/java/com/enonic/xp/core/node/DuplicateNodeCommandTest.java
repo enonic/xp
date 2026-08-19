@@ -33,6 +33,9 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
@@ -99,6 +102,31 @@ class DuplicateNodeCommandTest
         assertEquals( "my-child", result.getChildren().first().name().toString() );
 
         verify( duplicateNodeListener, times( 2 ) ).nodesDuplicated( anyInt() );
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 1 );
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 2 );
+    }
+
+    @Test
+    void unreadable_child_shrinks_resolved_total()
+    {
+        final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
+        createNode( CreateNodeParams.create().parent( node.path() ).name( "readable-child" ).build() );
+        ctxDefaultAdmin().callWith( () -> createNode( CreateNodeParams.create()
+                                                          .parent( node.path() )
+                                                          .name( "hidden-child" )
+                                                          .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                                  .principal( PrincipalKey.from(
+                                                                                                      "user:system:someone-else" ) )
+                                                                                                  .allowAll()
+                                                                                                  .build() ) )
+                                                          .build() ) );
+
+        duplicateNode( node );
+
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 1 );
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 3 );
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 2 );
+        verify( duplicateNodeListener, times( 2 ) ).nodesDuplicated( 1 );
     }
 
     @Test

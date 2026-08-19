@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPublishInfo;
 import com.enonic.xp.content.Mixin;
 import com.enonic.xp.content.Mixins;
+import com.enonic.xp.content.MoveContentListener;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.PushContentParams;
@@ -52,9 +53,12 @@ class ContentServiceImplTest_move
         createContent( child1.getPath(), "child2_1" );
         final Content site2 = createContent( ContentPath.ROOT, "site2" );
 
+        final TestListener listener = new TestListener();
+
         final MoveContentParams params = MoveContentParams.create().
             contentId( child1.getId() ).
             parentContentPath( site2.getPath() ).
+            moveContentListener( listener ).
             build();
         final MoveContentsResult result = this.contentService.move( params );
 
@@ -62,6 +66,7 @@ class ContentServiceImplTest_move
 
         assertEquals( 1, result.getMovedContents().getSize() );
         assertEquals( movedContent.getParentPath(), site2.getPath() );
+        assertEquals( 3, listener.moved );
 
     }
 
@@ -197,5 +202,17 @@ class ContentServiceImplTest_move
         set.addString( "applicationKey", "com.enonic.app.test" );
         set.addSet( "config" );
         return set;
+    }
+
+    private static final class TestListener
+        implements MoveContentListener
+    {
+        int moved;
+
+        @Override
+        public void contentMoved( final int count )
+        {
+            moved += count;
+        }
     }
 }

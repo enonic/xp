@@ -1,5 +1,8 @@
 package com.enonic.xp.core.node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -7,6 +10,7 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
@@ -194,11 +198,37 @@ class MoveNodeCommandTest
         final Node newParent = createNode(
             CreateNodeParams.create().name( "newParent" ).parent( NodePath.ROOT ).setNodeId( NodeId.from( "new-parent" ) ).build() );
 
+        final class Recorder
+            implements MoveNodeListener
+        {
+            final List<Integer> resolvedTotals = new ArrayList<>();
+
+            int moved;
+
+            @Override
+            public void nodesMoved( final int count )
+            {
+                moved += count;
+            }
+
+            @Override
+            public void resolved( final int count )
+            {
+                resolvedTotals.add( count );
+            }
+        }
+        final Recorder recorder = new Recorder();
+
         final Node movedNode = MoveNodeCommand.create()
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.storageService )
             .searchService( this.searchService )
-            .params( MoveNodeParams.create().nodeId( child1.id() ).newParentPath( newParent.path() ).refresh( RefreshMode.ALL ).build() )
+            .params( MoveNodeParams.create()
+                         .nodeId( child1.id() )
+                         .newParentPath( newParent.path() )
+                         .refresh( RefreshMode.ALL )
+                         .moveListener( recorder )
+                         .build() )
             .build()
             .execute()
             .getMovedNodes()
@@ -225,6 +255,9 @@ class MoveNodeCommandTest
         assertEquals( movedChild1.path(), movedChild1_1.parentPath() );
 
         assertEquals( child1.getPermissions(), movedNode.getPermissions() );
+
+        assertEquals( List.of( 4 ), recorder.resolvedTotals );
+        assertEquals( 4, recorder.moved );
     }
 
     @Test
