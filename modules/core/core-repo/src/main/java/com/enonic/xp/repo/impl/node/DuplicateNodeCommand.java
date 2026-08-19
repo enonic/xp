@@ -30,7 +30,6 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
-import com.enonic.xp.repo.impl.node.FindNodeBranchEntriesByParentCommand.IdAndPath;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
 
@@ -183,8 +182,14 @@ public final class DuplicateNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        final List<IdAndPath> subTree =
-            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().executeIdAndPaths();
+        // the walk reads nothing of an entry but its id and path, so the full entries are let go as soon as they are repacked
+        final List<IdAndPath> subTree = FindNodeBranchEntriesByParentCommand.create( this )
+            .parentPath( originalParent.path() )
+            .build()
+            .execute()
+            .stream()
+            .map( entry -> new IdAndPath( entry.getNodeId(), entry.getNodePath() ) )
+            .toList();
 
         int total = subTree.size() + 1;
         listener.resolved( total );
@@ -244,6 +249,10 @@ public final class DuplicateNodeCommand
     }
 
     private record DuplicatedParent(Node original, Node copy)
+    {
+    }
+
+    private record IdAndPath(NodeId nodeId, NodePath nodePath)
     {
     }
 

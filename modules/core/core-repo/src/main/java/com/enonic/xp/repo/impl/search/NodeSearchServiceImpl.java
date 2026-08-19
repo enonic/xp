@@ -12,6 +12,7 @@ import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.SearchSource;
 import com.enonic.xp.repo.impl.SingleRepoStorageSource;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
+import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.commit.storage.CommitIndexPath;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.repo.impl.storage.StaticStorageType;
@@ -25,6 +26,7 @@ public class NodeSearchServiceImpl
 {
     private static final ReturnFields VERSION_RETURN_FIELDS = ReturnFields.from( VersionIndexPath.entryFields() );
 
+    private static final ReturnFields BRANCH_RETURN_FIELDS = ReturnFields.from( BranchIndexPath.entryFields() );
 
     private static final ReturnFields COMMIT_RETURN_FIELDS = ReturnFields.from( CommitIndexPath.entryFields() );
 
@@ -71,7 +73,7 @@ public class NodeSearchServiceImpl
     {
         final SearchRequest searchRequest = SearchRequest.create()
             .searchSource( SingleRepoStorageSource.create( repositoryId, StaticStorageType.BRANCH ) )
-            .returnFields( nodeBranchQuery.getReturnFields() )
+            .returnFields( BRANCH_RETURN_FIELDS )
             .query( nodeBranchQuery )
             .build();
 

@@ -21,7 +21,6 @@ import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.repo.impl.InternalContext;
-import com.enonic.xp.repo.impl.node.FindNodeBranchEntriesByParentCommand.IdAndPath;
 import com.enonic.xp.repo.impl.storage.NodeVersionData;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
@@ -133,8 +132,14 @@ public class MoveNodeCommand
 
     private void doMoveNodeTree( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
     {
-        final List<IdAndPath> subTree =
-            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( existingNode.path() ).build().executeIdAndPaths();
+        // the walk reads nothing of an entry but its id and path, so the full entries are let go as soon as they are repacked
+        final List<IdAndPath> subTree = FindNodeBranchEntriesByParentCommand.create( this )
+            .parentPath( existingNode.path() )
+            .build()
+            .execute()
+            .stream()
+            .map( entry -> new IdAndPath( entry.getNodeId(), entry.getNodePath() ) )
+            .toList();
 
         moveListener.resolved( subTree.size() + 1 );
 
@@ -235,4 +240,8 @@ public class MoveNodeCommand
         }
     }
 
+
+    private record IdAndPath(NodeId nodeId, NodePath nodePath)
+    {
+    }
 }

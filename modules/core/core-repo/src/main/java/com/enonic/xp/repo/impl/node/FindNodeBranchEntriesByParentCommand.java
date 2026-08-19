@@ -1,13 +1,9 @@
 package com.enonic.xp.repo.impl.node;
 
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.ValueFactory;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.CompareExpr;
@@ -22,12 +18,10 @@ import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
-import com.enonic.xp.repo.impl.ReturnFields;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
-import com.enonic.xp.repo.impl.search.result.SearchHit;
 import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -98,7 +92,12 @@ final class FindNodeBranchEntriesByParentCommand
             refresh( RefreshMode.STORAGE );
         }
 
-        final NodeBranchQuery.Builder query = createSubtreeQuery( context )
+        final NodeBranchQuery.Builder query = NodeBranchQuery.create()
+            .query( QueryExpr.from( createBelowParentExpr() ) )
+            .addQueryFilter( ValueFilter.create()
+                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
+                                 .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
+                                 .build() )
             .addOrderBy( FieldOrderExpr.create( batchSize > 0 ? BranchIndexPath.NODE_ID : BranchIndexPath.PATH,
                                                 batchSize > 0 ? OrderExpr.Direction.ASC : pathOrder ) )
             .size( batchSize > 0 ? batchSize : NodeSearchService.GET_ALL_SIZE_FLAG );
@@ -125,55 +124,6 @@ final class FindNodeBranchEntriesByParentCommand
      */
     record Batch(NodeBranchEntries entries, String cursor, long totalHits)
     {
-    }
-
-    /**
-     * The subtree as bare id-and-path pairs, ordered by path, for a walker that reads nothing else of an entry - fetching neither
-     * version ids, blob keys nor timestamps. A permission requirement is not supported here, since deciding one costs exactly the
-     * access control key this projection does not fetch.
-     */
-    List<IdAndPath> executeIdAndPaths()
-    {
-        if ( requiredPermission != null )
-        {
-            throw new IllegalStateException( "a permission filter expects full entries" );
-        }
-
-        final InternalContext context = InternalContext.from( ContextAccessor.current() );
-
-        if ( refreshStorage )
-        {
-            refresh( RefreshMode.STORAGE );
-        }
-
-        final NodeBranchQuery query = createSubtreeQuery( context )
-            .addOrderBy( FieldOrderExpr.create( BranchIndexPath.PATH, pathOrder ) )
-            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-            .returnFields( ReturnFields.from( BranchIndexPath.NODE_ID, BranchIndexPath.PATH ) )
-            .build();
-
-        return this.nodeSearchService.query( query, context.getRepositoryId() )
-            .getHits()
-            .stream()
-            .map( SearchHit::getReturnValues )
-            .map( values -> new IdAndPath( NodeId.from( values.getStringValue( BranchIndexPath.NODE_ID ) ),
-                                           new NodePath( values.getStringValue( BranchIndexPath.PATH ) ) ) )
-            .filter( entry -> recursive || parentPath.equals( entry.nodePath().getParentPath() ) )
-            .collect( ImmutableList.toImmutableList() );
-    }
-
-    record IdAndPath(NodeId nodeId, NodePath nodePath)
-    {
-    }
-
-    private NodeBranchQuery.Builder createSubtreeQuery( final InternalContext context )
-    {
-        return NodeBranchQuery.create()
-            .query( QueryExpr.from( createBelowParentExpr() ) )
-            .addQueryFilter( ValueFilter.create()
-                                 .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
-                                 .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
-                                 .build() );
     }
 
     /**
