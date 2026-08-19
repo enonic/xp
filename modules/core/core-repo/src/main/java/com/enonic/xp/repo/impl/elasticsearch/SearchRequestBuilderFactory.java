@@ -79,11 +79,15 @@ public class SearchRequestBuilderFactory
             .setFrom( query.getFrom() )
             .setPreference( requireNonNullElse( query.getSearchPreference(), SearchPreference.LOCAL ).getName() );
 
-        // hits are read from _source only through the requested return fields, so a search that requests none
-        // does not need the source loaded and shipped at all
+        // hits are read from _source only through the requested return fields, so a search that requests none does not need the
+        // source loaded and shipped at all, and a search that requests some has the source filtered down to them before shipping
         if ( query.getReturnFields().isEmpty() )
         {
             searchRequestBuilder.setFetchSource( false );
+        }
+        else
+        {
+            searchRequestBuilder.setFetchSource( query.getReturnFields().getReturnFieldNames(), null );
         }
 
         if ( query.getHighlight() != null )
