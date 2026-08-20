@@ -21,6 +21,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
@@ -94,7 +95,9 @@ import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -395,7 +398,8 @@ public class NodeServiceImpl
         verifyContext();
         traceListing( params.getParentPath() );
 
-        final NodeBranchEntries entries = findBranchEntriesByParent( params.getParentPath() ).build().execute();
+        final NodeBranchEntries entries =
+            findBranchEntriesByParent( params.getParentPath() ).requiredPermission( Permission.READ ).build().execute();
 
         final ListNodesResult.Builder result = ListNodesResult.create();
         for ( final NodeBranchEntry entry : entries )
@@ -415,6 +419,9 @@ public class NodeServiceImpl
     public EnumerateNodesResult enumerate( final EnumerateNodesParams params )
     {
         verifyContext();
+        // the enumeration serves system walks and answers with everything the branch holds, so the caller is checked up front
+        // instead of the entries being filtered one by one
+        requireAdminRole();
         traceListing( params.getParentPath() );
 
         final FindNodeBranchEntriesByParentCommand.Batch batch =
@@ -437,6 +444,15 @@ public class NodeServiceImpl
         return enumerateResult;
     }
 
+    private static void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
     private static void traceListing( final NodePath parentPath )
     {
         Tracer.withCurrent( trace -> {
@@ -450,7 +466,6 @@ public class NodeServiceImpl
     {
         return FindNodeBranchEntriesByParentCommand.create()
             .parentPath( parentPath )
-            .requiredPermission( Permission.READ )
             // a read does not refresh: writes decide when they become visible, and every write through the content API already does
             .refreshStorage( false )
             .indexServiceInternal( this.indexServiceInternal )

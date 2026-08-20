@@ -69,15 +69,17 @@ public interface NodeService
     ListNodesResult list( ListNodesParams params );
 
     /**
-     * Enumerates the entire subtree of a node in batches.
+     * Enumerates the entire subtree of a node in batches. Requires the administrator role.
      * <p>
-     * Sees exactly what {@link #list(ListNodesParams)} sees — every node the caller is permitted to read, served from storage, without a
-     * refresh of its own — but hands it out one bounded batch at a time: repeat the call with the
-     * {@link EnumerateNodesResult#getCursor() cursor} of each batch until a batch answers with none. The sequence of batches observes
-     * each entry at most once — also when nodes are written, deleted or moved between batches, since the position of an entry in the
-     * enumeration does not depend on its path — although entries a concurrent write places behind the cursor are not observed. In return
-     * the entries arrive in an order that carries no meaning.
+     * The enumeration serves system walks — dump, export, clean-up, synchronization — so it answers with every node the subtree holds,
+     * unfiltered, and a caller without the administrator role is refused up front rather than filtered for. Like
+     * {@link #list(ListNodesParams)} it is served from storage and performs no refresh of its own, but it hands the subtree out one
+     * bounded batch at a time: repeat the call with the {@link EnumerateNodesResult#getCursor() cursor} of each batch until a batch
+     * answers with none. The sequence of batches observes each entry at most once — also when nodes are written, deleted or moved
+     * between batches, since the position of an entry in the enumeration does not depend on its path — although entries a concurrent
+     * write places behind the cursor are not observed. In return the entries arrive in an order that carries no meaning.
      *
+     * @throws com.enonic.xp.exception.ForbiddenAccessException where the caller lacks the administrator role.
      * @since 8.1.0
      */
     EnumerateNodesResult enumerate( EnumerateNodesParams params );

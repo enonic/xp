@@ -319,8 +319,8 @@ public class LayersContentService
     }
 
     /**
-     * One batch of an enumeration and the position it stopped at. The contract is the listing's own: continue until the cursor is
-     * null, and a batch may be empty while the enumeration is not finished.
+     * One batch of an enumeration and the position it stopped at. The contract is the enumeration's own: continue until the cursor
+     * is null.
      */
     public record ContentIdsBatch(ContentIds ids, String cursor)
     {

@@ -8,8 +8,8 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableList;
 
 /**
- * One batch of a {@link NodeService#enumerate(EnumerateNodesParams)} enumeration: the entries the caller is permitted to read, in an
- * order that carries no meaning, and the position where the enumeration continues.
+ * One batch of a {@link NodeService#enumerate(EnumerateNodesParams)} enumeration: its entries, in an order that carries no meaning,
+ * and the position where the enumeration continues.
  *
  * @since 8.1.0
  */
@@ -33,8 +33,7 @@ public final class EnumerateNodesResult
     }
 
     /**
-     * The entries of this batch. A batch may hold no entries while the enumeration is not finished: entries the caller is not permitted
-     * to read still advance the cursor.
+     * The entries of this batch.
      */
     public List<NodeEnumerationEntry> getEntries()
     {

@@ -1,14 +1,13 @@
 package com.enonic.xp.core.node;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.EnumerateNodesParams;
@@ -17,11 +16,9 @@ import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeEnumerationEntry;
-import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.node.NodeHelper;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
@@ -30,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class NodeServiceImplTest_enumerate
@@ -41,9 +39,9 @@ class NodeServiceImplTest_enumerate
         this.createDefaultRootNode();
     }
 
-    private static AccessControlList denyReadForPrincipal( final PrincipalKey principalKey )
+    private EnumerateNodesResult enumerate( final EnumerateNodesParams params )
     {
-        return AccessControlList.of( AccessControlEntry.create().deny( Permission.READ ).principal( principalKey ).build() );
+        return NodeHelper.runAsAdmin( () -> nodeService.enumerate( params ) );
     }
 
     @Test
@@ -59,61 +57,55 @@ class NodeServiceImplTest_enumerate
         nodeService.refresh( RefreshMode.STORAGE );
 
         final EnumerateNodesResult first =
-            nodeService.enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build() );
+            enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build() );
         assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childA.id(), childB.id() );
         // each entry names the version the scan observed, so a reader can hold the enumerated snapshot of the node
         assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::versionId )
             .containsExactly( childA.getNodeVersionId(), childB.getNodeVersionId() );
         assertNotNull( first.getCursor() );
 
-        final EnumerateNodesResult second = nodeService.enumerate(
+        final EnumerateNodesResult second = enumerate(
             EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).cursor( first.getCursor() ).build() );
         assertThat( second.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childC.id(), childD.id() );
         assertNotNull( second.getCursor() );
 
-        final EnumerateNodesResult third = nodeService.enumerate(
+        final EnumerateNodesResult third = enumerate(
             EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).cursor( second.getCursor() ).build() );
         assertThat( third.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childE.id() );
         assertNull( third.getCursor() );
     }
 
     @Test
-    void an_empty_batch_still_continues_the_enumeration()
+    void requires_the_administrator_role()
     {
-        // hidden entries are dropped after the scan, so a small batch may come back with no entries at all while the enumeration is far
-        // from finished; the hidden ids sort between the visible ones here, so the middle batches hold nothing
         final Node parent = createNode( NodePath.ROOT, "parent" );
-        final Node childA = createNode( parent.path(), "a" );
-        for ( int i = 1; i <= 5; i++ )
-        {
-            createNode( CreateNodeParams.create()
-                            .setNodeId( NodeId.from( "b-hidden-" + i ) )
-                            .name( "b-hidden-" + i )
-                            .parent( parent.path() )
-                            .permissions( denyReadForPrincipal( TEST_DEFAULT_USER.getKey() ) )
-                            .build() );
-        }
-        final Node childB = createNode( parent.path(), "z" );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final List<NodeEnumerationEntry> collected = new ArrayList<>();
-        String cursor = null;
-        int emptyBatches = 0;
-        do
-        {
-            final EnumerateNodesResult batch = nodeService.enumerate(
-                EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).cursor( cursor ).build() );
-            if ( batch.getEntries().isEmpty() )
-            {
-                emptyBatches++;
-            }
-            collected.addAll( batch.getEntries() );
-            cursor = batch.getCursor();
-        }
-        while ( cursor != null );
+        final EnumerateNodesParams params = EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build();
 
-        assertThat( collected ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childA.id(), childB.id() );
-        assertTrue( emptyBatches > 0, "expected the hidden-only batches to come back empty" );
+        // the default test user is no administrator: the enumeration refuses the caller up front instead of filtering for them
+        assertThrows( ForbiddenAccessException.class, () -> nodeService.enumerate( params ) );
+    }
+
+    @Test
+    void enumerates_without_filtering_by_permissions()
+    {
+        final Node parent = createNode( NodePath.ROOT, "parent" );
+        final Node visible = createNode( parent.path(), "visible" );
+        final Node hidden = createNode( CreateNodeParams.create()
+                                            .name( "hidden" )
+                                            .parent( parent.path() )
+                                            .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                    .deny( Permission.READ )
+                                                                                    .principal( TEST_DEFAULT_USER.getKey() )
+                                                                                    .build() ) )
+                                            .build() );
+        nodeService.refresh( RefreshMode.STORAGE );
+
+        final EnumerateNodesResult result =
+            enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 10 ).build() );
+
+        assertThat( result.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).contains( visible.id(), hidden.id() );
     }
 
     @Test
@@ -129,18 +121,18 @@ class NodeServiceImplTest_enumerate
 
         final EnumerateNodesParams.Builder params = EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 );
 
-        final EnumerateNodesResult first = nodeService.enumerate( params.build() );
+        final EnumerateNodesResult first = enumerate( params.build() );
         assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childA.id(), childB.id() );
 
         nodeService.move( MoveNodeParams.create().nodeId( childD.id() ).newParentPath( childA.path() ).build() );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final EnumerateNodesResult second = nodeService.enumerate( params.cursor( first.getCursor() ).build() );
+        final EnumerateNodesResult second = enumerate( params.cursor( first.getCursor() ).build() );
         assertThat( second.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childC.id(), childD.id() );
         assertThat( second.getEntries() ).extracting( NodeEnumerationEntry::nodePath )
             .contains( new NodePath( childA.path(), childD.name() ) );
 
-        final EnumerateNodesResult third = nodeService.enumerate( params.cursor( second.getCursor() ).build() );
+        final EnumerateNodesResult third = enumerate( params.cursor( second.getCursor() ).build() );
         assertThat( third.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childE.id() );
         assertNull( third.getCursor() );
     }
@@ -160,7 +152,7 @@ class NodeServiceImplTest_enumerate
         String cursor = null;
         do
         {
-            final EnumerateNodesResult batch = nodeService.enumerate(
+            final EnumerateNodesResult batch = enumerate(
                 EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 3 ).cursor( cursor ).build() );
             for ( final NodeEnumerationEntry entry : batch.getEntries() )
             {
@@ -176,31 +168,5 @@ class NodeServiceImplTest_enumerate
         nodeService.refresh( RefreshMode.STORAGE );
         assertTrue( NodeHelper.runAsAdmin(
             () -> nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() ) ).isEmpty() );
-    }
-
-    @Test
-    void entries_hidden_by_permission_still_advance_the_cursor()
-    {
-        final Node parent = createNode( NodePath.ROOT, "parent" );
-        final Node first = createNode( parent.path(), "a-visible" );
-        // the id is what places an entry in the scan, so it is set explicitly to put the hidden entry between the visible ones
-        createNode( CreateNodeParams.create()
-                        .setNodeId( NodeId.from( "b-hidden" ) )
-                        .name( "b-hidden" )
-                        .parent( parent.path() )
-                        .permissions( denyReadForPrincipal( TEST_DEFAULT_USER.getKey() ) )
-                        .build() );
-        final Node last = createNode( parent.path(), "c-visible" );
-        nodeService.refresh( RefreshMode.STORAGE );
-
-        final EnumerateNodesResult firstBatch =
-            nodeService.enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build() );
-        // the hidden entry is dropped from the batch but not from the scan, so the batch shrinks rather than backfills
-        assertThat( firstBatch.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( first.id() );
-        assertNotNull( firstBatch.getCursor() );
-
-        final EnumerateNodesResult secondBatch = nodeService.enumerate(
-            EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).cursor( firstBatch.getCursor() ).build() );
-        assertThat( secondBatch.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( last.id() );
     }
 }

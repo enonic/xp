@@ -34,6 +34,7 @@ import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 
@@ -166,14 +167,13 @@ class NodeExportIntegrationTest
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            result = NodeExporter.create()
+            result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
 
         assertEquals( 2, result.size() );
@@ -200,15 +200,14 @@ class NodeExportIntegrationTest
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            result = NodeExporter.create()
+            result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .nodeExportListener( nodeExportListener )
-                .build()
-                .execute();
+                .build()::execute );
         }
 
         assertEquals( 9, result.size() );
@@ -246,14 +245,13 @@ class NodeExportIntegrationTest
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            result = NodeExporter.create()
+            result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
 
         assertEquals( 8, result.size() );
@@ -277,14 +275,14 @@ class NodeExportIntegrationTest
 
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            NodeExporter.create()
+            NodeHelper.runAsAdmin( () -> NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()
-                .execute();
+                .execute() );
         }
 
         // the order the editor assigned, highest value first, rather than the order the children happened to be created in
@@ -305,14 +303,13 @@ class NodeExportIntegrationTest
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            result = NodeExporter.create()
+            result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( new NodePath( "/mynode/child1/child1_1" ) )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
 
         assertEquals( 3, result.getExportedNodes().getSize() );
@@ -336,14 +333,13 @@ class NodeExportIntegrationTest
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            result = NodeExporter.create()
+            result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( new NodePath( "/mynode/child1" ) )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
 
         assertEquals( 4, result.getExportedNodes().getSize() );
@@ -375,14 +371,13 @@ class NodeExportIntegrationTest
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            result = NodeExporter.create()
+            result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
 
         assertEquals( 2, result.getExportedNodes().getSize() );
@@ -400,14 +395,14 @@ class NodeExportIntegrationTest
     {
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            NodeExporter.create()
+            NodeHelper.runAsAdmin( () -> NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .xpVersion( "X.Y.Z-SNAPSHOT" )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .build()
-                .execute();
+                .execute() );
         }
 
         assertZipEntryExists( EXPORT_NAME + "/export.properties" );
@@ -431,14 +426,13 @@ class NodeExportIntegrationTest
             throw new RuntimeException( "exception message" );
         } ).when( exportWriter ).writeElement( Mockito.isA( Path.class ), Mockito.anyString() );
 
-        final NodeExportResult result = NodeExporter.create()
+        final NodeExportResult result = NodeHelper.runAsAdmin( NodeExporter.create()
             .nodeService( this.nodeService )
             .nodeExportWriter( exportWriter )
             .sourceNodePath( NodePath.ROOT )
             .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
             .xpVersion( "1.0.0" )
-            .build()
-            .execute();
+            .build()::execute );
         assertEquals( 2, result.getExportErrors().size() );
         assertEquals( "java.lang.RuntimeException: exception message", result.getExportErrors().get( 0 ).toString() );
     }
@@ -450,14 +444,13 @@ class NodeExportIntegrationTest
         final NodeExportResult result;
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            result = NodeExporter.create()
+            result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.create().addElement( "unknown" ).build() )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
 
         assertEquals( 0, result.size() );
@@ -472,14 +465,13 @@ class NodeExportIntegrationTest
     {
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            return NodeExporter.create()
+            return NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
     }
 

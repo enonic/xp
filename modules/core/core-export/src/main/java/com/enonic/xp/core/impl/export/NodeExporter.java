@@ -135,8 +135,7 @@ public class NodeExporter
     private void doExportNodes( final Node rootNode )
     {
         // enumerated from storage, so an export covers the subtree the repository holds rather than the one the search index has caught
-        // up with; the listing excludes the node the export was asked for. The count owed to the progress listener has to come from the
-        // entries - the index alone counts without regard to what the caller is permitted to read.
+        // up with; the enumeration excludes the node the export was asked for.
         final List<NodeEnumerationEntry> entries = new ArrayList<>();
 
         String cursor = null;
