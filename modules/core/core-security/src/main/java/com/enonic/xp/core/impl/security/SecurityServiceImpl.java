@@ -24,7 +24,6 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
@@ -115,9 +114,13 @@ public final class SecurityServiceImpl
     @Override
     public IdProviders getIdProviders()
     {
-        final ListNodesParams listParams =
-            ListNodesParams.create().parentPath( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH ).build();
-        final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( this.nodeService.list( listParams ).getNodeIds() ) );
+        // searched rather than enumerated: a listing of the providers could only scan their whole subtree - every user and group in
+        // the system - where the query narrows on the parent, like every other principal lookup here
+        final NodeQuery query = NodeQuery.create()
+            .parent( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH )
+            .size( NodeQuery.ALL_RESULTS_SIZE_FLAG )
+            .build();
+        final Nodes nodes = callWithContext( () -> this.nodeService.getByIds( this.nodeService.findByQuery( query ).getNodeIds() ) );
 
         return IdProviderNodeTranslator.fromNodes( nodes );
     }
