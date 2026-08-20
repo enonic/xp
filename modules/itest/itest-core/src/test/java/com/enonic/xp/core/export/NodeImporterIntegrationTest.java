@@ -26,6 +26,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.BinaryReference;
@@ -538,14 +539,14 @@ class NodeImporterIntegrationTest
 
         try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
-            NodeExporter.create()
+            NodeHelper.runAsAdmin( () -> NodeExporter.create()
                 .nodeService( nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.0.0" )
                 .build()
-                .execute();
+                .execute() );
         }
 
         // Delete the node
@@ -597,14 +598,14 @@ class NodeImporterIntegrationTest
 
         try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
-            NodeExporter.create()
+            NodeHelper.runAsAdmin( () -> NodeExporter.create()
                 .nodeService( nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.0.0" )
                 .build()
-                .execute();
+                .execute() );
         }
 
         // Delete the node
@@ -652,14 +653,14 @@ class NodeImporterIntegrationTest
 
         try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
-            NodeExporter.create()
+            NodeHelper.runAsAdmin( () -> NodeExporter.create()
                 .nodeService( nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.0.0" )
                 .build()
-                .execute();
+                .execute() );
         }
 
         // Delete the tree
@@ -700,14 +701,14 @@ class NodeImporterIntegrationTest
 
         try (ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
-            NodeExporter.create()
+            NodeHelper.runAsAdmin( () -> NodeExporter.create()
                 .nodeService( nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.0.0" )
                 .build()
-                .execute();
+                .execute() );
         }
 
         // Delete the node
