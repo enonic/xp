@@ -16,10 +16,10 @@ import static java.util.Objects.requireNonNull;
 public final class EnumerateNodesParams
 {
     /**
-     * The largest batch an enumeration may ask for. A batch is answered by a single sized request to the index, and this is the most
-     * such a request may return; a caller wanting more than this consumes several batches instead.
+     * The largest batch an enumeration may ask for, and what it asks for unless told otherwise: a batch is answered by a single sized
+     * request to the index, and this is the most such a request may return.
      */
-    public static final int MAX_BATCH_SIZE = 10_000;
+    private static final int MAX_BATCH_SIZE = 10_000;
 
     private final NodePath parentPath;
 
@@ -101,11 +101,11 @@ public final class EnumerateNodesParams
         }
 
          /**
-         * The most entries a single call returns, {@link #MAX_BATCH_SIZE} by default. A walk that hands every batch on and forgets it has
-         * no reason to ask for less - the fewer batches, the fewer requests, and the cost of one is bounded either way. Set it lower only
-         * where fewer entries are known to settle the question being asked.
+         * The most entries a single call returns, by default as many as the index will answer in one request. A walk that hands every
+         * batch on and forgets it has no reason to ask for less - the fewer batches, the fewer requests, and the cost of one is bounded
+         * either way. Set it lower only where fewer entries are known to settle the question being asked.
          *
-         * @param batchSize positive and no larger than {@link #MAX_BATCH_SIZE}.
+         * @param batchSize positive, and no larger than the index will answer in one request.
          */
         public Builder batchSize( final int batchSize )
         {
@@ -136,7 +136,7 @@ public final class EnumerateNodesParams
 
         /**
          * @throws NullPointerException where no parent path has been set.
-         * @throws IllegalArgumentException where the batch size is not positive, or larger than {@link #MAX_BATCH_SIZE}.
+         * @throws IllegalArgumentException where the batch size is not positive, or larger than the index will answer in one request.
          */
         public EnumerateNodesParams build()
         {

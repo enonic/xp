@@ -55,17 +55,17 @@ public class CleanUpAuditLogCommand
     {
         final CleanUpAuditLogResult.Builder result = CleanUpAuditLogResult.create();
 
+        final EnumerateNodesParams.Builder enumeration =
+            EnumerateNodesParams.create().parentPath( NodePath.ROOT ).modifiedBefore( until );
+
         boolean started = false;
         int resolved = 0;
         String cursor = null;
 
         do
         {
-            final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
-                                                                           .parentPath( NodePath.ROOT )
-                                                                           .modifiedBefore( until )
-                                                                           .cursor( cursor )
-                                                                           .build() );
+            final EnumerateNodesParams params = enumeration.cursor( cursor ).build();
+            final EnumerateNodesResult batch = nodeService.enumerate( params );
 
             if ( !batch.getEntries().isEmpty() )
             {
@@ -79,7 +79,7 @@ public class CleanUpAuditLogCommand
             {
                 if ( !started )
                 {
-                    listener.start( EnumerateNodesParams.MAX_BATCH_SIZE );
+                    listener.start( params.getBatchSize() );
                     started = true;
                 }
 
