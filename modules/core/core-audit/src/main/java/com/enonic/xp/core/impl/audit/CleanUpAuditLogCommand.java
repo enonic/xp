@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.node.DeleteNodeParams;
-import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
@@ -63,8 +63,8 @@ public class CleanUpAuditLogCommand
 
         do
         {
-            final ListNodesResult batch = nodeService.list(
-                ListNodesParams.create().parentPath( NodePath.ROOT ).batchSize( BATCH_SIZE ).cursor( cursor ).build() );
+            final EnumerateNodesResult batch = nodeService.enumerate(
+                EnumerateNodesParams.create().parentPath( NodePath.ROOT ).batchSize( BATCH_SIZE ).cursor( cursor ).build() );
 
             for ( final NodeListEntry entry : batch.getEntries() )
             {

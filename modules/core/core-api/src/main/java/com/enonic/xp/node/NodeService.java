@@ -51,7 +51,7 @@ public interface NodeService
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     /**
-     * Lists the entire subtree of a node.
+     * Lists the entire subtree of a node at once.
      * <p>
      * Every node the caller is permitted to read is listed, ordered by path, and is represented by its id, path and timestamp. The nodes
      * themselves are not read.
@@ -60,18 +60,27 @@ public interface NodeService
      * {@link RefreshMode#ALL} is therefore listed immediately, whereas {@link #findByQuery(NodeQuery)} returns it only once the search
      * index has been refreshed. This method performs no refresh of its own; a node stored without a refresh is visible to neither.
      * <p>
-     * A listing expected to hold many nodes should be consumed in batches: set {@link ListNodesParams.Builder#batchSize(int)} and repeat
-     * the call with the {@link ListNodesResult#getCursor() cursor} of each batch until a batch answers with none, instead of holding the
-     * whole listing at once. The sequence of batches observes each entry at most once — also when nodes are written, deleted or moved
-     * between batches, since the position of an entry in a batched listing does not depend on its path — although entries a concurrent
-     * write places behind the cursor are not observed.
-     * <p>
-     * An unbatched listing is ordered by path; a batched listing arrives in an order that carries no meaning. Filtering and ordering are
-     * otherwise not supported — use a query where either is required.
+     * The whole listing is held in memory at once, so a subtree expected to hold many nodes should be
+     * {@link #enumerate(EnumerateNodesParams) enumerated} instead. Filtering and ordering are not supported — use a query where either
+     * is required.
      *
      * @since 8.1.0
      */
     ListNodesResult list( ListNodesParams params );
+
+    /**
+     * Enumerates the entire subtree of a node in batches.
+     * <p>
+     * Sees exactly what {@link #list(ListNodesParams)} sees — every node the caller is permitted to read, served from storage, without a
+     * refresh of its own — but hands it out one bounded batch at a time: repeat the call with the
+     * {@link EnumerateNodesResult#getCursor() cursor} of each batch until a batch answers with none. The sequence of batches observes
+     * each entry at most once — also when nodes are written, deleted or moved between batches, since the position of an entry in the
+     * enumeration does not depend on its path — although entries a concurrent write places behind the cursor are not observed. In return
+     * the entries arrive in an order that carries no meaning.
+     *
+     * @since 8.1.0
+     */
+    EnumerateNodesResult enumerate( EnumerateNodesParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 

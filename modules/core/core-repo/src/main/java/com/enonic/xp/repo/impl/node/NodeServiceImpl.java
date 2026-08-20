@@ -32,6 +32,8 @@ import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.DuplicateNodeResult;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -390,27 +392,12 @@ public class NodeServiceImpl
     public ListNodesResult list( final ListNodesParams params )
     {
         verifyContext();
-        Tracer.withCurrent( trace -> {
-            trace.attribute( "parent", params.getParentPath().toString() );
-            trace.attribute( "repo", Objects.toString( ContextAccessor.current().getRepositoryId(), null ) );
-            trace.attribute( "branch", Objects.toString( ContextAccessor.current().getBranch(), null ) );
-        } );
+        traceListing( params.getParentPath() );
 
-        final FindNodeBranchEntriesByParentCommand.Batch batch = FindNodeBranchEntriesByParentCommand.create()
-            .parentPath( params.getParentPath() )
-            .batchSize( params.getBatchSize() )
-            .cursor( params.getCursor() )
-            .requiredPermission( Permission.READ )
-            // a read does not refresh: writes decide when they become visible, and every write through the content API already does
-            .refreshStorage( false )
-            .indexServiceInternal( this.indexServiceInternal )
-            .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .executeBatch();
+        final NodeBranchEntries entries = findBranchEntriesByParent( params.getParentPath() ).build().execute();
 
-        final ListNodesResult.Builder result = ListNodesResult.create().cursor( batch.cursor() );
-        for ( final NodeBranchEntry entry : batch.entries() )
+        final ListNodesResult.Builder result = ListNodesResult.create();
+        for ( final NodeBranchEntry entry : entries )
         {
             result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
         }
@@ -420,6 +407,53 @@ public class NodeServiceImpl
         Tracer.attribute( "hits", (long) listResult.getSize() );
 
         return listResult;
+    }
+
+    @Override
+    @Traced("node.enumerate")
+    public EnumerateNodesResult enumerate( final EnumerateNodesParams params )
+    {
+        verifyContext();
+        traceListing( params.getParentPath() );
+
+        final FindNodeBranchEntriesByParentCommand.Batch batch =
+            findBranchEntriesByParent( params.getParentPath() ).batchSize( params.getBatchSize() )
+                .cursor( params.getCursor() )
+                .build()
+                .executeBatch();
+
+        final EnumerateNodesResult.Builder result = EnumerateNodesResult.create().cursor( batch.cursor() );
+        for ( final NodeBranchEntry entry : batch.entries() )
+        {
+            result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
+        }
+
+        final EnumerateNodesResult enumerateResult = result.build();
+
+        Tracer.attribute( "hits", (long) enumerateResult.getEntries().size() );
+
+        return enumerateResult;
+    }
+
+    private static void traceListing( final NodePath parentPath )
+    {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "parent", parentPath.toString() );
+            trace.attribute( "repo", Objects.toString( ContextAccessor.current().getRepositoryId(), null ) );
+            trace.attribute( "branch", Objects.toString( ContextAccessor.current().getBranch(), null ) );
+        } );
+    }
+
+    private FindNodeBranchEntriesByParentCommand.Builder findBranchEntriesByParent( final NodePath parentPath )
+    {
+        return FindNodeBranchEntriesByParentCommand.create()
+            .parentPath( parentPath )
+            .requiredPermission( Permission.READ )
+            // a read does not refresh: writes decide when they become visible, and every write through the content API already does
+            .refreshStorage( false )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.nodeStorageService )
+            .searchService( this.nodeSearchService );
     }
 
     @Override

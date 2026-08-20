@@ -24,10 +24,10 @@ import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.DumpError;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpListener;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.GetActiveNodeVersionsParams;
 import com.enonic.xp.node.GetActiveNodeVersionsResult;
-import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeId;
@@ -135,11 +135,11 @@ public class RepoDumper
                 String cursor = null;
                 do
                 {
-                    final ListNodesResult batch = this.nodeService.list( ListNodesParams.create()
-                                                                             .parentPath( NodePath.ROOT )
-                                                                             .batchSize( LIST_BATCH_SIZE )
-                                                                             .cursor( cursor )
-                                                                             .build() );
+                    final EnumerateNodesResult batch = this.nodeService.enumerate( EnumerateNodesParams.create()
+                                                                                       .parentPath( NodePath.ROOT )
+                                                                                       .batchSize( LIST_BATCH_SIZE )
+                                                                                       .cursor( cursor )
+                                                                                       .build() );
                     for ( final NodeListEntry entry : batch.getEntries() )
                     {
                         if ( nodeIds == null || nodeIds.contains( entry.nodeId() ) )

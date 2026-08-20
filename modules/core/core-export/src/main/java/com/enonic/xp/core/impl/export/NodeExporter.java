@@ -23,8 +23,8 @@ import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportListener;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.node.AttachedBinary;
-import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -151,11 +151,11 @@ public class NodeExporter
         String cursor = null;
         do
         {
-            final ListNodesResult batch = nodeService.list( ListNodesParams.create()
-                                                                .parentPath( rootNode.path() )
-                                                                .batchSize( LIST_BATCH_SIZE )
-                                                                .cursor( cursor )
-                                                                .build() );
+            final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
+                                                                          .parentPath( rootNode.path() )
+                                                                          .batchSize( LIST_BATCH_SIZE )
+                                                                          .cursor( cursor )
+                                                                          .build() );
             for ( final NodeListEntry entry : batch.getEntries() )
             {
                 nodeIds.add( entry.nodeId() );

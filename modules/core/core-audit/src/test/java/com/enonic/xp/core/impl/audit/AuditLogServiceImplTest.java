@@ -22,9 +22,9 @@ import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
@@ -141,7 +141,7 @@ class AuditLogServiceImplTest
     {
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create().build() );
+        when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn( EnumerateNodesResult.create().build() );
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
@@ -160,7 +160,7 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn(
+        when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn(
             createBatch( 3, Instant.now().minusSeconds( 60 ), null ) );
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
@@ -180,7 +180,7 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn(
+        when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn(
                 createBatch( 10000, Instant.now().minusSeconds( 60 ), "/node-10000" ) )
             .thenReturn( createBatch( 500, Instant.now().minusSeconds( 60 ), null ) );
 
@@ -201,12 +201,12 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
-        final ListNodesResult batch = ListNodesResult.create()
+        final EnumerateNodesResult batch = EnumerateNodesResult.create()
             .addEntry( new NodeListEntry( NodeId.from( "old-1" ), new NodePath( "/old-1" ), Instant.now().minusSeconds( 60 ) ) )
             .addEntry( new NodeListEntry( NodeId.from( "new-1" ), new NodePath( "/new-1" ), Instant.now().plusSeconds( 60 ) ) )
             .addEntry( new NodeListEntry( NodeId.from( "old-2" ), new NodePath( "/old-2" ), Instant.now().minusSeconds( 60 ) ) )
             .build();
-        when( nodeService.list( any( ListNodesParams.class ) ) ).thenReturn( batch );
+        when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn( batch );
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
@@ -216,9 +216,9 @@ class AuditLogServiceImplTest
         verify( listener, times( 2 ) ).processed();
     }
 
-    private ListNodesResult createBatch( final int number, final Instant timestamp, final String cursor )
+    private EnumerateNodesResult createBatch( final int number, final Instant timestamp, final String cursor )
     {
-        final ListNodesResult.Builder batch = ListNodesResult.create().cursor( cursor );
+        final EnumerateNodesResult.Builder batch = EnumerateNodesResult.create().cursor( cursor );
         for ( int i = 1; i <= number; i++ )
         {
             batch.addEntry( new NodeListEntry( NodeId.from( "node-id-" + i ), new NodePath( "/node-" + i ), timestamp ) );

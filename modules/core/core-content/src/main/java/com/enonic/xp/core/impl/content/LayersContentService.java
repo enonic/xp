@@ -41,8 +41,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -281,8 +281,8 @@ public class LayersContentService
             String cursor = null;
             do
             {
-                final ListNodesResult batch = nodeService.list(
-                    ListNodesParams.create().parentPath( parentPath ).batchSize( SYNC_BATCH_SIZE ).cursor( cursor ).build() );
+                final EnumerateNodesResult batch = nodeService.enumerate(
+                    EnumerateNodesParams.create().parentPath( parentPath ).batchSize( SYNC_BATCH_SIZE ).cursor( cursor ).build() );
                 for ( final NodeListEntry entry : batch.getEntries() )
                 {
                     grouped.computeIfAbsent( ContentNodeHelper.translateNodePathToContentPath( entry.nodePath().getParentPath() ),
@@ -306,11 +306,12 @@ public class LayersContentService
     public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
     {
         return callOnPrimary( () -> {
-            final ListNodesResult batch = nodeService.list( ListNodesParams.create()
-                                                                .parentPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
-                                                                .batchSize( SYNC_BATCH_SIZE )
-                                                                .cursor( cursor )
-                                                                .build() );
+            final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
+                                                                          .parentPath( ContentNodeHelper.translateContentPathToNodePath(
+                                                                              contentPath ) )
+                                                                          .batchSize( SYNC_BATCH_SIZE )
+                                                                          .cursor( cursor )
+                                                                          .build() );
             return new ContentIdsBatch(
                 batch.getEntries().stream().map( entry -> ContentId.from( entry.nodeId() ) ).collect( ContentIds.collector() ),
                 batch.getCursor() );
