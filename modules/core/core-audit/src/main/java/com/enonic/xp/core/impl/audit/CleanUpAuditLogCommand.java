@@ -21,8 +21,6 @@ public class CleanUpAuditLogCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( CleanUpAuditLogCommand.class );
 
-    private static final int BATCH_SIZE = 10_000;
-
     private final Instant until;
 
     private final CleanUpAuditLogListener listener;
@@ -64,7 +62,7 @@ public class CleanUpAuditLogCommand
         {
             final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
                                                                            .parentPath( NodePath.ROOT )
-                                                                           .batchSize( BATCH_SIZE )
+                                                                           .batchSize( EnumerateNodesParams.MAX_BATCH_SIZE )
                                                                            .modifiedBefore( until )
                                                                            .cursor( cursor )
                                                                            .build() );
@@ -73,7 +71,7 @@ public class CleanUpAuditLogCommand
             {
                 if ( !started )
                 {
-                    listener.start( BATCH_SIZE );
+                    listener.start( EnumerateNodesParams.MAX_BATCH_SIZE );
                     started = true;
                 }
 

@@ -53,11 +53,6 @@ public class RepoDumper
 {
     private static final Logger LOG = LoggerFactory.getLogger( RepoDumper.class );
 
-    /**
-     * The most entries an unscrolled query may ask the index for at once.
-     */
-    private static final int LIST_BATCH_SIZE = 10_000;
-
     private final RepositoryId repositoryId;
 
     private final Branches branches;
@@ -140,7 +135,7 @@ public class RepoDumper
                 {
                     final EnumerateNodesResult batch = this.nodeService.enumerate( EnumerateNodesParams.create()
                                                                                        .parentPath( NodePath.ROOT )
-                                                                                       .batchSize( LIST_BATCH_SIZE )
+                                                                                       .batchSize( EnumerateNodesParams.MAX_BATCH_SIZE )
                                                                                        .cursor( cursor )
                                                                                        .build() );
                     for ( final NodeEnumerationEntry entry : batch.getEntries() )

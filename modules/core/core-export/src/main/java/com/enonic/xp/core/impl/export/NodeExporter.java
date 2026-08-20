@@ -38,11 +38,6 @@ public class NodeExporter
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     /**
-     * The most entries an unscrolled query may ask the index for at once.
-     */
-    private static final int LIST_BATCH_SIZE = 10_000;
-
-    /**
      * The order a manually ordered parent gives its children: by the value an editor assigned, highest first, and by modification time
      * where a sibling was never assigned one. It mirrors {@link com.enonic.xp.index.ChildOrder#manualOrder()}, which the index applies
      * when the same listing is answered by a query.
@@ -143,7 +138,7 @@ public class NodeExporter
         {
             final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
                                                                           .parentPath( rootNode.path() )
-                                                                          .batchSize( LIST_BATCH_SIZE )
+                                                                          .batchSize( EnumerateNodesParams.MAX_BATCH_SIZE )
                                                                           .cursor( cursor )
                                                                           .build() );
             entries.addAll( batch.getEntries() );

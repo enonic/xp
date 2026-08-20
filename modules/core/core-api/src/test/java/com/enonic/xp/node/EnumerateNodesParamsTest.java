@@ -52,6 +52,22 @@ class EnumerateNodesParamsTest
     }
 
     @Test
+    void batch_size_is_bounded_by_what_one_request_can_answer()
+    {
+        final EnumerateNodesParams.Builder tooLarge =
+            EnumerateNodesParams.create().parentPath( NodePath.ROOT ).batchSize( EnumerateNodesParams.MAX_BATCH_SIZE + 1 );
+
+        assertEquals( "batchSize cannot exceed " + EnumerateNodesParams.MAX_BATCH_SIZE,
+                      assertThrows( IllegalArgumentException.class, tooLarge::build ).getMessage() );
+
+        assertEquals( EnumerateNodesParams.MAX_BATCH_SIZE, EnumerateNodesParams.create()
+            .parentPath( NodePath.ROOT )
+            .batchSize( EnumerateNodesParams.MAX_BATCH_SIZE )
+            .build()
+            .getBatchSize() );
+    }
+
+    @Test
     void batch_size_must_be_positive()
     {
         final EnumerateNodesParams.Builder unset = EnumerateNodesParams.create().parentPath( NodePath.ROOT );

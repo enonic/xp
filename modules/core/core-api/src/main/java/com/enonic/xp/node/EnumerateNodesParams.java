@@ -15,6 +15,12 @@ import static java.util.Objects.requireNonNull;
 @NullMarked
 public final class EnumerateNodesParams
 {
+    /**
+     * The largest batch an enumeration may ask for. A batch is answered by a single sized request to the index, and this is the most
+     * such a request may return; a caller wanting more than this consumes several batches instead.
+     */
+    public static final int MAX_BATCH_SIZE = 10_000;
+
     private final NodePath parentPath;
 
     private final int batchSize;
@@ -31,6 +37,10 @@ public final class EnumerateNodesParams
         if ( builder.batchSize <= 0 )
         {
             throw new IllegalArgumentException( "batchSize must be positive" );
+        }
+        if ( builder.batchSize > MAX_BATCH_SIZE )
+        {
+            throw new IllegalArgumentException( "batchSize cannot exceed " + MAX_BATCH_SIZE );
         }
         this.batchSize = builder.batchSize;
         this.modifiedBefore = builder.modifiedBefore;
@@ -91,7 +101,7 @@ public final class EnumerateNodesParams
         }
 
         /**
-         * The most entries a single call returns. Required, positive.
+         * The most entries a single call returns. Required; positive and no larger than {@link #MAX_BATCH_SIZE}.
          */
         public Builder batchSize( final int batchSize )
         {
@@ -122,7 +132,7 @@ public final class EnumerateNodesParams
 
         /**
          * @throws NullPointerException where no parent path has been set.
-         * @throws IllegalArgumentException where the batch size is not positive.
+         * @throws IllegalArgumentException where the batch size is not positive, or larger than {@link #MAX_BATCH_SIZE}.
          */
         public EnumerateNodesParams build()
         {
