@@ -1,5 +1,6 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +16,6 @@ import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyPermissionsScope;
 import com.enonic.xp.node.Attributes;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -94,7 +93,9 @@ public class ApplyNodePermissionsCommand
 
         if ( ApplyPermissionsScope.SINGLE == params.getScope() || ApplyPermissionsScope.TREE == params.getScope() )
         {
-            final List<Map<Branch, NodeBranchEntry>> rootEntries = resolveBatch( List.of( params.getNodeId() ) );
+            final NodeBranchEntry rootEntry =
+                this.nodeStorageService.getNodeBranchEntry( params.getNodeId(), InternalContext.from( ContextAccessor.current() ) );
+            final List<Map<Branch, NodeBranchEntry>> rootEntries = resolveBatch( List.of( rootEntry ) );
             versions += countVersions( rootEntries );
             reported = report( versions, reported );
             applyBatch( rootEntries, permissions );
@@ -117,11 +118,11 @@ public class ApplyNodePermissionsCommand
                     .build()
                     .executeBatch();
 
-                final List<NodeId> nodeIds = batch.entries().stream().map( NodeBranchEntry::getNodeId ).toList();
-                final List<Map<Branch, NodeBranchEntry>> entriesToApply = resolveBatch( nodeIds );
+                final List<NodeBranchEntry> stride = batch.entries().stream().toList();
+                final List<Map<Branch, NodeBranchEntry>> entriesToApply = resolveBatch( stride );
 
                 final int batchVersions = countVersions( entriesToApply );
-                subtreeNodes += nodeIds.size();
+                subtreeNodes += stride.size();
                 subtreeVersions += batchVersions;
                 versions += batchVersions;
 
@@ -159,25 +160,35 @@ public class ApplyNodePermissionsCommand
     }
 
     /**
-     * Resolves the active branch entries of one stride with one bulk get per branch, instead of one lookup per node and branch.
+     * The stride's own entries already answer the context branch, so only the other branches are looked up - one entry get per node
+     * and branch, which is how the index serves them regardless of batching.
      */
-    private List<Map<Branch, NodeBranchEntry>> resolveBatch( final List<NodeId> nodeIds )
+    private List<Map<Branch, NodeBranchEntry>> resolveBatch( final List<NodeBranchEntry> stride )
     {
-        if ( nodeIds.isEmpty() )
-        {
-            return List.of();
-        }
+        final Branch contextBranch = ContextAccessor.current().getBranch();
+        final List<InternalContext> otherBranches = branches.stream()
+            .filter( branch -> !branch.equals( contextBranch ) )
+            .map( branch -> InternalContext.create( ContextAccessor.current() ).branch( branch ).build() )
+            .toList();
 
-        final Map<NodeId, Map<Branch, NodeBranchEntry>> found = new HashMap<>();
-        for ( final Branch branch : branches )
+        final List<Map<Branch, NodeBranchEntry>> entriesToApply = new ArrayList<>( stride.size() );
+        for ( final NodeBranchEntry contextEntry : stride )
         {
-            final InternalContext branchContext = InternalContext.create( ContextAccessor.current() ).branch( branch ).build();
-            for ( final NodeBranchEntry entry : this.nodeStorageService.getNodeBranchEntries( NodeIds.from( nodeIds ), branchContext ) )
+            final Map<Branch, NodeBranchEntry> byBranch = new HashMap<>();
+            byBranch.put( contextBranch, contextEntry );
+
+            for ( final InternalContext branchContext : otherBranches )
             {
-                found.computeIfAbsent( entry.getNodeId(), id -> new HashMap<>() ).put( branch, entry );
+                final NodeBranchEntry entry = this.nodeStorageService.getNodeBranchEntry( contextEntry.getNodeId(), branchContext );
+                if ( entry != null )
+                {
+                    byBranch.put( branchContext.getBranch(), entry );
+                }
             }
+
+            entriesToApply.add( byBranch );
         }
-        return nodeIds.stream().map( id -> found.getOrDefault( id, Map.of() ) ).toList();
+        return entriesToApply;
     }
 
     /**
