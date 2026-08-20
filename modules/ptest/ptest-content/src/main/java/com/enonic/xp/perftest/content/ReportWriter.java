@@ -65,8 +65,11 @@ final class ReportWriter
             final String unit = metric.path( "scoreUnit" ).asText();
             // reported by the benchmark itself, as the thread that ran the operation counted it
             final JsonNode secondary = item.path( "secondaryMetrics" );
-            rows.add( new Row( benchmark, mode, score, unit, kiB( secondary, "allocKiB" ), kiB( secondary, "peakLiveKiB" ),
-                               count( secondary, "nodes" ) ) );
+            // every counter is a total over the run - JMH sums an event counter rather than averaging it - so each is divided by the
+            // operations counted beside it
+            final double ops = count( secondary, "ops" );
+            rows.add( new Row( benchmark, mode, score, unit, kiB( secondary, "allocKiB" ) / ops, kiB( secondary, "peakLiveKiB" ) / ops,
+                               count( secondary, "nodes" ) / ops ) );
         }
         return rows;
     }
