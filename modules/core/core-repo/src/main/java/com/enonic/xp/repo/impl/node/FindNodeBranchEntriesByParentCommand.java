@@ -38,8 +38,6 @@ final class FindNodeBranchEntriesByParentCommand
 {
     private final NodePath parentPath;
 
-    private final boolean recursive;
-
     private final OrderExpr.Direction pathOrder;
 
     private final Permission requiredPermission;
@@ -54,7 +52,6 @@ final class FindNodeBranchEntriesByParentCommand
     {
         super( builder );
         this.parentPath = builder.parentPath;
-        this.recursive = builder.recursive;
         this.pathOrder = builder.pathOrder;
         this.requiredPermission = builder.requiredPermission;
         this.refreshStorage = builder.refreshStorage;
@@ -120,7 +117,7 @@ final class FindNodeBranchEntriesByParentCommand
 
     /**
      * totalHits counts every raw entry the scan still had in front of it when the batch was cut - the batch itself included, the
-     * depth and permission filtering not - so a walker can project the size of the whole walk from its first batch.
+     * permission filtering not - so a walker can project the size of the whole walk from its first batch.
      */
     record Batch(NodeBranchEntries entries, String cursor, long totalHits)
     {
@@ -128,9 +125,7 @@ final class FindNodeBranchEntriesByParentCommand
 
     /**
      * The branch index carries no parentPath field, so a parent is matched by a path prefix, which the index answers by seeking its term
-     * dictionary once and scanning the subtree from there. Narrowing that to the direct children would take a wildcard with an inner
-     * {@code *}, which no longer reduces to a prefix and makes the index run an automaton over every term of the subtree instead, so the
-     * deeper levels are dropped in {@link #filter} rather than here.
+     * dictionary once and scanning the subtree from there.
      */
     private ConstraintExpr createBelowParentExpr()
     {
@@ -140,14 +135,11 @@ final class FindNodeBranchEntriesByParentCommand
     }
 
     /**
-     * Drops the descendants a non-recursive listing did not ask for, and the entries the caller may not read. Depth is settled first,
-     * since it costs a path comparison whereas a permission decision costs a stored read of the access control list of the entry.
+     * Drops the entries the caller may not read, decided from the access control list each entry's version key points at.
      */
     private NodeBranchEntries filter( final NodeBranchEntries entries, final InternalContext context )
     {
-        final boolean checkPermission = requiredPermission != null && !context.getPrincipalKeys().contains( RoleKeys.ADMIN );
-
-        if ( recursive && !checkPermission )
+        if ( requiredPermission == null || context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )
         {
             return entries;
         }
@@ -155,21 +147,11 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries.Builder filtered = NodeBranchEntries.create();
         for ( final NodeBranchEntry entry : entries )
         {
-            if ( !recursive && !parentPath.equals( entry.getNodePath().getParentPath() ) )
+            final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
+            if ( NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
             {
-                continue;
+                filtered.add( entry );
             }
-
-            if ( checkPermission )
-            {
-                final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
-                if ( !NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
-                {
-                    continue;
-                }
-            }
-
-            filtered.add( entry );
         }
         return filtered.build();
     }
@@ -178,8 +160,6 @@ final class FindNodeBranchEntriesByParentCommand
         extends AbstractNodeCommand.Builder<Builder>
     {
         private NodePath parentPath;
-
-        private boolean recursive = true;
 
         private OrderExpr.Direction pathOrder = OrderExpr.Direction.ASC;
 
@@ -204,12 +184,6 @@ final class FindNodeBranchEntriesByParentCommand
         Builder parentPath( final NodePath parentPath )
         {
             this.parentPath = parentPath;
-            return this;
-        }
-
-        Builder recursive( final boolean recursive )
-        {
-            this.recursive = recursive;
             return this;
         }
 

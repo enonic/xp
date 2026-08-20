@@ -85,7 +85,7 @@ final class ArchiveContentCommand
         validateLocation( originalNode );
 
         final NodeIds descendants =
-            nodeService.list( ListNodesParams.create().parentPath( originalNode.path() ).recursive( true ).build() ).getNodeIds();
+            nodeService.list( ListNodesParams.create().parentPath( originalNode.path() ).build() ).getNodeIds();
 
         final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );
 

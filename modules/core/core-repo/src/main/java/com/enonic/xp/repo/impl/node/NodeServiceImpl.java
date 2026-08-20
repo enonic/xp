@@ -398,7 +398,6 @@ public class NodeServiceImpl
 
         final FindNodeBranchEntriesByParentCommand.Batch batch = FindNodeBranchEntriesByParentCommand.create()
             .parentPath( params.getParentPath() )
-            .recursive( params.isRecursive() )
             .batchSize( params.getBatchSize() )
             .cursor( params.getCursor() )
             .requiredPermission( Permission.READ )

@@ -153,7 +153,6 @@ public class NodeExporter
         {
             final ListNodesResult batch = nodeService.list( ListNodesParams.create()
                                                                 .parentPath( rootNode.path() )
-                                                                .recursive( true )
                                                                 .batchSize( LIST_BATCH_SIZE )
                                                                 .cursor( cursor )
                                                                 .build() );

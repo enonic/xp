@@ -83,7 +83,7 @@ final class DeleteContentCommand
 
         // enumerated, not searched: everything below has to be unpublished, including what a search has not indexed yet
         final NodeIds descendants =
-            nodeService.list( ListNodesParams.create().parentPath( nodeToDelete.path() ).recursive( true ).build() ).getNodeIds();
+            nodeService.list( ListNodesParams.create().parentPath( nodeToDelete.path() ).build() ).getNodeIds();
 
         final ContentIds unpublishedContents = unpublish( contentId, ContentNodeHelper.toContentIds( descendants ) );
         result.addUnpublished( unpublishedContents );

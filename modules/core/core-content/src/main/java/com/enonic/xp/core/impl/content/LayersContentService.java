@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.content;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.jspecify.annotations.NullMarked;
@@ -40,6 +41,8 @@ import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -263,14 +266,19 @@ public class LayersContentService
             .execute() );
     }
 
+    /**
+     * The listing knows no levels, so the direct children are kept here and the deeper entries advance the cursor unseen - a batch
+     * may therefore come back empty while the enumeration is not finished, which the batch contract already expects.
+     */
     public ContentIdsBatch findAllChildren( final ContentPath contentPath, final String cursor )
     {
-        return list( contentPath, false, cursor );
+        final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
+        return list( parentPath, cursor, entry -> parentPath.equals( entry.nodePath().getParentPath() ) );
     }
 
     public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
     {
-        return list( contentPath, true, cursor );
+        return list( ContentNodeHelper.translateContentPathToNodePath( contentPath ), cursor, entry -> true );
     }
 
     /**
@@ -279,18 +287,17 @@ public class LayersContentService
      * consumed in batches: the sync flows once split their walks by level only to bound memory, which a single severely huge level
      * defeats - a batch stays bounded whatever the shape of the tree.
      */
-    private ContentIdsBatch list( final ContentPath contentPath, final boolean recursive, final String cursor )
+    private ContentIdsBatch list( final NodePath parentPath, final String cursor, final Predicate<NodeListEntry> keep )
     {
         return callOnPrimary( () -> {
             final ListNodesResult batch = nodeService.list( ListNodesParams.create()
-                                                                .parentPath(
-                                                                    ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
-                                                                .recursive( recursive )
+                                                                .parentPath( parentPath )
                                                                 .batchSize( SYNC_BATCH_SIZE )
                                                                 .cursor( cursor )
                                                                 .build() );
             return new ContentIdsBatch( batch.getEntries()
                                             .stream()
+                                            .filter( keep )
                                             .map( entry -> ContentId.from( entry.nodeId() ) )
                                             .collect( ContentIds.collector() ), batch.getCursor() );
         } );

@@ -137,7 +137,6 @@ public class RepoDumper
                 {
                     final ListNodesResult batch = this.nodeService.list( ListNodesParams.create()
                                                                              .parentPath( NodePath.ROOT )
-                                                                             .recursive( true )
                                                                              .batchSize( LIST_BATCH_SIZE )
                                                                              .cursor( cursor )
                                                                              .build() );

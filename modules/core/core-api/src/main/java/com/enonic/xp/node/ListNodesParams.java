@@ -15,8 +15,6 @@ public final class ListNodesParams
 {
     private final NodePath parentPath;
 
-    private final boolean recursive;
-
     private final int batchSize;
 
     @Nullable
@@ -25,7 +23,6 @@ public final class ListNodesParams
     private ListNodesParams( final Builder builder )
     {
         this.parentPath = requireNonNull( builder.parentPath, "parentPath is required" );
-        this.recursive = builder.recursive;
         if ( builder.batchSize < 0 )
         {
             throw new IllegalArgumentException( "batchSize cannot be negative" );
@@ -48,11 +45,6 @@ public final class ListNodesParams
         return parentPath;
     }
 
-    public boolean isRecursive()
-    {
-        return recursive;
-    }
-
     public int getBatchSize()
     {
         return batchSize;
@@ -68,8 +60,6 @@ public final class ListNodesParams
         @Nullable
         private NodePath parentPath;
 
-        private boolean recursive;
-
         private int batchSize;
 
         @Nullable
@@ -80,24 +70,13 @@ public final class ListNodesParams
         }
 
         /**
-         * Sets the node whose children are listed. Required.
+         * Sets the node whose subtree is listed. Required.
          *
          * @param parentPath path of the parent node, {@link NodePath#ROOT} for the top level of the tree.
          */
         public Builder parentPath( final NodePath parentPath )
         {
             this.parentPath = parentPath;
-            return this;
-        }
-
-        /**
-         * Lists every descendant of the parent rather than the direct children only. Narrowing to the direct children is a semantic
-         * choice, never a cheaper one: the storage index holds no parent field, so a non-recursive listing walks the same subtree
-         * and drops the deeper levels afterward, costing as much as the recursive listing or more.
-         */
-        public Builder recursive( final boolean recursive )
-        {
-            this.recursive = recursive;
             return this;
         }
 
@@ -121,8 +100,8 @@ public final class ListNodesParams
 
         /**
          * Continues a batched listing from where the previous batch stopped. Pass the {@link ListNodesResult#getCursor() cursor} of that
-         * batch unchanged, or {@code null} for the first call. The listing must be continued with the same parent path, recursion and
-         * batch size for the sequence of batches to add up to the whole listing.
+         * batch unchanged, or {@code null} for the first call. The listing must be continued with the same parent path and batch
+         * size for the sequence of batches to add up to the whole listing.
          */
         public Builder cursor( final @Nullable String cursor )
         {

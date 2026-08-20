@@ -41,37 +41,22 @@ class NodeServiceImplTest_list
     }
 
     @Test
-    void direct_children_ordered_by_path()
+    void lists_whole_subtree_ordered_by_path()
     {
         final Node parent = createNode( NodePath.ROOT, "parent" );
         final Node childB = createNode( parent.path(), "b" );
         final Node childA = createNode( parent.path(), "a" );
-        createNode( childA.path(), "grandchild" );
+        final Node grandchild = createNode( childA.path(), "grandchild" );
         createNode( NodePath.ROOT, "outside" );
         nodeService.refresh( RefreshMode.STORAGE );
 
         final ListNodesResult result =
             nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() );
 
-        assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
-        assertThat( result.getEntries() ).extracting( NodeListEntry::nodePath )
-            .containsExactly( childA.path(), childB.path() );
-    }
-
-    @Test
-    void recursive_lists_whole_subtree()
-    {
-        final Node parent = createNode( NodePath.ROOT, "parent" );
-        final Node childA = createNode( parent.path(), "a" );
-        final Node childB = createNode( parent.path(), "b" );
-        final Node grandchild = createNode( childA.path(), "grandchild" );
-        nodeService.refresh( RefreshMode.STORAGE );
-
-        final ListNodesResult result =
-            nodeService.list( ListNodesParams.create().parentPath( parent.path() ).recursive( true ).build() );
-
         assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId )
             .containsExactly( childA.id(), grandchild.id(), childB.id() );
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodePath )
+            .containsExactly( childA.path(), grandchild.path(), childB.path() );
     }
 
     @Test
@@ -143,15 +128,20 @@ class NodeServiceImplTest_list
     @Test
     void an_empty_batch_still_continues_the_listing()
     {
-        // a non-recursive listing discards the deeper entries after the scan, so a small batch may come back with no entries at all
-        // while the listing is far from finished; the grandchild ids sort after the child ids here, so the tail batches hold nothing
+        // hidden entries are dropped after the scan, so a small batch may come back with no entries at all while the listing is far
+        // from finished; the hidden ids sort between the visible ones here, so the middle batches hold nothing
         final Node parent = createNode( NodePath.ROOT, "parent" );
         final Node childA = createNode( parent.path(), "a" );
         for ( int i = 1; i <= 5; i++ )
         {
-            createNode( childA.path(), "grandchild-" + i );
+            createNode( CreateNodeParams.create()
+                            .setNodeId( NodeId.from( "b-hidden-" + i ) )
+                            .name( "b-hidden-" + i )
+                            .parent( parent.path() )
+                            .permissions( denyReadForPrincipal( TEST_DEFAULT_USER.getKey() ) )
+                            .build() );
         }
-        final Node childB = createNode( parent.path(), "b" );
+        final Node childB = createNode( parent.path(), "z" );
         nodeService.refresh( RefreshMode.STORAGE );
 
         final List<NodeListEntry> collected = new ArrayList<>();
@@ -171,7 +161,7 @@ class NodeServiceImplTest_list
         while ( cursor != null );
 
         assertThat( collected ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
-        assertTrue( emptyBatches > 0, "expected the grandchild-only batches to come back empty" );
+        assertTrue( emptyBatches > 0, "expected the hidden-only batches to come back empty" );
     }
 
     @Test
@@ -185,7 +175,7 @@ class NodeServiceImplTest_list
         final Node childE = createNode( parent.path(), "e" );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final ListNodesParams.Builder params = ListNodesParams.create().parentPath( parent.path() ).recursive( true ).batchSize( 2 );
+        final ListNodesParams.Builder params = ListNodesParams.create().parentPath( parent.path() ).batchSize( 2 );
 
         final ListNodesResult first = nodeService.list( params.build() );
         assertThat( first.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
@@ -272,15 +262,14 @@ class NodeServiceImplTest_list
     }
 
     @Test
-    void root_lists_top_level_nodes()
+    void root_lists_the_whole_tree()
     {
         final Node top = createNode( NodePath.ROOT, "top" );
-        createNode( top.path(), "below" );
+        final Node below = createNode( top.path(), "below" );
         nodeService.refresh( RefreshMode.STORAGE );
 
         final ListNodesResult result = nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() );
 
-        assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).contains( top.id() );
-        assertThat( result.getEntries() ).extracting( NodeListEntry::nodePath ).allMatch( path -> path.getParentPath().isRoot() );
+        assertThat( result.getEntries() ).extracting( NodeListEntry::nodeId ).contains( top.id(), below.id() );
     }
 }

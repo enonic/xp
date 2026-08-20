@@ -64,7 +64,7 @@ public class CleanUpAuditLogCommand
         do
         {
             final ListNodesResult batch = nodeService.list(
-                ListNodesParams.create().parentPath( NodePath.ROOT ).recursive( true ).batchSize( BATCH_SIZE ).cursor( cursor ).build() );
+                ListNodesParams.create().parentPath( NodePath.ROOT ).batchSize( BATCH_SIZE ).cursor( cursor ).build() );
 
             for ( final NodeListEntry entry : batch.getEntries() )
             {

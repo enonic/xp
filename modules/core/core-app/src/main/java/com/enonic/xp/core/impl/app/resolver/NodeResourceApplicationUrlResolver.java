@@ -42,7 +42,7 @@ public final class NodeResourceApplicationUrlResolver
 
         return VirtualAppContext.createContext().callWith( () -> {
             final ListNodesResult nodes =
-                this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).recursive( true ).build() );
+                this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).build() );
 
             return nodes.getEntries()
                 .stream()

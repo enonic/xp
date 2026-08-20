@@ -19,7 +19,6 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,7 +50,6 @@ class NodeResourceApplicationUrlResolverTest
         verify( this.nodeService ).list( params.capture() );
 
         assertEquals( new NodePath( "/myapp/cms" ), params.getValue().getParentPath() );
-        assertTrue( params.getValue().isRecursive() );
     }
 
     @Test
