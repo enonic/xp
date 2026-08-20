@@ -296,7 +296,7 @@ public final class ParentContentSynchronizer
                 {
                     final LayersContentService.ContentIdsBatch batch =
                         layersContentService.findAllChildren( currentContent.getPath(), cursor );
-                    layersContentService.getByIds( batch.ids() ).forEach( queue::offer );
+                    layersContentService.getByIds( batch.ids() ).forEach( queue::add );
                     cursor = batch.cursor();
                 }
                 while ( cursor != null );
