@@ -75,8 +75,8 @@ final class DeletedEventSyncCommand
 
     private boolean needToDelete( final ContentToSync content, final Set<ContentId> idsToRemove )
     {
-        return content.getSourceContent() == null && removedInSource( content ) && hasNoInboundDependencies( content, idsToRemove ) &&
-            hasNoChildren( content, idsToRemove );
+        return content.getSourceContent() == null && removedInSource( content ) && noInboundReferenceSurvives( content, idsToRemove ) &&
+            noDescendantSurvives( content, idsToRemove );
     }
 
     private boolean removedInSource( final ContentToSync contentToSync )
@@ -85,7 +85,11 @@ final class DeletedEventSyncCommand
             .callWith( () -> layersContentService.getById( contentToSync.getTargetContent().getId() ).isEmpty() );
     }
 
-    private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
+    /**
+     * Whether nothing under the content outlives this deletion. Deleting a content takes its whole subtree with it, so the subtree is
+     * what is examined - and a descendant is no obstacle where this same synchronization is removing it too.
+     */
+    private boolean noDescendantSurvives( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
         String cursor = null;
         do
@@ -104,7 +108,11 @@ final class DeletedEventSyncCommand
         return true;
     }
 
-    private boolean hasNoInboundDependencies( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
+    /**
+     * Whether nothing that references the content outlives this deletion - a reference from a content this same synchronization is
+     * removing too leaves nothing dangling behind.
+     */
+    private boolean noInboundReferenceSurvives( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
         final ContentId contentId = contentToSync.getTargetContent().getId();
         final ContentQuery query = ContentQuery.create()
