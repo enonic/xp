@@ -39,6 +39,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -55,6 +56,8 @@ public class LayersContentService
     private static final String SEARCH_PREFERENCE_ATTRIBUTE = "_search_preference";
 
     private static final String SEARCH_PREFERENCE_PRIMARY = "PRIMARY";
+
+    private static final int SYNC_BATCH_SIZE = 1_000;
 
     private final NodeService nodeService;
 
@@ -260,31 +263,45 @@ public class LayersContentService
             .execute() );
     }
 
-    public ContentIds findAllChildren( final ContentPath contentPath )
+    public ContentIdsBatch findAllChildren( final ContentPath contentPath, final String cursor )
     {
-        return list( contentPath, false );
+        return list( contentPath, false, cursor );
     }
 
-    public ContentIds findAllByParent( final ContentPath contentPath )
+    public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
     {
-        return list( contentPath, true );
+        return list( contentPath, true, cursor );
     }
 
     /**
      * Enumerated rather than searched: syncing has to see every content that exists right now, including one written a moment ago that a
-     * search would not find yet, and it has no use for the ordering or the constraints a search would spend that freshness on.
+     * search would not find yet, and it has no use for the ordering or the constraints a search would spend that freshness on. And
+     * consumed in batches: the sync flows once split their walks by level only to bound memory, which a single severely huge level
+     * defeats - a batch stays bounded whatever the shape of the tree.
      */
-    private ContentIds list( final ContentPath contentPath, final boolean recursive )
+    private ContentIdsBatch list( final ContentPath contentPath, final boolean recursive, final String cursor )
     {
-        return callOnPrimary( () -> nodeService.list( ListNodesParams.create()
-                                                          .parentPath(
-                                                              ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
-                                                          .recursive( recursive )
-                                                          .build() )
-                                  .getEntries()
-                                  .stream()
-                                  .map( entry -> ContentId.from( entry.nodeId() ) )
-                                  .collect( ContentIds.collector() ) );
+        return callOnPrimary( () -> {
+            final ListNodesResult batch = nodeService.list( ListNodesParams.create()
+                                                                .parentPath(
+                                                                    ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
+                                                                .recursive( recursive )
+                                                                .batchSize( SYNC_BATCH_SIZE )
+                                                                .cursor( cursor )
+                                                                .build() );
+            return new ContentIdsBatch( batch.getEntries()
+                                            .stream()
+                                            .map( entry -> ContentId.from( entry.nodeId() ) )
+                                            .collect( ContentIds.collector() ), batch.getCursor() );
+        } );
+    }
+
+    /**
+     * One batch of an enumeration and the position it stopped at. The contract is the listing's own: continue until the cursor is
+     * null, and a batch may be empty while the enumeration is not finished.
+     */
+    public record ContentIdsBatch(ContentIds ids, String cursor)
+    {
     }
 
     private <T> T callOnPrimary( final Supplier<T> supplier )

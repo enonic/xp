@@ -47,8 +47,13 @@ final class SortedEventSyncCommand
                 }
                 if ( sourceContent.getChildOrder().isManualOrder() )
                 {
-                    final List<ContentToSync> childrenToSync =
-                        layersContentService.getByIds( layersContentService.findAllChildren( targetContent.getPath() ) )
+                    String cursor = null;
+                    do
+                    {
+                        final LayersContentService.ContentIdsBatch batch =
+                            layersContentService.findAllChildren( targetContent.getPath(), cursor );
+
+                        final List<ContentToSync> childrenToSync = layersContentService.getByIds( batch.ids() )
                             .stream()
                             .map( childTargetContent -> content.getSourceCtx()
                                 .callWith( () -> layersContentService.getById( childTargetContent.getId() ) )
@@ -62,14 +67,17 @@ final class SortedEventSyncCommand
                             .map( Optional::get )
                             .collect( Collectors.toList() );
 
-                    if ( !childrenToSync.isEmpty() )
-                    {
-                        UpdatedEventSyncCommand.create()
-                            .contentService( layersContentService )
-                            .contentToSync( childrenToSync )
-                            .build()
-                            .sync();
+                        if ( !childrenToSync.isEmpty() )
+                        {
+                            UpdatedEventSyncCommand.create()
+                                .contentService( layersContentService )
+                                .contentToSync( childrenToSync )
+                                .build()
+                                .sync();
+                        }
+                        cursor = batch.cursor();
                     }
+                    while ( cursor != null );
                 }
             }
         } );

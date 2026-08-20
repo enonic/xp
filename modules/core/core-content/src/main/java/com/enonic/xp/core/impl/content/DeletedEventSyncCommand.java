@@ -87,9 +87,21 @@ final class DeletedEventSyncCommand
 
     private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath() )
-            .stream()
-            .allMatch( idsToRemove::contains );
+        String cursor = null;
+        do
+        {
+            final LayersContentService.ContentIdsBatch batch =
+                this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath(), cursor );
+
+            if ( !batch.ids().stream().allMatch( idsToRemove::contains ) )
+            {
+                return false;
+            }
+            cursor = batch.cursor();
+        }
+        while ( cursor != null );
+
+        return true;
     }
 
     private boolean hasNoInboundDependencies( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )

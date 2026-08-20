@@ -119,16 +119,24 @@ public final class ParentContentSynchronizer
         }
 
         sourceContents.stream().filter( contentToSync -> contentToSync.getSourceContent() != null ).forEach( currentContentToSync -> {
-            final ContentIds result = currentContentToSync.getSourceCtx()
-                .callWith( () -> layersContentService.findAllChildren( currentContentToSync.getSourceContent().getPath() ) );
-
-            if ( !result.isEmpty() )
+            String cursor = null;
+            do
             {
-                final Map<NodePath, Context> sourceContexts = initContexts( currentContentToSync.getSourceCtx().getRepositoryId() );
-                final Map<NodePath, Context> targetContexts = initContexts( currentContentToSync.getTargetCtx().getRepositoryId() );
+                final String position = cursor;
+                final LayersContentService.ContentIdsBatch batch = currentContentToSync.getSourceCtx()
+                    .callWith(
+                        () -> layersContentService.findAllChildren( currentContentToSync.getSourceContent().getPath(), position ) );
 
-                doSyncWithChildren( createContentsToSync( result, sourceContexts, targetContexts ) );
+                if ( !batch.ids().isEmpty() )
+                {
+                    final Map<NodePath, Context> sourceContexts = initContexts( currentContentToSync.getSourceCtx().getRepositoryId() );
+                    final Map<NodePath, Context> targetContexts = initContexts( currentContentToSync.getTargetCtx().getRepositoryId() );
+
+                    doSyncWithChildren( createContentsToSync( batch.ids(), sourceContexts, targetContexts ) );
+                }
+                cursor = batch.cursor();
             }
+            while ( cursor != null );
         } );
 
         sourceContents.forEach( sourceContent -> {
@@ -283,7 +291,15 @@ public final class ParentContentSynchronizer
                     createEventCommand( contents, ContentSyncEventType.DELETED ).sync();
                 }
 
-                layersContentService.getByIds( layersContentService.findAllChildren( currentContent.getPath() ) ).forEach( queue::offer );
+                String cursor = null;
+                do
+                {
+                    final LayersContentService.ContentIdsBatch batch =
+                        layersContentService.findAllChildren( currentContent.getPath(), cursor );
+                    layersContentService.getByIds( batch.ids() ).forEach( queue::offer );
+                    cursor = batch.cursor();
+                }
+                while ( cursor != null );
             }
         } );
     }
