@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -300,39 +299,21 @@ public class LayersContentService
     }
 
     /**
-     * The listing knows no levels, so the direct children are kept here and the deeper entries advance the cursor unseen - a batch
-     * may therefore come back empty while the enumeration is not finished, which the batch contract already expects.
-     */
-    public ContentIdsBatch findAllChildren( final ContentPath contentPath, final String cursor )
-    {
-        final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
-        return list( parentPath, cursor, entry -> parentPath.equals( entry.nodePath().getParentPath() ) );
-    }
-
-    public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
-    {
-        return list( ContentNodeHelper.translateContentPathToNodePath( contentPath ), cursor, entry -> true );
-    }
-
-    /**
      * Enumerated rather than searched: syncing has to see every content that exists right now, including one written a moment ago that a
      * search would not find yet, and it has no use for the ordering or the constraints a search would spend that freshness on. And
-     * consumed in batches: the sync flows once split their walks by level only to bound memory, which a single severely huge level
-     * defeats - a batch stays bounded whatever the shape of the tree.
+     * consumed in batches, so the walk stays bounded whatever the shape of the tree.
      */
-    private ContentIdsBatch list( final NodePath parentPath, final String cursor, final Predicate<NodeListEntry> keep )
+    public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
     {
         return callOnPrimary( () -> {
             final ListNodesResult batch = nodeService.list( ListNodesParams.create()
-                                                                .parentPath( parentPath )
+                                                                .parentPath( ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
                                                                 .batchSize( SYNC_BATCH_SIZE )
                                                                 .cursor( cursor )
                                                                 .build() );
-            return new ContentIdsBatch( batch.getEntries()
-                                            .stream()
-                                            .filter( keep )
-                                            .map( entry -> ContentId.from( entry.nodeId() ) )
-                                            .collect( ContentIds.collector() ), batch.getCursor() );
+            return new ContentIdsBatch(
+                batch.getEntries().stream().map( entry -> ContentId.from( entry.nodeId() ) ).collect( ContentIds.collector() ),
+                batch.getCursor() );
         } );
     }
 

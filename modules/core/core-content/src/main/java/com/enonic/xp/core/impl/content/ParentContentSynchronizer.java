@@ -282,6 +282,11 @@ public final class ParentContentSynchronizer
     private void cleanDeletedContents( final ContentToSync contentToSync )
     {
         contentToSync.getTargetCtx().runWith( () -> {
+            // the target subtree is known upfront, so it is taken once and sliced level by level, like the sync descent.
+            // the snapshot survives its own walk: a content that still has children is never deleted by it
+            final Map<ContentPath, ContentIds> childrenByParent =
+                layersContentService.findAllGroupedByParent( contentToSync.getTargetContent().getPath() );
+
             final Queue<Content> queue = new ArrayDeque<>( Set.of( contentToSync.getTargetContent() ) );
 
             while ( !queue.isEmpty() )
@@ -305,15 +310,11 @@ public final class ParentContentSynchronizer
                     createEventCommand( contents, ContentSyncEventType.DELETED ).sync();
                 }
 
-                String cursor = null;
-                do
+                final ContentIds children = childrenByParent.get( currentContent.getPath() );
+                if ( children != null )
                 {
-                    final LayersContentService.ContentIdsBatch batch =
-                        layersContentService.findAllChildren( currentContent.getPath(), cursor );
-                    layersContentService.getByIds( batch.ids() ).forEach( queue::add );
-                    cursor = batch.cursor();
+                    layersContentService.getByIds( children ).forEach( queue::add );
                 }
-                while ( cursor != null );
             }
         } );
     }
