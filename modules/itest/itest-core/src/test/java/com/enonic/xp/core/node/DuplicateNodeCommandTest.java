@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -107,7 +108,7 @@ class DuplicateNodeCommandTest
     }
 
     @Test
-    void unreadable_child_shrinks_resolved_total()
+    void unreadable_subtree_excluded_from_resolved_total()
     {
         final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
         createNode( CreateNodeParams.create().parent( node.path() ).name( "readable-child" ).build() );
@@ -122,7 +123,7 @@ class DuplicateNodeCommandTest
                                                                                            .build() ) )
                                                                                    .build() ) );
 
-        // readable itself, but its parent is not duplicated, so it is skipped by the cascade and shrinks the total
+        // readable itself, but below a prohibited node, so it is excluded with the rest of that subtree
         ctxDefaultAdmin().callWith( () -> createNode( CreateNodeParams.create()
                                                           .parent( hiddenChild.path() )
                                                           .name( "readable-grandchild" )
@@ -136,8 +137,8 @@ class DuplicateNodeCommandTest
         duplicateNode( node );
 
         verify( duplicateNodeListener, times( 1 ) ).resolved( 1 );
-        verify( duplicateNodeListener, times( 1 ) ).resolved( 3 );
         verify( duplicateNodeListener, times( 1 ) ).resolved( 2 );
+        verify( duplicateNodeListener, never() ).resolved( 3 );
         verify( duplicateNodeListener, times( 2 ) ).nodesDuplicated( 1 );
     }
 

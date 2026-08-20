@@ -21,16 +21,19 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Reference;
 
 import static java.util.Objects.requireNonNull;
@@ -182,35 +185,25 @@ public final class DuplicateNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        final NodeIds subTreeIds = FindNodeBranchEntriesByParentCommand.create( this )
-            .parentPath( originalParent.path() )
-            .build()
-            .execute()
-            .stream()
-            .map( NodeBranchEntry::getNodeId )
-            .collect( NodeIds.collector() );
+        final NodeBranchEntries entries =
+            FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().execute();
 
-        // nodes not readable by the caller are not returned, and neither they nor their children are duplicated
-        final Nodes originalNodes = this.nodeStorageService.get( subTreeIds, internalContext );
+        final List<NodeBranchEntry> toDuplicate = filterToDuplicate( entries, internalContext );
 
-        int total = originalNodes.getSize() + 1;
-        listener.resolved( total );
+        listener.resolved( toDuplicate.size() + 1 );
 
-        // the storage get answers in the requested order, so the path order of the listing survives into the walk
-        // and a node is always duplicated before any of its children
+        // entries are ordered by path, so a node is always duplicated before any of its children
         final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
         duplicatedParents.put( originalParent.path(), new DuplicatedParent( originalParent, newParent ) );
 
-        for ( final Node node : originalNodes )
+        for ( final NodeBranchEntry entry : toDuplicate )
         {
-            final DuplicatedParent parent = duplicatedParents.get( node.parentPath() );
+            final DuplicatedParent parent = requireNonNull( duplicatedParents.get( entry.getNodePath().getParentPath() ),
+                                                            () -> "Parent of [" + entry.getNodePath() + "] was not duplicated yet" );
 
-            if ( parent == null )
-            {
-                // each node of a skipped branch is skipped individually, so the walk shrinks by exactly one per pass
-                listener.resolved( --total );
-                continue;
-            }
+            // the branch entry is already at hand, so completing the node reads only the version blobs
+            final Node node =
+                NodeFactory.create( this.nodeStorageService.getNodeVersion( entry.getNodeVersionKey(), internalContext ), entry );
 
             final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( parent.copy().path() );
 
@@ -245,6 +238,41 @@ public final class DuplicateNodeCommand
 
     private record DuplicatedParent(Node original, Node copy)
     {
+    }
+
+    /**
+     * Settles what the caller may duplicate from the access blobs alone - which are almost always cached - before any version is
+     * fetched, so the resolved total is exact from its first report. A node the caller may not read takes its whole subtree with it,
+     * which the path order serves as the contiguous run of entries right behind it.
+     */
+    private List<NodeBranchEntry> filterToDuplicate( final NodeBranchEntries entries, final InternalContext context )
+    {
+        if ( context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )
+        {
+            return entries.stream().toList();
+        }
+
+        final List<NodeBranchEntry> toDuplicate = new ArrayList<>( entries.getSize() );
+        String prohibitedRoot = null;
+        for ( final NodeBranchEntry entry : entries )
+        {
+            final String path = entry.getNodePath().toString();
+            if ( prohibitedRoot != null && path.startsWith( prohibitedRoot ) )
+            {
+                continue;
+            }
+
+            final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
+            if ( NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), Permission.READ, permissions ) )
+            {
+                toDuplicate.add( entry );
+            }
+            else
+            {
+                prohibitedRoot = path + "/";
+            }
+        }
+        return toDuplicate;
     }
 
     private void decideInsertStrategy( final Node originalParent, final Node node, final CreateNodeParams.Builder paramsBuilder )
