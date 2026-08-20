@@ -2,6 +2,7 @@ package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -44,10 +44,8 @@ class ListScheduledJobsCommandTest
         final Node cronNode = jobNode( "cron-job", ScheduleCalendarType.CRON, null );
         final Node oneTimeNode = jobNode( "one-time-job", ScheduleCalendarType.ONE_TIME, Instant.parse( "2026-01-01T10:00:00Z" ) );
 
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create()
-                                                                                 .addEntry( listEntry( cronNode ) )
-                                                                                 .addEntry( listEntry( oneTimeNode ) )
-                                                                                 .build() );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer(
+            invocation -> Stream.of( listEntry( cronNode ), listEntry( oneTimeNode ) ) );
         when( nodeService.getByIds( isA( NodeIds.class ) ) ).thenReturn( Nodes.from( cronNode, oneTimeNode ) );
 
         final SchedulerServiceImpl schedulerService =
@@ -75,8 +73,7 @@ class ListScheduledJobsCommandTest
     {
         final Node cronNode = jobNode( "cron-job", ScheduleCalendarType.CRON, null );
 
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn(
-            ListNodesResult.create().addEntry( listEntry( cronNode ) ).build() );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer( invocation -> Stream.of( listEntry( cronNode ) ) );
         when( nodeService.getByIds( isA( NodeIds.class ) ) ).thenReturn( Nodes.from( cronNode ) );
 
         final NodeVersion version = mock( NodeVersion.class );

@@ -46,7 +46,6 @@ import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -393,7 +392,7 @@ public class NodeServiceImpl
 
     @Override
     @Traced("node.list")
-    public ListNodesResult list( final ListNodesParams params )
+    public Stream<NodeListEntry> list( final ListNodesParams params )
     {
         verifyContext();
         traceListing( params.getParentPath() );
@@ -401,17 +400,9 @@ public class NodeServiceImpl
         final NodeBranchEntries entries =
             findBranchEntriesByParent( params.getParentPath() ).requiredPermission( Permission.READ ).build().execute();
 
-        final ListNodesResult.Builder result = ListNodesResult.create();
-        for ( final NodeBranchEntry entry : entries )
-        {
-            result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
-        }
+        Tracer.attribute( "hits", (long) entries.getSize() );
 
-        final ListNodesResult listResult = result.build();
-
-        Tracer.attribute( "hits", (long) listResult.getSize() );
-
-        return listResult;
+        return entries.stream().map( entry -> new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
     }
 
     @Override

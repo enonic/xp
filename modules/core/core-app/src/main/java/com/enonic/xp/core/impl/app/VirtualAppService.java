@@ -12,10 +12,10 @@ import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -36,10 +36,11 @@ public class VirtualAppService
     public List<Application> list()
     {
         return VirtualAppContext.createContext().callWith( () -> {
-            final ListNodesResult result =
-                this.nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() );
+            final NodeIds appIds = this.nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() )
+                .map( NodeListEntry::nodeId )
+                .collect( NodeIds.collector() );
 
-            final Nodes nodes = nodeService.getByIds( result.getNodeIds() );
+            final Nodes nodes = nodeService.getByIds( appIds );
 
             return nodes.stream()
                 .map( node -> DynamicResourceManager.appKeyFromNodePath( node.path() ) )

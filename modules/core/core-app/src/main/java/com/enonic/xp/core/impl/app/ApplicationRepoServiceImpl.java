@@ -5,9 +5,10 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
@@ -66,10 +67,12 @@ public class ApplicationRepoServiceImpl
     @Override
     public Nodes getApplications()
     {
-        final ListNodesResult applications = ApplicationHelper.runAsAdmin(
-            () -> this.nodeService.list( ListNodesParams.create().parentPath( APPLICATION_PATH ).build() ) );
+        final NodeIds applicationIds = ApplicationHelper.runAsAdmin(
+            () -> this.nodeService.list( ListNodesParams.create().parentPath( APPLICATION_PATH ).build() )
+                .map( NodeListEntry::nodeId )
+                .collect( NodeIds.collector() ) );
 
-        return this.nodeService.getByIds( applications.getNodeIds() );
+        return this.nodeService.getByIds( applicationIds );
     }
 
     @Override

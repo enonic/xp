@@ -84,10 +84,9 @@ final class ArchiveContentCommand
         verifyNotProtectedRoot( originalNode.path() );
         validateLocation( originalNode );
 
-        final NodeIds descendants =
-            nodeService.list( ListNodesParams.create().parentPath( originalNode.path() ).build() ).getNodeIds();
-
-        final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );
+        final ContentIds descendantContents = nodeService.list( ListNodesParams.create().parentPath( originalNode.path() ).build() )
+            .map( entry -> ContentId.from( entry.nodeId() ) )
+            .collect( ContentIds.collector() );
 
         final ContentIds unpublishedContents = unpublish( contentId, descendantContents );
 

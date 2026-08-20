@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.util.stream.Stream;
+
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -54,7 +56,8 @@ public interface NodeService
      * Lists the entire subtree of a node at once.
      * <p>
      * Every node the caller is permitted to read is listed, ordered by path, and is represented by its id, path and timestamp. The nodes
-     * themselves are not read.
+     * themselves are not read. The stream maps each entry straight to whatever the caller collects — typically the ids — without an
+     * intermediate collection; it is served from an already-completed read, so it holds no open resources and needs no closing.
      * <p>
      * The listing is served from storage rather than from the search index. A node stored with {@link RefreshMode#STORAGE} or
      * {@link RefreshMode#ALL} is therefore listed immediately, whereas {@link #findByQuery(NodeQuery)} returns it only once the search
@@ -66,7 +69,7 @@ public interface NodeService
      *
      * @since 8.1.0
      */
-    ListNodesResult list( ListNodesParams params );
+    Stream<NodeListEntry> list( ListNodesParams params );
 
     /**
      * Enumerates the entire subtree of a node in batches. Requires the administrator role.

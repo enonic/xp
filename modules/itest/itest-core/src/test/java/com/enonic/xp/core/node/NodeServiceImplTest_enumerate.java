@@ -167,6 +167,6 @@ class NodeServiceImplTest_enumerate
         // the verifying read needs the deletions refreshed; neither list nor enumerate refreshes on its own
         nodeService.refresh( RefreshMode.STORAGE );
         assertTrue( NodeHelper.runAsAdmin(
-            () -> nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() ) ).isEmpty() );
+            () -> nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() ).findAny().isEmpty() ) );
     }
 }
