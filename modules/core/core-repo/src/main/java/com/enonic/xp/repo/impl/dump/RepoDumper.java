@@ -135,7 +135,6 @@ public class RepoDumper
                 {
                     final EnumerateNodesResult batch = this.nodeService.enumerate( EnumerateNodesParams.create()
                                                                                        .parentPath( NodePath.ROOT )
-                                                                                       .batchSize( EnumerateNodesParams.MAX_BATCH_SIZE )
                                                                                        .cursor( cursor )
                                                                                        .build() );
                     for ( final NodeEnumerationEntry entry : batch.getEntries() )

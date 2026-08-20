@@ -138,7 +138,6 @@ public class NodeExporter
         {
             final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
                                                                           .parentPath( rootNode.path() )
-                                                                          .batchSize( EnumerateNodesParams.MAX_BATCH_SIZE )
                                                                           .cursor( cursor )
                                                                           .build() );
             entries.addAll( batch.getEntries() );

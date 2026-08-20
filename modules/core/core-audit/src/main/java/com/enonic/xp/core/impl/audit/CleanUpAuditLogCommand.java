@@ -63,7 +63,6 @@ public class CleanUpAuditLogCommand
         {
             final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
                                                                            .parentPath( NodePath.ROOT )
-                                                                           .batchSize( EnumerateNodesParams.MAX_BATCH_SIZE )
                                                                            .modifiedBefore( until )
                                                                            .cursor( cursor )
                                                                            .build() );

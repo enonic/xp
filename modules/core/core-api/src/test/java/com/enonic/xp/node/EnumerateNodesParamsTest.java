@@ -13,10 +13,10 @@ class EnumerateNodesParamsTest
     @Test
     void first_call_needs_no_cursor()
     {
-        final EnumerateNodesParams params = EnumerateNodesParams.create().parentPath( NodePath.ROOT ).batchSize( 10 ).build();
+        final EnumerateNodesParams params = EnumerateNodesParams.create().parentPath( NodePath.ROOT ).build();
 
         assertEquals( NodePath.ROOT, params.getParentPath() );
-        assertEquals( 10, params.getBatchSize() );
+        assertEquals( EnumerateNodesParams.MAX_BATCH_SIZE, params.getBatchSize() );
         assertNull( params.getModifiedBefore() );
         assertNull( params.getCursor() );
     }
@@ -48,7 +48,7 @@ class EnumerateNodesParamsTest
     @Test
     void parent_path_is_required()
     {
-        assertThrows( NullPointerException.class, () -> EnumerateNodesParams.create().batchSize( 10 ).build() );
+        assertThrows( NullPointerException.class, () -> EnumerateNodesParams.create().build() );
     }
 
     @Test
@@ -70,8 +70,8 @@ class EnumerateNodesParamsTest
     @Test
     void batch_size_must_be_positive()
     {
-        final EnumerateNodesParams.Builder unset = EnumerateNodesParams.create().parentPath( NodePath.ROOT );
-        assertEquals( "batchSize must be positive", assertThrows( IllegalArgumentException.class, unset::build ).getMessage() );
+        final EnumerateNodesParams.Builder zero = EnumerateNodesParams.create().parentPath( NodePath.ROOT ).batchSize( 0 );
+        assertEquals( "batchSize must be positive", assertThrows( IllegalArgumentException.class, zero::build ).getMessage() );
 
         final EnumerateNodesParams.Builder negative = EnumerateNodesParams.create().parentPath( NodePath.ROOT ).batchSize( -1 );
         assertEquals( "batchSize must be positive", assertThrows( IllegalArgumentException.class, negative::build ).getMessage() );

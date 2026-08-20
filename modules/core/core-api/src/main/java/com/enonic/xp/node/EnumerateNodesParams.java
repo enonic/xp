@@ -77,7 +77,7 @@ public final class EnumerateNodesParams
         @Nullable
         private NodePath parentPath;
 
-        private int batchSize;
+        private int batchSize = MAX_BATCH_SIZE;
 
         @Nullable
         private Instant modifiedBefore;
@@ -100,8 +100,12 @@ public final class EnumerateNodesParams
             return this;
         }
 
-        /**
-         * The most entries a single call returns. Required; positive and no larger than {@link #MAX_BATCH_SIZE}.
+         /**
+         * The most entries a single call returns, {@link #MAX_BATCH_SIZE} by default. A walk that hands every batch on and forgets it has
+         * no reason to ask for less - the fewer batches, the fewer requests, and the cost of one is bounded either way. Set it lower only
+         * where fewer entries are known to settle the question being asked.
+         *
+         * @param batchSize positive and no larger than {@link #MAX_BATCH_SIZE}.
          */
         public Builder batchSize( final int batchSize )
         {
