@@ -148,6 +148,22 @@ class NodeServiceImplTest_enumerate
     }
 
     @Test
+    void a_cursor_that_never_came_from_a_bounded_batch_is_refused()
+    {
+        final Node parent = createNode( NodePath.ROOT, "parent" );
+        nodeService.refresh( RefreshMode.STORAGE );
+
+        final EnumerateNodesParams params = EnumerateNodesParams.create()
+            .parentPath( parent.path() )
+            .batchSize( 1 )
+            .modifiedBefore( Instant.now() )
+            .cursor( "not-a-bounded-cursor" )
+            .build();
+
+        assertThrows( IllegalArgumentException.class, () -> enumerate( params ) );
+    }
+
+    @Test
     void a_move_between_batches_neither_hides_nor_repeats_an_entry()
     {
         final Node parent = createNode( NodePath.ROOT, "parent" );

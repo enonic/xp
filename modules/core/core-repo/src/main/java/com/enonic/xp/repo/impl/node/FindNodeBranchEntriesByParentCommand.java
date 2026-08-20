@@ -153,8 +153,17 @@ final class FindNodeBranchEntriesByParentCommand
             return RangeFilter.create().fieldName( BranchIndexPath.NODE_ID.getPath() ).gt( ValueFactory.newString( cursor ) ).build();
         }
 
+        // the cursor is caller-supplied: a value that never came from a bounded batch fails fast rather than as a raw parse error
         final int separator = cursor.indexOf( '|' );
-        final Value cursorTimestamp = ValueFactory.newDateTime( Instant.ofEpochMilli( Long.parseLong( cursor.substring( 0, separator ) ) ) );
+        final Value cursorTimestamp;
+        try
+        {
+            cursorTimestamp = ValueFactory.newDateTime( Instant.ofEpochMilli( Long.parseLong( cursor.substring( 0, separator ) ) ) );
+        }
+        catch ( IndexOutOfBoundsException | NumberFormatException e )
+        {
+            throw new IllegalArgumentException( "Invalid cursor: " + cursor, e );
+        }
         final String cursorId = cursor.substring( separator + 1 );
 
         return BooleanFilter.create()
