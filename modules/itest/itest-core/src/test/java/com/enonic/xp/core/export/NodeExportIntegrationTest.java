@@ -222,7 +222,7 @@ class NodeExportIntegrationTest
         assertZipEntryExists( EXPORT_NAME + "/mynode/child2/_/node.xml" );
         assertZipEntryExists( EXPORT_NAME + "/mynode/child2/child2_1/_/node.xml" );
 
-        Mockito.verify( nodeExportListener ).nodeResolved( 9 );
+        Mockito.verify( nodeExportListener ).resolved( 9 );
         Mockito.verify( nodeExportListener, Mockito.times( 9 ) ).nodeExported( 1 );
     }
 

@@ -22,6 +22,7 @@ public interface ApplyPermissionsListener
      */
     default void resolved( int count )
     {
+        setTotal( count );
     }
 
     void permissionsApplied( int count );

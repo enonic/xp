@@ -99,6 +99,9 @@ public class PushNodesCommand
         final List<NodeBranchEntry> list =
             nodeBranchEntries.stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) ).collect( Collectors.toList() );
 
+        // the whole push is in hand before any of it is pushed, so its size is known rather than discovered
+        pushListener.resolved( list.size() );
+
         final Set<NodePath> alreadyAdded = new HashSet<>();
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         for ( final NodeBranchEntry branchEntry : list )

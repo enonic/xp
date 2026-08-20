@@ -149,7 +149,6 @@ public class ApplyNodePermissionsCommand
         if ( total != reported )
         {
             listener.resolved( total );
-            listener.setTotal( total );
         }
         return total;
     }

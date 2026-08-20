@@ -28,7 +28,7 @@ public class FunctionBasedNodeExportListener
     }
 
     @Override
-    public void nodeResolved( final int count )
+    public void resolved( final int count )
     {
         nodeResolved.apply( count );
     }

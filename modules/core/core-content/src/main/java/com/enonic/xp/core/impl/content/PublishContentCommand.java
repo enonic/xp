@@ -76,7 +76,7 @@ public class PublishContentCommand
 
         if ( publishContentListener != null )
         {
-            publishContentListener.contentResolved( results.size() );
+            publishContentListener.resolved( results.size() );
         }
 
         doPush( results.contentIds() );

@@ -144,7 +144,7 @@ public class NodeExporter
             {
                 // the node the export was asked for, plus what the enumeration has handed over already and still holds - so the total
                 // stands from the first batch rather than waiting for the whole subtree to be enumerated
-                nodeExportListener.nodeResolved( (int) Math.min( 1L + entries.size() + batch.getRemaining(), Integer.MAX_VALUE ) );
+                nodeExportListener.resolved( (int) Math.min( 1L + entries.size() + batch.getRemaining(), Integer.MAX_VALUE ) );
             }
 
             entries.addAll( batch.getEntries() );

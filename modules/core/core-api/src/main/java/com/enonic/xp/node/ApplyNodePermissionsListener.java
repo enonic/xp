@@ -22,6 +22,7 @@ public interface ApplyNodePermissionsListener
      */
     default void resolved( int count )
     {
+        setTotal( count );
     }
 
     void permissionsApplied( int count );

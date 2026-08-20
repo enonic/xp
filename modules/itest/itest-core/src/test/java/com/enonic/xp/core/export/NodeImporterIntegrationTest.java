@@ -182,7 +182,7 @@ class NodeImporterIntegrationTest
         final Node mychildchild = assertNodeExists( mychild.path(), "mychildchild" );
         assertNodeExists( mychildchild.path(), "mychildchildchild" );
 
-        Mockito.verify( nodeImportListener ).nodeResolved( 5 );
+        Mockito.verify( nodeImportListener ).resolved( 5 );
         Mockito.verify( nodeImportListener, Mockito.times( 4 ) ).nodeImported( 1 );
     }
 

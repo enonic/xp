@@ -108,12 +108,6 @@ final class ApplyContentPermissionsCommand
         }
 
         @Override
-        public void setTotal( final int count )
-        {
-            delegate.setTotal( count );
-        }
-
-        @Override
         public void resolved( final int count )
         {
             delegate.resolved( count );

@@ -27,7 +27,7 @@ class FunctionBasedNodeImportListenerTest
             return null;
         } );
 
-        functionBasedNodeImportListener.nodeResolved( 10 );
+        functionBasedNodeImportListener.resolved( 10 );
         functionBasedNodeImportListener.nodeImported( 2 );
         functionBasedNodeImportListener.nodeSkipped( 1 );
         assertEquals( 10, nodesResolved.get() );
@@ -39,7 +39,7 @@ class FunctionBasedNodeImportListenerTest
     void null_safe()
     {
         final FunctionBasedNodeImportListener functionBasedNodeImportListener = new FunctionBasedNodeImportListener( null, null, null );
-        functionBasedNodeImportListener.nodeResolved( 10 );
+        functionBasedNodeImportListener.resolved( 10 );
         functionBasedNodeImportListener.nodeImported( 2 );
         functionBasedNodeImportListener.nodeSkipped( 1 );
     }

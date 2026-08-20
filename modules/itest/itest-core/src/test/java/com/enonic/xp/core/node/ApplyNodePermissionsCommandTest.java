@@ -308,7 +308,6 @@ class ApplyNodePermissionsCommandTest
 
         verify( listener, times( 1 ) ).notEnoughRights( 1 );
         verify( listener, times( 1 ) ).resolved( 1 );
-        verify( listener, times( 1 ) ).setTotal( 1 );
 
         assertEquals( 1, result.getResults().size() );
         assertNull( result.getResult( createdNode.id(), ContentConstants.BRANCH_DRAFT ).permissions() );
