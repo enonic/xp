@@ -81,6 +81,9 @@ public interface NodeService
      * answers with none. The sequence of batches observes each entry at most once — also when nodes are written, deleted or moved
      * between batches, since the position of an entry in the enumeration does not depend on its path — although entries a concurrent
      * write places behind the cursor are not observed. In return the entries arrive in an order that carries no meaning.
+     * <p>
+     * An enumeration {@link EnumerateNodesParams.Builder#modifiedBefore(java.time.Instant) bounded by a timestamp} returns only the
+     * nodes whose timestamp falls before the bound, judged when the scan passes each entry, and arrives oldest first.
      *
      * @throws com.enonic.xp.exception.ForbiddenAccessException where the caller lacks the administrator role.
      * @since 8.1.0

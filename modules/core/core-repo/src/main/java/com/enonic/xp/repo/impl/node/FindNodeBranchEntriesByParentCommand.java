@@ -1,8 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
+
 import com.google.common.collect.Iterables;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
@@ -13,6 +16,8 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.Filter;
 import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
@@ -46,6 +51,8 @@ final class FindNodeBranchEntriesByParentCommand
 
     private final int batchSize;
 
+    private final Instant modifiedBefore;
+
     private final String cursor;
 
     private FindNodeBranchEntriesByParentCommand( final Builder builder )
@@ -56,6 +63,7 @@ final class FindNodeBranchEntriesByParentCommand
         this.requiredPermission = builder.requiredPermission;
         this.refreshStorage = builder.refreshStorage;
         this.batchSize = builder.batchSize;
+        this.modifiedBefore = builder.modifiedBefore;
         this.cursor = builder.cursor;
     }
 
@@ -76,9 +84,9 @@ final class FindNodeBranchEntriesByParentCommand
 
     /**
      * One batch of the listing and the position it stopped at, or the whole listing and no position where no batch size is set. The
-     * cursor is the id of the last entry scanned rather than the last entry kept, so a continuation never revisits ground that
-     * {@link #filter} discarded; a batched scan orders by id rather than by path, so a move between batches cannot carry a node across
-     * the cursor.
+     * cursor names the last entry scanned rather than the last entry kept, so a continuation never revisits ground that
+     * {@link #filter} discarded; a batched scan orders by id — or by timestamp where a bound is set — rather than by path, so a move
+     * between batches cannot carry a node across the cursor.
      */
     Batch executeBatch()
     {
@@ -95,24 +103,74 @@ final class FindNodeBranchEntriesByParentCommand
                                  .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
                                  .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
                                  .build() )
-            .addOrderBy( FieldOrderExpr.create( batchSize > 0 ? BranchIndexPath.NODE_ID : BranchIndexPath.PATH,
-                                                batchSize > 0 ? OrderExpr.Direction.ASC : pathOrder ) )
             .size( batchSize > 0 ? batchSize : NodeSearchService.GET_ALL_SIZE_FLAG );
+
+        if ( modifiedBefore != null )
+        {
+            // a bounded scan orders by timestamp, oldest first, with the id breaking the ties the index's millisecond precision leaves
+            query.addQueryFilter( RangeFilter.create()
+                                      .fieldName( BranchIndexPath.TIMESTAMP.getPath() )
+                                      .lt( ValueFactory.newDateTime( modifiedBefore ) )
+                                      .build() )
+                .addOrderBy( FieldOrderExpr.create( BranchIndexPath.TIMESTAMP, OrderExpr.Direction.ASC ) )
+                .addOrderBy( FieldOrderExpr.create( BranchIndexPath.NODE_ID, OrderExpr.Direction.ASC ) );
+        }
+        else
+        {
+            query.addOrderBy( FieldOrderExpr.create( batchSize > 0 ? BranchIndexPath.NODE_ID : BranchIndexPath.PATH,
+                                                     batchSize > 0 ? OrderExpr.Direction.ASC : pathOrder ) );
+        }
 
         if ( cursor != null )
         {
-            query.addQueryFilter(
-                RangeFilter.create().fieldName( BranchIndexPath.NODE_ID.getPath() ).gt( ValueFactory.newString( cursor ) ).build() );
+            query.addQueryFilter( createAfterCursorFilter() );
         }
 
         final SearchResult result = this.nodeSearchService.query( query.build(), context.getRepositoryId() );
 
         final NodeBranchEntries entries = NodeBranchQueryResultFactory.create( result );
 
-        final String nextCursor =
-            batchSize > 0 && entries.getSize() == batchSize ? Iterables.getLast( entries ).getNodeId().toString() : null;
+        final String nextCursor = batchSize > 0 && entries.getSize() == batchSize ? cursorOf( Iterables.getLast( entries ) ) : null;
 
         return new Batch( filter( entries, context ), nextCursor, result.getTotalHits() );
+    }
+
+    private String cursorOf( final NodeBranchEntry entry )
+    {
+        return modifiedBefore == null
+            ? entry.getNodeId().toString()
+            : entry.getTimestamp().toEpochMilli() + "|" + entry.getNodeId();
+    }
+
+    /**
+     * The position the previous batch stopped at, translated back to a filter. An unbounded scan sits on the node id alone; a bounded
+     * one sits on (timestamp, id) — strictly after the cursor's millisecond, or within it and past its id.
+     */
+    private Filter createAfterCursorFilter()
+    {
+        if ( modifiedBefore == null )
+        {
+            return RangeFilter.create().fieldName( BranchIndexPath.NODE_ID.getPath() ).gt( ValueFactory.newString( cursor ) ).build();
+        }
+
+        final int separator = cursor.indexOf( '|' );
+        final Value cursorTimestamp = ValueFactory.newDateTime( Instant.ofEpochMilli( Long.parseLong( cursor.substring( 0, separator ) ) ) );
+        final String cursorId = cursor.substring( separator + 1 );
+
+        return BooleanFilter.create()
+            .should( RangeFilter.create().fieldName( BranchIndexPath.TIMESTAMP.getPath() ).gt( cursorTimestamp ).build() )
+            .should( BooleanFilter.create()
+                         .must( RangeFilter.create()
+                                    .fieldName( BranchIndexPath.TIMESTAMP.getPath() )
+                                    .from( cursorTimestamp )
+                                    .to( cursorTimestamp )
+                                    .build() )
+                         .must( RangeFilter.create()
+                                    .fieldName( BranchIndexPath.NODE_ID.getPath() )
+                                    .gt( ValueFactory.newString( cursorId ) )
+                                    .build() )
+                         .build() )
+            .build();
     }
 
     /**
@@ -169,6 +227,8 @@ final class FindNodeBranchEntriesByParentCommand
 
         private int batchSize;
 
+        private Instant modifiedBefore;
+
         private String cursor;
 
         private Builder()
@@ -208,6 +268,12 @@ final class FindNodeBranchEntriesByParentCommand
         Builder batchSize( final int batchSize )
         {
             this.batchSize = batchSize;
+            return this;
+        }
+
+        Builder modifiedBefore( final Instant modifiedBefore )
+        {
+            this.modifiedBefore = modifiedBefore;
             return this;
         }
 

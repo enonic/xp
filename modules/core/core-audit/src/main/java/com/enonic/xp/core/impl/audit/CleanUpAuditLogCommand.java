@@ -48,9 +48,10 @@ public class CleanUpAuditLogCommand
     }
 
     /**
-     * Enumerates the audit log from storage in batches and deletes every record older than the age threshold, aged by the moment it was
-     * written. The repository holds nothing but audit log records, and the cursor only moves forward over ground the deletions leave
-     * behind, so one storage refresh up front is the only refresh the whole clean-up needs.
+     * Enumerates the expired records from storage in batches - the enumeration itself is bounded by the age threshold, so the scan costs
+     * what expires rather than what the log holds, and every record it answers with is deleted, oldest first. Records are aged by the
+     * moment they were written: the log is add-only, so a record's timestamp never changes. The cursor only moves forward over ground
+     * the deletions leave behind, so one storage refresh up front is the only refresh the whole clean-up needs.
      */
     private CleanUpAuditLogResult doCleanUp()
     {
@@ -63,24 +64,25 @@ public class CleanUpAuditLogCommand
 
         do
         {
-            final EnumerateNodesResult batch = nodeService.enumerate(
-                EnumerateNodesParams.create().parentPath( NodePath.ROOT ).batchSize( BATCH_SIZE ).cursor( cursor ).build() );
+            final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
+                                                                           .parentPath( NodePath.ROOT )
+                                                                           .batchSize( BATCH_SIZE )
+                                                                           .modifiedBefore( until )
+                                                                           .cursor( cursor )
+                                                                           .build() );
 
             for ( final NodeEnumerationEntry entry : batch.getEntries() )
             {
-                if ( entry.timestamp().isBefore( until ) )
+                if ( !started )
                 {
-                    if ( !started )
-                    {
-                        listener.start( BATCH_SIZE );
-                        started = true;
-                    }
-
-                    result.deleted(
-                        nodeService.delete( DeleteNodeParams.create().nodeId( entry.nodeId() ).build() ).getNodeIds().getSize() );
-
-                    listener.processed();
+                    listener.start( BATCH_SIZE );
+                    started = true;
                 }
+
+                result.deleted(
+                    nodeService.delete( DeleteNodeParams.create().nodeId( entry.nodeId() ).build() ).getNodeIds().getSize() );
+
+                listener.processed();
             }
 
             cursor = batch.getCursor();

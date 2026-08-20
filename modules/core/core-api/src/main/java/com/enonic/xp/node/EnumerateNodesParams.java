@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.time.Instant;
+
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -18,6 +20,9 @@ public final class EnumerateNodesParams
     private final int batchSize;
 
     @Nullable
+    private final Instant modifiedBefore;
+
+    @Nullable
     private final String cursor;
 
     private EnumerateNodesParams( final Builder builder )
@@ -28,6 +33,7 @@ public final class EnumerateNodesParams
             throw new IllegalArgumentException( "batchSize must be positive" );
         }
         this.batchSize = builder.batchSize;
+        this.modifiedBefore = builder.modifiedBefore;
         this.cursor = builder.cursor;
     }
 
@@ -46,6 +52,11 @@ public final class EnumerateNodesParams
         return batchSize;
     }
 
+    public @Nullable Instant getModifiedBefore()
+    {
+        return modifiedBefore;
+    }
+
     public @Nullable String getCursor()
     {
         return cursor;
@@ -57,6 +68,9 @@ public final class EnumerateNodesParams
         private NodePath parentPath;
 
         private int batchSize;
+
+        @Nullable
+        private Instant modifiedBefore;
 
         @Nullable
         private String cursor;
@@ -86,9 +100,19 @@ public final class EnumerateNodesParams
         }
 
         /**
+         * Bounds the enumeration to the nodes whose timestamp falls strictly before the given moment, judged when the scan passes each
+         * entry. A bounded enumeration arrives oldest first.
+         */
+        public Builder modifiedBefore( final @Nullable Instant modifiedBefore )
+        {
+            this.modifiedBefore = modifiedBefore;
+            return this;
+        }
+
+        /**
          * Continues an enumeration from where the previous batch stopped. Pass the {@link EnumerateNodesResult#getCursor() cursor} of
-         * that batch unchanged, or {@code null} for the first call. The enumeration must be continued with the same parent path and
-         * batch size for the sequence of batches to add up to the whole subtree.
+         * that batch unchanged, or {@code null} for the first call. The enumeration must be continued with the same parent path, batch
+         * size and bound for the sequence of batches to add up to the whole subtree.
          */
         public Builder cursor( final @Nullable String cursor )
         {

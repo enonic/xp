@@ -417,6 +417,7 @@ public class NodeServiceImpl
 
         final FindNodeBranchEntriesByParentCommand.Batch batch =
             findBranchEntriesByParent( params.getParentPath() ).batchSize( params.getBatchSize() )
+                .modifiedBefore( params.getModifiedBefore() )
                 .cursor( params.getCursor() )
                 .build()
                 .executeBatch();

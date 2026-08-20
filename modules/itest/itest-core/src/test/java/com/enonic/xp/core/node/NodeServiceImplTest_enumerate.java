@@ -1,5 +1,6 @@
 package com.enonic.xp.core.node;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -106,6 +107,44 @@ class NodeServiceImplTest_enumerate
             enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 10 ).build() );
 
         assertThat( result.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).contains( visible.id(), hidden.id() );
+    }
+
+    @Test
+    void bounded_enumeration_returns_the_expired_oldest_first()
+        throws Exception
+    {
+        final Node parent = createNode( NodePath.ROOT, "parent" );
+        final Node oldB = createNode( parent.path(), "old-b" );
+        Thread.sleep( 10 );
+        final Node oldA = createNode( parent.path(), "old-a" );
+        Thread.sleep( 10 );
+        final Instant bound = Instant.now();
+        Thread.sleep( 10 );
+        createNode( parent.path(), "young" );
+        nodeService.refresh( RefreshMode.STORAGE );
+
+        // only the nodes from before the bound are enumerated, oldest first - the cursor walks the same order
+        final EnumerateNodesResult first = enumerate(
+            EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 1 ).modifiedBefore( bound ).build() );
+        assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( oldB.id() );
+        assertNotNull( first.getCursor() );
+
+        final EnumerateNodesResult second = enumerate( EnumerateNodesParams.create()
+                                                           .parentPath( parent.path() )
+                                                           .batchSize( 1 )
+                                                           .modifiedBefore( bound )
+                                                           .cursor( first.getCursor() )
+                                                           .build() );
+        assertThat( second.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( oldA.id() );
+
+        final EnumerateNodesResult third = enumerate( EnumerateNodesParams.create()
+                                                          .parentPath( parent.path() )
+                                                          .batchSize( 1 )
+                                                          .modifiedBefore( bound )
+                                                          .cursor( second.getCursor() )
+                                                          .build() );
+        assertThat( third.getEntries() ).isEmpty();
+        assertNull( third.getCursor() );
     }
 
     @Test

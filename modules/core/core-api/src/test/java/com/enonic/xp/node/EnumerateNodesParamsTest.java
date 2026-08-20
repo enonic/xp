@@ -1,5 +1,7 @@
 package com.enonic.xp.node;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +17,21 @@ class EnumerateNodesParamsTest
 
         assertEquals( NodePath.ROOT, params.getParentPath() );
         assertEquals( 10, params.getBatchSize() );
+        assertNull( params.getModifiedBefore() );
         assertNull( params.getCursor() );
+    }
+
+    @Test
+    void bound_is_carried()
+    {
+        final Instant bound = Instant.parse( "2026-01-01T00:00:00Z" );
+
+        assertEquals( bound, EnumerateNodesParams.create()
+            .parentPath( NodePath.ROOT )
+            .batchSize( 10 )
+            .modifiedBefore( bound )
+            .build()
+            .getModifiedBefore() );
     }
 
     @Test

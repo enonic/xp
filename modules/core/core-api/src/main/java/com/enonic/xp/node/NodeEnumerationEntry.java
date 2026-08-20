@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param nodeId id of the node.
  * @param nodePath path of the node.
- * @param timestamp the moment the node was last modified in the branch enumerated.
+ * @param timestamp timestamp of the node.
  * @param versionId the version of the node the enumeration observed.
  * @since 8.1.0
  */

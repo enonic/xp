@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.audit;
 
+import java.time.Duration;
 import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 
 import com.enonic.xp.audit.AuditLog;
@@ -42,6 +44,7 @@ import static java.util.Objects.requireNonNullElse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -195,25 +198,26 @@ class AuditLogServiceImplTest
     }
 
     @Test
-    void cleanUpKeepsRecordsNewerThanThreshold()
+    void cleanUpBoundsTheEnumerationByTheThreshold()
     {
         when( nodeService.delete( any() ) ).thenAnswer( AuditLogServiceImplTest::answerDeleted );
 
-        when( config.ageThreshold() ).thenReturn( "PT1s" );
+        when( config.ageThreshold() ).thenReturn( "PT1H" );
 
-        final EnumerateNodesResult batch = EnumerateNodesResult.create()
-            .addEntry( new NodeEnumerationEntry( NodeId.from( "old-1" ), new NodePath( "/old-1" ), Instant.now().minusSeconds( 60 ), NodeVersionId.from( "v-old-1" ) ) )
-            .addEntry( new NodeEnumerationEntry( NodeId.from( "new-1" ), new NodePath( "/new-1" ), Instant.now().plusSeconds( 60 ), NodeVersionId.from( "v-new-1" ) ) )
-            .addEntry( new NodeEnumerationEntry( NodeId.from( "old-2" ), new NodePath( "/old-2" ), Instant.now().minusSeconds( 60 ), NodeVersionId.from( "v-old-2" ) ) )
-            .build();
-        when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn( batch );
+        // the age check is the enumeration's own: the bound handed over must be now minus the threshold
+        final Instant oldestAccepted = Instant.now().minus( Duration.ofHours( 1 ) ).minusSeconds( 5 );
 
-        final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
+        when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn(
+            createBatch( 2, Instant.now().minus( Duration.ofHours( 2 ) ), null ) );
 
-        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
+        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().build() );
 
         assertEquals( 2, result.getDeleted() );
-        verify( listener, times( 2 ) ).processed();
+
+        final ArgumentCaptor<EnumerateNodesParams> params = ArgumentCaptor.forClass( EnumerateNodesParams.class );
+        verify( nodeService ).enumerate( params.capture() );
+        assertTrue( params.getValue().getModifiedBefore().isAfter( oldestAccepted ) );
+        assertTrue( params.getValue().getModifiedBefore().isBefore( Instant.now() ) );
     }
 
     private EnumerateNodesResult createBatch( final int number, final Instant timestamp, final String cursor )
