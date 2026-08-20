@@ -12,7 +12,6 @@ import com.enonic.xp.node.EnumerateNodesParams;
 import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.RefreshMode;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElseGet;
@@ -50,14 +49,13 @@ public class CleanUpAuditLogCommand
     /**
      * Enumerates the expired records from storage in batches - the enumeration itself is bounded by the age threshold, so the scan costs
      * what expires rather than what the log holds, and every record it answers with is deleted, oldest first. Records are aged by the
-     * moment they were written: the log is add-only, so a record's timestamp never changes. The cursor only moves forward over ground
-     * the deletions leave behind, so one storage refresh up front is the only refresh the whole clean-up needs.
+     * moment they were written: the log is add-only, so a record's timestamp never changes. No refresh is needed anywhere: the cursor
+     * only moves forward over ground the deletions leave behind, and a record too fresh to be visible without one is far too fresh to
+     * fall under the threshold.
      */
     private CleanUpAuditLogResult doCleanUp()
     {
         final CleanUpAuditLogResult.Builder result = CleanUpAuditLogResult.create();
-
-        nodeService.refresh( RefreshMode.STORAGE );
 
         boolean started = false;
         String cursor = null;
