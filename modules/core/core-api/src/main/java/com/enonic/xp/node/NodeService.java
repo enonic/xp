@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import java.time.Instant;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.NullMarked;
@@ -80,10 +81,12 @@ public interface NodeService
      * bounded batch at a time: repeat the call with the {@link EnumerateNodesResult#getCursor() cursor} of each batch until a batch
      * answers with none. The sequence of batches observes each entry at most once — also when nodes are written, deleted or moved
      * between batches, since the position of an entry in the enumeration does not depend on its path — although entries a concurrent
-     * write places behind the cursor are not observed. In return the entries arrive in an order that carries no meaning.
+     * write places behind the cursor are not observed.
      * <p>
-     * An enumeration {@link EnumerateNodesParams.Builder#modifiedBefore(java.time.Instant) bounded by a timestamp} returns only the
-     * nodes whose timestamp falls before the bound, judged when the scan passes each entry, and arrives oldest first.
+     * An enumeration {@link EnumerateNodesParams.Builder#modifiedBefore(Instant) bounded by a timestamp} returns only the nodes whose
+     * timestamp falls before the bound, judged when the scan passes each entry, and arrives oldest first — so a consumer working
+     * through a backlog gets it in the order it accumulated, for nothing. An unbounded enumeration arrives in an order that carries no
+     * meaning: by node id, which is what makes a batch boundary independent of any path.
      *
      * @throws com.enonic.xp.exception.ForbiddenAccessException where the caller lacks the administrator role.
      * @since 8.1.0

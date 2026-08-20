@@ -1,5 +1,6 @@
 package com.enonic.xp.node;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.jspecify.annotations.NullMarked;
@@ -8,8 +9,9 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableList;
 
 /**
- * One batch of a {@link NodeService#enumerate(EnumerateNodesParams)} enumeration: its entries, in an order that carries no meaning,
- * and the position where the enumeration continues.
+ * One batch of a {@link NodeService#enumerate(EnumerateNodesParams)} enumeration: its entries and the position where the enumeration
+ * continues. The entries of a plain enumeration arrive in an order that carries no meaning; those of one bounded by
+ * {@link EnumerateNodesParams.Builder#modifiedBefore(Instant)} arrive oldest first.
  *
  * @since 8.1.0
  */
