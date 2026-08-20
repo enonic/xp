@@ -305,11 +305,21 @@ public class LayersContentService
      */
     public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
     {
+        return findAllByParent( contentPath, cursor, SYNC_BATCH_SIZE );
+    }
+
+    /**
+     * @param batchSize the most entries this batch may hold, capped at the batch size the sync flows use. A caller that only has to find
+     * one entry of a kind can ask for the fewest entries that are certain to hold it, rather than for a full batch.
+     */
+    public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor, final int batchSize )
+    {
         return callOnPrimary( () -> {
             final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
                                                                           .parentPath( ContentNodeHelper.translateContentPathToNodePath(
                                                                               contentPath ) )
-                                                                          .batchSize( SYNC_BATCH_SIZE )
+                                                                          .batchSize( Math.min( Math.max( batchSize, 1 ),
+                                                                                                SYNC_BATCH_SIZE ) )
                                                                           .cursor( cursor )
                                                                           .build() );
             return new ContentIdsBatch(

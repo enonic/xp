@@ -91,11 +91,16 @@ final class DeletedEventSyncCommand
      */
     private boolean noDescendantSurvives( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
+        // one descendant outside the set settles it, and no batch has to be larger than the set to hold one: among that many distinct
+        // descendants, one of them cannot be in the set. So the walk asks for exactly the entries that can still answer it - for the
+        // clean-up flows, which remove one content at a time, that is a couple of entries rather than a thousand
+        final int decisive = idsToRemove.size() + 1;
+
         String cursor = null;
         do
         {
             final LayersContentService.ContentIdsBatch batch =
-                this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath(), cursor );
+                this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath(), cursor, decisive );
 
             if ( !batch.ids().stream().allMatch( idsToRemove::contains ) )
             {
