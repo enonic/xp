@@ -91,7 +91,9 @@ public final class ListNodesParams
         }
 
         /**
-         * Lists every descendant of the parent rather than the direct children only.
+         * Lists every descendant of the parent rather than the direct children only. Narrowing to the direct children is a semantic
+         * choice, never a cheaper one: the storage index holds no parent field, so a non-recursive listing walks the same subtree
+         * and drops the deeper levels afterward, costing as much as the recursive listing or more.
          */
         public Builder recursive( final boolean recursive )
         {
