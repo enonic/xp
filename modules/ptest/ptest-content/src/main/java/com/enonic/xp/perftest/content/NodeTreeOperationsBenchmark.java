@@ -79,7 +79,13 @@ public class NodeTreeOperationsBenchmark
     @AuxCounters( AuxCounters.Type.EVENTS )
     public static class Measured
     {
-        /** The nodes the operation covers, so every figure can be read per node as well as per operation. */
+        /**
+         * The operations counted, so the report can divide by it. JMH sums an event counter over the iterations of a run rather than
+         * averaging it, so every counter here is a total and only a ratio of two of them means anything.
+         */
+        public long ops;
+
+        /** The nodes the operations covered, so every figure can be read per node as well as per operation. */
         public long nodes;
 
         /** What the operation allocates on the thread that runs it. */
@@ -91,6 +97,7 @@ public class NodeTreeOperationsBenchmark
         @Setup( Level.Iteration )
         public void reset()
         {
+            ops = 0;
             nodes = 0;
             allocKiB = 0;
             peakLiveKiB = 0;
@@ -120,6 +127,7 @@ public class NodeTreeOperationsBenchmark
         <T> T measure( final int nodeCount, final Callable<T> operation )
             throws Exception
         {
+            ops++;
             nodes += nodeCount;
 
             final long liveBefore = liveSetBytes();
