@@ -111,12 +111,24 @@ class DuplicateNodeCommandTest
     {
         final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
         createNode( CreateNodeParams.create().parent( node.path() ).name( "readable-child" ).build() );
+        final Node hiddenChild = ctxDefaultAdmin().callWith( () -> createNode( CreateNodeParams.create()
+                                                                                   .parent( node.path() )
+                                                                                   .name( "hidden-child" )
+                                                                                   .permissions( AccessControlList.of(
+                                                                                       AccessControlEntry.create()
+                                                                                           .principal( PrincipalKey.from(
+                                                                                               "user:system:someone-else" ) )
+                                                                                           .allowAll()
+                                                                                           .build() ) )
+                                                                                   .build() ) );
+
+        // readable itself, but its parent is not duplicated, so it is skipped by the cascade and shrinks the total
         ctxDefaultAdmin().callWith( () -> createNode( CreateNodeParams.create()
-                                                          .parent( node.path() )
-                                                          .name( "hidden-child" )
+                                                          .parent( hiddenChild.path() )
+                                                          .name( "readable-grandchild" )
                                                           .permissions( AccessControlList.of( AccessControlEntry.create()
-                                                                                                  .principal( PrincipalKey.from(
-                                                                                                      "user:system:someone-else" ) )
+                                                                                                  .principal(
+                                                                                                      TEST_DEFAULT_USER.getKey() )
                                                                                                   .allowAll()
                                                                                                   .build() ) )
                                                           .build() ) );

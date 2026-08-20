@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +24,11 @@ import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.repo.impl.InternalContext;
+import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.util.Reference;
@@ -182,37 +182,32 @@ public final class DuplicateNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        // the walk reads nothing of an entry but its id and path, so the full entries are let go as soon as they are repacked
-        final List<IdAndPath> subTree = FindNodeBranchEntriesByParentCommand.create( this )
+        final NodeIds subTreeIds = FindNodeBranchEntriesByParentCommand.create( this )
             .parentPath( originalParent.path() )
             .build()
             .execute()
             .stream()
-            .map( entry -> new IdAndPath( entry.getNodeId(), entry.getNodePath() ) )
-            .toList();
-
-        int total = subTree.size() + 1;
-        listener.resolved( total );
-
-        final NodeIds subTreeIds = subTree.stream().map( IdAndPath::nodeId ).collect( NodeIds.collector() );
+            .map( NodeBranchEntry::getNodeId )
+            .collect( NodeIds.collector() );
 
         // nodes not readable by the caller are not returned, and neither they nor their children are duplicated
-        final Map<NodeId, Node> originalNodes = this.nodeStorageService.get( subTreeIds, internalContext )
-            .stream()
-            .collect( Collectors.toMap( Node::id, Function.identity() ) );
+        final Nodes originalNodes = this.nodeStorageService.get( subTreeIds, internalContext );
 
-        // entries are ordered by path, so a node is always duplicated before any of its children
+        int total = originalNodes.getSize() + 1;
+        listener.resolved( total );
+
+        // the storage get answers in the requested order, so the path order of the listing survives into the walk
+        // and a node is always duplicated before any of its children
         final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
         duplicatedParents.put( originalParent.path(), new DuplicatedParent( originalParent, newParent ) );
 
-        for ( final IdAndPath entry : subTree )
+        for ( final Node node : originalNodes )
         {
-            final Node node = originalNodes.get( entry.nodeId() );
-            final DuplicatedParent parent = duplicatedParents.get( entry.nodePath().getParentPath() );
+            final DuplicatedParent parent = duplicatedParents.get( node.parentPath() );
 
-            if ( node == null || parent == null )
+            if ( parent == null )
             {
-                // each entry of a skipped branch is skipped individually, so the walk shrinks by exactly one per pass
+                // each node of a skipped branch is skipped individually, so the walk shrinks by exactly one per pass
                 listener.resolved( --total );
                 continue;
             }
@@ -249,10 +244,6 @@ public final class DuplicateNodeCommand
     }
 
     private record DuplicatedParent(Node original, Node copy)
-    {
-    }
-
-    private record IdAndPath(NodeId nodeId, NodePath nodePath)
     {
     }
 
