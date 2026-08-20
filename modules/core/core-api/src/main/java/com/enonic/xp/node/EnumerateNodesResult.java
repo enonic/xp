@@ -21,10 +21,13 @@ public final class EnumerateNodesResult
     @Nullable
     private final String cursor;
 
+    private final long remaining;
+
     private EnumerateNodesResult( final Builder builder )
     {
         this.entries = builder.entries.build();
         this.cursor = builder.cursor;
+        this.remaining = builder.remaining;
     }
 
     public static Builder create()
@@ -38,6 +41,20 @@ public final class EnumerateNodesResult
     public List<NodeEnumerationEntry> getEntries()
     {
         return entries;
+    }
+
+    /**
+     * How many entries this batch and every batch after it hold together — what is left of the enumeration, this batch included. The
+     * index counts them while cutting the batch, so the first batch of an enumeration says how large the whole of it is, before any of
+     * it has been walked.
+     * <p>
+     * Exact rather than estimated, since an enumeration answers with everything the subtree holds and filters nothing away. It is
+     * counted afresh for every batch though, so a write ahead of the cursor moves it — a consumer adding it to what it has already
+     * consumed sees the size of the enumeration correct itself rather than stay wrong.
+     */
+    public long getRemaining()
+    {
+        return remaining;
     }
 
     /**
@@ -57,8 +74,16 @@ public final class EnumerateNodesResult
         @Nullable
         private String cursor;
 
+        private long remaining;
+
         private Builder()
         {
+        }
+
+        public Builder remaining( final long remaining )
+        {
+            this.remaining = remaining;
+            return this;
         }
 
         public Builder addEntry( final NodeEnumerationEntry entry )

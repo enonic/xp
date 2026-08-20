@@ -151,7 +151,8 @@ class AuditLogServiceImplTest
         final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
 
         assertEquals( 0, result.getDeleted() );
-        verify( listener, times( 0 ) ).resolved( anyInt() );
+        // it looked and found nothing, which is worth saying: the amount of work is zero rather than unknown
+        verify( listener, times( 1 ) ).resolved( 0 );
         verify( listener, times( 0 ) ).start( anyInt() );
         verify( listener, times( 0 ) ).processed();
         verify( listener, times( 0 ) ).finished();
@@ -186,17 +187,17 @@ class AuditLogServiceImplTest
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
         when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn(
-                createBatch( 10000, Instant.now().minusSeconds( 60 ), "/node-10000" ) )
-            .thenReturn( createBatch( 500, Instant.now().minusSeconds( 60 ), null ) );
+                createBatch( 10000, Instant.now().minusSeconds( 60 ), "/node-10000", 10_500 ) )
+            .thenReturn( createBatch( 500, Instant.now().minusSeconds( 60 ), null, 500 ) );
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
         final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
 
         assertEquals( 10500, result.getDeleted() );
-        // the total is not known up front: each batch adds what it found to what the previous ones did
-        verify( listener, times( 1 ) ).resolved( 10_000 );
+        // the first batch already counts what the whole clean-up has to delete, and the second confirms rather than raises it
         verify( listener, times( 1 ) ).resolved( 10_500 );
+        verify( listener, times( 1 ) ).resolved( anyInt() );
         verify( listener, times( 1 ) ).start( 10_000 );
         verify( listener, times( 10_500 ) ).processed();
         verify( listener, times( 1 ) ).finished();
@@ -227,7 +228,12 @@ class AuditLogServiceImplTest
 
     private EnumerateNodesResult createBatch( final int number, final Instant timestamp, final String cursor )
     {
-        final EnumerateNodesResult.Builder batch = EnumerateNodesResult.create().cursor( cursor );
+        return createBatch( number, timestamp, cursor, number );
+    }
+
+    private EnumerateNodesResult createBatch( final int number, final Instant timestamp, final String cursor, final long remaining )
+    {
+        final EnumerateNodesResult.Builder batch = EnumerateNodesResult.create().cursor( cursor ).remaining( remaining );
         for ( int i = 1; i <= number; i++ )
         {
             batch.addEntry( new NodeEnumerationEntry( NodeId.from( "node-id-" + i ), new NodePath( "/node-" + i ), timestamp, NodeVersionId.from( "version-" + i ) ) );

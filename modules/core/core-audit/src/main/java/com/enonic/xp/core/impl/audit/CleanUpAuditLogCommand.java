@@ -59,7 +59,8 @@ public class CleanUpAuditLogCommand
             EnumerateNodesParams.create().parentPath( NodePath.ROOT ).modifiedBefore( until );
 
         boolean started = false;
-        int resolved = 0;
+        int deleted = 0;
+        int resolved = -1;
         String cursor = null;
 
         do
@@ -67,11 +68,12 @@ public class CleanUpAuditLogCommand
             final EnumerateNodesParams params = enumeration.cursor( cursor ).build();
             final EnumerateNodesResult batch = nodeService.enumerate( params );
 
-            if ( !batch.getEntries().isEmpty() )
+            // what the clean-up has to delete: the records already deleted, plus everything the enumeration says is left of it. The
+            // first batch therefore carries the whole amount, and every batch after it confirms or corrects that
+            final int stillToDelete = (int) Math.min( batch.getRemaining(), Integer.MAX_VALUE - deleted );
+            if ( resolved != deleted + stillToDelete )
             {
-                // what the clean-up knows it has to delete so far: the enumeration answers only with expired records, but it cannot say
-                // how many are still ahead of the cursor, so the total grows with every batch instead of being known up front
-                resolved += batch.getEntries().size();
+                resolved = deleted + stillToDelete;
                 listener.resolved( resolved );
             }
 
@@ -85,6 +87,7 @@ public class CleanUpAuditLogCommand
 
                 result.deleted(
                     nodeService.delete( DeleteNodeParams.create().nodeId( entry.nodeId() ).build() ).getNodeIds().getSize() );
+                deleted++;
 
                 listener.processed();
             }
