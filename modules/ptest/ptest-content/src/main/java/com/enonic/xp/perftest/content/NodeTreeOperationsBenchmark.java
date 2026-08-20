@@ -1,8 +1,12 @@
 package com.enonic.xp.perftest.content;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryType;
+import java.lang.management.MemoryUsage;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.openjdk.jmh.annotations.AuxCounters;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -53,41 +57,114 @@ public class NodeTreeOperationsBenchmark
 {
     private static final int CHILDREN = Integer.getInteger( "ptest.tree.children", 10_000 );
 
+    /** What one whole-tree operation covers: the parent and every child. */
+    private static final int TREE_NODES = CHILDREN + 1;
+
     private static final com.sun.management.ThreadMXBean THREADS =
         (com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean();
 
     /**
-     * What one operation allocates on the thread that runs it, reported next to the time.
+     * What one operation costs, reported next to the time: the nodes it covers, what it allocates, and how far the live set grows while
+     * it runs.
      * <p>
-     * The whole-process figure a GC profiler reports is of no use here: the embedded search server allocates on its own threads
-     * throughout, and the corpus a benchmark rebuilds between invocations allocates too, both of which drown out the operation. The
-     * operation runs on the calling thread, so that thread's own counter isolates it.
+     * The two memory figures answer different questions. Allocation is churn - every node this operation rewrites is read, rebuilt and
+     * re-indexed, and that traffic is the same however the walk is organized. The live set is what the operation *holds*: a walk that
+     * keeps the whole subtree in memory at once shows here, a walk that keeps a stride at a time does not.
+     * <p>
+     * Both are measured close to the operation rather than through a GC profiler: the embedded search server allocates on its own
+     * threads throughout, and the corpus a benchmark rebuilds between invocations allocates too, both of which drown out the operation
+     * in a whole-process figure.
      */
     @State( Scope.Thread )
     @AuxCounters( AuxCounters.Type.EVENTS )
-    public static class Allocation
+    public static class Measured
     {
+        /** The nodes the operation covers, so every figure can be read per node as well as per operation. */
+        public long nodes;
+
+        /** What the operation allocates on the thread that runs it. */
         public long allocKiB;
+
+        /** How far the live set grows above where it stood when the operation started. */
+        public long peakLiveKiB;
 
         @Setup( Level.Iteration )
         public void reset()
         {
+            nodes = 0;
             allocKiB = 0;
+            peakLiveKiB = 0;
         }
 
-        <T> T measure( final Callable<T> operation )
+        /**
+         * The heap that survived the most recent collection. Reading it repeatedly while an operation runs, rather than once at the end,
+         * is what makes a peak out of it - the operation's own garbage is collected as it goes.
+         */
+        private static long liveSetBytes()
+        {
+            long live = 0;
+            for ( final MemoryPoolMXBean pool : ManagementFactory.getMemoryPoolMXBeans() )
+            {
+                if ( pool.getType() == MemoryType.HEAP )
+                {
+                    final MemoryUsage afterCollection = pool.getCollectionUsage();
+                    if ( afterCollection != null )
+                    {
+                        live += afterCollection.getUsed();
+                    }
+                }
+            }
+            return live;
+        }
+
+        <T> T measure( final int nodeCount, final Callable<T> operation )
             throws Exception
         {
-            final long before = THREADS.getCurrentThreadAllocatedBytes();
+            nodes += nodeCount;
+
+            final long liveBefore = liveSetBytes();
+            final AtomicLong peakLive = new AtomicLong( liveBefore );
+            final Thread watcher = new Thread( () -> {
+                while ( !Thread.currentThread().isInterrupted() )
+                {
+                    peakLive.accumulateAndGet( liveSetBytes(), Math::max );
+                    try
+                    {
+                        TimeUnit.MILLISECONDS.sleep( 20 );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        return;
+                    }
+                }
+            }, "live-set-watcher" );
+            watcher.setDaemon( true );
+
+            final long allocBefore = THREADS.getCurrentThreadAllocatedBytes();
+            watcher.start();
             try
             {
                 return operation.call();
             }
             finally
             {
-                allocKiB += ( THREADS.getCurrentThreadAllocatedBytes() - before ) / 1024;
+                allocKiB += ( THREADS.getCurrentThreadAllocatedBytes() - allocBefore ) / 1024;
+                watcher.interrupt();
+                watcher.join();
+                peakLiveKiB += Math.max( 0, peakLive.get() - liveBefore ) / 1024;
             }
         }
+    }
+
+    /**
+     * Readies the repository for one measured invocation: the index settles, and the heap is collected so that the live set the
+     * operation is measured against holds the corpus alone rather than whatever the previous invocation left uncollected. Both are
+     * untimed - single-shot timing covers the benchmark method only.
+     */
+    private static void settle( final Bootstrap bs )
+    {
+        bs.refresh();
+        System.gc();
     }
 
     /** Builds one parent with {@link #CHILDREN} children under the content root, refresh disabled for speed, settled at the end. */
@@ -141,9 +218,9 @@ public class NodeTreeOperationsBenchmark
         }
 
         @Setup( Level.Invocation )
-        public void settle()
+        public void settleForInvocation()
         {
-            bs.refresh();
+            settle( bs );
         }
 
         NodePath nextTarget()
@@ -161,11 +238,11 @@ public class NodeTreeOperationsBenchmark
 
     /** One move of the tree parent, back and forth between two targets - every child follows. */
     @Benchmark
-    public MoveNodeResult move( final MoveState s, final Allocation alloc )
+    public MoveNodeResult move( final MoveState s, final Measured measured )
         throws Exception
     {
         final NodePath target = s.nextTarget();
-        return alloc.measure( () -> s.bs.callInDraftContext(
+        return measured.measure( TREE_NODES, () -> s.bs.callInDraftContext(
             () -> s.bs.nodeService.move( MoveNodeParams.create().nodeId( s.treeId ).newParentPath( target ).build() ) ) );
     }
 
@@ -186,9 +263,9 @@ public class NodeTreeOperationsBenchmark
         }
 
         @Setup( Level.Invocation )
-        public void settle()
+        public void settleForInvocation()
         {
-            bs.refresh();
+            settle( bs );
         }
 
         @TearDown( Level.Trial )
@@ -201,10 +278,10 @@ public class NodeTreeOperationsBenchmark
     /** One duplication of the whole tree - every invocation leaves a new copy behind, so the corpus grows as it would in production. */
     @Benchmark
     @Measurement( iterations = 3 )
-    public DuplicateNodeResult duplicate( final DuplicateState s, final Allocation alloc )
+    public DuplicateNodeResult duplicate( final DuplicateState s, final Measured measured )
         throws Exception
     {
-        return alloc.measure( () -> s.bs.callInDraftContext(
+        return measured.measure( TREE_NODES, () -> s.bs.callInDraftContext(
             () -> s.bs.nodeService.duplicate( DuplicateNodeParams.create().nodeId( s.treeId ).includeChildren( true ).build() ) ) );
     }
 
@@ -238,9 +315,9 @@ public class NodeTreeOperationsBenchmark
         }
 
         @Setup( Level.Invocation )
-        public void settle()
+        public void settleForInvocation()
         {
-            bs.refresh();
+            settle( bs );
         }
 
         AccessControlList nextPermissions()
@@ -258,11 +335,11 @@ public class NodeTreeOperationsBenchmark
 
     /** One permission change over the whole tree, alternating between two lists so every invocation writes a real change. */
     @Benchmark
-    public ApplyNodePermissionsResult applyPermissions( final ApplyPermissionsState s, final Allocation alloc )
+    public ApplyNodePermissionsResult applyPermissions( final ApplyPermissionsState s, final Measured measured )
         throws Exception
     {
         final AccessControlList permissions = s.nextPermissions();
-        return alloc.measure( () -> s.bs.callInDraftContext( () -> s.bs.nodeService.applyPermissions(
+        return measured.measure( TREE_NODES, () -> s.bs.callInDraftContext( () -> s.bs.nodeService.applyPermissions(
             ApplyNodePermissionsParams.create()
                 .nodeId( s.treeId )
                 .permissions( permissions )
@@ -292,6 +369,7 @@ public class NodeTreeOperationsBenchmark
         public void rebuildTree()
         {
             treeId = buildTree( bs, "tree-" + rebuild++ ).id();
+            settle( bs );
         }
 
         @TearDown( Level.Trial )
@@ -304,10 +382,10 @@ public class NodeTreeOperationsBenchmark
     /** One deletion of the whole tree. */
     @Benchmark
     @Measurement( iterations = 3 )
-    public DeleteNodeResult delete( final DeleteState s, final Allocation alloc )
+    public DeleteNodeResult delete( final DeleteState s, final Measured measured )
         throws Exception
     {
-        return alloc.measure(
+        return measured.measure( TREE_NODES,
             () -> s.bs.callInDraftContext( () -> s.bs.nodeService.delete( DeleteNodeParams.create().nodeId( s.treeId ).build() ) ) );
     }
 }
