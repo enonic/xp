@@ -101,6 +101,26 @@ public final class ParentContentSynchronizer
         }
     }
 
+    private void syncSlice( final ContentPath parentPath, final Map<ContentPath, ContentIds> childrenByParent,
+                            final Map<NodePath, Context> sourceContexts, final Map<NodePath, Context> targetContexts )
+    {
+        final ContentIds children = childrenByParent.get( parentPath );
+
+        if ( children == null )
+        {
+            return;
+        }
+
+        final List<ContentToSync> contentsToSync = createContentsToSync( children, sourceContexts, targetContexts );
+
+        doSync( contentsToSync );
+
+        contentsToSync.stream()
+            .filter( contentToSync -> contentToSync.getSourceContent() != null )
+            .forEach( contentToSync -> syncSlice( contentToSync.getSourceContent().getPath(), childrenByParent, sourceContexts,
+                                                  targetContexts ) );
+    }
+
     private void doSyncWithChildren( final List<ContentToSync> sourceContents )
     {
         final List<ContentToSync> contentsToSync =
@@ -119,24 +139,18 @@ public final class ParentContentSynchronizer
         }
 
         sourceContents.stream().filter( contentToSync -> contentToSync.getSourceContent() != null ).forEach( currentContentToSync -> {
-            String cursor = null;
-            do
+            // the whole subtree is taken once and sliced into levels here: the descent still syncs a parent before its children,
+            // but no level is bought by rescanning the subtree
+            final Map<ContentPath, ContentIds> childrenByParent = currentContentToSync.getSourceCtx()
+                .callWith( () -> layersContentService.findAllGroupedByParent( currentContentToSync.getSourceContent().getPath() ) );
+
+            if ( !childrenByParent.isEmpty() )
             {
-                final String position = cursor;
-                final LayersContentService.ContentIdsBatch batch = currentContentToSync.getSourceCtx()
-                    .callWith(
-                        () -> layersContentService.findAllChildren( currentContentToSync.getSourceContent().getPath(), position ) );
+                final Map<NodePath, Context> sourceContexts = initContexts( currentContentToSync.getSourceCtx().getRepositoryId() );
+                final Map<NodePath, Context> targetContexts = initContexts( currentContentToSync.getTargetCtx().getRepositoryId() );
 
-                if ( !batch.ids().isEmpty() )
-                {
-                    final Map<NodePath, Context> sourceContexts = initContexts( currentContentToSync.getSourceCtx().getRepositoryId() );
-                    final Map<NodePath, Context> targetContexts = initContexts( currentContentToSync.getTargetCtx().getRepositoryId() );
-
-                    doSyncWithChildren( createContentsToSync( batch.ids(), sourceContexts, targetContexts ) );
-                }
-                cursor = batch.cursor();
+                syncSlice( currentContentToSync.getSourceContent().getPath(), childrenByParent, sourceContexts, targetContexts );
             }
-            while ( cursor != null );
         } );
 
         sourceContents.forEach( sourceContent -> {

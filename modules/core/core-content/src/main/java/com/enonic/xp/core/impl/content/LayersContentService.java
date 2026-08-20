@@ -1,10 +1,13 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
@@ -264,6 +267,36 @@ public class LayersContentService
             .eventPublisher( this.eventPublisher )
             .build()
             .execute() );
+    }
+
+    /**
+     * The whole subtree as ids grouped by the parent they belong to, gathered in batches - for the sync descent that works level by
+     * level. The listing knows no levels, and listing per level would rescan the subtree once per depth, so the descent takes it all
+     * at once and slices it.
+     */
+    public Map<ContentPath, ContentIds> findAllGroupedByParent( final ContentPath contentPath )
+    {
+        return callOnPrimary( () -> {
+            final Map<ContentPath, ContentIds.Builder> grouped = new LinkedHashMap<>();
+            final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
+            String cursor = null;
+            do
+            {
+                final ListNodesResult batch = nodeService.list(
+                    ListNodesParams.create().parentPath( parentPath ).batchSize( SYNC_BATCH_SIZE ).cursor( cursor ).build() );
+                for ( final NodeListEntry entry : batch.getEntries() )
+                {
+                    grouped.computeIfAbsent( ContentNodeHelper.translateNodePathToContentPath( entry.nodePath().getParentPath() ),
+                                             key -> ContentIds.create() ).add( ContentId.from( entry.nodeId() ) );
+                }
+                cursor = batch.getCursor();
+            }
+            while ( cursor != null );
+
+            return grouped.entrySet()
+                .stream()
+                .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, entry -> entry.getValue().build() ) );
+        } );
     }
 
     /**

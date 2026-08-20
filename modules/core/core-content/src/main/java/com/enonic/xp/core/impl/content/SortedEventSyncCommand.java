@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.SortContentParams;
 
@@ -47,13 +48,12 @@ final class SortedEventSyncCommand
                 }
                 if ( sourceContent.getChildOrder().isManualOrder() )
                 {
-                    String cursor = null;
-                    do
-                    {
-                        final LayersContentService.ContentIdsBatch batch =
-                            layersContentService.findAllChildren( targetContent.getPath(), cursor );
+                    // treated like the sort itself for now: the reordered level is read through search, which knows the levels
+                    final ContentQuery childrenQuery =
+                        ContentQuery.create().parentPath( targetContent.getPath() ).size( -1 ).build();
 
-                        final List<ContentToSync> childrenToSync = layersContentService.getByIds( batch.ids() )
+                    final List<ContentToSync> childrenToSync =
+                        layersContentService.getByIds( layersContentService.find( childrenQuery ).getContentIds() )
                             .stream()
                             .map( childTargetContent -> content.getSourceCtx()
                                 .callWith( () -> layersContentService.getById( childTargetContent.getId() ) )
@@ -67,17 +67,14 @@ final class SortedEventSyncCommand
                             .map( Optional::get )
                             .collect( Collectors.toList() );
 
-                        if ( !childrenToSync.isEmpty() )
-                        {
-                            UpdatedEventSyncCommand.create()
-                                .contentService( layersContentService )
-                                .contentToSync( childrenToSync )
-                                .build()
-                                .sync();
-                        }
-                        cursor = batch.cursor();
+                    if ( !childrenToSync.isEmpty() )
+                    {
+                        UpdatedEventSyncCommand.create()
+                            .contentService( layersContentService )
+                            .contentToSync( childrenToSync )
+                            .build()
+                            .sync();
                     }
-                    while ( cursor != null );
                 }
             }
         } );
