@@ -6,7 +6,8 @@ public interface NodeImportListener
 
     /**
      * @deprecated Renamed to {@link #resolved(int)}, so that every listener names the work it has resolved the same way. Still called
-     * where it is the only one implemented. Scheduled for removal.
+     * where it is the only one implemented: {@link #resolved(int)} forwards to this method and not the other way round, which is what
+     * keeps an implementation of this one alone hearing the total, since that is the method producers call. Scheduled for removal.
      */
     @Deprecated
     default void nodeResolved( int count )
