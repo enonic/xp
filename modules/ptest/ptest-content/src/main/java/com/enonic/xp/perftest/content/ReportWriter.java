@@ -24,14 +24,15 @@ final class ReportWriter
         final StringBuilder md = new StringBuilder( 1024 );
         md.append( "## ContentService benchmarks\n\n" );
         md.append( "Run: " ).append( Instant.now() ).append( "\n\n" );
-        md.append( "| Benchmark | Mode | Score | Unit | Throughput |\n" );
-        md.append( "|---|---|---:|---|---:|\n" );
+        md.append( "| Benchmark | Mode | Score | Unit | Throughput | Alloc/op |\n" );
+        md.append( "|---|---|---:|---|---:|---:|\n" );
         for ( final Row r : rows )
         {
             md.append( "| " ).append( r.benchmark ).append( " | " ).append( r.mode ).append( " | " );
             md.append( String.format( Locale.ROOT, "%.2f", r.score ) ).append( " | " );
             md.append( r.unit ).append( " | " );
-            md.append( String.format( Locale.ROOT, "%.0f ops/s", r.opsPerSec() ) ).append( " |\n" );
+            md.append( String.format( Locale.ROOT, "%.0f ops/s", r.opsPerSec() ) ).append( " | " );
+            md.append( r.allocPerOp() ).append( " |\n" );
         }
         md.append( "\n### Environment\n\n" );
         md.append( "- **CPU**: " ).append( info.cpuModel ).append( "\n" );
@@ -56,7 +57,10 @@ final class ReportWriter
             final JsonNode metric = item.path( "primaryMetric" );
             final double score = metric.path( "score" ).asDouble();
             final String unit = metric.path( "scoreUnit" ).asText();
-            rows.add( new Row( benchmark, mode, score, unit ) );
+            // reported by the benchmark itself, as the thread that ran the operation counted it
+            final JsonNode allocated = item.path( "secondaryMetrics" ).path( "allocKiB" );
+            final double bytesPerOp = allocated.isMissingNode() ? Double.NaN : allocated.path( "score" ).asDouble() * 1024.0;
+            rows.add( new Row( benchmark, mode, score, unit, bytesPerOp ) );
         }
         return rows;
     }
@@ -78,12 +82,33 @@ final class ReportWriter
 
         final String unit;
 
-        Row( final String benchmark, final String mode, final double score, final String unit )
+        final double bytesPerOp;
+
+        Row( final String benchmark, final String mode, final double score, final String unit, final double bytesPerOp )
         {
             this.benchmark = benchmark;
             this.mode = mode;
             this.score = score;
             this.unit = unit;
+            this.bytesPerOp = bytesPerOp;
+        }
+
+        /** What one operation allocates on the thread that runs it, or a dash where the benchmark does not count it. */
+        String allocPerOp()
+        {
+            if ( Double.isNaN( bytesPerOp ) )
+            {
+                return "-";
+            }
+            if ( bytesPerOp >= 1024.0 * 1024.0 )
+            {
+                return String.format( Locale.ROOT, "%.1f MiB", bytesPerOp / ( 1024.0 * 1024.0 ) );
+            }
+            if ( bytesPerOp >= 1024.0 )
+            {
+                return String.format( Locale.ROOT, "%.1f KiB", bytesPerOp / 1024.0 );
+            }
+            return String.format( Locale.ROOT, "%.0f B", bytesPerOp );
         }
 
         double opsPerSec()

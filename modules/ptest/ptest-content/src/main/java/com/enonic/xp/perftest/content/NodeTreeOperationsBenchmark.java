@@ -1,7 +1,10 @@
 package com.enonic.xp.perftest.content;
 
+import java.lang.management.ManagementFactory;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import org.openjdk.jmh.annotations.AuxCounters;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -49,6 +52,43 @@ import com.enonic.xp.security.acl.Permission;
 public class NodeTreeOperationsBenchmark
 {
     private static final int CHILDREN = Integer.getInteger( "ptest.tree.children", 10_000 );
+
+    private static final com.sun.management.ThreadMXBean THREADS =
+        (com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean();
+
+    /**
+     * What one operation allocates on the thread that runs it, reported next to the time.
+     * <p>
+     * The whole-process figure a GC profiler reports is of no use here: the embedded search server allocates on its own threads
+     * throughout, and the corpus a benchmark rebuilds between invocations allocates too, both of which drown out the operation. The
+     * operation runs on the calling thread, so that thread's own counter isolates it.
+     */
+    @State( Scope.Thread )
+    @AuxCounters( AuxCounters.Type.EVENTS )
+    public static class Allocation
+    {
+        public long allocKiB;
+
+        @Setup( Level.Iteration )
+        public void reset()
+        {
+            allocKiB = 0;
+        }
+
+        <T> T measure( final Callable<T> operation )
+            throws Exception
+        {
+            final long before = THREADS.getCurrentThreadAllocatedBytes();
+            try
+            {
+                return operation.call();
+            }
+            finally
+            {
+                allocKiB += ( THREADS.getCurrentThreadAllocatedBytes() - before ) / 1024;
+            }
+        }
+    }
 
     /** Builds one parent with {@link #CHILDREN} children under the content root, refresh disabled for speed, settled at the end. */
     private static Node buildTree( final Bootstrap bs, final String name )
@@ -121,11 +161,12 @@ public class NodeTreeOperationsBenchmark
 
     /** One move of the tree parent, back and forth between two targets - every child follows. */
     @Benchmark
-    public MoveNodeResult move( final MoveState s )
+    public MoveNodeResult move( final MoveState s, final Allocation alloc )
+        throws Exception
     {
         final NodePath target = s.nextTarget();
-        return s.bs.callInDraftContext(
-            () -> s.bs.nodeService.move( MoveNodeParams.create().nodeId( s.treeId ).newParentPath( target ).build() ) );
+        return alloc.measure( () -> s.bs.callInDraftContext(
+            () -> s.bs.nodeService.move( MoveNodeParams.create().nodeId( s.treeId ).newParentPath( target ).build() ) ) );
     }
 
     @State( Scope.Benchmark )
@@ -160,10 +201,11 @@ public class NodeTreeOperationsBenchmark
     /** One duplication of the whole tree - every invocation leaves a new copy behind, so the corpus grows as it would in production. */
     @Benchmark
     @Measurement( iterations = 3 )
-    public DuplicateNodeResult duplicate( final DuplicateState s )
+    public DuplicateNodeResult duplicate( final DuplicateState s, final Allocation alloc )
+        throws Exception
     {
-        return s.bs.callInDraftContext(
-            () -> s.bs.nodeService.duplicate( DuplicateNodeParams.create().nodeId( s.treeId ).includeChildren( true ).build() ) );
+        return alloc.measure( () -> s.bs.callInDraftContext(
+            () -> s.bs.nodeService.duplicate( DuplicateNodeParams.create().nodeId( s.treeId ).includeChildren( true ).build() ) ) );
     }
 
     @State( Scope.Benchmark )
@@ -216,14 +258,16 @@ public class NodeTreeOperationsBenchmark
 
     /** One permission change over the whole tree, alternating between two lists so every invocation writes a real change. */
     @Benchmark
-    public ApplyNodePermissionsResult applyPermissions( final ApplyPermissionsState s )
+    public ApplyNodePermissionsResult applyPermissions( final ApplyPermissionsState s, final Allocation alloc )
+        throws Exception
     {
         final AccessControlList permissions = s.nextPermissions();
-        return s.bs.callInDraftContext( () -> s.bs.nodeService.applyPermissions( ApplyNodePermissionsParams.create()
-                                                                                     .nodeId( s.treeId )
-                                                                                     .permissions( permissions )
-                                                                                     .scope( ApplyPermissionsScope.TREE )
-                                                                                     .build() ) );
+        return alloc.measure( () -> s.bs.callInDraftContext( () -> s.bs.nodeService.applyPermissions(
+            ApplyNodePermissionsParams.create()
+                .nodeId( s.treeId )
+                .permissions( permissions )
+                .scope( ApplyPermissionsScope.TREE )
+                .build() ) ) );
     }
 
     @State( Scope.Benchmark )
@@ -260,8 +304,10 @@ public class NodeTreeOperationsBenchmark
     /** One deletion of the whole tree. */
     @Benchmark
     @Measurement( iterations = 3 )
-    public DeleteNodeResult delete( final DeleteState s )
+    public DeleteNodeResult delete( final DeleteState s, final Allocation alloc )
+        throws Exception
     {
-        return s.bs.callInDraftContext( () -> s.bs.nodeService.delete( DeleteNodeParams.create().nodeId( s.treeId ).build() ) );
+        return alloc.measure(
+            () -> s.bs.callInDraftContext( () -> s.bs.nodeService.delete( DeleteNodeParams.create().nodeId( s.treeId ).build() ) ) );
     }
 }
