@@ -56,6 +56,7 @@ public class CleanUpAuditLogCommand
         final CleanUpAuditLogResult.Builder result = CleanUpAuditLogResult.create();
 
         boolean started = false;
+        int resolved = 0;
         String cursor = null;
 
         do
@@ -66,6 +67,14 @@ public class CleanUpAuditLogCommand
                                                                            .modifiedBefore( until )
                                                                            .cursor( cursor )
                                                                            .build() );
+
+            if ( !batch.getEntries().isEmpty() )
+            {
+                // what the clean-up knows it has to delete so far: the enumeration answers only with expired records, but it cannot say
+                // how many are still ahead of the cursor, so the total grows with every batch instead of being known up front
+                resolved += batch.getEntries().size();
+                listener.resolved( resolved );
+            }
 
             for ( final NodeEnumerationEntry entry : batch.getEntries() )
             {

@@ -151,6 +151,7 @@ class AuditLogServiceImplTest
         final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
 
         assertEquals( 0, result.getDeleted() );
+        verify( listener, times( 0 ) ).resolved( anyInt() );
         verify( listener, times( 0 ) ).start( anyInt() );
         verify( listener, times( 0 ) ).processed();
         verify( listener, times( 0 ) ).finished();
@@ -171,6 +172,7 @@ class AuditLogServiceImplTest
         final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
 
         assertEquals( 3, result.getDeleted() );
+        verify( listener, times( 1 ) ).resolved( 3 );
         verify( listener, times( 1 ) ).start( 10_000 );
         verify( listener, times( 3 ) ).processed();
         verify( listener, times( 1 ) ).finished();
@@ -192,6 +194,9 @@ class AuditLogServiceImplTest
         final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
 
         assertEquals( 10500, result.getDeleted() );
+        // the total is not known up front: each batch adds what it found to what the previous ones did
+        verify( listener, times( 1 ) ).resolved( 10_000 );
+        verify( listener, times( 1 ) ).resolved( 10_500 );
         verify( listener, times( 1 ) ).start( 10_000 );
         verify( listener, times( 10_500 ) ).processed();
         verify( listener, times( 1 ) ).finished();
