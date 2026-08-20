@@ -1,10 +1,15 @@
 package com.enonic.xp.core.impl.export;
 
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +52,9 @@ public class NodeExporter
      * where a sibling was never assigned one. It mirrors {@link com.enonic.xp.index.ChildOrder#manualOrder()}, which the index applies
      * when the same listing is answered by a query.
      */
-    private static final Comparator<Node> MANUAL_ORDER =
-        Comparator.comparing( Node::getManualOrderValue, Comparator.nullsLast( Comparator.reverseOrder() ) )
-            .thenComparing( Node::getTimestamp, Comparator.nullsLast( Comparator.reverseOrder() ) );
+    private static final Comparator<OrderedChild> MANUAL_ORDER =
+        Comparator.comparing( OrderedChild::manualOrderValue, Comparator.nullsLast( Comparator.reverseOrder() ) )
+            .thenComparing( OrderedChild::timestamp, Comparator.nullsLast( Comparator.reverseOrder() ) );
 
     private final NodePath sourceNodePath;
 
@@ -66,6 +71,12 @@ public class NodeExporter
     private final NodeExportListener nodeExportListener;
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
+
+    private final Map<NodePath, List<OrderedChild>> childrenByParent = new HashMap<>();
+
+    private final Set<NodePath> manualOrderParents = new HashSet<>();
+
+    private final Set<NodePath> unorderedParents = new HashSet<>();
 
     private static final Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
 
@@ -174,17 +185,18 @@ public class NodeExporter
 
             if ( batchNodeIds.isEmpty() )
             {
-                return;
+                break;
             }
 
             final Nodes exportNodes = this.nodeService.getByIds( batchNodeIds );
 
             for ( final Node child : exportNodes )
             {
+                collectChildOrder( child );
+
                 try
                 {
                     writeNode( child );
-                    writeNodeOrderList( child );
                 }
                 catch ( Exception e )
                 {
@@ -193,6 +205,8 @@ public class NodeExporter
                 }
             }
         }
+
+        writeNodeOrderLists();
     }
 
     private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
@@ -209,32 +223,63 @@ public class NodeExporter
         }
     }
 
-    private void writeNodeOrderList( final Node node )
+    /**
+     * The walk reads every child of every manually ordered parent anyway, so their order is collected as they pass rather than read
+     * again, and the order files are written once the walk has read them all. A parent known to keep no manual order sheds what its
+     * children left behind, so the walk retains little beyond the ordered sets it will write.
+     */
+    private void collectChildOrder( final Node node )
     {
-        if ( node == null || node.getChildOrder() == null || !node.getChildOrder().isManualOrder() )
+        if ( node.getChildOrder() != null && node.getChildOrder().isManualOrder() )
         {
-            return;
+            manualOrderParents.add( node.path() );
+        }
+        else
+        {
+            unorderedParents.add( node.path() );
+            childrenByParent.remove( node.path() );
         }
 
-        // a manually ordered set is the handful of siblings an editor arranged by hand, so the children are read and ordered here
-        // rather than through the search index, which leaves the export reading storage alone
-        final ListNodesResult children = nodeService.list( ListNodesParams.create().parentPath( node.path() ).build() );
-
-        final StringBuilder builder = new StringBuilder();
-
-        nodeService.getByIds( children.getNodeIds() )
-            .stream()
-            .sorted( MANUAL_ORDER )
-            .forEach( child -> builder.append( child.name().toString() ).append( LINE_SEPARATOR ) );
-
-        if ( builder.isEmpty() )
+        final NodePath parentPath = node.parentPath();
+        if ( !node.path().equals( sourceNodePath ) && !unorderedParents.contains( parentPath ) )
         {
-            return;
+            childrenByParent.computeIfAbsent( parentPath, key -> new ArrayList<>() )
+                .add( new OrderedChild( node.name().toString(), node.getManualOrderValue(), node.getTimestamp() ) );
         }
+    }
 
-        final Path nodeOrderListPath = resolveNodeDataFolder( node ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
+    private void writeNodeOrderLists()
+    {
+        for ( final NodePath parentPath : manualOrderParents )
+        {
+            final List<OrderedChild> children = childrenByParent.get( parentPath );
 
-        exportWriter.writeElement( nodeOrderListPath, builder.toString() );
+            if ( children == null )
+            {
+                continue;
+            }
+
+            try
+            {
+                children.sort( MANUAL_ORDER );
+
+                final StringBuilder builder = new StringBuilder();
+                children.forEach( child -> builder.append( child.name() ).append( LINE_SEPARATOR ) );
+
+                final Path nodeOrderListPath = resolveNodeDataFolder( parentPath ).resolve( NodeExportPathResolver.ORDER_EXPORT_NAME );
+
+                exportWriter.writeElement( nodeOrderListPath, builder.toString() );
+            }
+            catch ( Exception e )
+            {
+                LOG.error( "Failed to write child order of [{}]", parentPath, e );
+                result.addError( new ExportError( e.toString() ) );
+            }
+        }
+    }
+
+    private record OrderedChild(String name, Long manualOrderValue, Instant timestamp)
+    {
     }
 
     private void writeExportProperties()
@@ -245,7 +290,12 @@ public class NodeExporter
 
     private Path resolveNodeDataFolder( final Node node )
     {
-        final Path fullNodePath = Path.of( node.path().toString() );
+        return resolveNodeDataFolder( node.path() );
+    }
+
+    private Path resolveNodeDataFolder( final NodePath nodePath )
+    {
+        final Path fullNodePath = Path.of( nodePath.toString() );
 
         final Path exportBasePath;
 
