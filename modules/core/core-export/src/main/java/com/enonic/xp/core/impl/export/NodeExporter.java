@@ -140,15 +140,17 @@ public class NodeExporter
                                                                           .parentPath( rootNode.path() )
                                                                           .cursor( cursor )
                                                                           .build() );
+            if ( nodeExportListener != null )
+            {
+                // the node the export was asked for, plus what the enumeration has handed over already and still holds - so the total
+                // stands from the first batch rather than waiting for the whole subtree to be enumerated
+                nodeExportListener.nodeResolved( (int) Math.min( 1L + entries.size() + batch.getRemaining(), Integer.MAX_VALUE ) );
+            }
+
             entries.addAll( batch.getEntries() );
             cursor = batch.getCursor();
         }
         while ( cursor != null );
-
-        if ( nodeExportListener != null )
-        {
-            nodeExportListener.nodeResolved( entries.size() + 1 );
-        }
 
         exportNode( rootNode );
 
