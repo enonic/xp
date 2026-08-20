@@ -56,6 +56,7 @@ import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeListEntry;
@@ -425,7 +426,8 @@ public class NodeServiceImpl
         final EnumerateNodesResult.Builder result = EnumerateNodesResult.create().cursor( batch.cursor() );
         for ( final NodeBranchEntry entry : batch.entries() )
         {
-            result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
+            result.addEntry(
+                new NodeEnumerationEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp(), entry.getVersionId() ) );
         }
 
         final EnumerateNodesResult enumerateResult = result.build();

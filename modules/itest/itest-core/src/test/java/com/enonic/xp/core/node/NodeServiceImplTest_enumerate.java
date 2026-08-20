@@ -16,8 +16,8 @@ import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -60,17 +60,20 @@ class NodeServiceImplTest_enumerate
 
         final EnumerateNodesResult first =
             nodeService.enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build() );
-        assertThat( first.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
+        assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childA.id(), childB.id() );
+        // each entry names the version the scan observed, so a reader can hold the enumerated snapshot of the node
+        assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::versionId )
+            .containsExactly( childA.getNodeVersionId(), childB.getNodeVersionId() );
         assertNotNull( first.getCursor() );
 
         final EnumerateNodesResult second = nodeService.enumerate(
             EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).cursor( first.getCursor() ).build() );
-        assertThat( second.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childC.id(), childD.id() );
+        assertThat( second.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childC.id(), childD.id() );
         assertNotNull( second.getCursor() );
 
         final EnumerateNodesResult third = nodeService.enumerate(
             EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).cursor( second.getCursor() ).build() );
-        assertThat( third.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childE.id() );
+        assertThat( third.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childE.id() );
         assertNull( third.getCursor() );
     }
 
@@ -93,7 +96,7 @@ class NodeServiceImplTest_enumerate
         final Node childB = createNode( parent.path(), "z" );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        final List<NodeListEntry> collected = new ArrayList<>();
+        final List<NodeEnumerationEntry> collected = new ArrayList<>();
         String cursor = null;
         int emptyBatches = 0;
         do
@@ -109,7 +112,7 @@ class NodeServiceImplTest_enumerate
         }
         while ( cursor != null );
 
-        assertThat( collected ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
+        assertThat( collected ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childA.id(), childB.id() );
         assertTrue( emptyBatches > 0, "expected the hidden-only batches to come back empty" );
     }
 
@@ -127,18 +130,18 @@ class NodeServiceImplTest_enumerate
         final EnumerateNodesParams.Builder params = EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 );
 
         final EnumerateNodesResult first = nodeService.enumerate( params.build() );
-        assertThat( first.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childA.id(), childB.id() );
+        assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childA.id(), childB.id() );
 
         nodeService.move( MoveNodeParams.create().nodeId( childD.id() ).newParentPath( childA.path() ).build() );
         nodeService.refresh( RefreshMode.STORAGE );
 
         final EnumerateNodesResult second = nodeService.enumerate( params.cursor( first.getCursor() ).build() );
-        assertThat( second.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childC.id(), childD.id() );
-        assertThat( second.getEntries() ).extracting( NodeListEntry::nodePath )
+        assertThat( second.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childC.id(), childD.id() );
+        assertThat( second.getEntries() ).extracting( NodeEnumerationEntry::nodePath )
             .contains( new NodePath( childA.path(), childD.name() ) );
 
         final EnumerateNodesResult third = nodeService.enumerate( params.cursor( second.getCursor() ).build() );
-        assertThat( third.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( childE.id() );
+        assertThat( third.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childE.id() );
         assertNull( third.getCursor() );
     }
 
@@ -159,7 +162,7 @@ class NodeServiceImplTest_enumerate
         {
             final EnumerateNodesResult batch = nodeService.enumerate(
                 EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 3 ).cursor( cursor ).build() );
-            for ( final NodeListEntry entry : batch.getEntries() )
+            for ( final NodeEnumerationEntry entry : batch.getEntries() )
             {
                 assertTrue( seen.add( entry.nodePath() ), "entry enumerated twice: " + entry.nodePath() );
                 nodeService.delete( DeleteNodeParams.create().nodeId( entry.nodeId() ).build() );
@@ -193,11 +196,11 @@ class NodeServiceImplTest_enumerate
         final EnumerateNodesResult firstBatch =
             nodeService.enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build() );
         // the hidden entry is dropped from the batch but not from the scan, so the batch shrinks rather than backfills
-        assertThat( firstBatch.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( first.id() );
+        assertThat( firstBatch.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( first.id() );
         assertNotNull( firstBatch.getCursor() );
 
         final EnumerateNodesResult secondBatch = nodeService.enumerate(
             EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).cursor( firstBatch.getCursor() ).build() );
-        assertThat( secondBatch.getEntries() ).extracting( NodeListEntry::nodeId ).containsExactly( last.id() );
+        assertThat( secondBatch.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( last.id() );
     }
 }

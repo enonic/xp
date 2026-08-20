@@ -10,7 +10,7 @@ import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.EnumerateNodesParams;
 import com.enonic.xp.node.EnumerateNodesResult;
-import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
 
@@ -66,7 +66,7 @@ public class CleanUpAuditLogCommand
             final EnumerateNodesResult batch = nodeService.enumerate(
                 EnumerateNodesParams.create().parentPath( NodePath.ROOT ).batchSize( BATCH_SIZE ).cursor( cursor ).build() );
 
-            for ( final NodeListEntry entry : batch.getEntries() )
+            for ( final NodeEnumerationEntry entry : batch.getEntries() )
             {
                 if ( entry.timestamp().isBefore( until ) )
                 {

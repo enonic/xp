@@ -41,6 +41,11 @@ public final class ExportNodesParams
         return sourceNodePath;
     }
 
+    /**
+     * @deprecated The export reads each node by the exact version its enumeration observed, one by one, so a read batch size no longer
+     * influences anything. Scheduled for removal.
+     */
+    @Deprecated
     public int getBatchSize()
     {
         return batchSize;
@@ -77,6 +82,11 @@ public final class ExportNodesParams
             return this;
         }
 
+        /**
+         * @deprecated The export reads each node by the exact version its enumeration observed, one by one, so a read batch size no
+         * longer influences anything. Scheduled for removal.
+         */
+        @Deprecated
         public Builder batchSize( final int batchSize )
         {
             this.batchSize = batchSize;

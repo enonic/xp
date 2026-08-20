@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableList;
 @NullMarked
 public final class EnumerateNodesResult
 {
-    private final ImmutableList<NodeListEntry> entries;
+    private final ImmutableList<NodeEnumerationEntry> entries;
 
     @Nullable
     private final String cursor;
@@ -36,7 +36,7 @@ public final class EnumerateNodesResult
      * The entries of this batch. A batch may hold no entries while the enumeration is not finished: entries the caller is not permitted
      * to read still advance the cursor.
      */
-    public List<NodeListEntry> getEntries()
+    public List<NodeEnumerationEntry> getEntries()
     {
         return entries;
     }
@@ -53,7 +53,7 @@ public final class EnumerateNodesResult
 
     public static final class Builder
     {
-        private final ImmutableList.Builder<NodeListEntry> entries = ImmutableList.builder();
+        private final ImmutableList.Builder<NodeEnumerationEntry> entries = ImmutableList.builder();
 
         @Nullable
         private String cursor;
@@ -62,7 +62,7 @@ public final class EnumerateNodesResult
         {
         }
 
-        public Builder addEntry( final NodeListEntry entry )
+        public Builder addEntry( final NodeEnumerationEntry entry )
         {
             this.entries.add( entry );
             return this;

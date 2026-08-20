@@ -26,10 +26,10 @@ import com.enonic.xp.node.EnumerateNodesParams;
 import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodeHit;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
@@ -202,9 +202,9 @@ class AuditLogServiceImplTest
         when( config.ageThreshold() ).thenReturn( "PT1s" );
 
         final EnumerateNodesResult batch = EnumerateNodesResult.create()
-            .addEntry( new NodeListEntry( NodeId.from( "old-1" ), new NodePath( "/old-1" ), Instant.now().minusSeconds( 60 ) ) )
-            .addEntry( new NodeListEntry( NodeId.from( "new-1" ), new NodePath( "/new-1" ), Instant.now().plusSeconds( 60 ) ) )
-            .addEntry( new NodeListEntry( NodeId.from( "old-2" ), new NodePath( "/old-2" ), Instant.now().minusSeconds( 60 ) ) )
+            .addEntry( new NodeEnumerationEntry( NodeId.from( "old-1" ), new NodePath( "/old-1" ), Instant.now().minusSeconds( 60 ), NodeVersionId.from( "v-old-1" ) ) )
+            .addEntry( new NodeEnumerationEntry( NodeId.from( "new-1" ), new NodePath( "/new-1" ), Instant.now().plusSeconds( 60 ), NodeVersionId.from( "v-new-1" ) ) )
+            .addEntry( new NodeEnumerationEntry( NodeId.from( "old-2" ), new NodePath( "/old-2" ), Instant.now().minusSeconds( 60 ), NodeVersionId.from( "v-old-2" ) ) )
             .build();
         when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn( batch );
 
@@ -221,7 +221,7 @@ class AuditLogServiceImplTest
         final EnumerateNodesResult.Builder batch = EnumerateNodesResult.create().cursor( cursor );
         for ( int i = 1; i <= number; i++ )
         {
-            batch.addEntry( new NodeListEntry( NodeId.from( "node-id-" + i ), new NodePath( "/node-" + i ), timestamp ) );
+            batch.addEntry( new NodeEnumerationEntry( NodeId.from( "node-id-" + i ), new NodePath( "/node-" + i ), timestamp, NodeVersionId.from( "version-" + i ) ) );
         }
         return batch.build();
     }

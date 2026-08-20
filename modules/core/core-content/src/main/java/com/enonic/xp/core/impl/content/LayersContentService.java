@@ -43,7 +43,7 @@ import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.EnumerateNodesParams;
 import com.enonic.xp.node.EnumerateNodesResult;
-import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.page.PageDescriptorService;
@@ -283,7 +283,7 @@ public class LayersContentService
             {
                 final EnumerateNodesResult batch = nodeService.enumerate(
                     EnumerateNodesParams.create().parentPath( parentPath ).batchSize( SYNC_BATCH_SIZE ).cursor( cursor ).build() );
-                for ( final NodeListEntry entry : batch.getEntries() )
+                for ( final NodeEnumerationEntry entry : batch.getEntries() )
                 {
                     grouped.computeIfAbsent( ContentNodeHelper.translateNodePathToContentPath( entry.nodePath().getParentPath() ),
                                              key -> ContentIds.create() ).add( ContentId.from( entry.nodeId() ) );

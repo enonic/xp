@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,12 +25,9 @@ import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.EnumerateNodesParams;
 import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.util.BinaryReference;
 
@@ -42,8 +38,7 @@ public class NodeExporter
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     /**
-     * The most entries an unscrolled query may ask the index for at once. Unrelated to {@link Builder#batchSize(int)}, which sizes the
-     * node reads.
+     * The most entries an unscrolled query may ask the index for at once.
      */
     private static final int LIST_BATCH_SIZE = 10_000;
 
@@ -66,8 +61,6 @@ public class NodeExporter
 
     private final String xpVersion;
 
-    private final int batchSize;
-
     private final NodeExportListener nodeExportListener;
 
     private final NodeExportResult.Builder result = NodeExportResult.create();
@@ -87,7 +80,6 @@ public class NodeExporter
         this.exportWriter = builder.exportWriter;
         this.targetDirectory = builder.targetDirectory;
         this.xpVersion = requireNonNull( builder.xpVersion );
-        this.batchSize = Math.max( 1, builder.batchSize );
         this.nodeExportListener = builder.nodeExportListener;
     }
 
@@ -145,8 +137,7 @@ public class NodeExporter
         // enumerated from storage, so an export covers the subtree the repository holds rather than the one the search index has caught
         // up with; the listing excludes the node the export was asked for. The count owed to the progress listener has to come from the
         // entries - the index alone counts without regard to what the caller is permitted to read.
-        final List<NodeId> nodeIds = new ArrayList<>();
-        nodeIds.add( rootNode.id() );
+        final List<NodeEnumerationEntry> entries = new ArrayList<>();
 
         String cursor = null;
         do
@@ -156,56 +147,52 @@ public class NodeExporter
                                                                           .batchSize( LIST_BATCH_SIZE )
                                                                           .cursor( cursor )
                                                                           .build() );
-            for ( final NodeListEntry entry : batch.getEntries() )
-            {
-                nodeIds.add( entry.nodeId() );
-            }
+            entries.addAll( batch.getEntries() );
             cursor = batch.getCursor();
         }
         while ( cursor != null );
 
         if ( nodeExportListener != null )
         {
-            nodeExportListener.nodeResolved( nodeIds.size() );
+            nodeExportListener.nodeResolved( entries.size() + 1 );
         }
 
-        final Iterator<NodeId> iterator = nodeIds.iterator();
+        exportNode( rootNode );
 
-        while ( iterator.hasNext() )
+        for ( final NodeEnumerationEntry entry : entries )
         {
-            final NodeIds.Builder batch = NodeIds.create();
-
-            for ( int i = 0; i < batchSize && iterator.hasNext(); i++ )
+            final Node node;
+            try
             {
-                batch.add( iterator.next() );
+                // read by the enumerated version, so the export is a snapshot of the enumeration: what an entry claims about its node
+                // is what the export writes, whatever the node has become since it was scanned
+                node = this.nodeService.getByIdAndVersionId( entry.nodeId(), entry.versionId() );
             }
-
-            final NodeIds batchNodeIds = batch.build();
-
-            if ( batchNodeIds.isEmpty() )
+            catch ( Exception e )
             {
-                break;
+                LOG.error( "Failed to export node with path [{}]", entry.nodePath(), e );
+                result.addError( new ExportError( e.toString() ) );
+                continue;
             }
-
-            final Nodes exportNodes = this.nodeService.getByIds( batchNodeIds );
-
-            for ( final Node child : exportNodes )
-            {
-                collectChildOrder( child );
-
-                try
-                {
-                    writeNode( child );
-                }
-                catch ( Exception e )
-                {
-                    LOG.error( "Failed to export node with path [{}]", child.path(), e );
-                    result.addError( new ExportError( e.toString() ) );
-                }
-            }
+            exportNode( node );
         }
 
         writeNodeOrderLists();
+    }
+
+    private void exportNode( final Node node )
+    {
+        collectChildOrder( node );
+
+        try
+        {
+            writeNode( node );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Failed to export node with path [{}]", node.path(), e );
+            result.addError( new ExportError( e.toString() ) );
+        }
     }
 
     private void exportNodeBinaries( final Node relativeNode, final Path nodeDataFolder )
@@ -336,8 +323,6 @@ public class NodeExporter
 
         private String xpVersion;
 
-        private int batchSize;
-
         private NodeExportListener nodeExportListener;
 
         private Builder()
@@ -371,12 +356,6 @@ public class NodeExporter
         public Builder xpVersion( final String xpVersion )
         {
             this.xpVersion = xpVersion;
-            return this;
-        }
-
-        public Builder batchSize( final int batchSize )
-        {
-            this.batchSize = batchSize;
             return this;
         }
 
