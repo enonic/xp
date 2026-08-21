@@ -76,7 +76,7 @@ public class IconLoader
 
     private static Icon doLoadIcon( final Resource resource, final String mimeType )
     {
-        if ( !resource.exists() )
+        if ( !resource.exists() || resource.getSize() == 0 )
         {
             return null;
         }

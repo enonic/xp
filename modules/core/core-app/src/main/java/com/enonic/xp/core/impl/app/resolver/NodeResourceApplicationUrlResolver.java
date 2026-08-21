@@ -5,10 +5,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.NodeValueResource;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
-import com.enonic.xp.core.impl.app.VirtualAppContext;
+import com.enonic.xp.core.impl.schema.NodeValueResource;
+import com.enonic.xp.core.impl.schema.NamespaceConstants;
+import com.enonic.xp.core.impl.schema.NamespaceContext;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
@@ -35,12 +37,12 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        final NodePath cmsPath = NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
+        final NodePath cmsPath = NodePath.create( NamespaceConstants.NAMESPACE_APP_ROOT_PARENT )
             .addElement( applicationKey.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
+            .addElement( NamespaceConstants.CMS_ROOT_NAME )
             .build();
 
-        return VirtualAppContext.createContext().callWith( () -> {
+        return NamespaceContext.createAdminContext().callWith( () -> {
             final ListNodesResult nodes =
                 this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).recursive( true ).build() );
 
@@ -65,26 +67,34 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Resource findResource( final String path )
     {
-        if ( !path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) )
+        if ( !path.startsWith( "/" + NamespaceConstants.CMS_ROOT_NAME + "/" ) )
         {
             return null;
         }
 
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
+        final NodePath appPath = new NodePath( NamespaceConstants.NAMESPACE_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
 
         final NodePath.Builder builder = NodePath.create( appPath );
 
         Arrays.stream( path.split( "/" ) ).forEach( builder::addElement );
 
-        final Node resourceNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( builder.build() ) );
+        return NamespaceContext.createAdminContext().callWith( () -> {
+            final Node resourceNode = nodeService.getByPath( builder.build() );
 
-        if ( resourceNode == null )
-        {
-            return null;
-        }
-        else
-        {
-            return new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode );
-        }
+            if ( resourceNode == null )
+            {
+                return null;
+            }
+
+            final ResourceKey resourceKey = ResourceKey.from( applicationKey, path );
+
+            if ( resourceNode.getAttachedBinaries().getByBinaryReference( NamespaceConstants.ICON_BINARY_REFERENCE ) != null )
+            {
+                final ByteSource binary = nodeService.getBinary( resourceNode.id(), NamespaceConstants.ICON_BINARY_REFERENCE );
+                return new NodeValueResource( resourceKey, binary, resourceNode.getTimestamp() );
+            }
+
+            return new NodeValueResource( resourceKey, resourceNode );
+        } );
     }
 }

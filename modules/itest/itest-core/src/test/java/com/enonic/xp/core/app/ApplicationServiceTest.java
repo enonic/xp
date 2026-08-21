@@ -35,7 +35,7 @@ import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
-import com.enonic.xp.core.impl.app.VirtualAppService;
+import com.enonic.xp.core.impl.schema.NamespaceAppService;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -74,17 +74,20 @@ class ApplicationServiceTest
 
         BundleContext bundleContext = felix.getBundleContext();
 
-        ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         applicationAuditLogSupport.activate( appConfig );
 
-        this.applicationService = new ApplicationServiceImpl(
-            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
-            new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), applicationAuditLogSupport );
+        final ApplicationRegistryImpl applicationRegistry =
+            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
+        final NamespaceAppService namespaceAppService = new NamespaceAppService( nodeService );
+
+        this.applicationService = new ApplicationServiceImpl( applicationRegistry, repoService,
+                                                               new EventPublisherImpl( Executors.newSingleThreadExecutor() ),
+                                                               new AppFilterServiceImpl( appConfig ), namespaceAppService,
+                                                               applicationAuditLogSupport );
     }
 
     @AfterEach

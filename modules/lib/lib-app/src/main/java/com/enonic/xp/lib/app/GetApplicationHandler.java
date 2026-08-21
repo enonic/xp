@@ -19,7 +19,7 @@ public final class GetApplicationHandler
 
     public ApplicationMapper execute()
     {
-        return Optional.ofNullable( applicationServiceSupplier.get().get( ApplicationKey.from( key ) ) )
+        return Optional.ofNullable( applicationServiceSupplier.get().getInstalledApplication( ApplicationKey.from( key ) ) )
             .map( ApplicationMapper::new )
             .orElse( null );
     }

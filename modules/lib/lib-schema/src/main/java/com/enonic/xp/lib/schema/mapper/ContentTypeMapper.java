@@ -2,15 +2,14 @@ package com.enonic.xp.lib.schema.mapper;
 
 import java.util.List;
 
-import com.enonic.xp.resource.DynamicContentSchemaType;
-import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.script.serializer.MapGenerator;
 
 public final class ContentTypeMapper
     extends SchemaMapper<ContentType>
 {
-    public ContentTypeMapper( final DynamicSchemaResult<ContentType> schema )
+    public ContentTypeMapper( final SchemaResult<ContentType> schema )
     {
         super( schema );
     }
@@ -48,6 +47,6 @@ public final class ContentTypeMapper
     @Override
     protected String getType()
     {
-        return DynamicContentSchemaType.CONTENT_TYPE.name();
+        return "CONTENT_TYPE";
     }
 }

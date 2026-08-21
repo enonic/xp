@@ -7,7 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
+import com.enonic.xp.core.impl.schema.parser.YmlPartDescriptorParser;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -108,7 +108,7 @@ public class PartDescriptorLoader
         final ResourceKey resourceKey = toResourceKey( key, ext );
         final Resource resource = this.resourceService.getResource( resourceKey );
 
-        if ( !resource.exists() )
+        if ( !resource.exists() || resource.getSize() == 0 )
         {
             return null;
         }

@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 let resource = `kind: "FormFragment"
-title: "Virtual FormFragment"
+title: "Dynamic FormFragment"
 description: "FormFragment description"
 form:
 - type: "TextLine"
@@ -18,10 +18,9 @@ form:
 `;
 
 // BEGIN
-// Update virtual fragment.
-var result = schemaLib.updateSchema({
+// Update dynamic form fragment.
+var result = schemaLib.updateFormFragment({
     name: 'myapp:mytype',
-    type: 'FORM_FRAGMENT',
     resource
 
 });
@@ -33,11 +32,11 @@ log.info('Updated formFragment: ' + result.name);
 
 assert.assertJsonEquals({
     name: 'myapp:mytype',
-    title: 'Virtual FormFragment',
+    title: 'Dynamic FormFragment',
     description: 'FormFragment description',
     createdTime: '2021-09-25T10:00:00Z',
     modifiedTime: '2021-09-25T10:00:00Z',
-    resource: 'kind: \"FormFragment\"\ntitle: \"Virtual FormFragment\"\ndescription: \"FormFragment description\"\nform:\n- type: \"TextLine\"\n  name: \"text2\"\n  label: \"Text 2\"\n  occurrences:\n    min: 0\n    max: 1\n- type: \"FormFragment\"\n  name: \"inline\"\n',
+    resource: 'kind: \"FormFragment\"\ntitle: \"Dynamic FormFragment\"\ndescription: \"FormFragment description\"\nform:\n- type: \"TextLine\"\n  name: \"text2\"\n  label: \"Text 2\"\n  occurrences:\n    min: 0\n    max: 1\n- type: \"FormFragment\"\n  name: \"inline\"\n',
     type: 'FORM_FRAGMENT',
     form: [
         {

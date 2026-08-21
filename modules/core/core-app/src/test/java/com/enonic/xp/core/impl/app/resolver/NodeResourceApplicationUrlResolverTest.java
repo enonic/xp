@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app.resolver;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -10,15 +11,25 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.AttachedBinaries;
+import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.util.BinaryReference;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -70,6 +81,63 @@ class NodeResourceApplicationUrlResolverTest
             result( "/myapp/cms/content-types", "/myapp/cms/content-types/mytype", "/myapp/cms/content-types/mytype/content-types" ) );
 
         assertEquals( Set.of( "/cms/content-types/mytype/content-types" ), this.resolver.findFiles() );
+    }
+
+    @Test
+    void findResource_returns_the_resource_string_property()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "resource", "resource text" );
+
+        final Node node = Node.create()
+            .id( new NodeId() )
+            .name( "mytype.yaml" )
+            .parentPath( new NodePath( "/myapp/cms/content-types/mytype" ) )
+            .data( data )
+            .timestamp( Instant.ofEpochMilli( 1690000000000L ) )
+            .build();
+
+        when( this.nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) ).thenReturn( node );
+
+        final Resource resource = this.resolver.findResource( "/cms/content-types/mytype/mytype.yaml" );
+
+        assertEquals( "resource text", resource.readString() );
+        assertEquals( 1690000000000L, resource.getTimestamp() );
+    }
+
+    @Test
+    void findResource_returns_the_attached_binary_for_icon_nodes()
+        throws Exception
+    {
+        final byte[] iconData = {(byte) 0x89, 'P', 'N', 'G'};
+
+        final PropertyTree data = new PropertyTree();
+        data.setString( "mimeType", "image/png" );
+
+        final NodeId nodeId = new NodeId();
+        final Node node = Node.create()
+            .id( nodeId )
+            .name( "mytype.png" )
+            .parentPath( new NodePath( "/myapp/cms/content-types/mytype" ) )
+            .data( data )
+            .attachedBinaries(
+                AttachedBinaries.from( List.of( new AttachedBinary( BinaryReference.from( "icon" ), "blobKey" ) ) ) )
+            .timestamp( Instant.ofEpochMilli( 1690000000000L ) )
+            .build();
+
+        when( this.nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.png" ) ) ).thenReturn( node );
+        when( this.nodeService.getBinary( nodeId, BinaryReference.from( "icon" ) ) ).thenReturn( ByteSource.wrap( iconData ) );
+
+        final Resource resource = this.resolver.findResource( "/cms/content-types/mytype/mytype.png" );
+
+        assertArrayEquals( iconData, resource.readBytes() );
+        assertEquals( 1690000000000L, resource.getTimestamp() );
+    }
+
+    @Test
+    void findResource_returns_null_for_a_missing_node()
+    {
+        assertNull( this.resolver.findResource( "/cms/content-types/mytype/mytype.yaml" ) );
     }
 
     private static ListNodesResult result( final String... paths )

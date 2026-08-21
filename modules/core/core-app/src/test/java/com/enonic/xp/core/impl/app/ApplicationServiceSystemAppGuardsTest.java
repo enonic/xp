@@ -20,6 +20,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.schema.NamespaceAppService;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.RoleKeys;
@@ -46,8 +47,7 @@ class ApplicationServiceSystemAppGuardsTest
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         final NodeService nodeService = mock( NodeService.class );
 
-        final ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -56,7 +56,7 @@ class ApplicationServiceSystemAppGuardsTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ),
             mock( ApplicationRepoService.class ), mock( EventPublisher.class ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), auditLogSupport );
+            new NamespaceAppService( nodeService ), auditLogSupport );
     }
 
     @Test

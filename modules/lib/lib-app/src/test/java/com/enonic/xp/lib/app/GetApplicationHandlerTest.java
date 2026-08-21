@@ -19,7 +19,7 @@ class GetApplicationHandlerTest
     void testExample()
     {
 
-        when( applicationService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
+        when( applicationService.getInstalledApplication( isA( ApplicationKey.class ) ) ).thenAnswer( params -> {
             final ApplicationKey applicationKey = params.getArgument( 0, ApplicationKey.class );
 
             final Application application = mock( Application.class );
@@ -43,7 +43,7 @@ class GetApplicationHandlerTest
     void testMissing()
     {
 
-        when( applicationService.get( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );
+        when( applicationService.getInstalledApplication( isA( ApplicationKey.class ) ) ).thenAnswer( params -> null );
 
         runFunction( "/test/GetApplicationHandlerTest.js", "getMissing" );
     }

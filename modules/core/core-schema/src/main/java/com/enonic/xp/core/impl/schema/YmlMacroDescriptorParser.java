@@ -1,0 +1,48 @@
+package com.enonic.xp.core.impl.schema;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
+
+public class YmlMacroDescriptorParser
+{
+    private static final YmlParserBase PARSER = new YmlParserBase();
+
+    static
+    {
+        PARSER.addMixIn( MacroDescriptor.Builder.class, MacroDescriptorBuilderMixIn.class );
+    }
+
+    public static MacroDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
+    {
+        return PARSER.parse( "Macro", resource, MacroDescriptor.Builder.class, currentApplication );
+    }
+
+    @JsonIgnoreProperties("kind")
+    private abstract static class MacroDescriptorBuilderMixIn
+    {
+        @JsonCreator
+        static MacroDescriptor.Builder create()
+        {
+            return MacroDescriptor.create();
+        }
+
+        @JsonProperty("title")
+        abstract MacroDescriptor.Builder title( LocalizedText text );
+
+        @JsonProperty("description")
+        abstract MacroDescriptor.Builder description( LocalizedText text );
+
+        @JsonProperty("form")
+        abstract MacroDescriptor.Builder form( Form form );
+
+        @JsonProperty("config")
+        abstract MacroDescriptor.Builder schemaConfig( GenericValue schemaConfig );
+    }
+}

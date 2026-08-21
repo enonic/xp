@@ -4,20 +4,19 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual mixin.
+// Delete dynamic mixin.
 
 var params = {
-    name: 'myapp:mydata',
-    type: 'MIXIN'
+    name: 'myapp:mydata'
 };
 
-var result = schemaLib.deleteSchema(params);
+var result = schemaLib.deleteMixin(params);
 
 
 if (result) {
-    log.info('Deleted mixin: ' + params.key);
+    log.info('Deleted mixin: ' + params.name);
 } else {
-    log.info('Mixin deletion failed: ' + params.key);
+    log.info('Mixin deletion failed: ' + params.name);
 }
 
 // END

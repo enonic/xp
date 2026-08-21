@@ -20,10 +20,9 @@ form:
     max: 0`;
 
 // BEGIN
-// Update virtual content type.
-var result = schemaLib.updateSchema({
+// Update dynamic content type.
+var result = schemaLib.updateContentType({
     name: 'myapp:mytype',
-    type: 'CONTENT_TYPE',
     resource
 
 });

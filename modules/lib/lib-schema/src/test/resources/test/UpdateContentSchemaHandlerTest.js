@@ -1,0 +1,381 @@
+var schemaLib = require('/lib/xp/schema');
+var assert = require('/lib/xp/testing');
+
+/* global log*/
+
+exports.updateInvalidContentSchema = function () {
+    assert.assertThrows(() => schemaLib.updateContentType({
+        name: 'myapp:mydata',
+        resource: `<?xml version='1.0' encoding='UTF-8'?>
+        <content-type xmlns='urn:enonic:xp:model:1.0'>
+        </content-type>`
+    }));
+};
+
+let resource = `kind: "ContentType"
+superType: "base:structured"
+abstract: false
+final: true
+allowChildContent: true
+title: "My Tag"
+description: "My description"
+form:
+- type: "OptionSet"
+  name: "radioOptionSet"
+  expanded: false
+  label: "Single selection"
+  occurrences:
+    min: 0
+    max: 1
+  options:
+  - name: "option_1"
+    label: "Option 1"
+    selected: false
+    items:
+    - type: "TextLine"
+      name: "text-input"
+      label: "Name"
+      helpText: "Text input"
+      occurrences:
+        min: 1
+        max: 1
+      default: "something"
+    - type: "ItemSet"
+      name: "minimum3"
+      label: "Minimum 3"
+      occurrences:
+        min: 3
+        max: 0
+      items:
+      - type: "TextLine"
+        name: "label"
+        label: "Label"
+        occurrences:
+          min: 0
+          max: 1
+      - type: "TextLine"
+        name: "value"
+        label: "Value"
+        occurrences:
+          min: 0
+          max: 1
+  - name: "option_2"
+    label: "Option 2"
+    selected: false
+  selection:
+    min: 1
+    max: 1
+- type: "OptionSet"
+  name: "checkOptionSet"
+  expanded: true
+  label: "Multi selection"
+  occurrences:
+    min: 0
+    max: 1
+  options:
+  - name: "option_1"
+    label: "Option 1"
+    selected: true
+  - name: "option_2"
+    label: "Option 2"
+    selected: true
+    items:
+    - type: "OptionSet"
+      name: "nestedOptionSet"
+      expanded: false
+      label: "Multi selection"
+      occurrences:
+        min: 1
+        max: 1
+      options:
+      - name: "option2_1"
+        label: "Option 1_1"
+        selected: false
+        items:
+        - type: "TextLine"
+          name: "name"
+          label: "Name"
+          helpText: "Text input"
+          occurrences:
+            min: 1
+            max: 1
+      - name: "option2_2"
+        label: "Option 2_2"
+        selected: true
+        items:
+        - type: "CheckBox"
+          name: "myCheckbox"
+          label: "my-checkbox"
+          occurrences:
+            min: 0
+            max: 1
+      selection:
+        min: 2
+        max: 2
+  - name: "option_3"
+    label: "Option 3"
+    selected: false
+    items:
+    - type: "ImageSelector"
+      name: "imageselector"
+      label: "Image selector"
+      occurrences:
+        min: 1
+        max: 1
+      allowPath:
+       - "path1"
+       - "path2"
+      allowContentType:
+       - "mytype2"
+       - "mytype"
+  - name: "option_4"
+    label: "Option 4"
+    selected: false
+    items:
+    - type: "Double"
+      name: "double"
+      label: "Double"
+      occurrences:
+        min: 1
+        max: 1
+    - type: "Long"
+      name: "long"
+      label: "Long"
+      occurrences:
+        min: 0
+        max: 1
+  selection:
+    min: 0
+    max: 3
+`;
+
+exports.updateWithForm = function () {
+    let result = schemaLib.updateContentType({
+        name: 'myapp:mydata',
+        resource
+    });
+
+    assert.assertJsonEquals({
+        'name': 'myapp:mydata',
+        'title': 'My Tag',
+        'description': 'My description',
+        'createdTime': '2021-09-25T10:00:00Z',
+        'modifiedTime': '2021-09-25T10:00:00Z',
+        'resource': 'kind: \"ContentType\"\nsuperType: \"base:structured\"\nabstract: false\nfinal: true\nallowChildContent: true\ntitle: \"My Tag\"\ndescription: \"My description\"\nform:\n- type: \"OptionSet\"\n  name: \"radioOptionSet\"\n  expanded: false\n  label: \"Single selection\"\n  occurrences:\n    min: 0\n    max: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    selected: false\n    items:\n    - type: \"TextLine\"\n      name: \"text-input\"\n      label: \"Name\"\n      helpText: \"Text input\"\n      occurrences:\n        min: 1\n        max: 1\n      default: \"something\"\n    - type: \"ItemSet\"\n      name: \"minimum3\"\n      label: \"Minimum 3\"\n      occurrences:\n        min: 3\n        max: 0\n      items:\n      - type: \"TextLine\"\n        name: \"label\"\n        label: \"Label\"\n        occurrences:\n          min: 0\n          max: 1\n      - type: \"TextLine\"\n        name: \"value\"\n        label: \"Value\"\n        occurrences:\n          min: 0\n          max: 1\n  - name: \"option_2\"\n    label: \"Option 2\"\n    selected: false\n  selection:\n    min: 1\n    max: 1\n- type: \"OptionSet\"\n  name: \"checkOptionSet\"\n  expanded: true\n  label: \"Multi selection\"\n  occurrences:\n    min: 0\n    max: 1\n  options:\n  - name: \"option_1\"\n    label: \"Option 1\"\n    selected: true\n  - name: \"option_2\"\n    label: \"Option 2\"\n    selected: true\n    items:\n    - type: \"OptionSet\"\n      name: \"nestedOptionSet\"\n      expanded: false\n      label: \"Multi selection\"\n      occurrences:\n        min: 1\n        max: 1\n      options:\n      - name: \"option2_1\"\n        label: \"Option 1_1\"\n        selected: false\n        items:\n        - type: \"TextLine\"\n          name: \"name\"\n          label: \"Name\"\n          helpText: \"Text input\"\n          occurrences:\n            min: 1\n            max: 1\n      - name: \"option2_2\"\n        label: \"Option 2_2\"\n        selected: true\n        items:\n        - type: \"CheckBox\"\n          name: \"myCheckbox\"\n          label: \"my-checkbox\"\n          occurrences:\n            min: 0\n            max: 1\n      selection:\n        min: 2\n        max: 2\n  - name: \"option_3\"\n    label: \"Option 3\"\n    selected: false\n    items:\n    - type: \"ImageSelector\"\n      name: \"imageselector\"\n      label: \"Image selector\"\n      occurrences:\n        min: 1\n        max: 1\n      allowPath:\n       - \"path1\"\n       - \"path2\"\n      allowContentType:\n       - \"mytype2\"\n       - \"mytype\"\n  - name: \"option_4\"\n    label: \"Option 4\"\n    selected: false\n    items:\n    - type: \"Double\"\n      name: \"double\"\n      label: \"Double\"\n      occurrences:\n        min: 1\n        max: 1\n    - type: \"Long\"\n      name: \"long\"\n      label: \"Long\"\n      occurrences:\n        min: 0\n        max: 1\n  selection:\n    min: 0\n    max: 3\n',
+        'type': 'CONTENT_TYPE',
+        'superType': 'base:structured',
+        'abstract': false,
+        'final': true,
+        'allowChildContent': true,
+        'allowChildContentType': [],
+        'form': [
+            {
+                'formItemType': 'OptionSet',
+                'name': 'radioOptionSet',
+                'label': 'Single selection',
+                'expanded': false,
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 0
+                },
+                'selection': {
+                    'maximum': 1,
+                    'minimum': 1
+                },
+                'options': [
+                    {
+                        'name': 'option_1',
+                        'label': 'Option 1',
+                        'default': false,
+                        'items': [
+                            {
+                                'formItemType': 'Input',
+                                'name': 'text-input',
+                                'label': 'Name',
+                                'helpText': 'Text input',
+                                'inputType': 'TextLine',
+                                'occurrences': {
+                                    'maximum': 1,
+                                    'minimum': 1
+                                },
+                                'default': 'something',
+                            },
+                            {
+                                'formItemType': 'ItemSet',
+                                'name': 'minimum3',
+                                'label': 'Minimum 3',
+                                'occurrences': {
+                                    'maximum': 0,
+                                    'minimum': 3
+                                },
+                                'items': [
+                                    {
+                                        'formItemType': 'Input',
+                                        'name': 'label',
+                                        'label': 'Label',
+                                        'inputType': 'TextLine',
+                                        'occurrences': {
+                                            'maximum': 1,
+                                            'minimum': 0
+                                        },
+                                    },
+                                    {
+                                        'formItemType': 'Input',
+                                        'name': 'value',
+                                        'label': 'Value',
+                                        'inputType': 'TextLine',
+                                        'occurrences': {
+                                            'maximum': 1,
+                                            'minimum': 0
+                                        },
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'name': 'option_2',
+                        'label': 'Option 2',
+                        'default': false,
+                        'items': []
+                    }
+                ]
+            },
+            {
+                'formItemType': 'OptionSet',
+                'name': 'checkOptionSet',
+                'label': 'Multi selection',
+                'expanded': true,
+                'occurrences': {
+                    'maximum': 1,
+                    'minimum': 0
+                },
+                'selection': {
+                    'maximum': 3,
+                    'minimum': 0
+                },
+                'options': [
+                    {
+                        'name': 'option_1',
+                        'label': 'Option 1',
+                        'default': true,
+                        'items': []
+                    },
+                    {
+                        'name': 'option_2',
+                        'label': 'Option 2',
+                        'default': true,
+                        'items': [
+                            {
+                                'formItemType': 'OptionSet',
+                                'name': 'nestedOptionSet',
+                                'label': 'Multi selection',
+                                'expanded': false,
+                                'occurrences': {
+                                    'maximum': 1,
+                                    'minimum': 1
+                                },
+                                'selection': {
+                                    'maximum': 2,
+                                    'minimum': 2
+                                },
+                                'options': [
+                                    {
+                                        'name': 'option2_1',
+                                        'label': 'Option 1_1',
+                                        'default': false,
+                                        'items': [
+                                            {
+                                                'formItemType': 'Input',
+                                                'name': 'name',
+                                                'label': 'Name',
+                                                'helpText': 'Text input',
+                                                'inputType': 'TextLine',
+                                                'occurrences': {
+                                                    'maximum': 1,
+                                                    'minimum': 1
+                                                },
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        'name': 'option2_2',
+                                        'label': 'Option 2_2',
+                                        'default': true,
+                                        'items': [
+                                            {
+                                                'formItemType': 'Input',
+                                                'name': 'myCheckbox',
+                                                'label': 'my-checkbox',
+                                                'inputType': 'CheckBox',
+                                                'occurrences': {
+                                                    'maximum': 1,
+                                                    'minimum': 0
+                                                },
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'name': 'option_3',
+                        'label': 'Option 3',
+                        'default': false,
+                        'items': [
+                            {
+                                'formItemType': 'Input',
+                                'name': 'imageselector',
+                                'label': 'Image selector',
+                                'inputType': 'ImageSelector',
+                                'occurrences': {
+                                    'maximum': 1,
+                                    'minimum': 1
+                                },
+                                'allowPath': [
+                                    'path1',
+                                    'path2'
+                                ],
+                                'allowContentType': [
+                                    'mytype2',
+                                    'mytype'
+                                ],
+                            }
+                        ]
+                    },
+                    {
+                        'name': 'option_4',
+                        'label': 'Option 4',
+                        'default': false,
+                        'items': [
+                            {
+                                'formItemType': 'Input',
+                                'name': 'double',
+                                'label': 'Double',
+                                'inputType': 'Double',
+                                'occurrences': {
+                                    'maximum': 1,
+                                    'minimum': 1
+                                },
+                            },
+                            {
+                                'formItemType': 'Input',
+                                'name': 'long',
+                                'label': 'Long',
+                                'inputType': 'Long',
+                                'occurrences': {
+                                    'maximum': 1,
+                                    'minimum': 0
+                                },
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        'config': {},
+    }, result);
+};
+
+

@@ -1,0 +1,17 @@
+kind: "ContentType"
+superType: "base:folder"
+abstract: false
+final: true
+allowChildContent: false
+title: "Dynamic Content Type"
+description: "description"
+form:
+  - type: "Date"
+    name: "myDate"
+    label: "label"
+    occurrences:
+      min: 0
+      max: 1
+config:
+  displayNamePlaceholder: "Display Name Label"
+  displayNameExpression: "${firstName} ${lastName}"

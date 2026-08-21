@@ -10,7 +10,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.core.impl.content.parser.YmlStyleDescriptorParser;
+import com.enonic.xp.core.impl.schema.parser.YmlStyleDescriptorParser;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;

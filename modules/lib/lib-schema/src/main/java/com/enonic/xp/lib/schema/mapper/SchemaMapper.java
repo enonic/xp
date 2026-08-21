@@ -1,6 +1,6 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
@@ -14,7 +14,7 @@ public abstract class SchemaMapper<T extends BaseSchema<? extends BaseSchemaName
 
     private final Resource resource;
 
-    SchemaMapper( final DynamicSchemaResult<T> descriptor )
+    SchemaMapper( final SchemaResult<T> descriptor )
     {
         this.descriptor = descriptor.getSchema();
         this.resource = descriptor.getResource();

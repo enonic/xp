@@ -1,0 +1,42 @@
+package com.enonic.xp.core.impl.schema.parser;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.YmlParserBase;
+import com.enonic.xp.form.Form;
+import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.schema.LocalizedText;
+import com.enonic.xp.util.GenericValue;
+
+public final class YmlPartDescriptorParser
+{
+    private static final YmlParserBase PARSER = new YmlParserBase();
+
+    static
+    {
+        PARSER.addMixIn( PartDescriptor.Builder.class, PartDescriptorBuilderMixIn.class );
+    }
+
+    public static PartDescriptor.Builder parse( final String resource, final ApplicationKey currentApplication )
+    {
+        return PARSER.parse( "Part", resource, PartDescriptor.Builder.class, currentApplication );
+    }
+
+    @JsonIgnoreProperties("kind")
+    private abstract static class PartDescriptorBuilderMixIn
+    {
+        @JsonProperty("title")
+        abstract PartDescriptor.Builder title( LocalizedText text );
+
+        @JsonProperty("description")
+        abstract PartDescriptor.Builder description( LocalizedText text );
+
+        @JsonProperty("form")
+        abstract PartDescriptor.Builder config( Form config );
+
+        @JsonProperty("config")
+        abstract PartDescriptor.Builder schemaConfig( GenericValue value );
+    }
+}

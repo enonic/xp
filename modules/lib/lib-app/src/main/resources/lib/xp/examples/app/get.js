@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual app.
+// Fetch installed app.
 var result = appLib.get({
     key: 'my_app',
 });
@@ -24,4 +24,3 @@ assert.assertJsonEquals({
     started: true,
     system: true
 }, result);
-
