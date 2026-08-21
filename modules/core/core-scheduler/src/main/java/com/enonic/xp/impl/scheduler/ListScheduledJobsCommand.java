@@ -33,6 +33,7 @@ public class ListScheduledJobsCommand
     private List<ScheduledJobEntry> doExecute()
     {
         final NodeIds jobIds = nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() )
+            .filter( entry -> NodePath.ROOT.equals( entry.nodePath().getParentPath() ) )
             .map( NodeListEntry::nodeId )
             .collect( NodeIds.collector() );
 

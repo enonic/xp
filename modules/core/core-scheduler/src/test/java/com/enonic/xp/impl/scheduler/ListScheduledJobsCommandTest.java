@@ -16,6 +16,7 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -45,8 +46,10 @@ class ListScheduledJobsCommandTest
         final Node oneTimeNode = jobNode( "one-time-job", ScheduleCalendarType.ONE_TIME, Instant.parse( "2026-01-01T10:00:00Z" ) );
 
         when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer(
-            invocation -> Stream.of( listEntry( cronNode ), listEntry( oneTimeNode ) ) );
-        when( nodeService.getByIds( isA( NodeIds.class ) ) ).thenReturn( Nodes.from( cronNode, oneTimeNode ) );
+            invocation -> Stream.of( listEntry( cronNode ), listEntry( oneTimeNode ),
+                                     new NodeListEntry( NodeId.from( "below-a-job" ), new NodePath( oneTimeNode.path(), NodeName.from( "child" ) ),
+                                                        Instant.parse( "2026-01-01T10:00:00Z" ) ) ) );
+        when( nodeService.getByIds( NodeIds.from( cronNode.id(), oneTimeNode.id() ) ) ).thenReturn( Nodes.from( cronNode, oneTimeNode ) );
 
         final SchedulerServiceImpl schedulerService =
             new SchedulerServiceImpl( nodeService, mock( SchedulingCoordinator.class ), mock( ScheduleAuditLogSupport.class ) );

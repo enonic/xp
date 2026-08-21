@@ -234,8 +234,10 @@ class ApplicationServiceImplTest
 
         final NodeIds ids = NodeIds.from( virtualAppNodeId );
 
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer(
-            invocation -> Stream.of( new NodeListEntry( virtualAppNodeId, new NodePath( "/app3" ), Instant.EPOCH ) ) );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer( invocation -> Stream.of(
+            new NodeListEntry( virtualAppNodeId, new NodePath( "/app3" ), Instant.EPOCH ),
+            new NodeListEntry( NodeId.from( "resource-folder-id" ), new NodePath( "/app3/cms" ), Instant.EPOCH ),
+            new NodeListEntry( NodeId.from( "resource-id" ), new NodePath( "/app3/cms/mytype.yaml" ), Instant.EPOCH ) ) );
 
         when( nodeService.getByIds( ids ) ).thenReturn(
             Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );

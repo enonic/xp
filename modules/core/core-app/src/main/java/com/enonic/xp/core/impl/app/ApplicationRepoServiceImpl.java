@@ -69,6 +69,7 @@ public class ApplicationRepoServiceImpl
     {
         final NodeIds applicationIds = ApplicationHelper.runAsAdmin(
             () -> this.nodeService.list( ListNodesParams.create().parentPath( APPLICATION_PATH ).build() )
+                .filter( entry -> APPLICATION_PATH.equals( entry.nodePath().getParentPath() ) )
                 .map( NodeListEntry::nodeId )
                 .collect( NodeIds.collector() ) );
 

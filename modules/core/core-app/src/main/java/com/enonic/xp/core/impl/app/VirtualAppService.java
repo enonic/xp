@@ -37,6 +37,7 @@ public class VirtualAppService
     {
         return VirtualAppContext.createContext().callWith( () -> {
             final NodeIds appIds = this.nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() )
+                .filter( entry -> NodePath.ROOT.equals( entry.nodePath().getParentPath() ) )
                 .map( NodeListEntry::nodeId )
                 .collect( NodeIds.collector() );
 
