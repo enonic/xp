@@ -46,6 +46,7 @@ import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -201,6 +202,11 @@ public class LayersContentService
             .eventPublisher( this.eventPublisher )
             .build()
             .execute();
+    }
+
+    public void refresh( final RefreshMode refreshMode )
+    {
+        nodeService.refresh( refreshMode );
     }
 
     public void delete( final DeleteContentParams params )
