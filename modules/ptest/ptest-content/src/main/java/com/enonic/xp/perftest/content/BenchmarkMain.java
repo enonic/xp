@@ -10,8 +10,11 @@ public final class BenchmarkMain
     public static void main( final String[] args )
         throws Exception
     {
+        final String include =
+            args.length > 0 ? args[0] : "com\\.enonic\\.xp\\.perftest\\.content\\..*Benchmark";
+
         final Options opts = new OptionsBuilder()
-            .include( "com\\.enonic\\.xp\\.perftest\\.content\\..*Benchmark" )
+            .include( include )
             .resultFormat( ResultFormatType.JSON )
             .result( "results.json" )
             .output( "results.txt" )
