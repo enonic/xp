@@ -2,6 +2,7 @@ package com.enonic.xp.core.content;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.CompareContentResults;
@@ -13,6 +14,10 @@ import com.enonic.xp.content.PushContentParams;
 import com.enonic.xp.content.ResolvePublishDependenciesParams;
 import com.enonic.xp.content.UpdateContentParams;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.page.Page;
+import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.util.Reference;
 
@@ -103,6 +108,131 @@ class ContentServiceImplTest_resolvePublishDependencies
 
         assertFalse( result.contentIds().contains( child1.getId() ) );
         assertTrue( result.contentIds().contains( child3.getId() ) );
+    }
+
+    @Test
+    void resolve_default_page_template()
+    {
+        final Content site = createSite();
+        final Content template = createPageTemplate( site, ContentTypeName.folder() );
+        final Content content = createContentInSite( site, ContentTypeName.folder() );
+
+        final CompareContentResults result = this.contentService.resolvePublishDependencies(
+            ResolvePublishDependenciesParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        assertTrue( result.contentIds().contains( template.getId() ),
+                    "the template the content renders with has to be published along with it" );
+    }
+
+    @Test
+    void resolve_default_page_template_of_unsupported_type_not_included()
+    {
+        final Content site = createSite();
+        final Content template = createPageTemplate( site, ContentTypeName.from( "myapp:other-type" ) );
+        final Content content = createContentInSite( site, ContentTypeName.folder() );
+
+        final CompareContentResults result = this.contentService.resolvePublishDependencies(
+            ResolvePublishDependenciesParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        assertFalse( result.contentIds().contains( template.getId() ) );
+    }
+
+    @Test
+    void resolve_default_page_template_of_content_with_own_page_not_included()
+    {
+        final Content site = createSite();
+        final Content template = createPageTemplate( site, ContentTypeName.folder() );
+
+        final DescriptorKey descriptorKey = DescriptorKey.from( "myapp:mypage" );
+        Mockito.when( pageDescriptorService.getByKey( descriptorKey ) )
+            .thenReturn( PageDescriptor.create()
+                             .key( descriptorKey )
+                             .title( "My page" )
+                             .regions( RegionDescriptors.create().build() )
+                             .build() );
+
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "Customized" )
+                                                                .parent( site.getPath() )
+                                                                .type( ContentTypeName.folder() )
+                                                                .page( Page.create().descriptor( descriptorKey ).build() )
+                                                                .build() );
+
+        final CompareContentResults result = this.contentService.resolvePublishDependencies(
+            ResolvePublishDependenciesParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        assertFalse( result.contentIds().contains( template.getId() ),
+                     "a content that brings its own page never falls back to the default template" );
+    }
+
+    @Test
+    void resolve_default_page_template_excluded()
+    {
+        final Content site = createSite();
+        final Content template = createPageTemplate( site, ContentTypeName.folder() );
+        final Content content = createContentInSite( site, ContentTypeName.folder() );
+
+        final CompareContentResults result = this.contentService.resolvePublishDependencies(
+            ResolvePublishDependenciesParams.create()
+                .contentIds( ContentIds.from( content.getId() ) )
+                .excludedContentIds( ContentIds.from( template.getId() ) )
+                .build() );
+
+        assertFalse( result.contentIds().contains( template.getId() ) );
+    }
+
+    @Test
+    void resolve_default_page_template_outside_site()
+    {
+        final Content site = createSite();
+        final Content template = createPageTemplate( site, ContentTypeName.folder() );
+
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "Outside of any site" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        final CompareContentResults result = this.contentService.resolvePublishDependencies(
+            ResolvePublishDependenciesParams.create().contentIds( ContentIds.from( content.getId() ) ).build() );
+
+        assertFalse( result.contentIds().contains( template.getId() ) );
+    }
+
+    private Content createSite()
+    {
+        return this.contentService.create( CreateContentParams.create()
+                                               .contentData( new PropertyTree() )
+                                               .displayName( "My site" )
+                                               .parent( ContentPath.ROOT )
+                                               .type( ContentTypeName.site() )
+                                               .build() );
+    }
+
+    private Content createPageTemplate( final Content site, final ContentTypeName supports )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "supports", supports.toString() );
+
+        return this.contentService.create( CreateContentParams.create()
+                                               .contentData( data )
+                                               .name( "default-template" )
+                                               .displayName( "Default template" )
+                                               .parent( ContentPath.from( site.getPath(), "_templates" ) )
+                                               .type( ContentTypeName.pageTemplate() )
+                                               .build() );
+    }
+
+    private Content createContentInSite( final Content site, final ContentTypeName type )
+    {
+        return this.contentService.create( CreateContentParams.create()
+                                               .contentData( new PropertyTree() )
+                                               .displayName( "Renders with the default template" )
+                                               .parent( site.getPath() )
+                                               .type( type )
+                                               .build() );
     }
 
     private void initContent()

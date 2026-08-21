@@ -13,6 +13,7 @@ import com.enonic.xp.content.CreateContentParams;
 import com.enonic.xp.content.FindContentIdsByQueryResult;
 import com.enonic.xp.content.GetContentByIdsParams;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
+import com.enonic.xp.core.impl.content.DefaultPageTemplateQuery;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.CreatePageTemplateParams;
 import com.enonic.xp.page.GetDefaultPageTemplateParams;
@@ -21,7 +22,6 @@ import com.enonic.xp.page.PageTemplate;
 import com.enonic.xp.page.PageTemplateKey;
 import com.enonic.xp.page.PageTemplateService;
 import com.enonic.xp.page.PageTemplates;
-import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypeNames;
 import com.enonic.xp.security.PrincipalKey;
@@ -81,18 +81,8 @@ public final class PageTemplateServiceImpl
         {
             sitePath = contentService.getById( params.getSite() ).getPath();
         }
-        // no order expressions: the default template is the first one in the child order of the templates folder
-        final FindContentIdsByQueryResult result = contentService.find( ContentQuery.create()
-                                                                           .parentPath( ContentPath.from( sitePath,
-                                                                                                          ContentServiceImpl.TEMPLATES_FOLDER_NAME ) )
-                                                                           .addContentTypeName( ContentTypeName.pageTemplate() )
-                                                                           .queryFilter( ValueFilter.create()
-                                                                                             .fieldName( "data.supports" )
-                                                                                             .addValues(
-                                                                                                 params.getContentType().toString() )
-                                                                                             .build() )
-                                                                           .size( 1 )
-                                                                           .build() );
+        final FindContentIdsByQueryResult result =
+            contentService.find( DefaultPageTemplateQuery.create( sitePath, params.getContentType() ) );
 
         final ContentId templateId = result.getContentIds().first();
         return templateId == null ? null : (PageTemplate) contentService.getById( templateId );
