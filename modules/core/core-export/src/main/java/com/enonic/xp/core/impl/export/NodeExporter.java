@@ -123,7 +123,8 @@ public class NodeExporter
 
     private void doExportNodes( final Node rootNode )
     {
-        final List<NodeEnumerationEntry> entries = new ArrayList<>();
+        boolean rootExported = false;
+        int exported = 0;
 
         String cursor = null;
         do
@@ -134,33 +135,43 @@ public class NodeExporter
                                                                           .build() );
             if ( nodeExportListener != null )
             {
-                nodeExportListener.resolved( 1 + entries.size() + batch.getRemaining() );
+                nodeExportListener.resolved( 1 + exported + batch.getRemaining() );
             }
 
-            entries.addAll( batch.getEntries() );
+            if ( !rootExported )
+            {
+                exportNode( rootNode );
+                rootExported = true;
+            }
+
+            for ( final NodeEnumerationEntry entry : batch.getEntries() )
+            {
+                exportEntry( entry );
+                exported++;
+            }
+
             cursor = batch.getCursor();
         }
         while ( cursor != null );
 
-        exportNode( rootNode );
+        writeNodeOrderLists();
+    }
 
-        for ( final NodeEnumerationEntry entry : entries )
+    private void exportEntry( final NodeEnumerationEntry entry )
+    {
+        final Node node;
+        try
         {
-            final Node node;
-            try
-            {
-                node = this.nodeService.getByIdAndVersionId( entry.nodeId(), entry.versionId() );
-            }
-            catch ( Exception e )
-            {
-                LOG.error( "Failed to export node with path [{}]", entry.nodePath(), e );
-                result.addError( new ExportError( e.toString() ) );
-                continue;
-            }
-            exportNode( node );
+            node = this.nodeService.getByIdAndVersionId( entry.nodeId(), entry.versionId() );
+        }
+        catch ( Exception e )
+        {
+            LOG.error( "Failed to export node with path [{}]", entry.nodePath(), e );
+            result.addError( new ExportError( e.toString() ) );
+            return;
         }
 
-        writeNodeOrderLists();
+        exportNode( node );
     }
 
     private void exportNode( final Node node )
