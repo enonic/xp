@@ -883,7 +883,13 @@ public class ContentServiceImpl
     @Override
     public ContentIds getOutboundDependencies( final ContentId id )
     {
-        return new ContentOutboundDependenciesIdsResolver( this ).resolve( id );
+        return GetOutboundDependenciesCommand.create()
+            .contentId( id )
+            .nodeService( this.nodeService )
+            .contentTypeService( this.contentTypeService )
+            .eventPublisher( this.eventPublisher )
+            .build()
+            .execute();
     }
 
     @Override
