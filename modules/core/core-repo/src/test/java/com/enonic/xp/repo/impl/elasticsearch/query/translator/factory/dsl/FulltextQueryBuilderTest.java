@@ -37,6 +37,13 @@ class FulltextQueryBuilderTest
     }
 
     @Test
+    void fuzzy_ascii_folding()
+        throws Exception
+    {
+        test( "fuzzy_ascii_folding" );
+    }
+
+    @Test
     void weighted()
         throws Exception
     {

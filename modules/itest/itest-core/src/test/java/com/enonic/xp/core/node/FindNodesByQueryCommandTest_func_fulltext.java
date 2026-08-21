@@ -181,6 +181,35 @@ class FindNodesByQueryCommandTest_func_fulltext
     }
 
     @Test
+    void ascii_folding_with_fuzzyness()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "myProperty", "Grønnsaker" );
+
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
+        nodeService.refresh( RefreshMode.ALL );
+
+        final NodeQuery query = NodeQuery.create()
+            .query( QueryExpr.from( new DynamicConstraintExpr(
+                FunctionExpr.from( "fulltext", ValueExpr.string( NodeIndexPath.ALL_TEXT.getPath() ), ValueExpr.string( "Grønnsak~2" ),
+                                   ValueExpr.string( "AND" ) ) ) ) )
+            .build();
+
+        final FindNodesByQueryResult result = doFindByQuery( query );
+
+        assertEquals( 1, result.getNodeIds().getSize() );
+        assertTrue( result.getNodeIds().contains( node.id() ) );
+    }
+
+    @Test
     void fulltext_with_path()
     {
 

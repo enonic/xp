@@ -1,0 +1,8 @@
+{
+  "fulltext": {
+    "fields": [
+      "displayName"
+    ],
+    "query": "Grønnsak~2"
+  }
+}

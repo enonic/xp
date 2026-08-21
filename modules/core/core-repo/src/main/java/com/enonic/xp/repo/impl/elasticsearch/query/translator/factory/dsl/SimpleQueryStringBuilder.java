@@ -28,11 +28,19 @@ abstract class SimpleQueryStringBuilder
         this.fields = WeightedQueryFieldNames.from( getStrings( "fields" ) );
     }
 
+    /**
+     * The query string as it is passed to Elasticsearch. Analyzers which ASCII-fold override this to fold fuzzy terms as well.
+     */
+    protected String resolveQuery()
+    {
+        return query;
+    }
+
     @Override
     public QueryBuilder create()
     {
         final org.elasticsearch.index.query.SimpleQueryStringBuilder builder =
-            new org.elasticsearch.index.query.SimpleQueryStringBuilder( query ).analyzeWildcard( true );
+            new org.elasticsearch.index.query.SimpleQueryStringBuilder( resolveQuery() ).analyzeWildcard( true );
 
         if ( !nullToEmpty( operator ).isBlank() )
         {

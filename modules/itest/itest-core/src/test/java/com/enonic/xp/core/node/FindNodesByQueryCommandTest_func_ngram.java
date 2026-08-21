@@ -130,6 +130,26 @@ class FindNodesByQueryCommandTest_func_ngram
         queryAndAssert( node, "ngram('title', 'grønnsak*', 'AND')", 1 );
     }
 
+    @Test
+    void ascii_folding_with_fuzzyness()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( "title", "Smørbrød" );
+
+        final Node node = createNode( CreateNodeParams.create()
+                                          .name( "my-node-1" )
+                                          .parent( NodePath.ROOT )
+                                          .data( data )
+                                          .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                                    .analyzer( NodeConstants.DOCUMENT_INDEX_DEFAULT_ANALYZER )
+                                                                    .defaultConfig( IndexConfig.BY_TYPE )
+                                                                    .build() )
+                                          .build() );
+        nodeService.refresh( RefreshMode.ALL );
+
+        queryAndAssert( node, "ngram('title', 'Smørbrød~1', 'AND')", 1 );
+    }
+
     private Node createNodes()
     {
         final PropertyTree data = new PropertyTree();

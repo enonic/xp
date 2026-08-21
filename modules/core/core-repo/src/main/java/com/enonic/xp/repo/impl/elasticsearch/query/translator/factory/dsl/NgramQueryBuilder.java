@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.dsl;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.SimpleQueryStringAsciiFolder;
 import com.enonic.xp.repo.impl.index.StaticIndexValueType;
 import com.enonic.xp.repo.impl.node.NodeConstants;
 
@@ -14,6 +15,12 @@ class NgramQueryBuilder
     NgramQueryBuilder( final PropertySet expression )
     {
         super( expression );
+    }
+
+    @Override
+    protected String resolveQuery()
+    {
+        return SimpleQueryStringAsciiFolder.foldFuzzyTerms( super.resolveQuery() );
     }
 
     @Override

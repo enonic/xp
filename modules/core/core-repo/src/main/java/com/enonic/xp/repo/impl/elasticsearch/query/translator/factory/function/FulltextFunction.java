@@ -5,6 +5,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.SimpleQueryStringBuilder;
 
 import com.enonic.xp.query.expr.FunctionExpr;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.SimpleQueryStringAsciiFolder;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -20,7 +21,9 @@ class FulltextFunction
             return new MatchAllQueryBuilder();
         }
 
-        final SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( arguments.getSearchString() ).
+        final String searchString = SimpleQueryStringAsciiFolder.foldFuzzyTerms( arguments.getSearchString() );
+
+        final SimpleQueryStringBuilder builder = new SimpleQueryStringBuilder( searchString ).
             defaultOperator( arguments.getOperator() ).
             analyzer( arguments.getAnalyzer() ).
             analyzeWildcard( true );
