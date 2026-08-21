@@ -11,6 +11,7 @@ import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.CreateRootNodeParams;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
@@ -24,7 +25,10 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.node.CreateNodeCommand;
+import com.enonic.xp.repo.impl.node.CreateRootNodeCommand;
 import com.enonic.xp.repo.impl.node.FindNodesByQueryCommand;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
@@ -165,6 +169,38 @@ class CreateNodeCommandTest
         assertNotNull( c3.getManualOrderValue() );
         assertTrue( c1.getManualOrderValue() > c2.getManualOrderValue() );
         assertTrue( c2.getManualOrderValue() > c3.getManualOrderValue() );
+    }
+
+    @Test
+    void populate_manual_order_value_under_manually_ordered_root()
+    {
+        CreateRootNodeCommand.create()
+            .params( CreateRootNodeParams.create()
+                         .childOrder( ChildOrder.manualOrder() )
+                         .permissions( AccessControlList.of(
+                             AccessControlEntry.create().allowAll().principal( TEST_DEFAULT_USER.getKey() ).build() ) )
+                         .build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+
+        final Node c1 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child-node-1" ) ).
+            parent( NodePath.ROOT ).
+            name( "child-node-1" ).
+            build() );
+
+        final Node c2 = createNode( CreateNodeParams.create().
+            setNodeId( NodeId.from( "child-node-2" ) ).
+            parent( NodePath.ROOT ).
+            name( "child-node-2" ).
+            build() );
+
+        assertNotNull( c1.getManualOrderValue() );
+        assertNotNull( c2.getManualOrderValue() );
+        assertTrue( c1.getManualOrderValue() < c2.getManualOrderValue() );
     }
 
     @Test

@@ -148,11 +148,6 @@ public final class CreateNodeCommand
 
     private Long resolvePotentialManualOrderValue( final Node parentNode )
     {
-        if ( parentNode.isRoot() )
-        {
-            return null;
-        }
-
         if ( parentNode.getChildOrder() != null && parentNode.getChildOrder().isManualOrder() )
         {
             final InsertManualStrategy insertManualStrategy = this.params.getInsertManualStrategy();
