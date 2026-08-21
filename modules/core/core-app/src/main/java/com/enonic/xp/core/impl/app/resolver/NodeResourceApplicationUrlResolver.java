@@ -5,6 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.schema.NodeValueResource;
 import com.enonic.xp.core.impl.schema.NamespaceConstants;
@@ -76,15 +78,23 @@ public final class NodeResourceApplicationUrlResolver
 
         Arrays.stream( path.split( "/" ) ).forEach( builder::addElement );
 
-        final Node resourceNode = NamespaceContext.createAdminContext().callWith( () -> nodeService.getByPath( builder.build() ) );
+        return NamespaceContext.createAdminContext().callWith( () -> {
+            final Node resourceNode = nodeService.getByPath( builder.build() );
 
-        if ( resourceNode == null )
-        {
-            return null;
-        }
-        else
-        {
-            return new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode );
-        }
+            if ( resourceNode == null )
+            {
+                return null;
+            }
+
+            final ResourceKey resourceKey = ResourceKey.from( applicationKey, path );
+
+            if ( resourceNode.getAttachedBinaries().getByBinaryReference( NamespaceConstants.ICON_BINARY_REFERENCE ) != null )
+            {
+                final ByteSource binary = nodeService.getBinary( resourceNode.id(), NamespaceConstants.ICON_BINARY_REFERENCE );
+                return new NodeValueResource( resourceKey, binary, resourceNode.getTimestamp() );
+            }
+
+            return new NodeValueResource( resourceKey, resourceNode );
+        } );
     }
 }

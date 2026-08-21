@@ -1,7 +1,10 @@
 package com.enonic.xp.core.impl.schema;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
@@ -94,6 +97,61 @@ final class NamespaceResourceManager
             return new NodeValueResource(
                 ResourceKey.from( appKeyFromNodePath( schemaNode.path() ), resourcePathFromNodePath( schemaNode.path() ) ), schemaNode );
         } );
+    }
+
+    Resource putBinaryResourceFile( final NodePath folderPath, final String fileName, final ByteSource data, final String mimeType )
+    {
+        return NamespaceContext.createContext().callWith( () -> {
+
+            final PropertyTree resourceData = new PropertyTree();
+            resourceData.setString( SchemaNodePropertyNames.MIME_TYPE, mimeType );
+            resourceData.setBinaryReference( SchemaNodePropertyNames.ICON, NamespaceConstants.ICON_BINARY_REFERENCE );
+
+            final NodePath filePath = new NodePath( folderPath, NodeName.from( fileName ) );
+
+            final Node schemaNode;
+            if ( nodeService.nodeExists( filePath ) )
+            {
+                schemaNode = nodeService.update( UpdateNodeParams.create()
+                                                     .path( filePath )
+                                                     .editor( toBeEdited -> toBeEdited.data = resourceData )
+                                                     .attachBinary( NamespaceConstants.ICON_BINARY_REFERENCE, data )
+                                                     .refresh( RefreshMode.ALL )
+                                                     .build() );
+            }
+            else
+            {
+                schemaNode = nodeService.create( CreateNodeParams.create()
+                                                     .parent( folderPath )
+                                                     .name( fileName )
+                                                     .data( resourceData )
+                                                     .attachBinary( NamespaceConstants.ICON_BINARY_REFERENCE, data )
+                                                     .inheritPermissions( true )
+                                                     .refresh( RefreshMode.ALL )
+                                                     .build() );
+            }
+
+            return new NodeValueResource(
+                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( schemaNode.path() ) ), data,
+                schemaNode.getTimestamp() );
+        } );
+    }
+
+    boolean resourceFileNodeExists( final NodePath folderPath, final String fileName )
+    {
+        return NamespaceContext.createContext()
+            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( fileName ) ) ) );
+    }
+
+    void touchResourceFile( final NodePath folderPath, final String fileName )
+    {
+        NamespaceContext.createContext()
+            .callWith( () -> nodeService.update( UpdateNodeParams.create()
+                                                     .path( new NodePath( folderPath, NodeName.from( fileName ) ) )
+                                                     .editor( toBeEdited -> toBeEdited.data.setInstant(
+                                                         SchemaNodePropertyNames.ICON_MODIFIED_TIME, Instant.now() ) )
+                                                     .refresh( RefreshMode.ALL )
+                                                     .build() ) );
     }
 
     Resource getResource( final NodePath folderPath, final String name )

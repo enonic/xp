@@ -6,6 +6,7 @@ import com.enonic.xp.app.Namespace;
 import com.enonic.xp.app.UpdateNamespaceParams;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.CreateCmsParams;
 import com.enonic.xp.schema.CreateComponentParams;
@@ -34,11 +35,19 @@ public interface SchemaAuditLogSupport
 
     void deleteComponent( DescriptorKey key, ComponentType type );
 
+    void setComponentIcon( DescriptorKey key, ComponentType type, String mimeType, long size );
+
+    void deleteComponentIcon( DescriptorKey key, ComponentType type );
+
     void createContentSchema( CreateContentSchemaParams params, ContentSchemaType type, SchemaResult<?> result );
 
     void updateContentSchema( UpdateContentSchemaParams params, ContentSchemaType type, SchemaResult<?> result );
 
     void deleteContentSchema( BaseSchemaName name, ContentSchemaType type );
+
+    void setContentSchemaIcon( BaseSchemaName name, ContentSchemaType type, String mimeType, long size );
+
+    void deleteContentSchemaIcon( BaseSchemaName name, ContentSchemaType type );
 
     void createCms( CreateCmsParams params, SchemaResult<CmsDescriptor> result );
 
@@ -57,6 +66,10 @@ public interface SchemaAuditLogSupport
     void updateMacro( UpdateMacroParams params, SchemaResult<MacroDescriptor> result );
 
     void deleteMacro( DeleteMacroParams params );
+
+    void setMacroIcon( MacroKey key, String mimeType, long size );
+
+    void deleteMacroIcon( MacroKey key );
 
     void createPhrases( CreatePhrasesParams params, Resource result );
 

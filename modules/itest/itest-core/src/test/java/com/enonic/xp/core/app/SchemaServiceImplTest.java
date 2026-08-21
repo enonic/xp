@@ -70,6 +70,7 @@ import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
 import com.enonic.xp.macro.MacroDescriptor;
@@ -117,6 +118,10 @@ import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.schema.GetMacroParams;
 import com.enonic.xp.schema.GetPhrasesParams;
 import com.enonic.xp.schema.ListMacrosParams;
+import com.enonic.xp.schema.SchemaNotFoundException;
+import com.enonic.xp.schema.SetComponentIconParams;
+import com.enonic.xp.schema.SetMacroIconParams;
+import com.enonic.xp.schema.SetSchemaIconParams;
 import com.enonic.xp.schema.UpdateCmsParams;
 import com.enonic.xp.schema.UpdateComponentParams;
 import com.enonic.xp.schema.UpdateContentSchemaParams;
@@ -137,8 +142,10 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -2140,6 +2147,323 @@ class SchemaServiceImplTest
         assertThrows( Exception.class, () -> createAdminContext().callWith( () -> schemaService.createCms( params ) ) );
     }
 
+
+    @Test
+    void setContentTypeIcon()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createContentType( CreateContentSchemaParams.create()
+                                                                                  .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                  .resource( readResource( "_contentType.yaml" ) )
+                                                                                  .build() ) );
+
+        final byte[] iconData = "<svg/>".getBytes( StandardCharsets.UTF_8 );
+
+        final Icon icon = createAdminContext().callWith( () -> schemaService.setContentTypeIcon( SetSchemaIconParams.create()
+                                                                                                     .name( ContentTypeName.from(
+                                                                                                         "myapp:mytype" ) )
+                                                                                                     .data( ByteSource.wrap( iconData ) )
+                                                                                                     .mimeType( "image/svg+xml" )
+                                                                                                     .build() ) );
+
+        assertEquals( "image/svg+xml", icon.getMimeType() );
+        assertArrayEquals( iconData, icon.toByteArray() );
+
+        final Node iconNode = NamespaceContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.svg" ) ) );
+
+        assertEquals( "image/svg+xml", iconNode.data().getString( "mimeType" ) );
+        assertNull( iconNode.data().getString( "resource" ) );
+        assertNotNull( iconNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "icon" ) ) );
+        assertArrayEquals( iconData, NamespaceContext.createAdminContext()
+            .callWith( () -> nodeService.getBinary( iconNode.id(), BinaryReference.from( "icon" ) ) )
+            .read() );
+
+        final Node yamlNode = NamespaceContext.createAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
+        assertNotNull( yamlNode.data().getInstant( "iconModifiedTime" ) );
+
+        final Icon fetched =
+            createAdminContext().callWith( () -> schemaService.getContentTypeIcon( ContentTypeName.from( "myapp:mytype" ) ) );
+        assertEquals( "image/svg+xml", fetched.getMimeType() );
+        assertArrayEquals( iconData, fetched.toByteArray() );
+
+        final ContentType contentType =
+            createAdminContext().callWith( () -> schemaService.getContentType( ContentTypeName.from( "myapp:mytype" ) ) ).getSchema();
+        assertNotNull( contentType.getIcon() );
+        assertArrayEquals( iconData, contentType.getIcon().toByteArray() );
+
+        final List<SchemaResult<ContentType>> listed =
+            createAdminContext().callWith( () -> schemaService.listContentTypes( ApplicationKey.from( "myapp" ) ) );
+        assertNotNull( listed.get( 0 ).getSchema().getIcon() );
+    }
+
+    @Test
+    void setContentTypeIconReplacesPreviousFormat()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createContentType( CreateContentSchemaParams.create()
+                                                                                  .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                  .resource( readResource( "_contentType.yaml" ) )
+                                                                                  .build() ) );
+
+        createAdminContext().callWith( () -> schemaService.setContentTypeIcon( SetSchemaIconParams.create()
+                                                                                   .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                   .data( ByteSource.wrap(
+                                                                                       "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) )
+                                                                                   .mimeType( "image/svg+xml" )
+                                                                                   .build() ) );
+
+        final byte[] pngData = {(byte) 0x89, 'P', 'N', 'G'};
+        createAdminContext().callWith( () -> schemaService.setContentTypeIcon( SetSchemaIconParams.create()
+                                                                                   .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                   .data( ByteSource.wrap( pngData ) )
+                                                                                   .mimeType( "image/png" )
+                                                                                   .build() ) );
+
+        NamespaceContext.createAdminContext().runWith( () -> {
+            assertNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.svg" ) ) );
+            assertNotNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.png" ) ) );
+        } );
+
+        final Icon fetched =
+            createAdminContext().callWith( () -> schemaService.getContentTypeIcon( ContentTypeName.from( "myapp:mytype" ) ) );
+        assertEquals( "image/png", fetched.getMimeType() );
+        assertArrayEquals( pngData, fetched.toByteArray() );
+    }
+
+    @Test
+    void setContentTypeIconForMissingSchema()
+    {
+        final SetSchemaIconParams params = SetSchemaIconParams.create()
+            .name( ContentTypeName.from( "myapp:mytype" ) )
+            .data( ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) )
+            .mimeType( "image/svg+xml" )
+            .build();
+
+        assertThrows( SchemaNotFoundException.class,
+                      () -> createAdminContext().callWith( () -> schemaService.setContentTypeIcon( params ) ) );
+    }
+
+    @Test
+    void setContentTypeIconInvalidMimeType()
+    {
+        final SetSchemaIconParams params = SetSchemaIconParams.create()
+            .name( ContentTypeName.from( "myapp:mytype" ) )
+            .data( ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) )
+            .mimeType( "text/plain" )
+            .build();
+
+        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
+            () -> schemaService.setContentTypeIcon( params ) ) );
+
+        assertEquals( "unsupported icon mime type: text/plain", exception.getMessage() );
+    }
+
+    @Test
+    void setContentTypeIconEmptyData()
+    {
+        final SetSchemaIconParams params = SetSchemaIconParams.create()
+            .name( ContentTypeName.from( "myapp:mytype" ) )
+            .data( ByteSource.empty() )
+            .mimeType( "image/svg+xml" )
+            .build();
+
+        assertThrows( IllegalArgumentException.class,
+                      () -> createAdminContext().callWith( () -> schemaService.setContentTypeIcon( params ) ) );
+    }
+
+    @Test
+    void setContentTypeIconExceedingMaxSize()
+    {
+        final SetSchemaIconParams params = SetSchemaIconParams.create()
+            .name( ContentTypeName.from( "myapp:mytype" ) )
+            .data( ByteSource.wrap( new byte[100 * 1024 + 1] ) )
+            .mimeType( "image/svg+xml" )
+            .build();
+
+        assertThrows( IllegalArgumentException.class,
+                      () -> createAdminContext().callWith( () -> schemaService.setContentTypeIcon( params ) ) );
+    }
+
+    @Test
+    void setContentTypeIconWithoutAdminRole()
+    {
+        final SetSchemaIconParams params = SetSchemaIconParams.create()
+            .name( ContentTypeName.from( "myapp:mytype" ) )
+            .data( ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) )
+            .mimeType( "image/svg+xml" )
+            .build();
+
+        assertThrows( ForbiddenAccessException.class,
+                      () -> NamespaceContext.createContext().callWith( () -> schemaService.setContentTypeIcon( params ) ) );
+    }
+
+    @Test
+    void deleteContentTypeIcon()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createContentType( CreateContentSchemaParams.create()
+                                                                                  .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                  .resource( readResource( "_contentType.yaml" ) )
+                                                                                  .build() ) );
+
+        createAdminContext().callWith( () -> schemaService.setContentTypeIcon( SetSchemaIconParams.create()
+                                                                                   .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                   .data( ByteSource.wrap(
+                                                                                       "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) )
+                                                                                   .mimeType( "image/svg+xml" )
+                                                                                   .build() ) );
+
+        assertTrue(
+            createAdminContext().callWith( () -> schemaService.deleteContentTypeIcon( ContentTypeName.from( "myapp:mytype" ) ) ) );
+
+        assertNull( createAdminContext().callWith( () -> schemaService.getContentTypeIcon( ContentTypeName.from( "myapp:mytype" ) ) ) );
+        assertNotNull( createAdminContext().callWith( () -> schemaService.getContentType( ContentTypeName.from( "myapp:mytype" ) ) ) );
+
+        assertFalse(
+            createAdminContext().callWith( () -> schemaService.deleteContentTypeIcon( ContentTypeName.from( "myapp:mytype" ) ) ) );
+    }
+
+    @Test
+    void deleteContentTypeCascadesIcon()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createContentType( CreateContentSchemaParams.create()
+                                                                                  .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                  .resource( readResource( "_contentType.yaml" ) )
+                                                                                  .build() ) );
+
+        createAdminContext().callWith( () -> schemaService.setContentTypeIcon( SetSchemaIconParams.create()
+                                                                                   .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                                   .data( ByteSource.wrap(
+                                                                                       "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) )
+                                                                                   .mimeType( "image/svg+xml" )
+                                                                                   .build() ) );
+
+        assertTrue( createAdminContext().callWith( () -> schemaService.deleteContentType( ContentTypeName.from( "myapp:mytype" ) ) ) );
+
+        NamespaceContext.createAdminContext().runWith( () -> {
+            assertNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.svg" ) ) );
+            assertNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
+        } );
+    }
+
+    @Test
+    void setPartIcon()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createPart( CreateComponentParams.create()
+                                                                           .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
+                                                                           .resource( readResource( "_part.yaml" ) )
+                                                                           .build() ) );
+
+        final byte[] iconData = "<svg/>".getBytes( StandardCharsets.UTF_8 );
+
+        createAdminContext().callWith( () -> schemaService.setPartIcon( SetComponentIconParams.create()
+                                                                            .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
+                                                                            .data( ByteSource.wrap( iconData ) )
+                                                                            .mimeType( "image/svg+xml" )
+                                                                            .build() ) );
+
+        final Icon fetched = createAdminContext().callWith( () -> schemaService.getPartIcon( DescriptorKey.from( "myapp:mypart" ) ) );
+        assertArrayEquals( iconData, fetched.toByteArray() );
+
+        final PartDescriptor partDescriptor =
+            createAdminContext().callWith( () -> schemaService.getPart( DescriptorKey.from( "myapp:mypart" ) ) ).getSchema();
+        assertNotNull( partDescriptor.getIcon() );
+        assertArrayEquals( iconData, partDescriptor.getIcon().toByteArray() );
+
+        assertTrue( createAdminContext().callWith( () -> schemaService.deletePartIcon( DescriptorKey.from( "myapp:mypart" ) ) ) );
+        assertNull( createAdminContext().callWith( () -> schemaService.getPartIcon( DescriptorKey.from( "myapp:mypart" ) ) ) );
+    }
+
+    @Test
+    void setMacroIcon()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createMacro(
+            CreateMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).resource( readResource( "_macro.yaml" ) ).build() ) );
+
+        final byte[] iconData = "<svg/>".getBytes( StandardCharsets.UTF_8 );
+
+        createAdminContext().callWith( () -> schemaService.setMacroIcon( SetMacroIconParams.create()
+                                                                             .key( MacroKey.from( "myapp:mymacro" ) )
+                                                                             .data( ByteSource.wrap( iconData ) )
+                                                                             .mimeType( "image/svg+xml" )
+                                                                             .build() ) );
+
+        final Icon fetched = createAdminContext().callWith( () -> schemaService.getMacroIcon( MacroKey.from( "myapp:mymacro" ) ) );
+        assertArrayEquals( iconData, fetched.toByteArray() );
+
+        final MacroDescriptor macroDescriptor = createAdminContext().callWith(
+            () -> schemaService.getMacro( GetMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).build() ) ).getSchema();
+        assertNotNull( macroDescriptor.getIcon() );
+        assertArrayEquals( iconData, macroDescriptor.getIcon().toByteArray() );
+
+        assertTrue( createAdminContext().callWith( () -> schemaService.deleteMacroIcon( MacroKey.from( "myapp:mymacro" ) ) ) );
+        assertNull( createAdminContext().callWith( () -> schemaService.getMacroIcon( MacroKey.from( "myapp:mymacro" ) ) ) );
+    }
+
+    @Test
+    void setMixinIcon()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createMixin( CreateContentSchemaParams.create()
+                                                                            .name( MixinName.from( "myapp:mymixin" ) )
+                                                                            .resource( readResource( "_mixin.yaml" ) )
+                                                                            .build() ) );
+
+        final byte[] iconData = "<svg/>".getBytes( StandardCharsets.UTF_8 );
+
+        createAdminContext().callWith( () -> schemaService.setMixinIcon( SetSchemaIconParams.create()
+                                                                             .name( MixinName.from( "myapp:mymixin" ) )
+                                                                             .data( ByteSource.wrap( iconData ) )
+                                                                             .mimeType( "image/svg+xml" )
+                                                                             .build() ) );
+
+        final Icon fetched = createAdminContext().callWith( () -> schemaService.getMixinIcon( MixinName.from( "myapp:mymixin" ) ) );
+        assertArrayEquals( iconData, fetched.toByteArray() );
+
+        final MixinDescriptor mixinDescriptor =
+            createAdminContext().callWith( () -> schemaService.getMixin( MixinName.from( "myapp:mymixin" ) ) ).getSchema();
+        assertNotNull( mixinDescriptor.getIcon() );
+
+        assertTrue( createAdminContext().callWith( () -> schemaService.deleteMixinIcon( MixinName.from( "myapp:mymixin" ) ) ) );
+        assertNull( createAdminContext().callWith( () -> schemaService.getMixinIcon( MixinName.from( "myapp:mymixin" ) ) ) );
+    }
+
+    @Test
+    void setFormFragmentIcon()
+        throws Exception
+    {
+        createAdminContext().callWith( () -> schemaService.createFormFragment( CreateContentSchemaParams.create()
+                                                                                   .name( FormFragmentName.from( "myapp:myfragment" ) )
+                                                                                   .resource( readResource( "_formFragment.yaml" ) )
+                                                                                   .build() ) );
+
+        final byte[] iconData = "<svg/>".getBytes( StandardCharsets.UTF_8 );
+
+        createAdminContext().callWith( () -> schemaService.setFormFragmentIcon( SetSchemaIconParams.create()
+                                                                                    .name( FormFragmentName.from( "myapp:myfragment" ) )
+                                                                                    .data( ByteSource.wrap( iconData ) )
+                                                                                    .mimeType( "image/svg+xml" )
+                                                                                    .build() ) );
+
+        final Icon fetched =
+            createAdminContext().callWith( () -> schemaService.getFormFragmentIcon( FormFragmentName.from( "myapp:myfragment" ) ) );
+        assertArrayEquals( iconData, fetched.toByteArray() );
+
+        final FormFragmentDescriptor descriptor =
+            createAdminContext().callWith( () -> schemaService.getFormFragment( FormFragmentName.from( "myapp:myfragment" ) ) )
+                .getSchema();
+        assertNotNull( descriptor.getIcon() );
+
+        assertTrue(
+            createAdminContext().callWith( () -> schemaService.deleteFormFragmentIcon( FormFragmentName.from( "myapp:myfragment" ) ) ) );
+        assertNull(
+            createAdminContext().callWith( () -> schemaService.getFormFragmentIcon( FormFragmentName.from( "myapp:myfragment" ) ) ) );
+    }
 
     private Felix createFelixInstance( final Path cacheDir )
     {

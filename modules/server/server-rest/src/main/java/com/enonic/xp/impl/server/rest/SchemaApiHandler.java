@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -26,6 +28,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.DuplicateElementException;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.exception.NotFoundException;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.impl.server.rest.model.AppResourceJson;
 import com.enonic.xp.impl.server.rest.model.ComponentResourceJson;
 import com.enonic.xp.impl.server.rest.model.ErrorJson;
@@ -56,6 +59,9 @@ import com.enonic.xp.schema.GetPhrasesParams;
 import com.enonic.xp.schema.ListMacrosParams;
 import com.enonic.xp.schema.SchemaResult;
 import com.enonic.xp.schema.SchemaService;
+import com.enonic.xp.schema.SetComponentIconParams;
+import com.enonic.xp.schema.SetMacroIconParams;
+import com.enonic.xp.schema.SetSchemaIconParams;
 import com.enonic.xp.schema.UpdateCmsParams;
 import com.enonic.xp.schema.UpdateComponentParams;
 import com.enonic.xp.schema.UpdateContentSchemaParams;
@@ -237,7 +243,59 @@ public class SchemaApiHandler
             return handleContentSchema( request, type, name );
         }
 
+        if ( segments.length == 5 && "icon".equals( segments[4] ) )
+        {
+            final String type = typeSegment( segments[2] );
+            final BaseSchemaName name = schemaName( ApplicationKey.from( segments[1] ), type, segments[3] );
+            return handleContentSchemaIcon( request, type, name );
+        }
+
         return notFound();
+    }
+
+    private WebResponse handleContentSchemaIcon( final WebRequest request, final String type, final BaseSchemaName name )
+    {
+        switch ( request.getMethod() )
+        {
+            case PUT:
+                final SetSchemaIconParams params = SetSchemaIconParams.create()
+                    .name( name )
+                    .data( readBinaryBody( request ) )
+                    .mimeType( requireIconContentType( request ) )
+                    .build();
+                switch ( type )
+                {
+                    case "content-type" -> schemaService.setContentTypeIcon( params );
+                    case "form-fragment" -> schemaService.setFormFragmentIcon( params );
+                    case "mixin" -> schemaService.setMixinIcon( params );
+                    default -> throw new IllegalArgumentException( String.format( "unknown schema type: %s", type ) );
+                }
+                return noContent();
+            case GET:
+                final Icon icon = switch ( type )
+                {
+                    case "content-type" -> schemaService.getContentTypeIcon( (ContentTypeName) name );
+                    case "form-fragment" -> schemaService.getFormFragmentIcon( (FormFragmentName) name );
+                    case "mixin" -> schemaService.getMixinIcon( (MixinName) name );
+                    default -> throw new IllegalArgumentException( String.format( "unknown schema type: %s", type ) );
+                };
+                return icon == null
+                    ? errorResponse( HttpStatus.NOT_FOUND, String.format( "Icon for schema [%s] not found", name ) )
+                    : iconResponse( icon );
+            case DELETE:
+                final boolean deleted = switch ( type )
+                {
+                    case "content-type" -> schemaService.deleteContentTypeIcon( (ContentTypeName) name );
+                    case "form-fragment" -> schemaService.deleteFormFragmentIcon( (FormFragmentName) name );
+                    case "mixin" -> schemaService.deleteMixinIcon( (MixinName) name );
+                    default -> throw new IllegalArgumentException( String.format( "unknown schema type: %s", type ) );
+                };
+                return deleted
+                    ? noContent()
+                    : errorResponse( HttpStatus.NOT_FOUND, String.format( "Icon for schema [%s] not found", name ) );
+            default:
+                return methodNotAllowed();
+        }
     }
 
     private WebResponse handleContentSchema( final WebRequest request, final String type, final BaseSchemaName name )
@@ -321,7 +379,50 @@ public class SchemaApiHandler
             return handleComponent( request, type, key );
         }
 
+        if ( segments.length == 5 && "icon".equals( segments[4] ) )
+        {
+            final String type = typeSegment( segments[2] );
+            final DescriptorKey key = DescriptorKey.from( ApplicationKey.from( segments[1] ), segments[3] );
+            return handleComponentIcon( request, type, key );
+        }
+
         return notFound();
+    }
+
+    private WebResponse handleComponentIcon( final WebRequest request, final String type, final DescriptorKey key )
+    {
+        switch ( type )
+        {
+            case "part":
+                break;
+            case "layout":
+            case "page":
+                throw new IllegalArgumentException( String.format( "icons are not supported for component type: %s", type ) );
+            default:
+                throw new IllegalArgumentException( String.format( "unknown component type: %s", type ) );
+        }
+
+        switch ( request.getMethod() )
+        {
+            case PUT:
+                schemaService.setPartIcon( SetComponentIconParams.create()
+                                               .descriptorKey( key )
+                                               .data( readBinaryBody( request ) )
+                                               .mimeType( requireIconContentType( request ) )
+                                               .build() );
+                return noContent();
+            case GET:
+                final Icon icon = schemaService.getPartIcon( key );
+                return icon == null
+                    ? errorResponse( HttpStatus.NOT_FOUND, String.format( "Icon for component [%s] not found", key ) )
+                    : iconResponse( icon );
+            case DELETE:
+                return schemaService.deletePartIcon( key )
+                    ? noContent()
+                    : errorResponse( HttpStatus.NOT_FOUND, String.format( "Icon for component [%s] not found", key ) );
+            default:
+                return methodNotAllowed();
+        }
     }
 
     private WebResponse handleComponent( final WebRequest request, final String type, final DescriptorKey key )
@@ -388,6 +489,12 @@ public class SchemaApiHandler
             final List<SchemaResult<MacroDescriptor>> results =
                 schemaService.listMacros( ListMacrosParams.create().applicationKey( ApplicationKey.from( segments[1] ) ).build() );
             return jsonResponse( HttpStatus.OK, results.stream().map( SchemaApiHandler::toMacroJson ).collect( Collectors.toList() ) );
+        }
+
+        if ( segments.length == 4 && "icon".equals( segments[3] ) )
+        {
+            final MacroKey key = MacroKey.from( ApplicationKey.from( segments[1] ), segments[2] );
+            return handleMacroIcon( request, key );
         }
 
         if ( segments.length == 3 )
@@ -529,6 +636,76 @@ public class SchemaApiHandler
         }
 
         return notFound();
+    }
+
+    private WebResponse handleMacroIcon( final WebRequest request, final MacroKey key )
+    {
+        switch ( request.getMethod() )
+        {
+            case PUT:
+                schemaService.setMacroIcon( SetMacroIconParams.create()
+                                                .key( key )
+                                                .data( readBinaryBody( request ) )
+                                                .mimeType( requireIconContentType( request ) )
+                                                .build() );
+                return noContent();
+            case GET:
+                final Icon icon = schemaService.getMacroIcon( key );
+                return icon == null
+                    ? errorResponse( HttpStatus.NOT_FOUND, String.format( "Icon for macro [%s] not found", key ) )
+                    : iconResponse( icon );
+            case DELETE:
+                return schemaService.deleteMacroIcon( key )
+                    ? noContent()
+                    : errorResponse( HttpStatus.NOT_FOUND, String.format( "Icon for macro [%s] not found", key ) );
+            default:
+                return methodNotAllowed();
+        }
+    }
+
+    private static ByteSource readBinaryBody( final WebRequest request )
+    {
+        try
+        {
+            final byte[] bytes = request.getRawRequest().getInputStream().readAllBytes();
+            if ( bytes.length == 0 )
+            {
+                throw new IllegalArgumentException( "request body is required" );
+            }
+            return ByteSource.wrap( bytes );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private static String requireIconContentType( final WebRequest request )
+    {
+        final String contentType = request.getContentType();
+        if ( contentType == null || contentType.isBlank() )
+        {
+            throw new IllegalArgumentException( "Content-Type is required" );
+        }
+        final MediaType mediaType = MediaType.parse( contentType ).withoutParameters();
+        if ( mediaType.is( MediaType.SVG_UTF_8.withoutParameters() ) )
+        {
+            return "image/svg+xml";
+        }
+        if ( mediaType.is( MediaType.PNG ) )
+        {
+            return "image/png";
+        }
+        throw new IllegalArgumentException( String.format( "unsupported icon content type: %s", contentType ) );
+    }
+
+    private static WebResponse iconResponse( final Icon icon )
+    {
+        return WebResponse.create()
+            .status( HttpStatus.OK )
+            .contentType( MediaType.parse( icon.getMimeType() ) )
+            .body( icon.toByteArray() )
+            .build();
     }
 
     private static SchemaResourceJson toSchemaJson( final SchemaResult<? extends BaseSchema<?>> result, final String type )

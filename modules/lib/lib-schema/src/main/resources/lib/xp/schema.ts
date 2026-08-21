@@ -1976,3 +1976,276 @@ export function listNamespaces(): Namespace[] {
     const bean: ListNamespacesHandler = __.newBean<ListNamespacesHandler>('com.enonic.xp.lib.schema.ListNamespacesHandler');
     return __.toNativeObject(bean.execute());
 }
+
+type IconType = ContentSchemaType | 'PART' | 'MACRO';
+
+export interface SetSchemaIconParams {
+    name: string;
+    data: ByteSource;
+    mimeType: string;
+}
+
+export interface SetComponentIconParams {
+    key: string;
+    data: ByteSource;
+    mimeType: string;
+}
+
+export interface SetMacroIconParams {
+    key: string;
+    data: ByteSource;
+    mimeType: string;
+}
+
+export interface SchemaIconParams {
+    name: string;
+}
+
+export interface ComponentIconParams {
+    key: string;
+}
+
+export interface MacroIconParams {
+    key: string;
+}
+
+interface SetIconHandler {
+    setName(value: string): void;
+
+    setType(value: IconType): void;
+
+    setData(value: ByteSource): void;
+
+    setMimeType(value: string): void;
+
+    execute(): Icon;
+}
+
+interface GetIconHandler {
+    setName(value: string): void;
+
+    setType(value: IconType): void;
+
+    execute(): Icon | null;
+}
+
+interface DeleteIconHandler {
+    setName(value: string): void;
+
+    setType(value: IconType): void;
+
+    execute(): boolean;
+}
+
+function doSetIcon(name: string, type: IconType, data: ByteSource, mimeType: string): Icon {
+    const bean: SetIconHandler = __.newBean<SetIconHandler>('com.enonic.xp.lib.schema.SetIconHandler');
+    bean.setName(name);
+    bean.setType(type);
+    bean.setData(data);
+    bean.setMimeType(mimeType);
+    return __.toNativeObject(bean.execute());
+}
+
+function doGetIcon(name: string, type: IconType): Icon | null {
+    const bean: GetIconHandler = __.newBean<GetIconHandler>('com.enonic.xp.lib.schema.GetIconHandler');
+    bean.setName(name);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
+function doDeleteIcon(name: string, type: IconType): boolean {
+    const bean: DeleteIconHandler = __.newBean<DeleteIconHandler>('com.enonic.xp.lib.schema.DeleteIconHandler');
+    bean.setName(name);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
+/**
+ * Sets an icon for a dynamic content type. Replaces the existing icon, if any.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Content type name.
+ * @param {object} params.data Icon image data stream. SVG or PNG.
+ * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
+ *
+ * @returns {Icon} stored icon.
+ */
+export function setContentTypeIcon(params: SetSchemaIconParams): Icon {
+    return doSetIcon(checkRequired(params, 'name'), 'CONTENT_TYPE', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
+}
+
+/**
+ * Fetches an icon of a dynamic content type.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Content type name.
+ *
+ * @returns {Icon | null} icon, or null if not found.
+ */
+export function getContentTypeIcon(params: SchemaIconParams): Icon | null {
+    return doGetIcon(checkRequired(params, 'name'), 'CONTENT_TYPE');
+}
+
+/**
+ * Deletes an icon of a dynamic content type.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Content type name.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deleteContentTypeIcon(params: SchemaIconParams): boolean {
+    return doDeleteIcon(checkRequired(params, 'name'), 'CONTENT_TYPE');
+}
+
+/**
+ * Sets an icon for a dynamic form fragment. Replaces the existing icon, if any.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Form fragment name.
+ * @param {object} params.data Icon image data stream. SVG or PNG.
+ * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
+ *
+ * @returns {Icon} stored icon.
+ */
+export function setFormFragmentIcon(params: SetSchemaIconParams): Icon {
+    return doSetIcon(checkRequired(params, 'name'), 'FORM_FRAGMENT', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
+}
+
+/**
+ * Fetches an icon of a dynamic form fragment.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Form fragment name.
+ *
+ * @returns {Icon | null} icon, or null if not found.
+ */
+export function getFormFragmentIcon(params: SchemaIconParams): Icon | null {
+    return doGetIcon(checkRequired(params, 'name'), 'FORM_FRAGMENT');
+}
+
+/**
+ * Deletes an icon of a dynamic form fragment.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Form fragment name.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deleteFormFragmentIcon(params: SchemaIconParams): boolean {
+    return doDeleteIcon(checkRequired(params, 'name'), 'FORM_FRAGMENT');
+}
+
+/**
+ * Sets an icon for a dynamic mixin. Replaces the existing icon, if any.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Mixin name.
+ * @param {object} params.data Icon image data stream. SVG or PNG.
+ * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
+ *
+ * @returns {Icon} stored icon.
+ */
+export function setMixinIcon(params: SetSchemaIconParams): Icon {
+    return doSetIcon(checkRequired(params, 'name'), 'MIXIN', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
+}
+
+/**
+ * Fetches an icon of a dynamic mixin.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Mixin name.
+ *
+ * @returns {Icon | null} icon, or null if not found.
+ */
+export function getMixinIcon(params: SchemaIconParams): Icon | null {
+    return doGetIcon(checkRequired(params, 'name'), 'MIXIN');
+}
+
+/**
+ * Deletes an icon of a dynamic mixin.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Mixin name.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deleteMixinIcon(params: SchemaIconParams): boolean {
+    return doDeleteIcon(checkRequired(params, 'name'), 'MIXIN');
+}
+
+/**
+ * Sets an icon for a dynamic part. Replaces the existing icon, if any.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Part descriptor key.
+ * @param {object} params.data Icon image data stream. SVG or PNG.
+ * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
+ *
+ * @returns {Icon} stored icon.
+ */
+export function setPartIcon(params: SetComponentIconParams): Icon {
+    return doSetIcon(checkRequired(params, 'key'), 'PART', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
+}
+
+/**
+ * Fetches an icon of a dynamic part.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Part descriptor key.
+ *
+ * @returns {Icon | null} icon, or null if not found.
+ */
+export function getPartIcon(params: ComponentIconParams): Icon | null {
+    return doGetIcon(checkRequired(params, 'key'), 'PART');
+}
+
+/**
+ * Deletes an icon of a dynamic part.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Part descriptor key.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deletePartIcon(params: ComponentIconParams): boolean {
+    return doDeleteIcon(checkRequired(params, 'key'), 'PART');
+}
+
+/**
+ * Sets an icon for a dynamic macro. Replaces the existing icon, if any.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Macro key.
+ * @param {object} params.data Icon image data stream. SVG or PNG.
+ * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
+ *
+ * @returns {Icon} stored icon.
+ */
+export function setMacroIcon(params: SetMacroIconParams): Icon {
+    return doSetIcon(checkRequired(params, 'key'), 'MACRO', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
+}
+
+/**
+ * Fetches an icon of a dynamic macro.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Macro key.
+ *
+ * @returns {Icon | null} icon, or null if not found.
+ */
+export function getMacroIcon(params: MacroIconParams): Icon | null {
+    return doGetIcon(checkRequired(params, 'key'), 'MACRO');
+}
+
+/**
+ * Deletes an icon of a dynamic macro.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Macro key.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deleteMacroIcon(params: MacroIconParams): boolean {
+    return doDeleteIcon(checkRequired(params, 'key'), 'MACRO');
+}

@@ -8,7 +8,9 @@ import com.enonic.xp.app.CreateNamespaceParams;
 import com.enonic.xp.app.Namespace;
 import com.enonic.xp.app.UpdateNamespaceParams;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
@@ -46,6 +48,12 @@ public interface SchemaService
 
     boolean deletePart( DescriptorKey key );
 
+    Icon setPartIcon( SetComponentIconParams params );
+
+    Icon getPartIcon( DescriptorKey key );
+
+    boolean deletePartIcon( DescriptorKey key );
+
     SchemaResult<LayoutDescriptor> createLayout( CreateComponentParams params );
 
     SchemaResult<LayoutDescriptor> updateLayout( UpdateComponentParams params );
@@ -76,6 +84,12 @@ public interface SchemaService
 
     boolean deleteContentType( ContentTypeName name );
 
+    Icon setContentTypeIcon( SetSchemaIconParams params );
+
+    Icon getContentTypeIcon( ContentTypeName name );
+
+    boolean deleteContentTypeIcon( ContentTypeName name );
+
     SchemaResult<FormFragmentDescriptor> createFormFragment( CreateContentSchemaParams params );
 
     SchemaResult<FormFragmentDescriptor> updateFormFragment( UpdateContentSchemaParams params );
@@ -86,6 +100,12 @@ public interface SchemaService
 
     boolean deleteFormFragment( FormFragmentName name );
 
+    Icon setFormFragmentIcon( SetSchemaIconParams params );
+
+    Icon getFormFragmentIcon( FormFragmentName name );
+
+    boolean deleteFormFragmentIcon( FormFragmentName name );
+
     SchemaResult<MixinDescriptor> createMixin( CreateContentSchemaParams params );
 
     SchemaResult<MixinDescriptor> updateMixin( UpdateContentSchemaParams params );
@@ -95,6 +115,12 @@ public interface SchemaService
     List<SchemaResult<MixinDescriptor>> listMixins( ApplicationKey key );
 
     boolean deleteMixin( MixinName name );
+
+    Icon setMixinIcon( SetSchemaIconParams params );
+
+    Icon getMixinIcon( MixinName name );
+
+    boolean deleteMixinIcon( MixinName name );
 
     SchemaResult<CmsDescriptor> createCms( CreateCmsParams params );
 
@@ -131,5 +157,11 @@ public interface SchemaService
     List<SchemaResult<MacroDescriptor>> listMacros( ListMacrosParams params );
 
     boolean deleteMacro( DeleteMacroParams params );
+
+    Icon setMacroIcon( SetMacroIconParams params );
+
+    Icon getMacroIcon( MacroKey key );
+
+    boolean deleteMacroIcon( MacroKey key );
 
 }

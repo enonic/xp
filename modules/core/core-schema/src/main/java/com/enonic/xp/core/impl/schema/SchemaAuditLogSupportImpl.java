@@ -19,6 +19,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.CreateCmsParams;
 import com.enonic.xp.schema.CreateComponentParams;
@@ -106,6 +107,94 @@ public class SchemaAuditLogSupportImpl
             paramsSet.addString( "type", type.toString() );
 
             log( "system.schema.component.delete", data, AuditLogUris.from( key.toString() ) );
+        }
+    }
+
+    @Override
+    public void setComponentIcon( final DescriptorKey key, final ComponentType type, final String mimeType, final long size )
+    {
+        if ( isEnabledAuditLog )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.addString( "key", key.toString() );
+            paramsSet.addString( "type", type.toString() );
+            paramsSet.addString( "mimeType", mimeType );
+            paramsSet.addLong( "size", size );
+
+            log( "system.schema.component.icon.set", data, AuditLogUris.from( key.toString() ) );
+        }
+    }
+
+    @Override
+    public void deleteComponentIcon( final DescriptorKey key, final ComponentType type )
+    {
+        if ( isEnabledAuditLog )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.addString( "key", key.toString() );
+            paramsSet.addString( "type", type.toString() );
+
+            log( "system.schema.component.icon.delete", data, AuditLogUris.from( key.toString() ) );
+        }
+    }
+
+    @Override
+    public void setContentSchemaIcon( final BaseSchemaName name, final ContentSchemaType type, final String mimeType, final long size )
+    {
+        if ( isEnabledAuditLog )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.addString( "name", name.toString() );
+            paramsSet.addString( "type", type.toString() );
+            paramsSet.addString( "mimeType", mimeType );
+            paramsSet.addLong( "size", size );
+
+            log( "system.schema.contentSchema.icon.set", data, AuditLogUris.from( name.toString() ) );
+        }
+    }
+
+    @Override
+    public void deleteContentSchemaIcon( final BaseSchemaName name, final ContentSchemaType type )
+    {
+        if ( isEnabledAuditLog )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.addString( "name", name.toString() );
+            paramsSet.addString( "type", type.toString() );
+
+            log( "system.schema.contentSchema.icon.delete", data, AuditLogUris.from( name.toString() ) );
+        }
+    }
+
+    @Override
+    public void setMacroIcon( final MacroKey key, final String mimeType, final long size )
+    {
+        if ( isEnabledAuditLog )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.addString( "key", key.toString() );
+            paramsSet.addString( "mimeType", mimeType );
+            paramsSet.addLong( "size", size );
+
+            log( "system.schema.macro.icon.set", data, AuditLogUris.from( key.toString() ) );
+        }
+    }
+
+    @Override
+    public void deleteMacroIcon( final MacroKey key )
+    {
+        if ( isEnabledAuditLog )
+        {
+            final PropertyTree data = new PropertyTree();
+            final PropertySet paramsSet = data.addSet( "params" );
+            paramsSet.addString( "key", key.toString() );
+
+            log( "system.schema.macro.icon.delete", data, AuditLogUris.from( key.toString() ) );
         }
     }
 

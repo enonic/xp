@@ -108,7 +108,7 @@ public class PartDescriptorLoader
         final ResourceKey resourceKey = toResourceKey( key, ext );
         final Resource resource = this.resourceService.getResource( resourceKey );
 
-        if ( !resource.exists() )
+        if ( !resource.exists() || resource.getSize() == 0 )
         {
             return null;
         }
