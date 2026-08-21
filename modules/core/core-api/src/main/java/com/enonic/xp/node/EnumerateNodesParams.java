@@ -16,8 +16,7 @@ import static java.util.Objects.requireNonNull;
 public final class EnumerateNodesParams
 {
     /**
-     * The largest batch an enumeration may ask for, and what it asks for unless told otherwise: a batch is answered by a single sized
-     * request to the index, and this is the most such a request may return.
+     * The largest batch an enumeration may ask for, and what it asks for unless told otherwise.
      */
     private static final int MAX_BATCH_SIZE = 10_000;
 
@@ -101,11 +100,11 @@ public final class EnumerateNodesParams
         }
 
          /**
-         * The most entries a single call returns, by default as many as the index will answer in one request. A walk that hands every
-         * batch on and forgets it has no reason to ask for less - the fewer batches, the fewer requests, and the cost of one is bounded
-         * either way. Set it lower only where fewer entries are known to settle the question being asked.
+         * The most entries a single call returns: at least 1, at most 10 000, and 10 000 where it is not set. A walk that hands every
+         * batch on and keeps nothing of it has no reason to ask for less; set it lower only where fewer entries are known to settle the
+         * question being asked.
          *
-         * @param batchSize positive, and no larger than the index will answer in one request.
+         * @param batchSize positive and no larger than 10 000.
          */
         public Builder batchSize( final int batchSize )
         {
@@ -114,8 +113,9 @@ public final class EnumerateNodesParams
         }
 
         /**
-         * Bounds the enumeration to the nodes whose timestamp falls strictly before the given moment, judged when the scan passes each
-         * entry. A bounded enumeration arrives oldest first.
+         * Bounds the enumeration to the nodes whose timestamp falls strictly before the given moment. Each node is judged by the
+         * timestamp it carries when the batch that would hold it is answered, not by the one it carried when the enumeration began. A
+         * bounded enumeration arrives oldest first.
          */
         public Builder modifiedBefore( final @Nullable Instant modifiedBefore )
         {
@@ -136,7 +136,7 @@ public final class EnumerateNodesParams
 
         /**
          * @throws NullPointerException where no parent path has been set.
-         * @throws IllegalArgumentException where the batch size is not positive, or larger than the index will answer in one request.
+         * @throws IllegalArgumentException where the batch size is not positive, or larger than 10 000.
          */
         public EnumerateNodesParams build()
         {

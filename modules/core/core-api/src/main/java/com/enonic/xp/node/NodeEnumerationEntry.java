@@ -7,12 +7,12 @@ import org.jspecify.annotations.NullMarked;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A single node in an {@link EnumerateNodesResult}, identified without the node itself being read.
+ * A single node in an {@link EnumerateNodesResult}, named without any of its data.
  * <p>
- * The version id names the version the enumeration observed, so a consumer that reads by it — such as
- * {@link NodeService#getByIdAndVersionId(NodeId, NodeVersionId)} or {@link NodeService#getVersion(NodeId, NodeVersionId)} — works on a
- * snapshot of the enumeration: the path and timestamp of the entry describe exactly what is read, also when the node has been written
- * to, moved or deleted since the entry was scanned.
+ * The version id is that of the version the enumeration observed. Reading the node by it — with
+ * {@link NodeService#getByIdAndVersionId(NodeId, NodeVersionId)} or {@link NodeService#getVersion(NodeId, NodeVersionId)} — answers with
+ * the state this entry describes: its path and timestamp are those of what is read, also where the node has been written to, moved or
+ * deleted since.
  *
  * @param nodeId id of the node.
  * @param nodePath path of the node.

@@ -42,8 +42,7 @@ public final class ExportNodesParams
     }
 
     /**
-     * @deprecated The export reads each node by the exact version its enumeration observed, one by one, so a read batch size no longer
-     * influences anything. Scheduled for removal.
+     * @deprecated Ignored: an export no longer reads its nodes in batches, so this value changes nothing. Scheduled for removal.
      */
     @Deprecated
     public int getBatchSize()
@@ -83,8 +82,7 @@ public final class ExportNodesParams
         }
 
         /**
-         * @deprecated The export reads each node by the exact version its enumeration observed, one by one, so a read batch size no
-         * longer influences anything. Scheduled for removal.
+         * @deprecated Ignored: an export no longer reads its nodes in batches, so this value changes nothing. Scheduled for removal.
          */
         @Deprecated
         public Builder batchSize( final int batchSize )

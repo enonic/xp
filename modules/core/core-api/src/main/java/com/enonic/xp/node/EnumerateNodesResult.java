@@ -10,8 +10,8 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * One batch of a {@link NodeService#enumerate(EnumerateNodesParams)} enumeration: its entries and the position where the enumeration
- * continues. The entries of a plain enumeration arrive in an order that carries no meaning; those of one bounded by
- * {@link EnumerateNodesParams.Builder#modifiedBefore(Instant)} arrive oldest first.
+ * continues. The entries of an enumeration bounded by {@link EnumerateNodesParams.Builder#modifiedBefore(Instant)} arrive oldest first;
+ * those of an unbounded one in no specified order.
  *
  * @since 8.1.0
  */
@@ -46,13 +46,13 @@ public final class EnumerateNodesResult
     }
 
     /**
-     * How many entries this batch and every batch after it hold together — what is left of the enumeration, this batch included. The
-     * index counts them while cutting the batch, so the first batch of an enumeration says how large the whole of it is, before any of
+     * How many entries are left of the enumeration, this batch included: the number of entries this batch holds plus the number every
+     * batch after it will hold. The first batch of an enumeration therefore says how many nodes the whole of it covers, before any of
      * it has been walked.
      * <p>
-     * Exact rather than estimated, since an enumeration answers with everything the subtree holds and filters nothing away. It is
-     * counted afresh for every batch though, so a write ahead of the cursor moves it — a consumer adding it to what it has already
-     * consumed sees the size of the enumeration correct itself rather than stay wrong.
+     * The number is counted as this batch is answered. A node written below the parent, or deleted from it, after that moment is not
+     * accounted for, and the next batch counts again — so a consumer that adds this to the entries it has consumed already follows the
+     * size of the enumeration as it changes rather than holding on to the first answer.
      */
     public long getRemaining()
     {
