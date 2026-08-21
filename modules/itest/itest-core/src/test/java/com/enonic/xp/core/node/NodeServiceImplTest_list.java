@@ -50,7 +50,6 @@ class NodeServiceImplTest_list
     void sees_writes_that_refreshed_storage_alone()
     {
         final Node parent = createNode( NodePath.ROOT, "parent" );
-        // storage refresh only - no search refresh anywhere, so a query would still be blind to this node
         final Node child = createNode(
             CreateNodeParams.create().name( "just-created" ).parent( parent.path() ).refresh( RefreshMode.STORAGE ).build() );
 

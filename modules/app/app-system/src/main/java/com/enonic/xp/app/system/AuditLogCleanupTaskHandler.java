@@ -103,10 +103,6 @@ public class AuditLogCleanupTaskHandler
             reportProgress();
         }
 
-        /**
-         * The clean-up discovers its work as it goes, so the total moves with every batch. Progress is reported whenever it moves, and
-         * otherwise on the interval the clean-up logs at - a record-by-record report would publish an event per deleted record.
-         */
         private void reportProgress()
         {
             if ( progressReporter != null )

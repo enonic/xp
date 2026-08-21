@@ -85,15 +85,8 @@ final class DeletedEventSyncCommand
             .callWith( () -> layersContentService.getById( contentToSync.getTargetContent().getId() ).isEmpty() );
     }
 
-    /**
-     * Whether nothing under the content outlives this deletion. Deleting a content takes its whole subtree with it, so the subtree is
-     * what is examined - and a descendant is no obstacle where this same synchronization is removing it too.
-     */
     private boolean noDescendantSurvives( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        // one descendant outside the set settles it, and no batch has to be larger than the set to hold one: among that many distinct
-        // descendants, one of them cannot be in the set. So the walk asks for exactly the entries that can still answer it - for the
-        // clean-up flows, which remove one content at a time, that is a couple of entries rather than a thousand
         final int decisive = idsToRemove.size() + 1;
 
         String cursor = null;
@@ -113,10 +106,6 @@ final class DeletedEventSyncCommand
         return true;
     }
 
-    /**
-     * Whether nothing that references the content outlives this deletion - a reference from a content this same synchronization is
-     * removing too leaves nothing dangling behind.
-     */
     private boolean noInboundReferenceSurvives( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
         final ContentId contentId = contentToSync.getTargetContent().getId();

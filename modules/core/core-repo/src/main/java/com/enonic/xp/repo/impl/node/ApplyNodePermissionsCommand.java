@@ -33,10 +33,6 @@ import static java.util.Objects.requireNonNullElse;
 public class ApplyNodePermissionsCommand
     extends AbstractNodeCommand
 {
-    /**
-     * The stride of the subtree walk: how many nodes are resolved ahead of being applied, bounding both the silent stretch before
-     * progress moves and the versions held in memory at once.
-     */
     private static final int BATCH_SIZE = 1_000;
 
     private final ApplyNodePermissionsParams params;
@@ -108,7 +104,6 @@ public class ApplyNodePermissionsCommand
             String cursor = null;
             do
             {
-                // the walk never revisits scanned ground, so one storage refresh up front is enough
                 final FindNodeBranchEntriesByParentCommand.Batch batch = FindNodeBranchEntriesByParentCommand.create( this )
                     .parentPath( persistedNode.path() )
                     .requiredPermission( Permission.READ )
@@ -126,8 +121,6 @@ public class ApplyNodePermissionsCommand
                 subtreeVersions += batchVersions;
                 versions += batchVersions;
 
-                // what the scan still has ahead is projected to weigh as much per node as what it has resolved so far, so the
-                // reported total settles near its final value on the first stride instead of growing by one stride at a time
                 final long ahead = Math.max( 0, batch.totalHits() - BATCH_SIZE );
                 final long projectedAhead = subtreeNodes == 0 ? ahead : ahead * subtreeVersions / subtreeNodes;
                 reported = report( (int) Math.min( Integer.MAX_VALUE, versions + projectedAhead ), reported );
@@ -158,10 +151,6 @@ public class ApplyNodePermissionsCommand
         return entryMaps.stream().mapToInt( Map::size ).sum();
     }
 
-    /**
-     * The stride's own entries already answer the context branch, so only the other branches are looked up - one entry get per node
-     * and branch, which is how the index serves them regardless of batching.
-     */
     private List<Map<Branch, NodeBranchEntry>> resolveBatch( final List<NodeBranchEntry> stride )
     {
         final Branch contextBranch = ContextAccessor.current().getBranch();
@@ -190,11 +179,6 @@ public class ApplyNodePermissionsCommand
         return entriesToApply;
     }
 
-    /**
-     * Applies the permissions of one resolved stride right away, so that progress moves after each stride rather than after the
-     * whole subtree has been resolved. Permissions are read and authorized from the reference (context) branch, but applied equally
-     * on all specified branches, preserving the caller-supplied branch order, which determines the version origin.
-     */
     private void applyBatch( final List<Map<Branch, NodeBranchEntry>> entriesToApply, final AccessControlList permissions )
     {
         final Branch referenceBranch = ContextAccessor.current().getBranch();
@@ -238,13 +222,11 @@ public class ApplyNodePermissionsCommand
             }
             else
             {
-                // the branch entry is already at hand, so completing the node reads only the version blobs
                 final Node originalNode =
                     NodeFactory.create( this.nodeStorageService.getNodeVersion( entry.getNodeVersionKey(), adminContext ), entry );
 
                 final Node editedNode = Node.create( originalNode ).timestamp( Millis.now() ).permissions( permissions ).build();
 
-                // only a resolver reads the version attributes, so without one the version metadata is not fetched at all
                 final Attributes resolvedAttributes = params.getVersionAttributesResolver() == null
                     ? null
                     : resolveVersionAttributes( params.getVersionAttributesResolver(), originalNode, editedNode, branch,
@@ -260,10 +242,6 @@ public class ApplyNodePermissionsCommand
         } );
     }
 
-    /**
-     * The walk only ever reaches nodes the caller may read - settled by the subtree listing's permission filter, or for the single
-     * node by the command's own precondition - so the access blob alone decides what remains.
-     */
     private boolean allowedOnReferenceBranch( final NodeBranchEntry entry, final Branch referenceBranch )
     {
         final InternalContext referenceContext = InternalContext.create( ContextAccessor.current() ).branch( referenceBranch ).build();

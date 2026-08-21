@@ -151,7 +151,6 @@ class AuditLogServiceImplTest
         final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
 
         assertEquals( 0, result.getDeleted() );
-        // it looked and found nothing, which is worth saying: the amount of work is zero rather than unknown
         verify( listener, times( 1 ) ).resolved( 0 );
         verify( listener, times( 0 ) ).start( anyInt() );
         verify( listener, times( 0 ) ).processed();
@@ -195,7 +194,6 @@ class AuditLogServiceImplTest
         final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
 
         assertEquals( 10500, result.getDeleted() );
-        // the first batch already counts what the whole clean-up has to delete, and the second confirms rather than raises it
         verify( listener, times( 1 ) ).resolved( 10_500 );
         verify( listener, times( 1 ) ).resolved( anyInt() );
         verify( listener, times( 1 ) ).start( 10_000 );
@@ -210,7 +208,6 @@ class AuditLogServiceImplTest
 
         when( config.ageThreshold() ).thenReturn( "PT1H" );
 
-        // the age check is the enumeration's own: the bound handed over must be now minus the threshold
         final Instant oldestAccepted = Instant.now().minus( Duration.ofHours( 1 ) ).minusSeconds( 5 );
 
         when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn(

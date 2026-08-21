@@ -285,7 +285,6 @@ class NodeExportIntegrationTest
                 .execute() );
         }
 
-        // the order the editor assigned, highest value first, rather than the order the children happened to be created in
         assertEquals( List.of( "first", "middle", "last" ), readZipEntryLines( EXPORT_NAME + "/root/_/manualChildOrder.txt" ) );
     }
 
@@ -515,7 +514,6 @@ class NodeExportIntegrationTest
 
     private void createChildWithOrderValue( final NodePath parent, final String name, final Long manualOrderValue )
     {
-        // MANUAL is what makes the given value stick; the other strategies have the create command resolve one of its own
         createNode( CreateNodeParams.create()
                         .name( name )
                         .parent( parent )

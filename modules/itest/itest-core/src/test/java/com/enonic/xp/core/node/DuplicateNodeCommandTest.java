@@ -123,7 +123,6 @@ class DuplicateNodeCommandTest
                                                                                            .build() ) )
                                                                                    .build() ) );
 
-        // readable itself, but below a prohibited node, so it is excluded with the rest of that subtree
         ctxDefaultAdmin().callWith( () -> createNode( CreateNodeParams.create()
                                                           .parent( hiddenChild.path() )
                                                           .name( "readable-grandchild" )

@@ -142,7 +142,6 @@ public class MoveNodeCommand
 
         doMoveNode( newParentPath, newNodeName, this.nodeStorageService.getNodeBranchEntry( params.getNodeId(), internalContext ) );
 
-        // entries are ordered by path, so a node is always moved before any of its children
         final Map<NodePath, NodePath> newPaths = new HashMap<>();
         newPaths.put( existingNode.path(), new NodePath( newParentPath, newNodeName ) );
 
@@ -162,7 +161,6 @@ public class MoveNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        // the branch entry is already at hand, so completing the node reads only the version blobs
         final Node persistedNode =
             NodeFactory.create( this.nodeStorageService.getNodeVersion( entry.getNodeVersionKey(), internalContext ), entry );
 
@@ -193,7 +191,6 @@ public class MoveNodeCommand
 
         final Node builtNode = nodeToMoveBuilder.build();
 
-        // only a resolver reads the version attributes, so without one the version metadata is not fetched at all
         final Attributes resolvedAttributes = params.getVersionAttributesResolver() == null
             ? null
             : resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,

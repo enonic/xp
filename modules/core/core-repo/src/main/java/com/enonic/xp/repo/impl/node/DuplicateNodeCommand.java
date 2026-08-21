@@ -192,7 +192,6 @@ public final class DuplicateNodeCommand
 
         listener.resolved( toDuplicate.size() + 1 );
 
-        // entries are ordered by path, so a node is always duplicated before any of its children
         final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
         duplicatedParents.put( originalParent.path(), new DuplicatedParent( originalParent, newParent ) );
 
@@ -201,7 +200,6 @@ public final class DuplicateNodeCommand
             final DuplicatedParent parent = requireNonNull( duplicatedParents.get( entry.getNodePath().getParentPath() ),
                                                             () -> "Parent of [" + entry.getNodePath() + "] was not duplicated yet" );
 
-            // the branch entry is already at hand, so completing the node reads only the version blobs
             final Node node =
                 NodeFactory.create( this.nodeStorageService.getNodeVersion( entry.getNodeVersionKey(), internalContext ), entry );
 
@@ -217,7 +215,6 @@ public final class DuplicateNodeCommand
 
             final CreateNodeParams processedParams = executeProcessors( originalParams );
 
-            // the parent copy is already at hand, and every child path below it is created exactly once
             final Node newChildNode = CreateNodeCommand.create( this )
                 .params( processedParams )
                 .binaryService( this.binaryService )
@@ -240,11 +237,6 @@ public final class DuplicateNodeCommand
     {
     }
 
-    /**
-     * Settles what the caller may duplicate from the access blobs alone - which are almost always cached - before any version is
-     * fetched, so the resolved total is exact from its first report. A node the caller may not read takes its whole subtree with it,
-     * which the path order serves as the contiguous run of entries right behind it.
-     */
     private List<NodeBranchEntry> filterToDuplicate( final NodeBranchEntries entries, final InternalContext context )
     {
         if ( context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )

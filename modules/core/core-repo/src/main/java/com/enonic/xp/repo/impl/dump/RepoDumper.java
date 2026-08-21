@@ -75,10 +75,6 @@ public class RepoDumper
 
     private final SystemDumpListener listener;
 
-    /**
-     * Every node observed by the branch scans, with the version each branch's scan observed it at - so the version dumping binds a
-     * branch to the version the scan saw, not to whatever is active by the time the versions are dumped.
-     */
     private final Map<NodeId, Map<Branch, NodeVersionId>> nodesToDump = new LinkedHashMap<>();
 
     private final Map<Branch, BranchDumpResult.Builder> branchResults = new LinkedHashMap<>();
@@ -108,7 +104,6 @@ public class RepoDumper
         }
 
         setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> {
-            // nodes, versions and commits are all read from storage, so the search index has nothing to contribute to a dump
             this.nodeService.refresh( RefreshMode.STORAGE );
             for ( Branch branch : this.branches )
             {
@@ -128,7 +123,6 @@ public class RepoDumper
             final BranchDumpResult.Builder branchDumpResult = branchResults.get( branch );
             try
             {
-                // enumerated from storage: a dump answers for what the repository holds, not for what the search index has caught up with
                 long branchNodeCount = 0;
                 String cursor = null;
                 do

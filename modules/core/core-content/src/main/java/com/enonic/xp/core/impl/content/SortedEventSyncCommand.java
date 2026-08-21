@@ -48,7 +48,6 @@ final class SortedEventSyncCommand
                 }
                 if ( sourceContent.getChildOrder().isManualOrder() )
                 {
-                    // treated like the sort itself for now: the reordered level is read through search, which knows the levels
                     final ContentQuery childrenQuery =
                         ContentQuery.create().parentPath( targetContent.getPath() ).size( -1 ).build();
 

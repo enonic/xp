@@ -52,10 +52,6 @@ public class ListScheduledJobsCommand
         {
         }
 
-        /**
-         * Whether to read each job's run state, which costs a version read per job. The scheduling
-         * tick goes without, keeping track of run state itself.
-         */
         public Builder withRunState( final boolean withRunState )
         {
             this.withRunState = withRunState;

@@ -139,8 +139,6 @@ public final class ParentContentSynchronizer
         }
 
         sourceContents.stream().filter( contentToSync -> contentToSync.getSourceContent() != null ).forEach( currentContentToSync -> {
-            // the whole subtree is taken once and sliced into levels here: the descent still syncs a parent before its children,
-            // but no level is bought by rescanning the subtree
             final Map<ContentPath, ContentIds> childrenByParent = currentContentToSync.getSourceCtx()
                 .callWith( () -> layersContentService.findAllGroupedByParent( currentContentToSync.getSourceContent().getPath() ) );
 
@@ -282,8 +280,6 @@ public final class ParentContentSynchronizer
     private void cleanDeletedContents( final ContentToSync contentToSync )
     {
         contentToSync.getTargetCtx().runWith( () -> {
-            // the target subtree is known upfront, so it is taken once and sliced level by level, like the sync descent.
-            // the snapshot survives its own walk: a content that still has children is never deleted by it
             final Map<ContentPath, ContentIds> childrenByParent =
                 layersContentService.findAllGroupedByParent( contentToSync.getTargetContent().getPath() );
 

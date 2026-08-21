@@ -347,10 +347,6 @@ public class NodeServiceImpl
         return result;
     }
 
-    /**
-     * The deprecated findByParent expressed as the query it always was, so there is one implementation of searching by parent rather than
-     * two that can drift apart.
-     */
     private FindNodesByParentResult executeFindByParent( final FindNodesByParentParams params )
     {
         final NodePath parentPath = resolveFindByParentPath( params );
@@ -368,7 +364,6 @@ public class NodeServiceImpl
             .from( countOnly ? 0 : params.getFrom() )
             .size( countOnly ? 0 : params.getSize() );
 
-        // an unset child order is resolved from the parent by the query itself
         final ChildOrder childOrder = params.getChildOrder();
         if ( childOrder != null && !childOrder.isEmpty() )
         {
@@ -410,8 +405,6 @@ public class NodeServiceImpl
     public EnumerateNodesResult enumerate( final EnumerateNodesParams params )
     {
         verifyContext();
-        // the enumeration serves system walks and answers with everything the branch holds, so the caller is checked up front
-        // instead of the entries being filtered one by one
         requireAdminRole();
         traceListing( params.getParentPath() );
 
@@ -458,7 +451,6 @@ public class NodeServiceImpl
     {
         return FindNodeBranchEntriesByParentCommand.create()
             .parentPath( parentPath )
-            // a read does not refresh: writes decide when they become visible, and every write through the content API already does
             .refreshStorage( false )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
@@ -497,19 +489,6 @@ public class NodeServiceImpl
             .execute();
     }
 
-    /**
-     * A query restricted to a parent and carrying no order expressions of its own comes back in the child order of the parent, the same
-     * order findByParent used. Resolving the order costs a read of the parent, so it is skipped whenever the query orders explicitly or
-     * fetches no hits at all.
-     * <p>
-     * The read is done with elevated privileges because the child order never reaches the caller - it only sorts hits the caller was
-     * already permitted to see.
-     */
-    /**
-     * A parent orders its own children, so its child order answers a query for them and nothing else: applied to a whole subtree it
-     * would sort levels against each other by a value only siblings can be compared on. A recursive query is therefore left to the
-     * order it asks for, and the parent is not read at all.
-     */
     private NodeQuery applyChildOrderOfParent( final NodeQuery nodeQuery )
     {
         if ( nodeQuery.getParent() == null || nodeQuery.isRecursive() || !nodeQuery.getOrderBys().isEmpty() ||
@@ -741,7 +720,6 @@ public class NodeServiceImpl
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        // the duplicated node and its duplicated children are reported in a single event, parents before children
         this.eventPublisher.publish( NodeEvents.duplicated(
             Stream.concat( Stream.of( result.getNode() ), result.getChildren().stream() ).toList(), internalContext ) );
 

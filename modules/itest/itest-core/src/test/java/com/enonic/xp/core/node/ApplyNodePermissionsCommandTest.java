@@ -321,7 +321,6 @@ class ApplyNodePermissionsCommandTest
     {
         final PrincipalKey user = ContextAccessor.current().getAuthInfo().getUser().getKey();
 
-        // active version in master is not even readable by the user
         final Node createdNode = ctxDefaultAdmin().callWith( () -> nodeService.create( CreateNodeParams.create()
                                                                                            .name( "my-node" )
                                                                                            .parent( NodePath.ROOT )
@@ -335,7 +334,6 @@ class ApplyNodePermissionsCommandTest
 
         ctxDefaultAdmin().runWith( () -> pushNodes( WS_OTHER, createdNode.id() ) );
 
-        // reference (draft) version grants the user full access
         ctxDefaultAdmin().runWith( () -> nodeService.applyPermissions( ApplyNodePermissionsParams.create()
                                                                            .nodeId( createdNode.id() )
                                                                            .branches( Branches.from( WS_DEFAULT ) )

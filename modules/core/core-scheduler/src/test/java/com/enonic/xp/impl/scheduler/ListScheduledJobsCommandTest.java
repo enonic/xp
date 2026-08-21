@@ -58,13 +58,11 @@ class ListScheduledJobsCommandTest
         final ScheduledJobEntry cronEntry = entries.get( 0 );
         assertEquals( "cron-job", cronEntry.job().getName().getValue() );
         assertEquals( cronNode.getNodeVersionId(), cronEntry.versionId() );
-        // run state is not fetched from node versions - only node data is read
         assertNull( cronEntry.job().getLastRun() );
 
         final ScheduledJobEntry oneTimeEntry = entries.get( 1 );
         assertEquals( "one-time-job", oneTimeEntry.job().getName().getValue() );
         assertEquals( oneTimeNode.getNodeVersionId(), oneTimeEntry.versionId() );
-        // a one-time job's lastRun tombstone lives in node data and is part of the listing
         assertEquals( Instant.parse( "2026-01-01T10:00:00Z" ), oneTimeEntry.job().getLastRun() );
     }
 
@@ -86,7 +84,6 @@ class ListScheduledJobsCommandTest
 
         final List<ScheduledJob> jobs = schedulerService.list();
 
-        // the same listing, one version read per job richer: run state a cron job keeps in attributes
         assertEquals( 1, jobs.size() );
         assertEquals( Instant.parse( "2026-01-01T11:00:00Z" ), jobs.get( 0 ).getLastRun() );
         assertEquals( TaskId.from( "task-1" ), jobs.get( 0 ).getLastTaskId() );

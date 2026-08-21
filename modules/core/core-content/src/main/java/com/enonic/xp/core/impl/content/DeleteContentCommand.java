@@ -81,7 +81,6 @@ final class DeleteContentCommand
         final NodeId nodeId = nodeToDelete.id();
         final ContentId contentId = ContentId.from( nodeId );
 
-        // enumerated, not searched: everything below has to be unpublished, including what a search has not indexed yet
         final ContentIds descendants = nodeService.list( ListNodesParams.create().parentPath( nodeToDelete.path() ).build() )
             .map( entry -> ContentId.from( entry.nodeId() ) )
             .collect( ContentIds.collector() );

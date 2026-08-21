@@ -98,7 +98,6 @@ class AuditLogCleanupTaskHandlerTest
         verify( auditLogService, times( 1 ) ).cleanUp( paramsCaptor.capture() );
         final CleanUpAuditLogListener listener = paramsCaptor.getValue().getListener();
 
-        // what a clean-up of two batches tells its listener, the second batch uncovering one record more
         listener.start( 2 );
         listener.resolved( 2 );
         listener.processed();
@@ -110,7 +109,6 @@ class AuditLogCleanupTaskHandlerTest
         final ArgumentCaptor<ProgressReportParams> progress = ArgumentCaptor.forClass( ProgressReportParams.class );
         verify( progressReporter, times( 4 ) ).progress( progress.capture() );
 
-        // the total moves as the batches uncover it, and the count is reported on the interval the clean-up logs at
         assertThat( progress.getAllValues() ).extracting( ProgressReportParams::getCurrent, ProgressReportParams::getTotal )
             .containsExactly( tuple( 0, 2 ), tuple( 2, 2 ), tuple( 2, 3 ), tuple( 3, 3 ) );
     }

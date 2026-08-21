@@ -268,11 +268,6 @@ public class LayersContentService
             .execute() );
     }
 
-    /**
-     * The whole subtree as ids grouped by the parent they belong to, gathered in batches - for the sync descent that works level by
-     * level. The listing knows no levels, and listing per level would rescan the subtree once per depth, so the descent takes it all
-     * at once and slices it.
-     */
     public Map<ContentPath, ContentIds> findAllGroupedByParent( final ContentPath contentPath )
     {
         return callOnPrimary( () -> {
@@ -298,20 +293,11 @@ public class LayersContentService
         } );
     }
 
-    /**
-     * Enumerated rather than searched: syncing has to see every content that exists right now, including one written a moment ago that a
-     * search would not find yet, and it has no use for the ordering or the constraints a search would spend that freshness on. And
-     * consumed in batches, so the walk stays bounded whatever the shape of the tree.
-     */
     public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
     {
         return findAllByParent( contentPath, cursor, SYNC_BATCH_SIZE );
     }
 
-    /**
-     * @param batchSize the most entries this batch may hold, capped at the batch size the sync flows use. A caller that only has to find
-     * one entry of a kind can ask for the fewest entries that are certain to hold it, rather than for a full batch.
-     */
     public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor, final int batchSize )
     {
         return callOnPrimary( () -> {
@@ -328,10 +314,6 @@ public class LayersContentService
         } );
     }
 
-    /**
-     * One batch of an enumeration and the position it stopped at. The contract is the enumeration's own: continue until the cursor
-     * is null.
-     */
     public record ContentIdsBatch(ContentIds ids, String cursor)
     {
     }

@@ -48,7 +48,6 @@ class NodeServiceImplTest_enumerate
     @Test
     void batches_add_up_to_the_whole_subtree()
     {
-        // an enumeration scans by node id, and the test helper derives each id from the name, so the expected order is by name
         final Node parent = createNode( NodePath.ROOT, "parent" );
         final Node childA = createNode( parent.path(), "a" );
         final Node childB = createNode( parent.path(), "b" );
@@ -60,7 +59,6 @@ class NodeServiceImplTest_enumerate
         final EnumerateNodesResult first =
             enumerate( EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build() );
         assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( childA.id(), childB.id() );
-        // each entry names the version the scan observed, so a reader can hold the enumerated snapshot of the node
         assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::versionId )
             .containsExactly( childA.getNodeVersionId(), childB.getNodeVersionId() );
         assertNotNull( first.getCursor() );
@@ -84,7 +82,6 @@ class NodeServiceImplTest_enumerate
 
         final EnumerateNodesParams params = EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 2 ).build();
 
-        // the default test user is no administrator: the enumeration refuses the caller up front instead of filtering for them
         assertThrows( ForbiddenAccessException.class, () -> nodeService.enumerate( params ) );
     }
 
@@ -123,7 +120,6 @@ class NodeServiceImplTest_enumerate
         createNode( parent.path(), "young" );
         nodeService.refresh( RefreshMode.STORAGE );
 
-        // only the nodes from before the bound are enumerated, oldest first - the cursor walks the same order
         final EnumerateNodesResult first = enumerate(
             EnumerateNodesParams.create().parentPath( parent.path() ).batchSize( 1 ).modifiedBefore( bound ).build() );
         assertThat( first.getEntries() ).extracting( NodeEnumerationEntry::nodeId ).containsExactly( oldB.id() );
@@ -195,7 +191,6 @@ class NodeServiceImplTest_enumerate
     @Test
     void deleting_the_enumerated_entries_does_not_disturb_the_batches()
     {
-        // deliberately no refresh between the batches: the cursor only moves forward over ground the deletions leave behind
         final Node parent = createNode( NodePath.ROOT, "parent" );
         for ( int i = 1; i <= 7; i++ )
         {
@@ -219,7 +214,6 @@ class NodeServiceImplTest_enumerate
         while ( cursor != null );
 
         assertEquals( 7, seen.size() );
-        // the verifying read needs the deletions refreshed; neither list nor enumerate refreshes on its own
         nodeService.refresh( RefreshMode.STORAGE );
         assertTrue( NodeHelper.runAsAdmin(
             () -> nodeService.list( ListNodesParams.create().parentPath( parent.path() ).build() ).findAny().isEmpty() ) );

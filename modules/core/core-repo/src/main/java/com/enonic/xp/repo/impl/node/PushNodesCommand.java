@@ -75,7 +75,6 @@ public class PushNodesCommand
         {
             if ( comparison.getCompareStatus() == NodeCompareStatus.MOVED )
             {
-                // storage index is per-repository, so the refresh( STORAGE ) at the start of execute() already covers the target branch
                 final NodeIds childrenIds = targetContext().callWith( () -> FindNodeBranchEntriesByParentCommand.create( this )
                     .parentPath( comparison.getTargetPath() )
                     .refreshStorage( false )
@@ -99,7 +98,6 @@ public class PushNodesCommand
         final List<NodeBranchEntry> list =
             nodeBranchEntries.stream().sorted( Comparator.comparing( NodeBranchEntry::getNodePath ) ).collect( Collectors.toList() );
 
-        // the whole push is in hand before any of it is pushed, so its size is known rather than discovered
         pushListener.resolved( list.size() );
 
         final Set<NodePath> alreadyAdded = new HashSet<>();

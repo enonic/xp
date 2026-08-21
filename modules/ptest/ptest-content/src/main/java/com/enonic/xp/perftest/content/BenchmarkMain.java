@@ -10,7 +10,6 @@ public final class BenchmarkMain
     public static void main( final String[] args )
         throws Exception
     {
-        // an argument narrows the run to the benchmarks whose name matches it, for measuring one operation at a time
         final String include =
             args.length > 0 ? args[0] : "com\\.enonic\\.xp\\.perftest\\.content\\..*Benchmark";
 

@@ -37,11 +37,6 @@ public class NodeExporter
 {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    /**
-     * The order a manually ordered parent gives its children: by the value an editor assigned, highest first, and by modification time
-     * where a sibling was never assigned one. It mirrors {@link com.enonic.xp.index.ChildOrder#manualOrder()}, which the index applies
-     * when the same listing is answered by a query.
-     */
     private static final Comparator<OrderedChild> MANUAL_ORDER =
         Comparator.comparing( OrderedChild::manualOrderValue, Comparator.nullsLast( Comparator.reverseOrder() ) )
             .thenComparing( OrderedChild::timestamp, Comparator.nullsLast( Comparator.reverseOrder() ) );
@@ -80,7 +75,6 @@ public class NodeExporter
 
     public NodeExportResult execute()
     {
-        // every node an export reads is now resolved from storage, so the search index has nothing to contribute to it
         nodeService.refresh( RefreshMode.STORAGE );
 
         final Node rootNode = this.nodeService.getByPath( this.sourceNodePath );
@@ -129,8 +123,6 @@ public class NodeExporter
 
     private void doExportNodes( final Node rootNode )
     {
-        // enumerated from storage, so an export covers the subtree the repository holds rather than the one the search index has caught
-        // up with; the enumeration excludes the node the export was asked for.
         final List<NodeEnumerationEntry> entries = new ArrayList<>();
 
         String cursor = null;
@@ -142,8 +134,6 @@ public class NodeExporter
                                                                           .build() );
             if ( nodeExportListener != null )
             {
-                // the node the export was asked for, plus what the enumeration has handed over already and still holds - so the total
-                // stands from the first batch rather than waiting for the whole subtree to be enumerated
                 nodeExportListener.resolved( (int) Math.min( 1L + entries.size() + batch.getRemaining(), Integer.MAX_VALUE ) );
             }
 
@@ -159,8 +149,6 @@ public class NodeExporter
             final Node node;
             try
             {
-                // read by the enumerated version, so the export is a snapshot of the enumeration: what an entry claims about its node
-                // is what the export writes, whatever the node has become since it was scanned
                 node = this.nodeService.getByIdAndVersionId( entry.nodeId(), entry.versionId() );
             }
             catch ( Exception e )
@@ -204,11 +192,6 @@ public class NodeExporter
         }
     }
 
-    /**
-     * The walk reads every child of every manually ordered parent anyway, so their order is collected as they pass rather than read
-     * again, and the order files are written once the walk has read them all. A parent known to keep no manual order sheds what its
-     * children left behind, so the walk retains little beyond the ordered sets it will write.
-     */
     private void collectChildOrder( final Node node )
     {
         if ( node.getChildOrder() != null && node.getChildOrder().isManualOrder() )

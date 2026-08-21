@@ -34,10 +34,6 @@ import com.enonic.xp.security.acl.Permission;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * Finds all branch entries below a parent path by querying the branch storage index,
- * so that storage operations never depend on the search index.
- */
 final class FindNodeBranchEntriesByParentCommand
     extends AbstractNodeCommand
 {
@@ -82,12 +78,6 @@ final class FindNodeBranchEntriesByParentCommand
         return executeBatch().entries();
     }
 
-    /**
-     * One batch of the listing and the position it stopped at, or the whole listing and no position where no batch size is set. The
-     * cursor names the last entry scanned rather than the last entry kept, so a continuation never revisits ground that
-     * {@link #filter} discarded; a batched scan orders by id — or by timestamp where a bound is set — rather than by path, so a move
-     * between batches cannot carry a node across the cursor.
-     */
     Batch executeBatch()
     {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
@@ -107,7 +97,6 @@ final class FindNodeBranchEntriesByParentCommand
 
         if ( modifiedBefore != null )
         {
-            // a bounded scan orders by timestamp, oldest first, with the id breaking the ties the index's millisecond precision leaves
             query.addQueryFilter( RangeFilter.create()
                                       .fieldName( BranchIndexPath.TIMESTAMP.getPath() )
                                       .lt( ValueFactory.newDateTime( modifiedBefore ) )
@@ -142,10 +131,6 @@ final class FindNodeBranchEntriesByParentCommand
             : entry.getTimestamp().toEpochMilli() + "|" + entry.getNodeId();
     }
 
-    /**
-     * The position the previous batch stopped at, translated back to a filter. An unbounded scan sits on the node id alone; a bounded
-     * one sits on (timestamp, id) — strictly after the cursor's millisecond, or within it and past its id.
-     */
     private Filter createAfterCursorFilter()
     {
         if ( modifiedBefore == null )
@@ -153,7 +138,6 @@ final class FindNodeBranchEntriesByParentCommand
             return RangeFilter.create().fieldName( BranchIndexPath.NODE_ID.getPath() ).gt( ValueFactory.newString( cursor ) ).build();
         }
 
-        // the cursor is caller-supplied: a value that never came from a bounded batch fails fast rather than as a raw parse error
         final int separator = cursor.indexOf( '|' );
         final Value cursorTimestamp;
         try
@@ -182,18 +166,10 @@ final class FindNodeBranchEntriesByParentCommand
             .build();
     }
 
-    /**
-     * totalHits counts every raw entry the scan still had in front of it when the batch was cut - the batch itself included, the
-     * permission filtering not - so a walker can project the size of the whole walk from its first batch.
-     */
     record Batch(NodeBranchEntries entries, String cursor, long totalHits)
     {
     }
 
-    /**
-     * The branch index carries no parentPath field, so a parent is matched by a path prefix, which the index answers by seeking its term
-     * dictionary once and scanning the subtree from there.
-     */
     private ConstraintExpr createBelowParentExpr()
     {
         return parentPath.isRoot()
@@ -201,9 +177,6 @@ final class FindNodeBranchEntriesByParentCommand
             : CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( parentPath + "/*" ) );
     }
 
-    /**
-     * Drops the entries the caller may not read, decided from the access control list each entry's version key points at.
-     */
     private NodeBranchEntries filter( final NodeBranchEntries entries, final InternalContext context )
     {
         if ( requiredPermission == null || context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )

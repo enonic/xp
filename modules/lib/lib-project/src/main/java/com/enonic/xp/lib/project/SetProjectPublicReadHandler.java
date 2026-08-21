@@ -66,7 +66,6 @@ public final class SetProjectPublicReadHandler
         @Override
         public void notEnoughRights( final int count )
         {
-            // no-op: progress is reported as items are applied; rejected items are not counted
         }
     }
 

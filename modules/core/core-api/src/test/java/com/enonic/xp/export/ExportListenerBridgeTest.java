@@ -6,10 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * The deprecated total forwards from {@code resolved} and not the other way round: producers call {@code resolved}, so a listener that
- * implements only the old name would stop hearing anything the moment that direction were inverted.
- */
 class ExportListenerBridgeTest
 {
     @Test

@@ -48,10 +48,6 @@ public final class NodeResourceApplicationUrlResolver
         } );
     }
 
-    /**
-     * A resource is a leaf three levels below the cms root - {@code <resource root>/<name>/<file>}. The listing walks the whole subtree,
-     * so the folders on the way there are skipped here.
-     */
     private static boolean isResource( final NodePath cmsPath, final NodePath nodePath )
     {
         return cmsPath.equals( nodePath.getParentPath().getParentPath().getParentPath() );

@@ -114,8 +114,6 @@ public final class SecurityServiceImpl
     @Override
     public IdProviders getIdProviders()
     {
-        // searched rather than enumerated: a listing of the providers could only scan their whole subtree - every user and group in
-        // the system - where the query narrows on the parent, like every other principal lookup here
         final NodeQuery query = NodeQuery.create()
             .parent( IdProviderNodeTranslator.ID_PROVIDERS_PARENT_PATH )
             .size( NodeQuery.ALL_RESULTS_SIZE_FLAG )

@@ -44,13 +44,6 @@ public class CleanUpAuditLogCommand
         return AuditLogContext.createContext().callWith( this::doCleanUp );
     }
 
-    /**
-     * Enumerates the expired records from storage in batches - the enumeration itself is bounded by the age threshold, so the scan costs
-     * what expires rather than what the log holds, and every record it answers with is deleted, oldest first. Records are aged by the
-     * moment they were written: the log is add-only, so a record's timestamp never changes. No refresh is needed anywhere: the cursor
-     * only moves forward over ground the deletions leave behind, and a record too fresh to be visible without one is far too fresh to
-     * fall under the threshold.
-     */
     private CleanUpAuditLogResult doCleanUp()
     {
         final CleanUpAuditLogResult.Builder result = CleanUpAuditLogResult.create();
@@ -68,8 +61,6 @@ public class CleanUpAuditLogCommand
             final EnumerateNodesParams params = enumeration.cursor( cursor ).build();
             final EnumerateNodesResult batch = nodeService.enumerate( params );
 
-            // what the clean-up has to delete: the records already deleted, plus everything the enumeration says is left of it. The
-            // first batch therefore carries the whole amount, and every batch after it confirms or corrects that
             final int stillToDelete = (int) Math.min( batch.getRemaining(), Integer.MAX_VALUE - deleted );
             if ( resolved != deleted + stillToDelete )
             {
