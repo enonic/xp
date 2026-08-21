@@ -153,7 +153,7 @@ class AuditLogServiceImplTest
         assertEquals( 0, result.getDeleted() );
         verify( listener, times( 1 ) ).resolved( 0 );
         verify( listener, times( 0 ) ).start( anyInt() );
-        verify( listener, times( 0 ) ).processed();
+        verify( listener, times( 0 ) ).recordsDeleted( anyInt() );
         verify( listener, times( 0 ) ).finished();
     }
 
@@ -174,7 +174,7 @@ class AuditLogServiceImplTest
         assertEquals( 3, result.getDeleted() );
         verify( listener, times( 1 ) ).resolved( 3 );
         verify( listener, times( 1 ) ).start( 10_000 );
-        verify( listener, times( 3 ) ).processed();
+        verify( listener, times( 3 ) ).recordsDeleted( 1 );
         verify( listener, times( 1 ) ).finished();
     }
 
@@ -197,7 +197,7 @@ class AuditLogServiceImplTest
         verify( listener, times( 1 ) ).resolved( 10_500 );
         verify( listener, times( 1 ) ).resolved( anyInt() );
         verify( listener, times( 1 ) ).start( 10_000 );
-        verify( listener, times( 10_500 ) ).processed();
+        verify( listener, times( 10_500 ) ).recordsDeleted( 1 );
         verify( listener, times( 1 ) ).finished();
     }
 

@@ -14,12 +14,16 @@ import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElseGet;
+import static java.util.Objects.requireNonNullElse;
 
 public class CleanUpAuditLogCommand
     extends NodeServiceCommand<CleanUpAuditLogResult>
 {
     private static final Logger LOG = LoggerFactory.getLogger( CleanUpAuditLogCommand.class );
+
+    private static final CleanUpAuditLogListener NOOP_LISTENER = new CleanUpAuditLogListener()
+    {
+    };
 
     private final Instant until;
 
@@ -29,7 +33,7 @@ public class CleanUpAuditLogCommand
     {
         super( builder );
         until = builder.ageThreshold.isBlank() ? Instant.EPOCH : Instant.now().minus( Duration.parse( builder.ageThreshold ) );
-        listener = requireNonNullElseGet( builder.listener, EmptyCleanUpAuditLogListener::new );
+        listener = requireNonNullElse( builder.listener, NOOP_LISTENER );
     }
 
     @Override
@@ -79,7 +83,7 @@ public class CleanUpAuditLogCommand
                     nodeService.delete( DeleteNodeParams.create().nodeId( entry.nodeId() ).build() ).getNodeIds().getSize() );
                 deleted++;
 
-                listener.processed();
+                listener.recordsDeleted( 1 );
             }
 
             cursor = batch.getCursor();
@@ -131,25 +135,6 @@ public class CleanUpAuditLogCommand
         {
             validate();
             return new CleanUpAuditLogCommand( this );
-        }
-    }
-
-    private static class EmptyCleanUpAuditLogListener
-        implements CleanUpAuditLogListener
-    {
-        @Override
-        public void start( final int batchSize )
-        {
-        }
-
-        @Override
-        public void processed()
-        {
-        }
-
-        @Override
-        public void finished()
-        {
         }
     }
 }

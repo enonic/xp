@@ -98,19 +98,17 @@ class AuditLogCleanupTaskHandlerTest
         verify( auditLogService, times( 1 ) ).cleanUp( paramsCaptor.capture() );
         final CleanUpAuditLogListener listener = paramsCaptor.getValue().getListener();
 
-        listener.start( 2 );
-        listener.resolved( 2 );
-        listener.processed();
-        listener.processed();
-        listener.resolved( 3 );
-        listener.processed();
-        listener.finished();
+        listener.resolved( 2000 );
+        listener.recordsDeleted( 1000 );
+        listener.recordsDeleted( 500 );
+        listener.resolved( 2500 );
+        listener.recordsDeleted( 1000 );
 
         final ArgumentCaptor<ProgressReportParams> progress = ArgumentCaptor.forClass( ProgressReportParams.class );
         verify( progressReporter, times( 4 ) ).progress( progress.capture() );
 
         assertThat( progress.getAllValues() ).extracting( ProgressReportParams::getCurrent, ProgressReportParams::getTotal )
-            .containsExactly( tuple( 0, 2 ), tuple( 2, 2 ), tuple( 2, 3 ), tuple( 3, 3 ) );
+            .containsExactly( tuple( 0, 2000 ), tuple( 1000, 2000 ), tuple( 1500, 2500 ), tuple( 2500, 2500 ) );
     }
 
     @Test

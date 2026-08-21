@@ -41,10 +41,14 @@ public class AuditLogCleanupTaskHandler
     {
         TaskUtils.checkAlreadySubmitted( taskService.getTaskInfo( taskId ), taskService.getAllTasks() );
 
+        LOG.info( "Audit log clean up started" );
+
         auditLogService.cleanUp( CleanUpAuditLogParams.create()
                                      .listener( new Listener( TaskProgressReporterContext.current() ) )
                                      .ageThreshold( ageThreshold )
                                      .build() );
+
+        LOG.info( "Audit log clean up finished" );
     }
 
     @Override
@@ -57,24 +61,19 @@ public class AuditLogCleanupTaskHandler
     private static class Listener
         implements CleanUpAuditLogListener
     {
+        private static final int REPORT_INTERVAL = 1_000;
+
         private final ProgressReporter progressReporter;
 
-        private long count;
+        private int deleted;
 
-        private int batchSize;
+        private int reportedAt;
 
         private int resolved;
 
         Listener( final ProgressReporter progressReporter )
         {
             this.progressReporter = progressReporter;
-        }
-
-        @Override
-        public void start( final int batchSize )
-        {
-            LOG.info( "Audit log clean up started" );
-            this.batchSize = batchSize;
         }
 
         @Override
@@ -85,32 +84,24 @@ public class AuditLogCleanupTaskHandler
         }
 
         @Override
-        public void processed()
+        public void recordsDeleted( final int count )
         {
-            count++;
+            deleted += count;
 
-            if ( batchSize > 0 && count % batchSize == 0 )
+            if ( deleted - reportedAt >= REPORT_INTERVAL )
             {
-                LOG.debug( String.format( "[%s] audit log nodes has been processed", batchSize ) );
+                LOG.debug( "{} audit log records have been deleted", deleted );
                 reportProgress();
             }
         }
 
-        @Override
-        public void finished()
-        {
-            LOG.info( "Audit log clean up finished" );
-            reportProgress();
-        }
-
         private void reportProgress()
         {
+            reportedAt = deleted;
+
             if ( progressReporter != null )
             {
-                progressReporter.progress( ProgressReportParams.create()
-                                               .current( (int) Math.min( count, Integer.MAX_VALUE ) )
-                                               .total( resolved )
-                                               .build() );
+                progressReporter.progress( ProgressReportParams.create().current( deleted ).total( resolved ).build() );
             }
         }
     }
