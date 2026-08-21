@@ -43,10 +43,11 @@ public class AuditLogCleanupTaskHandler
 
         LOG.info( "Audit log clean up started" );
 
-        auditLogService.cleanUp( CleanUpAuditLogParams.create()
-                                     .listener( new Listener( TaskProgressReporterContext.current() ) )
-                                     .ageThreshold( ageThreshold )
-                                     .build() );
+        final Listener listener = new Listener( TaskProgressReporterContext.current() );
+
+        auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).ageThreshold( ageThreshold ).build() );
+
+        listener.reportProgress();
 
         LOG.info( "Audit log clean up finished" );
     }

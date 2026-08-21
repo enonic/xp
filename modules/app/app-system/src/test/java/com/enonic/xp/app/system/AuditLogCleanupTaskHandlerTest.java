@@ -15,6 +15,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogParams;
+import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -91,24 +93,26 @@ class AuditLogCleanupTaskHandlerTest
             .build();
         when( taskService.getTaskInfo( taskId ) ).thenReturn( taskInfo );
         when( taskService.getAllTasks() ).thenReturn( List.of( taskInfo ) );
+        when( auditLogService.cleanUp( any() ) ).thenAnswer( invocation -> {
+            final CleanUpAuditLogListener listener = invocation.getArgument( 0, CleanUpAuditLogParams.class ).getListener();
+
+            listener.resolved( 2000 );
+            listener.recordsDeleted( 1000 );
+            listener.recordsDeleted( 500 );
+            listener.resolved( 2500 );
+            listener.recordsDeleted( 999 );
+
+            return CleanUpAuditLogResult.create().build();
+        } );
 
         TaskProgressReporterContext.withContext(
             ( id, reporter ) -> runFunction( "/test/AuditLogCleanupTaskHandlerTest.js", "cleanUp" ) ).run( taskId, progressReporter );
-
-        verify( auditLogService, times( 1 ) ).cleanUp( paramsCaptor.capture() );
-        final CleanUpAuditLogListener listener = paramsCaptor.getValue().getListener();
-
-        listener.resolved( 2000 );
-        listener.recordsDeleted( 1000 );
-        listener.recordsDeleted( 500 );
-        listener.resolved( 2500 );
-        listener.recordsDeleted( 1000 );
 
         final ArgumentCaptor<ProgressReportParams> progress = ArgumentCaptor.forClass( ProgressReportParams.class );
         verify( progressReporter, times( 4 ) ).progress( progress.capture() );
 
         assertThat( progress.getAllValues() ).extracting( ProgressReportParams::getCurrent, ProgressReportParams::getTotal )
-            .containsExactly( tuple( 0, 2000 ), tuple( 1000, 2000 ), tuple( 1500, 2500 ), tuple( 2500, 2500 ) );
+            .containsExactly( tuple( 0, 2000 ), tuple( 1000, 2000 ), tuple( 1500, 2500 ), tuple( 2499, 2500 ) );
     }
 
     @Test
