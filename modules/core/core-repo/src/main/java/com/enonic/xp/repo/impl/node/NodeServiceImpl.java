@@ -415,7 +415,9 @@ public class NodeServiceImpl
                 .build()
                 .executeBatch();
 
-        final EnumerateNodesResult.Builder result = EnumerateNodesResult.create().cursor( batch.cursor() ).remaining( batch.totalHits() );
+        final EnumerateNodesResult.Builder result = EnumerateNodesResult.create()
+            .cursor( batch.cursor() )
+            .remaining( (int) Math.min( batch.totalHits(), Integer.MAX_VALUE ) );
         for ( final NodeBranchEntry entry : batch.entries() )
         {
             result.addEntry(

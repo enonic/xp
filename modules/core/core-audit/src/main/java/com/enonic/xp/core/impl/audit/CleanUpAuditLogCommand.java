@@ -61,10 +61,9 @@ public class CleanUpAuditLogCommand
             final EnumerateNodesParams params = enumeration.cursor( cursor ).build();
             final EnumerateNodesResult batch = nodeService.enumerate( params );
 
-            final int stillToDelete = (int) Math.min( batch.getRemaining(), Integer.MAX_VALUE - deleted );
-            if ( resolved != deleted + stillToDelete )
+            if ( resolved != deleted + batch.getRemaining() )
             {
-                resolved = deleted + stillToDelete;
+                resolved = deleted + batch.getRemaining();
                 listener.resolved( resolved );
             }
 

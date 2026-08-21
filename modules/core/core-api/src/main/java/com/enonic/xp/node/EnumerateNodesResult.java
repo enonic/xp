@@ -23,7 +23,7 @@ public final class EnumerateNodesResult
     @Nullable
     private final String cursor;
 
-    private final long remaining;
+    private final int remaining;
 
     private EnumerateNodesResult( final Builder builder )
     {
@@ -47,14 +47,14 @@ public final class EnumerateNodesResult
 
     /**
      * How many entries are left of the enumeration, this batch included: the number of entries this batch holds plus the number every
-     * batch after it will hold. The first batch of an enumeration therefore says how many nodes the whole of it covers, before any of
-     * it has been walked.
+     * batch after it will hold, {@link Integer#MAX_VALUE} at the most. The first batch of an enumeration therefore says how many nodes
+     * the whole of it covers, before any of it has been walked.
      * <p>
      * The number is counted as this batch is answered. A node written below the parent, or deleted from it, after that moment is not
      * accounted for, and the next batch counts again — so a consumer that adds this to the entries it has consumed already follows the
      * size of the enumeration as it changes rather than holding on to the first answer.
      */
-    public long getRemaining()
+    public int getRemaining()
     {
         return remaining;
     }
@@ -76,13 +76,13 @@ public final class EnumerateNodesResult
         @Nullable
         private String cursor;
 
-        private long remaining;
+        private int remaining;
 
         private Builder()
         {
         }
 
-        public Builder remaining( final long remaining )
+        public Builder remaining( final int remaining )
         {
             this.remaining = remaining;
             return this;

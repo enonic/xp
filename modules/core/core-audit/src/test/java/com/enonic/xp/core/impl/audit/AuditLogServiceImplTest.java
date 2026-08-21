@@ -228,7 +228,7 @@ class AuditLogServiceImplTest
         return createBatch( number, timestamp, cursor, number );
     }
 
-    private EnumerateNodesResult createBatch( final int number, final Instant timestamp, final String cursor, final long remaining )
+    private EnumerateNodesResult createBatch( final int number, final Instant timestamp, final String cursor, final int remaining )
     {
         final EnumerateNodesResult.Builder batch = EnumerateNodesResult.create().cursor( cursor ).remaining( remaining );
         for ( int i = 1; i <= number; i++ )

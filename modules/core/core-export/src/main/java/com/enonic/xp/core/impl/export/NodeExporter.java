@@ -134,7 +134,7 @@ public class NodeExporter
                                                                           .build() );
             if ( nodeExportListener != null )
             {
-                nodeExportListener.resolved( (int) Math.min( 1L + entries.size() + batch.getRemaining(), Integer.MAX_VALUE ) );
+                nodeExportListener.resolved( 1 + entries.size() + batch.getRemaining() );
             }
 
             entries.addAll( batch.getEntries() );
