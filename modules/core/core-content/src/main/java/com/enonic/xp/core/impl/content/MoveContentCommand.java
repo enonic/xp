@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.Mixins;
 import com.enonic.xp.content.MoveContentException;
+import com.enonic.xp.content.MoveContentListener;
 import com.enonic.xp.content.MoveContentParams;
 import com.enonic.xp.content.MoveContentsResult;
 import com.enonic.xp.content.ValidationErrors;
@@ -18,6 +19,7 @@ import com.enonic.xp.core.impl.content.serializer.ValidationErrorsSerializer;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.NodeAccessException;
@@ -125,7 +127,7 @@ final class MoveContentCommand
 
         if ( params.getMoveContentListener() != null )
         {
-            moveParams.moveListener( this.params.getMoveContentListener()::contentMoved );
+            moveParams.moveListener( new ListenerDelegate( this.params.getMoveContentListener() ) );
         }
 
         final MoveNodeResult movedNode = nodeService.move( moveParams.build() );
@@ -193,6 +195,29 @@ final class MoveContentCommand
         {
             validate();
             return new MoveContentCommand( this );
+        }
+    }
+
+    private static final class ListenerDelegate
+        implements MoveNodeListener
+    {
+        private final MoveContentListener delegate;
+
+        ListenerDelegate( final MoveContentListener delegate )
+        {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void nodesMoved( final int count )
+        {
+            delegate.contentMoved( count );
+        }
+
+        @Override
+        public void resolved( final int count )
+        {
+            delegate.resolved( count );
         }
     }
 }

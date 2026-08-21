@@ -50,10 +50,10 @@ public final class SetProjectPublicReadHandler
         }
 
         @Override
-        public void setTotal( final int count )
+        public void resolved( final int count )
         {
-            this.total = count;
-            this.reporter.progress( ProgressReportParams.create().current( applied ).total( count ).build() );
+            this.total = Math.max( count, 0 );
+            this.reporter.progress( ProgressReportParams.create().current( applied ).total( this.total ).build() );
         }
 
         @Override
@@ -66,7 +66,6 @@ public final class SetProjectPublicReadHandler
         @Override
         public void notEnoughRights( final int count )
         {
-            // no-op: progress is reported as items are applied; rejected items are not counted
         }
     }
 

@@ -24,15 +24,22 @@ final class ReportWriter
         final StringBuilder md = new StringBuilder( 1024 );
         md.append( "## ContentService benchmarks\n\n" );
         md.append( "Run: " ).append( Instant.now() ).append( "\n\n" );
-        md.append( "| Benchmark | Mode | Score | Unit | Throughput |\n" );
-        md.append( "|---|---|---:|---|---:|\n" );
+        md.append( "| Benchmark | Mode | Score | Unit | Throughput | Time/node | Alloc/op | Alloc/node | Peak live/op |\n" );
+        md.append( "|---|---|---:|---|---:|---:|---:|---:|---:|\n" );
         for ( final Row r : rows )
         {
             md.append( "| " ).append( r.benchmark ).append( " | " ).append( r.mode ).append( " | " );
             md.append( String.format( Locale.ROOT, "%.2f", r.score ) ).append( " | " );
             md.append( r.unit ).append( " | " );
-            md.append( String.format( Locale.ROOT, "%.0f ops/s", r.opsPerSec() ) ).append( " |\n" );
+            md.append( r.throughput() ).append( " | " );
+            md.append( r.timePerNode() ).append( " | " );
+            md.append( bytes( r.bytesPerOp ) ).append( " | " );
+            md.append( bytes( r.bytesPerNode() ) ).append( " | " );
+            md.append( bytes( r.peakLiveBytesPerOp ) ).append( " |\n" );
         }
+        md.append( "\nA whole-tree operation is one operation over many nodes, so its throughput is counted in nodes rather than in\n" );
+        md.append( "operations. **Alloc** is what the operation churns - every node it rewrites is read, rebuilt and re-indexed, whatever\n" );
+        md.append( "the shape of the walk. **Peak live** is what it holds: how far the surviving heap grows while it runs.\n" );
         md.append( "\n### Environment\n\n" );
         md.append( "- **CPU**: " ).append( info.cpuModel ).append( "\n" );
         md.append( "- **Logical cores**: " ).append( info.cores ).append( "\n" );
@@ -56,14 +63,45 @@ final class ReportWriter
             final JsonNode metric = item.path( "primaryMetric" );
             final double score = metric.path( "score" ).asDouble();
             final String unit = metric.path( "scoreUnit" ).asText();
-            rows.add( new Row( benchmark, mode, score, unit ) );
+            final JsonNode secondary = item.path( "secondaryMetrics" );
+            final double ops = count( secondary, "ops" );
+            rows.add( new Row( benchmark, mode, score, unit, kiB( secondary, "allocKiB" ) / ops, kiB( secondary, "peakLiveKiB" ) / ops,
+                               count( secondary, "nodes" ) / ops ) );
         }
         return rows;
     }
 
+    private static double kiB( final JsonNode secondaryMetrics, final String counter )
+    {
+        final JsonNode counted = secondaryMetrics.path( counter );
+        return counted.isMissingNode() ? Double.NaN : counted.path( "score" ).asDouble() * 1024.0;
+    }
+
+    private static double count( final JsonNode secondaryMetrics, final String counter )
+    {
+        final JsonNode counted = secondaryMetrics.path( counter );
+        return counted.isMissingNode() ? Double.NaN : counted.path( "score" ).asDouble();
+    }
+
+    private static String bytes( final double value )
+    {
+        if ( Double.isNaN( value ) )
+        {
+            return "-";
+        }
+        if ( value >= 1024.0 * 1024.0 )
+        {
+            return String.format( Locale.ROOT, "%.1f MiB", value / ( 1024.0 * 1024.0 ) );
+        }
+        if ( value >= 1024.0 )
+        {
+            return String.format( Locale.ROOT, "%.1f KiB", value / 1024.0 );
+        }
+        return String.format( Locale.ROOT, "%.0f B", value );
+    }
+
     private static String shorten( final String fqn )
     {
-        // com.enonic.xp.perftest.content.ContentCreateBenchmark.create -> ContentCreateBenchmark.create
         final int dot = fqn.lastIndexOf( '.', fqn.lastIndexOf( '.' ) - 1 );
         return dot >= 0 ? fqn.substring( dot + 1 ) : fqn;
     }
@@ -78,28 +116,63 @@ final class ReportWriter
 
         final String unit;
 
-        Row( final String benchmark, final String mode, final double score, final String unit )
+        final double bytesPerOp;
+
+        final double peakLiveBytesPerOp;
+
+        final double nodesPerOp;
+
+        Row( final String benchmark, final String mode, final double score, final String unit, final double bytesPerOp,
+             final double peakLiveBytesPerOp, final double nodesPerOp )
         {
             this.benchmark = benchmark;
             this.mode = mode;
             this.score = score;
             this.unit = unit;
+            this.bytesPerOp = bytesPerOp;
+            this.peakLiveBytesPerOp = peakLiveBytesPerOp;
+            this.nodesPerOp = nodesPerOp;
         }
 
-        double opsPerSec()
+        double bytesPerNode()
         {
-            // JMH avgt with us/op: ops/s = 1_000_000 / us-per-op
-            // Other modes/units would need different math; treat as best-effort.
+            return Double.isNaN( nodesPerOp ) || nodesPerOp <= 0 ? Double.NaN : bytesPerOp / nodesPerOp;
+        }
+
+        String throughput()
+        {
+            final double seconds = secondsPerOp();
+            if ( Double.isNaN( seconds ) || seconds <= 0 )
+            {
+                return "-";
+            }
+            return Double.isNaN( nodesPerOp )
+                ? String.format( Locale.ROOT, "%,.0f ops/s", 1.0 / seconds )
+                : String.format( Locale.ROOT, "%,.0f nodes/s", nodesPerOp / seconds );
+        }
+
+        String timePerNode()
+        {
+            final double seconds = secondsPerOp();
+            if ( Double.isNaN( seconds ) || Double.isNaN( nodesPerOp ) || nodesPerOp <= 0 )
+            {
+                return "-";
+            }
+            return String.format( Locale.ROOT, "%.1f us", seconds / nodesPerOp * 1_000_000.0 );
+        }
+
+        private double secondsPerOp()
+        {
             switch ( unit )
             {
-                case "us/op":
-                    return 1_000_000.0 / score;
-                case "ms/op":
-                    return 1_000.0 / score;
                 case "ns/op":
-                    return 1_000_000_000.0 / score;
+                    return score / 1_000_000_000.0;
+                case "us/op":
+                    return score / 1_000_000.0;
+                case "ms/op":
+                    return score / 1_000.0;
                 case "s/op":
-                    return 1.0 / score;
+                    return score;
                 default:
                     return Double.NaN;
             }

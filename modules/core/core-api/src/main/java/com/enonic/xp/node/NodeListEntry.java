@@ -7,11 +7,11 @@ import org.jspecify.annotations.NullMarked;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A single node in a {@link ListNodesResult}, identified without the node itself being read.
+ * A single node in a {@link NodeService#list(ListNodesParams)} listing, named without any of its data.
  *
  * @param nodeId id of the node.
- * @param nodePath path of the node, which also determines the position of the entry in the result.
- * @param timestamp the moment the node was last modified in the branch listed.
+ * @param nodePath path of the node.
+ * @param timestamp timestamp of the node.
  * @since 8.1.0
  */
 @NullMarked

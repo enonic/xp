@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.DuplicateContentListener;
 import com.enonic.xp.content.DuplicateContentParams;
 import com.enonic.xp.content.DuplicateContentsResult;
 import com.enonic.xp.content.FindContentByParentParams;
@@ -185,6 +186,23 @@ class ContentServiceImplTest_duplicate
         assertEquals( "rootcontent-copy", duplicatedContent.getName().toString() );
     }
 
+    @Test
+    void duplicate_with_listener()
+    {
+        final Content rootContent = createContent( ContentPath.ROOT );
+        createContent( rootContent.getPath() );
+
+        final TestListener listener = new TestListener();
+
+        contentService.duplicate( DuplicateContentParams.create()
+                                      .contentId( rootContent.getId() )
+                                      .includeChildren( true )
+                                      .duplicateContentListener( listener )
+                                      .build() );
+
+        assertEquals( 2, listener.duplicated );
+    }
+
     private Content doDuplicateContent( final Content content )
     {
         final DuplicateContentParams params =
@@ -270,4 +288,21 @@ class ContentServiceImplTest_duplicate
         assertEquals( duplicateParams.getParent(), duplicatedContent2.getParentPath() );
     }
 
+
+    private static final class TestListener
+        implements DuplicateContentListener
+    {
+        int duplicated;
+
+        @Override
+        public void contentDuplicated( final int count )
+        {
+            duplicated += count;
+        }
+
+        @Override
+        public void contentReferencesUpdated( final int count )
+        {
+        }
+    }
 }

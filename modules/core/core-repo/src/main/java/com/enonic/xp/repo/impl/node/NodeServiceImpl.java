@@ -21,6 +21,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.ApplyNodePermissionsParams;
 import com.enonic.xp.node.ApplyNodePermissionsResult;
@@ -32,6 +33,8 @@ import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.DuplicateNodeParams;
 import com.enonic.xp.node.DuplicateNodeResult;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.FindNodesByMultiRepoQueryResult;
 import com.enonic.xp.node.FindNodesByParentParams;
 import com.enonic.xp.node.FindNodesByParentResult;
@@ -43,7 +46,6 @@ import com.enonic.xp.node.GetNodeVersionsResult;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.MultiRepoNodeQuery;
@@ -54,6 +56,7 @@ import com.enonic.xp.node.NodeCommitQuery;
 import com.enonic.xp.node.NodeCommitQueryResult;
 import com.enonic.xp.node.NodeComparison;
 import com.enonic.xp.node.NodeComparisons;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeListEntry;
@@ -91,7 +94,9 @@ import com.enonic.xp.repository.BranchNotFoundException;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -342,10 +347,6 @@ public class NodeServiceImpl
         return result;
     }
 
-    /**
-     * The deprecated findByParent expressed as the query it always was, so there is one implementation of searching by parent rather than
-     * two that can drift apart.
-     */
     private FindNodesByParentResult executeFindByParent( final FindNodesByParentParams params )
     {
         final NodePath parentPath = resolveFindByParentPath( params );
@@ -363,7 +364,6 @@ public class NodeServiceImpl
             .from( countOnly ? 0 : params.getFrom() )
             .size( countOnly ? 0 : params.getSize() );
 
-        // an unset child order is resolved from the parent by the query itself
         final ChildOrder childOrder = params.getChildOrder();
         if ( childOrder != null && !childOrder.isEmpty() )
         {
@@ -387,38 +387,76 @@ public class NodeServiceImpl
 
     @Override
     @Traced("node.list")
-    public ListNodesResult list( final ListNodesParams params )
+    public Stream<NodeListEntry> list( final ListNodesParams params )
     {
         verifyContext();
+        traceListing( params.getParentPath() );
+
+        final NodeBranchEntries entries =
+            findBranchEntriesByParent( params.getParentPath() ).requiredPermission( Permission.READ ).build().execute();
+
+        Tracer.attribute( "hits", (long) entries.getSize() );
+
+        return entries.stream().map( entry -> new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
+    }
+
+    @Override
+    @Traced("node.enumerate")
+    public EnumerateNodesResult enumerate( final EnumerateNodesParams params )
+    {
+        verifyContext();
+        requireAdminRole();
+        traceListing( params.getParentPath() );
+
+        final FindNodeBranchEntriesByParentCommand.Batch batch =
+            findBranchEntriesByParent( params.getParentPath() ).batchSize( params.getBatchSize() )
+                .modifiedBefore( params.getModifiedBefore() )
+                .cursor( params.getCursor() )
+                .build()
+                .executeBatch();
+
+        final EnumerateNodesResult.Builder result = EnumerateNodesResult.create()
+            .cursor( batch.cursor() )
+            .remaining( (int) Math.min( batch.totalHits(), Integer.MAX_VALUE ) );
+        for ( final NodeBranchEntry entry : batch.entries() )
+        {
+            result.addEntry(
+                new NodeEnumerationEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp(), entry.getVersionId() ) );
+        }
+
+        final EnumerateNodesResult enumerateResult = result.build();
+
+        Tracer.attribute( "hits", (long) enumerateResult.getEntries().size() );
+
+        return enumerateResult;
+    }
+
+    private static void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
+    private static void traceListing( final NodePath parentPath )
+    {
         Tracer.withCurrent( trace -> {
-            trace.attribute( "parent", params.getParentPath().toString() );
+            trace.attribute( "parent", parentPath.toString() );
             trace.attribute( "repo", Objects.toString( ContextAccessor.current().getRepositoryId(), null ) );
             trace.attribute( "branch", Objects.toString( ContextAccessor.current().getBranch(), null ) );
         } );
+    }
 
-        final NodeBranchEntries entries = FindNodeBranchEntriesByParentCommand.create()
-            .parentPath( params.getParentPath() )
-            .recursive( params.isRecursive() )
-            .requiredPermission( Permission.READ )
-            // a read does not refresh: writes decide when they become visible, and every write through the content API already does
+    private FindNodeBranchEntriesByParentCommand.Builder findBranchEntriesByParent( final NodePath parentPath )
+    {
+        return FindNodeBranchEntriesByParentCommand.create()
+            .parentPath( parentPath )
             .refreshStorage( false )
             .indexServiceInternal( this.indexServiceInternal )
             .storageService( this.nodeStorageService )
-            .searchService( this.nodeSearchService )
-            .build()
-            .execute();
-
-        final ListNodesResult.Builder result = ListNodesResult.create();
-        for ( final NodeBranchEntry entry : entries )
-        {
-            result.addEntry( new NodeListEntry( entry.getNodeId(), entry.getNodePath(), entry.getTimestamp() ) );
-        }
-
-        final ListNodesResult listResult = result.build();
-
-        Tracer.attribute( "hits", (long) listResult.getSize() );
-
-        return listResult;
+            .searchService( this.nodeSearchService );
     }
 
     @Override
@@ -453,19 +491,6 @@ public class NodeServiceImpl
             .execute();
     }
 
-    /**
-     * A query restricted to a parent and carrying no order expressions of its own comes back in the child order of the parent, the same
-     * order findByParent used. Resolving the order costs a read of the parent, so it is skipped whenever the query orders explicitly or
-     * fetches no hits at all.
-     * <p>
-     * The read is done with elevated privileges because the child order never reaches the caller - it only sorts hits the caller was
-     * already permitted to see.
-     */
-    /**
-     * A parent orders its own children, so its child order answers a query for them and nothing else: applied to a whole subtree it
-     * would sort levels against each other by a value only siblings can be compared on. A recursive query is therefore left to the
-     * order it asks for, and the parent is not read at all.
-     */
     private NodeQuery applyChildOrderOfParent( final NodeQuery nodeQuery )
     {
         if ( nodeQuery.getParent() == null || nodeQuery.isRecursive() || !nodeQuery.getOrderBys().isEmpty() ||
@@ -697,7 +722,6 @@ public class NodeServiceImpl
 
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        // the duplicated node and its duplicated children are reported in a single event, parents before children
         this.eventPublisher.publish( NodeEvents.duplicated(
             Stream.concat( Stream.of( result.getNode() ), result.getChildren().stream() ).toList(), internalContext ) );
 

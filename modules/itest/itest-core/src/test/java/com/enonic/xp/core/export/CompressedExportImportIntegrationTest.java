@@ -22,6 +22,7 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.repo.impl.node.NodeHelper;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.vfs.VirtualFile;
@@ -315,14 +316,13 @@ class CompressedExportImportIntegrationTest
 
         try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, "version-export" ))
         {
-            final NodeExportResult exportResult = NodeExporter.create()
+            final NodeExportResult exportResult = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( exportDir.resolve( "version-export" ) )
                 .xpVersion( "1.0.0" )
-                .build()
-                .execute();
+                .build()::execute );
 
             assertEquals( 2, exportResult.size() ); // root + node
             assertEquals( 0, exportResult.getExportErrors().size() );
@@ -380,14 +380,13 @@ class CompressedExportImportIntegrationTest
     {
         try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
-            return NodeExporter.create()
+            return NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( sourcePath )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.1.0" )
-                .build()
-                .execute();
+                .build()::execute );
         }
     }
 

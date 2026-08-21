@@ -1,20 +1,26 @@
 package com.enonic.xp.core.node;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAccessException;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
+import com.enonic.xp.repo.impl.node.DeleteNodeCommand;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,6 +66,47 @@ class DeleteNodeByIdCommandTest
         assertNull( ctxDefaultAdmin().callWith( () -> getNodeById( parentNode.id() ) ) );
         assertNull( ctxDefaultAdmin().callWith( () -> getNodeById( childNode.id() ) ) );
         assertNull( ctxDefaultAdmin().callWith( () -> getNodeById( childChildNode.id() ) ) );
+    }
+
+    @Test
+    void delete_reports_resolved_total()
+    {
+        final Node parentNode = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
+        final Node childNode = createNode( CreateNodeParams.create().parent( parentNode.path() ).name( "my-child" ).build() );
+        createNode( CreateNodeParams.create().parent( childNode.path() ).name( "my-grandchild" ).build() );
+
+        final class Recorder
+            implements DeleteNodeListener
+        {
+            final List<Integer> resolvedTotals = new ArrayList<>();
+
+            int deleted;
+
+            @Override
+            public void nodesDeleted( final int count )
+            {
+                deleted += count;
+            }
+
+            @Override
+            public void resolved( final int count )
+            {
+                resolvedTotals.add( count );
+            }
+        }
+        final Recorder recorder = new Recorder();
+
+        DeleteNodeCommand.create()
+            .nodeId( parentNode.id() )
+            .deleteNodeListener( recorder )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+
+        assertEquals( List.of( 3 ), recorder.resolvedTotals );
+        assertEquals( 3, recorder.deleted );
     }
 
     @Test

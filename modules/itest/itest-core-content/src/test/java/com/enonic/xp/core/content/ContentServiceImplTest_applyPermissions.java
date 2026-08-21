@@ -75,10 +75,32 @@ class ContentServiceImplTest_applyPermissions
         final ApplyContentPermissionsResult result = this.contentService.applyPermissions( applyParams );
 
         verify( listener, times( 1 ) ).permissionsApplied( 1 );
+        verify( listener, times( 1 ) ).resolved( 1 );
 
         assertEquals( 1, result.getResults().size() );
 
         assertEquals( content.getPermissions(), result.getResult( content.getId() ) );
+    }
+
+    @Test
+    void listener_needs_no_total_methods()
+    {
+        final Content content = this.contentService.create( CreateContentParams.create()
+                                                                .contentData( new PropertyTree() )
+                                                                .displayName( "This is my content" )
+                                                                .parent( ContentPath.ROOT )
+                                                                .type( ContentTypeName.folder() )
+                                                                .build() );
+
+        final TestListener listener = new TestListener();
+
+        this.contentService.applyPermissions( ApplyContentPermissionsParams.create()
+                                                  .contentId( content.getId() )
+                                                  .addPermissions( content.getPermissions() )
+                                                  .applyContentPermissionsListener( listener )
+                                                  .build() );
+
+        assertEquals( 1, listener.applied );
     }
 
     @Test
@@ -238,5 +260,22 @@ class ContentServiceImplTest_applyPermissions
                         .flatMap( v -> v.actions().stream() ) )
             .extracting( ContentVersion.Action::origin )
             .containsExactly( ContentConstants.BRANCH_DRAFT.getValue(), ContentConstants.BRANCH_MASTER.getValue() );
+    }
+
+    private static final class TestListener
+        implements ApplyPermissionsListener
+    {
+        int applied;
+
+        @Override
+        public void permissionsApplied( final int count )
+        {
+            applied += count;
+        }
+
+        @Override
+        public void notEnoughRights( final int count )
+        {
+        }
     }
 }

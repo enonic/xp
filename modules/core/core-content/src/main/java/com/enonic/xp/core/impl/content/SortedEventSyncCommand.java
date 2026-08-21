@@ -8,8 +8,10 @@ import java.util.stream.Collectors;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentQuery;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.SortContentParams;
+import com.enonic.xp.node.RefreshMode;
 
 final class SortedEventSyncCommand
     extends AbstractContentEventSyncCommand
@@ -47,8 +49,13 @@ final class SortedEventSyncCommand
                 }
                 if ( sourceContent.getChildOrder().isManualOrder() )
                 {
+                    layersContentService.refresh( RefreshMode.ALL );
+
+                    final ContentQuery childrenQuery =
+                        ContentQuery.create().parentPath( targetContent.getPath() ).size( -1 ).build();
+
                     final List<ContentToSync> childrenToSync =
-                        layersContentService.getByIds( layersContentService.findAllChildren( targetContent.getPath() ) )
+                        layersContentService.getByIds( layersContentService.find( childrenQuery ).getContentIds() )
                             .stream()
                             .map( childTargetContent -> content.getSourceCtx()
                                 .callWith( () -> layersContentService.getById( childTargetContent.getId() ) )

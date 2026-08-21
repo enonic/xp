@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.RestoreContentException;
+import com.enonic.xp.archive.RestoreContentListener;
 import com.enonic.xp.archive.RestoreContentParams;
 import com.enonic.xp.archive.RestoreContentsResult;
 import com.enonic.xp.content.ContentConstants;
@@ -14,6 +15,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
@@ -131,7 +133,7 @@ final class RestoreContentCommand
 
         if ( params.getRestoreContentListener() != null )
         {
-            moveParams.moveListener( this.params.getRestoreContentListener()::contentRestored );
+            moveParams.moveListener( new ListenerDelegate( this.params.getRestoreContentListener() ) );
         }
 
         final var processors = CompositeNodeDataProcessor.create().add( updateProperties() );
@@ -235,6 +237,29 @@ final class RestoreContentCommand
         {
             validate();
             return new RestoreContentCommand( this );
+        }
+    }
+
+    private static final class ListenerDelegate
+        implements MoveNodeListener
+    {
+        private final RestoreContentListener delegate;
+
+        ListenerDelegate( final RestoreContentListener delegate )
+        {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void nodesMoved( final int count )
+        {
+            delegate.contentRestored( count );
+        }
+
+        @Override
+        public void resolved( final int count )
+        {
+            delegate.resolved( count );
         }
     }
 }

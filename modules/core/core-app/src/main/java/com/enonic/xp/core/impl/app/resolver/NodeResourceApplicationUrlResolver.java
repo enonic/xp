@@ -10,7 +10,6 @@ import com.enonic.xp.core.impl.app.NodeValueResource;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
@@ -41,11 +40,7 @@ public final class NodeResourceApplicationUrlResolver
             .build();
 
         return VirtualAppContext.createContext().callWith( () -> {
-            final ListNodesResult nodes =
-                this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).recursive( true ).build() );
-
-            return nodes.getEntries()
-                .stream()
+            return this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).build() )
                 .map( NodeListEntry::nodePath )
                 .filter( nodePath -> isResource( cmsPath, nodePath ) )
                 .map( nodePath -> nodePath.toString().substring( nodePath.toString().indexOf( '/', 1 ) ) )
@@ -53,10 +48,6 @@ public final class NodeResourceApplicationUrlResolver
         } );
     }
 
-    /**
-     * A resource is a leaf three levels below the cms root - {@code <resource root>/<name>/<file>}. The listing walks the whole subtree,
-     * so the folders on the way there are skipped here.
-     */
     private static boolean isResource( final NodePath cmsPath, final NodePath nodePath )
     {
         return cmsPath.equals( nodePath.getParentPath().getParentPath().getParentPath() );
