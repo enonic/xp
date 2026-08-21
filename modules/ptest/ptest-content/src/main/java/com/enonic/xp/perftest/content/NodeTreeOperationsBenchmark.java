@@ -42,12 +42,6 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
-/**
- * Whole-tree node operations on the simplest big shape: one parent with {@value #CHILDREN} direct children, one branch.
- * <p>
- * Every operation is a single shot over the whole tree, so each benchmark is one full walk. The index is settled - untimed - before
- * every invocation, so a measurement covers the operation alone, never the ground the previous one left behind.
- */
 @BenchmarkMode( Mode.SingleShotTime )
 @OutputTimeUnit( TimeUnit.MILLISECONDS )
 @Warmup( iterations = 1 )
@@ -57,41 +51,21 @@ public class NodeTreeOperationsBenchmark
 {
     private static final int CHILDREN = Integer.getInteger( "ptest.tree.children", 10_000 );
 
-    /** What one whole-tree operation covers: the parent and every child. */
     private static final int TREE_NODES = CHILDREN + 1;
 
     private static final com.sun.management.ThreadMXBean THREADS =
         (com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean();
 
-    /**
-     * What one operation costs, reported next to the time: the nodes it covers, what it allocates, and how far the live set grows while
-     * it runs.
-     * <p>
-     * The two memory figures answer different questions. Allocation is churn - every node this operation rewrites is read, rebuilt and
-     * re-indexed, and that traffic is the same however the walk is organized. The live set is what the operation *holds*: a walk that
-     * keeps the whole subtree in memory at once shows here, a walk that keeps a stride at a time does not.
-     * <p>
-     * Both are measured close to the operation rather than through a GC profiler: the embedded search server allocates on its own
-     * threads throughout, and the corpus a benchmark rebuilds between invocations allocates too, both of which drown out the operation
-     * in a whole-process figure.
-     */
     @State( Scope.Thread )
     @AuxCounters( AuxCounters.Type.EVENTS )
     public static class Measured
     {
-        /**
-         * The operations counted, so the report can divide by it. JMH sums an event counter over the iterations of a run rather than
-         * averaging it, so every counter here is a total and only a ratio of two of them means anything.
-         */
         public long ops;
 
-        /** The nodes the operations covered, so every figure can be read per node as well as per operation. */
         public long nodes;
 
-        /** What the operation allocates on the thread that runs it. */
         public long allocKiB;
 
-        /** How far the live set grows above where it stood when the operation started. */
         public long peakLiveKiB;
 
         @Setup( Level.Iteration )
@@ -103,10 +77,6 @@ public class NodeTreeOperationsBenchmark
             peakLiveKiB = 0;
         }
 
-        /**
-         * The heap that survived the most recent collection. Reading it repeatedly while an operation runs, rather than once at the end,
-         * is what makes a peak out of it - the operation's own garbage is collected as it goes.
-         */
         private static long liveSetBytes()
         {
             long live = 0;
@@ -164,18 +134,12 @@ public class NodeTreeOperationsBenchmark
         }
     }
 
-    /**
-     * Readies the repository for one measured invocation: the index settles, and the heap is collected so that the live set the
-     * operation is measured against holds the corpus alone rather than whatever the previous invocation left uncollected. Both are
-     * untimed - single-shot timing covers the benchmark method only.
-     */
     private static void settle( final Bootstrap bs )
     {
         bs.refresh();
         System.gc();
     }
 
-    /** Builds one parent with {@link #CHILDREN} children under the content root, refresh disabled for speed, settled at the end. */
     private static Node buildTree( final Bootstrap bs, final String name )
     {
         bs.setRefreshInterval( "-1" );
@@ -244,7 +208,6 @@ public class NodeTreeOperationsBenchmark
         }
     }
 
-    /** One move of the tree parent, back and forth between two targets - every child follows. */
     @Benchmark
     public MoveNodeResult move( final MoveState s, final Measured measured )
         throws Exception
@@ -283,7 +246,6 @@ public class NodeTreeOperationsBenchmark
         }
     }
 
-    /** One duplication of the whole tree - every invocation leaves a new copy behind, so the corpus grows as it would in production. */
     @Benchmark
     @Measurement( iterations = 3 )
     public DuplicateNodeResult duplicate( final DuplicateState s, final Measured measured )
@@ -313,7 +275,6 @@ public class NodeTreeOperationsBenchmark
             bs = new Bootstrap();
             bs.start();
             treeId = buildTree( bs, "tree" ).id();
-            // the operating role keeps full access in both variants, so every invocation stays permitted
             aclA = AccessControlList.of(
                 AccessControlEntry.create().principal( RoleKeys.CONTENT_MANAGER_ADMIN ).allowAll().build(),
                 AccessControlEntry.create().principal( RoleKeys.AUTHENTICATED ).allow( Permission.READ ).build() );
@@ -341,7 +302,6 @@ public class NodeTreeOperationsBenchmark
         }
     }
 
-    /** One permission change over the whole tree, alternating between two lists so every invocation writes a real change. */
     @Benchmark
     public ApplyNodePermissionsResult applyPermissions( final ApplyPermissionsState s, final Measured measured )
         throws Exception
@@ -372,7 +332,6 @@ public class NodeTreeOperationsBenchmark
             bs.start();
         }
 
-        /** A deletion consumes its tree, so every invocation gets a fresh one - built and settled outside the measurement. */
         @Setup( Level.Invocation )
         public void rebuildTree()
         {
@@ -387,7 +346,6 @@ public class NodeTreeOperationsBenchmark
         }
     }
 
-    /** One deletion of the whole tree. */
     @Benchmark
     @Measurement( iterations = 3 )
     public DeleteNodeResult delete( final DeleteState s, final Measured measured )

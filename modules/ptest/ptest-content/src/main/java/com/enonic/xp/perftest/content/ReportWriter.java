@@ -63,10 +63,7 @@ final class ReportWriter
             final JsonNode metric = item.path( "primaryMetric" );
             final double score = metric.path( "score" ).asDouble();
             final String unit = metric.path( "scoreUnit" ).asText();
-            // reported by the benchmark itself, as the thread that ran the operation counted it
             final JsonNode secondary = item.path( "secondaryMetrics" );
-            // every counter is a total over the run - JMH sums an event counter rather than averaging it - so each is divided by the
-            // operations counted beside it
             final double ops = count( secondary, "ops" );
             rows.add( new Row( benchmark, mode, score, unit, kiB( secondary, "allocKiB" ) / ops, kiB( secondary, "peakLiveKiB" ) / ops,
                                count( secondary, "nodes" ) / ops ) );
@@ -74,7 +71,6 @@ final class ReportWriter
         return rows;
     }
 
-    /** A counter the benchmark reported in KiB per operation, as bytes, or NaN where this benchmark does not count it. */
     private static double kiB( final JsonNode secondaryMetrics, final String counter )
     {
         final JsonNode counted = secondaryMetrics.path( counter );
@@ -106,7 +102,6 @@ final class ReportWriter
 
     private static String shorten( final String fqn )
     {
-        // com.enonic.xp.perftest.content.ContentCreateBenchmark.create -> ContentCreateBenchmark.create
         final int dot = fqn.lastIndexOf( '.', fqn.lastIndexOf( '.' ) - 1 );
         return dot >= 0 ? fqn.substring( dot + 1 ) : fqn;
     }
@@ -144,10 +139,6 @@ final class ReportWriter
             return Double.isNaN( nodesPerOp ) || nodesPerOp <= 0 ? Double.NaN : bytesPerOp / nodesPerOp;
         }
 
-        /**
-         * Nodes per second where the benchmark says how many nodes one operation covers, operations per second otherwise. The reciprocal
-         * of a whole-tree operation says nothing: it is one operation however many nodes it rewrote.
-         */
         String throughput()
         {
             final double seconds = secondsPerOp();
