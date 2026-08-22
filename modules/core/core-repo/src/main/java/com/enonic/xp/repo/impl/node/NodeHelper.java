@@ -32,11 +32,6 @@ public class NodeHelper
             callWith( callable );
     }
 
-    /**
-     * A branch holds the root node from the moment it is created, so the root node is what makes the branch exist and its absence is
-     * reported as a missing branch. The lookup asks for no field of the entry, which lets the storage answer without reading the
-     * document.
-     */
     static void verifyBranchExists( final NodeStorageService nodeStorageService, final RepositoryId repositoryId, final Branch branch )
     {
         final boolean rootExists;
