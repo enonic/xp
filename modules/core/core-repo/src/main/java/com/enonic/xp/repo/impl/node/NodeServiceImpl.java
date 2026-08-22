@@ -524,7 +524,6 @@ public class NodeServiceImpl
     @Override
     public Node create( final CreateNodeParams params )
     {
-        verifyContext();
         return doCreate( params );
     }
 
@@ -1079,22 +1078,7 @@ public class NodeServiceImpl
 
     private void verifyBranchExists( final RepositoryId repositoryId, final Branch branch )
     {
-        final boolean rootExists;
-        try
-        {
-            rootExists = this.nodeStorageService.exists( NodeId.ROOT, InternalContext.create( ContextAccessor.current() )
-                .repositoryId( repositoryId )
-                .branch( branch )
-                .build() );
-        }
-        catch ( IndexNotFoundException e )
-        {
-            throw new RepositoryNotFoundException( repositoryId );
-        }
-        if ( !rootExists )
-        {
-            throw new BranchNotFoundException( branch );
-        }
+        NodeHelper.verifyBranchExists( this.nodeStorageService, repositoryId, branch );
     }
 
     private PatchNodeParams convertUpdateParams( final UpdateNodeParams params )

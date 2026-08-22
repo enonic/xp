@@ -183,6 +183,11 @@ public class BranchServiceImpl
     @Override
     public NodeBranchEntry get( final NodePath nodePath, final InternalContext context )
     {
+        if ( nodePath.isRoot() )
+        {
+            return doGetById( NodeId.ROOT, context );
+        }
+
         final RepositoryId repositoryId = context.getRepositoryId();
         final Branch branch = context.getBranch();
         final BranchPath cacheKey = new BranchPath( repositoryId, branch, nodePath );
