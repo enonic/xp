@@ -180,10 +180,6 @@ public class BranchServiceImpl
         return builder.build();
     }
 
-    /**
-     * Resolving a path to a node asks the index which node holds it, except for the root path: the root node keeps the one node id that
-     * is known without asking, and it can be neither moved nor deleted, so the id it always has answers the path directly.
-     */
     @Override
     public NodeBranchEntry get( final NodePath nodePath, final InternalContext context )
     {

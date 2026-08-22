@@ -134,11 +134,6 @@ public final class CreateNodeCommand
         return params.getPermissions().isEmpty() ? NodeDefaultAclFactory.create( getCurrentPrincipalKey() ) : params.getPermissions();
     }
 
-    /**
-     * Verification and parent resolution are the storage a create reads before it writes anything, so a repository that does not exist
-     * surfaces here. It is reported as a missing repository rather than as the index error underneath, the way every other node command
-     * reports it.
-     */
     private Node verifyAndResolveParent()
     {
         try
@@ -155,10 +150,6 @@ public final class CreateNodeCommand
         }
     }
 
-    /**
-     * A parent that is not found is either genuinely absent or absent along with the branch that would hold it, and only the root node
-     * tells those apart, so it is consulted once the parent is known to be missing and never on the way to a node that is created.
-     */
     private Node getParentNode()
     {
         final Node parentNode = doGetByPath( params.getParent() );
