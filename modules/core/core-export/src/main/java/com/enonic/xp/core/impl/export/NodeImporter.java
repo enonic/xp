@@ -28,6 +28,7 @@ import com.enonic.xp.node.BinaryAttachments;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.ImportNodeParams;
 import com.enonic.xp.node.ImportNodeResult;
+import com.enonic.xp.core.internal.orderkey.OrderKeyCodec;
 import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
@@ -71,6 +72,8 @@ public final class NodeImporter
     private final NodeImportListener nodeImportListener;
 
     private final VersionAttributesResolver versionAttributesResolver;
+
+    private final OrderKeyCodec orderKeyCodec = new OrderKeyCodec( java.util.concurrent.ThreadLocalRandom.current() );
 
     private NodeImporter( final Builder builder )
     {
@@ -156,6 +159,49 @@ public final class NodeImporter
         }
     }
 
+    /**
+     * The order file names the children in display order; the keys that carry that order are minted here, not read
+     * from the export - a key belongs to the node that holds it where it lives, so an import mints its own chain: the
+     * first child starts it and every next one is placed after the one before. A child that had no key at export time
+     * gets one like the rest, in the position the order file gave it.
+     */
+    private void importFromOrderKeys( final VirtualFile nodeFolder )
+    {
+        final List<String> childNames;
+
+        try
+        {
+            final List<String> relativeChildNames = processBinarySource( nodeFolder );
+            childNames = getChildrenAbsolutePaths( nodeFolder, relativeChildNames );
+        }
+        catch ( Exception e )
+        {
+            result.addError( "Not able to import nodes by manual order, using default ordering", e );
+            importFromDirectoryLayout( nodeFolder );
+            return;
+        }
+
+        String previousKey = null;
+
+        for ( final String childName : childNames )
+        {
+            final VirtualFile child = nodeFolder.resolve( VirtualFilePaths.from( childName, "/" ) );
+
+            if ( child != null && child.exists() )
+            {
+                final Node imported = processNodeFolder( child, ProcessNodeSettings.create()
+                    .orderByKeys( true )
+                    .orderKeyAnchor( previousKey )
+                    .build() );
+
+                if ( imported != null && imported.getOrderKey() != null )
+                {
+                    previousKey = imported.getOrderKey();
+                }
+            }
+        }
+    }
+
     private List<String> getChildrenAbsolutePaths( final VirtualFile parent, final List<String> childNames )
     {
         final List<String> children = new ArrayList<>();
@@ -169,7 +215,7 @@ public final class NodeImporter
         return children;
     }
 
-    private void processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings processNodeSettings )
+    private Node processNodeFolder( final VirtualFile nodeFolder, final ProcessNodeSettings processNodeSettings )
     {
         Node node = null;
         try
@@ -183,13 +229,21 @@ public final class NodeImporter
 
         try
         {
-            if ( node == null || !node.getChildOrder().isManualOrder() )
+            if ( node == null )
             {
                 importFromDirectoryLayout( nodeFolder );
             }
-            else
+            else if ( node.getChildOrder().isManualOrder() )
             {
                 importFromManualOrder( nodeFolder );
+            }
+            else if ( node.getChildOrder().isOrderKeyOrder() )
+            {
+                importFromOrderKeys( nodeFolder );
+            }
+            else
+            {
+                importFromDirectoryLayout( nodeFolder );
             }
         }
         catch ( Exception e )
@@ -197,6 +251,7 @@ public final class NodeImporter
             result.addError( "Error when parsing children of " + nodeFolder.getPath(), e );
         }
 
+        return node;
     }
 
     private boolean isNodeFolder( final VirtualFile folder )
@@ -285,7 +340,7 @@ public final class NodeImporter
     {
         final BinaryAttachments binaryAttachments = processBinaryAttachments( nodeFolder, serializedNode );
 
-        final Node importNode = ImportNodeFactory.create()
+        Node importNode = ImportNodeFactory.create()
             .importNodeIds( this.importNodeIds )
             .importPermissions( this.importPermissions )
             .serializedNode( serializedNode )
@@ -295,6 +350,16 @@ public final class NodeImporter
                                    : null )
             .build()
             .execute();
+
+        if ( processNodeSettings.isOrderByKeys() )
+        {
+            final String anchor = processNodeSettings.getOrderKeyAnchor();
+            final String discriminator = importNode.id().toString();
+            final String orderKey = anchor == null
+                ? orderKeyCodec.initial( java.time.Instant.now(), discriminator )
+                : orderKeyCodec.after( anchor, discriminator );
+            importNode = Node.create( importNode ).orderKey( orderKey ).build();
+        }
 
         final ImportNodeParams importNodeParams = ImportNodeParams.create()
             .importNode( importNode )
