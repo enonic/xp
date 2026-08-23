@@ -45,7 +45,9 @@ import com.enonic.xp.node.EnumerateNodesParams;
 import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -152,8 +154,18 @@ public class LayersContentService
 
     public ImportContentResult importContent( final ImportContentParams params )
     {
+        return importContent( params, null );
+    }
+
+    /**
+     * Import that places the content at a caller-known raw order key - the internal form synchronization uses to give
+     * inherited content the placement it has in the project it comes from.
+     */
+    public ImportContentResult importContent( final ImportContentParams params, final String orderKey )
+    {
         return ImportContentCommand.create()
             .params( params )
+            .orderKey( orderKey )
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
@@ -240,6 +252,27 @@ public class LayersContentService
             .eventPublisher( this.eventPublisher )
             .build()
             .execute() );
+    }
+
+    /**
+     * The raw order key of the content's node. Order keys cross the public surface only wrapped; synchronization reads
+     * them raw here, in whatever project context it runs.
+     */
+    public String getOrderKey( final ContentId contentId )
+    {
+        return nodeService.getById( NodeId.from( contentId ) ).getOrderKey();
+    }
+
+    /**
+     * Writes the raw order key of the content's node, the way synchronization replicates a placement decided in the
+     * project it inherits from. A new version carries it, as a version carries any placement.
+     */
+    public void setOrderKey( final ContentId contentId, final String orderKey )
+    {
+        nodeService.update( UpdateNodeParams.create()
+                                .id( NodeId.from( contentId ) )
+                                .editor( toBeEdited -> toBeEdited.orderKey = orderKey )
+                                .build() );
     }
 
     public Optional<Content> getById( final ContentId contentId )

@@ -374,6 +374,7 @@ public final class Node
 
         return Objects.equals( id, node.id ) && Objects.equals( name, node.name ) && Objects.equals( nodeType, node.nodeType ) &&
             Objects.equals( parentPath, node.parentPath ) && Objects.equals( manualOrderValue, node.manualOrderValue ) &&
+            Objects.equals( orderKey, node.orderKey ) &&
             Objects.equals( childOrder, node.childOrder ) && Objects.equals( permissions, node.permissions ) &&
             Objects.equals( data, node.data ) && Objects.equals( attachedBinaries, node.attachedBinaries ) &&
             Objects.equals( nodeVersionId, node.nodeVersionId ) && Objects.equals( indexConfigDocument, node.indexConfigDocument );
@@ -382,7 +383,7 @@ public final class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, nodeType, manualOrderValue, childOrder, permissions, data, indexConfigDocument,
-                             attachedBinaries, nodeVersionId );
+        return Objects.hash( id, name, parentPath, nodeType, manualOrderValue, orderKey, childOrder, permissions, data,
+                             indexConfigDocument, attachedBinaries, nodeVersionId );
     }
 }

@@ -21,11 +21,14 @@ public class ImportContentFactory
 {
     private final ImportContentParams params;
 
+    private final String orderKey;
+
     private final ContentDataSerializer contentDataSerializer = new ContentDataSerializer();
 
     private ImportContentFactory( Builder builder )
     {
         this.params = builder.params;
+        this.orderKey = builder.orderKey;
     }
 
     public static Builder create()
@@ -57,6 +60,7 @@ public class ImportContentFactory
             .data( nodeData )
             .childOrder( params.getContent().getChildOrder() )
             .manualOrderValue( params.getContent().getManualOrderValue() )
+            .orderKey( orderKey )
             .permissions( params.getContent().getPermissions() )
             .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();
@@ -67,6 +71,8 @@ public class ImportContentFactory
     {
         private ImportContentParams params;
 
+        private String orderKey;
+
         private Builder()
         {
         }
@@ -74,6 +80,12 @@ public class ImportContentFactory
         public Builder params( final ImportContentParams params )
         {
             this.params = params;
+            return this;
+        }
+
+        public Builder orderKey( final String orderKey )
+        {
+            this.orderKey = orderKey;
             return this;
         }
 

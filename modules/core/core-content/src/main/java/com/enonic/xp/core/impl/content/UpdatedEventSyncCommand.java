@@ -48,6 +48,10 @@ final class UpdatedEventSyncCommand
                         layersContentService.patch( updateParams.build() );
                     }
                 }
+                if ( isToSyncSort( content.getTargetContent() ) )
+                {
+                    syncOrderKey( content );
+                }
             }
         } );
     }
@@ -83,6 +87,25 @@ final class UpdatedEventSyncCommand
     private boolean isToSyncData( final Content targetContent )
     {
         return targetContent.getInherit().contains( ContentInheritType.CONTENT );
+    }
+
+    private boolean isToSyncSort( final Content targetContent )
+    {
+        return targetContent.getInherit().contains( ContentInheritType.SORT );
+    }
+
+    /**
+     * A placement decided in the inherited-from project travels as the raw order key of the node, the only form that
+     * needs no sibling context on either side. A keyless source - stored before order keys - dictates nothing.
+     */
+    private void syncOrderKey( final ContentToSync content )
+    {
+        final String sourceOrderKey = content.getSourceCtx().callWith( () -> layersContentService.getOrderKey( content.getId() ) );
+
+        if ( sourceOrderKey != null && !Objects.equals( sourceOrderKey, layersContentService.getOrderKey( content.getId() ) ) )
+        {
+            layersContentService.setOrderKey( content.getId(), sourceOrderKey );
+        }
     }
 
     private boolean isContentSyncable( final Content sourceContent, final Content targetContent )
