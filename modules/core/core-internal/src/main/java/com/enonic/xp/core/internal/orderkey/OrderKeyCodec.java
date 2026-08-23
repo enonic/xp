@@ -27,7 +27,7 @@ public final class OrderKeyCodec
 
     static final int MAX_POSITION_LENGTH = 512;
 
-    static final int MAX_DISCRIMINATOR_LENGTH = 64;
+    static final int MAX_DISCRIMINATOR_LENGTH = 256;
 
     private static final int RADIX = 62;
 

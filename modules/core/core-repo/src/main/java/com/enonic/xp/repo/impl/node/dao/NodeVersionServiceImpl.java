@@ -120,6 +120,7 @@ public class NodeVersionServiceImpl
             .data( toPropertyTree( immutableNodeVersion.data ) )
             .childOrder( immutableNodeVersion.childOrder )
             .manualOrderValue( immutableNodeVersion.manualOrderValue )
+            .orderKey( immutableNodeVersion.orderKey )
             .attachedBinaries( immutableNodeVersion.attachedBinaries )
             .indexConfigDocument( indexConfigDocument )
             .permissions( accessControl )

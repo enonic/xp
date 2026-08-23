@@ -19,6 +19,8 @@ public final class NodeIndexPath
 
     public static final IndexPath MANUAL_ORDER_VALUE = IndexPath.from( "_manualOrderValue" );
 
+    public static final IndexPath ORDER_KEY = IndexPath.from( "_orderKey" );
+
     public static final IndexPath PATH = IndexPath.from( "_path" );
 
     public static final IndexPath ID = IndexPath.from( "_id" );

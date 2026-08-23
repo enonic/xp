@@ -19,11 +19,14 @@ public final class ImmutableNodeVersion
 
     public final Long manualOrderValue;
 
+    public final String orderKey;
+
     public final AttachedBinaries attachedBinaries;
 
     public ImmutableNodeVersion( final NodeId id, final NodeType nodeType, final List<ImmutableProperty> data,
                                  final ChildOrder childOrder,
                                  final Long manualOrderValue,
+                                 final String orderKey,
                                  final AttachedBinaries attachedBinaries )
     {
         this.id = id;
@@ -31,6 +34,7 @@ public final class ImmutableNodeVersion
         this.data = List.copyOf( data );
         this.childOrder = childOrder;
         this.manualOrderValue = manualOrderValue;
+        this.orderKey = orderKey;
         this.attachedBinaries = attachedBinaries;
     }
 }

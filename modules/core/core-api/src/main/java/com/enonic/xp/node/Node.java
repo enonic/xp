@@ -43,6 +43,8 @@ public final class Node
 
     private final Long manualOrderValue;
 
+    private final String orderKey;
+
     private final AccessControlList permissions;
 
     private final AttachedBinaries attachedBinaries;
@@ -57,6 +59,7 @@ public final class Node
         this.data = builder.data;
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
+        this.orderKey = builder.orderKey;
         this.permissions = builder.permissions;
         this.attachedBinaries = builder.attachedBinaries;
         this.timestamp = Millis.from( builder.timestamp );
@@ -134,6 +137,11 @@ public final class Node
         return manualOrderValue;
     }
 
+    public String getOrderKey()
+    {
+        return orderKey;
+    }
+
     public AccessControlList getPermissions()
     {
         return permissions;
@@ -198,6 +206,8 @@ public final class Node
 
         private Long manualOrderValue;
 
+        private String orderKey;
+
         private AccessControlList permissions = AccessControlList.empty();
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
@@ -226,6 +236,7 @@ public final class Node
             this.indexConfigDocument = node.indexConfigDocument;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
+            this.orderKey = node.orderKey;
             this.permissions = node.permissions;
             this.attachedBinaries = node.attachedBinaries;
             this.timestamp = node.timestamp;
@@ -283,6 +294,12 @@ public final class Node
         public Builder manualOrderValue( final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;
+            return this;
+        }
+
+        public Builder orderKey( final String value )
+        {
+            this.orderKey = value;
             return this;
         }
 

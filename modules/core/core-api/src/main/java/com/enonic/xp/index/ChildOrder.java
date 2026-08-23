@@ -21,6 +21,10 @@ public final class ChildOrder
 
     private static final FieldOrderExpr MANUAL_ORDER = FieldOrderExpr.create( NodeIndexPath.MANUAL_ORDER_VALUE, OrderExpr.Direction.DESC );
 
+    private static final FieldOrderExpr ORDER_KEY_ASC = FieldOrderExpr.create( NodeIndexPath.ORDER_KEY, OrderExpr.Direction.ASC );
+
+    private static final FieldOrderExpr ID_ASC = FieldOrderExpr.create( NodeIndexPath.ID, OrderExpr.Direction.ASC );
+
     private static final FieldOrderExpr PATH_ASC = FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.ASC );
 
     private static final FieldOrderExpr PATH_DESC = FieldOrderExpr.create( NodeIndexPath.PATH, OrderExpr.Direction.DESC );
@@ -41,6 +45,16 @@ public final class ChildOrder
     public static ChildOrder manualOrder()
     {
         return ChildOrder.create().add( MANUAL_ORDER ).add( DEFAULT_ORDER ).build();
+    }
+
+    /**
+     * Manual order carried by order keys. Nodes without a key - stored before keys existed and carried unchanged by
+     * pushes and syncs - sort after every keyed node, ordered among themselves by the default order, which is the order
+     * a key would have frozen for them. The id keeps the order total whatever the other fields hold.
+     */
+    public static ChildOrder orderKeyOrder()
+    {
+        return ChildOrder.create().add( ORDER_KEY_ASC ).add( DEFAULT_ORDER ).add( ID_ASC ).build();
     }
 
     public static ChildOrder defaultOrder()
@@ -100,6 +114,23 @@ public final class ChildOrder
         if ( orderExpr instanceof final FieldOrderExpr fieldOrderExpr )
         {
             return fieldOrderExpr.getField().getIndexPath().equals( MANUAL_ORDER.getField().getIndexPath() );
+        }
+
+        return false;
+    }
+
+    public boolean isOrderKeyOrder()
+    {
+        if ( this.orderExpressions.isEmpty() )
+        {
+            return false;
+        }
+
+        final OrderExpr orderExpr = this.orderExpressions.iterator().next();
+
+        if ( orderExpr instanceof final FieldOrderExpr fieldOrderExpr )
+        {
+            return fieldOrderExpr.getField().getIndexPath().equals( ORDER_KEY_ASC.getField().getIndexPath() );
         }
 
         return false;

@@ -43,6 +43,7 @@ public class NodeFactory
             .indexConfigDocument( nodeStoreVersion.indexConfigDocument() )
             .childOrder( nodeStoreVersion.childOrder() )
             .manualOrderValue( nodeStoreVersion.manualOrderValue() )
+            .orderKey( nodeStoreVersion.orderKey() )
             .permissions( nodeStoreVersion.permissions() )
             .attachedBinaries( nodeStoreVersion.attachedBinaries() );
     }

@@ -41,6 +41,8 @@ public class NodeStoreDocumentFactory
 
     private final Long manualOrderValue;
 
+    private final String orderKey;
+
     private final NodePath nodePath;
 
     private final NodeVersionId versionId;
@@ -55,6 +57,7 @@ public class NodeStoreDocumentFactory
         this.permissions = requireNonNullElse( builder.permissions, AccessControlList.empty() );
         this.data = requireNonNullElseGet( builder.data, PropertyTree::new );
         this.manualOrderValue = builder.manualOrderValue;
+        this.orderKey = builder.orderKey;
         this.nodePath = builder.nodePath;
         this.versionId = builder.versionId;
         this.timestamp = builder.timestamp;
@@ -74,6 +77,7 @@ public class NodeStoreDocumentFactory
             .permissions( nodeStoreVersion.permissions() )
             .data( nodeStoreVersion.data() )
             .manualOrderValue( nodeStoreVersion.manualOrderValue() )
+            .orderKey( nodeStoreVersion.orderKey() )
             .nodePath( nodeBranchEntry.getNodePath() )
             .versionId( nodeBranchEntry.getVersionId() )
             .timestamp( nodeBranchEntry.getTimestamp() )
@@ -117,6 +121,11 @@ public class NodeStoreDocumentFactory
         if ( this.manualOrderValue != null )
         {
             builder.add( IndexItemFactory.create( NodeIndexPath.MANUAL_ORDER_VALUE, ValueFactory.newLong( this.manualOrderValue ),
+                                                  createDefaultDocument( IndexConfig.MINIMAL ) ) );
+        }
+        if ( this.orderKey != null )
+        {
+            builder.add( IndexItemFactory.create( NodeIndexPath.ORDER_KEY, ValueFactory.newString( this.orderKey ),
                                                   createDefaultDocument( IndexConfig.MINIMAL ) ) );
         }
         builder.add( IndexItemFactory.create( NodeIndexPath.NODE_TYPE, ValueFactory.newString( this.nodeType.toString() ),
@@ -178,6 +187,8 @@ public class NodeStoreDocumentFactory
 
         private Long manualOrderValue;
 
+        private String orderKey;
+
         private NodePath nodePath;
 
         private NodeVersionId versionId;
@@ -221,6 +232,12 @@ public class NodeStoreDocumentFactory
         public Builder manualOrderValue( Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;
+            return this;
+        }
+
+        public Builder orderKey( String orderKey )
+        {
+            this.orderKey = orderKey;
             return this;
         }
 

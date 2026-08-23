@@ -176,7 +176,11 @@ class OrderKeyCodecTest
         assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A." ) );
         assertThrows( IllegalArgumentException.class,
                       () -> OrderKeyCodec.requireValidKey( "A".repeat( 512 ) + "1.x" ) );
-        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A1." + "x".repeat( 65 ) ) );
+        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A1." + "x".repeat( 257 ) ) );
+        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "A1." + "x".repeat( 256 ) ),
+                            "a discriminator as long as the longest node id must fit" );
+        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "A1.dotted.node.id:v2" ),
+                            "node id characters include the separator; the first one wins" );
         assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "A1.x" ) );
         assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( codec.initial( T0, "node-id" ) ) );
     }
