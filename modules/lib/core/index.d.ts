@@ -796,6 +796,11 @@ export interface Content<
     validationErrors?: ValidationError[];
     originProject?: string;
     childOrder?: string;
+    /**
+     * Opaque key carrying the content's place among manually ordered siblings.
+     * Compare it or hand it back as a reorder anchor - never parse it.
+     */
+    _orderKey?: string;
     _sort?: object[];
     page?: Type extends 'portal:fragment' ? never : _Component;
     x: XpMixin;

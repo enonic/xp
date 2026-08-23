@@ -673,24 +673,32 @@ export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
 export type NodePropertiesOnModify = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
+    _orderKey?: string;
     _parentPath?: never;
 };
 
 export type NodePropertiesOnUpdate = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
+    _orderKey?: string;
     _parentPath?: never;
 };
 
 export type NodePropertiesOnPatch = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
+    _orderKey?: string;
     _parentPath?: never;
 };
 
 export type NodePropertiesOnRead = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfig;
+    /**
+     * Opaque key carrying the node's place among manually ordered siblings. Assigned by the server on create;
+     * absent on nodes stored before order keys existed.
+     */
+    _orderKey?: string;
     _parentPath?: never;
 };
 

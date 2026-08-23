@@ -63,6 +63,7 @@ public final class ContentMapper
         {
             gen.value( "childOrder", value.getChildOrder().toString() );
         }
+        gen.value( "_orderKey", value.getOrderKey() );
         if ( sort != null && sort.getValues() != null )
         {
             gen.array( "_sort" );

@@ -18,6 +18,8 @@ public class NodePropertyConstants
 
     public static final String MANUAL_ORDER_VALUE = "_manualOrderValue";
 
+    public static final String ORDER_KEY = "_orderKey";
+
     public static final String TIMESTAMP = "_ts";
 
     public static final String PERMISSIONS = "_permissions";
