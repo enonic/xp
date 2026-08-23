@@ -136,8 +136,8 @@ class OrderKeyCodecTest
     @Test
     void between_equal_positions_lands_directly_after_the_anchors()
     {
-        final String keyA = "AB3.node-1";
-        final String keyB = "AB3.node-2";
+        final String keyA = "ab3.node-1";
+        final String keyB = "ab3.node-2";
         final String picked = codec.between( keyA, keyB, "node-3" );
         assertTrue( picked.compareTo( keyB ) > 0, "no key fits between equal positions; adjacency is the contract" );
         assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( picked ) );
@@ -169,19 +169,21 @@ class OrderKeyCodecTest
     @Test
     void validation_rejects_malformed_keys()
     {
-        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A0.x" ) );
-        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A" ) );
+        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "a0.x" ) );
+        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "a" ) );
         assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( ".x" ) );
-        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A!.x" ) );
-        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A." ) );
+        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "a!.x" ) );
+        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "a." ) );
         assertThrows( IllegalArgumentException.class,
-                      () -> OrderKeyCodec.requireValidKey( "A".repeat( 512 ) + "1.x" ) );
-        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A1." + "x".repeat( 257 ) ) );
-        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "A1." + "x".repeat( 256 ) ),
+                      () -> OrderKeyCodec.requireValidKey( "a".repeat( 512 ) + "1.x" ) );
+        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "a1." + "x".repeat( 257 ) ) );
+        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "a1." + "x".repeat( 256 ) ),
                             "a discriminator as long as the longest node id must fit" );
-        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "A1.dotted.node.id:v2" ),
+        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "a1.dotted.node.id:v2" ),
                             "node id characters include the separator; the first one wins" );
-        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "A1.x" ) );
+        assertThrows( IllegalArgumentException.class, () -> OrderKeyCodec.requireValidKey( "A1.x" ),
+                      "uppercase digits would sort differently case-folded and are not part of the alphabet" );
+        assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( "a1.x" ) );
         assertDoesNotThrow( () -> OrderKeyCodec.requireValidKey( codec.initial( T0, "node-id" ) ) );
     }
 
@@ -189,7 +191,7 @@ class OrderKeyCodecTest
     void instants_outside_the_encodable_range_are_rejected()
     {
         assertThrows( IllegalArgumentException.class, () -> codec.initial( Instant.ofEpochSecond( -1 ), "a" ) );
-        assertThrows( IllegalArgumentException.class, () -> codec.initial( Instant.parse( "4000-01-01T00:00:00Z" ), "a" ) );
+        assertThrows( IllegalArgumentException.class, () -> codec.initial( Instant.parse( "5000-01-01T00:00:00Z" ), "a" ) );
     }
 
     private static String positionOf( final String key )

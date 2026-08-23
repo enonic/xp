@@ -21,7 +21,12 @@ import java.util.random.RandomGenerator;
  */
 public final class OrderKeyCodec
 {
-    static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    /**
+     * Lowercase only: the search index sorts strings by a case-folded copy, so a case-sensitive alphabet would sort
+     * differently in the index than in this codec. Under these digits, folding is the identity and the two orders are
+     * one. Node ids, the discriminators, are lowercase by their own definition.
+     */
+    static final String ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     static final char SEPARATOR = '.';
 
@@ -29,20 +34,20 @@ public final class OrderKeyCodec
 
     static final int MAX_DISCRIMINATOR_LENGTH = 256;
 
-    private static final int RADIX = 62;
+    private static final int RADIX = 36;
 
     private static final BigInteger RADIX_BIG = BigInteger.valueOf( RADIX );
 
-    private static final int INSTANT_DIGITS = 6;
+    private static final int INSTANT_DIGITS = 7;
 
-    private static final int JITTER_DIGITS = 3;
+    private static final int JITTER_DIGITS = 4;
 
     /**
-     * 62^6 - 1. Instants up to this many epoch seconds (year 3769) fit the instant digits.
+     * 36^7 - 1. Instants up to this many epoch seconds (year 4453) fit the instant digits.
      */
-    private static final long MAX_SECONDS = 56_800_235_583L;
+    private static final long MAX_SECONDS = 78_364_164_095L;
 
-    private static final int JITTER_BOUND = RADIX * RADIX * RADIX;
+    private static final int JITTER_BOUND = RADIX * RADIX * RADIX * RADIX;
 
     /**
      * Steps and picks never work at a scale coarser than a birth position, whatever length canonical stripping left the

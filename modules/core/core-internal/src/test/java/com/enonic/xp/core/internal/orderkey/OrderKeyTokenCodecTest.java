@@ -20,44 +20,44 @@ class OrderKeyTokenCodecTest
     void golden_token_matches_independent_reference_implementation()
     {
         final OrderKeyTokenCodec reference = new OrderKeyTokenCodec( REFERENCE_SUBKEY );
-        assertEquals( "1A1b2C3.node-id~9222f4974cff8fae", reference.mint( "A1b2C3.node-id", "parent" ) );
+        assertEquals( "1a1b2c3.node-id~011349dec28a58b9", reference.mint( "a1b2c3.node-id", "parent" ) );
     }
 
     @Test
     void roundtrip()
     {
-        final String key = "A1b2C3.node-id";
+        final String key = "a1b2c3.node-id";
         assertEquals( key, codec.parse( codec.mint( key, "parent-id" ), "parent-id" ) );
     }
 
     @Test
     void tag_verification_is_case_insensitive()
     {
-        final String token = codec.mint( "A1b2C3.node-id", "parent-id" );
+        final String token = codec.mint( "a1b2c3.node-id", "parent-id" );
         final int tail = token.length() - 16;
         final String upper = token.substring( 0, tail ) + token.substring( tail ).toUpperCase();
-        assertEquals( "A1b2C3.node-id", codec.parse( upper, "parent-id" ) );
+        assertEquals( "a1b2c3.node-id", codec.parse( upper, "parent-id" ) );
     }
 
     @Test
     void rejects_wrong_scope()
     {
-        final String token = codec.mint( "A1b2C3.node-id", "parent-id" );
+        final String token = codec.mint( "a1b2c3.node-id", "parent-id" );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( token, "other-parent" ) );
     }
 
     @Test
     void rejects_tampered_key()
     {
-        final String token = codec.mint( "A1b2C3.node-id", "parent-id" );
-        final String tampered = token.replace( "A1b2C3", "B1b2C3" );
+        final String token = codec.mint( "a1b2c3.node-id", "parent-id" );
+        final String tampered = token.replace( "a1b2c3", "b1b2c3" );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( tampered, "parent-id" ) );
     }
 
     @Test
     void rejects_tampered_tag()
     {
-        final String token = codec.mint( "A1b2C3.node-id", "parent-id" );
+        final String token = codec.mint( "a1b2c3.node-id", "parent-id" );
         final char last = token.charAt( token.length() - 1 );
         final String tampered = token.substring( 0, token.length() - 1 ) + ( last == '0' ? '1' : '0' );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( tampered, "parent-id" ) );
@@ -69,10 +69,10 @@ class OrderKeyTokenCodecTest
         assertThrows( IllegalArgumentException.class, () -> codec.parse( null, "p" ) );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( "", "p" ) );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( "garbage", "p" ) );
-        final String token = codec.mint( "A1b2C3.node-id", "p" );
+        final String token = codec.mint( "a1b2c3.node-id", "p" );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( token.substring( 0, token.length() - 1 ), "p" ) );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( '2' + token.substring( 1 ), "p" ) );
-        assertThrows( IllegalArgumentException.class, () -> codec.parse( "1" + "A".repeat( 600 ) + "~0011223344556677", "p" ) );
+        assertThrows( IllegalArgumentException.class, () -> codec.parse( "1" + "a".repeat( 600 ) + "~0011223344556677", "p" ) );
     }
 
     @Test
@@ -80,7 +80,7 @@ class OrderKeyTokenCodecTest
     {
         final OrderKeyTokenCodec other = new OrderKeyTokenCodec(
             OrderKeyTokenCodec.deriveSubkey( "other-master".getBytes( StandardCharsets.UTF_8 ), "orderkey-token-v1" ) );
-        final String token = other.mint( "A1b2C3.node-id", "parent-id" );
+        final String token = other.mint( "a1b2c3.node-id", "parent-id" );
         assertThrows( IllegalArgumentException.class, () -> codec.parse( token, "parent-id" ) );
     }
 
@@ -99,7 +99,7 @@ class OrderKeyTokenCodecTest
     @Test
     void mint_refuses_invalid_keys()
     {
-        assertThrows( IllegalArgumentException.class, () -> codec.mint( "A0.x", "p" ) );
+        assertThrows( IllegalArgumentException.class, () -> codec.mint( "a0.x", "p" ) );
         assertThrows( IllegalArgumentException.class, () -> codec.mint( "no-separator", "p" ) );
     }
 }
