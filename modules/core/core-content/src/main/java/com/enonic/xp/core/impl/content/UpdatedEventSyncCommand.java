@@ -95,14 +95,16 @@ final class UpdatedEventSyncCommand
     }
 
     /**
-     * A placement decided in the inherited-from project travels as the raw order key of the node, the only form that
-     * needs no sibling context on either side. A keyless source - stored before order keys - dictates nothing.
+     * A placement decided in the inherited-from project travels as the order key, which both contents carry and which
+     * deliberately stays out of {@link #needToUpdate}: a placement change is not a content change. The write goes
+     * through the internal setter - reading keys is open, writing them is not. A keyless source - stored before order
+     * keys - dictates nothing.
      */
     private void syncOrderKey( final ContentToSync content )
     {
-        final String sourceOrderKey = content.getSourceCtx().callWith( () -> layersContentService.getOrderKey( content.getId() ) );
+        final String sourceOrderKey = content.getSourceContent().getOrderKey();
 
-        if ( sourceOrderKey != null && !Objects.equals( sourceOrderKey, layersContentService.getOrderKey( content.getId() ) ) )
+        if ( sourceOrderKey != null && !Objects.equals( sourceOrderKey, content.getTargetContent().getOrderKey() ) )
         {
             layersContentService.setOrderKey( content.getId(), sourceOrderKey );
         }

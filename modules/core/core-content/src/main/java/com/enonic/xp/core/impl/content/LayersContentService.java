@@ -154,18 +154,8 @@ public class LayersContentService
 
     public ImportContentResult importContent( final ImportContentParams params )
     {
-        return importContent( params, null );
-    }
-
-    /**
-     * Import that places the content at a caller-known raw order key - the internal form synchronization uses to give
-     * inherited content the placement it has in the project it comes from.
-     */
-    public ImportContentResult importContent( final ImportContentParams params, final String orderKey )
-    {
         return ImportContentCommand.create()
             .params( params )
-            .orderKey( orderKey )
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
@@ -252,15 +242,6 @@ public class LayersContentService
             .eventPublisher( this.eventPublisher )
             .build()
             .execute() );
-    }
-
-    /**
-     * The raw order key of the content's node. Order keys cross the public surface only wrapped; synchronization reads
-     * them raw here, in whatever project context it runs.
-     */
-    public String getOrderKey( final ContentId contentId )
-    {
-        return nodeService.getById( NodeId.from( contentId ) ).getOrderKey();
     }
 
     /**

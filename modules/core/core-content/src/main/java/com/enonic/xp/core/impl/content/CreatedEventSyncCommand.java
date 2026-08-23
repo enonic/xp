@@ -44,22 +44,19 @@ final class CreatedEventSyncCommand
     {
         try
         {
-            final String sourceOrderKey = content.getSourceCtx().callWith( () -> layersContentService.getOrderKey( content.getId() ) );
-
             content.getSourceCtx()
                 .runWith( () -> layersContentService.getByPath( content.getSourceContent().getParentPath() )
                     .map( Content::getId )
                     .ifPresent( parentId -> content.getTargetCtx().runWith( () -> {
                         if ( content.getSourceContent().getParentPath().isRoot() )
                         {
-                            layersContentService.importContent( createImportParams( content, ContentPath.ROOT ), sourceOrderKey );
+                            layersContentService.importContent( createImportParams( content, ContentPath.ROOT ) );
                         }
                         else
                         {
                             layersContentService.getById( parentId )
                                 .map( Content::getPath )
-                                .ifPresent(
-                                    path -> layersContentService.importContent( createImportParams( content, path ), sourceOrderKey ) );
+                                .ifPresent( path -> layersContentService.importContent( createImportParams( content, path ) ) );
                         }
                     } ) ) );
 

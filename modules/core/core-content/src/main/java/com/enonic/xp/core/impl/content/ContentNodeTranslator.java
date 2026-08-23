@@ -94,7 +94,8 @@ public class ContentNodeTranslator
         builder.id( contentId )
             .childOrder( node.getChildOrder() )
             .permissions( node.getPermissions() )
-            .manualOrderValue( node.getManualOrderValue() );
+            .manualOrderValue( node.getManualOrderValue() )
+            .orderKey( node.getOrderKey() );
 
         return builder.build();
     }

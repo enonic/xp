@@ -45,6 +45,9 @@ class OrderKeySyncTest
 
         assertEquals( orderKeyIn( projectContext, sourceChild.getId() ), orderKeyIn( layerContext, sourceChild.getId() ),
                       "an inherited content holds the key it holds in the project it comes from" );
+        assertEquals( orderKeyIn( layerContext, sourceChild.getId() ),
+                      layerContext.callWith( () -> layersContentService.getById( sourceChild.getId() ).orElseThrow().getOrderKey() ),
+                      "the content read surface shows the same key the node holds" );
     }
 
     @Test

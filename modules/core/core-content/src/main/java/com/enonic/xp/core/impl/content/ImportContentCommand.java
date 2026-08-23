@@ -19,13 +19,10 @@ final class ImportContentCommand
 {
     private final ImportContentParams params;
 
-    private final String orderKey;
-
     private ImportContentCommand( final Builder builder )
     {
         super( builder );
         this.params = builder.params;
-        this.orderKey = builder.orderKey;
     }
 
     static Builder create()
@@ -35,7 +32,7 @@ final class ImportContentCommand
 
     ImportContentResult execute()
     {
-        final Node importNode = ImportContentFactory.create().params( params ).orderKey( orderKey ).build().execute();
+        final Node importNode = ImportContentFactory.create().params( params ).build().execute();
 
         final ImportNodeParams importNodeParams = ImportNodeParams.create()
             .importNode( importNode )
@@ -72,8 +69,6 @@ final class ImportContentCommand
     {
         private ImportContentParams params;
 
-        private String orderKey;
-
         private Builder()
         {
         }
@@ -81,12 +76,6 @@ final class ImportContentCommand
         Builder params( final ImportContentParams params )
         {
             this.params = params;
-            return this;
-        }
-
-        Builder orderKey( final String orderKey )
-        {
-            this.orderKey = orderKey;
             return this;
         }
 
