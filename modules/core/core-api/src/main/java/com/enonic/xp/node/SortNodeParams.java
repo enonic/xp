@@ -49,6 +49,10 @@ public final class SortNodeParams
         return childOrder;
     }
 
+    /**
+     * @deprecated Under order keys, switching to manual order needs no seeding: the children already carry the keys that make the order. Scheduled for removal.
+     */
+    @Deprecated
     public ChildOrder getManualOrderSeed()
     {
         return manualOrderSeed;
@@ -118,6 +122,10 @@ public final class SortNodeParams
             return this;
         }
 
+        /**
+         * @deprecated Under order keys, switching to manual order needs no seeding. Scheduled for removal.
+         */
+        @Deprecated
         public Builder manualOrderSeed( final ChildOrder manualOrderSeed )
         {
             this.manualOrderSeed = manualOrderSeed;

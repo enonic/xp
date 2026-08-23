@@ -116,11 +116,19 @@ public final class CreateNodeParams
         return inheritPermissions;
     }
 
+    /**
+     * @deprecated A node is created with the order key of its creation instant; a placement value cannot be chosen at creation. Scheduled for removal.
+     */
+    @Deprecated
     public Long getManualOrderValue()
     {
         return manualOrderValue;
     }
 
+    /**
+     * @deprecated A node is created with the order key of its creation instant, which places it first. Scheduled for removal.
+     */
+    @Deprecated
     public InsertManualStrategy getInsertManualStrategy()
     {
         return insertManualStrategy;
@@ -257,12 +265,20 @@ public final class CreateNodeParams
             return this;
         }
 
+        /**
+         * @deprecated A node is created with the order key of its creation instant. Scheduled for removal.
+         */
+        @Deprecated
         public Builder insertManualStrategy( final InsertManualStrategy insertManualStrategy )
         {
             this.insertManualStrategy = insertManualStrategy;
             return this;
         }
 
+        /**
+         * @deprecated A node is created with the order key of its creation instant. Scheduled for removal.
+         */
+        @Deprecated
         public Builder manualOrderValue( final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;

@@ -14,6 +14,10 @@ public final class EditableNode
 
     public IndexConfigDocument indexConfigDocument;
 
+    /**
+     * @deprecated Manual order values are superseded by order keys and are not edited. Scheduled for removal.
+     */
+    @Deprecated
     public Long manualOrderValue;
 
     public ChildOrder childOrder;

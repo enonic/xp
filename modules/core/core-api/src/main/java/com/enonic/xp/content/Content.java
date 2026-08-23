@@ -304,6 +304,10 @@ public class Content
         return workflowInfo;
     }
 
+    /**
+     * @deprecated Manual order values are superseded by order keys. Scheduled for removal.
+     */
+    @Deprecated
     public Long getManualOrderValue()
     {
         return manualOrderValue;
@@ -660,6 +664,10 @@ public class Content
             return (BUILDER) this;
         }
 
+        /**
+         * @deprecated Manual order values are superseded by order keys. Scheduled for removal.
+         */
+        @Deprecated
         public BUILDER manualOrderValue( final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;

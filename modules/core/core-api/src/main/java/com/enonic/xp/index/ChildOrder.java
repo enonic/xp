@@ -42,6 +42,10 @@ public final class ChildOrder
         this.orderExpressions = OrderExpressions.from( builder.orderExpressions );
     }
 
+    /**
+     * @deprecated The manual order carried by long values is superseded by {@link #orderKeyOrder()}. Parents already sorted this way keep working; new manual ordering should not be built on it. Scheduled for removal.
+     */
+    @Deprecated
     public static ChildOrder manualOrder()
     {
         return ChildOrder.create().add( MANUAL_ORDER ).add( DEFAULT_ORDER ).build();

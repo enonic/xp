@@ -54,6 +54,10 @@ public class PatchableContent
 
     public PatchableField<WorkflowInfo> workflowInfo;
 
+    /**
+     * @deprecated Manual order values are superseded by order keys. Scheduled for removal.
+     */
+    @Deprecated
     public PatchableField<Long> manualOrderValue;
 
     public PatchableField<Set<ContentInheritType>> inherit;

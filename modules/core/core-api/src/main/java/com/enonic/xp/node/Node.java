@@ -132,6 +132,10 @@ public final class Node
         return childOrder;
     }
 
+    /**
+     * @deprecated Manual order values are superseded by order keys; read {@link #getOrderKey()}. Scheduled for removal.
+     */
+    @Deprecated
     public Long getManualOrderValue()
     {
         return manualOrderValue;
@@ -291,6 +295,10 @@ public final class Node
             return this;
         }
 
+        /**
+         * @deprecated Manual order values are superseded by order keys. Scheduled for removal.
+         */
+        @Deprecated
         public Builder manualOrderValue( final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;

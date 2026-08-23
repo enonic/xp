@@ -37,6 +37,10 @@ public final class ImportNodeParams
         return node;
     }
 
+    /**
+     * @deprecated An imported node keeps the order key it was exported with. Scheduled for removal.
+     */
+    @Deprecated
     public InsertManualStrategy getInsertManualStrategy()
     {
         return insertManualStrategy;
@@ -99,6 +103,10 @@ public final class ImportNodeParams
             return this;
         }
 
+        /**
+         * @deprecated An imported node keeps the order key it was exported with. Scheduled for removal.
+         */
+        @Deprecated
         public Builder insertManualStrategy( InsertManualStrategy insertManualStrategy )
         {
             this.insertManualStrategy = insertManualStrategy;
