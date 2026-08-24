@@ -9,10 +9,13 @@ public final class DeleteContentParams
 
     private final DeleteContentListener deleteContentListener;
 
+    private final PushContentListener unpublishListener;
+
     private DeleteContentParams( Builder builder )
     {
         contentPath = builder.contentPath;
         deleteContentListener = builder.deleteContentListener;
+        unpublishListener = builder.unpublishListener;
     }
 
     public static Builder create()
@@ -30,11 +33,18 @@ public final class DeleteContentParams
         return deleteContentListener;
     }
 
+    public PushContentListener getUnpublishListener()
+    {
+        return unpublishListener;
+    }
+
     public static final class Builder
     {
         private ContentPath contentPath;
 
         private DeleteContentListener deleteContentListener;
+
+        private PushContentListener unpublishListener;
 
         private Builder()
         {
@@ -49,6 +59,19 @@ public final class DeleteContentParams
         public Builder deleteContentListener( final DeleteContentListener deleteContentListener )
         {
             this.deleteContentListener = deleteContentListener;
+            return this;
+        }
+
+        /**
+         * Sets the listener of the unpublishing a delete does before it deletes anything: deleting a published content takes it offline
+         * first, and this listener hears that part of the work, where {@link #deleteContentListener(DeleteContentListener)} hears the
+         * deletion itself. Contents that were not published are passed over silently.
+         *
+         * @since 8.1.0
+         */
+        public Builder unpublishListener( final PushContentListener unpublishListener )
+        {
+            this.unpublishListener = unpublishListener;
             return this;
         }
 

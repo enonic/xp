@@ -1,6 +1,7 @@
 package com.enonic.xp.archive;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.PushContentListener;
 
 import static java.util.Objects.requireNonNull;
 
@@ -11,12 +12,15 @@ public final class ArchiveContentParams
 
     private final ArchiveContentListener archiveContentListener;
 
+    private final PushContentListener unpublishListener;
+
     private final String message;
 
     private ArchiveContentParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.archiveContentListener = builder.archiveContentListener;
+        this.unpublishListener = builder.unpublishListener;
         this.message = builder.message;
     }
 
@@ -35,6 +39,11 @@ public final class ArchiveContentParams
         return archiveContentListener;
     }
 
+    public PushContentListener getUnpublishListener()
+    {
+        return unpublishListener;
+    }
+
     public String getMessage()
     {
         return message;
@@ -45,6 +54,8 @@ public final class ArchiveContentParams
         private ContentId contentId;
 
         private ArchiveContentListener archiveContentListener;
+
+        private PushContentListener unpublishListener;
 
         private String message;
 
@@ -61,6 +72,19 @@ public final class ArchiveContentParams
         public Builder archiveContentListener( ArchiveContentListener archiveContentListener )
         {
             this.archiveContentListener = archiveContentListener;
+            return this;
+        }
+
+        /**
+         * Sets the listener of the unpublishing an archive does before it moves anything: archiving a content takes it offline, and this
+         * listener hears that part of the work, where {@link #archiveContentListener(ArchiveContentListener)} hears the archiving
+         * itself. Contents that were not published are passed over silently.
+         *
+         * @since 8.1.0
+         */
+        public Builder unpublishListener( final PushContentListener unpublishListener )
+        {
+            this.unpublishListener = unpublishListener;
             return this;
         }
 

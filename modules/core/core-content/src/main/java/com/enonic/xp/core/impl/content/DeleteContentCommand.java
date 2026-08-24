@@ -108,8 +108,10 @@ final class DeleteContentCommand
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
-            .params(
-                UnpublishContentParams.create().contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() ).build() )
+            .params( UnpublishContentParams.create()
+                         .contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() )
+                         .pushListener( params.getUnpublishListener() )
+                         .build() )
             .build()
             .execute()
             .getUnpublishedContents();

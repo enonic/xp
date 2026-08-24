@@ -1,5 +1,7 @@
 package com.enonic.xp.core.content;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -451,6 +453,24 @@ class ContentServiceImplTest_delete
         assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
             .extracting( result -> result.getStrings( "deletedContents" ), LIST)
             .containsExactly( childContent.getId().toString(), content.getId().toString() );
+    }
+
+    @Test
+    void delete_reports_the_unpublishing_it_does()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        createContent( parent.getPath(), "child" );
+
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( parent.getId() ) ).build() );
+
+        final AtomicInteger unpublished = new AtomicInteger();
+
+        this.contentService.delete( DeleteContentParams.create()
+                                        .contentPath( parent.getPath() )
+                                        .unpublishListener( unpublished::addAndGet )
+                                        .build() );
+
+        assertEquals( 2, unpublished.get() );
     }
 
     private static final class TestListener
