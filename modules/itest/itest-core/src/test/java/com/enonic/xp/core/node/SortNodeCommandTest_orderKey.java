@@ -129,6 +129,38 @@ class SortNodeCommandTest_orderKey
         assertThat( findByParent( parent.path() ).getNodeIds() ).containsExactly( bottom.id(), top.id() );
     }
 
+    @Test
+    void the_root_node_is_key_ordered_like_any_parent()
+    {
+        SortNodeCommand.create()
+            .params( SortNodeParams.create().nodeId( NodeId.ROOT ).childOrder( ChildOrder.orderKeyOrder() ).build() )
+            .indexServiceInternal( this.indexServiceInternal )
+            .storageService( this.storageService )
+            .searchService( this.searchService )
+            .build()
+            .execute();
+        refresh();
+
+        assertTrue( getNodeById( NodeId.ROOT ).getChildOrder().isOrderKeyOrder() );
+
+        final Node bottom = storeWithKeyMintedAt( NodePath.ROOT, "root-bottom", 100_000 );
+        final Node top = storeWithKeyMintedAt( NodePath.ROOT, "root-top", 200_000 );
+        // the real create path: the birth key of its creation instant places it first
+        final Node created = createNode( NodePath.ROOT, "root-created" );
+        refresh();
+
+        assertThat( created.getOrderKey() ).endsWith( "." + created.id() );
+        assertThat( findByParent( NodePath.ROOT ).getNodeIds() ).containsExactly( created.id(), top.id(), bottom.id() );
+
+        reorder( getNodeById( NodeId.ROOT ), ReorderChildNodeParams.create()
+            .nodeId( created.id() )
+            .afterOrderKey( top.getOrderKey() )
+            .beforeOrderKey( bottom.getOrderKey() )
+            .build() );
+
+        assertThat( findByParent( NodePath.ROOT ).getNodeIds() ).containsExactly( top.id(), created.id(), bottom.id() );
+    }
+
     private Node keyOrderedParent( final String name )
     {
         final Node parent = createNode( NodePath.ROOT, name );
