@@ -48,6 +48,10 @@ final class UpdatedEventSyncCommand
                         layersContentService.patch( updateParams.build() );
                     }
                 }
+                if ( isToSyncSort( content.getTargetContent() ) )
+                {
+                    syncOrderKey( content );
+                }
             }
         } );
     }
@@ -83,6 +87,27 @@ final class UpdatedEventSyncCommand
     private boolean isToSyncData( final Content targetContent )
     {
         return targetContent.getInherit().contains( ContentInheritType.CONTENT );
+    }
+
+    private boolean isToSyncSort( final Content targetContent )
+    {
+        return targetContent.getInherit().contains( ContentInheritType.SORT );
+    }
+
+    /**
+     * A placement decided in the inherited-from project travels as the order key, which both contents carry and which
+     * deliberately stays out of {@link #needToUpdate}: a placement change is not a content change. The write goes
+     * through the internal setter - reading keys is open, writing them is not. A keyless source - stored before order
+     * keys - dictates nothing.
+     */
+    private void syncOrderKey( final ContentToSync content )
+    {
+        final String sourceOrderKey = content.getSourceContent().getOrderKey();
+
+        if ( sourceOrderKey != null && !Objects.equals( sourceOrderKey, content.getTargetContent().getOrderKey() ) )
+        {
+            layersContentService.setOrderKey( content.getId(), sourceOrderKey );
+        }
     }
 
     private boolean isContentSyncable( final Content sourceContent, final Content targetContent )

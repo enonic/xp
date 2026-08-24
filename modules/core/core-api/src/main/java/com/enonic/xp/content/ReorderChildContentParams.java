@@ -11,10 +11,16 @@ public final class ReorderChildContentParams
 
     private final ContentId contentToMoveBefore;
 
+    private final String afterOrderKey;
+
+    private final String beforeOrderKey;
+
     private ReorderChildContentParams( final Builder builder )
     {
         contentToMove = builder.contentToMove;
         contentToMoveBefore = builder.contentToMoveBefore;
+        afterOrderKey = builder.afterOrderKey;
+        beforeOrderKey = builder.beforeOrderKey;
     }
 
     public ContentId getContentToMove()
@@ -27,6 +33,23 @@ public final class ReorderChildContentParams
         return contentToMoveBefore;
     }
 
+    /**
+     * The order key of the sibling shown directly above the drop point - the moved content lands after it. With
+     * {@link #getBeforeOrderKey()} also set, it lands between the two. Neither set means the top of the list.
+     */
+    public String getAfterOrderKey()
+    {
+        return afterOrderKey;
+    }
+
+    /**
+     * The order key of the sibling shown directly below the drop point - the moved content lands before it.
+     */
+    public String getBeforeOrderKey()
+    {
+        return beforeOrderKey;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -37,6 +60,10 @@ public final class ReorderChildContentParams
         private ContentId contentToMove;
 
         private ContentId contentToMoveBefore;
+
+        private String afterOrderKey;
+
+        private String beforeOrderKey;
 
         private Builder()
         {
@@ -51,6 +78,18 @@ public final class ReorderChildContentParams
         public Builder contentToMoveBefore( ContentId contentToMoveBefore )
         {
             this.contentToMoveBefore = contentToMoveBefore;
+            return this;
+        }
+
+        public Builder afterOrderKey( final String afterOrderKey )
+        {
+            this.afterOrderKey = afterOrderKey;
+            return this;
+        }
+
+        public Builder beforeOrderKey( final String beforeOrderKey )
+        {
+            this.beforeOrderKey = beforeOrderKey;
             return this;
         }
 

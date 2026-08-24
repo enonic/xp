@@ -17,7 +17,13 @@ public final class NodeIndexPath
 
     public static final IndexPath ALL_TEXT = IndexPath.from( "_allText" );
 
+    /**
+     * @deprecated Manual order values are superseded by order keys; sort on {@link #ORDER_KEY}. Scheduled for removal.
+     */
+    @Deprecated
     public static final IndexPath MANUAL_ORDER_VALUE = IndexPath.from( "_manualOrderValue" );
+
+    public static final IndexPath ORDER_KEY = IndexPath.from( "_orderKey" );
 
     public static final IndexPath PATH = IndexPath.from( "_path" );
 

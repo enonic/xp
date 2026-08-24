@@ -35,7 +35,7 @@ public final class PatchNodeHandler
     public Object execute()
     {
         final Node node = getExistingNode();
-        final NodeEditorInput editorInput = NodeHandlerUtils.prepareEditorInput( node, this.editor );
+        final NodeEditorInput editorInput = NodeHandlerUtils.prepareEditorInput( node, this.editor, true );
 
         final PatchNodeParams params = PatchNodeParams.create()
             .id( getNodeId( this.nodeKey ) )

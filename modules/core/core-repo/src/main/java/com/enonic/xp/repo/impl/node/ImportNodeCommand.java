@@ -117,6 +117,7 @@ public class ImportNodeCommand
             node = CreateNodeCommand.create( this )
                 .params( createNodeParams )
                 .binaryService( binaryService )
+                .presetOrderKey( this.importNode.getOrderKey() )
                 .build()
                 .execute();
         }

@@ -1,9 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
+import com.enonic.xp.core.internal.orderkey.OrderKeyCodec;
 import com.enonic.xp.data.Property;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.data.ValueTypes;
@@ -41,6 +44,8 @@ public final class CreateNodeCommand
 
     private final Node knownParentNode;
 
+    private final String presetOrderKey;
+
     private CreateNodeCommand( final Builder builder )
     {
         super( builder );
@@ -48,6 +53,7 @@ public final class CreateNodeCommand
         this.binaryService = builder.binaryService;
         this.skipVerification = builder.skipVerification;
         this.knownParentNode = builder.knownParentNode;
+        this.presetOrderKey = builder.presetOrderKey;
     }
 
     public static Builder create()
@@ -76,18 +82,25 @@ public final class CreateNodeCommand
 
         final AttachedBinaries attachedBinaries = storeAndAttachBinaries();
 
+        final NodeId nodeId = this.params.getNodeId() != null ? params.getNodeId() : new NodeId();
+        final Instant timestamp = Millis.now();
+        final String orderKey = presetOrderKey != null
+            ? OrderKeyCodec.requireValidKey( presetOrderKey )
+            : new OrderKeyCodec( ThreadLocalRandom.current() ).initial( timestamp, nodeId.toString() );
+
         final Node.Builder nodeBuilder = Node.create()
-            .id( this.params.getNodeId() != null ? params.getNodeId() : new NodeId() )
+            .id( nodeId )
             .parentPath( params.getParent() )
             .name( params.getName() )
             .data( params.getData() )
             .indexConfigDocument( params.getIndexConfigDocument() )
             .childOrder( params.getChildOrder() != null ? params.getChildOrder() : ChildOrder.defaultOrder() )
             .manualOrderValue( manualOrderValue )
+            .orderKey( orderKey )
             .permissions( permissions )
             .nodeType( params.getNodeType() != null ? params.getNodeType() : NodeType.DEFAULT_NODE_COLLECTION )
             .attachedBinaries( attachedBinaries )
-            .timestamp( Millis.now() );
+            .timestamp( timestamp );
 
         final Node builtNode = nodeBuilder.build();
         final Attributes resolvedAttributes =
@@ -203,6 +216,8 @@ public final class CreateNodeCommand
 
         private Node knownParentNode;
 
+        private String presetOrderKey;
+
         private Builder()
         {
             super();
@@ -237,6 +252,17 @@ public final class CreateNodeCommand
         public Builder knownParentNode( final Node knownParentNode )
         {
             this.knownParentNode = knownParentNode;
+            return this;
+        }
+
+        /**
+         * Order key carried over from an imported or duplicated node, so a restore keeps the order the dump had. A key
+         * cannot be chosen through {@link CreateNodeParams}: a node is created with the key of its creation instant,
+         * and only the internal callers that replicate existing nodes preset one.
+         */
+        Builder presetOrderKey( final String presetOrderKey )
+        {
+            this.presetOrderKey = presetOrderKey;
             return this;
         }
 

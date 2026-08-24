@@ -1367,6 +1367,63 @@ export function move<Data = Record<string, unknown>, Type extends string = strin
     return __.toNativeObject(bean.execute<Data, Type>());
 }
 
+export interface ReorderContentParams {
+    contentId: string;
+    afterOrderKey?: string;
+    beforeOrderKey?: string;
+}
+
+export interface SortContentParams {
+    key: string;
+    childOrder?: string;
+    reorder?: ReorderContentParams[];
+}
+
+export interface SortContentResult<Data = Record<string, unknown>, Type extends string = string> {
+    content: Content<Data, Type>;
+    movedChildren: string[];
+}
+
+interface SortContentHandler {
+    setKey(value: string): void;
+
+    setChildOrder(value: string | null): void;
+
+    setReorder(value: ScriptValue | null): void;
+
+    execute<Data, Type extends string>(): SortContentResult<Data, Type>;
+}
+
+/**
+ * Sets the ordering of a content's children, and/or moves individual children to new positions among their siblings.
+ *
+ * Repositioning children requires manual ordering, expressed by the `childOrder` value `'manual'`. Each `reorder` entry
+ * places one child relative to its siblings using order keys - the `_orderKey` values read off the sibling contents:
+ * `afterOrderKey` is the sibling directly above the drop point, `beforeOrderKey` the one directly below. Both set means
+ * between the two, only `afterOrderKey` means below that sibling, only `beforeOrderKey` means above it, and neither
+ * means the top of the list. When `reorder` is given without `childOrder`, the children are switched to manual ordering.
+ *
+ * @example-ref examples/content/sort.js
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Path or id of the content whose children are sorted.
+ * @param {string} [params.childOrder] New ordering of the children: `'manual'` for manual ordering, or an ordering expression, e.g. `'displayName ASC'`. Required unless `reorder` is given.
+ * @param {object[]} [params.reorder] Children to reposition, in order. Each entry has `contentId` and optional `afterOrderKey`/`beforeOrderKey` anchors.
+ *
+ * @returns {object} `content` is the sorted content, `movedChildren` lists the ids of the repositioned children.
+ */
+export function sort<Data = Record<string, unknown>, Type extends string = string>(params: SortContentParams): SortContentResult<Data, Type> {
+    const key = checkRequired(params, 'key');
+
+    const bean: SortContentHandler = __.newBean<SortContentHandler>('com.enonic.xp.lib.content.SortContentHandler');
+
+    bean.setKey(key);
+    bean.setChildOrder(__.nullOrValue(params.childOrder));
+    bean.setReorder(__.toScriptValue(params.reorder));
+
+    return __.toNativeObject(bean.execute<Data, Type>());
+}
+
 export interface ArchiveContentParams {
     content: string;
 }

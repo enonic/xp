@@ -40,6 +40,7 @@ public class NodeMapper
         gen.value( NodePropertyConstants.NODE_TYPE, node.getNodeType().getName() );
         gen.value( NodePropertyConstants.NODE_VERSION_ID, node.getNodeVersionId() );
         gen.value( NodePropertyConstants.MANUAL_ORDER_VALUE, node.getManualOrderValue() );
+        gen.value( NodePropertyConstants.ORDER_KEY, node.getOrderKey() );
         gen.value( NodePropertyConstants.TIMESTAMP, node.getTimestamp() );
         serializeData( gen, node.data() );
     }

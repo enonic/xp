@@ -30,6 +30,9 @@ public final class NodeVersionDataJson
     @JsonProperty("manualOrderValue")
     public Long manualOrderValue;
 
+    @JsonProperty("orderKey")
+    public String orderKey;
+
     @JsonProperty("nodeType")
     public String nodeType;
 
@@ -48,6 +51,7 @@ public final class NodeVersionDataJson
             .data( PropertyTreeJson.fromJson( json.data ) )
             .childOrder( ChildOrder.from( json.childOrder ) )
             .manualOrderValue( json.manualOrderValue )
+            .orderKey( json.orderKey )
             .nodeType( NodeType.from( json.nodeType ) )
             .attachedBinaries( json.attachedBinaries.stream().map( AttachedBinaryJson::fromJson ).collect( AttachedBinaries.collector() ) )
             .build();
@@ -60,6 +64,7 @@ public final class NodeVersionDataJson
         json.data = PropertyTreeJson.toJson( nodeVersion.data() );
         json.childOrder = nodeVersion.childOrder().toString();
         json.manualOrderValue = nodeVersion.manualOrderValue();
+        json.orderKey = nodeVersion.orderKey();
         json.nodeType = nodeVersion.nodeType().getName();
         json.attachedBinaries = toNodeAttachedBinaryJsonList( nodeVersion.attachedBinaries() );
         return json;

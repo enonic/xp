@@ -57,6 +57,7 @@ public class ImportContentFactory
             .data( nodeData )
             .childOrder( params.getContent().getChildOrder() )
             .manualOrderValue( params.getContent().getManualOrderValue() )
+            .orderKey( params.getContent().getOrderKey() )
             .permissions( params.getContent().getPermissions() )
             .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
             .build();

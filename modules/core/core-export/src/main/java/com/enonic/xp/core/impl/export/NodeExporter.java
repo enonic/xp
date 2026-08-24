@@ -41,6 +41,10 @@ public class NodeExporter
         Comparator.comparing( OrderedChild::manualOrderValue, Comparator.nullsLast( Comparator.reverseOrder() ) )
             .thenComparing( OrderedChild::timestamp, Comparator.nullsLast( Comparator.reverseOrder() ) );
 
+    private static final Comparator<OrderedChild> ORDER_KEY_ORDER =
+        Comparator.comparing( OrderedChild::orderKey, Comparator.nullsLast( Comparator.naturalOrder() ) )
+            .thenComparing( OrderedChild::timestamp, Comparator.nullsLast( Comparator.reverseOrder() ) );
+
     private final NodePath sourceNodePath;
 
     private final NodeService nodeService;
@@ -60,6 +64,8 @@ public class NodeExporter
     private final Set<NodePath> manualOrderParents = new HashSet<>();
 
     private final Set<NodePath> unorderedParents = new HashSet<>();
+
+    private final Set<NodePath> orderKeyParents = new HashSet<>();
 
     private static final Logger LOG = LoggerFactory.getLogger( NodeExporter.class );
 
@@ -209,6 +215,10 @@ public class NodeExporter
         {
             manualOrderParents.add( node.path() );
         }
+        else if ( node.getChildOrder() != null && node.getChildOrder().isOrderKeyOrder() )
+        {
+            orderKeyParents.add( node.path() );
+        }
         else
         {
             unorderedParents.add( node.path() );
@@ -219,13 +229,20 @@ public class NodeExporter
         if ( !node.path().equals( sourceNodePath ) && !unorderedParents.contains( parentPath ) )
         {
             childrenByParent.computeIfAbsent( parentPath, key -> new ArrayList<>() )
-                .add( new OrderedChild( node.name().toString(), node.getManualOrderValue(), node.getTimestamp() ) );
+                .add( new OrderedChild( node.name().toString(), node.getManualOrderValue(), node.getOrderKey(),
+                                        node.getTimestamp() ) );
         }
     }
 
     private void writeNodeOrderLists()
     {
-        for ( final NodePath parentPath : manualOrderParents )
+        writeNodeOrderLists( manualOrderParents, MANUAL_ORDER );
+        writeNodeOrderLists( orderKeyParents, ORDER_KEY_ORDER );
+    }
+
+    private void writeNodeOrderLists( final Set<NodePath> parents, final Comparator<OrderedChild> order )
+    {
+        for ( final NodePath parentPath : parents )
         {
             final List<OrderedChild> children = childrenByParent.get( parentPath );
 
@@ -236,7 +253,7 @@ public class NodeExporter
 
             try
             {
-                children.sort( MANUAL_ORDER );
+                children.sort( order );
 
                 final StringBuilder builder = new StringBuilder();
                 children.forEach( child -> builder.append( child.name() ).append( LINE_SEPARATOR ) );
@@ -253,7 +270,7 @@ public class NodeExporter
         }
     }
 
-    private record OrderedChild(String name, Long manualOrderValue, Instant timestamp)
+    private record OrderedChild(String name, Long manualOrderValue, String orderKey, Instant timestamp)
     {
     }
 

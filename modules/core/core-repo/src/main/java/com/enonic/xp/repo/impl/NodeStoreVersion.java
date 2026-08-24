@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
 
 public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, IndexConfigDocument indexConfigDocument,
-                               ChildOrder childOrder, Long manualOrderValue, AccessControlList permissions,
+                               ChildOrder childOrder, Long manualOrderValue, String orderKey, AccessControlList permissions,
                                AttachedBinaries attachedBinaries)
 {
     public NodeStoreVersion
@@ -33,6 +33,7 @@ public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, 
             .indexConfigDocument( node.getIndexConfigDocument() )
             .childOrder( node.getChildOrder() )
             .manualOrderValue( node.getManualOrderValue() )
+            .orderKey( node.getOrderKey() )
             .permissions( node.getPermissions() )
             .attachedBinaries( node.getAttachedBinaries() )
             .build();
@@ -62,6 +63,8 @@ public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, 
 
         private Long manualOrderValue;
 
+        private String orderKey;
+
         private AccessControlList permissions;
 
         private AttachedBinaries attachedBinaries;
@@ -78,6 +81,7 @@ public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, 
             this.indexConfigDocument = nodeVersion.indexConfigDocument;
             this.childOrder = nodeVersion.childOrder;
             this.manualOrderValue = nodeVersion.manualOrderValue;
+            this.orderKey = nodeVersion.orderKey;
             this.permissions = nodeVersion.permissions;
             this.attachedBinaries = nodeVersion.attachedBinaries;
         }
@@ -118,6 +122,12 @@ public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, 
             return this;
         }
 
+        public Builder orderKey( String orderKey )
+        {
+            this.orderKey = orderKey;
+            return this;
+        }
+
         public Builder permissions( AccessControlList permissions )
         {
             this.permissions = permissions;
@@ -133,7 +143,7 @@ public record NodeStoreVersion(NodeId id, NodeType nodeType, PropertyTree data, 
         public NodeStoreVersion build()
         {
             return new NodeStoreVersion( this.id, this.nodeType, this.data, this.indexConfigDocument, this.childOrder,
-                                         this.manualOrderValue, this.permissions, this.attachedBinaries );
+                                         this.manualOrderValue, this.orderKey, this.permissions, this.attachedBinaries );
         }
     }
 }

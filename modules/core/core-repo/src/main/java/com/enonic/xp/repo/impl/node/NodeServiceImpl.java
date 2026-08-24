@@ -1126,7 +1126,11 @@ public class NodeServiceImpl
         return PatchNodeParams.create()
             .id( params.getId() )
             .path( params.getPath() )
-            .editor( params.getEditor() )
+            .editor( toBeEdited -> {
+                params.getEditor().edit( toBeEdited );
+                // update edits content, never placement: only node patch may write the order key
+                toBeEdited.orderKey = toBeEdited.source.getOrderKey();
+            } )
             .setBinaryAttachments( params.getBinaryAttachments() )
             .versionAttributesResolver( params.getVersionAttributesResolver() )
             .refresh( params.getRefresh() )

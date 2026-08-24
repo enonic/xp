@@ -47,7 +47,7 @@ final class SortedEventSyncCommand
 
                     layersContentService.sort( sortParams );
                 }
-                if ( sourceContent.getChildOrder().isManualOrder() )
+                if ( sourceContent.getChildOrder().isManualOrder() || sourceContent.getChildOrder().isOrderKeyOrder() )
                 {
                     layersContentService.refresh( RefreshMode.ALL );
 

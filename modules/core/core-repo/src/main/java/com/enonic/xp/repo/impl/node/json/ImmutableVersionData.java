@@ -57,6 +57,7 @@ public final class ImmutableVersionData
                                           @JsonProperty("data") @JsonDeserialize(contentUsing = ImmutablePropertyArrayDeserializer.class) final List<ImmutableProperty> data,
                                           @JsonProperty("childOrder") @JsonDeserialize(using = ChildOrderDeserializer.class) final ChildOrder childOrder,
                                           @JsonProperty("manualOrderValue") final Long manualOrderValue,
+                                          @JsonProperty("orderKey") final String orderKey,
                                           @JsonProperty("attachedBinaries") @JsonDeserialize(using = AttachedBinariesDeserializer.class) final AttachedBinaries attachedBinaries )
         {
         }

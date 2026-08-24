@@ -35,6 +35,10 @@ public final class SortContentParams
         return childOrder;
     }
 
+    /**
+     * @deprecated Under order keys, switching to manual order needs no seeding. Scheduled for removal.
+     */
+    @Deprecated
     public ChildOrder getManualOrderSeed()
     {
         return manualOrderSeed;
@@ -76,6 +80,10 @@ public final class SortContentParams
             return this;
         }
 
+        /**
+         * @deprecated Under order keys, switching to manual order needs no seeding. Scheduled for removal.
+         */
+        @Deprecated
         public Builder manualOrderSeed( final ChildOrder manualOrderSeed )
         {
             this.manualOrderSeed = manualOrderSeed;

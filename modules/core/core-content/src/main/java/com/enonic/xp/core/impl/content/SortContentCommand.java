@@ -55,6 +55,8 @@ class SortContentCommand
                                                   .moveBefore( param.getContentToMoveBefore() == null
                                                                    ? null
                                                                    : NodeId.from( param.getContentToMoveBefore() ) )
+                                                  .afterOrderKey( param.getAfterOrderKey() )
+                                                  .beforeOrderKey( param.getBeforeOrderKey() )
                                                   .build() );
             }
 

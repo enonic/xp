@@ -29,7 +29,7 @@ public class UpdateNodeHandler
     public Object execute()
     {
         final Node node = getExistingNode();
-        final NodeEditorInput editorInput = NodeHandlerUtils.prepareEditorInput( node, this.editor );
+        final NodeEditorInput editorInput = NodeHandlerUtils.prepareEditorInput( node, this.editor, false );
 
         final UpdateNodeParams updateNodeParams = UpdateNodeParams.create()
             .id( node.id() ).editor( editorInput.editor() ).setBinaryAttachments( editorInput.binaryAttachments() )

@@ -45,7 +45,9 @@ import com.enonic.xp.node.EnumerateNodesParams;
 import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -240,6 +242,18 @@ public class LayersContentService
             .eventPublisher( this.eventPublisher )
             .build()
             .execute() );
+    }
+
+    /**
+     * Writes the raw order key of the content's node, the way synchronization replicates a placement decided in the
+     * project it inherits from. A new version carries it, as a version carries any placement.
+     */
+    public void setOrderKey( final ContentId contentId, final String orderKey )
+    {
+        nodeService.patch( PatchNodeParams.create()
+                               .id( NodeId.from( contentId ) )
+                               .editor( toBeEdited -> toBeEdited.orderKey = orderKey )
+                               .build() );
     }
 
     public Optional<Content> getById( final ContentId contentId )

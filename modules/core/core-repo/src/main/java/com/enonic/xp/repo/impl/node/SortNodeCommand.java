@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
+import com.enonic.xp.core.internal.orderkey.OrderKeyCodec;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.Attributes;
@@ -63,7 +65,11 @@ public class SortNodeCommand
 
         final SortNodeResult.Builder result = SortNodeResult.create();
 
-        if ( params.getChildOrder().isManualOrder() )
+        if ( params.getChildOrder().isOrderKeyOrder() )
+        {
+            reorderByOrderKeys( node.path(), params.getReorderChildNodes(), result );
+        }
+        else if ( params.getChildOrder().isManualOrder() )
         {
             if ( !node.getChildOrder().isManualOrder() )
             {
@@ -100,6 +106,64 @@ public class SortNodeCommand
     private void checkContextUserPermissionOrAdmin( final Node parentNode )
     {
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
+    }
+
+    /**
+     * Places each named child at the position its anchors describe: after one key, before another, between the two, or
+     * - with no anchors - first, which a fresh birth key is. The anchors are the keys the caller read off the siblings
+     * around the drop point; nothing is read from the sibling set here, and the stored position is minted by the
+     * server, jittered and discriminated, whatever the anchors were.
+     */
+    private void reorderByOrderKeys( final NodePath parentPath, final List<ReorderChildNodeParams> reorderChildNodes,
+                                     final SortNodeResult.Builder result )
+    {
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+        final OrderKeyCodec codec = new OrderKeyCodec( ThreadLocalRandom.current() );
+
+        for ( final ReorderChildNodeParams reorderChildNodeParams : reorderChildNodes )
+        {
+            final Node node = doGetById( reorderChildNodeParams.getNodeId() );
+            if ( node == null || !parentPath.equals( node.parentPath() ) )
+            {
+                LOG.debug( "Node [{}] to reorder is not a child of [{}]", reorderChildNodeParams.getNodeId(), parentPath );
+                continue;
+            }
+
+            final String after = reorderChildNodeParams.getAfterOrderKey();
+            final String before = reorderChildNodeParams.getBeforeOrderKey();
+            final String discriminator = node.id().toString();
+
+            final String orderKey;
+            if ( after != null && before != null )
+            {
+                orderKey = codec.between( after, before, discriminator );
+            }
+            else if ( after != null )
+            {
+                orderKey = codec.after( after, discriminator );
+            }
+            else if ( before != null )
+            {
+                orderKey = codec.before( before, discriminator );
+            }
+            else
+            {
+                orderKey = codec.initial( Millis.now(), discriminator );
+            }
+
+            final PropertyTree processedChildData = params.getChildProcessor().process( node.data(), node.path() );
+            final Node updatedNode =
+                Node.create( node ).data( processedChildData ).timestamp( Millis.now() ).orderKey( orderKey ).build();
+            final Attributes originalAttributes =
+                this.nodeStorageService.getVersion( node.getNodeVersionId(), internalContext ).getAttributes();
+            final Attributes childResolvedAttributes =
+                resolveVersionAttributes( params.getVersionAttributesResolver(), node, updatedNode, ContextAccessor.current().getBranch(),
+                                          originalAttributes );
+            final Node storedNode =
+                this.nodeStorageService.store( StoreNodeParams.newVersion( updatedNode, childResolvedAttributes ), internalContext ).node();
+
+            result.addReorderedNode( storedNode );
+        }
     }
 
     private void orderChildNodes( final NodePath parentNodePath, ChildOrder baseOrder, final List<ReorderChildNodeParams> reorderChildNodes,

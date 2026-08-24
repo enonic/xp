@@ -12,6 +12,7 @@ import static com.enonic.xp.lib.node.NodePropertyConstants.CHILD_ORDER;
 import static com.enonic.xp.lib.node.NodePropertyConstants.INDEX_CONFIG;
 import static com.enonic.xp.lib.node.NodePropertyConstants.MANUAL_ORDER_VALUE;
 import static com.enonic.xp.lib.node.NodePropertyConstants.NODE_TYPE;
+import static com.enonic.xp.lib.node.NodePropertyConstants.ORDER_KEY;
 
 class UpdateNodeExecutor
 {
@@ -19,10 +20,13 @@ class UpdateNodeExecutor
 
     private final PropertyTree propertyTree;
 
+    private final boolean orderKeyEditable;
+
     private UpdateNodeExecutor( final Builder builder )
     {
         editableNode = builder.editableNode;
         propertyTree = builder.propertyTree;
+        orderKeyEditable = builder.orderKeyEditable;
     }
 
     public static Builder create()
@@ -52,6 +56,11 @@ class UpdateNodeExecutor
         if ( exists( propertyTree, MANUAL_ORDER_VALUE, ValueTypes.LONG ) )
         {
             editableNode.manualOrderValue = propertyTree.getLong( MANUAL_ORDER_VALUE );
+        }
+
+        if ( orderKeyEditable && exists( propertyTree, ORDER_KEY, ValueTypes.STRING ) )
+        {
+            editableNode.orderKey = propertyTree.getString( ORDER_KEY );
         }
 
         if ( exists( propertyTree, NODE_TYPE, ValueTypes.STRING ) )
@@ -95,6 +104,8 @@ class UpdateNodeExecutor
 
         private PropertyTree propertyTree;
 
+        private boolean orderKeyEditable;
+
         private Builder()
         {
         }
@@ -108,6 +119,12 @@ class UpdateNodeExecutor
         public Builder propertyTree( final PropertyTree val )
         {
             propertyTree = val;
+            return this;
+        }
+
+        public Builder orderKeyEditable( final boolean val )
+        {
+            orderKeyEditable = val;
             return this;
         }
 

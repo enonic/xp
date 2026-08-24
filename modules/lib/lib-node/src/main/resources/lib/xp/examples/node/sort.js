@@ -89,3 +89,23 @@ var expected = {
 
 assert.assertJsonEquals(expected, result);
 
+// The reorder anchors are the _orderKey values read off the sibling nodes.
+var above = {_orderKey: '3ala4x8dnbc.above-sibling-id'};
+var below = {_orderKey: '3ala4xa1kfj.below-sibling-id'};
+
+// BEGIN
+// Switch children to manual ordering and drop one child between two of its
+// siblings: 'afterOrderKey' is the '_orderKey' of the sibling directly above
+// the drop point, 'beforeOrderKey' of the one below it.
+var reordered = repo.sort({
+    key: 'nodeid',
+    childOrder: 'manual',
+    reorder: [{
+        nodeId: 'child-node-id',
+        afterOrderKey: above._orderKey,
+        beforeOrderKey: below._orderKey
+    }]
+});
+// END
+
+assert.assertEquals('nodeid', reordered.node._id);

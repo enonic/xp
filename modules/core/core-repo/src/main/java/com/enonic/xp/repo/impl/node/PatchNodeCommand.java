@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.core.internal.orderkey.OrderKeyCodec;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.Attributes;
@@ -158,6 +159,11 @@ public final class PatchNodeCommand
                 .resolve();
 
             final Node editedNode = editableNode.build();
+
+            if ( editedNode.getOrderKey() != null && !editedNode.getOrderKey().equals( originalNode.getOrderKey() ) )
+            {
+                OrderKeyCodec.requireValidKey( editedNode.getOrderKey() );
+            }
 
             if ( editedNode.equals( originalNode ) && updatedBinaries.equals( originalNode.getAttachedBinaries() ) )
             {

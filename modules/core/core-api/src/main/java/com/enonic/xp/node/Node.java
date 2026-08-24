@@ -43,6 +43,8 @@ public final class Node
 
     private final Long manualOrderValue;
 
+    private final String orderKey;
+
     private final AccessControlList permissions;
 
     private final AttachedBinaries attachedBinaries;
@@ -57,6 +59,7 @@ public final class Node
         this.data = builder.data;
         this.childOrder = builder.childOrder;
         this.manualOrderValue = builder.manualOrderValue;
+        this.orderKey = builder.orderKey;
         this.permissions = builder.permissions;
         this.attachedBinaries = builder.attachedBinaries;
         this.timestamp = Millis.from( builder.timestamp );
@@ -129,9 +132,18 @@ public final class Node
         return childOrder;
     }
 
+    /**
+     * @deprecated Manual order values are superseded by order keys; read {@link #getOrderKey()}. Scheduled for removal.
+     */
+    @Deprecated
     public Long getManualOrderValue()
     {
         return manualOrderValue;
+    }
+
+    public String getOrderKey()
+    {
+        return orderKey;
     }
 
     public AccessControlList getPermissions()
@@ -198,6 +210,8 @@ public final class Node
 
         private Long manualOrderValue;
 
+        private String orderKey;
+
         private AccessControlList permissions = AccessControlList.empty();
 
         private NodeType nodeType = NodeType.DEFAULT_NODE_COLLECTION;
@@ -226,6 +240,7 @@ public final class Node
             this.indexConfigDocument = node.indexConfigDocument;
             this.childOrder = node.childOrder;
             this.manualOrderValue = node.manualOrderValue;
+            this.orderKey = node.orderKey;
             this.permissions = node.permissions;
             this.attachedBinaries = node.attachedBinaries;
             this.timestamp = node.timestamp;
@@ -280,9 +295,19 @@ public final class Node
             return this;
         }
 
+        /**
+         * @deprecated Manual order values are superseded by order keys. Scheduled for removal.
+         */
+        @Deprecated
         public Builder manualOrderValue( final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;
+            return this;
+        }
+
+        public Builder orderKey( final String value )
+        {
+            this.orderKey = value;
             return this;
         }
 
@@ -349,6 +374,7 @@ public final class Node
 
         return Objects.equals( id, node.id ) && Objects.equals( name, node.name ) && Objects.equals( nodeType, node.nodeType ) &&
             Objects.equals( parentPath, node.parentPath ) && Objects.equals( manualOrderValue, node.manualOrderValue ) &&
+            Objects.equals( orderKey, node.orderKey ) &&
             Objects.equals( childOrder, node.childOrder ) && Objects.equals( permissions, node.permissions ) &&
             Objects.equals( data, node.data ) && Objects.equals( attachedBinaries, node.attachedBinaries ) &&
             Objects.equals( nodeVersionId, node.nodeVersionId ) && Objects.equals( indexConfigDocument, node.indexConfigDocument );
@@ -357,7 +383,7 @@ public final class Node
     @Override
     public int hashCode()
     {
-        return Objects.hash( id, name, parentPath, nodeType, manualOrderValue, childOrder, permissions, data, indexConfigDocument,
-                             attachedBinaries, nodeVersionId );
+        return Objects.hash( id, name, parentPath, nodeType, manualOrderValue, orderKey, childOrder, permissions, data,
+                             indexConfigDocument, attachedBinaries, nodeVersionId );
     }
 }

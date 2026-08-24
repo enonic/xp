@@ -79,6 +79,8 @@ public class Content
 
     private final Long manualOrderValue;
 
+    private final String orderKey;
+
     private final ContentPath originalParentPath;
 
     private final ContentName originalName;
@@ -113,6 +115,7 @@ public class Content
         this.processedReferences = builder.processedReferences.build();
         this.workflowInfo = requireNonNullElse( builder.workflowInfo, WorkflowInfo.ready() );
         this.manualOrderValue = builder.manualOrderValue;
+        this.orderKey = builder.orderKey;
         this.originalName = builder.originalName;
         this.originalParentPath = builder.originalParentPath;
         this.archivedTime = Millis.from( builder.archivedTime );
@@ -304,9 +307,23 @@ public class Content
         return workflowInfo;
     }
 
+    /**
+     * @deprecated Manual order values are superseded by order keys. Scheduled for removal.
+     */
+    @Deprecated
     public Long getManualOrderValue()
     {
         return manualOrderValue;
+    }
+
+    /**
+     * The order key of this content: an opaque string whose lexicographic order among siblings is the manual order.
+     * Compare it, hand it back as a reorder anchor - never parse it; its inside is the server's own. Absent on content
+     * stored before order keys existed.
+     */
+    public String getOrderKey()
+    {
+        return orderKey;
     }
 
     public ContentPath getOriginalParentPath()
@@ -358,7 +375,8 @@ public class Content
             Objects.equals( data, other.data ) && Objects.equals( mixins, other.mixins ) && Objects.equals( page, other.page ) &&
             Objects.equals( language, other.language ) && Objects.equals( publishInfo, other.publishInfo ) &&
             Objects.equals( processedReferences, other.processedReferences ) && Objects.equals( workflowInfo, other.workflowInfo ) &&
-            Objects.equals( manualOrderValue, other.manualOrderValue ) && Objects.equals( originalName, other.originalName ) &&
+            Objects.equals( manualOrderValue, other.manualOrderValue ) && Objects.equals( orderKey, other.orderKey ) &&
+            Objects.equals( originalName, other.originalName ) &&
             Objects.equals( originalParentPath, other.originalParentPath ) && Objects.equals( archivedTime, other.archivedTime ) &&
             Objects.equals( archivedBy, other.archivedBy ) && Objects.equals( variantOf, other.variantOf );
     }
@@ -368,7 +386,7 @@ public class Content
     {
         return Objects.hash( id, path, displayName, type, valid, modifier, creator, owner, createdTime, modifiedTime, inherit,
                              originProject, childOrder, permissions, attachments, data, mixins, page, language, publishInfo,
-                             processedReferences, workflowInfo, manualOrderValue, originalName, originalParentPath, archivedTime,
+                             processedReferences, workflowInfo, manualOrderValue, orderKey, originalName, originalParentPath, archivedTime,
                              archivedBy, variantOf );
     }
 
@@ -424,6 +442,8 @@ public class Content
 
         protected Long manualOrderValue;
 
+        protected String orderKey;
+
         protected ContentPath originalParentPath;
 
         protected ContentName originalName;
@@ -471,6 +491,7 @@ public class Content
             this.processedReferences = ContentIds.create().addAll( source.processedReferences );
             this.workflowInfo = source.workflowInfo;
             this.manualOrderValue = source.manualOrderValue;
+            this.orderKey = source.orderKey;
             this.originalName = source.originalName;
             this.originalParentPath = source.originalParentPath;
             this.archivedTime = source.archivedTime;
@@ -660,9 +681,19 @@ public class Content
             return (BUILDER) this;
         }
 
+        /**
+         * @deprecated Manual order values are superseded by order keys. Scheduled for removal.
+         */
+        @Deprecated
         public BUILDER manualOrderValue( final Long manualOrderValue )
         {
             this.manualOrderValue = manualOrderValue;
+            return (BUILDER) this;
+        }
+
+        public BUILDER orderKey( final String orderKey )
+        {
+            this.orderKey = orderKey;
             return (BUILDER) this;
         }
 

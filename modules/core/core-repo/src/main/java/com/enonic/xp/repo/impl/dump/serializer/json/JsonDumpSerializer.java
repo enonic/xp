@@ -192,6 +192,7 @@ public class JsonDumpSerializer
             .data( PropertyTreeJson.fromJson( json.data ) )
             .childOrder( ChildOrder.from( json.childOrder ) )
             .manualOrderValue( json.manualOrderValue )
+            .orderKey( json.orderKey )
             .nodeType( NodeType.from( json.nodeType ) )
             .attachedBinaries( json.attachedBinaries.stream().map( AttachedBinaryJson::fromJson ).collect( AttachedBinaries.collector() ) )
             .build();

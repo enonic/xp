@@ -356,6 +356,10 @@ class AbstractCreatingOrUpdatingContentCommand
         }
     }
 
+    /**
+     * Deliberately blind to the order key: placement is not content, a content edit cannot change it, and a placement
+     * change must never look like a content change to the no-op gate.
+     */
     protected boolean isContentTheSame( Content c1, Content c2 )
     {
         return Objects.equals( c1.getId(), c2.getId() ) && Objects.equals( c1.getPath(), c2.getPath() ) &&
