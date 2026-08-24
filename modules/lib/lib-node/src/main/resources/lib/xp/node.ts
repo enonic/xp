@@ -238,7 +238,7 @@ interface NodeHandler {
 
     patch(params: PatchNodeHandlerParams): PatchNodeResult;
 
-    sort<NodeData>(key: string, childOrder: string): SortNodeResult<NodeData>;
+    sort<NodeData>(key: string, childOrder: string | null, reorder: ScriptValue | null): SortNodeResult<NodeData>;
 
     get<NodeData>(params: GetNodeHandlerParams): Node<NodeData> | Node<NodeData>[] | null;
 
@@ -386,9 +386,16 @@ export interface MoveNodeParams {
     target: string;
 }
 
+export interface ReorderNodeParams {
+    nodeId: string;
+    afterOrderKey?: string;
+    beforeOrderKey?: string;
+}
+
 export interface SortNodeParams {
     key: string;
-    childOrder: string;
+    childOrder?: string;
+    reorder?: ReorderNodeParams[];
 }
 
 export interface SortNodeResult<NodeData> {
@@ -1007,20 +1014,27 @@ class RepoConnectionImpl
     }
 
     /**
-     * Sort node's children
-
+     * Sets the ordering of a node's children, and/or moves individual children to new positions among their siblings.
+     *
+     * Repositioning children requires manual ordering, expressed by the `childOrder` value `'manual'`. Each `reorder`
+     * entry places one child relative to its siblings using order keys - the `_orderKey` values read off the sibling
+     * nodes: `afterOrderKey` is the sibling directly above the drop point, `beforeOrderKey` the one directly below.
+     * Both set means between the two, only `afterOrderKey` means below that sibling, only `beforeOrderKey` means above
+     * it, and neither means the top of the list. When `reorder` is given without `childOrder`, the children are
+     * switched to manual ordering.
+     *
      * @example-ref examples/node/sort.js
      *
      * @param {object} params JSON with the parameters.
      * @param {string} params.key node's path or id
-     * @param {string} params.childOrder children order
+     * @param {string} [params.childOrder] New ordering of the children: `'manual'` for manual ordering, or an ordering expression, e.g. `'displayName ASC'`. Required unless `reorder` is given.
+     * @param {object[]} [params.reorder] Children to reposition, in order. Each entry has `nodeId` and optional `afterOrderKey`/`beforeOrderKey` anchors.
      * @returns {object} result with updated nodes
      */
     sort<NodeData = Record<string, unknown>>(params: SortNodeParams): SortNodeResult<NodeData> {
         const key = checkRequired(params, 'key');
-        const childOrder = checkRequired(params, 'childOrder');
 
-        return __.toNativeObject(this.nodeHandler.sort(key, childOrder));
+        return __.toNativeObject(this.nodeHandler.sort(key, __.nullOrValue(params.childOrder), __.toScriptValue(params.reorder)));
     }
 
     /**

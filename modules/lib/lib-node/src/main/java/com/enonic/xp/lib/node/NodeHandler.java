@@ -48,12 +48,13 @@ public class NodeHandler
     }
 
     @SuppressWarnings("unused")
-    public Object sort( final String key, final String childOrder )
+    public Object sort( final String key, final String childOrder, final ScriptValue reorder )
     {
         return execute( SortHandler.create()
                             .nodeService( this.nodeService )
                             .key( NodeKey.from( key ) )
-                            .childOrder( ChildOrder.from( childOrder ) )
+                            .childOrder( childOrder )
+                            .reorder( reorder )
                             .build() );
     }
 
