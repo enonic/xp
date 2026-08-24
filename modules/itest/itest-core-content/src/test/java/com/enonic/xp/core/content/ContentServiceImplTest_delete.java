@@ -1,5 +1,7 @@
 package com.enonic.xp.core.content;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -10,6 +12,7 @@ import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.Contents;
 import com.enonic.xp.content.CreateContentParams;
+import com.enonic.xp.content.DeleteContentListener;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.GetContentByIdsParams;
@@ -45,12 +48,16 @@ class ContentServiceImplTest_delete
         final Content content = this.contentService.create( createContentParams );
 
         //Deletes the content
-        final DeleteContentParams deleteContentParams = DeleteContentParams.create().contentPath( content.getPath() ).build();
+        final TestListener listener = new TestListener();
+
+        final DeleteContentParams deleteContentParams =
+            DeleteContentParams.create().contentPath( content.getPath() ).deleteContentListener( listener ).build();
 
         final DeleteContentsResult deletedContents = this.contentService.delete( deleteContentParams );
         assertNotNull( deletedContents );
         assertEquals( 1, deletedContents.getDeletedContents().getSize() );
         assertEquals( content.getId(), deletedContents.getDeletedContents().first() );
+        assertEquals( 1, listener.deleted );
 
         //Checks that the content is deleted
         final ContentIds contentIds = ContentIds.from( content.getId() );
@@ -446,5 +453,35 @@ class ContentServiceImplTest_delete
         assertThat( log ).extracting( l -> l.getData().getSet( "result" ) )
             .extracting( result -> result.getStrings( "deletedContents" ), LIST)
             .containsExactly( childContent.getId().toString(), content.getId().toString() );
+    }
+
+    @Test
+    void delete_reports_the_unpublishing_it_does()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        createContent( parent.getPath(), "child" );
+
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( parent.getId() ) ).build() );
+
+        final AtomicInteger unpublished = new AtomicInteger();
+
+        this.contentService.delete( DeleteContentParams.create()
+                                        .contentPath( parent.getPath() )
+                                        .unpublishListener( unpublished::addAndGet )
+                                        .build() );
+
+        assertEquals( 2, unpublished.get() );
+    }
+
+    private static final class TestListener
+        implements DeleteContentListener
+    {
+        int deleted;
+
+        @Override
+        public void contentDeleted( final int count )
+        {
+            deleted += count;
+        }
     }
 }

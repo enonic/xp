@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.time.Instant;
+import java.util.stream.Stream;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +39,6 @@ import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -234,12 +234,10 @@ class ApplicationServiceImplTest
 
         final NodeIds ids = NodeIds.from( virtualAppNodeId );
 
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create()
-                                                                                         .addEntry( new NodeListEntry( virtualAppNodeId,
-                                                                                                                       new NodePath(
-                                                                                                                           "/app3" ),
-                                                                                                                       Instant.EPOCH ) )
-                                                                                         .build() );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer( invocation -> Stream.of(
+            new NodeListEntry( virtualAppNodeId, new NodePath( "/app3" ), Instant.EPOCH ),
+            new NodeListEntry( NodeId.from( "resource-folder-id" ), new NodePath( "/app3/cms" ), Instant.EPOCH ),
+            new NodeListEntry( NodeId.from( "resource-id" ), new NodePath( "/app3/cms/mytype.yaml" ), Instant.EPOCH ) ) );
 
         when( nodeService.getByIds( ids ) ).thenReturn(
             Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );

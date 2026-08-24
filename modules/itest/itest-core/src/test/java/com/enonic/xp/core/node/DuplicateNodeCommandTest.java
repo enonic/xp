@@ -33,6 +33,9 @@ import com.enonic.xp.node.ReorderChildNodeParams;
 import com.enonic.xp.node.SortNodeParams;
 import com.enonic.xp.repo.impl.node.DuplicateNodeCommand;
 import com.enonic.xp.repo.impl.node.SortNodeCommand;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.Reference;
 
@@ -43,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -99,6 +103,42 @@ class DuplicateNodeCommandTest
         assertEquals( "my-child", result.getChildren().first().name().toString() );
 
         verify( duplicateNodeListener, times( 2 ) ).nodesDuplicated( anyInt() );
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 1 );
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 2 );
+    }
+
+    @Test
+    void unreadable_subtree_excluded_from_resolved_total()
+    {
+        final Node node = createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( "my-node" ).build() );
+        createNode( CreateNodeParams.create().parent( node.path() ).name( "readable-child" ).build() );
+        final Node hiddenChild = ctxDefaultAdmin().callWith( () -> createNode( CreateNodeParams.create()
+                                                                                   .parent( node.path() )
+                                                                                   .name( "hidden-child" )
+                                                                                   .permissions( AccessControlList.of(
+                                                                                       AccessControlEntry.create()
+                                                                                           .principal( PrincipalKey.from(
+                                                                                               "user:system:someone-else" ) )
+                                                                                           .allowAll()
+                                                                                           .build() ) )
+                                                                                   .build() ) );
+
+        ctxDefaultAdmin().callWith( () -> createNode( CreateNodeParams.create()
+                                                          .parent( hiddenChild.path() )
+                                                          .name( "readable-grandchild" )
+                                                          .permissions( AccessControlList.of( AccessControlEntry.create()
+                                                                                                  .principal(
+                                                                                                      TEST_DEFAULT_USER.getKey() )
+                                                                                                  .allowAll()
+                                                                                                  .build() ) )
+                                                          .build() ) );
+
+        duplicateNode( node );
+
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 1 );
+        verify( duplicateNodeListener, times( 1 ) ).resolved( 2 );
+        verify( duplicateNodeListener, never() ).resolved( 3 );
+        verify( duplicateNodeListener, times( 2 ) ).nodesDuplicated( 1 );
     }
 
     @Test

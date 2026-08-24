@@ -5,7 +5,8 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.impl.scheduler.serializer.SchedulerSerializer;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 
 public class ListScheduledJobsCommand
@@ -31,9 +32,12 @@ public class ListScheduledJobsCommand
 
     private List<ScheduledJobEntry> doExecute()
     {
-        final ListNodesResult result = nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() );
+        final NodeIds jobIds = nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).build() )
+            .filter( entry -> NodePath.ROOT.equals( entry.nodePath().getParentPath() ) )
+            .map( NodeListEntry::nodeId )
+            .collect( NodeIds.collector() );
 
-        return nodeService.getByIds( result.getNodeIds() ).
+        return nodeService.getByIds( jobIds ).
             stream().
             map( node -> new ScheduledJobEntry( withRunState ? toScheduledJob( node ) : SchedulerSerializer.fromNode( node ),
                                                 node.getNodeVersionId() ) ).
@@ -49,10 +53,6 @@ public class ListScheduledJobsCommand
         {
         }
 
-        /**
-         * Whether to read each job's run state, which costs a version read per job. The scheduling
-         * tick goes without, keeping track of run state itself.
-         */
         public Builder withRunState( final boolean withRunState )
         {
             this.withRunState = withRunState;

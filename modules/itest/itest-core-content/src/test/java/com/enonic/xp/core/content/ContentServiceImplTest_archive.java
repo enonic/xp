@@ -3,6 +3,7 @@ package com.enonic.xp.core.content;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -275,6 +276,40 @@ class ContentServiceImplTest_archive
 
         ContentVersion version = iterator.next();
         assertEquals( "Archive test message", version.comment() );
+    }
+
+    @Test
+    void archive_reports_the_unpublishing_it_does()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        createContent( parent.getPath(), "child" );
+
+        this.contentService.publish( PushContentParams.create().contentIds( ContentIds.from( parent.getId() ) ).build() );
+
+        final AtomicInteger unpublished = new AtomicInteger();
+
+        this.contentService.archive( ArchiveContentParams.create()
+                                         .contentId( parent.getId() )
+                                         .unpublishListener( unpublished::addAndGet )
+                                         .build() );
+
+        assertEquals( 2, unpublished.get() );
+    }
+
+    @Test
+    void archive_of_what_was_never_published_reports_no_unpublishing()
+    {
+        final Content parent = createContent( ContentPath.ROOT, "parent" );
+        createContent( parent.getPath(), "child" );
+
+        final AtomicInteger unpublished = new AtomicInteger();
+
+        this.contentService.archive( ArchiveContentParams.create()
+                                         .contentId( parent.getId() )
+                                         .unpublishListener( unpublished::addAndGet )
+                                         .build() );
+
+        assertEquals( 0, unpublished.get() );
     }
 
     private static final class TestListener

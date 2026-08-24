@@ -67,6 +67,16 @@ tasks.register( 'performanceTest', JavaExec ) {
 
     systemProperty 'java.awt.headless', 'true'
 
+    // -Pptest.tree.children=<n> sizes the tree the whole-tree node benchmarks operate on; -Pptest.include=<regex> narrows the run.
+    if ( project.hasProperty( 'ptest.tree.children' ) )
+    {
+        systemProperty 'ptest.tree.children', project.property( 'ptest.tree.children' )
+    }
+    if ( project.hasProperty( 'ptest.include' ) )
+    {
+        args project.property( 'ptest.include' )
+    }
+
     workingDir = layout.buildDirectory.dir( 'perftest-report' ).get().asFile
     doFirst {
         workingDir.mkdirs()

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +21,6 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -32,7 +29,11 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
 import com.enonic.xp.repo.impl.binary.BinaryService;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.util.Reference;
 
 import static java.util.Objects.requireNonNull;
@@ -68,6 +69,9 @@ public final class DuplicateNodeCommand
     public DuplicateNodeResult execute()
     {
         final Node existingNode = getExistingNode();
+
+        listener.resolved( 1 );
+
         final Node duplicatedNode = doDuplicateNode( existingNode );
 
         result.node( duplicatedNode );
@@ -181,29 +185,23 @@ public final class DuplicateNodeCommand
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
 
-        final NodeBranchEntries subTree =
+        final NodeBranchEntries entries =
             FindNodeBranchEntriesByParentCommand.create( this ).parentPath( originalParent.path() ).build().execute();
 
-        final NodeIds subTreeIds = subTree.stream().map( NodeBranchEntry::getNodeId ).collect( NodeIds.collector() );
+        final List<NodeBranchEntry> toDuplicate = filterToDuplicate( entries, internalContext );
 
-        // nodes not readable by the caller are not returned, and neither they nor their children are duplicated
-        final Map<NodeId, Node> originalNodes = this.nodeStorageService.get( subTreeIds, internalContext )
-            .stream()
-            .collect( Collectors.toMap( Node::id, Function.identity() ) );
+        listener.resolved( toDuplicate.size() + 1 );
 
-        // entries are ordered by path, so a node is always duplicated before any of its children
         final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
         duplicatedParents.put( originalParent.path(), new DuplicatedParent( originalParent, newParent ) );
 
-        for ( final NodeBranchEntry entry : subTree )
+        for ( final NodeBranchEntry entry : toDuplicate )
         {
-            final Node node = originalNodes.get( entry.getNodeId() );
-            final DuplicatedParent parent = duplicatedParents.get( entry.getNodePath().getParentPath() );
+            final DuplicatedParent parent = requireNonNull( duplicatedParents.get( entry.getNodePath().getParentPath() ),
+                                                            () -> "Parent of [" + entry.getNodePath() + "] was not duplicated yet" );
 
-            if ( node == null || parent == null )
-            {
-                continue;
-            }
+            final Node node =
+                NodeFactory.create( this.nodeStorageService.getNodeVersion( entry.getNodeVersionKey(), internalContext ), entry );
 
             final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( parent.copy().path() );
 
@@ -217,7 +215,6 @@ public final class DuplicateNodeCommand
 
             final CreateNodeParams processedParams = executeProcessors( originalParams );
 
-            // the parent copy is already at hand, and every child path below it is created exactly once
             final Node newChildNode = CreateNodeCommand.create( this )
                 .params( processedParams )
                 .binaryService( this.binaryService )
@@ -238,6 +235,36 @@ public final class DuplicateNodeCommand
 
     private record DuplicatedParent(Node original, Node copy)
     {
+    }
+
+    private List<NodeBranchEntry> filterToDuplicate( final NodeBranchEntries entries, final InternalContext context )
+    {
+        if ( context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )
+        {
+            return entries.stream().toList();
+        }
+
+        final List<NodeBranchEntry> toDuplicate = new ArrayList<>( entries.getSize() );
+        String prohibitedRoot = null;
+        for ( final NodeBranchEntry entry : entries )
+        {
+            final String path = entry.getNodePath().toString();
+            if ( prohibitedRoot != null && path.startsWith( prohibitedRoot ) )
+            {
+                continue;
+            }
+
+            final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
+            if ( NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), Permission.READ, permissions ) )
+            {
+                toDuplicate.add( entry );
+            }
+            else
+            {
+                prohibitedRoot = path + "/";
+            }
+        }
+        return toDuplicate;
     }
 
     private void decideInsertStrategy( final Node originalParent, final Node node, final CreateNodeParams.Builder paramsBuilder )

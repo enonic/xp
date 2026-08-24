@@ -7,27 +7,23 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogResult;
-import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.DeleteNodeParams;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeHit;
-import com.enonic.xp.node.NodeIndexPath;
-import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.RefreshMode;
-import com.enonic.xp.query.expr.FieldOrderExpr;
-import com.enonic.xp.query.expr.OrderExpr;
-import com.enonic.xp.query.filter.RangeFilter;
-import com.enonic.xp.query.filter.ValueFilter;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
+import com.enonic.xp.node.NodeEnumerationEntry;
+import com.enonic.xp.node.NodePath;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Objects.requireNonNullElseGet;
+import static java.util.Objects.requireNonNullElse;
 
 public class CleanUpAuditLogCommand
     extends NodeServiceCommand<CleanUpAuditLogResult>
 {
     private static final Logger LOG = LoggerFactory.getLogger( CleanUpAuditLogCommand.class );
 
-    private static final int BATCH_SIZE = 10_000;
+    private static final CleanUpAuditLogListener NOOP_LISTENER = new CleanUpAuditLogListener()
+    {
+    };
 
     private final Instant until;
 
@@ -37,7 +33,7 @@ public class CleanUpAuditLogCommand
     {
         super( builder );
         until = builder.ageThreshold.isBlank() ? Instant.EPOCH : Instant.now().minus( Duration.parse( builder.ageThreshold ) );
-        listener = requireNonNullElseGet( builder.listener, EmptyCleanUpAuditLogListener::new );
+        listener = requireNonNullElse( builder.listener, NOOP_LISTENER );
     }
 
     @Override
@@ -56,55 +52,50 @@ public class CleanUpAuditLogCommand
     {
         final CleanUpAuditLogResult.Builder result = CleanUpAuditLogResult.create();
 
-        final NodeQuery query = createQuery();
+        final EnumerateNodesParams.Builder enumeration =
+            EnumerateNodesParams.create().parentPath( NodePath.ROOT ).modifiedBefore( until );
 
-        nodeService.refresh( RefreshMode.SEARCH );
-        FindNodesByQueryResult nodesToDelete = nodeService.findByQuery( query );
+        boolean started = false;
+        int deleted = 0;
+        int resolved = -1;
+        String cursor = null;
 
-        boolean empty = nodesToDelete.getNodeHits().isEmpty();
-
-        if ( empty )
+        do
         {
-            return CleanUpAuditLogResult.create().build();
-        }
+            final EnumerateNodesParams params = enumeration.cursor( cursor ).build();
+            final EnumerateNodesResult batch = nodeService.enumerate( params );
 
-        listener.start( BATCH_SIZE );
-
-        while ( !empty )
-        {
-            for ( NodeHit nodeHit : nodesToDelete.getNodeHits() )
+            if ( resolved != deleted + batch.getRemaining() )
             {
-                result.deleted(
-                    nodeService.delete( DeleteNodeParams.create().nodeId( nodeHit.getNodeId() ).build() ).getNodeIds().getSize() );
-
-                listener.processed();
+                resolved = deleted + batch.getRemaining();
+                listener.resolved( resolved );
             }
-            nodeService.refresh( RefreshMode.SEARCH );
-            nodesToDelete = nodeService.findByQuery( query );
 
-            empty = nodesToDelete.getNodeHits().isEmpty();
+            for ( final NodeEnumerationEntry entry : batch.getEntries() )
+            {
+                if ( !started )
+                {
+                    listener.start( params.getBatchSize() );
+                    started = true;
+                }
+
+                result.deleted(
+                    nodeService.delete( DeleteNodeParams.create().nodeId( entry.nodeId() ).build() ).getNodeIds().getSize() );
+                deleted++;
+
+                listener.recordsDeleted( 1 );
+            }
+
+            cursor = batch.getCursor();
         }
+        while ( cursor != null );
 
-        listener.finished();
+        if ( started )
+        {
+            listener.finished();
+        }
 
         return result.build();
-    }
-
-    private NodeQuery createQuery()
-    {
-        final NodeQuery.Builder builder = NodeQuery.create()
-            .addQueryFilter( ValueFilter.create()
-                                 .fieldName( NodeIndexPath.NODE_TYPE.toString() )
-                                 .addValue( ValueFactory.newString( AuditLogConstants.NODE_TYPE.toString() ) )
-                                 .build() );
-
-        final RangeFilter timeToFilter =
-            RangeFilter.create().fieldName( AuditLogConstants.TIME.toString() ).to( ValueFactory.newDateTime( until ) ).build();
-        builder.addQueryFilter( timeToFilter );
-
-        builder.addOrderBy( FieldOrderExpr.create( AuditLogConstants.TIME, OrderExpr.Direction.ASC ) ).size( BATCH_SIZE );
-
-        return builder.build();
     }
 
     public static Builder create()
@@ -144,25 +135,6 @@ public class CleanUpAuditLogCommand
         {
             validate();
             return new CleanUpAuditLogCommand( this );
-        }
-    }
-
-    private static class EmptyCleanUpAuditLogListener
-        implements CleanUpAuditLogListener
-    {
-        @Override
-        public void start( final int batchSize )
-        {
-        }
-
-        @Override
-        public void processed()
-        {
-        }
-
-        @Override
-        public void finished()
-        {
         }
     }
 }

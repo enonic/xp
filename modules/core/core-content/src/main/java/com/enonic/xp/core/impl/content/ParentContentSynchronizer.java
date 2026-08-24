@@ -101,6 +101,26 @@ public final class ParentContentSynchronizer
         }
     }
 
+    private void syncSlice( final ContentPath parentPath, final Map<ContentPath, ContentIds> childrenByParent,
+                            final Map<NodePath, Context> sourceContexts, final Map<NodePath, Context> targetContexts )
+    {
+        final ContentIds children = childrenByParent.get( parentPath );
+
+        if ( children == null )
+        {
+            return;
+        }
+
+        final List<ContentToSync> contentsToSync = createContentsToSync( children, sourceContexts, targetContexts );
+
+        doSync( contentsToSync );
+
+        contentsToSync.stream()
+            .filter( contentToSync -> contentToSync.getSourceContent() != null )
+            .forEach( contentToSync -> syncSlice( contentToSync.getSourceContent().getPath(), childrenByParent, sourceContexts,
+                                                  targetContexts ) );
+    }
+
     private void doSyncWithChildren( final List<ContentToSync> sourceContents )
     {
         final List<ContentToSync> contentsToSync =
@@ -119,15 +139,15 @@ public final class ParentContentSynchronizer
         }
 
         sourceContents.stream().filter( contentToSync -> contentToSync.getSourceContent() != null ).forEach( currentContentToSync -> {
-            final ContentIds result = currentContentToSync.getSourceCtx()
-                .callWith( () -> layersContentService.findAllChildren( currentContentToSync.getSourceContent().getPath() ) );
+            final Map<ContentPath, ContentIds> childrenByParent = currentContentToSync.getSourceCtx()
+                .callWith( () -> layersContentService.findAllGroupedByParent( currentContentToSync.getSourceContent().getPath() ) );
 
-            if ( !result.isEmpty() )
+            if ( !childrenByParent.isEmpty() )
             {
                 final Map<NodePath, Context> sourceContexts = initContexts( currentContentToSync.getSourceCtx().getRepositoryId() );
                 final Map<NodePath, Context> targetContexts = initContexts( currentContentToSync.getTargetCtx().getRepositoryId() );
 
-                doSyncWithChildren( createContentsToSync( result, sourceContexts, targetContexts ) );
+                syncSlice( currentContentToSync.getSourceContent().getPath(), childrenByParent, sourceContexts, targetContexts );
             }
         } );
 
@@ -260,6 +280,9 @@ public final class ParentContentSynchronizer
     private void cleanDeletedContents( final ContentToSync contentToSync )
     {
         contentToSync.getTargetCtx().runWith( () -> {
+            final Map<ContentPath, ContentIds> childrenByParent =
+                layersContentService.findAllGroupedByParent( contentToSync.getTargetContent().getPath() );
+
             final Queue<Content> queue = new ArrayDeque<>( Set.of( contentToSync.getTargetContent() ) );
 
             while ( !queue.isEmpty() )
@@ -283,7 +306,11 @@ public final class ParentContentSynchronizer
                     createEventCommand( contents, ContentSyncEventType.DELETED ).sync();
                 }
 
-                layersContentService.getByIds( layersContentService.findAllChildren( currentContent.getPath() ) ).forEach( queue::offer );
+                final ContentIds children = childrenByParent.get( currentContent.getPath() );
+                if ( children != null )
+                {
+                    layersContentService.getByIds( children ).forEach( queue::add );
+                }
             }
         } );
     }

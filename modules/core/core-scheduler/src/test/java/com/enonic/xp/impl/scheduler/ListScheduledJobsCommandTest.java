@@ -2,6 +2,7 @@ package com.enonic.xp.impl.scheduler;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,11 +12,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeListEntry;
+import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
@@ -44,11 +45,11 @@ class ListScheduledJobsCommandTest
         final Node cronNode = jobNode( "cron-job", ScheduleCalendarType.CRON, null );
         final Node oneTimeNode = jobNode( "one-time-job", ScheduleCalendarType.ONE_TIME, Instant.parse( "2026-01-01T10:00:00Z" ) );
 
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn( ListNodesResult.create()
-                                                                                 .addEntry( listEntry( cronNode ) )
-                                                                                 .addEntry( listEntry( oneTimeNode ) )
-                                                                                 .build() );
-        when( nodeService.getByIds( isA( NodeIds.class ) ) ).thenReturn( Nodes.from( cronNode, oneTimeNode ) );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer(
+            invocation -> Stream.of( listEntry( cronNode ), listEntry( oneTimeNode ),
+                                     new NodeListEntry( NodeId.from( "below-a-job" ), new NodePath( oneTimeNode.path(), NodeName.from( "child" ) ),
+                                                        Instant.parse( "2026-01-01T10:00:00Z" ) ) ) );
+        when( nodeService.getByIds( NodeIds.from( cronNode.id(), oneTimeNode.id() ) ) ).thenReturn( Nodes.from( cronNode, oneTimeNode ) );
 
         final SchedulerServiceImpl schedulerService =
             new SchedulerServiceImpl( nodeService, mock( SchedulingCoordinator.class ), mock( ScheduleAuditLogSupport.class ) );
@@ -60,13 +61,11 @@ class ListScheduledJobsCommandTest
         final ScheduledJobEntry cronEntry = entries.get( 0 );
         assertEquals( "cron-job", cronEntry.job().getName().getValue() );
         assertEquals( cronNode.getNodeVersionId(), cronEntry.versionId() );
-        // run state is not fetched from node versions - only node data is read
         assertNull( cronEntry.job().getLastRun() );
 
         final ScheduledJobEntry oneTimeEntry = entries.get( 1 );
         assertEquals( "one-time-job", oneTimeEntry.job().getName().getValue() );
         assertEquals( oneTimeNode.getNodeVersionId(), oneTimeEntry.versionId() );
-        // a one-time job's lastRun tombstone lives in node data and is part of the listing
         assertEquals( Instant.parse( "2026-01-01T10:00:00Z" ), oneTimeEntry.job().getLastRun() );
     }
 
@@ -75,8 +74,7 @@ class ListScheduledJobsCommandTest
     {
         final Node cronNode = jobNode( "cron-job", ScheduleCalendarType.CRON, null );
 
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenReturn(
-            ListNodesResult.create().addEntry( listEntry( cronNode ) ).build() );
+        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer( invocation -> Stream.of( listEntry( cronNode ) ) );
         when( nodeService.getByIds( isA( NodeIds.class ) ) ).thenReturn( Nodes.from( cronNode ) );
 
         final NodeVersion version = mock( NodeVersion.class );
@@ -89,7 +87,6 @@ class ListScheduledJobsCommandTest
 
         final List<ScheduledJob> jobs = schedulerService.list();
 
-        // the same listing, one version read per job richer: run state a cron job keeps in attributes
         assertEquals( 1, jobs.size() );
         assertEquals( Instant.parse( "2026-01-01T11:00:00Z" ), jobs.get( 0 ).getLastRun() );
         assertEquals( TaskId.from( "task-1" ), jobs.get( 0 ).getLastTaskId() );

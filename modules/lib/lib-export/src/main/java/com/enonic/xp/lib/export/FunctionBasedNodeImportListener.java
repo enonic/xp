@@ -32,7 +32,7 @@ public class FunctionBasedNodeImportListener
     }
 
     @Override
-    public void nodeResolved( final int count )
+    public void resolved( final int count )
     {
         nodeResolved.apply( count );
     }

@@ -1,9 +1,12 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
@@ -38,8 +41,12 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.content.processor.ContentProcessor;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.node.ListNodesParams;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
+import com.enonic.xp.node.NodeEnumerationEntry;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.PartDescriptorService;
@@ -55,6 +62,8 @@ public class LayersContentService
     private static final String SEARCH_PREFERENCE_ATTRIBUTE = "_search_preference";
 
     private static final String SEARCH_PREFERENCE_PRIMARY = "PRIMARY";
+
+    private static final int SYNC_BATCH_SIZE = 1_000;
 
     private final NodeService nodeService;
 
@@ -195,6 +204,11 @@ public class LayersContentService
             .execute();
     }
 
+    public void refresh( final RefreshMode refreshMode )
+    {
+        nodeService.refresh( refreshMode );
+    }
+
     public void delete( final DeleteContentParams params )
     {
         DeleteContentCommand.create()
@@ -260,31 +274,54 @@ public class LayersContentService
             .execute() );
     }
 
-    public ContentIds findAllChildren( final ContentPath contentPath )
+    public Map<ContentPath, ContentIds> findAllGroupedByParent( final ContentPath contentPath )
     {
-        return list( contentPath, false );
+        return callOnPrimary( () -> {
+            final Map<ContentPath, ContentIds.Builder> grouped = new LinkedHashMap<>();
+            final NodePath parentPath = ContentNodeHelper.translateContentPathToNodePath( contentPath );
+            String cursor = null;
+            do
+            {
+                final EnumerateNodesResult batch = nodeService.enumerate(
+                    EnumerateNodesParams.create().parentPath( parentPath ).batchSize( SYNC_BATCH_SIZE ).cursor( cursor ).build() );
+                for ( final NodeEnumerationEntry entry : batch.getEntries() )
+                {
+                    grouped.computeIfAbsent( ContentNodeHelper.translateNodePathToContentPath( entry.nodePath().getParentPath() ),
+                                             key -> ContentIds.create() ).add( ContentId.from( entry.nodeId() ) );
+                }
+                cursor = batch.getCursor();
+            }
+            while ( cursor != null );
+
+            return grouped.entrySet()
+                .stream()
+                .collect( Collectors.toUnmodifiableMap( Map.Entry::getKey, entry -> entry.getValue().build() ) );
+        } );
     }
 
-    public ContentIds findAllByParent( final ContentPath contentPath )
+    public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor )
     {
-        return list( contentPath, true );
+        return findAllByParent( contentPath, cursor, SYNC_BATCH_SIZE );
     }
 
-    /**
-     * Enumerated rather than searched: syncing has to see every content that exists right now, including one written a moment ago that a
-     * search would not find yet, and it has no use for the ordering or the constraints a search would spend that freshness on.
-     */
-    private ContentIds list( final ContentPath contentPath, final boolean recursive )
+    public ContentIdsBatch findAllByParent( final ContentPath contentPath, final String cursor, final int batchSize )
     {
-        return callOnPrimary( () -> nodeService.list( ListNodesParams.create()
-                                                          .parentPath(
-                                                              ContentNodeHelper.translateContentPathToNodePath( contentPath ) )
-                                                          .recursive( recursive )
-                                                          .build() )
-                                  .getEntries()
-                                  .stream()
-                                  .map( entry -> ContentId.from( entry.nodeId() ) )
-                                  .collect( ContentIds.collector() ) );
+        return callOnPrimary( () -> {
+            final EnumerateNodesResult batch = nodeService.enumerate( EnumerateNodesParams.create()
+                                                                          .parentPath( ContentNodeHelper.translateContentPathToNodePath(
+                                                                              contentPath ) )
+                                                                          .batchSize( Math.min( Math.max( batchSize, 1 ),
+                                                                                                SYNC_BATCH_SIZE ) )
+                                                                          .cursor( cursor )
+                                                                          .build() );
+            return new ContentIdsBatch(
+                batch.getEntries().stream().map( entry -> ContentId.from( entry.nodeId() ) ).collect( ContentIds.collector() ),
+                batch.getCursor() );
+        } );
+    }
+
+    public record ContentIdsBatch(ContentIds ids, String cursor)
+    {
     }
 
     private <T> T callOnPrimary( final Supplier<T> supplier )

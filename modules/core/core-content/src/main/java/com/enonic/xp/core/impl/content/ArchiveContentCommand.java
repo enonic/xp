@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.enonic.xp.archive.ArchiveConstants;
 import com.enonic.xp.archive.ArchiveContentException;
+import com.enonic.xp.archive.ArchiveContentListener;
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.archive.ArchiveContentsResult;
 import com.enonic.xp.content.ContentConstants;
@@ -18,6 +19,7 @@ import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.node.CommitNodeParams;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.MoveNodeException;
+import com.enonic.xp.node.MoveNodeListener;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.MoveNodeResult;
 import com.enonic.xp.node.Node;
@@ -82,10 +84,9 @@ final class ArchiveContentCommand
         verifyNotProtectedRoot( originalNode.path() );
         validateLocation( originalNode );
 
-        final NodeIds descendants =
-            nodeService.list( ListNodesParams.create().parentPath( originalNode.path() ).recursive( true ).build() ).getNodeIds();
-
-        final ContentIds descendantContents = ContentNodeHelper.toContentIds( descendants );
+        final ContentIds descendantContents = nodeService.list( ListNodesParams.create().parentPath( originalNode.path() ).build() )
+            .map( entry -> ContentId.from( entry.nodeId() ) )
+            .collect( ContentIds.collector() );
 
         final ContentIds unpublishedContents = unpublish( contentId, descendantContents );
 
@@ -108,8 +109,10 @@ final class ArchiveContentCommand
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
-            .params(
-                UnpublishContentParams.create().contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() ).build() )
+            .params( UnpublishContentParams.create()
+                         .contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() )
+                         .pushListener( params.getUnpublishListener() )
+                         .build() )
             .build()
             .execute()
             .getUnpublishedContents();
@@ -156,7 +159,7 @@ final class ArchiveContentCommand
 
         if ( params.getArchiveContentListener() != null )
         {
-            moveParams.moveListener( this.params.getArchiveContentListener()::contentArchived );
+            moveParams.moveListener( new ListenerDelegate( this.params.getArchiveContentListener() ) );
         }
 
         if ( !newPath.getName().equals( node.name() ) )
@@ -248,4 +251,27 @@ final class ArchiveContentCommand
         }
     }
 
+
+    private static final class ListenerDelegate
+        implements MoveNodeListener
+    {
+        private final ArchiveContentListener delegate;
+
+        ListenerDelegate( final ArchiveContentListener delegate )
+        {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void nodesMoved( final int count )
+        {
+            delegate.contentArchived( count );
+        }
+
+        @Override
+        public void resolved( final int count )
+        {
+            delegate.resolved( count );
+        }
+    }
 }

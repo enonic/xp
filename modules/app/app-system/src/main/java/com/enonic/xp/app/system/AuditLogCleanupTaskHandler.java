@@ -8,7 +8,10 @@ import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.task.ProgressReportParams;
+import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskProgressReporterContext;
 import com.enonic.xp.task.TaskService;
 
 public class AuditLogCleanupTaskHandler
@@ -38,7 +41,15 @@ public class AuditLogCleanupTaskHandler
     {
         TaskUtils.checkAlreadySubmitted( taskService.getTaskInfo( taskId ), taskService.getAllTasks() );
 
-        auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( new Listener() ).ageThreshold( ageThreshold ).build() );
+        LOG.info( "Audit log clean up started" );
+
+        final Listener listener = new Listener( TaskProgressReporterContext.current() );
+
+        auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).ageThreshold( ageThreshold ).build() );
+
+        listener.reportProgress();
+
+        LOG.info( "Audit log clean up finished" );
     }
 
     @Override
@@ -51,32 +62,48 @@ public class AuditLogCleanupTaskHandler
     private static class Listener
         implements CleanUpAuditLogListener
     {
-        private long count;
+        private static final int REPORT_INTERVAL = 1_000;
 
-        private int batchSize;
+        private final ProgressReporter progressReporter;
 
-        @Override
-        public void start( final int batchSize )
+        private int deleted;
+
+        private int reportedAt;
+
+        private int resolved;
+
+        Listener( final ProgressReporter progressReporter )
         {
-            LOG.info( "Audit log clean up started" );
-            this.batchSize = batchSize;
+            this.progressReporter = progressReporter;
         }
 
         @Override
-        public void processed()
+        public void resolved( final int count )
         {
-            count++;
+            this.resolved = count;
+            reportProgress();
+        }
 
-            if ( batchSize > 0 && count % batchSize == 0 )
+        @Override
+        public void recordsDeleted( final int count )
+        {
+            deleted += count;
+
+            if ( deleted - reportedAt >= REPORT_INTERVAL )
             {
-                LOG.debug( String.format( "[%s] audit log nodes has been processed", batchSize ) );
+                LOG.debug( "{} audit log records have been deleted", deleted );
+                reportProgress();
             }
         }
 
-        @Override
-        public void finished()
+        private void reportProgress()
         {
-            LOG.info( "Audit log clean up finished" );
+            reportedAt = deleted;
+
+            if ( progressReporter != null )
+            {
+                progressReporter.progress( ProgressReportParams.create().current( deleted ).total( resolved ).build() );
+            }
         }
     }
 }

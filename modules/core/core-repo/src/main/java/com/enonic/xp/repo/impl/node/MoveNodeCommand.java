@@ -22,7 +22,7 @@ import com.enonic.xp.node.OperationNotPermittedException;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
 import com.enonic.xp.repo.impl.NodeBranchEntry;
-import com.enonic.xp.repo.impl.storage.NodeVersionData;
+import com.enonic.xp.repo.impl.branch.storage.NodeFactory;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
@@ -133,12 +133,15 @@ public class MoveNodeCommand
 
     private void doMoveNodeTree( final Node existingNode, final NodePath newParentPath, final NodeName newNodeName )
     {
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+
         final NodeBranchEntries subTree =
             FindNodeBranchEntriesByParentCommand.create( this ).parentPath( existingNode.path() ).build().execute();
 
-        doMoveNode( newParentPath, newNodeName, params.getNodeId() );
+        moveListener.resolved( subTree.getSize() + 1 );
 
-        // entries are ordered by path, so a node is always moved before any of its children
+        doMoveNode( newParentPath, newNodeName, this.nodeStorageService.getNodeBranchEntry( params.getNodeId(), internalContext ) );
+
         final Map<NodePath, NodePath> newPaths = new HashMap<>();
         newPaths.put( existingNode.path(), new NodePath( newParentPath, newNodeName ) );
 
@@ -150,15 +153,16 @@ public class MoveNodeCommand
 
             newPaths.put( entry.getNodePath(), new NodePath( newChildParentPath, childName ) );
 
-            doMoveNode( newChildParentPath, childName, entry.getNodeId() );
+            doMoveNode( newChildParentPath, childName, entry );
         }
     }
 
-    private void doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeId id )
+    private void doMoveNode( final NodePath newParentPath, final NodeName newNodeName, final NodeBranchEntry entry )
     {
         final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
-        final NodeVersionData persistedData = this.nodeStorageService.getNodeVersionData( id, internalContext );
-        final Node persistedNode = persistedData.node();
+
+        final Node persistedNode =
+            NodeFactory.create( this.nodeStorageService.getNodeVersion( entry.getNodeVersionKey(), internalContext ), entry );
 
         final Node.Builder nodeToMoveBuilder = Node.create( persistedNode )
             .name( newNodeName )
@@ -186,9 +190,12 @@ public class MoveNodeCommand
         }
 
         final Node builtNode = nodeToMoveBuilder.build();
-        final Attributes resolvedAttributes = resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,
-                                                                        ContextAccessor.current().getBranch(),
-                                                                        persistedData.version().getAttributes() );
+
+        final Attributes resolvedAttributes = params.getVersionAttributesResolver() == null
+            ? null
+            : resolveVersionAttributes( params.getVersionAttributesResolver(), persistedNode, builtNode,
+                                        ContextAccessor.current().getBranch(),
+                                        this.nodeStorageService.getVersion( entry.getVersionId(), internalContext ).getAttributes() );
         final Node movedNode =
             this.nodeStorageService.store( StoreNodeParams.newVersion( builtNode, resolvedAttributes ), internalContext ).node();
         this.nodeStorageService.invalidatePath( persistedNode.path(), internalContext );

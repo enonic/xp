@@ -24,12 +24,11 @@ import com.enonic.xp.dump.BranchDumpResult;
 import com.enonic.xp.dump.DumpError;
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpListener;
-import com.enonic.xp.node.GetActiveNodeVersionsParams;
-import com.enonic.xp.node.GetActiveNodeVersionsResult;
-import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.ListNodesResult;
+import com.enonic.xp.node.EnumerateNodesParams;
+import com.enonic.xp.node.EnumerateNodesResult;
 import com.enonic.xp.node.NodeCommitEntries;
 import com.enonic.xp.node.NodeCommitQuery;
+import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -47,6 +46,7 @@ import com.enonic.xp.repo.impl.version.VersionIndexPath;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
 public class RepoDumper
@@ -75,7 +75,7 @@ public class RepoDumper
 
     private final SystemDumpListener listener;
 
-    private final Set<NodeId> nodesToDump = new HashSet<>();
+    private final Map<NodeId, Map<Branch, NodeVersionId>> nodesToDump = new LinkedHashMap<>();
 
     private final Map<Branch, BranchDumpResult.Builder> branchResults = new LinkedHashMap<>();
 
@@ -104,7 +104,6 @@ public class RepoDumper
         }
 
         setContext( RepositoryConstants.MASTER_BRANCH ).runWith( () -> {
-            // nodes, versions and commits are all read from storage, so the search index has nothing to contribute to a dump
             this.nodeService.refresh( RefreshMode.STORAGE );
             for ( Branch branch : this.branches )
             {
@@ -124,19 +123,32 @@ public class RepoDumper
             final BranchDumpResult.Builder branchDumpResult = branchResults.get( branch );
             try
             {
-                // enumerated from storage: a dump answers for what the repository holds, not for what the search index has caught up with
-                final ListNodesResult children =
-                    this.nodeService.list( ListNodesParams.create().parentPath( NodePath.ROOT ).recursive( true ).build() );
+                long branchNodeCount = 0;
+                String cursor = null;
+                do
+                {
+                    final EnumerateNodesResult batch = this.nodeService.enumerate( EnumerateNodesParams.create()
+                                                                                       .parentPath( NodePath.ROOT )
+                                                                                       .cursor( cursor )
+                                                                                       .build() );
+                    for ( final NodeEnumerationEntry entry : batch.getEntries() )
+                    {
+                        if ( nodeIds == null || nodeIds.contains( entry.nodeId() ) )
+                        {
+                            nodesToDump.computeIfAbsent( entry.nodeId(), key -> new LinkedHashMap<>() )
+                                .put( branch, entry.versionId() );
+                            branchNodeCount++;
+                        }
+                    }
+                    cursor = batch.getCursor();
+                }
+                while ( cursor != null );
 
-                final NodeIds branchNodes = nodeIds != null
-                    ? children.getNodeIds().stream().filter( nodeIds::contains ).collect( NodeIds.collector() )
-                    : children.getNodeIds();
-
-                this.listener.dumpingBranch( repositoryId, branch, branchNodes.getSize() + 1 );
+                this.listener.dumpingBranch( repositoryId, branch, branchNodeCount + 1 );
                 LOG.info( "Visiting repository [{}], branch [{}]", repositoryId, branch );
 
-                nodesToDump.add( NodeId.ROOT );
-                branchNodes.forEach( nodesToDump::add );
+                nodesToDump.computeIfAbsent( NodeId.ROOT, key -> new LinkedHashMap<>() )
+                    .put( branch, this.nodeService.getById( NodeId.ROOT ).getNodeVersionId() );
             }
             catch ( Exception e )
             {
@@ -152,22 +164,18 @@ public class RepoDumper
         writer.openVersionsMeta( repositoryId );
         try
         {
-            for ( NodeId nodeId : nodesToDump )
+            for ( Map.Entry<NodeId, Map<Branch, NodeVersionId>> nodeToDump : nodesToDump.entrySet() )
             {
+                final NodeId nodeId = nodeToDump.getKey();
                 final Set<NodeVersionId> written = new HashSet<>();
                 try (DumpWriter.VersionsStream stream = writer.openVersions( nodeId ))
                 {
-                    final GetActiveNodeVersionsResult activeVersions = this.nodeService.getActiveVersions(
-                        GetActiveNodeVersionsParams.create().nodeId( nodeId ).branches( this.branches ).build() );
-
                     final Map<NodeVersionId, List<Branch>> branchesByVersion = new LinkedHashMap<>();
-                    final Map<NodeVersionId, NodeVersion> activeByVersion = new LinkedHashMap<>();
-                    activeVersions.getNodeVersions().forEach( ( branch, nodeVersion ) -> {
-                        activeByVersion.putIfAbsent( nodeVersion.getNodeVersionId(), nodeVersion );
-                        branchesByVersion.computeIfAbsent( nodeVersion.getNodeVersionId(), _ -> new ArrayList<>() ).add( branch );
-                    } );
+                    nodeToDump.getValue()
+                        .forEach( ( branch, versionId ) -> branchesByVersion.computeIfAbsent( versionId, _ -> new ArrayList<>() )
+                            .add( branch ) );
 
-                    for ( Branch activeBranch : activeVersions.getNodeVersions().keySet() )
+                    for ( Branch activeBranch : nodeToDump.getValue().keySet() )
                     {
                         final BranchDumpResult.Builder branchResult = branchResults.get( activeBranch );
                         if ( branchResult != null )
@@ -177,15 +185,15 @@ public class RepoDumper
                         this.listener.nodeDumped();
                     }
 
-                    for ( NodeVersion nodeVersion : activeByVersion.values() )
+                    for ( Map.Entry<NodeVersionId, List<Branch>> versionBranches : branchesByVersion.entrySet() )
                     {
-                        if ( written.add( nodeVersion.getNodeVersionId() ) )
-                        {
-                            stream.append( VersionMetaFactory.create( nodeVersion ),
-                                           branchesByVersion.get( nodeVersion.getNodeVersionId() ) );
-                            doStoreVersion( nodeVersion, this.dumpResult );
-                            this.dumpResult.addedVersion();
-                        }
+                        final NodeVersion nodeVersion = requireNonNull( this.nodeService.getVersion( nodeId, versionBranches.getKey() ),
+                                                                        "Version " + versionBranches.getKey() + " of node " + nodeId +
+                                                                            " not found" );
+                        written.add( nodeVersion.getNodeVersionId() );
+                        stream.append( VersionMetaFactory.create( nodeVersion ), versionBranches.getValue() );
+                        doStoreVersion( nodeVersion, this.dumpResult );
+                        this.dumpResult.addedVersion();
                     }
 
                     if ( includeVersions )

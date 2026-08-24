@@ -93,7 +93,7 @@ public final class NodeImporter
     {
         if ( nodeImportListener != null )
         {
-            nodeImportListener.nodeResolved( exportReader.getNodeFileCount( exportRoot ) );
+            nodeImportListener.resolved( exportReader.getNodeFileCount( exportRoot ) );
         }
 
         if ( !isNodeFolder( this.exportRoot ) )

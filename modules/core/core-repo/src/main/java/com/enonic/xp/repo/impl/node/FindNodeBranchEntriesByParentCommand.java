@@ -1,6 +1,11 @@
 package com.enonic.xp.repo.impl.node;
 
+import java.time.Instant;
+
+import com.google.common.collect.Iterables;
+
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.data.Value;
 import com.enonic.xp.data.ValueFactory;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.RefreshMode;
@@ -11,6 +16,9 @@ import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
 import com.enonic.xp.query.expr.ValueExpr;
+import com.enonic.xp.query.filter.BooleanFilter;
+import com.enonic.xp.query.filter.Filter;
+import com.enonic.xp.query.filter.RangeFilter;
 import com.enonic.xp.query.filter.ValueFilter;
 import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.NodeBranchEntries;
@@ -19,22 +27,17 @@ import com.enonic.xp.repo.impl.branch.search.NodeBranchQuery;
 import com.enonic.xp.repo.impl.branch.search.NodeBranchQueryResultFactory;
 import com.enonic.xp.repo.impl.branch.storage.BranchIndexPath;
 import com.enonic.xp.repo.impl.search.NodeSearchService;
+import com.enonic.xp.repo.impl.search.result.SearchResult;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
 import static java.util.Objects.requireNonNull;
 
-/**
- * Finds all branch entries below a parent path by querying the branch storage index,
- * so that storage operations never depend on the search index.
- */
 final class FindNodeBranchEntriesByParentCommand
     extends AbstractNodeCommand
 {
     private final NodePath parentPath;
-
-    private final boolean recursive;
 
     private final OrderExpr.Direction pathOrder;
 
@@ -42,14 +45,22 @@ final class FindNodeBranchEntriesByParentCommand
 
     private final boolean refreshStorage;
 
+    private final int batchSize;
+
+    private final Instant modifiedBefore;
+
+    private final String cursor;
+
     private FindNodeBranchEntriesByParentCommand( final Builder builder )
     {
         super( builder );
         this.parentPath = builder.parentPath;
-        this.recursive = builder.recursive;
         this.pathOrder = builder.pathOrder;
         this.requiredPermission = builder.requiredPermission;
         this.refreshStorage = builder.refreshStorage;
+        this.batchSize = builder.batchSize;
+        this.modifiedBefore = builder.modifiedBefore;
+        this.cursor = builder.cursor;
     }
 
     static Builder create()
@@ -64,6 +75,11 @@ final class FindNodeBranchEntriesByParentCommand
 
     NodeBranchEntries execute()
     {
+        return executeBatch().entries();
+    }
+
+    Batch executeBatch()
+    {
         final InternalContext context = InternalContext.from( ContextAccessor.current() );
 
         if ( refreshStorage )
@@ -71,28 +87,89 @@ final class FindNodeBranchEntriesByParentCommand
             refresh( RefreshMode.STORAGE );
         }
 
-        final NodeBranchQuery query = NodeBranchQuery.create()
+        final NodeBranchQuery.Builder query = NodeBranchQuery.create()
             .query( QueryExpr.from( createBelowParentExpr() ) )
             .addQueryFilter( ValueFilter.create()
                                  .fieldName( BranchIndexPath.BRANCH_NAME.getPath() )
                                  .addValue( ValueFactory.newString( context.getBranch().getValue() ) )
                                  .build() )
-            .addOrderBy( FieldOrderExpr.create( BranchIndexPath.PATH, pathOrder ) )
-            .size( NodeSearchService.GET_ALL_SIZE_FLAG )
-            .build();
+            .size( batchSize > 0 ? batchSize : NodeSearchService.GET_ALL_SIZE_FLAG );
 
-        final NodeBranchEntries entries =
-            NodeBranchQueryResultFactory.create( this.nodeSearchService.query( query, context.getRepositoryId() ) );
+        if ( modifiedBefore != null )
+        {
+            query.addQueryFilter( RangeFilter.create()
+                                      .fieldName( BranchIndexPath.TIMESTAMP.getPath() )
+                                      .lt( ValueFactory.newDateTime( modifiedBefore ) )
+                                      .build() )
+                .addOrderBy( FieldOrderExpr.create( BranchIndexPath.TIMESTAMP, OrderExpr.Direction.ASC ) )
+                .addOrderBy( FieldOrderExpr.create( BranchIndexPath.NODE_ID, OrderExpr.Direction.ASC ) );
+        }
+        else
+        {
+            query.addOrderBy( FieldOrderExpr.create( batchSize > 0 ? BranchIndexPath.NODE_ID : BranchIndexPath.PATH,
+                                                     batchSize > 0 ? OrderExpr.Direction.ASC : pathOrder ) );
+        }
 
-        return filter( entries, context );
+        if ( cursor != null )
+        {
+            query.addQueryFilter( createAfterCursorFilter() );
+        }
+
+        final SearchResult result = this.nodeSearchService.query( query.build(), context.getRepositoryId() );
+
+        final NodeBranchEntries entries = NodeBranchQueryResultFactory.create( result );
+
+        final String nextCursor = batchSize > 0 && entries.getSize() == batchSize ? cursorOf( Iterables.getLast( entries ) ) : null;
+
+        return new Batch( filter( entries, context ), nextCursor, result.getTotalHits() );
     }
 
-    /**
-     * The branch index carries no parentPath field, so a parent is matched by a path prefix, which the index answers by seeking its term
-     * dictionary once and scanning the subtree from there. Narrowing that to the direct children would take a wildcard with an inner
-     * {@code *}, which no longer reduces to a prefix and makes the index run an automaton over every term of the subtree instead, so the
-     * deeper levels are dropped in {@link #filter} rather than here.
-     */
+    private String cursorOf( final NodeBranchEntry entry )
+    {
+        return modifiedBefore == null
+            ? entry.getNodeId().toString()
+            : entry.getTimestamp().toEpochMilli() + "|" + entry.getNodeId();
+    }
+
+    private Filter createAfterCursorFilter()
+    {
+        if ( modifiedBefore == null )
+        {
+            return RangeFilter.create().fieldName( BranchIndexPath.NODE_ID.getPath() ).gt( ValueFactory.newString( cursor ) ).build();
+        }
+
+        final int separator = cursor.indexOf( '|' );
+        final Value cursorTimestamp;
+        try
+        {
+            cursorTimestamp = ValueFactory.newDateTime( Instant.ofEpochMilli( Long.parseLong( cursor.substring( 0, separator ) ) ) );
+        }
+        catch ( IndexOutOfBoundsException | NumberFormatException e )
+        {
+            throw new IllegalArgumentException( "Invalid cursor: " + cursor, e );
+        }
+        final String cursorId = cursor.substring( separator + 1 );
+
+        return BooleanFilter.create()
+            .should( RangeFilter.create().fieldName( BranchIndexPath.TIMESTAMP.getPath() ).gt( cursorTimestamp ).build() )
+            .should( BooleanFilter.create()
+                         .must( RangeFilter.create()
+                                    .fieldName( BranchIndexPath.TIMESTAMP.getPath() )
+                                    .from( cursorTimestamp )
+                                    .to( cursorTimestamp )
+                                    .build() )
+                         .must( RangeFilter.create()
+                                    .fieldName( BranchIndexPath.NODE_ID.getPath() )
+                                    .gt( ValueFactory.newString( cursorId ) )
+                                    .build() )
+                         .build() )
+            .build();
+    }
+
+    record Batch(NodeBranchEntries entries, String cursor, long totalHits)
+    {
+    }
+
     private ConstraintExpr createBelowParentExpr()
     {
         return parentPath.isRoot()
@@ -100,15 +177,9 @@ final class FindNodeBranchEntriesByParentCommand
             : CompareExpr.like( FieldExpr.from( BranchIndexPath.PATH ), ValueExpr.string( parentPath + "/*" ) );
     }
 
-    /**
-     * Drops the descendants a non-recursive listing did not ask for, and the entries the caller may not read. Depth is settled first,
-     * since it costs a path comparison whereas a permission decision costs a stored read of the access control list of the entry.
-     */
     private NodeBranchEntries filter( final NodeBranchEntries entries, final InternalContext context )
     {
-        final boolean checkPermission = requiredPermission != null && !context.getPrincipalKeys().contains( RoleKeys.ADMIN );
-
-        if ( recursive && !checkPermission )
+        if ( requiredPermission == null || context.getPrincipalKeys().contains( RoleKeys.ADMIN ) )
         {
             return entries;
         }
@@ -116,21 +187,11 @@ final class FindNodeBranchEntriesByParentCommand
         final NodeBranchEntries.Builder filtered = NodeBranchEntries.create();
         for ( final NodeBranchEntry entry : entries )
         {
-            if ( !recursive && !parentPath.equals( entry.getNodePath().getParentPath() ) )
+            final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
+            if ( NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
             {
-                continue;
+                filtered.add( entry );
             }
-
-            if ( checkPermission )
-            {
-                final AccessControlList permissions = this.nodeStorageService.getNodePermissions( entry.getNodeVersionKey(), context );
-                if ( !NodePermissionsResolver.hasPermission( context.getPrincipalKeys(), requiredPermission, permissions ) )
-                {
-                    continue;
-                }
-            }
-
-            filtered.add( entry );
         }
         return filtered.build();
     }
@@ -140,13 +201,17 @@ final class FindNodeBranchEntriesByParentCommand
     {
         private NodePath parentPath;
 
-        private boolean recursive = true;
-
         private OrderExpr.Direction pathOrder = OrderExpr.Direction.ASC;
 
         private Permission requiredPermission;
 
         private boolean refreshStorage = true;
+
+        private int batchSize;
+
+        private Instant modifiedBefore;
+
+        private String cursor;
 
         private Builder()
         {
@@ -161,12 +226,6 @@ final class FindNodeBranchEntriesByParentCommand
         Builder parentPath( final NodePath parentPath )
         {
             this.parentPath = parentPath;
-            return this;
-        }
-
-        Builder recursive( final boolean recursive )
-        {
-            this.recursive = recursive;
             return this;
         }
 
@@ -185,6 +244,24 @@ final class FindNodeBranchEntriesByParentCommand
         Builder refreshStorage( final boolean refreshStorage )
         {
             this.refreshStorage = refreshStorage;
+            return this;
+        }
+
+        Builder batchSize( final int batchSize )
+        {
+            this.batchSize = batchSize;
+            return this;
+        }
+
+        Builder modifiedBefore( final Instant modifiedBefore )
+        {
+            this.modifiedBefore = modifiedBefore;
+            return this;
+        }
+
+        Builder cursor( final String cursor )
+        {
+            this.cursor = cursor;
             return this;
         }
 

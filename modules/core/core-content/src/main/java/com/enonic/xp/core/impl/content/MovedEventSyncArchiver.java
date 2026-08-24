@@ -1,12 +1,11 @@
 package com.enonic.xp.core.impl.content;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.google.common.collect.Maps;
 
 import com.enonic.xp.archive.ArchiveContentParams;
 import com.enonic.xp.content.Content;
@@ -90,17 +89,26 @@ final class MovedEventSyncArchiver
 
     private Map<Content, Context> getAllArchived( final List<ContentToSync> contentToSync )
     {
-        final Stream<Map.Entry<Content, Context>> parentStream =
-            contentToSync.stream().map( c -> Maps.immutableEntry( c.getTargetContent(), c.getTargetCtx() ) );
+        final Map<Content, Context> archived = new LinkedHashMap<>();
 
-        final Stream<Map.Entry<Content, Context>> childrenStream = contentToSync.stream()
-            .flatMap( c -> c.getTargetCtx()
-                .callWith( () -> layersContentService.getByIds( layersContentService.findAllByParent( c.getTargetContent().getPath() ) )
-                    .stream()
-                    .map( child -> Maps.immutableEntry( child, c.getTargetCtx() ) ) ) );
+        for ( final ContentToSync c : contentToSync )
+        {
+            archived.putIfAbsent( c.getTargetContent(), c.getTargetCtx() );
 
-        return Stream.concat( parentStream, childrenStream )
-            .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue, ( a, _ ) -> a ) );
+            c.getTargetCtx().runWith( () -> {
+                String cursor = null;
+                do
+                {
+                    final LayersContentService.ContentIdsBatch batch =
+                        layersContentService.findAllByParent( c.getTargetContent().getPath(), cursor );
+                    layersContentService.getByIds( batch.ids() ).forEach( child -> archived.putIfAbsent( child, c.getTargetCtx() ) );
+                    cursor = batch.cursor();
+                }
+                while ( cursor != null );
+            } );
+        }
+
+        return archived;
     }
 
     static class Builder

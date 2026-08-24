@@ -1,5 +1,8 @@
 package com.enonic.xp.node;
 
+import java.time.Instant;
+import java.util.stream.Stream;
+
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -51,20 +54,48 @@ public interface NodeService
     FindNodesByParentResult findByParent( FindNodesByParentParams params );
 
     /**
-     * Lists the children of a node, or its entire subtree when {@link ListNodesParams.Builder#recursive(boolean)} is set.
+     * Lists the entire subtree of a node at once.
      * <p>
-     * Every node the caller is permitted to read is listed, ordered by path, and is represented by its id, path and timestamp. The nodes
-     * themselves are not read.
+     * The stream holds one entry for every node below the given parent that the caller is permitted to read, ordered by path, each
+     * naming its node by id, path and timestamp. The nodes themselves are not read. The stream may be consumed once and needs no
+     * closing.
      * <p>
-     * The listing is served from storage rather than from the search index. A node stored with {@link RefreshMode#STORAGE} or
-     * {@link RefreshMode#ALL} is therefore listed immediately, whereas {@link #findByQuery(NodeQuery)} returns it only once the search
-     * index has been refreshed. This method performs no refresh of its own; a node stored without a refresh is visible to neither.
+     * A node is listed once it has been written with {@link RefreshMode#STORAGE} or {@link RefreshMode#ALL} — earlier than
+     * {@link #findByQuery(NodeQuery)} answers with it, which additionally waits for the search index. This method refreshes nothing
+     * itself, so a node written without any refresh is listed by neither.
      * <p>
-     * Paging, filtering and ordering are not supported. Use a query where any of them is required.
+     * The whole listing is answered at once, so what it costs grows with the number of nodes in the subtree: a subtree that may hold
+     * many should be {@link #enumerate(EnumerateNodesParams) enumerated} instead. Neither filtering nor ordering is offered — use
+     * {@link #findByQuery(NodeQuery)} where either is required.
      *
      * @since 8.1.0
      */
-    ListNodesResult list( ListNodesParams params );
+    Stream<NodeListEntry> list( ListNodesParams params );
+
+    /**
+     * Enumerates the entire subtree of a node in batches. Requires the administrator role.
+     * <p>
+     * A batch holds at most {@link EnumerateNodesParams.Builder#batchSize(int) batchSize} entries, and the enumeration answers with
+     * every node the subtree holds: nothing is left out for want of permission, and a caller without the administrator role is refused
+     * rather than answered with less. Repeat the call with the {@link EnumerateNodesResult#getCursor() cursor} of each batch until a
+     * batch answers with none — a batch may be empty before then, so the cursor and not the entries says whether the enumeration is
+     * finished.
+     * <p>
+     * A node is observed at most once, whatever is written, deleted or moved while the enumeration is consumed; a node a concurrent
+     * write places behind the cursor is not observed at all. The one exception belongs to a bounded enumeration: a node whose timestamp
+     * changes to another moment before the bound is observed a second time.
+     * <p>
+     * As with {@link #list(ListNodesParams)}, a node is enumerated once it has been written with {@link RefreshMode#STORAGE} or
+     * {@link RefreshMode#ALL}, and this method refreshes nothing itself.
+     * <p>
+     * An enumeration {@link EnumerateNodesParams.Builder#modifiedBefore(Instant) bounded by a timestamp} holds only the nodes whose
+     * timestamp falls before the bound and arrives oldest first — so a consumer working through a backlog gets it in the order it
+     * accumulated. An unbounded enumeration arrives in no specified order.
+     *
+     * @throws com.enonic.xp.exception.ForbiddenAccessException where the caller lacks the administrator role.
+     * @since 8.1.0
+     */
+    EnumerateNodesResult enumerate( EnumerateNodesParams params );
 
     FindNodesByQueryResult findByQuery( NodeQuery nodeQuery );
 

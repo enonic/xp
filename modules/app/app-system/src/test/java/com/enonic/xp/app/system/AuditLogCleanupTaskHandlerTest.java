@@ -13,15 +13,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.audit.CleanUpAuditLogListener;
 import com.enonic.xp.audit.CleanUpAuditLogParams;
+import com.enonic.xp.audit.CleanUpAuditLogResult;
+import com.enonic.xp.task.ProgressReportParams;
+import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
+import com.enonic.xp.task.TaskProgressReporterContext;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.task.TaskState;
 import com.enonic.xp.testing.ScriptTestSupport;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,6 +46,9 @@ class AuditLogCleanupTaskHandlerTest
 
     @Mock
     private TaskService taskService;
+
+    @Mock
+    private ProgressReporter progressReporter;
 
     @Override
     public void initialize()
@@ -67,6 +78,41 @@ class AuditLogCleanupTaskHandlerTest
         verify( auditLogService, times( 1 ) ).cleanUp( paramsCaptor.capture() );
 
         assertEquals( "PT2s", paramsCaptor.getValue().getAgeThreshold() );
+    }
+
+    @Test
+    void cleanUp_reports_what_it_has_found_and_deleted()
+    {
+        final TaskId taskId = TaskId.from( "id1" );
+        final TaskInfo taskInfo = TaskInfo.create()
+            .id( taskId )
+            .name( "com.enonic.xp.app.system:audit-log-cleanup" )
+            .application( ApplicationKey.SYSTEM )
+            .startTime( Instant.now() )
+            .state( TaskState.RUNNING )
+            .build();
+        when( taskService.getTaskInfo( taskId ) ).thenReturn( taskInfo );
+        when( taskService.getAllTasks() ).thenReturn( List.of( taskInfo ) );
+        when( auditLogService.cleanUp( any() ) ).thenAnswer( invocation -> {
+            final CleanUpAuditLogListener listener = invocation.getArgument( 0, CleanUpAuditLogParams.class ).getListener();
+
+            listener.resolved( 2000 );
+            listener.recordsDeleted( 1000 );
+            listener.recordsDeleted( 500 );
+            listener.resolved( 2500 );
+            listener.recordsDeleted( 999 );
+
+            return CleanUpAuditLogResult.create().build();
+        } );
+
+        TaskProgressReporterContext.withContext(
+            ( id, reporter ) -> runFunction( "/test/AuditLogCleanupTaskHandlerTest.js", "cleanUp" ) ).run( taskId, progressReporter );
+
+        final ArgumentCaptor<ProgressReportParams> progress = ArgumentCaptor.forClass( ProgressReportParams.class );
+        verify( progressReporter, times( 4 ) ).progress( progress.capture() );
+
+        assertThat( progress.getAllValues() ).extracting( ProgressReportParams::getCurrent, ProgressReportParams::getTotal )
+            .containsExactly( tuple( 0, 2000 ), tuple( 1000, 2000 ), tuple( 1500, 2500 ), tuple( 2499, 2500 ) );
     }
 
     @Test

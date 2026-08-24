@@ -535,9 +535,9 @@ public class ProjectServiceImpl
         }
 
         @Override
-        public void setTotal( final int count )
+        public void resolved( final int count )
         {
-            delegate.setTotal( count );
+            delegate.resolved( count );
         }
 
         @Override

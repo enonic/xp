@@ -19,12 +19,6 @@ class ApplyContentPermissionsParamsTest
             .applyContentPermissionsListener( new ApplyPermissionsListener()
             {
                 @Override
-                public void setTotal( final int count )
-                {
-
-                }
-
-                @Override
                 public void permissionsApplied( final int count )
                 {
 

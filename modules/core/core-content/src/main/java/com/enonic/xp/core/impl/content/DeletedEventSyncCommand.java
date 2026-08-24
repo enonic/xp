@@ -75,8 +75,8 @@ final class DeletedEventSyncCommand
 
     private boolean needToDelete( final ContentToSync content, final Set<ContentId> idsToRemove )
     {
-        return content.getSourceContent() == null && removedInSource( content ) && hasNoInboundDependencies( content, idsToRemove ) &&
-            hasNoChildren( content, idsToRemove );
+        return content.getSourceContent() == null && removedInSource( content ) && noInboundReferenceSurvives( content, idsToRemove ) &&
+            noDescendantSurvives( content, idsToRemove );
     }
 
     private boolean removedInSource( final ContentToSync contentToSync )
@@ -85,14 +85,28 @@ final class DeletedEventSyncCommand
             .callWith( () -> layersContentService.getById( contentToSync.getTargetContent().getId() ).isEmpty() );
     }
 
-    private boolean hasNoChildren( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
+    private boolean noDescendantSurvives( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
-        return this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath() )
-            .stream()
-            .allMatch( idsToRemove::contains );
+        final int decisive = idsToRemove.size() + 1;
+
+        String cursor = null;
+        do
+        {
+            final LayersContentService.ContentIdsBatch batch =
+                this.layersContentService.findAllByParent( contentToSync.getTargetContent().getPath(), cursor, decisive );
+
+            if ( !batch.ids().stream().allMatch( idsToRemove::contains ) )
+            {
+                return false;
+            }
+            cursor = batch.cursor();
+        }
+        while ( cursor != null );
+
+        return true;
     }
 
-    private boolean hasNoInboundDependencies( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
+    private boolean noInboundReferenceSurvives( final ContentToSync contentToSync, final Set<ContentId> idsToRemove )
     {
         final ContentId contentId = contentToSync.getTargetContent().getId();
         final ContentQuery query = ContentQuery.create()

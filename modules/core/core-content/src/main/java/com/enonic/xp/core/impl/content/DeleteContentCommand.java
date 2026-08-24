@@ -5,10 +5,12 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.content.DeleteContentListener;
 import com.enonic.xp.content.DeleteContentParams;
 import com.enonic.xp.content.DeleteContentsResult;
 import com.enonic.xp.content.UnpublishContentParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.node.DeleteNodeListener;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.DeleteNodeResult;
 import com.enonic.xp.node.ListNodesParams;
@@ -79,18 +81,18 @@ final class DeleteContentCommand
         final NodeId nodeId = nodeToDelete.id();
         final ContentId contentId = ContentId.from( nodeId );
 
-        // enumerated, not searched: everything below has to be unpublished, including what a search has not indexed yet
-        final NodeIds descendants =
-            nodeService.list( ListNodesParams.create().parentPath( nodeToDelete.path() ).recursive( true ).build() ).getNodeIds();
+        final ContentIds descendants = nodeService.list( ListNodesParams.create().parentPath( nodeToDelete.path() ).build() )
+            .map( entry -> ContentId.from( entry.nodeId() ) )
+            .collect( ContentIds.collector() );
 
-        final ContentIds unpublishedContents = unpublish( contentId, ContentNodeHelper.toContentIds( descendants ) );
+        final ContentIds unpublishedContents = unpublish( contentId, descendants );
         result.addUnpublished( unpublishedContents );
 
         final DeleteNodeParams.Builder builder = DeleteNodeParams.create().nodeId( nodeId ).refresh( RefreshMode.SEARCH );
 
         if ( params.getDeleteContentListener() != null )
         {
-            builder.deleteNodeListener( params.getDeleteContentListener()::contentDeleted );
+            builder.deleteNodeListener( new ListenerDelegate( params.getDeleteContentListener() ) );
         }
 
         final DeleteNodeResult deletedNodes = this.nodeService.delete( builder.build() );
@@ -106,8 +108,10 @@ final class DeleteContentCommand
             .nodeService( nodeService )
             .contentTypeService( contentTypeService )
             .eventPublisher( eventPublisher )
-            .params(
-                UnpublishContentParams.create().contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() ).build() )
+            .params( UnpublishContentParams.create()
+                         .contentIds( ContentIds.create().addAll( descendants ).add( contentId ).build() )
+                         .pushListener( params.getUnpublishListener() )
+                         .build() )
             .build()
             .execute()
             .getUnpublishedContents();
@@ -135,6 +139,29 @@ final class DeleteContentCommand
         {
             validate();
             return new DeleteContentCommand( this );
+        }
+    }
+
+    private static final class ListenerDelegate
+        implements DeleteNodeListener
+    {
+        private final DeleteContentListener delegate;
+
+        ListenerDelegate( final DeleteContentListener delegate )
+        {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public void nodesDeleted( final int count )
+        {
+            delegate.contentDeleted( count );
+        }
+
+        @Override
+        public void resolved( final int count )
+        {
+            delegate.resolved( count );
         }
     }
 }
