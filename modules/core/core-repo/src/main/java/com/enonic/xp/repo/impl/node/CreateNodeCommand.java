@@ -2,6 +2,9 @@ package com.enonic.xp.repo.impl.node;
 
 import java.util.List;
 
+import org.elasticsearch.index.IndexNotFoundException;
+
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.Property;
@@ -25,6 +28,7 @@ import com.enonic.xp.repo.impl.InternalContext;
 import com.enonic.xp.repo.impl.binary.BinaryService;
 import com.enonic.xp.repo.impl.storage.StoreNodeParams;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 
@@ -62,11 +66,7 @@ public final class CreateNodeCommand
 
     public Node execute()
     {
-        if ( !skipVerification )
-        {
-            NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
-        }
-        final Node parentNode = knownParentNode != null ? knownParentNode : NodeHelper.runAsAdmin( this::getParentNode );
+        final Node parentNode = verifyAndResolveParent();
 
         NodePermissionsResolver.requireContextUserPermissionOrAdmin( Permission.CREATE, parentNode );
 
@@ -134,12 +134,31 @@ public final class CreateNodeCommand
         return params.getPermissions().isEmpty() ? NodeDefaultAclFactory.create( getCurrentPrincipalKey() ) : params.getPermissions();
     }
 
+    private Node verifyAndResolveParent()
+    {
+        try
+        {
+            if ( !skipVerification )
+            {
+                NodeHelper.runAsAdmin( this::verifyNotExistsAlready );
+            }
+            return knownParentNode != null ? knownParentNode : NodeHelper.runAsAdmin( this::getParentNode );
+        }
+        catch ( IndexNotFoundException e )
+        {
+            throw new RepositoryNotFoundException( ContextAccessor.current().getRepositoryId() );
+        }
+    }
+
     private Node getParentNode()
     {
         final Node parentNode = doGetByPath( params.getParent() );
 
         if ( parentNode == null )
         {
+            final Context context = ContextAccessor.current();
+            NodeHelper.verifyBranchExists( this.nodeStorageService, context.getRepositoryId(), context.getBranch() );
+
             throw new NodeNotFoundException(
                 "Cannot create node with name " + params.getName() + ", parent '" + params.getParent() + "' not found" );
         }

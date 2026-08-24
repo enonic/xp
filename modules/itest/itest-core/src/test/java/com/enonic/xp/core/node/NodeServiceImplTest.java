@@ -435,6 +435,28 @@ class NodeServiceImplTest
     }
 
     @Test
+    void create_repo_non_existing()
+    {
+        final CreateNodeParams params = CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build();
+
+        assertThrows( RepositoryNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() )
+            .repositoryId( "missing-repo" )
+            .build()
+            .callWith( () -> this.nodeService.create( params ) ) );
+    }
+
+    @Test
+    void create_branch_non_existing()
+    {
+        final CreateNodeParams params = CreateNodeParams.create().name( "my-node" ).parent( NodePath.ROOT ).build();
+
+        assertThrows( BranchNotFoundException.class, () -> ContextBuilder.from( ContextAccessor.current() )
+            .branch( "missing-branch" )
+            .build()
+            .callWith( () -> this.nodeService.create( params ) ) );
+    }
+
+    @Test
     void test_duplicate_binary()
     {
         final PropertyTree data = new PropertyTree();
