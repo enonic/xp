@@ -47,7 +47,7 @@ import com.enonic.xp.node.NodeEnumerationEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.region.LayoutDescriptorService;
@@ -250,10 +250,10 @@ public class LayersContentService
      */
     public void setOrderKey( final ContentId contentId, final String orderKey )
     {
-        nodeService.update( UpdateNodeParams.create()
-                                .id( NodeId.from( contentId ) )
-                                .editor( toBeEdited -> toBeEdited.orderKey = orderKey )
-                                .build() );
+        nodeService.patch( PatchNodeParams.create()
+                               .id( NodeId.from( contentId ) )
+                               .editor( toBeEdited -> toBeEdited.orderKey = orderKey )
+                               .build() );
     }
 
     public Optional<Content> getById( final ContentId contentId )

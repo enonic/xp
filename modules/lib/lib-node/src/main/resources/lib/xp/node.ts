@@ -673,20 +673,22 @@ export type NodePropertiesOnCreate = Partial<CommonNodeProperties> & {
 export type NodePropertiesOnModify = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
-    _orderKey?: string;
     _parentPath?: never;
 };
 
 export type NodePropertiesOnUpdate = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
-    _orderKey?: string;
     _parentPath?: never;
 };
 
 export type NodePropertiesOnPatch = CommonNodeProperties & {
     _id: string;
     _indexConfig: NodeIndexConfigParams;
+    /**
+     * Opaque key carrying the node's place among manually ordered siblings. Patch is the only standard write channel
+     * for it - update discards a change to it.
+     */
     _orderKey?: string;
     _parentPath?: never;
 };

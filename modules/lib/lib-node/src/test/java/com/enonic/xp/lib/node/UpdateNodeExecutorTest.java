@@ -62,7 +62,28 @@ class UpdateNodeExecutorTest
     }
 
     @Test
-    void update_order_key()
+    void order_key_applied_when_editable()
+    {
+        final Node originalNode =
+            Node.create().name( "myNode" ).parentPath( NodePath.ROOT ).orderKey( "3ala4x8dnbc.original" ).build();
+
+        final EditableNode editableNode = new EditableNode( originalNode );
+
+        final PropertyTree updateScript = new PropertyTree();
+        updateScript.setString( "_orderKey", "3ala4x8dnbd.updated" );
+
+        UpdateNodeExecutor.create()
+            .editableNode( editableNode )
+            .propertyTree( updateScript )
+            .orderKeyEditable( true )
+            .build()
+            .execute();
+
+        assertEquals( "3ala4x8dnbd.updated", editableNode.orderKey );
+    }
+
+    @Test
+    void order_key_ignored_when_not_editable()
     {
         final Node originalNode =
             Node.create().name( "myNode" ).parentPath( NodePath.ROOT ).orderKey( "3ala4x8dnbc.original" ).build();
@@ -74,7 +95,7 @@ class UpdateNodeExecutorTest
 
         UpdateNodeExecutor.create().editableNode( editableNode ).propertyTree( updateScript ).build().execute();
 
-        assertEquals( "3ala4x8dnbd.updated", editableNode.orderKey );
+        assertEquals( "3ala4x8dnbc.original", editableNode.orderKey );
     }
 
     @Test
@@ -85,7 +106,12 @@ class UpdateNodeExecutorTest
 
         final EditableNode editableNode = new EditableNode( originalNode );
 
-        UpdateNodeExecutor.create().editableNode( editableNode ).propertyTree( new PropertyTree() ).build().execute();
+        UpdateNodeExecutor.create()
+            .editableNode( editableNode )
+            .propertyTree( new PropertyTree() )
+            .orderKeyEditable( true )
+            .build()
+            .execute();
 
         assertEquals( "3ala4x8dnbc.original", editableNode.orderKey );
     }

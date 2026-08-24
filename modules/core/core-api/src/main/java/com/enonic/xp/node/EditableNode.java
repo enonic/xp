@@ -24,7 +24,8 @@ public final class EditableNode
 
     /**
      * The order key, settable here and nowhere else outside the server: node patching is the sanctioned way to write an
-     * exact placement, for replication and repair. An unchanged value keeps the node where it is.
+     * exact placement, for replication and repair. Node update discards a change to it. An unchanged value keeps the
+     * node where it is.
      */
     public String orderKey;
 

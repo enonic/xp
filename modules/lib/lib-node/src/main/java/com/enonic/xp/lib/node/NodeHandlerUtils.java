@@ -15,7 +15,7 @@ final class NodeHandlerUtils
     {
     }
 
-    static NodeEditorInput prepareEditorInput( final Node node, final ScriptValue editorScript )
+    static NodeEditorInput prepareEditorInput( final Node node, final ScriptValue editorScript, final boolean orderKeyEditable )
     {
         final ScriptValue appliedResult = applyEditor( node, editorScript );
 
@@ -25,7 +25,7 @@ final class NodeHandlerUtils
         }
 
         final BinaryAttachments attachments = new BinaryAttachmentsParser().parse( appliedResult );
-        final NodeEditor nodeEditor = createEditor( appliedResult );
+        final NodeEditor nodeEditor = createEditor( appliedResult, orderKeyEditable );
 
         return new NodeEditorInput( nodeEditor, attachments );
     }
@@ -36,14 +36,19 @@ final class NodeHandlerUtils
         return editor.call( nodeMapper );
     }
 
-    private static NodeEditor createEditor( final ScriptValue updatedNode )
+    private static NodeEditor createEditor( final ScriptValue updatedNode, final boolean orderKeyEditable )
     {
         return edit -> {
             if ( updatedNode != null )
             {
                 final ScriptValueTranslatorResult result = new ScriptValueTranslator( false ).create( updatedNode );
                 final PropertyTree tree = result.getPropertyTree();
-                UpdateNodeExecutor.create().editableNode( edit ).propertyTree( tree ).build().execute();
+                UpdateNodeExecutor.create()
+                    .editableNode( edit )
+                    .propertyTree( tree )
+                    .orderKeyEditable( orderKeyEditable )
+                    .build()
+                    .execute();
             }
         };
     }

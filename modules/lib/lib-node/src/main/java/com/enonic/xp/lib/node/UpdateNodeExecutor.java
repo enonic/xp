@@ -20,10 +20,13 @@ class UpdateNodeExecutor
 
     private final PropertyTree propertyTree;
 
+    private final boolean orderKeyEditable;
+
     private UpdateNodeExecutor( final Builder builder )
     {
         editableNode = builder.editableNode;
         propertyTree = builder.propertyTree;
+        orderKeyEditable = builder.orderKeyEditable;
     }
 
     public static Builder create()
@@ -55,7 +58,7 @@ class UpdateNodeExecutor
             editableNode.manualOrderValue = propertyTree.getLong( MANUAL_ORDER_VALUE );
         }
 
-        if ( exists( propertyTree, ORDER_KEY, ValueTypes.STRING ) )
+        if ( orderKeyEditable && exists( propertyTree, ORDER_KEY, ValueTypes.STRING ) )
         {
             editableNode.orderKey = propertyTree.getString( ORDER_KEY );
         }
@@ -101,6 +104,8 @@ class UpdateNodeExecutor
 
         private PropertyTree propertyTree;
 
+        private boolean orderKeyEditable;
+
         private Builder()
         {
         }
@@ -114,6 +119,12 @@ class UpdateNodeExecutor
         public Builder propertyTree( final PropertyTree val )
         {
             propertyTree = val;
+            return this;
+        }
+
+        public Builder orderKeyEditable( final boolean val )
+        {
+            orderKeyEditable = val;
             return this;
         }
 

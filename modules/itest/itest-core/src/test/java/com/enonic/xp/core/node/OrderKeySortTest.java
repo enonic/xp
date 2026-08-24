@@ -122,6 +122,27 @@ class OrderKeySortTest
     }
 
     @Test
+    void update_discards_an_order_key_edit_and_patch_applies_it()
+    {
+        final Node node = createNode( NodePath.ROOT, "my-node" );
+        final String liftedKey =
+            new OrderKeyCodec( new java.util.SplittableRandom( 42 ) ).initial( java.time.Instant.ofEpochSecond( 300_000 ),
+                                                                               node.id().toString() );
+
+        this.nodeService.update( com.enonic.xp.node.UpdateNodeParams.create()
+                                     .id( node.id() )
+                                     .editor( toBeEdited -> toBeEdited.orderKey = liftedKey )
+                                     .build() );
+        assertEquals( node.getOrderKey(), getNodeById( node.id() ).getOrderKey(), "update must not move the node" );
+
+        this.nodeService.patch( com.enonic.xp.node.PatchNodeParams.create()
+                                    .id( node.id() )
+                                    .editor( toBeEdited -> toBeEdited.orderKey = liftedKey )
+                                    .build() );
+        assertEquals( liftedKey, getNodeById( node.id() ).getOrderKey(), "patch is the sanctioned write channel" );
+    }
+
+    @Test
     void keyless_version_stays_keyless_through_storage()
     {
         final Node legacy = storeKeyless( NodePath.ROOT, "legacy", 1234 );

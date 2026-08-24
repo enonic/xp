@@ -17,7 +17,7 @@ import com.enonic.xp.core.impl.content.ParentContentSynchronizer;
 import com.enonic.xp.core.internal.orderkey.OrderKeyCodec;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.UpdateNodeParams;
+import com.enonic.xp.node.PatchNodeParams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -66,13 +66,14 @@ class OrderKeySyncTest
         final Content sortedTarget = syncSorted( sourceParent.getId() );
         assertEquals( ChildOrder.orderKeyOrder(), sortedTarget.getChildOrder() );
 
-        // move child-a to the top in the source project: a fresh key at a later instant sorts before everything
+        // move child-a to the top in the source project: a fresh key at a later instant sorts before everything.
+        // Patch, not update: node patch is the only channel that writes an exact key.
         final String liftedKey = new OrderKeyCodec( new SplittableRandom( 42 ) )
             .initial( Instant.now().plusSeconds( 60 ), childA.getId().toString() );
-        projectContext.runWith( () -> nodeService.update( UpdateNodeParams.create()
-                                                              .id( NodeId.from( childA.getId() ) )
-                                                              .editor( toBeEdited -> toBeEdited.orderKey = liftedKey )
-                                                              .build() ) );
+        projectContext.runWith( () -> nodeService.patch( PatchNodeParams.create()
+                                                             .id( NodeId.from( childA.getId() ) )
+                                                             .editor( toBeEdited -> toBeEdited.orderKey = liftedKey )
+                                                             .build() ) );
 
         assertEquals( liftedKey, orderKeyIn( projectContext, childA.getId() ), "the lift must stick in the source first" );
 
@@ -94,10 +95,10 @@ class OrderKeySyncTest
         syncCreated( sourceChild.getId() );
 
         // strip the key in the source, the state of a node stored before order keys existed
-        projectContext.runWith( () -> nodeService.update( UpdateNodeParams.create()
-                                                              .id( NodeId.from( sourceChild.getId() ) )
-                                                              .editor( toBeEdited -> toBeEdited.orderKey = null )
-                                                              .build() ) );
+        projectContext.runWith( () -> nodeService.patch( PatchNodeParams.create()
+                                                             .id( NodeId.from( sourceChild.getId() ) )
+                                                             .editor( toBeEdited -> toBeEdited.orderKey = null )
+                                                             .build() ) );
 
         final String targetKeyBefore = orderKeyIn( layerContext, sourceChild.getId() );
         syncUpdated( sourceChild.getId() );
