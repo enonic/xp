@@ -2,10 +2,7 @@ package com.enonic.xp.lib.schema;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
-import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -33,27 +30,15 @@ public class DeleteDynamicContentSchemaHandler
 
     public boolean execute()
     {
-        final DynamicContentSchemaType dynamicContentSchemaType = DynamicContentSchemaType.valueOf( type );
-        BaseSchemaName schemaName;
-        switch ( dynamicContentSchemaType )
+        final DynamicSchemaService service = dynamicSchemaServiceSupplier.get();
+
+        return switch ( type )
         {
-            case FORM_FRAGMENT:
-                schemaName = FormFragmentName.from( name );
-                break;
-            case CONTENT_TYPE:
-                schemaName = ContentTypeName.from( name );
-                break;
-            case MIXIN:
-                schemaName = MixinName.from( name );
-                break;
-            default:
-                throw new IllegalArgumentException( "illegal schema type: " + dynamicContentSchemaType );
-
-        }
-        final DeleteDynamicContentSchemaParams params =
-            DeleteDynamicContentSchemaParams.create().name( schemaName ).type( dynamicContentSchemaType ).build();
-
-        return dynamicSchemaServiceSupplier.get().deleteContentSchema( params );
+            case "CONTENT_TYPE" -> service.deleteContentType( ContentTypeName.from( name ) );
+            case "FORM_FRAGMENT" -> service.deleteFormFragment( FormFragmentName.from( name ) );
+            case "MIXIN" -> service.deleteMixin( MixinName.from( name ) );
+            default -> throw new IllegalArgumentException( "illegal schema type: " + type );
+        };
     }
 
     @Override

@@ -1,138 +1,255 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.SchemaNodeLayout.Kind;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
-import com.enonic.xp.node.NodeName;
+import com.enonic.xp.node.NodeAlreadyExistAtPathException;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
+import com.enonic.xp.util.BinaryReference;
 
+/**
+ * Reads and writes the schema of an application as nodes below its {@code cms} node, laid out as {@link SchemaNodeLayout}
+ * describes: one node per schema, holding the descriptor as text in the {@code resource} property and the icon as a binary.
+ * Every write is a single node operation, so a schema is never seen half written.
+ */
 final class DynamicResourceManager
 {
     private final NodeService nodeService;
 
-    private final ResourceService resourceService;
-
-    DynamicResourceManager( final NodeService nodeService, final ResourceService resourceService )
+    DynamicResourceManager( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.resourceService = resourceService;
     }
 
-    Resource createResource( final NodePath folderPath, final String name, final String resource )
+    /**
+     * A schema node as written: created when there was none, updated otherwise.
+     */
+    record Stored(Node node, boolean created)
     {
-        return VirtualAppContext.createContext().callWith( () -> {
+    }
 
-            Node resourceFolder = nodeService.getByPath( folderPath );
-            if ( resourceFolder == null )
+    /**
+     * The node of a schema, {@code null} when there is none.
+     */
+    Node get( final ApplicationKey applicationKey, final Kind kind, final String name )
+    {
+        return ApplicationHelper.runAsAdmin( () -> nodeService.getByPath( nodePath( applicationKey, kind, name ) ) );
+    }
+
+    /**
+     * Creates the schema node, or updates it when there is one: the descriptor is replaced when a {@code resource} is given and
+     * kept otherwise, the icon is kept, removed or replaced as {@code iconUpdate} tells. A create racing another create of the same
+     * schema ends up as an update.
+     */
+    Stored upsert( final ApplicationKey applicationKey, final Kind kind, final String name, final String resource,
+                   final IconUpdate iconUpdate )
+    {
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath path = nodePath( applicationKey, kind, name );
+            if ( !nodeService.nodeExists( path ) )
             {
-                resourceFolder = nodeService.create( CreateNodeParams.create()
-                                                         .name( folderPath.getName() )
-                                                         .parent( folderPath.getParentPath() )
-                                                         .inheritPermissions( true )
-                                                         .refresh( RefreshMode.ALL )
-                                                         .build() );
+                if ( resource == null )
+                {
+                    throw new IllegalArgumentException( String.format( "resource is required to create [%s]", path ) );
+                }
+                try
+                {
+                    return new Stored( create( path, resource, iconUpdate ), true );
+                }
+                catch ( NodeAlreadyExistAtPathException e )
+                {
+                    // created by a racing call: updated instead
+                }
             }
-
-            final PropertyTree resourceData = new PropertyTree();
-
-            if ( resource != null )
-            {
-                resourceData.setString( SchemaNodePropertyNames.RESOURCE, resource );
-            }
-
-            final Node schemaNode = nodeService.create( CreateNodeParams.create()
-                                                            .parent( resourceFolder.path() )
-                                                            .name( name + ".yaml" )
-                                                            .data( resourceData )
-                                                            .inheritPermissions( true )
-                                                            .refresh( RefreshMode.ALL )
-                                                            .build() );
-
-            return new NodeValueResource( ResourceKey.from( appKeyFromNodePath( folderPath), resourcePathFromNodePath( schemaNode.path() ) ), schemaNode );
+            return new Stored( update( path, resource, iconUpdate ), false );
         } );
     }
 
-    Resource updateResource( final NodePath folderPath, final String name, final String resource )
+    private Node create( final NodePath path, final String resource, final IconUpdate iconUpdate )
     {
-        return VirtualAppContext.createContext().callWith( () -> {
+        final PropertyTree data = new PropertyTree();
+        data.setString( SchemaNodePropertyNames.RESOURCE, resource );
 
-            final PropertyTree resourceData = new PropertyTree();
+        final CreateNodeParams.Builder params = CreateNodeParams.create()
+            .parent( path.getParentPath() )
+            .name( path.getName() )
+            .data( data )
+            .inheritPermissions( true )
+            .refresh( RefreshMode.ALL );
 
+        if ( iconUpdate instanceof IconUpdate.Replace replace )
+        {
+            final BinaryReference reference = iconReference( replace );
+            data.setBinaryReference( SchemaNodePropertyNames.ICON, reference );
+            params.attachBinary( reference, replace.data() );
+        }
+        return nodeService.create( params.build() );
+    }
+
+    private Node update( final NodePath path, final String resource, final IconUpdate iconUpdate )
+    {
+        final BinaryReference reference = iconUpdate instanceof IconUpdate.Replace replace ? iconReference( replace ) : null;
+
+        final UpdateNodeParams.Builder params = UpdateNodeParams.create().path( path ).editor( toBeEdited -> {
             if ( resource != null )
             {
-                resourceData.setString( SchemaNodePropertyNames.RESOURCE, resource );
+                toBeEdited.data.setString( SchemaNodePropertyNames.RESOURCE, resource );
             }
+            switch ( iconUpdate )
+            {
+                case IconUpdate.Keep _ ->
+                {
+                }
+                case IconUpdate.Remove _ -> toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
+                case IconUpdate.Replace _ -> toBeEdited.data.setBinaryReference( SchemaNodePropertyNames.ICON, reference );
+            }
+        } ).refresh( RefreshMode.ALL );
 
-            final Node schemaNode = nodeService.update( UpdateNodeParams.create()
-                                                            .path( new NodePath( folderPath, NodeName.from( name + ".yaml" ) ) )
-                                                            .editor( toBeEdited -> toBeEdited.data = resourceData )
-                                                            .refresh( RefreshMode.ALL )
-                                                            .build() );
+        if ( iconUpdate instanceof IconUpdate.Replace replace )
+        {
+            // a binary attached under the other format's name is no longer referenced and dropped by the update
+            params.attachBinary( reference, replace.data() );
+        }
+        return nodeService.update( params.build() );
+    }
 
-            return new NodeValueResource(
-                ResourceKey.from( appKeyFromNodePath( schemaNode.path() ), resourcePathFromNodePath( schemaNode.path() ) ), schemaNode );
+    private static BinaryReference iconReference( final IconUpdate.Replace replace )
+    {
+        final BinaryReference reference = SchemaNodeLayout.iconReference( replace.mimeType() );
+        if ( reference == null )
+        {
+            throw new IllegalArgumentException( String.format( "unsupported icon mime type: %s", replace.mimeType() ) );
+        }
+        return reference;
+    }
+
+    /**
+     * @return {@code false} when there is no such schema
+     */
+    boolean delete( final ApplicationKey applicationKey, final Kind kind, final String name )
+    {
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath path = nodePath( applicationKey, kind, name );
+            return nodeService.nodeExists( path ) &&
+                nodeService.delete( DeleteNodeParams.create().nodePath( path ).refresh( RefreshMode.ALL ).build() ).getNodeIds().isNotEmpty();
         } );
     }
 
-    boolean resourceNodeExists( final NodePath folderPath, final String name )
+    /**
+     * The nodes of a kind, by name.
+     */
+    List<Node> list( final ApplicationKey applicationKey, final Kind kind )
     {
-        return VirtualAppContext.createContext()
-            .callWith( () -> nodeService.nodeExists( new NodePath( folderPath, NodeName.from( name + ".yaml" ) ) ) );
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath cmsPath = ApplicationRepoServiceImpl.cmsNodePath( applicationKey );
+            final NodeIds nodeIds = nodeService.list( ListNodesParams.create().parentPath( cmsPath ).build() )
+                .filter( entry -> cmsPath.equals( entry.nodePath().getParentPath() ) )
+                .filter( entry -> {
+                    final SchemaNodeLayout.Location location = SchemaNodeLayout.locate( entry.nodePath().getName() );
+                    return location != null && location.kind() == kind;
+                } )
+                .map( NodeListEntry::nodeId )
+                .collect( NodeIds.collector() );
+            return nodeIds.isEmpty()
+                ? List.of()
+                : nodeService.getByIds( nodeIds ).stream().sorted( Comparator.comparing( node -> node.name().toString() ) ).toList();
+        } );
     }
 
-    Resource getResource( final NodePath folderPath, final String name )
+    /**
+     * Creates the {@code cms} node, the marker of an application owning a schema, with the cms descriptor below it, in that order:
+     * the descriptor is there once the schema can be written.
+     */
+    Node createCms( final ApplicationKey applicationKey, final String resource )
     {
-        return VirtualAppContext.createContext()
-            .callWith( () -> resourceService.getResource(
-                ResourceKey.from( appKeyFromNodePath( folderPath ), resourcePathFromNodePath( folderPath ) + "/" + name + ".yaml" ) ) );
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath cmsPath = ApplicationRepoServiceImpl.cmsNodePath( applicationKey );
+            if ( !nodeService.nodeExists( cmsPath ) )
+            {
+                nodeService.create( CreateNodeParams.create()
+                                        .name( cmsPath.getName() )
+                                        .parent( cmsPath.getParentPath() )
+                                        .inheritPermissions( true )
+                                        .refresh( RefreshMode.ALL )
+                                        .build() );
+            }
+            return create( nodePath( applicationKey, Kind.CMS, null ), resource, IconUpdate.KEEP );
+        } );
     }
 
-    List<Resource> listResources( final NodePath folderPath )
+    /**
+     * Deletes the {@code cms} node with the whole schema below it.
+     *
+     * @return {@code false} when the application owns no schema
+     */
+    boolean deleteCms( final ApplicationKey applicationKey )
     {
-        return VirtualAppContext.createContext()
-            .callWith( () -> resourceService.findFiles( appKeyFromNodePath( folderPath ),
-                                                        resourcePathFromNodePath( folderPath ) + "/" + ".+/.+\\.yaml" )
-                .stream()
-                .map( resourceService::getResource )
-                .collect( Collectors.toList() ) );
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath cmsPath = ApplicationRepoServiceImpl.cmsNodePath( applicationKey );
+            return nodeService.nodeExists( cmsPath ) &&
+                nodeService.delete( DeleteNodeParams.create().nodePath( cmsPath ).refresh( RefreshMode.ALL ).build() ).getNodeIds().isNotEmpty();
+        } );
     }
 
-    boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder )
+    boolean nodeExists( final NodePath nodePath )
     {
-        return VirtualAppContext.createContext()
-            .callWith( () -> nodeService.delete( DeleteNodeParams.create()
-                                                     .nodePath( deleteFolder
-                                                                    ? folderPath
-                                                                    : new NodePath( folderPath, NodeName.from( name + ".yaml" ) ) )
-                                                     .refresh( RefreshMode.ALL )
-                                                     .build() ) )
-            .getNodeIds()
-            .isNotEmpty();
+        return ApplicationHelper.runAsAdmin( () -> nodeService.nodeExists( nodePath ) );
     }
 
-    public static ApplicationKey appKeyFromNodePath( final NodePath path )
+    /**
+     * The descriptor held by a schema node, as the resource it is served as.
+     */
+    static Resource toResource( final ApplicationKey applicationKey, final Node node )
     {
-        final String pathString = path.toString();
-        final int endIndex = pathString.indexOf( '/', 1 );
-        return ApplicationKey.from( pathString.substring( 1, endIndex == -1 ? pathString.length() : endIndex ) );
+        final SchemaNodeLayout.Location location = SchemaNodeLayout.locate( node.name() );
+        return new NodeValueResource( ResourceKey.from( applicationKey, location.kind().resourcePath( location.name() ) ), node );
     }
 
-    private static String resourcePathFromNodePath( final NodePath path )
+    /**
+     * The icon attached to a schema node, {@code null} when it has none.
+     */
+    Icon iconOf( final Node node )
     {
-        final String pathString = path.toString();
-        final int beginIndex = pathString.indexOf( '/', 1 );
-        return pathString.substring( beginIndex == -1 ? 1 : beginIndex );
+        final BinaryReference reference = node.data().getBinaryReference( SchemaNodePropertyNames.ICON );
+        final String mimeType = SchemaNodeLayout.iconMimeType( reference );
+        if ( mimeType == null )
+        {
+            return null;
+        }
+        final ByteSource binary = ApplicationHelper.runAsAdmin( () -> nodeService.getBinary( node.id(), reference ) );
+        try
+        {
+            return Icon.from( binary.read(), mimeType, node.getTimestamp() );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private static NodePath nodePath( final ApplicationKey applicationKey, final Kind kind, final String name )
+    {
+        return ApplicationRepoServiceImpl.schemaNodePath( applicationKey, kind.nodePath( name ) );
     }
 }

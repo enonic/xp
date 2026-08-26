@@ -2,7 +2,6 @@ package com.enonic.xp.lib.schema.mapper;
 
 import java.util.List;
 
-import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -48,6 +47,6 @@ public final class ContentTypeMapper
     @Override
     protected String getType()
     {
-        return DynamicContentSchemaType.CONTENT_TYPE.name();
+        return "CONTENT_TYPE";
     }
 }

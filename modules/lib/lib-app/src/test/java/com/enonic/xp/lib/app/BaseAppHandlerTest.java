@@ -1,6 +1,10 @@
 package com.enonic.xp.lib.app;
 
+import java.nio.charset.StandardCharsets;
+
 import org.mockito.Mockito;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationService;
@@ -25,5 +29,10 @@ public abstract class BaseAppHandlerTest
 
         addService( ApplicationService.class, this.applicationService );
         addService( ApplicationDescriptorService.class, this.applicationDescriptorService );
+    }
+
+    public ByteSource createByteSource( final String value )
+    {
+        return ByteSource.wrap( value.getBytes( StandardCharsets.UTF_8 ) );
     }
 }

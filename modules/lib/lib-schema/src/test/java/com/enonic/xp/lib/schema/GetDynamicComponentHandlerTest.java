@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -12,9 +13,7 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
-import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicSchemaResult;
-import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.Resource;
 
 import static org.mockito.ArgumentMatchers.isA;
@@ -27,14 +26,8 @@ class GetDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
-            final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
-
-            if ( DynamicComponentType.PART != componentParams.getType() )
-            {
-                throw new IllegalArgumentException( "invalid component type: " + componentParams.getType() );
-            }
-
+        when( dynamicSchemaService.getPart( isA( DescriptorKey.class ) ) ).thenAnswer( params -> {
+            final DescriptorKey componentKey = params.getArgument( 0, DescriptorKey.class );
             final Form partForm = Form.create()
                 .addFormItem( Input.create().name( "width" ).label( "width" ).inputType( InputTypeName.DOUBLE ).build() )
                 .build();
@@ -42,7 +35,7 @@ class GetDynamicComponentHandlerTest
             final PartDescriptor partDescriptor = PartDescriptor.create()
                 .title( "News part" )
                 .config( partForm )
-                .key( componentParams.getKey() )
+                .key( componentKey )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
                 .description( "My news part" )
                 .descriptionI18nKey( "key.description" )
@@ -60,14 +53,8 @@ class GetDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
-            final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
-
-            if ( DynamicComponentType.LAYOUT != componentParams.getType() )
-            {
-                throw new IllegalArgumentException( "invalid component type: " + componentParams.getType() );
-            }
-
+        when( dynamicSchemaService.getLayout( isA( DescriptorKey.class ) ) ).thenAnswer( params -> {
+            final DescriptorKey componentKey = params.getArgument( 0, DescriptorKey.class );
             final Form layoutForm = Form.create()
                 .addFormItem( Input.create().name( "width" ).label( "width" ).inputType( InputTypeName.DOUBLE ).build() )
                 .build();
@@ -76,7 +63,7 @@ class GetDynamicComponentHandlerTest
                 .title( "News layout" )
                 .config( layoutForm )
                 .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region-one" ).build() ).build() )
-                .key( componentParams.getKey() )
+                .key( componentKey )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
                 .description( "My news layout" )
                 .descriptionI18nKey( "key.description" )
@@ -94,14 +81,8 @@ class GetDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.getComponent( isA( GetDynamicComponentParams.class ) ) ).thenAnswer( params -> {
-            final GetDynamicComponentParams componentParams = params.getArgument( 0, GetDynamicComponentParams.class );
-
-            if ( DynamicComponentType.PAGE != componentParams.getType() )
-            {
-                throw new IllegalArgumentException( "invalid component type: " + componentParams.getType() );
-            }
-
+        when( dynamicSchemaService.getPage( isA( DescriptorKey.class ) ) ).thenAnswer( params -> {
+            final DescriptorKey componentKey = params.getArgument( 0, DescriptorKey.class );
             final Form pageForm = Form.create()
                 .addFormItem( Input.create().name( "width" ).label( "width" ).inputType( InputTypeName.DOUBLE ).build() )
                 .build();
@@ -110,7 +91,7 @@ class GetDynamicComponentHandlerTest
                 .title( "News page" )
                 .config( pageForm )
                 .regions( RegionDescriptors.create().add( RegionDescriptor.create().name( "region-one" ).build() ).build() )
-                .key( componentParams.getKey() )
+                .key( componentKey )
                 .modifiedTime( Instant.parse( "2021-02-25T10:44:33.170079900Z" ) )
                 .description( "My news page" )
                 .descriptionI18nKey( "key.description" )
@@ -124,7 +105,6 @@ class GetDynamicComponentHandlerTest
 
         runScript( "/lib/xp/examples/schema/getPage.js" );
     }
-
 
     @Test
     void testInvalidSchemaType()
