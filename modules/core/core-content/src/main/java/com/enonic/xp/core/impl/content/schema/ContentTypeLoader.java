@@ -24,7 +24,7 @@ final class ContentTypeLoader
         final ContentType.Builder builder = YmlContentTypeParser.parse( resource.readString(), name.getApplicationKey() );
 
         builder.name( name );
-        builder.icon( loadIcon( name ) );
+        builder.icon( loadIcon( name, resource ) );
 
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         builder.modifiedTime( modifiedTime );

@@ -1,58 +1,29 @@
 package com.enonic.xp.core.impl.app;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.enonic.xp.app.ApplicationRepoConstants;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.init.ExternalInitializer;
-import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.RefreshMode;
+import com.enonic.xp.repository.CreateRepositoryParams;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Creates the application repository ({@link ApplicationRepoConstants#APP_REPO_ID}). The applications are children of its root,
+ * nothing else needs to be laid out.
+ */
 public class ApplicationRepoInitializer
     extends ExternalInitializer
 {
-    private final NodeService nodeService;
+    private final InternalRepositoryService repositoryService;
 
-    private static final Logger LOG = LoggerFactory.getLogger( ApplicationRepoInitializer.class );
+    private final Context adminContext;
 
     private ApplicationRepoInitializer( final Builder builder )
     {
         super( builder );
-        this.nodeService = builder.nodeService;
-    }
-
-    @Override
-    public final void doInitialize()
-    {
-        ApplicationHelper.runAsAdmin( this::initApplicationFolder );
-    }
-
-    @Override
-    public boolean isInitialized()
-    {
-        return ApplicationHelper.runAsAdmin( () -> this.nodeService.getByPath( ApplicationRepoServiceImpl.APPLICATION_PATH ) != null );
-    }
-
-    @Override
-    protected String getInitializationSubject()
-    {
-        return "System-repo [applications] layout";
-    }
-
-    private void initApplicationFolder()
-    {
-        final NodePath applicationsRootPath = ApplicationRepoServiceImpl.APPLICATION_PATH;
-        LOG.info( "Initializing [" + applicationsRootPath + "] folder" );
-
-        nodeService.create( CreateNodeParams.create().
-            parent( applicationsRootPath.getParentPath() ).
-            name( applicationsRootPath.getName() ).
-            inheritPermissions( true ).
-            refresh( RefreshMode.ALL ).
-            build() );
+        this.repositoryService = builder.repositoryService;
+        this.adminContext = ApplicationHelper.createAdminContext();
     }
 
     public static Builder create()
@@ -60,14 +31,36 @@ public class ApplicationRepoInitializer
         return new Builder();
     }
 
+    @Override
+    protected boolean isInitialized()
+    {
+        return this.adminContext.callWith( () -> repositoryService.isInitialized( ApplicationRepoConstants.APP_REPO_ID ) );
+    }
+
+    @Override
+    protected void doInitialize()
+    {
+        this.adminContext.runWith( () -> repositoryService.initializeRepository( CreateRepositoryParams.create()
+                                                                                    .repositoryId( ApplicationRepoConstants.APP_REPO_ID )
+                                                                                    .rootPermissions(
+                                                                                        ApplicationRepoConstants.APP_REPO_DEFAULT_ACL )
+                                                                                    .build() ) );
+    }
+
+    @Override
+    protected String getInitializationSubject()
+    {
+        return ApplicationRepoConstants.APP_REPO_ID + " repo";
+    }
+
     public static class Builder
         extends ExternalInitializer.Builder<Builder>
     {
-        private NodeService nodeService;
+        private InternalRepositoryService repositoryService;
 
-        public Builder setNodeService( final NodeService nodeService )
+        public Builder setRepositoryService( final InternalRepositoryService repositoryService )
         {
-            this.nodeService = nodeService;
+            this.repositoryService = repositoryService;
             return this;
         }
 
@@ -75,7 +68,7 @@ public class ApplicationRepoInitializer
         protected void validate()
         {
             super.validate();
-            requireNonNull( nodeService );
+            requireNonNull( repositoryService );
         }
 
         public ApplicationRepoInitializer build()

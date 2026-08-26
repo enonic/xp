@@ -4,10 +4,9 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual parts.
-var result = schemaLib.listComponents({
-    application: 'myapp',
-    type: 'PART'
+// Fetch dynamic parts.
+var result = schemaLib.listParts({
+    application: 'myapp'
 });
 
 log.info('Fetched parts: ' + result.map((part) => part.key).join(','));

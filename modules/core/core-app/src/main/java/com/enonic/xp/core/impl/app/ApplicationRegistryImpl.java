@@ -72,7 +72,7 @@ public class ApplicationRegistryImpl
     }
 
     @Override
-    public Application install( final ApplicationKey applicationKey, final ByteSource byteSource )
+    public Application install( final ApplicationKey applicationKey, final ByteSource byteSource, final boolean local )
     {
         final RuntimeException[] exceptionHolder = new RuntimeException[1];
         final ApplicationAdaptor app = applications.compute( applicationKey, ( key, existingApp ) -> {
@@ -82,9 +82,10 @@ public class ApplicationRegistryImpl
             }
             try (InputStream in = byteSource.openStream())
             {
-                LOG.debug( "Installing application {} bundle", key );
+                LOG.debug( "Installing {} application {} bundle", local ? "local" : "", key );
 
-                final Bundle bundle = context.installBundle( key.getName(), in );
+                // the bundle location carries the local marker: it is the only thing the bundle tracker sees when it creates the application
+                final Bundle bundle = context.installBundle( ApplicationHelper.toBundleLocation( key, local ), in );
 
                 LOG.info( "Installed application {} bundle {}", key, bundle.getBundleId() );
 

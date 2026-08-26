@@ -13,9 +13,9 @@ declare global {
     }
 }
 
-import type {ByteSource} from '@enonic-types/core';
+import type {ByteSource, ConfigValue, ScriptValue} from '@enonic-types/core';
 
-export type {ByteSource} from '@enonic-types/core';
+export type {ByteSource, ConfigObject, ConfigValue, ScriptValue} from '@enonic-types/core';
 
 function checkRequired<T extends object, K extends keyof T>(
     obj: T,
@@ -27,10 +27,6 @@ function checkRequired<T extends object, K extends keyof T>(
     return obj[name];
 }
 
-export interface CreateVirtualApplicationParams {
-    key: string;
-}
-
 export interface Application {
     key: string;
     version: string | null;
@@ -40,54 +36,7 @@ export interface Application {
     modifiedTime: string | null;
     started: boolean;
     system: boolean;
-}
-
-interface CreateVirtualApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): Application;
-}
-
-/**
- * Creates virtual application.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {Application} created application.
- */
-export function createVirtualApplication(params: CreateVirtualApplicationParams): Application {
-    const key = checkRequired(params, 'key');
-
-    const bean: CreateVirtualApplicationHandler = __.newBean<CreateVirtualApplicationHandler>('com.enonic.xp.lib.app.CreateVirtualApplicationHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
-}
-
-export interface DeleteVirtualApplicationParams {
-    key: string;
-}
-
-interface DeleteVirtualApplicationHandler {
-    setKey(value: string): void;
-
-    execute(): boolean;
-}
-
-/**
- * Deletes virtual application.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Application key.
- *
- * @returns {boolean} deletion result.
- */
-export function deleteVirtualApplication(params: DeleteVirtualApplicationParams): boolean {
-    const key = checkRequired(params, 'key');
-
-    const bean: DeleteVirtualApplicationHandler = __.newBean<DeleteVirtualApplicationHandler>('com.enonic.xp.lib.app.DeleteVirtualApplicationHandler');
-    bean.setKey(key);
-    return __.toNativeObject(bean.execute());
+    schema: boolean;
 }
 
 export interface GetApplicationParams {
@@ -121,7 +70,7 @@ interface ListApplicationsHandler {
 }
 
 /**
- * Fetches both static and virtual applications.
+ * Fetches all applications.
  *
  * @returns {Application[]} applications list.
  */
@@ -155,6 +104,7 @@ export interface ApplicationDescriptor {
     vendorName: string | null;
     vendorUrl: string | null;
     url: string | null;
+    config: Record<string, ConfigValue>;
     icon?: Icon;
 }
 
@@ -175,33 +125,70 @@ interface GetApplicationDescriptorHandler {
 export function getDescriptor(params: GetApplicationDescriptorParams): ApplicationDescriptor | null {
     const key = checkRequired(params, 'key');
 
-    const bean: GetApplicationDescriptorHandler = __.newBean<GetApplicationDescriptorHandler>('com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
+    const bean: GetApplicationDescriptorHandler = __.newBean<GetApplicationDescriptorHandler>(
+        'com.enonic.xp.lib.app.GetApplicationDescriptorHandler');
     bean.setKey(key);
     return __.toNativeObject(bean.execute());
 }
 
-export interface GetApplicationModeParams {
-    key: string;
-}
-
-interface GetApplicationModeHandler {
-    setKey(value: string): void;
-
-    execute(): string | null;
+export interface IconInput {
+    data: ByteSource;
+    mimeType: string;
 }
 
 /**
- * Fetches a mode of the app with the app key.
+ * The application descriptor as handed to the editor of {@link createOrUpdate}: the fields of {@link ApplicationDescriptor},
+ * with the icon replaceable by `{data, mimeType}` or removable by `null`.
+ */
+export interface EditableApplicationDescriptor
+    extends Omit<ApplicationDescriptor, 'icon'> {
+    icon?: Icon | IconInput | null;
+}
+
+export type ApplicationDescriptorEditor = (descriptor: EditableApplicationDescriptor) => EditableApplicationDescriptor;
+
+export interface CreateOrUpdateApplicationDescriptorParams {
+    key: string;
+    editor: ApplicationDescriptorEditor;
+}
+
+interface CreateOrUpdateApplicationDescriptorHandler {
+    setKey(value: string): void;
+
+    setEditor(value: ScriptValue | null): void;
+
+    execute(): ApplicationDescriptor;
+}
+
+/**
+ * Creates or updates the application descriptor (`enonic.yaml`) persisted in system-repo, and its icon.
+ *
+ * Pass an `editor` function that receives the current descriptor, as {@link getDescriptor} returns it, mutates the fields
+ * it wants to change and returns it. Fields left untouched keep their value, fields set to `null` are cleared.
+ * The icon is kept when left as received, removed when set to `null`, and replaced when set to `{data, mimeType}`
+ * (`image/svg+xml` or `image/png`, at most 100 KB).
+ *
+ * An application without a node in system-repo gets one, so a descriptor can be created before any bundle is installed:
+ * the editor then receives a descriptor holding only the key. Installing a bundle of the application later persists the
+ * bundle's descriptor over it.
+ *
+ * Requires the `system.admin` or `system.schema.admin` role.
+ *
+ * @example-ref examples/app/createOrUpdate.js
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Application key.
+ * @param {Function} params.editor Function that receives the editable descriptor, mutates fields, and returns it.
  *
- * @returns {string | null} application mode, or null if the application is not installed.
+ * @returns {ApplicationDescriptor} The descriptor as read after the change.
  */
-export function getApplicationMode(params: GetApplicationModeParams): string | null {
+export function createOrUpdate(params: CreateOrUpdateApplicationDescriptorParams): ApplicationDescriptor {
     const key = checkRequired(params, 'key');
+    const editor = checkRequired(params, 'editor');
 
-    const bean: GetApplicationModeHandler = __.newBean<GetApplicationModeHandler>('com.enonic.xp.lib.app.GetApplicationModeHandler');
+    const bean: CreateOrUpdateApplicationDescriptorHandler = __.newBean<CreateOrUpdateApplicationDescriptorHandler>(
+        'com.enonic.xp.lib.app.CreateOrUpdateApplicationDescriptorHandler');
     bean.setKey(key);
+    bean.setEditor(__.toScriptValue(editor));
     return __.toNativeObject(bean.execute());
 }

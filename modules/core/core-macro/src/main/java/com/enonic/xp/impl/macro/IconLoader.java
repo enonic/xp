@@ -3,12 +3,11 @@ package com.enonic.xp.impl.macro;
 import java.io.InputStream;
 import java.time.Instant;
 
-import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 
 public class IconLoader
@@ -45,9 +44,12 @@ public class IconLoader
         }
     }
 
-    public static Icon loadIcon( final MacroKey macroKey, final ResourceService resourceService, final String path )
+    /**
+     * Icon of the macro, next to its {@code descriptor}.
+     */
+    public static Icon loadIcon( final MacroKey macroKey, final Resource descriptor, final ResourceService resourceService )
     {
-        final Icon svgIcon = loadIcon( macroKey, "image/svg+xml", "svg", resourceService, path );
+        final Icon svgIcon = loadIcon( macroKey, descriptor, "image/svg+xml", "svg", resourceService );
 
         if ( svgIcon != null )
         {
@@ -55,23 +57,16 @@ public class IconLoader
         }
         else
         {
-            return loadIcon( macroKey, "image/png", "png", resourceService, path );
+            return loadIcon( macroKey, descriptor, "image/png", "png", resourceService );
         }
     }
 
-    private static Icon loadIcon( final MacroKey macroKey, final String mimeType, final String ext, final ResourceService resourceService,
-                                  final String path )
+    private static Icon loadIcon( final MacroKey macroKey, final Resource descriptor, final String mimeType, final String ext,
+                                  final ResourceService resourceService )
     {
-        final ResourceKey resourceKey = toResourceKey( macroKey, ext, path );
-        final Resource resource = resourceService.getResource( resourceKey );
+        final Resource resource =
+            resourceService.getResource( CmsResourceKeys.siblingKey( macroKey.getApplicationKey(), descriptor.getKey(), ext ) );
         return doLoadIcon( resource, mimeType );
-    }
-
-    private static ResourceKey toResourceKey( final MacroKey macroKey, final String ext, final String path )
-    {
-        final ApplicationKey appKey = macroKey.getApplicationKey();
-        final String localName = macroKey.getName();
-        return ResourceKey.from( appKey, path + "/" + localName + "/" + localName + "." + ext );
     }
 
     private static Icon doLoadIcon( final Resource resource, final String mimeType )

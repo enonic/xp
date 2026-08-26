@@ -4,13 +4,12 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual content types.
-var result = schemaLib.listSchemas({
-    application: 'myapp',
-    type: 'CONTENT_TYPE'
+// Fetch dynamic content types.
+var result = schemaLib.listContentTypes({
+    application: 'myapp'
 });
 
-log.info('Fetched content types: ' + result.map((type) => type.key).join(','));
+log.info('Fetched content types: ' + result.map((type) => type.name).join(','));
 
 // END
 

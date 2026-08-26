@@ -35,12 +35,14 @@ public class ApplicationInfoJson
 
     private final boolean system;
 
+    private final boolean schema;
+
     private final @Nullable String iconHash;
 
     private ApplicationInfoJson( final String key, final String version, final String title, final String maxSystemVersion,
                                  final String minSystemVersion, final String url, final String vendorName, final String vendorUrl,
-                                 final Instant modifiedTime, final String state, final boolean local,
-                                 final boolean system, final @Nullable String iconHash )
+                                 final Instant modifiedTime, final String state, final boolean local, final boolean system,
+                                 final boolean schema, final @Nullable String iconHash )
     {
         this.key = key;
         this.version = version;
@@ -54,6 +56,7 @@ public class ApplicationInfoJson
         this.state = state;
         this.local = local;
         this.system = system;
+        this.schema = schema;
         this.iconHash = iconHash;
     }
 
@@ -66,7 +69,7 @@ public class ApplicationInfoJson
                                         descriptor != null ? descriptor.getVendorName() : null,
                                         descriptor != null ? descriptor.getVendorUrl() : null, application.getModifiedTime(),
                                         application.isStarted() ? "started" : "stopped", local,
-                                        application.isSystem(), icon != null ? IconHash.of( icon ) : null );
+                                        application.isSystem(), application.isSchema(), icon != null ? IconHash.of( icon ) : null );
     }
 
     public String getKey()
@@ -127,6 +130,11 @@ public class ApplicationInfoJson
     public boolean getSystem()
     {
         return system;
+    }
+
+    public boolean getSchema()
+    {
+        return schema;
     }
 
     public @Nullable String getIconHash()
