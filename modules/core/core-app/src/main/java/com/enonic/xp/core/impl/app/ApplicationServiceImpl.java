@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -22,6 +23,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.ApplicationType;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -282,11 +284,27 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
         }
 
+        final Map<String, ByteSource> schemaResources;
+        try
+        {
+            schemaResources =
+                appInfo.type == ApplicationType.STATIC || appInfo.hasCmsDescriptor ? AppSchemaResolver.resolve( byteSource ) : null;
+        }
+        catch ( Exception e )
+        {
+            throw new ApplicationBundleException( "Cannot install application", e );
+        }
+
         repoService.upsertApplicationNode( appInfo, byteSource );
 
         this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
 
-        final Application application = doInstallApplication( byteSource, applicationKey );
+        final Application application = doInstallApplication( byteSource, applicationKey, false );
+
+        if ( schemaResources != null )
+        {
+            repoService.persistApplicationSchema( applicationKey, schemaResources );
+        }
 
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 
@@ -335,7 +353,7 @@ public final class ApplicationServiceImpl
                 "Cannot install application [" + applicationKey + "], system app must not be stored" );
         }
 
-        doInstallApplication( byteSource, applicationKey );
+        doInstallApplication( byteSource, applicationKey, false );
 
         LOG.info( "Stored application [{}] installed successfully", applicationKey );
     }
@@ -381,7 +399,7 @@ public final class ApplicationServiceImpl
     {
         final ApplicationKey applicationKey = ApplicationKey.from( getAppInfo( byteSource ).name );
 
-        final Application application = doInstallApplication( byteSource, applicationKey );
+        final Application application = doInstallApplication( byteSource, applicationKey, true );
         localApplicationSet.add( applicationKey );
 
         LOG.info( "Local application [{}] installed successfully", applicationKey );
@@ -401,9 +419,9 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private Application doInstallApplication( final ByteSource byteSource, final ApplicationKey applicationKey )
+    private Application doInstallApplication( final ByteSource byteSource, final ApplicationKey applicationKey, final boolean local )
     {
-        final Application application = this.registry.install( applicationKey, byteSource );
+        final Application application = this.registry.install( applicationKey, byteSource, local );
         this.eventPublisher.publish( ApplicationEvents.installed( applicationKey ) );
         return application;
     }

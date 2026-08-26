@@ -31,9 +31,12 @@ public final class ApplicationDescriptor
 
     private final String url;
 
+    private final ApplicationType type;
+
     private ApplicationDescriptor( final Builder builder )
     {
         this.key = requireNonNull( builder.key, "key cannot be null" );
+        this.type = builder.type != null ? builder.type : ApplicationType.BUNDLE;
         this.description = builder.description != null ? builder.description : "";
         this.descriptionI18nKey = builder.descriptionI18nKey;
         this.icon = builder.icon;
@@ -48,6 +51,11 @@ public final class ApplicationDescriptor
     public ApplicationKey getKey()
     {
         return key;
+    }
+
+    public ApplicationType getType()
+    {
+        return type;
     }
 
     public String getDescription()
@@ -109,16 +117,17 @@ public final class ApplicationDescriptor
 
         final ApplicationDescriptor that = (ApplicationDescriptor) o;
 
-        return key.equals( that.key ) && Objects.equals( description, that.description ) && Objects.equals( icon, that.icon ) &&
-            Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) && Objects.equals( title, that.title ) &&
-            Objects.equals( titleI18nKey, that.titleI18nKey ) && Objects.equals( vendorName, that.vendorName ) &&
-            Objects.equals( vendorUrl, that.vendorUrl ) && Objects.equals( url, that.url ) && schemaConfig.equals( that.schemaConfig );
+        return key.equals( that.key ) && type == that.type && Objects.equals( description, that.description ) &&
+            Objects.equals( icon, that.icon ) && Objects.equals( descriptionI18nKey, that.descriptionI18nKey ) &&
+            Objects.equals( title, that.title ) && Objects.equals( titleI18nKey, that.titleI18nKey ) &&
+            Objects.equals( vendorName, that.vendorName ) && Objects.equals( vendorUrl, that.vendorUrl ) &&
+            Objects.equals( url, that.url ) && schemaConfig.equals( that.schemaConfig );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( key, description, icon, title, titleI18nKey, vendorName, vendorUrl, url, schemaConfig );
+        return Objects.hash( key, type, description, icon, title, titleI18nKey, vendorName, vendorUrl, url, schemaConfig );
     }
 
     public static Builder create()
@@ -146,6 +155,8 @@ public final class ApplicationDescriptor
 
         private String url;
 
+        private ApplicationType type;
+
         private final GenericValue.ObjectBuilder schemaConfig = GenericValue.newObject();
 
         private Builder()
@@ -155,6 +166,12 @@ public final class ApplicationDescriptor
         public Builder key( final ApplicationKey key )
         {
             this.key = key;
+            return this;
+        }
+
+        public Builder type( final ApplicationType type )
+        {
+            this.type = type;
             return this;
         }
 

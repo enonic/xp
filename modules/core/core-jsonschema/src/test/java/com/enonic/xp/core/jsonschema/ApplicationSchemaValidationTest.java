@@ -31,6 +31,30 @@ class ApplicationSchemaValidationTest
     }
 
     @Test
+    void typeStaticIsValid()
+    {
+        assertThat( validateYaml( schema, "fixtures/application/valid-type-static.yml" ) ).isEmpty();
+    }
+
+    @Test
+    void typeBundleIsValid()
+    {
+        assertThat( validateYaml( schema, "fixtures/application/valid-type-bundle.yml" ) ).isEmpty();
+    }
+
+    @Test
+    void typeMustBeKnownValue()
+    {
+        assertThat( validateYaml( schema, "fixtures/application/invalid-type-unknown.yml" ) ).isNotEmpty();
+    }
+
+    @Test
+    void typeIsCaseSensitive()
+    {
+        assertThat( validateYaml( schema, "fixtures/application/invalid-type-lowercase.yml" ) ).isNotEmpty();
+    }
+
+    @Test
     void descriptionMustBeString()
     {
         assertThat( validateYaml( schema, "fixtures/application/invalid-description-not-string.yml" ) ).isNotEmpty();

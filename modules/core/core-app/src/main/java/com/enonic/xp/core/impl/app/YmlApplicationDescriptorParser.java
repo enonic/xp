@@ -1,11 +1,18 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationType;
 import com.enonic.xp.core.impl.schema.YmlParserBase;
 import com.enonic.xp.schema.LocalizedText;
 import com.enonic.xp.util.GenericValue;
@@ -27,6 +34,10 @@ final class YmlApplicationDescriptorParser
     @JsonIgnoreProperties("kind")
     private abstract static class ApplicationDescriptorBuilderMapper
     {
+        @JsonProperty("type")
+        @JsonDeserialize(using = ApplicationTypeDeserializer.class)
+        abstract ApplicationDescriptor.Builder type( ApplicationType type );
+
         @JsonProperty("title")
         abstract ApplicationDescriptor.Builder title( LocalizedText text );
 
@@ -47,5 +58,22 @@ final class YmlApplicationDescriptorParser
 
         @JsonProperty("config")
         abstract ApplicationDescriptor.Builder schemaConfig( GenericValue schemaConfig );
+    }
+
+    private static class ApplicationTypeDeserializer
+        extends JsonDeserializer<ApplicationType>
+    {
+        @Override
+        public ApplicationType deserialize( final JsonParser parser, final DeserializationContext context )
+            throws IOException
+        {
+            final String value = parser.getValueAsString();
+            return switch ( value )
+            {
+                case "Static" -> ApplicationType.STATIC;
+                case "Bundle" -> ApplicationType.BUNDLE;
+                default -> throw new IllegalArgumentException( String.format( "Unknown application type \"%s\"", value ) );
+            };
+        }
     }
 }

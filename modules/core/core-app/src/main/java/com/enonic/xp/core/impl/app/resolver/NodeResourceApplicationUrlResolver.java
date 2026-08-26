@@ -3,9 +3,13 @@ package com.enonic.xp.core.impl.app.resolver;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.core.impl.app.NodeValueResource;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
@@ -18,6 +22,10 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 
+/**
+ * Serves application resources stored as nodes below {@code <appNodePath>/cms}.
+ * Resource paths are relative to the application node, e.g. {@code /cms/content-types/mytype/mytype.yaml}.
+ */
 public final class NodeResourceApplicationUrlResolver
     implements ApplicationUrlResolver
 {
@@ -25,32 +33,50 @@ public final class NodeResourceApplicationUrlResolver
 
     private final NodeService nodeService;
 
-    public NodeResourceApplicationUrlResolver( final ApplicationKey applicationKey, final NodeService nodeService )
+    private final NodePath appNodePath;
+
+    private final Supplier<Context> contextSupplier;
+
+    public NodeResourceApplicationUrlResolver( final ApplicationKey applicationKey, final NodeService nodeService, final NodePath appNodePath,
+                                               final Supplier<Context> contextSupplier )
     {
         this.applicationKey = applicationKey;
         this.nodeService = nodeService;
+        this.appNodePath = appNodePath;
+        this.contextSupplier = contextSupplier;
+    }
+
+    /**
+     * Resolver for a virtual application stored in the {@code system.app} repository.
+     */
+    public static NodeResourceApplicationUrlResolver forVirtualApp( final ApplicationKey applicationKey, final NodeService nodeService )
+    {
+        return new NodeResourceApplicationUrlResolver( applicationKey, nodeService, new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT,
+                                                                                                  NodeName.from( applicationKey.toString() ) ),
+                                                       VirtualAppContext::createContext );
     }
 
     @Override
     public Set<String> findFiles()
     {
-        final NodePath cmsPath = NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-            .addElement( applicationKey.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
-            .build();
+        final NodePath cmsPath = new NodePath( appNodePath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
+        final int appPathLength = appNodePath.toString().length();
 
-        return VirtualAppContext.createContext().callWith( () -> {
+        return contextSupplier.get().callWith( () -> {
             return this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).build() )
                 .map( NodeListEntry::nodePath )
-                .filter( nodePath -> isResource( cmsPath, nodePath ) )
-                .map( nodePath -> nodePath.toString().substring( nodePath.toString().indexOf( '/', 1 ) ) )
+                .filter( NodeResourceApplicationUrlResolver::isResource )
+                .map( nodePath -> nodePath.toString().substring( appPathLength ) )
                 .collect( Collectors.toCollection( LinkedHashSet::new ) );
         } );
     }
 
-    private static boolean isResource( final NodePath cmsPath, final NodePath nodePath )
+    /**
+     * A resource is a file node (its name has an extension); nodes without an extension are folders on the way to a resource.
+     */
+    private static boolean isResource( final NodePath nodePath )
     {
-        return cmsPath.equals( nodePath.getParentPath().getParentPath().getParentPath() );
+        return nodePath.getName().toString().contains( "." );
     }
 
     @Override
@@ -61,21 +87,27 @@ public final class NodeResourceApplicationUrlResolver
             return null;
         }
 
-        final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.toString() ) );
-
-        final NodePath.Builder builder = NodePath.create( appPath );
+        final NodePath.Builder builder = NodePath.create( appNodePath );
 
         Arrays.stream( path.split( "/" ) ).forEach( builder::addElement );
 
-        final Node resourceNode = VirtualAppContext.createContext().callWith( () -> nodeService.getByPath( builder.build() ) );
+        return contextSupplier.get().callWith( () -> {
+            final Node resourceNode = nodeService.getByPath( builder.build() );
 
-        if ( resourceNode == null )
-        {
-            return null;
-        }
-        else
-        {
-            return new NodeValueResource( ResourceKey.from( applicationKey, path ), resourceNode );
-        }
+            if ( resourceNode == null )
+            {
+                return null;
+            }
+
+            final ResourceKey resourceKey = ResourceKey.from( applicationKey, path );
+
+            if ( resourceNode.getAttachedBinaries().getByBinaryReference( VirtualAppConstants.ICON_BINARY_REFERENCE ) != null )
+            {
+                final ByteSource binary = nodeService.getBinary( resourceNode.id(), VirtualAppConstants.ICON_BINARY_REFERENCE );
+                return new NodeValueResource( resourceKey, binary, resourceNode.getTimestamp() );
+            }
+
+            return new NodeValueResource( resourceKey, resourceNode );
+        } );
     }
 }
