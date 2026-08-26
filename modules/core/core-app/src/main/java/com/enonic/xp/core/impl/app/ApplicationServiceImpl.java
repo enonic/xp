@@ -1,10 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,22 +20,17 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.schema.SchemaNodePropertyNames;
 
 @Component
 public final class ApplicationServiceImpl
@@ -52,21 +48,18 @@ public final class ApplicationServiceImpl
 
     private final AppFilterService appFilterService;
 
-    private final VirtualAppService virtualAppService;
-
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
     @Activate
     public ApplicationServiceImpl( @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
-                                   @Reference final AppFilterService appFilterService, @Reference final VirtualAppService virtualAppService,
+                                   @Reference final AppFilterService appFilterService,
                                    @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
         this.registry = applicationRegistry;
         this.repoService = repoService;
         this.eventPublisher = eventPublisher;
         this.appFilterService = appFilterService;
-        this.virtualAppService = virtualAppService;
         this.applicationAuditLogSupport = applicationAuditLogSupport;
     }
 
@@ -89,28 +82,70 @@ public final class ApplicationServiceImpl
     @Override
     public Application getInstalledApplication( final ApplicationKey key )
     {
-        return this.registry.get( key );
+        return doGet( key );
     }
 
     @Override
     public Application get( final ApplicationKey key )
     {
-        final Application installedApplication = this.registry.get( key );
-        return installedApplication != null ? installedApplication : virtualAppService.get( key );
+        return doGet( key );
     }
 
     @Override
     public Applications getInstalledApplications()
     {
-        return Applications.from( this.registry.getAll() );
+        return doList();
     }
 
     @Override
     public Applications list()
     {
-        return Applications.from( Stream.concat( this.registry.getAll().stream(), virtualAppService.list().stream() )
-                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
-                                      .values() );
+        return doList();
+    }
+
+    /**
+     * The applications installed from a bundle, and the ones that exist as nodes only (created through the descriptor service).
+     */
+    private Applications doList()
+    {
+        final List<Application> installed = this.registry.getAll();
+        final Set<ApplicationKey> installedKeys = installed.stream().map( Application::getKey ).collect( Collectors.toSet() );
+
+        final Stream<Application> persisted = ApplicationHelper.runAsAdmin( this.repoService::getApplications )
+            .stream()
+            .filter( node -> !hasBundle( node ) )
+            .filter( node -> !installedKeys.contains( ApplicationKey.from( node.name().toString() ) ) )
+            .filter( ApplicationServiceImpl::hasPersistedDescriptor )
+            .map( this::persistedApplication );
+
+        return Applications.from( Stream.concat( installed.stream(), persisted ).toList() );
+    }
+
+    private PersistedApplication persistedApplication( final Node applicationNode )
+    {
+        final ApplicationKey key = ApplicationKey.from( applicationNode.name().toString() );
+        return new PersistedApplication( applicationNode, this.repoService.hasCmsDescriptor( key ) );
+    }
+
+    private Application doGet( final ApplicationKey key )
+    {
+        final Application installed = this.registry.get( key );
+        return installed != null ? installed : findPersistedApplication( key );
+    }
+
+    /**
+     * The application existing as nodes only: an application node without a bundle, holding a persisted descriptor.
+     * The application nodes live in the application repository, whatever the context of the caller.
+     */
+    private Application findPersistedApplication( final ApplicationKey key )
+    {
+        final Node node = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) );
+        return node != null && !hasBundle( node ) && hasPersistedDescriptor( node ) ? persistedApplication( node ) : null;
+    }
+
+    private static boolean hasPersistedDescriptor( final Node applicationNode )
+    {
+        return applicationNode.data().getString( SchemaNodePropertyNames.DESCRIPTOR ) != null;
     }
 
     @Override
@@ -122,6 +157,7 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
+        requireStartableApplication( key, "start" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -143,11 +179,12 @@ public final class ApplicationServiceImpl
     @Override
     public void stopApplication( final ApplicationKey key )
     {
-        final Application app = registry.get( key );
+        final Application app = doGet( key );
         if ( app != null && app.isSystem() )
         {
             throw new IllegalArgumentException( "Cannot stop system application: " + key );
         }
+        requireStartableApplication( key, "stop" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -197,13 +234,25 @@ public final class ApplicationServiceImpl
                 String.format( "Cannot uninstall application %s since it is installed as local application on this instance", key ) );
         }
         ApplicationHelper.runWithContext( () -> {
+            // an application existing as nodes only has no bundle to uninstall, its nodes are removed like any other's
+            final boolean installed = this.registry.get( key ) != null;
+            if ( !installed && findPersistedApplication( key ) == null )
+            {
+                throw new ApplicationNotFoundException( key );
+            }
 
             this.eventPublisher.publish( ApplicationClusterEvents.uninstall( key ) );
 
-            doUninstallApplication( key );
+            if ( installed )
+            {
+                this.registry.uninstall( key );
+            }
 
             this.repoService.deleteApplicationNode( key );
             this.applicationAuditLogSupport.uninstallApplication( key );
+
+            // published once the nodes are gone: a listener listing the applications on this event no longer finds it
+            this.eventPublisher.publish( ApplicationEvents.uninstalled( key ) );
             this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( key ) );
         } );
     }
@@ -220,56 +269,10 @@ public final class ApplicationServiceImpl
         ApplicationHelper.runWithContext( () -> doReinstallStoredApplication( key ) );
     }
 
-    @Override
-    public Application createVirtualApplication( final CreateVirtualApplicationParams params )
-    {
-        return this.virtualAppService.create( params );
-    }
-
-    @Override
-    public boolean deleteVirtualApplication( final ApplicationKey key )
-    {
-        return this.virtualAppService.delete( key );
-    }
-
-    @Override
-    public ApplicationMode getApplicationMode( final ApplicationKey applicationKey )
-    {
-        requireSchemaAdminRole();
-
-        final boolean hasReal = this.registry.get( applicationKey ) != null;
-        final boolean hasVirtual =
-            VirtualAppContext.createAdminContext().callWith( () -> this.virtualAppService.get( applicationKey ) ) != null;
-
-        if ( hasReal )
-        {
-            if ( hasVirtual )
-            {
-                return ApplicationMode.AUGMENTED;
-            }
-            else
-            {
-                return ApplicationMode.BUNDLED;
-            }
-        }
-        else if ( hasVirtual )
-        {
-            return ApplicationMode.VIRTUAL;
-        }
-
-        return null;
-    }
-
     private Application doInstallGlobalApplication( final ByteSource byteSource )
     {
-        final AppInfo appInfo = getAppInfo( byteSource );
-
-        if ( appInfo.system )
-        {
-            throw new ApplicationBundleException( "Cannot install system application globally" );
-        }
-
-        final ApplicationKey applicationKey = ApplicationKey.from( appInfo.name );
+        final PreparedApplication prepared = PreparedApplication.prepare( byteSource );
+        final ApplicationKey applicationKey = prepared.key();
 
         final Application localApp = findLocal( applicationKey );
         if ( localApp != null )
@@ -282,11 +285,17 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
         }
 
-        repoService.upsertApplicationNode( appInfo, byteSource );
+        repoService.upsertApplicationNode( prepared.appInfo(), byteSource );
+
+        // the schema is persisted before the bundle is installed: the application created for the bundle (and the
+        // application descriptor built on bundle install) must see the persisted nodes from the start, on this
+        // cluster node as well as on the others receiving the install event. Whatever an earlier version persisted
+        // (a schema the new version no longer ships, for instance) is replaced.
+        repoService.persistApplicationSchema( applicationKey, prepared.schemaResources() );
 
         this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
 
-        final Application application = doInstallApplication( byteSource, applicationKey );
+        final Application application = doInstallApplication( byteSource, applicationKey, false );
 
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 
@@ -323,6 +332,12 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( "Cannot install application [" + applicationKey + "], node not found" );
         }
 
+        if ( !hasBundle( applicationNode ) )
+        {
+            LOG.debug( "Application [{}] has no bundle, nothing to install", applicationKey );
+            return;
+        }
+
         final ByteSource byteSource = this.repoService.getApplicationSource( applicationNode.id() );
         if ( byteSource == null )
         {
@@ -335,7 +350,7 @@ public final class ApplicationServiceImpl
                 "Cannot install application [" + applicationKey + "], system app must not be stored" );
         }
 
-        doInstallApplication( byteSource, applicationKey );
+        doInstallApplication( byteSource, applicationKey, false );
 
         LOG.info( "Stored application [{}] installed successfully", applicationKey );
     }
@@ -381,7 +396,7 @@ public final class ApplicationServiceImpl
     {
         final ApplicationKey applicationKey = ApplicationKey.from( getAppInfo( byteSource ).name );
 
-        final Application application = doInstallApplication( byteSource, applicationKey );
+        final Application application = doInstallApplication( byteSource, applicationKey, true );
         localApplicationSet.add( applicationKey );
 
         LOG.info( "Local application [{}] installed successfully", applicationKey );
@@ -390,20 +405,55 @@ public final class ApplicationServiceImpl
         return application;
     }
 
+    // a schema application is always started, whatever state was stored for it, and an application without a bundle has
+    // nothing to start or stop
+    private void requireStartableApplication( final ApplicationKey key, final String action )
+    {
+        final Application app = doGet( key );
+        if ( app == null )
+        {
+            return;
+        }
+        if ( app.isSchema() )
+        {
+            throw new IllegalArgumentException( "Cannot " + action + " schema application: " + key );
+        }
+        if ( app instanceof PersistedApplication )
+        {
+            throw new IllegalArgumentException( "Cannot " + action + " application without bundle: " + key );
+        }
+    }
+
+    /**
+     * An application node without the bundle binary holds nothing but a persisted descriptor (created through
+     * {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}): there is no application to install.
+     */
+    private static boolean hasBundle( final Node applicationNode )
+    {
+        return applicationNode.data().getBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) != null;
+    }
+
     private void doInstallAndStartStoredApplication( final Node applicationNode )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( applicationNode.name().toString() );
+        if ( !hasBundle( applicationNode ) )
+        {
+            LOG.debug( "Application [{}] has no bundle, nothing to install", applicationKey );
+            return;
+        }
         doInstallStoredApplication( applicationKey );
-        final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) );
+        final Application application = registry.get( applicationKey );
+        final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) ||
+            application != null && application.isSchema();
         if ( started )
         {
             tryStartApplication( applicationKey );
         }
     }
 
-    private Application doInstallApplication( final ByteSource byteSource, final ApplicationKey applicationKey )
+    private Application doInstallApplication( final ByteSource byteSource, final ApplicationKey applicationKey, final boolean local )
     {
-        final Application application = this.registry.install( applicationKey, byteSource );
+        final Application application = this.registry.install( applicationKey, byteSource, local );
         this.eventPublisher.publish( ApplicationEvents.installed( applicationKey ) );
         return application;
     }
@@ -472,15 +522,6 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private void requireSchemaAdminRole()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
-        if ( !hasAdminRole )
-        {
-            throw new ForbiddenAccessException( authInfo.getUser() );
-        }
-    }
 
     @Override
     public void onEvent( final Event event )
@@ -494,13 +535,20 @@ public final class ApplicationServiceImpl
                         handleEvent( event, this::doInstallStoredApplication );
                         break;
                     case ApplicationClusterEvents.UNINSTALL:
-                        handleEvent( event, this::doUninstallApplication );
+                        // an application existing as nodes only is in the registry of no cluster node, it leaves the list all the same
+                        handleEvent( event, applicationKey -> {
+                            if ( this.registry.get( applicationKey ) != null )
+                            {
+                                this.registry.uninstall( applicationKey );
+                            }
+                            this.eventPublisher.publish( ApplicationEvents.uninstalled( applicationKey ) );
+                        } );
                         break;
                     case ApplicationClusterEvents.START:
-                        handleEvent( event, this::doStartApplication );
+                        handleInstalledEvent( event, this::doStartApplication );
                         break;
                     case ApplicationClusterEvents.STOP:
-                        handleEvent( event, this::doStopApplication );
+                        handleInstalledEvent( event, this::doStopApplication );
                         break;
                     default:
                         LOG.debug( "Ignoring {} {}", ApplicationClusterEvents.EVENT_TYPE, eventSubType );
@@ -508,6 +556,17 @@ public final class ApplicationServiceImpl
                 }
             } );
         }
+    }
+
+    // an application existing as nodes only is in the registry of no cluster node: there is nothing to start or stop
+    private void handleInstalledEvent( final Event event, final Consumer<ApplicationKey> callback )
+    {
+        handleEvent( event, applicationKey -> {
+            if ( this.registry.get( applicationKey ) != null )
+            {
+                callback.accept( applicationKey );
+            }
+        } );
     }
 
     private void handleEvent( final Event event, final Consumer<ApplicationKey> callback )
