@@ -2,8 +2,6 @@ package com.enonic.xp.core.impl.app;
 
 class ApplicationPropertyNames
 {
-    static final String DISPLAY_NAME = "displayName";
-
     static final String MAX_SYSTEM_VERSION = "maxSystemVersion";
 
     static final String MIN_SYSTEM_VERSION = "minSystemVersion";

@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlLayoutDescriptorParser;
+import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -56,13 +57,7 @@ public class LayoutDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        final String basePath = PATH + "/" + key.getName() + "/" + key.getName();
-        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
-        if ( resourceService.getResource( yamlKey ).exists() )
-        {
-            return yamlKey;
-        }
-        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
+        return CmsResourceKeys.descriptorKey( resourceService, key.getApplicationKey(), PATH, key.getName() );
     }
 
     @Override

@@ -1,0 +1,4 @@
+kind: "Page"
+title: "Flat page"
+regions:
+  - "main"

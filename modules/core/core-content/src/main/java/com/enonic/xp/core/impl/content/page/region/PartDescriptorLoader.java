@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
+import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -57,13 +58,7 @@ public class PartDescriptorLoader
     @Override
     public ResourceKey toResource( final DescriptorKey key )
     {
-        final String basePath = PATH + "/" + key.getName() + "/" + key.getName();
-        final ResourceKey yamlKey = ResourceKey.from( key.getApplicationKey(), basePath + ".yaml" );
-        if ( resourceService.getResource( yamlKey ).exists() )
-        {
-            return yamlKey;
-        }
-        return ResourceKey.from( key.getApplicationKey(), basePath + ".yml" );
+        return CmsResourceKeys.descriptorKey( resourceService, key.getApplicationKey(), PATH, key.getName() );
     }
 
     @Override
@@ -72,7 +67,7 @@ public class PartDescriptorLoader
     {
         return YmlPartDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .key( key )
-            .icon( loadIcon( key ) )
+            .icon( loadIcon( key, resource ) )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
     }
@@ -89,9 +84,10 @@ public class PartDescriptorLoader
         return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
-    protected final Icon loadIcon( final DescriptorKey name )
+    // the icon is next to the descriptor
+    protected final Icon loadIcon( final DescriptorKey key, final Resource descriptor )
     {
-        final Icon svgIcon = loadIcon( name, "image/svg+xml", "svg" );
+        final Icon svgIcon = loadIcon( key, descriptor, "image/svg+xml", "svg" );
 
         if ( svgIcon != null )
         {
@@ -99,14 +95,14 @@ public class PartDescriptorLoader
         }
         else
         {
-            return loadIcon( name, "image/png", "png" );
+            return loadIcon( key, descriptor, "image/png", "png" );
         }
     }
 
-    private Icon loadIcon( final DescriptorKey key, final String mimeType, final String ext )
+    private Icon loadIcon( final DescriptorKey key, final Resource descriptor, final String mimeType, final String ext )
     {
-        final ResourceKey resourceKey = toResourceKey( key, ext );
-        final Resource resource = this.resourceService.getResource( resourceKey );
+        final Resource resource =
+            this.resourceService.getResource( CmsResourceKeys.siblingKey( key.getApplicationKey(), descriptor.getKey(), ext ) );
 
         if ( !resource.exists() )
         {
@@ -115,10 +111,5 @@ public class PartDescriptorLoader
 
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         return Icon.from( resource.readBytes(), mimeType, modifiedTime );
-    }
-
-    private ResourceKey toResourceKey( final DescriptorKey key, final String ext )
-    {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + "." + ext );
     }
 }
