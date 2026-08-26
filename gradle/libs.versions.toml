@@ -10,7 +10,7 @@ tika = "3.3.2"
 log4j = "2.26.1"
 micrometer = "1.17.1"
 prometheus = "1.8.0"
-graalvm = "25.2.4"
+graalvm = "25.3.4.1"
 caffeine = "3.2.4"
 guava = "33.7.1-jre"
 
@@ -21,7 +21,7 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-junitjupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.5" }
+equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version = "4.5.1" }
 
 assertj-core = { module = "org.assertj:assertj-core", version = "3.27.7" }
 
@@ -75,7 +75,7 @@ caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "c
 guava-guava = { module = "com.google.guava:guava", version.ref = "guava" }
 guava-failureaccess = { module = "com.google.guava:failureaccess", version = "1.0.3" }
 
-jsoup = { module = "org.jsoup:jsoup", version = "1.23.1" }
+jsoup = { module = "org.jsoup:jsoup", version = "1.23.2" }
 
 owaspsanitizer = { module = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer", version = "20260313.1" }
 
