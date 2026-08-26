@@ -295,6 +295,52 @@ class GraalJSContextFactoryTest
         }
     }
 
+    @Test
+    void textEncodingWebApisAreAvailable()
+    {
+        try ( Context context = new GraalJSContextFactory().create() )
+        {
+            final Value roundTrip = context.eval( "js", """
+                (function () {
+                  const encoder = new TextEncoder();
+                  const encoded = encoder.encode( 'hei på deg' );
+                  return {
+                    encoding: encoder.encoding,
+                    byteLength: encoded.length,
+                    decoded: new TextDecoder().decode( encoded )
+                  };
+                })()
+                """ );
+
+            assertEquals( "utf-8", roundTrip.getMember( "encoding" ).asString() );
+            assertEquals( 11, roundTrip.getMember( "byteLength" ).asInt() );
+            assertEquals( "hei på deg", roundTrip.getMember( "decoded" ).asString() );
+        }
+    }
+
+    @Test
+    void textEncodingWebApisAreAvailableOnTheSharedEngine()
+    {
+        final Engine engine = Engine.newBuilder().build();
+        try
+        {
+            final GraalJSContextFactory factory = new GraalJSContextFactory( getClass().getClassLoader(), () -> engine );
+
+            try ( Context first = factory.create(); Context second = factory.create() )
+            {
+                for ( final Context context : List.of( first, second ) )
+                {
+                    assertEquals( "æøå", context.eval( "js",
+                                                       "new TextDecoder().decode( new TextEncoder().encode( 'æøå' ) )" ).asString() );
+                }
+            }
+        }
+        finally
+        {
+            engine.close();
+        }
+    }
+
     public static final class Converter
     {
         private final Value function;

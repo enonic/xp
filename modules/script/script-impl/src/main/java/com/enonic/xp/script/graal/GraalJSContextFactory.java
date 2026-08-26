@@ -64,6 +64,7 @@ public final class GraalJSContextFactory
             .allowHostAccess( HOST_ACCESS )
             .allowHostClassLookup( className -> true )
             .option( "js.strict", "true" )
+            .option( "js.text-encoding", "true" )
             .allowHostClassLoading( true );
 
         if ( sharedEngine != null )
