@@ -30,7 +30,7 @@ public final class VirtualHostMapping
 
     private final VirtualHostIdProvidersMapping idProvidersMapping;
 
-    private final Set<String> connectors;
+    private final String connector;
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
@@ -41,12 +41,12 @@ public final class VirtualHostMapping
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context )
     {
-        this( name, host, source, target, idProvidersMapping, order, context, Set.of( DispatchConstants.XP_CONNECTOR ) );
+        this( name, host, source, target, idProvidersMapping, order, context, DispatchConstants.XP_CONNECTOR );
     }
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context,
-                               final Set<String> connectors )
+                               final String connector )
     {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
@@ -61,7 +61,7 @@ public final class VirtualHostMapping
         this.idProvidersMapping = idProvidersMapping;
         this.order = order;
         this.context = Collections.unmodifiableMap( requireNonNullElse( context, Map.of() ) );
-        this.connectors = Set.copyOf( requireNonNullElse( connectors, Set.of( DispatchConstants.XP_CONNECTOR ) ) );
+        this.connector = requireNonNullElse( connector, DispatchConstants.XP_CONNECTOR );
     }
 
     @Override
@@ -107,9 +107,9 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public Set<String> getConnectors()
+    public String getConnector()
     {
-        return connectors;
+        return connector;
     }
 
     @Override

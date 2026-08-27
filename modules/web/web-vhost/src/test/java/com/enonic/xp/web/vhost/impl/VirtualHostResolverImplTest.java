@@ -291,7 +291,7 @@ class VirtualHostResolverImplTest
     {
         final VirtualHostMapping apiMapping =
             new VirtualHostMapping( "mgmt", "admin.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
-                                    Set.of( DispatchConstants.API_CONNECTOR ) );
+                                    DispatchConstants.API_CONNECTOR );
         final VirtualHostMapping xpMapping = createVirtualHostMapping( "web", "admin.enonic.com", "/", "/", 1 );
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( apiMapping, xpMapping ) );
 

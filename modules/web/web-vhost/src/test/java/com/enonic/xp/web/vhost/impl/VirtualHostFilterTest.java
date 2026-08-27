@@ -146,7 +146,7 @@ class VirtualHostFilterTest
     {
         final VirtualHostMapping mapping =
             new VirtualHostMapping( "mgmt", "admin.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
-                                    Set.of( DispatchConstants.API_CONNECTOR ) );
+                                    DispatchConstants.API_CONNECTOR );
         this.virtualHosts.add( mapping );
 
         when( this.virtualHostService.isEnabled() ).thenReturn( true );

@@ -1,7 +1,6 @@
 package com.enonic.xp.web.vhost.impl;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -101,7 +100,6 @@ public final class VirtualHostFilter
         }
         idProvidersMapping.setDefaultIdProvider( IdProviderKey.system() );
 
-        return new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping.build(), Integer.MAX_VALUE, null,
-                                       Set.of( connector ) );
+        return new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping.build(), Integer.MAX_VALUE, null, connector );
     }
 }

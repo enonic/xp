@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -222,47 +224,45 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testConnector_default()
+    void testEndpoint_default()
     {
         map.put( "mapping.myapp1.host", "example.com" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( Set.of( "xp" ), virtualHost.getConnectors() );
+        assertEquals( "xp", virtualHost.getConnector() );
     }
 
     @Test
-    void testConnector_explicit()
+    void testEndpoint_explicit()
     {
         map.put( "mapping.myapp1.host", "example.com" );
-        map.put( "mapping.myapp1.connector", "api, status" );
+        map.put( "mapping.myapp1.endpoint", "management" );
 
-        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+        map.put( "mapping.myapp2.host", "example.com" );
+        map.put( "mapping.myapp2.endpoint", "statistics" );
 
-        assertEquals( Set.of( "api", "status" ), virtualHost.getConnectors() );
+        map.put( "mapping.myapp3.host", "example.com" );
+        map.put( "mapping.myapp3.endpoint", "web" );
+
+        final Map<String, String> connectorByName = new VirtualHostConfigMap( map ).buildMappings()
+            .stream()
+            .collect( Collectors.toMap( VirtualHost::getName, VirtualHost::getConnector ) );
+
+        assertEquals( "api", connectorByName.get( "myapp1" ) );
+        assertEquals( "status", connectorByName.get( "myapp2" ) );
+        assertEquals( "xp", connectorByName.get( "myapp3" ) );
     }
 
     @Test
-    void testConnector_unknownIgnored()
+    void testEndpoint_unknownFails()
     {
         map.put( "mapping.myapp1.host", "example.com" );
-        map.put( "mapping.myapp1.connector", "bogus, api" );
+        map.put( "mapping.myapp1.endpoint", "bogus" );
 
-        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+        final VirtualHostConfigMap virtualHostConfigMap = new VirtualHostConfigMap( map );
 
-        assertEquals( Set.of( "api" ), virtualHost.getConnectors() );
-    }
-
-    @Test
-    void testConnector_noValidConnectors_matchesNothing()
-    {
-        map.put( "mapping.myapp1.host", "example.com" );
-        map.put( "mapping.myapp1.connector", "bogus" );
-
-        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
-
-        // an explicit but invalid connector never falls back to the web connector
-        assertEquals( Set.of(), virtualHost.getConnectors() );
+        assertThrows( IllegalArgumentException.class, virtualHostConfigMap::buildMappings );
     }
 
     @Test

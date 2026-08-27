@@ -32,13 +32,13 @@ public interface VirtualHost
     }
 
     /**
-     * The connectors this vhost mapping applies to. Defaults to the {@code xp} connector only, so
-     * mappings never apply to the management ({@code api}) or statistics ({@code status}) ports
+     * The connector this vhost mapping applies to. Defaults to the web ({@code xp}) connector, so
+     * mappings never apply to the management ({@code api}) or statistics ({@code status}) endpoints
      * unless explicitly configured to.
      */
-    default Set<String> getConnectors()
+    default String getConnector()
     {
-        return Set.of( DispatchConstants.XP_CONNECTOR );
+        return DispatchConstants.XP_CONNECTOR;
     }
 
     int getOrder();

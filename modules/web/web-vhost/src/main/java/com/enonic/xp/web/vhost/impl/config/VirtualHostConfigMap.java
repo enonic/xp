@@ -2,7 +2,6 @@ package com.enonic.xp.web.vhost.impl.config;
 
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +26,11 @@ final class VirtualHostConfigMap
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
 
     private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.(?<name>[^.]+)\\..+" );
+
+    // Documented endpoint names mapped to the internal connector names.
+    private static final Map<String, String> ENDPOINTS =
+        Map.of( "web", DispatchConstants.XP_CONNECTOR, "management", DispatchConstants.API_CONNECTOR, "statistics",
+                DispatchConstants.STATUS_CONNECTOR );
 
     private final Map<String, String> map;
 
@@ -62,31 +66,29 @@ final class VirtualHostConfigMap
         final VirtualHostIdProvidersMapping idProvidersMapping = getHostIdProvidersMapping( prefix );
         final int order = getInt( prefix + "order", Integer.MAX_VALUE );
         final Map<String, String> context = getVirtualHostContext( prefix );
-        final Set<String> connectors = getConnectors( prefix );
+        final String connector = getConnector( prefix );
 
-        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connectors );
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector );
     }
 
-    // A mapping without a connector applies to the web (xp) connector; mappings for the other
-    // connectors must specify them explicitly. Unknown connector names never fall back to web.
-    private Set<String> getConnectors( final String mappingPrefix )
+    // A mapping without an endpoint applies to the web endpoint; a mapping for another endpoint
+    // must name it explicitly. Endpoints are named as documented (web, management, statistics),
+    // not by their internal connector names.
+    private String getConnector( final String mappingPrefix )
     {
-        final String value = getString( mappingPrefix + "connector" );
+        final String value = getString( mappingPrefix + "endpoint" );
         if ( value == null )
         {
-            return Set.of( DispatchConstants.XP_CONNECTOR );
+            return DispatchConstants.XP_CONNECTOR;
         }
 
-        final Set<String> connectors = new LinkedHashSet<>();
-        for ( final String token : value.split( "," ) )
+        final String connector = ENDPOINTS.get( value );
+        if ( connector == null )
         {
-            final String connector = token.trim();
-            if ( DispatchConstants.CONNECTORS.contains( connector ) )
-            {
-                connectors.add( connector );
-            }
+            throw new IllegalArgumentException(
+                "Unknown endpoint [" + value + "] in vhost mapping, must be one of " + ENDPOINTS.keySet() );
         }
-        return connectors;
+        return connector;
     }
 
     private VirtualHostIdProvidersMapping getHostIdProvidersMapping( final String mappingPrefix )
