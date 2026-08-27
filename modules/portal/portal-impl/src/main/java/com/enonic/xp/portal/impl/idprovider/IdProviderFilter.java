@@ -124,6 +124,6 @@ public final class IdProviderFilter
     // stay reachable for unauthenticated users, otherwise forced authentication locks everyone out.
     private static boolean isIdProviderEndpoint( final String path )
     {
-        return path != null && ( path.contains( "/_/idprovider/" ) || path.startsWith( "/api/idprovider/" ) );
+        return path != null && path.contains( "/_/idprovider/" );
     }
 }
