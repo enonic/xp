@@ -12,7 +12,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
@@ -37,6 +36,7 @@ class IdProviderFilterTest
     void setup()
     {
         idProviderControllerService = Mockito.mock( IdProviderControllerService.class );
+        Mockito.when( idProviderControllerService.hasFunction( Mockito.any(), Mockito.any() ) ).thenReturn( true );
         idProviderFilter = new IdProviderFilter( idProviderControllerService );
     }
 
@@ -121,7 +121,7 @@ class IdProviderFilterTest
     }
 
     @Test
-    void testAutoLogin_iteratesOverIdProviders()
+    void testAutoLogin_firstImplementingIdProviderTakesControl()
         throws Exception
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
@@ -133,22 +133,20 @@ class IdProviderFilterTest
                          Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ), otherIdProvider,
                                  Set.of( IdProviderFlow.AUTOLOGIN ) ) );
 
-        // no autoLogin succeeds, so every id provider with the autologin flow is tried (default first)
-        ContextBuilder.create().build().callWith( () -> {
-            idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+        // the default id provider does not implement autoLogin, so the next enabled one takes control
+        Mockito.when( idProviderControllerService.hasFunction( IdProviderKey.system(), "autoLogin" ) ).thenReturn( false );
 
-            final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
-                ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
-            Mockito.verify( idProviderControllerService, Mockito.times( 2 ) ).execute( paramsCaptor.capture() );
-            assertEquals( IdProviderKey.system(), paramsCaptor.getAllValues().get( 0 ).getIdProviderKey() );
-            assertEquals( otherIdProvider, paramsCaptor.getAllValues().get( 1 ).getIdProviderKey() );
-            Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
-            return null;
-        } );
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+
+        final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
+            ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
+        Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
+        assertEquals( otherIdProvider, paramsCaptor.getValue().getIdProviderKey() );
+        Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
     }
 
     @Test
-    void testAutoLogin_stopsOnceAuthenticated()
+    void testAutoLogin_defaultIdProviderFirst()
         throws Exception
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
@@ -160,27 +158,14 @@ class IdProviderFilterTest
                          Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ), otherIdProvider,
                                  Set.of( IdProviderFlow.AUTOLOGIN ) ) );
 
-        final User user =
-            User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).displayName( "User 1" ).login( "user1" ).build();
-        final AuthenticationInfo authenticationInfo =
-            AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        // every id provider implements autoLogin: only the default one is executed
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 
-        // the first autoLogin authenticates the request, so the remaining id providers are not tried
-        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
-            ContextAccessor.current().getLocalScope().setAttribute( authenticationInfo );
-            return null;
-        } );
-
-        ContextBuilder.create().build().callWith( () -> {
-            idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
-
-            final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
-                ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
-            Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
-            assertEquals( IdProviderKey.system(), paramsCaptor.getValue().getIdProviderKey() );
-            Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
-            return null;
-        } );
+        final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
+            ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
+        Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
+        assertEquals( IdProviderKey.system(), paramsCaptor.getValue().getIdProviderKey() );
+        Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
     }
 
     @Test

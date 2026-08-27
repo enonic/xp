@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.impl.idprovider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -54,19 +51,16 @@ public final class IdProviderFilter
             }
             else
             {
-                // Executes the autoLogin function of every id provider with the autologin flow
-                // enabled on this vhost (default first) until one of them authenticates the request.
-                for ( final IdProviderKey idProviderKey : autoLoginIdProviders( virtualHost ) )
+                // Executes the autoLogin function of the first id provider (default first) that
+                // implements it and does not have the autologin flow disabled on this vhost.
+                final IdProviderKey idProviderKey = resolveAutoLoginIdProvider( virtualHost );
+                if ( idProviderKey != null )
                 {
                     idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
                                                              .functionName( "autoLogin" )
                                                              .idProviderKey( idProviderKey )
                                                              .servletRequest( req )
                                                              .build() );
-                    if ( ContextAccessor.current().getAuthInfo().isAuthenticated() )
-                    {
-                        break;
-                    }
                 }
             }
         }
@@ -91,24 +85,28 @@ public final class IdProviderFilter
         chain.doFilter( requestWrapper, response );
     }
 
-    private static List<IdProviderKey> autoLoginIdProviders( final VirtualHost virtualHost )
+    private IdProviderKey resolveAutoLoginIdProvider( final VirtualHost virtualHost )
     {
-        final List<IdProviderKey> result = new ArrayList<>();
-
         final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
-        if ( defaultKey != null && virtualHost.getIdProviderFlows( defaultKey ).contains( IdProviderFlow.AUTOLOGIN ) )
+        if ( defaultKey != null && canAutoLogin( virtualHost, defaultKey ) )
         {
-            result.add( defaultKey );
+            return defaultKey;
         }
 
         for ( final IdProviderKey key : virtualHost.getIdProviderKeys() )
         {
-            if ( !key.equals( defaultKey ) && virtualHost.getIdProviderFlows( key ).contains( IdProviderFlow.AUTOLOGIN ) )
+            if ( !key.equals( defaultKey ) && canAutoLogin( virtualHost, key ) )
             {
-                result.add( key );
+                return key;
             }
         }
-        return result;
+        return null;
+    }
+
+    private boolean canAutoLogin( final VirtualHost virtualHost, final IdProviderKey idProviderKey )
+    {
+        return virtualHost.getIdProviderFlows( idProviderKey ).contains( IdProviderFlow.AUTOLOGIN ) &&
+            idProviderControllerService.hasFunction( idProviderKey, "autoLogin" );
     }
 
     private static boolean isForcedAuthentication( final VirtualHost virtualHost, final HttpServletRequest req )
