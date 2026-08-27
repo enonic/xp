@@ -246,11 +246,23 @@ class VirtualHostConfigMapTest
     void testConnector_unknownIgnored()
     {
         map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.connector", "bogus, api" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( "api" ), virtualHost.getConnectors() );
+    }
+
+    @Test
+    void testConnector_noValidConnectors_matchesNothing()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
         map.put( "mapping.myapp1.connector", "bogus" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( Set.of( "xp" ), virtualHost.getConnectors() );
+        // an explicit but invalid connector never falls back to the web connector
+        assertEquals( Set.of(), virtualHost.getConnectors() );
     }
 
     @Test

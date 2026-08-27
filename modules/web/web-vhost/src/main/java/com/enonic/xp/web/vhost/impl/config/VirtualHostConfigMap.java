@@ -67,6 +67,8 @@ final class VirtualHostConfigMap
         return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connectors );
     }
 
+    // A mapping without a connector applies to the web (xp) connector; mappings for the other
+    // connectors must specify them explicitly. Unknown connector names never fall back to web.
     private Set<String> getConnectors( final String mappingPrefix )
     {
         final String value = getString( mappingPrefix + "connector" );
@@ -84,7 +86,7 @@ final class VirtualHostConfigMap
                 connectors.add( connector );
             }
         }
-        return connectors.isEmpty() ? Set.of( DispatchConstants.XP_CONNECTOR ) : connectors;
+        return connectors;
     }
 
     private VirtualHostIdProvidersMapping getHostIdProvidersMapping( final String mappingPrefix )
