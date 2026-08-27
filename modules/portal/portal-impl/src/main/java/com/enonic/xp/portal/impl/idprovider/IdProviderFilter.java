@@ -14,11 +14,14 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
+import com.enonic.xp.web.vhost.IdProviderFlow;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-30)
 @WebFilter("/*")
 public final class IdProviderFilter
@@ -36,25 +39,87 @@ public final class IdProviderFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
+
         // If the current user is not authenticated
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        if ( !authInfo.isAuthenticated() )
+        if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {
-            //Executes the function autoLogin of the IdProvider
-            IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-                functionName( "autoLogin" ).
-                servletRequest( req ).
-                build();
-            idProviderControllerService.execute( executionParams );
+            // Executes the autoLogin function of the first id provider (default first) that has the
+            // autologin flow enabled on this vhost.
+            final IdProviderKey idProviderKey = resolveAutoLoginIdProvider( virtualHost );
+            if ( virtualHost == null )
+            {
+                idProviderControllerService.execute(
+                    IdProviderControllerExecutionParams.create().functionName( "autoLogin" ).servletRequest( req ).build() );
+            }
+            else if ( idProviderKey != null )
+            {
+                idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
+                                                         .functionName( "autoLogin" )
+                                                         .idProviderKey( idProviderKey )
+                                                         .servletRequest( req )
+                                                         .build() );
+            }
         }
 
-        //Wraps the response to handle 403 errors
+        // Interactive login (handle401) only exists on the web connector; the management and
+        // statistics ports support the non-interactive flows only.
         final HttpServletResponse response = DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
             ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
             : res;
 
+        // Forced authentication: reject unauthenticated requests upfront instead of relying on a
+        // downstream 401 response. On the web connector the wrapped response lets the default id
+        // provider's login flow (when enabled) render the response.
+        if ( isForcedAuthentication( virtualHost, req ) && !ContextAccessor.current().getAuthInfo().isAuthenticated() )
+        {
+            response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+            return;
+        }
+
         final IdProviderRequestWrapper requestWrapper = new IdProviderRequestWrapper( req );
 
         chain.doFilter( requestWrapper, response );
+    }
+
+    private static IdProviderKey resolveAutoLoginIdProvider( final VirtualHost virtualHost )
+    {
+        if ( virtualHost == null )
+        {
+            return null;
+        }
+
+        final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
+        if ( defaultKey != null && virtualHost.getIdProviderFlows( defaultKey ).contains( IdProviderFlow.AUTOLOGIN ) )
+        {
+            return defaultKey;
+        }
+
+        for ( final IdProviderKey key : virtualHost.getIdProviderKeys() )
+        {
+            if ( virtualHost.getIdProviderFlows( key ).contains( IdProviderFlow.AUTOLOGIN ) )
+            {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isForcedAuthentication( final VirtualHost virtualHost, final HttpServletRequest req )
+    {
+        if ( virtualHost == null )
+        {
+            return false;
+        }
+        final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
+        return defaultKey != null && virtualHost.getIdProviderFlows( defaultKey ).contains( IdProviderFlow.FORCED ) &&
+            !isIdProviderEndpoint( req.getPathInfo() );
+    }
+
+    // The id provider endpoints (login page, login/logout functions, callbacks, static assets) must
+    // stay reachable for unauthenticated users, otherwise forced authentication locks everyone out.
+    private static boolean isIdProviderEndpoint( final String path )
+    {
+        return path != null && ( path.contains( "/_/idprovider/" ) || path.startsWith( "/api/idprovider/" ) );
     }
 }

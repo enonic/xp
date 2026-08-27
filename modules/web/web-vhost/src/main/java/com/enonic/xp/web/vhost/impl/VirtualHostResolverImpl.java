@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
@@ -43,9 +44,11 @@ public class VirtualHostResolverImpl
     @Override
     public VirtualHost resolveVirtualHost( final HttpServletRequest req )
     {
-        String serverName = req.getServerName();
+        final String serverName = req.getServerName();
+        final Object connectorAttribute = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
+        final String connector = connectorAttribute != null ? connectorAttribute.toString() : DispatchConstants.XP_CONNECTOR;
         return virtualHostMappings.stream()
-            .map( virtualHost -> virtualHost.matches( serverName, req.getPathInfo() ) )
+            .map( virtualHost -> virtualHost.matches( serverName, req.getPathInfo(), connector ) )
             .filter( Objects::nonNull )
             .findFirst()
             .orElse( null );
@@ -66,8 +69,12 @@ public class VirtualHostResolverImpl
             this.pattern = originalHost.startsWith( "~" ) ? Pattern.compile( originalHost.substring( 1 ), Pattern.CASE_INSENSITIVE ) : null;
         }
 
-        VirtualHostMapping matches( String serverName, String pathInfo )
+        VirtualHostMapping matches( String serverName, String pathInfo, String connector )
         {
+            if ( !virtualHost.getConnectors().contains( connector ) )
+            {
+                return null;
+            }
             if ( pattern != null )
             {
                 Matcher matcher = pattern.matcher( serverName );
@@ -75,13 +82,14 @@ public class VirtualHostResolverImpl
                 {
                     return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(),
                                                    matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping(),
-                                                   virtualHost.getOrder(), virtualHost.getContext() );
+                                                   virtualHost.getOrder(), virtualHost.getContext(), virtualHost.getConnectors() );
                 }
             }
             else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( pathInfo ) )
             {
                 return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(), virtualHost.getTarget(),
-                                               createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext() );
+                                               createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext(),
+                                               virtualHost.getConnectors() );
             }
             return null;
         }
@@ -101,7 +109,8 @@ public class VirtualHostResolverImpl
             }
             if ( virtualHost.getIdProviderKeys() != null )
             {
-                virtualHost.getIdProviderKeys().forEach( idProvidersMapping::addIdProviderKey );
+                virtualHost.getIdProviderKeys()
+                    .forEach( key -> idProvidersMapping.addIdProvider( key, virtualHost.getIdProviderFlows( key ) ) );
             }
             return idProvidersMapping.build();
         }

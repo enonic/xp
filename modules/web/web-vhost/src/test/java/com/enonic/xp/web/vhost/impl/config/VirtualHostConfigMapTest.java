@@ -3,11 +3,13 @@ package com.enonic.xp.web.vhost.impl.config;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -173,6 +175,82 @@ class VirtualHostConfigMapTest
         assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
         assertEquals( 2, virtualHost.getIdProviderKeys().getSize() );
         assertTrue( virtualHost.getIdProviderKeys().contains( IdProviderKey.from( "myProvider" ) ) );
+    }
+
+    @Test
+    void testIdProviderFlows_default()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( IdProviderFlow.DEFAULT, virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of(), virtualHost.getIdProviderFlows( IdProviderKey.from( "other" ) ) );
+    }
+
+    @Test
+    void testIdProviderFlows_explicit()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default&enabled=autologin,forced" );
+        map.put( "mapping.myapp1.idProvider.myProvider", "enabled=login" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.FORCED ), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of( IdProviderFlow.LOGIN ), virtualHost.getIdProviderFlows( IdProviderKey.from( "myProvider" ) ) );
+    }
+
+    @Test
+    void testIdProviderFlows_unknownFlowIgnored()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "enabled=autologin,unknown" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+    }
+
+    @Test
+    void testIdProviderFlows_emptyListMeansDefault()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "enabled=" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( IdProviderFlow.DEFAULT, virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+    }
+
+    @Test
+    void testConnector_default()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( "xp" ), virtualHost.getConnectors() );
+    }
+
+    @Test
+    void testConnector_explicit()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.connector", "api, status" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( "api", "status" ), virtualHost.getConnectors() );
+    }
+
+    @Test
+    void testConnector_unknownIgnored()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.connector", "bogus" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( "xp" ), virtualHost.getConnectors() );
     }
 
     @Test

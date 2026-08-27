@@ -1,5 +1,8 @@
 package com.enonic.xp.web.vhost.impl;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -16,6 +19,7 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
@@ -23,7 +27,7 @@ import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
-@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-200)
 @WebFilter("/*")
 public final class VirtualHostFilter
@@ -47,11 +51,18 @@ public final class VirtualHostFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        if ( virtualHostService.isEnabled() &&
-            DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
+        final Object connectorAttribute = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
+        final String connector = connectorAttribute != null ? connectorAttribute.toString() : DispatchConstants.XP_CONNECTOR;
+
+        if ( virtualHostService.isEnabled() )
         {
             final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
-            if ( virtualHost == null )
+            if ( virtualHost != null )
+            {
+                VirtualHostHelper.setVirtualHost( req, virtualHost );
+                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+            }
+            else if ( DispatchConstants.XP_CONNECTOR.equals( connector ) )
             {
                 LOG.warn( "Virtual host mapping could not be resolved for host [{}] and path [{}]", req.getServerName(),
                           req.getPathInfo() );
@@ -59,24 +70,38 @@ public final class VirtualHostFilter
             }
             else
             {
-                VirtualHostHelper.setVirtualHost( req, virtualHost );
-                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+                // Management and statistics ports stay reachable when no vhost mapping matches.
+                applyDefaultVirtualHost( req, res, chain, connector );
             }
         }
         else
         {
-            final VirtualHostMapping virtualHost = generateDefaultVirtualHostMapping( req );
-            VirtualHostHelper.setVirtualHost( req, virtualHost );
-            chain.doFilter( req, res );
+            applyDefaultVirtualHost( req, res, chain, connector );
         }
     }
 
-    private static VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req )
+    private static void applyDefaultVirtualHost( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain,
+                                                 final String connector )
+        throws Exception
+    {
+        final VirtualHostMapping virtualHost = generateDefaultVirtualHostMapping( req, connector );
+        VirtualHostHelper.setVirtualHost( req, virtualHost );
+        chain.doFilter( req, res );
+    }
+
+    private static VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req, final String connector )
     {
         final String serverName = req.getServerName();
 
-        return new VirtualHostMapping( serverName, serverName, "/", "/",
-                                       VirtualHostIdProvidersMapping.create().setDefaultIdProvider( IdProviderKey.system() ).build(),
-                                       Integer.MAX_VALUE );
+        final VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
+        if ( !DispatchConstants.XP_CONNECTOR.equals( connector ) )
+        {
+            // Only non-interactive authentication out of the box on the management and statistics ports.
+            idProvidersMapping.addIdProvider( IdProviderKey.system(), EnumSet.of( IdProviderFlow.AUTOLOGIN ) );
+        }
+        idProvidersMapping.setDefaultIdProvider( IdProviderKey.system() );
+
+        return new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping.build(), Integer.MAX_VALUE, null,
+                                       Set.of( connector ) );
     }
 }

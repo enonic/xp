@@ -2,8 +2,12 @@ package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
+import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static java.util.Objects.requireNonNull;
@@ -26,6 +30,8 @@ public final class VirtualHostMapping
 
     private final VirtualHostIdProvidersMapping idProvidersMapping;
 
+    private final Set<String> connectors;
+
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
     {
@@ -34,6 +40,13 @@ public final class VirtualHostMapping
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context )
+    {
+        this( name, host, source, target, idProvidersMapping, order, context, Set.of( DispatchConstants.XP_CONNECTOR ) );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context,
+                               final Set<String> connectors )
     {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
@@ -48,6 +61,7 @@ public final class VirtualHostMapping
         this.idProvidersMapping = idProvidersMapping;
         this.order = order;
         this.context = Collections.unmodifiableMap( requireNonNullElse( context, Map.of() ) );
+        this.connectors = Set.copyOf( requireNonNullElse( connectors, Set.of( DispatchConstants.XP_CONNECTOR ) ) );
     }
 
     @Override
@@ -84,6 +98,18 @@ public final class VirtualHostMapping
     public IdProviderKeys getIdProviderKeys()
     {
         return idProvidersMapping.getIdProviderKeys();
+    }
+
+    @Override
+    public Set<IdProviderFlow> getIdProviderFlows( final IdProviderKey idProviderKey )
+    {
+        return idProvidersMapping.getFlows( idProviderKey );
+    }
+
+    @Override
+    public Set<String> getConnectors()
+    {
+        return connectors;
     }
 
     @Override
