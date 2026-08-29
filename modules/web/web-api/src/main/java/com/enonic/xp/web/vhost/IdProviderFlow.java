@@ -18,17 +18,10 @@ public enum IdProviderFlow
      * Non-interactive login (the id provider's {@code autoLogin} function), e.g. bearer-token or
      * basic authentication.
      */
-    AUTOLOGIN,
+    AUTOLOGIN;
 
     /**
-     * Forced authentication: unauthenticated requests are rejected with 401 before they reach any
-     * handler (giving the default id provider's {@code login} flow, when enabled, a chance to respond).
-     * Never enabled by default - it must be listed explicitly, e.g. {@code enabled=autologin,forced}.
-     */
-    FORCED;
-
-    /**
-     * The flows enabled when no explicit flow list is configured. Excludes {@link #FORCED}.
+     * The flows enabled when no explicit flow list is configured.
      */
     public static final Set<IdProviderFlow> DEFAULT = Set.of( LOGIN, AUTOLOGIN );
 

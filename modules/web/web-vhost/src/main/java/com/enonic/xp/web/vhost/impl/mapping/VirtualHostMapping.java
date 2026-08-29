@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -32,6 +33,8 @@ public final class VirtualHostMapping
 
     private final String connector;
 
+    private final PrincipalKeys allowedPrincipals;
+
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
     {
@@ -48,6 +51,13 @@ public final class VirtualHostMapping
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context,
                                final String connector )
     {
+        this( name, host, source, target, idProvidersMapping, order, context, connector, PrincipalKeys.empty() );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context,
+                               final String connector, final PrincipalKeys allowedPrincipals )
+    {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
         requireNonNull( source, "source must be set" );
@@ -62,6 +72,7 @@ public final class VirtualHostMapping
         this.order = order;
         this.context = Collections.unmodifiableMap( requireNonNullElse( context, Map.of() ) );
         this.connector = requireNonNullElse( connector, DispatchConstants.XP_CONNECTOR );
+        this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
     }
 
     @Override
@@ -110,6 +121,12 @@ public final class VirtualHostMapping
     public String getConnector()
     {
         return connector;
+    }
+
+    @Override
+    public PrincipalKeys getAllowedPrincipals()
+    {
+        return allowedPrincipals;
     }
 
     @Override

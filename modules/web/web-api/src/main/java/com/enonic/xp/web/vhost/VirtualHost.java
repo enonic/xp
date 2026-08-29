@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 
 
@@ -39,6 +40,16 @@ public interface VirtualHost
     default String getConnector()
     {
         return DispatchConstants.XP_CONNECTOR;
+    }
+
+    /**
+     * The principals allowed to pass through this vhost, checked before requests reach any handler:
+     * unauthenticated requests are rejected with 401, authenticated ones without any of these
+     * principals with 403. An empty set (the default) means no restriction.
+     */
+    default PrincipalKeys getAllowedPrincipals()
+    {
+        return PrincipalKeys.empty();
     }
 
     int getOrder();

@@ -19,6 +19,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.IdProviderFlow;
@@ -81,13 +83,23 @@ public final class IdProviderFilter
             ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
             : res;
 
-        // Forced authentication: reject unauthenticated requests upfront instead of relying on a
-        // downstream 401 response. On the web connector the wrapped response lets the default id
-        // provider's login flow (when enabled) render the response.
-        if ( isForcedAuthentication( virtualHost, req ) && !ContextAccessor.current().getAuthInfo().isAuthenticated() )
+        // The vhost's principals allow list is checked before requests pass through. On the web
+        // connector the wrapped response lets the default id provider's login flow (when enabled)
+        // render the 401.
+        final PrincipalKeys allowedPrincipals = virtualHost == null ? PrincipalKeys.empty() : virtualHost.getAllowedPrincipals();
+        if ( !allowedPrincipals.isEmpty() && !isIdProviderEndpoint( req.getPathInfo() ) )
         {
-            response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
-            return;
+            final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+            if ( !authInfo.isAuthenticated() )
+            {
+                response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+                return;
+            }
+            if ( authInfo.getPrincipals().stream().noneMatch( allowedPrincipals::contains ) )
+            {
+                response.sendError( HttpServletResponse.SC_FORBIDDEN );
+                return;
+            }
         }
 
         final IdProviderRequestWrapper requestWrapper = new IdProviderRequestWrapper( req );
@@ -115,19 +127,8 @@ public final class IdProviderFilter
         return result;
     }
 
-    private static boolean isForcedAuthentication( final VirtualHost virtualHost, final HttpServletRequest req )
-    {
-        if ( virtualHost == null )
-        {
-            return false;
-        }
-        final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
-        return defaultKey != null && virtualHost.getIdProviderFlows( defaultKey ).contains( IdProviderFlow.FORCED ) &&
-            !isIdProviderEndpoint( req.getPathInfo() );
-    }
-
     // The id provider endpoints (login page, login/logout functions, callbacks, static assets) must
-    // stay reachable for unauthenticated users, otherwise forced authentication locks everyone out.
+    // stay reachable for unauthenticated users, otherwise the allow list locks everyone out.
     private static boolean isIdProviderEndpoint( final String path )
     {
         return path != null && path.contains( "/_/idprovider/" );

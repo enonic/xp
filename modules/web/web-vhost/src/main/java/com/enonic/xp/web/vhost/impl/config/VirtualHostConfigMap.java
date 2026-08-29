@@ -9,8 +9,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -67,8 +70,22 @@ final class VirtualHostConfigMap
         final int order = getInt( prefix + "order", Integer.MAX_VALUE );
         final Map<String, String> context = getVirtualHostContext( prefix );
         final String connector = getConnector( prefix );
+        final PrincipalKeys allowedPrincipals = getAllowedPrincipals( prefix );
 
-        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector );
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals );
+    }
+
+    // Principals allowed to pass through the vhost. No list means no restriction; an invalid
+    // principal key fails the configuration.
+    private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )
+    {
+        final String value = getString( mappingPrefix + "principals" );
+        if ( value == null )
+        {
+            return PrincipalKeys.empty();
+        }
+
+        return Stream.of( value.split( "," ) ).map( String::trim ).map( PrincipalKey::from ).collect( PrincipalKeys.collector() );
     }
 
     // A mapping without an endpoint applies to the web endpoint; a mapping for another endpoint

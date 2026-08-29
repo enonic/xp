@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 
@@ -193,13 +194,13 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProviderFlows_explicit()
     {
-        map.put( "mapping.myapp1.idProvider.system", "default&enabled=autologin,forced" );
+        map.put( "mapping.myapp1.idProvider.system", "default&enabled=autologin" );
         map.put( "mapping.myapp1.idProvider.myProvider", "enabled=login" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
         assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.FORCED ), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
         assertEquals( Set.of( IdProviderFlow.LOGIN ), virtualHost.getIdProviderFlows( IdProviderKey.from( "myProvider" ) ) );
     }
 
@@ -221,6 +222,38 @@ class VirtualHostConfigMapTest
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
         assertEquals( IdProviderFlow.DEFAULT, virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+    }
+
+    @Test
+    void testPrincipals_default()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( PrincipalKeys.empty(), virtualHost.getAllowedPrincipals() );
+    }
+
+    @Test
+    void testPrincipals_explicit()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.principals", "role:system.admin, user:system:deployer" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( PrincipalKeys.from( "role:system.admin", "user:system:deployer" ), virtualHost.getAllowedPrincipals() );
+    }
+
+    @Test
+    void testPrincipals_invalidFails()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.principals", "bogus" );
+
+        final VirtualHostConfigMap virtualHostConfigMap = new VirtualHostConfigMap( map );
+
+        assertThrows( IllegalArgumentException.class, virtualHostConfigMap::buildMappings );
     }
 
     @Test

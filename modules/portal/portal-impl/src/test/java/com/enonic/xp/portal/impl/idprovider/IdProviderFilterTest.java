@@ -19,6 +19,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -176,15 +177,16 @@ class IdProviderFilterTest
     }
 
     @Test
-    void testForcedAuthentication_unauthenticated()
+    void testAllowedPrincipals_unauthenticated()
         throws Exception
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
         final FilterChain filterChain = Mockito.mock( FilterChain.class );
 
-        mockVirtualHost( httpServletRequest, IdProviderKey.system(),
-                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.FORCED ) ) );
+        final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN_LOGIN ) );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 
@@ -193,30 +195,37 @@ class IdProviderFilterTest
     }
 
     @Test
-    void testForcedAuthentication_authenticated()
+    void testAllowedPrincipals_allowed()
     {
-        final User user =
-            User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).displayName( "User 1" ).login( "user1" ).build();
-        final AuthenticationInfo authenticationInfo =
-            AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
-        ContextBuilder.create().authInfo( authenticationInfo ).build().callWith( () -> {
-            final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
-            final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
-            final FilterChain filterChain = Mockito.mock( FilterChain.class );
-
-            mockVirtualHost( httpServletRequest, IdProviderKey.system(),
-                             Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.FORCED ) ) );
+        callAuthenticated( ( httpServletRequest, httpServletResponse, filterChain ) -> {
+            final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                             Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+            Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN_LOGIN ) );
 
             idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 
             Mockito.verify( httpServletResponse, Mockito.times( 0 ) ).sendError( Mockito.anyInt() );
             Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
-            return null;
         } );
     }
 
     @Test
-    void testForcedAuthentication_idProviderEndpointExempt()
+    void testAllowedPrincipals_forbidden()
+    {
+        callAuthenticated( ( httpServletRequest, httpServletResponse, filterChain ) -> {
+            final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                             Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+            Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN ) );
+
+            idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+
+            Mockito.verify( httpServletResponse ).sendError( HttpServletResponse.SC_FORBIDDEN );
+            Mockito.verify( filterChain, Mockito.times( 0 ) ).doFilter( Mockito.any(), Mockito.any() );
+        } );
+    }
+
+    @Test
+    void testAllowedPrincipals_idProviderEndpointExempt()
         throws Exception
     {
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
@@ -224,8 +233,9 @@ class IdProviderFilterTest
         final FilterChain filterChain = Mockito.mock( FilterChain.class );
 
         Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/site/_/idprovider/system/login" );
-        mockVirtualHost( httpServletRequest, IdProviderKey.system(),
-                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.FORCED ) ) );
+        final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN_LOGIN ) );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 
@@ -233,14 +243,36 @@ class IdProviderFilterTest
         Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
     }
 
-    private static void mockVirtualHost( final HttpServletRequest request, final IdProviderKey defaultIdProvider,
-                                         final Map<IdProviderKey, Set<IdProviderFlow>> flows )
+    private interface FilterCall
+    {
+        void run( HttpServletRequest req, HttpServletResponse res, FilterChain chain )
+            throws Exception;
+    }
+
+    // Runs the call as a user of the system id provider with the admin.login role.
+    private static void callAuthenticated( final FilterCall call )
+    {
+        final User user =
+            User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).displayName( "User 1" ).login( "user1" ).build();
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        ContextBuilder.create().authInfo( authenticationInfo ).build().callWith( () -> {
+            call.run( Mockito.mock( HttpServletRequest.class ), Mockito.mock( HttpServletResponse.class ),
+                      Mockito.mock( FilterChain.class ) );
+            return null;
+        } );
+    }
+
+    private static VirtualHost mockVirtualHost( final HttpServletRequest request, final IdProviderKey defaultIdProvider,
+                                                final Map<IdProviderKey, Set<IdProviderFlow>> flows )
     {
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
         Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( defaultIdProvider );
         Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( flows.keySet() ) );
         Mockito.when( virtualHost.getIdProviderFlows( Mockito.any() ) )
             .thenAnswer( invocation -> flows.getOrDefault( invocation.getArgument( 0 ), Set.of() ) );
+        Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.empty() );
         Mockito.when( request.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        return virtualHost;
     }
 }
