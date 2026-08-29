@@ -225,7 +225,7 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testPrincipals_default()
+    void testAllow_default()
     {
         map.put( "mapping.myapp1.host", "example.com" );
 
@@ -235,10 +235,10 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testPrincipals_explicit()
+    void testAllow_explicit()
     {
         map.put( "mapping.myapp1.host", "example.com" );
-        map.put( "mapping.myapp1.principals", "role:system.admin, user:system:deployer" );
+        map.put( "mapping.myapp1.allow", "role:system.admin, user:system:deployer" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
@@ -246,10 +246,10 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testPrincipals_invalidFails()
+    void testAllow_invalidFails()
     {
         map.put( "mapping.myapp1.host", "example.com" );
-        map.put( "mapping.myapp1.principals", "bogus" );
+        map.put( "mapping.myapp1.allow", "bogus" );
 
         final VirtualHostConfigMap virtualHostConfigMap = new VirtualHostConfigMap( map );
 

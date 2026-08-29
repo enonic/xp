@@ -79,7 +79,7 @@ final class VirtualHostConfigMap
     // principal key fails the configuration.
     private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )
     {
-        final String value = getString( mappingPrefix + "principals" );
+        final String value = getString( mappingPrefix + "allow" );
         if ( value == null )
         {
             return PrincipalKeys.empty();

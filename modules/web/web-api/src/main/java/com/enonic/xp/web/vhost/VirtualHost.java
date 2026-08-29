@@ -43,9 +43,10 @@ public interface VirtualHost
     }
 
     /**
-     * The principals allowed to pass through this vhost, checked before requests reach any handler:
-     * unauthenticated requests are rejected with 401, authenticated ones without any of these
-     * principals with 403. An empty set (the default) means no restriction.
+     * The principals allowed to pass through this vhost (the mapping's {@code allow} list), checked
+     * before requests reach any handler: unauthenticated requests are rejected with 401,
+     * authenticated ones without any of these principals with 403. An empty set (the default) means
+     * no restriction.
      */
     default PrincipalKeys getAllowedPrincipals()
     {
