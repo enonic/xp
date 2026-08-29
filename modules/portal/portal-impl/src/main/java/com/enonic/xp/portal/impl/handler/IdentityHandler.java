@@ -20,6 +20,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -77,6 +78,16 @@ public class IdentityHandler
         }
 
         String idProviderFunction = matcher.group( "fun" );
+
+        // The id provider's interactive surface - the login function and the custom endpoints
+        // (login pages, callbacks, static assets) - requires the login flow on this vhost.
+        // Logout stays available for any enabled id provider: a session must be endable even
+        // where it cannot be started.
+        if ( !"logout".equals( idProviderFunction ) &&
+            !virtualHost.getIdProviderFlows( idProviderKey ).contains( IdProviderFlow.LOGIN ) )
+        {
+            throw WebException.forbidden( String.format( "Login flow is disabled for '%s' id provider", idProviderKey ) );
+        }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 

@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -19,6 +21,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
@@ -79,6 +82,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
         when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( IdProviderFlow.DEFAULT );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
     }
 
@@ -231,6 +235,37 @@ class IdentityHandlerTest
     }
 
     @Test
+    void testHandleWithLoginFlowDisabled()
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
+        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.AUTOLOGIN ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        // the custom endpoints are part of the interactive surface (401 for the anonymous caller)
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+        assertEquals( "Login flow is disabled for 'myidprovider' id provider", ex.getMessage() );
+
+        // so is the login function
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/login" );
+        ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+
+        // logout stays available: it passes the gate and reaches function dispatch
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/logout" );
+        ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        assertEquals( "ID Provider function [logout] not found for id provider [myidprovider]", ex.getMessage() );
+    }
+
+    @Test
     void testHandleMethodNotAllowed()
     {
         this.request.setMethod( HttpMethod.CONNECT );
@@ -253,6 +288,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/" );
         when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
         when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( IdProviderFlow.DEFAULT );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
