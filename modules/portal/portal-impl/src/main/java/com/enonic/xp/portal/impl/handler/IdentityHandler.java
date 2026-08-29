@@ -79,10 +79,12 @@ public class IdentityHandler
 
         String idProviderFunction = matcher.group( "fun" );
 
-        // The logout function requires the logout flow on this vhost; the rest of the id provider's
-        // interactive surface - the login function and the custom endpoints (login pages, callbacks,
-        // static assets) - requires the login flow.
-        final IdProviderFlow requiredFlow = "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
+        // Each function requires its flow on this vhost: the login and logout functions their own
+        // flows, and the custom endpoints (pages, callbacks, token endpoints, static assets) the
+        // custom flow - a custom endpoint is not necessarily interactive.
+        final IdProviderFlow requiredFlow = idProviderFunction == null
+            ? IdProviderFlow.CUSTOM
+            : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
         if ( !virtualHost.getIdProviderFlows( idProviderKey ).contains( requiredFlow ) )
         {
             throw WebException.forbidden( String.format( "%s flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );

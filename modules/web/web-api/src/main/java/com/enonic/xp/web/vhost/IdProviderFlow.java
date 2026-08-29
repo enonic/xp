@@ -23,12 +23,20 @@ public enum IdProviderFlow
     /**
      * The id provider's {@code logout} function.
      */
-    LOGOUT;
+    LOGOUT,
+
+    /**
+     * The id provider's custom endpoints - the controller's HTTP-method functions (pages,
+     * callbacks, token endpoints, static assets). Interactive login of a controller-based id
+     * provider typically needs {@link #LOGIN} and {@link #CUSTOM} together: the login page is
+     * rendered by the login flow, while its assets, form posts and callbacks are custom endpoints.
+     */
+    CUSTOM;
 
     /**
      * The flows enabled when no explicit flow list is configured.
      */
-    public static final Set<IdProviderFlow> DEFAULT = Set.of( LOGIN, AUTOLOGIN, LOGOUT );
+    public static final Set<IdProviderFlow> DEFAULT = Set.of( LOGIN, AUTOLOGIN, LOGOUT, CUSTOM );
 
     public static Optional<IdProviderFlow> from( final String value )
     {

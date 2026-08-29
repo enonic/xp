@@ -248,21 +248,48 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.LOGOUT ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        // the custom endpoints are part of the interactive surface (401 for the anonymous caller)
+        // the custom endpoints are governed by the custom flow (401 for the anonymous caller)
         WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
-        assertEquals( "LOGIN flow is disabled for 'myidprovider' id provider", ex.getMessage() );
+        assertEquals( "CUSTOM flow is disabled for 'myidprovider' id provider", ex.getMessage() );
 
-        // so is the login function
+        // the login function by the login flow
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/login" );
         ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+        assertEquals( "LOGIN flow is disabled for 'myidprovider' id provider", ex.getMessage() );
 
         // logout is governed by its own flow: it passes the gate and reaches function dispatch
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/logout" );
         ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
         assertEquals( "ID Provider function [logout] not found for id provider [myidprovider]", ex.getMessage() );
+    }
+
+    @Test
+    void testHandleWithCustomFlowOnly()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
+
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
+        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.CUSTOM ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        // a custom endpoint is not necessarily interactive (e.g. a token endpoint): it works
+        // without the login flow
+        final WebResponse portalResponse = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/login" );
+        final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+        assertEquals( "LOGIN flow is disabled for 'myidprovider' id provider", ex.getMessage() );
     }
 
     @Test
@@ -277,7 +304,8 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
         when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) )
+            .thenReturn( Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN, IdProviderFlow.CUSTOM ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         // the interactive surface still works
