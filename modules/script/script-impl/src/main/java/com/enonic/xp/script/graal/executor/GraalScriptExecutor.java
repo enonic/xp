@@ -23,7 +23,6 @@ import javax.script.SimpleBindings;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
-import org.graalvm.polyglot.proxy.ProxyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -871,8 +870,9 @@ public class GraalScriptExecutor
             this.exportsCache = new ScriptExportsCache<>( resourceService::getResource, GraalScriptExecutor.this::onCacheExpired );
 
             final Map<String, Object> globalVariables = new HashMap<>( scriptSettings.getGlobalVariables() );
-            globalVariables.put( "app", ProxyObject.fromMap( application.buildMap( HashMap::new ) ) );
+            globalVariables.put( "app", this.javascriptHelper.objectConverter().toJs( application.buildMap( HashMap::new ) ) );
             globalVariables.forEach( ( key, value ) -> this.context.getBindings( "js" ).putMember( key, value ) );
+            this.context.eval( "js", "Object.defineProperty( globalThis, 'app', { writable: false, configurable: false } );" );
         }
     }
 }
