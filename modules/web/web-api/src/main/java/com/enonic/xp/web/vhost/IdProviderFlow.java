@@ -18,12 +18,17 @@ public enum IdProviderFlow
      * Non-interactive login (the id provider's {@code autoLogin} function), e.g. bearer-token or
      * basic authentication.
      */
-    AUTOLOGIN;
+    AUTOLOGIN,
+
+    /**
+     * The id provider's {@code logout} function.
+     */
+    LOGOUT;
 
     /**
      * The flows enabled when no explicit flow list is configured.
      */
-    public static final Set<IdProviderFlow> DEFAULT = Set.of( LOGIN, AUTOLOGIN );
+    public static final Set<IdProviderFlow> DEFAULT = Set.of( LOGIN, AUTOLOGIN, LOGOUT );
 
     public static Optional<IdProviderFlow> from( final String value )
     {

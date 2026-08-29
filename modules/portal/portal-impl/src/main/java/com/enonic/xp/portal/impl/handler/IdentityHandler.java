@@ -79,14 +79,13 @@ public class IdentityHandler
 
         String idProviderFunction = matcher.group( "fun" );
 
-        // The id provider's interactive surface - the login function and the custom endpoints
-        // (login pages, callbacks, static assets) - requires the login flow on this vhost.
-        // Logout stays available for any enabled id provider: a session must be endable even
-        // where it cannot be started.
-        if ( !"logout".equals( idProviderFunction ) &&
-            !virtualHost.getIdProviderFlows( idProviderKey ).contains( IdProviderFlow.LOGIN ) )
+        // The logout function requires the logout flow on this vhost; the rest of the id provider's
+        // interactive surface - the login function and the custom endpoints (login pages, callbacks,
+        // static assets) - requires the login flow.
+        final IdProviderFlow requiredFlow = "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
+        if ( !virtualHost.getIdProviderFlows( idProviderKey ).contains( requiredFlow ) )
         {
-            throw WebException.forbidden( String.format( "Login flow is disabled for '%s' id provider", idProviderKey ) );
+            throw WebException.forbidden( String.format( "%s flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
         }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
