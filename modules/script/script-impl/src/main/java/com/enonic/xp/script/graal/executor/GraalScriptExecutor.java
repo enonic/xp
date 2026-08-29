@@ -59,6 +59,26 @@ public class GraalScriptExecutor
 
     private static final long SLOT_WAIT_SECONDS = 300;
 
+    private static final Source READ_ONLY_APP_SCRIPT = Source.newBuilder( "js", "(function() {" +
+        "const readOnly = function( target, label ) {" +
+        "const deny = function( property ) {" +
+        "throw new TypeError( \"Cannot assign to read only property '\" + String( property ) + \"' of \" + label );" +
+        "};" +
+        "return new Proxy( Object.freeze( target ), {" +
+        "set: function( target, property ) { deny( property ); }," +
+        "defineProperty: function( target, property ) { deny( property ); }," +
+        "deleteProperty: function( target, property ) { deny( property ); } } );" +
+        "};" +
+        "const source = globalThis.app;" +
+        "source.config = readOnly( source.config, 'app.config' );" +
+        "const app = readOnly( source, 'app' );" +
+        "Object.defineProperty( globalThis, 'app', {" +
+        "get: function() { return app; }," +
+        "set: function() { throw new TypeError( \"Cannot assign to read only property 'app' of global\" ); }," +
+        "enumerable: true," +
+        "configurable: false } );" +
+        "})();", "read-only-app" ).buildLiteral();
+
     private final ScriptSettings scriptSettings;
 
     private final ClassLoader classLoader;
@@ -872,7 +892,7 @@ public class GraalScriptExecutor
             final Map<String, Object> globalVariables = new HashMap<>( scriptSettings.getGlobalVariables() );
             globalVariables.put( "app", this.javascriptHelper.objectConverter().toJs( application.buildMap( HashMap::new ) ) );
             globalVariables.forEach( ( key, value ) -> this.context.getBindings( "js" ).putMember( key, value ) );
-            this.context.eval( "js", "Object.defineProperty( globalThis, 'app', { writable: false, configurable: false } );" );
+            this.context.eval( READ_ONLY_APP_SCRIPT );
         }
     }
 }
