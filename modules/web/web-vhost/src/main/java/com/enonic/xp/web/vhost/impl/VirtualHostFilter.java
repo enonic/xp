@@ -1,6 +1,6 @@
 package com.enonic.xp.web.vhost.impl;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -96,7 +96,7 @@ public final class VirtualHostFilter
         if ( !DispatchConstants.XP_CONNECTOR.equals( connector ) )
         {
             // Only non-interactive authentication out of the box on the management and statistics ports.
-            idProvidersMapping.addIdProvider( IdProviderKey.system(), EnumSet.of( IdProviderFlow.AUTOLOGIN ) );
+            idProvidersMapping.addIdProvider( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) );
         }
         idProvidersMapping.setDefaultIdProvider( IdProviderKey.system() );
 

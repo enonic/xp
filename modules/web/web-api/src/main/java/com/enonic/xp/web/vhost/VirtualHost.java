@@ -24,11 +24,13 @@ public interface VirtualHost
     IdProviderKeys getIdProviderKeys();
 
     /**
-     * The authentication flows enabled for the given id provider on this vhost. Implementations
-     * return an empty set for an id provider that is not enabled here; the default implementation
-     * applies no restriction and returns {@link IdProviderFlow#DEFAULT} for any id provider.
+     * The authentication flows enabled for the given id provider on this vhost: the XP-managed
+     * flow names ({@link IdProviderFlow}) plus any informational names for the id provider app.
+     * Implementations return an empty set for an id provider that is not enabled here; the default
+     * implementation applies no restriction and returns {@link IdProviderFlow#DEFAULT} for any id
+     * provider.
      */
-    default Set<IdProviderFlow> getIdProviderFlows( final IdProviderKey idProviderKey )
+    default Set<String> getIdProviderFlows( final IdProviderKey idProviderKey )
     {
         return IdProviderFlow.DEFAULT;
     }

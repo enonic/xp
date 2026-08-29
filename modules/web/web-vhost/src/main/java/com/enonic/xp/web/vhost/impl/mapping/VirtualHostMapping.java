@@ -8,7 +8,6 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
-import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static java.util.Objects.requireNonNull;
@@ -112,7 +111,7 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public Set<IdProviderFlow> getIdProviderFlows( final IdProviderKey idProviderKey )
+    public Set<String> getIdProviderFlows( final IdProviderKey idProviderKey )
     {
         return idProvidersMapping.getFlows( idProviderKey );
     }

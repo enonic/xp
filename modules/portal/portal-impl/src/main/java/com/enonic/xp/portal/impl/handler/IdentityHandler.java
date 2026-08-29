@@ -79,15 +79,14 @@ public class IdentityHandler
 
         String idProviderFunction = matcher.group( "fun" );
 
-        // Each function requires its flow on this vhost: the login and logout functions their own
-        // flows, and the custom endpoints (pages, callbacks, token endpoints, static assets) the
-        // custom flow - a custom endpoint is not necessarily interactive.
-        final IdProviderFlow requiredFlow = idProviderFunction == null
-            ? IdProviderFlow.CUSTOM
+        // The XP-managed functions require their flow on this vhost. The custom endpoints (pages,
+        // callbacks, token endpoints, static assets) are always dispatched: the id provider app
+        // controls them itself, guided by the vhost's flow list on the request.
+        final String requiredFlow = idProviderFunction == null ? null
             : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
-        if ( !virtualHost.getIdProviderFlows( idProviderKey ).contains( requiredFlow ) )
+        if ( requiredFlow != null && !virtualHost.getIdProviderFlows( idProviderKey ).contains( requiredFlow ) )
         {
-            throw WebException.forbidden( String.format( "%s flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
+            throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
         }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );

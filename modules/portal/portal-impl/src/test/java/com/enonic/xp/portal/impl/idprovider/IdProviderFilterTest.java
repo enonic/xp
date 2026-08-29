@@ -301,7 +301,7 @@ class IdProviderFilterTest
     }
 
     private static VirtualHost mockVirtualHost( final HttpServletRequest request, final IdProviderKey defaultIdProvider,
-                                                final Map<IdProviderKey, Set<IdProviderFlow>> flows )
+                                                final Map<IdProviderKey, Set<String>> flows )
     {
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
         Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( defaultIdProvider );

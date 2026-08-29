@@ -236,6 +236,7 @@ class IdentityHandlerTest
 
     @Test
     void testHandleWithLoginFlowDisabled()
+        throws Exception
     {
         final HttpServletRequest rawRequest = this.request.getRawRequest();
         final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
@@ -248,48 +249,21 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.LOGOUT ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        // the custom endpoints are governed by the custom flow (401 for the anonymous caller)
-        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
-        assertEquals( "CUSTOM flow is disabled for 'myidprovider' id provider", ex.getMessage() );
-
-        // the login function by the login flow
-        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/login" );
-        ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
-        assertEquals( "LOGIN flow is disabled for 'myidprovider' id provider", ex.getMessage() );
-
-        // logout is governed by its own flow: it passes the gate and reaches function dispatch
-        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/logout" );
-        ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
-        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
-        assertEquals( "ID Provider function [logout] not found for id provider [myidprovider]", ex.getMessage() );
-    }
-
-    @Test
-    void testHandleWithCustomFlowOnly()
-        throws Exception
-    {
-        final HttpServletRequest rawRequest = this.request.getRawRequest();
-        final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
-
-        final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getSource() ).thenReturn( "/" );
-        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
-        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.CUSTOM ) );
-        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-
-        // a custom endpoint is not necessarily interactive (e.g. a token endpoint): it works
-        // without the login flow
+        // the custom endpoints are always dispatched - the id provider app governs them itself
         final WebResponse portalResponse = this.handler.handle( this.request );
         assertEquals( HttpStatus.OK, portalResponse.getStatus() );
 
+        // the login function is governed by the login flow
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/login" );
         final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
-        assertEquals( "LOGIN flow is disabled for 'myidprovider' id provider", ex.getMessage() );
+        assertEquals( "'login' flow is disabled for 'myidprovider' id provider", ex.getMessage() );
+
+        // logout is governed by its own flow: it passes the gate and reaches function dispatch
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/logout" );
+        final WebException notFound = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, notFound.getStatus() );
+        assertEquals( "ID Provider function [logout] not found for id provider [myidprovider]", notFound.getMessage() );
     }
 
     @Test
@@ -304,8 +278,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
         when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) )
-            .thenReturn( Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN, IdProviderFlow.CUSTOM ) );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         // the interactive surface still works
@@ -316,7 +289,7 @@ class IdentityHandlerTest
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/logout" );
         final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
-        assertEquals( "LOGOUT flow is disabled for 'myidprovider' id provider", ex.getMessage() );
+        assertEquals( "'logout' flow is disabled for 'myidprovider' id provider", ex.getMessage() );
     }
 
     @Test

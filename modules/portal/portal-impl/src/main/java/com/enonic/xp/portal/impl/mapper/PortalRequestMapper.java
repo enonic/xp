@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class PortalRequestMapper
     implements MapSerializable
@@ -58,12 +60,32 @@ public final class PortalRequestMapper
             gen.value( "contextPath", this.request.getContextPath() );
         }
 
+        serializeIdProviderFlows( gen );
+
         serializeBody( gen );
         MapperHelper.serializeMultimap( "params", gen, this.request.getParams().asMap() );
         gen.value( "headers", this.request.getHeaders() );
         gen.value( "getHeader", (Function<String, String>) s -> request.getHeaders().get( s ) );
         gen.value( "cookies", this.request.getCookies() );
         gen.value( "locales", this.request.getLocales().stream().map( Locale::toLanguageTag ).collect( Collectors.toList() ) );
+    }
+
+    // The flows the vhost enables for the addressed id provider, so the id provider app can adapt
+    // its custom endpoints to them (follow or ignore).
+    private void serializeIdProviderFlows( final MapGenerator gen )
+    {
+        if ( this.request.getIdProvider() == null || this.request.getRawRequest() == null )
+        {
+            return;
+        }
+
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
+        if ( virtualHost != null )
+        {
+            gen.value( "idProviderFlows",
+                       virtualHost.getIdProviderFlows( this.request.getIdProvider().getKey() ).stream().sorted().collect(
+                           Collectors.toList() ) );
+        }
     }
 
     private void serializeBody( final MapGenerator gen )

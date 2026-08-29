@@ -1,52 +1,41 @@
 package com.enonic.xp.web.vhost;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**
- * The authentication flows an id provider may expose on a virtual host. Which flows are enabled is
- * configured per id provider in the vhost mapping value, e.g. {@code enabled=login,autologin}.
+ * The authentication flows an id provider may expose on a virtual host, configured per id provider
+ * in the vhost mapping value, e.g. {@code enabled=login,autologin}.
+ * <p>
+ * XP manages the flows with known functions: {@link #LOGIN}, {@link #AUTOLOGIN} and
+ * {@link #LOGOUT}. Any other name in the list is informational for the id provider app, which can
+ * follow or ignore it - e.g. an id provider may serve a token endpoint only where {@code device}
+ * is listed. Informational flows are never enabled by default: they must be listed explicitly.
  */
-public enum IdProviderFlow
+public final class IdProviderFlow
 {
     /**
-     * Interactive login (the id provider's {@code handle401} function), triggered by a 401 response.
+     * Interactive login: the id provider's {@code handle401} and {@code login} functions. Web
+     * endpoint only.
      */
-    LOGIN,
+    public static final String LOGIN = "login";
 
     /**
      * Non-interactive login (the id provider's {@code autoLogin} function), e.g. bearer-token or
      * basic authentication.
      */
-    AUTOLOGIN,
+    public static final String AUTOLOGIN = "autologin";
 
     /**
      * The id provider's {@code logout} function.
      */
-    LOGOUT,
+    public static final String LOGOUT = "logout";
 
     /**
-     * The id provider's custom endpoints - the controller's HTTP-method functions (pages,
-     * callbacks, token endpoints, static assets). Interactive login of a controller-based id
-     * provider typically needs {@link #LOGIN} and {@link #CUSTOM} together: the login page is
-     * rendered by the login flow, while its assets, form posts and callbacks are custom endpoints.
+     * The flows enabled when no explicit flow list is configured: the XP-managed flows.
      */
-    CUSTOM;
+    public static final Set<String> DEFAULT = Set.of( LOGIN, AUTOLOGIN, LOGOUT );
 
-    /**
-     * The flows enabled when no explicit flow list is configured.
-     */
-    public static final Set<IdProviderFlow> DEFAULT = Set.of( LOGIN, AUTOLOGIN, LOGOUT, CUSTOM );
-
-    public static Optional<IdProviderFlow> from( final String value )
+    private IdProviderFlow()
     {
-        for ( final IdProviderFlow flow : values() )
-        {
-            if ( flow.name().equalsIgnoreCase( value ) )
-            {
-                return Optional.of( flow );
-            }
-        }
-        return Optional.empty();
     }
 }

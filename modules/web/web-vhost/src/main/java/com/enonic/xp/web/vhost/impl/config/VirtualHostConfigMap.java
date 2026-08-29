@@ -1,8 +1,8 @@
 package com.enonic.xp.web.vhost.impl.config;
 
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -15,7 +15,6 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
-import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
@@ -119,10 +118,12 @@ final class VirtualHostConfigMap
             final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
 
             // Query-string style value: "default" and/or "enabled[=flow,flow...]".
-            // The flow list (if any) comes from the "enabled" parameter; no list means the default flows.
+            // The flow list (if any) comes from the "enabled" parameter; no list means the default
+            // flows. Names beyond the XP-managed flows are kept as informational for the id
+            // provider app.
             boolean isDefault = false;
             boolean isEnabled = false;
-            Set<IdProviderFlow> flows = null;
+            Set<String> flows = null;
 
             for ( final String token : idProviderStatus.split( "&" ) )
             {
@@ -159,14 +160,13 @@ final class VirtualHostConfigMap
         return hostIdProvidersMapping.build();
     }
 
-    private static Set<IdProviderFlow> parseFlows( final String value )
+    private static Set<String> parseFlows( final String value )
     {
-        final EnumSet<IdProviderFlow> flows = EnumSet.noneOf( IdProviderFlow.class );
-        for ( final String token : value.split( "," ) )
-        {
-            IdProviderFlow.from( token.trim() ).ifPresent( flows::add );
-        }
-        return flows;
+        return Stream.of( value.split( "," ) )
+            .map( String::trim )
+            .filter( token -> !token.isEmpty() )
+            .map( token -> token.toLowerCase( Locale.ROOT ) )
+            .collect( Collectors.toUnmodifiableSet() );
     }
 
     private Map<String, String> getVirtualHostContext( final String mappingPrefix )
