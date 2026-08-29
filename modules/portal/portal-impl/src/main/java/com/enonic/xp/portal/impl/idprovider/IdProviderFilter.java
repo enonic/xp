@@ -73,10 +73,12 @@ public final class IdProviderFilter
     }
 
     /**
-     * Executes the autoLogin function of the first id provider (default first) that implements it
-     * and does not have the autologin flow disabled on the vhost. A single execute call both
-     * discovers and runs the function: it returns null without side effects when the id provider
-     * does not implement autoLogin, letting the next id provider take control.
+     * Executes the autoLogin function of the id providers that do not have the autologin flow
+     * disabled on the vhost (default first). A single execute call both discovers and runs the
+     * function - it returns null without side effects when the id provider does not implement
+     * autoLogin - but a null response alone cannot signal control: real id providers (e.g. the
+     * OIDC id provider) return nothing from autoLogin even when they authenticate. The established
+     * authentication, or a returned response, is what ends the search.
      */
     private void autoLogin( final VirtualHost virtualHost, final HttpServletRequest req )
         throws IOException
@@ -100,7 +102,7 @@ public final class IdProviderFilter
                                                                                            .idProviderKey( idProviderKey )
                                                                                            .servletRequest( req )
                                                                                            .build() );
-            if ( portalResponse != null )
+            if ( portalResponse != null || ContextAccessor.current().getAuthInfo().isAuthenticated() )
             {
                 break;
             }

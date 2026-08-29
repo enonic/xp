@@ -12,6 +12,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
@@ -174,6 +175,42 @@ class IdProviderFilterTest
         Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
         assertEquals( IdProviderKey.system(), paramsCaptor.getValue().getIdProviderKey() );
         Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    void testAutoLogin_stopsWhenAuthenticatedWithoutResponse()
+        throws Exception
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+        final FilterChain filterChain = Mockito.mock( FilterChain.class );
+
+        final IdProviderKey otherIdProvider = IdProviderKey.from( "other" );
+        mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ), otherIdProvider,
+                                 Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+
+        final User user =
+            User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).displayName( "User 1" ).login( "user1" ).build();
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        // some id providers (e.g. the OIDC id provider) authenticate without returning a response
+        Mockito.when( idProviderControllerService.execute( Mockito.any() ) ).thenAnswer( invocation -> {
+            ContextAccessor.current().getLocalScope().setAttribute( authenticationInfo );
+            return null;
+        } );
+
+        ContextBuilder.create().build().callWith( () -> {
+            idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+
+            final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
+                ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
+            Mockito.verify( idProviderControllerService, Mockito.times( 1 ) ).execute( paramsCaptor.capture() );
+            assertEquals( IdProviderKey.system(), paramsCaptor.getValue().getIdProviderKey() );
+            Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
+            return null;
+        } );
     }
 
     @Test
