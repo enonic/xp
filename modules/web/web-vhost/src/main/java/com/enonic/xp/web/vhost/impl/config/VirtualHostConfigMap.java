@@ -75,12 +75,12 @@ final class VirtualHostConfigMap
         return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals );
     }
 
-    // Principals allowed to pass through the vhost. No list means no restriction; an invalid
-    // principal key fails the configuration.
+    // Principals allowed to pass through the vhost. No list (or a blank value) means no
+    // restriction; an invalid principal key fails the configuration.
     private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )
     {
         final String value = getString( mappingPrefix + "allow" );
-        if ( value == null )
+        if ( value == null || value.isBlank() )
         {
             return PrincipalKeys.empty();
         }

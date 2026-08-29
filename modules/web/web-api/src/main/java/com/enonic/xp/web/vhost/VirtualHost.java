@@ -24,8 +24,9 @@ public interface VirtualHost
     IdProviderKeys getIdProviderKeys();
 
     /**
-     * The authentication flows enabled for the given id provider on this vhost, or an empty set if
-     * the id provider is not enabled here. Defaults to {@link IdProviderFlow#DEFAULT}.
+     * The authentication flows enabled for the given id provider on this vhost. Implementations
+     * return an empty set for an id provider that is not enabled here; the default implementation
+     * applies no restriction and returns {@link IdProviderFlow#DEFAULT} for any id provider.
      */
     default Set<IdProviderFlow> getIdProviderFlows( final IdProviderKey idProviderKey )
     {

@@ -246,6 +246,17 @@ class VirtualHostConfigMapTest
     }
 
     @Test
+    void testAllow_blankMeansNoRestriction()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.allow", " " );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( PrincipalKeys.empty(), virtualHost.getAllowedPrincipals() );
+    }
+
+    @Test
     void testAllow_invalidFails()
     {
         map.put( "mapping.myapp1.host", "example.com" );

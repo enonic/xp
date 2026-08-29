@@ -61,11 +61,13 @@ public final class IdProviderFilter
 
     /**
      * Interactive login (handle401) only exists on the web connector; the management and statistics
-     * endpoints support the non-interactive flows only.
+     * endpoints support the non-interactive flows only. A missing connector attribute means the web
+     * connector, as everywhere else.
      */
     private HttpServletResponse wrapResponse( final HttpServletRequest req, final HttpServletResponse res )
     {
-        return DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
+        final Object connector = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
+        return connector == null || DispatchConstants.XP_CONNECTOR.equals( connector )
             ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
             : res;
     }
