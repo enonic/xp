@@ -32,7 +32,7 @@ final class IdentityPathSupplier
         final IdProviderKey idProviderKey = requireNonNullElseGet( this.params.getIdProviderKey(), () -> {
             final PortalRequest portalRequest = requireNonNull( PortalRequestAccessor.get(), "no request bound" );
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
-            return virtualHost.getDefaultIdProviderKey();
+            return virtualHost.getIdProviders().keySet().stream().findFirst().orElse( null );
         } );
 
         UrlBuilderHelper.appendPart( url, idProviderKey.toString() );

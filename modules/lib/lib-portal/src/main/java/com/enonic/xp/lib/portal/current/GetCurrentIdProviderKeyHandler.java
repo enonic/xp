@@ -36,7 +36,7 @@ public final class GetCurrentIdProviderKeyHandler
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request.getRawRequest() );
         if ( virtualHost != null )
         {
-            return virtualHost.getDefaultIdProviderKey();
+            return virtualHost.getIdProviders().keySet().stream().findFirst().orElse( null );
         }
         return null;
     }

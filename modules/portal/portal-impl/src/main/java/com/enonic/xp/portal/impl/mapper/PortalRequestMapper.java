@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.serializer.MapGenerator;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -61,10 +62,11 @@ public final class PortalRequestMapper
             gen.value( "contextPath", this.request.getContextPath() );
         }
 
-        if ( this.request.getIdProvider() != null && this.request.getRawRequest() != null )
+        final IdProviderKey idProviderKey = this.request.getIdProvider() == null ? null : this.request.getIdProvider().getKey();
+        if ( idProviderKey != null && this.request.getRawRequest() != null )
         {
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
-            final Set<String> flows = virtualHost.getIdProviders().getOrDefault( this.request.getIdProvider().getKey(), Set.of() );
+            final Set<String> flows = virtualHost.getIdProviders().getOrDefault( idProviderKey, Set.of() );
             // An absent list means no flow restriction: the id provider app applies its own defaults.
             if ( !flows.isEmpty() )
             {
