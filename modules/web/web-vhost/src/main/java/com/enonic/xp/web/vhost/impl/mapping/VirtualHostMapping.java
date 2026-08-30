@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
@@ -54,8 +56,9 @@ public final class VirtualHostMapping
     }
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
-                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context,
-                               final String connector, final PrincipalKeys allowedPrincipals )
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order,
+                               @Nullable final Map<String, String> context, @Nullable final String connector,
+                               @Nullable final PrincipalKeys allowedPrincipals )
     {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );

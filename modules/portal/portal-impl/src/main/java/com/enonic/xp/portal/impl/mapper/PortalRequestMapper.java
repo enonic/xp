@@ -70,8 +70,6 @@ public final class PortalRequestMapper
         gen.value( "locales", this.request.getLocales().stream().map( Locale::toLanguageTag ).collect( Collectors.toList() ) );
     }
 
-    // The flows the vhost enables for the addressed id provider, so the id provider app can adapt
-    // its custom endpoints to them (follow or ignore).
     private void serializeIdProviderFlows( final MapGenerator gen )
     {
         if ( this.request.getIdProvider() == null || this.request.getRawRequest() == null )

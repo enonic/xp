@@ -79,9 +79,8 @@ public class IdentityHandler
 
         String idProviderFunction = matcher.group( "fun" );
 
-        // The XP-managed functions require their flow on this vhost. The custom endpoints (pages,
-        // callbacks, token endpoints, static assets) are always dispatched: the id provider app
-        // controls them itself, guided by the vhost's flow list on the request.
+        // Custom endpoints are always dispatched: the id provider app gates them itself, guided by
+        // the vhost's flow list on the request.
         final String requiredFlow = idProviderFunction == null ? null
             : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
         if ( requiredFlow != null && !virtualHost.getIdProviderFlows( idProviderKey ).contains( requiredFlow ) )

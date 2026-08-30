@@ -2,6 +2,8 @@ package com.enonic.xp.web.vhost;
 
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * The authentication flows an id provider may expose on a virtual host, configured per id provider
  * in the vhost mapping value, e.g. {@code enabled=login,autologin}.
@@ -11,6 +13,7 @@ import java.util.Set;
  * follow or ignore it - e.g. an id provider may serve a token endpoint only where {@code device}
  * is listed. Informational flows are never enabled by default: they must be listed explicitly.
  */
+@NullMarked
 public final class IdProviderFlow
 {
     /**

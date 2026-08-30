@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -69,7 +70,8 @@ public class VirtualHostResolverImpl
             this.pattern = originalHost.startsWith( "~" ) ? Pattern.compile( originalHost.substring( 1 ), Pattern.CASE_INSENSITIVE ) : null;
         }
 
-        VirtualHostMapping matches( String serverName, String pathInfo, String connector )
+        @Nullable
+        VirtualHostMapping matches( String serverName, @Nullable String pathInfo, String connector )
         {
             if ( !virtualHost.getConnector().equals( connector ) )
             {

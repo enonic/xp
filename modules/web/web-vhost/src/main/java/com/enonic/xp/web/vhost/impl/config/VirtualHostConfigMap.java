@@ -29,7 +29,7 @@ final class VirtualHostConfigMap
 
     private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.(?<name>[^.]+)\\..+" );
 
-    // Documented endpoint names mapped to the internal connector names.
+    // Endpoints are configured by their documented names, not the internal connector names.
     private static final Map<String, String> ENDPOINTS =
         Map.of( "web", DispatchConstants.XP_CONNECTOR, "management", DispatchConstants.API_CONNECTOR, "statistics",
                 DispatchConstants.STATUS_CONNECTOR );
@@ -74,8 +74,6 @@ final class VirtualHostConfigMap
         return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals );
     }
 
-    // Principals allowed to pass through the vhost. No list (or a blank value) means no
-    // restriction; an invalid principal key fails the configuration.
     private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )
     {
         final String value = getString( mappingPrefix + "allow" );
@@ -87,9 +85,6 @@ final class VirtualHostConfigMap
         return Stream.of( value.split( "," ) ).map( String::trim ).map( PrincipalKey::from ).collect( PrincipalKeys.collector() );
     }
 
-    // A mapping without an endpoint applies to the web endpoint; a mapping for another endpoint
-    // must name it explicitly. Endpoints are named as documented (web, management, statistics),
-    // not by their internal connector names.
     private String getConnector( final String mappingPrefix )
     {
         final String value = getString( mappingPrefix + "endpoint" );
@@ -117,10 +112,7 @@ final class VirtualHostConfigMap
 
             final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
 
-            // Query-string style value: "default" and/or "enabled[=flow,flow...]".
-            // The flow list (if any) comes from the "enabled" parameter; no list means the default
-            // flows. Names beyond the XP-managed flows are kept as informational for the id
-            // provider app.
+            // Value grammar: "default" and/or "enabled[=flow,flow...]".
             boolean isDefault = false;
             boolean isEnabled = false;
             Set<String> flows = null;

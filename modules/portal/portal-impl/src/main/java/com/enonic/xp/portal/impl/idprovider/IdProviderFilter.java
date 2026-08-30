@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -59,11 +60,7 @@ public final class IdProviderFilter
         chain.doFilter( new IdProviderRequestWrapper( req ), response );
     }
 
-    /**
-     * Interactive login (handle401) only exists on the web connector; the management and statistics
-     * endpoints support the non-interactive flows only. A missing connector attribute means the web
-     * connector, as everywhere else.
-     */
+    // handle401 (interactive login) exists on the web connector only.
     private HttpServletResponse wrapResponse( final HttpServletRequest req, final HttpServletResponse res )
     {
         final Object connector = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
@@ -72,15 +69,9 @@ public final class IdProviderFilter
             : res;
     }
 
-    /**
-     * Executes the autoLogin function of the id providers that do not have the autologin flow
-     * disabled on the vhost (default first). A single execute call both discovers and runs the
-     * function - it returns null without side effects when the id provider does not implement
-     * autoLogin - but a null response alone cannot signal control: real id providers (e.g. the
-     * OIDC id provider) return nothing from autoLogin even when they authenticate. The established
-     * authentication, or a returned response, is what ends the search.
-     */
-    private void autoLogin( final VirtualHost virtualHost, final HttpServletRequest req )
+    // Id providers may authenticate without returning a response, so established authentication
+    // also ends the search.
+    private void autoLogin( @Nullable final VirtualHost virtualHost, final HttpServletRequest req )
         throws IOException
     {
         if ( ContextAccessor.current().getAuthInfo().isAuthenticated() )
@@ -129,14 +120,10 @@ public final class IdProviderFilter
         return result;
     }
 
-    /**
-     * Applies the vhost's allow list before requests pass through: unauthenticated requests are
-     * rejected with 401 (on the web connector the wrapped response lets the default id provider's
-     * login flow, when enabled, render it), authenticated ones without any allowed principal with
-     * 403. The id provider endpoints stay reachable, otherwise the allow list locks everyone out of
-     * interactive login.
-     */
-    private static boolean allow( final VirtualHost virtualHost, final HttpServletRequest req, final HttpServletResponse response )
+    // The id provider endpoints are exempt, otherwise the allow list locks everyone out of
+    // interactive login.
+    private static boolean allow( @Nullable final VirtualHost virtualHost, final HttpServletRequest req,
+                                  final HttpServletResponse response )
         throws IOException
     {
         final PrincipalKeys allow = virtualHost == null ? PrincipalKeys.empty() : virtualHost.getAllowedPrincipals();
@@ -159,8 +146,7 @@ public final class IdProviderFilter
         return true;
     }
 
-    // The id provider endpoints (login page, login/logout functions, callbacks, static assets).
-    private static boolean isIdProviderEndpoint( final String path )
+    private static boolean isIdProviderEndpoint( @Nullable final String path )
     {
         return path != null && path.contains( "/_/idprovider/" );
     }

@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -72,7 +74,7 @@ public class VirtualHostIdProvidersMapping
             return this;
         }
 
-        public Builder addIdProvider( final IdProviderKey idProviderKey, final Set<String> flows )
+        public Builder addIdProvider( final IdProviderKey idProviderKey, @Nullable final Set<String> flows )
         {
             this.idProviders.put( idProviderKey, flows == null || flows.isEmpty() ? IdProviderFlow.DEFAULT : Set.copyOf( flows ) );
             return this;

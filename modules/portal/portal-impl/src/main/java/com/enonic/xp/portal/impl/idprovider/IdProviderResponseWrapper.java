@@ -155,8 +155,6 @@ public class IdProviderResponseWrapper
         return 401 == sc || 403 == sc && !ContextAccessor.current().getAuthInfo().isAuthenticated();
     }
 
-    // Interactive login (handle401) targets the vhost's default id provider, and only when it has
-    // the 'login' flow enabled on this vhost.
     private boolean isInteractiveLoginEnabled()
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
