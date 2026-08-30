@@ -103,7 +103,7 @@ public final class JettyActivator
         for ( DispatchServlet dispatchServlet : this.dispatchServlets )
         {
             final ServletContextHandler servletContextHandler = initServletContextHandler( dispatchServlet );
-            if ( !DispatchConstants.STATUS_CONNECTOR.equals( dispatchServlet.getConnector() ) )
+            if ( !DispatchConstants.STATISTICS_CONNECTOR.equals( dispatchServlet.getConnector() ) )
             {
                 JakartaWebSocketServletContainerInitializer.configure( servletContextHandler,
                                                                        ( context, configurator ) -> configurator.setDefaultMaxSessionIdleTimeout(
@@ -147,9 +147,9 @@ public final class JettyActivator
     {
         return switch ( connectorName )
         {
-            case DispatchConstants.XP_CONNECTOR -> "web";
-            case DispatchConstants.API_CONNECTOR -> "management";
-            case DispatchConstants.STATUS_CONNECTOR -> "statistics";
+            case DispatchConstants.WEB_CONNECTOR -> "web";
+            case DispatchConstants.MANAGEMENT_CONNECTOR -> "management";
+            case DispatchConstants.STATISTICS_CONNECTOR -> "statistics";
             default -> connectorName;
         };
     }

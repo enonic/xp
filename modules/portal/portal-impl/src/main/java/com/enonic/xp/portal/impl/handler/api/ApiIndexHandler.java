@@ -85,7 +85,7 @@ public class ApiIndexHandler
             ? (String) webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE )
             : null;
 
-        final String mountFilter = DispatchConstants.API_CONNECTOR.equals( connector ) ? "management" : "web";
+        final String mountFilter = DispatchConstants.MANAGEMENT_CONNECTOR.equals( connector ) ? "management" : "web";
 
         return Stream.concat( universalApiHandlerRegistry.getAllApiDescriptors().stream(), applicationService.getInstalledApplications()
                 .stream()

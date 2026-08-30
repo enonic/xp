@@ -208,7 +208,7 @@ class ApiIndexHandlerTest
                                                            RoleKeys.EVERYONE.toString() ) );
 
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
-        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
 
         final WebRequest webRequest = new WebRequest();
         webRequest.setRawRequest( rawRequest );

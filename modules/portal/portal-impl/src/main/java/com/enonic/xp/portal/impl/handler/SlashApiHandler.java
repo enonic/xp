@@ -176,11 +176,11 @@ public class SlashApiHandler
                 ? (String) portalRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE )
                 : null;
 
-            if ( DispatchConstants.API_CONNECTOR.equals( connector ) )
+            if ( DispatchConstants.MANAGEMENT_CONNECTOR.equals( connector ) )
             {
                 return MountContext.connector( "management" );
             }
-            else if ( DispatchConstants.XP_CONNECTOR.equals( connector ) )
+            else if ( DispatchConstants.WEB_CONNECTOR.equals( connector ) )
             {
                 return MountContext.connector( "web" );
             }

@@ -42,7 +42,7 @@ public final class JettyTestServer
         final ServerConnector connector = new ServerConnector( this.server, new HttpConnectionFactory() );
         connector.setHost( "localhost" );
         connector.setPort( 0 );
-        connector.setName( DispatchConstants.XP_CONNECTOR );
+        connector.setName( DispatchConstants.WEB_CONNECTOR );
 
         this.server.addConnector( connector );
 

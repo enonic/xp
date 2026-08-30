@@ -32,8 +32,8 @@ final class VirtualHostConfigMap
 
     // Endpoints are configured by their documented names, not the internal connector names.
     private static final Map<String, String> ENDPOINTS =
-        Map.of( "web", DispatchConstants.XP_CONNECTOR, "management", DispatchConstants.API_CONNECTOR, "statistics",
-                DispatchConstants.STATUS_CONNECTOR );
+        Map.of( "web", DispatchConstants.WEB_CONNECTOR, "management", DispatchConstants.MANAGEMENT_CONNECTOR, "statistics",
+                DispatchConstants.STATISTICS_CONNECTOR );
 
     private final Map<String, String> map;
 
@@ -91,7 +91,7 @@ final class VirtualHostConfigMap
         final String value = getString( mappingPrefix + "endpoint" );
         if ( value == null )
         {
-            return DispatchConstants.XP_CONNECTOR;
+            return DispatchConstants.WEB_CONNECTOR;
         }
 
         final String connector = ENDPOINTS.get( value );

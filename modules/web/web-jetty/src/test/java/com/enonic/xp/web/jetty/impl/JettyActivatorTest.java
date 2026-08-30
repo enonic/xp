@@ -53,7 +53,7 @@ class JettyActivatorTest
 
         final JettySessionStoreConfigurator jettySessionStoreConfigurator = Mockito.mock( JettySessionStoreConfigurator.class );
         final DispatchServlet xpDispatcherServlet = mock( DispatchServlet.class );
-        when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         JettyActivator activator = new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, new WebSocketSessionTracker(),
                                                        Collections.singletonList( xpDispatcherServlet ) );
 
@@ -81,7 +81,7 @@ class JettyActivatorTest
 
         final JettySessionStoreConfigurator jettySessionStoreConfigurator = Mockito.mock( JettySessionStoreConfigurator.class );
         final DispatchServlet xpDispatcherServlet = mock( DispatchServlet.class );
-        when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        when( xpDispatcherServlet.getConnector() ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         final JettyActivator activator =
             new JettyActivator( config, bundleContext, jettySessionStoreConfigurator, new WebSocketSessionTracker(),
                                 Collections.singletonList( xpDispatcherServlet ) );

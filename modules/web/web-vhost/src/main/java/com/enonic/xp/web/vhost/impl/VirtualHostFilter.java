@@ -60,7 +60,7 @@ public final class VirtualHostFilter
                 VirtualHostHelper.setVirtualHost( req, virtualHost );
                 chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
             }
-            else if ( DispatchConstants.XP_CONNECTOR.equals( connector ) )
+            else if ( DispatchConstants.WEB_CONNECTOR.equals( connector ) )
             {
                 LOG.warn( "Virtual host mapping could not be resolved for host [{}] and path [{}]", req.getServerName(),
                           req.getPathInfo() );
@@ -83,7 +83,7 @@ public final class VirtualHostFilter
         throws Exception
     {
         final VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
-        if ( !DispatchConstants.XP_CONNECTOR.equals( connector ) )
+        if ( !DispatchConstants.WEB_CONNECTOR.equals( connector ) )
         {
             // Only non-interactive authentication out of the box on the management and statistics ports.
             idProvidersMapping.addIdProvider( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) );

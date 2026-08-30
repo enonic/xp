@@ -27,15 +27,15 @@ public final class HttpConfigurator
 
         final int webPort =
             effectivePort( this.config.http_web_port(), this.config.http_xp_port(), "http.web.port", "http.xp.port", 8080 );
-        addConnectors( factory, DispatchConstants.XP_CONNECTOR, webPort, this.config.http_web_host() );
+        addConnectors( factory, DispatchConstants.WEB_CONNECTOR, webPort, this.config.http_web_host() );
 
-        addConnectors( factory, DispatchConstants.API_CONNECTOR, this.config.http_management_port(),
+        addConnectors( factory, DispatchConstants.MANAGEMENT_CONNECTOR, this.config.http_management_port(),
                        this.config.http_management_host() );
 
         final int statisticsPort =
             effectivePort( this.config.http_statistics_port(), this.config.http_monitor_port(), "http.statistics.port",
                            "http.monitor.port", 2609 );
-        addConnectors( factory, DispatchConstants.STATUS_CONNECTOR, statisticsPort, this.config.http_statistics_host() );
+        addConnectors( factory, DispatchConstants.STATISTICS_CONNECTOR, statisticsPort, this.config.http_statistics_host() );
     }
 
     private static int effectivePort( final int port, final int deprecatedPort, final String name, final String deprecatedName,

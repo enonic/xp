@@ -49,7 +49,7 @@ class VirtualHostFilterTest
     void setup()
     {
         this.req = mock( HttpServletRequest.class );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         this.res = mock( HttpServletResponse.class );
         this.chain = mock( FilterChain.class );
 
@@ -79,7 +79,7 @@ class VirtualHostFilterTest
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
         when( this.req.getServerName() ).thenReturn( "domain.com" );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
 
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
@@ -93,7 +93,7 @@ class VirtualHostFilterTest
     {
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
         when( this.req.getServerName() ).thenReturn( "domain.com" );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
 
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
@@ -110,7 +110,7 @@ class VirtualHostFilterTest
         addMapping();
 
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "not-exists.com" );
         when( req.getRequestURI() ).thenReturn( "/rest/status" );
 
@@ -128,7 +128,7 @@ class VirtualHostFilterTest
     {
         addMapping();
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "enonic.com" );
         when( req.getRequestURI() ).thenReturn( "/rest/status" );
         when( req.getPathInfo() ).thenReturn( "/rest/status" );
@@ -148,13 +148,13 @@ class VirtualHostFilterTest
     {
         final VirtualHostMapping mapping =
             new VirtualHostMapping( "mgmt", "admin.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
-                                    DispatchConstants.API_CONNECTOR );
+                                    DispatchConstants.MANAGEMENT_CONNECTOR );
         this.virtualHosts.add( mapping );
 
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
         when( this.req.getServerName() ).thenReturn( "admin.enonic.com" );
         when( this.req.getPathInfo() ).thenReturn( "/repo" );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
 
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
@@ -175,7 +175,7 @@ class VirtualHostFilterTest
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
         when( this.req.getServerName() ).thenReturn( "enonic.com" );
         when( this.req.getPathInfo() ).thenReturn( "/rest/status" );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
 
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );
@@ -196,7 +196,7 @@ class VirtualHostFilterTest
         when( this.virtualHostService.isEnabled() ).thenReturn( true );
         when( this.req.getServerName() ).thenReturn( "enonic.com" );
         when( this.req.getPathInfo() ).thenReturn( "/" );
-        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.STATUS_CONNECTOR );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.STATISTICS_CONNECTOR );
 
         VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
         filter.doFilter( this.req, this.res, this.chain );

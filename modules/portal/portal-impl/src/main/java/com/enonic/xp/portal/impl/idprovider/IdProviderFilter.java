@@ -49,7 +49,7 @@ public final class IdProviderFilter
 
         // handle401 (interactive login) exists on the web connector only.
         final HttpServletResponse response =
-            DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
+            DispatchConstants.WEB_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
                 ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
                 : res;
 
