@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
@@ -115,7 +115,7 @@ class IdProviderFilterTest
 
         final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
                                                          Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.LOGIN ) ) );
-        Mockito.when( virtualHost.getIdProviderFlows( IdProviderKey.system() ) ).thenReturn( Set.of() );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), Set.of() ) );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 
@@ -352,10 +352,10 @@ class IdProviderFilterTest
     {
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
-        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( defaultIdProvider );
-        Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( flows.keySet() ) );
-        Mockito.when( virtualHost.getIdProviderFlows( Mockito.any() ) )
-            .thenAnswer( invocation -> flows.getOrDefault( invocation.getArgument( 0 ), Set.of() ) );
+        final Map<IdProviderKey, Set<String>> idProviders = new LinkedHashMap<>();
+        idProviders.put( defaultIdProvider, flows.getOrDefault( defaultIdProvider, Set.of() ) );
+        flows.forEach( idProviders::putIfAbsent );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( idProviders );
         Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.empty() );
         Mockito.when( request.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         return virtualHost;

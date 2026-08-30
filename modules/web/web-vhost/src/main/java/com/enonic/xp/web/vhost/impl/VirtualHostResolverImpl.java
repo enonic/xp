@@ -104,16 +104,8 @@ public class VirtualHostResolverImpl
 
         VirtualHostIdProvidersMapping createIdProvidersMapping()
         {
-            VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
-            if ( virtualHost.getDefaultIdProviderKey() != null )
-            {
-                idProvidersMapping.setDefaultIdProvider( virtualHost.getDefaultIdProviderKey() );
-            }
-            if ( virtualHost.getIdProviderKeys() != null )
-            {
-                virtualHost.getIdProviderKeys()
-                    .forEach( key -> idProvidersMapping.addIdProvider( key, virtualHost.getIdProviderFlows( key ) ) );
-            }
+            final VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
+            virtualHost.getIdProviders().forEach( idProvidersMapping::addIdProvider );
             return idProvidersMapping.build();
         }
 

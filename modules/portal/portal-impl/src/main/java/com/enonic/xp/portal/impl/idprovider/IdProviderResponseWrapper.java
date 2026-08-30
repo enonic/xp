@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.Set;
 
 import jakarta.servlet.ServletOutputStream;
@@ -15,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
@@ -156,15 +156,16 @@ public class IdProviderResponseWrapper
         return 401 == sc || 403 == sc && !ContextAccessor.current().getAuthInfo().isAuthenticated();
     }
 
+    // handle401 targets the default id provider: the first one of the vhost.
     private boolean isInteractiveLoginEnabled()
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
-        final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
-        if ( defaultKey == null )
+        final Iterator<Set<String>> idProviderFlows = virtualHost.getIdProviders().values().iterator();
+        if ( !idProviderFlows.hasNext() )
         {
             return false;
         }
-        final Set<String> flows = virtualHost.getIdProviderFlows( defaultKey );
+        final Set<String> flows = idProviderFlows.next();
         return flows.isEmpty() || flows.contains( IdProviderFlow.LOGIN );
     }
 

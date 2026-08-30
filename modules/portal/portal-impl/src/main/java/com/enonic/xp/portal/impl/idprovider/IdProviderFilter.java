@@ -1,8 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -56,22 +55,17 @@ public final class IdProviderFilter
 
         if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {
-            final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
-            final List<IdProviderKey> idProviderKeys =
-                Stream.concat( Stream.ofNullable( defaultKey ), virtualHost.getIdProviderKeys()
-                    .stream()
-                    .filter( key -> !key.equals( defaultKey ) ) )
-                    .filter( key -> {
-                        final Set<String> flows = virtualHost.getIdProviderFlows( key );
-                        return flows.isEmpty() || flows.contains( IdProviderFlow.AUTOLOGIN );
-                    } )
-                    .toList();
-
-            for ( final IdProviderKey idProviderKey : idProviderKeys )
+            for ( final Map.Entry<IdProviderKey, Set<String>> idProvider : virtualHost.getIdProviders().entrySet() )
             {
+                final Set<String> flows = idProvider.getValue();
+                if ( !flows.isEmpty() && !flows.contains( IdProviderFlow.AUTOLOGIN ) )
+                {
+                    continue;
+                }
+
                 final PortalResponse portalResponse = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
                                                                                                .functionName( "autoLogin" )
-                                                                                               .idProviderKey( idProviderKey )
+                                                                                               .idProviderKey( idProvider.getKey() )
                                                                                                .servletRequest( req )
                                                                                                .build() );
                 // Id providers may authenticate without returning a response.

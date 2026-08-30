@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ class IdProviderResponseWrapperTest
 
         // unrestricted default id provider, as the default vhost provides
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.system() );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), Set.of() ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         this.idProviderResponseWrapper =
@@ -90,9 +91,7 @@ class IdProviderResponseWrapperTest
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.system() );
-        Mockito.when( virtualHost.getIdProviderFlows( IdProviderKey.system() ) )
-            .thenReturn( Set.of( IdProviderFlow.AUTOLOGIN ) );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         final IdProviderResponseWrapper responseWrapper =
@@ -103,8 +102,8 @@ class IdProviderResponseWrapperTest
         Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
         Mockito.verify( httpServletResponse ).sendError( 401 );
 
-        Mockito.when( virtualHost.getIdProviderFlows( IdProviderKey.system() ) )
-            .thenReturn( Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) );
+        Mockito.when( virtualHost.getIdProviders() )
+            .thenReturn( Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
 
         responseWrapper.sendError( 401 );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );

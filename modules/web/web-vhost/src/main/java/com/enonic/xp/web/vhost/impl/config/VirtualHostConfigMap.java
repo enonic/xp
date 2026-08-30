@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -168,10 +169,13 @@ final class VirtualHostConfigMap
 
     private Map<String, String> getIdProviders( final String idProviderPrefix )
     {
+        // Sorted by name so the id provider iteration order (after the default) is deterministic.
         return this.map.entrySet()
             .stream()
             .filter( entry -> entry.getKey().startsWith( idProviderPrefix ) )
-            .collect( Collectors.toMap( entry -> entry.getKey().replace( idProviderPrefix, "" ), Map.Entry::getValue ) );
+            .collect(
+                Collectors.toMap( entry -> entry.getKey().replace( idProviderPrefix, "" ), Map.Entry::getValue, ( a, b ) -> a,
+                                  TreeMap::new ) );
     }
 
     private String getString( final String name )

@@ -1,6 +1,7 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,22 +102,25 @@ public final class VirtualHostMapping
         return this.target;
     }
 
+    @Deprecated
     @Override
     public IdProviderKey getDefaultIdProviderKey()
     {
-        return idProvidersMapping.getDefaultIdProvider();
+        final Iterator<IdProviderKey> keys = idProvidersMapping.getIdProviders().keySet().iterator();
+        return keys.hasNext() ? keys.next() : null;
     }
 
+    @Deprecated
     @Override
     public IdProviderKeys getIdProviderKeys()
     {
-        return idProvidersMapping.getIdProviderKeys();
+        return IdProviderKeys.from( idProvidersMapping.getIdProviders().keySet() );
     }
 
     @Override
-    public Set<String> getIdProviderFlows( final IdProviderKey idProviderKey )
+    public Map<IdProviderKey, Set<String>> getIdProviders()
     {
-        return idProvidersMapping.getFlows( idProviderKey );
+        return idProvidersMapping.getIdProviders();
     }
 
     @Override

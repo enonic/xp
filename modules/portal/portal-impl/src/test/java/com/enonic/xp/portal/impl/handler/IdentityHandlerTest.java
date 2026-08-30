@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +15,6 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -80,9 +80,7 @@ class IdentityHandlerTest
 
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
-        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of() );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, Set.of() ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
     }
 
@@ -186,7 +184,7 @@ class IdentityHandlerTest
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider" ) );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.from( "otherEnabledIdProvider" ), Set.of() ) );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
 
@@ -207,7 +205,8 @@ class IdentityHandlerTest
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( "otherEnabledIdProvider", "myidprovider" ) );
+        when( virtualHost.getIdProviders() ).thenReturn(
+            Map.of( IdProviderKey.from( "otherEnabledIdProvider" ), Set.of(), IdProviderKey.from( "myidprovider" ), Set.of() ) );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
 
@@ -224,7 +223,7 @@ class IdentityHandlerTest
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.empty() );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of() );
 
         VirtualHostHelper.setVirtualHost( rawRequest, virtualHost );
 
@@ -244,9 +243,7 @@ class IdentityHandlerTest
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
-        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.LOGOUT ) );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, Set.of( IdProviderFlow.AUTOLOGIN, IdProviderFlow.LOGOUT ) ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         // the custom endpoints are always dispatched - the id provider app governs them itself
@@ -276,9 +273,7 @@ class IdentityHandlerTest
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
-        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         // the interactive surface still works
@@ -313,9 +308,7 @@ class IdentityHandlerTest
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
-        when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
-        when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of() );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, Set.of() ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );

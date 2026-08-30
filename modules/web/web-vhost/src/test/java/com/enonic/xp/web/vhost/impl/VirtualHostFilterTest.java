@@ -184,7 +184,7 @@ class VirtualHostFilterTest
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
         assertEquals( IdProviderKey.system(), vhostCaptor.getValue().getDefaultIdProviderKey() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), vhostCaptor.getValue().getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ) );
         verify( this.chain, times( 1 ) ).doFilter( eq( this.req ), eq( this.res ) );
         verify( res, never() ).setStatus( 404 );
     }
@@ -203,7 +203,7 @@ class VirtualHostFilterTest
 
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), vhostCaptor.getValue().getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ) );
         verify( this.chain, times( 1 ) ).doFilter( eq( this.req ), eq( this.res ) );
     }
 
@@ -219,7 +219,7 @@ class VirtualHostFilterTest
 
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
-        assertEquals( Set.of(), vhostCaptor.getValue().getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of(), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ) );
     }
 
     private void addMapping()

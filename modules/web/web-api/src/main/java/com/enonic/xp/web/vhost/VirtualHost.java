@@ -37,22 +37,29 @@ public interface VirtualHost
     String getTarget();
 
     /**
-     * Returns the vhost's default id provider, or null when none is configured.
+     * Returns the vhost's default id provider, or null when none is enabled.
+     *
+     * @deprecated The default id provider is the first key of {@link #getIdProviders()}.
      */
+    @Deprecated
     @Nullable
     IdProviderKey getDefaultIdProviderKey();
 
     /**
      * Returns the id providers enabled on this vhost.
+     *
+     * @deprecated Use the keys of {@link #getIdProviders()}.
      */
+    @Deprecated
     IdProviderKeys getIdProviderKeys();
 
     /**
-     * Returns the flow list configured for the given id provider on this vhost: XP-managed flow
-     * names ({@link IdProviderFlow}) plus any additional flows of the id provider app itself. An
-     * empty set means no restriction: the id provider serves whatever flows it supports.
+     * Returns the id providers enabled on this vhost with their configured flow lists, the default
+     * id provider first. Flow lists hold XP-managed flow names ({@link IdProviderFlow}) plus any
+     * additional flows of the id provider app itself; an empty list means no restriction: the id
+     * provider serves whatever flows it supports.
      */
-    Set<String> getIdProviderFlows( IdProviderKey idProviderKey );
+    Map<IdProviderKey, Set<String>> getIdProviders();
 
     /**
      * Returns the connector this vhost applies to: web ({@code xp}, the default), management

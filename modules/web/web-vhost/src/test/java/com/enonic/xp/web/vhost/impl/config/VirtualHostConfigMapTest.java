@@ -187,7 +187,7 @@ class VirtualHostConfigMapTest
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( Set.of(), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Map.of( IdProviderKey.system(), Set.of() ), virtualHost.getIdProviders() );
     }
 
     @Test
@@ -199,8 +199,8 @@ class VirtualHostConfigMapTest
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
         assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
-        assertEquals( Set.of( IdProviderFlow.LOGIN ), virtualHost.getIdProviderFlows( IdProviderKey.from( "myProvider" ) ) );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviders().get( IdProviderKey.system() ) );
+        assertEquals( Set.of( IdProviderFlow.LOGIN ), virtualHost.getIdProviders().get( IdProviderKey.from( "myProvider" ) ) );
     }
 
     @Test
@@ -211,7 +211,7 @@ class VirtualHostConfigMapTest
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
         // names beyond the XP-managed flows are kept, lower-cased, for the id provider app's additional flows
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, "device" ), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, "device" ), virtualHost.getIdProviders().get( IdProviderKey.system() ) );
     }
 
     @Test
@@ -221,7 +221,7 @@ class VirtualHostConfigMapTest
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( Set.of(), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Map.of( IdProviderKey.system(), Set.of() ), virtualHost.getIdProviders() );
     }
 
     @Test

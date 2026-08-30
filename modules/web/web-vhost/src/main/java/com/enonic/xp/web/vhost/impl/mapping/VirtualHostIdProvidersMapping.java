@@ -8,18 +8,20 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.IdProviderKeys;
 
 public class VirtualHostIdProvidersMapping
 {
-    private final IdProviderKey defaultIdProvider;
-
     private final Map<IdProviderKey, Set<String>> idProviders;
 
     public VirtualHostIdProvidersMapping( final Builder builder )
     {
-        this.defaultIdProvider = builder.defaultIdProvider;
-        this.idProviders = Collections.unmodifiableMap( new LinkedHashMap<>( builder.idProviders ) );
+        final Map<IdProviderKey, Set<String>> map = new LinkedHashMap<>();
+        if ( builder.defaultIdProvider != null )
+        {
+            map.put( builder.defaultIdProvider, builder.idProviders.getOrDefault( builder.defaultIdProvider, Set.of() ) );
+        }
+        map.putAll( builder.idProviders );
+        this.idProviders = Collections.unmodifiableMap( map );
     }
 
     public static Builder create()
@@ -27,22 +29,13 @@ public class VirtualHostIdProvidersMapping
         return new Builder();
     }
 
-    public IdProviderKey getDefaultIdProvider()
-    {
-        return defaultIdProvider;
-    }
-
-    public IdProviderKeys getIdProviderKeys()
-    {
-        return IdProviderKeys.from( idProviders.keySet() );
-    }
-
     /**
-     * The flow list configured for the given id provider: an empty set means no restriction.
+     * The enabled id providers with their configured flow lists, the default id provider first.
+     * An empty flow list means no restriction.
      */
-    public Set<String> getFlows( final IdProviderKey idProviderKey )
+    public Map<IdProviderKey, Set<String>> getIdProviders()
     {
-        return idProviders.getOrDefault( idProviderKey, Set.of() );
+        return idProviders;
     }
 
     public static class Builder
