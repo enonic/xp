@@ -165,7 +165,7 @@ public class IdProviderResponseWrapper
             return false;
         }
         final Set<String> flows = virtualHost.getIdProviderFlows( defaultKey );
-        return flows == null || flows.contains( IdProviderFlow.LOGIN );
+        return flows.isEmpty() || flows.contains( IdProviderFlow.LOGIN );
     }
 
     private boolean isErrorAlreadyHandled()

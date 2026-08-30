@@ -82,7 +82,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
         when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( null );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of() );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
     }
 
@@ -315,7 +315,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/" );
         when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( myIdProvider ) );
         when( virtualHost.getDefaultIdProviderKey() ).thenReturn( myIdProvider );
-        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( null );
+        when( virtualHost.getIdProviderFlows( myIdProvider ) ).thenReturn( Set.of() );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );

@@ -85,7 +85,7 @@ public class IdentityHandler
         final String requiredFlow = idProviderFunction == null ? null
             : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
         final Set<String> flows = virtualHost.getIdProviderFlows( idProviderKey );
-        if ( requiredFlow != null && flows != null && !flows.contains( requiredFlow ) )
+        if ( requiredFlow != null && !flows.isEmpty() && !flows.contains( requiredFlow ) )
         {
             throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
         }

@@ -114,7 +114,7 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public @Nullable Set<String> getIdProviderFlows( final IdProviderKey idProviderKey )
+    public Set<String> getIdProviderFlows( final IdProviderKey idProviderKey )
     {
         return idProvidersMapping.getFlows( idProviderKey );
     }

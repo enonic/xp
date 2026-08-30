@@ -219,7 +219,7 @@ class VirtualHostFilterTest
 
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
-        assertNull( vhostCaptor.getValue().getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of(), vhostCaptor.getValue().getIdProviderFlows( IdProviderKey.system() ) );
     }
 
     private void addMapping()

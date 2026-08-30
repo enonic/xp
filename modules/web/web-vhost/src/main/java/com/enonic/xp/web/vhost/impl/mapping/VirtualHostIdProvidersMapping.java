@@ -38,20 +38,18 @@ public class VirtualHostIdProvidersMapping
     }
 
     /**
-     * The flow list configured for the given id provider: null when it is enabled without
-     * restriction, an empty set when it is not enabled here.
+     * The flow list configured for the given id provider: an empty set means no restriction.
      */
-    public @Nullable Set<String> getFlows( final IdProviderKey idProviderKey )
+    public Set<String> getFlows( final IdProviderKey idProviderKey )
     {
-        return idProviders.containsKey( idProviderKey ) ? idProviders.get( idProviderKey ) : Set.of();
+        return idProviders.getOrDefault( idProviderKey, Set.of() );
     }
 
     public static class Builder
     {
         private IdProviderKey defaultIdProvider;
 
-        // Insertion-ordered so the (non-default) iteration order is stable. A null value means
-        // the id provider is enabled without a flow restriction.
+        // Insertion-ordered so the (non-default) iteration order is stable.
         private final Map<IdProviderKey, Set<String>> idProviders = new LinkedHashMap<>();
 
         private Builder()
@@ -61,19 +59,19 @@ public class VirtualHostIdProvidersMapping
         public Builder setDefaultIdProvider( final IdProviderKey defaultIdProvider )
         {
             this.defaultIdProvider = defaultIdProvider;
-            this.idProviders.putIfAbsent( defaultIdProvider, null );
+            this.idProviders.putIfAbsent( defaultIdProvider, Set.of() );
             return this;
         }
 
         public Builder addIdProviderKey( final IdProviderKey idProviderKey )
         {
-            this.idProviders.putIfAbsent( idProviderKey, null );
+            this.idProviders.putIfAbsent( idProviderKey, Set.of() );
             return this;
         }
 
         public Builder addIdProvider( final IdProviderKey idProviderKey, @Nullable final Set<String> flows )
         {
-            this.idProviders.put( idProviderKey, flows == null || flows.isEmpty() ? null : Set.copyOf( flows ) );
+            this.idProviders.put( idProviderKey, flows == null ? Set.of() : Set.copyOf( flows ) );
             return this;
         }
 

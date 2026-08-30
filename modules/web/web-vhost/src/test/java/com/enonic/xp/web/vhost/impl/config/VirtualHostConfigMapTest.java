@@ -187,8 +187,7 @@ class VirtualHostConfigMapTest
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertNull( virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
-        assertEquals( Set.of(), virtualHost.getIdProviderFlows( IdProviderKey.from( "other" ) ) );
+        assertEquals( Set.of(), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
     }
 
     @Test
@@ -222,7 +221,7 @@ class VirtualHostConfigMapTest
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertNull( virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertEquals( Set.of(), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
     }
 
     @Test

@@ -115,7 +115,7 @@ class IdProviderFilterTest
 
         final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
                                                          Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.LOGIN ) ) );
-        Mockito.when( virtualHost.getIdProviderFlows( IdProviderKey.system() ) ).thenReturn( null );
+        Mockito.when( virtualHost.getIdProviderFlows( IdProviderKey.system() ) ).thenReturn( Set.of() );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 

@@ -66,7 +66,7 @@ public final class PortalRequestMapper
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
             final Set<String> flows = virtualHost.getIdProviderFlows( this.request.getIdProvider().getKey() );
             // An absent list means no flow restriction: the id provider app applies its own defaults.
-            if ( flows != null )
+            if ( !flows.isEmpty() )
             {
                 gen.value( "idProviderFlows", flows.stream().sorted().toList() );
             }

@@ -63,7 +63,7 @@ public final class IdProviderFilter
                     .filter( key -> !key.equals( defaultKey ) ) )
                     .filter( key -> {
                         final Set<String> flows = virtualHost.getIdProviderFlows( key );
-                        return flows == null || flows.contains( IdProviderFlow.AUTOLOGIN );
+                        return flows.isEmpty() || flows.contains( IdProviderFlow.AUTOLOGIN );
                     } )
                     .toList();
 
