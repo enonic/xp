@@ -53,14 +53,17 @@ public final class IdProviderFilter
             ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
             : res;
 
-        if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
+        if ( virtualHost == null )
         {
-            if ( virtualHost == null )
+            if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
             {
                 idProviderControllerService.execute(
                     IdProviderControllerExecutionParams.create().functionName( "autoLogin" ).servletRequest( req ).build() );
             }
-            else
+        }
+        else
+        {
+            if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
             {
                 final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
                 final List<IdProviderKey> idProviderKeys =
@@ -84,27 +87,28 @@ public final class IdProviderFilter
                     }
                 }
             }
-        }
 
-        final PrincipalKeys allow = virtualHost == null ? PrincipalKeys.empty() : virtualHost.getAllowedPrincipals();
-        if ( !allow.isEmpty() )
-        {
-            // The id provider endpoints are exempt, otherwise the allow list locks everyone out of
-            // interactive login. They live at exactly one location: right on the vhost target.
-            final String idProviderEndpoints = ( "/".equals( virtualHost.getTarget() ) ? "" : virtualHost.getTarget() ) + "/_/idprovider/";
-            final String path = req.getPathInfo();
-            if ( path == null || !path.startsWith( idProviderEndpoints ) )
+            final PrincipalKeys allow = virtualHost.getAllowedPrincipals();
+            if ( !allow.isEmpty() )
             {
-                final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-                if ( !authInfo.isAuthenticated() )
+                // The id provider endpoints are exempt, otherwise the allow list locks everyone out of
+                // interactive login. They live at exactly one location: right on the vhost target.
+                final String idProviderEndpoints =
+                    ( "/".equals( virtualHost.getTarget() ) ? "" : virtualHost.getTarget() ) + "/_/idprovider/";
+                final String path = req.getPathInfo();
+                if ( path == null || !path.startsWith( idProviderEndpoints ) )
                 {
-                    response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
-                    return;
-                }
-                if ( authInfo.getPrincipals().stream().noneMatch( allow::contains ) )
-                {
-                    response.sendError( HttpServletResponse.SC_FORBIDDEN );
-                    return;
+                    final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+                    if ( !authInfo.isAuthenticated() )
+                    {
+                        response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+                        return;
+                    }
+                    if ( authInfo.getPrincipals().stream().noneMatch( allow::contains ) )
+                    {
+                        response.sendError( HttpServletResponse.SC_FORBIDDEN );
+                        return;
+                    }
                 }
             }
         }
