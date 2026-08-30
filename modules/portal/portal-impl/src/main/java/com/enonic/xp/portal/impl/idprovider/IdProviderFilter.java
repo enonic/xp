@@ -49,10 +49,10 @@ public final class IdProviderFilter
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
 
         // handle401 (interactive login) exists on the web connector only.
-        final Object connector = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
-        final HttpServletResponse response = connector == null || DispatchConstants.XP_CONNECTOR.equals( connector )
-            ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
-            : res;
+        final HttpServletResponse response =
+            DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
+                ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
+                : res;
 
         if ( virtualHost == null )
         {

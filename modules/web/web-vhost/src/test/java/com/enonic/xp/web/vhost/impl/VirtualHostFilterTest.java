@@ -49,6 +49,7 @@ class VirtualHostFilterTest
     void setup()
     {
         this.req = mock( HttpServletRequest.class );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
         this.res = mock( HttpServletResponse.class );
         this.chain = mock( FilterChain.class );
 

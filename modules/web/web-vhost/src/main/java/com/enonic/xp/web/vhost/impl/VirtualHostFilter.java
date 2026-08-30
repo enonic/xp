@@ -50,8 +50,7 @@ public final class VirtualHostFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        final Object connectorAttribute = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
-        final String connector = connectorAttribute != null ? connectorAttribute.toString() : DispatchConstants.XP_CONNECTOR;
+        final String connector = (String) req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
 
         if ( virtualHostService.isEnabled() )
         {

@@ -46,8 +46,7 @@ public class VirtualHostResolverImpl
     public VirtualHost resolveVirtualHost( final HttpServletRequest req )
     {
         final String serverName = req.getServerName();
-        final Object connectorAttribute = req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
-        final String connector = connectorAttribute != null ? connectorAttribute.toString() : DispatchConstants.XP_CONNECTOR;
+        final String connector = (String) req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
         return virtualHostMappings.stream()
             .map( virtualHost -> virtualHost.matches( serverName, req.getPathInfo(), connector ) )
             .filter( Objects::nonNull )
