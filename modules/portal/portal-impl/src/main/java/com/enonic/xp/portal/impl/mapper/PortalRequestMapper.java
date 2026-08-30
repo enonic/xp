@@ -60,7 +60,15 @@ public final class PortalRequestMapper
             gen.value( "contextPath", this.request.getContextPath() );
         }
 
-        serializeIdProviderFlows( gen );
+        if ( this.request.getIdProvider() != null && this.request.getRawRequest() != null )
+        {
+            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
+            if ( virtualHost != null )
+            {
+                gen.value( "idProviderFlows",
+                           virtualHost.getIdProviderFlows( this.request.getIdProvider().getKey() ).stream().sorted().toList() );
+            }
+        }
 
         serializeBody( gen );
         MapperHelper.serializeMultimap( "params", gen, this.request.getParams().asMap() );
@@ -68,22 +76,6 @@ public final class PortalRequestMapper
         gen.value( "getHeader", (Function<String, String>) s -> request.getHeaders().get( s ) );
         gen.value( "cookies", this.request.getCookies() );
         gen.value( "locales", this.request.getLocales().stream().map( Locale::toLanguageTag ).collect( Collectors.toList() ) );
-    }
-
-    private void serializeIdProviderFlows( final MapGenerator gen )
-    {
-        if ( this.request.getIdProvider() == null || this.request.getRawRequest() == null )
-        {
-            return;
-        }
-
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
-        if ( virtualHost != null )
-        {
-            gen.value( "idProviderFlows",
-                       virtualHost.getIdProviderFlows( this.request.getIdProvider().getKey() ).stream().sorted().collect(
-                           Collectors.toList() ) );
-        }
     }
 
     private void serializeBody( final MapGenerator gen )

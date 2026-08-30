@@ -272,12 +272,33 @@ class IdProviderFilterTest
         Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/site/_/idprovider/system/login" );
         final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
                                                          Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site" );
         Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN_LOGIN ) );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 
         Mockito.verify( httpServletResponse, Mockito.times( 0 ) ).sendError( Mockito.anyInt() );
         Mockito.verify( filterChain ).doFilter( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    void testAllowedPrincipals_idProviderEndpointNotOnTargetNotExempt()
+        throws Exception
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+        final FilterChain filterChain = Mockito.mock( FilterChain.class );
+
+        Mockito.when( httpServletRequest.getPathInfo() ).thenReturn( "/site/sub/_/idprovider/system/login" );
+        final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/site" );
+        Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.from( RoleKeys.ADMIN_LOGIN ) );
+
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+
+        Mockito.verify( httpServletResponse ).sendError( HttpServletResponse.SC_UNAUTHORIZED );
+        Mockito.verify( filterChain, Mockito.times( 0 ) ).doFilter( Mockito.any(), Mockito.any() );
     }
 
     private interface FilterCall
@@ -304,6 +325,7 @@ class IdProviderFilterTest
                                                 final Map<IdProviderKey, Set<String>> flows )
     {
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
         Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( defaultIdProvider );
         Mockito.when( virtualHost.getIdProviderKeys() ).thenReturn( IdProviderKeys.from( flows.keySet() ) );
         Mockito.when( virtualHost.getIdProviderFlows( Mockito.any() ) )

@@ -83,15 +83,6 @@ public final class VirtualHostFilter
                                                  final String connector )
         throws Exception
     {
-        final VirtualHostMapping virtualHost = generateDefaultVirtualHostMapping( req, connector );
-        VirtualHostHelper.setVirtualHost( req, virtualHost );
-        chain.doFilter( req, res );
-    }
-
-    private static VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req, final String connector )
-    {
-        final String serverName = req.getServerName();
-
         final VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
         if ( !DispatchConstants.XP_CONNECTOR.equals( connector ) )
         {
@@ -100,6 +91,9 @@ public final class VirtualHostFilter
         }
         idProvidersMapping.setDefaultIdProvider( IdProviderKey.system() );
 
-        return new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping.build(), Integer.MAX_VALUE, null, connector );
+        final String serverName = req.getServerName();
+        VirtualHostHelper.setVirtualHost( req, new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping.build(),
+                                                                       Integer.MAX_VALUE, null, connector ) );
+        chain.doFilter( req, res );
     }
 }

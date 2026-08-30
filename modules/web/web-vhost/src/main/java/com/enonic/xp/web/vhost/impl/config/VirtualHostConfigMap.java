@@ -133,7 +133,11 @@ final class VirtualHostConfigMap
                     isEnabled = true;
                     if ( value != null && !value.isBlank() )
                     {
-                        flows = parseFlows( value );
+                        flows = Stream.of( value.split( "," ) )
+                            .map( String::trim )
+                            .filter( flow -> !flow.isEmpty() )
+                            .map( flow -> flow.toLowerCase( Locale.ROOT ) )
+                            .collect( Collectors.toUnmodifiableSet() );
                     }
                 }
             }
@@ -150,15 +154,6 @@ final class VirtualHostConfigMap
         } );
 
         return hostIdProvidersMapping.build();
-    }
-
-    private static Set<String> parseFlows( final String value )
-    {
-        return Stream.of( value.split( "," ) )
-            .map( String::trim )
-            .filter( token -> !token.isEmpty() )
-            .map( token -> token.toLowerCase( Locale.ROOT ) )
-            .collect( Collectors.toUnmodifiableSet() );
     }
 
     private Map<String, String> getVirtualHostContext( final String mappingPrefix )
