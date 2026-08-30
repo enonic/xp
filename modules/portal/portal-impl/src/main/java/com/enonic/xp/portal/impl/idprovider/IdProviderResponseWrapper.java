@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.util.Set;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
@@ -163,7 +164,12 @@ public class IdProviderResponseWrapper
             return true;
         }
         final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
-        return defaultKey != null && virtualHost.getIdProviderFlows( defaultKey ).contains( IdProviderFlow.LOGIN );
+        if ( defaultKey == null )
+        {
+            return false;
+        }
+        final Set<String> flows = virtualHost.getIdProviderFlows( defaultKey );
+        return flows == null || flows.contains( IdProviderFlow.LOGIN );
     }
 
     private boolean isErrorAlreadyHandled()

@@ -22,6 +22,7 @@ import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -217,7 +218,7 @@ class VirtualHostFilterTest
 
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
-        assertEquals( IdProviderFlow.DEFAULT, vhostCaptor.getValue().getIdProviderFlows( IdProviderKey.system() ) );
+        assertNull( vhostCaptor.getValue().getIdProviderFlows( IdProviderKey.system() ) );
     }
 
     private void addMapping()

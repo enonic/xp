@@ -1,30 +1,25 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
-import com.enonic.xp.web.vhost.IdProviderFlow;
 
 public class VirtualHostIdProvidersMapping
 {
     private final IdProviderKey defaultIdProvider;
 
-    private final ImmutableMap<IdProviderKey, ImmutableSet<String>> idProviders;
+    private final Map<IdProviderKey, Set<String>> idProviders;
 
     public VirtualHostIdProvidersMapping( final Builder builder )
     {
         this.defaultIdProvider = builder.defaultIdProvider;
-        final ImmutableMap.Builder<IdProviderKey, ImmutableSet<String>> map = ImmutableMap.builder();
-        builder.idProviders.forEach( ( key, flows ) -> map.put( key, ImmutableSet.copyOf( flows ) ) );
-        this.idProviders = map.build();
+        this.idProviders = Collections.unmodifiableMap( new LinkedHashMap<>( builder.idProviders ) );
     }
 
     public static Builder create()
@@ -43,18 +38,20 @@ public class VirtualHostIdProvidersMapping
     }
 
     /**
-     * The flows enabled for the given id provider, or an empty set if it is not enabled here.
+     * The flow list configured for the given id provider: null when it is enabled without
+     * restriction, an empty set when it is not enabled here.
      */
-    public Set<String> getFlows( final IdProviderKey idProviderKey )
+    public @Nullable Set<String> getFlows( final IdProviderKey idProviderKey )
     {
-        return idProviders.getOrDefault( idProviderKey, ImmutableSet.of() );
+        return idProviders.containsKey( idProviderKey ) ? idProviders.get( idProviderKey ) : Set.of();
     }
 
     public static class Builder
     {
         private IdProviderKey defaultIdProvider;
 
-        // Insertion-ordered so the (non-default) iteration order is stable.
+        // Insertion-ordered so the (non-default) iteration order is stable. A null value means
+        // the id provider is enabled without a flow restriction.
         private final Map<IdProviderKey, Set<String>> idProviders = new LinkedHashMap<>();
 
         private Builder()
@@ -64,19 +61,19 @@ public class VirtualHostIdProvidersMapping
         public Builder setDefaultIdProvider( final IdProviderKey defaultIdProvider )
         {
             this.defaultIdProvider = defaultIdProvider;
-            this.idProviders.computeIfAbsent( defaultIdProvider, k -> IdProviderFlow.DEFAULT );
+            this.idProviders.putIfAbsent( defaultIdProvider, null );
             return this;
         }
 
         public Builder addIdProviderKey( final IdProviderKey idProviderKey )
         {
-            this.idProviders.computeIfAbsent( idProviderKey, k -> IdProviderFlow.DEFAULT );
+            this.idProviders.putIfAbsent( idProviderKey, null );
             return this;
         }
 
         public Builder addIdProvider( final IdProviderKey idProviderKey, @Nullable final Set<String> flows )
         {
-            this.idProviders.put( idProviderKey, flows == null || flows.isEmpty() ? IdProviderFlow.DEFAULT : Set.copyOf( flows ) );
+            this.idProviders.put( idProviderKey, flows == null || flows.isEmpty() ? null : Set.copyOf( flows ) );
             return this;
         }
 

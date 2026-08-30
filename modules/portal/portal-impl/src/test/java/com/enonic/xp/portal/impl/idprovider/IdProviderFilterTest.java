@@ -101,6 +101,27 @@ class IdProviderFilterTest
     }
 
     @Test
+    void testAutoLogin_noFlowRestriction()
+        throws Exception
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+        final FilterChain filterChain = Mockito.mock( FilterChain.class );
+
+        final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
+                                                         Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.LOGIN ) ) );
+        Mockito.when( virtualHost.getIdProviderFlows( IdProviderKey.system() ) ).thenReturn( null );
+
+        idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
+
+        final ArgumentCaptor<IdProviderControllerExecutionParams> paramsCaptor =
+            ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
+        Mockito.verify( idProviderControllerService ).execute( paramsCaptor.capture() );
+        assertEquals( IdProviderKey.system(), paramsCaptor.getValue().getIdProviderKey() );
+        assertEquals( "autoLogin", paramsCaptor.getValue().getFunctionName() );
+    }
+
+    @Test
     void testAutoLogin_fallsBackToEnabledIdProvider()
         throws Exception
     {

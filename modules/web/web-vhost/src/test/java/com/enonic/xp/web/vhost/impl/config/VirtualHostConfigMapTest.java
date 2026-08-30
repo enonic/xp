@@ -187,7 +187,7 @@ class VirtualHostConfigMapTest
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( IdProviderFlow.DEFAULT, virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertNull( virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
         assertEquals( Set.of(), virtualHost.getIdProviderFlows( IdProviderKey.from( "other" ) ) );
     }
 
@@ -216,13 +216,13 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testIdProviderFlows_emptyListMeansDefault()
+    void testIdProviderFlows_emptyListMeansNoRestriction()
     {
         map.put( "mapping.myapp1.idProvider.system", "enabled=" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( IdProviderFlow.DEFAULT, virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
+        assertNull( virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
     }
 
     @Test

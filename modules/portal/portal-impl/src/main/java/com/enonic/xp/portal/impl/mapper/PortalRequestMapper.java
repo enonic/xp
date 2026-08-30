@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.mapper;
 
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -63,10 +64,11 @@ public final class PortalRequestMapper
         if ( this.request.getIdProvider() != null && this.request.getRawRequest() != null )
         {
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
-            if ( virtualHost != null )
+            final Set<String> flows = virtualHost == null ? null : virtualHost.getIdProviderFlows( this.request.getIdProvider().getKey() );
+            // An absent list means no flow restriction: the id provider app applies its own defaults.
+            if ( flows != null )
             {
-                gen.value( "idProviderFlows",
-                           virtualHost.getIdProviderFlows( this.request.getIdProvider().getKey() ).stream().sorted().toList() );
+                gen.value( "idProviderFlows", flows.stream().sorted().toList() );
             }
         }
 

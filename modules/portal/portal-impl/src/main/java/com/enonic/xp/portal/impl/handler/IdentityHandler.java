@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,7 +84,8 @@ public class IdentityHandler
         // the vhost's flow list on the request.
         final String requiredFlow = idProviderFunction == null ? null
             : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
-        if ( requiredFlow != null && !virtualHost.getIdProviderFlows( idProviderKey ).contains( requiredFlow ) )
+        final Set<String> flows = virtualHost.getIdProviderFlows( idProviderKey );
+        if ( requiredFlow != null && flows != null && !flows.contains( requiredFlow ) )
         {
             throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
         }

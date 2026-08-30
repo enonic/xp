@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
@@ -70,7 +71,10 @@ public final class IdProviderFilter
                     Stream.concat( Stream.ofNullable( defaultKey ), virtualHost.getIdProviderKeys()
                         .stream()
                         .filter( key -> !key.equals( defaultKey ) ) )
-                        .filter( key -> virtualHost.getIdProviderFlows( key ).contains( IdProviderFlow.AUTOLOGIN ) )
+                        .filter( key -> {
+                            final Set<String> flows = virtualHost.getIdProviderFlows( key );
+                            return flows == null || flows.contains( IdProviderFlow.AUTOLOGIN );
+                        } )
                         .toList();
 
                 for ( final IdProviderKey idProviderKey : idProviderKeys )
