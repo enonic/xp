@@ -8,9 +8,9 @@ import org.jspecify.annotations.NullMarked;
  * no restriction applies and the id provider serves whatever flows it supports.
  * <p>
  * XP manages the flows with known functions: {@link #LOGIN}, {@link #AUTOLOGIN} and
- * {@link #LOGOUT}. Any other name in the list is informational for the id provider app, which can
- * follow or ignore it - e.g. an id provider may serve a token endpoint only where {@code device}
- * is listed.
+ * {@link #LOGOUT}. Any other name in the list is an additional flow of the id provider app, which
+ * may use this configuration to enable flows of its own - e.g. an id provider may serve a token
+ * endpoint only where {@code device} is listed.
  */
 @NullMarked
 public final class IdProviderFlow

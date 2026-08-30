@@ -205,13 +205,13 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testIdProviderFlows_informationalFlowsKept()
+    void testIdProviderFlows_additionalFlowsKept()
     {
         map.put( "mapping.myapp1.idProvider.system", "enabled=autologin,Device" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        // names beyond the XP-managed flows are kept, lower-cased, as informational for the id provider app
+        // names beyond the XP-managed flows are kept, lower-cased, for the id provider app's additional flows
         assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, "device" ), virtualHost.getIdProviderFlows( IdProviderKey.system() ) );
     }
 

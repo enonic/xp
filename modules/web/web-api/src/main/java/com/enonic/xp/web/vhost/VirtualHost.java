@@ -50,9 +50,9 @@ public interface VirtualHost
 
     /**
      * Returns the flow list configured for the given id provider on this vhost: XP-managed flow
-     * names ({@link IdProviderFlow}) plus any informational names for the id provider app. Returns
-     * null where no flow restriction applies (the id provider serves whatever flows it supports),
-     * and an empty set for an id provider not enabled on this vhost.
+     * names ({@link IdProviderFlow}) plus any additional flows of the id provider app itself.
+     * Returns null where no flow restriction applies (the id provider serves whatever flows it
+     * supports), and an empty set for an id provider not enabled on this vhost.
      */
     default @Nullable Set<String> getIdProviderFlows( final IdProviderKey idProviderKey )
     {
