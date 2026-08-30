@@ -37,6 +37,12 @@ class IdProviderResponseWrapperTest
         final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
 
+        // unrestricted default id provider, as the default vhost provides
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( IdProviderKey.system() );
+        Mockito.when( virtualHost.getIdProviderFlows( IdProviderKey.system() ) ).thenReturn( null );
+        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
         this.idProviderResponseWrapper =
             new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
     }

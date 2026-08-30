@@ -54,65 +54,54 @@ public final class IdProviderFilter
                 ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
                 : res;
 
-        if ( virtualHost == null )
+        if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {
-            if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
-            {
-                idProviderControllerService.execute(
-                    IdProviderControllerExecutionParams.create().functionName( "autoLogin" ).servletRequest( req ).build() );
-            }
-        }
-        else
-        {
-            if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
-            {
-                final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
-                final List<IdProviderKey> idProviderKeys =
-                    Stream.concat( Stream.ofNullable( defaultKey ), virtualHost.getIdProviderKeys()
-                        .stream()
-                        .filter( key -> !key.equals( defaultKey ) ) )
-                        .filter( key -> {
-                            final Set<String> flows = virtualHost.getIdProviderFlows( key );
-                            return flows == null || flows.contains( IdProviderFlow.AUTOLOGIN );
-                        } )
-                        .toList();
+            final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
+            final List<IdProviderKey> idProviderKeys =
+                Stream.concat( Stream.ofNullable( defaultKey ), virtualHost.getIdProviderKeys()
+                    .stream()
+                    .filter( key -> !key.equals( defaultKey ) ) )
+                    .filter( key -> {
+                        final Set<String> flows = virtualHost.getIdProviderFlows( key );
+                        return flows == null || flows.contains( IdProviderFlow.AUTOLOGIN );
+                    } )
+                    .toList();
 
-                for ( final IdProviderKey idProviderKey : idProviderKeys )
+            for ( final IdProviderKey idProviderKey : idProviderKeys )
+            {
+                final PortalResponse portalResponse = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
+                                                                                               .functionName( "autoLogin" )
+                                                                                               .idProviderKey( idProviderKey )
+                                                                                               .servletRequest( req )
+                                                                                               .build() );
+                // Id providers may authenticate without returning a response.
+                if ( portalResponse != null || ContextAccessor.current().getAuthInfo().isAuthenticated() )
                 {
-                    final PortalResponse portalResponse = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
-                                                                                                   .functionName( "autoLogin" )
-                                                                                                   .idProviderKey( idProviderKey )
-                                                                                                   .servletRequest( req )
-                                                                                                   .build() );
-                    // Id providers may authenticate without returning a response.
-                    if ( portalResponse != null || ContextAccessor.current().getAuthInfo().isAuthenticated() )
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
+        }
 
-            final PrincipalKeys allow = virtualHost.getAllowedPrincipals();
-            if ( !allow.isEmpty() )
+        final PrincipalKeys allow = virtualHost.getAllowedPrincipals();
+        if ( !allow.isEmpty() )
+        {
+            // The id provider endpoints are exempt, otherwise the allow list locks everyone out of
+            // interactive login. They live at exactly one location: right on the vhost target.
+            final String idProviderEndpoints =
+                ( "/".equals( virtualHost.getTarget() ) ? "" : virtualHost.getTarget() ) + "/_/idprovider/";
+            final String path = req.getPathInfo();
+            if ( path == null || !path.startsWith( idProviderEndpoints ) )
             {
-                // The id provider endpoints are exempt, otherwise the allow list locks everyone out of
-                // interactive login. They live at exactly one location: right on the vhost target.
-                final String idProviderEndpoints =
-                    ( "/".equals( virtualHost.getTarget() ) ? "" : virtualHost.getTarget() ) + "/_/idprovider/";
-                final String path = req.getPathInfo();
-                if ( path == null || !path.startsWith( idProviderEndpoints ) )
+                final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+                if ( !authInfo.isAuthenticated() )
                 {
-                    final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-                    if ( !authInfo.isAuthenticated() )
-                    {
-                        response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
-                        return;
-                    }
-                    if ( authInfo.getPrincipals().stream().noneMatch( allow::contains ) )
-                    {
-                        response.sendError( HttpServletResponse.SC_FORBIDDEN );
-                        return;
-                    }
+                    response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+                    return;
+                }
+                if ( authInfo.getPrincipals().stream().noneMatch( allow::contains ) )
+                {
+                    response.sendError( HttpServletResponse.SC_FORBIDDEN );
+                    return;
                 }
             }
         }

@@ -159,10 +159,6 @@ public class IdProviderResponseWrapper
     private boolean isInteractiveLoginEnabled()
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
-        if ( virtualHost == null )
-        {
-            return true;
-        }
         final IdProviderKey defaultKey = virtualHost.getDefaultIdProviderKey();
         if ( defaultKey == null )
         {
