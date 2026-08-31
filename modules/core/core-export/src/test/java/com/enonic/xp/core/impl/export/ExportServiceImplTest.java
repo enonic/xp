@@ -8,16 +8,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.export.ExportInfo;
 import com.enonic.xp.export.ListExportsResult;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ExportServiceImplTest
 {
+    private static final Context ADMIN_CONTEXT = ContextBuilder.create()
+        .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
+        .build();
+
     @TempDir
     Path tempDir;
 
@@ -39,7 +50,7 @@ class ExportServiceImplTest
     @Test
     void list_returnsEmpty_whenExportsDirDoesNotExist()
     {
-        final ListExportsResult result = exportService.list();
+        final ListExportsResult result = listAsAdmin();
 
         assertThat( result.isEmpty() ).isTrue();
         assertThat( result.getSize() ).isZero();
@@ -51,7 +62,7 @@ class ExportServiceImplTest
     {
         Files.createDirectories( exportsDir );
 
-        assertThat( exportService.list().isEmpty() ).isTrue();
+        assertThat( listAsAdmin().isEmpty() ).isTrue();
     }
 
     @Test
@@ -61,7 +72,7 @@ class ExportServiceImplTest
         Files.createDirectories( exportsDir );
         Files.createFile( exportsDir.resolve( "site-backup.zip" ) );
 
-        assertThat( exportService.list().getList() ).extracting( ExportInfo::name ).containsExactly( "site-backup" );
+        assertThat( listAsAdmin().getList() ).extracting( ExportInfo::name ).containsExactly( "site-backup" );
     }
 
     @Test
@@ -73,7 +84,7 @@ class ExportServiceImplTest
         Files.createFile( exportsDir.resolve( "notes.txt" ) );
         Files.createFile( exportsDir.resolve( "archive.tar" ) );
 
-        assertThat( exportService.list().getList() ).extracting( ExportInfo::name ).containsExactly( "real" );
+        assertThat( listAsAdmin().getList() ).extracting( ExportInfo::name ).containsExactly( "real" );
     }
 
     @Test
@@ -84,7 +95,7 @@ class ExportServiceImplTest
         Files.createDirectories( exportsDir.resolve( "nested.zip" ) );
         Files.createFile( exportsDir.resolve( "actual.zip" ) );
 
-        assertThat( exportService.list().getList() ).extracting( ExportInfo::name ).containsExactly( "actual" );
+        assertThat( listAsAdmin().getList() ).extracting( ExportInfo::name ).containsExactly( "actual" );
     }
 
     @Test
@@ -95,7 +106,7 @@ class ExportServiceImplTest
         Files.createFile( exportsDir.resolve( ".hidden.zip" ) );
         Files.createFile( exportsDir.resolve( "visible.zip" ) );
 
-        assertThat( exportService.list().getList() ).extracting( ExportInfo::name ).containsExactly( "visible" );
+        assertThat( listAsAdmin().getList() ).extracting( ExportInfo::name ).containsExactly( "visible" );
     }
 
     @Test
@@ -106,7 +117,28 @@ class ExportServiceImplTest
         Files.createFile( exportsDir.resolve( "one.zip" ) );
         Files.createFile( exportsDir.resolve( "two.zip" ) );
 
-        final long count = exportService.list().stream().count();
+        final long count = listAsAdmin().stream().count();
         assertThat( count ).isEqualTo( 2L );
+    }
+
+    @Test
+    void list_requires_the_administrator_role()
+    {
+        assertThrows( ForbiddenAccessException.class, () -> exportService.list() );
+    }
+
+    @Test
+    void list_requires_the_administrator_role_for_authenticated_user()
+    {
+        final Context context = ContextBuilder.create()
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED ).user( User.anonymous() ).build() )
+            .build();
+
+        assertThrows( ForbiddenAccessException.class, () -> context.callWith( () -> exportService.list() ) );
+    }
+
+    private ListExportsResult listAsAdmin()
+    {
+        return ADMIN_CONTEXT.callWith( () -> exportService.list() );
     }
 }

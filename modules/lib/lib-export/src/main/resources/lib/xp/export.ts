@@ -209,6 +209,8 @@ interface ListExportsHandler {
 /**
  * List the available node-exports stored in the exports directory.
  *
+ * Requires the `system.admin` role.
+ *
  * @example-ref examples/export/listExports.js
  *
  * @returns {ListExportsResult} Names of all available exports.

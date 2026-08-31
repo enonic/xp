@@ -13,11 +13,13 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.export.reader.ZipVirtualFile;
 import com.enonic.xp.core.impl.export.writer.ExportWriter;
 import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
 import com.enonic.xp.core.internal.FileNames;
 import com.enonic.xp.core.internal.FilePredicates;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.export.ExportInfo;
 import com.enonic.xp.export.ExportNodesParams;
 import com.enonic.xp.export.ExportService;
@@ -26,6 +28,8 @@ import com.enonic.xp.export.ListExportsResult;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.VersionInfo;
 import com.enonic.xp.vfs.VirtualFile;
 
@@ -107,6 +111,8 @@ public class ExportServiceImpl
     @Override
     public ListExportsResult list()
     {
+        requireAdminRole();
+
         final Path exportsDir = exportConfiguration.getExportsDir();
 
         final ListExportsResult.Builder builder = ListExportsResult.create();
@@ -134,6 +140,15 @@ public class ExportServiceImpl
         }
 
         return builder.build();
+    }
+
+    private static void requireAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
     }
 
     private static final class TimedExport
