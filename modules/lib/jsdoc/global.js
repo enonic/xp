@@ -54,6 +54,7 @@ var app = {
      * Name of application.
      *
      * @type string
+     * @readonly
      */
     name: '',
 
@@ -61,6 +62,7 @@ var app = {
      * Application version.
      *
      * @type string
+     * @readonly
      */
     version: '',
 
@@ -69,7 +71,9 @@ var app = {
      * $XP_HOME/config/<app-name>.cfg.
      *
      * @type Object
+     * @readonly
      */
+    config: {}
 };
 
 /**

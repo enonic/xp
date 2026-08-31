@@ -18,6 +18,7 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.config.ConfigBuilder;
+import com.enonic.xp.config.Configuration;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
@@ -278,8 +279,18 @@ public abstract class ScriptTestSupport
         }
         final ApplicationImpl application = new ApplicationImpl( bundle, new ClassLoaderApplicationUrlResolver(
             new URLClassLoader( resourcesPath, ClassLoader.getPlatformClassLoader() ), appKey ), getClass().getClassLoader() );
-        application.setConfig( ConfigBuilder.create().build() );
+        application.setConfig( createAppConfig() );
         return application;
+    }
+
+    /**
+     * Supplies the configuration the scripts under test see as {@code app.config}. Override to seed
+     * values; it is consulted once, while the script runtime is being built, so it cannot depend on
+     * anything an overridden {@link #initialize()} sets up after {@code super.initialize()}.
+     */
+    protected Configuration createAppConfig()
+    {
+        return ConfigBuilder.create().build();
     }
 
     private Bundle createBundle()

@@ -44,7 +44,8 @@ public abstract class AbstractScriptTest
         Mockito.when( application.getVersion() ).thenReturn( Version.parseVersion( "1.0.0" ) );
         Mockito.when( application.getClassLoader() ).thenReturn( getClass().getClassLoader() );
         Mockito.when( application.isStarted() ).thenReturn( true );
-        Mockito.when( application.getConfig() ).thenReturn( ConfigBuilder.create().build() );
+        Mockito.when( application.getConfig() )
+            .thenReturn( ConfigBuilder.create().add( "key", "value" ).add( "dotted.key", "dotted value" ).build() );
 
         final ResourceService resourceService = Mockito.mock( ResourceService.class );
         Mockito.when( resourceService.getResource( Mockito.any() ) ).thenAnswer( invocation -> {
