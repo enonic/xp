@@ -3,7 +3,6 @@ package com.enonic.xp.web.vhost.impl.mapping;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 

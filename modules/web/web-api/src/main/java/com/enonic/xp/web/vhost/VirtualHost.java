@@ -1,7 +1,6 @@
 package com.enonic.xp.web.vhost;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
