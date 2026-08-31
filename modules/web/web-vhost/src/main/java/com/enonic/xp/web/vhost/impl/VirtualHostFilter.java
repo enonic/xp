@@ -1,7 +1,5 @@
 package com.enonic.xp.web.vhost.impl;
 
-import java.util.Set;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -18,7 +16,6 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
-import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
@@ -82,16 +79,12 @@ public final class VirtualHostFilter
                                                  final String connector )
         throws Exception
     {
-        final VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
-        if ( !DispatchConstants.WEB_CONNECTOR.equals( connector ) )
-        {
-            // Only non-interactive authentication out of the box on the management and statistics ports.
-            idProvidersMapping.addIdProvider( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) );
-        }
-        idProvidersMapping.setDefaultIdProvider( IdProviderKey.system() );
+        // No flow restriction: interactive login exists on the web connector only, structurally.
+        final VirtualHostIdProvidersMapping idProvidersMapping =
+            VirtualHostIdProvidersMapping.create().setDefaultIdProvider( IdProviderKey.system() ).build();
 
         final String serverName = req.getServerName();
-        VirtualHostHelper.setVirtualHost( req, new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping.build(),
+        VirtualHostHelper.setVirtualHost( req, new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping,
                                                                        Integer.MAX_VALUE, null, connector ) );
         chain.doFilter( req, res );
     }

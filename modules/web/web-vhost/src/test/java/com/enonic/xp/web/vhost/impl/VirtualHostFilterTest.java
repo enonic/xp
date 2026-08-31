@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.dispatch.DispatchConstants;
-import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
@@ -184,7 +183,8 @@ class VirtualHostFilterTest
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
         assertEquals( IdProviderKey.system(), vhostCaptor.getValue().getDefaultIdProviderKey() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ) );
+        // no flow restriction: interactive login is structurally impossible off the web connector
+        assertEquals( Set.of(), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ) );
         verify( this.chain, times( 1 ) ).doFilter( eq( this.req ), eq( this.res ) );
         verify( res, never() ).setStatus( 404 );
     }
@@ -203,7 +203,7 @@ class VirtualHostFilterTest
 
         final ArgumentCaptor<VirtualHost> vhostCaptor = forClass( VirtualHost.class );
         verify( req ).setAttribute( eq( VirtualHost.class.getName() ), vhostCaptor.capture() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ) );
+        assertEquals( Set.of(), vhostCaptor.getValue().getIdProviders().get( IdProviderKey.system() ) );
         verify( this.chain, times( 1 ) ).doFilter( eq( this.req ), eq( this.res ) );
     }
 
