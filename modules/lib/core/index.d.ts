@@ -16,19 +16,21 @@ declare global {
     type XpMixin = Record<string, Record<string, Record<string, unknown>>>;
 }
 
+export type AppConfig = Readonly<Record<string, string | undefined>>;
+
 export interface App {
     /**
      * The name of the application.
      *
      * @type string
      */
-    name: string;
+    readonly name: string;
     /**
      * Version of the application.
      *
      * @type string
      */
-    version: string;
+    readonly version: string;
     /**
      * Values from the application’s configuration file.
      * This can be set using $XP_HOME/config/<app.name>.cfg.
@@ -36,7 +38,7 @@ export interface App {
      *
      * @type Object
      */
-    config: Record<string, string | undefined>;
+    readonly config: AppConfig;
 }
 
 export interface DoubleUnderscore {
