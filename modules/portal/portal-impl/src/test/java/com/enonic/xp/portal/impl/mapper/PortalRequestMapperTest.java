@@ -22,6 +22,7 @@ import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -102,7 +103,8 @@ class PortalRequestMapperTest
         this.portalRequest.setIdProvider( idProvider );
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), flows ) );
+        Mockito.when( virtualHost.getIdProviders() )
+            .thenReturn( Map.of( IdProviderKey.system(), VirtualHostIdProvider.create().flows( flows ).build() ) );
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
         Mockito.when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         this.portalRequest.setRawRequest( rawRequest );

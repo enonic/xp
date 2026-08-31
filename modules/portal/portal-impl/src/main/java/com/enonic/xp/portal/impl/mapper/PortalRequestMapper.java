@@ -11,6 +11,7 @@ import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class PortalRequestMapper
@@ -66,7 +67,8 @@ public final class PortalRequestMapper
         if ( idProviderKey != null && this.request.getRawRequest() != null )
         {
             final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
-            final Set<String> flows = virtualHost.getIdProviders().getOrDefault( idProviderKey, Set.of() );
+            final VirtualHostIdProvider idProvider = virtualHost.getIdProviders().get( idProviderKey );
+            final Set<String> flows = idProvider == null ? Set.of() : idProvider.getFlows();
             // An absent list means no flow restriction: the id provider app applies its own defaults.
             if ( !flows.isEmpty() )
             {

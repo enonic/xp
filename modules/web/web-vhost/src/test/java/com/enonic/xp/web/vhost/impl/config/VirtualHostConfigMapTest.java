@@ -187,7 +187,8 @@ class VirtualHostConfigMapTest
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( Map.of( IdProviderKey.system(), Set.of() ), virtualHost.getIdProviders() );
+        assertEquals( Set.of( IdProviderKey.system() ), virtualHost.getIdProviders().keySet() );
+        assertEquals( Set.of(), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
     }
 
     @Test
@@ -199,8 +200,8 @@ class VirtualHostConfigMapTest
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
         assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviders().get( IdProviderKey.system() ) );
-        assertEquals( Set.of( IdProviderFlow.LOGIN ), virtualHost.getIdProviders().get( IdProviderKey.from( "myProvider" ) ) );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
+        assertEquals( Set.of( IdProviderFlow.LOGIN ), virtualHost.getIdProviders().get( IdProviderKey.from( "myProvider" ) ).getFlows() );
     }
 
     @Test
@@ -211,7 +212,7 @@ class VirtualHostConfigMapTest
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
         // names beyond the XP-managed flows are kept, lower-cased, for the id provider app's additional flows
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, "device" ), virtualHost.getIdProviders().get( IdProviderKey.system() ) );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, "device" ), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
     }
 
     @Test
@@ -221,7 +222,8 @@ class VirtualHostConfigMapTest
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
-        assertEquals( Map.of( IdProviderKey.system(), Set.of() ), virtualHost.getIdProviders() );
+        assertEquals( Set.of( IdProviderKey.system() ), virtualHost.getIdProviders().keySet() );
+        assertEquals( Set.of(), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
     }
 
     @Test

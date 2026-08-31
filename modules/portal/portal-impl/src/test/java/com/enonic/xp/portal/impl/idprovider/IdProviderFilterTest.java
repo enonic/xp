@@ -26,6 +26,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -115,7 +116,7 @@ class IdProviderFilterTest
 
         final VirtualHost virtualHost = mockVirtualHost( httpServletRequest, IdProviderKey.system(),
                                                          Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.LOGIN ) ) );
-        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), Set.of() ) );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider( Set.of() ) ) );
 
         idProviderFilter.doHandle( httpServletRequest, httpServletResponse, filterChain );
 
@@ -352,12 +353,17 @@ class IdProviderFilterTest
     {
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
         Mockito.when( virtualHost.getTarget() ).thenReturn( "/" );
-        final Map<IdProviderKey, Set<String>> idProviders = new LinkedHashMap<>();
-        idProviders.put( defaultIdProvider, flows.getOrDefault( defaultIdProvider, Set.of() ) );
-        flows.forEach( idProviders::putIfAbsent );
+        final Map<IdProviderKey, VirtualHostIdProvider> idProviders = new LinkedHashMap<>();
+        idProviders.put( defaultIdProvider, idProvider( flows.getOrDefault( defaultIdProvider, Set.of() ) ) );
+        flows.forEach( ( key, keyFlows ) -> idProviders.putIfAbsent( key, idProvider( keyFlows ) ) );
         Mockito.when( virtualHost.getIdProviders() ).thenReturn( idProviders );
         Mockito.when( virtualHost.getAllowedPrincipals() ).thenReturn( PrincipalKeys.empty() );
         Mockito.when( request.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         return virtualHost;
     }
+    private static VirtualHostIdProvider idProvider( final Set<String> flows )
+    {
+        return VirtualHostIdProvider.create().flows( flows ).build();
+    }
+
 }

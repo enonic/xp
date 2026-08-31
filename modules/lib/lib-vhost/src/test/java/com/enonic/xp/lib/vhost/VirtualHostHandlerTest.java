@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostService;
 
 class VirtualHostHandlerTest
@@ -44,7 +45,7 @@ class VirtualHostHandlerTest
 
         final IdProviderKey defaultIdProviderKey = IdProviderKey.from( "default" );
         Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( defaultIdProviderKey );
-        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( defaultIdProviderKey, Set.of() ) );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( defaultIdProviderKey, VirtualHostIdProvider.create().build() ) );
     }
 
     @Test
@@ -65,7 +66,7 @@ class VirtualHostHandlerTest
 
         final IdProviderKey defaultIdProviderKey = IdProviderKey.from( "default" );
         Mockito.when( virtualHost2.getDefaultIdProviderKey() ).thenReturn( defaultIdProviderKey );
-        Mockito.when( virtualHost2.getIdProviders() ).thenReturn( Map.of( defaultIdProviderKey, Set.of() ) );
+        Mockito.when( virtualHost2.getIdProviders() ).thenReturn( Map.of( defaultIdProviderKey, VirtualHostIdProvider.create().build() ) );
 
         Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( virtualHost, virtualHost2 ) );
 

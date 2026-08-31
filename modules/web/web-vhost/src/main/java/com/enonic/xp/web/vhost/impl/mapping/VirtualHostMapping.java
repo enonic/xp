@@ -12,6 +12,7 @@ import com.enonic.xp.security.IdProviderKeys;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
@@ -117,7 +118,7 @@ public final class VirtualHostMapping
     }
 
     @Override
-    public Map<IdProviderKey, Set<String>> getIdProviders()
+    public Map<IdProviderKey, VirtualHostIdProvider> getIdProviders()
     {
         return idProvidersMapping.getIdProviders();
     }

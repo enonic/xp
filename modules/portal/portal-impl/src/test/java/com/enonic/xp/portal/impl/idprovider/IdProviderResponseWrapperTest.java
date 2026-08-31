@@ -22,6 +22,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -45,7 +46,7 @@ class IdProviderResponseWrapperTest
 
         // unrestricted default id provider, as the default vhost provides
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), Set.of() ) );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider() ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         this.idProviderResponseWrapper =
@@ -96,7 +97,7 @@ class IdProviderResponseWrapperTest
         final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.AUTOLOGIN ) ) );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), idProvider( IdProviderFlow.AUTOLOGIN ) ) );
         Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
         final IdProviderResponseWrapper responseWrapper =
@@ -108,7 +109,7 @@ class IdProviderResponseWrapperTest
         Mockito.verify( httpServletResponse ).sendError( 401 );
 
         Mockito.when( virtualHost.getIdProviders() )
-            .thenReturn( Map.of( IdProviderKey.system(), Set.of( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
+            .thenReturn( Map.of( IdProviderKey.system(), idProvider( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
 
         responseWrapper.sendError( 401 );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
@@ -148,6 +149,11 @@ class IdProviderResponseWrapperTest
             Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
             return null;
         } );
+    }
+
+    private static VirtualHostIdProvider idProvider( final String... flows )
+    {
+        return VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();
     }
 
     @Test

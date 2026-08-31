@@ -18,6 +18,7 @@ import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public class IdProviderResponseWrapper
@@ -160,12 +161,12 @@ public class IdProviderResponseWrapper
     private boolean isInteractiveLoginEnabled()
     {
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
-        final Iterator<Set<String>> idProviderFlows = virtualHost.getIdProviders().values().iterator();
-        if ( !idProviderFlows.hasNext() )
+        final Iterator<VirtualHostIdProvider> idProviders = virtualHost.getIdProviders().values().iterator();
+        if ( !idProviders.hasNext() )
         {
             return false;
         }
-        final Set<String> flows = idProviderFlows.next();
+        final Set<String> flows = idProviders.next().getFlows();
         return flows.isEmpty() || flows.contains( IdProviderFlow.LOGIN );
     }
 

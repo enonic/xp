@@ -52,12 +52,10 @@ public interface VirtualHost
     IdProviderKeys getIdProviderKeys();
 
     /**
-     * Returns the id providers enabled on this vhost with their configured flow lists, the default
-     * id provider first. Flow lists hold XP-managed flow names ({@link IdProviderFlow}) plus any
-     * additional flows of the id provider app itself; an empty list means no restriction: the id
-     * provider serves whatever flows it supports.
+     * Returns the id providers enabled on this vhost with their per-vhost configuration
+     * ({@link VirtualHostIdProvider}), the default id provider first.
      */
-    Map<IdProviderKey, Set<String>> getIdProviders();
+    Map<IdProviderKey, VirtualHostIdProvider> getIdProviders();
 
     /**
      * Returns the connector this vhost applies to: web ({@code xp}, the default), management

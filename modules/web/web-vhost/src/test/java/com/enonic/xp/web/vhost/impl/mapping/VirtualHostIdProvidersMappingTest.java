@@ -25,8 +25,8 @@ class VirtualHostIdProvidersMappingTest
             .build();
 
         assertEquals( List.of( PROVIDER_B, PROVIDER_A ), List.copyOf( mapping.getIdProviders().keySet() ) );
-        assertEquals( Set.of( "autologin" ), mapping.getIdProviders().get( PROVIDER_B ) );
-        assertEquals( Set.of( "login" ), mapping.getIdProviders().get( PROVIDER_A ) );
+        assertEquals( Set.of( "autologin" ), mapping.getIdProviders().get( PROVIDER_B ).getFlows() );
+        assertEquals( Set.of( "login" ), mapping.getIdProviders().get( PROVIDER_A ).getFlows() );
     }
 
     @Test
@@ -39,7 +39,7 @@ class VirtualHostIdProvidersMappingTest
             .build();
 
         assertEquals( List.of( PROVIDER_B, PROVIDER_A ), List.copyOf( mapping.getIdProviders().keySet() ) );
-        assertEquals( Set.of( "autologin" ), mapping.getIdProviders().get( PROVIDER_B ) );
+        assertEquals( Set.of( "autologin" ), mapping.getIdProviders().get( PROVIDER_B ).getFlows() );
     }
 
     @Test
@@ -50,7 +50,7 @@ class VirtualHostIdProvidersMappingTest
             .addIdProviderKey( PROVIDER_A )
             .build();
 
-        assertEquals( Set.of( "login" ), mapping.getIdProviders().get( PROVIDER_A ) );
+        assertEquals( Set.of( "login" ), mapping.getIdProviders().get( PROVIDER_A ).getFlows() );
     }
 
     @Test
@@ -61,7 +61,7 @@ class VirtualHostIdProvidersMappingTest
             .addIdProvider( PROVIDER_B, null )
             .build();
 
-        assertEquals( Set.of(), mapping.getIdProviders().get( PROVIDER_A ) );
-        assertEquals( Set.of(), mapping.getIdProviders().get( PROVIDER_B ) );
+        assertEquals( Set.of(), mapping.getIdProviders().get( PROVIDER_A ).getFlows() );
+        assertEquals( Set.of(), mapping.getIdProviders().get( PROVIDER_B ).getFlows() );
     }
 }

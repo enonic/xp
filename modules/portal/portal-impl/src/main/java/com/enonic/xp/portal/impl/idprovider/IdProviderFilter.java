@@ -25,6 +25,7 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
@@ -55,9 +56,9 @@ public final class IdProviderFilter
 
         if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {
-            for ( final Map.Entry<IdProviderKey, Set<String>> idProvider : virtualHost.getIdProviders().entrySet() )
+            for ( final Map.Entry<IdProviderKey, VirtualHostIdProvider> idProvider : virtualHost.getIdProviders().entrySet() )
             {
-                final Set<String> flows = idProvider.getValue();
+                final Set<String> flows = idProvider.getValue().getFlows();
                 if ( !flows.isEmpty() && !flows.contains( IdProviderFlow.AUTOLOGIN ) )
                 {
                     continue;
