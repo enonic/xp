@@ -43,6 +43,7 @@ class VirtualHostHandlerTest
         Mockito.when( virtualHost.getHost() ).thenReturn( "localhost" );
 
         final IdProviderKey defaultIdProviderKey = IdProviderKey.from( "default" );
+        Mockito.when( virtualHost.getDefaultIdProviderKey() ).thenReturn( defaultIdProviderKey );
         Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( defaultIdProviderKey, Set.of() ) );
     }
 
@@ -63,6 +64,7 @@ class VirtualHostHandlerTest
         Mockito.when( virtualHost2.getHost() ).thenReturn( "localhost" );
 
         final IdProviderKey defaultIdProviderKey = IdProviderKey.from( "default" );
+        Mockito.when( virtualHost2.getDefaultIdProviderKey() ).thenReturn( defaultIdProviderKey );
         Mockito.when( virtualHost2.getIdProviders() ).thenReturn( Map.of( defaultIdProviderKey, Set.of() ) );
 
         Mockito.when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( virtualHost, virtualHost2 ) );

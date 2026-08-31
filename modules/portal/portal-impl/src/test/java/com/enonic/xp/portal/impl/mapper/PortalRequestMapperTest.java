@@ -1,7 +1,13 @@
 package com.enonic.xp.portal.impl.mapper;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
@@ -12,7 +18,10 @@ import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.security.IdProvider;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -60,6 +69,43 @@ class PortalRequestMapperTest
     void testSimple()
     {
         assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    @Test
+    void testIdProviderFlows()
+    {
+        setIdProviderWithFlows( IdProvider.create().key( IdProviderKey.system() ).build(), Set.of( "basic", "autologin" ) );
+
+        // the flow list is serialized sorted
+        assertHelper.assertJson( "request-idprovider-flows.json", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    @Test
+    void testIdProviderFlows_noRestriction()
+    {
+        setIdProviderWithFlows( IdProvider.create().key( IdProviderKey.system() ).build(), Set.of() );
+
+        // no flow restriction: the property is absent and the id provider app applies its own defaults
+        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    @Test
+    void testIdProviderFlows_idProviderWithoutKey()
+    {
+        setIdProviderWithFlows( IdProvider.create().build(), Set.of( "basic" ) );
+
+        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    private void setIdProviderWithFlows( final IdProvider idProvider, final Set<String> flows )
+    {
+        this.portalRequest.setIdProvider( idProvider );
+
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), flows ) );
+        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        this.portalRequest.setRawRequest( rawRequest );
     }
 
     @Test

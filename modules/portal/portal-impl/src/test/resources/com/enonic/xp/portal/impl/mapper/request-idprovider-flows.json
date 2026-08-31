@@ -1,0 +1,35 @@
+{
+  "method": "GET",
+  "scheme": "http",
+  "host": "localhost",
+  "port": 80,
+  "path": "/site/live/master/a/b",
+  "rawPath": "/site/live/master/a/b",
+  "url": "http://localhost/site/live/master/a/b?param1=value1",
+  "remoteAddress": "10.0.0.1",
+  "mode": "live",
+  "webSocket": false,
+  "validTicket": true,
+  "repositoryId": "com.enonic.cms.myproject",
+  "branch": "draft",
+  "contextPath": "/site/live/master/a",
+  "idProviderFlows": [
+    "autologin",
+    "basic"
+  ],
+  "params": {
+    "param1": "value1",
+    "param2": "value2",
+    "param3": [
+      "value3-A",
+      "value3-B"
+    ]
+  },
+  "headers": {
+    "header1": "value1",
+    "header2": "value2",
+    "header3": "value3"
+  },
+  "cookies": {},
+  "locales":[]
+}

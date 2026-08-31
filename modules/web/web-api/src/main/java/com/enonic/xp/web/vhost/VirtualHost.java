@@ -37,11 +37,9 @@ public interface VirtualHost
     String getTarget();
 
     /**
-     * Returns the vhost's default id provider, or null when none is enabled.
-     *
-     * @deprecated The default id provider is the first key of {@link #getIdProviders()}.
+     * Returns the vhost's default id provider - the first key of {@link #getIdProviders()} - or
+     * null when none is enabled.
      */
-    @Deprecated
     @Nullable
     IdProviderKey getDefaultIdProviderKey();
 

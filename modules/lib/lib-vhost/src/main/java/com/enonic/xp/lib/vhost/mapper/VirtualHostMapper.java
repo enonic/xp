@@ -1,7 +1,5 @@
 package com.enonic.xp.lib.vhost.mapper;
 
-import java.util.Set;
-
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
 import com.enonic.xp.security.IdProviderKey;
@@ -26,15 +24,14 @@ public class VirtualHostMapper
         gen.value( "target", virtualHost.getTarget() );
         gen.value( "host", virtualHost.getHost() );
 
-        final Set<IdProviderKey> idProviderKeys = virtualHost.getIdProviders().keySet();
-
-        if ( !idProviderKeys.isEmpty() )
+        final IdProviderKey defaultIdProviderKey = virtualHost.getDefaultIdProviderKey();
+        if ( defaultIdProviderKey != null )
         {
-            gen.value( "defaultIdProviderKey", idProviderKeys.iterator().next().toString() );
+            gen.value( "defaultIdProviderKey", defaultIdProviderKey.toString() );
         }
 
         gen.array( "idProviderKeys" );
-        idProviderKeys.forEach( idProviderKey -> {
+        virtualHost.getIdProviders().keySet().forEach( idProviderKey -> {
             gen.map();
             gen.value( "idProviderKey", idProviderKey.toString() );
             gen.end();

@@ -102,7 +102,6 @@ public final class VirtualHostMapping
         return this.target;
     }
 
-    @Deprecated
     @Override
     public IdProviderKey getDefaultIdProviderKey()
     {

@@ -12,9 +12,14 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 
@@ -107,6 +112,42 @@ class IdProviderResponseWrapperTest
 
         responseWrapper.sendError( 401 );
         Mockito.verify( idProviderControllerService ).execute( Mockito.any() );
+    }
+
+    @Test
+    void testHandle401_noIdProviders()
+        throws IOException
+    {
+        final HttpServletRequest httpServletRequest = Mockito.mock( HttpServletRequest.class );
+        final HttpServletResponse httpServletResponse = Mockito.mock( HttpServletResponse.class );
+
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of() );
+        Mockito.when( httpServletRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+
+        final IdProviderResponseWrapper responseWrapper =
+            new IdProviderResponseWrapper( idProviderControllerService, httpServletRequest, httpServletResponse );
+
+        responseWrapper.sendError( 401 );
+
+        Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+        Mockito.verify( httpServletResponse ).sendError( 401 );
+    }
+
+    @Test
+    void testAuthenticated403_notIntercepted()
+        throws Exception
+    {
+        final User user =
+            User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "user1" ) ).displayName( "User 1" ).login( "user1" ).build();
+        final AuthenticationInfo authenticationInfo =
+            AuthenticationInfo.create().user( user ).principals( RoleKeys.AUTHENTICATED ).build();
+
+        ContextBuilder.create().authInfo( authenticationInfo ).build().callWith( () -> {
+            idProviderResponseWrapper.sendError( 403 );
+            Mockito.verify( idProviderControllerService, Mockito.times( 0 ) ).execute( Mockito.any() );
+            return null;
+        } );
     }
 
     @Test
