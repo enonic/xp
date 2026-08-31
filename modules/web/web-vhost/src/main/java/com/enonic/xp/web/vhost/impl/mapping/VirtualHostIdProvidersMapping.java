@@ -1,21 +1,30 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.IdProviderKeys;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 public class VirtualHostIdProvidersMapping
 {
-    private final IdProviderKey defaultIdProvider;
+    private static final VirtualHostIdProvider UNRESTRICTED = VirtualHostIdProvider.create().build();
 
-    private final IdProviderKeys idProviderKeys;
+    private final Map<IdProviderKey, VirtualHostIdProvider> idProviders;
 
     public VirtualHostIdProvidersMapping( final Builder builder )
     {
-        this.defaultIdProvider = builder.defaultIdProvider;
-        this.idProviderKeys = IdProviderKeys.from( builder.idProviderKeys );
+        final Map<IdProviderKey, VirtualHostIdProvider> map = new LinkedHashMap<>();
+        if ( builder.defaultIdProvider != null )
+        {
+            map.put( builder.defaultIdProvider, builder.idProviders.getOrDefault( builder.defaultIdProvider, UNRESTRICTED ) );
+        }
+        map.putAll( builder.idProviders );
+        this.idProviders = Collections.unmodifiableMap( map );
     }
 
     public static Builder create()
@@ -23,42 +32,42 @@ public class VirtualHostIdProvidersMapping
         return new Builder();
     }
 
-    public IdProviderKey getDefaultIdProvider()
+    /**
+     * The enabled id providers with their per-vhost configuration, the default id provider first.
+     */
+    public Map<IdProviderKey, VirtualHostIdProvider> getIdProviders()
     {
-        return defaultIdProvider;
-    }
-
-    public IdProviderKeys getIdProviderKeys()
-    {
-        return idProviderKeys;
+        return idProviders;
     }
 
     public static class Builder
     {
         private IdProviderKey defaultIdProvider;
 
-        private final List<IdProviderKey> idProviderKeys;
+        // Insertion-ordered so the (non-default) iteration order is stable.
+        private final Map<IdProviderKey, VirtualHostIdProvider> idProviders = new LinkedHashMap<>();
 
         private Builder()
         {
-            this.idProviderKeys = new ArrayList<>();
         }
 
         public Builder setDefaultIdProvider( final IdProviderKey defaultIdProvider )
         {
             this.defaultIdProvider = defaultIdProvider;
-            addIdProviderKey( defaultIdProvider );
-
+            this.idProviders.putIfAbsent( defaultIdProvider, UNRESTRICTED );
             return this;
         }
 
         public Builder addIdProviderKey( final IdProviderKey idProviderKey )
         {
-            if ( !this.idProviderKeys.contains( idProviderKey ) )
-            {
-                this.idProviderKeys.add( idProviderKey );
-            }
+            this.idProviders.putIfAbsent( idProviderKey, UNRESTRICTED );
+            return this;
+        }
 
+        public Builder addIdProvider( final IdProviderKey idProviderKey, @Nullable final Set<String> flows )
+        {
+            this.idProviders.put( idProviderKey,
+                                  flows == null ? UNRESTRICTED : VirtualHostIdProvider.create().flows( flows ).build() );
             return this;
         }
 

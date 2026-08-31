@@ -23,7 +23,7 @@ import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
-@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-200)
 @WebFilter("/*")
 public final class VirtualHostFilter
@@ -47,11 +47,17 @@ public final class VirtualHostFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        if ( virtualHostService.isEnabled() &&
-            DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
+        final String connector = (String) req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
+
+        if ( virtualHostService.isEnabled() )
         {
             final VirtualHost virtualHost = virtualHostResolver.resolveVirtualHost( req );
-            if ( virtualHost == null )
+            if ( virtualHost != null )
+            {
+                VirtualHostHelper.setVirtualHost( req, virtualHost );
+                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+            }
+            else if ( DispatchConstants.WEB_CONNECTOR.equals( connector ) )
             {
                 LOG.warn( "Virtual host mapping could not be resolved for host [{}] and path [{}]", req.getServerName(),
                           req.getPathInfo() );
@@ -59,24 +65,27 @@ public final class VirtualHostFilter
             }
             else
             {
-                VirtualHostHelper.setVirtualHost( req, virtualHost );
-                chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
+                // Management and statistics ports stay reachable when no vhost mapping matches.
+                applyDefaultVirtualHost( req, res, chain, connector );
             }
         }
         else
         {
-            final VirtualHostMapping virtualHost = generateDefaultVirtualHostMapping( req );
-            VirtualHostHelper.setVirtualHost( req, virtualHost );
-            chain.doFilter( req, res );
+            applyDefaultVirtualHost( req, res, chain, connector );
         }
     }
 
-    private static VirtualHostMapping generateDefaultVirtualHostMapping( final HttpServletRequest req )
+    private static void applyDefaultVirtualHost( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain,
+                                                 final String connector )
+        throws Exception
     {
-        final String serverName = req.getServerName();
+        // No flow restriction: interactive login exists on the web connector only, structurally.
+        final VirtualHostIdProvidersMapping idProvidersMapping =
+            VirtualHostIdProvidersMapping.create().setDefaultIdProvider( IdProviderKey.system() ).build();
 
-        return new VirtualHostMapping( serverName, serverName, "/", "/",
-                                       VirtualHostIdProvidersMapping.create().setDefaultIdProvider( IdProviderKey.system() ).build(),
-                                       Integer.MAX_VALUE );
+        final String serverName = req.getServerName();
+        VirtualHostHelper.setVirtualHost( req, new VirtualHostMapping( serverName, serverName, "/", "/", idProvidersMapping,
+                                                                       Integer.MAX_VALUE, null, connector ) );
+        chain.doFilter( req, res );
     }
 }

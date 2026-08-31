@@ -1,10 +1,17 @@
 package com.enonic.xp.web.vhost.impl.mapping;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
+
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviderKeys;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
@@ -26,6 +33,10 @@ public final class VirtualHostMapping
 
     private final VirtualHostIdProvidersMapping idProvidersMapping;
 
+    private final String connector;
+
+    private final PrincipalKeys allowedPrincipals;
+
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
     {
@@ -34,6 +45,21 @@ public final class VirtualHostMapping
 
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context )
+    {
+        this( name, host, source, target, idProvidersMapping, order, context, DispatchConstants.WEB_CONNECTOR );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order, final Map<String, String> context,
+                               final String connector )
+    {
+        this( name, host, source, target, idProvidersMapping, order, context, connector, PrincipalKeys.empty() );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order,
+                               @Nullable final Map<String, String> context, @Nullable final String connector,
+                               @Nullable final PrincipalKeys allowedPrincipals )
     {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
@@ -48,6 +74,8 @@ public final class VirtualHostMapping
         this.idProvidersMapping = idProvidersMapping;
         this.order = order;
         this.context = Collections.unmodifiableMap( requireNonNullElse( context, Map.of() ) );
+        this.connector = requireNonNullElse( connector, DispatchConstants.WEB_CONNECTOR );
+        this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
     }
 
     @Override
@@ -77,13 +105,33 @@ public final class VirtualHostMapping
     @Override
     public IdProviderKey getDefaultIdProviderKey()
     {
-        return idProvidersMapping.getDefaultIdProvider();
+        final Iterator<IdProviderKey> keys = idProvidersMapping.getIdProviders().keySet().iterator();
+        return keys.hasNext() ? keys.next() : null;
     }
 
+    @Deprecated
     @Override
     public IdProviderKeys getIdProviderKeys()
     {
-        return idProvidersMapping.getIdProviderKeys();
+        return IdProviderKeys.from( idProvidersMapping.getIdProviders().keySet() );
+    }
+
+    @Override
+    public Map<IdProviderKey, VirtualHostIdProvider> getIdProviders()
+    {
+        return idProvidersMapping.getIdProviders();
+    }
+
+    @Override
+    public String getConnector()
+    {
+        return connector;
+    }
+
+    @Override
+    public PrincipalKeys getAllowedPrincipals()
+    {
+        return allowedPrincipals;
     }
 
     @Override

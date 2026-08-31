@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
@@ -44,6 +45,7 @@ class VirtualHostResolverImplTest
         VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getPathInfo() ).thenReturn( "/a/b" );
 
@@ -60,6 +62,7 @@ class VirtualHostResolverImplTest
         VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "foo.no" );
         when( req.getPathInfo() ).thenReturn( "/a" );
 
@@ -76,6 +79,7 @@ class VirtualHostResolverImplTest
         VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "foo.no" );
         when( req.getPathInfo() ).thenReturn( "/a/b" );
 
@@ -93,6 +97,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "eXampLe.com" );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
@@ -114,6 +119,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "foo.no" );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
@@ -136,6 +142,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
         when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
 
@@ -166,6 +173,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
         when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com/source/path/123" ).getPath() );
 
@@ -189,6 +197,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
         when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
 
@@ -211,6 +220,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "DoMaIn.com" );
         when( req.getPathInfo() ).thenReturn( URI.create( "https://domain.com/source" ).getPath() );
 
@@ -233,6 +243,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "no.domain.com" );
         when( req.getPathInfo() ).thenReturn( URI.create( "https://no.domain.com" ).getPath() );
 
@@ -255,6 +266,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "foo.com" );
 
         final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
@@ -271,6 +283,7 @@ class VirtualHostResolverImplTest
         when( virtualHostService.getVirtualHosts() ).thenReturn( virtualHosts );
 
         HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         when( req.getServerName() ).thenReturn( "domain.com" );
         when( req.getPathInfo() ).thenReturn( "/source" );
 
@@ -282,6 +295,46 @@ class VirtualHostResolverImplTest
         assertNotNull( contextConfig );
         assertEquals( contextConfig.get( "k1" ), "v1" );
         assertEquals( contextConfig.get( "k2" ), "v2" );
+    }
+
+    @Test
+    void testMatches_connector()
+    {
+        final VirtualHostMapping apiMapping =
+            new VirtualHostMapping( "mgmt", "admin.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
+                                    DispatchConstants.MANAGEMENT_CONNECTOR );
+        final VirtualHostMapping xpMapping = createVirtualHostMapping( "web", "admin.enonic.com", "/", "/", 1 );
+        when( virtualHostService.getVirtualHosts() ).thenReturn( List.of( apiMapping, xpMapping ) );
+
+        final VirtualHostResolver virtualHostResolver = new VirtualHostResolverImpl( virtualHostService );
+
+        final HttpServletRequest apiReq = mock( HttpServletRequest.class );
+        when( apiReq.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( apiReq.getServerName() ).thenReturn( "admin.enonic.com" );
+        when( apiReq.getPathInfo() ).thenReturn( "/repo" );
+        when( apiReq.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+
+        final VirtualHost resolvedForApi = virtualHostResolver.resolveVirtualHost( apiReq );
+        assertNotNull( resolvedForApi );
+        assertEquals( "mgmt", resolvedForApi.getName() );
+
+        // no connector attribute means the xp connector, which the api-only mapping must not match
+        final HttpServletRequest xpReq = mock( HttpServletRequest.class );
+        when( xpReq.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( xpReq.getServerName() ).thenReturn( "admin.enonic.com" );
+        when( xpReq.getPathInfo() ).thenReturn( "/repo" );
+
+        final VirtualHost resolvedForXp = virtualHostResolver.resolveVirtualHost( xpReq );
+        assertNotNull( resolvedForXp );
+        assertEquals( "web", resolvedForXp.getName() );
+
+        final HttpServletRequest statusReq = mock( HttpServletRequest.class );
+        when( statusReq.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( statusReq.getServerName() ).thenReturn( "admin.enonic.com" );
+        when( statusReq.getPathInfo() ).thenReturn( "/" );
+        when( statusReq.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.STATISTICS_CONNECTOR );
+
+        assertNull( virtualHostResolver.resolveVirtualHost( statusReq ) );
     }
 
     private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target, Integer order,

@@ -40,17 +40,17 @@ class HttpConfiguratorTest
 
         configure();
 
-        final ServerConnector connector = getConnector( DispatchConstants.XP_CONNECTOR );
+        final ServerConnector connector = getConnector( DispatchConstants.WEB_CONNECTOR );
         assertNotNull( connector );
         assertNull( connector.getHost() );
         assertEquals( 8080, connector.getPort() );
         assertEquals( 60000, connector.getIdleTimeout() );
 
-        assertNull( getConnector( DispatchConstants.API_CONNECTOR ).getHost() );
-        assertEquals( 4848, getConnector( DispatchConstants.API_CONNECTOR ).getPort() );
+        assertNull( getConnector( DispatchConstants.MANAGEMENT_CONNECTOR ).getHost() );
+        assertEquals( 4848, getConnector( DispatchConstants.MANAGEMENT_CONNECTOR ).getPort() );
 
-        assertNull( getConnector( DispatchConstants.STATUS_CONNECTOR ).getHost() );
-        assertEquals( 2609, getConnector( DispatchConstants.STATUS_CONNECTOR ).getPort() );
+        assertNull( getConnector( DispatchConstants.STATISTICS_CONNECTOR ).getHost() );
+        assertEquals( 2609, getConnector( DispatchConstants.STATISTICS_CONNECTOR ).getPort() );
 
         final HttpConnectionFactory factory = connector.getConnectionFactory( HttpConnectionFactory.class );
         assertNotNull( factory );
@@ -76,9 +76,9 @@ class HttpConfiguratorTest
         configure();
 
         // in dev mode every connector binds both loopback addresses, like Elasticsearch does for _local_
-        assertThat( getHosts( DispatchConstants.XP_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
-        assertThat( getHosts( DispatchConstants.API_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
-        assertThat( getHosts( DispatchConstants.STATUS_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
+        assertThat( getHosts( DispatchConstants.WEB_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
+        assertThat( getHosts( DispatchConstants.MANAGEMENT_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
+        assertThat( getHosts( DispatchConstants.STATISTICS_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
     }
 
     @Test
@@ -105,14 +105,14 @@ class HttpConfiguratorTest
 
         configure();
 
-        final ServerConnector connector = getConnector( DispatchConstants.XP_CONNECTOR );
+        final ServerConnector connector = getConnector( DispatchConstants.WEB_CONNECTOR );
         assertNotNull( connector );
         assertEquals( "127.0.0.1", connector.getHost() );
         assertEquals( 9999, connector.getPort() );
         assertEquals( 10, connector.getIdleTimeout() );
 
-        assertEquals( "127.0.0.1", getConnector( DispatchConstants.API_CONNECTOR ).getHost() );
-        assertEquals( "127.0.0.1", getConnector( DispatchConstants.STATUS_CONNECTOR ).getHost() );
+        assertEquals( "127.0.0.1", getConnector( DispatchConstants.MANAGEMENT_CONNECTOR ).getHost() );
+        assertEquals( "127.0.0.1", getConnector( DispatchConstants.STATISTICS_CONNECTOR ).getHost() );
 
         final HttpConnectionFactory factory = connector.getConnectionFactory( HttpConnectionFactory.class );
         assertNotNull( factory );
@@ -140,9 +140,9 @@ class HttpConfiguratorTest
 
         configure();
 
-        assertThat( getHosts( DispatchConstants.XP_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
-        assertThat( getHosts( DispatchConstants.API_CONNECTOR ) ).containsExactly( "127.0.0.2" );
-        assertThat( getHosts( DispatchConstants.STATUS_CONNECTOR ) ).containsExactly( "0:0:0:0:0:0:0:1" );
+        assertThat( getHosts( DispatchConstants.WEB_CONNECTOR ) ).containsExactlyInAnyOrder( "127.0.0.1", "0:0:0:0:0:0:0:1" );
+        assertThat( getHosts( DispatchConstants.MANAGEMENT_CONNECTOR ) ).containsExactly( "127.0.0.2" );
+        assertThat( getHosts( DispatchConstants.STATISTICS_CONNECTOR ) ).containsExactly( "0:0:0:0:0:0:0:1" );
     }
 
     @Test
@@ -154,9 +154,9 @@ class HttpConfiguratorTest
 
         configure();
 
-        assertThat( getHosts( DispatchConstants.XP_CONNECTOR ) ).containsExactly( "127.0.0.1" );
-        assertThat( getHosts( DispatchConstants.API_CONNECTOR ) ).containsExactly( "127.0.0.2" );
-        assertThat( getHosts( DispatchConstants.STATUS_CONNECTOR ) ).containsExactly( "127.0.0.2" );
+        assertThat( getHosts( DispatchConstants.WEB_CONNECTOR ) ).containsExactly( "127.0.0.1" );
+        assertThat( getHosts( DispatchConstants.MANAGEMENT_CONNECTOR ) ).containsExactly( "127.0.0.2" );
+        assertThat( getHosts( DispatchConstants.STATISTICS_CONNECTOR ) ).containsExactly( "127.0.0.2" );
     }
 
     @Test
@@ -168,8 +168,8 @@ class HttpConfiguratorTest
 
         configure();
 
-        assertEquals( 9999, getConnector( DispatchConstants.XP_CONNECTOR ).getPort() );
-        assertEquals( 8888, getConnector( DispatchConstants.STATUS_CONNECTOR ).getPort() );
+        assertEquals( 9999, getConnector( DispatchConstants.WEB_CONNECTOR ).getPort() );
+        assertEquals( 8888, getConnector( DispatchConstants.STATISTICS_CONNECTOR ).getPort() );
     }
 
     @Test
@@ -183,8 +183,8 @@ class HttpConfiguratorTest
 
         configure();
 
-        assertEquals( 7777, getConnector( DispatchConstants.XP_CONNECTOR ).getPort() );
-        assertEquals( 6666, getConnector( DispatchConstants.STATUS_CONNECTOR ).getPort() );
+        assertEquals( 7777, getConnector( DispatchConstants.WEB_CONNECTOR ).getPort() );
+        assertEquals( 6666, getConnector( DispatchConstants.STATISTICS_CONNECTOR ).getPort() );
     }
 
     private ServerConnector getConnector( final String name )

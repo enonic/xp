@@ -2,14 +2,20 @@ package com.enonic.xp.web.vhost.impl.config;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
@@ -23,6 +29,11 @@ final class VirtualHostConfigMap
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
 
     private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.(?<name>[^.]+)\\..+" );
+
+    // Endpoints are configured by their documented names, not the internal connector names.
+    private static final Map<String, String> ENDPOINTS =
+        Map.of( "web", DispatchConstants.WEB_CONNECTOR, "management", DispatchConstants.MANAGEMENT_CONNECTOR, "statistics",
+                DispatchConstants.STATISTICS_CONNECTOR );
 
     private final Map<String, String> map;
 
@@ -58,8 +69,38 @@ final class VirtualHostConfigMap
         final VirtualHostIdProvidersMapping idProvidersMapping = getHostIdProvidersMapping( prefix );
         final int order = getInt( prefix + "order", Integer.MAX_VALUE );
         final Map<String, String> context = getVirtualHostContext( prefix );
+        final String connector = getConnector( prefix );
+        final PrincipalKeys allowedPrincipals = getAllowedPrincipals( prefix );
 
-        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context );
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals );
+    }
+
+    private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )
+    {
+        final String value = getString( mappingPrefix + "allow" );
+        if ( value == null || value.isBlank() )
+        {
+            return PrincipalKeys.empty();
+        }
+
+        return Stream.of( value.split( "," ) ).map( String::trim ).map( PrincipalKey::from ).collect( PrincipalKeys.collector() );
+    }
+
+    private String getConnector( final String mappingPrefix )
+    {
+        final String value = getString( mappingPrefix + "endpoint" );
+        if ( value == null )
+        {
+            return DispatchConstants.WEB_CONNECTOR;
+        }
+
+        final String connector = ENDPOINTS.get( value );
+        if ( connector == null )
+        {
+            throw new IllegalArgumentException(
+                "Unknown endpoint [" + value + "] in vhost mapping, must be one of " + ENDPOINTS.keySet() );
+        }
+        return connector;
     }
 
     private VirtualHostIdProvidersMapping getHostIdProvidersMapping( final String mappingPrefix )
@@ -72,13 +113,43 @@ final class VirtualHostConfigMap
 
             final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
 
-            if ( DEFAULT_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
+            // Value grammar: "default" and/or "enabled[=flow,flow...]".
+            boolean isDefault = false;
+            boolean isEnabled = false;
+            Set<String> flows = null;
+
+            for ( final String token : idProviderStatus.split( "&" ) )
             {
-                hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
+                final String trimmed = token.trim();
+                final int eq = trimmed.indexOf( '=' );
+                final String name = eq < 0 ? trimmed : trimmed.substring( 0, eq );
+                final String value = eq < 0 ? null : trimmed.substring( eq + 1 );
+
+                if ( DEFAULT_ID_PROVIDER_VALUE.equals( name ) )
+                {
+                    isDefault = true;
+                }
+                else if ( ENABLED_ID_PROVIDER_VALUE.equals( name ) )
+                {
+                    isEnabled = true;
+                    if ( value != null && !value.isBlank() )
+                    {
+                        flows = Stream.of( value.split( "," ) )
+                            .map( String::trim )
+                            .filter( flow -> !flow.isEmpty() )
+                            .map( flow -> flow.toLowerCase( Locale.ROOT ) )
+                            .collect( Collectors.toUnmodifiableSet() );
+                    }
+                }
             }
-            if ( ENABLED_ID_PROVIDER_VALUE.equals( idProviderStatus ) )
+
+            if ( isDefault || isEnabled )
             {
-                hostIdProvidersMapping.addIdProviderKey( idProviderKey );
+                hostIdProvidersMapping.addIdProvider( idProviderKey, flows );
+                if ( isDefault )
+                {
+                    hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
+                }
             }
 
         } );
@@ -98,10 +169,13 @@ final class VirtualHostConfigMap
 
     private Map<String, String> getIdProviders( final String idProviderPrefix )
     {
+        // Sorted by name so the id provider iteration order (after the default) is deterministic.
         return this.map.entrySet()
             .stream()
             .filter( entry -> entry.getKey().startsWith( idProviderPrefix ) )
-            .collect( Collectors.toMap( entry -> entry.getKey().replace( idProviderPrefix, "" ), Map.Entry::getValue ) );
+            .collect(
+                Collectors.toMap( entry -> entry.getKey().replace( idProviderPrefix, "" ), Map.Entry::getValue, ( a, b ) -> a,
+                                  TreeMap::new ) );
     }
 
     private String getString( final String name )

@@ -33,11 +33,11 @@ class DispatchServletImplTest
         this.filterPipeline = mock( FilterPipeline.class );
         this.servletPipeline = mock( ServletPipeline.class );
 
-        this.servlet = new DispatchServletImpl( Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.XP_CONNECTOR ) );
+        this.servlet = new DispatchServletImpl( Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.WEB_CONNECTOR ) );
         this.servlet.addFilterPipeline( this.filterPipeline,
-                                        Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.XP_CONNECTOR ) );
+                                        Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.WEB_CONNECTOR ) );
         this.servlet.addServletPipeline( this.servletPipeline,
-                                         Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.XP_CONNECTOR ) );
+                                         Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.WEB_CONNECTOR ) );
     }
 
     @Test
@@ -71,7 +71,7 @@ class DispatchServletImplTest
 
         this.servlet.service( req, res );
 
-        verify( req, times( 1 ) ).setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, DispatchConstants.XP_CONNECTOR );
+        verify( req, times( 1 ) ).setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, DispatchConstants.WEB_CONNECTOR );
         verify( this.filterPipeline, times( 1 ) ).filter( req, res, this.servletPipeline );
     }
 

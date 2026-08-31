@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.Set;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
@@ -14,6 +16,10 @@ import jakarta.servlet.http.HttpServletResponseWrapper;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.web.vhost.IdProviderFlow;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public class IdProviderResponseWrapper
     extends HttpServletResponseWrapper
@@ -131,7 +137,7 @@ public class IdProviderResponseWrapper
     private void handleError( final int sc )
         throws IOException
     {
-        if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() )
+        if ( !errorHandled && isUnauthorizedError( sc ) && !isErrorAlreadyHandled() && isInteractiveLoginEnabled() )
         {
             final IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create()
                 .functionName( "handle401" )
@@ -149,6 +155,19 @@ public class IdProviderResponseWrapper
     private boolean isUnauthorizedError( final int sc )
     {
         return 401 == sc || 403 == sc && !ContextAccessor.current().getAuthInfo().isAuthenticated();
+    }
+
+    // handle401 targets the default id provider: the first one of the vhost.
+    private boolean isInteractiveLoginEnabled()
+    {
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( request );
+        final Iterator<VirtualHostIdProvider> idProviders = virtualHost.getIdProviders().values().iterator();
+        if ( !idProviders.hasNext() )
+        {
+            return false;
+        }
+        final Set<String> flows = idProviders.next().getFlows();
+        return flows.isEmpty() || flows.contains( IdProviderFlow.LOGIN );
     }
 
     private boolean isErrorAlreadyHandled()

@@ -3,15 +3,20 @@ package com.enonic.xp.web.vhost.impl.config;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -173,6 +178,137 @@ class VirtualHostConfigMapTest
         assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
         assertEquals( 2, virtualHost.getIdProviderKeys().getSize() );
         assertTrue( virtualHost.getIdProviderKeys().contains( IdProviderKey.from( "myProvider" ) ) );
+    }
+
+    @Test
+    void testIdProviderFlows_default()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( IdProviderKey.system() ), virtualHost.getIdProviders().keySet() );
+        assertEquals( Set.of(), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
+    }
+
+    @Test
+    void testIdProviderFlows_explicit()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default&enabled=autologin" );
+        map.put( "mapping.myapp1.idProvider.myProvider", "enabled=login" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
+        assertEquals( Set.of( IdProviderFlow.LOGIN ), virtualHost.getIdProviders().get( IdProviderKey.from( "myProvider" ) ).getFlows() );
+    }
+
+    @Test
+    void testIdProviderFlows_additionalFlowsKept()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "enabled=autologin,Device" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        // names beyond the XP-managed flows are kept, lower-cased, for the id provider app's additional flows
+        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN, "device" ), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
+    }
+
+    @Test
+    void testIdProviderFlows_emptyListMeansNoRestriction()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "enabled=" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( IdProviderKey.system() ), virtualHost.getIdProviders().keySet() );
+        assertEquals( Set.of(), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
+    }
+
+    @Test
+    void testAllow_default()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( PrincipalKeys.empty(), virtualHost.getAllowedPrincipals() );
+    }
+
+    @Test
+    void testAllow_explicit()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.allow", "role:system.admin, user:system:deployer" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( PrincipalKeys.from( "role:system.admin", "user:system:deployer" ), virtualHost.getAllowedPrincipals() );
+    }
+
+    @Test
+    void testAllow_blankMeansNoRestriction()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.allow", " " );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( PrincipalKeys.empty(), virtualHost.getAllowedPrincipals() );
+    }
+
+    @Test
+    void testAllow_invalidFails()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.allow", "bogus" );
+
+        final VirtualHostConfigMap virtualHostConfigMap = new VirtualHostConfigMap( map );
+
+        assertThrows( IllegalArgumentException.class, virtualHostConfigMap::buildMappings );
+    }
+
+    @Test
+    void testEndpoint_default()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( "xp", virtualHost.getConnector() );
+    }
+
+    @Test
+    void testEndpoint_explicit()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.endpoint", "management" );
+
+        map.put( "mapping.myapp2.host", "example.com" );
+        map.put( "mapping.myapp2.endpoint", "statistics" );
+
+        map.put( "mapping.myapp3.host", "example.com" );
+        map.put( "mapping.myapp3.endpoint", "web" );
+
+        final Map<String, String> connectorByName = new VirtualHostConfigMap( map ).buildMappings()
+            .stream()
+            .collect( Collectors.toMap( VirtualHost::getName, VirtualHost::getConnector ) );
+
+        assertEquals( "api", connectorByName.get( "myapp1" ) );
+        assertEquals( "status", connectorByName.get( "myapp2" ) );
+        assertEquals( "xp", connectorByName.get( "myapp3" ) );
+    }
+
+    @Test
+    void testEndpoint_unknownFails()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.endpoint", "bogus" );
+
+        final VirtualHostConfigMap virtualHostConfigMap = new VirtualHostConfigMap( map );
+
+        assertThrows( IllegalArgumentException.class, virtualHostConfigMap::buildMappings );
     }
 
     @Test

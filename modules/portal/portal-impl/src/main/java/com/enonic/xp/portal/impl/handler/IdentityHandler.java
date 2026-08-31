@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +21,9 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
@@ -65,7 +68,8 @@ public class IdentityHandler
 
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
 
-        if ( !virtualHost.getIdProviderKeys().contains( idProviderKey ) )
+        final VirtualHostIdProvider idProvider = virtualHost.getIdProviders().get( idProviderKey );
+        if ( idProvider == null )
         {
             throw WebException.forbidden( String.format( "'%s' id provider is forbidden", idProviderKey ) );
         }
@@ -77,6 +81,16 @@ public class IdentityHandler
         }
 
         String idProviderFunction = matcher.group( "fun" );
+
+        // Custom endpoints are always dispatched: the id provider app gates them itself, guided by
+        // the vhost's flow list on the request.
+        final String requiredFlow = idProviderFunction == null ? null
+            : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
+        final Set<String> flows = idProvider.getFlows();
+        if ( requiredFlow != null && !flows.isEmpty() && !flows.contains( requiredFlow ) )
+        {
+            throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
+        }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 

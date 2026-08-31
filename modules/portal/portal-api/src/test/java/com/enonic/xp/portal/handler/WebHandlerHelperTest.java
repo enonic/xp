@@ -118,7 +118,7 @@ class WebHandlerHelperTest
     private static WebRequest createApiConnectorRequest( final String rawPath )
     {
         final HttpServletRequest rawRequest = mock( HttpServletRequest.class );
-        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.API_CONNECTOR );
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
 
         final WebRequest req = new WebRequest();
         req.setRawRequest( rawRequest );

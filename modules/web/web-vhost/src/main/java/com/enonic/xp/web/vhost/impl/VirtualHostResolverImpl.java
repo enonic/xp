@@ -8,12 +8,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
@@ -43,9 +45,10 @@ public class VirtualHostResolverImpl
     @Override
     public VirtualHost resolveVirtualHost( final HttpServletRequest req )
     {
-        String serverName = req.getServerName();
+        final String serverName = req.getServerName();
+        final String connector = (String) req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE );
         return virtualHostMappings.stream()
-            .map( virtualHost -> virtualHost.matches( serverName, req.getPathInfo() ) )
+            .map( virtualHost -> virtualHost.matches( serverName, req.getPathInfo(), connector ) )
             .filter( Objects::nonNull )
             .findFirst()
             .orElse( null );
@@ -66,8 +69,13 @@ public class VirtualHostResolverImpl
             this.pattern = originalHost.startsWith( "~" ) ? Pattern.compile( originalHost.substring( 1 ), Pattern.CASE_INSENSITIVE ) : null;
         }
 
-        VirtualHostMapping matches( String serverName, String pathInfo )
+        @Nullable
+        VirtualHostMapping matches( String serverName, @Nullable String pathInfo, String connector )
         {
+            if ( !virtualHost.getConnector().equals( connector ) )
+            {
+                return null;
+            }
             if ( pattern != null )
             {
                 Matcher matcher = pattern.matcher( serverName );
@@ -75,13 +83,15 @@ public class VirtualHostResolverImpl
                 {
                     return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(),
                                                    matcher.replaceAll( virtualHost.getTarget() ), createIdProvidersMapping(),
-                                                   virtualHost.getOrder(), virtualHost.getContext() );
+                                                   virtualHost.getOrder(), virtualHost.getContext(), virtualHost.getConnector(),
+                                                   virtualHost.getAllowedPrincipals() );
                 }
             }
             else if ( originalHost.equalsIgnoreCase( serverName ) && matchesSource( pathInfo ) )
             {
                 return new VirtualHostMapping( virtualHost.getName(), serverName, virtualHost.getSource(), virtualHost.getTarget(),
-                                               createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext() );
+                                               createIdProvidersMapping(), virtualHost.getOrder(), virtualHost.getContext(),
+                                               virtualHost.getConnector(), virtualHost.getAllowedPrincipals() );
             }
             return null;
         }
@@ -94,15 +104,8 @@ public class VirtualHostResolverImpl
 
         VirtualHostIdProvidersMapping createIdProvidersMapping()
         {
-            VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
-            if ( virtualHost.getDefaultIdProviderKey() != null )
-            {
-                idProvidersMapping.setDefaultIdProvider( virtualHost.getDefaultIdProviderKey() );
-            }
-            if ( virtualHost.getIdProviderKeys() != null )
-            {
-                virtualHost.getIdProviderKeys().forEach( idProvidersMapping::addIdProviderKey );
-            }
+            final VirtualHostIdProvidersMapping.Builder idProvidersMapping = VirtualHostIdProvidersMapping.create();
+            virtualHost.getIdProviders().forEach( ( key, idProvider ) -> idProvidersMapping.addIdProvider( key, idProvider.getFlows() ) );
             return idProvidersMapping.build();
         }
 

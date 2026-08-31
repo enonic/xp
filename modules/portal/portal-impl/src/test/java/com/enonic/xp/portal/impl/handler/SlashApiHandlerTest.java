@@ -134,7 +134,7 @@ class SlashApiHandlerTest
         request.setWebSocketContext( webSocketContext );
         request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
         servletRequestMock = mock( HttpServletRequest.class );
-        when( servletRequestMock.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.XP_CONNECTOR );
+        when( servletRequestMock.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
         request.setRawRequest( servletRequestMock );
     }
 

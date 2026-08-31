@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.idprovider;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -12,13 +15,20 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.filter.OncePerRequestFilter;
+import com.enonic.xp.web.vhost.IdProviderFlow;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
-@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api"})
+@Component(immediate = true, service = Filter.class, property = {"connector=xp", "connector=api", "connector=status"})
 @Order(-30)
 @WebFilter("/*")
 public final class IdProviderFilter
@@ -36,25 +46,61 @@ public final class IdProviderFilter
     protected void doHandle( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws Exception
     {
-        // If the current user is not authenticated
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        if ( !authInfo.isAuthenticated() )
+        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( req );
+
+        // handle401 (interactive login) exists on the web connector only.
+        final HttpServletResponse response =
+            DispatchConstants.WEB_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
+                ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
+                : res;
+
+        if ( !ContextAccessor.current().getAuthInfo().isAuthenticated() )
         {
-            //Executes the function autoLogin of the IdProvider
-            IdProviderControllerExecutionParams executionParams = IdProviderControllerExecutionParams.create().
-                functionName( "autoLogin" ).
-                servletRequest( req ).
-                build();
-            idProviderControllerService.execute( executionParams );
+            for ( final Map.Entry<IdProviderKey, VirtualHostIdProvider> idProvider : virtualHost.getIdProviders().entrySet() )
+            {
+                final Set<String> flows = idProvider.getValue().getFlows();
+                if ( !flows.isEmpty() && !flows.contains( IdProviderFlow.AUTOLOGIN ) )
+                {
+                    continue;
+                }
+
+                final PortalResponse portalResponse = idProviderControllerService.execute( IdProviderControllerExecutionParams.create()
+                                                                                               .functionName( "autoLogin" )
+                                                                                               .idProviderKey( idProvider.getKey() )
+                                                                                               .servletRequest( req )
+                                                                                               .build() );
+                // Id providers may authenticate without returning a response.
+                if ( portalResponse != null || ContextAccessor.current().getAuthInfo().isAuthenticated() )
+                {
+                    break;
+                }
+            }
         }
 
-        //Wraps the response to handle 403 errors
-        final HttpServletResponse response = DispatchConstants.XP_CONNECTOR.equals( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) )
-            ? new IdProviderResponseWrapper( idProviderControllerService, req, res )
-            : res;
+        final PrincipalKeys allow = virtualHost.getAllowedPrincipals();
+        if ( !allow.isEmpty() )
+        {
+            // The id provider endpoints are exempt, otherwise the allow list locks everyone out of
+            // interactive login. They live at exactly one location: right on the vhost target.
+            final String idProviderEndpoints =
+                ( "/".equals( virtualHost.getTarget() ) ? "" : virtualHost.getTarget() ) + "/_/idprovider/";
+            final String path = req.getPathInfo();
+            if ( path == null || !path.startsWith( idProviderEndpoints ) )
+            {
+                final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+                if ( !authInfo.isAuthenticated() )
+                {
+                    response.sendError( HttpServletResponse.SC_UNAUTHORIZED );
+                    return;
+                }
+                if ( authInfo.getPrincipals().stream().noneMatch( allow::contains ) )
+                {
+                    response.sendError( HttpServletResponse.SC_FORBIDDEN );
+                    return;
+                }
+            }
+        }
 
-        final IdProviderRequestWrapper requestWrapper = new IdProviderRequestWrapper( req );
-
-        chain.doFilter( requestWrapper, response );
+        chain.doFilter( new IdProviderRequestWrapper( req ), response );
     }
 }

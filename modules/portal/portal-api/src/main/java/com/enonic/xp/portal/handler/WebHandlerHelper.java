@@ -43,7 +43,7 @@ public final class WebHandlerHelper
 
         final String prefix;
         final String basePath;
-        if ( DispatchConstants.API_CONNECTOR.equals( connector ) )
+        if ( DispatchConstants.MANAGEMENT_CONNECTOR.equals( connector ) )
         {
             prefix = "/";
             basePath = req.getRawPath();

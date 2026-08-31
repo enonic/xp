@@ -2,6 +2,7 @@ package com.enonic.xp.lib.vhost.mapper;
 
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.web.vhost.VirtualHost;
 
 public class VirtualHostMapper
@@ -23,21 +24,19 @@ public class VirtualHostMapper
         gen.value( "target", virtualHost.getTarget() );
         gen.value( "host", virtualHost.getHost() );
 
-        if ( virtualHost.getDefaultIdProviderKey() != null )
+        final IdProviderKey defaultIdProviderKey = virtualHost.getDefaultIdProviderKey();
+        if ( defaultIdProviderKey != null )
         {
-            gen.value( "defaultIdProviderKey", virtualHost.getDefaultIdProviderKey().toString() );
+            gen.value( "defaultIdProviderKey", defaultIdProviderKey.toString() );
         }
 
-        if ( virtualHost.getIdProviderKeys() != null )
-        {
-            gen.array( "idProviderKeys" );
-            virtualHost.getIdProviderKeys().forEach( idProviderKey -> {
-                gen.map();
-                gen.value( "idProviderKey", idProviderKey.toString() );
-                gen.end();
-            } );
+        gen.array( "idProviderKeys" );
+        virtualHost.getIdProviders().keySet().forEach( idProviderKey -> {
+            gen.map();
+            gen.value( "idProviderKey", idProviderKey.toString() );
             gen.end();
-        }
+        } );
+        gen.end();
     }
 
 }
