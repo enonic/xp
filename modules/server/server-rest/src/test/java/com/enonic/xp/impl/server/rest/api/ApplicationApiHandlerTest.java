@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.server.rest;
+package com.enonic.xp.impl.server.rest.api;
 
 import java.time.Instant;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.mockito.ArgumentCaptor;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.impl.server.rest.ApplicationResourceService;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.portal.sse.SseManager;
@@ -349,5 +350,52 @@ class ApplicationApiHandlerTest
         when( application.isStarted() ).thenReturn( true );
         when( application.getModifiedTime() ).thenReturn( Instant.parse( "2012-01-01T00:00:00.00Z" ) );
         return application;
+    }
+
+    @Test
+    void handleList()
+    {
+        final ApplicationInfoJson info = ApplicationInfoJson.create( createApplication(), null, false );
+        when( applicationResourceService.getInstalledApplications() ).thenReturn( java.util.List.of( info ) );
+
+        final WebRequest request = ManagementApiTestSupport.request( HttpMethod.GET, "/server:app" );
+
+        final WebResponse response = handler.handle( request );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertTrue( String.valueOf( response.getBody() ).startsWith( "{\"applications\":[" ) );
+    }
+
+    @Test
+    void handleWatchAndEventsAlias()
+    {
+        assertNotNull( handler.handle( ManagementApiTestSupport.request( HttpMethod.GET, "/server:app/watch" ) ).getSse() );
+        assertNotNull( handler.handle( ManagementApiTestSupport.request( HttpMethod.GET, "/server:app/events" ) ).getSse() );
+    }
+
+    @Test
+    void handlePullAndInstallUrlAlias()
+    {
+        final ApplicationInfoJson resultJson = ApplicationInfoJson.create( createApplication(), null, false );
+        when( applicationResourceService.installUrl( any() ) ).thenReturn( resultJson );
+
+        final WebRequest pull = ManagementApiTestSupport.request( HttpMethod.POST, "/server:app/pull", "{\"URL\":\"https://repo.enonic.com/app.jar\"}" );
+        assertEquals( HttpStatus.OK, handler.handle( pull ).getStatus() );
+
+        final WebRequest legacy = ManagementApiTestSupport.request( HttpMethod.POST, "/server:app/installUrl", "{\"URL\":\"https://repo.enonic.com/app.jar\"}" );
+        assertEquals( HttpStatus.OK, handler.handle( legacy ).getStatus() );
+    }
+
+    @Test
+    void pullIsItsOwnVerb()
+    {
+        final java.util.Map<String, String> uploadOnly = java.util.Map.of( "api.server:app.verbs", "list, install" );
+
+        final WebRequest pull = ManagementApiTestSupport.request( HttpMethod.POST, "/server:app/pull", "{\"URL\":\"https://x/app.jar\"}" );
+        assertEquals( HttpStatus.FORBIDDEN, ManagementApiTestSupport.withVirtualHostContext( uploadOnly, () -> handler.handle( pull ) ).getStatus() );
+
+        final WebRequest legacy = ManagementApiTestSupport.request( HttpMethod.POST, "/server:app/installUrl", "{\"URL\":\"https://x/app.jar\"}" );
+        assertEquals( HttpStatus.FORBIDDEN, ManagementApiTestSupport.withVirtualHostContext( uploadOnly, () -> handler.handle( legacy ) ).getStatus() );
+        verify( applicationResourceService, never() ).installUrl( any() );
     }
 }

@@ -136,4 +136,24 @@ class ProjectsSyncTaskTest
         }
         return project.build();
     }
+
+    @Test
+    void syncSelected()
+    {
+        final Project parent = createProject( "parent", null );
+        final Project child1 = createProject( "child1", "parent" );
+        final Project child2 = createProject( "child2", "child1" );
+
+        when( projectService.list() ).thenReturn( Projects.create().addAll( Set.of( parent, child1, child2 ) ).build() );
+
+        ProjectsSyncTask.create()
+            .projectService( projectService )
+            .syncContentService( syncContentService )
+            .projects( List.of( child2.getName() ) )
+            .build()
+            .run( TaskId.from( "taskId" ), mock( ProgressReporter.class, withSettings().stubOnly() ) );
+
+        verify( syncContentService ).syncProject( paramsCaptor.capture() );
+        assertThat( paramsCaptor.getValue().getTargetProject() ).isEqualTo( child2.getName() );
+    }
 }

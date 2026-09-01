@@ -349,4 +349,45 @@ class VirtualHostConfigMapTest
         final Map<String, String> context = virtualHosts.get( 0 ).getContext();
         assertEquals( "propertyValue", context.get( "propertyName" ) );
     }
+
+    @Test
+    void testApiContextKeys()
+    {
+        map.put( "mapping.mgmt.host", "mgmt.example.com" );
+        map.put( "mapping.mgmt.source", "/" );
+        map.put( "mapping.mgmt.target", "/" );
+        map.put( "mapping.mgmt.endpoint", "management" );
+        map.put( "mapping.mgmt.context.api.rest.enabled", "false" );
+        map.put( "mapping.mgmt.context.api.server:snapshot.verbs", "list, create" );
+        map.put( "mapping.mgmt.context.api.com.enonic.app.ops:cluster.nodes", "a, b" );
+        map.put( "mapping.mgmt.context.other.key", "kept" );
+
+        final Map<String, String> context = new VirtualHostConfigMap( map ).buildMappings().get( 0 ).getContext();
+
+        assertEquals( "false", context.get( "api.rest.enabled" ) );
+        assertEquals( "list, create", context.get( "api.server:snapshot.verbs" ) );
+        assertEquals( "a, b", context.get( "api.com.enonic.app.ops:cluster.nodes" ) );
+        assertEquals( "kept", context.get( "other.key" ) );
+    }
+
+    @Test
+    void testApiContextKeyWithoutApi()
+    {
+        // the colon was not escaped in the .cfg file, so the properties parser cut the key at it
+        map.put( "mapping.mgmt.host", "mgmt.example.com" );
+        map.put( "mapping.mgmt.context.api.server", "snapshot.verbs = list" );
+
+        final IllegalArgumentException e = assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertTrue( e.getMessage().contains( "mapping.mgmt.context.api.server" ) );
+        assertTrue( e.getMessage().contains( "escaped" ) );
+    }
+
+    @Test
+    void testApiContextKeyWithoutSetting()
+    {
+        map.put( "mapping.mgmt.host", "mgmt.example.com" );
+        map.put( "mapping.mgmt.context.api.server:snapshot", "list" );
+
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
 }

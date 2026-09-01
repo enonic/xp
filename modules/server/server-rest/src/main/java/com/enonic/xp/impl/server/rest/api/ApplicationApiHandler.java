@@ -1,4 +1,4 @@
-package com.enonic.xp.impl.server.rest;
+package com.enonic.xp.impl.server.rest.api;
 
 import java.util.UUID;
 
@@ -14,9 +14,9 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.UuidHelper;
-import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
+import com.enonic.xp.impl.server.rest.ApplicationResourceService;
 import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
@@ -24,7 +24,6 @@ import com.enonic.xp.impl.server.rest.model.ApplicationJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationUninstalledJson;
 import com.enonic.xp.impl.server.rest.model.ListApplicationJson;
-import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.HttpMethod;
@@ -37,15 +36,23 @@ import com.enonic.xp.web.sse.SseEvent;
 import com.enonic.xp.web.sse.SseEventType;
 import com.enonic.xp.web.sse.SseMessage;
 
-@Component(property = {"key=server:app", "title=Applications API", "mount=management", "allowedPrincipals=role:system.admin"})
+/**
+ * {@code server:app} - installed applications. {@code install} takes the bundle as a multipart upload; {@code pull}
+ * fetches it from a URL the server can reach (with its own allow-list and checksum policy, see
+ * {@code com.enonic.xp.server.management.app.cfg}), so a vhost can grant one without the other. {@code /installUrl} and
+ * {@code /events} are aliases of {@code /pull} and {@code /watch}.
+ */
+@Component(service = UniversalApiHandler.class, property = {"key=server:app", "title=Applications API", "mount=management",
+    "allowedPrincipals=role:system.admin"})
 public class ApplicationApiHandler
-    implements UniversalApiHandler, EventListener
+    extends ManagementApiHandler
+    implements EventListener
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationApiHandler.class );
 
-    private static final ObjectMapper OBJECT_MAPPER = ObjectMapperHelper.create();
+    private static final ObjectMapper OBJECT_MAPPER = MAPPER;
 
-    private static final String APP_API = "server:app";
+    static final String KEY = "server:app";
 
     private static final String SSE_GROUP = "server:app:events";
 
@@ -71,42 +78,31 @@ public class ApplicationApiHandler
     public ApplicationApiHandler( @Reference final ApplicationResourceService applicationResourceService,
                                   @Reference final MultipartService multipartService, @Reference final SseManager sseManager )
     {
+        super( KEY );
         this.applicationResourceService = applicationResourceService;
         this.multipartService = multipartService;
         this.sseManager = sseManager;
+
+        route( HttpMethod.GET, "/", "list", ( request, params ) -> handleList() );
+        route( HttpMethod.POST, "/install", "install", ( request, params ) -> handleInstall( request ) );
+        route( HttpMethod.POST, "/pull", "pull", ( request, params ) -> handleInstallUrl( request ) );
+        route( HttpMethod.POST, "/installUrl", "pull", ( request, params ) -> handleInstallUrl( request ) );
+        route( HttpMethod.POST, "/uninstall", "uninstall", ( request, params ) -> handleUninstall( request ) );
+        route( HttpMethod.POST, "/start", "start", ( request, params ) -> handleStart( request ) );
+        route( HttpMethod.POST, "/stop", "stop", ( request, params ) -> handleStop( request ) );
+        route( HttpMethod.GET, "/watch", "watch", ( request, params ) -> handleWatch() );
+        route( HttpMethod.GET, "/events", "watch", ( request, params ) -> handleWatch() );
     }
 
-    @Override
-    public WebResponse handle( final WebRequest request )
+    private WebResponse handleWatch()
     {
-        final String apiPath = WebHandlerHelper.findApiPath( request, APP_API );
+        return WebResponse.create().status( HttpStatus.OK ).sse( SseConfig.empty() ).build();
+    }
 
-        if ( "/events".equals( apiPath ) && request.getMethod() == HttpMethod.GET )
-        {
-            return WebResponse.create().status( HttpStatus.OK ).sse( SseConfig.empty() ).build();
-        }
-
-        if ( request.getMethod() != HttpMethod.POST )
-        {
-            return WebResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
-        }
-
-        try
-        {
-            return switch ( apiPath )
-            {
-                case "/install" -> handleInstall( request );
-                case "/installUrl" -> handleInstallUrl( request );
-                case "/start" -> handleStart( request );
-                case "/stop" -> handleStop( request );
-                case "/uninstall" -> handleUninstall( request );
-                default -> WebResponse.create().status( HttpStatus.NOT_FOUND ).build();
-            };
-        }
-        catch ( JsonProcessingException e )
-        {
-            return WebResponse.create().status( HttpStatus.BAD_REQUEST ).build();
-        }
+    private WebResponse handleList()
+        throws JsonProcessingException
+    {
+        return json( new ListApplicationJson( applicationResourceService.getInstalledApplications().stream().map( ApplicationJson::new ).toList() ) );
     }
 
     @Override
