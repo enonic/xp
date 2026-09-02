@@ -6,16 +6,25 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.export.ExportService;
+import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ImportHandlerTest
@@ -51,8 +60,37 @@ class ImportHandlerTest
             .addError( "error", new NoStacktraceException() )
             .build();
 
-        when( exportService.importNodes( any() ) ).thenReturn( result );
+        final ArgumentCaptor<ImportNodesParams> captor = ArgumentCaptor.forClass( ImportNodesParams.class );
+        when( exportService.importNodes( captor.capture() ) ).thenReturn( result );
         runScript( "/lib/xp/examples/export/importNodes.js" );
+
+        final ImportNodesParams params = captor.getValue();
+        assertNotNull( params.getSource() );
+        assertNotNull( params.getXslt() );
+        assertEquals( "/content", params.getTargetNodePath().toString() );
+    }
+
+    @Test
+    void importNodes_withoutXslt()
+    {
+        final ArgumentCaptor<ImportNodesParams> captor = ArgumentCaptor.forClass( ImportNodesParams.class );
+        when( exportService.importNodes( captor.capture() ) ).thenReturn( NodeImportResult.create().build() );
+
+        runScript( "/test/importNodes-without-xslt.js" );
+
+        final ImportNodesParams params = captor.getValue();
+        assertNull( params.getXslt() );
+        assertEquals( "my-export", params.getExportName() );
+        assertEquals( "/content", params.getTargetNodePath().toString() );
+    }
+
+    @Test
+    void importNodes_rejectsXsltFileName()
+    {
+        final RuntimeException e = assertThrows( RuntimeException.class, () -> runScript( "/test/importNodes-with-xslt-string.js" ) );
+
+        assertTrue( e.getMessage().contains( "xslt must be an application resource key" ), e.getMessage() );
+        verify( exportService, never() ).importNodes( any() );
     }
 
     private static class NoStacktraceException

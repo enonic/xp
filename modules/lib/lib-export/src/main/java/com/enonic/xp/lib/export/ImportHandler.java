@@ -61,9 +61,9 @@ public class ImportHandler
         {
             paramsBuilder.xslt( toVirtualFile( (ResourceKey) xslt ) );
         }
-        else
+        else if ( xslt != null )
         {
-            paramsBuilder.xsltFileName( xslt.toString() );
+            throw new IllegalArgumentException( "xslt must be an application resource key" );
         }
 
         if ( xsltParams != null )

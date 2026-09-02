@@ -1,8 +1,12 @@
 package com.enonic.xp.impl.server.rest.model;
 
 import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import static java.util.Objects.requireNonNull;
 
@@ -16,10 +20,6 @@ public final class ImportNodesRequestJson
 
     private final boolean importWithPermissions;
 
-    private final String xslSource;
-
-    private final Map<String, Object> xslParams;
-
     @JsonCreator
     public ImportNodesRequestJson( @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
@@ -27,18 +27,18 @@ public final class ImportNodesRequestJson
                                    @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
                                    @JsonProperty("xslSource") final String xslSource, //
                                    @JsonProperty("xslParams") final Map<String, Object> xslParams )
-
     {
-
         requireNonNull( exportName, "exportName is required" );
         requireNonNull( targetRepoPath, "targetRepoPath is required" );
+
+        // Older clients still send these keys; XSL transformation of server-side imports is not supported.
+        Preconditions.checkArgument( Strings.isNullOrEmpty( xslSource ) && ( xslParams == null || xslParams.isEmpty() ),
+                                     "xslSource and xslParams are not supported" );
 
         this.targetRepoPath = RepoPath.from( targetRepoPath );
         this.exportName = exportName;
         this.importWithIds = importWithIds != null ? importWithIds : true;
         this.importWithPermissions = importWithPermissions != null ? importWithPermissions : true;
-        this.xslSource = xslSource;
-        this.xslParams = xslParams;
     }
 
     public RepoPath getTargetRepoPath()
@@ -59,16 +59,5 @@ public final class ImportNodesRequestJson
     public boolean isImportWithPermissions()
     {
         return importWithPermissions;
-    }
-
-
-    public String getXslSource()
-    {
-        return xslSource;
-    }
-
-    public Map<String, Object> getXslParams()
-    {
-        return xslParams;
     }
 }

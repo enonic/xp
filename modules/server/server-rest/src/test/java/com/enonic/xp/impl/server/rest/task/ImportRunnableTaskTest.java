@@ -51,8 +51,6 @@ class ImportRunnableTaskTest
             .exportName( params.getExportName() )
             .importWithIds( params.isImportWithIds() )
             .importWithPermissions( params.isImportWithPermissions() )
-            .xslSource( params.getXslSource() )
-            .xslParams( params.getXslParams() )
             .exportService( exportService )
             .build();
     }

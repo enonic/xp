@@ -108,8 +108,6 @@ public final class ImportNodesParams
 
         private VirtualFile xslt;
 
-        private String xsltFileName;
-
         private Map<String, Object> xsltParams;
 
         private NodeImportListener nodeImportListener;
@@ -156,12 +154,6 @@ public final class ImportNodesParams
             return this;
         }
 
-        public Builder xsltFileName( final String xsltFileName )
-        {
-            this.xsltFileName = xsltFileName;
-            return this;
-        }
-
         public Builder xsltParams( final Map<String, Object> xsltParams )
         {
             this.xsltParams = xsltParams;
@@ -197,12 +189,6 @@ public final class ImportNodesParams
             if ( exportName != null )
             {
                 Preconditions.checkArgument( FileNames.isSafeFileName( exportName ), "Invalid export name" );
-            }
-
-            Preconditions.checkArgument( !( xsltFileName != null && xslt != null ), "xsltFileName and xslt are mutually exclusive" );
-            if ( xsltFileName != null )
-            {
-                Preconditions.checkArgument( FileNames.isSafeFileName( xsltFileName ), "Invalid xslt file name" );
             }
         }
 

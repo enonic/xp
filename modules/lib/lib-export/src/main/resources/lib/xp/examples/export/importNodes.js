@@ -7,7 +7,7 @@ var t = require('/lib/xp/testing');
 let importNodes = exportLib.importNodes({
     source: resolve('/import'),
     targetNodePath: '/content',
-    xslt: 'transform.xslt',
+    xslt: resolve('/import/transform.xsl'),
     xsltParams: {'k': 'v'},
     includeNodeIds: true,
     includePermissions: true
