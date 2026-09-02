@@ -30,7 +30,7 @@ function checkRequired<T extends object, K extends keyof T>(
 export interface ImportNodesParams {
     source: string | object;
     targetNodePath: string;
-    xslt?: ResourceKey;
+    xslt?: string | ResourceKey;
     xsltParams?: Record<string, unknown>;
     includeNodeIds?: boolean;
     includePermissions?: boolean;
@@ -59,7 +59,7 @@ interface ImportHandler {
 
     setTargetNodePath(value: string): void;
 
-    setXslt(value: ResourceKey | null): void;
+    setXslt(value: string | ResourceKey | null): void;
 
     setXsltParams(value: ScriptValue | null): void;
 
@@ -88,7 +88,7 @@ interface ImportHandler {
  * @param {object} params JSON with the parameters.
  * @param {string|object} params.source Either name of nodes-export located in exports directory or application resource key.
  * @param {string} params.targetNodePath Target path for imported nodes.
- * @param {object} [params.xslt] Application resource key of an XSLT file used to transform node XML before import.
+ * @param {object} [params.xslt] Application resource key of an XSLT file used to transform node XML before import. A file name (string) is deprecated and ignored.
  * @param {object} [params.xsltParams] Parameters used in XSLT transformation.
  * @param {boolean} [params.includeNodeIds=false] Set to true to use node IDs from the import, false to generate new node IDs.
  * @param {boolean} [params.includePermissions=false] Set to true to use Node permissions from the import, false to use target node permissions.

@@ -19,12 +19,7 @@ import com.enonic.xp.util.BinaryReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ImportHandlerTest
@@ -85,12 +80,14 @@ class ImportHandlerTest
     }
 
     @Test
-    void importNodes_rejectsXsltFileName()
+    void importNodes_ignoresDeprecatedXsltFileName()
     {
-        final RuntimeException e = assertThrows( RuntimeException.class, () -> runScript( "/test/importNodes-with-xslt-string.js" ) );
+        final ArgumentCaptor<ImportNodesParams> captor = ArgumentCaptor.forClass( ImportNodesParams.class );
+        when( exportService.importNodes( captor.capture() ) ).thenReturn( NodeImportResult.create().build() );
 
-        assertTrue( e.getMessage().contains( "xslt must be an application resource key" ), e.getMessage() );
-        verify( exportService, never() ).importNodes( any() );
+        runScript( "/test/importNodes-with-xslt-string.js" );
+
+        assertNull( captor.getValue().getXslt() );
     }
 
     private static class NoStacktraceException

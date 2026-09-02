@@ -57,13 +57,10 @@ public class ImportHandler
             paramsBuilder.exportName( source.toString() );
         }
 
+        // A plain file name (deprecated: XSLT file in the exports directory) is ignored.
         if ( xslt instanceof ResourceKey )
         {
             paramsBuilder.xslt( toVirtualFile( (ResourceKey) xslt ) );
-        }
-        else if ( xslt != null )
-        {
-            throw new IllegalArgumentException( "xslt must be an application resource key" );
         }
 
         if ( xsltParams != null )
