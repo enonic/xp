@@ -155,7 +155,7 @@ public final class ImportNodesParams
         }
 
         /**
-         * @deprecated XSLT files in the exports directory are not supported. The value is ignored; use {@link #xslt(VirtualFile)}.
+         * @deprecated ignored, use {@link #xslt(VirtualFile)}
          */
         @Deprecated
         public Builder xsltFileName( final String xsltFileName )

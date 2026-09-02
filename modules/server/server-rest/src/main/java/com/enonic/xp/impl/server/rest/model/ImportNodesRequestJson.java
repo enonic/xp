@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static java.util.Objects.requireNonNull;
 
-// xslSource and xslParams are deprecated and ignored: XSLT files in the exports directory are not supported.
 @JsonIgnoreProperties({"xslSource", "xslParams"})
 public final class ImportNodesRequestJson
 {
