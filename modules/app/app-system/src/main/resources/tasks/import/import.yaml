@@ -37,10 +37,3 @@ form:
     occurrences:
       min: 0
       max: 1
-  - type: "TextLine"
-    name: "xslSource"
-    label: "XSLT file"
-    occurrences:
-      min: 0
-      max: 1
-# xslParams: an optional set of XSLT parameters, passed as task data (no form item type describes a free-form set).

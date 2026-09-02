@@ -8,7 +8,5 @@ exports.run = function (params) {
     bean.setNodePath(__.nullOrValue(params.nodePath));
     bean.setImportWithIds(params.importWithIds !== false);
     bean.setImportWithPermissions(params.importWithPermissions !== false);
-    bean.setXslSource(__.nullOrValue(params.xslSource));
-    bean.setXslParams(params.xslParams ? __.toScriptValue(params.xslParams) : null);
     bean.execute();
 };

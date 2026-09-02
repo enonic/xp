@@ -1,7 +1,6 @@
 package com.enonic.xp.app.system;
 
 import java.nio.file.Path;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,6 +75,7 @@ class ImportTaskHandlerTest
         assertTrue( paramsCaptor.getValue().isImportNodeIds() );
         assertTrue( paramsCaptor.getValue().isImportPermissions() );
         assertNull( paramsCaptor.getValue().getXslt() );
+        assertNull( paramsCaptor.getValue().getXsltParams() );
 
         final ArgumentCaptor<ProgressReportParams> progressCaptor = ArgumentCaptor.forClass( ProgressReportParams.class );
         verify( progressReporter ).progress( progressCaptor.capture() );
@@ -84,14 +84,14 @@ class ImportTaskHandlerTest
     }
 
     @Test
-    void importNodesXsl()
+    void importNodesWithoutIds()
     {
         when( exportService.importNodes( paramsCaptor.capture() ) ).thenReturn( NodeImportResult.create().build() );
 
-        TaskProgressReporterContext.withContext( ( id, reporter ) -> runFunction( "/test/ImportTaskHandlerTest.js", "importNodesXsl" ) )
+        TaskProgressReporterContext.withContext( ( id, reporter ) -> runFunction( "/test/ImportTaskHandlerTest.js", "importNodesWithoutIds" ) )
             .run( TaskId.from( "task" ), progressReporter );
 
         assertFalse( paramsCaptor.getValue().isImportNodeIds() );
-        assertEquals( Map.of( "k", "v" ), paramsCaptor.getValue().getXsltParams() );
+        assertTrue( paramsCaptor.getValue().isImportPermissions() );
     }
 }

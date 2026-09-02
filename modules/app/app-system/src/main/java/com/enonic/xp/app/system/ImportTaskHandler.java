@@ -1,7 +1,5 @@
 package com.enonic.xp.app.system;
 
-import java.util.Map;
-
 import com.enonic.xp.app.system.json.NodeImportResultJson;
 import com.enonic.xp.app.system.listener.ImportListenerImpl;
 import com.enonic.xp.branch.Branch;
@@ -12,17 +10,16 @@ import com.enonic.xp.export.ImportNodesParams;
 import com.enonic.xp.export.NodeImportResult;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.repository.RepositoryId;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.TaskProgressReporterContext;
 
-import static com.google.common.base.Strings.emptyToNull;
-
 /**
- * The {@code com.enonic.xp.app.system:import} task: imports {@code $XP_HOME/data/export/<name>} into a node path.
+ * The {@code com.enonic.xp.app.system:import} task: imports {@code $XP_HOME/data/export/<name>} into a node path. No XSLT
+ * transformation: a stylesheet read from the exports directory has no provenance, so only {@code lib-export} with an
+ * application resource can transform on import.
  */
 public class ImportTaskHandler
     implements ScriptBean
@@ -40,10 +37,6 @@ public class ImportTaskHandler
     private boolean importWithIds = true;
 
     private boolean importWithPermissions = true;
-
-    private String xslSource;
-
-    private Map<String, Object> xslParams;
 
     public void setExportName( final String exportName )
     {
@@ -75,16 +68,6 @@ public class ImportTaskHandler
         this.importWithPermissions = importWithPermissions;
     }
 
-    public void setXslSource( final String xslSource )
-    {
-        this.xslSource = xslSource;
-    }
-
-    public void setXslParams( final ScriptValue xslParams )
-    {
-        this.xslParams = xslParams == null ? null : xslParams.getMap();
-    }
-
     public void execute()
     {
         final ProgressReporter progressReporter = TaskProgressReporterContext.current();
@@ -98,8 +81,6 @@ public class ImportTaskHandler
                                                             .targetNodePath( new NodePath( nodePath ) )
                                                             .includeNodeIds( importWithIds )
                                                             .includePermissions( importWithPermissions )
-                                                            .xsltFileName( emptyToNull( xslSource ) )
-                                                            .xsltParams( xslParams )
                                                             .nodeImportListener( new ImportListenerImpl( progressReporter ) )
                                                             .build() ) );
 

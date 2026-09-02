@@ -16,6 +16,7 @@ import com.enonic.xp.web.WebResponse;
 
 import static com.enonic.xp.impl.server.rest.api.ManagementApiTestSupport.request;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -90,14 +91,15 @@ class ExportApiHandlerTest
     }
 
     @Test
-    void loadPassesXslParams()
+    void loadIgnoresRetiredXslKeys()
     {
-        handler.handle( request( HttpMethod.POST, "/server:export/nightly/load",
-                                 "{\"targetRepoPath\":\"a:b:/\",\"xslSource\":\"t.xsl\",\"xslParams\":{\"k\":\"v\"}}" ) );
+        final WebResponse response = handler.handle( request( HttpMethod.POST, "/server:export/nightly/load",
+                                                              "{\"targetRepoPath\":\"a:b:/\",\"xslSource\":\"t.xsl\",\"xslParams\":{\"k\":\"v\"}}" ) );
 
+        assertEquals( HttpStatus.ACCEPTED, response.getStatus() );
         final SubmitTaskParams params = submitted();
-        assertEquals( "t.xsl", params.getData().getString( "xslSource" ) );
-        assertEquals( "v", params.getData().getSet( "xslParams" ).getString( "k" ) );
+        assertNull( params.getData().getString( "xslSource" ) );
+        assertNull( params.getData().getSet( "xslParams" ) );
     }
 
     private SubmitTaskParams submitted()

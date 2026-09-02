@@ -7,9 +7,9 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ExportInfo;
 import com.enonic.xp.export.ExportService;
@@ -96,21 +96,15 @@ public class ExportApiHandler
         data.addString( "nodePath", target.getNodePath().toString() );
         data.addBoolean( "importWithIds", load.importWithIds );
         data.addBoolean( "importWithPermissions", load.importWithPermissions );
-        if ( load.xslSource != null )
-        {
-            data.addString( "xslSource", load.xslSource );
-        }
-        if ( load.xslParams != null && !load.xslParams.isEmpty() )
-        {
-            final PropertySet xslParams = data.addSet( "xslParams" );
-            load.xslParams.forEach( ( key, value ) -> xslParams.addString( key, String.valueOf( value ) ) );
-        }
         return accepted( taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.IMPORT ).data( data ).build() ) );
     }
 
     /**
-     * Body of {@code POST /{name}/load}; the export is named by the path.
+     * Body of {@code POST /{name}/load}; the export is named by the path. The legacy {@code xslSource} and
+     * {@code xslParams} keys are accepted and ignored: a stylesheet is only applied through {@code lib-export} from an
+     * application resource.
      */
+    @JsonIgnoreProperties({"xslSource", "xslParams"})
     public static final class LoadJson
     {
         public String targetRepoPath;
@@ -118,9 +112,5 @@ public class ExportApiHandler
         public boolean importWithIds = true;
 
         public boolean importWithPermissions = true;
-
-        public String xslSource;
-
-        public Map<String, Object> xslParams;
     }
 }
