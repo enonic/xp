@@ -9,15 +9,15 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ExportInfo;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.RepoPath;
-import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
-import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
+import com.enonic.xp.impl.server.rest.task.SystemTasks;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
-import com.enonic.xp.task.SubmitLocalTaskParams;
-import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
@@ -66,18 +66,16 @@ public class ExportApiHandler
             throw new IllegalArgumentException( "[exportName] and [sourceRepoPath] are required" );
         }
 
-        final ExportRunnableTask task = ExportRunnableTask.create()
-            .repositoryId( export.getSourceRepoPath().getRepositoryId() )
-            .branch( export.getSourceRepoPath().getBranch() )
-            .nodePath( export.getSourceRepoPath().getNodePath() )
-            .exportName( export.getExportName() )
-            .batchSize( export.getBatchSize() )
-            .exportService( exportService )
-            .build();
-
-        final TaskId taskId = taskService.submitLocalTask(
-            SubmitLocalTaskParams.create().runnableTask( task ).description( "Export " + export.getExportName() ).build() );
-        return accepted( taskId );
+        final PropertyTree data = new PropertyTree();
+        data.addString( "repository", export.getSourceRepoPath().getRepositoryId().toString() );
+        data.addString( "branch", export.getSourceRepoPath().getBranch().getValue() );
+        data.addString( "nodePath", export.getSourceRepoPath().getNodePath().toString() );
+        data.addString( "exportName", export.getExportName() );
+        if ( export.getBatchSize() != null )
+        {
+            data.addLong( "batchSize", export.getBatchSize().longValue() );
+        }
+        return accepted( taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.EXPORT ).data( data ).build() ) );
     }
 
     private WebResponse load( final WebRequest request, final Map<String, String> params )
@@ -91,21 +89,23 @@ public class ExportApiHandler
         }
         final RepoPath target = RepoPath.from( load.targetRepoPath );
 
-        final ImportRunnableTask task = ImportRunnableTask.create()
-            .repositoryId( target.getRepositoryId() )
-            .branch( target.getBranch() )
-            .nodePath( target.getNodePath() )
-            .exportName( name )
-            .importWithIds( load.importWithIds )
-            .importWithPermissions( load.importWithPermissions )
-            .xslSource( load.xslSource )
-            .xslParams( load.xslParams )
-            .exportService( exportService )
-            .build();
-
-        final TaskId taskId =
-            taskService.submitLocalTask( SubmitLocalTaskParams.create().runnableTask( task ).description( "Import " + name ).build() );
-        return accepted( taskId );
+        final PropertyTree data = new PropertyTree();
+        data.addString( "exportName", name );
+        data.addString( "repository", target.getRepositoryId().toString() );
+        data.addString( "branch", target.getBranch().getValue() );
+        data.addString( "nodePath", target.getNodePath().toString() );
+        data.addBoolean( "importWithIds", load.importWithIds );
+        data.addBoolean( "importWithPermissions", load.importWithPermissions );
+        if ( load.xslSource != null )
+        {
+            data.addString( "xslSource", load.xslSource );
+        }
+        if ( load.xslParams != null && !load.xslParams.isEmpty() )
+        {
+            final PropertySet xslParams = data.addSet( "xslParams" );
+            load.xslParams.forEach( ( key, value ) -> xslParams.addString( key, String.valueOf( value ) ) );
+        }
+        return accepted( taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.IMPORT ).data( data ).build() ) );
     }
 
     /**

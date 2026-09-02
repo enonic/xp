@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.dump.DumpService;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpMethod;
@@ -35,7 +35,7 @@ class DumpApiHandlerTest
         dumpService = mock( DumpService.class );
         taskService = mock( TaskService.class );
         handler = new DumpApiHandler( dumpService, taskService );
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
     }
 
     @Test
@@ -65,14 +65,36 @@ class DumpApiHandlerTest
     }
 
     @Test
+    void createPassesParams()
+    {
+        handler.handle( request( HttpMethod.POST, "/server:dump", "{\"name\":\"full\",\"includeVersions\":true,\"maxAge\":30,\"repositories\":[\"a\"]}" ) );
+
+        final SubmitTaskParams params = submitted( 1 ).get( 0 );
+        assertEquals( "com.enonic.xp.app.system:dump", params.getDescriptorKey().toString() );
+        assertEquals( "full", params.getData().getString( "name" ) );
+        assertEquals( Boolean.TRUE, params.getData().getBoolean( "includeVersions" ) );
+        assertEquals( 30L, params.getData().getLong( "maxAge" ) );
+        assertEquals( "a", params.getData().getString( "repositories" ) );
+    }
+
+    @Test
     void loadAndUpgradeTakeNameFromPath()
     {
-        assertEquals( HttpStatus.ACCEPTED, handler.handle( request( HttpMethod.POST, "/server:dump/full/load" ) ).getStatus() );
+        assertEquals( HttpStatus.ACCEPTED, handler.handle( request( HttpMethod.POST, "/server:dump/full/load", "{\"upgrade\":true}" ) ).getStatus() );
         assertEquals( HttpStatus.ACCEPTED, handler.handle( request( HttpMethod.POST, "/server:dump/full/upgrade" ) ).getStatus() );
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
-        verify( taskService, org.mockito.Mockito.times( 2 ) ).submitLocalTask( captor.capture() );
-        assertEquals( "Load full", captor.getAllValues().get( 0 ).getDescription() );
-        assertEquals( "Upgrade dump full", captor.getAllValues().get( 1 ).getDescription() );
+        final List<SubmitTaskParams> params = submitted( 2 );
+        assertEquals( "com.enonic.xp.app.system:load", params.get( 0 ).getDescriptorKey().toString() );
+        assertEquals( "full", params.get( 0 ).getData().getString( "name" ) );
+        assertEquals( Boolean.TRUE, params.get( 0 ).getData().getBoolean( "upgrade" ) );
+        assertEquals( "com.enonic.xp.app.system:upgrade", params.get( 1 ).getDescriptorKey().toString() );
+        assertEquals( "full", params.get( 1 ).getData().getString( "name" ) );
+    }
+
+    private List<SubmitTaskParams> submitted( final int times )
+    {
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
+        verify( taskService, org.mockito.Mockito.times( times ) ).submitTask( captor.capture() );
+        return captor.getAllValues();
     }
 }

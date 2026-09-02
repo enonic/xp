@@ -1,0 +1,21 @@
+kind: "Task"
+description: "Load task"
+form:
+  - type: "TextLine"
+    name: "name"
+    label: "Dump name"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "CheckBox"
+    name: "upgrade"
+    label: "Upgrade the dump before loading"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "TextLine"
+    name: "repositories"
+    label: "Repositories (default: all)"
+    occurrences:
+      min: 0
+      max: 0

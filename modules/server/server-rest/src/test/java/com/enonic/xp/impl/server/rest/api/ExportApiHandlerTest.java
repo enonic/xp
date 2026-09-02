@@ -7,7 +7,7 @@ import org.mockito.ArgumentCaptor;
 import com.enonic.xp.export.ExportInfo;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.ListExportsResult;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpMethod;
@@ -36,7 +36,7 @@ class ExportApiHandlerTest
         exportService = mock( ExportService.class );
         taskService = mock( TaskService.class );
         handler = new ExportApiHandler( exportService, taskService );
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
     }
 
     @Test
@@ -59,16 +59,19 @@ class ExportApiHandlerTest
         assertEquals( HttpStatus.ACCEPTED, response.getStatus() );
         assertEquals( "{\"taskId\":\"t1\"}", response.getBody() );
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
-        verify( taskService ).submitLocalTask( captor.capture() );
-        assertEquals( "Export nightly", captor.getValue().getDescription() );
+        final SubmitTaskParams params = submitted();
+        assertEquals( "com.enonic.xp.app.system:export", params.getDescriptorKey().toString() );
+        assertEquals( "nightly", params.getData().getString( "exportName" ) );
+        assertEquals( "com.enonic.cms.default", params.getData().getString( "repository" ) );
+        assertEquals( "draft", params.getData().getString( "branch" ) );
+        assertEquals( "/", params.getData().getString( "nodePath" ) );
     }
 
     @Test
     void createRequiresNameAndPath()
     {
         assertEquals( HttpStatus.BAD_REQUEST, handler.handle( request( HttpMethod.POST, "/server:export", "{\"exportName\":\"x\"}" ) ).getStatus() );
-        verify( taskService, never() ).submitLocalTask( any() );
+        verify( taskService, never() ).submitTask( any() );
     }
 
     @Test
@@ -79,8 +82,28 @@ class ExportApiHandlerTest
 
         assertEquals( HttpStatus.ACCEPTED, response.getStatus() );
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
-        verify( taskService ).submitLocalTask( captor.capture() );
-        assertEquals( "Import nightly", captor.getValue().getDescription() );
+        final SubmitTaskParams params = submitted();
+        assertEquals( "com.enonic.xp.app.system:import", params.getDescriptorKey().toString() );
+        assertEquals( "nightly", params.getData().getString( "exportName" ) );
+        assertEquals( Boolean.TRUE, params.getData().getBoolean( "importWithIds" ) );
+        assertEquals( Boolean.TRUE, params.getData().getBoolean( "importWithPermissions" ) );
+    }
+
+    @Test
+    void loadPassesXslParams()
+    {
+        handler.handle( request( HttpMethod.POST, "/server:export/nightly/load",
+                                 "{\"targetRepoPath\":\"a:b:/\",\"xslSource\":\"t.xsl\",\"xslParams\":{\"k\":\"v\"}}" ) );
+
+        final SubmitTaskParams params = submitted();
+        assertEquals( "t.xsl", params.getData().getString( "xslSource" ) );
+        assertEquals( "v", params.getData().getSet( "xslParams" ).getString( "k" ) );
+    }
+
+    private SubmitTaskParams submitted()
+    {
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
+        verify( taskService ).submitTask( captor.capture() );
+        return captor.getValue();
     }
 }

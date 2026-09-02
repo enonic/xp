@@ -3,8 +3,8 @@ package com.enonic.xp.impl.server.rest.task;
 import com.enonic.xp.descriptor.DescriptorKey;
 
 /**
- * Tasks of the system application. They run as cluster tasks - on whichever node picks them up - unlike the local
- * tasks that read or write this node's file system (dumps, exports).
+ * Tasks of the system application. They run as cluster tasks, on whichever node picks them up; dumps and exports rely
+ * on the data directory being shared between the nodes of a cluster.
  */
 public final class SystemTasks
 {
@@ -19,6 +19,16 @@ public final class SystemTasks
     public static final DescriptorKey REINDEX = DescriptorKey.from( "com.enonic.xp.app.system:reindex" );
 
     public static final DescriptorKey PROJECT_SYNC = DescriptorKey.from( "com.enonic.xp.app.system:project-sync" );
+
+    public static final DescriptorKey DUMP = DescriptorKey.from( "com.enonic.xp.app.system:dump" );
+
+    public static final DescriptorKey LOAD = DescriptorKey.from( "com.enonic.xp.app.system:load" );
+
+    public static final DescriptorKey UPGRADE = DescriptorKey.from( "com.enonic.xp.app.system:upgrade" );
+
+    public static final DescriptorKey EXPORT = DescriptorKey.from( "com.enonic.xp.app.system:export" );
+
+    public static final DescriptorKey IMPORT = DescriptorKey.from( "com.enonic.xp.app.system:import" );
 
     private SystemTasks()
     {

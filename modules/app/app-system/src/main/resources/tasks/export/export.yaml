@@ -1,0 +1,33 @@
+kind: "Task"
+description: "Export task"
+form:
+  - type: "TextLine"
+    name: "repository"
+    label: "Repository ID"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "branch"
+    label: "Branch"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "nodePath"
+    label: "Node path"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "TextLine"
+    name: "exportName"
+    label: "Export name"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "Long"
+    name: "batchSize"
+    label: "Batch size"
+    occurrences:
+      min: 0
+      max: 1

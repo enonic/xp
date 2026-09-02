@@ -1,0 +1,47 @@
+package com.enonic.xp.app.system.listener;
+
+import com.enonic.xp.task.ProgressReportParams;
+import com.enonic.xp.task.ProgressReporter;
+import com.enonic.xp.upgrade.UpgradeListener;
+
+public class UpgradeListenerImpl
+    implements UpgradeListener
+{
+    private final ProgressReporter progressReporter;
+
+    private int total = 0;
+
+    private int current = 0;
+
+    public UpgradeListenerImpl( final ProgressReporter progressReporter )
+    {
+        this.progressReporter = progressReporter;
+    }
+
+    @Override
+    public void total( final long total )
+    {
+        this.total = Math.toIntExact( total );
+    }
+
+    @Override
+    public void upgraded()
+    {
+        this.progressReporter.progress( ProgressReportParams.create( ++current, total ).build() );
+    }
+
+    @Override
+    public void finished()
+    {
+        if ( total == 0 )
+        {
+            this.progressReporter.progress( ProgressReportParams.create( 1, 1 ).build() );
+            return;
+        }
+
+        if ( current < total )
+        {
+            this.progressReporter.progress( ProgressReportParams.create( total, total ).build() );
+        }
+    }
+}
