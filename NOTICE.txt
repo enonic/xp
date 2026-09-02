@@ -36,6 +36,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     Apache License 2.0
     https://bytebuddy.net/
 
+    Caffeine
+    Apache License 2.0
+    https://github.com/ben-manes/caffeine
+
     Carrot Search
     Apache License 2.0
     https://github.com/carrotsearch/hppc/blob/master/LICENSE.txt
