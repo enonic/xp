@@ -1,24 +1,36 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.enonic.xp.core.internal.json.ObjectMapperHelper;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ImportNodesRequestJsonTest
 {
+    private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
+
     @Test
-    @SuppressWarnings("deprecation")
     void deprecatedXslFields_areAccepted_andIgnored()
+        throws Exception
     {
-        final ImportNodesRequestJson json =
-            new ImportNodesRequestJson( "export", "system-repo:master:/a", null, null, "transform.xsl", Map.of( "k", "v" ) );
+        final ImportNodesRequestJson json = MAPPER.readValue( """
+                                                                  {
+                                                                    "exportName": "export",
+                                                                    "targetRepoPath": "system-repo:master:/a",
+                                                                    "importWithIds": false,
+                                                                    "xslSource": "transform.xsl",
+                                                                    "xslParams": {"applicationId": "com.acme.app"}
+                                                                  }
+                                                                  """, ImportNodesRequestJson.class );
 
         assertEquals( "export", json.getExportName() );
         assertEquals( "system-repo", json.getTargetRepoPath().getRepositoryId().toString() );
-        assertTrue( json.isImportWithIds() );
+        assertFalse( json.isImportWithIds() );
         assertTrue( json.isImportWithPermissions() );
     }
 }

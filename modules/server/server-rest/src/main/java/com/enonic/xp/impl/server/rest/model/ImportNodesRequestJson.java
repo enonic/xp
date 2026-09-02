@@ -1,12 +1,13 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static java.util.Objects.requireNonNull;
 
+// xslSource and xslParams are deprecated and ignored: XSLT files in the exports directory are not supported.
+@JsonIgnoreProperties({"xslSource", "xslParams"})
 public final class ImportNodesRequestJson
 {
     private final RepoPath targetRepoPath;
@@ -17,17 +18,11 @@ public final class ImportNodesRequestJson
 
     private final boolean importWithPermissions;
 
-    /**
-     * @param xslSource deprecated, ignored. XSLT files in the exports directory are not supported.
-     * @param xslParams deprecated, ignored.
-     */
     @JsonCreator
     public ImportNodesRequestJson( @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
-                                   @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
-                                   @Deprecated @JsonProperty("xslSource") final String xslSource, //
-                                   @Deprecated @JsonProperty("xslParams") final Map<String, Object> xslParams )
+                                   @JsonProperty("importWithPermissions") final Boolean importWithPermissions )
     {
         requireNonNull( exportName, "exportName is required" );
         requireNonNull( targetRepoPath, "targetRepoPath is required" );
