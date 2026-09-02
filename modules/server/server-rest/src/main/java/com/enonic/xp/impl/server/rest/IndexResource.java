@@ -10,12 +10,14 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.server.rest.model.ReindexRequestJson;
 import com.enonic.xp.impl.server.rest.model.ReindexResultJson;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsRequestJson;
 import com.enonic.xp.impl.server.rest.model.UpdateIndexSettingsResultJson;
-import com.enonic.xp.impl.server.rest.task.ReindexRunnableTask;
+import com.enonic.xp.impl.server.rest.task.SystemTasks;
 import com.enonic.xp.impl.server.rest.task.listener.ReindexListenerImpl;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.ReindexParams;
@@ -27,7 +29,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
@@ -65,20 +67,12 @@ public final class IndexResource
     @Path("reindexTask")
     public TaskResultJson reindexTask( final ReindexRequestJson params )
     {
-        ReindexRunnableTask reindexRunnableTask = ReindexRunnableTask.create()
-            .indexService( indexService )
-            .taskService( taskService )
-            .repository( params.getRepository() )
-            .branches( params.getBranches() )
-            .initialize( params.isInitialize() )
-            .build();
-        final TaskId taskId = taskService.submitLocalTask( SubmitLocalTaskParams.create()
-                                                               .runnableTask( reindexRunnableTask )
-                                                               .name( "reindex-" + params.getRepository() )
-                                                               .description(
-                                                                   "Reindex " + params.getRepository() + " " + params.getBranches() )
-                                                               .build() );
+        final PropertyTree data = new PropertyTree();
+        data.addString( "repository", params.getRepository().toString() );
+        data.addStrings( "branches", params.getBranches().stream().map( Branch::getValue ).toList() );
+        data.addBoolean( "initialize", params.isInitialize() );
 
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.REINDEX ).data( data ).build() );
         return new TaskResultJson( taskId );
     }
 

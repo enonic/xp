@@ -1,14 +1,17 @@
 package com.enonic.xp.impl.server.rest.api;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.google.common.collect.Lists;
+
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.project.Projects;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpMethod;
@@ -17,6 +20,7 @@ import com.enonic.xp.web.WebResponse;
 
 import static com.enonic.xp.impl.server.rest.api.ManagementApiTestSupport.request;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -35,8 +39,8 @@ class ProjectApiHandlerTest
     {
         projectService = mock( ProjectService.class );
         taskService = mock( TaskService.class );
-        handler = new ProjectApiHandler( projectService, mock( ContentService.class ), mock( SyncContentService.class ), taskService );
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
+        handler = new ProjectApiHandler( projectService, mock( ContentService.class ), taskService );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
     }
 
     @Test
@@ -56,7 +60,9 @@ class ProjectApiHandlerTest
         final WebResponse response = handler.handle( request( HttpMethod.POST, "/server:project/sync" ) );
 
         assertEquals( HttpStatus.ACCEPTED, response.getStatus() );
-        assertEquals( "Sync all projects", submitted().getDescription() );
+        final SubmitTaskParams params = submitted();
+        assertEquals( "com.enonic.xp.app.system:project-sync", params.getDescriptorKey().toString() );
+        assertTrue( Lists.newArrayList( params.getData().getStrings( "projects" ) ).isEmpty() );
     }
 
     @Test
@@ -64,13 +70,19 @@ class ProjectApiHandlerTest
     {
         handler.handle( request( HttpMethod.POST, "/server:project/sync", "{\"projects\":[\"intranet\"]}" ) );
 
-        assertEquals( "Sync projects [intranet]", submitted().getDescription() );
+        assertEquals( List.of( "intranet" ), Lists.newArrayList( submitted().getData().getStrings( "projects" ) ) );
     }
 
-    private SubmitLocalTaskParams submitted()
+    @Test
+    void syncRejectsInvalidProjectName()
     {
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
-        verify( taskService ).submitLocalTask( captor.capture() );
+        assertEquals( HttpStatus.BAD_REQUEST, handler.handle( request( HttpMethod.POST, "/server:project/sync", "{\"projects\":[\"Not A Project\"]}" ) ).getStatus() );
+    }
+
+    private SubmitTaskParams submitted()
+    {
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
+        verify( taskService ).submitTask( captor.capture() );
         return captor.getValue();
     }
 }

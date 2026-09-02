@@ -10,13 +10,13 @@ import org.osgi.service.component.annotations.Reference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.content.SyncContentService;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.server.rest.ProjectJsonFactory;
-import com.enonic.xp.impl.server.rest.task.ProjectsSyncTask;
+import com.enonic.xp.impl.server.rest.task.SystemTasks;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpMethod;
@@ -36,20 +36,14 @@ public class ProjectApiHandler
 
     private final ProjectJsonFactory projectJsonFactory;
 
-    private final ProjectService projectService;
-
-    private final SyncContentService syncContentService;
-
     private final TaskService taskService;
 
     @Activate
     public ProjectApiHandler( @Reference final ProjectService projectService, @Reference final ContentService contentService,
-                              @Reference final SyncContentService syncContentService, @Reference final TaskService taskService )
+                              @Reference final TaskService taskService )
     {
         super( KEY );
         this.projectJsonFactory = new ProjectJsonFactory( projectService, contentService );
-        this.projectService = projectService;
-        this.syncContentService = syncContentService;
         this.taskService = taskService;
 
         route( HttpMethod.GET, "/", "list", this::list );
@@ -67,16 +61,15 @@ public class ProjectApiHandler
     {
         final String body = request.getBodyAsString();
         final SyncJson sync = body == null || body.isBlank() ? new SyncJson() : MAPPER.readValue( body, SyncJson.class );
-        final List<ProjectName> projects = sync.projects == null ? List.of() : sync.projects.stream().map( ProjectName::from ).toList();
 
-        final ProjectsSyncTask task =
-            ProjectsSyncTask.create().projectService( projectService ).syncContentService( syncContentService ).projects( projects ).build();
+        final PropertyTree data = new PropertyTree();
+        if ( sync.projects != null && !sync.projects.isEmpty() )
+        {
+            sync.projects.forEach( ProjectName::from ); // validate
+            data.addStrings( "projects", sync.projects );
+        }
 
-        final TaskId taskId = taskService.submitLocalTask( SubmitLocalTaskParams.create()
-                                                               .runnableTask( task )
-                                                               .name( "sync-all-projects" )
-                                                               .description( projects.isEmpty() ? "Sync all projects" : "Sync projects " + projects )
-                                                               .build() );
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.PROJECT_SYNC ).data( data ).build() );
         return accepted( taskId );
     }
 

@@ -1,10 +1,13 @@
 package com.enonic.xp.impl.server.rest.api;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import com.google.common.collect.Lists;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.index.IndexService;
@@ -14,7 +17,7 @@ import com.enonic.xp.index.UpdateIndexSettingsResult;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpMethod;
@@ -127,31 +130,37 @@ class IndexApiHandlerTest
     @Test
     void reindexDefaultsToAllBranches()
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
 
         final WebResponse response = handler.handle( request( HttpMethod.POST, "/server:index/" + REPO + "/reindex" ) );
 
         assertEquals( HttpStatus.ACCEPTED, response.getStatus() );
         assertEquals( "{\"taskId\":\"t1\"}", response.getBody() );
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
-        verify( taskService ).submitLocalTask( captor.capture() );
-        assertEquals( "reindex-" + REPO, captor.getValue().getName() );
-        assertTrue( captor.getValue().getDescription().contains( "draft" ) );
-        assertTrue( captor.getValue().getDescription().contains( "master" ) );
+        final SubmitTaskParams params = submitted();
+        assertEquals( "com.enonic.xp.app.system:reindex", params.getDescriptorKey().toString() );
+        assertEquals( REPO.toString(), params.getData().getString( "repository" ) );
+        assertEquals( List.of( "draft", "master" ), Lists.newArrayList( params.getData().getStrings( "branches" ) ) );
+        assertEquals( Boolean.FALSE, params.getData().getBoolean( "initialize" ) );
     }
 
     @Test
     void reindexNamedBranches()
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "t1" ) );
 
         handler.handle( request( HttpMethod.POST, "/server:index/" + REPO + "/reindex", "{\"branches\":[\"master\"],\"initialize\":true}" ) );
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
-        verify( taskService ).submitLocalTask( captor.capture() );
-        assertTrue( captor.getValue().getDescription().contains( "master" ) );
-        assertTrue( !captor.getValue().getDescription().contains( "draft" ) );
+        final SubmitTaskParams params = submitted();
+        assertEquals( List.of( "master" ), Lists.newArrayList( params.getData().getStrings( "branches" ) ) );
+        assertEquals( Boolean.TRUE, params.getData().getBoolean( "initialize" ) );
+    }
+
+    private SubmitTaskParams submitted()
+    {
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
+        verify( taskService ).submitTask( captor.capture() );
+        return captor.getValue();
     }
 
     @Test
@@ -163,6 +172,6 @@ class IndexApiHandlerTest
         assertEquals( HttpStatus.OK, withVirtualHostContext( policy, () -> handler.handle( request( HttpMethod.GET, "/server:index/" + REPO ) ) ).getStatus() );
         assertEquals( HttpStatus.FORBIDDEN,
                       withVirtualHostContext( policy, () -> handler.handle( request( HttpMethod.POST, "/server:index/" + REPO + "/reindex" ) ) ).getStatus() );
-        verify( taskService, never() ).submitLocalTask( any() );
+        verify( taskService, never() ).submitTask( any() );
     }
 }

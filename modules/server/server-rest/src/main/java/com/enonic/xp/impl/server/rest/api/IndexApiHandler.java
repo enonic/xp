@@ -12,8 +12,8 @@ import org.osgi.service.component.annotations.Reference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.branch.Branches;
-import com.enonic.xp.impl.server.rest.task.ReindexRunnableTask;
+import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.impl.server.rest.task.SystemTasks;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.index.IndexType;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
@@ -21,7 +21,7 @@ import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.web.HttpMethod;
@@ -126,23 +126,16 @@ public class IndexApiHandler
         final String body = request.getBodyAsString();
         final ReindexJson reindex = body == null || body.isBlank() ? new ReindexJson() : MAPPER.readValue( body, ReindexJson.class );
 
-        final Branches branches = reindex.branches == null || reindex.branches.isEmpty()
-            ? repository.getBranches()
-            : reindex.branches.stream().map( Branch::from ).collect( Branches.collector() );
+        final List<String> branches = reindex.branches == null || reindex.branches.isEmpty()
+            ? repository.getBranches().stream().map( Branch::getValue ).toList()
+            : reindex.branches;
 
-        final ReindexRunnableTask task = ReindexRunnableTask.create()
-            .indexService( indexService )
-            .taskService( taskService )
-            .repository( repository.getId() )
-            .branches( branches )
-            .initialize( reindex.initialize )
-            .build();
+        final PropertyTree data = new PropertyTree();
+        data.addString( "repository", repository.getId().toString() );
+        data.addStrings( "branches", branches );
+        data.addBoolean( "initialize", reindex.initialize );
 
-        final TaskId taskId = taskService.submitLocalTask( SubmitLocalTaskParams.create()
-                                                               .runnableTask( task )
-                                                               .name( "reindex-" + repository.getId() )
-                                                               .description( "Reindex " + repository.getId() + " " + branches )
-                                                               .build() );
+        final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.REINDEX ).data( data ).build() );
         return accepted( taskId );
     }
 
