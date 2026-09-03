@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.enonic.xp.dump.RepoDumpResult;
 import com.enonic.xp.dump.SystemDumpResult;
-import com.enonic.xp.app.system.json.JsonHelper;
 
 public class SystemDumpResultJson
 {
