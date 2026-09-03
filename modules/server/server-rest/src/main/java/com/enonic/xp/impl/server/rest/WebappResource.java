@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -12,9 +13,12 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.impl.server.rest.model.WebappJson;
 import com.enonic.xp.jaxrs.JaxRsComponent;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 
@@ -25,18 +29,30 @@ import com.enonic.xp.security.RoleKeys;
 public final class WebappResource
     implements JaxRsComponent
 {
-    private final WebappJsonFactory webappJsonFactory;
+    private final ApplicationService applicationService;
+
+    private final ResourceService resourceService;
 
     @Activate
     public WebappResource( @Reference final ApplicationService applicationService, @Reference final ResourceService resourceService )
     {
-        this.webappJsonFactory = new WebappJsonFactory( applicationService, resourceService );
+        this.applicationService = applicationService;
+        this.resourceService = resourceService;
     }
 
     @GET
     @Path("list")
     public List<WebappJson> list()
     {
-        return webappJsonFactory.list();
+        return applicationService.getInstalledApplications()
+            .stream()
+            .map( Application::getKey )
+            .map( key -> ResourceKey.from( key, "/webapp/webapp.js" ) )
+            .map( resourceService::getResource )
+            .filter( Resource::exists )
+            .map( Resource::getKey )
+            .map( ResourceKey::getApplicationKey )
+            .map( WebappJson::from )
+            .collect( Collectors.toList() );
     }
 }
