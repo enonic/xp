@@ -18,8 +18,6 @@ public final class SystemTasks
 
     public static final DescriptorKey REINDEX = DescriptorKey.from( "com.enonic.xp.app.system:reindex" );
 
-    public static final DescriptorKey PROJECT_SYNC = DescriptorKey.from( "com.enonic.xp.app.system:project-sync" );
-
     public static final DescriptorKey DUMP = DescriptorKey.from( "com.enonic.xp.app.system:dump" );
 
     public static final DescriptorKey LOAD = DescriptorKey.from( "com.enonic.xp.app.system:load" );

@@ -11,8 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.ProjectSyncParams;
-import com.enonic.xp.content.SyncContentService;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.DumpService;
 import com.enonic.xp.dump.SystemDumpParams;
@@ -29,10 +27,6 @@ import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.lib.common.PropertyTreeMapper;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.project.Project;
-import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.project.Projects;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryIds;
 import com.enonic.xp.repository.RepositoryService;
@@ -80,12 +74,6 @@ class TaskParamsMappingTest
     private ExportService exportService;
 
     @Mock
-    private ProjectService projectService;
-
-    @Mock
-    private SyncContentService syncContentService;
-
-    @Mock
     private VacuumService vacuumService;
 
     @Mock
@@ -104,8 +92,6 @@ class TaskParamsMappingTest
         addService( RepositoryService.class, repositoryService );
         addService( DumpService.class, dumpService );
         addService( ExportService.class, exportService );
-        addService( ProjectService.class, projectService );
-        addService( SyncContentService.class, syncContentService );
         addService( VacuumService.class, vacuumService );
         addService( TaskService.class, taskService );
     }
@@ -146,24 +132,6 @@ class TaskParamsMappingTest
         verify( indexService ).reindex( captor.capture() );
         assertEquals( 2, captor.getValue().getBranches().getSize() );
         assertFalse( captor.getValue().isInitialize() );
-    }
-
-    @Test
-    void projectSync_singleProject()
-    {
-        task( "project-sync" );
-        final Project parent = Project.create().name( ProjectName.from( "parent" ) ).displayName( "p" ).build();
-        final Project child = Project.create().name( ProjectName.from( "child" ) ).displayName( "c" ).addParent( parent.getName() ).build();
-        when( projectService.list() ).thenReturn( Projects.create().addAll( List.of( parent, child ) ).build() );
-
-        final PropertyTree data = new PropertyTree();
-        data.addStrings( "projects", List.of( "child" ) );
-
-        run( "project-sync", data );
-
-        final ArgumentCaptor<ProjectSyncParams> captor = ArgumentCaptor.forClass( ProjectSyncParams.class );
-        verify( syncContentService ).syncProject( captor.capture() );
-        assertEquals( child.getName(), captor.getValue().getTargetProject() );
     }
 
     @Test

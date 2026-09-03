@@ -1,9 +1,0 @@
-kind: "Task"
-description: "Project sync task"
-form:
-  - type: "TextLine"
-    name: "projects"
-    label: "Projects to sync (default: all)"
-    occurrences:
-      min: 0
-      max: 0
