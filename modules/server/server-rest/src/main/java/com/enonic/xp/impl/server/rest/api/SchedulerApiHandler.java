@@ -77,27 +77,27 @@ public class SchedulerApiHandler
         throws JsonProcessingException
     {
         final CreateJson create = body( request, CreateJson.class );
-        if ( create.name == null || create.name.isBlank() )
+        if ( create.name() == null || create.name().isBlank() )
         {
             throw new IllegalArgumentException( "[name] is required" );
         }
-        if ( create.descriptor == null || create.descriptor.isBlank() )
+        if ( create.descriptor() == null || create.descriptor().isBlank() )
         {
             throw new IllegalArgumentException( "[descriptor] is required" );
         }
-        if ( create.schedule == null )
+        if ( create.schedule() == null )
         {
             throw new IllegalArgumentException( "[schedule] is required" );
         }
 
         final ScheduledJob job = schedulerService.create( CreateScheduledJobParams.create()
-                                                              .name( ScheduledJobName.from( create.name ) )
-                                                              .descriptor( DescriptorKey.from( create.descriptor ) )
-                                                              .calendar( calendar( create.schedule ) )
-                                                              .description( create.description )
-                                                              .config( PropertyTree.fromMap( create.config == null ? Map.of() : create.config ) )
-                                                              .enabled( create.enabled )
-                                                              .user( Optional.ofNullable( create.user ).map( PrincipalKey::from ).orElse( null ) )
+                                                              .name( ScheduledJobName.from( create.name() ) )
+                                                              .descriptor( DescriptorKey.from( create.descriptor() ) )
+                                                              .calendar( calendar( create.schedule() ) )
+                                                              .description( create.description() )
+                                                              .config( PropertyTree.fromMap( create.config() == null ? Map.of() : create.config() ) )
+                                                              .enabled( create.enabled() )
+                                                              .user( Optional.ofNullable( create.user() ).map( PrincipalKey::from ).orElse( null ) )
                                                               .build() );
         return json( HttpStatus.CREATED, new ScheduledJobJson( job ) );
     }
@@ -119,48 +119,33 @@ public class SchedulerApiHandler
 
     private ScheduleCalendar calendar( final ScheduleJson schedule )
     {
-        if ( schedule.type == null )
+        if ( schedule.type() == null )
         {
             throw new IllegalArgumentException( "[schedule.type] is required: CRON, ONE_TIME or FIXED_RATE" );
         }
-        if ( schedule.value == null )
+        if ( schedule.value() == null )
         {
             throw new IllegalArgumentException( "[schedule.value] is required" );
         }
-        return switch ( schedule.type )
+        return switch ( schedule.type() )
         {
-            case CRON -> calendarService.cron( schedule.value, TimeZone.getTimeZone(
-                Optional.ofNullable( schedule.timeZone ).orElseThrow( () -> new IllegalArgumentException( "[schedule.timeZone] is required for CRON" ) ) ) );
-            case ONE_TIME -> calendarService.oneTime( Instant.parse( schedule.value ), schedule.deleteAfterRun );
-            case FIXED_RATE -> calendarService.fixedRate( Duration.parse( schedule.value ) );
+            case CRON -> calendarService.cron( schedule.value(), TimeZone.getTimeZone(
+                Optional.ofNullable( schedule.timeZone() ).orElseThrow( () -> new IllegalArgumentException( "[schedule.timeZone] is required for CRON" ) ) ) );
+            case ONE_TIME -> calendarService.oneTime( Instant.parse( schedule.value() ), schedule.deleteAfterRun() );
+            case FIXED_RATE -> calendarService.fixedRate( Duration.parse( schedule.value() ) );
         };
     }
 
-    public static final class CreateJson
+    public record CreateJson(String name, String descriptor, String description, ScheduleJson schedule, Map<String, Object> config,
+                             Boolean enabled, String user)
     {
-        public String name;
-
-        public String descriptor;
-
-        public String description;
-
-        public ScheduleJson schedule;
-
-        public Map<String, Object> config;
-
-        public boolean enabled = true;
-
-        public String user;
+        public CreateJson
+        {
+            enabled = enabled == null || enabled;
+        }
     }
 
-    public static final class ScheduleJson
+    public record ScheduleJson(ScheduleCalendarType type, String value, String timeZone, boolean deleteAfterRun)
     {
-        public ScheduleCalendarType type;
-
-        public String value;
-
-        public String timeZone;
-
-        public boolean deleteAfterRun;
     }
 }

@@ -41,7 +41,7 @@ class SystemRepoDumpResultJsonTest
 
         final SystemDumpResultJson json = SystemDumpResultJson.from( systemDumpResult );
 
-        assertEquals( 2, json.getRepositories().size() );
-        assertEquals( 2, json.getRepositories().get( 0 ).getBranches().size() );
+        assertEquals( 2, json.repositories().size() );
+        assertEquals( 2, json.repositories().get( 0 ).branches().size() );
     }
 }

@@ -34,7 +34,7 @@ class SystemRepoLoadResultJsonTest
 
         final SystemLoadResultJson json = SystemLoadResultJson.from( results );
 
-        assertEquals( 2, json.getRepositories().size() );
-        assertEquals( 2, json.getRepositories().get( 0 ).getBranches().size() );
+        assertEquals( 2, json.repositories().size() );
+        assertEquals( 2, json.repositories().get( 0 ).branches().size() );
     }
 }

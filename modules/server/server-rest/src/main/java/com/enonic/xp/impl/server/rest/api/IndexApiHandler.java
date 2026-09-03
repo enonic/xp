@@ -93,12 +93,12 @@ public class IndexApiHandler
         }
 
         final ReplicasJson replicas = body( request, ReplicasJson.class );
-        if ( replicas.replicas == null )
+        if ( replicas.replicas() == null )
         {
             throw new IllegalArgumentException( "[replicas] is required" );
         }
-        final String search = validate( SEARCH, replicas.replicas.get( SEARCH ) );
-        final String storage = validate( STORAGE, replicas.replicas.get( STORAGE ) );
+        final String search = validate( SEARCH, replicas.replicas().get( SEARCH ) );
+        final String storage = validate( STORAGE, replicas.replicas().get( STORAGE ) );
 
         indexService.updateIndexSettings( UpdateIndexSettingsParams.create()
                                               .repository( repository.getId() )
@@ -124,16 +124,16 @@ public class IndexApiHandler
         }
 
         final String body = request.getBodyAsString();
-        final ReindexJson reindex = body == null || body.isBlank() ? new ReindexJson() : MAPPER.readValue( body, ReindexJson.class );
+        final ReindexJson reindex = body == null || body.isBlank() ? new ReindexJson( null, false ) : MAPPER.readValue( body, ReindexJson.class );
 
-        final List<String> branches = reindex.branches == null || reindex.branches.isEmpty()
+        final List<String> branches = reindex.branches() == null || reindex.branches().isEmpty()
             ? repository.getBranches().stream().map( Branch::getValue ).toList()
-            : reindex.branches;
+            : reindex.branches();
 
         final PropertyTree data = new PropertyTree();
         data.addString( "repository", repository.getId().toString() );
         data.addStrings( "branches", branches );
-        data.addBoolean( "initialize", reindex.initialize );
+        data.addBoolean( "initialize", reindex.initialize() );
 
         final TaskId taskId = taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.REINDEX ).data( data ).build() );
         return accepted( taskId );
@@ -151,11 +151,10 @@ public class IndexApiHandler
 
     private ReplicasJson replicas( final RepositoryId repositoryId )
     {
-        final ReplicasJson json = new ReplicasJson();
-        json.replicas = new LinkedHashMap<>();
-        json.replicas.put( SEARCH, replicas( indexService.getIndexSettings( repositoryId, IndexType.SEARCH ) ) );
-        json.replicas.put( STORAGE, replicas( indexService.getIndexSettings( repositoryId, IndexType.VERSION ) ) );
-        return json;
+        final Map<String, String> replicas = new LinkedHashMap<>();
+        replicas.put( SEARCH, replicas( indexService.getIndexSettings( repositoryId, IndexType.SEARCH ) ) );
+        replicas.put( STORAGE, replicas( indexService.getIndexSettings( repositoryId, IndexType.VERSION ) ) );
+        return new ReplicasJson( replicas );
     }
 
     private static String replicas( final Map<String, String> settings )
@@ -198,15 +197,11 @@ public class IndexApiHandler
         return MAPPER.writeValueAsString( Map.of( "index", index ) );
     }
 
-    public static final class ReplicasJson
+    public record ReplicasJson(Map<String, String> replicas)
     {
-        public Map<String, String> replicas;
     }
 
-    public static final class ReindexJson
+    public record ReindexJson(List<String> branches, boolean initialize)
     {
-        public List<String> branches;
-
-        public boolean initialize;
     }
 }

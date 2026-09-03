@@ -54,8 +54,8 @@ public class ContentApiHandler
         throws JsonProcessingException
     {
         final String body = request.getBodyAsString();
-        final SyncJson sync = body == null || body.isBlank() ? new SyncJson() : MAPPER.readValue( body, SyncJson.class );
-        final List<ProjectName> projects = sync.projects == null ? List.of() : sync.projects.stream().map( ProjectName::from ).toList();
+        final SyncJson sync = body == null || body.isBlank() ? new SyncJson( null ) : MAPPER.readValue( body, SyncJson.class );
+        final List<ProjectName> projects = sync.projects() == null ? List.of() : sync.projects().stream().map( ProjectName::from ).toList();
 
         final ProjectsSyncTask task =
             ProjectsSyncTask.create().projectService( projectService ).syncContentService( syncContentService ).projects( projects ).build();
@@ -68,8 +68,7 @@ public class ContentApiHandler
         return accepted( taskId );
     }
 
-    public static final class SyncJson
+    public record SyncJson(List<String> projects)
     {
-        public List<String> projects;
     }
 }

@@ -83,19 +83,19 @@ public class ExportApiHandler
     {
         final String name = params.get( "name" );
         final LoadJson load = body( request, LoadJson.class );
-        if ( load.targetRepoPath == null )
+        if ( load.targetRepoPath() == null )
         {
             throw new IllegalArgumentException( "[targetRepoPath] is required" );
         }
-        final RepoPath target = RepoPath.from( load.targetRepoPath );
+        final RepoPath target = RepoPath.from( load.targetRepoPath() );
 
         final PropertyTree data = new PropertyTree();
         data.addString( "exportName", name );
         data.addString( "repository", target.getRepositoryId().toString() );
         data.addString( "branch", target.getBranch().getValue() );
         data.addString( "nodePath", target.getNodePath().toString() );
-        data.addBoolean( "importWithIds", load.importWithIds );
-        data.addBoolean( "importWithPermissions", load.importWithPermissions );
+        data.addBoolean( "importWithIds", load.importWithIds() );
+        data.addBoolean( "importWithPermissions", load.importWithPermissions() );
         return accepted( taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.IMPORT ).data( data ).build() ) );
     }
 
@@ -105,12 +105,12 @@ public class ExportApiHandler
      * application resource.
      */
     @JsonIgnoreProperties({"xslSource", "xslParams"})
-    public static final class LoadJson
+    public record LoadJson(String targetRepoPath, Boolean importWithIds, Boolean importWithPermissions)
     {
-        public String targetRepoPath;
-
-        public boolean importWithIds = true;
-
-        public boolean importWithPermissions = true;
+        public LoadJson
+        {
+            importWithIds = importWithIds == null || importWithIds;
+            importWithPermissions = importWithPermissions == null || importWithPermissions;
+        }
     }
 }

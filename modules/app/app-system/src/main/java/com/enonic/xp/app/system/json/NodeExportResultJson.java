@@ -1,76 +1,18 @@
 package com.enonic.xp.app.system.json;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.enonic.xp.export.ExportError;
 import com.enonic.xp.export.NodeExportResult;
-import com.enonic.xp.app.system.json.JsonHelper;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodePaths;
 
-public class NodeExportResultJson
+public record NodeExportResultJson(List<String> exportedNodes, List<String> exportErrors, List<String> exportedBinaries)
 {
-    private int total;
-
-    private List<String> exportedNodes;
-
-    private List<String> exportErrors;
-
-    private List<String> exportedBinaries;
-
     public static NodeExportResultJson from( final NodeExportResult result )
     {
-        final NodeExportResultJson nodeExportResultJson = new NodeExportResultJson();
-
-        nodeExportResultJson.total = result.getExportedNodes().getSize();
-        nodeExportResultJson.exportedNodes = exportedNodes( result.getExportedNodes() );
-        nodeExportResultJson.exportErrors = exportErrors( result.getExportErrors() );
-        nodeExportResultJson.exportedBinaries = result.getExportedBinaries();
-
-        return nodeExportResultJson;
-    }
-
-    private static List<String> exportErrors( final List<ExportError> exportErrors )
-    {
-        return exportErrors.stream().map( ExportError::toString ).collect( Collectors.toList() );
-    }
-
-    private static List<String> exportedNodes( final NodePaths nodePaths )
-    {
-        List<String> exportedNodes = new ArrayList<>();
-
-        for ( final NodePath nodePath : nodePaths )
-        {
-            exportedNodes.add( nodePath.toString() );
-        }
-
-        return exportedNodes;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public void setTotal( final int total )
-    {
-        this.total = total;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public List<String> getExportedNodes()
-    {
-        return exportedNodes;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public List<String> getExportErrors()
-    {
-        return exportErrors;
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    public List<String> getExportedBinaries()
-    {
-        return exportedBinaries;
+        return new NodeExportResultJson( result.getExportedNodes().stream().map( NodePath::toString ).toList(),
+                                         result.getExportErrors().stream().map( ExportError::toString ).toList(),
+                                         result.getExportedBinaries() );
     }
 
     @Override
