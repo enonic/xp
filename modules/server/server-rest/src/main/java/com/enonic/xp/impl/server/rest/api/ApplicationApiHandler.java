@@ -42,8 +42,8 @@ import com.enonic.xp.web.sse.SseMessage;
  * {@code com.enonic.xp.server.management.app.cfg}), so a vhost can grant one without the other. {@code /installUrl} and
  * {@code /events} are aliases of {@code /pull} and {@code /watch}.
  */
-@Component(service = UniversalApiHandler.class, property = {"key=server:app", "title=Applications API", "mount=management",
-    "allowedPrincipals=role:system.admin"})
+@Component(service = {UniversalApiHandler.class, EventListener.class}, property = {"key=server:app", "title=Applications API",
+    "mount=management", "allowedPrincipals=role:system.admin"})
 public class ApplicationApiHandler
     extends ManagementApiHandler
     implements EventListener
