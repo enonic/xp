@@ -51,8 +51,6 @@ class ImportRunnableTaskTest
             .exportName( params.getExportName() )
             .importWithIds( params.isImportWithIds() )
             .importWithPermissions( params.isImportWithPermissions() )
-            .xslSource( params.getXslSource() )
-            .xslParams( params.getXslParams() )
             .exportService( exportService )
             .build();
     }
@@ -71,7 +69,7 @@ class ImportRunnableTaskTest
         final PropertyTree repoData = new PropertyTree();
         repoData.addString( "key", "value" );
 
-        final ImportRunnableTask task = createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true, "", null ) );
+        final ImportRunnableTask task = createTask( new ImportNodesRequestJson( "export", "system-repo:master:a", true, true ) );
 
         ProgressReporter progressReporter = mock( ProgressReporter.class );
         task.run( TaskId.from( "taskId" ), progressReporter );

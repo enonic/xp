@@ -88,7 +88,7 @@ interface ImportHandler {
  * @param {object} params JSON with the parameters.
  * @param {string|object} params.source Either name of nodes-export located in exports directory or application resource key.
  * @param {string} params.targetNodePath Target path for imported nodes.
- * @param {string|object} [params.xslt] XSLT file name in exports directory or application resource key. Used for XSLT transformation.
+ * @param {object} [params.xslt] Application resource key of an XSLT file used to transform node XML before import. A file name (string) is deprecated and ignored.
  * @param {object} [params.xsltParams] Parameters used in XSLT transformation.
  * @param {boolean} [params.includeNodeIds=false] Set to true to use node IDs from the import, false to generate new node IDs.
  * @param {boolean} [params.includePermissions=false] Set to true to use Node permissions from the import, false to use target node permissions.

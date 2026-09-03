@@ -1,7 +1,5 @@
 package com.enonic.xp.impl.server.rest.task;
 
-import java.util.Map;
-
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -18,8 +16,6 @@ import com.enonic.xp.task.ProgressReporter;
 import com.enonic.xp.task.RunnableTask;
 import com.enonic.xp.task.TaskId;
 
-import static com.google.common.base.Strings.emptyToNull;
-
 public class ImportRunnableTask
     implements RunnableTask
 {
@@ -35,10 +31,6 @@ public class ImportRunnableTask
 
     private final boolean importWithPermissions;
 
-    private final String xslSource;
-
-    private final Map<String, Object> xslParams;
-
     private final ExportService exportService;
 
     private ImportRunnableTask( Builder builder )
@@ -49,9 +41,6 @@ public class ImportRunnableTask
         this.exportName = builder.exportName;
         this.importWithIds = builder.importWithIds;
         this.importWithPermissions = builder.importWithPermissions;
-        this.xslSource = builder.xslSource;
-        this.xslParams = builder.xslParams;
-
         this.exportService = builder.exportService;
     }
 
@@ -69,8 +58,6 @@ public class ImportRunnableTask
                 .targetNodePath( nodePath )
                 .includeNodeIds( importWithIds )
                 .includePermissions( importWithPermissions )
-                .xsltFileName( emptyToNull( xslSource ) )
-                .xsltParams( xslParams )
                 .nodeImportListener( new ImportListenerImpl( progressReporter ) );
 
             return this.exportService.importNodes( builder.build() );
@@ -100,10 +87,6 @@ public class ImportRunnableTask
         private boolean importWithIds;
 
         private boolean importWithPermissions;
-
-        private String xslSource;
-
-        private Map<String, Object> xslParams;
 
         private ExportService exportService;
 
@@ -140,18 +123,6 @@ public class ImportRunnableTask
         public Builder importWithPermissions( boolean importWithPermissions )
         {
             this.importWithPermissions = importWithPermissions;
-            return this;
-        }
-
-        public Builder xslSource( String xslSource )
-        {
-            this.xslSource = xslSource;
-            return this;
-        }
-
-        public Builder xslParams( Map<String, Object> xslParams )
-        {
-            this.xslParams = xslParams;
             return this;
         }
 
