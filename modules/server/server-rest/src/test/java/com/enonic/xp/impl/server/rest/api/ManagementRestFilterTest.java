@@ -84,6 +84,30 @@ class ManagementRestFilterTest
         verify( chain ).doFilter( request, response );
     }
 
+    @Test
+    void restDisabledBlocksRootWithoutPath()
+        throws Exception
+    {
+        vhost( Map.of( ManagementRestFilter.REST_ENABLED, "false" ) );
+        when( request.getPathInfo() ).thenReturn( null );
+
+        filter.doFilter( request, response, chain );
+
+        verify( response ).sendError( HttpServletResponse.SC_NOT_FOUND );
+    }
+
+    @Test
+    void restEnabledExplicitly()
+        throws Exception
+    {
+        vhost( Map.of( ManagementRestFilter.REST_ENABLED, "true" ) );
+        when( request.getPathInfo() ).thenReturn( "/repo/list" );
+
+        filter.doFilter( request, response, chain );
+
+        verify( chain ).doFilter( request, response );
+    }
+
     private void vhost( final Map<String, String> context )
     {
         final VirtualHost virtualHost = mock( VirtualHost.class );

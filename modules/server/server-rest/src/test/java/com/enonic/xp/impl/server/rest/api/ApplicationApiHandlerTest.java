@@ -2,6 +2,7 @@ package com.enonic.xp.impl.server.rest.api;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -356,7 +357,7 @@ class ApplicationApiHandlerTest
     void handleList()
     {
         final ApplicationInfoJson info = ApplicationInfoJson.create( createApplication(), null, false );
-        when( applicationResourceService.getInstalledApplications() ).thenReturn( java.util.List.of( info ) );
+        when( applicationResourceService.getInstalledApplications() ).thenReturn( List.of( info ) );
 
         final WebRequest request = ManagementApiTestSupport.request( HttpMethod.GET, "/server:app" );
 
@@ -389,7 +390,7 @@ class ApplicationApiHandlerTest
     @Test
     void pullIsItsOwnVerb()
     {
-        final java.util.Map<String, String> uploadOnly = java.util.Map.of( "api.server:app.verbs", "list, install" );
+        final Map<String, String> uploadOnly = Map.of( "api.server:app.verbs", "list, install" );
 
         final WebRequest pull = ManagementApiTestSupport.request( HttpMethod.POST, "/server:app/pull", "{\"URL\":\"https://x/app.jar\"}" );
         assertEquals( HttpStatus.FORBIDDEN, ManagementApiTestSupport.withVirtualHostContext( uploadOnly, () -> handler.handle( pull ) ).getStatus() );

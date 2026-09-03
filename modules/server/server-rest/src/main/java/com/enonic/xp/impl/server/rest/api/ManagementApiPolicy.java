@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.enonic.xp.context.ContextAccessor;
 
@@ -43,11 +44,17 @@ public final class ManagementApiPolicy
     }
 
     /**
-     * Reads a single setting of an API from the current context.
+     * Reads a single setting of an API from the current context. A vhost mapping delivers strings; an attribute set by
+     * other means may be a collection, which is read as its comma separated elements.
      */
     public static Optional<String> setting( final String descriptorKey, final String name )
     {
         final Object value = ContextAccessor.current().getAttribute( PREFIX + descriptorKey + "." + name );
+        if ( value instanceof Iterable<?> iterable )
+        {
+            return Optional.of( StreamSupport.stream( iterable.spliterator(), false ).map( String::valueOf ).collect( Collectors.joining( "," ) ) )
+                .filter( s -> !s.isBlank() );
+        }
         return Optional.ofNullable( value ).map( String::valueOf ).filter( s -> !s.isBlank() );
     }
 

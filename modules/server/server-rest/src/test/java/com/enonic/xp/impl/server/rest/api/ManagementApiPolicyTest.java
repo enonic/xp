@@ -1,9 +1,13 @@
 package com.enonic.xp.impl.server.rest.api;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextBuilder;
 
 import static com.enonic.xp.impl.server.rest.api.ManagementApiTestSupport.withVirtualHostContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,5 +73,18 @@ class ManagementApiPolicyTest
 
         assertEquals( Optional.of( "com.enonic.cms.default" ), setting );
         assertEquals( Optional.empty(), withVirtualHostContext( Map.of(), () -> ManagementApiPolicy.setting( "server:index", "repositories" ) ) );
+    }
+
+    @Test
+    void nonStringAttributeValue()
+    {
+        final Context context = ContextBuilder.create().build();
+        context.getLocalScope().setAttribute( "api.server:snapshot.verbs", List.of( "list" ) );
+
+        final ManagementApiPolicy policy = context.callWith( () -> ManagementApiPolicy.of( "server:snapshot" ) );
+
+        assertEquals( "server:snapshot", policy.getDescriptorKey() );
+        assertTrue( policy.allows( "list" ) );
+        assertFalse( policy.allows( "restore" ) );
     }
 }

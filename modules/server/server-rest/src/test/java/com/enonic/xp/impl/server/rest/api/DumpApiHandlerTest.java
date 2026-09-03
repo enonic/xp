@@ -18,6 +18,7 @@ import static com.enonic.xp.impl.server.rest.api.ManagementApiTestSupport.reques
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -94,7 +95,7 @@ class DumpApiHandlerTest
     private List<SubmitTaskParams> submitted( final int times )
     {
         final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
-        verify( taskService, org.mockito.Mockito.times( times ) ).submitTask( captor.capture() );
+        verify( taskService, times( times ) ).submitTask( captor.capture() );
         return captor.getAllValues();
     }
 }

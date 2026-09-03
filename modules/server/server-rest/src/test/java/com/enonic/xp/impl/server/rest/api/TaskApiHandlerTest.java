@@ -139,7 +139,7 @@ class TaskApiHandlerTest
         verify( sseManager ).addToGroup( TaskApiHandler.SSE_GROUP, clientId );
         final ArgumentCaptor<SseMessage> captor = ArgumentCaptor.forClass( SseMessage.class );
         verify( sseManager ).send( eq( clientId ), captor.capture() );
-        assertTrue( captor.getValue().toString().contains( "event: list\n" ) );
+        assertTrue( captor.getValue().toString().contains( "event:list\n" ) );
         assertTrue( captor.getValue().toString().contains( "\"id\":\"t1\"" ) );
     }
 
@@ -158,7 +158,7 @@ class TaskApiHandlerTest
         verify( sseManager ).addToGroup( TaskApiHandler.SSE_GROUP + ":t1", clientId );
         final ArgumentCaptor<SseMessage> captor = ArgumentCaptor.forClass( SseMessage.class );
         verify( sseManager ).send( eq( clientId ), captor.capture() );
-        assertTrue( captor.getValue().toString().contains( "event: task\n" ) );
+        assertTrue( captor.getValue().toString().contains( "event:task\n" ) );
     }
 
     @Test
@@ -180,7 +180,7 @@ class TaskApiHandlerTest
         final ArgumentCaptor<SseMessage> captor = ArgumentCaptor.forClass( SseMessage.class );
         verify( sseManager ).sendToGroup( eq( TaskApiHandler.SSE_GROUP ), captor.capture() );
         verify( sseManager ).sendToGroup( eq( TaskApiHandler.SSE_GROUP + ":t1" ), any() );
-        assertTrue( captor.getValue().toString().contains( "event: finished\n" ) );
+        assertTrue( captor.getValue().toString().contains( "event:finished\n" ) );
         assertTrue( captor.getValue().toString().contains( "\"id\":\"t1\"" ) );
         assertTrue( captor.getValue().toString().contains( "\"state\":\"FINISHED\"" ) );
         assertTrue( captor.getValue().toString().contains( "\"progress\":{" ) );

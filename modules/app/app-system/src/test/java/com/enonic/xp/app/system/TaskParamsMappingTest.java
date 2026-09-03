@@ -1,5 +1,6 @@
 package com.enonic.xp.app.system;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.vacuum.VacuumParameters;
 import com.enonic.xp.vacuum.VacuumResult;
 import com.enonic.xp.vacuum.VacuumService;
+import com.enonic.xp.branch.Branches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -279,8 +281,8 @@ class TaskParamsMappingTest
             .repositoryId( RepositoryId.from( "my-repo" ) )
             .startTime( Instant.EPOCH )
             .endTime( Instant.EPOCH )
-            .duration( java.time.Duration.ZERO )
-            .branches( com.enonic.xp.branch.Branches.from( Branch.from( "master" ) ) )
+            .duration( Duration.ZERO )
+            .branches( Branches.from( Branch.from( "master" ) ) )
             .build();
     }
 }

@@ -7,12 +7,15 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.task.TaskId;
 
 import static com.enonic.xp.impl.server.rest.api.ManagementApiTestSupport.request;
 import static com.enonic.xp.impl.server.rest.api.ManagementApiTestSupport.withVirtualHostContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ManagementApiHandlerTest
@@ -110,6 +113,38 @@ class ManagementApiHandlerTest
         assertEquals( "{\"taskId\":\"t1\"}", body( response ) );
     }
 
+    @Test
+    void wildcardPolicy()
+    {
+        assertEquals( HttpStatus.OK, withVirtualHostContext( Map.of( "api.server:test.verbs", "*" ),
+                                                             () -> handler.handle( request( HttpMethod.POST, "/server:test/prune" ) ) ).getStatus() );
+    }
+
+    @Test
+    void errorWithoutMessageUsesReasonPhrase()
+    {
+        final WebResponse response = handler.handle( request( HttpMethod.POST, "/server:test/fail" ) );
+
+        assertEquals( HttpStatus.BAD_REQUEST, response.getStatus() );
+        assertTrue( body( response ).contains( "\"message\":\"Bad Request\"" ) );
+    }
+
+    @Test
+    void queryParam()
+    {
+        assertEquals( "param:null", body( handler.handle( request( HttpMethod.GET, "/server:test/param" ) ) ) );
+
+        final WebRequest request = request( HttpMethod.GET, "/server:test/param" );
+        request.getParams().put( "name", "x" );
+        assertEquals( "param:x", body( handler.handle( request ) ) );
+    }
+
+    @Test
+    void wrongApiPrefixIsRejected()
+    {
+        assertThrows( WebException.class, () -> handler.handle( request( HttpMethod.GET, "/server:other/abc" ) ) );
+    }
+
     private static String body( final WebResponse response )
     {
         return String.valueOf( response.getBody() );
@@ -122,12 +157,18 @@ class ManagementApiHandlerTest
         {
             super( "server:test" );
             route( HttpMethod.GET, "/", "list", ( request, params ) -> text( "list" ) );
+            // literal routes are registered before the {name} capture: routes match in registration order
+            route( HttpMethod.GET, "/param", "param", ( request, params ) -> text( "param:" + param( request, "name" ) ) );
             route( HttpMethod.GET, "/{name}", "get", ( request, params ) -> text( "get:" + params.get( "name" ) ) );
             route( HttpMethod.POST, "/{name}/load", "load", ( request, params ) -> text( "load:" + params.get( "name" ) ) );
             route( HttpMethod.POST, "/prune", "prune", ( request, params ) -> text( "prune" ) );
             route( HttpMethod.POST, "/vacuum", "prune", ( request, params ) -> text( "prune" ) );
             route( HttpMethod.POST, "/parse", "parse", ( request, params ) -> text( body( request, Map.class ).toString() ) );
-            route( HttpMethod.POST, "/task", "task", ( request, params ) -> accepted( com.enonic.xp.task.TaskId.from( "t1" ) ) );
+            route( HttpMethod.POST, "/task", "task", ( request, params ) -> accepted( TaskId.from( "t1" ) ) );
+            route( HttpMethod.POST, "/fail", "fail", ( request, params ) -> {
+                throw new IllegalArgumentException();
+            } );
+
         }
 
         private static WebResponse text( final String text )

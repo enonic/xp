@@ -2,9 +2,13 @@ package com.enonic.xp.impl.server.rest;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+
+import com.google.common.collect.Lists;
 
 import jakarta.ws.rs.core.MediaType;
 
@@ -20,8 +24,12 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
+import com.enonic.xp.task.SubmitTaskParams;
+import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.TaskService;
 
 import static org.mockito.ArgumentMatchers.isA;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 class JsonIndexResourceTest
@@ -30,6 +38,8 @@ class JsonIndexResourceTest
     private IndexService indexService;
 
     private RepositoryService repositoryService;
+
+    private TaskService taskService;
 
     @Test
     void reindex()
@@ -75,15 +85,37 @@ class JsonIndexResourceTest
         assertJson( "update_index_settings.json", result );
     }
 
+    @Test
+    void reindexTask()
+        throws Exception
+    {
+        Mockito.when( this.taskService.submitTask( isA( SubmitTaskParams.class ) ) ).thenReturn( TaskId.from( "task-id" ) );
+
+        final String result = request().path( "repo/index/reindexTask" )
+            .entity( "{\"repository\":\"my-repo\",\"branches\":\"draft,master\",\"initialize\":true}", MediaType.APPLICATION_JSON_TYPE )
+            .post()
+            .getAsString();
+
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
+        Mockito.verify( this.taskService ).submitTask( captor.capture() );
+        assertEquals( "com.enonic.xp.app.system:reindex", captor.getValue().getDescriptorKey().toString() );
+        assertEquals( "my-repo", captor.getValue().getData().getString( "repository" ) );
+        assertEquals( List.of( "draft", "master" ), Lists.newArrayList( captor.getValue().getData().getStrings( "branches" ) ) );
+        assertEquals( Boolean.TRUE, captor.getValue().getData().getBoolean( "initialize" ) );
+        assertEquals( "{\"taskId\":\"task-id\"}", result );
+    }
+
     @Override
     protected Object getResourceInstance()
     {
         this.indexService = mock( IndexService.class );
         this.repositoryService = mock( RepositoryService.class );
+        this.taskService = mock( TaskService.class );
 
         final IndexResource resource = new IndexResource();
         resource.setIndexService( indexService );
         resource.setRepositoryService( repositoryService );
+        resource.setTaskService( taskService );
         return resource;
     }
 }

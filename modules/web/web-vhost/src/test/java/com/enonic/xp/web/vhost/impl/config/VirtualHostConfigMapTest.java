@@ -390,4 +390,13 @@ class VirtualHostConfigMapTest
 
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
     }
+
+    @Test
+    void testApiContextKeyWithInvalidApplication()
+    {
+        map.put( "mapping.mgmt.host", "mgmt.example.com" );
+        map.put( "mapping.mgmt.context.api.not an app:snapshot.verbs", "list" );
+
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
 }

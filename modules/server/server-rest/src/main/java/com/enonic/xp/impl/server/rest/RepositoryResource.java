@@ -22,7 +22,6 @@ import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.task.SubmitTaskParams;
-import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
 @Path("/repo")
