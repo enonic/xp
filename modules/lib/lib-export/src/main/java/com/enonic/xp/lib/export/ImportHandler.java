@@ -61,10 +61,6 @@ public class ImportHandler
         {
             paramsBuilder.xslt( toVirtualFile( (ResourceKey) xslt ) );
         }
-        else
-        {
-            paramsBuilder.xsltFileName( xslt.toString() );
-        }
 
         if ( xsltParams != null )
         {

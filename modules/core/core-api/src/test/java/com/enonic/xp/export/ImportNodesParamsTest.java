@@ -9,6 +9,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.vfs.VirtualFile;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ImportNodesParamsTest
@@ -35,5 +36,18 @@ class ImportNodesParamsTest
         assertNotNull( result.getSource() );
         assertNotNull( result.getXslt() );
         assertNotNull( result.getXsltParams() );
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void xsltFileName_isDeprecatedAndIgnored()
+    {
+        final ImportNodesParams result = ImportNodesParams.create()
+            .targetNodePath( NodePath.ROOT )
+            .exportName( "my-export" )
+            .xsltFileName( "transform.xsl" )
+            .build();
+
+        assertNull( result.getXslt() );
     }
 }

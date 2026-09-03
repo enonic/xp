@@ -1,11 +1,12 @@
 package com.enonic.xp.impl.server.rest.model;
 
-import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static java.util.Objects.requireNonNull;
 
+@JsonIgnoreProperties({"xslSource", "xslParams"})
 public final class ImportNodesRequestJson
 {
     private final RepoPath targetRepoPath;
@@ -16,20 +17,12 @@ public final class ImportNodesRequestJson
 
     private final boolean importWithPermissions;
 
-    private final String xslSource;
-
-    private final Map<String, Object> xslParams;
-
     @JsonCreator
     public ImportNodesRequestJson( @JsonProperty("exportName") final String exportName, //
                                    @JsonProperty("targetRepoPath") final String targetRepoPath, //
                                    @JsonProperty("importWithIds") final Boolean importWithIds, //
-                                   @JsonProperty("importWithPermissions") final Boolean importWithPermissions, //
-                                   @JsonProperty("xslSource") final String xslSource, //
-                                   @JsonProperty("xslParams") final Map<String, Object> xslParams )
-
+                                   @JsonProperty("importWithPermissions") final Boolean importWithPermissions )
     {
-
         requireNonNull( exportName, "exportName is required" );
         requireNonNull( targetRepoPath, "targetRepoPath is required" );
 
@@ -37,8 +30,6 @@ public final class ImportNodesRequestJson
         this.exportName = exportName;
         this.importWithIds = importWithIds != null ? importWithIds : true;
         this.importWithPermissions = importWithPermissions != null ? importWithPermissions : true;
-        this.xslSource = xslSource;
-        this.xslParams = xslParams;
     }
 
     public RepoPath getTargetRepoPath()
@@ -59,16 +50,5 @@ public final class ImportNodesRequestJson
     public boolean isImportWithPermissions()
     {
         return importWithPermissions;
-    }
-
-
-    public String getXslSource()
-    {
-        return xslSource;
-    }
-
-    public Map<String, Object> getXslParams()
-    {
-        return xslParams;
     }
 }
