@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentIds;
 import com.enonic.xp.content.ContentInheritType;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
@@ -31,6 +32,7 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.Reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
@@ -201,6 +203,77 @@ class ContentServiceImplTest_duplicate
                                       .build() );
 
         assertEquals( 2, listener.duplicated );
+    }
+
+    @Test
+    void referred_contents_duplicated_when_children_excluded()
+    {
+        final Content content = createContent( ContentPath.ROOT, "content" );
+        final Content templates = createContent( content.getPath(), "templates" );
+        final Content template = createContent( templates.getPath(), "template" );
+        createContent( content.getPath(), "article" );
+
+        addReference( content, template );
+
+        refresh();
+
+        final DuplicateContentsResult result =
+            contentService.duplicate( DuplicateContentParams.create().contentId( content.getId() ).includeChildren( false ).build() );
+
+        assertEquals( 3, result.getDuplicatedContents().getSize() );
+
+        final Content duplicatedContent = this.contentService.getById( result.getDuplicatedContents().first() );
+
+        final Content duplicatedTemplates = getSingleChild( duplicatedContent );
+        assertEquals( templates.getDisplayName(), duplicatedTemplates.getDisplayName() );
+
+        final Content duplicatedTemplate = getSingleChild( duplicatedTemplates );
+        assertEquals( template.getDisplayName(), duplicatedTemplate.getDisplayName() );
+
+        assertEquals( new Reference( NodeId.from( duplicatedTemplate.getId() ) ),
+                      duplicatedContent.getData().getReference( "myRef" ) );
+    }
+
+    @Test
+    void referred_content_outside_tree_not_duplicated()
+    {
+        final Content content = createContent( ContentPath.ROOT, "content" );
+        final Content other = createContent( ContentPath.ROOT, "other" );
+        createContent( content.getPath(), "article" );
+
+        addReference( content, other );
+
+        refresh();
+
+        final DuplicateContentsResult result =
+            contentService.duplicate( DuplicateContentParams.create().contentId( content.getId() ).includeChildren( false ).build() );
+
+        assertEquals( 1, result.getDuplicatedContents().getSize() );
+
+        final Content duplicatedContent = this.contentService.getById( result.getDuplicatedContents().first() );
+
+        assertEquals( 0, this.contentService.findIdsByParent(
+            FindContentByParentParams.create().parentId( duplicatedContent.getId() ).build() ).getContentIds().getSize() );
+
+        assertEquals( new Reference( NodeId.from( other.getId() ) ), duplicatedContent.getData().getReference( "myRef" ) );
+    }
+
+    private void addReference( final Content content, final Content referred )
+    {
+        final PropertyTree data = content.getData().copy();
+        data.addReference( "myRef", new Reference( NodeId.from( referred.getId() ) ) );
+
+        this.contentService.update( new UpdateContentParams().contentId( content.getId() ).editor( edit -> edit.data = data ) );
+    }
+
+    private Content getSingleChild( final Content content )
+    {
+        final ContentIds children = this.contentService.findIdsByParent(
+            FindContentByParentParams.create().parentId( content.getId() ).build() ).getContentIds();
+
+        assertEquals( 1, children.getSize() );
+
+        return this.contentService.getById( children.first() );
     }
 
     private Content doDuplicateContent( final Content content )

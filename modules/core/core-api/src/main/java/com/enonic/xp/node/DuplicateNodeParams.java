@@ -14,6 +14,8 @@ public final class DuplicateNodeParams
 
     private final Boolean includeChildren;
 
+    private final boolean includeReferences;
+
     private final String name;
 
     private final NodePath parent;
@@ -28,6 +30,7 @@ public final class DuplicateNodeParams
         this.dataProcessor = builder.dataProcessor;
         this.duplicateListener = builder.duplicateListener;
         this.includeChildren = builder.includeChildren;
+        this.includeReferences = builder.includeReferences;
         this.name = builder.name;
         this.parent = builder.parent;
         this.versionAttributesResolver = builder.versionAttributesResolver;
@@ -59,6 +62,17 @@ public final class DuplicateNodeParams
         return includeChildren;
     }
 
+    /**
+     * Tells whether nodes referred to by the duplicated node must be duplicated along with it.
+     *
+     * @see Builder#includeReferences(boolean)
+     * @since 8.2.0
+     */
+    public boolean isIncludeReferences()
+    {
+        return includeReferences;
+    }
+
     public String getName()
     {
         return name;
@@ -88,6 +102,8 @@ public final class DuplicateNodeParams
         private DuplicateNodeListener duplicateListener;
 
         private Boolean includeChildren = true;
+
+        private boolean includeReferences;
 
         private String name;
 
@@ -122,6 +138,21 @@ public final class DuplicateNodeParams
         public Builder includeChildren( final Boolean includeChildren )
         {
             this.includeChildren = requireNonNullElse( includeChildren, true );
+            return this;
+        }
+
+        /**
+         * Duplicates the nodes the duplicated node refers to, so that the copy does not depend on nodes of the original tree. Only
+         * nodes inside the duplicated node's own tree are duplicated, together with the nodes required to hold them, and references
+         * are updated to point at the copies. References to nodes outside of the duplicated tree are kept as they are.
+         * <p>
+         * Has no effect when children are included, since the whole tree is duplicated then.
+         *
+         * @since 8.2.0
+         */
+        public Builder includeReferences( final boolean includeReferences )
+        {
+            this.includeReferences = includeReferences;
             return this;
         }
 

@@ -1,9 +1,12 @@
 package com.enonic.xp.repo.impl.node;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,7 @@ import com.enonic.xp.node.InsertManualStrategy;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeAlreadyExistAtPathException;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeNotFoundException;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.OperationNotPermittedException;
@@ -85,6 +89,10 @@ public final class DuplicateNodeCommand
         if ( params.getIncludeChildren() )
         {
             storeChildNodes( existingNode, duplicatedNode, builder, createdChildren );
+        }
+        else if ( params.isIncludeReferences() )
+        {
+            storeReferredNodes( existingNode, duplicatedNode, builder, createdChildren );
         }
 
         final NodeReferenceUpdatesHolder nodesToBeUpdated = builder.build();
@@ -203,34 +211,156 @@ public final class DuplicateNodeCommand
             final Node node =
                 NodeFactory.create( this.nodeStorageService.getNodeVersion( entry.getNodeVersionKey(), internalContext ), entry );
 
-            final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( parent.copy().path() );
-
-            decideInsertStrategy( parent.original(), node, paramsBuilder );
-
-            attachBinaries( node, paramsBuilder );
-
-            paramsBuilder.versionAttributesResolver( params.getVersionAttributesResolver() );
-
-            final CreateNodeParams originalParams = paramsBuilder.build();
-
-            final CreateNodeParams processedParams = executeProcessors( originalParams );
-
-            final Node newChildNode = CreateNodeCommand.create( this )
-                .params( processedParams )
-                .binaryService( this.binaryService )
-                .knownParentNode( parent.copy() )
-                .skipVerification( true )
-                .build()
-                .execute();
-
-            builder.add( node.id(), newChildNode.id() );
-
-            result.addChild( newChildNode );
-            createdChildren.add( newChildNode );
-            listener.nodesDuplicated( 1 );
+            final Node newChildNode = storeNode( node, parent, builder, createdChildren );
 
             duplicatedParents.put( node.path(), new DuplicatedParent( node, newChildNode ) );
         }
+    }
+
+    /**
+     * Duplicates the nodes the duplicated node refers to. Only nodes inside the duplicated node's own tree are duplicated, since
+     * references to nodes outside of it are equally valid for the copy. The nodes required to hold them are duplicated as well, so
+     * that the referred nodes keep their position relative to the duplicated node.
+     */
+    private void storeReferredNodes( final Node originalNode, final Node newNode, final NodeReferenceUpdatesHolder.Builder builder,
+                                     final List<Node> createdChildren )
+    {
+        final List<Node> toDuplicate = resolveReferredNodes( originalNode );
+
+        if ( toDuplicate.isEmpty() )
+        {
+            return;
+        }
+
+        listener.resolved( toDuplicate.size() + 1 );
+
+        final Map<NodePath, DuplicatedParent> duplicatedParents = new HashMap<>();
+        duplicatedParents.put( originalNode.path(), new DuplicatedParent( originalNode, newNode ) );
+
+        for ( final Node node : toDuplicate )
+        {
+            final DuplicatedParent parent = requireNonNull( duplicatedParents.get( node.parentPath() ),
+                                                            () -> "Parent of [" + node.path() + "] was not duplicated yet" );
+
+            final Node newReferredNode = storeNode( node, parent, builder, createdChildren );
+
+            duplicatedParents.put( node.path(), new DuplicatedParent( node, newReferredNode ) );
+        }
+    }
+
+    /**
+     * @return the nodes inside the duplicated node's tree that are referred to by it, directly or through another referred node,
+     * together with the nodes holding them, ordered so that a node always comes after the nodes it is stored in.
+     */
+    private List<Node> resolveReferredNodes( final Node originalNode )
+    {
+        final InternalContext internalContext = InternalContext.from( ContextAccessor.current() );
+
+        final Set<NodeId> resolved = new HashSet<>();
+        resolved.add( originalNode.id() );
+
+        final Map<NodePath, Node> referred = new HashMap<>();
+
+        NodeIds toResolve = referredNodeIds( originalNode, resolved );
+
+        while ( !toResolve.isEmpty() )
+        {
+            final NodeIds.Builder nextToResolve = NodeIds.create();
+
+            // nodes the current principals are not allowed to read are not returned, and are therefore never duplicated
+            for ( final Node node : this.nodeStorageService.get( toResolve, internalContext ) )
+            {
+                if ( node.path().isChildOf( originalNode.path() ) )
+                {
+                    referred.put( node.path(), node );
+
+                    // nodes outside of the duplicated tree are not duplicated, so what they refer to is of no interest either
+                    nextToResolve.addAll( referredNodeIds( node, resolved ) );
+                }
+            }
+
+            toResolve = nextToResolve.build();
+        }
+
+        final Map<NodePath, Node> toDuplicate = new HashMap<>();
+
+        for ( final Node node : referred.values() )
+        {
+            addWithHoldingNodes( node, originalNode, referred, toDuplicate );
+        }
+
+        return toDuplicate.values().stream().sorted( Comparator.comparing( Node::path ) ).toList();
+    }
+
+    private NodeIds referredNodeIds( final Node node, final Set<NodeId> resolved )
+    {
+        final NodeIds.Builder referredNodeIds = NodeIds.create();
+
+        for ( final Property property : node.data().getProperties( ValueTypes.REFERENCE ) )
+        {
+            final Reference reference = property.getReference();
+            if ( reference != null && resolved.add( reference.getNodeId() ) )
+            {
+                referredNodeIds.add( reference.getNodeId() );
+            }
+        }
+
+        return referredNodeIds.build();
+    }
+
+    private void addWithHoldingNodes( final Node node, final Node originalNode, final Map<NodePath, Node> referred,
+                                      final Map<NodePath, Node> toDuplicate )
+    {
+        final List<Node> holdingNodes = new ArrayList<>();
+
+        NodePath path = node.parentPath();
+        while ( path.isChildOf( originalNode.path() ) && !toDuplicate.containsKey( path ) )
+        {
+            final Node holdingNode = referred.containsKey( path ) ? referred.get( path ) : doGetByPath( path );
+            if ( holdingNode == null )
+            {
+                // the referred node cannot be placed in the copy without the nodes it is stored in
+                return;
+            }
+
+            holdingNodes.add( holdingNode );
+            path = path.getParentPath();
+        }
+
+        toDuplicate.put( node.path(), node );
+        holdingNodes.forEach( holdingNode -> toDuplicate.put( holdingNode.path(), holdingNode ) );
+    }
+
+    private Node storeNode( final Node node, final DuplicatedParent parent, final NodeReferenceUpdatesHolder.Builder builder,
+                            final List<Node> createdChildren )
+    {
+        final CreateNodeParams.Builder paramsBuilder = CreateNodeParams.from( node ).parent( parent.copy().path() );
+
+        decideInsertStrategy( parent.original(), node, paramsBuilder );
+
+        attachBinaries( node, paramsBuilder );
+
+        paramsBuilder.versionAttributesResolver( params.getVersionAttributesResolver() );
+
+        final CreateNodeParams originalParams = paramsBuilder.build();
+
+        final CreateNodeParams processedParams = executeProcessors( originalParams );
+
+        final Node newNode = CreateNodeCommand.create( this )
+            .params( processedParams )
+            .binaryService( this.binaryService )
+            .knownParentNode( parent.copy() )
+            .skipVerification( true )
+            .build()
+            .execute();
+
+        builder.add( node.id(), newNode.id() );
+
+        result.addChild( newNode );
+        createdChildren.add( newNode );
+        listener.nodesDuplicated( 1 );
+
+        return newNode;
     }
 
     private record DuplicatedParent(Node original, Node copy)

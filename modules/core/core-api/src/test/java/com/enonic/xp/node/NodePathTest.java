@@ -86,6 +86,21 @@ class NodePathTest
     }
 
     @Test
+    void isChildOf()
+    {
+        assertTrue( new NodePath( "/one/two" ).isChildOf( new NodePath( "/one" ) ) );
+        assertTrue( new NodePath( "/one/two/three" ).isChildOf( new NodePath( "/one" ) ) );
+        assertTrue( new NodePath( "/one/TWO" ).isChildOf( new NodePath( "/ONE" ) ) );
+        assertTrue( new NodePath( "/one" ).isChildOf( NodePath.ROOT ) );
+
+        assertFalse( new NodePath( "/one" ).isChildOf( new NodePath( "/one" ) ) );
+        assertFalse( new NodePath( "/one" ).isChildOf( new NodePath( "/one/two" ) ) );
+        assertFalse( new NodePath( "/one-two/three" ).isChildOf( new NodePath( "/one" ) ) );
+        assertFalse( new NodePath( "/two/one" ).isChildOf( new NodePath( "/one" ) ) );
+        assertFalse( NodePath.ROOT.isChildOf( NodePath.ROOT ) );
+    }
+
+    @Test
     void compareTo()
     {
         NodePath a = new NodePath( "/a" );
