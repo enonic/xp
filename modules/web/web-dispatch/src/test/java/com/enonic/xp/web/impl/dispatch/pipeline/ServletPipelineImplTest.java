@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>
 {
-    @WebServlet
+    @WebServlet("/*")
     private static final class MyServlet
         extends HttpServlet
     {
@@ -47,11 +48,12 @@ class ServletPipelineImplTest
     {
         final MyServlet servlet = new MyServlet();
 
-        assertThat( this.pipeline.list.snapshot() ).isEmpty();
+        assertThat( this.pipeline.list() ).isEmpty();
         this.pipeline.addServlet( servlet, Map.of() );
+        assertThat( this.pipeline.list() ).hasSize( 1 );
 
-        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeServlet( servlet );
+        assertThat( this.pipeline.list() ).isEmpty();
     }
 
     @Test
@@ -59,12 +61,14 @@ class ServletPipelineImplTest
     {
         final ServletMapping mapping = mock( ServletMapping.class );
         when( mapping.getResource() ).thenReturn( mock( Servlet.class ) );
+        when( mapping.getUrlPatterns() ).thenReturn( Set.of( "/*" ) );
 
-        assertThat( this.pipeline.list.snapshot() ).isEmpty();
+        assertThat( this.pipeline.list() ).isEmpty();
         this.pipeline.addMapping( mapping );
+        assertThat( this.pipeline.list() ).hasSize( 1 );
 
-        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeMapping( mapping );
+        assertThat( this.pipeline.list() ).isEmpty();
     }
 
     @Test

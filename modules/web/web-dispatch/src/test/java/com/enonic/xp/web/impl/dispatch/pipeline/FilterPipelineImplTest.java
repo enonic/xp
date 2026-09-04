@@ -1,13 +1,13 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
@@ -21,24 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FilterPipelineImplTest
     extends ResourcePipelineImplTest<FilterDefinition, FilterPipelineImpl>
 {
-    @WebFilter
+    @WebFilter("/*")
     private static final class MyFilter
         implements Filter
     {
         @Override
-        public void init( final FilterConfig config )
-        {
-            // Do nothing
-        }
-
-        @Override
         public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
-        {
-            // Do nothing
-        }
-
-        @Override
-        public void destroy()
         {
             // Do nothing
         }
@@ -63,11 +51,12 @@ class FilterPipelineImplTest
     {
         final MyFilter filter = new MyFilter();
 
-        assertThat( this.pipeline.list.snapshot() ).isEmpty();
+        assertThat( this.pipeline.list() ).isEmpty();
         this.pipeline.addFilter( filter, Map.of() );
+        assertThat( this.pipeline.list() ).hasSize( 1 );
 
-        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeFilter( filter );
+        assertThat( this.pipeline.list() ).isEmpty();
     }
 
     @Test
@@ -75,12 +64,14 @@ class FilterPipelineImplTest
     {
         final FilterMapping mapping = Mockito.mock( FilterMapping.class );
         Mockito.when( mapping.getResource() ).thenReturn( Mockito.mock( Filter.class ) );
+        Mockito.when( mapping.getUrlPatterns() ).thenReturn( Set.of( "/*" ) );
 
-        assertThat( this.pipeline.list.snapshot() ).isEmpty();
+        assertThat( this.pipeline.list() ).isEmpty();
         this.pipeline.addMapping( mapping );
+        assertThat( this.pipeline.list() ).hasSize( 1 );
 
-        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeMapping( mapping );
+        assertThat( this.pipeline.list() ).isEmpty();
     }
 
     @Test

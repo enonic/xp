@@ -5,10 +5,11 @@ import java.io.IOException;
 import org.eclipse.jetty.ee11.servlets.DoSFilter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -23,63 +24,80 @@ import com.enonic.xp.annotation.Order;
 public final class DosFilterWrapper
     implements Filter
 {
-    protected Filter delegate;
+    private final DosFilterConfig config;
 
-    private DosFilterConfig config;
+    /**
+     * The wrapped Jetty filter, or {@code null} when the DoS filter is disabled.
+     */
+    private final Filter delegate;
+
+    /**
+     * Jetty's DoSFilter hands the {@link ServletContext} to every rate tracker it creates and its idle
+     * tracker reads an attribute from it, so - unlike the other wrapped filters - it cannot be initialized
+     * when this component is activated. It is initialized on the first request instead, which is where a
+     * servlet context first becomes available.
+     */
+    private volatile boolean initialized;
 
     @Activate
-    public void activate( final DosFilterConfig config )
+    public DosFilterWrapper( final DosFilterConfig config )
     {
-        this.config = config;
-
-        if ( this.config.enabled() )
-        {
-            this.delegate = new DoSFilter();
-        }
+        this( config, config.enabled() ? new DoSFilter() : null );
     }
 
-    @Override
-    public void init( final FilterConfig config )
-        throws ServletException
+    DosFilterWrapper( final DosFilterConfig config, final Filter delegate )
     {
-        if ( this.delegate == null )
-        {
-            return;
-        }
+        this.config = config;
+        this.delegate = delegate;
+    }
 
-        final FilterConfigImpl wrapped = new FilterConfigImpl( config );
-        wrapped.populate( this.config );
-        this.delegate.init( wrapped );
+    @Deactivate
+    public void deactivate()
+    {
+        if ( this.initialized )
+        {
+            this.delegate.destroy();
+        }
     }
 
     @Override
     public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
         throws IOException, ServletException
     {
-        if ( this.delegate != null )
-        {
-            this.delegate.doFilter( req, res, chain );
-            return;
-        }
-
-        chain.doFilter( req, res );
-    }
-
-    @Override
-    public void destroy()
-    {
         if ( this.delegate == null )
         {
+            chain.doFilter( req, res );
             return;
         }
 
-        try
+        initialize( req.getServletContext() );
+        this.delegate.doFilter( req, res, chain );
+    }
+
+    private void initialize( final ServletContext context )
+        throws ServletException
+    {
+        if ( this.initialized )
         {
-            this.delegate.destroy();
+            return;
         }
-        finally
+
+        synchronized ( this )
         {
-            this.delegate = null;
+            if ( this.initialized )
+            {
+                return;
+            }
+
+            final FilterConfigImpl filterConfig = new FilterConfigImpl( DoSFilter.class.getSimpleName(), context );
+            filterConfig.populate( this.config );
+            this.delegate.init( filterConfig );
+            this.initialized = true;
         }
+    }
+
+    Filter getDelegate()
+    {
+        return this.delegate;
     }
 }

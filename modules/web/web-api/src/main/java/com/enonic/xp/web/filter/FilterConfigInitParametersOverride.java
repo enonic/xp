@@ -9,6 +9,12 @@ import com.google.common.collect.ImmutableMap;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 
+/**
+ * @deprecated XP does not call {@code Filter.init}, so there is no container-provided {@link FilterConfig} to
+ * override init parameters on. Configure the filter in the {@code @Activate} method of its component
+ * instead. Scheduled for removal in XP 9.0.
+ */
+@Deprecated(since = "8.2", forRemoval = true)
 public final class FilterConfigInitParametersOverride
     implements FilterConfig
 {

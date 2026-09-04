@@ -8,29 +8,37 @@ import java.util.Map;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 
+/**
+ * The config the wrapped Jetty filter is initialized with. XP does not initialize filters any more, so there
+ * is no container-provided config to build on: the name is ours and the context comes from the request that
+ * triggers initialization.
+ */
 final class FilterConfigImpl
     implements FilterConfig
 {
-    private final FilterConfig delegate;
+    private final String name;
+
+    private final ServletContext context;
 
     private final Map<String, String> config;
 
-    FilterConfigImpl( final FilterConfig delegate )
+    FilterConfigImpl( final String name, final ServletContext context )
     {
-        this.delegate = delegate;
+        this.name = name;
+        this.context = context;
         this.config = new HashMap<>();
     }
 
     @Override
     public String getFilterName()
     {
-        return this.delegate.getFilterName();
+        return this.name;
     }
 
     @Override
     public ServletContext getServletContext()
     {
-        return this.delegate.getServletContext();
+        return this.context;
     }
 
     @Override

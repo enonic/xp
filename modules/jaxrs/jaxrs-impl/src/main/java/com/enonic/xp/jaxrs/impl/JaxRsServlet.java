@@ -53,13 +53,17 @@ final class JaxRsServlet
         }
     }
 
-    @Override
-    public synchronized void destroy()
+    /**
+     * Releases the dispatcher. Called by the owning JaxRsService when it is destroyed: XP does not call the
+     * servlet lifecycle methods.
+     */
+    synchronized void dispose()
     {
         final JaxRsDispatcher dispatcher = this.dispatcher;
         if ( dispatcher != null )
         {
             dispatcher.destroy();
+            this.dispatcher = null;
         }
     }
 

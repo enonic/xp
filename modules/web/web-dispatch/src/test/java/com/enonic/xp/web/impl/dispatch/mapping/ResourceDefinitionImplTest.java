@@ -2,9 +2,6 @@ package com.enonic.xp.web.impl.dispatch.mapping;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import jakarta.servlet.ServletContext;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
@@ -16,13 +13,10 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
 {
     T resource;
 
-    ServletContext context;
-
     @BeforeEach
     public final void setup()
     {
         this.resource = newResource();
-        this.context = Mockito.mock( ServletContext.class );
     }
 
     abstract T newResource();
@@ -33,7 +27,6 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
     {
         builder.order( 10 );
         builder.name( "test" );
-        builder.initParam( "a", "1" );
         builder.urlPatterns( "/a/*" );
     }
 
@@ -43,7 +36,6 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
         final D def = newDefinition();
         assertEquals( 10, def.getOrder() );
         assertEquals( "test", def.getName() );
-        assertEquals( "{a=1}", def.getInitParams().toString() );
         assertEquals( "[/a/*]", def.getUrlPatterns().toString() );
         assertEquals( this.resource, def.getResource() );
     }
@@ -51,66 +43,11 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
     @Test
     void testMatches()
     {
-        final ResourceDefinitionImpl def = (ResourceDefinitionImpl) newDefinition();
-        assertFalse( def.matches( "/a/b/c" ) );
+        // a definition is ready to serve as soon as it exists, there is nothing to initialize
+        final ResourceDefinitionImpl<?> def = (ResourceDefinitionImpl<?>) newDefinition();
 
-        def.init( this.context );
+        assertFalse( def.matches( null ) );
         assertFalse( def.matches( "/b" ) );
         assertTrue( def.matches( "/a/b/c" ) );
-    }
-
-    @Test
-    void matches_afterDestroy()
-    {
-        final ResourceDefinitionImpl def = (ResourceDefinitionImpl) newDefinition();
-
-        def.init( this.context );
-        assertTrue( def.matches( "/a/b/c" ) );
-
-        def.destroy();
-        assertFalse( def.matches( "/a/b/c" ) );
-
-        def.init( this.context );
-        assertTrue( def.matches( "/a/b/c" ) );
-    }
-
-    abstract void verifyInit( int times )
-        throws Exception;
-
-    abstract void verifyDestroy( int times );
-
-    abstract void setupInitException()
-        throws Exception;
-
-    @Test
-    void testInitDestroy()
-        throws Exception
-    {
-        final D def = newDefinition();
-
-        def.destroy();
-        verifyDestroy( 0 );
-        verifyInit( 0 );
-
-        def.init( this.context );
-        verifyInit( 1 );
-
-        def.init( this.context );
-        verifyInit( 1 );
-
-        def.destroy();
-        verifyDestroy( 1 );
-
-        def.destroy();
-        verifyDestroy( 1 );
-    }
-
-    @Test
-    void testInitException()
-        throws Exception
-    {
-        final D def = newDefinition();
-        setupInitException();
-        def.init( this.context );
     }
 }

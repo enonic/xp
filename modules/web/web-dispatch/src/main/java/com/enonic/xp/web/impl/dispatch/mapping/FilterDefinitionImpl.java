@@ -20,19 +20,6 @@ final class FilterDefinitionImpl
     }
 
     @Override
-    void doInit( final ResourceConfig config )
-        throws ServletException
-    {
-        this.resource.init( config );
-    }
-
-    @Override
-    void doDestroy()
-    {
-        this.resource.destroy();
-    }
-
-    @Override
     public boolean doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws IOException, ServletException
     {

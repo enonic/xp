@@ -70,6 +70,7 @@ final class ResourceMappingHelper
         }
     }
 
+    @SuppressWarnings("removal")
     private static void addInitParams( final MappingBuilder builder, final WebInitParam... params )
     {
         for ( final WebInitParam param : params )

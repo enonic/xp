@@ -1,78 +1,106 @@
 package com.enonic.xp.web.impl.dos;
 
+import org.eclipse.jetty.ee11.servlets.DoSFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class DosFilterWrapperTest
 {
-    private DosFilterWrapper filter;
-
     private DosFilterConfig config;
 
-    private FilterConfig filterConfig;
+    private Filter delegate;
 
-    private ServletRequest servletRequest;
+    private HttpServletRequest request;
 
-    private ServletResponse servletResponse;
+    private HttpServletResponse response;
 
     private FilterChain filterChain;
 
     @BeforeEach
     void setup()
     {
-        this.filter = new DosFilterWrapper();
         this.config = Mockito.mock( DosFilterConfig.class );
-        this.filterConfig = Mockito.mock( FilterConfig.class );
-        this.servletRequest = Mockito.mock( ServletRequest.class );
-        this.servletResponse = Mockito.mock( ServletResponse.class );
+        this.delegate = Mockito.mock( Filter.class );
+        this.request = Mockito.mock( HttpServletRequest.class );
+        this.response = Mockito.mock( HttpServletResponse.class );
         this.filterChain = Mockito.mock( FilterChain.class );
     }
 
     @Test
-    void testNotEnabled()
-        throws Exception
+    void delegate_notEnabled()
     {
         Mockito.when( this.config.enabled() ).thenReturn( false );
-        this.filter.activate( this.config );
 
-        this.filter.init( this.filterConfig );
-        assertNull( this.filter.delegate );
-
-        this.filter.doFilter( this.servletRequest, this.servletResponse, this.filterChain );
-        Mockito.verify( this.filterChain, Mockito.times( 1 ) ).doFilter( this.servletRequest, this.servletResponse );
-
-        this.filter.destroy();
-        assertNull( this.filter.delegate );
+        assertNull( new DosFilterWrapper( this.config ).getDelegate() );
     }
 
     @Test
-    void testEnabled()
-        throws Exception
+    void delegate_enabled()
     {
         Mockito.when( this.config.enabled() ).thenReturn( true );
-        this.filter.activate( this.config );
 
-        this.filter.init( this.filterConfig );
-        assertNotNull( this.filter.delegate );
+        assertInstanceOf( DoSFilter.class, new DosFilterWrapper( this.config ).getDelegate() );
+    }
 
-        final Filter delegate = Mockito.mock( Filter.class );
-        this.filter.delegate = delegate;
+    @Test
+    void doFilter_notEnabled()
+        throws Exception
+    {
+        final DosFilterWrapper filter = new DosFilterWrapper( this.config, null );
 
-        this.filter.doFilter( this.servletRequest, this.servletResponse, this.filterChain );
-        Mockito.verify( delegate, Mockito.times( 1 ) ).doFilter( this.servletRequest, this.servletResponse, this.filterChain );
+        filter.doFilter( this.request, this.response, this.filterChain );
 
-        this.filter.destroy();
-        Mockito.verify( delegate, Mockito.times( 1 ) ).destroy();
-        assertNull( this.filter.delegate );
+        Mockito.verify( this.filterChain, Mockito.times( 1 ) ).doFilter( this.request, this.response );
+    }
+
+    @Test
+    void doFilter_initializesDelegateOnce()
+        throws Exception
+    {
+        Mockito.when( this.request.getServletContext() ).thenReturn( Mockito.mock( ServletContext.class ) );
+
+        final DosFilterWrapper filter = new DosFilterWrapper( this.config, this.delegate );
+
+        // the delegate needs a servlet context, which only a request can provide
+        Mockito.verify( this.delegate, Mockito.never() ).init( Mockito.any() );
+
+        filter.doFilter( this.request, this.response, this.filterChain );
+        filter.doFilter( this.request, this.response, this.filterChain );
+
+        Mockito.verify( this.delegate, Mockito.times( 1 ) ).init( Mockito.any() );
+        Mockito.verify( this.delegate, Mockito.times( 2 ) ).doFilter( this.request, this.response, this.filterChain );
+    }
+
+    @Test
+    void deactivate_destroysInitializedDelegate()
+        throws Exception
+    {
+        Mockito.when( this.request.getServletContext() ).thenReturn( Mockito.mock( ServletContext.class ) );
+
+        final DosFilterWrapper filter = new DosFilterWrapper( this.config, this.delegate );
+        filter.doFilter( this.request, this.response, this.filterChain );
+
+        filter.deactivate();
+
+        Mockito.verify( this.delegate, Mockito.times( 1 ) ).destroy();
+    }
+
+    @Test
+    void deactivate_withoutRequest()
+    {
+        // nothing initialized the delegate, so there is nothing to destroy
+        new DosFilterWrapper( this.config, this.delegate ).deactivate();
+
+        Mockito.verify( this.delegate, Mockito.never() ).destroy();
     }
 }

@@ -123,6 +123,8 @@ public final class MappingBuilder
             return this.order;
         }
 
+        @Deprecated
+        @SuppressWarnings("removal")
         @Override
         public final Map<String, String> getInitParams()
         {
@@ -142,6 +144,12 @@ public final class MappingBuilder
         }
     }
 
+    /**
+     * @deprecated Init parameters are not passed to the filter or servlet any more: XP does not call
+     * {@code Filter.init} or {@code Servlet.init}. Configure the resource in the {@code @Activate} method of
+     * its component instead. Scheduled for removal in XP 9.0.
+     */
+    @Deprecated(since = "8.2", forRemoval = true)
     public MappingBuilder initParam( final String key, final String value )
     {
         this.initParams.put( key, value );

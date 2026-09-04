@@ -1,20 +1,16 @@
 package com.enonic.xp.web.impl.dispatch.mapping;
 
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,37 +34,10 @@ class FilterDefinitionImplTest
     }
 
     @Test
-    void create_noAnnotations()
-    {
-        assertNull( ResourceDefinitionFactory.create( this.resource, new ArrayList<>() ) );
-    }
-
-    @Override
-    void verifyInit( final int times )
-        throws Exception
-    {
-        Mockito.verify( this.resource, Mockito.times( times ) ).init( Mockito.any() );
-    }
-
-    @Override
-    void verifyDestroy( final int times )
-    {
-        Mockito.verify( this.resource, Mockito.times( times ) ).destroy();
-    }
-
-    @Override
-    void setupInitException()
-        throws Exception
-    {
-        Mockito.doThrow( new ServletException( "test" ) ).when( this.resource ).init( Mockito.any() );
-    }
-
-    @Test
     void doFilter()
         throws Exception
     {
         final FilterDefinition def = newDefinition();
-        def.init( this.context );
 
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );

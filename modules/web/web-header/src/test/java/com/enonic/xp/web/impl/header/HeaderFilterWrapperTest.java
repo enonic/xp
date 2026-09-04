@@ -6,7 +6,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,11 +30,10 @@ class HeaderFilterWrapperTest
         when( headerFilterConfig.headerConfig() ).thenReturn( "set X-Content-Type-Options: nosniff" );
         final HeaderFilterWrapper instance = new HeaderFilterWrapper( headerFilterConfig );
 
-        instance.init( mock( FilterConfig.class ) );
         final HttpServletRequest requestMock = mock( HttpServletRequest.class );
         when( requestMock.getServletContext() ).thenReturn( mock( ServletContext.class ) );
         instance.doHandle( requestMock, httpServletResponse, mock( FilterChain.class ) );
-        instance.destroy();
+        instance.deactivate();
 
         verify( httpServletResponse ).setHeader( "X-Content-Type-Options", "nosniff" );
     }

@@ -59,6 +59,7 @@ final class JaxRsServiceImpl
     {
         this.tracker.close();
         this.registration.unregister();
+        this.servlet.dispose();
     }
 
     @Override

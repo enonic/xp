@@ -3,7 +3,9 @@
     "order": 0,
     "name": "MyFilter",
     "class": "com.enonic.xp.web.impl.dispatch.status.FilterStatusReporterTest$MyFilter",
-    "patterns": [],
+    "patterns": [
+      "/*"
+    ],
     "connectors": [
       "a"
     ],
@@ -13,7 +15,9 @@
     "order": 0,
     "name": "MyFilter",
     "class": "com.enonic.xp.web.impl.dispatch.status.FilterStatusReporterTest$MyFilter",
-    "patterns": [],
+    "patterns": [
+      "/*"
+    ],
     "connectors": [
       "a",
       "b"

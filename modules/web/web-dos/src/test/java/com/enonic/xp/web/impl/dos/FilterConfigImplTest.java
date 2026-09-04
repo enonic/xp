@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,13 +21,8 @@ class FilterConfigImplTest
     @BeforeEach
     void setup()
     {
-        final FilterConfig delegate = Mockito.mock( FilterConfig.class );
-        Mockito.when( delegate.getFilterName() ).thenReturn( "dos-filter" );
-
         this.servletContext = Mockito.mock( ServletContext.class );
-        Mockito.when( delegate.getServletContext() ).thenReturn( this.servletContext );
-
-        this.wrapped = new FilterConfigImpl( delegate );
+        this.wrapped = new FilterConfigImpl( "dos-filter", this.servletContext );
     }
 
     @Test

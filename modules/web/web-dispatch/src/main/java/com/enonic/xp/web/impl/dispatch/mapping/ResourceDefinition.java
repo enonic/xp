@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.servlet.ServletContext;
-
+/**
+ * An immutable, ready-to-serve filter or servlet registration. A definition carries no lifecycle: the
+ * resource it wraps is fully initialized by its own component before it is registered, and XP never calls
+ * {@code init} or {@code destroy} on it.
+ */
 public interface ResourceDefinition<T>
 {
     int getOrder();
@@ -19,8 +22,4 @@ public interface ResourceDefinition<T>
     Map<String, String> getInitParams();
 
     T getResource();
-
-    void init( ServletContext context );
-
-    void destroy();
 }

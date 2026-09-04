@@ -4,10 +4,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,6 +12,7 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.impl.dispatch.pipeline.FilterPipeline;
 import com.enonic.xp.web.impl.dispatch.pipeline.ServletPipeline;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -32,9 +30,9 @@ class DispatchServletImplTest
 
     private DispatchServletImpl servlet;
 
-    private ServletContext context;
+    private HttpServletRequest req;
 
-    private ServletConfig config;
+    private HttpServletResponse res;
 
     @BeforeEach
     void setup()
@@ -42,9 +40,8 @@ class DispatchServletImplTest
         this.filterPipeline = mock( FilterPipeline.class );
         this.servletPipeline = mock( ServletPipeline.class );
 
-        this.context = mock( ServletContext.class );
-        this.config = mock( ServletConfig.class );
-        Mockito.when( this.config.getServletContext() ).thenReturn( this.context );
+        this.req = mock( HttpServletRequest.class );
+        this.res = mock( HttpServletResponse.class );
 
         this.servlet = new DispatchServletImpl( WEB_CONNECTOR_PROPERTIES );
     }
@@ -56,101 +53,24 @@ class DispatchServletImplTest
     }
 
     @Test
-    void testInit()
-        throws Exception
-    {
-        addPipelines();
-
-        this.servlet.init( this.config );
-
-        verify( this.filterPipeline, times( 1 ) ).init( this.context );
-        verify( this.servletPipeline, times( 1 ) ).init( this.context );
-    }
-
-    @Test
-    void init_beforePipelinesAreBound()
-        throws Exception
-    {
-        this.servlet.init( this.config );
-
-        verifyNoInteractions( this.filterPipeline, this.servletPipeline );
-
-        addPipelines();
-
-        verify( this.filterPipeline, times( 1 ) ).init( this.context );
-        verify( this.servletPipeline, times( 1 ) ).init( this.context );
-    }
-
-    @Test
-    void init_otherConnectorPipelinesAreIgnored()
-        throws Exception
-    {
-        final Map<String, ?> otherConnector = Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.MANAGEMENT_CONNECTOR );
-
-        this.servlet.init( this.config );
-        this.servlet.addFilterPipeline( this.filterPipeline, otherConnector );
-        this.servlet.addServletPipeline( this.servletPipeline, otherConnector );
-
-        verifyNoInteractions( this.filterPipeline, this.servletPipeline );
-    }
-
-    @Test
-    void testDestroy()
-    {
-        addPipelines();
-
-        this.servlet.destroy();
-
-        verify( this.filterPipeline, times( 1 ) ).destroy();
-        verify( this.servletPipeline, times( 1 ) ).destroy();
-    }
-
-    @Test
-    void destroy_beforePipelinesAreBound()
-    {
-        this.servlet.destroy();
-
-        verifyNoInteractions( this.filterPipeline, this.servletPipeline );
-    }
-
-    @Test
-    void destroy_pipelineBoundAfterwardsIsNotInitialized()
-        throws Exception
-    {
-        this.servlet.init( this.config );
-        this.servlet.destroy();
-
-        addPipelines();
-
-        verify( this.filterPipeline, never() ).init( this.context );
-        verify( this.servletPipeline, never() ).init( this.context );
-    }
-
-    @Test
     void testService()
         throws Exception
     {
         addPipelines();
 
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletResponse res = mock( HttpServletResponse.class );
+        this.servlet.service( this.req, this.res );
 
-        this.servlet.service( req, res );
-
-        verify( req, times( 1 ) ).setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, DispatchConstants.WEB_CONNECTOR );
-        verify( this.filterPipeline, times( 1 ) ).filter( req, res, this.servletPipeline );
+        verify( this.req, times( 1 ) ).setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, DispatchConstants.WEB_CONNECTOR );
+        verify( this.filterPipeline, times( 1 ) ).filter( this.req, this.res, this.servletPipeline );
     }
 
     @Test
     void service_beforePipelinesAreBound()
         throws Exception
     {
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletResponse res = mock( HttpServletResponse.class );
+        this.servlet.service( this.req, this.res );
 
-        this.servlet.service( req, res );
-
-        verify( res, times( 1 ) ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+        verify( this.res, times( 1 ) ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
         verifyNoInteractions( this.filterPipeline, this.servletPipeline );
     }
 
@@ -162,12 +82,44 @@ class DispatchServletImplTest
         this.servlet.removeFilterPipeline( this.filterPipeline );
         this.servlet.removeServletPipeline( this.servletPipeline );
 
-        final HttpServletRequest req = mock( HttpServletRequest.class );
-        final HttpServletResponse res = mock( HttpServletResponse.class );
+        this.servlet.service( this.req, this.res );
 
-        this.servlet.service( req, res );
+        verify( this.res, times( 1 ) ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+        verify( this.filterPipeline, never() ).filter( this.req, this.res, this.servletPipeline );
+    }
 
-        verify( res, times( 1 ) ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
-        verify( this.filterPipeline, never() ).filter( req, res, this.servletPipeline );
+    @Test
+    void pipelinesOfOtherConnectorsAreIgnored()
+        throws Exception
+    {
+        final Map<String, ?> otherConnector = Map.of( DispatchConstants.CONNECTOR_PROPERTY, DispatchConstants.MANAGEMENT_CONNECTOR );
+
+        this.servlet.addFilterPipeline( this.filterPipeline, otherConnector );
+        this.servlet.addServletPipeline( this.servletPipeline, otherConnector );
+
+        this.servlet.service( this.req, this.res );
+
+        verify( this.res, times( 1 ) ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+        verifyNoInteractions( this.filterPipeline, this.servletPipeline );
+    }
+
+    @Test
+    void unbindingAnotherPipelineKeepsTheCurrentOne()
+        throws Exception
+    {
+        addPipelines();
+
+        this.servlet.removeFilterPipeline( mock( FilterPipeline.class ) );
+        this.servlet.removeServletPipeline( mock( ServletPipeline.class ) );
+
+        this.servlet.service( this.req, this.res );
+
+        verify( this.filterPipeline, times( 1 ) ).filter( this.req, this.res, this.servletPipeline );
+    }
+
+    @Test
+    void getConnector()
+    {
+        assertEquals( DispatchConstants.WEB_CONNECTOR, this.servlet.getConnector() );
     }
 }
