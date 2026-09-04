@@ -58,7 +58,7 @@ public class ApplicationResourceService
     static String allowedUrls( final AppManagementConfig config )
     {
         final String pull = config.pull_allowedUrls();
-        return AppManagementConfig.UNSET.equals( pull ) ? config.installUrl_allowedUrls() : pull;
+        return pull == null ? config.installUrl_allowedUrls() : pull;
     }
 
     static boolean checksumRequired( final AppManagementConfig config )
