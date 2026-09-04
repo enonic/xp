@@ -4,8 +4,10 @@ dependencies {
     compileOnly project( ':core:core-internal' )
 
     testImplementation project( ':tools:testing' )
+    testImplementation project( ':lib:lib-common' )
     testImplementation project( ':core:core-app' )
     testImplementation( testFixtures( project( ':core:core-app' ) ) )
+    testImplementation( testFixtures( project( ':core:core-api' ) ) )
 }
 
 jar {

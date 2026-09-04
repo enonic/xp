@@ -1,0 +1,33 @@
+kind: "Task"
+description: "Dump task"
+form:
+  - type: "TextLine"
+    name: "name"
+    label: "Dump name"
+    occurrences:
+      min: 1
+      max: 1
+  - type: "CheckBox"
+    name: "includeVersions"
+    label: "Include versions"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "Long"
+    name: "maxAge"
+    label: "Max age of versions (days)"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "Long"
+    name: "maxVersions"
+    label: "Max number of versions"
+    occurrences:
+      min: 0
+      max: 1
+  - type: "TextLine"
+    name: "repositories"
+    label: "Repositories (default: all)"
+    occurrences:
+      min: 0
+      max: 0

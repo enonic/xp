@@ -10,19 +10,18 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.impl.server.rest.model.ExportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.ImportNodesRequestJson;
 import com.enonic.xp.impl.server.rest.model.RepositoriesJson;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
-import com.enonic.xp.impl.server.rest.task.ExportRunnableTask;
-import com.enonic.xp.impl.server.rest.task.ImportRunnableTask;
+import com.enonic.xp.impl.server.rest.task.SystemTasks;
 import com.enonic.xp.jaxrs.JaxRsComponent;
 import com.enonic.xp.repository.Repositories;
 import com.enonic.xp.repository.RepositoryService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.task.SubmitLocalTaskParams;
-import com.enonic.xp.task.TaskId;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskService;
 
 @Path("/repo")
@@ -42,37 +41,30 @@ public final class RepositoryResource
     @Path("export")
     public TaskResultJson exportNodes( final ExportNodesRequestJson params )
     {
-        final ExportRunnableTask task = ExportRunnableTask.create()
-            .repositoryId( params.getSourceRepoPath().getRepositoryId() )
-            .branch( params.getSourceRepoPath().getBranch() )
-            .nodePath( params.getSourceRepoPath().getNodePath() )
-            .exportName( params.getExportName() )
-            .batchSize( params.getBatchSize() )
-            .exportService( exportService )
-            .build();
-        final TaskId taskId = taskService.submitLocalTask(
-            SubmitLocalTaskParams.create().runnableTask( task ).description( "Export " + params.getExportName() ).build() );
-
-        return new TaskResultJson( taskId );
+        final PropertyTree data = new PropertyTree();
+        data.addString( "repository", params.getSourceRepoPath().getRepositoryId().toString() );
+        data.addString( "branch", params.getSourceRepoPath().getBranch().getValue() );
+        data.addString( "nodePath", params.getSourceRepoPath().getNodePath().toString() );
+        data.addString( "exportName", params.getExportName() );
+        if ( params.getBatchSize() != null )
+        {
+            data.addLong( "batchSize", params.getBatchSize().longValue() );
+        }
+        return new TaskResultJson( taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.EXPORT ).data( data ).build() ) );
     }
 
     @POST
     @Path("import")
     public TaskResultJson importNodes( final ImportNodesRequestJson params )
     {
-        final ImportRunnableTask task = ImportRunnableTask.create()
-            .repositoryId( params.getTargetRepoPath().getRepositoryId() )
-            .branch( params.getTargetRepoPath().getBranch() )
-            .nodePath( params.getTargetRepoPath().getNodePath() )
-            .exportName( params.getExportName() )
-            .importWithIds( params.isImportWithIds() )
-            .importWithPermissions( params.isImportWithPermissions() )
-            .exportService( exportService )
-            .build();
-        final TaskId taskId = taskService.submitLocalTask(
-            SubmitLocalTaskParams.create().runnableTask( task ).description( "Import " + params.getExportName() ).build() );
-
-        return new TaskResultJson( taskId );
+        final PropertyTree data = new PropertyTree();
+        data.addString( "exportName", params.getExportName() );
+        data.addString( "repository", params.getTargetRepoPath().getRepositoryId().toString() );
+        data.addString( "branch", params.getTargetRepoPath().getBranch().getValue() );
+        data.addString( "nodePath", params.getTargetRepoPath().getNodePath().toString() );
+        data.addBoolean( "importWithIds", params.isImportWithIds() );
+        data.addBoolean( "importWithPermissions", params.isImportWithPermissions() );
+        return new TaskResultJson( taskService.submitTask( SubmitTaskParams.create().descriptorKey( SystemTasks.IMPORT ).data( data ).build() ) );
     }
 
     @GET

@@ -15,13 +15,11 @@ import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.impl.server.rest.model.VacuumRequestJson;
 import com.enonic.xp.jaxrs.impl.JaxRsResourceTestSupport;
 import com.enonic.xp.support.JsonTestHelper;
-import com.enonic.xp.task.SubmitLocalTaskParams;
 import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 import com.enonic.xp.util.Version;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
@@ -43,16 +41,16 @@ class SystemResourceTest
     void dump()
         throws Exception
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
         final String result =
             request().path( "system/dump" ).entity( "{\"name\" : \"dump\"}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
 
-        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
-        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName, SubmitLocalTaskParams::getDescription )
-            .containsExactly( "dump", "Dump dump" );
+        verify( taskService, times( 1 ) ).submitTask( captor.capture() );
+        assertEquals( "com.enonic.xp.app.system:dump", captor.getValue().getDescriptorKey().toString() );
+        assertEquals( "dump", captor.getValue().getData().getString( "name" ) );
 
         assertEquals( "{\"taskId\":\"task-id\"}", result );
     }
@@ -61,16 +59,16 @@ class SystemResourceTest
     void load()
         throws Exception
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
         final String result =
             request().path( "system/load" ).entity( "{\"name\" : \"dump\"}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
 
-        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
-        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName, SubmitLocalTaskParams::getDescription )
-            .containsExactly( "load", "Load dump" );
+        verify( taskService, times( 1 ) ).submitTask( captor.capture() );
+        assertEquals( "com.enonic.xp.app.system:load", captor.getValue().getDescriptorKey().toString() );
+        assertEquals( "dump", captor.getValue().getData().getString( "name" ) );
 
         assertEquals( "{\"taskId\":\"task-id\"}", result );
     }
@@ -88,17 +86,16 @@ class SystemResourceTest
     void upgrade()
         throws Exception
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
         final String result =
             request().path( "system/upgrade" ).entity( "{\"name\" : \"dump-name\"}", MediaType.APPLICATION_JSON_TYPE ).post().getAsString();
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
 
-        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
-        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName,
-                                                                         SubmitLocalTaskParams::getDescription )
-            .containsExactly( null, "Upgrade dump dump-name" );
+        verify( taskService, times( 1 ) ).submitTask( captor.capture() );
+        assertEquals( "com.enonic.xp.app.system:upgrade", captor.getValue().getDescriptorKey().toString() );
+        assertEquals( "dump-name", captor.getValue().getData().getString( "name" ) );
 
         assertEquals( "{\"taskId\":\"task-id\"}", result );
     }

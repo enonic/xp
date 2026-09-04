@@ -17,11 +17,10 @@ import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.repository.RepositoryService;
-import com.enonic.xp.task.SubmitLocalTaskParams;
+import com.enonic.xp.task.SubmitTaskParams;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskService;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -66,19 +65,18 @@ class RepositoryResourceTest
     void exportNodes()
         throws Exception
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
         final String result = request().path( "repo/export" )
             .entity( readFromFile( "export_params.json" ), MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
 
-        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
-        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName,
-                                                                         SubmitLocalTaskParams::getDescription )
-            .containsExactly( null, "Export my_export" );
+        verify( taskService, times( 1 ) ).submitTask( captor.capture() );
+        assertEquals( "com.enonic.xp.app.system:export", captor.getValue().getDescriptorKey().toString() );
+        assertEquals( "my_export", captor.getValue().getData().getString( "exportName" ) );
 
         assertStringJson( "{\"taskId\" : \"task-id\"}", result );
     }
@@ -87,18 +85,18 @@ class RepositoryResourceTest
     public void exportNodes_withBatchSize()
         throws Exception
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
         final String result = request().path( "repo/export" )
             .entity( readFromFile( "export_params_with_batch_size.json" ), MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
 
-        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
-        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName, SubmitLocalTaskParams::getDescription )
-            .containsExactly( null, "Export my_export_batch" );
+        verify( taskService, times( 1 ) ).submitTask( captor.capture() );
+        assertEquals( "com.enonic.xp.app.system:export", captor.getValue().getDescriptorKey().toString() );
+        assertEquals( "my_export_batch", captor.getValue().getData().getString( "exportName" ) );
 
         assertStringJson( "{\"taskId\" : \"task-id\"}", result );
     }
@@ -107,19 +105,18 @@ class RepositoryResourceTest
     void importNodes()
         throws Exception
     {
-        when( taskService.submitLocalTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
+        when( taskService.submitTask( any() ) ).thenReturn( TaskId.from( "task-id" ) );
 
         final String result = request().path( "repo/import" )
             .entity( readFromFile( "import_params.json" ), MediaType.APPLICATION_JSON_TYPE )
             .post()
             .getAsString();
 
-        final ArgumentCaptor<SubmitLocalTaskParams> captor = ArgumentCaptor.forClass( SubmitLocalTaskParams.class );
+        final ArgumentCaptor<SubmitTaskParams> captor = ArgumentCaptor.forClass( SubmitTaskParams.class );
 
-        verify( taskService, times( 1 ) ).submitLocalTask( captor.capture() );
-        assertThat( captor.getValue() ).extracting( SubmitLocalTaskParams::getName,
-                                                    SubmitLocalTaskParams::getDescription )
-            .containsExactly( null, "Import my_export" );
+        verify( taskService, times( 1 ) ).submitTask( captor.capture() );
+        assertEquals( "com.enonic.xp.app.system:import", captor.getValue().getDescriptorKey().toString() );
+        assertEquals( "my_export", captor.getValue().getData().getString( "exportName" ) );
 
         assertStringJson( "{\"taskId\" : \"task-id\"}", result );
     }

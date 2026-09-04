@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
@@ -27,6 +28,10 @@ final class VirtualHostConfigMap
     private static final String DEFAULT_ID_PROVIDER_VALUE = "default";
 
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
+
+    private static final String API_CONTEXT_PREFIX = "api.";
+
+    private static final String API_REST_ENABLED = "rest.enabled";
 
     private static final Pattern MAPPING_NAME_PATTERN = Pattern.compile( "mapping\\.(?<name>[^.]+)\\..+" );
 
@@ -161,10 +166,41 @@ final class VirtualHostConfigMap
     {
         final String configPrefix = mappingPrefix + "context" + ".";
 
-        return this.map.entrySet()
+        final Map<String, String> context = this.map.entrySet()
             .stream()
             .filter( entry -> entry.getKey().startsWith( configPrefix ) )
             .collect( Collectors.toMap( entry -> entry.getKey().replace( configPrefix, "" ), Map.Entry::getValue ) );
+
+        context.keySet().forEach( key -> validateApiContextKey( mappingPrefix, key ) );
+        return context;
+    }
+
+    /**
+     * The {@code api.} context namespace carries the management API policies of a vhost and is validated eagerly: a
+     * key that fails to parse would otherwise be ignored, leaving the API it was meant to restrict unrestricted.
+     * Accepted forms are {@code api.rest.enabled} and {@code api.<application>:<api>.<setting>}.
+     */
+    private static void validateApiContextKey( final String mappingPrefix, final String key )
+    {
+        if ( !key.startsWith( API_CONTEXT_PREFIX ) )
+        {
+            return;
+        }
+        final String remainder = key.substring( API_CONTEXT_PREFIX.length() );
+        if ( API_REST_ENABLED.equals( remainder ) )
+        {
+            return;
+        }
+
+        final int colon = remainder.indexOf( ':' );
+        final int dot = colon < 0 ? -1 : remainder.indexOf( '.', colon );
+        if ( colon <= 0 || dot <= colon + 1 || dot == remainder.length() - 1 )
+        {
+            throw new IllegalArgumentException(
+                "Invalid context key [" + mappingPrefix + "context." + key + "] in vhost mapping, expected api.rest.enabled or " +
+                    "api.<application>\\:<api>.<setting> (the colon must be escaped in .cfg files)" );
+        }
+        ApplicationKey.from( remainder.substring( 0, colon ) );
     }
 
     private Map<String, String> getIdProviders( final String idProviderPrefix )

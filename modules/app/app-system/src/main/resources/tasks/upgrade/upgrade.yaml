@@ -1,0 +1,9 @@
+kind: "Task"
+description: "Dump upgrade task"
+form:
+  - type: "TextLine"
+    name: "name"
+    label: "Dump name"
+    occurrences:
+      min: 1
+      max: 1

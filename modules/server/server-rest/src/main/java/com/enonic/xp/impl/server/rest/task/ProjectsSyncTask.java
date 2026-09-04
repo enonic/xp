@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest.task;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,10 +28,13 @@ public final class ProjectsSyncTask
 
     private final SyncContentService syncContentService;
 
+    private final Set<ProjectName> projects;
+
     public ProjectsSyncTask( final Builder builder )
     {
         this.projectService = builder.projectService;
         this.syncContentService = builder.syncContentService;
+        this.projects = Set.copyOf( builder.projects );
     }
 
     public static Builder create()
@@ -41,7 +45,9 @@ public final class ProjectsSyncTask
     @Override
     public void run( final TaskId taskId, final ProgressReporter progressReporter )
     {
-        sortAndFilterProjectsForSync( this.projectService.list() ).forEach( this::doSync );
+        sortAndFilterProjectsForSync( this.projectService.list() ).stream()
+            .filter( projectName -> projects.isEmpty() || projects.contains( projectName ) )
+            .forEach( this::doSync );
     }
 
     private void doSync( final ProjectName targetProjectName )
@@ -93,8 +99,19 @@ public final class ProjectsSyncTask
 
         private SyncContentService syncContentService;
 
+        private final Set<ProjectName> projects = new LinkedHashSet<>();
+
         private Builder()
         {
+        }
+
+        /**
+         * Restricts the sync to these projects. Parents are still synced before children; an empty set syncs all.
+         */
+        public Builder projects( final Collection<ProjectName> projects )
+        {
+            this.projects.addAll( projects );
+            return this;
         }
 
         public Builder projectService( final ProjectService projectService )

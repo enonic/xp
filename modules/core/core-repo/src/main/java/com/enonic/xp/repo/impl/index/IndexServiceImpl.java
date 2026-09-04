@@ -83,19 +83,24 @@ public class IndexServiceImpl
 
         for ( final RepositoryId repositoryId : params.getRepositoryIds() )
         {
-            updateIndexSettings( repositoryId, updateIndexSettings, params.isRequireClosedIndex(), result );
+            updateIndexSettings( repositoryId, params.getIndexType(), updateIndexSettings, params.isRequireClosedIndex(), result );
         }
 
         return result.build();
     }
 
-    private void updateIndexSettings( final RepositoryId repositoryId, final UpdateIndexSettings updateIndexSettings,
-                                      final boolean closeIndex, final UpdateIndexSettingsResult.Builder result )
+    private void updateIndexSettings( final RepositoryId repositoryId, final IndexType indexType,
+                                      final UpdateIndexSettings updateIndexSettings, final boolean closeIndex,
+                                      final UpdateIndexSettingsResult.Builder result )
     {
-        final String searchIndexName = IndexNameResolver.resolveSearchIndexName( repositoryId );
-        final String storageIndexName = IndexNameResolver.resolveStorageIndexName( repositoryId );
-        updateIndexSettings( searchIndexName, updateIndexSettings, result, closeIndex );
-        updateIndexSettings( storageIndexName, updateIndexSettings, result, closeIndex );
+        if ( indexType == null || indexType == IndexType.SEARCH )
+        {
+            updateIndexSettings( IndexNameResolver.resolveSearchIndexName( repositoryId ), updateIndexSettings, result, closeIndex );
+        }
+        if ( indexType == null || indexType != IndexType.SEARCH )
+        {
+            updateIndexSettings( IndexNameResolver.resolveStorageIndexName( repositoryId ), updateIndexSettings, result, closeIndex );
+        }
     }
 
     private void updateIndexSettings( final String indexName, final UpdateIndexSettings settings,

@@ -52,7 +52,19 @@ public class ApplicationResourceService
     @Modified
     public void activate( final AppManagementConfig config )
     {
-        this.applicationLoader = new ApplicationLoader( config.installUrl_allowedUrls(), config.installUrl_checksumRequired() );
+        this.applicationLoader = new ApplicationLoader( allowedUrls( config ), checksumRequired( config ) );
+    }
+
+    static String allowedUrls( final AppManagementConfig config )
+    {
+        final String pull = config.pull_allowedUrls();
+        return AppManagementConfig.UNSET.equals( pull ) ? config.installUrl_allowedUrls() : pull;
+    }
+
+    static boolean checksumRequired( final AppManagementConfig config )
+    {
+        final String pull = config.pull_checksumRequired();
+        return pull.isBlank() ? config.installUrl_checksumRequired() : Boolean.parseBoolean( pull.strip() );
     }
 
     public ApplicationInfoJson install( final MultipartForm form )

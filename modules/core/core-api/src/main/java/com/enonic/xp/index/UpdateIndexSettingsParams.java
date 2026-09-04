@@ -15,11 +15,14 @@ public final class UpdateIndexSettingsParams
 
     private final boolean requireClosedIndex;
 
+    private final IndexType indexType;
+
     private UpdateIndexSettingsParams( Builder builder )
     {
         repositoryIds = RepositoryIds.from( builder.repositoryIds );
         settings = builder.settings;
         this.requireClosedIndex = builder.requireClosedIndex;
+        this.indexType = builder.indexType;
     }
 
     public RepositoryIds getRepositoryIds()
@@ -37,6 +40,15 @@ public final class UpdateIndexSettingsParams
         return requireClosedIndex;
     }
 
+    /**
+     * Returns the index the settings apply to: {@link IndexType#SEARCH} for the search index, any other type for the
+     * storage index (version, branch and commit data share one index). {@code null} applies the settings to both.
+     */
+    public IndexType getIndexType()
+    {
+        return indexType;
+    }
+
     public static Builder create()
     {
         return new Builder();
@@ -49,6 +61,8 @@ public final class UpdateIndexSettingsParams
         private String settings;
 
         private boolean requireClosedIndex = false;
+
+        private IndexType indexType;
 
         private Builder()
         {
@@ -75,6 +89,12 @@ public final class UpdateIndexSettingsParams
         public Builder requireClosedIndex( final boolean requireClosedIndex )
         {
             this.requireClosedIndex = requireClosedIndex;
+            return this;
+        }
+
+        public Builder indexType( final IndexType indexType )
+        {
+            this.indexType = indexType;
             return this;
         }
 
