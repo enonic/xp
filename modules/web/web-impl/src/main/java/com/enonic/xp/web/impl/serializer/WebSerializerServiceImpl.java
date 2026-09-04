@@ -1,7 +1,6 @@
 package com.enonic.xp.web.impl.serializer;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -21,14 +20,6 @@ public final class WebSerializerServiceImpl
     {
         final WebRequest webRequest = new WebRequest();
         new RequestSerializer( webRequest ).serialize( httpRequest );
-        try
-        {
-            webRequest.setBody( RequestBodyReader.readBody( httpRequest ) );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
         return webRequest;
     }
 
