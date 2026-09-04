@@ -107,20 +107,6 @@ public final class NodePath
         return NodeName.fromInternal( path.substring( this.path.lastIndexOf( ELEMENT_DIVIDER ) + 1 ) );
     }
 
-    /**
-     * Tells whether this path is below the given path, at any depth.
-     *
-     * @return {@code true} if this path is a descendant of {@code possibleParentPath}, {@code false} if it is the very same path or
-     * outside of it.
-     * @since 8.2.0
-     */
-    public boolean isChildOf( final NodePath possibleParentPath )
-    {
-        final String prefix = possibleParentPath.isRoot() ? ELEMENT_DIVIDER : possibleParentPath.path + ELEMENT_DIVIDER;
-
-        return this.path.length() > prefix.length() && this.path.regionMatches( true, 0, prefix, 0, prefix.length() );
-    }
-
     @Override
     public boolean equals( final Object o )
     {

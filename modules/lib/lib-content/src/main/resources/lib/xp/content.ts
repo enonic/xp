@@ -1912,10 +1912,6 @@ interface DuplicateContentHandler {
 
 /** This function duplicates a content.
  *
- * Contents referred to by the duplicated content are duplicated as well, so that the copy does not refer to contents of the original
- * tree. Only contents inside the duplicated content's own tree are duplicated, together with the contents required to hold them.
- * References to contents outside of the duplicated tree are kept as they are.
- *
  * @example-ref examples/content/duplicate.js
  *
  * @param {object} params JSON with the parameters.

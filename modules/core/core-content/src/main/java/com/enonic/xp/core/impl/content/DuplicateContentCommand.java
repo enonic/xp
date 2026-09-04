@@ -87,8 +87,7 @@ final class DuplicateContentCommand
         {
             builder.parent( ContentNodeHelper.translateContentPathToNodePath( params.getParent() ) );
         }
-        // contents referred to by the duplicated content are duplicated as well, so that the copy never depends on the original tree
-        builder.includeChildren( params.getIncludeChildren() ).includeReferences( true );
+        builder.includeChildren( params.getIncludeChildren() );
 
         return builder.build();
     }
