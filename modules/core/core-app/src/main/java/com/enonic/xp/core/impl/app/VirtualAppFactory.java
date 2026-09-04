@@ -28,7 +28,7 @@ public class VirtualAppFactory
             @Override
             public ApplicationUrlResolver getUrlResolver()
             {
-                return new MultiApplicationUrlResolver( new NodeResourceApplicationUrlResolver( applicationKey, nodeService ),
+                return new MultiApplicationUrlResolver( NodeResourceApplicationUrlResolver.forVirtualApp( applicationKey, nodeService ),
                                                         new FakeCmsYamlUrlResolver( applicationKey, nodeService ) );
             }
 

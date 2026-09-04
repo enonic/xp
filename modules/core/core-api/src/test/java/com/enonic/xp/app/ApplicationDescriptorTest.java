@@ -32,6 +32,30 @@ class ApplicationDescriptorTest
     }
 
     @Test
+    void default_type_is_bundle()
+    {
+        final ApplicationDescriptor desc = ApplicationDescriptor.create().key( ApplicationKey.from( "app" ) ).build();
+
+        assertEquals( ApplicationType.BUNDLE, desc.getType() );
+    }
+
+    @Test
+    void type()
+    {
+        final ApplicationKey key = ApplicationKey.from( "app" );
+
+        final ApplicationDescriptor staticDesc = ApplicationDescriptor.create().key( key ).type( ApplicationType.STATIC ).build();
+        final ApplicationDescriptor bundleDesc = ApplicationDescriptor.create().key( key ).type( ApplicationType.BUNDLE ).build();
+        final ApplicationDescriptor defaultDesc = ApplicationDescriptor.create().key( key ).build();
+
+        assertEquals( ApplicationType.STATIC, staticDesc.getType() );
+        assertEquals( ApplicationType.BUNDLE, bundleDesc.getType() );
+        assertEquals( bundleDesc, defaultDesc );
+        assertNotEquals( staticDesc, bundleDesc );
+        assertNotEquals( staticDesc.hashCode(), bundleDesc.hashCode() );
+    }
+
+    @Test
     void null_description()
     {
         final ApplicationKey key = ApplicationKey.from( "app" );

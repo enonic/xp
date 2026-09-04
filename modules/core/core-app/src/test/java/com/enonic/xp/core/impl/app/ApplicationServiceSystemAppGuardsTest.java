@@ -70,8 +70,10 @@ class ApplicationServiceSystemAppGuardsTest
         assertThat( installed ).isNotNull();
         assertThat( installed.isSystem() ).isTrue();
 
-        final Bundle bundle = getBundleContext().getBundle( SYSTEM_APP_NAME );
+        // local applications are installed under a marked bundle location
+        final Bundle bundle = getBundleContext().getBundle( ApplicationHelper.toBundleLocation( key, true ) );
         assertThat( bundle ).isNotNull();
+        assertThat( ApplicationHelper.isLocalApplication( bundle ) ).isTrue();
         assertThat( bundle.getState() ).isEqualTo( Bundle.ACTIVE );
 
         adminContext().runWith( () -> {

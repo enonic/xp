@@ -1,8 +1,14 @@
 package com.enonic.xp.core.impl.app;
 
+import com.enonic.xp.app.ApplicationType;
+
 public class AppInfo
 {
     public String name;
+
+    public ApplicationType type = ApplicationType.BUNDLE;
+
+    public boolean hasCmsDescriptor;
 
     public String title;
 

@@ -43,6 +43,7 @@ class AppInfoResolver
     {
         final Manifest man;
         final String descriptorYaml;
+        final boolean hasCmsDescriptor;
 
         try (JarFile jarFile = new JarFile( file.toFile() ))
         {
@@ -60,8 +61,10 @@ class AppInfoResolver
                 throw new ApplicationInvalidException( "Not a valid application." );
             }
 
+            hasCmsDescriptor = SchemaResourcePaths.CMS_DESCRIPTOR_PATHS.stream().anyMatch( path -> jarFile.getJarEntry( path ) != null );
         }
         final AppInfo appInfo = new AppInfo();
+        appInfo.hasCmsDescriptor = hasCmsDescriptor;
         final Attributes attrs = man.getMainAttributes();
         appInfo.name = attrs.getValue( Constants.BUNDLE_SYMBOLICNAME );
         appInfo.version = Optional.ofNullable( attrs.getValue( Constants.BUNDLE_VERSION ) ).orElse( "0.0.0" );
@@ -83,6 +86,7 @@ class AppInfoResolver
                 YmlApplicationDescriptorParser.parse( descriptorYaml, ApplicationKey.from( appInfo.name ) ).build();
             appInfo.title = descriptor.getTitle();
             appInfo.vendorName = descriptor.getVendorName();
+            appInfo.type = descriptor.getType();
         }
         else
         {
