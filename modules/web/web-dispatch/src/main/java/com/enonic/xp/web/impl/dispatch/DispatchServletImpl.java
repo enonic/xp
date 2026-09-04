@@ -2,6 +2,7 @@ package com.enonic.xp.web.impl.dispatch;
 
 import java.io.IOException;
 import java.util.Map;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -26,6 +27,16 @@ public final class DispatchServletImpl
     extends HttpServlet
     implements DispatchServlet
 {
+    /**
+     * Guards {@link #servletContext} and the pipeline fields. Pipelines are bound dynamically, so they may
+     * arrive both before and after Jetty calls {@link #init()}: whichever happens last initializes them, and
+     * the lock makes sure that happens exactly once. A pipeline is only published to request threads once it
+     * has been initialized, so the volatile fields are always written last.
+     */
+    private final Object lock = new Object();
+
+    private ServletContext servletContext;
+
     private volatile FilterPipeline filterPipeline;
 
     private volatile ServletPipeline servletPipeline;
@@ -43,61 +54,120 @@ public final class DispatchServletImpl
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
+        final FilterPipeline filterPipeline = this.filterPipeline;
+        final ServletPipeline servletPipeline = this.servletPipeline;
+
+        if ( filterPipeline == null || servletPipeline == null )
+        {
+            res.sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+            return;
+        }
+
         req.setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, connector );
 
-        this.filterPipeline.filter( req, res, this.servletPipeline );
+        filterPipeline.filter( req, res, servletPipeline );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addFilterPipeline( final FilterPipeline filterPipeline, final Map<String, ?> properties )
     {
-        if ( sameConnector( properties ) )
+        if ( !sameConnector( properties ) )
         {
+            return;
+        }
+
+        synchronized ( this.lock )
+        {
+            if ( this.servletContext != null )
+            {
+                filterPipeline.init( this.servletContext );
+            }
             this.filterPipeline = filterPipeline;
         }
     }
 
     public void removeFilterPipeline( final FilterPipeline filterPipeline )
     {
-        final FilterPipeline currentFilterPipeline = this.filterPipeline;
-        if ( currentFilterPipeline == filterPipeline )
+        synchronized ( this.lock )
         {
-            this.filterPipeline = null;
+            if ( this.filterPipeline == filterPipeline )
+            {
+                this.filterPipeline = null;
+            }
         }
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     public void addServletPipeline( final ServletPipeline servletPipeline, final Map<String, ?> properties )
     {
-        if ( sameConnector( properties ) )
+        if ( !sameConnector( properties ) )
         {
+            return;
+        }
+
+        synchronized ( this.lock )
+        {
+            if ( this.servletContext != null )
+            {
+                servletPipeline.init( this.servletContext );
+            }
             this.servletPipeline = servletPipeline;
         }
     }
 
     public void removeServletPipeline( final ServletPipeline servletPipeline )
     {
-        final ServletPipeline currentServletPipeline = this.servletPipeline;
-        if ( currentServletPipeline == servletPipeline )
+        synchronized ( this.lock )
         {
-            this.servletPipeline = null;
+            if ( this.servletPipeline == servletPipeline )
+            {
+                this.servletPipeline = null;
+            }
         }
     }
 
     @Override
     public void init()
-        throws ServletException
     {
         final ServletContext servletContext = getServletContext();
-        this.filterPipeline.init( servletContext );
-        this.servletPipeline.init( servletContext );
+
+        synchronized ( this.lock )
+        {
+            this.servletContext = servletContext;
+
+            final FilterPipeline filterPipeline = this.filterPipeline;
+            if ( filterPipeline != null )
+            {
+                filterPipeline.init( servletContext );
+            }
+
+            final ServletPipeline servletPipeline = this.servletPipeline;
+            if ( servletPipeline != null )
+            {
+                servletPipeline.init( servletContext );
+            }
+        }
     }
 
     @Override
     public void destroy()
     {
-        this.servletPipeline.destroy();
-        this.filterPipeline.destroy();
+        synchronized ( this.lock )
+        {
+            this.servletContext = null;
+
+            final ServletPipeline servletPipeline = this.servletPipeline;
+            if ( servletPipeline != null )
+            {
+                servletPipeline.destroy();
+            }
+
+            final FilterPipeline filterPipeline = this.filterPipeline;
+            if ( filterPipeline != null )
+            {
+                filterPipeline.destroy();
+            }
+        }
     }
 
     @Override

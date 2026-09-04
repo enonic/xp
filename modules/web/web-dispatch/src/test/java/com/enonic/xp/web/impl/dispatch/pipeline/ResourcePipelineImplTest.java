@@ -67,4 +67,34 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         this.pipeline.destroy();
         Mockito.verify( def, Mockito.times( 1 ) ).destroy();
     }
+
+    @Test
+    void add_afterDestroy()
+    {
+        this.pipeline.init( this.context );
+        this.pipeline.destroy();
+
+        final D def = newDefinition();
+        this.pipeline.add( def );
+
+        Mockito.verify( def, Mockito.never() ).init( Mockito.any() );
+    }
+
+    @Test
+    void addRemove_keepsListAndMapInSync()
+    {
+        final D def = newDefinition();
+
+        this.pipeline.init( this.context );
+        this.pipeline.add( def );
+        assertThat( this.pipeline.list.snapshot() ).containsExactly( def );
+
+        this.pipeline.remove( def.getResource() );
+        assertThat( this.pipeline.list.snapshot() ).isEmpty();
+        Mockito.verify( def, Mockito.times( 1 ) ).destroy();
+
+        // an unknown resource is not in the map, so nothing is destroyed
+        this.pipeline.remove( newDefinition().getResource() );
+        Mockito.verify( def, Mockito.times( 1 ) ).destroy();
+    }
 }

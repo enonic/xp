@@ -1,12 +1,11 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 
 import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.web.dispatch.DispatchConstants;
@@ -17,11 +16,18 @@ import static java.util.Objects.requireNonNull;
 public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     implements ResourcePipeline<T>
 {
-    private volatile ServletContext context;
+    /**
+     * Guards {@link #context} and {@link #map}, and serializes the lifecycle calls made on definitions.
+     * Definitions are added to {@link #list} only after they have been initialized and removed from it
+     * before they are destroyed, so request threads never observe a definition that is not ready to serve.
+     */
+    private final Object lock = new Object();
 
-    private final Map<Object, T> map = new ConcurrentHashMap<>();
+    private final Map<Object, T> map = new HashMap<>();
 
     final AtomicSortedList<T> list = new AtomicSortedList<>( Comparator.comparingInt( T::getOrder ) );
+
+    private ServletContext context;
 
     private final String connector;
 
@@ -33,10 +39,14 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
 
     @Override
     public final void init( final ServletContext context )
-        throws ServletException
     {
-        this.context = requireNonNull( context );
-        this.list.snapshot().forEach( r -> r.init( this.context ) );
+        requireNonNull( context );
+
+        synchronized ( this.lock )
+        {
+            this.context = context;
+            this.list.snapshot().forEach( def -> def.init( context ) );
+        }
     }
 
     public List<T> list()
@@ -47,7 +57,11 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     @Override
     public final void destroy()
     {
-        this.list.snapshot().forEach( ResourceDefinition::destroy );
+        synchronized ( this.lock )
+        {
+            this.context = null;
+            this.list.snapshot().forEach( ResourceDefinition::destroy );
+        }
     }
 
     final void add( final T def )
@@ -57,25 +71,31 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
             return;
         }
 
-        this.map.put( def.getResource(), def );
-        this.list.add( def );
-
-        if ( this.context != null )
+        synchronized ( this.lock )
         {
-            def.init( this.context );
+            if ( this.context != null )
+            {
+                def.init( this.context );
+            }
+
+            this.map.put( def.getResource(), def );
+            this.list.add( def );
         }
     }
 
     final void remove( final Object key )
     {
-        final T def = this.map.remove( key );
-        if ( def == null )
+        synchronized ( this.lock )
         {
-            return;
-        }
+            final T def = this.map.remove( key );
+            if ( def == null )
+            {
+                return;
+            }
 
-        this.list.remove( def );
-        def.destroy();
+            this.list.remove( def );
+            def.destroy();
+        }
     }
 
     protected final List<String> getConnectorsFromProperty( final Map<String, ?> props )

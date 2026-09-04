@@ -59,6 +59,21 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
         assertTrue( def.matches( "/a/b/c" ) );
     }
 
+    @Test
+    void matches_afterDestroy()
+    {
+        final ResourceDefinitionImpl def = (ResourceDefinitionImpl) newDefinition();
+
+        def.init( this.context );
+        assertTrue( def.matches( "/a/b/c" ) );
+
+        def.destroy();
+        assertFalse( def.matches( "/a/b/c" ) );
+
+        def.init( this.context );
+        assertTrue( def.matches( "/a/b/c" ) );
+    }
+
     abstract void verifyInit( int times )
         throws Exception;
 

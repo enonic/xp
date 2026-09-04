@@ -23,8 +23,19 @@ abstract class ResourceDefinitionImpl<T>
 
     final T resource;
 
-    private Pattern pattern;
+    /**
+     * Set as the very last step of {@link #init(ServletContext)} and cleared as the very first step of
+     * {@link #destroy()}. Request threads read it without synchronization, so it doubles as the safe
+     * publication of the resource state {@code doInit} sets up: a thread that sees a pattern here is
+     * guaranteed to see an initialized resource.
+     */
+    private volatile Pattern pattern;
 
+    /**
+     * Guarded by {@code this}, so that concurrent {@code init}/{@code destroy} calls - the pipeline can
+     * initialize a definition both when it is added and when the servlet context arrives - initialize and
+     * destroy the resource exactly once.
+     */
     private boolean initialized;
 
     ResourceDefinitionImpl( final ResourceMapping<T> mapping )
@@ -34,14 +45,14 @@ abstract class ResourceDefinitionImpl<T>
     }
 
     @Override
-    public final void init( final ServletContext context )
+    public final synchronized void init( final ServletContext context )
     {
         if ( this.initialized )
         {
             return;
         }
 
-        initPattern();
+        final Pattern pattern = compilePattern();
 
         try
         {
@@ -54,16 +65,19 @@ abstract class ResourceDefinitionImpl<T>
         finally
         {
             this.initialized = true;
+            this.pattern = pattern;
         }
     }
 
     @Override
-    public final void destroy()
+    public final synchronized void destroy()
     {
         if ( !this.initialized )
         {
             return;
         }
+
+        this.pattern = null;
 
         try
         {
@@ -116,10 +130,10 @@ abstract class ResourceDefinitionImpl<T>
         return this.resource;
     }
 
-    private void initPattern()
+    private Pattern compilePattern()
     {
         final List<String> list = getUrlPatterns().stream().map( this::toRegExp ).collect( Collectors.toList() );
-        this.pattern = Pattern.compile( "(" + String.join( "|", list ) + ")" );
+        return Pattern.compile( "(" + String.join( "|", list ) + ")" );
     }
 
     private String toRegExp( final String glob )
@@ -129,6 +143,7 @@ abstract class ResourceDefinitionImpl<T>
 
     final boolean matches( final String uri )
     {
-        return uri != null && this.pattern != null && this.pattern.matcher( uri ).matches();
+        final Pattern pattern = this.pattern;
+        return uri != null && pattern != null && pattern.matcher( uri ).matches();
     }
 }
