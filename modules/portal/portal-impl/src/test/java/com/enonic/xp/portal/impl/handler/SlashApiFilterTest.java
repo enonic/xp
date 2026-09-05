@@ -19,7 +19,6 @@ import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -95,6 +94,31 @@ class SlashApiFilterTest
 
         verify( slashApiHandler ).handle( webRequest );
         verifyNoInteractions( chain );
+    }
+
+    @Test
+    void rendersHandlerFailure()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final FilterChain chain = mock( FilterChain.class );
+
+        when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
+
+        final WebRequest webRequest = new WebRequest();
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
+
+        final WebException cause = new WebException( HttpStatus.NOT_FOUND, "API not found" );
+        when( slashApiHandler.handle( webRequest ) ).thenThrow( cause );
+
+        final WebResponse errorResponse = WebResponse.create().status( HttpStatus.NOT_FOUND ).build();
+        when( exceptionRenderer.render( webRequest, cause ) ).thenReturn( errorResponse );
+
+        filter.doFilter( req, res, chain );
+
+        verify( exceptionRenderer ).render( webRequest, cause );
+        verify( webSerializerService ).response( webRequest, errorResponse, res );
     }
 
     @Test
