@@ -91,6 +91,16 @@ class RequestSerializerMultipartTest
         new RequestSerializer( webRequest ).serialize( request );
 
         assertEquals( List.of( "value" ), webRequest.getParams().get( "field" ) );
+    }
+
+    @Test
+    void isMultipartFormData()
+    {
+        assertTrue( RequestSerializer.isMultipartFormData( "multipart/form-data" ) );
+        assertTrue( RequestSerializer.isMultipartFormData( "multipart/form-data; boundary=x" ) );
+        assertTrue( RequestSerializer.isMultipartFormData( "MULTIPART/FORM-DATA ; boundary=x" ) );
+        assertFalse( RequestSerializer.isMultipartFormData( "multipart/form-data2" ) );
+        assertFalse( RequestSerializer.isMultipartFormData( "multipart/mixed; boundary=x" ) );
         assertFalse( RequestSerializer.isMultipartFormData( "application/x-www-form-urlencoded" ) );
         assertFalse( RequestSerializer.isMultipartFormData( null ) );
     }
