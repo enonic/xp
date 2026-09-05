@@ -243,6 +243,82 @@ class MappingHandlerTest
     }
 
     @Test
+    void executeScript_noContent()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( "/.*" ).build();
+
+        setupContentAndSite( mapping, false );
+        this.request.setContent( null );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/missing" ) );
+
+        when( rendererDelegate.render( isA( ControllerMappingDescriptor.class ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "Ok body" ).build() );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "Ok body", response.getBody() );
+        assertNull( this.request.getContent() );
+    }
+
+    @Test
+    void executeScript_contentNotReadable_unauthorized()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( "/.*" ).build();
+
+        setupContentAndSite( mapping, false );
+
+        final Content restrictedContent = Content.create( this.request.getContent() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                              .build() )
+            .build();
+        this.request.setContent( restrictedContent );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
+        verifyNoInteractions( rendererDelegate );
+    }
+
+    @Test
+    void executeScript_noContent_siteNotReadable_unauthorized()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( "/.*" ).build();
+
+        setupContentAndSite( mapping, false );
+
+        final Site restrictedSite = Site.create( this.request.getSite() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                              .build() )
+            .build();
+        this.request.setSite( restrictedSite );
+        this.request.setContent( null );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/missing" ) );
+
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
+        verifyNoInteractions( rendererDelegate );
+    }
+
+    @Test
     void executeScript_recordsTraceAttributes()
         throws Exception
     {
@@ -797,6 +873,9 @@ class MappingHandlerTest
             .modifier( PrincipalKey.from( "user:system:admin" ) )
             .type( ContentTypeName.from( contentTypeName ) )
             .page( page )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() )
             .build();
     }
 
