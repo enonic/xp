@@ -311,6 +311,32 @@ class AttachmentHandlerTest
     }
 
     @Test
+    void byteServingUnknownUnitServesWholeBody()
+        throws Exception
+    {
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "items=0-1" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "Content-Range" ) );
+        assertArrayEquals( mediaBytes.read(), ( (ByteSource) res.getBody() ).read() );
+    }
+
+    @Test
+    void byteServingOverlappingRangesServeWholeBody()
+        throws Exception
+    {
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=0-,0-" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.PNG, res.getContentType() );
+        assertArrayEquals( mediaBytes.read(), ( (ByteSource) res.getBody() ).read() );
+    }
+
+    @Test
     void byteServingSuffixFrom()
         throws Exception
     {

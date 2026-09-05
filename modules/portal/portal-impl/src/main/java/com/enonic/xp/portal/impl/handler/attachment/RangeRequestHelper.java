@@ -27,6 +27,8 @@ public final class RangeRequestHelper
 
     private static final int MAX_RANGES = 10;
 
+    private static final String BYTES_UNIT = "bytes=";
+
     public void handleRangeRequest( final WebRequest request, final WebResponse.Builder response, final ByteSource body,
                                     final MediaType contentType )
         throws IOException
@@ -40,8 +42,13 @@ public final class RangeRequestHelper
         }
 
         final String rangeHeader = request.getHeaders().getOrDefault( HttpHeaders.RANGE, "" ).trim();
-        final String rangeValue = rangeHeader.length() > "bytes=".length() ? rangeHeader.substring( "bytes=".length() ) : "";
-        final String[] rangeValues = rangeValue.split( ",", MAX_RANGES + 1 );
+        if ( !rangeHeader.regionMatches( true, 0, BYTES_UNIT, 0, BYTES_UNIT.length() ) )
+        {
+            response.body( body );
+            return;
+        }
+
+        final String[] rangeValues = rangeHeader.substring( BYTES_UNIT.length() ).split( ",", MAX_RANGES + 1 );
         if ( rangeValues.length > MAX_RANGES )
         {
             response.status( HttpStatus.OK );
@@ -51,6 +58,13 @@ public final class RangeRequestHelper
 
         long fileLength = body.size();
         final List<Range> ranges = parseRangeBytesHeader( rangeValues, fileLength );
+        if ( ranges.stream().mapToLong( range -> range.length ).sum() > fileLength )
+        {
+            response.status( HttpStatus.OK );
+            response.body( body );
+            return;
+        }
+
         if ( ranges.isEmpty() )
         {
             response.status( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE );
