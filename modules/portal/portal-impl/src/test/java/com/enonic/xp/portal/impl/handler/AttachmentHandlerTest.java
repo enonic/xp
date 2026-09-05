@@ -191,6 +191,22 @@ class AttachmentHandlerTest
     }
 
     @Test
+    void malformedMimeTypeServedAsOctetStream()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "logo.png" ).mimeType( "png" ).label( "small" ).build();
+        final Media content = createMedia( "123456", "path/to/content", attachment );
+        when( this.contentService.getById( eq( content.getId() ) ) ).thenReturn( content );
+
+        this.request.setRawPath( "/_/attachment/download/123456/logo.png" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertEquals( MediaType.OCTET_STREAM, res.getContentType() );
+        assertSame( this.mediaBytes, res.getBody() );
+    }
+
+    @Test
     void idNotFound()
         throws Exception
     {

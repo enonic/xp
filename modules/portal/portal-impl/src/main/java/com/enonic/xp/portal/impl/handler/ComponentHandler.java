@@ -116,7 +116,7 @@ public class ComponentHandler
         final PageResolverResult resolvedPage = pageResolver.resolve( content, site.getPath() );
         Page effectivePage = resolvedPage.getEffectivePageOrElseThrow( portalRequest.getMode() );
         com.enonic.xp.region.Component component = null;
-        final ComponentPath componentPath = ComponentPath.from( HandlerHelper.findEndpointPath( portalRequest, "component" ) );
+        final ComponentPath componentPath = parseComponentPath( HandlerHelper.findEndpointPath( portalRequest, "component" ) );
 
         if ( content.getType().isFragment() )
         {
@@ -151,6 +151,18 @@ public class ComponentHandler
         portalRequest.setApplicationKey( resolvedPage.getApplicationKey() );
 
         return portalRequest;
+    }
+
+    private static ComponentPath parseComponentPath( final String path )
+    {
+        try
+        {
+            return ComponentPath.from( path );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.badRequest( String.format( "Invalid component path [%s]", path ), e );
+        }
     }
 
     private Page inlineFragments( Page page, final ComponentPath componentPath )

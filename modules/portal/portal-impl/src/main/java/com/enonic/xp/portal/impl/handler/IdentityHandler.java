@@ -64,7 +64,7 @@ public class IdentityHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        final IdProviderKey idProviderKey = IdProviderKey.from( matcher.group( "idp" ) );
+        final IdProviderKey idProviderKey = parseIdProviderKey( matcher.group( "idp" ) );
 
         final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
 
@@ -153,6 +153,18 @@ public class IdentityHandler
             }
 
             req.setValidTicket( redirectChecksumService.verifyChecksum( redirect, ticket ) );
+        }
+    }
+
+    private static IdProviderKey parseIdProviderKey( final String value )
+    {
+        try
+        {
+            return IdProviderKey.from( value );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.badRequest( String.format( "Invalid id provider key [%s]", value ), e );
         }
     }
 }
