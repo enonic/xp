@@ -189,6 +189,50 @@ class VirtualHostFilterTest
     }
 
     @Test
+    void testManagementPort_mappingExistsButNoMatch_notFound()
+        throws Exception
+    {
+        final VirtualHostMapping mapping =
+            new VirtualHostMapping( "mgmt", "admin.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
+                                    DispatchConstants.MANAGEMENT_CONNECTOR );
+        this.virtualHosts.add( mapping );
+
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getServerName() ).thenReturn( "10.0.0.5" );
+        when( this.req.getPathInfo() ).thenReturn( "/repo" );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( this.chain, never() ).doFilter( any(), any() );
+        verify( req, never() ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( res ).setStatus( 404 );
+    }
+
+    @Test
+    void testStatusPort_mappingExistsButNoMatch_notFound()
+        throws Exception
+    {
+        final VirtualHostMapping mapping =
+            new VirtualHostMapping( "stats", "stats.enonic.com", "/", "/", VirtualHostIdProvidersMapping.create().build(), 0, Map.of(),
+                                    DispatchConstants.STATISTICS_CONNECTOR );
+        this.virtualHosts.add( mapping );
+
+        when( this.virtualHostService.isEnabled() ).thenReturn( true );
+        when( this.req.getServerName() ).thenReturn( "10.0.0.5" );
+        when( this.req.getPathInfo() ).thenReturn( "/dump.threads" );
+        when( this.req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.STATISTICS_CONNECTOR );
+
+        VirtualHostFilter filter = new VirtualHostFilter( virtualHostService, new VirtualHostResolverImpl( virtualHostService ) );
+        filter.doFilter( this.req, this.res, this.chain );
+
+        verify( this.chain, never() ).doFilter( any(), any() );
+        verify( req, never() ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( res ).setStatus( 404 );
+    }
+
+    @Test
     void testStatusPort_noMatch_defaultVhostUsed()
         throws Exception
     {
