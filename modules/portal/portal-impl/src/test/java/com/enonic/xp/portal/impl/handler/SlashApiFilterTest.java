@@ -122,6 +122,53 @@ class SlashApiFilterTest
     }
 
     @Test
+    void readsPlainTextBody()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final FilterChain chain = mock( FilterChain.class );
+
+        when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
+        when( req.getContentType() ).thenReturn( "text/plain; charset=utf-8" );
+        when( req.getReader() ).thenReturn( new BufferedReader( new StringReader( "Hello World" ) ) );
+
+        final WebRequest webRequest = new WebRequest();
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
+        when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( WebResponse.create().status( HttpStatus.OK ).build() );
+
+        filter.doFilter( req, res, chain );
+
+        verify( slashApiHandler ).handle( webRequest );
+        assertEquals( "Hello World", webRequest.getBody() );
+    }
+
+    @Test
+    void rendersHandlerFailure()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+        final FilterChain chain = mock( FilterChain.class );
+
+        when( req.getPathInfo() ).thenReturn( "/com.enonic.app.myapp:myapi" );
+
+        final WebRequest webRequest = new WebRequest();
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
+
+        final WebException cause = new WebException( HttpStatus.NOT_FOUND, "API not found" );
+        when( slashApiHandler.handle( webRequest ) ).thenThrow( cause );
+
+        final WebResponse errorResponse = WebResponse.create().status( HttpStatus.NOT_FOUND ).build();
+        when( exceptionRenderer.render( webRequest, cause ) ).thenReturn( errorResponse );
+
+        filter.doFilter( req, res, chain );
+
+        verify( exceptionRenderer ).render( webRequest, cause );
+        verify( webSerializerService ).response( webRequest, errorResponse, res );
+    }
+
+    @Test
     void skipsBodyForMalformedContentType()
         throws Exception
     {
