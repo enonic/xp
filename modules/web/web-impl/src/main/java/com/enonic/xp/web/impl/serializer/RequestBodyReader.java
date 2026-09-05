@@ -43,7 +43,7 @@ public final class RequestBodyReader
         int read;
         while ( ( read = reader.read( buffer ) ) != -1 )
         {
-            total += read;
+            total += utf8Length( buffer, read );
             if ( total > maxBytes )
             {
                 throw tooLarge( maxBytes );
@@ -56,6 +56,28 @@ public final class RequestBodyReader
     public static boolean isText( final MediaType type )
     {
         return TEXT_CONTENT_TYPES.stream().anyMatch( type::is );
+    }
+
+    private static long utf8Length( final char[] chars, final int length )
+    {
+        long bytes = 0;
+        for ( int i = 0; i < length; i++ )
+        {
+            final char c = chars[i];
+            if ( c < 0x80 )
+            {
+                bytes += 1;
+            }
+            else if ( c < 0x800 || Character.isSurrogate( c ) )
+            {
+                bytes += 2;
+            }
+            else
+            {
+                bytes += 3;
+            }
+        }
+        return bytes;
     }
 
     private static WebException tooLarge( final long maxBytes )

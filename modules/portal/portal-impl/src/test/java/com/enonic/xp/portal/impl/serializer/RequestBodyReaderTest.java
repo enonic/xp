@@ -107,6 +107,20 @@ class RequestBodyReaderTest
     }
 
     @Test
+    void readText_streamedNonAscii_countsEncodedBytes()
+        throws Exception
+    {
+        final String fiveTwoByteChars = "\u00e9\u00e9\u00e9\u00e9\u00e9";
+
+        setText( "text/plain", fiveTwoByteChars );
+        assertEquals( fiveTwoByteChars, RequestBodyReader.readBody( this.req, 10 ) );
+
+        setText( "text/plain", fiveTwoByteChars );
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, 9 ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
+    }
+
+    @Test
     void readText_streamedOverLimit_rejected()
         throws Exception
     {
