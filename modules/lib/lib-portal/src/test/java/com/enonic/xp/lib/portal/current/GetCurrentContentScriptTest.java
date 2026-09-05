@@ -34,6 +34,15 @@ class GetCurrentContentScriptTest
     }
 
     @Test
+    void currentContentIsRoot()
+    {
+        final Content content = Content.create( TestDataFixtures.newContent() ).root().build();
+        this.portalRequest.setContent( content );
+
+        runFunction( "/test/getCurrentContent-test.js", "noCurrentContent" );
+    }
+
+    @Test
     void noCurrentContent()
     {
         this.portalRequest.setContent( null );

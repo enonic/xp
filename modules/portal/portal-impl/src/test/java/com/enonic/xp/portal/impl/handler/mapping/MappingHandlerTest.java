@@ -243,6 +243,29 @@ class MappingHandlerTest
     }
 
     @Test
+    void executeScript_noContent()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( "/.*" ).build();
+
+        setupContentAndSite( mapping, false );
+        this.request.setContent( null );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/missing" ) );
+
+        when( rendererDelegate.render( isA( ControllerMappingDescriptor.class ), same( request ) ) ).thenReturn(
+            PortalResponse.create().body( "Ok body" ).build() );
+
+        final WebResponse response = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( "Ok body", response.getBody() );
+        assertNull( this.request.getContent() );
+    }
+
+    @Test
     void executeScript_contentNotReadable_unauthorized()
         throws Exception
     {
