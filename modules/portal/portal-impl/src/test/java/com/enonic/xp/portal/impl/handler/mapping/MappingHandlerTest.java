@@ -243,6 +243,32 @@ class MappingHandlerTest
     }
 
     @Test
+    void executeScript_contentNotReadable_unauthorized()
+        throws Exception
+    {
+        final ResourceKey controller = ResourceKey.from( "demo:/services/test" );
+        final ControllerMappingDescriptor mapping =
+            ControllerMappingDescriptor.create().controller( controller ).pattern( "/.*" ).build();
+
+        setupContentAndSite( mapping, false );
+
+        final Content restrictedContent = Content.create( this.request.getContent() )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.ADMIN ).build() )
+                              .build() )
+            .build();
+        this.request.setContent( restrictedContent );
+
+        this.request.setBaseUri( "/site" );
+        this.request.setContentPath( ContentPath.from( "/site/somesite/content" ) );
+
+        final WebException e =
+            assertThrows( WebException.class, () -> this.handler.handle( this.request, PortalResponse.create().build(), null ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, e.getStatus() );
+        verifyNoInteractions( rendererDelegate );
+    }
+
+    @Test
     void executeScript_recordsTraceAttributes()
         throws Exception
     {
