@@ -150,6 +150,23 @@ class AssetHandlerTest
     }
 
     @Test
+    void testPathOutsideAssetsNotFound()
+    {
+        addResource( "demo:/site/site.xml" );
+        addResource( "demo:/assets-other/main.css" );
+
+        this.request.setRawPath( "/_/asset/demo/../site/site.xml" );
+        final WebException traversal = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, traversal.getStatus() );
+        assertEquals( "Resource [demo:/site/site.xml] not found", traversal.getMessage() );
+
+        this.request.setRawPath( "/_/asset/demo/../assets-other/main.css" );
+        final WebException sibling = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, sibling.getStatus() );
+        assertEquals( "Resource [demo:/assets-other/main.css] not found", sibling.getMessage() );
+    }
+
+    @Test
     void testNotValidUrlPattern()
         throws Exception
     {
