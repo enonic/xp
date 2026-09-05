@@ -21,16 +21,19 @@ class JsonExceptionMapperTest
 {
     private JsonExceptionMapper mapper;
 
+    private RunMode previousRunMode;
+
     @BeforeEach
     void setup()
     {
         this.mapper = new JsonExceptionMapper();
+        this.previousRunMode = RunMode.get();
     }
 
     @AfterEach
-    void resetRunMode()
+    void restoreRunMode()
     {
-        RunModeSupport.set( RunMode.PROD );
+        RunModeSupport.set( previousRunMode );
     }
 
     @Test
