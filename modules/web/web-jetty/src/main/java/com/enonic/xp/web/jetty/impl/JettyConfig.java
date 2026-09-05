@@ -90,6 +90,26 @@ public @interface JettyConfig
     int http_responseHeaderSize() default 32 * 1024;
 
     /**
+     * Honour Forwarded and X-Forwarded-* headers on the web connector.
+     */
+    boolean http_web_forwarded_enabled() default true;
+
+    /**
+     * Honour Forwarded and X-Forwarded-* headers on the management connector.
+     */
+    boolean http_management_forwarded_enabled() default false;
+
+    /**
+     * Honour Forwarded and X-Forwarded-* headers on the statistics connector.
+     */
+    boolean http_statistics_forwarded_enabled() default false;
+
+    /**
+     * Comma-separated addresses or CIDR ranges of the proxies whose Forwarded headers are trusted. Empty trusts every peer.
+     */
+    String http_forwarded_trustedProxies() default "";
+
+    /**
      * Session cookie name.
      */
     String session_cookieName() default "JSESSIONID";

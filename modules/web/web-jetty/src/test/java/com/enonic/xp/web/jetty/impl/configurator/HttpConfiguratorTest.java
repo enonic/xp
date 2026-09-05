@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +64,42 @@ class HttpConfiguratorTest
         assertNotNull( configuration.getCustomizer( ForwardedRequestCustomizer.class ) );
         assertEquals( 32 * 1024, configuration.getRequestHeaderSize() );
         assertEquals( 32 * 1024, configuration.getResponseHeaderSize() );
+
+        assertTrue( getHttpConfiguration( DispatchConstants.MANAGEMENT_CONNECTOR ).getCustomizers().isEmpty() );
+        assertTrue( getHttpConfiguration( DispatchConstants.STATISTICS_CONNECTOR ).getCustomizers().isEmpty() );
+    }
+
+    @Test
+    void forwardedPerConnector()
+    {
+        RunModeSupport.set( RunMode.PROD );
+        when( this.config.http_web_forwarded_enabled() ).thenReturn( false );
+        when( this.config.http_management_forwarded_enabled() ).thenReturn( true );
+        when( this.config.http_statistics_forwarded_enabled() ).thenReturn( true );
+
+        configure();
+
+        assertTrue( getHttpConfiguration( DispatchConstants.WEB_CONNECTOR ).getCustomizers().isEmpty() );
+        assertNotNull( getHttpConfiguration( DispatchConstants.MANAGEMENT_CONNECTOR ).getCustomizer( ForwardedRequestCustomizer.class ) );
+        assertNotNull( getHttpConfiguration( DispatchConstants.STATISTICS_CONNECTOR ).getCustomizer( ForwardedRequestCustomizer.class ) );
+    }
+
+    @Test
+    void forwardedTrustedProxies()
+    {
+        RunModeSupport.set( RunMode.PROD );
+        when( this.config.http_forwarded_trustedProxies() ).thenReturn( "10.0.0.0/8, 127.0.0.1" );
+
+        configure();
+
+        final HttpConfiguration configuration = getHttpConfiguration( DispatchConstants.WEB_CONNECTOR );
+        assertNotNull( configuration.getCustomizer( TrustedProxyForwardedCustomizer.class ) );
+        assertNull( configuration.getCustomizer( ForwardedRequestCustomizer.class ) );
+    }
+
+    private HttpConfiguration getHttpConfiguration( final String name )
+    {
+        return getConnector( name ).getConnectionFactory( HttpConnectionFactory.class ).getHttpConfiguration();
     }
 
     @Test
