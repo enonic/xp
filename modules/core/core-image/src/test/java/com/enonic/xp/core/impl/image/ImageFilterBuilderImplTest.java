@@ -64,6 +64,16 @@ public final class ImageFilterBuilderImplTest
     }
 
     @Test
+    void testFilterArgumentOutOfBounds()
+    {
+        final ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
+        imageFilterBuilder.activate( mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+
+        assertThrows( IllegalArgumentException.class, () -> imageFilterBuilder.build( FilterSetExpr.parse( "blur(5000000)" ) ) );
+        assertThrows( IllegalArgumentException.class, () -> imageFilterBuilder.build( FilterSetExpr.parse( "block(0)" ) ) );
+    }
+
+    @Test
     void testTooManyFilters()
     {
         final ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
