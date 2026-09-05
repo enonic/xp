@@ -20,7 +20,6 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -58,9 +57,8 @@ public final class WebDispatcherServlet
         final WebRequest webRequest = webSerializerService.request( req );
         final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
         webRequest.setWebSocketContext( webSocketContext );
-        webRequest.setBody( RequestBodyReader.readBody( req ) );
 
-        final WebResponse webResponse = doHandle( webRequest );
+        final WebResponse webResponse = doHandle( req, webRequest );
 
         if ( webRequest.getWebSocketContext() != null && webResponse.getWebSocket() != null )
         {
@@ -76,10 +74,11 @@ public final class WebDispatcherServlet
         webSerializerService.response( webRequest, webResponse, res );
     }
 
-    private WebResponse doHandle( final WebRequest webRequest )
+    private WebResponse doHandle( final HttpServletRequest req, final WebRequest webRequest )
     {
         try
         {
+            webRequest.setBody( webSerializerService.readBody( req ) );
             return exceptionRenderer.maybeThrow( webRequest, webDispatcher.dispatch( webRequest, WebResponse.create().build() ) );
         }
         catch ( Exception e )

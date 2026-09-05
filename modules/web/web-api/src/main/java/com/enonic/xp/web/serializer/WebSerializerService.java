@@ -12,6 +12,9 @@ public interface WebSerializerService
 {
     WebRequest request( HttpServletRequest httpRequest );
 
+    Object readBody( HttpServletRequest httpRequest )
+        throws IOException;
+
     void response( WebRequest webRequest, WebResponse webResponse, HttpServletResponse httpResponse )
         throws IOException;
 }

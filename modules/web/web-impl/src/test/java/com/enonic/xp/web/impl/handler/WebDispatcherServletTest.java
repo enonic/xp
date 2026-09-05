@@ -12,8 +12,10 @@ import com.google.common.net.MediaType;
 
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
+import com.enonic.xp.web.impl.serializer.WebSerializerConfig;
 import com.enonic.xp.web.impl.serializer.WebSerializerServiceImpl;
 import com.enonic.xp.web.jetty.impl.JettyTestSupport;
 import com.enonic.xp.web.sse.SseConfig;
@@ -21,6 +23,7 @@ import com.enonic.xp.web.sse.SseConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,6 +35,8 @@ class WebDispatcherServletTest
 
     private TestWebHandler handler;
 
+    private WebSerializerServiceImpl webSerializerService;
+
     final ExceptionRenderer exceptionRenderer = mock();
 
     @Override
@@ -40,8 +45,14 @@ class WebDispatcherServletTest
         this.handler = new TestWebHandler();
 
         when( exceptionRenderer.maybeThrow( any(), any() ) ).thenAnswer( invocation -> invocation.getArgument( 1 ) );
+        when( exceptionRenderer.render( any(), any() ) ).thenAnswer( invocation -> {
+            final Exception e = invocation.getArgument( 1 );
+            final HttpStatus status = e instanceof WebException webException ? webException.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+            return WebResponse.create().status( status ).build();
+        } );
 
-        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl(), exceptionRenderer, mock(), new WebSerializerServiceImpl() );
+        this.webSerializerService = new WebSerializerServiceImpl();
+        this.servlet = new WebDispatcherServlet( new WebDispatcherImpl(), exceptionRenderer, mock(), this.webSerializerService );
         this.servlet.addWebHandler( this.handler );
 
         this.handler.response = WebResponse.create().status( HttpStatus.OK ).build();
@@ -187,6 +198,24 @@ class WebDispatcherServletTest
 
         final HttpResponse<String> response = callRequest( request );
         assertEquals( 200, response.statusCode() );
+    }
+
+    @Test
+    void testPost_bodyTooLarge()
+        throws Exception
+    {
+        final WebSerializerConfig config = mock( WebSerializerConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( config.http_maxRequestBodySize() ).thenReturn( 8L );
+        this.webSerializerService.activate( config );
+
+        final HttpRequest request = newRequest( "/site/master/a/b" ).header( "content-type", "text/plain; charset=utf-8" )
+            .POST( HttpRequest.BodyPublishers.ofString( "Hello World" ) )
+            .build();
+
+        this.handler.verifier = req -> fail( "handler must not be invoked for an oversized body" );
+
+        final HttpResponse<String> response = callRequest( request );
+        assertEquals( 413, response.statusCode() );
     }
 
     @Test
