@@ -65,17 +65,23 @@ public final class SlashApiFilter
             return;
         }
 
-        final WebRequest webRequest = webSerializerService.request( req );
-        final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
-        webRequest.setWebSocketContext( webSocketContext );
-
+        WebRequest webRequest = null;
         WebResponse webResponse;
         try
         {
+            webRequest = webSerializerService.request( req );
+            final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
+            webRequest.setWebSocketContext( webSocketContext );
+
             webResponse = slashApiHandler.handle( webRequest );
         }
         catch ( Exception e )
         {
+            if ( webRequest == null )
+            {
+                webRequest = new WebRequest();
+                webRequest.setRawRequest( req );
+            }
             webResponse = exceptionRenderer.render( webRequest, e );
         }
 

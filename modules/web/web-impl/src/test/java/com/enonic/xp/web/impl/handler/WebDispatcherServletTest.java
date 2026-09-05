@@ -4,6 +4,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -24,8 +25,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class WebDispatcherServletTest
@@ -216,6 +221,43 @@ class WebDispatcherServletTest
 
         final HttpResponse<String> response = callRequest( request );
         assertEquals( 413, response.statusCode() );
+    }
+
+    @Test
+    void testPost_malformedContentType()
+        throws Exception
+    {
+        final HttpRequest request = newRequest( "/site/master/a/b" ).header( "content-type", "foo" )
+            .POST( HttpRequest.BodyPublishers.ofString( "Hello World" ) )
+            .build();
+
+        this.handler.verifier = req -> {
+            assertEquals( "foo", req.getContentType() );
+            assertNull( req.getBody() );
+        };
+
+        final HttpResponse<String> response = callRequest( request );
+        assertEquals( 200, response.statusCode() );
+    }
+
+    @Test
+    void testUnknownMethod_methodNotAllowed()
+        throws Exception
+    {
+        when( exceptionRenderer.render( any(), any() ) ).thenAnswer( invocation -> {
+            final WebException cause = invocation.getArgument( 1 );
+            return WebResponse.create().status( cause.getStatus() ).build();
+        } );
+
+        final AtomicBoolean handled = new AtomicBoolean();
+        this.handler.verifier = req -> handled.set( true );
+
+        final HttpRequest request = newRequest( "/site/master/a/b" ).method( "BREW", HttpRequest.BodyPublishers.noBody() ).build();
+
+        final HttpResponse<String> response = callRequest( request );
+        assertEquals( 405, response.statusCode() );
+        assertFalse( handled.get() );
+        verify( exceptionRenderer ).render( argThat( req -> req.getRawRequest() != null ), any( WebException.class ) );
     }
 
     @Test
