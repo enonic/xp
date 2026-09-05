@@ -20,7 +20,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class RequestSerializer
 {
-    private static final String MULTIPART_FORM_DATA = "multipart/form-data";
+    private static final String MULTIPART_PREFIX = "multipart/";
 
     private final WebRequest webRequest;
 
@@ -71,7 +71,7 @@ public final class RequestSerializer
 
     private void setParameters( final HttpServletRequest from, final WebRequest to )
     {
-        if ( isMultipartFormData( from.getContentType() ) )
+        if ( isMultipart( from.getContentType() ) )
         {
             addQueryParameters( from.getQueryString(), to );
             return;
@@ -83,15 +83,15 @@ public final class RequestSerializer
         }
     }
 
-    static boolean isMultipartFormData( final String contentType )
+    static boolean isMultipart( final String contentType )
     {
         if ( contentType == null )
         {
             return false;
         }
         final int parameters = contentType.indexOf( ';' );
-        final String mediaType = parameters < 0 ? contentType : contentType.substring( 0, parameters );
-        return MULTIPART_FORM_DATA.equalsIgnoreCase( mediaType.trim() );
+        final String mediaType = ( parameters < 0 ? contentType : contentType.substring( 0, parameters ) ).trim();
+        return mediaType.regionMatches( true, 0, MULTIPART_PREFIX, 0, MULTIPART_PREFIX.length() );
     }
 
     static void addQueryParameters( final String queryString, final WebRequest to )
