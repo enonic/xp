@@ -19,4 +19,9 @@ public interface StatusReporter
     {
         this.report( context.getOutputStream() );
     }
+
+    default boolean isSensitive()
+    {
+        return false;
+    }
 }
