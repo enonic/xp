@@ -90,7 +90,7 @@ class MappingHandlerHelper
             return webHandlerChain.handle( webRequest, webResponse );
         }
 
-        final Content content = request.getContent();
+        final Content content = request.getContent() == null ? null : PortalRequestHelper.getContentOrElseThrow( request );
 
         final List<ControllerMappingDescriptor> matchingMappings =
             controllerMappingsResolver.resolveAll( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(), content,
