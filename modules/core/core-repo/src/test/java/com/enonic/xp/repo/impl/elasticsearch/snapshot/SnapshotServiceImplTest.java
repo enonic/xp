@@ -43,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class SnapshotServiceImplTest
@@ -138,5 +139,6 @@ class SnapshotServiceImplTest
         assertThrows( ForbiddenAccessException.class, () -> instance.restore( RestoreParams.create().snapshotName( "s" ).build() ) );
         assertThrows( ForbiddenAccessException.class, () -> instance.list() );
         assertThrows( ForbiddenAccessException.class, () -> instance.delete( DeleteSnapshotParams.create().add( "s" ).build() ) );
+        verifyNoInteractions( clusterAdminClient );
     }
 }

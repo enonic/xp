@@ -51,6 +51,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class AuditLogServiceImplTest
@@ -144,6 +145,7 @@ class AuditLogServiceImplTest
     void cleanUpRequiresAdmin()
     {
         assertThrows( ForbiddenAccessException.class, () -> auditLogService.cleanUp( CleanUpAuditLogParams.create().build() ) );
+        verifyNoInteractions( nodeService );
     }
 
     @Test
