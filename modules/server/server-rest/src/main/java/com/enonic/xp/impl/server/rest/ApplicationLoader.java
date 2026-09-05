@@ -16,6 +16,7 @@ import java.util.HexFormat;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
@@ -52,6 +53,7 @@ public class ApplicationLoader
 
     ApplicationLoader( final String allowedUrls, final boolean requireChecksum, final long maxSize )
     {
+        Preconditions.checkArgument( maxSize > 0 && maxSize < Long.MAX_VALUE, "maxSize out of range: %s", maxSize );
         this.allowList = new UrlAllowList( allowedUrls );
         this.requireChecksum = requireChecksum;
         this.maxSize = maxSize;
@@ -88,7 +90,7 @@ public class ApplicationLoader
         return load( url, sha512, eventConsumer );
     }
 
-    public ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
+    private ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
     {
         try
         {

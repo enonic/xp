@@ -2,15 +2,18 @@ package com.enonic.xp.impl.server.rest;
 
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.HexFormat;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,7 +28,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -68,7 +73,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader().load( URI.create( appUrl ).toURL(), null, eventListener );
+        final ByteSource byteSource = new ApplicationLoader( appUrl + "*", false ).load( appUrl, null, eventListener );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
@@ -79,9 +84,6 @@ class ApplicationLoaderTest
         throws Exception
     {
         final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
-        final byte[] sha512 = HexFormat.of()
-            .parseHex(
-                "7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
 
         this.server.createContext( "/", exchange -> {
 
@@ -91,7 +93,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader().load( URI.create( appUrl ).toURL(), sha512, eventListener );
+        final ByteSource byteSource = new ApplicationLoader( appUrl + "*", true ).load( appUrl, "7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c", eventListener );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
@@ -101,9 +103,6 @@ class ApplicationLoaderTest
     void load_with_sha512_wrong()
     {
         final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
-        final byte[] sha512 = HexFormat.of()
-            .parseHex(
-                "0d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c" );
 
         this.server.createContext( "/", exchange -> {
 
@@ -113,18 +112,21 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        assertThrows( WebException.class, () -> new ApplicationLoader().load( URI.create( appUrl ).toURL(), sha512, eventListener ) );
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", true );
+
+        assertThrows( WebException.class, () -> loader.load( appUrl, "0d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c", eventListener ) );
     }
 
-    @Test
-    void load_follows_redirect_within_allowlist()
+    @ParameterizedTest
+    @ValueSource(ints = {301, 302, 303, 307, 308})
+    void load_follows_redirect_within_allowlist( final int status )
         throws Exception
     {
         final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
 
         this.server.createContext( "/old", exchange -> {
             exchange.getResponseHeaders().add( "Location", "/new/app.jar" );
-            exchange.sendResponseHeaders( 302, -1 );
+            exchange.sendResponseHeaders( status, -1 );
             exchange.close();
         } );
         this.server.createContext( "/new", exchange -> {
@@ -133,10 +135,49 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource =
-            new ApplicationLoader( appUrl + "*", false ).load( URI.create( appUrl + "/old" ).toURL(), null, eventListener );
+        final ByteSource byteSource = new ApplicationLoader( appUrl + "*", false ).load( appUrl + "/old", null, eventListener );
 
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
+        verify( eventListener, atLeastOnce() ).accept(
+            argThat( event -> ( appUrl + "/old" ).equals( event.getValue( "applicationUrl" ).orElse( null ) ) ) );
+    }
+
+    @Test
+    void load_rejects_invalid_redirect_location()
+    {
+        this.server.createContext( "/old", exchange -> {
+            exchange.getResponseHeaders().add( "Location", "http://exa mple.com/app.jar" );
+            exchange.sendResponseHeaders( 302, -1 );
+            exchange.close();
+        } );
+
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+
+        assertThatThrownBy( () -> loader.load( appUrl + "/old", null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
+                                                                                                                e -> assertThat(
+                                                                                                                    e.getStatus() ).isEqualTo(
+                                                                                                                    HttpStatus.BAD_REQUEST ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
+    void load_from_file_url( @TempDir final Path tempDir )
+        throws Exception
+    {
+        final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
+        final Path file = Files.write( tempDir.resolve( "app.jar" ), bytes );
+
+        final ByteSource byteSource = new ApplicationLoader( "file:*", false ).load( file.toUri().toString(), null, eventListener );
+
+        verify( eventListener ).accept( notNull() );
+        assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
+    }
+
+    @Test
+    void rejects_max_size_out_of_range()
+    {
+        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 0 ) );
+        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, Long.MAX_VALUE ) );
     }
 
     @Test
@@ -150,7 +191,7 @@ class ApplicationLoaderTest
 
         final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
 
-        assertThatThrownBy( () -> loader.load( URI.create( appUrl + "/old" ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+        assertThatThrownBy( () -> loader.load( appUrl + "/old", null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.CONFLICT ) );
         verifyNoInteractions( eventListener );
     }
@@ -166,7 +207,7 @@ class ApplicationLoaderTest
 
         final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
 
-        assertThatThrownBy( () -> loader.load( URI.create( appUrl + "/loop" ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+        assertThatThrownBy( () -> loader.load( appUrl + "/loop", null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
         verifyNoInteractions( eventListener );
     }
@@ -184,7 +225,7 @@ class ApplicationLoaderTest
 
         final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false, bytes.length - 1 );
 
-        assertThatThrownBy( () -> loader.load( URI.create( appUrl ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+        assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
     }
 
@@ -201,7 +242,7 @@ class ApplicationLoaderTest
 
         final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false, bytes.length - 1 );
 
-        assertThatThrownBy( () -> loader.load( URI.create( appUrl ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+        assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
         verifyNoInteractions( eventListener );
     }
