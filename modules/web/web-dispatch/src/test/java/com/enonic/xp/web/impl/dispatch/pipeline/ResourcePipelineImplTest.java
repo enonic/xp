@@ -27,6 +27,9 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         this.pipeline = newPipeline();
         this.request = Mockito.mock( HttpServletRequest.class );
         this.response = Mockito.mock( HttpServletResponse.class );
+
+        Mockito.lenient().when( this.request.getServletPath() ).thenReturn( "" );
+        Mockito.lenient().when( this.request.getPathInfo() ).thenReturn( "/a/b" );
     }
 
     abstract P newPipeline();

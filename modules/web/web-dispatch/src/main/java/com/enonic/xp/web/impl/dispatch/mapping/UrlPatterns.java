@@ -4,7 +4,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Builds the request uri matcher of a mapping out of its url patterns.
+ * Builds the request path matcher of a mapping out of its url patterns.
  * <p>
  * A url pattern is a glob: {@code *} stands for any sequence of characters and every other character stands
  * for itself. The patterns used to be spliced into one regular expression with only {@code *} translated,
@@ -12,9 +12,9 @@ import java.util.function.Predicate;
  * holding {@code |} silently became two alternatives, and one holding {@code (} or {@code [} threw
  * {@link java.util.regex.PatternSyntaxException} rather than being registered at all.
  * <p>
- * Matching walks the uri instead. That makes it literal, and it keeps the regex engine off a path that runs
- * for every filter and every servlet of every request: the patterns that occur in practice - {@code /*}, a
- * prefix, an extension, an exact path - each come down to one {@link String} comparison.
+ * Matching walks the path instead. That makes it literal, and it keeps the regex engine out of code that
+ * runs for every filter and every servlet of every request: the patterns that occur in practice - {@code /*},
+ * a prefix, an extension, an exact path - each come down to one {@link String} comparison.
  */
 final class UrlPatterns
 {
@@ -24,7 +24,7 @@ final class UrlPatterns
 
     static Predicate<String> matcher( final Set<String> urlPatterns )
     {
-        return urlPatterns.stream().map( UrlPatterns::matcher ).reduce( Predicate::or ).orElse( uri -> false );
+        return urlPatterns.stream().map( UrlPatterns::matcher ).reduce( Predicate::or ).orElse( path -> false );
     }
 
     private static Predicate<String> matcher( final String urlPattern )
@@ -43,28 +43,28 @@ final class UrlPatterns
 
             if ( suffix.isEmpty() )
             {
-                return uri -> uri.startsWith( prefix );
+                return path -> path.startsWith( prefix );
             }
             if ( prefix.isEmpty() )
             {
-                return uri -> uri.endsWith( suffix );
+                return path -> path.endsWith( suffix );
             }
-            return uri -> uri.length() >= prefix.length() + suffix.length() && uri.startsWith( prefix ) && uri.endsWith( suffix );
+            return path -> path.length() >= prefix.length() + suffix.length() && path.startsWith( prefix ) && path.endsWith( suffix );
         }
 
         final String[] literals = urlPattern.split( "\\*", -1 );
-        return uri -> matches( uri, literals );
+        return path -> matches( path, literals );
     }
 
-    private static boolean matches( final String uri, final String[] literals )
+    private static boolean matches( final String path, final String[] literals )
     {
         final String prefix = literals[0];
         final String suffix = literals[literals.length - 1];
 
         int from = prefix.length();
-        final int until = uri.length() - suffix.length();
+        final int until = path.length() - suffix.length();
 
-        if ( from > until || !uri.startsWith( prefix ) || !uri.endsWith( suffix ) )
+        if ( from > until || !path.startsWith( prefix ) || !path.endsWith( suffix ) )
         {
             return false;
         }
@@ -74,7 +74,7 @@ final class UrlPatterns
         for ( int i = 1; i < literals.length - 1; i++ )
         {
             final String literal = literals[i];
-            final int at = uri.indexOf( literal, from );
+            final int at = path.indexOf( literal, from );
             if ( at < 0 || at + literal.length() > until )
             {
                 return false;

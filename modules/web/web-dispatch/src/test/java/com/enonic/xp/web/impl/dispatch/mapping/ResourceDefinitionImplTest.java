@@ -44,7 +44,7 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
     void testMatches()
     {
         // a definition is ready to serve as soon as it exists, there is nothing to initialize
-        final ResourceDefinitionImpl<?> def = (ResourceDefinitionImpl<?>) newDefinition();
+        final D def = newDefinition();
 
         assertFalse( def.matches( null ) );
         assertFalse( def.matches( "/b" ) );

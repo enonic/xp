@@ -11,6 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface FilterDefinition
     extends ResourceDefinition<Filter>
 {
-    boolean doFilter( HttpServletRequest req, HttpServletResponse res, FilterChain chain )
+    void doFilter( HttpServletRequest req, HttpServletResponse res, FilterChain chain )
         throws IOException, ServletException;
 }

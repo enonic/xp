@@ -20,15 +20,9 @@ final class FilterDefinitionImpl
     }
 
     @Override
-    public boolean doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
+    public void doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
         throws IOException, ServletException
     {
-        if ( matches( req.getRequestURI() ) )
-        {
-            this.resource.doFilter( req, res, chain );
-            return true;
-        }
-
-        return false;
+        this.resource.doFilter( req, res, chain );
     }
 }

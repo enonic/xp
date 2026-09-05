@@ -23,4 +23,10 @@ public interface ResourceDefinition<T>
     Map<String, String> getInitParams();
 
     T getResource();
+
+    /**
+     * Returns true if this definition serves the given request path. The path is the decoded path within the
+     * context, not the raw request uri.
+     */
+    boolean matches( String path );
 }

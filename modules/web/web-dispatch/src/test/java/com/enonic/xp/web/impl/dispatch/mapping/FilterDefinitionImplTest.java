@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class FilterDefinitionImplTest
     extends ResourceDefinitionImplTest<Filter, FilterDefinition>
@@ -43,12 +40,8 @@ class FilterDefinitionImplTest
         final HttpServletResponse res = mock( HttpServletResponse.class );
         final FilterChain chain = mock( FilterChain.class );
 
-        when( req.getRequestURI() ).thenReturn( "/b" );
-        assertFalse( def.doFilter( req, res, chain ) );
-        Mockito.verify( this.resource, Mockito.times( 0 ) ).doFilter( req, res, chain );
+        def.doFilter( req, res, chain );
 
-        when( req.getRequestURI() ).thenReturn( "/a/b/c" );
-        assertTrue( def.doFilter( req, res, chain ) );
         Mockito.verify( this.resource, Mockito.times( 1 ) ).doFilter( req, res, chain );
     }
 }

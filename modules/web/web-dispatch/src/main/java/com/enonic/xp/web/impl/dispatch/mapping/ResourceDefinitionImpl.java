@@ -14,13 +14,13 @@ abstract class ResourceDefinitionImpl<T>
 
     final T resource;
 
-    private final Predicate<String> uriMatcher;
+    private final Predicate<String> pathMatcher;
 
     ResourceDefinitionImpl( final ResourceMapping<T> mapping )
     {
         this.mapping = mapping;
         this.resource = this.mapping.getResource();
-        this.uriMatcher = UrlPatterns.matcher( this.mapping.getUrlPatterns() );
+        this.pathMatcher = UrlPatterns.matcher( this.mapping.getUrlPatterns() );
     }
 
     @Override
@@ -60,8 +60,9 @@ abstract class ResourceDefinitionImpl<T>
         return this.resource;
     }
 
-    final boolean matches( final String uri )
+    @Override
+    public final boolean matches( final String path )
     {
-        return uri != null && this.uriMatcher.test( uri );
+        return path != null && this.pathMatcher.test( path );
     }
 }

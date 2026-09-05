@@ -8,12 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.web.dispatch.MappingBuilder;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class ServletDefinitionImplTest
     extends ResourceDefinitionImplTest<Servlet, ServletDefinition>
@@ -42,12 +39,8 @@ class ServletDefinitionImplTest
         final HttpServletRequest req = mock( HttpServletRequest.class );
         final HttpServletResponse res = mock( HttpServletResponse.class );
 
-        when( req.getRequestURI() ).thenReturn( "/b" );
-        assertFalse( def.service( req, res ) );
-        verify( this.resource, times( 0 ) ).service( req, res );
+        def.service( req, res );
 
-        when( req.getRequestURI() ).thenReturn( "/a/b/c" );
-        assertTrue( def.service( req, res ) );
         verify( this.resource, times( 1 ) ).service( req, res );
     }
 }

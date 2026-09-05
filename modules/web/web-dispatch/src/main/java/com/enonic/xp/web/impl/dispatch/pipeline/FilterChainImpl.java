@@ -36,19 +36,20 @@ final class FilterChainImpl
     private void doFilter( final HttpServletRequest req, final HttpServletResponse res )
         throws IOException, ServletException
     {
-        if ( this.filters.hasNext() )
+        // resolved on every step of the chain, as a filter may have wrapped the request and rewritten its
+        // path on the way here - the virtual host filter does
+        final String path = RequestPath.of( req );
+
+        while ( this.filters.hasNext() )
         {
             final FilterDefinition def = this.filters.next();
-            final boolean handled = def.doFilter( req, res, this );
-
-            if ( !handled )
+            if ( def.matches( path ) )
             {
-                doFilter( req, res );
+                def.doFilter( req, res, this );
+                return;
             }
         }
-        else
-        {
-            this.servletPipeline.service( req, res );
-        }
+
+        this.servletPipeline.service( req, res );
     }
 }

@@ -16,6 +16,7 @@ import com.enonic.xp.web.impl.dispatch.mapping.ServletDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -81,16 +82,35 @@ class ServletPipelineImplTest
         this.pipeline.add( def1 );
         this.pipeline.add( def2 );
 
+        // the first definition that serves the path handles the request, the rest are left alone
+        when( def2.matches( "/a/b" ) ).thenReturn( true );
+        this.pipeline.service( this.request, this.response );
+
+        verify( def1, never() ).service( this.request, this.response );
+        verify( def2, times( 1 ) ).service( this.request, this.response );
+
+        when( def1.matches( "/a/b" ) ).thenReturn( true );
         this.pipeline.service( this.request, this.response );
 
         verify( def1, times( 1 ) ).service( this.request, this.response );
         verify( def2, times( 1 ) ).service( this.request, this.response );
+    }
 
-        when( def1.service( this.request, this.response ) ).thenReturn( true );
+    @Test
+    void service_matchesTheDecodedPath()
+        throws Exception
+    {
+        final ServletDefinition def = newDefinition();
+        this.pipeline.add( def );
+
+        // the raw uri still carries what the container normalized away before it routed the request
+        when( this.request.getRequestURI() ).thenReturn( "/a/b;jsessionid=1" );
+        when( def.matches( "/a/b" ) ).thenReturn( true );
+
         this.pipeline.service( this.request, this.response );
 
-        verify( def1, times( 2 ) ).service( this.request, this.response );
-        verify( def2, times( 1 ) ).service( this.request, this.response );
+        verify( def, times( 1 ) ).service( this.request, this.response );
+        verify( this.request, never() ).getRequestURI();
     }
 
     @Test
@@ -98,6 +118,17 @@ class ServletPipelineImplTest
         throws Exception
     {
         this.pipeline.service( this.request, this.response );
+        verify( this.response ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+    }
+
+    @Test
+    void no_matching_service()
+        throws Exception
+    {
+        this.pipeline.add( newDefinition() );
+
+        this.pipeline.service( this.request, this.response );
+
         verify( this.response ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
     }
 }

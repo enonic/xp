@@ -33,10 +33,13 @@ public final class ServletPipelineImpl
     public void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
+        final String path = RequestPath.of( req );
+
         for ( final ServletDefinition def : this.list.snapshot() )
         {
-            if ( def.service( req, res ) )
+            if ( def.matches( path ) )
             {
+                def.service( req, res );
                 return;
             }
         }
