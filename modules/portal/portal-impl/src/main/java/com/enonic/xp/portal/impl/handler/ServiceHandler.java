@@ -101,8 +101,10 @@ public class ServiceHandler
 
     private PortalRequest createPortalRequest( final WebRequest webRequest, final String servicePath, final DescriptorKey descriptorKey )
     {
-        final PortalRequest portalRequest =
-            webRequest instanceof PortalRequest ? (PortalRequest) webRequest : new PortalRequest( webRequest );
+        if ( !( webRequest instanceof PortalRequest portalRequest ) || portalRequest.getBaseUri() == null )
+        {
+            throw WebException.notFound( "Not a valid request" );
+        }
         portalRequest.setContextPath( portalRequest.getBasePath() + "/_/service/" + servicePath );
 
         //Retrieves the ServiceDescriptor

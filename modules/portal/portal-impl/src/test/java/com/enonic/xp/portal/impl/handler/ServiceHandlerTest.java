@@ -43,6 +43,7 @@ import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
+import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -133,6 +134,18 @@ class ServiceHandlerTest
             assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
             assertEquals( "Not a valid service url pattern", e.getMessage() );
         }
+    }
+
+    @Test
+    void testHandleNotSiteBase()
+    {
+        final WebRequest webRequest = new WebRequest();
+        webRequest.setMethod( HttpMethod.GET );
+        webRequest.setRawPath( "/_/service/demo/test" );
+
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( webRequest ) );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        assertEquals( "Not a valid request", e.getMessage() );
     }
 
     @Test
