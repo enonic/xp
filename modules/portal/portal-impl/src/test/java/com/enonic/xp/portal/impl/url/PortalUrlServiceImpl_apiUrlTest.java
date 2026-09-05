@@ -84,6 +84,20 @@ class PortalUrlServiceImpl_apiUrlTest
     }
 
     @Test
+    void testPathIsEncoded()
+    {
+        PortalRequestAccessor.set( null );
+
+        final ApiUrlParams params = ApiUrlParams.create()
+            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
+            .setPath( "/a b/c?d=1#e/" )
+            .build();
+
+        final String url = this.service.apiUrl( params );
+        assertEquals( "/api/com.enonic.app.myapp:myapi/a%20b/c%3Fd=1%23e", url );
+    }
+
+    @Test
     void testNoRequestWithBaseUrl()
     {
         PortalRequestAccessor.set( null );

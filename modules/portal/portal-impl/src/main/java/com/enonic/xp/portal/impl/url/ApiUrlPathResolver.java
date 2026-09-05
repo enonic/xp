@@ -3,8 +3,8 @@ package com.enonic.xp.portal.impl.url;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendAndEncodePathParts;
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPathSegments;
-import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendSubPath;
 
 final class ApiUrlPathResolver
     implements Supplier<String>
@@ -24,7 +24,7 @@ final class ApiUrlPathResolver
     {
         final StringBuilder result = new StringBuilder();
 
-        appendSubPath( result, path );
+        appendAndEncodePathParts( result, path );
         appendPathSegments( result, pathSegments );
 
         return result.toString();
