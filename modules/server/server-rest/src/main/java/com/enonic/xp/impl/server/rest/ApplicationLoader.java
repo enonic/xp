@@ -4,8 +4,10 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.DigestInputStream;
@@ -14,7 +16,9 @@ import java.util.HexFormat;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.event.Event;
@@ -23,9 +27,19 @@ import com.enonic.xp.web.WebException;
 
 public class ApplicationLoader
 {
+    private static final long DEFAULT_MAX_SIZE = 1L << 30;
+
+    private static final int MAX_REDIRECTS = 5;
+
+    private static final int CONNECT_TIMEOUT_MILLIS = 10_000;
+
+    private static final int READ_TIMEOUT_MILLIS = 60_000;
+
     private final UrlAllowList allowList;
 
     private final boolean requireChecksum;
+
+    private final long maxSize;
 
     public ApplicationLoader()
     {
@@ -34,8 +48,15 @@ public class ApplicationLoader
 
     public ApplicationLoader( final String allowedUrls, final boolean requireChecksum )
     {
+        this( allowedUrls, requireChecksum, DEFAULT_MAX_SIZE );
+    }
+
+    ApplicationLoader( final String allowedUrls, final boolean requireChecksum, final long maxSize )
+    {
+        Preconditions.checkArgument( maxSize > 0 && maxSize < Long.MAX_VALUE, "maxSize out of range: %s", maxSize );
         this.allowList = new UrlAllowList( allowedUrls );
         this.requireChecksum = requireChecksum;
+        this.maxSize = maxSize;
     }
 
     public ByteSource load( final String urlString, final String sha512Hex, final Consumer<Event> eventConsumer )
@@ -69,19 +90,29 @@ public class ApplicationLoader
         return load( url, sha512, eventConsumer );
     }
 
-    public ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
+    private ByteSource load( final URL url, final byte[] sha512Checksum, final Consumer<Event> eventConsumer )
     {
         try
         {
-            final URLConnection connection = url.openConnection();
+            final URLConnection connection = connect( url );
 
-            final InputStream inputStream = connection.getInputStream();
+            if ( connection.getContentLengthLong() > maxSize )
+            {
+                throw tooLarge();
+            }
+
+            final InputStream inputStream = ByteStreams.limit( connection.getInputStream(), maxSize + 1 );
             final DigestInputStream digestInputStream = new DigestInputStream( inputStream, MessageDigests.sha512() );
             final ProgressInputStream progressInputStream =
                 new ProgressInputStream( digestInputStream, connection.getContentLengthLong(), url.toString(), eventConsumer );
             try (inputStream; digestInputStream; progressInputStream)
             {
                 final byte[] bytes = progressInputStream.readAllBytes();
+
+                if ( bytes.length > maxSize )
+                {
+                    throw tooLarge();
+                }
 
                 if ( sha512Checksum != null && !MessageDigest.isEqual( sha512Checksum, digestInputStream.getMessageDigest().digest() ) )
                 {
@@ -94,6 +125,65 @@ public class ApplicationLoader
         {
             throw new UncheckedIOException( "Failed to load application from " + url, e );
         }
+    }
+
+    private URLConnection connect( final URL start )
+        throws IOException
+    {
+        URL url = start;
+        for ( int redirects = 0; ; redirects++ )
+        {
+            final URLConnection connection = url.openConnection();
+            connection.setConnectTimeout( CONNECT_TIMEOUT_MILLIS );
+            connection.setReadTimeout( READ_TIMEOUT_MILLIS );
+
+            if ( !( connection instanceof HttpURLConnection http ) )
+            {
+                return connection;
+            }
+
+            http.setInstanceFollowRedirects( false );
+            final String location = isRedirect( http.getResponseCode() ) ? http.getHeaderField( "Location" ) : null;
+            if ( location == null )
+            {
+                return http;
+            }
+
+            http.disconnect();
+            if ( redirects >= MAX_REDIRECTS )
+            {
+                throw WebException.badRequest( "Too many redirects from " + start );
+            }
+
+            url = resolveRedirect( url, location );
+            if ( !allowList.matches( url.toString() ) )
+            {
+                throw new WebException( HttpStatus.CONFLICT, "Redirect target is not in the installUrl allowlist" );
+            }
+        }
+    }
+
+    private static boolean isRedirect( final int status )
+    {
+        return status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_MOVED_TEMP ||
+            status == HttpURLConnection.HTTP_SEE_OTHER || status == 307 || status == 308;
+    }
+
+    private static URL resolveRedirect( final URL from, final String location )
+    {
+        try
+        {
+            return from.toURI().resolve( location ).toURL();
+        }
+        catch ( URISyntaxException | IllegalArgumentException | MalformedURLException e )
+        {
+            throw WebException.badRequest( "Invalid redirect location: " + location, e );
+        }
+    }
+
+    private WebException tooLarge()
+    {
+        return WebException.badRequest( String.format( "Application exceeds the maximum size of %d bytes", maxSize ) );
     }
 
     private static class ProgressInputStream
