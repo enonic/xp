@@ -191,7 +191,7 @@ public final class SendMailParams
 
         public Builder contentType( final String contentType )
         {
-            this.contentType = contentType;
+            this.contentType = MailHeaderValue.requireSingleLine( contentType, "Content type" );
             return this;
         }
 
