@@ -25,6 +25,10 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
+import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
@@ -111,7 +115,11 @@ class ComponentServiceMappingHandlerTest
         SiteConfigsDataSerializer.toData( siteConfigs, siteData.getRoot() );
 
         final Site site = Site.create().name( "my-site" ).parentPath( ContentPath.ROOT ).data( siteData ).build();
-        final Content content = Content.create().name( "my-content" ).parentPath( site.getPath() ).build();
+        final Content content = Content.create()
+            .name( "my-content" )
+            .parentPath( site.getPath() )
+            .permissions( AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() ) )
+            .build();
 
         this.request.setContent( content );
         this.request.setContentPath( content.getPath() );
