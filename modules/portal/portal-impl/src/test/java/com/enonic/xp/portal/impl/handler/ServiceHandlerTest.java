@@ -137,6 +137,16 @@ class ServiceHandlerTest
     }
 
     @Test
+    void testInvalidServiceKey()
+    {
+        this.request.setRawPath( "/site/draft/site/somepath/content/_/service/invalid!/test" );
+
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.BAD_REQUEST, e.getStatus() );
+        assertEquals( "Invalid service [invalid!/test]", e.getMessage() );
+    }
+
+    @Test
     void testHandleNotSiteBase()
     {
         final WebRequest webRequest = new WebRequest();

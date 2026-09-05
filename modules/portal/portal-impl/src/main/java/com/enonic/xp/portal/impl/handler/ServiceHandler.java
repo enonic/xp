@@ -69,10 +69,10 @@ public class ServiceHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        final ApplicationKey applicationKey = ApplicationKey.from( matcher.group( 1 ) );
-        final String name = matcher.group( 2 );
+        final DescriptorKey descriptorKey = parseDescriptorKey( matcher.group( 1 ), matcher.group( 2 ) );
+        final ApplicationKey applicationKey = descriptorKey.getApplicationKey();
+        final String name = descriptorKey.getName();
         final String servicePath = matcher.group( 0 );
-        final DescriptorKey descriptorKey = DescriptorKey.from( applicationKey, name );
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, servicePath, descriptorKey );
 
@@ -97,6 +97,18 @@ public class ServiceHandler
         }
 
         return portalResponse;
+    }
+
+    private static DescriptorKey parseDescriptorKey( final String applicationKey, final String name )
+    {
+        try
+        {
+            return DescriptorKey.from( ApplicationKey.from( applicationKey ), name );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.badRequest( String.format( "Invalid service [%s/%s]", applicationKey, name ), e );
+        }
     }
 
     private PortalRequest createPortalRequest( final WebRequest webRequest, final String servicePath, final DescriptorKey descriptorKey )
