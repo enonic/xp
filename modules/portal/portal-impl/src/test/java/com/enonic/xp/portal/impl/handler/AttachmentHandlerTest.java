@@ -266,8 +266,48 @@ class AttachmentHandlerTest
         final byte[] responseBody = ( (ByteSource) res.getBody() ).read();
         final byte[] mediaBytesData = mediaBytes.read();
 
-        assertEquals( 4, responseBody.length );
-        assertArrayEquals( new byte[]{mediaBytesData[3], mediaBytesData[4], mediaBytesData[5], mediaBytesData[6]}, responseBody );
+        assertEquals( 3, responseBody.length );
+        assertArrayEquals( new byte[]{mediaBytesData[4], mediaBytesData[5], mediaBytesData[6]}, responseBody );
+        assertEquals( "bytes 4-6/7", res.getHeaders().get( "Content-Range" ) );
+    }
+
+    @Test
+    void byteServingSuffixLongerThanFile()
+        throws Exception
+    {
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=-100" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.PARTIAL_CONTENT, res.getStatus() );
+        assertEquals( "bytes 0-6/7", res.getHeaders().get( "Content-Range" ) );
+        assertArrayEquals( mediaBytes.read(), ( (ByteSource) res.getBody() ).read() );
+    }
+
+    @Test
+    void byteServingSuffixZero()
+        throws Exception
+    {
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=-0" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, res.getStatus() );
+        assertEquals( "bytes */7", res.getHeaders().get( "Content-Range" ) );
+        assertNull( res.getBody() );
+    }
+
+    @Test
+    void byteServingTooManyRangesServesWholeBody()
+        throws Exception
+    {
+        this.request.setRawPath( "/_/attachment/inline/123456/logo.png" );
+        this.request.getHeaders().put( "Range", "bytes=" + "0-,".repeat( 10 ) + "0-" );
+
+        final PortalResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+        assertNull( res.getHeaders().get( "Content-Range" ) );
+        assertSame( this.mediaBytes, res.getBody() );
     }
 
     @Test
