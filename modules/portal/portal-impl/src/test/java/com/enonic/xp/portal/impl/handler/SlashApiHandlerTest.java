@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 
@@ -291,6 +292,24 @@ class SlashApiHandlerTest
         final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
         assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
         verify( webSerializerService, never() ).readBody( any() );
+    }
+
+    @Test
+    void testHandleApi_bodyReadFailureIsUnchecked()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+        when( webSerializerService.readBody( servletRequestMock ) ).thenThrow( new IOException( "closed" ) );
+
+        assertThrows( UncheckedIOException.class, () -> this.handler.handle( request ) );
     }
 
     @Test

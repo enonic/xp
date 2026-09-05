@@ -121,6 +121,34 @@ class RequestBodyReaderTest
     }
 
     @Test
+    void readText_streamedThreeByteChars_countsEncodedBytes()
+        throws Exception
+    {
+        final String threeEuroSigns = "\u20ac\u20ac\u20ac";
+
+        setText( "text/plain", threeEuroSigns );
+        assertEquals( threeEuroSigns, RequestBodyReader.readBody( this.req, 9 ) );
+
+        setText( "text/plain", threeEuroSigns );
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, 8 ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
+    }
+
+    @Test
+    void readText_streamedSurrogatePair_countsFourBytes()
+        throws Exception
+    {
+        final String emoji = "\uD83D\uDE00";
+
+        setText( "text/plain", emoji );
+        assertEquals( emoji, RequestBodyReader.readBody( this.req, 4 ) );
+
+        setText( "text/plain", emoji );
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, 3 ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
+    }
+
+    @Test
     void readText_streamedOverLimit_rejected()
         throws Exception
     {
