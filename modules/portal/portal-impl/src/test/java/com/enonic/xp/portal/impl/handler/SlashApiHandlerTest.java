@@ -277,6 +277,29 @@ class SlashApiHandlerTest
     }
 
     @Test
+    void testStateChangeWithoutOriginAllowed()
+    {
+        setupWebApi();
+        when( servletRequestMock.getSession( false ) ).thenReturn( mock( HttpSession.class ) );
+        request.setMethod( HttpMethod.POST );
+
+        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> this.handler.handle( request ) ).getStatus() );
+    }
+
+    @Test
+    void testCrossOriginStateChangeWithoutRawRequestSkipsOriginCheck()
+    {
+        setupWebApi();
+        request.setRawRequest( null );
+        request.setMethod( HttpMethod.POST );
+        request.getHeaders().put( "Origin", "https://evil.example.org" );
+
+        final WebException ex =
+            assertThrows( WebException.class, () -> authenticatedContext().callWith( () -> this.handler.handle( request ) ) );
+        assertEquals( "API [com.enonic.app.myapp:api-key] is not mounted", ex.getMessage() );
+    }
+
+    @Test
     void testCrossOriginStateChangeAnonymousAllowed()
     {
         setupWebApi();

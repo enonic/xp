@@ -43,6 +43,26 @@ class SameOriginCheckTest
     }
 
     @Test
+    void originWithoutHost()
+    {
+        assertFalse( SameOriginCheck.isSameOrigin( "file:///app", request( "https", "example.com", 443 ) ) );
+    }
+
+    @Test
+    void requestWithoutSchemeOrHost()
+    {
+        assertFalse( SameOriginCheck.isSameOrigin( "https://example.com", request( null, "example.com", 443 ) ) );
+        assertFalse( SameOriginCheck.isSameOrigin( "https://example.com", request( "https", null, 443 ) ) );
+    }
+
+    @Test
+    void schemeWithoutDefaultPort()
+    {
+        assertFalse( SameOriginCheck.isSameOrigin( "ftp://example.com", request( "ftp", "example.com", 21 ) ) );
+        assertTrue( SameOriginCheck.isSameOrigin( "ftp://example.com:21", request( "ftp", "example.com", 21 ) ) );
+    }
+
+    @Test
     void opaqueOrMalformedOrigin()
     {
         assertFalse( SameOriginCheck.isSameOrigin( "null", request( "https", "example.com", 443 ) ) );
