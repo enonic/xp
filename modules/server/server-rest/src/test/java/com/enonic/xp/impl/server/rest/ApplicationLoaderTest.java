@@ -117,6 +117,96 @@ class ApplicationLoaderTest
     }
 
     @Test
+    void load_follows_redirect_within_allowlist()
+        throws Exception
+    {
+        final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
+
+        this.server.createContext( "/old", exchange -> {
+            exchange.getResponseHeaders().add( "Location", "/new/app.jar" );
+            exchange.sendResponseHeaders( 302, -1 );
+            exchange.close();
+        } );
+        this.server.createContext( "/new", exchange -> {
+            exchange.sendResponseHeaders( 200, 0 );
+            exchange.getResponseBody().write( bytes );
+            exchange.close();
+        } );
+
+        final ByteSource byteSource =
+            new ApplicationLoader( appUrl + "*", false ).load( URI.create( appUrl + "/old" ).toURL(), null, eventListener );
+
+        assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
+    }
+
+    @Test
+    void load_rejects_redirect_outside_allowlist()
+    {
+        this.server.createContext( "/old", exchange -> {
+            exchange.getResponseHeaders().add( "Location", "http://other.invalid/app.jar" );
+            exchange.sendResponseHeaders( 302, -1 );
+            exchange.close();
+        } );
+
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+
+        assertThatThrownBy( () -> loader.load( URI.create( appUrl + "/old" ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+            WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.CONFLICT ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
+    void load_rejects_too_many_redirects()
+    {
+        this.server.createContext( "/loop", exchange -> {
+            exchange.getResponseHeaders().add( "Location", "/loop" );
+            exchange.sendResponseHeaders( 302, -1 );
+            exchange.close();
+        } );
+
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+
+        assertThatThrownBy( () -> loader.load( URI.create( appUrl + "/loop" ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+            WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
+    void load_rejects_oversized_application()
+    {
+        final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
+
+        this.server.createContext( "/", exchange -> {
+            exchange.sendResponseHeaders( 200, 0 );
+            exchange.getResponseBody().write( bytes );
+            exchange.close();
+        } );
+
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false, bytes.length - 1 );
+
+        assertThatThrownBy( () -> loader.load( URI.create( appUrl ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+            WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
+    }
+
+    @Test
+    void load_rejects_oversized_content_length()
+    {
+        final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
+
+        this.server.createContext( "/", exchange -> {
+            exchange.sendResponseHeaders( 200, bytes.length );
+            exchange.getResponseBody().write( bytes );
+            exchange.close();
+        } );
+
+        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false, bytes.length - 1 );
+
+        assertThatThrownBy( () -> loader.load( URI.create( appUrl ).toURL(), null, eventListener ) ).isInstanceOfSatisfying(
+            WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
+        verifyNoInteractions( eventListener );
+    }
+
+    @Test
     void load_rejects_url_outside_allowlist()
     {
         final ApplicationLoader loader = new ApplicationLoader( "https://allowed.example/*", false );
