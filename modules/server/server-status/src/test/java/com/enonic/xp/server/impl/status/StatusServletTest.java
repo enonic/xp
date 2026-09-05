@@ -32,6 +32,7 @@ import com.enonic.xp.web.vhost.VirtualHostService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -79,8 +80,8 @@ class StatusServletTest
         when( res.getWriter() ).thenReturn( new PrintWriter( error ) );
 
         servlet = new StatusServlet( virtualHostService );
-        servlet.addReporter( reporter( "dump.threads", true ) );
-        servlet.addReporter( reporter( "jvm.info", false ) );
+        servlet.addReporter( new SensitiveReporter( "dump.threads" ) );
+        servlet.addReporter( new PlainReporter( "jvm.info" ) );
     }
 
     private void virtualHosts( final String... connectors )
@@ -140,6 +141,20 @@ class StatusServletTest
     }
 
     @Test
+    void sensitiveReporterOpenWithVirtualHostsDisabled()
+        throws Exception
+    {
+        when( virtualHostService.isEnabled() ).thenReturn( false );
+        when( req.getRequestURI() ).thenReturn( "/dump.threads" );
+
+        servlet.doGet( req, res );
+
+        verify( res ).setStatus( 200 );
+        verify( virtualHostService, never() ).getVirtualHosts();
+        assertEquals( "dump.threads", body.toString( StandardCharsets.UTF_8 ) );
+    }
+
+    @Test
     void plainReporterOpenWithStatisticsVirtualHost()
         throws Exception
     {
@@ -163,34 +178,48 @@ class StatusServletTest
         verify( res ).setStatus( 404 );
     }
 
-    private static StatusReporter reporter( final String name, final boolean sensitive )
+    private static class PlainReporter
+        implements StatusReporter
     {
-        return new StatusReporter()
+        private final String name;
+
+        PlainReporter( final String name )
         {
-            @Override
-            public String getName()
-            {
-                return name;
-            }
+            this.name = name;
+        }
 
-            @Override
-            public MediaType getMediaType()
-            {
-                return MediaType.PLAIN_TEXT_UTF_8;
-            }
+        @Override
+        public String getName()
+        {
+            return name;
+        }
 
-            @Override
-            public void report( final OutputStream stream )
-                throws IOException
-            {
-                stream.write( name.getBytes( StandardCharsets.UTF_8 ) );
-            }
+        @Override
+        public MediaType getMediaType()
+        {
+            return MediaType.PLAIN_TEXT_UTF_8;
+        }
 
-            @Override
-            public boolean isSensitive()
-            {
-                return sensitive;
-            }
-        };
+        @Override
+        public void report( final OutputStream stream )
+            throws IOException
+        {
+            stream.write( name.getBytes( StandardCharsets.UTF_8 ) );
+        }
+    }
+
+    private static final class SensitiveReporter
+        extends PlainReporter
+    {
+        SensitiveReporter( final String name )
+        {
+            super( name );
+        }
+
+        @Override
+        public boolean isSensitive()
+        {
+            return true;
+        }
     }
 }
