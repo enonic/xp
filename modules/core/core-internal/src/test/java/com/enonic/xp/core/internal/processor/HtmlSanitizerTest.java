@@ -82,7 +82,11 @@ class HtmlSanitizerTest
         }
         finally
         {
-            executor.shutdownNow();
+            executor.shutdown();
+            if ( !executor.awaitTermination( 30, TimeUnit.SECONDS ) )
+            {
+                executor.shutdownNow();
+            }
         }
     }
 
