@@ -13,12 +13,12 @@ import com.enonic.xp.web.dispatch.ResourceMapping;
 import com.enonic.xp.web.dispatch.ServletMapping;
 
 /**
- * Turns a registration into a {@link ResourceDefinition}, rejecting the ones that cannot work: they used to
- * be dropped without a word, which made a missing or incomplete annotation impossible to spot.
+ * Creates the {@link ResourceDefinition} of a registration.
  * <p>
- * A registration without connectors is not one of those: it is served on every connector, which is a
- * deliberate default and not a mistake. Init parameters are ignored, silently, as is anything else the
- * resource may expect from a lifecycle XP does not drive.
+ * A registration that could never serve a request is rejected: {@code create} returns {@code null} and logs
+ * the reason. That is a {@code Filter} or {@code Servlet} service without a {@code @WebFilter} or
+ * {@code @WebServlet} annotation, and a mapping without url patterns. A mapping without connectors is not
+ * rejected: it is served on every connector.
  */
 public final class ResourceDefinitionFactory
 {

@@ -109,12 +109,12 @@ class UrlPatternsTest
     @Test
     void regexMetacharactersAreLiteral()
     {
-        // spliced into a regular expression, the dot used to match any character here
+        // a dot stands for a dot, not for any character
         final Predicate<String> dot = matcher( "/api/v1.0/*" );
         assertTrue( dot.test( "/api/v1.0/x" ) );
         assertFalse( dot.test( "/api/v1X0/x" ) );
 
-        // and the pipe used to split the pattern into two alternatives
+        // a pipe is part of the path, it does not separate alternatives
         final Predicate<String> pipe = matcher( "/a|b" );
         assertTrue( pipe.test( "/a|b" ) );
         assertFalse( pipe.test( "/a" ) );
@@ -122,7 +122,6 @@ class UrlPatternsTest
 
         for ( final String metacharacter : List.of( "(", ")", "[", "]", "{", "}", "+", "?", "^", "$", "\\", "." ) )
         {
-            // these used to throw PatternSyntaxException out of the registration instead of being matched
             final String urlPattern = "/x" + metacharacter + "y/*";
             assertTrue( matcher( urlPattern ).test( "/x" + metacharacter + "y/z" ), urlPattern );
             assertFalse( matcher( urlPattern ).test( "/xQy/z" ), urlPattern );

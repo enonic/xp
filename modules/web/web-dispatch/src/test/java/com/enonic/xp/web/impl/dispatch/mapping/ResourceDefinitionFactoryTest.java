@@ -85,7 +85,7 @@ class ResourceDefinitionFactoryTest
     @Test
     void filter_withoutAnnotation()
     {
-        // a Filter service without @WebFilter cannot be mapped and is rejected, it used to be dropped silently
+        // a Filter service without @WebFilter carries no url patterns, so it cannot be mapped at all
         assertNull( ResourceDefinitionFactory.create( new UnannotatedFilter(), List.of( "xp" ) ) );
     }
 

@@ -4,17 +4,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
- * Builds the request path matcher of a mapping out of its url patterns.
+ * Builds the request path matcher of a mapping.
  * <p>
- * A url pattern is a glob: {@code *} stands for any sequence of characters and every other character stands
- * for itself. The patterns used to be spliced into one regular expression with only {@code *} translated,
- * which left every other metacharacter live - {@code /api/v1.0/*} also matched {@code /api/v1X0/}, a pattern
- * holding {@code |} silently became two alternatives, and one holding {@code (} or {@code [} threw
- * {@link java.util.regex.PatternSyntaxException} rather than being registered at all.
- * <p>
- * Matching walks the path instead. That makes it literal, and it keeps the regex engine out of code that
- * runs for every filter and every servlet of every request: the patterns that occur in practice - {@code /*},
- * a prefix, an extension, an exact path - each come down to one {@link String} comparison.
+ * A url pattern is a glob: {@code *} stands for any sequence of characters, every other character stands for
+ * itself, and the whole path has to match. A path matches a mapping when it matches any of its patterns.
  */
 final class UrlPatterns
 {
@@ -70,7 +63,7 @@ final class UrlPatterns
         }
 
         // a * matches anything, so the leftmost occurrence of a literal is always as good a place to carry
-        // on from as any later one and there is nothing to backtrack over
+        // on from as any later one: there is nothing to backtrack over
         for ( int i = 1; i < literals.length - 1; i++ )
         {
             final String literal = literals[i];

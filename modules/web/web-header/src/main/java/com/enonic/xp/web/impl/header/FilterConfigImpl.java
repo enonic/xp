@@ -8,8 +8,8 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 
 /**
- * The config the wrapped Jetty filter is initialized with. XP does not initialize filters any more, so there
- * is no container-provided config to build on; {@link HeaderFilter} only reads init parameters.
+ * The {@link FilterConfig} the wrapped Jetty filter is initialized with. It carries no servlet context, as
+ * the wrapped filter reads only init parameters.
  */
 final class FilterConfigImpl
     implements FilterConfig

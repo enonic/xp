@@ -5,10 +5,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * An immutable, ready-to-serve filter or servlet registration. A definition carries no lifecycle: the
- * resource it wraps is fully initialized by its own component before it is registered, and XP never calls
- * {@code init} or {@code destroy} on it. A resource that declares them is registered unchanged, and what
- * those methods would have set up is simply never set up.
+ * An immutable filter or servlet registration, ready to serve requests. The resource it wraps is initialized
+ * by its own component; the servlet lifecycle methods are not called on it.
  */
 public interface ResourceDefinition<T>
 {
@@ -25,8 +23,9 @@ public interface ResourceDefinition<T>
     T getResource();
 
     /**
-     * Returns true if this definition serves the given request path. The path is the decoded path within the
-     * context, not the raw request uri.
+     * Returns true if this definition serves the given request path.
+     *
+     * @param path the decoded path of the request within the context
      */
     boolean matches( String path );
 }

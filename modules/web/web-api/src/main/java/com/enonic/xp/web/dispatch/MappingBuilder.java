@@ -20,13 +20,12 @@ import static java.util.Objects.requireNonNull;
  * Builds the mapping of a filter or servlet, to be registered as a {@link FilterMapping} or a
  * {@link ServletMapping} service.
  * <p>
- * XP does not drive the servlet lifecycle: {@code Filter.init}, {@code Servlet.init} and {@code destroy} are
- * never called, so a resource must be ready to serve requests by the time it is registered. Set it up in the
- * {@code @Activate} method of its component and tear it down in {@code @Deactivate}; what a resource that
- * declares {@code init} or {@code destroy} does instead is undefined.
+ * A resource must be ready to serve requests by the time it is registered: set it up in the
+ * {@code @Activate} method of its component and tear it down in {@code @Deactivate}. The servlet lifecycle
+ * methods are not called on it, and the behaviour of a resource that relies on them is undefined.
  * <p>
- * Url patterns are required, a mapping without them would never match a request. Connectors are not: a
- * mapping without them is served on every connector.
+ * At least one url pattern is required. Connectors are optional: a mapping without them is served on every
+ * connector.
  */
 public final class MappingBuilder
 {
@@ -157,9 +156,8 @@ public final class MappingBuilder
     }
 
     /**
-     * @deprecated Init parameters are not passed to the filter or servlet any more: XP does not call
-     * {@code Filter.init} or {@code Servlet.init}. Configure the resource in the {@code @Activate} method of
-     * its component instead. Scheduled for removal in XP 9.0.
+     * @deprecated Init parameters are not passed to the filter or servlet. Configure the resource in the
+     * {@code @Activate} method of its component instead. Scheduled for removal in XP 9.0.
      */
     @Deprecated(since = "8.2", forRemoval = true)
     public MappingBuilder initParam( final String key, final String value )

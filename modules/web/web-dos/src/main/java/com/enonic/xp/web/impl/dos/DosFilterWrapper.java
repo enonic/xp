@@ -31,12 +31,6 @@ public final class DosFilterWrapper
      */
     private final Filter delegate;
 
-    /**
-     * Jetty's DoSFilter hands the {@link ServletContext} to every rate tracker it creates and its idle
-     * tracker reads an attribute from it, so - unlike the other wrapped filters - it cannot be initialized
-     * when this component is activated. It is initialized on the first request instead, which is where a
-     * servlet context first becomes available.
-     */
     private volatile boolean initialized;
 
     @Activate
@@ -74,6 +68,10 @@ public final class DosFilterWrapper
         this.delegate.doFilter( req, res, chain );
     }
 
+    /**
+     * Initializes the delegate. DoSFilter hands the servlet context to every rate tracker it creates, so it
+     * can only be initialized once a request has provided one.
+     */
     private void initialize( final ServletContext context )
         throws ServletException
     {

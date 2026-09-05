@@ -54,8 +54,7 @@ final class JaxRsServlet
     }
 
     /**
-     * Releases the dispatcher. Called by the owning JaxRsService when it is destroyed: XP does not call the
-     * servlet lifecycle methods.
+     * Releases the dispatcher. Called by the JaxRsService that owns this servlet.
      */
     synchronized void dispose()
     {

@@ -11,9 +11,7 @@ import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Holds the definitions of one connector, ordered, as a single immutable snapshot. Definitions carry no
- * lifecycle, so a pipeline is nothing but that snapshot: there is no state for a request thread to observe
- * half-built, and adding or removing a definition cannot race with anything.
+ * Holds the definitions of one connector, ordered by {@link ResourceDefinition#getOrder()}.
  */
 public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     implements ResourcePipeline<T>
