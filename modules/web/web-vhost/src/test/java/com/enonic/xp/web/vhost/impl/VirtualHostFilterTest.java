@@ -206,7 +206,7 @@ class VirtualHostFilterTest
         filter.doFilter( this.req, this.res, this.chain );
 
         verify( this.chain, never() ).doFilter( any(), any() );
-        verify( req, never() ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( req, never() ).setAttribute( eq( VirtualHost.class.getName() ), any() );
         verify( res ).setStatus( 404 );
     }
 
@@ -228,7 +228,7 @@ class VirtualHostFilterTest
         filter.doFilter( this.req, this.res, this.chain );
 
         verify( this.chain, never() ).doFilter( any(), any() );
-        verify( req, never() ).setAttribute( eq( VirtualHost.class.getName() ), notNull() );
+        verify( req, never() ).setAttribute( eq( VirtualHost.class.getName() ), any() );
         verify( res ).setStatus( 404 );
     }
 
