@@ -64,6 +64,16 @@ class RequestBodyReaderTest
     }
 
     @Test
+    void readMalformedContentType()
+        throws Exception
+    {
+        Mockito.when( this.req.getContentType() ).thenReturn( "text" );
+
+        assertNull( RequestBodyReader.readBody( this.req, LIMIT ) );
+        Mockito.verify( this.req, Mockito.never() ).getReader();
+    }
+
+    @Test
     void readNonText_ignoresLimit()
         throws Exception
     {

@@ -25,8 +25,8 @@ public final class RequestBodyReader
     public static Object readBody( final HttpServletRequest req, final long maxBytes )
         throws IOException
     {
-        final String type = req.getContentType();
-        if ( type == null || !isText( MediaType.parse( type ) ) )
+        final MediaType type = parseOrNull( req.getContentType() );
+        if ( type == null || !isText( type ) )
         {
             return null;
         }
@@ -56,6 +56,22 @@ public final class RequestBodyReader
     public static boolean isText( final MediaType type )
     {
         return TEXT_CONTENT_TYPES.stream().anyMatch( type::is );
+    }
+
+    private static MediaType parseOrNull( final String contentType )
+    {
+        if ( contentType == null )
+        {
+            return null;
+        }
+        try
+        {
+            return MediaType.parse( contentType );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return null;
+        }
     }
 
     private static long utf8Length( final char[] chars, final int length )
