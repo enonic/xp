@@ -23,7 +23,8 @@ public final class GetCurrentContentHandler
 
     private static boolean isReadable( final Content content )
     {
-        return content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ );
+        return !content.getPath().isRoot() &&
+            content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ );
     }
 
     @Override
