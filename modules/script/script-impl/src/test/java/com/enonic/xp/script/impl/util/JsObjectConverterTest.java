@@ -55,6 +55,8 @@ class JsObjectConverterTest
         generator.value( "key", "value" );
 
         final JSObject check = (JSObject) engine.eval( "(function(o) { return Object.getPrototypeOf(o) === Object.prototype" +
+                                                           " && Object.prototype.hasOwnProperty.call(o, '__proto__')" +
+                                                           " && Object.keys(o).join() === '__proto__,key'" +
                                                            " && Array.isArray(o.__proto__) && o.key === 'value' && o.length === undefined; })" );
         assertTrue( (Boolean) check.call( null, generator.getRoot() ) );
     }
