@@ -35,11 +35,11 @@ class ReindexLoadTest
 
         refresh();
 
-        final ReindexResult result = this.indexService.reindex( ReindexParams.create().
+        final ReindexResult result = ctxDefaultAdmin().callWith( () -> this.indexService.reindex( ReindexParams.create().
             addBranch( WS_DEFAULT ).
             repositoryId( testRepoId ).
             initialize( true ).
-            build() );
+            build() ) );
 
         assertEquals( loadSize + 1, result.getReindexNodes().getSize() );
     }

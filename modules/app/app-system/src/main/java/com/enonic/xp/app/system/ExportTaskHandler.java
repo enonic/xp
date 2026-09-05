@@ -61,6 +61,8 @@ public class ExportTaskHandler
 
     public void execute()
     {
+        TaskUtils.requireAdmin();
+
         final ProgressReporter progressReporter = TaskProgressReporterContext.current();
 
         final ExportNodesParams.Builder params = ExportNodesParams.create()

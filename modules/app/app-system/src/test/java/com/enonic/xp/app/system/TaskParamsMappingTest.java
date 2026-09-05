@@ -10,6 +10,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
@@ -96,6 +102,10 @@ class TaskParamsMappingTest
         addService( ExportService.class, exportService );
         addService( VacuumService.class, vacuumService );
         addService( TaskService.class, taskService );
+        ContextAccessorSupport.getInstance()
+            .set( ContextBuilder.from( ContextAccessor.current() )
+                      .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
+                      .build() );
     }
 
     @Test

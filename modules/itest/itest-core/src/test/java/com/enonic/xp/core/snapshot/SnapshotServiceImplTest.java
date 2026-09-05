@@ -318,7 +318,8 @@ class SnapshotServiceImplTest
     void restore_latest_no_snapshots()
     {
         final SnapshotException exception =
-            assertThrows( SnapshotException.class, () -> snapshotService.restore( RestoreParams.create().latest( true ).build() ) );
+            assertThrows( SnapshotException.class,
+                          () -> NodeHelper.runAsAdmin( () -> snapshotService.restore( RestoreParams.create().latest( true ).build() ) ) );
 
         assertEquals( "No snapshots found", exception.getMessage() );
     }

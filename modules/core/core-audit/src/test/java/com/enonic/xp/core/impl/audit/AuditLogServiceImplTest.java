@@ -38,6 +38,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.repository.internal.InternalRepositoryService;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.security.PrincipalKey;
 
 import static java.util.Objects.requireNonNullElse;
@@ -50,6 +51,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class AuditLogServiceImplTest
@@ -140,6 +142,13 @@ class AuditLogServiceImplTest
     }
 
     @Test
+    void cleanUpRequiresAdmin()
+    {
+        assertThrows( ForbiddenAccessException.class, () -> auditLogService.cleanUp( CleanUpAuditLogParams.create().build() ) );
+        verifyNoInteractions( nodeService );
+    }
+
+    @Test
     void cleanUpOneEmpty()
     {
         when( config.ageThreshold() ).thenReturn( "PT1s" );
@@ -148,7 +157,7 @@ class AuditLogServiceImplTest
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
-        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
+        final CleanUpAuditLogResult result = AuditLogContext.createAdminContext().callWith( () -> auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() ) );
 
         assertEquals( 0, result.getDeleted() );
         verify( listener, times( 1 ) ).resolved( 0 );
@@ -169,7 +178,7 @@ class AuditLogServiceImplTest
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
-        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
+        final CleanUpAuditLogResult result = AuditLogContext.createAdminContext().callWith( () -> auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() ) );
 
         assertEquals( 3, result.getDeleted() );
         verify( listener, times( 1 ) ).resolved( 3 );
@@ -191,7 +200,7 @@ class AuditLogServiceImplTest
 
         final CleanUpAuditLogListener listener = mock( CleanUpAuditLogListener.class );
 
-        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() );
+        final CleanUpAuditLogResult result = AuditLogContext.createAdminContext().callWith( () -> auditLogService.cleanUp( CleanUpAuditLogParams.create().listener( listener ).build() ) );
 
         assertEquals( 10500, result.getDeleted() );
         verify( listener, times( 1 ) ).resolved( 10_500 );
@@ -213,7 +222,7 @@ class AuditLogServiceImplTest
         when( nodeService.enumerate( any( EnumerateNodesParams.class ) ) ).thenReturn(
             createBatch( 2, Instant.now().minus( Duration.ofHours( 2 ) ), null ) );
 
-        final CleanUpAuditLogResult result = auditLogService.cleanUp( CleanUpAuditLogParams.create().build() );
+        final CleanUpAuditLogResult result = AuditLogContext.createAdminContext().callWith( () -> auditLogService.cleanUp( CleanUpAuditLogParams.create().build() ) );
 
         assertEquals( 2, result.getDeleted() );
 

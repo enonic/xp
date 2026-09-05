@@ -11,10 +11,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.enonic.xp.export.ExportNodesParams;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextAccessorSupport;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.export.ExportService;
 import com.enonic.xp.export.NodeExportResult;
 import com.enonic.xp.home.HomeDirSupport;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.support.JsonTestHelper;
 import com.enonic.xp.task.ProgressReportParams;
 import com.enonic.xp.task.ProgressReporter;
@@ -24,7 +31,9 @@ import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,6 +61,21 @@ class ExportTaskHandlerTest
         super.initialize();
         HomeDirSupport.set( temporaryFolder );
         addService( ExportService.class, this.exportService );
+        ContextAccessorSupport.getInstance()
+            .set( ContextBuilder.from( ContextAccessor.current() )
+                      .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
+                      .build() );
+    }
+
+    @Test
+    void exportNodes_requiresAdmin()
+    {
+        ContextAccessorSupport.getInstance()
+            .set( ContextBuilder.from( ContextAccessor.current() ).authInfo( AuthenticationInfo.unAuthenticated() ).build() );
+
+        assertThrows( ForbiddenAccessException.class, () -> TaskProgressReporterContext.withContext(
+            ( id, reporter ) -> runFunction( "/test/ExportTaskHandlerTest.js", "exportNodes" ) ).run( TaskId.from( "task" ), progressReporter ) );
+        verifyNoInteractions( exportService );
     }
 
     @Test

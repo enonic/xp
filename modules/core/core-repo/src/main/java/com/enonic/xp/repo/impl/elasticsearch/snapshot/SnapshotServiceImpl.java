@@ -40,6 +40,7 @@ import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.node.SnapshotResult;
 import com.enonic.xp.node.SnapshotResults;
 import com.enonic.xp.repo.impl.RepositoryEvents;
+import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.node.NodeHelper;
@@ -82,6 +83,7 @@ public class SnapshotServiceImpl
     @Override
     public SnapshotResult snapshot( final SnapshotParams snapshotParams )
     {
+        SecurityHelper.requireAdmin();
         checkSnapshotRepository();
 
         return NodeHelper.runAsAdmin( () -> doSnapshot( snapshotParams ) );
@@ -126,6 +128,7 @@ public class SnapshotServiceImpl
     @Override
     public RestoreResult restore( final RestoreParams restoreParams )
     {
+        SecurityHelper.requireAdmin();
         checkSnapshotRepository();
 
         return NodeHelper.runAsAdmin( () -> doRestore( restoreParams ) );
@@ -209,6 +212,7 @@ public class SnapshotServiceImpl
     @Override
     public SnapshotResults list()
     {
+        SecurityHelper.requireAdmin();
         checkSnapshotRepository();
 
         return doListSnapshots();
@@ -226,6 +230,7 @@ public class SnapshotServiceImpl
     @Override
     public DeleteSnapshotsResult delete( final DeleteSnapshotParams params )
     {
+        SecurityHelper.requireAdmin();
         checkSnapshotRepository();
 
         return doDelete( params );
