@@ -22,11 +22,24 @@ public final class RequestBodyReader
             return null;
         }
 
-        return isText( MediaType.parse( type ) ) ? CharStreams.toString( req.getReader() ) : null;
+        final MediaType mediaType = parseOrNull( type );
+        return mediaType != null && isText( mediaType ) ? CharStreams.toString( req.getReader() ) : null;
     }
 
     public static boolean isText( final MediaType type )
     {
         return TEXT_CONTENT_TYPES.stream().anyMatch( type::is );
+    }
+
+    private static MediaType parseOrNull( final String type )
+    {
+        try
+        {
+            return MediaType.parse( type );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return null;
+        }
     }
 }
