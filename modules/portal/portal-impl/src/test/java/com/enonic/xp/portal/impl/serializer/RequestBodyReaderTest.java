@@ -11,22 +11,28 @@ import com.google.common.net.MediaType;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RequestBodyReaderTest
 {
+    private static final long LIMIT = 1024;
+
     private HttpServletRequest req;
 
     @BeforeEach
     void setup()
     {
         this.req = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( this.req.getContentLengthLong() ).thenReturn( -1L );
     }
 
     @Test
@@ -47,19 +53,35 @@ class RequestBodyReaderTest
         Mockito.when( this.req.getReader() ).thenReturn( new BufferedReader( new StringReader( text ) ) );
     }
 
-    private void setBytes( final String type, final byte[] bytes )
-    {
-        Mockito.when( this.req.getContentType() ).thenReturn( type );
-    }
-
     @Test
     void readNonText()
         throws Exception
     {
-        setBytes( "application/octet-stream", new byte[0] );
+        Mockito.when( this.req.getContentType() ).thenReturn( "application/octet-stream" );
 
-        final Object result = RequestBodyReader.readBody( this.req );
+        final Object result = RequestBodyReader.readBody( this.req, LIMIT );
         assertNull( result );
+    }
+
+    @Test
+    void readMalformedContentType()
+        throws Exception
+    {
+        Mockito.when( this.req.getContentType() ).thenReturn( "text" );
+
+        assertNull( RequestBodyReader.readBody( this.req, LIMIT ) );
+        Mockito.verify( this.req, Mockito.never() ).getReader();
+    }
+
+    @Test
+    void readNonText_ignoresLimit()
+        throws Exception
+    {
+        Mockito.when( this.req.getContentType() ).thenReturn( "application/octet-stream" );
+        Mockito.when( this.req.getContentLengthLong() ).thenReturn( LIMIT * 100 );
+
+        assertNull( RequestBodyReader.readBody( this.req, LIMIT ) );
+        Mockito.verify( this.req, Mockito.never() ).getReader();
     }
 
     @Test
@@ -68,8 +90,81 @@ class RequestBodyReaderTest
     {
         setText( "text/plain", "Hello World" );
 
-        final Object result = RequestBodyReader.readBody( this.req );
+        final Object result = RequestBodyReader.readBody( this.req, LIMIT );
         assertNotNull( result );
         assertEquals( "Hello World", result );
+    }
+
+    @Test
+    void readText_exactlyAtLimit()
+        throws Exception
+    {
+        setText( "text/plain", "Hello World" );
+
+        assertEquals( "Hello World", RequestBodyReader.readBody( this.req, "Hello World".length() ) );
+    }
+
+    @Test
+    void readText_declaredLengthOverLimit_rejectedWithoutReading()
+        throws Exception
+    {
+        Mockito.when( this.req.getContentType() ).thenReturn( "application/json" );
+        Mockito.when( this.req.getContentLengthLong() ).thenReturn( LIMIT + 1 );
+
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, LIMIT ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
+        Mockito.verify( this.req, Mockito.never() ).getReader();
+    }
+
+    @Test
+    void readText_streamedNonAscii_countsEncodedBytes()
+        throws Exception
+    {
+        final String fiveTwoByteChars = "\u00e9\u00e9\u00e9\u00e9\u00e9";
+
+        setText( "text/plain", fiveTwoByteChars );
+        assertEquals( fiveTwoByteChars, RequestBodyReader.readBody( this.req, 10 ) );
+
+        setText( "text/plain", fiveTwoByteChars );
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, 9 ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
+    }
+
+    @Test
+    void readText_streamedThreeByteChars_countsEncodedBytes()
+        throws Exception
+    {
+        final String threeEuroSigns = "\u20ac\u20ac\u20ac";
+
+        setText( "text/plain", threeEuroSigns );
+        assertEquals( threeEuroSigns, RequestBodyReader.readBody( this.req, 9 ) );
+
+        setText( "text/plain", threeEuroSigns );
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, 8 ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
+    }
+
+    @Test
+    void readText_streamedSurrogatePair_countsFourBytes()
+        throws Exception
+    {
+        final String emoji = "\uD83D\uDE00";
+
+        setText( "text/plain", emoji );
+        assertEquals( emoji, RequestBodyReader.readBody( this.req, 4 ) );
+
+        setText( "text/plain", emoji );
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, 3 ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
+    }
+
+    @Test
+    void readText_streamedOverLimit_rejected()
+        throws Exception
+    {
+        setText( "text/plain", "Hello World" );
+
+        final WebException e = assertThrows( WebException.class, () -> RequestBodyReader.readBody( this.req, "Hello World".length() - 1 ) );
+        assertEquals( HttpStatus.PAYLOAD_TOO_LARGE, e.getStatus() );
     }
 }

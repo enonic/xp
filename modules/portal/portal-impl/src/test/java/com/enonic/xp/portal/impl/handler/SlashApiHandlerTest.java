@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +58,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.sse.SseConfig;
+import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.sse.SseEndpoint;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -76,6 +78,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -95,6 +98,8 @@ class SlashApiHandlerTest
 
     private SseManager sseManager;
 
+    private WebSerializerService webSerializerService;
+
     private ControllerScript controllerScript;
 
     private PortalRequest request;
@@ -112,9 +117,10 @@ class SlashApiHandlerTest
         adminToolDescriptorService = mock( AdminToolDescriptorService.class );
         universalApiHandlerRegistry = new DynamicUniversalApiHandlerRegistry();
         sseManager = mock( SseManager.class );
+        webSerializerService = mock( WebSerializerService.class );
 
         handler = new SlashApiHandler( controllerScriptFactory, apiDescriptorService, siteService, webappService, adminToolDescriptorService,
-                                       universalApiHandlerRegistry, sseManager );
+                                       universalApiHandlerRegistry, sseManager, webSerializerService );
 
         final WebSocketConfig webSocketConfig = mock( WebSocketConfig.class );
 
@@ -226,6 +232,84 @@ class SlashApiHandlerTest
         assertNull( request.getSite() );
         assertNull( request.getContent() );
         assertEquals( "/api/com.enonic.app.myapp:api-key", request.getContextPath() );
+    }
+
+    @Test
+    void testHandleApi_readsBodyAfterAccessGranted()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+        when( webSerializerService.readBody( servletRequestMock ) ).thenReturn( "{\"a\":1}" );
+
+        final WebResponse webResponse = this.handler.handle( request );
+        assertEquals( HttpStatus.OK, webResponse.getStatus() );
+        assertEquals( "{\"a\":1}", request.getBody() );
+    }
+
+    @Test
+    void testHandleApi_bodyAlreadyReadIsKept()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+        request.setBody( "already read by the dispatcher" );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        this.handler.handle( request );
+
+        verify( webSerializerService, never() ).readBody( any() );
+        assertEquals( "already read by the dispatcher", request.getBody() );
+    }
+
+    @Test
+    void testHandleApiAccessDenied_doesNotReadBody()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( PrincipalKey.from( "role:principalKey" ) ) )
+            .mount( "web" )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+
+        final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( request ) );
+        assertEquals( HttpStatus.UNAUTHORIZED, ex.getStatus() );
+        verify( webSerializerService, never() ).readBody( any() );
+    }
+
+    @Test
+    void testHandleApi_bodyReadFailureIsUnchecked()
+        throws Exception
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
+        when( webSerializerService.readBody( servletRequestMock ) ).thenThrow( new IOException( "closed" ) );
+
+        assertThrows( UncheckedIOException.class, () -> this.handler.handle( request ) );
     }
 
     @Test
