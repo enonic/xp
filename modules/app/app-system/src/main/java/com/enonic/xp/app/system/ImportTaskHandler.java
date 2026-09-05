@@ -70,6 +70,8 @@ public class ImportTaskHandler
 
     public void execute()
     {
+        TaskUtils.requireAdmin();
+
         final ProgressReporter progressReporter = TaskProgressReporterContext.current();
 
         final NodeImportResult result = ContextBuilder.from( ContextAccessor.current() )

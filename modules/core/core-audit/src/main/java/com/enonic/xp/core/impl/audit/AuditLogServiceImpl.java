@@ -11,8 +11,12 @@ import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 public class AuditLogServiceImpl
     implements AuditLogService
@@ -87,6 +91,12 @@ public class AuditLogServiceImpl
     @Override
     public CleanUpAuditLogResult cleanUp( final CleanUpAuditLogParams params )
     {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+
         return CleanUpAuditLogCommand.create().
             nodeService( nodeService ).
             ageThreshold( params.getAgeThreshold() != null ? params.getAgeThreshold() : config.ageThreshold() ).

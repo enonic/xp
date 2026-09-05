@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl;
 
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
@@ -11,6 +12,15 @@ public class SecurityHelper
     {
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
         return authInfo.hasRole( RoleKeys.ADMIN );
+    }
+
+    public static void requireAdmin()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
     }
 
 }

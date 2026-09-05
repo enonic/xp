@@ -14,6 +14,7 @@ import com.enonic.xp.index.ReindexParams;
 import com.enonic.xp.index.ReindexResult;
 import com.enonic.xp.index.UpdateIndexSettingsParams;
 import com.enonic.xp.index.UpdateIndexSettingsResult;
+import com.enonic.xp.repo.impl.SecurityHelper;
 import com.enonic.xp.repo.impl.node.dao.NodeVersionService;
 import com.enonic.xp.repo.impl.repository.DefaultIndexResourceProvider;
 import com.enonic.xp.repo.impl.repository.IndexNameResolver;
@@ -57,6 +58,8 @@ public class IndexServiceImpl
     @Override
     public ReindexResult reindex( final ReindexParams params )
     {
+        SecurityHelper.requireAdmin();
+
         if ( params.isInitialize() )
         {
             doPurgeSearchIndex( params.getRepositoryId() );
@@ -77,6 +80,8 @@ public class IndexServiceImpl
     @Override
     public UpdateIndexSettingsResult updateIndexSettings( final UpdateIndexSettingsParams params )
     {
+        SecurityHelper.requireAdmin();
+
         final UpdateIndexSettingsResult.Builder result = UpdateIndexSettingsResult.create();
 
         final UpdateIndexSettings updateIndexSettings = UpdateIndexSettings.from( params.getSettings() );
