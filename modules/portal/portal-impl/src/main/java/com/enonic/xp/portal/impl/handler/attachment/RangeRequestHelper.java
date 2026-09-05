@@ -41,9 +41,10 @@ public final class RangeRequestHelper
 
         final String rangeHeader = request.getHeaders().getOrDefault( HttpHeaders.RANGE, "" ).trim();
         final String rangeValue = rangeHeader.length() > "bytes=".length() ? rangeHeader.substring( "bytes=".length() ) : "";
-        final String[] rangeValues = rangeValue.split( "," );
+        final String[] rangeValues = rangeValue.split( ",", MAX_RANGES + 1 );
         if ( rangeValues.length > MAX_RANGES )
         {
+            response.status( HttpStatus.OK );
             response.body( body );
             return;
         }
