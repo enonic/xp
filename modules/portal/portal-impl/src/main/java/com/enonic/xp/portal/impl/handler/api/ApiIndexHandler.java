@@ -67,9 +67,9 @@ public class ApiIndexHandler
     @Override
     protected boolean canHandle( final WebRequest webRequest )
     {
-        boolean isIndexEnabled = apiIndexMode == ApiIndexMode.ON || apiIndexMode == ApiIndexMode.AUTO && RunMode.isDev();
-        return isIndexEnabled && PathMatchers.API_BASE.equals( webRequest.getBasePath() ) ||
-            PathMatchers.API_PREFIX.equals( webRequest.getBasePath() );
+        final boolean isIndexEnabled = apiIndexMode == ApiIndexMode.ON || ( apiIndexMode == ApiIndexMode.AUTO && RunMode.isDev() );
+        final String basePath = webRequest.getBasePath();
+        return isIndexEnabled && ( PathMatchers.API_BASE.equals( basePath ) || PathMatchers.API_PREFIX.equals( basePath ) );
     }
 
     @Override
