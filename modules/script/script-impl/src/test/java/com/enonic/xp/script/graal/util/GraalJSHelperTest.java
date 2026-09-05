@@ -62,6 +62,21 @@ class GraalJSHelperTest
     }
 
     @Test
+    void addToNativeObject_protoKeyBecomesOwnProperty()
+    {
+        final Value object = (Value) javascriptHelper.newJsObject();
+        final Value array = (Value) javascriptHelper.newJsArray();
+
+        GraalJSHelper.addToNativeObject( object, "__proto__", array );
+        GraalJSHelper.addToNativeObject( object, "key", "value" );
+
+        final Value check = context.eval( "js", "(o, a) => Object.getPrototypeOf(o) === Object.prototype" +
+            " && Object.prototype.hasOwnProperty.call(o, '__proto__') && o.__proto__ === a" +
+            " && Object.keys(o).join() === '__proto__,key'" );
+        assertTrue( check.execute( object, array ).asBoolean() );
+    }
+
+    @Test
     void testIsNativeObject()
     {
         assertFalse( GraalJSHelper.isNativeObject( 1 ) );

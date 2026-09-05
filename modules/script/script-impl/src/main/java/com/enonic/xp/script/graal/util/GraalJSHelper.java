@@ -6,6 +6,8 @@ import org.graalvm.polyglot.Value;
 
 public final class GraalJSHelper
 {
+    private static final String PROTO_KEY = "__proto__";
+
     public static boolean isUndefined( final Object value )
     {
         return value == null || Value.asValue( value ).isNull();
@@ -40,7 +42,26 @@ public final class GraalJSHelper
 
     public static void addToNativeObject( final Object object, final String key, final Object value )
     {
-        Value.asValue( object ).putMember( key, value );
+        final Value target = Value.asValue( object );
+        if ( PROTO_KEY.equals( key ) )
+        {
+            defineOwnProperty( target, key, value );
+        }
+        else
+        {
+            target.putMember( key, value );
+        }
+    }
+
+    private static void defineOwnProperty( final Value target, final String key, final Object value )
+    {
+        final Value objectConstructor = target.getContext().getBindings( "js" ).getMember( "Object" );
+        final Value descriptor = objectConstructor.newInstance();
+        descriptor.putMember( "value", value );
+        descriptor.putMember( "writable", true );
+        descriptor.putMember( "enumerable", true );
+        descriptor.putMember( "configurable", true );
+        objectConstructor.getMember( "defineProperty" ).execute( target, key, descriptor );
     }
 
     public static void addToNativeArray( final Object array, final Object value )
