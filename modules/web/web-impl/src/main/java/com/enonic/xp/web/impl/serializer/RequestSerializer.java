@@ -85,7 +85,13 @@ public final class RequestSerializer
 
     static boolean isMultipartFormData( final String contentType )
     {
-        return contentType != null && contentType.regionMatches( true, 0, MULTIPART_FORM_DATA, 0, MULTIPART_FORM_DATA.length() );
+        if ( contentType == null )
+        {
+            return false;
+        }
+        final int parameters = contentType.indexOf( ';' );
+        final String mediaType = parameters < 0 ? contentType : contentType.substring( 0, parameters );
+        return MULTIPART_FORM_DATA.equalsIgnoreCase( mediaType.trim() );
     }
 
     static void addQueryParameters( final String queryString, final WebRequest to )
