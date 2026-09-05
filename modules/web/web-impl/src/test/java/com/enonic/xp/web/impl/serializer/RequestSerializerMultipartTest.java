@@ -94,14 +94,33 @@ class RequestSerializerMultipartTest
     }
 
     @Test
-    void isMultipartFormData()
+    void multipartMixedRequestTakesParametersFromQueryStringOnly()
+        throws Exception
     {
-        assertTrue( RequestSerializer.isMultipartFormData( "multipart/form-data" ) );
-        assertTrue( RequestSerializer.isMultipartFormData( "multipart/form-data; boundary=x" ) );
-        assertTrue( RequestSerializer.isMultipartFormData( "MULTIPART/FORM-DATA ; boundary=x" ) );
-        assertFalse( RequestSerializer.isMultipartFormData( "multipart/form-data2" ) );
-        assertFalse( RequestSerializer.isMultipartFormData( "multipart/mixed; boundary=x" ) );
-        assertFalse( RequestSerializer.isMultipartFormData( "application/x-www-form-urlencoded" ) );
-        assertFalse( RequestSerializer.isMultipartFormData( null ) );
+        when( request.getContentType() ).thenReturn( "multipart/mixed; boundary=x" );
+        when( request.getQueryString() ).thenReturn( "a=1" );
+
+        final WebRequest webRequest = new WebRequest();
+        new RequestSerializer( webRequest ).serialize( request );
+
+        assertEquals( List.of( "1" ), webRequest.getParams().get( "a" ) );
+        verify( request, never() ).getParameterMap();
+        verify( request, never() ).getParts();
+    }
+
+    @Test
+    void isMultipart()
+    {
+        assertTrue( RequestSerializer.isMultipart( "multipart/form-data" ) );
+        assertTrue( RequestSerializer.isMultipart( "multipart/form-data; boundary=x" ) );
+        assertTrue( RequestSerializer.isMultipart( "MULTIPART/FORM-DATA ; boundary=x" ) );
+        assertTrue( RequestSerializer.isMultipart( "multipart/mixed; boundary=x" ) );
+        assertTrue( RequestSerializer.isMultipart( "multipart/related; type=application/xop+xml" ) );
+        assertTrue( RequestSerializer.isMultipart( " Multipart/Byteranges" ) );
+        assertFalse( RequestSerializer.isMultipart( "multipartx/form-data" ) );
+        assertFalse( RequestSerializer.isMultipart( "application/x-www-form-urlencoded" ) );
+        assertFalse( RequestSerializer.isMultipart( "text/plain" ) );
+        assertFalse( RequestSerializer.isMultipart( "" ) );
+        assertFalse( RequestSerializer.isMultipart( null ) );
     }
 }
