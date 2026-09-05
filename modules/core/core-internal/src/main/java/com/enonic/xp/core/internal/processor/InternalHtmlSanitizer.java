@@ -1,13 +1,15 @@
 package com.enonic.xp.core.internal.processor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
 import org.owasp.html.ElementPolicy;
 import org.owasp.html.HtmlPolicyBuilder;
-import org.owasp.html.HtmlStreamEventProcessor;
-import org.owasp.html.HtmlStreamEventReceiver;
-import org.owasp.html.HtmlStreamEventReceiverWrapper;
+import org.owasp.html.HtmlSanitizer;
+import org.owasp.html.PolicyFactory;
 
 public final class InternalHtmlSanitizer
 {
@@ -16,30 +18,7 @@ public final class InternalHtmlSanitizer
             "h1", "h2", "h3", "h4", "h5", "h6", "div", "pre", "strong", "a", "img", "figure", "figcaption", "table", "caption", "tbody",
             "thead", "tfoot"};
 
-    private static final HtmlPolicyBuilder RICH_TEXT_POLICY = new HtmlPolicyBuilder().allowElements( ALLOWED_ELEMENTS )
-        .allowElements( getImgElementPolicy(), "img" )
-        .allowAttributes( "class" )
-        .globally()//classes to everyone
-        .allowAttributes( "start" )
-        .onElements( "ol" )
-        .allowAttributes( "value" )
-        .onElements( "li" )
-        .allowAttributes( "colspan", "rowspan" )
-        .onElements( "td", "th" )
-        .allowAttributes( "alt", "width", "height", "src" )
-        .onElements( "img" )
-        .allowAttributes( "accesskey", "charset", "dir", "download", "href", "id", "lang", "name", "onclick", "rel", "tabindex", "target",
-                          "title", "type" )
-        .onElements( "a" )
-        .allowAttributes( "align", "border", "cellpadding", "cellspacing", "summary" )
-        .onElements( "table" )
-        .allowAttributes( "scope" )
-        .onElements( "td", "th", "tr" )
-        .allowStandardUrlProtocols()
-        .allowUrlProtocols( "content", "media", "image" )
-        .allowStyling();
-
-    private static final HtmlPolicyBuilder STRICT_POLICY = new HtmlPolicyBuilder().allowCommonBlockElements()
+    private static final PolicyFactory STRICT_POLICY = new HtmlPolicyBuilder().allowCommonBlockElements()
         .allowCommonInlineFormattingElements()
         .allowElements( "a", "img", "pre" )
         .allowElements( "table", "caption", "thead", "tbody", "tfoot", "tr", "th", "td", "col", "colgroup" )
@@ -53,60 +32,111 @@ public final class InternalHtmlSanitizer
         .allowAttributes( "scope" )
         .onElements( "td", "th" )
         .allowStandardUrlProtocols()
-        .allowStyling();
+        .allowStyling()
+        .toFactory();
 
-    private static final Sanitizer STRICT_SANITIZER = new Sanitizer( STRICT_POLICY, true );
+    private static final Sanitizer STRICT_SANITIZER = new Sanitizer( html -> STRICT_POLICY, true );
 
-    private static final Sanitizer RICH_TEXT_SANITIZER =
-        new Sanitizer( RICH_TEXT_POLICY, ( HtmlStreamEventReceiver r ) -> new HtmlStreamEventReceiverWrapper( r )
-        {
-            @Override
-            public void openTag( String elementName, List<String> attrs )
-            {
-                attrs.stream()
-                    .filter( attr -> attr.startsWith( "data-" ) )
-                    .forEach( attr -> RICH_TEXT_POLICY.allowAttributes( attr ).globally() );
-
-                super.openTag( elementName, attrs );
-            }
-        }, false );
+    private static final Sanitizer RICH_TEXT_SANITIZER = new Sanitizer( InternalHtmlSanitizer::richTextPolicy, false );
 
     private InternalHtmlSanitizer()
     {
     }
 
+    private static HtmlPolicyBuilder richTextPolicyBuilder()
+    {
+        return new HtmlPolicyBuilder().allowElements( ALLOWED_ELEMENTS )
+            .allowElements( getImgElementPolicy(), "img" )
+            .allowAttributes( "class" )
+            .globally()//classes to everyone
+            .allowAttributes( "start" )
+            .onElements( "ol" )
+            .allowAttributes( "value" )
+            .onElements( "li" )
+            .allowAttributes( "colspan", "rowspan" )
+            .onElements( "td", "th" )
+            .allowAttributes( "alt", "width", "height", "src" )
+            .onElements( "img" )
+            .allowAttributes( "accesskey", "charset", "dir", "download", "href", "id", "lang", "name", "onclick", "rel", "tabindex",
+                              "target", "title", "type" )
+            .onElements( "a" )
+            .allowAttributes( "align", "border", "cellpadding", "cellspacing", "summary" )
+            .onElements( "table" )
+            .allowAttributes( "scope" )
+            .onElements( "td", "th", "tr" )
+            .allowStandardUrlProtocols()
+            .allowUrlProtocols( "content", "media", "image" )
+            .allowStyling();
+    }
+
+    private static PolicyFactory richTextPolicy( final String html )
+    {
+        final HtmlPolicyBuilder policy = richTextPolicyBuilder();
+        final Set<String> dataAttributes = dataAttributes( html );
+        if ( !dataAttributes.isEmpty() )
+        {
+            policy.allowAttributes( dataAttributes.toArray( String[]::new ) ).globally();
+        }
+        return policy.toFactory();
+    }
+
+    private static Set<String> dataAttributes( final String html )
+    {
+        final Set<String> result = new HashSet<>();
+        HtmlSanitizer.sanitize( html, new HtmlSanitizer.Policy()
+        {
+            @Override
+            public void openDocument()
+            {
+            }
+
+            @Override
+            public void closeDocument()
+            {
+            }
+
+            @Override
+            public void openTag( final String elementName, final List<String> attrs )
+            {
+                for ( int i = 0; i < attrs.size(); i += 2 )
+                {
+                    if ( attrs.get( i ).startsWith( "data-" ) )
+                    {
+                        result.add( attrs.get( i ) );
+                    }
+                }
+            }
+
+            @Override
+            public void closeTag( final String elementName )
+            {
+            }
+
+            @Override
+            public void text( final String text )
+            {
+            }
+        } );
+        return result;
+    }
+
     public static final class Sanitizer
     {
-        private final HtmlPolicyBuilder policy;
-
-        private final HtmlStreamEventProcessor processor;
+        private final Function<String, PolicyFactory> policy;
 
         private final boolean nbspReplace;
 
-        private Sanitizer( final HtmlPolicyBuilder policy, final boolean nbspReplace )
+        private Sanitizer( final Function<String, PolicyFactory> policy, final boolean nbspReplace )
         {
             this.policy = policy;
-            this.processor = null;
-            this.nbspReplace = nbspReplace;
-        }
-
-        private Sanitizer( final HtmlPolicyBuilder policy, HtmlStreamEventProcessor processor, final boolean nbspReplace )
-        {
-            this.policy = policy;
-            this.processor = processor;
             this.nbspReplace = nbspReplace;
         }
 
         public String sanitize( final String value )
         {
-            if ( processor != null )
-            {
-                policy.withPreprocessor( processor ).toFactory().sanitize( value );
-            }
-
-            return policy.toFactory().sanitize( nbspReplace ? value.replace( "\u00A0", "&nbsp;" ) : value );
+            final String html = nbspReplace ? value.replace( "\u00A0", "&nbsp;" ) : value;
+            return policy.apply( html ).sanitize( html );
         }
-
     }
 
     public static Sanitizer richText()
