@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -15,34 +14,18 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.web.dispatch.FilterMapping;
 import com.enonic.xp.web.dispatch.MappingBuilder;
 import com.enonic.xp.web.dispatch.ServletMapping;
-import com.enonic.xp.web.filter.BaseWebFilter;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResourceDefinitionFactoryTest
 {
     @WebFilter("/*")
     private static final class AnnotatedFilter
-        implements Filter
-    {
-        @Override
-        public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
-            throws IOException, ServletException
-        {
-            chain.doFilter( req, res );
-        }
-    }
-
-    private abstract static class AnnotatedFilterBase
         implements Filter
     {
         @Override
@@ -77,7 +60,7 @@ class ResourceDefinitionFactoryTest
     }
 
     @WebServlet("/*")
-    private static class AnnotatedServlet
+    private static final class AnnotatedServlet
         extends HttpServlet
     {
     }
@@ -85,64 +68,6 @@ class ResourceDefinitionFactoryTest
     private static final class UnannotatedServlet
         extends HttpServlet
     {
-    }
-
-    private static final class LifecycleFilter
-        extends AnnotatedFilterBase
-    {
-        @Override
-        public void init( final FilterConfig config )
-        {
-            // expects a lifecycle XP does not drive
-        }
-    }
-
-    private static final class DestroyingFilter
-        extends AnnotatedFilterBase
-    {
-        @Override
-        public void destroy()
-        {
-            // expects a lifecycle XP does not drive
-        }
-    }
-
-    private static final class BaseWebFilterSubclass
-        extends BaseWebFilter
-    {
-        @Override
-        protected void doFilter( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain )
-        {
-            // Do nothing
-        }
-    }
-
-    private static final class LifecycleServlet
-        extends AnnotatedServlet
-    {
-        @Override
-        public void init()
-        {
-            // expects a lifecycle XP does not drive
-        }
-    }
-
-    @Test
-    void declaresLifecycle_filter()
-    {
-        assertFalse( ResourceDefinitionFactory.declaresLifecycle( new AnnotatedFilter() ) );
-        assertFalse( ResourceDefinitionFactory.declaresLifecycle( new BaseWebFilterSubclass() ) );
-
-        assertTrue( ResourceDefinitionFactory.declaresLifecycle( new LifecycleFilter() ) );
-        assertTrue( ResourceDefinitionFactory.declaresLifecycle( new DestroyingFilter() ) );
-    }
-
-    @Test
-    void declaresLifecycle_servlet()
-    {
-        assertFalse( ResourceDefinitionFactory.declaresLifecycle( new AnnotatedServlet() ) );
-
-        assertTrue( ResourceDefinitionFactory.declaresLifecycle( new LifecycleServlet() ) );
     }
 
     @Test

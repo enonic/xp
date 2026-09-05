@@ -16,6 +16,18 @@ import jakarta.servlet.Servlet;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Builds the mapping of a filter or servlet, to be registered as a {@link FilterMapping} or a
+ * {@link ServletMapping} service.
+ * <p>
+ * XP does not drive the servlet lifecycle: {@code Filter.init}, {@code Servlet.init} and {@code destroy} are
+ * never called, so a resource must be ready to serve requests by the time it is registered. Set it up in the
+ * {@code @Activate} method of its component and tear it down in {@code @Deactivate}; what a resource that
+ * declares {@code init} or {@code destroy} does instead is undefined.
+ * <p>
+ * Url patterns are required, a mapping without them would never match a request. Connectors are not: a
+ * mapping without them is served on every connector.
+ */
 public final class MappingBuilder
 {
     private final List<String> connectors;

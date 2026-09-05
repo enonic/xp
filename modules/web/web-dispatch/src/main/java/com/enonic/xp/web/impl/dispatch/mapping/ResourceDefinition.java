@@ -7,7 +7,8 @@ import java.util.Set;
 /**
  * An immutable, ready-to-serve filter or servlet registration. A definition carries no lifecycle: the
  * resource it wraps is fully initialized by its own component before it is registered, and XP never calls
- * {@code init} or {@code destroy} on it.
+ * {@code init} or {@code destroy} on it. A resource that declares them is registered unchanged, and what
+ * those methods would have set up is simply never set up.
  */
 public interface ResourceDefinition<T>
 {
