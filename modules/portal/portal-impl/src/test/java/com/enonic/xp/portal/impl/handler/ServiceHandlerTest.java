@@ -159,6 +159,18 @@ class ServiceHandlerTest
     }
 
     @Test
+    void testHandlePortalRequestWithoutBaseUri()
+    {
+        final PortalRequest portalRequest = new PortalRequest();
+        portalRequest.setMethod( HttpMethod.GET );
+        portalRequest.setRawPath( "/_/service/demo/test" );
+
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( portalRequest ) );
+        assertEquals( HttpStatus.NOT_FOUND, e.getStatus() );
+        assertEquals( "Not a valid request", e.getMessage() );
+    }
+
+    @Test
     void testForbiddenService()
         throws Exception
     {

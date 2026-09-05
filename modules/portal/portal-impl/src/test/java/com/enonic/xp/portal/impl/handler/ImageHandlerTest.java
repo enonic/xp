@@ -354,6 +354,19 @@ class ImageHandlerTest
     }
 
     @Test
+    void backgroundWithoutPrefix()
+        throws Exception
+    {
+        setupContent();
+
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.getParams().put( "background", "ffffff" );
+
+        final WebResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+    }
+
+    @Test
     void nameMissmatch()
         throws Exception
     {
