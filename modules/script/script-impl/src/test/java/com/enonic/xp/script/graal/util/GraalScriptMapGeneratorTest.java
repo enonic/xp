@@ -50,4 +50,19 @@ class GraalScriptMapGeneratorTest
         value = context.eval( "js", "var count = undefined; count;" );
         assertFalse( generator.isMap( value ) );
     }
+
+    @Test
+    void protoKeyDoesNotChangePrototype()
+    {
+        final GraalScriptMapGenerator generator = new GraalScriptMapGenerator( javascriptHelper );
+        generator.array( "__proto__" );
+        generator.value( "a" );
+        generator.value( "b" );
+        generator.end();
+        generator.value( "key", "value" );
+
+        final Value check = context.eval( "js", "(o) => Object.getPrototypeOf(o) === Object.prototype" +
+            " && Array.isArray(o.__proto__) && o.key === 'value' && o.length === undefined" );
+        assertTrue( check.execute( generator.getRoot() ).asBoolean() );
+    }
 }

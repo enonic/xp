@@ -8,6 +8,7 @@ import javax.script.ScriptEngine;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.openjdk.nashorn.api.scripting.JSObject;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -40,6 +41,22 @@ class JsObjectConverterTest
 
         assertTrue( NashornHelper.isNativeArray( result ) );
         assertEquals( 3, ( (Bindings) result ).size() );
+    }
+
+    @Test
+    void testToJs_protoKeyDoesNotChangePrototype()
+        throws Exception
+    {
+        final ScriptMapGenerator generator = new ScriptMapGenerator( new JavascriptHelperFactory( this.engine ).create() );
+        generator.array( "__proto__" );
+        generator.value( "a" );
+        generator.value( "b" );
+        generator.end();
+        generator.value( "key", "value" );
+
+        final JSObject check = (JSObject) engine.eval( "(function(o) { return Object.getPrototypeOf(o) === Object.prototype" +
+                                                           " && Array.isArray(o.__proto__) && o.key === 'value' && o.length === undefined; })" );
+        assertTrue( (Boolean) check.call( null, generator.getRoot() ) );
     }
 
     @Test

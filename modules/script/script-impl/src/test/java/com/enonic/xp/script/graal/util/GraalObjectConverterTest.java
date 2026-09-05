@@ -52,6 +52,16 @@ class GraalObjectConverterTest
     }
 
     @Test
+    void testToJs_protoKeyDoesNotChangePrototype()
+    {
+        final Value result = (Value) instance.toJs( Map.of( "__proto__", List.of( "a", "b" ) ) );
+
+        final Value check = context.eval( "js", "(o) => Object.getPrototypeOf(o) === Object.prototype" +
+            " && Array.isArray(o.__proto__) && o.__proto__.length === 2 && o.length === undefined" );
+        assertTrue( check.execute( result ).asBoolean() );
+    }
+
+    @Test
     void testToJs_Primitives()
     {
         final int[] values = {1, 2, 3};

@@ -12,6 +12,8 @@ public final class NashornHelper
 {
     private static final NashornScriptEngineFactory FACTORY = new NashornScriptEngineFactory();
 
+    private static final String PROTO_KEY = "__proto__";
+
     public static ScriptEngine getScriptEngine( final ClassLoader loader )
     {
         return FACTORY.getScriptEngine( new String[]{"--optimistic-types=false", "--global-per-engine", "-strict", "--language=es6"},
@@ -35,7 +37,18 @@ public final class NashornHelper
 
     static void addToNativeObject( final Object object, final String key, final Object value )
     {
-        ( (ScriptObjectMirror) object ).put( key, value );
+        final ScriptObjectMirror target = (ScriptObjectMirror) object;
+        if ( PROTO_KEY.equals( key ) )
+        {
+            final ScriptObjectMirror descriptor =
+                (ScriptObjectMirror) target.eval( "({writable: true, enumerable: true, configurable: true})" );
+            descriptor.put( "value", value );
+            ( (ScriptObjectMirror) target.eval( "Object.defineProperty" ) ).call( null, target, key, descriptor );
+        }
+        else
+        {
+            target.put( key, value );
+        }
     }
 
     static void addToNativeArray( final Object array, final Object value )
