@@ -24,6 +24,17 @@ class ImageFiltersArgumentsTest
     }
 
     @Test
+    void tooManyArguments()
+    {
+        assertThrows( IllegalArgumentException.class, () -> newFilters().blur( 2, 1 ) );
+        assertThrows( IllegalArgumentException.class, () -> newFilters().block( 2, 1 ) );
+        assertThrows( IllegalArgumentException.class, () -> newFilters().border( 2, 0, 1 ) );
+        assertThrows( IllegalArgumentException.class, () -> newFilters().rounded( 10, 0, 0, 1 ) );
+        assertNotNull( newFilters().border( 2, 0 ).apply( getOpaque() ) );
+        assertNotNull( newFilters().rounded( 10, 0, 0 ).apply( getOpaque() ) );
+    }
+
+    @Test
     void blockSizeOutOfBounds()
     {
         assertThrows( IllegalArgumentException.class, () -> newFilters().block( 0 ) );
