@@ -16,9 +16,6 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.google.common.io.CharStreams;
-import com.google.common.net.MediaType;
-
 import com.enonic.xp.annotation.Order;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
@@ -69,7 +66,6 @@ public final class SlashApiFilter
         }
 
         final WebRequest webRequest = webSerializerService.request( req );
-        webRequest.setBody( readBody( req ) );
         final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
         webRequest.setWebSocketContext( webSocketContext );
 
@@ -89,19 +85,5 @@ public final class SlashApiFilter
         }
 
         webSerializerService.response( webRequest, webResponse, res );
-    }
-
-    private static String readBody( final HttpServletRequest req )
-        throws IOException
-    {
-        final String contentType = req.getContentType();
-        if ( contentType == null )
-        {
-            return null;
-        }
-        final MediaType mediaType = MediaType.parse( contentType );
-        return mediaType.is( MediaType.ANY_TEXT_TYPE ) || mediaType.is( MediaType.JSON_UTF_8.withoutParameters() )
-            ? CharStreams.toString( req.getReader() )
-            : null;
     }
 }
