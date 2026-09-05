@@ -1,5 +1,7 @@
 package com.enonic.xp.admin.impl.portal.extension;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +71,7 @@ class GetAdminExtensionIconHandlerTest
         final WebRequest webRequest = newRequest( "myapp", "myextension" );
 
         final Icon icon = mock( Icon.class );
-        when( icon.toByteArray() ).thenReturn( "<svg/>".getBytes() );
+        when( icon.toByteArray() ).thenReturn( "<svg/>".getBytes( StandardCharsets.UTF_8 ) );
         when( icon.getMimeType() ).thenReturn( "image/svg+xml" );
 
         final AdminExtensionDescriptor descriptor = mock( AdminExtensionDescriptor.class );
