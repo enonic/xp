@@ -3,8 +3,7 @@ package com.enonic.xp.web.impl.dispatch.mapping;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 import com.enonic.xp.web.dispatch.ResourceMapping;
 
@@ -15,13 +14,13 @@ abstract class ResourceDefinitionImpl<T>
 
     final T resource;
 
-    private final Pattern pattern;
+    private final Predicate<String> uriMatcher;
 
     ResourceDefinitionImpl( final ResourceMapping<T> mapping )
     {
         this.mapping = mapping;
         this.resource = this.mapping.getResource();
-        this.pattern = compilePattern( this.mapping.getUrlPatterns() );
+        this.uriMatcher = UrlPatterns.matcher( this.mapping.getUrlPatterns() );
     }
 
     @Override
@@ -63,12 +62,6 @@ abstract class ResourceDefinitionImpl<T>
 
     final boolean matches( final String uri )
     {
-        return uri != null && this.pattern.matcher( uri ).matches();
-    }
-
-    private static Pattern compilePattern( final Set<String> urlPatterns )
-    {
-        return Pattern.compile(
-            urlPatterns.stream().map( glob -> glob.replace( "*", ".*" ) ).collect( Collectors.joining( "|", "(", ")" ) ) );
+        return uri != null && this.uriMatcher.test( uri );
     }
 }
