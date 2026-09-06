@@ -37,6 +37,14 @@ import static org.mockito.Mockito.verifyNoInteractions;
 @ExtendWith(MockitoExtension.class)
 class ApplicationLoaderTest
 {
+    private static final long DEFAULT_MAX_SIZE = 1L << 30;
+
+    private static final int DEFAULT_MAX_REDIRECTS = 5;
+
+    private static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 10_000;
+
+    private static final int DEFAULT_READ_TIMEOUT_MILLIS = 60_000;
+
     private HttpServer server;
 
     private String appUrl;
@@ -73,7 +81,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader( appUrl + "*", false ).load( appUrl, null, eventListener );
+        final ByteSource byteSource = loader( appUrl + "*", false ).load( appUrl, null, eventListener );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
@@ -93,7 +101,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader( appUrl + "*", true ).load( appUrl, "7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c", eventListener );
+        final ByteSource byteSource = loader( appUrl + "*", true ).load( appUrl, "7d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c", eventListener );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
@@ -112,7 +120,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", true );
+        final ApplicationLoader loader = loader( appUrl + "*", true );
 
         assertThrows( WebException.class, () -> loader.load( appUrl, "0d0a8468ed220400c0b8e6f335baa7e070ce880a37e2ac5995b9a97b809026de626da636ac7365249bb974c719edf543b52ed286646f437dc7f810cc2068375c", eventListener ) );
     }
@@ -135,7 +143,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ByteSource byteSource = new ApplicationLoader( appUrl + "*", false ).load( appUrl + "/old", null, eventListener );
+        final ByteSource byteSource = loader( appUrl + "*", false ).load( appUrl + "/old", null, eventListener );
 
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
         verify( eventListener, atLeastOnce() ).accept(
@@ -151,7 +159,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+        final ApplicationLoader loader = loader( appUrl + "*", false );
 
         assertThatThrownBy( () -> loader.load( appUrl + "/old", null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
                                                                                                                 e -> assertThat(
@@ -167,7 +175,7 @@ class ApplicationLoaderTest
         final byte[] bytes = "this is a test".getBytes( StandardCharsets.UTF_8 );
         final Path file = Files.write( tempDir.resolve( "app.jar" ), bytes );
 
-        final ByteSource byteSource = new ApplicationLoader( "file:*", false ).load( file.toUri().toString(), null, eventListener );
+        final ByteSource byteSource = loader( "file:*", false ).load( file.toUri().toString(), null, eventListener );
 
         verify( eventListener ).accept( notNull() );
         assertTrue( byteSource.contentEquals( ByteSource.wrap( bytes ) ) );
@@ -176,8 +184,12 @@ class ApplicationLoaderTest
     @Test
     void rejects_max_size_out_of_range()
     {
-        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 0 ) );
-        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, Long.MAX_VALUE ) );
+        assertThrows( IllegalArgumentException.class,
+                      () -> new ApplicationLoader( "", false, 0, DEFAULT_MAX_REDIRECTS, DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                                                   DEFAULT_READ_TIMEOUT_MILLIS ) );
+        assertThrows( IllegalArgumentException.class,
+                      () -> new ApplicationLoader( "", false, Long.MAX_VALUE, DEFAULT_MAX_REDIRECTS,
+                                                   DEFAULT_CONNECT_TIMEOUT_MILLIS, DEFAULT_READ_TIMEOUT_MILLIS ) );
         assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 1, -1, 1, 1 ) );
         assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 1, 1, 0, 1 ) );
         assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 1, 1, 1, 0 ) );
@@ -192,7 +204,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+        final ApplicationLoader loader = loader( appUrl + "*", false );
 
         assertThatThrownBy( () -> loader.load( appUrl + "/old", null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.CONFLICT ) );
@@ -208,7 +220,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+        final ApplicationLoader loader = loader( appUrl + "*", false );
 
         assertThatThrownBy( () -> loader.load( appUrl + "/loop", null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
@@ -226,7 +238,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false, bytes.length - 1 );
+        final ApplicationLoader loader = loader( appUrl + "*", false, bytes.length - 1 );
 
         assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
@@ -243,7 +255,7 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false, bytes.length - 1 );
+        final ApplicationLoader loader = loader( appUrl + "*", false, bytes.length - 1 );
 
         assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
@@ -253,7 +265,7 @@ class ApplicationLoaderTest
     @Test
     void load_rejects_url_outside_allowlist()
     {
-        final ApplicationLoader loader = new ApplicationLoader( "https://allowed.example/*", false );
+        final ApplicationLoader loader = loader( "https://allowed.example/*", false );
 
         assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
                                                                                                        e -> assertThat( e.getStatus() ).isEqualTo(
@@ -264,7 +276,7 @@ class ApplicationLoaderTest
     @Test
     void load_rejects_when_empty_allowlist()
     {
-        final ApplicationLoader loader = new ApplicationLoader( "", false );
+        final ApplicationLoader loader = loader( "", false );
 
         assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
                                                                                                        e -> assertThat( e.getStatus() ).isEqualTo(
@@ -275,7 +287,7 @@ class ApplicationLoaderTest
     @Test
     void load_rejects_when_checksum_required_but_missing()
     {
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", true );
+        final ApplicationLoader loader = loader( appUrl + "*", true );
 
         assertThatThrownBy( () -> loader.load( appUrl, null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
                                                                                                        e -> assertThat( e.getStatus() ).isEqualTo(
@@ -286,7 +298,7 @@ class ApplicationLoaderTest
     @Test
     void load_rejects_when_checksum_required_but_blank()
     {
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", true );
+        final ApplicationLoader loader = loader( appUrl + "*", true );
 
         assertThatThrownBy( () -> loader.load( appUrl, "   ", eventListener ) ).isInstanceOfSatisfying( WebException.class,
                                                                                                         e -> assertThat( e.getStatus() ).isEqualTo(
@@ -297,7 +309,7 @@ class ApplicationLoaderTest
     @Test
     void load_rejects_invalid_sha512_hex_with_400()
     {
-        final ApplicationLoader loader = new ApplicationLoader( "https://*", true );
+        final ApplicationLoader loader = loader( "https://*", true );
 
         assertThatThrownBy( () -> loader.load( "https://example.com/foo", "not-a-hex-string", eventListener ) ).isInstanceOfSatisfying(
             WebException.class, e -> assertThat( e.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST ) );
@@ -306,7 +318,7 @@ class ApplicationLoaderTest
     @Test
     void load_rejects_malformed_url_with_400()
     {
-        final ApplicationLoader loader = new ApplicationLoader( "xyz://*", false );
+        final ApplicationLoader loader = loader( "xyz://*", false );
 
         assertThatThrownBy( () -> loader.load( "xyz://example.com/foo", null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
                                                                                                                        e -> assertThat(
@@ -317,7 +329,7 @@ class ApplicationLoaderTest
     @Test
     void load_rejects_unparseable_uri_with_400()
     {
-        final ApplicationLoader loader = new ApplicationLoader( "https://*", false );
+        final ApplicationLoader loader = loader( "https://*", false );
 
         assertThatThrownBy( () -> loader.load( "https://exa mple.com", null, eventListener ) ).isInstanceOfSatisfying( WebException.class,
                                                                                                                       e -> assertThat(
@@ -337,9 +349,21 @@ class ApplicationLoaderTest
             exchange.close();
         } );
 
-        final ApplicationLoader loader = new ApplicationLoader( appUrl + "*", false );
+        final ApplicationLoader loader = loader( appUrl + "*", false );
         final ByteSource result = loader.load( appUrl, null, eventListener );
 
         assertTrue( result.contentEquals( ByteSource.wrap( bytes ) ) );
+    }
+
+    private static ApplicationLoader loader( final String allowedUrls, final boolean requireChecksum )
+    {
+        return new ApplicationLoader( allowedUrls, requireChecksum, DEFAULT_MAX_SIZE, DEFAULT_MAX_REDIRECTS,
+                                      DEFAULT_CONNECT_TIMEOUT_MILLIS, DEFAULT_READ_TIMEOUT_MILLIS );
+    }
+
+    private static ApplicationLoader loader( final String allowedUrls, final boolean requireChecksum, final long maxSize )
+    {
+        return new ApplicationLoader( allowedUrls, requireChecksum, maxSize, DEFAULT_MAX_REDIRECTS, DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                                      DEFAULT_READ_TIMEOUT_MILLIS );
     }
 }

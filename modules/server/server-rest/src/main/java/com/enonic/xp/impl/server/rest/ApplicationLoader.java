@@ -27,14 +27,6 @@ import com.enonic.xp.web.WebException;
 
 public class ApplicationLoader
 {
-    private static final long DEFAULT_MAX_SIZE = 1L << 30;
-
-    private static final int DEFAULT_MAX_REDIRECTS = 5;
-
-    private static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 10_000;
-
-    private static final int DEFAULT_READ_TIMEOUT_MILLIS = 60_000;
-
     private final UrlAllowList allowList;
 
     private final boolean requireChecksum;
@@ -46,23 +38,6 @@ public class ApplicationLoader
     private final int connectTimeoutMillis;
 
     private final int readTimeoutMillis;
-
-    public ApplicationLoader()
-    {
-        this( "", true );
-    }
-
-    public ApplicationLoader( final String allowedUrls, final boolean requireChecksum )
-    {
-        this( allowedUrls, requireChecksum, DEFAULT_MAX_SIZE, DEFAULT_MAX_REDIRECTS, DEFAULT_CONNECT_TIMEOUT_MILLIS,
-              DEFAULT_READ_TIMEOUT_MILLIS );
-    }
-
-    ApplicationLoader( final String allowedUrls, final boolean requireChecksum, final long maxSize )
-    {
-        this( allowedUrls, requireChecksum, maxSize, DEFAULT_MAX_REDIRECTS, DEFAULT_CONNECT_TIMEOUT_MILLIS,
-              DEFAULT_READ_TIMEOUT_MILLIS );
-    }
 
     ApplicationLoader( final String allowedUrls, final boolean requireChecksum, final long maxSize, final int maxRedirects,
                        final int connectTimeoutMillis, final int readTimeoutMillis )
