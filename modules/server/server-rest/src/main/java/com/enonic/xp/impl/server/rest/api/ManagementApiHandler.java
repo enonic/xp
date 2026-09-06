@@ -64,10 +64,10 @@ public abstract class ManagementApiHandler
     @Override
     public WebResponse handle( final WebRequest request )
     {
-        final WebResponse sameOriginViolation = verifySameOrigin( request );
-        if ( sameOriginViolation != null )
+        final WebResponse originViolation = verifyOrigin( request );
+        if ( originViolation != null )
         {
-            return sameOriginViolation;
+            return originViolation;
         }
 
         final String apiPath = normalize( WebHandlerHelper.findApiPath( request, descriptorKey ) );
@@ -157,7 +157,7 @@ public abstract class ManagementApiHandler
         return request.getParams().get( name ).stream().findFirst().orElse( null );
     }
 
-    private WebResponse verifySameOrigin( final WebRequest request )
+    private WebResponse verifyOrigin( final WebRequest request )
     {
         if ( SAFE_METHODS.contains( request.getMethod() ) )
         {
