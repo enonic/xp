@@ -82,7 +82,7 @@ class GetAdminExtensionIconHandlerTest
         final WebResponse webResponse = instance.handle( webRequest );
         assertEquals( HttpStatus.OK, webResponse.getStatus() );
         assertEquals( "nosniff", webResponse.getHeaders().get( HttpHeaders.X_CONTENT_TYPE_OPTIONS ) );
-        assertEquals( "sandbox; default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'",
+        assertEquals( "sandbox; default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'unsafe-inline'",
                       webResponse.getHeaders().get( HttpHeaders.CONTENT_SECURITY_POLICY ) );
     }
 

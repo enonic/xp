@@ -29,7 +29,7 @@ public class GetAdminExtensionIconHandler
     private static final MediaType SVG = MediaType.SVG_UTF_8.withoutParameters();
 
     private static final String SVG_CONTENT_SECURITY_POLICY =
-        "sandbox; default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'";
+        "sandbox; default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'unsafe-inline'";
 
     private final AdminExtensionDescriptorService descriptorService;
 
