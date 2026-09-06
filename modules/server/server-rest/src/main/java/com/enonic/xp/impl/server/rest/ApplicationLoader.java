@@ -29,17 +29,23 @@ public class ApplicationLoader
 {
     private static final long DEFAULT_MAX_SIZE = 1L << 30;
 
-    private static final int MAX_REDIRECTS = 5;
+    private static final int DEFAULT_MAX_REDIRECTS = 5;
 
-    private static final int CONNECT_TIMEOUT_MILLIS = 10_000;
+    private static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 10_000;
 
-    private static final int READ_TIMEOUT_MILLIS = 60_000;
+    private static final int DEFAULT_READ_TIMEOUT_MILLIS = 60_000;
 
     private final UrlAllowList allowList;
 
     private final boolean requireChecksum;
 
     private final long maxSize;
+
+    private final int maxRedirects;
+
+    private final int connectTimeoutMillis;
+
+    private final int readTimeoutMillis;
 
     public ApplicationLoader()
     {
@@ -48,26 +54,40 @@ public class ApplicationLoader
 
     public ApplicationLoader( final String allowedUrls, final boolean requireChecksum )
     {
-        this( allowedUrls, requireChecksum, DEFAULT_MAX_SIZE );
+        this( allowedUrls, requireChecksum, DEFAULT_MAX_SIZE, DEFAULT_MAX_REDIRECTS, DEFAULT_CONNECT_TIMEOUT_MILLIS,
+              DEFAULT_READ_TIMEOUT_MILLIS );
     }
 
     ApplicationLoader( final String allowedUrls, final boolean requireChecksum, final long maxSize )
     {
+        this( allowedUrls, requireChecksum, maxSize, DEFAULT_MAX_REDIRECTS, DEFAULT_CONNECT_TIMEOUT_MILLIS,
+              DEFAULT_READ_TIMEOUT_MILLIS );
+    }
+
+    ApplicationLoader( final String allowedUrls, final boolean requireChecksum, final long maxSize, final int maxRedirects,
+                       final int connectTimeoutMillis, final int readTimeoutMillis )
+    {
         Preconditions.checkArgument( maxSize > 0 && maxSize < Long.MAX_VALUE, "maxSize out of range: %s", maxSize );
+        Preconditions.checkArgument( maxRedirects >= 0, "maxRedirects out of range: %s", maxRedirects );
+        Preconditions.checkArgument( connectTimeoutMillis > 0, "connectTimeoutMillis out of range: %s", connectTimeoutMillis );
+        Preconditions.checkArgument( readTimeoutMillis > 0, "readTimeoutMillis out of range: %s", readTimeoutMillis );
         this.allowList = new UrlAllowList( allowedUrls );
         this.requireChecksum = requireChecksum;
         this.maxSize = maxSize;
+        this.maxRedirects = maxRedirects;
+        this.connectTimeoutMillis = connectTimeoutMillis;
+        this.readTimeoutMillis = readTimeoutMillis;
     }
 
     public ByteSource load( final String urlString, final String sha512Hex, final Consumer<Event> eventConsumer )
     {
         if ( !allowList.matches( urlString ) )
         {
-            throw new WebException( HttpStatus.CONFLICT, "URL is not in the installUrl allowlist" );
+            throw new WebException( HttpStatus.CONFLICT, "URL is not in the pull allowlist" );
         }
         if ( requireChecksum && ( sha512Hex == null || sha512Hex.isBlank() ) )
         {
-            throw new WebException( HttpStatus.CONFLICT, "SHA512 checksum is required for installUrl" );
+            throw new WebException( HttpStatus.CONFLICT, "SHA512 checksum is required for pull" );
         }
         final byte[] sha512;
         try
@@ -134,8 +154,8 @@ public class ApplicationLoader
         for ( int redirects = 0; ; redirects++ )
         {
             final URLConnection connection = url.openConnection();
-            connection.setConnectTimeout( CONNECT_TIMEOUT_MILLIS );
-            connection.setReadTimeout( READ_TIMEOUT_MILLIS );
+            connection.setConnectTimeout( connectTimeoutMillis );
+            connection.setReadTimeout( readTimeoutMillis );
 
             if ( !( connection instanceof HttpURLConnection http ) )
             {
@@ -150,7 +170,7 @@ public class ApplicationLoader
             }
 
             http.disconnect();
-            if ( redirects >= MAX_REDIRECTS )
+            if ( redirects >= maxRedirects )
             {
                 throw WebException.badRequest( "Too many redirects from " + start );
             }
@@ -158,7 +178,7 @@ public class ApplicationLoader
             url = resolveRedirect( url, location );
             if ( !allowList.matches( url.toString() ) )
             {
-                throw new WebException( HttpStatus.CONFLICT, "Redirect target is not in the installUrl allowlist" );
+                throw new WebException( HttpStatus.CONFLICT, "Redirect target is not in the pull allowlist" );
             }
         }
     }

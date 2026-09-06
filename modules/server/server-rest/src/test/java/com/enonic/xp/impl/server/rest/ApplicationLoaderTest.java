@@ -178,6 +178,9 @@ class ApplicationLoaderTest
     {
         assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 0 ) );
         assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, Long.MAX_VALUE ) );
+        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 1, -1, 1, 1 ) );
+        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 1, 1, 0, 1 ) );
+        assertThrows( IllegalArgumentException.class, () -> new ApplicationLoader( "", false, 1, 1, 1, 0 ) );
     }
 
     @Test
