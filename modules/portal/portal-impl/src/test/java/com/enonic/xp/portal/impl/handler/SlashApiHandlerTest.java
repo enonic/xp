@@ -16,7 +16,6 @@ import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
@@ -35,11 +34,8 @@ import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -226,6 +222,21 @@ class SlashApiHandlerTest
         assertNull( request.getSite() );
         assertNull( request.getContent() );
         assertEquals( "/api/com.enonic.app.myapp:api-key", request.getContextPath() );
+    }
+
+    private void setupWebApi()
+    {
+        request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
+        request.setScheme( "https" );
+        request.setHost( "example.com" );
+        request.setPort( 443 );
+
+        final ApiDescriptor apiDescriptor = ApiDescriptor.create()
+            .key( DescriptorKey.from( ApplicationKey.from( "com.enonic.app.myapp" ), "api-key" ) )
+            .allowedPrincipals( PrincipalKeys.from( RoleKeys.EVERYONE ) )
+            .mount( "web" )
+            .build();
+        when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
     }
 
     @Test

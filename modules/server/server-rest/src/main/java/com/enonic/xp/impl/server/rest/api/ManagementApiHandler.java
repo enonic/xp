@@ -1,6 +1,7 @@
 package com.enonic.xp.impl.server.rest.api;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,9 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
+import com.google.common.net.HttpHeaders;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.internal.json.ObjectMapperHelper;
 import com.enonic.xp.impl.server.rest.model.TaskResultJson;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
@@ -33,6 +36,7 @@ public abstract class ManagementApiHandler
     protected static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private static final Pattern PLACEHOLDER = Pattern.compile( "\\{([a-zA-Z]+)}" );
+    private static final EnumSet<HttpMethod> SAFE_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS, HttpMethod.TRACE );
 
     private final String descriptorKey;
 
@@ -60,6 +64,12 @@ public abstract class ManagementApiHandler
     @Override
     public WebResponse handle( final WebRequest request )
     {
+        final WebResponse originViolation = verifyOrigin( request );
+        if ( originViolation != null )
+        {
+            return originViolation;
+        }
+
         final String apiPath = normalize( WebHandlerHelper.findApiPath( request, descriptorKey ) );
 
         boolean pathMatched = false;
@@ -145,6 +155,29 @@ public abstract class ManagementApiHandler
     protected static String param( final WebRequest request, final String name )
     {
         return request.getParams().get( name ).stream().findFirst().orElse( null );
+    }
+
+    private WebResponse verifyOrigin( final WebRequest request )
+    {
+        if ( SAFE_METHODS.contains( request.getMethod() ) )
+        {
+            return null;
+        }
+
+        final String origin = request.getHeaders().get( HttpHeaders.ORIGIN );
+        if ( origin == null || !isSessionAuthenticated( request ) )
+        {
+            return null;
+        }
+
+        return SameOriginCheck.isSameOrigin( origin, request ) ? null
+            : error( HttpStatus.FORBIDDEN, String.format( "Origin [%s] is not allowed", origin ) );
+    }
+
+    private boolean isSessionAuthenticated( final WebRequest request )
+    {
+        return ContextAccessor.current().getAuthInfo().isAuthenticated() && request.getRawRequest() != null &&
+            request.getRawRequest().getSession( false ) != null;
     }
 
     private static String normalize( final String apiPath )

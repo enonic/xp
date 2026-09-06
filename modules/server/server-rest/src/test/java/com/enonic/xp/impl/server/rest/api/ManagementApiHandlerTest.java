@@ -5,6 +5,16 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import jakarta.servlet.http.HttpSession;
+
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
@@ -17,6 +27,8 @@ import static com.enonic.xp.impl.server.rest.api.ManagementApiTestSupport.withVi
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ManagementApiHandlerTest
 {
@@ -145,9 +157,71 @@ class ManagementApiHandlerTest
         assertThrows( WebException.class, () -> handler.handle( request( HttpMethod.GET, "/server:other/abc" ) ) );
     }
 
+    @Test
+    void crossOriginStateChangeRejectedForSessionUser()
+    {
+        final WebRequest request = request( HttpMethod.POST, "/server:test/prune" );
+        request.setScheme( "https" );
+        request.setHost( "example.com" );
+        request.setPort( 443 );
+        request.getHeaders().put( "Origin", "https://evil.example.org" );
+        when( request.getRawRequest().getSession( false ) ).thenReturn( mock( HttpSession.class ) );
+
+        final WebResponse response = authenticatedContext().callWith( () -> handler.handle( request ) );
+
+        assertEquals( HttpStatus.FORBIDDEN, response.getStatus() );
+        assertTrue( body( response ).contains( "Origin [https://evil.example.org] is not allowed" ) );
+    }
+
+    @Test
+    void sameOriginStateChangeAllowed()
+    {
+        final WebRequest request = request( HttpMethod.POST, "/server:test/prune" );
+        request.setScheme( "https" );
+        request.setHost( "example.com" );
+        request.setPort( 443 );
+        request.getHeaders().put( "Origin", "https://example.com" );
+        when( request.getRawRequest().getSession( false ) ).thenReturn( mock( HttpSession.class ) );
+
+        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> handler.handle( request ) ).getStatus() );
+    }
+
+    @Test
+    void crossOriginSafeMethodAllowed()
+    {
+        final WebRequest request = request( HttpMethod.GET, "/server:test" );
+        request.setScheme( "https" );
+        request.setHost( "example.com" );
+        request.setPort( 443 );
+        request.getHeaders().put( "Origin", "https://evil.example.org" );
+        when( request.getRawRequest().getSession( false ) ).thenReturn( mock( HttpSession.class ) );
+
+        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> handler.handle( request ) ).getStatus() );
+    }
+
+    @Test
+    void crossOriginStateChangeWithoutSessionAllowed()
+    {
+        final WebRequest request = request( HttpMethod.POST, "/server:test/prune" );
+        request.setScheme( "https" );
+        request.setHost( "example.com" );
+        request.setPort( 443 );
+        request.getHeaders().put( "Origin", "https://evil.example.org" );
+
+        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> handler.handle( request ) ).getStatus() );
+    }
+
     private static String body( final WebResponse response )
     {
         return String.valueOf( response.getBody() );
+    }
+
+    private static Context authenticatedContext()
+    {
+        final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "user" ) ).login( "user" ).build();
+        return ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED ).user( user ).build() )
+            .build();
     }
 
     private static final class TestHandler
