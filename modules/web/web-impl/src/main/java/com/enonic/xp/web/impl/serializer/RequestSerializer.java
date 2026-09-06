@@ -103,8 +103,20 @@ public final class RequestSerializer
             return false;
         }
         final int parameters = contentType.indexOf( ';' );
-        final String mediaType = ( parameters < 0 ? contentType : contentType.substring( 0, parameters ) ).trim();
-        return mediaType.regionMatches( true, 0, MULTIPART_PREFIX, 0, MULTIPART_PREFIX.length() );
+        int end = parameters < 0 ? contentType.length() : parameters;
+        int start = 0;
+
+        while ( start < end && Character.isWhitespace( contentType.charAt( start ) ) )
+        {
+            start++;
+        }
+        while ( end > start && Character.isWhitespace( contentType.charAt( end - 1 ) ) )
+        {
+            end--;
+        }
+
+        return end - start >= MULTIPART_PREFIX.length() &&
+            contentType.regionMatches( true, start, MULTIPART_PREFIX, 0, MULTIPART_PREFIX.length() );
     }
 
     static void addQueryParameters( final String queryString, final WebRequest to )
