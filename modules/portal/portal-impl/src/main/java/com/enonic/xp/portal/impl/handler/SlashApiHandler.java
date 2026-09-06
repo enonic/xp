@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.EnumSet;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.MatchResult;
@@ -12,14 +11,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.net.HttpHeaders;
-
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -72,8 +68,6 @@ public class SlashApiHandler
     private final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry;
 
     private final SseManager sseManager;
-
-    private static final EnumSet<HttpMethod> SAFE_METHODS = EnumSet.of( HttpMethod.GET, HttpMethod.HEAD, HttpMethod.OPTIONS, HttpMethod.TRACE );
 
     private volatile boolean mediaApiAutoMount = true;
 
@@ -135,8 +129,6 @@ public class SlashApiHandler
             return HandlerHelper.handleDefaultOptions( HttpMethod.standard() );
         }
 
-        verifySameOrigin( webRequest );
-
         final PortalRequest portalRequest = createPortalRequest( webRequest, descriptorKey );
 
         final DynamicUniversalApiHandler dynamicApiHandler = universalApiHandlerRegistry.getApiHandler( descriptorKey );
@@ -156,31 +148,6 @@ public class SlashApiHandler
             : () -> executeController( portalRequest, descriptorKey );
 
         return execute( portalRequest, descriptorKey, handler );
-    }
-
-    private static void verifySameOrigin( final WebRequest webRequest )
-    {
-        if ( SAFE_METHODS.contains( webRequest.getMethod() ) )
-        {
-            return;
-        }
-
-        final String origin = webRequest.getHeaders().get( HttpHeaders.ORIGIN );
-        if ( origin == null || !isSessionAuthenticated( webRequest ) )
-        {
-            return;
-        }
-
-        if ( !SameOriginCheck.isSameOrigin( origin, webRequest ) )
-        {
-            throw WebException.forbidden( String.format( "Origin [%s] is not allowed", origin ) );
-        }
-    }
-
-    private static boolean isSessionAuthenticated( final WebRequest webRequest )
-    {
-        return ContextAccessor.current().getAuthInfo().isAuthenticated() && webRequest.getRawRequest() != null &&
-            webRequest.getRawRequest().getSession( false ) != null;
     }
 
     private ApiDescriptor resolveApiDescriptor( DynamicUniversalApiHandler dynamicApiHandler, final DescriptorKey descriptorKey )

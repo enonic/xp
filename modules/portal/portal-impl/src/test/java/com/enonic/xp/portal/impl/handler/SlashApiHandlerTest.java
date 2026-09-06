@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
@@ -16,9 +15,7 @@ import com.enonic.xp.api.ApiDescriptor;
 import com.enonic.xp.api.ApiDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.data.PropertySet;
@@ -37,11 +34,8 @@ import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.User;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -230,86 +224,6 @@ class SlashApiHandlerTest
         assertEquals( "/api/com.enonic.app.myapp:api-key", request.getContextPath() );
     }
 
-    @Test
-    void testCrossOriginStateChangeRejectedForSessionUser()
-    {
-        setupWebApi();
-        when( servletRequestMock.getSession( false ) ).thenReturn( mock( HttpSession.class ) );
-        request.setMethod( HttpMethod.POST );
-        request.getHeaders().put( "Origin", "https://evil.example.org" );
-
-        final WebException ex =
-            assertThrows( WebException.class, () -> authenticatedContext().callWith( () -> this.handler.handle( request ) ) );
-        assertEquals( HttpStatus.FORBIDDEN, ex.getStatus() );
-        assertEquals( "Origin [https://evil.example.org] is not allowed", ex.getMessage() );
-    }
-
-    @Test
-    void testSameOriginStateChangeAllowed()
-    {
-        setupWebApi();
-        when( servletRequestMock.getSession( false ) ).thenReturn( mock( HttpSession.class ) );
-        request.setMethod( HttpMethod.POST );
-        request.getHeaders().put( "Origin", "https://example.com" );
-
-        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> this.handler.handle( request ) ).getStatus() );
-    }
-
-    @Test
-    void testCrossOriginSafeMethodAllowed()
-    {
-        setupWebApi();
-        when( servletRequestMock.getSession( false ) ).thenReturn( mock( HttpSession.class ) );
-        request.setMethod( HttpMethod.GET );
-        request.getHeaders().put( "Origin", "https://evil.example.org" );
-
-        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> this.handler.handle( request ) ).getStatus() );
-    }
-
-    @Test
-    void testCrossOriginStateChangeWithoutSessionAllowed()
-    {
-        setupWebApi();
-        request.setMethod( HttpMethod.POST );
-        request.getHeaders().put( "Origin", "https://evil.example.org" );
-
-        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> this.handler.handle( request ) ).getStatus() );
-    }
-
-    @Test
-    void testStateChangeWithoutOriginAllowed()
-    {
-        setupWebApi();
-        when( servletRequestMock.getSession( false ) ).thenReturn( mock( HttpSession.class ) );
-        request.setMethod( HttpMethod.POST );
-
-        assertEquals( HttpStatus.OK, authenticatedContext().callWith( () -> this.handler.handle( request ) ).getStatus() );
-    }
-
-    @Test
-    void testCrossOriginStateChangeWithoutRawRequestSkipsOriginCheck()
-    {
-        setupWebApi();
-        request.setRawRequest( null );
-        request.setMethod( HttpMethod.POST );
-        request.getHeaders().put( "Origin", "https://evil.example.org" );
-
-        final WebException ex =
-            assertThrows( WebException.class, () -> authenticatedContext().callWith( () -> this.handler.handle( request ) ) );
-        assertEquals( "API [com.enonic.app.myapp:api-key] is not mounted", ex.getMessage() );
-    }
-
-    @Test
-    void testCrossOriginStateChangeAnonymousAllowed()
-    {
-        setupWebApi();
-        when( servletRequestMock.getSession( false ) ).thenReturn( mock( HttpSession.class ) );
-        request.setMethod( HttpMethod.POST );
-        request.getHeaders().put( "Origin", "https://evil.example.org" );
-
-        assertEquals( HttpStatus.OK, this.handler.handle( request ).getStatus() );
-    }
-
     private void setupWebApi()
     {
         request.setRawPath( "/api/com.enonic.app.myapp:api-key" );
@@ -323,14 +237,6 @@ class SlashApiHandlerTest
             .mount( "web" )
             .build();
         when( apiDescriptorService.getByKey( any( DescriptorKey.class ) ) ).thenReturn( apiDescriptor );
-    }
-
-    private static Context authenticatedContext()
-    {
-        final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "user" ) ).login( "user" ).build();
-        return ContextBuilder.from( ContextAccessor.current() )
-            .authInfo( AuthenticationInfo.create().principals( RoleKeys.EVERYONE, RoleKeys.AUTHENTICATED ).user( user ).build() )
-            .build();
     }
 
     @Test

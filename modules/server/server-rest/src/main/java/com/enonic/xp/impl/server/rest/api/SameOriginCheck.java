@@ -1,4 +1,4 @@
-package com.enonic.xp.portal.impl.handler;
+package com.enonic.xp.impl.server.rest.api;
 
 import java.net.URI;
 import java.util.Locale;
