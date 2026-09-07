@@ -25,6 +25,10 @@ public final class RangeRequestHelper
 
     private static final String MULTIPART_BOUNDARY = "__BOUNDARY__";
 
+    private static final int MAX_RANGES = 10;
+
+    private static final String BYTES_UNIT = "bytes=";
+
     public void handleRangeRequest( final WebRequest request, final WebResponse.Builder response, final ByteSource body,
                                     final MediaType contentType )
         throws IOException
@@ -38,10 +42,29 @@ public final class RangeRequestHelper
         }
 
         final String rangeHeader = request.getHeaders().getOrDefault( HttpHeaders.RANGE, "" ).trim();
-        final String rangeValue = rangeHeader.length() > "bytes=".length() ? rangeHeader.substring( "bytes=".length() ) : "";
+        if ( !rangeHeader.regionMatches( true, 0, BYTES_UNIT, 0, BYTES_UNIT.length() ) )
+        {
+            response.body( body );
+            return;
+        }
+
+        final String[] rangeValues = rangeHeader.substring( BYTES_UNIT.length() ).split( ",", MAX_RANGES + 1 );
+        if ( rangeValues.length > MAX_RANGES )
+        {
+            response.status( HttpStatus.OK );
+            response.body( body );
+            return;
+        }
 
         long fileLength = body.size();
-        final List<Range> ranges = parseRangeBytesHeader( rangeValue, fileLength );
+        final List<Range> ranges = parseRangeBytesHeader( rangeValues, fileLength );
+        if ( ranges.stream().mapToLong( range -> range.length ).sum() > fileLength )
+        {
+            response.status( HttpStatus.OK );
+            response.body( body );
+            return;
+        }
+
         if ( ranges.isEmpty() )
         {
             response.status( HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE );
@@ -64,13 +87,12 @@ public final class RangeRequestHelper
         }
     }
 
-    private List<Range> parseRangeBytesHeader( final String rangeHeaderValue, final long fileLength )
+    private List<Range> parseRangeBytesHeader( final String[] rangeValues, final long fileLength )
     {
-        final String[] rangeValues = rangeHeaderValue.split( "," );
         try
         {
             return Arrays.stream( rangeValues ).
-                map( ( rangeValue ) -> parseRangeBytes( rangeValue, fileLength ) ).
+                map( ( rangeValue ) -> parseRangeBytes( rangeValue.trim(), fileLength ) ).
                 filter( Objects::nonNull ).
                 collect( Collectors.toList() );
         }
@@ -87,7 +109,7 @@ public final class RangeRequestHelper
         if ( rangeValue.startsWith( "-" ) )
         {
             end = fileLength - 1;
-            start = fileLength - 1 - Long.parseLong( rangeValue.substring( "-".length() ) );
+            start = Math.max( 0, fileLength - Long.parseLong( rangeValue.substring( "-".length() ) ) );
         }
         else
         {
