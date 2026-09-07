@@ -22,23 +22,37 @@ import org.elasticsearch.snapshots.SnapshotState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.DeleteSnapshotParams;
 import com.enonic.xp.node.DeleteSnapshotsResult;
+import com.enonic.xp.node.RestoreParams;
+import com.enonic.xp.node.SnapshotParams;
 import com.enonic.xp.repo.impl.config.RepoConfiguration;
 import com.enonic.xp.repo.impl.index.IndexServiceInternal;
 import com.enonic.xp.repo.impl.repository.RepositoryEntryService;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class SnapshotServiceImplTest
 {
     private ClusterAdminClient clusterAdminClient;
+
+    private static final Context ADMIN_CONTEXT = ContextBuilder.create()
+        .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
+        .build();
 
     private SnapshotServiceImpl instance;
 
@@ -96,8 +110,8 @@ class SnapshotServiceImplTest
             argThat( request -> "snapshot2".equals( request.snapshot() ) || "snapshot4".equals( request.snapshot() ) ) ) ).thenThrow(
             new ElasticsearchException( "Failed to delete snapshot" ) );
 
-        final DeleteSnapshotsResult result = instance.delete(
-            DeleteSnapshotParams.create().add( "snapshot1" ).add( "snapshot2" ).before( now.minus( 2, ChronoUnit.HOURS ) ).build() );
+        final DeleteSnapshotsResult result = ADMIN_CONTEXT.callWith( () -> instance.delete(
+            DeleteSnapshotParams.create().add( "snapshot1" ).add( "snapshot2" ).before( now.minus( 2, ChronoUnit.HOURS ) ).build() ) );
 
         assertEquals( 2, result.getDeletedSnapshots().size() );
         assertTrue( result.getDeletedSnapshots().contains( "snapshot1" ) );
@@ -116,5 +130,15 @@ class SnapshotServiceImplTest
         when( snapshot.endTime() ).thenReturn( endTime.toEpochMilli() );
 
         return snapshot;
+    }
+
+    @Test
+    void requiresAdmin()
+    {
+        assertThrows( ForbiddenAccessException.class, () -> instance.snapshot( SnapshotParams.create().snapshotName( "s" ).build() ) );
+        assertThrows( ForbiddenAccessException.class, () -> instance.restore( RestoreParams.create().snapshotName( "s" ).build() ) );
+        assertThrows( ForbiddenAccessException.class, () -> instance.list() );
+        assertThrows( ForbiddenAccessException.class, () -> instance.delete( DeleteSnapshotParams.create().add( "s" ).build() ) );
+        verifyNoInteractions( clusterAdminClient );
     }
 }

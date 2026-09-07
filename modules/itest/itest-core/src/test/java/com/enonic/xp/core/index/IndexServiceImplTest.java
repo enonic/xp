@@ -51,11 +51,11 @@ class IndexServiceImplTest
         final Node node =
             createNode( CreateNodeParams.create().name( "myNode" ).parent( NodePath.ROOT ).refresh( RefreshMode.ALL ).build() );
 
-        final ReindexResult result = this.indexService.reindex( ReindexParams.create().
+        final ReindexResult result = ctxDefaultAdmin().callWith( () -> this.indexService.reindex( ReindexParams.create().
             addBranch( WS_DEFAULT ).
             repositoryId( testRepoId ).
             initialize( true ).
-            build() );
+            build() ) );
 
         refresh();
 
@@ -74,11 +74,11 @@ class IndexServiceImplTest
             refresh( RefreshMode.ALL ).
             build() );
 
-        final ReindexResult result = this.indexService.reindex( ReindexParams.create().
+        final ReindexResult result = ctxDefaultAdmin().callWith( () -> this.indexService.reindex( ReindexParams.create().
             addBranch( WS_DEFAULT ).
             repositoryId( testRepoId ).
             initialize( false ).
-            build() );
+            build() ) );
 
         assertEquals( 2, result.getReindexNodes().getSize() );
 
@@ -95,11 +95,11 @@ class IndexServiceImplTest
             refresh( RefreshMode.ALL ).
             build() );
 
-        final ReindexResult result = this.indexService.reindex( ReindexParams.create().
+        final ReindexResult result = ctxDefaultAdmin().callWith( () -> this.indexService.reindex( ReindexParams.create().
             addBranch( WS_DEFAULT ).
             repositoryId( testRepoId ).
             initialize( false ).
-            build() );
+            build() ) );
 
         assertEquals( 2, result.getReindexNodes().getSize() );
 
@@ -131,11 +131,11 @@ class IndexServiceImplTest
         assertNotNull( ctxOther().callWith( () -> queryForNode( node.id() ) ) );
 
 
-        this.indexService.reindex( ReindexParams.create().
+        ctxDefaultAdmin().runWith( () -> this.indexService.reindex( ReindexParams.create().
             addBranch( WS_OTHER ).
             repositoryId( testRepoId ).
             initialize( true ).
-            build() );
+            build() ) );
 
         refresh();
 
@@ -161,11 +161,11 @@ class IndexServiceImplTest
 
         assertEquals( 2, cmsRepoContext.callWith( this::findAllNodes ).getNodeHits().getSize() );
 
-        this.indexService.reindex( ReindexParams.create().
+        ctxDefaultAdmin().runWith( () -> this.indexService.reindex( ReindexParams.create().
             addBranch( cmsRepoContext.getBranch() ).
             repositoryId( cmsRepoContext.getRepositoryId() ).
             initialize( true ).
-            build() );
+            build() ) );
 
         refresh();
 
@@ -194,11 +194,11 @@ class IndexServiceImplTest
 
         final int nodesInSystemRepoCount = systemRepoContext.callWith( this::findAllNodes ).getNodeHits().getSize();
 
-        this.indexService.reindex( ReindexParams.create().
+        ctxDefaultAdmin().runWith( () -> this.indexService.reindex( ReindexParams.create().
             addBranch( systemRepoContext.getBranch() ).
             repositoryId( systemRepoContext.getRepositoryId() ).
             initialize( true ).
-            build() );
+            build() ) );
 
         refresh();
 
@@ -235,10 +235,10 @@ class IndexServiceImplTest
     @Test
     void updateIndexSettings()
     {
-        final UpdateIndexSettingsResult result = this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
+        final UpdateIndexSettingsResult result = ctxDefaultAdmin().callWith( () -> this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
             repository( testRepoId ).
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
-            build() );
+            build() ) );
 
         assertEquals( 2, result.getUpdatedIndexes().size() );
     }
@@ -254,10 +254,10 @@ class IndexServiceImplTest
     @Test
     void getIndexSettings()
     {
-        this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
+        ctxDefaultAdmin().runWith( () -> this.indexService.updateIndexSettings( UpdateIndexSettingsParams.create().
             repository( testRepoId ).
             settings( "{\"index\": {\"number_of_replicas\": 2}}" ).
-            build() );
+            build() ) );
 
         final Map<String, String> indexSettings = this.indexService.getIndexSettings( testRepoId, IndexType.SEARCH );
 

@@ -5,6 +5,10 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.task.TaskId;
 import com.enonic.xp.task.TaskInfo;
 
@@ -12,6 +16,15 @@ public final class TaskUtils
 {
     private TaskUtils()
     {
+    }
+
+    public static void requireAdmin()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        if ( !authInfo.hasRole( RoleKeys.ADMIN ) )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
     }
 
     public static void checkAlreadySubmitted( final TaskInfo currentTaskInfo, final Collection<TaskInfo> allTasks )
