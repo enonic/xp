@@ -69,7 +69,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final boolean isSvgz = "svgz".equals( attachment.getExtension() );
 
-        final MediaType attachmentMimeType = isSvgz ? SVG_MEDIA_TYPE : MediaType.parse( attachment.getMimeType() );
+        final MediaType attachmentMimeType = isSvgz ? SVG_MEDIA_TYPE : parseMimeType( attachment.getMimeType() );
 
         final MediaType contentType;
         final ByteSource body;
@@ -200,5 +200,17 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         }
 
         return binary;
+    }
+
+    private static MediaType parseMimeType( final String mimeType )
+    {
+        try
+        {
+            return MediaType.parse( mimeType );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return MediaType.OCTET_STREAM;
+        }
     }
 }

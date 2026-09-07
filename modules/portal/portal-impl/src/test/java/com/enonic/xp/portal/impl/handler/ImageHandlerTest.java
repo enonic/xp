@@ -328,6 +328,45 @@ class ImageHandlerTest
     }
 
     @Test
+    void invalidQualityFormat()
+        throws Exception
+    {
+        setupContent();
+
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.getParams().put( "quality", "high" );
+
+        final WebException webException = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.BAD_REQUEST, webException.getStatus() );
+    }
+
+    @Test
+    void invalidBackground()
+        throws Exception
+    {
+        setupContent();
+
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.getParams().put( "background", "0xzz" );
+
+        final WebException webException = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.BAD_REQUEST, webException.getStatus() );
+    }
+
+    @Test
+    void backgroundWithoutPrefix()
+        throws Exception
+    {
+        setupContent();
+
+        this.request.setRawPath( "/_/image/123456/scale-100-100/image-name.jpg" );
+        this.request.getParams().put( "background", "ffffff" );
+
+        final WebResponse res = this.handler.handle( this.request );
+        assertEquals( HttpStatus.OK, res.getStatus() );
+    }
+
+    @Test
     void nameMissmatch()
         throws Exception
     {

@@ -121,6 +121,16 @@ class IdentityHandlerTest
     }
 
     @Test
+    void testInvalidIdProviderKey()
+    {
+        this.request.setRawPath( "/site/project/branch/_/idprovider/roles" );
+
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.BAD_REQUEST, e.getStatus() );
+        assertEquals( "Invalid id provider key [roles]", e.getMessage() );
+    }
+
+    @Test
     void testHandle()
         throws Exception
     {
