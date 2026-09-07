@@ -8,8 +8,8 @@ public final class MailHeader
 
     public MailHeader( final String key, final String value )
     {
-        this.key = key;
-        this.value = value;
+        this.key = MailHeaderValue.requireSingleLine( key, "Mail header name" );
+        this.value = MailHeaderValue.requireSingleLine( value, "Mail header value" );
     }
 
     public static MailHeader from( final String key, final String value )
