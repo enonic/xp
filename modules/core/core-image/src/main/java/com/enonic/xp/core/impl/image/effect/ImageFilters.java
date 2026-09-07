@@ -14,6 +14,8 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.util.function.Consumer;
 
+import com.google.common.base.Preconditions;
+
 import com.jhlabs.image.BlockFilter;
 import com.jhlabs.image.BumpFilter;
 import com.jhlabs.image.EdgeFilter;
@@ -33,22 +35,34 @@ import com.enonic.xp.image.ImageHelper;
 
 public class ImageFilters
 {
+    private static final int MAX_BLUR_RADIUS = 100;
+
+    private static final int MAX_SIZE = 1000;
+
     public ImageFunction block( Object... args )
     {
+        Preconditions.checkArgument( args.length <= 1, "Too many arguments %s", args.length );
         final int blockSize = CommandArgumentParser.getIntArg( args, 0, 2 );
+        Preconditions.checkArgument( blockSize > 0 && blockSize <= MAX_SIZE, "block size must be between 1 and %s : %s", MAX_SIZE,
+                                     blockSize );
         return adaptOperation( new BlockFilter( blockSize ) );
     }
 
     public ImageFunction blur( Object... args )
     {
+        Preconditions.checkArgument( args.length <= 1, "Too many arguments %s", args.length );
         final int radius = CommandArgumentParser.getIntArg( args, 0, 2 );
+        Preconditions.checkArgument( radius >= 0 && radius <= MAX_BLUR_RADIUS, "blur radius must be between 0 and %s : %s",
+                                     MAX_BLUR_RADIUS, radius );
         return adaptOperation( new GaussianFilter( radius ) );
     }
 
     public ImageFunction border( Object... args )
     {
+        Preconditions.checkArgument( args.length <= 2, "Too many arguments %s", args.length );
         final int size = CommandArgumentParser.getIntArg( args, 0, 2 );
         final int color = CommandArgumentParser.getIntArg( args, 1, 0x000000 );
+        Preconditions.checkArgument( size >= 0 && size <= MAX_SIZE, "border size must be between 0 and %s : %s", MAX_SIZE, size );
         return borderFunction( size, color );
     }
 
@@ -145,9 +159,13 @@ public class ImageFilters
 
     public ImageFunction rounded( Object... args )
     {
+        Preconditions.checkArgument( args.length <= 3, "Too many arguments %s", args.length );
         final int radius = CommandArgumentParser.getIntArg( args, 0, 10 );
         final int borderSize = CommandArgumentParser.getIntArg( args, 1, 0 );
         final int borderColor = CommandArgumentParser.getIntArg( args, 2, 0x000000 );
+        Preconditions.checkArgument( radius >= 0 && radius <= MAX_SIZE, "rounded radius must be between 0 and %s : %s", MAX_SIZE, radius );
+        Preconditions.checkArgument( borderSize >= 0 && borderSize <= MAX_SIZE, "rounded border size must be between 0 and %s : %s",
+                                     MAX_SIZE, borderSize );
         return roundedFunction( radius, borderSize, borderColor );
     }
 
