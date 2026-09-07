@@ -1,5 +1,7 @@
 package com.enonic.xp.web.vhost.impl;
 
+import java.util.Objects;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -57,15 +59,14 @@ public final class VirtualHostFilter
                 VirtualHostHelper.setVirtualHost( req, virtualHost );
                 chain.doFilter( new VirtualHostRequestWrapper( req, virtualHost ), res );
             }
-            else if ( DispatchConstants.WEB_CONNECTOR.equals( connector ) )
+            else if ( DispatchConstants.WEB_CONNECTOR.equals( connector ) || hasMappingsFor( connector ) )
             {
-                LOG.warn( "Virtual host mapping could not be resolved for host [{}] and path [{}]", req.getServerName(),
-                          req.getPathInfo() );
+                LOG.warn( "Virtual host mapping could not be resolved for host [{}] and path [{}] on connector [{}]", req.getServerName(),
+                          req.getPathInfo(), connector );
                 res.setStatus( HttpServletResponse.SC_NOT_FOUND );
             }
             else
             {
-                // Management and statistics ports stay reachable when no vhost mapping matches.
                 applyDefaultVirtualHost( req, res, chain, connector );
             }
         }
@@ -73,6 +74,13 @@ public final class VirtualHostFilter
         {
             applyDefaultVirtualHost( req, res, chain, connector );
         }
+    }
+
+    private boolean hasMappingsFor( final String connector )
+    {
+        return virtualHostService.getVirtualHosts()
+            .stream()
+            .anyMatch( virtualHost -> Objects.equals( connector, virtualHost.getConnector() ) );
     }
 
     private static void applyDefaultVirtualHost( final HttpServletRequest req, final HttpServletResponse res, final FilterChain chain,
