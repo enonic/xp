@@ -57,8 +57,7 @@ public final class PortalRequestHelper
         final Content content = portalRequest.getContent();
         if ( content != null )
         {
-            if ( content.getPath().isRoot() ||
-                !content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ ) )
+            if ( !isReadable( content ) )
             {
                 throw WebException.forbidden( String.format( "You don't have permission to access [%s]", portalRequest.getContentPath() ) );
             }
@@ -68,6 +67,12 @@ public final class PortalRequestHelper
         {
             throw WebException.notFound( String.format( "Page [%s] not found", portalRequest.getContentPath() ) );
         }
+    }
+
+    public static boolean isReadable( final Content content )
+    {
+        return !content.getPath().isRoot() &&
+            content.getPermissions().isAllowedFor( ContextAccessor.current().getAuthInfo().getPrincipals(), Permission.READ );
     }
 
     public static Site getSiteOrElseThrow( final PortalRequest portalRequest )

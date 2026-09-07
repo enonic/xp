@@ -56,6 +56,8 @@ public final class TestDataFixtures
                             .add( new Mixin( MixinName.from( "com.enonic.myapplication:myschema" ), newTinyPropertyTree() ) )
                             .build() );
         builder.page( newPage() );
+        builder.permissions(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() ) );
 
         return builder.build();
     }
@@ -73,6 +75,8 @@ public final class TestDataFixtures
         builder.createdTime( Instant.ofEpochSecond( 0 ) );
         builder.language( Locale.ENGLISH );
         builder.data( newTinyPropertyTree() );
+        builder.permissions(
+            AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.EVERYONE ).allow( Permission.READ ).build() ) );
         return builder.build();
     }
 
