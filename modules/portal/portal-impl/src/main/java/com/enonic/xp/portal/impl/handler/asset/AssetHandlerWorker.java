@@ -50,6 +50,10 @@ final class AssetHandlerWorker
         final String assetPath = assetsKey.getPath() + path;
 
         final ResourceKey resourceKey = ResourceKey.from( applicationKey, assetPath );
+        if ( !resourceKey.getPath().startsWith( assetsKey.getPath() ) )
+        {
+            throw WebException.notFound( String.format( "Resource [%s] not found", resourceKey ) );
+        }
 
         final Resource resource = resolveResource( resourceKey );
 
