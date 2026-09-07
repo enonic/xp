@@ -38,6 +38,11 @@ final class ExceptionInfo
 
     public String getDescription()
     {
+        if ( this.status.is5xxServerError() && !this.withDebugInfo )
+        {
+            return this.status.getReasonPhrase();
+        }
+
         String str = this.getMessage();
         final Throwable innerCause = this.cause != null ? this.cause.getCause() : null;
         if ( innerCause != null )

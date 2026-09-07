@@ -17,9 +17,11 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.server.RunMode;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.WebException;
 
+import static java.util.Objects.requireNonNullElse;
 import static java.util.Objects.requireNonNullElseGet;
 
 @Provider
@@ -53,9 +55,14 @@ public final class JsonExceptionMapper
     {
         final ObjectNode node = JsonNodeFactory.instance.objectNode();
         node.put( "status", status );
-        node.put( "message", cause.getMessage() );
+        node.put( "message", status >= 500 && !RunMode.isDev() ? reasonPhrase( status ) : cause.getMessage() );
         node.set( "context", createContextJson() );
         return node;
+    }
+
+    private static String reasonPhrase( final int status )
+    {
+        return requireNonNullElse( Response.Status.fromStatusCode( status ), Response.Status.INTERNAL_SERVER_ERROR ).getReasonPhrase();
     }
 
     private static ObjectNode createContextJson()
