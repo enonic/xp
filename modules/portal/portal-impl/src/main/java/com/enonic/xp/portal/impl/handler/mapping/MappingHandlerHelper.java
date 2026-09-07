@@ -90,7 +90,11 @@ class MappingHandlerHelper
             return webHandlerChain.handle( webRequest, webResponse );
         }
 
-        final Content content = request.getContent();
+        final Content content = request.getContent() == null ? null : PortalRequestHelper.getContentOrElseThrow( request );
+        if ( content == null && site != null && !PortalRequestHelper.isReadable( site ) )
+        {
+            throw WebException.forbidden( String.format( "You don't have permission to access [%s]", request.getContentPath() ) );
+        }
 
         final List<ControllerMappingDescriptor> matchingMappings =
             controllerMappingsResolver.resolveAll( PortalRequestHelper.getSiteRelativePath( request ), request.getParams(), content,
