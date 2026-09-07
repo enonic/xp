@@ -276,6 +276,20 @@ class ExceptionRendererImplTest
     }
 
     @Test
+    void render_internal_server_error_prod_hides_details()
+    {
+        RunModeSupport.set( RunMode.PROD );
+        this.renderer =
+            new ExceptionRendererImpl( resourceService, errorHandlerScriptFactory, null, postProcessor, new ExceptionMapperImpl() );
+
+        final RuntimeException cause = new RuntimeException( "/opt/xp/home/repo/blob is not writable" );
+        final PortalResponse res = this.renderer.render( this.request, cause );
+
+        assertThat( res.getStatus() ).isEqualTo( HttpStatus.INTERNAL_SERVER_ERROR );
+        assertThat( res.getBody().toString() ).isEqualTo( "{\"status\":500,\"message\":\"Internal Server Error\"}" );
+    }
+
+    @Test
     void render_internal_server_error()
     {
         this.request.getHeaders().put( HttpHeaders.ACCEPT, "text/html,text/*" );
