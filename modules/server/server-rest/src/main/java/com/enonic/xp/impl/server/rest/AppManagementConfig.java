@@ -15,6 +15,26 @@ public @interface AppManagementConfig
     String pull_checksumRequired() default "";
 
     /**
+     * Maximum size of the pulled application, using size units (for example {@code 512mb}, {@code 1gb}).
+     */
+    String pull_maxSize() default "1gb";
+
+    /**
+     * Maximum number of redirect hops allowed while pulling an application.
+     */
+    int pull_maxRedirects() default 5;
+
+    /**
+     * Connection timeout while pulling an application, as ISO-8601 duration.
+     */
+    String pull_connectTimeout() default "PT10S";
+
+    /**
+     * Read timeout while pulling an application, as ISO-8601 duration.
+     */
+    String pull_readTimeout() default "PT60S";
+
+    /**
      * Legacy alias of {@link #pull_allowedUrls()}.
      */
     String installUrl_allowedUrls() default "https://*";

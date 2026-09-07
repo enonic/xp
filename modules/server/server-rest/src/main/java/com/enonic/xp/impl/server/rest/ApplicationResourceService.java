@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.server.rest;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
+import com.enonic.xp.util.ByteSizeParser;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.multipart.MultipartForm;
 import com.enonic.xp.web.multipart.MultipartItem;
@@ -52,7 +54,9 @@ public class ApplicationResourceService
     @Modified
     public void activate( final AppManagementConfig config )
     {
-        this.applicationLoader = new ApplicationLoader( allowedUrls( config ), checksumRequired( config ) );
+        this.applicationLoader = new ApplicationLoader( allowedUrls( config ), checksumRequired( config ), maxSize( config ),
+                                                        maxRedirects( config ), connectTimeoutMillis( config ),
+                                                        readTimeoutMillis( config ) );
     }
 
     static String allowedUrls( final AppManagementConfig config )
@@ -65,6 +69,31 @@ public class ApplicationResourceService
     {
         final String pull = config.pull_checksumRequired();
         return pull.isBlank() ? config.installUrl_checksumRequired() : Boolean.parseBoolean( pull.strip() );
+    }
+
+    static long maxSize( final AppManagementConfig config )
+    {
+        return ByteSizeParser.parse( config.pull_maxSize().strip() );
+    }
+
+    static int maxRedirects( final AppManagementConfig config )
+    {
+        return config.pull_maxRedirects();
+    }
+
+    static int connectTimeoutMillis( final AppManagementConfig config )
+    {
+        return parseTimeoutMillis( config.pull_connectTimeout() );
+    }
+
+    static int readTimeoutMillis( final AppManagementConfig config )
+    {
+        return parseTimeoutMillis( config.pull_readTimeout() );
+    }
+
+    private static int parseTimeoutMillis( final String duration )
+    {
+        return Math.toIntExact( Duration.parse( duration.strip() ).toMillis() );
     }
 
     public ApplicationInfoJson install( final MultipartForm form )
