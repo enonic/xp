@@ -119,3 +119,19 @@ exports.sendWithAttachments = function () {
     });
 
 };
+
+exports.headerWithLineBreak = function () {
+
+    var result = mail.send({
+        subject: 'test subject',
+        body: 'test body',
+        to: 'to@bar.com',
+        from: 'from@bar.com',
+        headers: {
+            'X-Ref': '1\r\nBcc: attacker@example.com'
+        }
+    });
+
+    assert.assertEquals(false, result);
+
+};

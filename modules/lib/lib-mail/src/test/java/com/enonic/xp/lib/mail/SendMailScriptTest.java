@@ -67,6 +67,14 @@ public class SendMailScriptTest
     }
 
     @Test
+    public void testHeaderWithLineBreakIsNotSent()
+    {
+        runFunction( "/test/send-test.js", "headerWithLineBreak" );
+
+        assertNull( this.actualMessage );
+    }
+
+    @Test
     public void testSimpleMail()
     {
         runFunction( "/test/send-test.js", "simpleMail" );

@@ -21,10 +21,14 @@ public final class MailAttachment
 
     private MailAttachment( final Builder builder )
     {
-        this.fileName = Objects.requireNonNull( builder.fileName );
+        this.fileName = MailHeaderValue.requireSingleLine( Objects.requireNonNull( builder.fileName ), "Attachment file name" );
         this.data = Objects.requireNonNull( builder.data );
-        this.mimeType = builder.mimeType;
+        this.mimeType = MailHeaderValue.requireSingleLine( builder.mimeType, "Attachment mime type" );
         this.headers = builder.headers != null ? ImmutableMap.copyOf( builder.headers ) : ImmutableMap.of();
+        this.headers.forEach( ( name, value ) -> {
+            MailHeaderValue.requireSingleLine( name, "Attachment header name" );
+            MailHeaderValue.requireSingleLine( value, "Attachment header value" );
+        } );
     }
 
     public static Builder create()
