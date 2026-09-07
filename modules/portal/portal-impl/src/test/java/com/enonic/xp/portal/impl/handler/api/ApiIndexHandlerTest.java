@@ -104,17 +104,33 @@ class ApiIndexHandlerTest
     {
         RunModeSupport.set( RunMode.PROD );
 
-        RunModeSupport.set( RunMode.PROD );
-
         final WebRequest webRequest7 = new WebRequest();
         webRequest7.setRawPath( "/api" );
         assertFalse( this.handler.canHandle( webRequest7 ) );
+
+        final WebRequest webRequest7a = new WebRequest();
+        webRequest7a.setRawPath( "/api/" );
+        assertFalse( this.handler.canHandle( webRequest7a ) );
 
         when( apiConfig.api_index_enabled() ).thenReturn( "off" );
         this.handler.activate( apiConfig );
         final WebRequest webRequest8 = new WebRequest();
         webRequest8.setRawPath( "/api" );
         assertFalse( this.handler.canHandle( webRequest8 ) );
+
+        final WebRequest webRequest8a = new WebRequest();
+        webRequest8a.setRawPath( "/api/" );
+        assertFalse( this.handler.canHandle( webRequest8a ) );
+
+        when( apiConfig.api_index_enabled() ).thenReturn( "on" );
+        this.handler.activate( apiConfig );
+        final WebRequest webRequest9 = new WebRequest();
+        webRequest9.setRawPath( "/api" );
+        assertTrue( this.handler.canHandle( webRequest9 ) );
+
+        final WebRequest webRequest9a = new WebRequest();
+        webRequest9a.setRawPath( "/api/" );
+        assertTrue( this.handler.canHandle( webRequest9a ) );
     }
 
     @Test
