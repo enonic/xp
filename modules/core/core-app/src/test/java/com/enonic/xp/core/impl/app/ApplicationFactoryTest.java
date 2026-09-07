@@ -16,7 +16,6 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
@@ -29,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class ApplicationFactoryTest
@@ -47,24 +45,20 @@ class ApplicationFactoryTest
     void create_app()
     {
         final Bundle bundle = deploy( "app1", true, false );
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         RunModeSupport.set( RunMode.PROD );
 
-        final Application app = new ApplicationFactory( nodeService, appConfig ).create( bundle );
+        final Application app = new ApplicationFactory( nodeService ).create( bundle );
         assertNotNull( app );
         assertNull( app.getConfig() );
     }
 
     @Test
-    void createUrlResolver_prod_without_virtual_apps()
+    void createUrlResolver_prod()
     {
         final Bundle bundle = deploy( "app1", true, false );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( false );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
         assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
     }
@@ -73,55 +67,9 @@ class ApplicationFactoryTest
     void createUrlResolver_dev_with_source()
     {
         final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( true );
         RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
-    }
-
-    @Test
-    void createUrlResolver_dev_virtual_not_override()
-    {
-        final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
-        RunModeSupport.set( RunMode.DEV );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-    }
-
-    @Test
-    void createUrlResolver_prod_virtual_not_override()
-    {
-        final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
-        RunModeSupport.set( RunMode.PROD );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-    }
-
-    @Test
-    void createUrlResolver_dev_with_source_without_virtual_apps()
-    {
-        final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( false );
-        RunModeSupport.set( RunMode.DEV );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
         assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
     }
@@ -130,27 +78,9 @@ class ApplicationFactoryTest
     void createUrlResolver_dev_no_source()
     {
         final Bundle bundle = deploy( "app1", true, false );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( true );
         RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-        assertNotNull( resolver );
-        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
-    }
-
-    @Test
-    void createUrlResolver_dev_no_source_no_virtual_apps()
-    {
-        final Bundle bundle = deploy( "app1", true, false );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( false );
-        RunModeSupport.set( RunMode.DEV );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
         assertNotNull( resolver );
         assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
     }
@@ -159,29 +89,21 @@ class ApplicationFactoryTest
     void createUrlResolverByName()
     {
         final Bundle bundle = deploy( "app1", true, true );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
         RunModeSupport.set( RunMode.DEV );
 
-        final ApplicationFactory applicationFactory = new ApplicationFactory( nodeService, appConfig );
-        assertInstanceOf( NodeResourceApplicationUrlResolver.class, applicationFactory.createUrlResolver( bundle, "virtual" ) );
+        final ApplicationFactory applicationFactory = new ApplicationFactory( nodeService );
         assertInstanceOf( MultiApplicationUrlResolver.class, applicationFactory.createUrlResolver( bundle, "bundle" ) );
 
         assertThrows( IllegalArgumentException.class, () -> applicationFactory.createUrlResolver( bundle, "unknown" ) );
     }
 
     @Test
-    void static_app_resolver_is_multi_regardless_of_virtual_flags()
+    void static_app_resolver_is_multi()
     {
         final Bundle bundle = deploy( "app1", createStaticBundle( "app1" ) );
-
-        final AppConfig appConfig = mock( AppConfig.class );
-        when( appConfig.virtual_enabled() ).thenReturn( false );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
         assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
     }
 
@@ -190,12 +112,11 @@ class ApplicationFactoryTest
     {
         final Bundle bundle = deploy( "app1", createStaticBundle( "app1" ) );
 
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         assertNotNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
         assertNotNull( resolver.findResource( "/" + ICON_PATH ) );
@@ -212,12 +133,11 @@ class ApplicationFactoryTest
     {
         final Bundle bundle = deploy( "app1", createStaticBundle( "app1" ) );
 
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         // schema resources, icons included, are served from nodes only
         assertNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
@@ -236,11 +156,10 @@ class ApplicationFactoryTest
         // no cms/cms.yaml in the bundle and no persisted schema: plain bundle resolver, schema descriptors come from the bundle
         final Bundle bundle = deploy( "app1", createBundleWithCmsResources( newBundle( "app1", true ) ) );
 
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
         assertNotNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
@@ -253,12 +172,11 @@ class ApplicationFactoryTest
         final Bundle bundle = deploy( "app1", createBundleWithCmsResources( newBundle( "app1", true ) ).addResource( CONTROLLER_PATH,
                                                                                                                        stream( "controller" ) ) );
 
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
         assertNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
@@ -278,12 +196,11 @@ class ApplicationFactoryTest
         final Bundle bundle = deploy( "app1", createBundleWithCmsResources( newBundle( "app1", true ) ).addResource( "cms/cms.yaml", stream(
             "kind: \"CMS\"" ) ) );
 
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
         assertNotNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
@@ -297,11 +214,10 @@ class ApplicationFactoryTest
         final Bundle bundle = deploy( "local:app1", createBundleWithCmsResources( newBundle( "app1", true ) ).addResource( "cms/cms.yaml", stream(
             "kind: \"CMS\"" ) ) );
 
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( true );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
         assertNotNull( resolver.findResource( "/cms/cms.yaml" ) );
@@ -315,12 +231,11 @@ class ApplicationFactoryTest
         // a local application shipping logic only still runs on the persisted schema
         final Bundle bundle = deploy( "local:app1", newBundle( "app1", true ).addResource( CONTROLLER_PATH, stream( "controller" ) ) );
 
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
+        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
         assertNotNull( resolver.findResource( "/" + CONTROLLER_PATH ) );

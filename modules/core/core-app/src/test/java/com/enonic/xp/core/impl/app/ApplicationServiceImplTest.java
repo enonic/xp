@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.stream.Stream;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +23,8 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
@@ -37,20 +32,9 @@ import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.ForbiddenAccessException;
-import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeListEntry;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -85,10 +68,6 @@ class ApplicationServiceImplTest
 
     private AppFilterService appFilterService;
 
-    private NodeService nodeService;
-
-    private VirtualAppService virtualAppService;
-
     @BeforeEach
     void initService()
     {
@@ -107,12 +86,7 @@ class ApplicationServiceImplTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
         auditLogSupport.activate( appConfig );
 
-        nodeService = mock( NodeService.class );
-
-        virtualAppService = new VirtualAppService( nodeService );
-
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
-                                                   auditLogSupport );
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, auditLogSupport );
     }
 
     @Test
@@ -135,71 +109,6 @@ class ApplicationServiceImplTest
         final ApplicationAdaptor result = (ApplicationAdaptor) this.service.get( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
         assertSame( bundle, result.getBundle() );
-    }
-
-    @Test
-    void get_virtual_application()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        final Application virtualApp = this.service.get( applicationKey );
-
-        assertEquals( applicationKey, virtualApp.getKey() );
-        assertTrue( virtualApp.getModifiedTime().compareTo( Instant.now() ) <= 0 );
-    }
-
-    @Test
-    void create_virtual_application()
-    {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).name( "app-node" ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
-
-        final Application result = VirtualAppContext.createAdminContext()
-            .callWith( () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
-
-        assertEquals( appKey, result.getKey() );
-    }
-
-    @Test
-    void create_virtual_application_without_admin()
-    {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
-
-        assertThrows( ForbiddenAccessException.class,
-                      () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
-    }
-
-    @Test
-    void delete_virtual_application()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteVirtualApplication( appKey ) ) );
-    }
-
-    @Test
-    void delete_virtual_application_without_admin()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertThrows( ForbiddenAccessException.class, () -> this.service.deleteVirtualApplication( appKey ) );
     }
 
     @Test
@@ -233,22 +142,9 @@ class ApplicationServiceImplTest
         applicationRegistry.registerApplication( bundle1 );
         applicationRegistry.registerApplication( bundle2 );
 
-        NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
-
-        final NodeIds ids = NodeIds.from( virtualAppNodeId );
-
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer( invocation -> Stream.of(
-            new NodeListEntry( virtualAppNodeId, new NodePath( "/app3" ), Instant.EPOCH ),
-            new NodeListEntry( NodeId.from( "resource-folder-id" ), new NodePath( "/app3/cms" ), Instant.EPOCH ),
-            new NodeListEntry( NodeId.from( "resource-id" ), new NodePath( "/app3/cms/mytype.yaml" ), Instant.EPOCH ) ) );
-
-        when( nodeService.getByIds( ids ) ).thenReturn(
-            Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );
-
         final Applications result = this.service.list();
         assertNotNull( result );
-        assertEquals( 3, result.getSize() );
-        assertEquals( "app3", result.get( 2 ).getKey().toString() );
+        assertEquals( 2, result.getSize() );
     }
 
     @Test
@@ -957,74 +853,6 @@ class ApplicationServiceImplTest
         verify( mock, times( 1 ) ).invalidate( eq( key ), eq( ApplicationInvalidationLevel.FULL ) );
     }
 
-
-    @Test
-    void get_application_mode()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        final List<String> appNodeNames =
-            List.of( "cms", "content-types", "form-fragments", "mixins", "parts", "layouts", "pages", "styles" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
-            final CreateNodeParams createNodeParams = params.getArgument( 0 );
-
-            if ( applicationKey.toString().equals( createNodeParams.getName().toString() ) )
-            {
-
-                when( nodeService.nodeExists(
-                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn(
-                    true );
-
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( NodePath.ROOT )
-                    .build();
-
-            }
-            if ( appNodeNames.contains( createNodeParams.getName().toString() ) )
-            {
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( new NodePath( "/app1" ) )
-                    .build();
-            }
-
-            return null;
-        } );
-
-        VirtualAppContext.createAdminContext()
-            .runWith( () -> virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() ) );
-
-        assertThrows( ForbiddenAccessException.class, () -> service.getApplicationMode( applicationKey ) );
-        assertEquals( ApplicationMode.VIRTUAL,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.AUGMENTED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-    }
-
-    @Test
-    void get_application_mode_bundled()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create().build() );
-
-        assertNull( VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.BUNDLED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-    }
 
     private void verifyInstalledEvents( final ApplicationKey applicationKey, final NodeId nodeId, final VerificationMode times )
     {

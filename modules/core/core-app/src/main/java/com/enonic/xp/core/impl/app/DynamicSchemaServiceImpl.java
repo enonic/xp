@@ -34,7 +34,6 @@ import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
@@ -61,9 +60,9 @@ public class DynamicSchemaServiceImpl
     private final DynamicResourceParser dynamicResourceParser;
 
     @Activate
-    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService, @Reference final ResourceService resourceService )
+    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService )
     {
-        this.dynamicResourceManager = new DynamicResourceManager( nodeService, resourceService );
+        this.dynamicResourceManager = new DynamicResourceManager( nodeService );
         this.dynamicResourceParser = new DynamicResourceParser();
     }
 
@@ -135,7 +134,7 @@ public class DynamicSchemaServiceImpl
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
         final Resource createdResource =
-            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() );
+            dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
@@ -150,9 +149,9 @@ public class DynamicSchemaServiceImpl
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
 
-        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME )
-            ? dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() )
-            : dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, params.getResource() );
+        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME )
+            ? dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() )
+            : dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -166,9 +165,9 @@ public class DynamicSchemaServiceImpl
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
+            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
         final Resource resource =
-            dynamicResourceManager.createResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, params.getResource() );
+            dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -182,9 +181,9 @@ public class DynamicSchemaServiceImpl
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
+            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
         final Resource resource =
-            dynamicResourceManager.updateResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, params.getResource() );
+            dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, params.getResource() );
 
         return new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -249,7 +248,7 @@ public class DynamicSchemaServiceImpl
 
         final NodePath resourceFolderPath = createCmsFolderPath( key );
 
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME );
 
         if ( resource.exists() && resource.getSize() > 0 )
         {
@@ -266,8 +265,8 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
-        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME );
+            NodePath.create( createCmsFolderPath( key ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME );
 
         if ( resource.exists() && resource.getSize() > 0 )
         {
@@ -319,7 +318,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createCmsFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.CMS_ROOT_NAME, false );
+        return dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, false );
     }
 
     @Override
@@ -328,8 +327,8 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( key ) ).addElement( VirtualAppConstants.STYLE_ROOT_NAME ).build();
-        return dynamicResourceManager.deleteResource( resourceFolderPath, VirtualAppConstants.STYLE_NAME, false );
+            NodePath.create( createCmsFolderPath( key ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
+        return dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, false );
     }
 
     private BaseSchemaName getSchemaName( final ApplicationKey applicationKey, final DynamicContentSchemaType type, final String name )
@@ -360,12 +359,7 @@ public class DynamicSchemaServiceImpl
 
     private NodePath createComponentRootPath( final ApplicationKey key, final DynamicComponentType dynamicType )
     {
-        final String resourceRootName = getComponentRootName( dynamicType );
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-            .addElement( key.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
-            .addElement( resourceRootName )
-            .build();
+        return new NodePath( createCmsFolderPath( key ), NodeName.from( getComponentRootName( dynamicType ) ) );
     }
 
     private NodePath createSchemaFolderPath( final BaseSchemaName key, final DynamicContentSchemaType dynamicType )
@@ -376,20 +370,13 @@ public class DynamicSchemaServiceImpl
 
     private NodePath createSchemaRootPath( final ApplicationKey key, final DynamicContentSchemaType dynamicType )
     {
-        final String resourceRootName = getSchemaRootName( dynamicType );
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-            .addElement( key.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
-            .addElement( resourceRootName )
-            .build();
+        return new NodePath( createCmsFolderPath( key ), NodeName.from( getSchemaRootName( dynamicType ) ) );
     }
 
+    // the persisted schema of an application lives below its node in system-repo
     private NodePath createCmsFolderPath( final ApplicationKey key )
     {
-        return NodePath.create( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT )
-            .addElement( key.toString() )
-            .addElement( VirtualAppConstants.CMS_ROOT_NAME )
-            .build();
+        return new NodePath( ApplicationRepoServiceImpl.applicationNodePath( key ), NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) );
     }
 
     private String getSchemaRootName( final DynamicContentSchemaType type )
@@ -397,11 +384,11 @@ public class DynamicSchemaServiceImpl
         switch ( type )
         {
             case CONTENT_TYPE:
-                return VirtualAppConstants.CONTENT_TYPE_ROOT_NAME;
+                return SchemaResourceNames.CONTENT_TYPE_ROOT_NAME;
             case FORM_FRAGMENT:
-                return VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME;
+                return SchemaResourceNames.FORM_FRAGMENTS_ROOT_NAME;
             case MIXIN:
-                return VirtualAppConstants.MIXINS_ROOT_NAME;
+                return SchemaResourceNames.MIXINS_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic schema type: " + type );
         }
@@ -412,11 +399,11 @@ public class DynamicSchemaServiceImpl
         switch ( type )
         {
             case PAGE:
-                return VirtualAppConstants.PAGE_ROOT_NAME;
+                return SchemaResourceNames.PAGE_ROOT_NAME;
             case PART:
-                return VirtualAppConstants.PART_ROOT_NAME;
+                return SchemaResourceNames.PART_ROOT_NAME;
             case LAYOUT:
-                return VirtualAppConstants.LAYOUT_ROOT_NAME;
+                return SchemaResourceNames.LAYOUT_ROOT_NAME;
             default:
                 throw new IllegalArgumentException( "invalid dynamic component type: " + type );
         }

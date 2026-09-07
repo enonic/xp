@@ -32,8 +32,7 @@ public class RepositoryAuditLogSupportImpl
     private static final String SOURCE = "com.enonic.xp.repo";
 
     private static final Set<RepositoryId> SYSTEM_REPO_IDS =
-        Set.of( SystemConstants.SYSTEM_REPO_ID, RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ),
-                RepositoryId.from( "system.app" ) );
+        Set.of( SystemConstants.SYSTEM_REPO_ID, RepositoryId.from( "system.auditlog" ), RepositoryId.from( "system.scheduler" ) );
 
     private final AuditLogService auditLogService;
 

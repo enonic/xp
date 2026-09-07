@@ -15,7 +15,7 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
+import com.enonic.xp.core.impl.app.SchemaResourceNames;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -48,7 +48,7 @@ class NodeResourceApplicationUrlResolverTest
     {
         when( this.nodeService.list( any() ) ).thenAnswer( invocation -> result( "/myapp/cms/content-types/mytype/mytype.yaml" ) );
 
-        virtualAppResolver().findFiles();
+        rootAppResolver().findFiles();
 
         final ArgumentCaptor<ListNodesParams> params = ArgumentCaptor.forClass( ListNodesParams.class );
         verify( this.nodeService ).list( params.capture() );
@@ -62,7 +62,7 @@ class NodeResourceApplicationUrlResolverTest
         when( this.nodeService.list( any() ) ).thenAnswer(
             invocation -> result( "/myapp/cms/content-types/mytype/mytype.yaml", "/myapp/cms/parts/mypart/mypart.yaml" ) );
 
-        assertEquals( Set.of( "/cms/content-types/mytype/mytype.yaml", "/cms/parts/mypart/mypart.yaml" ), virtualAppResolver().findFiles() );
+        assertEquals( Set.of( "/cms/content-types/mytype/mytype.yaml", "/cms/parts/mypart/mypart.yaml" ), rootAppResolver().findFiles() );
     }
 
     @Test
@@ -74,7 +74,7 @@ class NodeResourceApplicationUrlResolverTest
                                                                                   "/myapp/cms/i18n/phrases/phrases_en.properties" ) );
 
         assertEquals( Set.of( "/cms/content-types/mytype/mytype.yaml", "/cms/i18n/phrases/phrases_en.properties" ),
-                      virtualAppResolver().findFiles() );
+                      rootAppResolver().findFiles() );
     }
 
     @Test
@@ -83,7 +83,7 @@ class NodeResourceApplicationUrlResolverTest
         when( this.nodeService.list( any() ) ).thenAnswer(
             invocation -> result( "/myapp/cms/cms.yaml", "/myapp/cms/style", "/myapp/cms/style/style.yaml" ) );
 
-        assertEquals( Set.of( "/cms/cms.yaml", "/cms/style/style.yaml" ), virtualAppResolver().findFiles() );
+        assertEquals( Set.of( "/cms/cms.yaml", "/cms/style/style.yaml" ), rootAppResolver().findFiles() );
     }
 
     @Test
@@ -128,7 +128,7 @@ class NodeResourceApplicationUrlResolverTest
     {
         final PropertyTree data = new PropertyTree();
         data.setString( SchemaNodePropertyNames.MIME_TYPE, "image/svg+xml" );
-        data.setBinaryReference( SchemaNodePropertyNames.ICON, VirtualAppConstants.ICON_BINARY_REFERENCE );
+        data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.ICON_BINARY_REFERENCE );
         final NodeId nodeId = new NodeId();
         final Node node = Node.create()
             .id( nodeId )
@@ -137,11 +137,11 @@ class NodeResourceApplicationUrlResolverTest
             .data( data )
             .timestamp( Instant.now() )
             .attachedBinaries( AttachedBinaries.create()
-                                   .add( new AttachedBinary( VirtualAppConstants.ICON_BINARY_REFERENCE, "blobkey" ) )
+                                   .add( new AttachedBinary( SchemaResourceNames.ICON_BINARY_REFERENCE, "blobkey" ) )
                                    .build() )
             .build();
         when( this.nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype/mytype.svg" ) ) ).thenReturn( node );
-        when( this.nodeService.getBinary( nodeId, VirtualAppConstants.ICON_BINARY_REFERENCE ) ).thenReturn(
+        when( this.nodeService.getBinary( nodeId, SchemaResourceNames.ICON_BINARY_REFERENCE ) ).thenReturn(
             ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
 
         final Resource resource = staticAppResolver().findResource( "/cms/content-types/mytype/mytype.svg" );
@@ -163,9 +163,11 @@ class NodeResourceApplicationUrlResolverTest
         verify( this.nodeService, org.mockito.Mockito.never() ).getByPath( any() );
     }
 
-    private NodeResourceApplicationUrlResolver virtualAppResolver()
+    // application node directly below the repository root
+    private NodeResourceApplicationUrlResolver rootAppResolver()
     {
-        return NodeResourceApplicationUrlResolver.forVirtualApp( APP_KEY, this.nodeService );
+        return new NodeResourceApplicationUrlResolver( APP_KEY, this.nodeService, new NodePath( "/myapp" ),
+                                                       () -> ContextBuilder.create().build() );
     }
 
     private NodeResourceApplicationUrlResolver staticAppResolver()

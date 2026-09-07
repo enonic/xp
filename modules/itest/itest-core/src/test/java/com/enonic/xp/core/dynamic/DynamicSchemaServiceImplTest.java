@@ -3,52 +3,30 @@ package com.enonic.xp.core.dynamic;
 import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.felix.framework.Felix;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
-import com.enonic.xp.core.impl.app.AppConfig;
-import com.enonic.xp.core.impl.app.AppFilterService;
-import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
-import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
-import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
-import com.enonic.xp.core.impl.app.ApplicationListenerHub;
-import com.enonic.xp.core.impl.app.ApplicationRegistry;
-import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
+import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
-import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
-import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.CreateDynamicCmsParams;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
-import com.enonic.xp.core.impl.app.VirtualAppContext;
-import com.enonic.xp.core.impl.app.VirtualAppInitializer;
-import com.enonic.xp.core.impl.app.VirtualAppService;
-import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
+import com.enonic.xp.core.impl.app.SchemaResourceNames;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
@@ -57,12 +35,15 @@ import com.enonic.xp.core.impl.security.SecurityAuditLogSupportImpl;
 import com.enonic.xp.core.impl.security.SecurityConfig;
 import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.itest.AbstractElasticsearchIntegrationTest;
+import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.project.CreateProjectParams;
 import com.enonic.xp.project.ProjectName;
@@ -111,6 +92,7 @@ import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
@@ -137,8 +119,11 @@ class DynamicSchemaServiceImplTest
 
     private ProjectServiceImpl projectService;
 
-    @TempDir
-    private Path felixTempFolder;
+    private static final String CMS_DESCRIPTOR_DEFAULT_VALUE = """
+        kind: "CMS"
+        mixins: [ ]
+        form: [ ]
+        """;
 
     private static Context ctxDefault()
     {
@@ -158,6 +143,43 @@ class DynamicSchemaServiceImplTest
             .authInfo(
                 AuthenticationInfo.create().principals( RoleKeys.AUTHENTICATED, RoleKeys.SCHEMA_ADMIN ).user( User.anonymous() ).build() )
             .build();
+    }
+
+    // admin context of system-repo, where the schema of an application is persisted below /applications/<app>/cms
+    private static Context appRepoAdminContext()
+    {
+        return ContextBuilder.copyOf( createAdminContext() )
+            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( SystemConstants.BRANCH_SYSTEM )
+            .build();
+    }
+
+    // the dynamic schema service writes under /applications/<app>/cms/<kind>, and only creates the innermost folder itself
+    private void createApplicationNodes( final ApplicationKey applicationKey )
+    {
+        ApplicationHelper.runAsAdmin( () -> {
+            final NodePath appPath = createFolderNode( new NodePath( "/applications" ), applicationKey.toString() );
+            final NodePath cmsPath = createFolderNode( appPath, SchemaResourceNames.CMS_ROOT_NAME );
+
+            for ( final String name : List.of( SchemaResourceNames.CONTENT_TYPE_ROOT_NAME, SchemaResourceNames.PART_ROOT_NAME,
+                                               SchemaResourceNames.LAYOUT_ROOT_NAME, SchemaResourceNames.PAGE_ROOT_NAME,
+                                               SchemaResourceNames.FORM_FRAGMENTS_ROOT_NAME, SchemaResourceNames.MIXINS_ROOT_NAME ) )
+            {
+                createFolderNode( cmsPath, name );
+            }
+
+            nodeService.refresh( RefreshMode.ALL );
+        } );
+    }
+
+    private NodePath createFolderNode( final NodePath parent, final String name )
+    {
+        return nodeService.create( CreateNodeParams.create()
+                                       .data( new PropertyTree() )
+                                       .name( name )
+                                       .parent( parent )
+                                       .inheritPermissions( true )
+                                       .build() ).path();
     }
 
     @BeforeEach
@@ -216,31 +238,9 @@ class DynamicSchemaServiceImplTest
 
         nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
-
-        Felix felix = createFelixInstance( cacheDir );
-        felix.start();
-
-        ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
         ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
 
-        BundleContext bundleContext = felix.getBundleContext();
-
-        AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-
-        ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
-        applicationFactoryService.activate();
-
-        ResourceServiceImpl resourceService = new ResourceServiceImpl( applicationFactoryService );
-
-        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, resourceService );
-
-        AppFilterService appFilterService = new AppFilterServiceImpl( appConfig );
-
-        ApplicationRegistry applicationRegistry =
-            new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService );
+        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
             .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
@@ -259,18 +259,8 @@ class DynamicSchemaServiceImplTest
             .build()
             .initialize();
 
-        final VirtualAppService virtualAppService = new VirtualAppService( nodeService );
-        VirtualAppInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
-
-        ApplicationService applicationService =
-            new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
-                                        new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) ) );
-
-        createSchemaAdminContext().runWith( () -> applicationService.createVirtualApplication(
-            CreateVirtualApplicationParams.create().key( ApplicationKey.from( "myapp" ) ).build() ) );
-
-        createAdminContext().runWith( () -> applicationService.createVirtualApplication(
-            CreateVirtualApplicationParams.create().key( ApplicationKey.from( "my_other_app" ) ).build() ) );
+        createApplicationNodes( ApplicationKey.from( "myapp" ) );
+        createApplicationNodes( ApplicationKey.from( "my_other_app" ) );
 
         projectService =
             new ProjectServiceImpl( repositoryService, repositoryService, indexService, nodeService, securityService, eventPublisher,
@@ -321,8 +311,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/content-types/mytype/mytype.yaml", result.getResource().getKey().toString() );
         assertTrue( result.getResource().getSize() > 0 );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -374,8 +364,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/content-types/mytype/mytype.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -415,8 +405,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -452,7 +442,7 @@ class DynamicSchemaServiceImplTest
             .build();
 
         assertThrows( ForbiddenAccessException.class,
-                      () -> VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.createContentSchema( params ) ) );
+                      () -> ctxDefault().callWith( () -> dynamicSchemaService.createContentSchema( params ) ) );
     }
 
     @Test
@@ -503,8 +493,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/form-fragments/my-fragment/my-fragment.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/form-fragments/my-fragment/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -565,7 +555,7 @@ class DynamicSchemaServiceImplTest
             .build();
 
         assertThrows( ForbiddenAccessException.class,
-                      () -> VirtualAppContext.createContext().callWith( () -> dynamicSchemaService.updateContentSchema( updateParams ) ) );
+                      () -> ctxDefault().callWith( () -> dynamicSchemaService.updateContentSchema( updateParams ) ) );
     }
 
 
@@ -603,8 +593,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -656,8 +646,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/mixins/mymixin/mymixin.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/mixins/mymixin/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -702,8 +692,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/parts/mypart/mypart.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/parts/mypart/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -761,8 +751,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/parts/mypart/mypart.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart/mypart.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/parts/mypart/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -805,8 +795,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -863,8 +853,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/layouts/mylayout/mylayout.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/layouts/mylayout/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -907,8 +897,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/pages/mypage/mypage.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/pages/mypage/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -965,8 +955,8 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, result.getResource().readString() );
         assertEquals( "myapp:/cms/pages/mypage/mypage.yaml", result.getResource().getKey().toString() );
 
-        final Node resourceNode = VirtualAppContext.createAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage/mypage.yaml" ) ) );
+        final Node resourceNode = appRepoAdminContext()
+            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/pages/mypage/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -978,7 +968,8 @@ class DynamicSchemaServiceImplTest
         final String resource = readResource( "_cms.yaml" );
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
+        // no cms descriptor until one is created
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNull();
 
         final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
             () -> dynamicSchemaService.createCms( CreateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
@@ -997,7 +988,7 @@ class DynamicSchemaServiceImplTest
         assertNotNull( cmsDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1018,7 +1009,7 @@ class DynamicSchemaServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
         createAdminContext().runWith( () -> dynamicSchemaService.createCms(
-            CreateDynamicCmsParams.create().key( applicationKey ).resource( VirtualAppConstants.CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ) );
+            CreateDynamicCmsParams.create().key( applicationKey ).resource( CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ) );
 
         final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
             () -> dynamicSchemaService.updateCms( UpdateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
@@ -1036,7 +1027,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1064,7 +1055,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1074,9 +1065,8 @@ class DynamicSchemaServiceImplTest
     {
         final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
 
-        createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) );
-
-        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
+        // no cms descriptor until one is created
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNull();
 
         createAdminContext().callWith( () -> dynamicSchemaService.createCms(
             CreateDynamicCmsParams.create().key( applicationKey ).resource( readResource( "_cms.yaml" ) ).build() ) );
@@ -1089,10 +1079,8 @@ class DynamicSchemaServiceImplTest
 
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.deleteCms( applicationKey ) ) ).isTrue();
 
-        cmsDescriptorResult = createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) );
-
-        assertThat( cmsDescriptorResult.getSchema().getForm() ).isEmpty();
-        assertThat( cmsDescriptorResult.getSchema().getMixinMappings() ).isEmpty();
+        // the deleted descriptor is gone, nothing is synthesized in its place
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNull();
     }
 
     @Test
@@ -1120,7 +1108,7 @@ class DynamicSchemaServiceImplTest
         assertNotNull( styleDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/style/style.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1150,7 +1138,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/style/style.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            VirtualAppContext.createAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/style/style.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1400,7 +1388,7 @@ class DynamicSchemaServiceImplTest
                                                                                            .type( DynamicContentSchemaType.FORM_FRAGMENT )
                                                                                            .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+        assertThrows( ForbiddenAccessException.class, () -> ctxDefault()
             .callWith( () -> dynamicSchemaService.listContentSchemas( ListDynamicContentSchemasParams.create()
                                                                           .applicationKey( applicationKey )
                                                                           .type( DynamicContentSchemaType.FORM_FRAGMENT )
@@ -1513,7 +1501,7 @@ class DynamicSchemaServiceImplTest
                 .type( DynamicContentSchemaType.CONTENT_TYPE )
                 .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () -> VirtualAppContext.createContext()
+        assertThrows( ForbiddenAccessException.class, () -> ctxDefault()
             .callWith( () -> dynamicSchemaService.deleteContentSchema( DeleteDynamicContentSchemaParams.create()
                                                                            .name( contentType.getSchema().getName() )
                                                                            .type( DynamicContentSchemaType.CONTENT_TYPE )
@@ -1685,15 +1673,6 @@ class DynamicSchemaServiceImplTest
         assertThrows( Exception.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createCms( params ) ) );
     }
 
-
-    private Felix createFelixInstance( final Path cacheDir )
-    {
-        Map<String, Object> config = new HashMap<>();
-        config.put( Constants.FRAMEWORK_STORAGE, cacheDir.toString() );
-        config.put( Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT );
-
-        return new Felix( config );
-    }
 
     private String readResource( final String suffix )
         throws Exception

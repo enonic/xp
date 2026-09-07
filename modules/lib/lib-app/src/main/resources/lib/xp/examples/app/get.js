@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Create virtual app.
+// Get app.
 var result = appLib.get({
     key: 'my_app',
 });

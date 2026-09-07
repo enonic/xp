@@ -126,7 +126,7 @@ class ApplicationRepoServiceImplTest
         final ArgumentCaptor<MoveNodeParams> moveCaptor = ArgumentCaptor.forClass( MoveNodeParams.class );
         Mockito.verify( this.nodeService ).move( moveCaptor.capture() );
         assertEquals( stagingNode.id(), moveCaptor.getValue().getNodeId() );
-        assertEquals( VirtualAppConstants.CMS_ROOT_NAME, moveCaptor.getValue().getNewNodeName().toString() );
+        assertEquals( SchemaResourceNames.CMS_ROOT_NAME, moveCaptor.getValue().getNewNodeName().toString() );
 
         Mockito.verify( this.nodeService ).refresh( RefreshMode.ALL );
     }
@@ -151,10 +151,10 @@ class ApplicationRepoServiceImplTest
             .orElseThrow();
 
         assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, iconParams.getData().getString( SchemaNodePropertyNames.MIME_TYPE ) );
-        assertEquals( VirtualAppConstants.ICON_BINARY_REFERENCE,
+        assertEquals( SchemaResourceNames.ICON_BINARY_REFERENCE,
                       iconParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
         assertNull( iconParams.getData().getString( SchemaNodePropertyNames.RESOURCE ) );
-        assertNotNull( iconParams.getBinaryAttachments().get( VirtualAppConstants.ICON_BINARY_REFERENCE ) );
+        assertNotNull( iconParams.getBinaryAttachments().get( SchemaResourceNames.ICON_BINARY_REFERENCE ) );
     }
 
     @Test
@@ -182,7 +182,7 @@ class ApplicationRepoServiceImplTest
         final ArgumentCaptor<MoveNodeParams> moveCaptor = ArgumentCaptor.forClass( MoveNodeParams.class );
         inOrder.verify( this.nodeService ).move( moveCaptor.capture() );
         assertEquals( stagingNode.id(), moveCaptor.getValue().getNodeId() );
-        assertEquals( VirtualAppConstants.CMS_ROOT_NAME, moveCaptor.getValue().getNewNodeName().toString() );
+        assertEquals( SchemaResourceNames.CMS_ROOT_NAME, moveCaptor.getValue().getNewNodeName().toString() );
     }
 
     @Test

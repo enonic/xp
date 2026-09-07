@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// List virtual apps.
+// List apps.
 var result = appLib.list();
 
 log.info('Listed apps: ' + result.map((app) => app.key).join(', '));

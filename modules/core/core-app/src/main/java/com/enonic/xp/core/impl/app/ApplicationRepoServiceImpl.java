@@ -55,11 +55,19 @@ public class ApplicationRepoServiceImpl
         }
     }
 
+    /**
+     * Node of an application in system-repo, the parent of its persisted schema ({@code cms}).
+     */
+    static NodePath applicationNodePath( final ApplicationKey applicationKey )
+    {
+        return new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
+    }
+
     @Override
     public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
         this.nodeService.delete( DeleteNodeParams.create()
-                                           .nodePath( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ) )
+                                           .nodePath( applicationNodePath( applicationKey ) )
                                            .refresh( RefreshMode.ALL )
                                            .build() );
     }
@@ -73,8 +81,8 @@ public class ApplicationRepoServiceImpl
     public void persistApplicationSchema( final ApplicationKey applicationKey, final Map<String, ByteSource> resources )
     {
         ApplicationHelper.runAsAdmin( () -> {
-            final NodePath appPath = new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
-            final NodePath cmsPath = new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
+            final NodePath appPath = applicationNodePath( applicationKey );
+            final NodePath cmsPath = new NodePath( appPath, NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) );
             final NodePath stagingPath = new NodePath( appPath, NodeName.from( CMS_STAGING_NAME ) );
 
             // leftover of an earlier failed install
@@ -114,7 +122,7 @@ public class ApplicationRepoServiceImpl
 
             this.nodeService.move( MoveNodeParams.create()
                                        .nodeId( stagingNode.id() )
-                                       .newName( NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) )
+                                       .newName( NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) )
                                        .refresh( RefreshMode.ALL )
                                        .build() );
 
@@ -157,8 +165,8 @@ public class ApplicationRepoServiceImpl
         {
             // icons are stored as node binaries, the descriptors and phrases as a text property
             data.setString( SchemaNodePropertyNames.MIME_TYPE, iconMimeType );
-            data.setBinaryReference( SchemaNodePropertyNames.ICON, VirtualAppConstants.ICON_BINARY_REFERENCE );
-            params.attachBinary( VirtualAppConstants.ICON_BINARY_REFERENCE, content );
+            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.ICON_BINARY_REFERENCE );
+            params.attachBinary( SchemaResourceNames.ICON_BINARY_REFERENCE, content );
         }
         else
         {

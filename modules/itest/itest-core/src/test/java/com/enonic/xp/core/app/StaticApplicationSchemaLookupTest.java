@@ -40,7 +40,6 @@ import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
-import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.content.schema.CmsFormFragmentServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
@@ -100,7 +99,7 @@ class StaticApplicationSchemaLookupTest
         final BundleContext bundleContext = felix.getBundleContext();
 
         final ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+            new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
@@ -110,8 +109,7 @@ class StaticApplicationSchemaLookupTest
 
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
-            new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), auditLogSupport );
+            new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ), auditLogSupport );
 
         this.contentTypeService =
             new ContentTypeServiceImpl( resourceService, applicationService, new CmsFormFragmentServiceImpl( resourceService ) );

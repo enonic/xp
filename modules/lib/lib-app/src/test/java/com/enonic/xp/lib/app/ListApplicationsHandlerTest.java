@@ -14,7 +14,7 @@ import com.enonic.xp.util.Version;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ListVirtualApplicationHandlerTest
+class ListApplicationsHandlerTest
     extends BaseAppHandlerTest
 {
     @Test
