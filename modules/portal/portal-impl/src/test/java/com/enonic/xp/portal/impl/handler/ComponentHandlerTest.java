@@ -140,6 +140,20 @@ class ComponentHandlerTest
     }
 
     @Test
+    void invalidComponentPath()
+    {
+        setupSite();
+        setupContent();
+        setupTemplates();
+
+        this.request.setRawPath( "/_/component/main-region/first" );
+
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.BAD_REQUEST, e.getStatus() );
+        assertEquals( "Invalid component path [main-region/first]", e.getMessage() );
+    }
+
+    @Test
     void getContentNotFound()
     {
         this.request.setRawPath( "/_/component/main-region/666" );

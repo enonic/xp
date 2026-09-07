@@ -109,13 +109,16 @@ public final class ImageHandlerWorker
         final ImageOrientation imageOrientation = requireNonNullElse(
             MediaUtils.readOrientation( mediaData ), ImageOrientation.TopLeft );
 
-        final int imageQuality = nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
-
-        final int backgroundColor = nullToEmpty( this.backgroundParam ).isEmpty()
-            ? DEFAULT_BACKGROUND
-            : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam, 16 );
         try
         {
+            final int imageQuality =
+                nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
+
+            final int backgroundColor = nullToEmpty( this.backgroundParam ).isEmpty()
+                ? DEFAULT_BACKGROUND
+                : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam,
+                                    16 );
+
             final Attachment attachment =
                 requireNonNull( content.getAttachments().byLabel( "source" ), "Media content must have an attachment" );
 
