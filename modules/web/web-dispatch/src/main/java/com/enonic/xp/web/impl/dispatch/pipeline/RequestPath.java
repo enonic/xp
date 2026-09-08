@@ -18,12 +18,12 @@ final class RequestPath
     static String of( final HttpServletRequest req )
     {
         final String pathInfo = req.getPathInfo();
+        final String servletPath = req.getServletPath();
+
         if ( pathInfo == null )
         {
-            return req.getServletPath();
+            return servletPath;
         }
-
-        final String servletPath = req.getServletPath();
-        return servletPath.isEmpty() ? pathInfo : servletPath + pathInfo;
+        return servletPath == null || servletPath.isEmpty() ? pathInfo : servletPath + pathInfo;
     }
 }

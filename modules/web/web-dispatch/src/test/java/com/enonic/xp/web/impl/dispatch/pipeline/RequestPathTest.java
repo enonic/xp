@@ -37,6 +37,12 @@ class RequestPathTest
     }
 
     @Test
+    void wrappedWithoutServletPath()
+    {
+        assertEquals( "/admin/tool", RequestPath.of( request( null, "/admin/tool" ) ) );
+    }
+
+    @Test
     void noPath()
     {
         assertNull( RequestPath.of( request( null, null ) ) );
