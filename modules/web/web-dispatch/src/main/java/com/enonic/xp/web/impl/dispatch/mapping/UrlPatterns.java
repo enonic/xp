@@ -62,8 +62,6 @@ final class UrlPatterns
             return false;
         }
 
-        // a * matches anything, so the leftmost occurrence of a literal is always as good a place to carry
-        // on from as any later one: there is nothing to backtrack over
         for ( int i = 1; i < literals.length - 1; i++ )
         {
             final String literal = literals[i];

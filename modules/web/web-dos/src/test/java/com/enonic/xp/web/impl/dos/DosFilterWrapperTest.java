@@ -71,7 +71,6 @@ class DosFilterWrapperTest
 
         final DosFilterWrapper filter = new DosFilterWrapper( this.config, this.delegate );
 
-        // the delegate needs a servlet context, which only a request can provide
         Mockito.verify( this.delegate, Mockito.never() ).init( Mockito.any() );
 
         filter.doFilter( this.request, this.response, this.filterChain );
@@ -96,9 +95,8 @@ class DosFilterWrapperTest
     }
 
     @Test
-    void deactivate_withoutRequest()
+    void deactivate_withoutInitialization_doesNotDestroy()
     {
-        // nothing initialized the delegate, so there is nothing to destroy
         new DosFilterWrapper( this.config, this.delegate ).deactivate();
 
         Mockito.verify( this.delegate, Mockito.never() ).destroy();

@@ -48,7 +48,6 @@ public final class DispatchServletImpl
 
         if ( filterPipeline == null || servletPipeline == null )
         {
-            // both pipelines are bound dynamically, a request can arrive before they are in place
             res.sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
             return;
         }

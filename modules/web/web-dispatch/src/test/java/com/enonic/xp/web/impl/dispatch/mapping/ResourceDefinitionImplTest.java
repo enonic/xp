@@ -43,7 +43,6 @@ public abstract class ResourceDefinitionImplTest<T, D extends ResourceDefinition
     @Test
     void testMatches()
     {
-        // a definition is ready to serve as soon as it exists, there is nothing to initialize
         final D def = newDefinition();
 
         assertFalse( def.matches( null ) );

@@ -8,8 +8,7 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletContext;
 
 /**
- * The {@link FilterConfig} the wrapped Jetty filter is initialized with. It carries no servlet context, as
- * the wrapped filter reads only init parameters.
+ * The {@link FilterConfig} the wrapped Jetty filter is initialized with.
  */
 final class FilterConfigImpl
     implements FilterConfig

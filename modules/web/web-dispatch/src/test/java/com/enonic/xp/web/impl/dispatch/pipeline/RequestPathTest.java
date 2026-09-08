@@ -21,7 +21,6 @@ class RequestPathTest
     @Test
     void mappedOnEverything()
     {
-        // how the dispatch servlet is mapped: the whole path within the context is the path info
         assertEquals( "/admin/tool", RequestPath.of( request( "", "/admin/tool" ) ) );
     }
 

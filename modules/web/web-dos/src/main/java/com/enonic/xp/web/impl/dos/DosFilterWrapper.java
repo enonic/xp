@@ -26,9 +26,6 @@ public final class DosFilterWrapper
 {
     private final DosFilterConfig config;
 
-    /**
-     * The wrapped Jetty filter, or {@code null} when the DoS filter is disabled.
-     */
     private final Filter delegate;
 
     private volatile boolean initialized;
@@ -68,10 +65,6 @@ public final class DosFilterWrapper
         this.delegate.doFilter( req, res, chain );
     }
 
-    /**
-     * Initializes the delegate. DoSFilter hands the servlet context to every rate tracker it creates, so it
-     * can only be initialized once a request has provided one.
-     */
     private void initialize( final ServletContext context )
         throws ServletException
     {

@@ -75,7 +75,6 @@ public abstract class ResourcePipelineImplTest<D extends ResourceDefinition<?>, 
         this.pipeline.add( def );
         assertThat( this.pipeline.list() ).hasSize( 2 );
 
-        // both definitions of the resource go, a stale one would keep serving requests forever
         this.pipeline.remove( def.getResource() );
         assertThat( this.pipeline.list() ).isEmpty();
     }

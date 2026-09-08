@@ -24,9 +24,12 @@ class UrlPatternsTest
 
         assertTrue( matcher.test( "/" ) );
         assertTrue( matcher.test( "/a/b/c" ) );
+    }
 
-        // as before, the leading slash is part of the pattern: an asterisk-form request target is not a path
-        assertFalse( matcher.test( "*" ) );
+    @Test
+    void matchAll_requiresTheLeadingSlash()
+    {
+        assertFalse( matcher( "/*" ).test( "*" ) );
     }
 
     @Test
@@ -76,7 +79,13 @@ class UrlPatternsTest
 
         assertFalse( matcher.test( "/app/main.css" ) );
         assertFalse( matcher.test( "/other/main.js" ) );
-        // the prefix and the suffix may not overlap to make up a match
+    }
+
+    @Test
+    void prefixAndSuffix_mayNotOverlap()
+    {
+        final Predicate<String> matcher = matcher( "/app/*.js" );
+
         assertFalse( matcher.test( "/app/" ) );
         assertFalse( matcher.test( "/app" ) );
     }
@@ -107,19 +116,27 @@ class UrlPatternsTest
     }
 
     @Test
-    void regexMetacharactersAreLiteral()
+    void dotMatchesOnlyADot()
     {
-        // a dot stands for a dot, not for any character
-        final Predicate<String> dot = matcher( "/api/v1.0/*" );
-        assertTrue( dot.test( "/api/v1.0/x" ) );
-        assertFalse( dot.test( "/api/v1X0/x" ) );
+        final Predicate<String> matcher = matcher( "/api/v1.0/*" );
 
-        // a pipe is part of the path, it does not separate alternatives
-        final Predicate<String> pipe = matcher( "/a|b" );
-        assertTrue( pipe.test( "/a|b" ) );
-        assertFalse( pipe.test( "/a" ) );
-        assertFalse( pipe.test( "b" ) );
+        assertTrue( matcher.test( "/api/v1.0/x" ) );
+        assertFalse( matcher.test( "/api/v1X0/x" ) );
+    }
 
+    @Test
+    void pipeDoesNotSeparateAlternatives()
+    {
+        final Predicate<String> matcher = matcher( "/a|b" );
+
+        assertTrue( matcher.test( "/a|b" ) );
+        assertFalse( matcher.test( "/a" ) );
+        assertFalse( matcher.test( "b" ) );
+    }
+
+    @Test
+    void everyMetacharacterIsLiteral()
+    {
         for ( final String metacharacter : List.of( "(", ")", "[", "]", "{", "}", "+", "?", "^", "$", "\\", "." ) )
         {
             final String urlPattern = "/x" + metacharacter + "y/*";
@@ -131,7 +148,6 @@ class UrlPatternsTest
     @Test
     void noPatterns()
     {
-        // the factory rejects a mapping without url patterns, a matcher without them matches nothing
         assertFalse( UrlPatterns.matcher( Set.of() ).test( "/" ) );
     }
 }

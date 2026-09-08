@@ -73,7 +73,7 @@ class ServletPipelineImplTest
     }
 
     @Test
-    void testService()
+    void service_firstMatchingDefinitionServes()
         throws Exception
     {
         final ServletDefinition def1 = newDefinition();
@@ -82,7 +82,6 @@ class ServletPipelineImplTest
         this.pipeline.add( def1 );
         this.pipeline.add( def2 );
 
-        // the first definition that serves the path handles the request, the rest are left alone
         when( def2.matches( "/a/b" ) ).thenReturn( true );
         this.pipeline.service( this.request, this.response );
 
@@ -103,7 +102,6 @@ class ServletPipelineImplTest
         final ServletDefinition def = newDefinition();
         this.pipeline.add( def );
 
-        // the raw uri still carries what the container normalized away before it routed the request
         when( this.request.getRequestURI() ).thenReturn( "/a/b;jsessionid=1" );
         when( def.matches( "/a/b" ) ).thenReturn( true );
 

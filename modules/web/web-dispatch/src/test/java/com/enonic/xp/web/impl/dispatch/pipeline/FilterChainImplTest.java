@@ -84,7 +84,6 @@ class FilterChainImplTest
     void doFilter_matchesTheDecodedPath()
         throws Exception
     {
-        // the raw uri still carries what the container normalized away before it routed the request
         Mockito.when( this.request.getRequestURI() ).thenReturn( "/x/../a/b;jsessionid=1" );
         Mockito.when( this.filter.matches( "/a/b" ) ).thenReturn( true );
 
