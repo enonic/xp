@@ -12,8 +12,6 @@ import org.osgi.framework.Constants;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
-import com.enonic.xp.app.ApplicationType;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -97,27 +95,6 @@ class AppInfoResolverTest
         final AppInfo appInfo = AppInfoResolver.resolve( source );
 
         assertEquals( "Application title", appInfo.title );
-    }
-
-    @Test
-    void descriptor_type_static()
-        throws Exception
-    {
-        final ByteSource source = wrapBundle( newBundle( "myBundle", true ).addResource( "enonic.yaml", ByteSource.wrap(
-            "kind: \"Application\"\ntype: \"Static\"\n".getBytes( StandardCharsets.UTF_8 ) ).openStream() ) );
-
-        assertEquals( ApplicationType.STATIC, AppInfoResolver.resolve( source ).type );
-    }
-
-    @Test
-    void descriptor_type_defaults_to_bundle()
-        throws Exception
-    {
-        final ByteSource withDescriptor = wrapBundle( newBundle( "myBundle", true ).addResource( "enonic.yaml", descriptorYaml( "title" ) ) );
-        assertEquals( ApplicationType.BUNDLE, AppInfoResolver.resolve( withDescriptor ).type );
-
-        final ByteSource withoutDescriptor = wrapBundle( newBundle( "myBundle", true ) );
-        assertEquals( ApplicationType.BUNDLE, AppInfoResolver.resolve( withoutDescriptor ).type );
     }
 
     @Test

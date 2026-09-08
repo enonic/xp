@@ -173,9 +173,9 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void static_app_resolver_is_multi_regardless_of_virtual_flags()
+    void cms_descriptor_app_resolver_is_multi_regardless_of_virtual_flags()
     {
-        final Bundle bundle = deploy( "app1", createStaticBundle( "app1" ) );
+        final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
 
         final AppConfig appConfig = mock( AppConfig.class );
         when( appConfig.virtual_enabled() ).thenReturn( false );
@@ -186,9 +186,10 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void static_schema_from_bundle_when_cms_node_missing()
+    void cms_descriptor_schema_from_bundle_when_cms_node_missing()
     {
-        final Bundle bundle = deploy( "app1", createStaticBundle( "app1" ) );
+        // cms/cms.yaml in the bundle: node backed, but the bundle serves the schema until it is persisted
+        final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
 
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
@@ -197,6 +198,8 @@ class ApplicationFactoryTest
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
 
+        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
+        assertNotNull( resolver.findResource( "/cms/cms.yaml" ) );
         assertNotNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
         assertNotNull( resolver.findResource( "/" + ICON_PATH ) );
         assertNotNull( resolver.findResource( "/" + PHRASES_PATH ) );
@@ -208,9 +211,9 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void static_schema_not_contributed_by_bundle_when_cms_node_exists()
+    void cms_descriptor_schema_not_contributed_by_bundle_when_cms_node_exists()
     {
-        final Bundle bundle = deploy( "app1", createStaticBundle( "app1" ) );
+        final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
 
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
@@ -272,30 +275,10 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void bundle_app_with_cms_descriptor_is_node_backed()
-    {
-        // cms/cms.yaml in the bundle: node backed regardless of type; the bundle serves the schema until it is persisted
-        final Bundle bundle = deploy( "app1", createBundleWithCmsResources( newBundle( "app1", true ) ).addResource( "cms/cms.yaml", stream(
-            "kind: \"CMS\"" ) ) );
-
-        final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
-        when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
-        RunModeSupport.set( RunMode.PROD );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
-
-        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
-        assertNotNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
-        assertNotNull( resolver.findResource( "/cms/cms.yaml" ) );
-    }
-
-    @Test
     void local_app_with_cms_descriptor_ignores_persisted_schema()
     {
         // a local application owning its schema is never shadowed by the schema persisted for the global installation
-        final Bundle bundle = deploy( "local:app1", createBundleWithCmsResources( newBundle( "app1", true ) ).addResource( "cms/cms.yaml", stream(
-            "kind: \"CMS\"" ) ) );
+        final Bundle bundle = deploy( "local:app1", createBundleWithCmsDescriptor( "app1" ) );
 
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( true );
@@ -334,10 +317,11 @@ class ApplicationFactoryTest
 
     private static final String PHRASES_PATH = "cms/i18n/phrases/phrases_en.properties";
 
-    private TinyBundle createStaticBundle( final String name )
+    private TinyBundle createBundleWithCmsDescriptor( final String name )
     {
         final TinyBundle bundle = newBundle( name, true );
-        bundle.addResource( "enonic.yaml", stream( "kind: \"Application\"\ntype: \"Static\"\n" ) );
+        bundle.addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) );
+        bundle.addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) );
         return createBundleWithCmsResources( bundle );
     }
 

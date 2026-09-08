@@ -12,15 +12,6 @@
       "type": "string",
       "const": "Application"
     },
-    "type": {
-      "type": "string",
-      "enum": [
-        "Static",
-        "Bundle"
-      ],
-      "default": "Bundle",
-      "description": "Application type. Defaults to Bundle."
-    },
     "title": {
       "$ref": "#/$defs/localizedTextDef"
     },

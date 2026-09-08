@@ -86,7 +86,6 @@ class AppInfoResolver
                 YmlApplicationDescriptorParser.parse( descriptorYaml, ApplicationKey.from( appInfo.name ) ).build();
             appInfo.title = descriptor.getTitle();
             appInfo.vendorName = descriptor.getVendorName();
-            appInfo.type = descriptor.getType();
         }
         else
         {

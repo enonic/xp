@@ -23,7 +23,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
-import com.enonic.xp.app.ApplicationType;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.context.ContextAccessor;
@@ -284,11 +283,11 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
         }
 
+        // an application shipping cms/cms.yaml owns its schema: the schema is persisted in nodes and served from there
         final Map<String, ByteSource> schemaResources;
         try
         {
-            schemaResources =
-                appInfo.type == ApplicationType.STATIC || appInfo.hasCmsDescriptor ? AppSchemaResolver.resolve( byteSource ) : null;
+            schemaResources = appInfo.hasCmsDescriptor ? AppSchemaResolver.resolve( byteSource ) : null;
         }
         catch ( Exception e )
         {

@@ -67,9 +67,9 @@ import static org.mockito.Mockito.mock;
 class ApplicationServiceTest
     extends AbstractNodeTest
 {
-    private static final String STATIC_DESCRIPTOR = "kind: \"Application\"\ntype: \"Static\"\n";
+    private static final String APP_DESCRIPTOR = "kind: \"Application\"\n";
 
-    private static final String BUNDLE_DESCRIPTOR = "kind: \"Application\"\n";
+    private static final String CMS_DESCRIPTOR = "kind: \"CMS\"";
 
     @TempDir
     public Path felixTempFolder;
@@ -150,14 +150,14 @@ class ApplicationServiceTest
     }
 
     @Test
-    void installGlobalStaticApplicationPersistsSchema()
+    void installGlobalApplicationWithCmsDescriptorPersistsSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
-                "cms/cms.yaml", "kind: \"CMS\"", //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yml", "kind: \"ContentType\"\ndisplayName: \"My type\"", //
                 "cms/content-types/mytype/mytype.svg", "<svg/>", //
                 "cms/i18n/phrases/phrases_en.properties", "key=value", //
@@ -218,13 +218,14 @@ class ApplicationServiceTest
     }
 
     @Test
-    void reinstallStaticApplicationResetsSchema()
+    void reinstallApplicationWithCmsDescriptorResetsSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"", //
                 "cms/i18n/phrases/phrases_en.properties", "key=value" ) ) );
 
@@ -232,7 +233,8 @@ class ApplicationServiceTest
             assertNotNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
 
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertEquals( appNode.id(), appNode( "staticapp" ).id() );
@@ -247,21 +249,22 @@ class ApplicationServiceTest
     }
 
     @Test
-    void reinstallAsBundleWithCmsDescriptorReplacesSchema()
+    void reinstallWithCodeAndCmsDescriptorReplacesSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNotNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
 
-            // the new version is not Static, but ships cms/cms.yaml: it owns the schema, the persisted one is replaced
+            // the new version ships code as well as cms/cms.yaml: it still owns the schema, the persisted one is replaced
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
-                "enonic.yaml", BUNDLE_DESCRIPTOR, //
-                "cms/cms.yaml", "kind: \"CMS\"", //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"", //
                 "cms/parts/mypart/mypart.yaml", "kind: \"Part\"", //
                 "cms/parts/mypart/mypart.js", "exports.get = function() {}" ) ) );
@@ -281,20 +284,21 @@ class ApplicationServiceTest
     }
 
     @Test
-    void reinstallAsBundleWithoutCmsDescriptorKeepsSchema()
+    void reinstallWithoutCmsDescriptorKeepsSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNotNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
 
             // the new version ships logic only (no cms/cms.yaml): the persisted schema stays and is still served
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
-                "enonic.yaml", BUNDLE_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/parts/mypart/mypart.js", "exports.get = function() {}", //
                 "assets/app.js", "console.log()" ) ) );
 
@@ -316,7 +320,8 @@ class ApplicationServiceTest
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "brokenschemaapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype/mytype.yaml" ) );
@@ -325,8 +330,8 @@ class ApplicationServiceTest
             // while it is being staged, so the previously persisted schema survives and the staging leftover is cleaned up
             assertThrows( RuntimeException.class, () -> applicationService.installGlobalApplication(
                 createAppSource( "brokenschemaapp", "1.0.1", Map.of( //
-                    "enonic.yaml", BUNDLE_DESCRIPTOR, //
-                    "cms/cms.yaml", "kind: \"CMS\"", //
+                    "enonic.yaml", APP_DESCRIPTOR, //
+                    "cms/cms.yaml", CMS_DESCRIPTOR, //
                     "cms/content-types/my?type/my?type.yaml", "kind: \"ContentType\"" ) ) ) );
 
             assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype/mytype.yaml" ) );
@@ -334,8 +339,8 @@ class ApplicationServiceTest
 
             // reinstalling a fixed version repairs the application: the schema is replaced and served
             applicationService.installGlobalApplication( createAppSource( "brokenschemaapp", "1.0.2", Map.of( //
-                "enonic.yaml", BUNDLE_DESCRIPTOR, //
-                "cms/cms.yaml", "kind: \"CMS\"", //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNull( schemaNode( "brokenschemaapp", "content-types/mytype/mytype.yaml" ) );
@@ -346,15 +351,15 @@ class ApplicationServiceTest
     }
 
     @Test
-    void installGlobalBundleApplicationWithCmsDescriptorPersistsSchema()
+    void installGlobalApplicationWithCodeAndCmsDescriptorPersistsSchema()
     {
         // own name: the repository is shared by the tests of this class, and a persisted schema outlives a bundle without cms/cms.yaml
         final ApplicationKey appKey = ApplicationKey.from( "schemabundleapp" );
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "schemabundleapp", "1.0.0", Map.of( //
-                "enonic.yaml", BUNDLE_DESCRIPTOR, //
-                "cms/cms.yaml", "kind: \"CMS\"", //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"", //
                 "cms/parts/mypart/mypart.yaml", "kind: \"Part\"", //
                 "cms/parts/mypart/mypart.js", "exports.get = function() {}" ) ) );
@@ -375,11 +380,12 @@ class ApplicationServiceTest
     }
 
     @Test
-    void uninstallStaticApplicationRemovesSchema()
+    void uninstallApplicationRemovesPersistedSchema()
     {
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNotNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
@@ -392,37 +398,18 @@ class ApplicationServiceTest
     }
 
     @Test
-    void installGlobalBundleApplicationDoesNotPersistSchema()
+    void installGlobalApplicationWithoutCmsDescriptorDoesNotPersistSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "bundleapp" );
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "bundleapp", "1.0.0", Map.of( //
-                "enonic.yaml", BUNDLE_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNotNull( appNode( "bundleapp" ) );
             assertNull( appChildNode( "bundleapp", "cms" ) );
 
-            final Resource contentType = resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) );
-            assertTrue( contentType.exists() );
-            assertEquals( "bundle", contentType.getResolverName() );
-        } );
-    }
-
-    @Test
-    void installLocalStaticApplicationDoesNotPersistSchema()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "localapp" );
-
-        adminContext().runWith( () -> {
-            applicationService.installLocalApplication( createAppSource( "localapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
-
-            assertNull( appNode( "localapp" ) );
-
-            // no persisted schema: the static application falls back to the bundle
             final Resource contentType = resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) );
             assertTrue( contentType.exists() );
             assertEquals( "bundle", contentType.getResolverName() );
@@ -436,8 +423,8 @@ class ApplicationServiceTest
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "overriddenapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
-                "cms/cms.yaml", "kind: \"CMS\"", //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNotNull( schemaNode( "overriddenapp", "content-types/mytype/mytype.yaml" ) );
@@ -446,8 +433,8 @@ class ApplicationServiceTest
 
             // a local build of the same application, shipping its own schema, is deployed on top of the global one
             applicationService.installLocalApplication( createAppSource( "overriddenapp", "1.0.1-SNAPSHOT", Map.of( //
-                "enonic.yaml", BUNDLE_DESCRIPTOR, //
-                "cms/cms.yaml", "kind: \"CMS\"", //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/othertype/othertype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertTrue( applicationService.isLocalApplication( appKey ) );
@@ -471,14 +458,14 @@ class ApplicationServiceTest
     }
 
     @Test
-    void installLocalBundleApplicationWithCmsDescriptorDoesNotPersistSchema()
+    void installLocalApplicationWithCmsDescriptorDoesNotPersistSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "localbundleapp" );
 
         adminContext().runWith( () -> {
             applicationService.installLocalApplication( createAppSource( "localbundleapp", "1.0.0", Map.of( //
-                "enonic.yaml", BUNDLE_DESCRIPTOR, //
-                "cms/cms.yaml", "kind: \"CMS\"", //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             // local applications are never stored: no application node, no persisted schema

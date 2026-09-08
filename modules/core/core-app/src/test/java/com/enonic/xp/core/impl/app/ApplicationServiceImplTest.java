@@ -409,7 +409,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void install_global_static_persists_schema()
+    void install_global_with_cms_descriptor_persists_schema()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
         final String bundleName = "my.bundle";
@@ -418,7 +418,7 @@ class ApplicationServiceImplTest
         mockRepoCreateNode( node );
         mockRepoGetNode( node, bundleName );
 
-        final ByteSource byteSource = createStaticBundleSource( bundleName );
+        final ByteSource byteSource = createSchemaBundleSource( bundleName );
 
         final Application application = this.service.installGlobalApplication( byteSource );
 
@@ -452,7 +452,7 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void install_global_bundle_with_cms_descriptor_persists_schema()
+    void install_global_with_cms_yml_descriptor_persists_schema()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
         final String bundleName = "my.bundle";
@@ -461,8 +461,8 @@ class ApplicationServiceImplTest
         mockRepoCreateNode( node );
         mockRepoGetNode( node, bundleName );
 
+        // no application descriptor at all, cms/cms.yml variant: still owns the schema
         this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
-                                                         .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
                                                          .addResource( "cms/cms.yml", stream( "cms-descriptor" ) )
                                                          .addResource( "cms/parts/mypart/mypart.yaml", stream( "part" ) )
                                                          .addResource( "cms/parts/mypart/mypart.js", stream( "controller" ) )
@@ -508,34 +508,11 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void install_local_static_does_not_persist_schema()
-    {
-        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
-        final String bundleName = "my.bundle";
-
-        mockRepoCreateNode( node );
-        mockRepoGetNode( node, bundleName );
-
-        final Application application = this.service.installLocalApplication( createStaticBundleSource( bundleName ) );
-
-        assertNotNull( application );
-        assertTrue( this.service.isLocalApplication( application.getKey() ) );
-
-        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-    }
-
-    @Test
-    void install_local_bundle_with_cms_descriptor_does_not_persist_schema()
+    void install_local_with_cms_descriptor_does_not_persist_schema()
     {
         final String bundleName = "my.bundle";
 
-        final Application application = this.service.installLocalApplication( wrap( newBundle( bundleName, true )
-                                                                                        .addResource( "enonic.yaml", stream(
-                                                                                            "kind: \"Application\"\n" ) )
-                                                                                        .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) )
-                                                                                        .addResource( "cms/parts/mypart/mypart.yaml",
-                                                                                                      stream( "part" ) )
-                                                                                        .build() ) );
+        final Application application = this.service.installLocalApplication( createSchemaBundleSource( bundleName ) );
 
         assertNotNull( application );
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
@@ -1066,9 +1043,9 @@ class ApplicationServiceImplTest
         return wrap( newBundle( bundleName, isApp ).build() );
     }
 
-    private ByteSource createStaticBundleSource( final String bundleName )
+    private ByteSource createSchemaBundleSource( final String bundleName )
     {
-        return wrap( newBundle( bundleName, true ).addResource( "enonic.yaml", stream( "kind: \"Application\"\ntype: \"Static\"\n" ) )
+        return wrap( newBundle( bundleName, true ).addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
                          .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) )
                          .addResource( "cms/content-types/mytype/mytype.yml", stream( "content-type" ) )
                          .addResource( "cms/content-types/mytype/mytype.svg", stream( "<svg/>" ) )

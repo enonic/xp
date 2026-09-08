@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationType;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
@@ -60,7 +59,7 @@ public final class ApplicationFactory
         final ApplicationUrlResolver appUrlResolver = hasNodeBackedSchema( bundle, appKey )
             // schema resources are served from nodes below the application node in system-repo,
             // the bundle's own schema resources are hidden as soon as the persisted schema exists.
-            ? new MultiApplicationUrlResolver( createStaticAppNodeResolver( appKey ),
+            ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey ),
                                                new FilteredApplicationUrlResolver( bundleUrlResolver, () -> schemaResourceFilter( appKey ) ) )
             : bundleUrlResolver;
 
@@ -76,23 +75,16 @@ public final class ApplicationFactory
     }
 
     /**
-     * The schema of an application lives in nodes when the bundle owns it ({@code type: Static} or shipping {@code cms/cms.yaml})
+     * The schema of an application lives in nodes when the bundle owns it (ships {@code cms/cms.yaml})
      * or when a schema persisted by an earlier version still exists (the bundle then contributes logic only).
      * A local application shipping {@code cms/cms.yaml} is the exception: it is never persisted and must not be shadowed
      * by the schema persisted for a global installation of the same application, so its schema comes from the bundle only.
      */
     private boolean hasNodeBackedSchema( final Bundle bundle, final ApplicationKey appKey )
     {
-        final boolean hasCmsDescriptor = ApplicationHelper.hasCmsDescriptor( bundle );
-
-        if ( hasCmsDescriptor && ApplicationHelper.isLocalApplication( bundle ) )
+        if ( ApplicationHelper.hasCmsDescriptor( bundle ) )
         {
-            return false;
-        }
-
-        if ( hasCmsDescriptor || ApplicationHelper.getApplicationType( bundle ) == ApplicationType.STATIC )
-        {
-            return true;
+            return !ApplicationHelper.isLocalApplication( bundle );
         }
 
         try
@@ -133,9 +125,9 @@ public final class ApplicationFactory
             : bundleUrlResolver;
     }
 
-    private NodeResourceApplicationUrlResolver createStaticAppNodeResolver( final ApplicationKey applicationKey )
+    private NodeResourceApplicationUrlResolver createPersistedSchemaResolver( final ApplicationKey applicationKey )
     {
-        return new NodeResourceApplicationUrlResolver( applicationKey, nodeService, staticAppNodePath( applicationKey ),
+        return new NodeResourceApplicationUrlResolver( applicationKey, nodeService, applicationNodePath( applicationKey ),
                                                        ApplicationHelper::createAdminContext );
     }
 
@@ -149,11 +141,11 @@ public final class ApplicationFactory
 
     private boolean schemaNodeExists( final ApplicationKey applicationKey )
     {
-        final NodePath cmsPath = new NodePath( staticAppNodePath( applicationKey ), NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
+        final NodePath cmsPath = new NodePath( applicationNodePath( applicationKey ), NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
         return ApplicationHelper.runAsAdmin( () -> nodeService.nodeExists( cmsPath ) );
     }
 
-    private static NodePath staticAppNodePath( final ApplicationKey applicationKey )
+    private static NodePath applicationNodePath( final ApplicationKey applicationKey )
     {
         return new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
     }

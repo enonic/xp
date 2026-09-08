@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 /**
  * Defines which application resources are "schema resources": descriptors, schema icons and i18n phrases located under {@code cms/}.
- * These are the resources persisted as nodes for applications that own their schema ({@code type: Static} or shipping {@code cms/cms.yaml}).
+ * These are the resources persisted as nodes for applications that own their schema (shipping {@code cms/cms.yaml}).
  */
 public final class SchemaResourcePaths
 {

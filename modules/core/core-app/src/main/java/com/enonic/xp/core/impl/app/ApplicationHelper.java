@@ -1,8 +1,5 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,14 +9,11 @@ import java.util.jar.Manifest;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationType;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -32,42 +26,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ApplicationHelper.class );
-
     private static final String LOCAL_BUNDLE_LOCATION_PREFIX = "local:";
 
     public static ApplicationKey getApplicationKey( final Bundle bundle )
     {
         return ApplicationKey.from( ApplicationBundleUtils.getApplicationName( bundle ) );
-    }
-
-    /**
-     * Resolves the application type declared in the application descriptor (enonic.yaml) of the bundle.
-     * Falls back to {@link ApplicationType#BUNDLE} when the bundle has no descriptor or the descriptor cannot be parsed.
-     */
-    static ApplicationType getApplicationType( final Bundle bundle )
-    {
-        final URL descriptorUrl = ApplicationBundleUtils.DESCRIPTOR_PATHS.stream()
-            .filter( path -> bundle.getEntry( path ) != null )
-            .findFirst()
-            .map( bundle::getResource )
-            .orElse( null );
-
-        if ( descriptorUrl == null )
-        {
-            return ApplicationType.BUNDLE;
-        }
-
-        try (InputStream stream = descriptorUrl.openStream())
-        {
-            final String yaml = new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
-            return YmlApplicationDescriptorParser.parse( yaml, getApplicationKey( bundle ) ).build().getType();
-        }
-        catch ( Exception e )
-        {
-            LOG.warn( "Unable to resolve application type of [{}], assuming {}", bundle.getSymbolicName(), ApplicationType.BUNDLE, e );
-            return ApplicationType.BUNDLE;
-        }
     }
 
     /**

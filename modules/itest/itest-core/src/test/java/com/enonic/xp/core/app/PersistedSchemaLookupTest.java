@@ -58,12 +58,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 /**
- * Verifies that schema services see the schemas of a {@code type: Static} application, which are served from nodes.
+ * Verifies that schema services see the schemas of an application shipping {@code cms/cms.yaml}, which are served from nodes.
  */
-class StaticApplicationSchemaLookupTest
+class PersistedSchemaLookupTest
     extends AbstractNodeTest
 {
-    private static final String STATIC_DESCRIPTOR = "kind: \"Application\"\ntype: \"Static\"\n";
+    private static final String APP_DESCRIPTOR = "kind: \"Application\"\n";
 
     private static final String CONTENT_TYPE = "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"My type\"\n";
 
@@ -132,7 +132,7 @@ class StaticApplicationSchemaLookupTest
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", "kind: \"CMS\"", //
                 "cms/content-types/mytype/mytype.yaml", CONTENT_TYPE, //
                 "cms/content-types/othertype/othertype.yml", CONTENT_TYPE ) ) );
@@ -152,7 +152,7 @@ class StaticApplicationSchemaLookupTest
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", STATIC_DESCRIPTOR, //
+                "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", "kind: \"CMS\"", //
                 "cms/content-types/mytype/mytype.yaml", CONTENT_TYPE, //
                 "cms/content-types/broken/broken.yaml", INVALID_CONTENT_TYPE ) ) );

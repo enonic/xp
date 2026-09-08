@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationType;
 import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +29,6 @@ public class YmlApplicationDescriptorParserTest
         assertNotNull( descriptor );
         assertEquals( MYAPP, descriptor.getKey() );
         assertEquals( "Brief description of the application", descriptor.getDescription() );
-        assertEquals( ApplicationType.BUNDLE, descriptor.getType() );
 
         final GenericValue schemaConfig = descriptor.getSchemaConfig();
         assertEquals( "value_1", schemaConfig.property( "property_1" ).asString() );
@@ -38,31 +36,10 @@ public class YmlApplicationDescriptorParserTest
     }
 
     @Test
-    void type_static()
+    void type_is_not_supported()
     {
-        final ApplicationDescriptor descriptor = parse( "kind: \"Application\"\ntype: \"Static\"\n" );
-        assertEquals( ApplicationType.STATIC, descriptor.getType() );
-    }
-
-    @Test
-    void type_bundle()
-    {
-        final ApplicationDescriptor descriptor = parse( "kind: \"Application\"\ntype: \"Bundle\"\n" );
-        assertEquals( ApplicationType.BUNDLE, descriptor.getType() );
-    }
-
-    @Test
-    void type_unknown()
-    {
-        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\ntype: \"Virtual\"\n" ) );
-        assertTrue( ex.getMessage().contains( "Unknown application type \"Virtual\"" ), ex.getMessage() );
-    }
-
-    @Test
-    void type_case_sensitive()
-    {
-        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\ntype: \"static\"\n" ) );
-        assertTrue( ex.getMessage().contains( "Unknown application type \"static\"" ), ex.getMessage() );
+        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\ntype: \"Static\"\n" ) );
+        assertTrue( ex.getMessage().contains( "\"type\"" ), ex.getMessage() );
     }
 
     private static ApplicationDescriptor parse( final String yml )
