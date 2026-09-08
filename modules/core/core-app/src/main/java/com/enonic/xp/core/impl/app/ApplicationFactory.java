@@ -9,8 +9,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.osgi.framework.Bundle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Suppliers;
 
@@ -29,8 +27,6 @@ import com.enonic.xp.server.RunMode;
 
 public final class ApplicationFactory
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ApplicationFactory.class );
-
     private final NodeService nodeService;
 
     private final AppConfig appConfig;
@@ -56,7 +52,7 @@ public final class ApplicationFactory
         final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
         final ApplicationUrlResolver bundleUrlResolver = createBundleUrlResolver( bundle );
 
-        final ApplicationUrlResolver appUrlResolver = hasNodeBackedSchema( bundle, appKey )
+        final ApplicationUrlResolver appUrlResolver = hasNodeBackedSchema( bundle )
             // schema resources are served from nodes below the application node in system-repo,
             // the bundle's own schema resources are hidden as soon as the persisted schema exists.
             ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey ),
@@ -75,27 +71,13 @@ public final class ApplicationFactory
     }
 
     /**
-     * The schema of an application lives in nodes when the bundle owns it (ships {@code cms/cms.yaml})
-     * or when a schema persisted by an earlier version still exists (the bundle then contributes logic only).
-     * A local application shipping {@code cms/cms.yaml} is the exception: it is never persisted and must not be shadowed
-     * by the schema persisted for a global installation of the same application, so its schema comes from the bundle only.
+     * The schema of an application lives in nodes when the bundle owns it (ships {@code cms/cms.yaml}) and is installed globally.
+     * A local application is never persisted and must not be shadowed by the schema persisted for a global installation
+     * of the same application, so its schema comes from the bundle only.
      */
-    private boolean hasNodeBackedSchema( final Bundle bundle, final ApplicationKey appKey )
+    private static boolean hasNodeBackedSchema( final Bundle bundle )
     {
-        if ( ApplicationHelper.hasCmsDescriptor( bundle ) )
-        {
-            return !ApplicationHelper.isLocalApplication( bundle );
-        }
-
-        try
-        {
-            return schemaNodeExists( appKey );
-        }
-        catch ( Exception e )
-        {
-            LOG.debug( "Unable to check persisted schema of [{}], assuming none", appKey, e );
-            return false;
-        }
+        return ApplicationHelper.hasCmsDescriptor( bundle ) && !ApplicationHelper.isLocalApplication( bundle );
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )

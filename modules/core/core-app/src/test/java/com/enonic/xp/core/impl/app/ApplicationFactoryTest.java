@@ -236,8 +236,8 @@ class ApplicationFactoryTest
     @Test
     void bundle_app_without_schema_uses_bundle_resolver()
     {
-        // no cms/cms.yaml in the bundle and no persisted schema: plain bundle resolver, schema descriptors come from the bundle
-        final Bundle bundle = deploy( "app1", createBundleWithCmsResources( newBundle( "app1", true ) ) );
+        // no cms/cms.yaml in the bundle and no persisted schema: plain bundle resolver serving the logic
+        final Bundle bundle = deploy( "app1", newBundle( "app1", true ).addResource( LIB_PATH, stream( "library" ) ) );
 
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
@@ -246,32 +246,25 @@ class ApplicationFactoryTest
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
 
         assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
-        assertNotNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
+        assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
     }
 
     @Test
-    void bundle_app_with_persisted_schema_is_node_backed()
+    void bundle_app_without_cms_descriptor_ignores_persisted_schema()
     {
-        // no cms/cms.yaml in the bundle, but a schema persisted by an earlier version exists: schema from nodes, logic from the bundle
-        final Bundle bundle = deploy( "app1", createBundleWithCmsResources( newBundle( "app1", true ) ).addResource( CONTROLLER_PATH,
-                                                                                                                       stream( "controller" ) ) );
+        // no cms/cms.yaml in the bundle: the bundle ships logic only, a stale persisted schema is never consulted
+        final Bundle bundle = deploy( "app1", newBundle( "app1", true ).addResource( LIB_PATH, stream( "library" ) ) );
 
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
-        when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
+        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( true );
         RunModeSupport.set( RunMode.PROD );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
 
-        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
+        assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
         assertNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
-        assertNull( resolver.findResource( "/" + ICON_PATH ) );
-        assertNull( resolver.findResource( "/" + PHRASES_PATH ) );
-        assertNotNull( resolver.findResource( "/" + CONTROLLER_PATH ) );
-
-        final Set<String> files = resolver.findFiles();
-        assertFalse( files.contains( CONTENT_TYPE_PATH ) );
-        assertTrue( files.contains( CONTROLLER_PATH ) );
+        assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
+        assertTrue( resolver.findFiles().contains( LIB_PATH ) );
     }
 
     @Test
@@ -293,25 +286,24 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void local_app_without_cms_descriptor_uses_persisted_schema()
+    void local_app_without_cms_descriptor_uses_bundle_resolver()
     {
-        // a local application shipping logic only still runs on the persisted schema
-        final Bundle bundle = deploy( "local:app1", newBundle( "app1", true ).addResource( CONTROLLER_PATH, stream( "controller" ) ) );
+        // a local application is never node backed, whether or not a schema is persisted for the global installation
+        final Bundle bundle = deploy( "local:app1", newBundle( "app1", true ).addResource( LIB_PATH, stream( "library" ) ) );
 
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
-        when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
+        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( true );
         RunModeSupport.set( RunMode.PROD );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService, appConfig ).createUrlResolver( bundle, null );
 
-        assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
-        assertNotNull( resolver.findResource( "/" + CONTROLLER_PATH ) );
+        assertInstanceOf( BundleApplicationUrlResolver.class, resolver );
+        assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
     }
 
     private static final String CONTENT_TYPE_PATH = "cms/content-types/mytype/mytype.yaml";
 
-    private static final String CONTROLLER_PATH = "cms/parts/mypart/mypart.js";
+    private static final String LIB_PATH = "lib/util.js";
 
     private static final String ICON_PATH = "cms/content-types/mytype/mytype.svg";
 

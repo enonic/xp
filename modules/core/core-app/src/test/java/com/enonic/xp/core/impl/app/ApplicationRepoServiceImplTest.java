@@ -16,7 +16,6 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
-import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeName;
@@ -86,14 +85,14 @@ class ApplicationRepoServiceImplTest
     }
 
     @Test
-    void persist_schema_builds_staging_then_swaps()
+    void persist_schema_creates_cms_tree()
     {
         final Map<String, ByteSource> resources = new LinkedHashMap<>();
         resources.put( "cms.yaml", ByteSource.wrap( "cms-descriptor".getBytes( StandardCharsets.UTF_8 ) ) );
         resources.put( "content-types/mytype/mytype.yaml", ByteSource.wrap( "content-type".getBytes( StandardCharsets.UTF_8 ) ) );
         resources.put( "i18n/phrases/phrases_en.properties", ByteSource.wrap( "phrases".getBytes( StandardCharsets.UTF_8 ) ) );
 
-        final Node stagingNode = stubCreate();
+        stubCreate();
 
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), resources );
 
@@ -103,11 +102,10 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService, Mockito.times( 8 ) ).create( captor.capture() );
 
         final List<CreateNodeParams> created = captor.getAllValues();
-        assertEquals( List.of( "/applications/myBundle/cms_staging", "/applications/myBundle/cms_staging/cms.yaml",
-                               "/applications/myBundle/cms_staging/content-types", "/applications/myBundle/cms_staging/content-types/mytype",
-                               "/applications/myBundle/cms_staging/content-types/mytype/mytype.yaml",
-                               "/applications/myBundle/cms_staging/i18n", "/applications/myBundle/cms_staging/i18n/phrases",
-                               "/applications/myBundle/cms_staging/i18n/phrases/phrases_en.properties" ),
+        assertEquals( List.of( "/applications/myBundle/cms", "/applications/myBundle/cms/cms.yaml", "/applications/myBundle/cms/content-types",
+                               "/applications/myBundle/cms/content-types/mytype", "/applications/myBundle/cms/content-types/mytype/mytype.yaml",
+                               "/applications/myBundle/cms/i18n", "/applications/myBundle/cms/i18n/phrases",
+                               "/applications/myBundle/cms/i18n/phrases/phrases_en.properties" ),
                       created.stream().map( params -> new NodePath( params.getParent(), params.getName() ).toString() ).toList() );
 
         assertEquals( "content-type", created.stream()
@@ -122,11 +120,6 @@ class ApplicationRepoServiceImplTest
             .orElseThrow()
             .getData()
             .getString( SchemaNodePropertyNames.RESOURCE ) );
-
-        final ArgumentCaptor<MoveNodeParams> moveCaptor = ArgumentCaptor.forClass( MoveNodeParams.class );
-        Mockito.verify( this.nodeService ).move( moveCaptor.capture() );
-        assertEquals( stagingNode.id(), moveCaptor.getValue().getNodeId() );
-        assertEquals( VirtualAppConstants.CMS_ROOT_NAME, moveCaptor.getValue().getNewNodeName().toString() );
 
         Mockito.verify( this.nodeService ).refresh( RefreshMode.ALL );
     }
@@ -163,43 +156,38 @@ class ApplicationRepoServiceImplTest
         final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
 
-        final Node stagingNode = stubCreate();
+        stubCreate();
 
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), Map.of() );
 
-        // the new schema is fully built (staging created) before the old one is deleted, then swapped in by rename
+        // the old schema is removed before the new one is written
         final InOrder inOrder = Mockito.inOrder( this.nodeService );
-
-        final ArgumentCaptor<CreateNodeParams> createCaptor = ArgumentCaptor.forClass( CreateNodeParams.class );
-        inOrder.verify( this.nodeService ).create( createCaptor.capture() );
-        assertEquals( ApplicationRepoServiceImpl.CMS_STAGING_NAME, createCaptor.getValue().getName().toString() );
-        assertEquals( new NodePath( "/applications/myBundle" ), createCaptor.getValue().getParent() );
 
         final ArgumentCaptor<DeleteNodeParams> deleteCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
         inOrder.verify( this.nodeService ).delete( deleteCaptor.capture() );
         assertEquals( cmsPath, deleteCaptor.getValue().getNodePath() );
 
-        final ArgumentCaptor<MoveNodeParams> moveCaptor = ArgumentCaptor.forClass( MoveNodeParams.class );
-        inOrder.verify( this.nodeService ).move( moveCaptor.capture() );
-        assertEquals( stagingNode.id(), moveCaptor.getValue().getNodeId() );
-        assertEquals( VirtualAppConstants.CMS_ROOT_NAME, moveCaptor.getValue().getNewNodeName().toString() );
+        final ArgumentCaptor<CreateNodeParams> createCaptor = ArgumentCaptor.forClass( CreateNodeParams.class );
+        inOrder.verify( this.nodeService ).create( createCaptor.capture() );
+        assertEquals( VirtualAppConstants.CMS_ROOT_NAME, createCaptor.getValue().getName().toString() );
+        assertEquals( new NodePath( "/applications/myBundle" ), createCaptor.getValue().getParent() );
     }
 
     @Test
-    void persist_schema_failure_keeps_existing_schema()
+    void persist_schema_failure_leaves_no_schema()
     {
         final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
-        final NodePath stagingPath = new NodePath( "/applications/myBundle/" + ApplicationRepoServiceImpl.CMS_STAGING_NAME );
+        // the old schema exists before the call; the freshly created cms node exists at cleanup time
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
 
-        final Node stagingNode = stagingNode();
+        final Node cmsNode = cmsNode();
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenAnswer( invocation -> {
             final CreateNodeParams params = invocation.getArgument( 0 );
             if ( "mytype.yaml".equals( params.getName().toString() ) )
             {
                 throw new RuntimeException( "node layer failure" );
             }
-            return stagingNode;
+            return cmsNode;
         } );
 
         final Map<String, ByteSource> resources =
@@ -208,45 +196,47 @@ class ApplicationRepoServiceImplTest
         assertThrows( RuntimeException.class,
                       () -> this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), resources ) );
 
-        // the previously persisted schema is untouched: only the staging node is cleaned up
+        // the old schema is removed up front and the half-written new one is removed on failure: no schema is left behind
         final ArgumentCaptor<DeleteNodeParams> deleteCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
-        Mockito.verify( this.nodeService ).delete( deleteCaptor.capture() );
-        assertEquals( stagingPath, deleteCaptor.getValue().getNodePath() );
-        Mockito.verify( this.nodeService, Mockito.never() ).move( Mockito.any( MoveNodeParams.class ) );
+        Mockito.verify( this.nodeService, Mockito.times( 2 ) ).delete( deleteCaptor.capture() );
+        assertEquals( List.of( cmsPath, cmsPath ), deleteCaptor.getAllValues().stream().map( DeleteNodeParams::getNodePath ).toList() );
+        Mockito.verify( this.nodeService, Mockito.never() ).refresh( Mockito.any() );
     }
 
     @Test
-    void persist_schema_removes_leftover_staging()
+    void delete_schema_removes_cms()
     {
-        final NodePath stagingPath = new NodePath( "/applications/myBundle/" + ApplicationRepoServiceImpl.CMS_STAGING_NAME );
-        Mockito.when( this.nodeService.nodeExists( stagingPath ) ).thenReturn( true );
+        final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
+        Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
 
-        stubCreate();
-
-        this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), Map.of() );
-
-        final InOrder inOrder = Mockito.inOrder( this.nodeService );
+        this.service.deleteApplicationSchema( ApplicationKey.from( "myBundle" ) );
 
         final ArgumentCaptor<DeleteNodeParams> deleteCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
-        inOrder.verify( this.nodeService ).delete( deleteCaptor.capture() );
-        assertEquals( stagingPath, deleteCaptor.getValue().getNodePath() );
+        Mockito.verify( this.nodeService ).delete( deleteCaptor.capture() );
+        assertEquals( cmsPath, deleteCaptor.getValue().getNodePath() );
+        Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
+    }
 
-        inOrder.verify( this.nodeService ).create( Mockito.any( CreateNodeParams.class ) );
-        inOrder.verify( this.nodeService ).move( Mockito.any( MoveNodeParams.class ) );
+    @Test
+    void delete_schema_without_persisted_schema_is_noop()
+    {
+        this.service.deleteApplicationSchema( ApplicationKey.from( "myBundle" ) );
+
+        Mockito.verify( this.nodeService, Mockito.never() ).delete( Mockito.any( DeleteNodeParams.class ) );
     }
 
     private Node stubCreate()
     {
-        final Node stagingNode = stagingNode();
-        Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenReturn( stagingNode );
-        return stagingNode;
+        final Node cmsNode = cmsNode();
+        Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenReturn( cmsNode );
+        return cmsNode;
     }
 
-    private static Node stagingNode()
+    private static Node cmsNode()
     {
         return Node.create()
             .id( new NodeId() )
-            .name( ApplicationRepoServiceImpl.CMS_STAGING_NAME )
+            .name( VirtualAppConstants.CMS_ROOT_NAME )
             .parentPath( new NodePath( "/applications/myBundle" ) )
             .build();
     }

@@ -284,7 +284,7 @@ class ApplicationServiceTest
     }
 
     @Test
-    void reinstallWithoutCmsDescriptorKeepsSchema()
+    void reinstallWithoutCmsDescriptorRemovesSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
@@ -296,25 +296,24 @@ class ApplicationServiceTest
 
             assertNotNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
 
-            // the new version ships logic only (no cms/cms.yaml): the persisted schema stays and is still served
+            // the new version ships logic only (no cms/cms.yaml, hence no schema): the persisted schema is removed,
+            // controllers, apis, assets and the like are served from the bundle as always
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
-                "cms/parts/mypart/mypart.js", "exports.get = function() {}", //
+                "lib/util.js", "exports.util = function() {}", //
                 "assets/app.js", "console.log()" ) ) );
 
             assertNotNull( appNode( "staticapp" ) );
-            assertNotNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
+            assertNull( appChildNode( "staticapp", "cms" ) );
 
-            final Resource contentType = resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) );
-            assertTrue( contentType.exists() );
-            assertEquals( "node", contentType.getResolverName() );
-            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/lib/util.js" ) ).getResolverName() );
             assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/assets/app.js" ) ).getResolverName() );
         } );
     }
 
     @Test
-    void reinstallWithBrokenSchemaKeepsPersistedSchema()
+    void reinstallWithBrokenSchemaLeavesNoSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "brokenschemaapp" );
 
@@ -326,18 +325,17 @@ class ApplicationServiceTest
 
             assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype/mytype.yaml" ) );
 
-            // "my?type" passes the schema resource pattern but is not a valid node name: persisting the new schema fails
-            // while it is being staged, so the previously persisted schema survives and the staging leftover is cleaned up
+            // "my?type" passes the schema resource pattern but is not a valid node name: persisting the new schema fails halfway,
+            // the old schema is already gone and the half-written new one is removed, so no schema is left behind
             assertThrows( RuntimeException.class, () -> applicationService.installGlobalApplication(
                 createAppSource( "brokenschemaapp", "1.0.1", Map.of( //
                     "enonic.yaml", APP_DESCRIPTOR, //
                     "cms/cms.yaml", CMS_DESCRIPTOR, //
                     "cms/content-types/my?type/my?type.yaml", "kind: \"ContentType\"" ) ) ) );
 
-            assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype/mytype.yaml" ) );
-            assertNull( appChildNode( "brokenschemaapp", "cms_staging" ) );
+            assertNull( appChildNode( "brokenschemaapp", "cms" ) );
 
-            // reinstalling a fixed version repairs the application: the schema is replaced and served
+            // reinstalling a fixed version repairs the application: the schema is persisted and served
             applicationService.installGlobalApplication( createAppSource( "brokenschemaapp", "1.0.2", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
@@ -353,7 +351,6 @@ class ApplicationServiceTest
     @Test
     void installGlobalApplicationWithCodeAndCmsDescriptorPersistsSchema()
     {
-        // own name: the repository is shared by the tests of this class, and a persisted schema outlives a bundle without cms/cms.yaml
         final ApplicationKey appKey = ApplicationKey.from( "schemabundleapp" );
 
         adminContext().runWith( () -> {

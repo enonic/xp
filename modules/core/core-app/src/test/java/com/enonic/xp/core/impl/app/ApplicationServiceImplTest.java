@@ -431,10 +431,11 @@ class ApplicationServiceImplTest
                 "<svg/>".equals( readResource( resources, "content-types/mytype/mytype.svg" ) ) &&
                 "macro".equals( readResource( resources, "macros/mymacro/mymacro.yaml" ) ) &&
                 "phrases".equals( readResource( resources, "i18n/phrases/phrases_en.properties" ) ) ) );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
     }
 
     @Test
-    void install_global_bundle_without_cms_descriptor_keeps_persisted_schema()
+    void install_global_without_cms_descriptor_removes_persisted_schema()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
         final String bundleName = "my.bundle";
@@ -442,13 +443,14 @@ class ApplicationServiceImplTest
         mockRepoCreateNode( node );
         mockRepoGetNode( node, bundleName );
 
-        // schema descriptors without cms/cms.yaml: the bundle does not own the schema, nothing is persisted (or removed)
+        // no cms/cms.yaml: the bundle ships logic only, nothing is persisted and a schema persisted by an earlier version is removed
         this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
-                                                         .addResource( "cms/content-types/mytype/mytype.yaml", stream( "content-type" ) )
-                                                         .addResource( "cms/parts/mypart/mypart.js", stream( "controller" ) )
+                                                         .addResource( "lib/util.js", stream( "library" ) )
+                                                         .addResource( "assets/app.js", stream( "asset" ) )
                                                          .build() ) );
 
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService ).deleteApplicationSchema( ApplicationKey.from( bundleName ) );
     }
 
     @Test
@@ -503,6 +505,7 @@ class ApplicationServiceImplTest
         // schema extraction fails before anything is changed: no node writes, no events, no bundle
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.eventPublisher, never() ).publish( any() );
         assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
     }
@@ -518,6 +521,7 @@ class ApplicationServiceImplTest
         assertTrue( this.service.isLocalApplication( application.getKey() ) );
 
         verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
         verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
     }
 

@@ -24,6 +24,11 @@ public interface ApplicationRepoService
      */
     void persistApplicationSchema( ApplicationKey applicationKey, Map<String, ByteSource> resources );
 
+    /**
+     * Removes the schema persisted for the application ({@code /applications/<name>/cms}), if any.
+     */
+    void deleteApplicationSchema( ApplicationKey applicationKey );
+
     Node getApplicationNode( ApplicationKey applicationKey );
 
     ByteSource getApplicationSource( NodeId nodeId );

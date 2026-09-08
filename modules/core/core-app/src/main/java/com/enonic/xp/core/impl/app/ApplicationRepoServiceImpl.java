@@ -12,7 +12,6 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
 import com.enonic.xp.node.ListNodesParams;
-import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodeIds;
@@ -31,9 +30,6 @@ public class ApplicationRepoServiceImpl
     implements ApplicationRepoService
 {
     static final NodePath APPLICATION_PATH = new NodePath( NodePath.ROOT, NodeName.from( "applications" ) );
-
-    // the new schema is staged here before replacing the cms node; the resolvers never address this name
-    static final String CMS_STAGING_NAME = "cms_staging";
 
     private final NodeService nodeService;
 
@@ -65,9 +61,8 @@ public class ApplicationRepoServiceImpl
     }
 
     /**
-     * The new schema is built in full under a staging node invisible to the resolvers (they address {@code cms} only), and only then
-     * swapped in: a failure while building leaves the previously persisted schema untouched and served. The swap itself is delete+rename;
-     * a crash in between leaves no {@code cms} node, with the complete new schema still under staging — reinstalling repairs it.
+     * The previously persisted schema is replaced by the new one. A failure while writing leaves no schema at all
+     * (the {@code cms} node is removed again), never a mix of old and new: reinstalling a fixed version repairs it.
      */
     @Override
     public void persistApplicationSchema( final ApplicationKey applicationKey, final Map<String, ByteSource> resources )
@@ -75,30 +70,25 @@ public class ApplicationRepoServiceImpl
         ApplicationHelper.runAsAdmin( () -> {
             final NodePath appPath = new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
             final NodePath cmsPath = new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
-            final NodePath stagingPath = new NodePath( appPath, NodeName.from( CMS_STAGING_NAME ) );
 
-            // leftover of an earlier failed install
-            if ( this.nodeService.nodeExists( stagingPath ) )
-            {
-                this.nodeService.delete( DeleteNodeParams.create().nodePath( stagingPath ).refresh( RefreshMode.ALL ).build() );
-            }
-
-            final Node stagingNode = this.nodeService.create( CreateNodeParams.create()
-                                                                  .parent( appPath )
-                                                                  .name( CMS_STAGING_NAME )
-                                                                  .inheritPermissions( true )
-                                                                  .refresh( RefreshMode.ALL )
-                                                                  .build() );
+            deleteIfExists( cmsPath );
 
             try
             {
-                resources.forEach( ( path, content ) -> createResourceNode( stagingPath, path, content ) );
+                this.nodeService.create( CreateNodeParams.create()
+                                             .parent( appPath )
+                                             .name( VirtualAppConstants.CMS_ROOT_NAME )
+                                             .inheritPermissions( true )
+                                             .refresh( RefreshMode.ALL )
+                                             .build() );
+
+                resources.forEach( ( path, content ) -> createResourceNode( cmsPath, path, content ) );
             }
             catch ( RuntimeException e )
             {
                 try
                 {
-                    this.nodeService.delete( DeleteNodeParams.create().nodePath( stagingPath ).refresh( RefreshMode.ALL ).build() );
+                    deleteIfExists( cmsPath );
                 }
                 catch ( Exception cleanupFailure )
                 {
@@ -107,19 +97,24 @@ public class ApplicationRepoServiceImpl
                 throw e;
             }
 
-            if ( this.nodeService.nodeExists( cmsPath ) )
-            {
-                this.nodeService.delete( DeleteNodeParams.create().nodePath( cmsPath ).refresh( RefreshMode.ALL ).build() );
-            }
-
-            this.nodeService.move( MoveNodeParams.create()
-                                       .nodeId( stagingNode.id() )
-                                       .newName( NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) )
-                                       .refresh( RefreshMode.ALL )
-                                       .build() );
-
             this.nodeService.refresh( RefreshMode.ALL );
         } );
+    }
+
+    @Override
+    public void deleteApplicationSchema( final ApplicationKey applicationKey )
+    {
+        ApplicationHelper.runAsAdmin( () -> deleteIfExists(
+            new NodePath( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ),
+                          NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) ) ) );
+    }
+
+    private void deleteIfExists( final NodePath nodePath )
+    {
+        if ( this.nodeService.nodeExists( nodePath ) )
+        {
+            this.nodeService.delete( DeleteNodeParams.create().nodePath( nodePath ).refresh( RefreshMode.ALL ).build() );
+        }
     }
 
     private void createResourceNode( final NodePath cmsPath, final String resourcePath, final ByteSource content )

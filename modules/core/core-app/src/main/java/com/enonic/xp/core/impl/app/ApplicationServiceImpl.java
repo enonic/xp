@@ -304,6 +304,10 @@ public final class ApplicationServiceImpl
         {
             repoService.persistApplicationSchema( applicationKey, schemaResources );
         }
+        else
+        {
+            repoService.deleteApplicationSchema( applicationKey );
+        }
 
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 
