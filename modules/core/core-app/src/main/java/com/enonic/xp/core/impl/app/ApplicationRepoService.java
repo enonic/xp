@@ -13,6 +13,11 @@ public interface ApplicationRepoService
 {
     Node upsertApplicationNode( AppInfo application, ByteSource source );
 
+    /**
+     * Removes the application from the node layer. A schema persisted below the application node ({@code cms}) outlives the
+     * application: the node is then kept schema-only and no longer counts as an installed application, i.e. it is not returned by
+     * {@link #getApplicationNode} or {@link #getApplications} until the application is installed again.
+     */
     void deleteApplicationNode( ApplicationKey application );
 
     /**

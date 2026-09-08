@@ -58,10 +58,33 @@ public class ApplicationRepoServiceImpl
     @Override
     public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
-        this.nodeService.delete( DeleteNodeParams.create()
-                                           .nodePath( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ) )
-                                           .refresh( RefreshMode.ALL )
-                                           .build() );
+        final NodePath appPath = new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
+        final NodePath cmsPath = new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
+
+        if ( this.nodeService.nodeExists( cmsPath ) )
+        {
+            // the persisted schema outlives the application: only the application itself is removed and the node stays schema-only.
+            // Dropping the binary reference leaves the jar attached to the node version until the next install replaces it,
+            // the data is what marks the node as not installed, see isInstalled()
+            this.nodeService.update( UpdateNodeParams.create()
+                                         .path( appPath )
+                                         .editor( toBeEdited -> toBeEdited.data = new PropertyTree() )
+                                         .refresh( RefreshMode.ALL )
+                                         .build() );
+        }
+        else
+        {
+            this.nodeService.delete( DeleteNodeParams.create().nodePath( appPath ).refresh( RefreshMode.ALL ).build() );
+        }
+    }
+
+    /**
+     * A node below {@code /applications} is an installed application only while it carries the application binary reference,
+     * a schema-only node left behind by {@link #deleteApplicationNode} is not.
+     */
+    private static boolean isInstalled( final Node node )
+    {
+        return node.data().hasProperty( ApplicationNodeTransformer.APPLICATION_BINARY_REF );
     }
 
     /**
@@ -189,7 +212,8 @@ public class ApplicationRepoServiceImpl
     @Override
     public Node getApplicationNode( final ApplicationKey applicationKey )
     {
-        return doGetNodeByName( applicationKey.getName() );
+        final Node node = doGetNodeByName( applicationKey.getName() );
+        return node != null && isInstalled( node ) ? node : null;
     }
 
     @Override
@@ -201,7 +225,7 @@ public class ApplicationRepoServiceImpl
                 .map( NodeListEntry::nodeId )
                 .collect( NodeIds.collector() ) );
 
-        return this.nodeService.getByIds( applicationIds );
+        return this.nodeService.getByIds( applicationIds ).stream().filter( ApplicationRepoServiceImpl::isInstalled ).collect( Nodes.collector() );
     }
 
     @Override

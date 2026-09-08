@@ -1,9 +1,11 @@
 package com.enonic.xp.core.impl.app;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,17 +16,24 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
+import com.enonic.xp.node.EditableNode;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.MoveNodeParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -73,9 +82,8 @@ class ApplicationRepoServiceImplTest
     {
         final AppInfo app = createApp();
 
-        Mockito.when( this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ) ) )
-            .thenReturn(
-                Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
+        // no persisted schema below the application node: the node is removed altogether
+        Mockito.when( this.nodeService.nodeExists( new NodePath( "/applications/myBundle/cms" ) ) ).thenReturn( false );
 
         this.service.deleteApplicationNode( ApplicationKey.from( app.name ) );
 
@@ -83,6 +91,70 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).delete( argCaptor.capture() );
         assertEquals( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ),
                       argCaptor.getValue().getNodePath() );
+        Mockito.verify( this.nodeService, Mockito.never() ).update( Mockito.any( UpdateNodeParams.class ) );
+    }
+
+    @Test
+    void delete_node_keeps_persisted_schema()
+    {
+        final AppInfo app = createApp();
+
+        Mockito.when( this.nodeService.nodeExists( new NodePath( "/applications/myBundle/cms" ) ) ).thenReturn( true );
+
+        this.service.deleteApplicationNode( ApplicationKey.from( app.name ) );
+
+        // the application node stays, schema-only: its data is cleared, nothing is deleted
+        final ArgumentCaptor<UpdateNodeParams> updateCaptor = ArgumentCaptor.forClass( UpdateNodeParams.class );
+        Mockito.verify( this.nodeService, Mockito.times( 1 ) ).update( updateCaptor.capture() );
+        Mockito.verify( this.nodeService, Mockito.never() ).delete( Mockito.any( DeleteNodeParams.class ) );
+
+        assertEquals( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ),
+                      updateCaptor.getValue().getPath() );
+
+        final EditableNode editableNode = new EditableNode( installedNode( "myBundle" ) );
+        updateCaptor.getValue().getEditor().edit( editableNode );
+        assertEquals( 0, editableNode.data.getTotalSize() );
+    }
+
+    @Test
+    void get_application_node_ignores_schema_only_node()
+    {
+        final NodePath appPath = new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) );
+
+        Mockito.when( this.nodeService.getByPath( appPath ) ).thenReturn( schemaOnlyNode( "myBundle" ) );
+        assertNull( this.service.getApplicationNode( ApplicationKey.from( "myBundle" ) ) );
+
+        Mockito.when( this.nodeService.getByPath( appPath ) ).thenReturn( installedNode( "myBundle" ) );
+        assertNotNull( this.service.getApplicationNode( ApplicationKey.from( "myBundle" ) ) );
+    }
+
+    @Test
+    void get_applications_skips_schema_only_nodes()
+    {
+        final Node installed = installedNode( "installedapp" );
+        final Node schemaOnly = schemaOnlyNode( "removedapp" );
+
+        Mockito.when( this.nodeService.list( Mockito.any( ListNodesParams.class ) ) )
+            .thenAnswer( invocation -> Stream.of( new NodeListEntry( installed.id(), installed.path(), Instant.EPOCH ),
+                                                  new NodeListEntry( schemaOnly.id(), schemaOnly.path(), Instant.EPOCH ) ) );
+        Mockito.when( this.nodeService.getByIds( Mockito.any( NodeIds.class ) ) ).thenReturn( Nodes.from( installed, schemaOnly ) );
+
+        final Nodes applications = this.service.getApplications();
+
+        assertEquals( Nodes.from( installed ), applications );
+    }
+
+    private static Node installedNode( final String name )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF,
+                                 BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
+        return Node.create().id( new NodeId() ).name( name ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).data( data ).build();
+    }
+
+    private static Node schemaOnlyNode( final String name )
+    {
+        return Node.create().id( new NodeId() ).name( name ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build();
     }
 
     @Test

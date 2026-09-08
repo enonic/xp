@@ -375,19 +375,40 @@ class ApplicationServiceTest
     }
 
     @Test
-    void uninstallStaticApplicationRemovesSchema()
+    void uninstallStaticApplicationKeepsSchema()
     {
+        final ApplicationKey appKey = ApplicationKey.from( "keptschemaapp" );
+
         adminContext().runWith( () -> {
-            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+            applicationService.installGlobalApplication( createAppSource( "keptschemaapp", "1.0.0", Map.of( //
                 "enonic.yaml", STATIC_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
-            assertNotNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
+            assertNotNull( schemaNode( "keptschemaapp", "content-types/mytype/mytype.yaml" ) );
 
-            applicationService.uninstallApplication( ApplicationKey.from( "staticapp" ) );
+            applicationService.uninstallApplication( appKey );
 
-            assertNull( appNode( "staticapp" ) );
-            assertNull( schemaNode( "staticapp", "content-types/mytype/mytype.yaml" ) );
+            // the application is gone, its persisted schema is not
+            assertNull( applicationService.getInstalledApplication( appKey ) );
+            assertNotNull( appNode( "keptschemaapp" ) );
+            assertNotNull( schemaNode( "keptschemaapp", "content-types/mytype/mytype.yaml" ) );
+
+            // without a bundle nothing serves the schema
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
+
+            // the schema-only node is not an installed application
+            applicationService.installAllStoredApplications();
+            assertNull( applicationService.getInstalledApplication( appKey ) );
+
+            // a logic-only build installed later runs on the kept schema
+            applicationService.installGlobalApplication( createAppSource( "keptschemaapp", "1.0.1", Map.of( //
+                "enonic.yaml", BUNDLE_DESCRIPTOR, //
+                "cms/parts/mypart/mypart.js", "exports.get = function() {}" ) ) );
+
+            assertNotNull( applicationService.getInstalledApplication( appKey ) );
+            assertEquals( "node",
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).getResolverName() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
         } );
     }
 
