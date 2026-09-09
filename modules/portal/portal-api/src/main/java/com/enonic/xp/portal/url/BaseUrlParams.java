@@ -7,6 +7,7 @@ import com.google.common.base.MoreObjects;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.descriptor.DescriptorKey;
 
+import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNullElse;
 
 
@@ -24,6 +25,8 @@ public final class BaseUrlParams
 
     private final Supplier<Content> contentSupplier;
 
+    private final String anchor;
+
     private final DescriptorKey api;
 
     private BaseUrlParams( final Builder builder )
@@ -34,6 +37,7 @@ public final class BaseUrlParams
         this.id = builder.id;
         this.path = builder.path;
         this.contentSupplier = builder.contentSupplier;
+        this.anchor = builder.anchor;
         this.api = builder.api;
     }
 
@@ -67,6 +71,11 @@ public final class BaseUrlParams
         return contentSupplier;
     }
 
+    public String getAnchor()
+    {
+        return anchor;
+    }
+
     public DescriptorKey getApi()
     {
         return api;
@@ -90,6 +99,8 @@ public final class BaseUrlParams
         private String path;
 
         private Supplier<Content> contentSupplier;
+
+        private String anchor;
 
         private DescriptorKey api;
 
@@ -137,6 +148,20 @@ public final class BaseUrlParams
         }
 
         /**
+         * Sets the site the URL is anchored at, as an id or a path, instead of resolving it
+         * from the content: the base URL is then the one configured for that site, and paths
+         * are relative to it. {@code "/"} anchors at the project itself.
+         *
+         * @param anchor id or path of the site to anchor at
+         * @return this builder
+         */
+        public Builder setAnchor( final String anchor )
+        {
+            this.anchor = emptyToNull( anchor );
+            return this;
+        }
+
+        /**
          * Requests the base URL of an API mount instead of the content base URL.
          * <p>
          * The result is the prefix that the API descriptor ({@code <application>:<name>}) gets appended to.
@@ -169,6 +194,7 @@ public final class BaseUrlParams
         helper.add( "path", this.path );
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
+        helper.add( "anchor", this.anchor );
         helper.add( "api", this.api );
         return helper.toString();
     }

@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Function;
 
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -63,7 +64,16 @@ final class ContentBaseUrlResolver
 
         if ( resolvedBaseUrl == null )
         {
-            return PathMatchers.SITE_PREFIX + baseUrlMetadata.getProjectName() + "/" + baseUrlMetadata.getBranch();
+            // no Base URL is configured: the site engine serves the anchor, so the base is its
+            // address there - paths stay relative to the anchor as with a configured Base URL
+            final StringBuilder url = new StringBuilder(
+                PathMatchers.SITE_PREFIX + baseUrlMetadata.getProjectName() + "/" + baseUrlMetadata.getBranch() );
+            final ContentPath anchorPath = baseUrlMetadata.getAnchorPath();
+            if ( !anchorPath.isRoot() )
+            {
+                UrlBuilderHelper.appendAndEncodePathParts( url, anchorPath.toString() );
+            }
+            return url.toString();
         }
 
         // the configured Base URL is used verbatim and itself determines the URL form:

@@ -17,6 +17,8 @@ public final class PageUrlParams
 
     private String baseUrl;
 
+    private String anchor;
+
     public String getId()
     {
         return this.id;
@@ -40,6 +42,11 @@ public final class PageUrlParams
     public String getBaseUrl()
     {
         return baseUrl;
+    }
+
+    public String getAnchor()
+    {
+        return anchor;
     }
 
     public PageUrlParams id( final String value )
@@ -68,14 +75,34 @@ public final class PageUrlParams
 
     /**
      * Base URL used verbatim as the prefix of the generated URL, followed by the content
-     * path relative to the nearest site (the full content path when there is no site):
-     * {@code <baseUrl>/<site-relative path>}. When set, base URL resolution from
-     * configuration and from the current request is skipped.
+     * path relative to the anchor. When set, base URL resolution from configuration and from
+     * the current request is skipped.
      * Empty value is treated as unspecified.
+     *
+     * @deprecated use {@link #anchor(String)}: a base URL alone does not say which site it
+     * belongs to, so the path cannot be made relative to it.
      */
+    @Deprecated
     public PageUrlParams baseUrl( final String value )
     {
         this.baseUrl = Strings.emptyToNull( value );
+        return this;
+    }
+
+    /**
+     * Site the URL is anchored at, as an id or a path: the URL is the Base URL configured for
+     * that site followed by the content path relative to it, and the site engine address of
+     * the site when it has no Base URL configured. {@code "/"} anchors at the project itself,
+     * and so do contents outside any site.
+     * <p>
+     * Without an anchor the URL is anchored at the site of the content, which for a content
+     * inside a nested site is that nested site. Configuration of a site is never inherited
+     * from a parent site, so the anchor alone decides which Base URL applies.
+     * Empty value is treated as unspecified.
+     */
+    public PageUrlParams anchor( final String value )
+    {
+        this.anchor = Strings.emptyToNull( value );
         return this;
     }
 
@@ -91,6 +118,7 @@ public final class PageUrlParams
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
         helper.add( "baseUrl", this.baseUrl );
+        helper.add( "anchor", this.anchor );
         return helper.toString();
     }
 }

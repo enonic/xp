@@ -27,6 +27,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -42,6 +43,9 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
@@ -333,6 +337,59 @@ class PortalUrlServiceImpl_processHtmlTest
             .callWith( () -> service.processHtml( params ) );
 
         assertEquals( "<a href=\"https://www.example.com/b/mycontent\">Content</a>", html );
+    }
+
+    @Test
+    void testContentLinkWithPageAnchor()
+    {
+        portalRequest.setMode( null );
+        portalRequest.setBaseUri( "/api/guillotine:graphql" );
+        portalRequest.setRepositoryId( null );
+        portalRequest.setBranch( null );
+        portalRequest.setRawPath( "/api/guillotine:graphql" );
+
+        final Content content = Content.create( ContentFixtures.newContent() ).build();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        // the content sits in the nested site /a/b, itself inside the site /a
+        final Site nestedSite = mockSiteWithBaseUrl( ContentPath.from( "/a/b" ), "https://nested.example.com" );
+        mockSiteWithBaseUrl( ContentPath.from( "/a" ), "https://parent.example.com" );
+
+        when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( nestedSite );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams();
+        params.value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) );
+        params.pageAnchor( "/a" );
+
+        final String html = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> service.processHtml( params ) );
+
+        // anchored at /a: its Base URL, and the content path relative to it
+        assertEquals( "<a href=\"https://parent.example.com/b/mycontent\">Content</a>", html );
+    }
+
+    private Site mockSiteWithBaseUrl( final ContentPath path, final String baseUrl )
+    {
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( path );
+
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", baseUrl );
+
+        final SiteConfigs siteConfigs = SiteConfigs.create()
+            .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
+            .build();
+
+        final PropertyTree data = new PropertyTree();
+        when( site.getData() ).thenReturn( data );
+        SiteConfigsDataSerializer.toData( siteConfigs, data.getRoot() );
+
+        when( this.contentService.getByPath( path ) ).thenReturn( site );
+
+        return site;
     }
 
     @Test

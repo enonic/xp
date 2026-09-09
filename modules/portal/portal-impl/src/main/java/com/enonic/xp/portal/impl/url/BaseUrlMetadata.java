@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
@@ -20,6 +21,8 @@ final class BaseUrlMetadata
 
     private final SiteConfigs siteConfigs;
 
+    private final ContentPath anchorPath;
+
     private BaseUrlMetadata( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
@@ -28,6 +31,7 @@ final class BaseUrlMetadata
         this.projectName = builder.projectName;
         this.branch = builder.branch;
         this.siteConfigs = builder.siteConfigs;
+        this.anchorPath = builder.anchorPath;
     }
 
     public String getBaseUrl()
@@ -38,6 +42,15 @@ final class BaseUrlMetadata
     public SiteConfigs getSiteConfigs()
     {
         return siteConfigs;
+    }
+
+    /**
+     * @return the path the base URL is anchored at: the site the URL is generated relative to,
+     * or the root of the project when it is anchored there
+     */
+    public ContentPath getAnchorPath()
+    {
+        return anchorPath;
     }
 
     public Site getNearestSite()
@@ -79,6 +92,8 @@ final class BaseUrlMetadata
 
         private SiteConfigs siteConfigs = SiteConfigs.empty();
 
+        private ContentPath anchorPath = ContentPath.ROOT;
+
         public Builder setBaseUrl( final String baseUrl )
         {
             this.baseUrl = baseUrl;
@@ -88,6 +103,12 @@ final class BaseUrlMetadata
         public Builder setSiteConfigs( final SiteConfigs siteConfigs )
         {
             this.siteConfigs = siteConfigs;
+            return this;
+        }
+
+        public Builder setAnchorPath( final ContentPath anchorPath )
+        {
+            this.anchorPath = anchorPath;
             return this;
         }
 

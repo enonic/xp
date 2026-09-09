@@ -33,6 +33,8 @@ public final class ProcessHtmlParams
 
     private String pageBaseUrl;
 
+    private String pageAnchor;
+
     public String getValue()
     {
         return this.value;
@@ -162,9 +164,30 @@ public final class ProcessHtmlParams
         return pageBaseUrl;
     }
 
+    /**
+     * @deprecated use {@link #pageAnchor(String)}: a base URL alone does not say which site it
+     * belongs to, so the path of a content link cannot be made relative to it.
+     */
+    @Deprecated
     public ProcessHtmlParams pageBaseUrl( final String pageBaseUrl )
     {
         this.pageBaseUrl = Strings.emptyToNull( pageBaseUrl );
+        return this;
+    }
+
+    public String getPageAnchor()
+    {
+        return pageAnchor;
+    }
+
+    /**
+     * Site the content links of the processed HTML are anchored at, as an id or a path.
+     *
+     * @see PageUrlParams#anchor(String)
+     */
+    public ProcessHtmlParams pageAnchor( final String pageAnchor )
+    {
+        this.pageAnchor = Strings.emptyToNull( pageAnchor );
         return this;
     }
 

@@ -49,7 +49,6 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.StyleDescriptorService;
 
@@ -200,17 +199,13 @@ public final class PortalUrlServiceImpl
                 .setBranch( params.getBranch() )
                 .setId( params.getId() )
                 .setPath( params.getPath() )
+                .setAnchor( params.getAnchor() )
                 .build();
 
             // an explicit empty base disables resolution from configuration and from the request:
             // the result is the escaped path relative to the nearest site, with a leading slash
-            final String path = new ContentBaseUrlResolver( contentService, projectService, baseUrlParams, "" ).resolve( metadata -> {
-                final Site nearestSite = metadata.getNearestSite();
-                final Content content = metadata.getContent();
-                return nearestSite != null
-                    ? content.getPath().toString().substring( nearestSite.getPath().toString().length() )
-                    : content.getPath().toString();
-            } );
+            final String path = new ContentBaseUrlResolver( contentService, projectService, baseUrlParams, "" ).resolve(
+                metadata -> ContentPathResolver.relativeToAnchor( metadata.getContent().getPath(), metadata.getAnchorPath() ) );
 
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getParams() );

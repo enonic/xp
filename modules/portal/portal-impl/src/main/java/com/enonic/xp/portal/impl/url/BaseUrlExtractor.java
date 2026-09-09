@@ -51,7 +51,10 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
+        // an anchor names the site the URL belongs to, which is what following the request would
+        // otherwise decide - so it takes the request out of play
+        if ( noExplicitContext && params.getAnchor() == null && params.getApi() == null &&
+            PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
@@ -69,20 +72,21 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
             builder.setContent( content );
 
-            Site site = null;
-            if ( content instanceof Site )
-            {
-                site = (Site) content;
-            }
-            else if ( content != null && !content.getPath().isRoot() )
-            {
-                site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
-            }
+            final Site site = context.callWith( () -> resolveSite( content ) );
 
             if ( site != null )
             {
                 builder.setNearestSite( site );
             }
+
+            // the URL is anchored at the site the base URL belongs to: the one asked for, when
+            // an anchor is given, and the site of the content otherwise. Configuration of a site
+            // is never inherited from a parent site, so the anchor decides on its own
+            final Site anchorSite = params.getAnchor() != null
+                ? context.callWith( () -> resolveSite( resolveContent( params.getAnchor() ) ) )
+                : site;
+
+            builder.setAnchorPath( anchorSite != null ? anchorSite.getPath() : ContentPath.ROOT );
 
             if ( baseUrl != null )
             {
@@ -91,9 +95,9 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             else
             {
                 final SiteConfigs siteConfigs;
-                if ( site != null )
+                if ( anchorSite != null )
                 {
-                    siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
+                    siteConfigs = SiteConfigsDataSerializer.fromData( anchorSite.getData().getRoot() );
                 }
                 else
                 {
@@ -107,6 +111,19 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         }
 
         return builder.build();
+    }
+
+    private Site resolveSite( final Content content )
+    {
+        if ( content instanceof Site )
+        {
+            return (Site) content;
+        }
+        if ( content != null && !content.getPath().isRoot() )
+        {
+            return contentService.getNearestSite( ContentId.from( content.getId() ) );
+        }
+        return null;
     }
 
     private Project resolveProject( final ProjectName projectName, final PortalRequest portalRequest )
@@ -151,10 +168,22 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         if ( params.getPath() != null )
         {
-            final ContentPath path = ContentPath.from( params.getPath() );
-            return path.isRoot() ? null : contentService.getByPath( path );
+            return resolveContent( params.getPath() );
         }
 
         return null;
+    }
+
+    /**
+     * @return the content the key denotes, or {@code null} when it denotes the root of the project
+     */
+    private Content resolveContent( final String contentKey )
+    {
+        if ( contentKey.startsWith( "/" ) )
+        {
+            final ContentPath path = ContentPath.from( contentKey );
+            return path.isRoot() ? null : contentService.getByPath( path );
+        }
+        return contentService.getById( ContentId.from( contentKey ) );
     }
 }

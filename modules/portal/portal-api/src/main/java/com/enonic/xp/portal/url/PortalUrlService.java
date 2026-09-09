@@ -7,7 +7,8 @@ public interface PortalUrlService
     String serviceUrl( ServiceUrlParams params );
 
     /**
-     * Resolves the base URL of a content anchor.
+     * Resolves the base URL of a content anchor: the Base URL configured for the site the anchor
+     * belongs to, and the site engine address of that site when it has none configured.
      * <p>
      * When {@code api} is set on the params, resolves the mount point of that API for the anchor
      * instead: {@code <baseUrl>/_} when a Base URL is configured and the API is mounted on the
@@ -25,8 +26,9 @@ public interface PortalUrlService
     /**
      * Resolves the parts of a page URL, for building the full URL from segments:
      * {@code url = <baseUrl> + path + queryString}. The path is the URL-escaped content path
-     * relative to the nearest site (the full content path when there is no site); base URL
-     * resolution from configuration and from the current request is not involved.
+     * relative to the site the URL is anchored at (the full content path when it is anchored at
+     * the project); base URL resolution from configuration and from the current request is not
+     * involved.
      */
     PageUrlParts pageUrlParts( PageUrlParams params );
 

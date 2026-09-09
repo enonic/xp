@@ -2,7 +2,6 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -10,7 +9,6 @@ import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.site.Site;
 
 final class PageBaseUrlSupplier
     implements Supplier<String>
@@ -37,12 +35,13 @@ final class PageBaseUrlSupplier
             .setBranch( params.getBranch() )
             .setId( params.getId() )
             .setPath( params.getPath() )
+            .setAnchor( params.getAnchor() )
             .build();
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final boolean preferSiteRequest = params.getBaseUrl() == null && PortalRequestHelper.isSiteBase( portalRequest ) &&
-            params.getProjectName() == null && params.getBranch() == null;
+        final boolean preferSiteRequest = params.getBaseUrl() == null && params.getAnchor() == null &&
+            PortalRequestHelper.isSiteBase( portalRequest ) && params.getProjectName() == null && params.getBranch() == null;
 
         final String baseUrl =
             new ContentBaseUrlResolver( contentService, projectService, baseUrlParams, params.getBaseUrl() ).resolve( metadata -> {
@@ -55,17 +54,9 @@ final class PageBaseUrlSupplier
                     .resolve()
                     .toString();
             }
-            else if ( metadata.getBaseUrl() == null )
-            {
-                return metadata.getContent().getPath().toString();
-            }
             else
             {
-                final Site nearestSite = metadata.getNearestSite();
-                final Content content = metadata.getContent();
-                return nearestSite != null
-                    ? content.getPath().toString().substring( nearestSite.getPath().toString().length() )
-                    : content.getPath().toString();
+                return ContentPathResolver.relativeToAnchor( metadata.getContent().getPath(), metadata.getAnchorPath() );
             }
         } );
 

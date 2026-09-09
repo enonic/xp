@@ -39,6 +39,29 @@ final class ContentPathResolver
         return this;
     }
 
+    /**
+     * @return the content path as it appears after the base URL of the anchor: relative to the
+     * anchor when the content is inside it, and the full content path when the anchor is the
+     * root of the project
+     */
+    static String relativeToAnchor( final ContentPath contentPath, final ContentPath anchorPath )
+    {
+        if ( anchorPath.isRoot() )
+        {
+            return contentPath.toString();
+        }
+
+        if ( contentPath.equals( anchorPath ) )
+        {
+            return "";
+        }
+
+        // a content outside the anchor cannot be addressed relative to it: its full path is kept
+        return contentPath.isChildOf( anchorPath )
+            ? contentPath.toString().substring( anchorPath.toString().length() )
+            : contentPath.toString();
+    }
+
     public ContentPath resolve()
     {
         if ( this.id != null )

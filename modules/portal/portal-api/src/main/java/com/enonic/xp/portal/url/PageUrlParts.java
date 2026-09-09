@@ -6,8 +6,9 @@ import org.jspecify.annotations.NullMarked;
  * Parts of a page URL, for building the full URL from segments:
  * {@code url = <baseUrl> + path + queryString}.
  *
- * @param path        URL-escaped path of the content relative to its nearest site (the full content path when there
- *                    is no site), with a leading slash; empty when the content is the site itself
+ * @param path        URL-escaped path of the content relative to the site the URL is anchored at (the full content
+ *                    path when it is anchored at the project), with a leading slash; empty when the content is the
+ *                    anchored site itself
  * @param queryString URL-escaped query string prefixed with {@code ?}; empty when there are no parameters
  */
 @NullMarked
