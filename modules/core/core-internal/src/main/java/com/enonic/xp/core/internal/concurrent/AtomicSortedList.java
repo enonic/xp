@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,6 +50,19 @@ public class AtomicSortedList<T>
     public void remove( T element )
     {
         elementsRef.updateAndGet( previous -> updateAndSort( previous, element, AtomicSortedList::subtract, comparator ) );
+    }
+
+    /**
+     * Removes all elements of this list that match the given predicate, preserving sort order.
+     *
+     * @param predicate a predicate to apply to each element to decide if it should be removed. It may be
+     *                  applied more than once, so it must not have side effects
+     */
+    public void removeIf( final Predicate<? super T> predicate )
+    {
+        requireNonNull( predicate );
+        elementsRef.updateAndGet(
+            previous -> previous.stream().filter( predicate.negate() ).collect( Collectors.toUnmodifiableList() ) );
     }
 
     /**

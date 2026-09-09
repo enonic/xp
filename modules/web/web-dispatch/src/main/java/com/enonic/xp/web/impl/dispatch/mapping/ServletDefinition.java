@@ -10,6 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface ServletDefinition
     extends ResourceDefinition<Servlet>
 {
-    boolean service( HttpServletRequest req, HttpServletResponse res )
+    void service( HttpServletRequest req, HttpServletResponse res )
         throws IOException, ServletException;
 }

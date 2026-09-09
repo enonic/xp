@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,15 +18,6 @@ class BaseWebFilterTest
             {
             }
         } );
-    }
-
-    @Test
-    void testLifecycle()
-        throws Exception
-    {
-        final BaseWebFilter filter = newFilter();
-        filter.init( Mockito.mock( FilterConfig.class ) );
-        filter.destroy();
     }
 
     @Test

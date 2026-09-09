@@ -34,6 +34,31 @@ class AtomicSortedListTest
     }
 
     @Test
+    void removeIf()
+    {
+        final AtomicSortedList<Integer> sortedList = new AtomicSortedList<Integer>( Comparator.naturalOrder() );
+        sortedList.add( 2 );
+        sortedList.add( 1 );
+        sortedList.add( 3 );
+        sortedList.add( 2 );
+
+        sortedList.removeIf( value -> value == 2 );
+
+        assertThat( sortedList.snapshot() ).containsExactly( 1, 3 );
+    }
+
+    @Test
+    void removeIf_noMatch()
+    {
+        final AtomicSortedList<Integer> sortedList = new AtomicSortedList<Integer>( Comparator.naturalOrder() );
+        sortedList.add( 1 );
+
+        sortedList.removeIf( value -> value == 2 );
+
+        assertThat( sortedList.snapshot() ).containsExactly( 1 );
+    }
+
+    @Test
     void snapshot()
     {
         final AtomicSortedList<Integer> sortedList = new AtomicSortedList<Integer>( Comparator.naturalOrder() );

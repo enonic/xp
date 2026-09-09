@@ -53,13 +53,16 @@ final class JaxRsServlet
         }
     }
 
-    @Override
-    public synchronized void destroy()
+    /**
+     * Releases the dispatcher. Called by the JaxRsService that owns this servlet.
+     */
+    synchronized void dispose()
     {
         final JaxRsDispatcher dispatcher = this.dispatcher;
         if ( dispatcher != null )
         {
             dispatcher.destroy();
+            this.dispatcher = null;
         }
     }
 

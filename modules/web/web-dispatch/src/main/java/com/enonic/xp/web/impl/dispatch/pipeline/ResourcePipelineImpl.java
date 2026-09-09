@@ -3,10 +3,6 @@ package com.enonic.xp.web.impl.dispatch.pipeline;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 
 import com.enonic.xp.core.internal.concurrent.AtomicSortedList;
 import com.enonic.xp.web.dispatch.DispatchConstants;
@@ -14,13 +10,12 @@ import com.enonic.xp.web.impl.dispatch.mapping.ResourceDefinition;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Holds the definitions of one connector, ordered by {@link ResourceDefinition#getOrder()}.
+ */
 public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     implements ResourcePipeline<T>
 {
-    private volatile ServletContext context;
-
-    private final Map<Object, T> map = new ConcurrentHashMap<>();
-
     final AtomicSortedList<T> list = new AtomicSortedList<>( Comparator.comparingInt( T::getOrder ) );
 
     private final String connector;
@@ -32,22 +27,9 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
     }
 
     @Override
-    public final void init( final ServletContext context )
-        throws ServletException
-    {
-        this.context = requireNonNull( context );
-        this.list.snapshot().forEach( r -> r.init( this.context ) );
-    }
-
     public List<T> list()
     {
         return this.list.snapshot();
-    }
-
-    @Override
-    public final void destroy()
-    {
-        this.list.snapshot().forEach( ResourceDefinition::destroy );
     }
 
     final void add( final T def )
@@ -57,25 +39,12 @@ public abstract class ResourcePipelineImpl<T extends ResourceDefinition<?>>
             return;
         }
 
-        this.map.put( def.getResource(), def );
         this.list.add( def );
-
-        if ( this.context != null )
-        {
-            def.init( this.context );
-        }
     }
 
-    final void remove( final Object key )
+    final void remove( final Object resource )
     {
-        final T def = this.map.remove( key );
-        if ( def == null )
-        {
-            return;
-        }
-
-        this.list.remove( def );
-        def.destroy();
+        this.list.removeIf( def -> def.getResource() == resource );
     }
 
     protected final List<String> getConnectorsFromProperty( final Map<String, ?> props )

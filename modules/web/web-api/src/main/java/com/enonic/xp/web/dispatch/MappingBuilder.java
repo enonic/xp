@@ -16,6 +16,17 @@ import jakarta.servlet.Servlet;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Builds the mapping of a filter or servlet, to be registered as a {@link FilterMapping} or a
+ * {@link ServletMapping} service.
+ * <p>
+ * A resource must be ready to serve requests by the time it is registered: set it up in the
+ * {@code @Activate} method of its component and tear it down in {@code @Deactivate}. The servlet lifecycle
+ * methods are not called on it, and the behaviour of a resource that relies on them is undefined.
+ * <p>
+ * At least one url pattern is required. Connectors are optional: a mapping without them is served on every
+ * connector.
+ */
 public final class MappingBuilder
 {
     private final List<String> connectors;
@@ -123,6 +134,8 @@ public final class MappingBuilder
             return this.order;
         }
 
+        @Deprecated
+        @SuppressWarnings("removal")
         @Override
         public final Map<String, String> getInitParams()
         {
@@ -142,6 +155,11 @@ public final class MappingBuilder
         }
     }
 
+    /**
+     * @deprecated Init parameters are not passed to the filter or servlet. Configure the resource in the
+     * {@code @Activate} method of its component instead. Scheduled for removal in XP 9.0.
+     */
+    @Deprecated(since = "8.2", forRemoval = true)
     public MappingBuilder initParam( final String key, final String value )
     {
         this.initParams.put( key, value );

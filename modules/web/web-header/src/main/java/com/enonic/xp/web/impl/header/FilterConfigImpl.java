@@ -1,27 +1,26 @@
-package com.enonic.xp.web.impl.dispatch.mapping;
+package com.enonic.xp.web.impl.header;
 
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 
 import jakarta.servlet.FilterConfig;
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 
-final class ResourceConfig
-    implements FilterConfig, ServletConfig
+/**
+ * The {@link FilterConfig} the wrapped Jetty filter is initialized with.
+ */
+final class FilterConfigImpl
+    implements FilterConfig
 {
     private final String name;
 
-    private final ServletContext context;
-
     private final Map<String, String> initParams;
 
-    ResourceConfig( final String name, final ServletContext context, final Map<String, String> initParams )
+    FilterConfigImpl( final String name, final Map<String, String> initParams )
     {
         this.name = name;
-        this.context = context;
-        this.initParams = initParams;
+        this.initParams = Map.copyOf( initParams );
     }
 
     @Override
@@ -33,24 +32,18 @@ final class ResourceConfig
     @Override
     public ServletContext getServletContext()
     {
-        return this.context;
+        return null;
     }
 
     @Override
-    public String getInitParameter( String key )
+    public String getInitParameter( final String name )
     {
-        return this.initParams.get( key );
+        return this.initParams.get( name );
     }
 
     @Override
     public Enumeration<String> getInitParameterNames()
     {
         return Collections.enumeration( this.initParams.keySet() );
-    }
-
-    @Override
-    public String getServletName()
-    {
-        return this.name;
     }
 }

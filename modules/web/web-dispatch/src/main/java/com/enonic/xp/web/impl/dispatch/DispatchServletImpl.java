@@ -2,13 +2,13 @@ package com.enonic.xp.web.impl.dispatch;
 
 import java.io.IOException;
 import java.util.Map;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,9 +43,18 @@ public final class DispatchServletImpl
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
+        final FilterPipeline filterPipeline = this.filterPipeline;
+        final ServletPipeline servletPipeline = this.servletPipeline;
+
+        if ( filterPipeline == null || servletPipeline == null )
+        {
+            res.sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+            return;
+        }
+
         req.setAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE, connector );
 
-        this.filterPipeline.filter( req, res, this.servletPipeline );
+        filterPipeline.filter( req, res, servletPipeline );
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
@@ -59,8 +68,7 @@ public final class DispatchServletImpl
 
     public void removeFilterPipeline( final FilterPipeline filterPipeline )
     {
-        final FilterPipeline currentFilterPipeline = this.filterPipeline;
-        if ( currentFilterPipeline == filterPipeline )
+        if ( this.filterPipeline == filterPipeline )
         {
             this.filterPipeline = null;
         }
@@ -77,27 +85,10 @@ public final class DispatchServletImpl
 
     public void removeServletPipeline( final ServletPipeline servletPipeline )
     {
-        final ServletPipeline currentServletPipeline = this.servletPipeline;
-        if ( currentServletPipeline == servletPipeline )
+        if ( this.servletPipeline == servletPipeline )
         {
             this.servletPipeline = null;
         }
-    }
-
-    @Override
-    public void init()
-        throws ServletException
-    {
-        final ServletContext servletContext = getServletContext();
-        this.filterPipeline.init( servletContext );
-        this.servletPipeline.init( servletContext );
-    }
-
-    @Override
-    public void destroy()
-    {
-        this.servletPipeline.destroy();
-        this.filterPipeline.destroy();
     }
 
     @Override

@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.servlet.ServletContext;
-
+/**
+ * An immutable filter or servlet registration, ready to serve requests. The resource it wraps is initialized
+ * by its own component; the servlet lifecycle methods are not called on it.
+ */
 public interface ResourceDefinition<T>
 {
     int getOrder();
@@ -20,7 +22,10 @@ public interface ResourceDefinition<T>
 
     T getResource();
 
-    void init( ServletContext context );
-
-    void destroy();
+    /**
+     * Returns true if this definition serves the given request path.
+     *
+     * @param path the decoded path of the request within the context
+     */
+    boolean matches( String path );
 }

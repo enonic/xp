@@ -1,6 +1,7 @@
 package com.enonic.xp.web.impl.dispatch.pipeline;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +16,7 @@ import com.enonic.xp.web.impl.dispatch.mapping.ServletDefinition;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,7 +24,7 @@ import static org.mockito.Mockito.when;
 class ServletPipelineImplTest
     extends ResourcePipelineImplTest<ServletDefinition, ServletPipelineImpl>
 {
-    @WebServlet
+    @WebServlet("/*")
     private static final class MyServlet
         extends HttpServlet
     {
@@ -47,11 +49,12 @@ class ServletPipelineImplTest
     {
         final MyServlet servlet = new MyServlet();
 
-        assertThat( this.pipeline.list.snapshot() ).isEmpty();
+        assertThat( this.pipeline.list() ).isEmpty();
         this.pipeline.addServlet( servlet, Map.of() );
+        assertThat( this.pipeline.list() ).hasSize( 1 );
 
-        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeServlet( servlet );
+        assertThat( this.pipeline.list() ).isEmpty();
     }
 
     @Test
@@ -59,16 +62,18 @@ class ServletPipelineImplTest
     {
         final ServletMapping mapping = mock( ServletMapping.class );
         when( mapping.getResource() ).thenReturn( mock( Servlet.class ) );
+        when( mapping.getUrlPatterns() ).thenReturn( Set.of( "/*" ) );
 
-        assertThat( this.pipeline.list.snapshot() ).isEmpty();
+        assertThat( this.pipeline.list() ).isEmpty();
         this.pipeline.addMapping( mapping );
+        assertThat( this.pipeline.list() ).hasSize( 1 );
 
-        assertThat( this.pipeline.list.snapshot().size() ).isEqualTo( 1 );
         this.pipeline.removeMapping( mapping );
+        assertThat( this.pipeline.list() ).isEmpty();
     }
 
     @Test
-    void testService()
+    void service_firstMatchingDefinitionServes()
         throws Exception
     {
         final ServletDefinition def1 = newDefinition();
@@ -77,16 +82,33 @@ class ServletPipelineImplTest
         this.pipeline.add( def1 );
         this.pipeline.add( def2 );
 
+        when( def2.matches( "/a/b" ) ).thenReturn( true );
+        this.pipeline.service( this.request, this.response );
+
+        verify( def1, never() ).service( this.request, this.response );
+        verify( def2, times( 1 ) ).service( this.request, this.response );
+
+        when( def1.matches( "/a/b" ) ).thenReturn( true );
         this.pipeline.service( this.request, this.response );
 
         verify( def1, times( 1 ) ).service( this.request, this.response );
         verify( def2, times( 1 ) ).service( this.request, this.response );
+    }
 
-        when( def1.service( this.request, this.response ) ).thenReturn( true );
+    @Test
+    void service_matchesTheDecodedPath()
+        throws Exception
+    {
+        final ServletDefinition def = newDefinition();
+        this.pipeline.add( def );
+
+        when( this.request.getRequestURI() ).thenReturn( "/a/b;jsessionid=1" );
+        when( def.matches( "/a/b" ) ).thenReturn( true );
+
         this.pipeline.service( this.request, this.response );
 
-        verify( def1, times( 2 ) ).service( this.request, this.response );
-        verify( def2, times( 1 ) ).service( this.request, this.response );
+        verify( def, times( 1 ) ).service( this.request, this.response );
+        verify( this.request, never() ).getRequestURI();
     }
 
     @Test
@@ -94,6 +116,17 @@ class ServletPipelineImplTest
         throws Exception
     {
         this.pipeline.service( this.request, this.response );
+        verify( this.response ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
+    }
+
+    @Test
+    void no_matching_service()
+        throws Exception
+    {
+        this.pipeline.add( newDefinition() );
+
+        this.pipeline.service( this.request, this.response );
+
         verify( this.response ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE );
     }
 }

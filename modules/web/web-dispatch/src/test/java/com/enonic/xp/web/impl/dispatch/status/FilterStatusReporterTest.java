@@ -10,7 +10,6 @@ import com.google.common.net.MediaType;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
@@ -57,24 +56,12 @@ class FilterStatusReporterTest
                                          jsonTestHelper.bytesToJson( outputStream.toByteArray() ) );
     }
 
-    @WebFilter
+    @WebFilter("/*")
     private static final class MyFilter
         implements Filter
     {
         @Override
-        public void init( final FilterConfig config )
-        {
-            // Do nothing
-        }
-
-        @Override
         public void doFilter( final ServletRequest req, final ServletResponse res, final FilterChain chain )
-        {
-            // Do nothing
-        }
-
-        @Override
-        public void destroy()
         {
             // Do nothing
         }
