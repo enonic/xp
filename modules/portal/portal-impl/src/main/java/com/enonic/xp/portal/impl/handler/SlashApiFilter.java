@@ -68,18 +68,24 @@ public final class SlashApiFilter
             return;
         }
 
-        final WebRequest webRequest = webSerializerService.request( req );
-        webRequest.setBody( readBody( req ) );
-        final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
-        webRequest.setWebSocketContext( webSocketContext );
-
+        WebRequest webRequest = null;
         WebResponse webResponse;
         try
         {
+            webRequest = webSerializerService.request( req );
+            webRequest.setBody( readBody( req ) );
+            final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
+            webRequest.setWebSocketContext( webSocketContext );
+
             webResponse = slashApiHandler.handle( webRequest );
         }
         catch ( Exception e )
         {
+            if ( webRequest == null )
+            {
+                webRequest = new WebRequest();
+                webRequest.setRawRequest( req );
+            }
             webResponse = exceptionRenderer.render( webRequest, e );
         }
 
@@ -94,14 +100,25 @@ public final class SlashApiFilter
     private static String readBody( final HttpServletRequest req )
         throws IOException
     {
-        final String contentType = req.getContentType();
+        final MediaType mediaType = parseMediaType( req.getContentType() );
+        return mediaType != null && ( mediaType.is( MediaType.ANY_TEXT_TYPE ) || mediaType.is( MediaType.JSON_UTF_8.withoutParameters() ) )
+            ? CharStreams.toString( req.getReader() )
+            : null;
+    }
+
+    private static MediaType parseMediaType( final String contentType )
+    {
         if ( contentType == null )
         {
             return null;
         }
-        final MediaType mediaType = MediaType.parse( contentType );
-        return mediaType.is( MediaType.ANY_TEXT_TYPE ) || mediaType.is( MediaType.JSON_UTF_8.withoutParameters() )
-            ? CharStreams.toString( req.getReader() )
-            : null;
+        try
+        {
+            return MediaType.parse( contentType );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            return null;
+        }
     }
 }

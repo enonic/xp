@@ -8,6 +8,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.web.HttpMethod;
+import com.enonic.xp.web.HttpStatus;
+import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
 
@@ -23,7 +25,7 @@ public final class RequestSerializer
     public void serialize( final HttpServletRequest request )
     {
         webRequest.setRawRequest( request );
-        webRequest.setMethod( HttpMethod.valueOf( request.getMethod() ) );
+        webRequest.setMethod( parseMethod( request.getMethod() ) );
         webRequest.setScheme( request.getScheme() );
         webRequest.setHost( request.getServerName() );
         webRequest.setPort( request.getServerPort() );
@@ -36,6 +38,18 @@ public final class RequestSerializer
         setParameters( request, webRequest );
         setHeaders( request, webRequest );
         setCookies( request, webRequest );
+    }
+
+    private static HttpMethod parseMethod( final String method )
+    {
+        try
+        {
+            return HttpMethod.valueOf( method );
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
+        }
     }
 
     private void setHeaders( final HttpServletRequest from, final WebRequest to )

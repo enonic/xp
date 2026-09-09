@@ -63,6 +63,15 @@ class RequestBodyReaderTest
     }
 
     @Test
+    void readMalformedContentType()
+        throws Exception
+    {
+        setText( "foo", "Hello World" );
+
+        assertNull( RequestBodyReader.readBody( this.req ) );
+    }
+
+    @Test
     void readText()
         throws Exception
     {
