@@ -541,6 +541,20 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void install_global_descriptor_name_mismatch()
+    {
+        // "name" in enonic.yaml must denote the bundle itself
+        final ByteSource byteSource = wrap( newBundle( "my.bundle", true )
+                                                .addResource( "enonic.yaml", stream( "kind: \"Application\"\nname: \"other.bundle\"\n" ) )
+                                                .build() );
+
+        assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( byteSource ) );
+
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
+    }
+
+    @Test
     void install_global_denied()
     {
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( false );

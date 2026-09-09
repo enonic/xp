@@ -98,6 +98,30 @@ class AppInfoResolverTest
     }
 
     @Test
+    void descriptor_name_matches_bundle()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle( newBundle( "myBundle", true ).addResource( "enonic.yaml", content(
+            "kind: \"Application\"\nname: \"myBundle\"\ntitle: \"Title\"\n" ) ) );
+
+        final AppInfo appInfo = AppInfoResolver.resolve( source );
+
+        assertEquals( "myBundle", appInfo.name );
+        assertEquals( "Title", appInfo.title );
+    }
+
+    @Test
+    void descriptor_name_not_matching_bundle_is_invalid()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle(
+            newBundle( "myBundle", true ).addResource( "enonic.yaml", content( "kind: \"Application\"\nname: \"otherBundle\"\n" ) ) );
+
+        final Exception ex = assertThrows( Exception.class, () -> AppInfoResolver.resolve( source ) );
+        assertTrue( ex.getMessage().contains( "does not match application \"myBundle\"" ), ex.getMessage() );
+    }
+
+    @Test
     void has_cms_descriptor_yaml()
         throws Exception
     {

@@ -36,6 +36,29 @@ public class YmlApplicationDescriptorParserTest
     }
 
     @Test
+    void name_matching_application()
+    {
+        final ApplicationDescriptor descriptor = parse( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"My app\"\n" );
+        assertEquals( MYAPP, descriptor.getKey() );
+        assertEquals( "My app", descriptor.getTitle() );
+    }
+
+    @Test
+    void name_not_matching_application()
+    {
+        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\nname: \"otherapp\"\n" ) );
+        assertTrue( ex.getMessage().contains( "Application name \"otherapp\" in descriptor does not match application \"myapp\"" ),
+                    ex.getMessage() );
+    }
+
+    @Test
+    void name_invalid()
+    {
+        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\nname: \"my-app\"\n" ) );
+        assertTrue( ex.getMessage().contains( "ApplicationKey is invalid: my-app" ), ex.getMessage() );
+    }
+
+    @Test
     void type_is_not_supported()
     {
         final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\ntype: \"Static\"\n" ) );
