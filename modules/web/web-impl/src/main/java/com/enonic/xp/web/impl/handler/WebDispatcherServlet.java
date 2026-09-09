@@ -55,12 +55,26 @@ public final class WebDispatcherServlet
     protected void service( final HttpServletRequest req, final HttpServletResponse res )
         throws ServletException, IOException
     {
-        final WebRequest webRequest = webSerializerService.request( req );
-        final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
-        webRequest.setWebSocketContext( webSocketContext );
-        webRequest.setBody( RequestBodyReader.readBody( req ) );
+        WebRequest webRequest = null;
+        WebResponse webResponse;
+        try
+        {
+            webRequest = webSerializerService.request( req );
+            final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
+            webRequest.setWebSocketContext( webSocketContext );
+            webRequest.setBody( RequestBodyReader.readBody( req ) );
 
-        final WebResponse webResponse = doHandle( webRequest );
+            webResponse = exceptionRenderer.maybeThrow( webRequest, webDispatcher.dispatch( webRequest, WebResponse.create().build() ) );
+        }
+        catch ( Exception e )
+        {
+            if ( webRequest == null )
+            {
+                webRequest = new WebRequest();
+                webRequest.setRawRequest( req );
+            }
+            webResponse = exceptionRenderer.render( webRequest, e );
+        }
 
         if ( webRequest.getWebSocketContext() != null && webResponse.getWebSocket() != null )
         {
@@ -74,18 +88,6 @@ public final class WebDispatcherServlet
         }
 
         webSerializerService.response( webRequest, webResponse, res );
-    }
-
-    private WebResponse doHandle( final WebRequest webRequest )
-    {
-        try
-        {
-            return exceptionRenderer.maybeThrow( webRequest, webDispatcher.dispatch( webRequest, WebResponse.create().build() ) );
-        }
-        catch ( Exception e )
-        {
-            return exceptionRenderer.render( webRequest, e );
-        }
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
