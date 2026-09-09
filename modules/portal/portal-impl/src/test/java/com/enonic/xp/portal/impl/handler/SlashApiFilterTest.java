@@ -18,7 +18,6 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
