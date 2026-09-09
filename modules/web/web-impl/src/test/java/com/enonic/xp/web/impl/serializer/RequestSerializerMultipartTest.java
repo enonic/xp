@@ -115,12 +115,13 @@ class RequestSerializerMultipartTest
         assertTrue( RequestSerializer.isMultipart( "multipart/form-data; boundary=x" ) );
         assertTrue( RequestSerializer.isMultipart( "MULTIPART/FORM-DATA ; boundary=x" ) );
         assertTrue( RequestSerializer.isMultipart( "multipart/mixed; boundary=x" ) );
-        assertTrue( RequestSerializer.isMultipart( "multipart/related; type=application/xop+xml" ) );
-        assertTrue( RequestSerializer.isMultipart( " Multipart/Byteranges" ) );
+        assertTrue( RequestSerializer.isMultipart( "multipart/related; type=\"application/xop+xml\"" ) );
+        assertTrue( RequestSerializer.isMultipart( "Multipart/Byteranges" ) );
         assertFalse( RequestSerializer.isMultipart( "multipartx/form-data" ) );
         assertFalse( RequestSerializer.isMultipart( "application/x-www-form-urlencoded" ) );
         assertFalse( RequestSerializer.isMultipart( "text/plain" ) );
         assertFalse( RequestSerializer.isMultipart( "" ) );
+        assertFalse( RequestSerializer.isMultipart( "multipart" ) );
         assertFalse( RequestSerializer.isMultipart( null ) );
     }
 }

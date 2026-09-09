@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.google.common.base.Splitter;
+import com.google.common.net.MediaType;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class RequestSerializer
 {
-    private static final String MULTIPART_PREFIX = "multipart/";
+    private static final MediaType ANY_MULTIPART_TYPE = MediaType.create( "multipart", "*" );
 
     private final WebRequest webRequest;
 
@@ -102,21 +103,14 @@ public final class RequestSerializer
         {
             return false;
         }
-        final int parameters = contentType.indexOf( ';' );
-        int end = parameters < 0 ? contentType.length() : parameters;
-        int start = 0;
-
-        while ( start < end && Character.isWhitespace( contentType.charAt( start ) ) )
+        try
         {
-            start++;
+            return MediaType.parse( contentType ).is( ANY_MULTIPART_TYPE );
         }
-        while ( end > start && Character.isWhitespace( contentType.charAt( end - 1 ) ) )
+        catch ( IllegalArgumentException e )
         {
-            end--;
+            return false;
         }
-
-        return end - start >= MULTIPART_PREFIX.length() &&
-            contentType.regionMatches( true, start, MULTIPART_PREFIX, 0, MULTIPART_PREFIX.length() );
     }
 
     static void addQueryParameters( final String queryString, final WebRequest to )
