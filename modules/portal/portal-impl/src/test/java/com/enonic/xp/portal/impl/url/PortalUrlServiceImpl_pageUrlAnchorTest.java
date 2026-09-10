@@ -13,6 +13,7 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.BaseUrlParams;
+import com.enonic.xp.portal.url.ContentOutOfScopeException;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.repository.RepositoryId;
@@ -25,6 +26,7 @@ import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -228,7 +230,7 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     }
 
     @Test
-    void testAnchoredAtSiteNotContainingTheContent()
+    void testSelectedSiteDoesNotContainTheContent()
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
@@ -237,9 +239,23 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
 
         final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() ).base( siteBase( "/features/sub" ) );
 
-        // the content cannot be addressed relative to that site, so its full path is kept
-        assertEquals( "https://sub.com/features/subsite/folder", this.service.pageUrl( params ) );
-        assertEquals( "/features/subsite/folder", this.service.pageUrlParts( params ).path() );
+        // the Base URL of that site does not lead to the content, so there is no URL to give
+        assertThatThrownBy( () -> this.service.pageUrl( params ) ).isInstanceOf( ContentOutOfScopeException.class )
+            .hasMessageContaining( "/features/subsite/folder" )
+            .hasMessageContaining( "/features/sub" );
+        assertThatThrownBy( () -> this.service.pageUrlParts( params ) ).isInstanceOf( ContentOutOfScopeException.class );
+    }
+
+    @Test
+    void testSelectedSiteIsInsideTheContent()
+    {
+        mockNestedSites( "https://features.com", "https://subsite.com" );
+
+        // the content is the parent site, above the selected one - equally unreachable from it
+        final PageUrlParams params = new PageUrlParams().path( FEATURES.toString() ).base( siteBase( SUBSITE.toString() ) );
+
+        assertThatThrownBy( () -> this.service.pageUrl( params ) ).isInstanceOf( ContentOutOfScopeException.class );
+        assertThatThrownBy( () -> this.service.pageUrlParts( params ) ).isInstanceOf( ContentOutOfScopeException.class );
     }
 
     @Test

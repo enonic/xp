@@ -22,6 +22,10 @@ public interface PortalUrlService
      */
     String baseUrl( BaseUrlParams params );
 
+    /**
+     * @throws ContentOutOfScopeException if the site or project the URL is asked to belong to
+     * does not contain the content
+     */
     String pageUrl( PageUrlParams params );
 
     /**
@@ -29,6 +33,9 @@ public interface PortalUrlService
      * {@code url = <baseUrl> + path + queryString}. The path is the URL-escaped content path
      * relative to the site or project the URL belongs to; base URL resolution from configuration
      * and from the current request is not involved.
+     *
+     * @throws ContentOutOfScopeException if the site or project the URL is asked to belong to
+     * does not contain the content
      */
     PageUrlParts pageUrlParts( PageUrlParams params );
 

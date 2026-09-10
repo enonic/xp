@@ -78,6 +78,10 @@ public final class PageUrlParams
      * Without it the URL belongs to the innermost level containing the content. Configuration is
      * never inherited from a level above, so the selected one alone decides which Base URL
      * applies.
+     * <p>
+     * The content has to be inside the selected level, or be that level itself. There is no URL
+     * for a content elsewhere - the base URL of the level does not lead to it - so one is refused
+     * rather than assembled: see {@link ContentOutOfScopeException}.
      */
     public PageUrlParams base( final BaseUrlParams value )
     {
