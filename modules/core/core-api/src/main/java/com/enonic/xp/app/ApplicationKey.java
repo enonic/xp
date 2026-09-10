@@ -36,7 +36,18 @@ public final class ApplicationKey
 
     public static final ApplicationKey BASE = new ApplicationKey( "base" );
 
-    public static final ApplicationKeys SYSTEM_RESERVED_APPLICATION_KEYS = ApplicationKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE );
+    public static final ApplicationKey SERVER = new ApplicationKey( "server" );
+
+    public static final ApplicationKey ADMIN = new ApplicationKey( "admin" );
+
+    public static final ApplicationKey XP = new ApplicationKey( "xp" );
+
+    public static final ApplicationKey ENONIC = new ApplicationKey( "enonic" );
+
+    public static final ApplicationKey CMS = new ApplicationKey( "cms" );
+
+    public static final ApplicationKeys SYSTEM_RESERVED_APPLICATION_KEYS =
+        ApplicationKeys.from( SYSTEM, MEDIA_MOD, PORTAL, BASE, SERVER, ADMIN, XP, ENONIC, CMS );
 
     private final String name;
 
@@ -76,6 +87,11 @@ public final class ApplicationKey
             case "media" -> MEDIA_MOD;
             case "portal" -> PORTAL;
             case "base" -> BASE;
+            case "server" -> SERVER;
+            case "admin" -> ADMIN;
+            case "xp" -> XP;
+            case "enonic" -> ENONIC;
+            case "cms" -> CMS;
             default -> new ApplicationKey( APPLICATION_KEY_VALIDATOR.validate( name ) );
         };
     }
