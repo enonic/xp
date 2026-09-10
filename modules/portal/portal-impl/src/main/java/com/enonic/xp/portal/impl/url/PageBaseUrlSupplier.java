@@ -2,15 +2,12 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.project.ProjectService;
-import com.enonic.xp.site.Site;
 
 final class PageBaseUrlSupplier
     implements Supplier<String>
@@ -31,43 +28,29 @@ final class PageBaseUrlSupplier
     @Override
     public String get()
     {
-        final BaseUrlParams baseUrlParams = BaseUrlParams.create()
-            .setUrlType( params.getType() )
-            .setProjectName( params.getProjectName() )
-            .setBranch( params.getBranch() )
-            .setId( params.getId() )
-            .setPath( params.getPath() )
-            .build();
-
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        final boolean preferSiteRequest = params.getBaseUrl() == null && PortalRequestHelper.isSiteBase( portalRequest ) &&
+        // selecting a level is a statement about where the URL belongs, which is what following
+        // the request would otherwise decide - so it takes the request out of play
+        final boolean preferSiteRequest = params.getBase() == null && PortalRequestHelper.isSiteBase( portalRequest ) &&
             params.getProjectName() == null && params.getBranch() == null;
 
         final String baseUrl =
-            new ContentBaseUrlResolver( contentService, projectService, baseUrlParams, params.getBaseUrl() ).resolve( metadata -> {
-            if ( preferSiteRequest )
-            {
-                return new ContentPathResolver().portalRequest( portalRequest )
-                    .contentService( this.contentService )
-                    .id( params.getId() )
-                    .path( params.getPath() )
-                    .resolve()
-                    .toString();
-            }
-            else if ( metadata.getBaseUrl() == null )
-            {
-                return metadata.getContent().getPath().toString();
-            }
-            else
-            {
-                final Site nearestSite = metadata.getNearestSite();
-                final Content content = metadata.getContent();
-                return nearestSite != null
-                    ? content.getPath().toString().substring( nearestSite.getPath().toString().length() )
-                    : content.getPath().toString();
-            }
-        } );
+            new ContentBaseUrlResolver( contentService, projectService, PageBase.params( params ), preferSiteRequest ).resolve(
+                metadata -> {
+                    if ( preferSiteRequest )
+                    {
+                        return new ContentPathResolver().portalRequest( portalRequest )
+                            .contentService( this.contentService )
+                            .id( params.getId() )
+                            .path( params.getPath() )
+                            .resolve()
+                            .toString();
+                    }
+
+                    return ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
+                                                                 PageBase.level( params, metadata ) );
+                } );
 
         return preferSiteRequest ? UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getType(), baseUrl ) : baseUrl;
     }

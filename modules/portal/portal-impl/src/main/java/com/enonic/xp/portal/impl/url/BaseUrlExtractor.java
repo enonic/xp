@@ -31,7 +31,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         this.projectService = requireNonNull( projectService );
     }
 
-    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl )
+    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest )
     {
         final boolean noExplicitContext = baseUrl == null && params.getProjectName() == null && params.getBranch() == null;
 
@@ -51,7 +51,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( followRequest && noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
@@ -69,15 +69,10 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
             builder.setContent( content );
 
-            Site site = null;
-            if ( content instanceof Site )
-            {
-                site = (Site) content;
-            }
-            else if ( content != null && !content.getPath().isRoot() )
-            {
-                site = context.callWith( () -> contentService.getNearestSite( ContentId.from( content.getId() ) ) );
-            }
+            // the base URL belongs to the site of this content, and the URL is anchored there.
+            // Configuration of a site is never inherited from a parent site, so that site decides
+            // on its own which Base URL applies
+            final Site site = context.callWith( () -> resolveSite( content ) );
 
             if ( site != null )
             {
@@ -107,6 +102,19 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         }
 
         return builder.build();
+    }
+
+    private Site resolveSite( final Content content )
+    {
+        if ( content instanceof Site )
+        {
+            return (Site) content;
+        }
+        if ( content != null && !content.getPath().isRoot() )
+        {
+            return contentService.getNearestSite( ContentId.from( content.getId() ) );
+        }
+        return null;
     }
 
     private Project resolveProject( final ProjectName projectName, final PortalRequest portalRequest )
@@ -151,10 +159,22 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         if ( params.getPath() != null )
         {
-            final ContentPath path = ContentPath.from( params.getPath() );
-            return path.isRoot() ? null : contentService.getByPath( path );
+            return resolveContent( params.getPath() );
         }
 
         return null;
+    }
+
+    /**
+     * @return the content the key denotes, or {@code null} when it denotes the root of the project
+     */
+    Content resolveContent( final String contentKey )
+    {
+        if ( contentKey.startsWith( "/" ) )
+        {
+            final ContentPath path = ContentPath.from( contentKey );
+            return path.isRoot() ? null : contentService.getByPath( path );
+        }
+        return contentService.getById( ContentId.from( contentKey ) );
     }
 }

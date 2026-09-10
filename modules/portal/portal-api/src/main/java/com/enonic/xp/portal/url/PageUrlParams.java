@@ -15,7 +15,7 @@ public final class PageUrlParams
 
     private String branch;
 
-    private String baseUrl;
+    private BaseUrlParams base;
 
     public String getId()
     {
@@ -37,9 +37,9 @@ public final class PageUrlParams
         return branch;
     }
 
-    public String getBaseUrl()
+    public BaseUrlParams getBase()
     {
-        return baseUrl;
+        return base;
     }
 
     public PageUrlParams id( final String value )
@@ -67,15 +67,25 @@ public final class PageUrlParams
     }
 
     /**
-     * Base URL used verbatim as the prefix of the generated URL, followed by the content
-     * path relative to the nearest site (the full content path when there is no site):
-     * {@code <baseUrl>/<site-relative path>}. When set, base URL resolution from
-     * configuration and from the current request is skipped.
-     * Empty value is treated as unspecified.
+     * Selects the site - or the project - the URL belongs to, by the same parameters
+     * {@link PortalUrlService#baseUrl(BaseUrlParams)} takes: the nearest one at or above the
+     * content they name. The URL then starts with the base URL that one resolves to, followed by
+     * the content path relative to it. Passing the very same parameters to both calls is what
+     * makes {@code pageUrl = baseUrl + path + queryString} hold.
+     * <p>
+     * A project contains sites and a site can contain further sites, so this picks a level of
+     * that containment: {@code "/"} names the project, a site path or id names that site.
+     * Without it the URL belongs to the innermost level containing the content. Configuration is
+     * never inherited from a level above, so the selected one alone decides which Base URL
+     * applies.
+     * <p>
+     * The content has to be inside the selected level, or be that level itself. The base URL of
+     * the level does not lead to a content elsewhere, so there is no URL for one: see
+     * {@link ContentOutOfScopeException}.
      */
-    public PageUrlParams baseUrl( final String value )
+    public PageUrlParams base( final BaseUrlParams value )
     {
-        this.baseUrl = Strings.emptyToNull( value );
+        this.base = value;
         return this;
     }
 
@@ -90,7 +100,7 @@ public final class PageUrlParams
         helper.add( "path", this.path );
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
-        helper.add( "baseUrl", this.baseUrl );
+        helper.add( "base", this.base );
         return helper.toString();
     }
 }

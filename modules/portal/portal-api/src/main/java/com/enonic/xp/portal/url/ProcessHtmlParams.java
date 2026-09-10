@@ -31,7 +31,7 @@ public final class ProcessHtmlParams
 
     private String attachmentBaseUrl;
 
-    private String pageBaseUrl;
+    private BaseUrlParams pageBase;
 
     public String getValue()
     {
@@ -112,7 +112,7 @@ public final class ProcessHtmlParams
      *
      * @deprecated use {@link #imageBaseUrl(String)} and {@link #attachmentBaseUrl(String)}
      * for media URLs (append {@code /_} to the value to keep the mount form produced by
-     * this method) and {@link #pageBaseUrl(String)} for content links.
+     * this method) and {@link #pageBase(BaseUrlParams)} for content links.
      */
     @Deprecated
     public ProcessHtmlParams baseUrl( final String baseUrl )
@@ -157,14 +157,19 @@ public final class ProcessHtmlParams
         return this;
     }
 
-    public String getPageBaseUrl()
+    public BaseUrlParams getPageBase()
     {
-        return pageBaseUrl;
+        return pageBase;
     }
 
-    public ProcessHtmlParams pageBaseUrl( final String pageBaseUrl )
+    /**
+     * Selects the site - or the project - the content links of the processed HTML belong to.
+     *
+     * @see PageUrlParams#base(BaseUrlParams)
+     */
+    public ProcessHtmlParams pageBase( final BaseUrlParams pageBase )
     {
-        this.pageBaseUrl = Strings.emptyToNull( pageBaseUrl );
+        this.pageBase = pageBase;
         return this;
     }
 

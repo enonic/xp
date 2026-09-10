@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Function;
 
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -19,23 +20,28 @@ final class ContentBaseUrlResolver
 
     private final String baseUrl;
 
-    ContentBaseUrlResolver( final ContentService contentService, final ProjectService projectService, final BaseUrlParams params )
+    private final boolean followRequest;
+
+    ContentBaseUrlResolver( final ContentService contentService, final ProjectService projectService, final BaseUrlParams params,
+                            final boolean followRequest )
     {
-        this( contentService, projectService, params, null );
+        this( contentService, projectService, params, null, followRequest );
     }
 
     ContentBaseUrlResolver( final ContentService contentService, final ProjectService projectService, final BaseUrlParams params,
-                            final String baseUrl )
+                            final String baseUrl, final boolean followRequest )
     {
         this.contentService = contentService;
         this.projectService = projectService;
         this.params = params;
         this.baseUrl = baseUrl;
+        this.followRequest = followRequest;
     }
 
     public String resolve( final Function<BaseUrlMetadata, String> pathResolver )
     {
-        final BaseUrlMetadata baseUrlMetadata = new BaseUrlExtractor( contentService, projectService ).extract( params, baseUrl );
+        final BaseUrlMetadata baseUrlMetadata =
+            new BaseUrlExtractor( contentService, projectService ).extract( params, baseUrl, followRequest );
 
         final String resolvedBaseUrl = resolveBaseUrl( baseUrlMetadata );
 
@@ -63,7 +69,16 @@ final class ContentBaseUrlResolver
 
         if ( resolvedBaseUrl == null )
         {
-            return PathMatchers.SITE_PREFIX + baseUrlMetadata.getProjectName() + "/" + baseUrlMetadata.getBranch();
+            // no Base URL is configured: the site engine serves the anchor, so the base is its
+            // address there - paths stay relative to the anchor as with a configured Base URL
+            final StringBuilder url = new StringBuilder(
+                PathMatchers.SITE_PREFIX + baseUrlMetadata.getProjectName() + "/" + baseUrlMetadata.getBranch() );
+            final ContentPath anchorPath = baseUrlMetadata.getAnchorPath();
+            if ( !anchorPath.isRoot() )
+            {
+                UrlBuilderHelper.appendAndEncodePathParts( url, anchorPath.toString() );
+            }
+            return url.toString();
         }
 
         // the configured Base URL is used verbatim and itself determines the URL form:
