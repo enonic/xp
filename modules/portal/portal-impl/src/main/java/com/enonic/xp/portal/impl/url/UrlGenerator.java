@@ -32,8 +32,8 @@ final class UrlGenerator
         }
         catch ( ContentOutOfScopeException e )
         {
-            // the caller asked for a URL that does not exist, rather than for a URL that failed
-            // to build: an error URL here would be just as unusable as the wrong URL it replaces
+            // this URL does not exist, so an error URL in its place would be just as unusable in
+            // an href, and would leave pageUrlParts throwing while pageUrl answered with a string
             throw e;
         }
         catch ( Exception e )

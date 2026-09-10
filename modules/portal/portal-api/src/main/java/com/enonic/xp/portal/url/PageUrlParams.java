@@ -79,9 +79,9 @@ public final class PageUrlParams
      * never inherited from a level above, so the selected one alone decides which Base URL
      * applies.
      * <p>
-     * The content has to be inside the selected level, or be that level itself. There is no URL
-     * for a content elsewhere - the base URL of the level does not lead to it - so one is refused
-     * rather than assembled: see {@link ContentOutOfScopeException}.
+     * The content has to be inside the selected level, or be that level itself. The base URL of
+     * the level does not lead to a content elsewhere, so there is no URL for one: see
+     * {@link ContentOutOfScopeException}.
      */
     public PageUrlParams base( final BaseUrlParams value )
     {
