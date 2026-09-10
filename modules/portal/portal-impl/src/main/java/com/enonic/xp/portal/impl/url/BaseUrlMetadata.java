@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfigs;
@@ -38,6 +39,15 @@ final class BaseUrlMetadata
     public SiteConfigs getSiteConfigs()
     {
         return siteConfigs;
+    }
+
+    /**
+     * @return the path of the level the base URL belongs to: the nearest site, or the root of
+     * the project when there is no site above the content
+     */
+    public ContentPath getAnchorPath()
+    {
+        return nearestSite != null ? nearestSite.getPath() : ContentPath.ROOT;
     }
 
     public Site getNearestSite()

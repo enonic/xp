@@ -49,7 +49,6 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.StyleDescriptorService;
 
@@ -155,7 +154,7 @@ public final class PortalUrlServiceImpl
 
     private String resolveApiBaseUrl( final BaseUrlParams params )
     {
-        final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extract( params, null );
+        final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extract( params, null, true );
 
         final String configuredBaseUrl = metadata.getBaseUrl();
 
@@ -194,23 +193,13 @@ public final class PortalUrlServiceImpl
     public PageUrlParts pageUrlParts( final PageUrlParams params )
     {
         return runWithAdminRole( () -> {
-            final BaseUrlParams baseUrlParams = BaseUrlParams.create()
-                .setUrlType( params.getType() )
-                .setProjectName( params.getProjectName() )
-                .setBranch( params.getBranch() )
-                .setId( params.getId() )
-                .setPath( params.getPath() )
-                .build();
-
             // an explicit empty base disables resolution from configuration and from the request:
-            // the result is the escaped path relative to the nearest site, with a leading slash
-            final String path = new ContentBaseUrlResolver( contentService, projectService, baseUrlParams, "" ).resolve( metadata -> {
-                final Site nearestSite = metadata.getNearestSite();
-                final Content content = metadata.getContent();
-                return nearestSite != null
-                    ? content.getPath().toString().substring( nearestSite.getPath().toString().length() )
-                    : content.getPath().toString();
-            } );
+            // the result is the escaped path relative to the site the URL belongs to, with a
+            // leading slash
+            final String path =
+                new ContentBaseUrlResolver( contentService, projectService, PageBase.params( params ), "", false ).resolve(
+                    metadata -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
+                                                                     PageBase.level( params, metadata ) ) );
 
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getParams() );

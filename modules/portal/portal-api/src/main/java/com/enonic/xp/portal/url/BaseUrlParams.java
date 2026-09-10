@@ -10,6 +10,11 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import static java.util.Objects.requireNonNullElse;
 
 
+/**
+ * Names a content, and through it the level of the content tree its URLs belong to: the nearest
+ * site at or above it, or the project when no site is. That level carries the Base URL
+ * configuration, so it decides both the base URL and what content paths are relative to.
+ */
 public final class BaseUrlParams
 {
     private final String urlType;
@@ -124,10 +129,10 @@ public final class BaseUrlParams
         }
 
         /**
-         * Sets the content anchor directly, as an alternative to {@link #setId(String)} and {@link #setPath(String)}.
+         * Names the content directly, as an alternative to {@link #setId(String)} and {@link #setPath(String)}.
          * Useful when the caller already holds the content: no extra lookup is made.
          *
-         * @param contentSupplier supplier of the anchor content
+         * @param contentSupplier supplier of the content
          * @return this builder
          */
         public Builder setContent( final Supplier<Content> contentSupplier )
@@ -140,8 +145,8 @@ public final class BaseUrlParams
          * Requests the base URL of an API mount instead of the content base URL.
          * <p>
          * The result is the prefix that the API descriptor ({@code <application>:<name>}) gets appended to.
-         * It is resolved to {@code <baseUrl>/_} when a Base URL is configured for the anchored site (or project)
-         * and the API is mounted on the site. Media APIs fall back to the {@code media.defaultBaseUrl}
+         * It is resolved to {@code <baseUrl>/_} when a Base URL is configured for the site (or project) the
+         * content belongs to and the API is mounted on the site. Media APIs fall back to the {@code media.defaultBaseUrl}
          * configuration, when set. Otherwise the result is {@code null}: URLs should then stay request-based.
          *
          * @param api descriptor key of the API

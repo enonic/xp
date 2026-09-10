@@ -208,7 +208,8 @@ class PortalUrlService_baseUrlTest
             .callWith( () -> this.service.baseUrl(
                 BaseUrlParams.create().setUrlType( UrlTypeConstants.ABSOLUTE ).setPath( "/mycontent" ).build() ) );
 
-        assertEquals( "/site/myproject/master", url );
+        // no Base URL configured: the base is where the site engine serves the site
+        assertEquals( "/site/myproject/master/a", url );
     }
 
     @Test
@@ -242,7 +243,7 @@ class PortalUrlService_baseUrlTest
                 return this.service.baseUrl( params );
             } );
 
-        assertEquals( "/site/explicit-project/context-branch", url );
+        assertEquals( "/site/explicit-project/context-branch/a", url );
     }
 
     @Test
@@ -277,7 +278,7 @@ class PortalUrlService_baseUrlTest
                 return this.service.baseUrl( params );
             } );
 
-        assertEquals( "/site/explicit-project/explicit-branch", url );
+        assertEquals( "/site/explicit-project/explicit-branch/a", url );
     }
 
     @Test
@@ -558,7 +559,7 @@ class PortalUrlService_baseUrlTest
                                                        .setBranch( "explicit-branch" )
                                                        .build() ) );
 
-        assertEquals( "/site/explicit-project/explicit-branch", url );
+        assertEquals( "/site/explicit-project/explicit-branch/a", url );
     }
 
     private Site mockSite( final SiteConfigs siteConfigs )

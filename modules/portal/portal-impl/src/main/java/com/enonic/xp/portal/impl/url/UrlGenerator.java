@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.impl.exception.OutOfScopeException;
+import com.enonic.xp.portal.url.ContentOutOfScopeException;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -28,6 +29,12 @@ final class UrlGenerator
             final String queryParams = nullToEmpty( params.getQueryString() != null ? params.getQueryString().get() : null );
 
             return baseUrl + path + queryParams;
+        }
+        catch ( ContentOutOfScopeException e )
+        {
+            // this URL does not exist, so an error URL in its place would be just as unusable in
+            // an href, and would leave pageUrlParts throwing while pageUrl answered with a string
+            throw e;
         }
         catch ( Exception e )
         {
