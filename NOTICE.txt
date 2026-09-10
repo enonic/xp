@@ -246,6 +246,10 @@ Licenses used by Enonic XP (full license texts are provided after the list of li
     https://util.unicode.org/UnicodeJsps/regex.jsp
     https://unicode-org.github.io/icu-docs/legal/
 
+    Unsplash background image contributed by Sondre Haugdal
+    Unsplash license
+    https://unsplash.com/license
+
 ---------------------------------------------------------------------------
 
 LICENSE TEXTS
@@ -259,6 +263,7 @@ LICENSE TEXTS
 8. Unicode, inc. License Agreement
 9. The Universal Permissive License Version 1.0
 10. The GNU General Public License (GPL) Version 2.0
+11. The Unsplash license
 
 ---------------------------------------------------------------------------
 
@@ -1433,5 +1438,11 @@ exception as provided by Oracle in the LICENSE file that accompanied this code."
     you modify this library, you may extend this exception to your version of
     the library, but you are not obligated to do so.  If you do not wish to do
     so, delete this exception statement from your version.
+
+---------------------------------------------------------------------------
+
+The Unsplash license
+
+Unsplash grants you an irrevocable, nonexclusive, worldwide copyright license to download, copy, modify, distribute, perform, and use images from Unsplash for free, including for commercial purposes, without permission from or attributing the photographer or Unsplash. This license does not include the right to compile images from Unsplash to replicate a similar or competing service.
 
 ---------------------------------------------------------------------------
