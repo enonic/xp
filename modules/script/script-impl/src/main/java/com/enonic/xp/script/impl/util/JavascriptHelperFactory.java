@@ -11,11 +11,26 @@ import org.openjdk.nashorn.api.scripting.JSObject;
 
 public final class JavascriptHelperFactory
 {
+    private static final String DEFINE_DATA_PROPERTY =
+        "(function (object, key, value) { Object.defineProperty(object, key, {value: value, writable: true, enumerable: true, configurable: true}); })";
+
     private final ScriptEngine engine;
 
     public JavascriptHelperFactory( final ScriptEngine engine )
     {
         this.engine = engine;
+    }
+
+    private static Object eval( final ScriptEngine engine, final String script )
+    {
+        try
+        {
+            return engine.eval( script );
+        }
+        catch ( ScriptException e )
+        {
+            throw new RuntimeException( e );
+        }
     }
 
     public JavascriptHelper<Bindings> create()
@@ -24,6 +39,7 @@ public final class JavascriptHelperFactory
         final JSObject arrayProto = (JSObject) bindings.get( "Array" );
         final JSObject objectProto = (JSObject) bindings.get( "Object" );
         final JSObject jsonProto = (JSObject) bindings.get( "JSON" );
+        final JSObject defineDataProperty = (JSObject) eval( this.engine, DEFINE_DATA_PROPERTY );
 
         return new JavascriptHelper<>()
         {
@@ -40,16 +56,15 @@ public final class JavascriptHelperFactory
             }
 
             @Override
+            public void defineDataProperty( final Object object, final String key, final Object value )
+            {
+                defineDataProperty.call( null, object, key, value );
+            }
+
+            @Override
             public Object newFunction( final Function<?, ?> function )
             {
-                try
-                {
-                    return ( (JSObject) engine.eval( "f => a => f.apply(a)" ) ).call( null, function );
-                }
-                catch ( ScriptException e )
-                {
-                    throw new RuntimeException( e );
-                }
+                return ( (JSObject) JavascriptHelperFactory.eval( engine, "f => a => f.apply(a)" ) ).call( null, function );
             }
 
             @Override
@@ -61,14 +76,7 @@ public final class JavascriptHelperFactory
             @Override
             public Object eval( final String script )
             {
-                try
-                {
-                    return engine.eval( script );
-                }
-                catch ( ScriptException e )
-                {
-                    throw new RuntimeException( e );
-                }
+                return JavascriptHelperFactory.eval( engine, script );
             }
 
             @Override
