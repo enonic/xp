@@ -211,8 +211,7 @@ public class RichTextProcessor
         final String rawPageUrl =
             portalUrlService.pageUrl( new PageUrlParams().type( params.getType() )
                                           .id( id )
-                                          .base( params.getPageBase() )
-                                          .baseUrl( params.getPageBaseUrl() ) );
+                                          .base( params.getPageBase() ) );
 
         final String pageUrl = addQueryParamsIfPresent( rawPageUrl, urlParamsString );
 

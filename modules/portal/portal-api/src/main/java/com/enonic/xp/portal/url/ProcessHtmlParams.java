@@ -31,8 +31,6 @@ public final class ProcessHtmlParams
 
     private String attachmentBaseUrl;
 
-    private String pageBaseUrl;
-
     private BaseUrlParams pageBase;
 
     public String getValue()
@@ -114,7 +112,7 @@ public final class ProcessHtmlParams
      *
      * @deprecated use {@link #imageBaseUrl(String)} and {@link #attachmentBaseUrl(String)}
      * for media URLs (append {@code /_} to the value to keep the mount form produced by
-     * this method) and {@link #pageBaseUrl(String)} for content links.
+     * this method) and {@link #pageBase(BaseUrlParams)} for content links.
      */
     @Deprecated
     public ProcessHtmlParams baseUrl( final String baseUrl )
@@ -156,22 +154,6 @@ public final class ProcessHtmlParams
     public ProcessHtmlParams attachmentBaseUrl( final String attachmentBaseUrl )
     {
         this.attachmentBaseUrl = Strings.emptyToNull( attachmentBaseUrl );
-        return this;
-    }
-
-    public String getPageBaseUrl()
-    {
-        return pageBaseUrl;
-    }
-
-    /**
-     * @deprecated use {@link #pageBase(BaseUrlParams)}: a base URL alone does not say which site
-     * it belongs to, so the path of a content link cannot be made relative to it.
-     */
-    @Deprecated
-    public ProcessHtmlParams pageBaseUrl( final String pageBaseUrl )
-    {
-        this.pageBaseUrl = Strings.emptyToNull( pageBaseUrl );
         return this;
     }
 

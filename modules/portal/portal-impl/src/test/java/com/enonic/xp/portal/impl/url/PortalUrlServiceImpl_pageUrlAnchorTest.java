@@ -205,20 +205,6 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     }
 
     @Test
-    void testAnchorWithExplicitBaseUrl()
-    {
-        mockNestedSites( "https://features.com", "https://subsite.com" );
-
-        final PageUrlParams params =
-            new PageUrlParams().path( FOLDER.toString() ).base( siteBase( FEATURES.toString() ) ).baseUrl( "https://cdn.example.com/" );
-
-        // the two answer different questions: baseUrl is the prefix, base is the site
-        // the path is relative to
-        assertEquals( "https://cdn.example.com/subsite/folder", this.service.pageUrl( params ) );
-        assertEquals( "/subsite/folder", this.service.pageUrlParts( params ).path() );
-    }
-
-    @Test
     void testAnchoredAtProjectRoot()
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );

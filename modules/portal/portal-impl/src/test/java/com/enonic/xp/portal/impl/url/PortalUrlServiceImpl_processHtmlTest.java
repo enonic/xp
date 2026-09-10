@@ -312,35 +312,6 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    void testContentLinkWithPageBaseUrl()
-    {
-        portalRequest.setMode( null );
-        portalRequest.setBaseUri( "/api/guillotine:graphql" );
-        portalRequest.setRepositoryId( null );
-        portalRequest.setBranch( null );
-        portalRequest.setRawPath( "/api/guillotine:graphql" );
-
-        final Content content = Content.create( ContentFixtures.newContent() ).build();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
-        when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( site );
-
-        final ProcessHtmlParams params = new ProcessHtmlParams();
-        params.value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) );
-        params.pageBaseUrl( "https://www.example.com/" );
-
-        final String html = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
-            .branch( Branch.from( "context-branch" ) )
-            .build()
-            .callWith( () -> service.processHtml( params ) );
-
-        assertEquals( "<a href=\"https://www.example.com/b/mycontent\">Content</a>", html );
-    }
-
-    @Test
     void testContentLinkWithPageBase()
     {
         portalRequest.setMode( null );
