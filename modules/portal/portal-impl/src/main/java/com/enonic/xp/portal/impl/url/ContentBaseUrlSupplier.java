@@ -2,6 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Supplier;
 
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -28,10 +29,23 @@ final class ContentBaseUrlSupplier
     @Override
     public String get()
     {
-        final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, params, true ).resolve( metadata -> null );
-
         final PortalRequest portalRequest = PortalRequestAccessor.get();
-        if ( PortalRequestHelper.isSiteBase( portalRequest ) && params.getProjectName() == null && params.getBranch() == null )
+
+        final boolean followsRequest =
+            PortalRequestHelper.isSiteBase( portalRequest ) && params.getProjectName() == null && params.getBranch() == null;
+
+        // when the request is followed the base is the address of the level the virtual host
+        // mounts, so that it is inside the mapping and can be rewritten into the host's own terms
+        final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, params, true ).resolve( metadata -> {
+            if ( !followsRequest )
+            {
+                return null;
+            }
+            final ContentPath mounted = VhostLevel.resolve( metadata.getProjectName(), metadata.getBranch() );
+            return mounted != null && !mounted.isRoot() ? mounted.toString() : null;
+        } );
+
+        if ( followsRequest )
         {
             return UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getUrlType(), baseUrl );
         }

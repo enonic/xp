@@ -199,7 +199,7 @@ public final class PortalUrlServiceImpl
             final String path =
                 new ContentBaseUrlResolver( contentService, projectService, PageBase.params( params ), "", false ).resolve(
                     metadata -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
-                                                                     metadata.getAnchorPath() ) );
+                                                                     PageBase.level( params, metadata ) ) );
 
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getParams() );

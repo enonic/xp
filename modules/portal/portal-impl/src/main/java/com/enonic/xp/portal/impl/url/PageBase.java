@@ -39,6 +39,22 @@ final class PageBase
     }
 
     /**
+     * @return the level the URL belongs to: the one the caller selected, the one the matched
+     * virtual host mounts when it selected none, and the content's own otherwise
+     */
+    static ContentPath level( final PageUrlParams params, final BaseUrlMetadata baseUrlMetadata )
+    {
+        if ( params.getBase() != null )
+        {
+            return baseUrlMetadata.getAnchorPath();
+        }
+
+        final ContentPath mounted = VhostLevel.resolve( baseUrlMetadata.getProjectName(), baseUrlMetadata.getBranch() );
+
+        return mounted != null ? mounted : baseUrlMetadata.getAnchorPath();
+    }
+
+    /**
      * @return the path of the content the URL addresses, which is resolved separately from the
      * base only when the caller selected a level of its own
      */
