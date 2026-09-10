@@ -35,6 +35,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
@@ -340,7 +341,7 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    void testContentLinkWithPageAnchor()
+    void testContentLinkWithPageBase()
     {
         portalRequest.setMode( null );
         portalRequest.setBaseUri( "/api/guillotine:graphql" );
@@ -359,7 +360,7 @@ class PortalUrlServiceImpl_processHtmlTest
 
         final ProcessHtmlParams params = new ProcessHtmlParams();
         params.value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) );
-        params.pageAnchor( "/a" );
+        params.pageBase( BaseUrlParams.create().setPath( "/a" ).build() );
 
         final String html = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
@@ -367,7 +368,7 @@ class PortalUrlServiceImpl_processHtmlTest
             .build()
             .callWith( () -> service.processHtml( params ) );
 
-        // anchored at /a: its Base URL, and the content path relative to it
+        // the URL belongs to /a: its Base URL, and the content path relative to it
         assertEquals( "<a href=\"https://parent.example.com/b/mycontent\">Content</a>", html );
     }
 

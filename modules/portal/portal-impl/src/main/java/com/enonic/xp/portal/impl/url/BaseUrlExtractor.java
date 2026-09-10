@@ -31,7 +31,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         this.projectService = requireNonNull( projectService );
     }
 
-    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl )
+    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest )
     {
         final boolean noExplicitContext = baseUrl == null && params.getProjectName() == null && params.getBranch() == null;
 
@@ -51,10 +51,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        // an anchor names the site the URL belongs to, which is what following the request would
-        // otherwise decide - so it takes the request out of play
-        if ( noExplicitContext && params.getAnchor() == null && params.getApi() == null &&
-            PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( followRequest && noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
@@ -72,21 +69,15 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
             builder.setContent( content );
 
+            // the base URL belongs to the site of this content, and the URL is anchored there.
+            // Configuration of a site is never inherited from a parent site, so that site decides
+            // on its own which Base URL applies
             final Site site = context.callWith( () -> resolveSite( content ) );
 
             if ( site != null )
             {
                 builder.setNearestSite( site );
             }
-
-            // the URL is anchored at the site the base URL belongs to: the one asked for, when
-            // an anchor is given, and the site of the content otherwise. Configuration of a site
-            // is never inherited from a parent site, so the anchor decides on its own
-            final Site anchorSite = params.getAnchor() != null
-                ? context.callWith( () -> resolveSite( resolveContent( params.getAnchor() ) ) )
-                : site;
-
-            builder.setAnchorPath( anchorSite != null ? anchorSite.getPath() : ContentPath.ROOT );
 
             if ( baseUrl != null )
             {
@@ -95,9 +86,9 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
             else
             {
                 final SiteConfigs siteConfigs;
-                if ( anchorSite != null )
+                if ( site != null )
                 {
-                    siteConfigs = SiteConfigsDataSerializer.fromData( anchorSite.getData().getRoot() );
+                    siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
                 }
                 else
                 {
@@ -177,7 +168,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
     /**
      * @return the content the key denotes, or {@code null} when it denotes the root of the project
      */
-    private Content resolveContent( final String contentKey )
+    Content resolveContent( final String contentKey )
     {
         if ( contentKey.startsWith( "/" ) )
         {

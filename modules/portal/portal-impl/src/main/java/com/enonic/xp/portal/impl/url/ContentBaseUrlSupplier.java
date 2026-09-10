@@ -28,7 +28,7 @@ final class ContentBaseUrlSupplier
     @Override
     public String get()
     {
-        final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, params ).resolve( metadata -> null );
+        final String baseUrl = new ContentBaseUrlResolver( contentService, projectService, params, true ).resolve( metadata -> null );
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
         if ( PortalRequestHelper.isSiteBase( portalRequest ) && params.getProjectName() == null && params.getBranch() == null )

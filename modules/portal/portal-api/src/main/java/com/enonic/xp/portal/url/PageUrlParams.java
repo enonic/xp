@@ -17,7 +17,7 @@ public final class PageUrlParams
 
     private String baseUrl;
 
-    private String anchor;
+    private BaseUrlParams base;
 
     public String getId()
     {
@@ -44,9 +44,9 @@ public final class PageUrlParams
         return baseUrl;
     }
 
-    public String getAnchor()
+    public BaseUrlParams getBase()
     {
-        return anchor;
+        return base;
     }
 
     public PageUrlParams id( final String value )
@@ -75,11 +75,11 @@ public final class PageUrlParams
 
     /**
      * Base URL used verbatim as the prefix of the generated URL, followed by the content
-     * path relative to the anchor. When set, base URL resolution from configuration and from
-     * the current request is skipped.
+     * path relative to the site the URL belongs to. When set, base URL resolution from
+     * configuration and from the current request is skipped.
      * Empty value is treated as unspecified.
      *
-     * @deprecated use {@link #anchor(String)}: a base URL alone does not say which site it
+     * @deprecated use {@link #base(BaseUrlParams)}: a base URL alone does not say which site it
      * belongs to, so the path cannot be made relative to it.
      */
     @Deprecated
@@ -90,19 +90,19 @@ public final class PageUrlParams
     }
 
     /**
-     * Site the URL is anchored at, as an id or a path: the URL is the Base URL configured for
-     * that site followed by the content path relative to it, and the site engine address of
-     * the site when it has no Base URL configured. {@code "/"} anchors at the project itself,
-     * and so do contents outside any site.
+     * Selects the site the URL belongs to, by the same parameters
+     * {@link PortalUrlService#baseUrl(BaseUrlParams)} takes: the URL then starts with the base
+     * URL those parameters resolve to, followed by the content path relative to the site they
+     * select. Passing the very same parameters to both calls is what makes
+     * {@code pageUrl = baseUrl + path + queryString} hold.
      * <p>
-     * Without an anchor the URL is anchored at the site of the content, which for a content
-     * inside a nested site is that nested site. Configuration of a site is never inherited
-     * from a parent site, so the anchor alone decides which Base URL applies.
-     * Empty value is treated as unspecified.
+     * Without this, the URL belongs to the site of the content itself, which for a content
+     * inside a nested site is that nested site. Configuration of a site is never inherited from
+     * a parent site, so the selected site alone decides which Base URL applies.
      */
-    public PageUrlParams anchor( final String value )
+    public PageUrlParams base( final BaseUrlParams value )
     {
-        this.anchor = Strings.emptyToNull( value );
+        this.base = value;
         return this;
     }
 
@@ -118,7 +118,7 @@ public final class PageUrlParams
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
         helper.add( "baseUrl", this.baseUrl );
-        helper.add( "anchor", this.anchor );
+        helper.add( "base", this.base );
         return helper.toString();
     }
 }

@@ -33,7 +33,7 @@ public final class ProcessHtmlParams
 
     private String pageBaseUrl;
 
-    private String pageAnchor;
+    private BaseUrlParams pageBase;
 
     public String getValue()
     {
@@ -165,8 +165,8 @@ public final class ProcessHtmlParams
     }
 
     /**
-     * @deprecated use {@link #pageAnchor(String)}: a base URL alone does not say which site it
-     * belongs to, so the path of a content link cannot be made relative to it.
+     * @deprecated use {@link #pageBase(BaseUrlParams)}: a base URL alone does not say which site
+     * it belongs to, so the path of a content link cannot be made relative to it.
      */
     @Deprecated
     public ProcessHtmlParams pageBaseUrl( final String pageBaseUrl )
@@ -175,19 +175,19 @@ public final class ProcessHtmlParams
         return this;
     }
 
-    public String getPageAnchor()
+    public BaseUrlParams getPageBase()
     {
-        return pageAnchor;
+        return pageBase;
     }
 
     /**
-     * Site the content links of the processed HTML are anchored at, as an id or a path.
+     * Selects the site the content links of the processed HTML belong to.
      *
-     * @see PageUrlParams#anchor(String)
+     * @see PageUrlParams#base(BaseUrlParams)
      */
-    public ProcessHtmlParams pageAnchor( final String pageAnchor )
+    public ProcessHtmlParams pageBase( final BaseUrlParams pageBase )
     {
-        this.pageAnchor = Strings.emptyToNull( pageAnchor );
+        this.pageBase = pageBase;
         return this;
     }
 
