@@ -90,15 +90,17 @@ public final class PageUrlParams
     }
 
     /**
-     * Selects the site the URL belongs to, by the same parameters
-     * {@link PortalUrlService#baseUrl(BaseUrlParams)} takes: the URL then starts with the base
-     * URL those parameters resolve to, followed by the content path relative to the site they
-     * select. Passing the very same parameters to both calls is what makes
-     * {@code pageUrl = baseUrl + path + queryString} hold.
+     * Selects the site - or the project - the URL belongs to, by the same parameters
+     * {@link PortalUrlService#baseUrl(BaseUrlParams)} takes: the nearest one at or above the
+     * content they name. The URL then starts with the base URL that one resolves to, followed by
+     * the content path relative to it. Passing the very same parameters to both calls is what
+     * makes {@code pageUrl = baseUrl + path + queryString} hold.
      * <p>
-     * Without this, the URL belongs to the site of the content itself, which for a content
-     * inside a nested site is that nested site. Configuration of a site is never inherited from
-     * a parent site, so the selected site alone decides which Base URL applies.
+     * A project contains sites and a site can contain further sites, so this picks a level of
+     * that containment: {@code "/"} names the project, a site path or id names that site.
+     * Without it the URL belongs to the innermost level containing the content. Configuration is
+     * never inherited from a level above, so the selected one alone decides which Base URL
+     * applies.
      */
     public PageUrlParams base( final BaseUrlParams value )
     {

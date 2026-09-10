@@ -42,8 +42,8 @@ final class BaseUrlMetadata
     }
 
     /**
-     * @return the path the base URL is anchored at: the site it belongs to, or the root of the
-     * project when it belongs to no site
+     * @return the path of the level the base URL belongs to: the nearest site, or the root of
+     * the project when there is no site above the content
      */
     public ContentPath getAnchorPath()
     {

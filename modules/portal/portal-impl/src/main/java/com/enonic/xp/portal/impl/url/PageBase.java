@@ -7,9 +7,10 @@ import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
 
 /**
- * The two things a page URL is made of: the site it belongs to - which decides the base URL and
- * what the path is relative to - and the content it addresses. They are the same content unless
- * the caller selects a site of its own.
+ * The two things a page URL is made of: the level of the content tree it belongs to - the
+ * nearest site at or above it, or the project - which decides the base URL and what the path is
+ * relative to, and the content it addresses. They are the same content unless the caller selects
+ * a level of its own.
  */
 final class PageBase
 {
@@ -18,7 +19,7 @@ final class PageBase
     }
 
     /**
-     * @return the parameters the base URL is resolved from: the ones the caller selected a site
+     * @return the parameters the base URL is resolved from: the ones the caller selected a level
      * with, or the content's own when it selected none
      */
     static BaseUrlParams params( final PageUrlParams params )
@@ -39,7 +40,7 @@ final class PageBase
 
     /**
      * @return the path of the content the URL addresses, which is resolved separately from the
-     * base only when the caller selected a site of its own
+     * base only when the caller selected a level of its own
      */
     static ContentPath contentPath( final ContentService contentService, final PageUrlParams params,
                                     final BaseUrlMetadata baseUrlMetadata )

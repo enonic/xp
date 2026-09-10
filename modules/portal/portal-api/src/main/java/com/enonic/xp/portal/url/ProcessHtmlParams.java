@@ -181,7 +181,7 @@ public final class ProcessHtmlParams
     }
 
     /**
-     * Selects the site the content links of the processed HTML belong to.
+     * Selects the site - or the project - the content links of the processed HTML belong to.
      *
      * @see PageUrlParams#base(BaseUrlParams)
      */
