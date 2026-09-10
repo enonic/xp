@@ -345,6 +345,9 @@ interface PageUrlHandler {
 /**
  * This function generates a URL pointing to a page.
  *
+ * The URL starts with the base URL of the site - or project - the page belongs to, followed by the
+ * path of the page below that site. See {@link baseUrl} for how that base URL is resolved.
+ *
  * @example-ref examples/portal/pageUrl.js
  *
  * @param {object} params Input parameters as JSON.
@@ -600,6 +603,9 @@ interface ProcessHtmlHandler {
 
 /**
  * This function replaces abstract internal links contained in an HTML text by generated URLs.
+ *
+ * Links to content are generated the same way {@link pageUrl} generates them, and links to media
+ * the same way {@link attachmentUrl} and {@link imageUrl} do.
  *
  * When outputting processed HTML in Thymeleaf, use attribute `data-th-utext="${processedHtml}"`.
  *
@@ -926,7 +932,15 @@ interface BaseUrlHandler {
 }
 
 /**
- * This function generates a baseURL.
+ * This function generates the base URL of the site - or project - a content belongs to: the
+ * nearest site at or above it, and the project when no site is above it.
+ *
+ * The result is the Base URL configured for that site or project. With none configured, it is the
+ * address the site engine serves it at, `/site/<project>/<branch>/<site path>`. On a site request
+ * it is the address of whatever the matched virtual host mapping points at.
+ *
+ * Content paths are relative to the same site or project, so the full URL of a content is this
+ * base URL followed by its path below that site.
  *
  * Never returns an error URL: raises an error when the content does not exist.
  *
