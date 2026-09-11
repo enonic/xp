@@ -109,7 +109,7 @@ export type ImageUrlParams = IdXorPath & {
     filter?: string;
     params?: object;
     type?: 'server' | 'absolute';
-    /** Fully qualified processing style (application:name). Cannot be combined with processing parameters. */
+    /** Fully qualified processing style (application:name). Controls scale, quality, filter, and background; format is selected separately. */
     style?: string;
     scale?:
         | `block(${number},${number})`
@@ -169,7 +169,7 @@ interface ImageUrlHandler {
  * @param {string} [params.scale] Required unless style is provided. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
  * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
  * @param {string} [params.background] Background color.
- * @param {string} [params.format] Format of the image.
+ * @param {string} [params.format] Output format of the image. WebP and AVIF require a predefined style.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Name of the project.

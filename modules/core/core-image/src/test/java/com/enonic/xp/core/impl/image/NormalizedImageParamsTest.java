@@ -32,7 +32,7 @@ class NormalizedImageParamsTest
     void resolvedStyleOwnsAllProcessingParameters()
     {
         final ImageStyle style = ImageStyle.create().name( "card" ).scale( "block(640,360)" )
-            .format( "webp" ).quality( 75 ).filter( "grayscale()" ).build();
+            .quality( 75 ).filter( "grayscale()" ).build();
         final NormalizedImageParams params = new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" )
             .scaleParams( new ScaleParams( "square", new Object[]{8000} ) ).filterParam( "blur(100)" )
             .quality( 100 ).backgroundColor( 0 ).build(), style );
@@ -44,12 +44,17 @@ class NormalizedImageParamsTest
     }
 
     @Test
-    void outputTypeMustMatchResolvedStyle()
+    void sameStyleSupportsEveryOutputFormat()
     {
-        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "max(100)" ).format( "avif" ).build();
-        assertThrows( IllegalArgumentException.class,
-                      () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" ).build(), style ) );
-        assertEquals( 85, new NormalizedImageParams( noFormatTemplate().mimeType( "image/avif" ).build(), style ).getQuality() );
+        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "max(100)" ).build();
+        for ( String format : new String[]{"jpeg", "png", "gif", "webp", "avif"} )
+        {
+            final NormalizedImageParams params = new NormalizedImageParams(
+                noFormatTemplate().mimeType( "image/" + format ).build(), style );
+            assertEquals( format, params.getFormat() );
+            assertEquals( 85, params.getQuality() );
+            assertEquals( "max", params.getScaleParams().getName() );
+        }
     }
 
     @Test

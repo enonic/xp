@@ -31,14 +31,12 @@ public class YmlStyleDescriptorParserTest
               - type: Image
                 name: card
                 scale: block(640,360)
-                format: webp
                 quality: 75
                 background: 'ffffff'
                 filter: grayscale()
             """, ApplicationKey.from( "myapp" ) ).build();
         final ImageStyle style = assertInstanceOf( ImageStyle.class, descriptor.getElements().getFirst() );
         assertEquals( "block(640,360)", style.getScale() );
-        assertEquals( "webp", style.getFormat() );
         assertEquals( 75, style.getQuality() );
         assertEquals( "ffffff", style.getBackground() );
         assertEquals( "grayscale()", style.getFilter() );

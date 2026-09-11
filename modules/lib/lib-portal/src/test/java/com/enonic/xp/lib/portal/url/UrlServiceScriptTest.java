@@ -323,6 +323,7 @@ class UrlServiceScriptTest
         final ArgumentCaptor<ImageUrlParams> captor = ArgumentCaptor.forClass( ImageUrlParams.class );
         verify( portalUrlService ).imageUrl( captor.capture() );
         assertEquals( "app:card", captor.getValue().getStyle() );
+        assertEquals( "avif", captor.getValue().getFormat() );
         assertEquals( "full", captor.getValue().getScale() );
     }
 

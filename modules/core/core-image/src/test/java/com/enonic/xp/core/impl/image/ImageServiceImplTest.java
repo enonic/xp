@@ -103,11 +103,11 @@ class ImageServiceImplTest
         return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, styleDescriptorService, imageConfig );
     }
 
-    private void processingStyle( final String scale, final String format )
+    private void processingStyle( final String scale )
     {
         when( styleDescriptorService.getByApplication( ApplicationKey.from( "app" ) ) ).thenReturn(
             StyleDescriptor.create().application( ApplicationKey.from( "app" ) )
-                .addStyleElement( ImageStyle.create().name( "card" ).scale( scale ).format( format ).build() ).build() );
+                .addStyleElement( ImageStyle.create().name( "card" ).scale( scale ).build() ).build() );
     }
 
     private ReadImageParams styledParams( final String format )
@@ -121,12 +121,12 @@ class ImageServiceImplTest
     void rejectsUnknownAndIncompleteStylesBeforeReadingContent()
     {
         assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:missing" ) );
-        processingStyle( null, "webp" );
+        processingStyle( null );
         assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
-        processingStyle( "full", "webp" );
+        processingStyle( "full" );
         assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
-        processingStyle( "max(100)", "webp" );
-        assertEquals( "webp", imageService.getStyle( "app:card" ).getFormat() );
+        processingStyle( "max(100)" );
+        assertEquals( "max(100)", imageService.getStyle( "app:card" ).getScale() );
         verifyNoInteractions( contentService );
     }
 
@@ -147,25 +147,40 @@ class ImageServiceImplTest
         throws Exception
     {
         mockOriginalImage( "original.png" );
-        processingStyle( "square(10)", "png" );
+        processingStyle( "square(10)" );
         final byte[] first = imageService.readImage( styledParams( "png" ) ).read();
         assertEquals( 10, ImageIO.read( new ByteArrayInputStream( first ) ).getWidth() );
         imageService.readImage( styledParams( "png" ) ).read();
         verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
 
-        processingStyle( "square(20)", "png" );
+        processingStyle( "square(20)" );
         final byte[] second = imageService.readImage( styledParams( "png" ) ).read();
         assertEquals( 20, ImageIO.read( new ByteArrayInputStream( second ) ).getWidth() );
         verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
     }
 
     @Test
+    void sameStyleCachesDifferentOutputFormatsSeparately()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( "square(10)" );
+        final byte[] png = imageService.readImage( styledParams( "png" ) ).read();
+        final byte[] jpeg = imageService.readImage( styledParams( "jpeg" ) ).read();
+        assertEquals( 0x89, Byte.toUnsignedInt( png[0] ) );
+        assertEquals( 0xff, Byte.toUnsignedInt( jpeg[0] ) );
+        assertArrayEquals( png, imageService.readImage( styledParams( "png" ) ).read() );
+        assertArrayEquals( jpeg, imageService.readImage( styledParams( "jpeg" ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
     void rejectsStyleChangedSinceFingerprintWasResolved()
     {
-        processingStyle( "max(20)", "webp" );
+        processingStyle( "max(20)" );
         final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
             .mimeType( "image/webp" ).style( "app:card" )
-            .expectedStyle( ImageStyle.create().name( "card" ).scale( "max(10)" ).format( "webp" ).build() ).build();
+            .expectedStyle( ImageStyle.create().name( "card" ).scale( "max(10)" ).build() ).build();
         final IllegalArgumentException error = assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) );
         assertTrue( error.getMessage().contains( "changed during request" ) );
         verifyNoInteractions( contentService );
@@ -175,7 +190,7 @@ class ImageServiceImplTest
     void oversizedSourceRejectedBeforeStartingEncoder()
     {
         mockOriginalImage( "original.png" );
-        processingStyle( "max(10)", "webp" );
+        processingStyle( "max(10)" );
         when( imageConfig.encoding_maxPixels() ).thenReturn( 1L );
         imageService = newImageService();
         final IllegalArgumentException error = assertThrows( IllegalArgumentException.class,
@@ -188,7 +203,7 @@ class ImageServiceImplTest
         throws Exception
     {
         mockOriginalImage( "original.png" );
-        processingStyle( "max(10)", "webp" );
+        processingStyle( "max(10)" );
         when( imageConfig.encoding_maxConcurrent() ).thenReturn( 1 );
         when( imageConfig.encoding_maxQueue() ).thenReturn( 0 );
         imageService = newImageService();

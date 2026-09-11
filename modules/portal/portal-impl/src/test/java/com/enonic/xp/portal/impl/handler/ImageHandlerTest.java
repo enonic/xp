@@ -208,22 +208,23 @@ class ImageHandlerTest
         when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
-    @Test
-    void predefinedStyleDeterminesOutputType()
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "jpeg", "png"})
+    void styleAllowsRequestedOutputFormat( final String format )
         throws Exception
     {
         setupContent();
-        request.setRawPath( "/_/image/123456/full/image-name.jpg" );
+        request.setRawPath( "/_/image/123456/full/image-name.jpg." + format );
         request.getParams().put( "style", "app:card" );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).build() );
         final WebResponse response = handler.handle( request );
-        assertEquals( MediaType.WEBP, response.getContentType() );
+        assertEquals( MediaType.parse( "image/" + format ), response.getContentType() );
         assertNull( response.getHeaders().get( "Cache-Control" ) );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "app:card", params.getValue().getStyle() );
-        assertEquals( "image/webp", params.getValue().getMimeType() );
+        assertEquals( "image/" + format, params.getValue().getMimeType() );
     }
 
     @ParameterizedTest
@@ -260,16 +261,15 @@ class ImageHandlerTest
         verifyNoInteractions( contentService );
     }
 
-    @Test
-    void styleRejectsOutputExtensionOverride()
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
+    void modernOutputRequiresStyle( final String format )
         throws Exception
     {
         setupContent();
-        request.setRawPath( "/_/image/123456/full/image-name.jpg.webp" );
-        request.getParams().put( "style", "app:card" );
-        when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
+        request.setRawPath( "/_/image/123456/full/image-name.jpg." + format );
         assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( imageService );
     }
 
     @Test

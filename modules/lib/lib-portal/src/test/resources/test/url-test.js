@@ -117,7 +117,7 @@ exports.componentUrlTest_unknownProperty = function () {
 };
 
 exports.imageUrlStyleTest = function () {
-    portal.imageUrl({id: '123', style: 'app:card'});
+    portal.imageUrl({id: '123', style: 'app:card', format: 'avif'});
     return true;
 };
 

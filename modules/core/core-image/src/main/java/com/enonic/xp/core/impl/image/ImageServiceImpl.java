@@ -135,11 +135,10 @@ public class ImageServiceImpl
         }
         if ( style.getScale() == null || !style.getScale().replaceAll( "\\s", "" ).matches(
             "(?:max|width|height|square)\\([1-9][0-9]*\\)|(?:block|wide)\\([1-9][0-9]*,[1-9][0-9]*\\)" ) ||
-            style.getFormat() == null || !Set.of( "png", "jpeg", "gif", "webp", "avif" ).contains( style.getFormat() ) ||
             style.getQuality() != null && ( style.getQuality() < 0 || style.getQuality() > 100 ) ||
             style.getBackground() != null && !style.getBackground().matches( "(?:0x)?[0-9a-fA-F]{1,6}" ) )
         {
-            throw new IllegalArgumentException( "Image style must define a fixed scale and supported format, with valid quality/background" );
+            throw new IllegalArgumentException( "Image style must define a fixed scale, with valid quality/background" );
         }
         return style;
     }

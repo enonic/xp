@@ -10,30 +10,26 @@ Define each permitted variant in the application's `cms/style/style.yml`:
 kind: Style
 styles:
   - type: Image
-    name: card-webp
-    label: Card WebP
+    name: card
+    label: Card
     scale: block(640,360)
-    format: webp
     quality: 80
-  - type: Image
-    name: card-avif
-    label: Card AVIF
-    scale: block(640,360)
-    format: avif
-    quality: 60
 ```
 
 Generate the URL with:
 
 ```javascript
-portal.imageUrl({ id: imageId, style: 'com.example.site:card-webp' });
+portal.imageUrl({ id: imageId, style: 'com.example.site:card', format: 'webp' });
+portal.imageUrl({ id: imageId, style: 'com.example.site:card', format: 'avif' });
 ```
 
-The URL retains the original file name and uses the `full` path placeholder plus
-`?style=com.example.site%3Acard-webp`. The response Content-Type is determined by
-the style. Both the legacy image endpoint and `media:image` support this form.
+The style does not contain an output format. Choose it separately using the
+existing `format` argument to `portal.imageUrl`. The URL uses the `full` path
+placeholder, the requested output extension (for example `photo.jpg.webp`), and
+`?style=com.example.site%3Acard`. The output format is selected by the extension.
+Both the legacy image endpoint and `media:image` support this form.
 
-A processing style must define `scale` and `format`. Supported scales are
+A processing style must define `scale`. Supported scales are
 `max`, `width`, `height`, `square`, `block`, and `wide`, with fixed positive
 dimensions and the existing `scale.maxDimension` limit. `full` is deliberately
 excluded from processing styles. Formats are `jpeg`, `png`, `gif`, `webp`, and
@@ -43,8 +39,11 @@ flattening to JPEG/GIF; PNG/WebP/AVIF preserve transparency. The existing
 `aspectRatio` field remains an editor hint; the processing `scale` explicitly
 defines the output geometry. Define separate styles for responsive sizes.
 
-Style URLs reject scale, format, quality, filter, and background overrides,
-including empty query parameters, duplicate styles, and added output extensions.
+Style URLs reject scale, quality, filter, and background overrides, including
+empty query parameters and duplicate styles. Select format with the API's
+`format` argument, which is encoded as the output extension; a raw `format`
+query parameter is not supported. WebP/AVIF conversion without a style is rejected
+both when generating URLs and when serving requests.
 The image service resolves styles again before processing, so arbitrary URL
 parameters cannot authorize a modern-format conversion. Content permissions,
 stored cropping, focal point, and orientation still apply.
@@ -98,8 +97,8 @@ not an operating-system limit on all memory allocated by codec libraries.
 The cache key includes the source checksum and resolved processing parameters.
 Concurrent requests recheck the cache after obtaining the file lock, preventing
 duplicate conversions. The URL fingerprint also includes the style's scale,
-format, quality, filter, and background, so editing those fields produces a new
-URL. The handler checks the same fingerprint before applying the configured
+quality, filter, and background, so editing those fields produces a new
+URL. Different output formats have distinct URL extensions and disk cache keys. The handler checks the same fingerprint before applying the configured
 public/private immutable cache header. Old fingerprints do not receive immutable
 cache headers after a style changes. A style change during request processing
 is rejected before encoding, preventing a response with a mismatched fingerprint.

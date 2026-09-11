@@ -70,7 +70,6 @@ public final class MediaHashResolver
         digest.update( HexFormat.of().parseHex( imageHash ) );
         // Length-prefix fields to keep the fingerprint independent of delimiters in filters.
         updateStyleField( digest, style.getScale() );
-        updateStyleField( digest, style.getFormat() );
         updateStyleField( digest, style.getFilter() );
         updateStyleField( digest, style.getQuality() == null ? "85" : style.getQuality().toString() );
         updateStyleField( digest, style.getBackground() );

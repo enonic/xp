@@ -53,10 +53,10 @@ class NormalizedImageParams
             new ScaleParamsParser().parse( style.getScale().replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" ) );
         this.focalPoint = readImageParams.getFocalPoint();
         this.filterParam = FilterSetExpr.parse( style == null ? readImageParams.getFilterParam() : style.getFilter() );
-        this.format = style == null ? normalizeFormat( readImageParams ) : style.getFormat();
-        if ( style != null && !( "image/" + format ).equals( readImageParams.getMimeType() ) )
+        this.format = normalizeFormat( readImageParams );
+        if ( style == null && ( "webp".equals( format ) || "avif".equals( format ) ) )
         {
-            throw new IllegalArgumentException( "Requested type does not match image style" );
+            throw new IllegalArgumentException( "WebP and AVIF encoding requires a predefined image style" );
         }
         this.backgroundColor = supportsAlpha( format ) ? 0xFFFFFF : style == null ? readImageParams.getBackgroundColor() :
             style.getBackground() == null ? 0xFFFFFF : Integer.parseInt( style.getBackground().replaceFirst( "^0x", "" ), 16 );
@@ -136,6 +136,8 @@ class NormalizedImageParams
             case "image/png" -> "png";
             case "image/jpeg" -> "jpeg";
             case "image/gif" -> "gif";
+            case "image/webp" -> "webp";
+            case "image/avif" -> "avif";
             default -> throw new IllegalArgumentException( "Unsupported type " + mimeType );
         };
     }

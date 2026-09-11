@@ -105,17 +105,14 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected MediaType resolveContentType( final Media content, final MediaType attachmentMimeType )
-    {
-        return style == null ? super.resolveContentType( content, attachmentMimeType ) : MediaType.parse( "image/" + style.getFormat() );
-    }
-
-    @Override
     protected Attachment resolveAttachment( final Content content, final String name )
     {
-        if ( style != null && !content.getName().toString().equals( name ) )
+        // Validate explicit output extensions before pass-through sources can bypass conversion.
+        final String extension = Files.getFileExtension( name );
+        if ( style == null && ( "webp".equalsIgnoreCase( extension ) || "avif".equalsIgnoreCase( extension ) ) &&
+            shouldConvert( content, name ) )
         {
-            throw WebException.badRequest( "Image style URLs must use the original file name" );
+            throw WebException.badRequest( "WebP and AVIF encoding requires a predefined image style" );
         }
         final Attachment attachment = content.getAttachments().byLabel( "source" );
         if ( attachment == null )

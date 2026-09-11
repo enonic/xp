@@ -83,22 +83,23 @@ class ImageMediaHandlerTest
         this.request.setContentPath( ContentPath.from( "/" ) );
     }
 
-    @Test
-    void predefinedStyleDeterminesOutputType()
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "jpeg", "png"})
+    void styleAllowsRequestedOutputFormat( final String format )
         throws Exception
     {
         setupContent();
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg." + format );
         request.getParams().put( "style", "app:card" );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).build() );
         final WebResponse response = handler.handle( request );
-        assertEquals( MediaType.WEBP, response.getContentType() );
+        assertEquals( MediaType.parse( "image/" + format ), response.getContentType() );
         assertNull( response.getHeaders().get( "Cache-Control" ) );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "app:card", params.getValue().getStyle() );
-        assertEquals( "image/webp", params.getValue().getMimeType() );
+        assertEquals( "image/" + format, params.getValue().getMimeType() );
     }
 
     @Test
@@ -106,13 +107,13 @@ class ImageMediaHandlerTest
         throws Exception
     {
         setupContent();
-        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build();
+        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "max(640)" ).build();
         when( imageService.getStyle( "app:card" ) ).thenReturn( style );
         request.getParams().put( "style", "app:card" );
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:df39cc209f0eff3546f4d089e68c1029/full/image-name.jpg" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:6749e09d479eddfd560f05056d7bf8af/full/image-name.jpg" );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(320)" ).format( "webp" ).build() );
+            ImageStyle.create().name( "card" ).scale( "max(320)" ).build() );
         assertNull( handler.handle( request ).getHeaders().get( "Cache-Control" ) );
     }
 
@@ -150,16 +151,15 @@ class ImageMediaHandlerTest
         verifyNoInteractions( contentService );
     }
 
-    @Test
-    void styleRejectsOutputExtensionOverride()
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
+    void modernOutputRequiresStyle( final String format )
         throws Exception
     {
         setupContent();
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg.webp" );
-        request.getParams().put( "style", "app:card" );
-        when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg." + format );
         assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( imageService );
     }
 
     @Test

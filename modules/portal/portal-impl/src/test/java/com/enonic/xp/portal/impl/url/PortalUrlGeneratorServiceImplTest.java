@@ -61,14 +61,14 @@ class PortalUrlGeneratorServiceImplTest
     void imageStyleUrlAndPartsUseCanonicalPlaceholder()
     {
         when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).build() );
         final ImageUrlGeneratorParams params = styleUrlParams().build();
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:df39cc209f0eff3546f4d089e68c1029/full/mycontent.png?style=app%3Acard",
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:6749e09d479eddfd560f05056d7bf8af/full/mycontent.png.webp?style=app%3Acard",
                       service.imageUrl( params ) );
         final ImageUrlParts parts = service.imageUrlParts( params );
-        assertEquals( "df39cc209f0eff3546f4d089e68c1029", parts.fingerprint() );
+        assertEquals( "6749e09d479eddfd560f05056d7bf8af", parts.fingerprint() );
         assertEquals( "full", parts.scale() );
-        assertEquals( "mycontent.png", parts.name() );
+        assertEquals( "mycontent.png.webp", parts.name() );
         assertEquals( "?style=app%3Acard", parts.queryString() );
     }
 
@@ -77,12 +77,11 @@ class PortalUrlGeneratorServiceImplTest
     {
         final ImageUrlGeneratorParams params = styleUrlParams().build();
         final var styles = List.of(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(320)" ).format( "webp" ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "avif" ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).quality( 60 ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).filter( "blur(1)" ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).background( "000000" ).build() );
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(320)" ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).quality( 60 ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).filter( "blur(1)" ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).background( "000000" ).build() );
         final var fingerprints = new java.util.HashSet<String>();
         for ( final ImageStyle style : styles )
         {
@@ -99,7 +98,6 @@ class PortalUrlGeneratorServiceImplTest
     {
         assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setScale( "max(100)" ).build() );
         assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setQuality( 90 ).build() );
-        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setFormat( "avif" ).build() );
         assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setFilter( "blur(1)" ).build() );
         assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setBackground( "ffffff" ).build() );
         final ImageUrlGeneratorParams queryOverride = styleUrlParams().setQueryParam( "quality", "90" ).build();
@@ -107,12 +105,37 @@ class PortalUrlGeneratorServiceImplTest
         assertThrows( IllegalArgumentException.class, () -> service.imageUrlParts( queryOverride ) );
     }
 
+    @Test
+    void formatIsSelectedIndependentlyOfStyle()
+    {
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).build() );
+        for ( String format : new String[]{"jpeg", "png", "webp", "avif"} )
+        {
+            final ImageUrlGeneratorParams params = styleUrlParams().setFormat( format ).build();
+            final ImageUrlParts parts = service.imageUrlParts( params );
+            assertEquals( "6749e09d479eddfd560f05056d7bf8af", parts.fingerprint() );
+            assertThat( service.imageUrl( params ) ).contains( "/" + parts.name() + "?style=app%3Acard" );
+            assertThat( parts.name() ).endsWith( "." + format );
+        }
+    }
+
+    @Test
+    void modernFormatRequiresStyleWhenGeneratingUrl()
+    {
+        for ( String format : new String[]{"webp", "avif", "WEBP", "AVIF"} )
+        {
+            assertThrows( IllegalArgumentException.class,
+                () -> styleUrlParams().setStyle( null ).setScale( "max(100)" ).setFormat( format ).build() );
+        }
+    }
+
     private ImageUrlGeneratorParams.Builder styleUrlParams()
     {
         return ImageUrlGeneratorParams.create().setBaseUrl( "baseUrl" )
             .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "draft" ) ).setStyle( "app:card" );
+            .setBranch( () -> Branch.from( "draft" ) ).setStyle( "app:card" ).setFormat( "webp" );
     }
 
     @Test
@@ -177,12 +200,12 @@ class PortalUrlGeneratorServiceImplTest
             .setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> Branch.from( "draft" ) )
             .setScale( "max(300)" )
-            .setFormat( "webp" )
+            .setFormat( "jpeg" )
             .build();
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png.webp", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png.jpeg", url );
     }
 
     @Test
@@ -470,7 +493,7 @@ class PortalUrlGeneratorServiceImplTest
             .setBranch( () -> Branch.from( "master" ) )
             .setScale( "block(800,200)" )
             .setFilter( "blur(3)" )
-            .setFormat( "webp" );
+            .setFormat( "jpeg" );
 
         final ImageUrlParts parts = this.service.imageUrlParts( builder.build() );
         final String url = this.service.imageUrl( builder.setMediaBaseUrl( "https://media.example.com" ).build() );
