@@ -19,8 +19,7 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 /**
- * {@code server:scheduler} - scheduled jobs: list and get. Jobs are created by applications and the
- * scheduler configuration, not through the management API.
+ * {@code server:scheduler} - scheduled jobs: list and get.
  */
 @Component(service = UniversalApiHandler.class, property = {"key=server:scheduler", "title=Scheduler API", "mount=management",
     "allowedPrincipals=role:system.admin"})
