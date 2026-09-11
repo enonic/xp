@@ -147,7 +147,7 @@ public final class ImageHandlerWorker
         {
             // The source fingerprint does not identify the style definition. Revalidate HTTP
             // responses so editing a style cannot leave an immutable, stale browser/CDN entry.
-            portalResponse.header( HttpHeaders.CACHE_CONTROL, "no-cache" );
+            portalResponse.header( HttpHeaders.CACHE_CONTROL, "private, no-cache" );
         }
     }
 

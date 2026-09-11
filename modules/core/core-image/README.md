@@ -80,7 +80,7 @@ not an operating-system limit on all memory allocated by codec libraries.
 
 The cache key includes the source checksum and resolved processing parameters.
 Concurrent requests recheck the cache after obtaining the file lock, preventing
-duplicate conversions. The HTTP response uses `Cache-Control: no-cache` because
+duplicate conversions. The HTTP response uses `Cache-Control: private, no-cache` because
 the URL's source fingerprint does not version the style definition; requests
 revalidate and reuse the disk cache until the source or style changes.
 
