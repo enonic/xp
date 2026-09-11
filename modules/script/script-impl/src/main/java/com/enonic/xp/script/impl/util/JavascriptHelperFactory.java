@@ -8,9 +8,12 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import org.openjdk.nashorn.api.scripting.JSObject;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 
 public final class JavascriptHelperFactory
 {
+    private static final String PROTO_KEY = "__proto__";
+
     private static final String DEFINE_DATA_PROPERTY =
         "(function (object, key, value) { Object.defineProperty(object, key, {value: value, writable: true, enumerable: true, configurable: true}); })";
 
@@ -58,7 +61,14 @@ public final class JavascriptHelperFactory
             @Override
             public void defineDataProperty( final Object object, final String key, final Object value )
             {
-                defineDataProperty.call( null, object, key, value );
+                if ( PROTO_KEY.equals( key ) )
+                {
+                    defineDataProperty.call( null, object, key, value );
+                }
+                else
+                {
+                    ( (ScriptObjectMirror) object ).put( key, value );
+                }
             }
 
             @Override
