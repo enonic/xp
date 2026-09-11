@@ -50,14 +50,14 @@ final class ScriptMapGenerator
     {
         if ( value != null )
         {
-            NashornHelper.addToNativeObject( map, key, value );
+            this.helper.defineDataProperty( map, key, value );
         }
     }
 
     @Override
     protected void putRawValueInMap( final Object map, final String key, final Object value )
     {
-        NashornHelper.addToNativeObject( map, key, value );
+        this.helper.defineDataProperty( map, key, value );
     }
 
     @Override

@@ -8,6 +8,8 @@ public interface JavascriptHelper<T>
 
     T newJsObject();
 
+    void defineDataProperty( Object object, String key, Object value );
+
     Object newFunction( Function<?, ?> function);
 
     T parseJson( String text );

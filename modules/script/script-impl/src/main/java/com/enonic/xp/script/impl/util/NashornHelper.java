@@ -33,11 +33,6 @@ public final class NashornHelper
         return ( value instanceof JSObject ) && !isNativeArray( value );
     }
 
-    static void addToNativeObject( final Object object, final String key, final Object value )
-    {
-        ( (ScriptObjectMirror) object ).put( key, value );
-    }
-
     static void addToNativeArray( final Object array, final Object value )
     {
         ( (ScriptObjectMirror) array ).callMember( "push", value );
