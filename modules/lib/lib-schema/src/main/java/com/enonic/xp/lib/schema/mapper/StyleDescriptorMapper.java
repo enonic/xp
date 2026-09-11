@@ -52,6 +52,10 @@ public class StyleDescriptorMapper
                     gen.value( "type", IMAGE_TYPE );
                     gen.value( "aspectRatio", imageStyle.getAspectRatio() );
                     gen.value( "filter", imageStyle.getFilter() );
+                    gen.value( "scale", imageStyle.getScale() );
+                    gen.value( "format", imageStyle.getFormat() );
+                    gen.value( "quality", imageStyle.getQuality() );
+                    gen.value( "background", imageStyle.getBackground() );
                 }
 
                 if ( !element.getEditor().properties().isEmpty() )

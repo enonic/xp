@@ -23,6 +23,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class YmlStyleDescriptorParserTest
 {
     @Test
+    void processingStyle()
+    {
+        final StyleDescriptor descriptor = YmlStyleDescriptorParser.parse( """
+            kind: Style
+            styles:
+              - type: Image
+                name: card
+                scale: block(640,360)
+                format: webp
+                quality: 75
+                background: 'ffffff'
+                filter: grayscale()
+            """, ApplicationKey.from( "myapp" ) ).build();
+        final ImageStyle style = assertInstanceOf( ImageStyle.class, descriptor.getElements().getFirst() );
+        assertEquals( "block(640,360)", style.getScale() );
+        assertEquals( "webp", style.getFormat() );
+        assertEquals( 75, style.getQuality() );
+        assertEquals( "ffffff", style.getBackground() );
+        assertEquals( "grayscale()", style.getFilter() );
+    }
+
+    @Test
     void test()
         throws Exception
     {

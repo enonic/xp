@@ -5,7 +5,6 @@ import com.google.common.base.Strings;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-
 public final class ImageUrlParams
     extends AbstractUrlParams<ImageUrlParams>
 {
@@ -22,6 +21,8 @@ public final class ImageUrlParams
     private String format;
 
     private String scale;
+
+    private String style;
 
     private String projectName;
 
@@ -59,6 +60,17 @@ public final class ImageUrlParams
     public String getFormat()
     {
         return this.format;
+    }
+
+    public String getStyle()
+    {
+        return style;
+    }
+
+    public ImageUrlParams style( final String value )
+    {
+        this.style = Strings.emptyToNull( value );
+        return this;
     }
 
     public String getScale()
@@ -189,6 +201,7 @@ public final class ImageUrlParams
         helper.add( "filter", this.filter );
         helper.add( "background", this.background );
         helper.add( "scale", this.scale );
+        helper.add( "style", this.style );
         return helper.toString();
     }
 }

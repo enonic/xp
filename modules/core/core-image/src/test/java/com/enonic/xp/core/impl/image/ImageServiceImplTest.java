@@ -2,10 +2,14 @@ package com.enonic.xp.core.impl.image;
 
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.HexFormat;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
@@ -17,25 +21,33 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.internal.security.MessageDigests;
+import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.StyleDescriptor;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +59,8 @@ class ImageServiceImplTest
     private ContentService contentService;
 
     private ImageServiceImpl imageService;
+
+    private StyleDescriptorService styleDescriptorService;
 
     private ContentId contentId;
 
@@ -65,6 +79,8 @@ class ImageServiceImplTest
         binaryReference = BinaryReference.from( "binaryRef" );
         contentService = mock( ContentService.class );
 
+        styleDescriptorService = mock( StyleDescriptorService.class );
+
         imageConfig = mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
         if ( info.getTags().contains( "progressive_disabled" ) )
@@ -72,6 +88,11 @@ class ImageServiceImplTest
             when( imageConfig.progressive() ).thenReturn( "" );
         }
 
+        imageService = newImageService();
+    }
+
+    private ImageServiceImpl newImageService()
+    {
         ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
         imageFilterBuilder.activate( imageConfig );
 
@@ -79,7 +100,113 @@ class ImageServiceImplTest
 
         imageScaleFunctionBuilder.activate( imageConfig );
 
-        imageService = new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, imageConfig );
+        return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, styleDescriptorService, imageConfig );
+    }
+
+    private void processingStyle( final String scale, final String format )
+    {
+        when( styleDescriptorService.getByApplication( ApplicationKey.from( "app" ) ) ).thenReturn(
+            StyleDescriptor.create().application( ApplicationKey.from( "app" ) )
+                .addStyleElement( ImageStyle.create().name( "card" ).scale( scale ).format( format ).build() ).build() );
+    }
+
+    private ReadImageParams styledParams( final String format )
+    {
+        return ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/" + format ).style( "app:card" ).build();
+    }
+
+    @Test
+    void rejectsUnknownAndIncompleteStylesBeforeReadingContent()
+    {
+        assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:missing" ) );
+        processingStyle( null, "webp" );
+        assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
+        processingStyle( "full", "webp" );
+        assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
+        processingStyle( "max(100)", "webp" );
+        assertEquals( "webp", imageService.getStyle( "app:card" ).getFormat() );
+        verifyNoInteractions( contentService );
+    }
+
+    @Test
+    void directModernEncodingWithoutStyleIsRejected()
+    {
+        for ( String format : new String[]{"webp", "avif"} )
+        {
+            assertThrows( IllegalArgumentException.class, () -> imageService.readImage(
+                ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+                    .mimeType( "image/" + format ).build() ) );
+        }
+        verifyNoInteractions( contentService );
+    }
+
+    @Test
+    void styleChangeInvalidatesCachedImage()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( "square(10)", "png" );
+        final byte[] first = imageService.readImage( styledParams( "png" ) ).read();
+        assertEquals( 10, ImageIO.read( new ByteArrayInputStream( first ) ).getWidth() );
+        imageService.readImage( styledParams( "png" ) ).read();
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+
+        processingStyle( "square(20)", "png" );
+        final byte[] second = imageService.readImage( styledParams( "png" ) ).read();
+        assertEquals( 20, ImageIO.read( new ByteArrayInputStream( second ) ).getWidth() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void oversizedSourceRejectedBeforeStartingEncoder()
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( "max(10)", "webp" );
+        when( imageConfig.encoding_executable() ).thenReturn( "/missing-encoder" );
+        when( imageConfig.encoding_maxPixels() ).thenReturn( 1L );
+        imageService = newImageService();
+        final IllegalArgumentException error = assertThrows( IllegalArgumentException.class,
+            () -> imageService.readImage( styledParams( "webp" ) ) );
+        assertTrue( error.getMessage().contains( "Source image" ) );
+    }
+
+    @Test
+    void boundedQueueRejectsExcessRequestsAndReleasesSlotsAfterFailure()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( "max(10)", "webp" );
+        when( imageConfig.encoding_executable() ).thenReturn( "/missing-encoder" );
+        when( imageConfig.encoding_maxConcurrent() ).thenReturn( 1 );
+        when( imageConfig.encoding_maxQueue() ).thenReturn( 0 );
+        imageService = newImageService();
+        final var started = new CountDownLatch( 1 );
+        final var release = new CountDownLatch( 1 );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenAnswer( invocation -> {
+            started.countDown();
+            assertTrue( release.await( 10, TimeUnit.SECONDS ) );
+            return ByteSource.wrap( imageDataOriginal );
+        } );
+        try (var executor = Executors.newSingleThreadExecutor())
+        {
+            final var first = executor.submit( () -> assertThrows( IOException.class,
+                () -> imageService.readImage( styledParams( "webp" ) ) ) );
+            try
+            {
+                assertTrue( started.await( 5, TimeUnit.SECONDS ) );
+                assertThrows( ThrottlingException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+            }
+            finally
+            {
+                release.countDown();
+            }
+            first.get( 10, TimeUnit.SECONDS );
+        }
+        // A failed conversion neither leaves a cache entry nor consumes the next request's slot.
+        assertThrows( IOException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
     }
 
     private byte[] readImage( final String path )

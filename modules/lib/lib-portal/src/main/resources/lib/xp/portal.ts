@@ -109,7 +109,9 @@ export type ImageUrlParams = IdXorPath & {
     filter?: string;
     params?: object;
     type?: 'server' | 'absolute';
-    scale:
+    /** Fully qualified processing style (application:name). Cannot be combined with processing parameters. */
+    style?: string;
+    scale?:
         | `block(${number},${number})`
         | `height(${number})`
         | `max(${number})`
@@ -150,6 +152,8 @@ interface ImageUrlHandler {
 
     setScale(value: string): void;
 
+    setStyle(value: string | null): void;
+
     createUrl(): string;
 }
 
@@ -161,7 +165,8 @@ interface ImageUrlHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] ID of the image content. Either `id` or `path` is required.
  * @param {string} [params.path] Path to the image. If `id` is specified, this parameter is not used.
- * @param {string} params.scale Required. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
+ * @param {string} [params.style] Predefined processing style (application:name). Required for WebP/AVIF encoding.
+ * @param {string} [params.scale] Required unless style is provided. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
  * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Format of the image.
@@ -177,7 +182,7 @@ interface ImageUrlHandler {
 export function imageUrl(params: ImageUrlParams): string {
     const bean: ImageUrlHandler = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
 
-    const scale = checkRequired(params, 'scale');
+    const scale = params.style ? (params.scale ?? 'full') : checkRequired(params, 'scale');
 
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
@@ -188,6 +193,7 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setFilter(__.nullOrValue(params.filter));
     bean.setFormat(__.nullOrValue(params.format));
     bean.setScale(scale);
+    bean.setStyle(__.nullOrValue(params.style));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
     bean.setBaseUrl(__.nullOrValue(params.baseUrl));

@@ -6,6 +6,9 @@ import java.util.HexFormat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
@@ -34,6 +37,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -53,6 +57,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class ImageHandlerTest
@@ -200,6 +206,70 @@ class ImageHandlerTest
         when( this.contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( imageBytes );
 
         when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
+    }
+
+    @Test
+    void predefinedStyleDeterminesOutputType()
+        throws Exception
+    {
+        setupContent();
+        request.setRawPath( "/_/image/123456/full/image-name.jpg" );
+        request.getParams().put( "style", "app:card" );
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
+        final WebResponse response = handler.handle( request );
+        assertEquals( MediaType.WEBP, response.getContentType() );
+        assertEquals( "no-cache", response.getHeaders().get( "Cache-Control" ) );
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( "app:card", params.getValue().getStyle() );
+        assertEquals( "image/webp", params.getValue().getMimeType() );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"scale", "format", "quality", "filter", "background"})
+    void styleRejectsEvenEmptyOverridesBeforeReadingContent( final String parameter )
+    {
+        request.setRawPath( "/_/image/123456/full/image-name.jpg" );
+        request.getParams().put( "style", "app:card" );
+        request.getParams().put( parameter, "" );
+        final WebException error = assertThrows( WebException.class, () -> handler.handle( request ) );
+        assertEquals( HttpStatus.BAD_REQUEST, error.getStatus() );
+        verifyNoInteractions( contentService, imageService );
+    }
+
+    @Test
+    void styleRejectsScalePathAndDuplicateStyle()
+    {
+        request.setRawPath( "/_/image/123456/full/image-name.jpg".replace( "/full/", "/max-123/" ) );
+        request.getParams().put( "style", "app:card" );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        request.setRawPath( "/_/image/123456/full/image-name.jpg" );
+        request.getParams().put( "style", "app:other" );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( contentService, imageService );
+    }
+
+    @Test
+    void unknownStyleIsBadRequest()
+    {
+        request.setRawPath( "/_/image/123456/full/image-name.jpg" );
+        request.getParams().put( "style", "app:missing" );
+        when( imageService.getStyle( "app:missing" ) ).thenThrow( new IllegalArgumentException( "Unknown style" ) );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( contentService );
+    }
+
+    @Test
+    void styleRejectsOutputExtensionOverride()
+        throws Exception
+    {
+        setupContent();
+        request.setRawPath( "/_/image/123456/full/image-name.jpg.webp" );
+        request.getParams().put( "style", "app:card" );
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
     }
 
     @Test

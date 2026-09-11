@@ -116,6 +116,11 @@ exports.componentUrlTest_unknownProperty = function () {
     return true;
 };
 
+exports.imageUrlStyleTest = function () {
+    portal.imageUrl({id: '123', style: 'app:card'});
+    return true;
+};
+
 exports.imageUrlTest = function () {
     var result = portal.imageUrl({
         id: '123',

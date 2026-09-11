@@ -40,6 +40,8 @@ public final class ReadImageParams
 
     private final String attachmentSha512;
 
+    private final String style;
+
     private ReadImageParams( final Builder builder )
     {
         this.contentId = builder.contentId;
@@ -56,6 +58,7 @@ public final class ReadImageParams
         this.mimeType = builder.mimeType;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
         this.attachmentSha512 = builder.attachmentSha512;
+        this.style = builder.style;
     }
 
     public ContentId getContentId()
@@ -128,6 +131,11 @@ public final class ReadImageParams
         return attachmentSha512;
     }
 
+    public String getStyle()
+    {
+        return style;
+    }
+
     public static Builder newImageParams()
     {
         return new Builder();
@@ -162,6 +170,17 @@ public final class ReadImageParams
         public int quality;
 
         private String attachmentSha512;
+
+        private String style;
+
+        /**
+         * Fully qualified image style (application:name). Processing parameters are resolved server-side.
+         */
+        public Builder style( final String style )
+        {
+            this.style = style;
+            return this;
+        }
 
         private Builder()
         {

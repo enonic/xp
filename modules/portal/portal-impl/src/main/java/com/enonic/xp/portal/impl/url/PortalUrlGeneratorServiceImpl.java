@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.url;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
@@ -151,6 +152,16 @@ public class PortalUrlGeneratorServiceImpl
     private static Map<String, List<String>> imageQueryParams( final ImageUrlGeneratorParams params )
     {
         final Map<String, List<String>> queryParams = new LinkedHashMap<>( params.getQueryParams() );
+
+        if ( params.getStyle() != null )
+        {
+            if ( Set.of( "style", "scale", "format", "quality", "filter", "background" ).stream()
+                .anyMatch( queryParams::containsKey ) )
+            {
+                throw new IllegalArgumentException( "Image style parameters cannot be overridden in query parameters" );
+            }
+            queryParams.put( "style", List.of( params.getStyle() ) );
+        }
 
         if ( params.getQuality() != null )
         {

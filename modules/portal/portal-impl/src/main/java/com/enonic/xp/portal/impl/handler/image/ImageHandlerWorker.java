@@ -1,9 +1,11 @@
 package com.enonic.xp.portal.impl.handler.image;
 
 import java.io.IOException;
+import java.util.Set;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
+import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -21,6 +23,8 @@ import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
+import com.enonic.xp.portal.impl.handler.HandlerHelper;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
@@ -48,6 +52,10 @@ public final class ImageHandlerWorker
 
     public ScaleParams scaleParams;
 
+    private String styleParam;
+
+    private ImageStyle style;
+
     public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService )
     {
         super( request, contentService );
@@ -55,8 +63,61 @@ public final class ImageHandlerWorker
     }
 
     @Override
+    public PortalResponse execute()
+        throws IOException
+    {
+        this.styleParam = HandlerHelper.getParameter( request, "style" );
+        if ( styleParam != null )
+        {
+            if ( request.getParams().get( "style" ).size() != 1 ||
+                scaleParams == null || !"full".equals( scaleParams.getName() ) || scaleParams.getArguments().length != 0 ||
+                Set.of( "scale", "format", "quality", "filter", "background" ).stream()
+                    .anyMatch( request.getParams()::containsKey ) )
+            {
+                throw WebException.badRequest( "Image styles cannot be combined with processing parameters" );
+            }
+            try
+            {
+                this.style = imageService.getStyle( styleParam );
+            }
+            catch ( IllegalArgumentException e )
+            {
+                throw WebException.badRequest( "Invalid image style", e );
+            }
+        }
+        return super.execute();
+    }
+
+    @Override
+    protected boolean shouldBypassTransformation( final MediaType attachmentMimeType )
+    {
+        if ( style != null )
+        {
+            // These formats have no decoder in the current ImageIO backend. Preserve the existing
+            // pass-through behaviour for unstyled requests, but never silently ignore a style.
+            if ( attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( MediaType.AVIF ) ||
+                attachmentMimeType.is( MediaType.SVG_UTF_8.withoutParameters() ) )
+            {
+                throw WebException.badRequest( "Source format does not support image styles" );
+            }
+            return false;
+        }
+        return super.shouldBypassTransformation( attachmentMimeType );
+    }
+
+    @Override
+    protected MediaType resolveContentType( final Media content, final MediaType attachmentMimeType )
+    {
+        return style == null ? super.resolveContentType( content, attachmentMimeType ) : MediaType.parse( "image/" + style.getFormat() );
+    }
+
+    @Override
     protected Attachment resolveAttachment( final Content content, final String name )
     {
+        if ( style != null && !content.getName().toString().equals( name ) )
+        {
+            throw WebException.badRequest( "Image style URLs must use the original file name" );
+        }
         final Attachment attachment = content.getAttachments().byLabel( "source" );
         if ( attachment == null )
         {
@@ -82,6 +143,12 @@ public final class ImageHandlerWorker
     {
         portalResponse.contentType( contentType );
         portalResponse.body( body );
+        if ( style != null )
+        {
+            // The source fingerprint does not identify the style definition. Revalidate HTTP
+            // responses so editing a style cannot leave an immutable, stale browser/CDN entry.
+            portalResponse.header( HttpHeaders.CACHE_CONTROL, "no-cache" );
+        }
     }
 
     @Override
@@ -134,6 +201,7 @@ public final class ImageHandlerWorker
                 .backgroundColor( backgroundColor )
                 .quality( imageQuality )
                 .mimeType( contentType.toString() )
+                .style( styleParam )
                 .build();
 
             return this.imageService.readImage( readImageParams );

@@ -8,12 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -31,12 +34,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
+import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.core.internal.SimpleCsvParser;
 import com.enonic.xp.core.internal.security.MessageDigests;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
@@ -45,10 +51,13 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.StyleDescriptor;
+import com.enonic.xp.style.StyleDescriptorService;
 
 import static java.util.Objects.requireNonNull;
 
-@Component
+@Component(configurationPid = "com.enonic.xp.image")
 public class ImageServiceImpl
     implements ImageService
 {
@@ -68,14 +77,40 @@ public class ImageServiceImpl
 
     private final Set<String> progressiveOnFormats;
 
+    private final StyleDescriptorService styleDescriptorService;
+
+    private final ImageMagickEncoder modernEncoder;
+
+    private final Semaphore encodingRequests;
+
+    private final Semaphore encodingSlots;
+
+    private final int queueTimeoutSeconds;
+
+    private final long maxEncodingPixels;
+
     @Activate
     public ImageServiceImpl( @Reference final ContentService contentService,
                              @Reference final ImageScaleFunctionBuilder imageScaleFunctionBuilder,
-                             @Reference final ImageFilterBuilder imageFilterBuilder, final ImageConfig config )
+                             @Reference final ImageFilterBuilder imageFilterBuilder,
+                             @Reference final StyleDescriptorService styleDescriptorService, final ImageConfig config )
     {
         this.contentService = contentService;
         this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
         this.imageFilterBuilder = imageFilterBuilder;
+        this.styleDescriptorService = styleDescriptorService;
+
+        if ( config.encoding_maxConcurrent() < 1 || config.encoding_maxQueue() < 0 ||
+            config.encoding_queueTimeoutSeconds() < 1 || config.encoding_maxPixels() < 1 )
+        {
+            throw new IllegalArgumentException( "Invalid image encoding limits" );
+        }
+        this.encodingSlots = new Semaphore( config.encoding_maxConcurrent(), true );
+        this.encodingRequests = new Semaphore( Math.addExact( config.encoding_maxConcurrent(), config.encoding_maxQueue() ) );
+        this.queueTimeoutSeconds = config.encoding_queueTimeoutSeconds();
+        this.maxEncodingPixels = config.encoding_maxPixels();
+        this.modernEncoder = new ImageMagickEncoder( config.encoding_executable(), config.encoding_timeoutSeconds(),
+                                                    cacheFolder.resolve( "encoding" ) );
 
         this.circuitBreaker = new MemoryCircuitBreaker( toMegaBytes( MemoryLimitParser.maxHeap().parse( config.memoryLimit() ) ) );
 
@@ -87,15 +122,79 @@ public class ImageServiceImpl
     }
 
     @Override
+    public ImageStyle getStyle( final String key )
+    {
+        final DescriptorKey descriptorKey = DescriptorKey.from( key );
+        final StyleDescriptor descriptor = styleDescriptorService.getByApplication( descriptorKey.getApplicationKey() );
+        final ImageStyle style = descriptor == null ? null : descriptor.getElements().stream()
+            .filter( element -> element instanceof ImageStyle && element.getName().equals( descriptorKey.getName() ) )
+            .map( ImageStyle.class::cast ).findFirst().orElse( null );
+        if ( style == null )
+        {
+            throw new IllegalArgumentException( "Unknown image style " + key );
+        }
+        if ( style.getScale() == null || !style.getScale().replaceAll( "\\s", "" ).matches(
+            "(?:max|width|height|square)\\([1-9][0-9]*\\)|(?:block|wide)\\([1-9][0-9]*,[1-9][0-9]*\\)" ) ||
+            style.getFormat() == null || !Set.of( "png", "jpeg", "gif", "webp", "avif" ).contains( style.getFormat() ) ||
+            style.getQuality() != null && ( style.getQuality() < 0 || style.getQuality() > 100 ) ||
+            style.getBackground() != null && !style.getBackground().matches( "(?:0x)?[0-9a-fA-F]{1,6}" ) )
+        {
+            throw new IllegalArgumentException( "Image style must define a fixed scale and supported format, with valid quality/background" );
+        }
+        return style;
+    }
+
+    @Override
     public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
-        final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams );
+        final ImageStyle style = readImageParams.getStyle() == null ? null : getStyle( readImageParams.getStyle() );
+        final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams, style );
+        if ( isModernFormat( normalizedImageParams.getFormat() ) )
+        {
+            modernEncoder.checkEnabled();
+        }
 
         final String resolvedSha512 = resolveAttachmentSha512( normalizedImageParams );
 
-        return immutableFilesHelper.computeIfAbsent( getCachedImagePath( normalizedImageParams, resolvedSha512 ),
-                                                     sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
+        final Path path = getCachedImagePath( normalizedImageParams, resolvedSha512 );
+        if ( !isModernFormat( normalizedImageParams.getFormat() ) )
+        {
+            return immutableFilesHelper.computeIfAbsent( path, sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
+        }
+        if ( Files.exists( path ) )
+        {
+            return MoreFiles.asByteSource( path );
+        }
+        if ( !encodingRequests.tryAcquire() )
+        {
+            throw new ThrottlingException( "Image encoding queue is full" );
+        }
+        try
+        {
+            if ( !encodingSlots.tryAcquire( queueTimeoutSeconds, TimeUnit.SECONDS ) )
+            {
+                throw new ThrottlingException( "Image encoding queue timed out" );
+            }
+            try
+            {
+                return immutableFilesHelper.computeIfAbsent( path,
+                    sink -> writeImage( normalizedImageParams, resolvedSha512, sink ), queueTimeoutSeconds );
+            }
+            finally
+            {
+                encodingSlots.release();
+            }
+        }
+        catch ( InterruptedException e )
+        {
+            Thread.currentThread().interrupt();
+            throw new IOException( "Interrupted waiting for image encoder", e );
+        }
+        finally
+        {
+            encodingRequests.release();
+        }
     }
 
 
@@ -190,6 +289,11 @@ public class ImageServiceImpl
             {
                 final int width = imageReader.getWidth( 0 );
                 final int height = imageReader.getHeight( 0 );
+                final boolean modern = isModernFormat( readImageParams.getFormat() );
+                if ( modern && (long) width * height > maxEncodingPixels )
+                {
+                    throw new IllegalArgumentException( "Source image exceeds encoding.maxPixels" );
+                }
 
                 final ImageTypeSpecifier rawImageType = imageReader.getRawImageType( 0 );
                 final int pixelSize;
@@ -209,7 +313,8 @@ public class ImageServiceImpl
 
                 final boolean toRotate = readImageParams.getOrientation() != ImageOrientation.TopLeft;
                 final boolean toApplyFilters = !readImageParams.getFilterParam().isEmpty();
-                final boolean toAddBackground = !"png".equals( readImageParams.getFormat() ) && ( mayHaveAlpha || toApplyFilters );
+                final boolean toAddBackground = !NormalizedImageParams.supportsAlpha( readImageParams.getFormat() ) &&
+                    ( mayHaveAlpha || toApplyFilters );
                 final boolean toScale = !ScaleParams.NO_SCALE.getName().equals( readImageParams.getScaleParams().getName() );
                 final boolean toCrop = !readImageParams.getCropping().isUnmodified();
 
@@ -227,6 +332,10 @@ public class ImageServiceImpl
                     final FocalPoint focalPoint =
                         toCropRelativeFocalPoint( readImageParams.getFocalPoint(), readImageParams.getCropping() );
                     imageScaleFunction = imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), focalPoint );
+                    if ( modern && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
+                    {
+                        throw new IllegalArgumentException( "Output image exceeds encoding.maxPixels" );
+                    }
                     final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
                     scaledMemoryRequirements = Math.max(
                         toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ), 1 );
@@ -249,7 +358,16 @@ public class ImageServiceImpl
                            originalMemoryRequirements, scaledMemoryRequirements, intermediatesMemoryRequirements,
                            totalMemoryRequirementsEstimate, pixelSize );
 
-                final int permitted = circuitBreaker.softTryAcquire( totalMemoryRequirementsEstimate );
+                final int permitted;
+                if ( modern )
+                {
+                    circuitBreaker.tryAcquire( totalMemoryRequirementsEstimate );
+                    permitted = totalMemoryRequirementsEstimate;
+                }
+                else
+                {
+                    permitted = circuitBreaker.softTryAcquire( totalMemoryRequirementsEstimate );
+                }
                 try
                 {
                     BufferedImage bufferedImage = imageReader.read( 0, imageReader.getDefaultReadParam() );
@@ -280,6 +398,11 @@ public class ImageServiceImpl
                         bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
                     }
 
+                    if ( modern && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxEncodingPixels )
+                    {
+                        throw new IllegalArgumentException( "Transformed image exceeds encoding.maxPixels" );
+                    }
+
                     // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,
                     // and anything below 0 as system default due to Exception swallow
                     // New implementation supports 0 value (it means "best compression" for PNG),
@@ -292,7 +415,14 @@ public class ImageServiceImpl
 
                     try (OutputStream outputStream = sink.openBufferedStream())
                     {
-                        ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality, progressive );
+                        if ( modern )
+                        {
+                            modernEncoder.write( bufferedImage, readImageParams.getFormat(), readImageParams.getQuality(), outputStream );
+                        }
+                        else
+                        {
+                            ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality, progressive );
+                        }
                     }
                     LOG.debug( "Finish writing" );
                 }
@@ -306,6 +436,11 @@ public class ImageServiceImpl
                 imageReader.dispose();
             }
         }
+    }
+
+    private static boolean isModernFormat( final String format )
+    {
+        return "webp".equals( format ) || "avif".equals( format );
     }
 
     private static int toMegaBytes( long bytesValue )

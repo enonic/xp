@@ -70,6 +70,18 @@ public final class YmlStyleDescriptorParser
             @JsonProperty("filter")
             abstract ImageStyle.Builder filter( String filter );
 
+            @JsonProperty("scale")
+            abstract ImageStyle.Builder scale( String scale );
+
+            @JsonProperty("format")
+            abstract ImageStyle.Builder format( String format );
+
+            @JsonProperty("quality")
+            abstract ImageStyle.Builder quality( Integer quality );
+
+            @JsonProperty("background")
+            abstract ImageStyle.Builder background( String background );
+
             @JsonProperty("editor")
             abstract ImageStyle.Builder editor( GenericValue value );
         }

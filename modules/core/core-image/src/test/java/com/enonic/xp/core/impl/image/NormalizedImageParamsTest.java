@@ -6,6 +6,7 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -14,6 +15,43 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NormalizedImageParamsTest
 {
+    @Test
+    void modernFormatsRequireResolvedStyle()
+    {
+        for ( String format : new String[]{"webp", "avif"} )
+        {
+            assertThrows( IllegalArgumentException.class,
+                          () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/" + format ).build() ) );
+            // Merely supplying an unverified style name must not enable the encoder.
+            assertThrows( IllegalArgumentException.class,
+                          () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/" + format ).style( "app:card" ).build() ) );
+        }
+    }
+
+    @Test
+    void resolvedStyleOwnsAllProcessingParameters()
+    {
+        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "block(640,360)" )
+            .format( "webp" ).quality( 75 ).filter( "grayscale()" ).build();
+        final NormalizedImageParams params = new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" )
+            .scaleParams( new ScaleParams( "square", new Object[]{8000} ) ).filterParam( "blur(100)" )
+            .quality( 100 ).backgroundColor( 0 ).build(), style );
+        assertEquals( "block(640,360)", params.getScaleParams().toString() );
+        assertEquals( "webp", params.getFormat() );
+        assertEquals( 75, params.getQuality() );
+        assertEquals( "grayscale()", params.getFilterParam().toString() );
+        assertEquals( 0xFFFFFF, params.getBackgroundColor() );
+    }
+
+    @Test
+    void outputTypeMustMatchResolvedStyle()
+    {
+        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "max(100)" ).format( "avif" ).build();
+        assertThrows( IllegalArgumentException.class,
+                      () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" ).build(), style ) );
+        assertEquals( 85, new NormalizedImageParams( noFormatTemplate().mimeType( "image/avif" ).build(), style ).getQuality() );
+    }
+
     @Test
     void normalizeFormat()
     {

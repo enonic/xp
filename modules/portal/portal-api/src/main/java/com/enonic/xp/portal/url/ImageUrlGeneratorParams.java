@@ -13,7 +13,6 @@ import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
-
 public final class ImageUrlGeneratorParams
 {
     private final String baseUrl;
@@ -38,6 +37,8 @@ public final class ImageUrlGeneratorParams
 
     private final String scale;
 
+    private final String style;
+
     private final Map<String, List<String>> queryParams;
 
     private ImageUrlGeneratorParams( final Builder builder )
@@ -48,7 +49,13 @@ public final class ImageUrlGeneratorParams
         this.mediaSupplier = requireNonNull( builder.mediaSupplier );
         this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
         this.branchSupplier = requireNonNull( builder.branchSupplier );
-        this.scale = requireNonNull( builder.scale );
+        this.style = emptyToNull( builder.style );
+        if ( style != null && ( builder.scale != null && !"full".equals( builder.scale ) ||
+            builder.format != null || builder.quality != null || builder.filter != null || builder.background != null ) )
+        {
+            throw new IllegalArgumentException( "Image styles cannot be combined with processing parameters" );
+        }
+        this.scale = style == null ? requireNonNull( builder.scale ) : "full";
         this.background = builder.background;
         this.quality = builder.quality;
         this.filter = builder.filter;
@@ -106,6 +113,11 @@ public final class ImageUrlGeneratorParams
         return format;
     }
 
+    public String getStyle()
+    {
+        return style;
+    }
+
     public String getScale()
     {
         return scale;
@@ -144,6 +156,14 @@ public final class ImageUrlGeneratorParams
         private String format;
 
         private String scale;
+
+        private String style;
+
+        public Builder setStyle( final String style )
+        {
+            this.style = style;
+            return this;
+        }
 
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 

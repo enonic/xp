@@ -20,8 +20,8 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
-import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
@@ -32,6 +32,7 @@ import com.enonic.xp.webapp.WebappService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,6 +50,39 @@ class PortalUrlGeneratorServiceImplTest
     void tearDown()
     {
         PortalRequestAccessor.remove();
+    }
+
+    @Test
+    void imageStyleUrlAndPartsUseCanonicalPlaceholder()
+    {
+        final ImageUrlGeneratorParams params = styleUrlParams().build();
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/full/mycontent.png?style=app%3Acard",
+                      service.imageUrl( params ) );
+        final ImageUrlParts parts = service.imageUrlParts( params );
+        assertEquals( "full", parts.scale() );
+        assertEquals( "mycontent.png", parts.name() );
+        assertEquals( "?style=app%3Acard", parts.queryString() );
+    }
+
+    @Test
+    void imageStyleUrlRejectsOverrides()
+    {
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setScale( "max(100)" ).build() );
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setQuality( 90 ).build() );
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setFormat( "avif" ).build() );
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setFilter( "blur(1)" ).build() );
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setBackground( "ffffff" ).build() );
+        final ImageUrlGeneratorParams queryOverride = styleUrlParams().setQueryParam( "quality", "90" ).build();
+        assertThrows( IllegalArgumentException.class, () -> service.imageUrl( queryOverride ) );
+        assertThrows( IllegalArgumentException.class, () -> service.imageUrlParts( queryOverride ) );
+    }
+
+    private ImageUrlGeneratorParams.Builder styleUrlParams()
+    {
+        return ImageUrlGeneratorParams.create().setBaseUrl( "baseUrl" )
+            .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
+            .setProjectName( () -> ProjectName.from( "myproject" ) )
+            .setBranch( () -> Branch.from( "draft" ) ).setStyle( "app:card" );
     }
 
     @Test

@@ -9,4 +9,17 @@ public @interface ImageConfig
     String memoryLimit() default "10%";
 
     String progressive() default "jpeg";
+
+    // An empty executable disables modern-format encoding until explicitly configured.
+    String encoding_executable() default "";
+
+    int encoding_maxConcurrent() default 2;
+
+    int encoding_maxQueue() default 8;
+
+    int encoding_queueTimeoutSeconds() default 5;
+
+    int encoding_timeoutSeconds() default 30;
+
+    long encoding_maxPixels() default 40_000_000;
 }
