@@ -27,6 +27,8 @@ import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.image.ImageService;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.webapp.WebappService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,10 +42,13 @@ class PortalUrlGeneratorServiceImplTest
 {
     private PortalUrlGeneratorService service;
 
+    private ImageService imageService;
+
     @BeforeEach
     void setUp()
     {
-        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        this.imageService = mock( ImageService.class );
+        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), imageService );
     }
 
     @AfterEach
@@ -55,13 +60,38 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void imageStyleUrlAndPartsUseCanonicalPlaceholder()
     {
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
         final ImageUrlGeneratorParams params = styleUrlParams().build();
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/full/mycontent.png?style=app%3Acard",
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:df39cc209f0eff3546f4d089e68c1029/full/mycontent.png?style=app%3Acard",
                       service.imageUrl( params ) );
         final ImageUrlParts parts = service.imageUrlParts( params );
+        assertEquals( "df39cc209f0eff3546f4d089e68c1029", parts.fingerprint() );
         assertEquals( "full", parts.scale() );
         assertEquals( "mycontent.png", parts.name() );
         assertEquals( "?style=app%3Acard", parts.queryString() );
+    }
+
+    @Test
+    void changingStyleSettingsChangesUrlAndPartsFingerprint()
+    {
+        final ImageUrlGeneratorParams params = styleUrlParams().build();
+        final var styles = List.of(
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(320)" ).format( "webp" ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "avif" ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).quality( 60 ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).filter( "blur(1)" ).build(),
+            ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).background( "000000" ).build() );
+        final var fingerprints = new java.util.HashSet<String>();
+        for ( final ImageStyle style : styles )
+        {
+            when( imageService.getStyle( "app:card" ) ).thenReturn( style );
+            final ImageUrlParts parts = service.imageUrlParts( params );
+            assertThat( service.imageUrl( params ) ).contains( ":" + parts.fingerprint() + "/full/" );
+            fingerprints.add( parts.fingerprint() );
+        }
+        assertEquals( styles.size(), fingerprints.size() );
     }
 
     @Test

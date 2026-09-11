@@ -18,6 +18,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.image.ImageService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
@@ -44,15 +45,19 @@ public class PortalUrlGeneratorServiceImpl
 
     private final SiteService siteService;
 
+    private final ImageService imageService;
+
     private volatile String defaultMediaBaseUrl;
 
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
-    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService )
+    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService,
+                                          @Reference final ImageService imageService )
     {
         this.webappService = webappService;
         this.siteService = siteService;
+        this.imageService = imageService;
     }
 
     @Activate
@@ -75,6 +80,7 @@ public class PortalUrlGeneratorServiceImpl
                           .setBranch( params.getBranch() )
                           .setScale( params.getScale() )
                           .setFormat( params.getFormat() )
+                          .setStyle( () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
                           .build() );
 
         builder.setQueryParams( imageQueryParams( params ) );
@@ -119,6 +125,7 @@ public class PortalUrlGeneratorServiceImpl
                 .setBranch( params.getBranch() )
                 .setScale( params.getScale() )
                 .setFormat( params.getFormat() )
+                .setStyle( () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
                 .build()
                 .parts();
 

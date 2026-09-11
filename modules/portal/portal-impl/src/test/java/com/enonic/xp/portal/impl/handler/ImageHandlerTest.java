@@ -219,7 +219,7 @@ class ImageHandlerTest
             ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
         final WebResponse response = handler.handle( request );
         assertEquals( MediaType.WEBP, response.getContentType() );
-        assertEquals( "private, no-cache", response.getHeaders().get( "Cache-Control" ) );
+        assertNull( response.getHeaders().get( "Cache-Control" ) );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "app:card", params.getValue().getStyle() );

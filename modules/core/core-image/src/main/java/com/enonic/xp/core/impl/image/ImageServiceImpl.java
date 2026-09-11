@@ -109,7 +109,7 @@ public class ImageServiceImpl
         this.encodingRequests = new Semaphore( Math.addExact( config.encoding_maxConcurrent(), config.encoding_maxQueue() ) );
         this.queueTimeoutSeconds = config.encoding_queueTimeoutSeconds();
         this.maxEncodingPixels = config.encoding_maxPixels();
-        this.modernEncoder = new ImageMagickEncoder( config.encoding_executable(), config.encoding_timeoutSeconds(),
+        this.modernEncoder = new ImageMagickEncoder( config.encoding_enabled() ? "embedded" : "", config.encoding_timeoutSeconds(),
                                                     cacheFolder.resolve( "encoding" ) );
 
         this.circuitBreaker = new MemoryCircuitBreaker( toMegaBytes( MemoryLimitParser.maxHeap().parse( config.memoryLimit() ) ) );
@@ -149,6 +149,10 @@ public class ImageServiceImpl
         throws IOException
     {
         final ImageStyle style = readImageParams.getStyle() == null ? null : getStyle( readImageParams.getStyle() );
+        if ( readImageParams.getExpectedStyle() != null && !readImageParams.getExpectedStyle().equals( style ) )
+        {
+            throw new IllegalArgumentException( "Image style changed during request; regenerate the image URL" );
+        }
         final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams, style );
         if ( isModernFormat( normalizedImageParams.getFormat() ) )
         {

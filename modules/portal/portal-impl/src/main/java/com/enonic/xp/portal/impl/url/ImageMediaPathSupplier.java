@@ -10,6 +10,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.style.ImageStyle;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -28,6 +29,8 @@ final class ImageMediaPathSupplier
 
     private final String format;
 
+    private final Supplier<ImageStyle> styleSupplier;
+
     private ImageMediaPathSupplier( final Builder builder )
     {
         this.scale = requireNonNull( builder.scale );
@@ -35,6 +38,7 @@ final class ImageMediaPathSupplier
         this.projectNameSupplier = builder.projectNameSupplier;
         this.branchSupplier = builder.branchSupplier;
         this.format = builder.format;
+        this.styleSupplier = builder.styleSupplier;
     }
 
     public static Builder create()
@@ -65,7 +69,8 @@ final class ImageMediaPathSupplier
 
         final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 
-        return new MediaPathParts( context, media.getId().toString(), MediaHashResolver.resolveImageHash( media ),
+        return new MediaPathParts( context, media.getId().toString(), MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ),
+                                                                                styleSupplier.get() ),
                                         resolveScale( scale ), resolveName( media, format ) );
     }
 
@@ -100,6 +105,14 @@ final class ImageMediaPathSupplier
         private String scale;
 
         private String format;
+
+        private Supplier<ImageStyle> styleSupplier = () -> null;
+
+        public Builder setStyle( final Supplier<ImageStyle> styleSupplier )
+        {
+            this.styleSupplier = styleSupplier;
+            return this;
+        }
 
         public Builder setMedia( final Supplier<Media> mediaSupplier )
         {

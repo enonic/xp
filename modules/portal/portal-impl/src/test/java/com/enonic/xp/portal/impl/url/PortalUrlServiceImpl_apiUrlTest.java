@@ -30,6 +30,7 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.image.ImageService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.webapp.WebappService;
@@ -51,7 +52,7 @@ class PortalUrlServiceImpl_apiUrlTest
     void setUp()
     {
         PortalUrlGeneratorService portalUrlGeneratorService =
-            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), mock( ImageService.class ) );
 
         this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

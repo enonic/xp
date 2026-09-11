@@ -1,6 +1,8 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
+    implementation libs.commons.compress
+    runtimeOnly libs.xz
     implementation libs.jhlabs.filters
 }
 
@@ -9,4 +11,44 @@ jar {
         bnd( 'Bundle-Name': 'Enonic XP Core - Image',
              'Private-Package': 'com.jhlabs.*' )
     }
+}
+
+// Download pinned, complete portable distributions at build time, never on the server.
+def imageMagickResources = layout.buildDirectory.dir( 'generated/imagemagick' )
+def nativeManifest = file( 'native/distributions.json' )
+def packageImageMagick = tasks.register( 'packageImageMagick' ) {
+    inputs.file( nativeManifest )
+    outputs.dir( imageMagickResources )
+    doLast {
+        def manifest = new groovy.json.JsonSlurper().parse( nativeManifest )
+        def directory = imageMagickResources.get().dir( 'native/imagemagick' ).asFile
+        directory.mkdirs()
+        manifest.platforms.each { platform, distribution ->
+            def suffix = distribution.file.endsWith( '.AppImage' ) ? '.AppImage' : '.7z'
+            def target = new File( directory, platform + suffix )
+            def temporary = new File( directory, platform + '.tmp' )
+            def digest = java.security.MessageDigest.getInstance( 'SHA-256' )
+            def url = new URI( "https://github.com/ImageMagick/ImageMagick/releases/download/${manifest.version}/${distribution.file}" ).toURL()
+            def connection = url.openConnection()
+            connection.connectTimeout = 120000
+            connection.readTimeout = 120000
+            try {
+                connection.inputStream.withCloseable { input ->
+                    new java.security.DigestInputStream( input, digest ).withCloseable { checked ->
+                        temporary.withOutputStream { output -> checked.transferTo( output ) }
+                    }
+                }
+                if ( java.util.HexFormat.of().formatHex( digest.digest() ) != distribution.sha256 ) {
+                    throw new GradleException( "ImageMagick checksum mismatch: ${platform}" )
+                }
+                java.nio.file.Files.move( temporary.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING )
+            } finally {
+                temporary.delete()
+            }
+        }
+    }
+}
+sourceSets.main.resources.srcDir( imageMagickResources )
+tasks.named( 'processResources' ) {
+    dependsOn packageImageMagick
 }

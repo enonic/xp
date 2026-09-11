@@ -94,11 +94,26 @@ class ImageMediaHandlerTest
             ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build() );
         final WebResponse response = handler.handle( request );
         assertEquals( MediaType.WEBP, response.getContentType() );
-        assertEquals( "private, no-cache", response.getHeaders().get( "Cache-Control" ) );
+        assertNull( response.getHeaders().get( "Cache-Control" ) );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "app:card", params.getValue().getStyle() );
         assertEquals( "image/webp", params.getValue().getMimeType() );
+    }
+
+    @Test
+    void styleFingerprintControlsCaching()
+        throws Exception
+    {
+        setupContent();
+        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "max(640)" ).format( "webp" ).build();
+        when( imageService.getStyle( "app:card" ) ).thenReturn( style );
+        request.getParams().put( "style", "app:card" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:df39cc209f0eff3546f4d089e68c1029/full/image-name.jpg" );
+        assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).scale( "max(320)" ).format( "webp" ).build() );
+        assertNull( handler.handle( request ).getHeaders().get( "Cache-Control" ) );
     }
 
     @ParameterizedTest

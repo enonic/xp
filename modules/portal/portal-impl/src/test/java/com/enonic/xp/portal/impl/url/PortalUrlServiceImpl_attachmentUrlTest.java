@@ -35,6 +35,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.image.ImageService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.webapp.WebappService;
@@ -66,7 +67,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
         this.contentService = mock( ContentService.class );
 
         this.webappService = mock( WebappService.class );
-        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ) );
+        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ), mock( ImageService.class ) );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

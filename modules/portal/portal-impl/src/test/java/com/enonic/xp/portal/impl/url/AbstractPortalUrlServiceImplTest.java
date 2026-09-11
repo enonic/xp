@@ -23,6 +23,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.image.ImageService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 import com.enonic.xp.web.vhost.VirtualHost;
@@ -89,7 +90,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.siteService = mock( SiteService.class );
 
         PortalUrlGeneratorService portalUrlGeneratorService =
-            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService );
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService, mock( ImageService.class ) );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,

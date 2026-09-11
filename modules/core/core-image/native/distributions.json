@@ -1,0 +1,20 @@
+{
+  "version": "7.1.2-31",
+  "platforms": {
+    "linux-x86_64": {
+      "file": "ImageMagick-7.1.2-31-gcc-x86_64.AppImage",
+      "sha256": "b22dee096a68e7eb6771a6f98c16490ea78d399ffa27f34ca2ec4f02e707fd9c",
+      "executable": "AppRun"
+    },
+    "windows-x86_64": {
+      "file": "ImageMagick-7.1.2-31-portable-Q8-x64.7z",
+      "sha256": "4eb7914050902c52bf388bae188fdbdb04154ca89d105b2f6200a29cb774241b",
+      "executable": "magick.exe"
+    },
+    "windows-aarch64": {
+      "file": "ImageMagick-7.1.2-31-portable-Q8-arm64.7z",
+      "sha256": "35cae1eecc3caa2993b8213d846f4f3a8125f1d06e86a63c4992da1daaebb185",
+      "executable": "magick.exe"
+    }
+  }
+}

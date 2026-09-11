@@ -1,0 +1,25 @@
+name: Embedded ImageMagick
+
+on:
+  push:
+    paths:
+      - 'modules/core/core-image/**'
+      - 'gradle/libs.versions.toml'
+      - '.github/workflows/native-image.yml'
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-latest]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          distribution: graalvm-community
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Test bundled encoder and extraction
+        run: ./gradlew :core:core-image:test --tests '*ImageMagickEncoderTest' --tests '*EmbeddedImageMagickTest'

@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
@@ -82,11 +81,11 @@ class ImageMagickEncoderTest
 
     @ParameterizedTest
     @ValueSource(strings = {"webp", "avif"})
-    @EnabledIfEnvironmentVariable(named = "XP_TEST_IMAGEMAGICK", matches = ".+")
+    @EnabledOnOs({OS.LINUX, OS.WINDOWS})
     void nativeEncoderProducesRequestedFormat( final String format )
         throws Exception
     {
-        final ImageMagickEncoder encoder = new ImageMagickEncoder( System.getenv( "XP_TEST_IMAGEMAGICK" ), 30, temporaryFolder );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( 30, temporaryFolder );
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         encoder.write( image(), format, 80, output );
         final byte[] bytes = output.toByteArray();

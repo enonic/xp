@@ -17,6 +17,11 @@ final class ImageMagickEncoder
 {
     private final String executable;
 
+    ImageMagickEncoder( final int timeoutSeconds, final Path temporaryFolder )
+    {
+        this( "embedded", timeoutSeconds, temporaryFolder );
+    }
+
     private final int timeoutSeconds;
 
     private final Path temporaryFolder;
@@ -36,7 +41,7 @@ final class ImageMagickEncoder
     {
         if ( executable.isBlank() )
         {
-            throw new IllegalArgumentException( "Modern image encoding is disabled; configure encoding.executable" );
+            throw new IllegalArgumentException( "Modern image encoding is disabled; set encoding.enabled=true" );
         }
     }
 
@@ -60,7 +65,8 @@ final class ImageMagickEncoder
             {
                 throw new IOException( "PNG writer is unavailable" );
             }
-            process = new ProcessBuilder( executable,
+            final String command = "embedded".equals( executable ) ? EmbeddedImageMagick.executable().toString() : executable;
+            process = new ProcessBuilder( command,
                                           "-limit", "thread", "1",
                                           "-limit", "memory", "256MiB",
                                           "-limit", "map", "0",
@@ -94,37 +100,42 @@ final class ImageMagickEncoder
         }
         finally
         {
-            if ( process != null && process.isAlive() )
-            {
-                process.descendants().forEach( ProcessHandle::destroyForcibly );
-                process.destroyForcibly();
-                // Wait for the killed encoder before removing files or releasing the processing slot.
-                boolean interrupted = Thread.interrupted();
-                try
-                {
-                    while ( process.isAlive() )
-                    {
-                        try
-                        {
-                            process.waitFor();
-                        }
-                        catch ( InterruptedException e )
-                        {
-                            interrupted = true;
-                        }
-                    }
-                }
-                finally
-                {
-                    if ( interrupted )
-                    {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
+            stop( process );
             Files.deleteIfExists( input );
             Files.deleteIfExists( result );
             Files.deleteIfExists( directory );
+        }
+    }
+
+    static void stop( final Process process )
+    {
+        if ( process != null && process.isAlive() )
+        {
+            process.descendants().forEach( ProcessHandle::destroyForcibly );
+            process.destroyForcibly();
+            // Wait for the killed encoder before removing files or releasing the processing slot.
+            boolean interrupted = Thread.interrupted();
+            try
+            {
+                while ( process.isAlive() )
+                {
+                    try
+                    {
+                        process.waitFor();
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        interrupted = true;
+                    }
+                }
+            }
+            finally
+            {
+                if ( interrupted )
+                {
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.util.BinaryReference;
 
 import static java.util.Objects.requireNonNull;
@@ -42,6 +43,8 @@ public final class ReadImageParams
 
     private final String style;
 
+    private final ImageStyle expectedStyle;
+
     private ReadImageParams( final Builder builder )
     {
         this.contentId = builder.contentId;
@@ -59,6 +62,7 @@ public final class ReadImageParams
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
         this.attachmentSha512 = builder.attachmentSha512;
         this.style = builder.style;
+        this.expectedStyle = builder.expectedStyle;
     }
 
     public ContentId getContentId()
@@ -131,6 +135,11 @@ public final class ReadImageParams
         return attachmentSha512;
     }
 
+    public ImageStyle getExpectedStyle()
+    {
+        return expectedStyle;
+    }
+
     public String getStyle()
     {
         return style;
@@ -172,6 +181,14 @@ public final class ReadImageParams
         private String attachmentSha512;
 
         private String style;
+
+        private ImageStyle expectedStyle;
+
+        public Builder expectedStyle( final ImageStyle expectedStyle )
+        {
+            this.expectedStyle = expectedStyle;
+            return this;
+        }
 
         /**
          * Fully qualified image style (application:name). Processing parameters are resolved server-side.

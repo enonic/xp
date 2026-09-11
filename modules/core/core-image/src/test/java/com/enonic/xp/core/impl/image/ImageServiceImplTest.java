@@ -160,11 +160,22 @@ class ImageServiceImplTest
     }
 
     @Test
+    void rejectsStyleChangedSinceFingerprintWasResolved()
+    {
+        processingStyle( "max(20)", "webp" );
+        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .mimeType( "image/webp" ).style( "app:card" )
+            .expectedStyle( ImageStyle.create().name( "card" ).scale( "max(10)" ).format( "webp" ).build() ).build();
+        final IllegalArgumentException error = assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) );
+        assertTrue( error.getMessage().contains( "changed during request" ) );
+        verifyNoInteractions( contentService );
+    }
+
+    @Test
     void oversizedSourceRejectedBeforeStartingEncoder()
     {
         mockOriginalImage( "original.png" );
         processingStyle( "max(10)", "webp" );
-        when( imageConfig.encoding_executable() ).thenReturn( "/missing-encoder" );
         when( imageConfig.encoding_maxPixels() ).thenReturn( 1L );
         imageService = newImageService();
         final IllegalArgumentException error = assertThrows( IllegalArgumentException.class,
@@ -178,7 +189,6 @@ class ImageServiceImplTest
     {
         mockOriginalImage( "original.png" );
         processingStyle( "max(10)", "webp" );
-        when( imageConfig.encoding_executable() ).thenReturn( "/missing-encoder" );
         when( imageConfig.encoding_maxConcurrent() ).thenReturn( 1 );
         when( imageConfig.encoding_maxQueue() ).thenReturn( 0 );
         imageService = newImageService();
@@ -187,7 +197,7 @@ class ImageServiceImplTest
         when( contentService.getBinary( contentId, binaryReference ) ).thenAnswer( invocation -> {
             started.countDown();
             assertTrue( release.await( 10, TimeUnit.SECONDS ) );
-            return ByteSource.wrap( imageDataOriginal );
+            throw new IOException( "Source read failed" );
         } );
         try (var executor = Executors.newSingleThreadExecutor())
         {

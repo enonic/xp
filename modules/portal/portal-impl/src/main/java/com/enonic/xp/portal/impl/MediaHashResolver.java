@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 
@@ -12,6 +13,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -56,6 +58,30 @@ public final class MediaHashResolver
         }
 
         return resolveImageHash( media, resolveAttachmentHash( attachment ) );
+    }
+
+    public static String resolveStyledImageHash( final String imageHash, final ImageStyle style )
+    {
+        if ( imageHash == null || style == null )
+        {
+            return imageHash;
+        }
+        final MessageDigest digest = MessageDigests.sha512();
+        digest.update( HexFormat.of().parseHex( imageHash ) );
+        // Length-prefix fields to keep the fingerprint independent of delimiters in filters.
+        updateStyleField( digest, style.getScale() );
+        updateStyleField( digest, style.getFormat() );
+        updateStyleField( digest, style.getFilter() );
+        updateStyleField( digest, style.getQuality() == null ? "85" : style.getQuality().toString() );
+        updateStyleField( digest, style.getBackground() );
+        return HexFormat.of().formatHex( digest.digest(), 0, 16 );
+    }
+
+    private static void updateStyleField( final MessageDigest digest, final String value )
+    {
+        final byte[] bytes = value == null ? new byte[0] : value.getBytes( StandardCharsets.UTF_8 );
+        MessageDigests.updateWithIntLE( digest, bytes.length );
+        digest.update( bytes );
     }
 
     public static String resolveAttachmentHash( final Attachment attachment )

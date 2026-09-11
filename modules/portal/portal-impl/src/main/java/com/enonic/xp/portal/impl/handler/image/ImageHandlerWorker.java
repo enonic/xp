@@ -5,7 +5,6 @@ import java.util.Set;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
@@ -143,12 +142,6 @@ public final class ImageHandlerWorker
     {
         portalResponse.contentType( contentType );
         portalResponse.body( body );
-        if ( style != null )
-        {
-            // The source fingerprint does not identify the style definition. Revalidate HTTP
-            // responses so editing a style cannot leave an immutable, stale browser/CDN entry.
-            portalResponse.header( HttpHeaders.CACHE_CONTROL, "private, no-cache" );
-        }
     }
 
     @Override
@@ -202,6 +195,7 @@ public final class ImageHandlerWorker
                 .quality( imageQuality )
                 .mimeType( contentType.toString() )
                 .style( styleParam )
+                .expectedStyle( style )
                 .build();
 
             return this.imageService.readImage( readImageParams );
@@ -219,13 +213,14 @@ public final class ImageHandlerWorker
     @Override
     protected String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
     {
-        if ( legacyMode )
+        if ( legacyMode && style == null )
         {
             return null;
         }
         else
         {
-            return MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) );
+            return MediaHashResolver.resolveStyledImageHash(
+                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style );
         }
     }
 

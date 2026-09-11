@@ -10,8 +10,8 @@ public @interface ImageConfig
 
     String progressive() default "jpeg";
 
-    // An empty executable disables modern-format encoding until explicitly configured.
-    String encoding_executable() default "";
+    // Bundled native encoding is enabled by default; no system executable is used.
+    boolean encoding_enabled() default true;
 
     int encoding_maxConcurrent() default 2;
 
