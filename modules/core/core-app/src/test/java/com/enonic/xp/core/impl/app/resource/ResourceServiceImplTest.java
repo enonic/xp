@@ -238,7 +238,7 @@ class ResourceServiceImplTest
                 assertNull( processResource( "segment1", "/cms/parts/a/a.yml", "1" ) );
 
                 final ApplicationUrlResolver applicationUrlResolver =
-                    new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService );
+                    NodeResourceApplicationUrlResolver.forVirtualApp( ApplicationKey.from( "myapp" ), nodeService );
 
                 doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
                     .findResolver( ApplicationKey.from( "myapp" ), "node" );
@@ -279,7 +279,7 @@ class ResourceServiceImplTest
         when( nodeService.getByPath( new NodePath( "/myapp/cms/parts/my-part/my-part.yml" ) ) ).thenReturn( partSchemaNode );
 
         final ApplicationUrlResolver applicationUrlResolver =
-            new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService );
+            NodeResourceApplicationUrlResolver.forVirtualApp( ApplicationKey.from( "myapp" ), nodeService );
 
         doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
             .findResolver( ApplicationKey.from( "myapp" ), null );

@@ -11,6 +11,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.util.BinaryReference;
 
 public final class VirtualAppConstants
 {
@@ -41,6 +42,8 @@ public final class VirtualAppConstants
     public static final String LAYOUT_ROOT_NAME = "layouts";
 
     public static final String STYLE_NAME = "style";
+
+    public static final BinaryReference ICON_BINARY_REFERENCE = BinaryReference.from( "icon" );
 
     public static final NodePath VIRTUAL_APP_ROOT_PARENT = NodePath.ROOT;
 

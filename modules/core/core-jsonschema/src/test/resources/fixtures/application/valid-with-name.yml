@@ -1,0 +1,3 @@
+kind: "Application"
+name: "com.enonic.app.myapp"
+title: "My Application"

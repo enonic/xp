@@ -16,7 +16,7 @@ public interface ApplicationRegistry
 
     List<Application> getAll();
 
-    Application install( ApplicationKey applicationKey, ByteSource byteSource );
+    Application install( ApplicationKey applicationKey, ByteSource byteSource, boolean local );
 
     void uninstall( ApplicationKey applicationKey );
 

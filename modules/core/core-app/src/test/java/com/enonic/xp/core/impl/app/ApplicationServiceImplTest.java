@@ -1,11 +1,14 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.stream.Stream;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -406,6 +409,123 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void install_global_with_cms_descriptor_persists_schema()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        final ByteSource byteSource = createSchemaBundleSource( bundleName );
+
+        final Application application = this.service.installGlobalApplication( byteSource );
+
+        assertNotNull( application );
+        assertFalse( this.service.isLocalApplication( applicationKey ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 5 && "cms-descriptor".equals( readResource( resources, "cms.yaml" ) ) &&
+                "content-type".equals( readResource( resources, "content-types/mytype/mytype.yaml" ) ) &&
+                "<svg/>".equals( readResource( resources, "content-types/mytype/mytype.svg" ) ) &&
+                "macro".equals( readResource( resources, "macros/mymacro/mymacro.yaml" ) ) &&
+                "phrases".equals( readResource( resources, "i18n/phrases/phrases_en.properties" ) ) ) );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+    }
+
+    @Test
+    void install_global_without_cms_descriptor_removes_persisted_schema()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // no cms/cms.yaml: the bundle ships logic only, nothing is persisted and a schema persisted by an earlier version is removed
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
+                                                         .addResource( "lib/util.js", stream( "library" ) )
+                                                         .addResource( "assets/app.js", stream( "asset" ) )
+                                                         .build() ) );
+
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService ).deleteApplicationSchema( ApplicationKey.from( bundleName ) );
+    }
+
+    @Test
+    void install_global_with_cms_yml_descriptor_persists_schema()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // no application descriptor at all, cms/cms.yml variant: still owns the schema
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
+                                                         .addResource( "cms/cms.yml", stream( "cms-descriptor" ) )
+                                                         .addResource( "cms/parts/mypart/mypart.yaml", stream( "part" ) )
+                                                         .addResource( "cms/parts/mypart/mypart.js", stream( "controller" ) )
+                                                         .build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 2 && "cms-descriptor".equals( readResource( resources, "cms.yaml" ) ) &&
+                "part".equals( readResource( resources, "parts/mypart/mypart.yaml" ) ) ) );
+    }
+
+    @Test
+    void install_global_unreadable_schema_changes_nothing()
+    {
+        final ByteSource bundleSource = wrap( newBundle( "my.bundle", true )
+                                                  .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
+                                                  .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) )
+                                                  .build() );
+
+        // readable while AppInfo is resolved (first open), unreadable when the schema is extracted
+        final ByteSource failingSource = new ByteSource()
+        {
+            private int opens;
+
+            @Override
+            public InputStream openStream()
+                throws IOException
+            {
+                if ( ++opens > 1 )
+                {
+                    throw new IOException( "unreadable jar" );
+                }
+                return bundleSource.openStream();
+            }
+        };
+
+        assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( failingSource ) );
+
+        // schema extraction fails before anything is changed: no node writes, no events, no bundle
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
+    }
+
+    @Test
+    void install_local_with_cms_descriptor_does_not_persist_schema()
+    {
+        final String bundleName = "my.bundle";
+
+        final Application application = this.service.installLocalApplication( createSchemaBundleSource( bundleName ) );
+
+        assertNotNull( application );
+        assertTrue( this.service.isLocalApplication( application.getKey() ) );
+
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+    }
+
+    @Test
     void install_global_invalid()
     {
         final Node applicationNode = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -418,6 +538,20 @@ class ApplicationServiceImplTest
         final ByteSource byteSource = createBundleSource( bundleName, false );
 
         assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( byteSource ) );
+    }
+
+    @Test
+    void install_global_descriptor_name_mismatch()
+    {
+        // "name" in enonic.yaml must denote the bundle itself
+        final ByteSource byteSource = wrap( newBundle( "my.bundle", true )
+                                                .addResource( "enonic.yaml", stream( "kind: \"Application\"\nname: \"other.bundle\"\n" ) )
+                                                .build() );
+
+        assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( byteSource ) );
+
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
     }
 
     @Test
@@ -924,11 +1058,48 @@ class ApplicationServiceImplTest
 
     private ByteSource createBundleSource( final String bundleName, final boolean isApp )
     {
-        final InputStream in = newBundle( bundleName, isApp ).build();
+        return wrap( newBundle( bundleName, isApp ).build() );
+    }
 
+    private ByteSource createSchemaBundleSource( final String bundleName )
+    {
+        return wrap( newBundle( bundleName, true ).addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
+                         .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) )
+                         .addResource( "cms/content-types/mytype/mytype.yml", stream( "content-type" ) )
+                         .addResource( "cms/content-types/mytype/mytype.svg", stream( "<svg/>" ) )
+                         .addResource( "cms/macros/mymacro/mymacro.yaml", stream( "macro" ) )
+                         .addResource( "cms/i18n/phrases/phrases_en.properties", stream( "phrases" ) )
+                         .addResource( "i18n/phrases_en.properties", stream( "root-phrases" ) )
+                         .build() );
+    }
+
+    private static ByteSource wrap( final InputStream in )
+    {
         try
         {
             return ByteSource.wrap( ByteStreams.toByteArray( in ) );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private static InputStream stream( final String content )
+    {
+        return new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    private static String readResource( final Map<String, ByteSource> resources, final String path )
+    {
+        final ByteSource byteSource = resources.get( path );
+        if ( byteSource == null )
+        {
+            return null;
+        }
+        try
+        {
+            return byteSource.asCharSource( StandardCharsets.UTF_8 ).read();
         }
         catch ( IOException e )
         {
