@@ -16,7 +16,7 @@
       "type": "string",
       "pattern": "^\\w+(?:\\.\\w+)*$",
       "maxLength": 63,
-      "description": "Application name, e.g. com.example.myapp. Optional for gradle-built applications, where it must match the Bundle-SymbolicName of the jar. Required for applications without a build (schema only), packaged by the Enonic CLI."
+      "description": "Application name, e.g. com.example.myapp. Required only for Schema Applications."
     },
     "title": {
       "$ref": "#/$defs/localizedTextDef"
