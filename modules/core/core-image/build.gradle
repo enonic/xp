@@ -52,3 +52,7 @@ sourceSets.main.resources.srcDir( imageMagickResources )
 tasks.named( 'processResources' ) {
     dependsOn packageImageMagick
 }
+
+tasks.withType( Test ).configureEach {
+    testLogging.exceptionFormat = 'full'
+}

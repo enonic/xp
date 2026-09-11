@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 class ImageMagickEncoderTest
 {
@@ -85,6 +86,8 @@ class ImageMagickEncoderTest
     void nativeEncoderProducesRequestedFormat( final String format )
         throws Exception
     {
+        final String platform = EmbeddedImageMagick.platform( System.getProperty( "os.name" ), System.getProperty( "os.arch" ) );
+        assumeTrue( java.util.Set.of( "linux-x86_64", "windows-x86_64", "windows-aarch64" ).contains( platform ) );
         final ImageMagickEncoder encoder = new ImageMagickEncoder( 30, temporaryFolder );
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         encoder.write( image(), format, 80, output );
