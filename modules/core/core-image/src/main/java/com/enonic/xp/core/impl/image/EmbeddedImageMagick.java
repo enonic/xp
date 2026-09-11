@@ -7,9 +7,8 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
-import org.apache.commons.compress.archivers.sevenz.SevenZFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /** Loads the platform distribution from this bundle; never downloads code at runtime. */
 final class EmbeddedImageMagick
@@ -25,7 +24,7 @@ final class EmbeddedImageMagick
         }
         final String platform = platform( System.getProperty( "os.name" ), System.getProperty( "os.arch" ) );
         final boolean windows = platform.startsWith( "windows-" );
-        final String suffix = windows ? ".7z" : ".AppImage";
+        final String suffix = windows ? ".zip" : ".AppImage";
         try (InputStream resource = EmbeddedImageMagick.class.getResourceAsStream( "/native/imagemagick/" + platform + suffix ))
         {
             if ( resource == null )
@@ -82,9 +81,9 @@ final class EmbeddedImageMagick
     static void extractWindows( final Path archive, final Path directory )
         throws IOException
     {
-        try (SevenZFile zip = SevenZFile.builder().setPath( archive ).get())
+        try (ZipInputStream zip = new ZipInputStream( Files.newInputStream( archive ) ))
         {
-            SevenZArchiveEntry entry;
+            ZipEntry entry;
             final byte[] buffer = new byte[8192];
             while ( ( entry = zip.getNextEntry() ) != null )
             {

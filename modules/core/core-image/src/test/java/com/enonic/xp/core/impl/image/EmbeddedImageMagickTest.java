@@ -3,10 +3,9 @@ package com.enonic.xp.core.impl.image;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
-import org.apache.commons.compress.archivers.sevenz.SevenZMethod;
-import org.apache.commons.compress.archivers.sevenz.SevenZOutputFile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -42,15 +41,12 @@ class EmbeddedImageMagickTest
     private Path archive( final String name )
         throws IOException
     {
-        final Path path = temporaryFolder.resolve( "test.7z" );
-        try (SevenZOutputFile output = new SevenZOutputFile( path.toFile() ))
+        final Path path = temporaryFolder.resolve( "test.zip" );
+        try (ZipOutputStream output = new ZipOutputStream( Files.newOutputStream( path ) ))
         {
-            output.setContentCompression( SevenZMethod.COPY );
-            final SevenZArchiveEntry entry = new SevenZArchiveEntry();
-            entry.setName( name );
-            output.putArchiveEntry( entry );
+            output.putNextEntry( new ZipEntry( name ) );
             output.write( new byte[]{1, 2, 3} );
-            output.closeArchiveEntry();
+            output.closeEntry();
         }
         return path;
     }

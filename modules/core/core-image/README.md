@@ -73,7 +73,11 @@ Bundled platforms currently cover Linux x86-64 and Windows x86-64/ARM64 using
 ImageMagick 7.1.2-31. Other platforms report an unavailable encoder for modern
 output; existing ImageIO processing remains available. The complete upstream
 archives retain their licenses and dependencies. Version and SHA-256 pins live
-in `native/distributions.json`. Adding another platform requires a portable
+in `native/distributions.json`. Building XP requires 7-Zip to repack upstream
+Windows archives as ZIP; production servers do not need it. Install `p7zip-full`
+on Linux or 7-Zip on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
+a build-time extractor (for example Homebrew's `7zz` on macOS).
+Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
 No process is started for ordinary formats or modern-format cache hits.

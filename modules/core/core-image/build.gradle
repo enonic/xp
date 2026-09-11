@@ -1,8 +1,6 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
-    implementation libs.commons.compress
-    runtimeOnly libs.xz
     implementation libs.jhlabs.filters
 }
 
@@ -22,9 +20,13 @@ def packageImageMagick = tasks.register( 'packageImageMagick' ) {
     doLast {
         def manifest = new groovy.json.JsonSlurper().parse( nativeManifest )
         def directory = imageMagickResources.get().dir( 'native/imagemagick' ).asFile
+        delete( directory )
         directory.mkdirs()
+        def sevenZip = providers.gradleProperty( 'imageMagickSevenZip' ).getOrElse(
+            System.getProperty( 'os.name' ).startsWith( 'Windows' ) ?
+                new File( System.getenv( 'ProgramFiles' ), '7-Zip/7z.exe' ).path : '7z' )
         manifest.platforms.each { platform, distribution ->
-            def suffix = distribution.file.endsWith( '.AppImage' ) ? '.AppImage' : '.7z'
+            def suffix = distribution.file.endsWith( '.AppImage' ) ? '.AppImage' : '.zip'
             def target = new File( directory, platform + suffix )
             def temporary = new File( directory, platform + '.tmp' )
             def digest = java.security.MessageDigest.getInstance( 'SHA-256' )
@@ -41,7 +43,34 @@ def packageImageMagick = tasks.register( 'packageImageMagick' ) {
                 if ( java.util.HexFormat.of().formatHex( digest.digest() ) != distribution.sha256 ) {
                     throw new GradleException( "ImageMagick checksum mismatch: ${platform}" )
                 }
-                java.nio.file.Files.move( temporary.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING )
+                if ( suffix == '.AppImage' ) {
+                    java.nio.file.Files.move( temporary.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING )
+                } else {
+                    // Upstream 7z uses BCJ2, which Java's 7z readers cannot decode.
+                    // Repack once at build time so the server needs only the JDK ZIP reader.
+                    def unpacked = java.nio.file.Files.createTempDirectory( layout.buildDirectory.get().asFile.toPath(), 'imagemagick-' ).toFile()
+                    try {
+                        def process = new ProcessBuilder( sevenZip, 'x', temporary.path, '-o' + unpacked.path, '-y' ).inheritIO().start()
+                        if ( !process.waitFor( 120, java.util.concurrent.TimeUnit.SECONDS ) ) {
+                            process.destroyForcibly().waitFor()
+                            throw new GradleException( "ImageMagick unpacking timed out: ${platform}" )
+                        }
+                        if ( process.exitValue() != 0 || !new File( unpacked, 'magick.exe' ).isFile() ) {
+                            throw new GradleException( "ImageMagick unpacking failed: ${platform}" )
+                        }
+                        new java.util.zip.ZipOutputStream( new FileOutputStream( target ) ).withCloseable { zip ->
+                            fileTree( unpacked ).files.sort { it.path }.each { file ->
+                                def entry = new java.util.zip.ZipEntry( unpacked.toPath().relativize( file.toPath() ).toString().replace( '\\', '/' ) )
+                                entry.time = 0
+                                zip.putNextEntry( entry )
+                                file.withInputStream { it.transferTo( zip ) }
+                                zip.closeEntry()
+                            }
+                        }
+                    } finally {
+                        delete( unpacked )
+                    }
+                }
             } finally {
                 temporary.delete()
             }
