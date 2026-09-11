@@ -10,6 +10,7 @@ import com.enonic.xp.script.graal.GraalJSContextFactory;
 import com.enonic.xp.script.impl.util.JavascriptHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GraalJavascriptHelperFactoryTest
 {
@@ -46,6 +47,21 @@ class GraalJavascriptHelperFactoryTest
         assertEquals( "app", info.getMember( "name" ).asString() );
         assertEquals( "1.0.0", info.getMember( "version" ).asString() );
         assertEquals( "value1", info.getMember( "config" ).getMember( "prop1" ).asString() );
+    }
+
+    @Test
+    void defineDataProperty_protoKeyBecomesOwnProperty()
+    {
+        final Value object = javascriptHelper.newJsObject();
+        final Value array = javascriptHelper.newJsArray();
+
+        javascriptHelper.defineDataProperty( object, "__proto__", array );
+        javascriptHelper.defineDataProperty( object, "key", "value" );
+
+        final Value check = context.eval( "js", "(o, a) => Object.getPrototypeOf(o) === Object.prototype" +
+            " && Object.prototype.hasOwnProperty.call(o, '__proto__') && o.__proto__ === a" +
+            " && Object.keys(o).join() === '__proto__,key' && o.key === 'value'" );
+        assertTrue( check.execute( object, array ).asBoolean() );
     }
 
     @Test

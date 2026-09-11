@@ -9,8 +9,16 @@ import com.enonic.xp.script.impl.util.JavascriptHelper;
 
 public final class GraalJavascriptHelperFactory
 {
+    private static final String DEFINE_DATA_PROPERTY =
+        "(object, key, value) => { Object.defineProperty(object, key, {value: value, writable: true, enumerable: true, configurable: true}); }";
+
     public JavascriptHelper<Value> create( final Context context )
     {
+        final Value defineDataProperty;
+        synchronized ( context )
+        {
+            defineDataProperty = context.eval( "js", DEFINE_DATA_PROPERTY );
+        }
         return new JavascriptHelper<>()
         {
             @Override
@@ -28,6 +36,15 @@ public final class GraalJavascriptHelperFactory
                 synchronized ( context )
                 {
                     return context.getBindings( "js" ).getMember( "Object" ).newInstance();
+                }
+            }
+
+            @Override
+            public void defineDataProperty( final Object object, final String key, final Object value )
+            {
+                synchronized ( context )
+                {
+                    defineDataProperty.execute( object, key, value );
                 }
             }
 

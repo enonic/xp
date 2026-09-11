@@ -51,14 +51,14 @@ public final class GraalScriptMapGenerator
     {
         if ( value != null )
         {
-            GraalJSHelper.addToNativeObject( map, key, value );
+            this.helper.defineDataProperty( map, key, value );
         }
     }
 
     @Override
     protected void putRawValueInMap( final Object map, final String key, final Object value )
     {
-        GraalJSHelper.addToNativeObject( map, key, value );
+        this.helper.defineDataProperty( map, key, value );
     }
 
     @Override

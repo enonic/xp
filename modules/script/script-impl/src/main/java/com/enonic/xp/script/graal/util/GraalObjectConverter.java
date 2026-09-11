@@ -79,7 +79,7 @@ public final class GraalObjectConverter
         final Object object = this.helper.newJsObject();
         for ( final Map.Entry<?, ?> entry : map.entrySet() )
         {
-            GraalJSHelper.addToNativeObject( object, String.valueOf( entry.getKey() ), toJs( entry.getValue() ) );
+            this.helper.defineDataProperty( object, String.valueOf( entry.getKey() ), toJs( entry.getValue() ) );
         }
 
         return object;

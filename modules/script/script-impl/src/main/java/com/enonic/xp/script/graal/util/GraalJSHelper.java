@@ -38,11 +38,6 @@ public final class GraalJSHelper
         return false;
     }
 
-    public static void addToNativeObject( final Object object, final String key, final Object value )
-    {
-        Value.asValue( object ).putMember( key, value );
-    }
-
     public static void addToNativeArray( final Object array, final Object value )
     {
         Value.asValue( array ).getMember( "push" ).execute( value );
