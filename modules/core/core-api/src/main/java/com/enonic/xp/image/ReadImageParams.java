@@ -45,6 +45,8 @@ public final class ReadImageParams
 
     private final ImageStyle expectedStyle;
 
+    private final boolean cacheOnly;
+
     private ReadImageParams( final Builder builder )
     {
         this.contentId = builder.contentId;
@@ -63,6 +65,7 @@ public final class ReadImageParams
         this.attachmentSha512 = builder.attachmentSha512;
         this.style = builder.style;
         this.expectedStyle = builder.expectedStyle;
+        this.cacheOnly = builder.cacheOnly;
     }
 
     public ContentId getContentId()
@@ -135,6 +138,11 @@ public final class ReadImageParams
         return attachmentSha512;
     }
 
+    public boolean isCacheOnly()
+    {
+        return cacheOnly;
+    }
+
     public ImageStyle getExpectedStyle()
     {
         return expectedStyle;
@@ -183,6 +191,15 @@ public final class ReadImageParams
         private String style;
 
         private ImageStyle expectedStyle;
+
+        private boolean cacheOnly;
+
+        /** Only read an existing rendition; never regenerate or populate the cache on a miss. */
+        public Builder cacheOnly( final boolean cacheOnly )
+        {
+            this.cacheOnly = cacheOnly;
+            return this;
+        }
 
         public Builder expectedStyle( final ImageStyle expectedStyle )
         {

@@ -152,22 +152,26 @@ public class ImageServiceImpl
             throw new IllegalArgumentException( "Image style changed during request; regenerate the image URL" );
         }
         final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams, style );
-        if ( isModernFormat( normalizedImageParams.getFormat() ) )
+        // Cache-only requests must not read the source to discover a missing checksum.
+        if ( readImageParams.isCacheOnly() && normalizedImageParams.getAttachmentSha512() == null )
         {
-            modernEncoder.checkEnabled();
+            throw new IllegalArgumentException( "A source checksum is required for cache-only image requests" );
         }
-
         final String resolvedSha512 = resolveAttachmentSha512( normalizedImageParams );
-
         final Path path = getCachedImagePath( normalizedImageParams, resolvedSha512 );
-        if ( !isModernFormat( normalizedImageParams.getFormat() ) )
-        {
-            return immutableFilesHelper.computeIfAbsent( path, sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
-        }
         if ( Files.exists( path ) )
         {
             return MoreFiles.asByteSource( path );
         }
+        if ( readImageParams.isCacheOnly() )
+        {
+            throw new IllegalArgumentException( "Image is not cached; regeneration requires a matching image fingerprint" );
+        }
+        if ( !isModernFormat( normalizedImageParams.getFormat() ) )
+        {
+            return immutableFilesHelper.computeIfAbsent( path, sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
+        }
+        modernEncoder.checkEnabled();
         if ( !encodingRequests.tryAcquire() )
         {
             throw new ThrottlingException( "Image encoding queue is full" );

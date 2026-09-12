@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -18,20 +18,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RedirectChecksumServiceTest
+class HmacServiceTest
 {
     private static final NodePath GENERIC_KEY_PATH = NodePath.create().addElement( "keys" ).addElement( "generic-hmac-sha512" ).build();
 
     @Mock
     private NodeService nodeService;
 
-    private RedirectChecksumService redirectChecksumService;
-
-    @BeforeEach
-    void setup()
-    {
-        redirectChecksumService = new RedirectChecksumService( new HmacService( nodeService ) );
-    }
+    @InjectMocks
+    private HmacService hmacService;
 
     @Test
     void generateChecksum_returnsExpectedChecksum()
@@ -41,7 +36,7 @@ class RedirectChecksumServiceTest
 
         when( nodeService.getByPath( GENERIC_KEY_PATH ) ).thenReturn( genericKeyNode() );
 
-        String result = redirectChecksumService.generateChecksum( redirect );
+        String result = hmacService.generateChecksum( redirect );
 
         assertNotNull( result );
         assertEquals( expectedChecksum, result );
@@ -55,7 +50,7 @@ class RedirectChecksumServiceTest
 
         when( nodeService.getByPath( GENERIC_KEY_PATH ) ).thenReturn( genericKeyNode() );
 
-        boolean result = redirectChecksumService.verifyChecksum( redirect, validChecksum );
+        boolean result = hmacService.verifyChecksum( redirect, validChecksum );
 
         assertTrue( result );
     }
@@ -68,7 +63,7 @@ class RedirectChecksumServiceTest
 
         when( nodeService.getByPath( GENERIC_KEY_PATH ) ).thenReturn( genericKeyNode() );
 
-        boolean result = redirectChecksumService.verifyChecksum( redirect, invalidChecksum );
+        boolean result = hmacService.verifyChecksum( redirect, invalidChecksum );
 
         assertFalse( result );
     }

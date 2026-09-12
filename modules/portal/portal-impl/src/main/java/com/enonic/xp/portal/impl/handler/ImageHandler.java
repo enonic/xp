@@ -14,6 +14,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageService;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -39,6 +40,8 @@ public class ImageHandler
 
     private final ImageService imageService;
 
+    private final HmacService hmacService;
+
     private volatile String privateCacheControlHeaderConfig;
 
     private volatile String publicCacheControlHeaderConfig;
@@ -48,10 +51,11 @@ public class ImageHandler
     private volatile String contentSecurityPolicySvg;
 
     @Activate
-    public ImageHandler( @Reference final ContentService contentService, @Reference final ImageService imageService )
+    public ImageHandler( @Reference final ContentService contentService, @Reference final ImageService imageService, @Reference final HmacService hmacService )
     {
         this.contentService = contentService;
         this.imageService = imageService;
+        this.hmacService = hmacService;
     }
 
     @Activate
@@ -92,7 +96,7 @@ public class ImageHandler
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
-        final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
+        final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.hmacService );
 
         worker.id = ContentId.from( matcher.group( 1 ) );
         worker.fingerprint = matcher.group( 2 );

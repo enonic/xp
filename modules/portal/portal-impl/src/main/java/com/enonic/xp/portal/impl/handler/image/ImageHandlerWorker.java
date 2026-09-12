@@ -16,6 +16,7 @@ import com.enonic.xp.content.MediaUtils;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.image.ImageService;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
@@ -43,6 +44,8 @@ public final class ImageHandlerWorker
 
     private final ImageService imageService;
 
+    private final HmacService hmacService;
+
     public String filterParam;
 
     public String qualityParam;
@@ -55,10 +58,11 @@ public final class ImageHandlerWorker
 
     private ImageStyle style;
 
-    public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService )
+    public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService, final HmacService hmacService )
     {
         super( request, contentService );
         this.imageService = imageService;
+        this.hmacService = hmacService;
     }
 
     @Override
@@ -119,13 +123,6 @@ public final class ImageHandlerWorker
         {
             throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
         }
-        final boolean modern = "webp".equalsIgnoreCase( extension ) || "avif".equalsIgnoreCase( extension ) ||
-            "image/webp".equalsIgnoreCase( attachment.getMimeType() ) || "image/avif".equalsIgnoreCase( attachment.getMimeType() );
-        if ( modern && ( fingerprint == null || !fingerprint.equals(
-            resolveHash( (Media) content, attachment, attachment.getBinaryReference() ) ) ) )
-        {
-            throw WebException.badRequest( "WebP and AVIF require a matching image fingerprint in the path" );
-        }
         return attachment;
     }
 
@@ -165,8 +162,7 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final ByteSource binary,
-                                    final MediaType contentType )
+    protected ByteSource transform( final Media content, final BinaryReference binaryReference, final MediaType contentType )
         throws IOException
     {
         final PropertySet mediaData = content.getData().getSet( ContentPropertyNames.MEDIA );
@@ -186,6 +182,12 @@ public final class ImageHandlerWorker
             final Attachment attachment =
                 requireNonNull( content.getAttachments().byLabel( "source" ), "Media content must have an attachment" );
 
+            final String currentFingerprint = MediaHashResolver.resolveStyledImageHash(
+                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style, scaleParams, hmacService );
+            final boolean hashMatches = MediaHashResolver.matchesFingerprint( currentFingerprint, fingerprint );
+            final boolean cacheOnly = !hashMatches && ( !nullToEmpty( fingerprint ).isBlank() ||
+                contentType.is( MediaType.WEBP ) || contentType.is( MediaType.AVIF ) );
+
             final ReadImageParams readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )
                 .binaryReference( binaryReference )
@@ -200,6 +202,7 @@ public final class ImageHandlerWorker
                 .mimeType( contentType.toString() )
                 .style( styleParam )
                 .expectedStyle( style )
+                .cacheOnly( cacheOnly )
                 .build();
 
             return this.imageService.readImage( readImageParams );
@@ -217,15 +220,14 @@ public final class ImageHandlerWorker
     @Override
     protected String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
     {
-        if ( legacyMode && style == null && !"image/webp".equalsIgnoreCase( attachment.getMimeType() ) &&
-            !"image/avif".equalsIgnoreCase( attachment.getMimeType() ) )
+        if ( legacyMode && style == null )
         {
             return null;
         }
         else
         {
             return MediaHashResolver.resolveStyledImageHash(
-                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style, scaleParams );
+                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style, scaleParams, hmacService );
         }
     }
 

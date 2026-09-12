@@ -43,13 +43,28 @@ filter, and background overrides, empty query overrides and duplicate styles.
 Scale is supplied in the path; a raw `scale` or `format` query override is not
 supported. Output format is selected by the extension.
 
-WebP/AVIF conversion requires a style. All WebP/AVIF image requests, including
-original-file pass-through, also require a nonempty, matching path fingerprint.
-Missing, stale, or mismatched fingerprints return HTTP 400 before reading the
-source binary or starting conversion, including on HEAD requests. Styled
-fingerprints cover the source, requested scale, aspect ratio, quality, filter,
-and background. Changing dimensions in a styled URL requires a new fingerprint.
-This is a content fingerprint, not a secret-key URL signature.
+WebP/AVIF conversion requires a style and a valid signed path fingerprint on
+cache misses. Styled fingerprints cover the source, requested scale, aspect
+ratio, quality, filter, and background, authenticated with HMAC-SHA512 using
+XP's existing `generic-hmac-sha512` key. The common HMAC service is also used by
+redirect checksums; an image-specific prefix separates the two uses. Existing
+redirect checksum values are unchanged. Styled path fingerprints are 40 hex
+characters and are compared in constant time.
+
+An existing rendition can be served even if the URL fingerprint is wrong or
+stale. A supplied mismatched fingerprint makes the request cache-only for every
+output format; missing fingerprints also mean cache-only for WebP/AVIF. A cache
+miss returns HTTP 400 without reading source bytes, acquiring encoder capacity,
+or creating a cache file. Cache hits work even when modern encoding is disabled.
+Unsigned JPEG/PNG/GIF requests retain normal processing. These rules also apply
+to HEAD requests. Original-file pass-through needs no regeneration and remains
+available without a valid fingerprint.
+
+The disk cache is keyed by the actual source checksum and resolved processing
+settings, not by an untrusted URL hash. A stale URL can therefore serve the
+currently resolved rendition if it is cached; this does not retrieve historical
+renditions by their old URL fingerprint. Mismatched fingerprints do not receive
+immutable response caching headers.
 
 The image service resolves styles again before processing. Content permissions,
 stored cropping, focal point, and orientation still apply.
@@ -86,8 +101,7 @@ Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
 No process is started for ordinary formats or modern-format cache hits.
-Original WebP/AVIF files pass through only with a matching fingerprint.
-SVG pass-through remains unchanged. Styled processing currently accepts formats decoded by
+Original WebP/AVIF/SVG files retain their pass-through behavior. Styled processing currently accepts formats decoded by
 the existing ImageIO backend; WebP/AVIF/SVG inputs are rejected, and GIF styles
 process the first frame.
 
@@ -106,9 +120,10 @@ duplicate conversions. The URL fingerprint includes the requested scale and the
 style's aspect ratio, quality, filter, and background. Different output formats
 have distinct URL extensions and disk cache keys. The handler also checks the
 fingerprint before applying the configured public/private immutable cache header.
-Old JPEG/PNG/GIF fingerprints lose immutable caching after a style change;
-WebP/AVIF requests with old fingerprints are rejected. A style change during
+Old fingerprints lose immutable caching after a style change and allow only
+existing cache entries to be served. Cache misses cannot regenerate the image. A style change during
 request processing is rejected before encoding.
 
-Tests cover style fingerprints and enforcement, cache coalescing, encoder failure
+Tests cover HMAC fingerprints, redirect compatibility, cache-only hits/misses,
+style enforcement, cache coalescing, encoder failure
 and timeout cleanup, and actual WebP/AVIF output using the embedded distribution.

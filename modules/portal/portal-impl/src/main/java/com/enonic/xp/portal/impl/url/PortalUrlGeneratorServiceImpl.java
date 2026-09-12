@@ -19,6 +19,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.image.ImageService;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
@@ -47,17 +48,20 @@ public class PortalUrlGeneratorServiceImpl
 
     private final ImageService imageService;
 
+    private final HmacService hmacService;
+
     private volatile String defaultMediaBaseUrl;
 
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
     public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService,
-                                          @Reference final ImageService imageService )
+                                          @Reference final ImageService imageService, @Reference final HmacService hmacService )
     {
         this.webappService = webappService;
         this.siteService = siteService;
         this.imageService = imageService;
+        this.hmacService = hmacService;
     }
 
     @Activate
@@ -81,6 +85,7 @@ public class PortalUrlGeneratorServiceImpl
                           .setScale( params.getScale() )
                           .setFormat( params.getFormat() )
                           .setStyle( () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                .setHmacService( hmacService )
                           .build() );
 
         builder.setQueryParams( imageQueryParams( params ) );
@@ -126,6 +131,7 @@ public class PortalUrlGeneratorServiceImpl
                 .setScale( params.getScale() )
                 .setFormat( params.getFormat() )
                 .setStyle( () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                .setHmacService( hmacService )
                 .build()
                 .parts();
 

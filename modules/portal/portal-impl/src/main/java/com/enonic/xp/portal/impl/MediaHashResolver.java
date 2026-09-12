@@ -61,7 +61,8 @@ public final class MediaHashResolver
         return resolveImageHash( media, resolveAttachmentHash( attachment ) );
     }
 
-    public static String resolveStyledImageHash( final String imageHash, final ImageStyle style, final ScaleParams scale )
+    public static String resolveStyledImageHash( final String imageHash, final ImageStyle style, final ScaleParams scale,
+                                                 final HmacService hmacService )
     {
         if ( imageHash == null || style == null )
         {
@@ -75,7 +76,14 @@ public final class MediaHashResolver
         updateStyleField( digest, style.getFilter() );
         updateStyleField( digest, style.getQuality() == null ? "85" : style.getQuality().toString() );
         updateStyleField( digest, style.getBackground() );
-        return HexFormat.of().formatHex( digest.digest(), 0, 16 );
+        // Domain separation prevents a redirect checksum from authorizing an image rendition.
+        return hmacService.generateChecksum( "image-fingerprint-v1\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
+    }
+
+    public static boolean matchesFingerprint( final String expected, final String supplied )
+    {
+        return expected != null && supplied != null && MessageDigest.isEqual(
+            expected.getBytes( StandardCharsets.UTF_8 ), supplied.getBytes( StandardCharsets.UTF_8 ) );
     }
 
     private static void updateStyleField( final MessageDigest digest, final String value )

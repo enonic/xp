@@ -9,6 +9,7 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.MediaHashResolver;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.project.ProjectName;
@@ -33,6 +34,8 @@ final class ImageMediaPathSupplier
 
     private final Supplier<ImageStyle> styleSupplier;
 
+    private final HmacService hmacService;
+
     private ImageMediaPathSupplier( final Builder builder )
     {
         this.scale = requireNonNull( builder.scale );
@@ -41,6 +44,7 @@ final class ImageMediaPathSupplier
         this.branchSupplier = builder.branchSupplier;
         this.format = builder.format;
         this.styleSupplier = builder.styleSupplier;
+        this.hmacService = builder.hmacService;
     }
 
     public static Builder create()
@@ -79,7 +83,7 @@ final class ImageMediaPathSupplier
             requireNonNull( scaleParams, "Image scale is required" ).withAspectRatio( style.getAspectRatio() );
         }
         return new MediaPathParts( context, media.getId().toString(),
-                                   MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ), style, scaleParams ),
+                                   MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ), style, scaleParams, hmacService ),
                                    resolvedScale, resolveName( media, format ) );
     }
 
@@ -116,6 +120,14 @@ final class ImageMediaPathSupplier
         private String format;
 
         private Supplier<ImageStyle> styleSupplier = () -> null;
+
+        private HmacService hmacService;
+
+        public Builder setHmacService( final HmacService hmacService )
+        {
+            this.hmacService = hmacService;
+            return this;
+        }
 
         public Builder setStyle( final Supplier<ImageStyle> styleSupplier )
         {

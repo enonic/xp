@@ -18,6 +18,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
@@ -90,7 +91,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.siteService = mock( SiteService.class );
 
         PortalUrlGeneratorService portalUrlGeneratorService =
-            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService, mock( ImageService.class ) );
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService, mock( ImageService.class ), HmacTestHelper.createHmacService() );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,

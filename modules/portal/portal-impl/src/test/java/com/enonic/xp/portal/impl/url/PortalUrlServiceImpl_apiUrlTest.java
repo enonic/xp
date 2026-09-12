@@ -21,6 +21,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
@@ -52,7 +53,7 @@ class PortalUrlServiceImpl_apiUrlTest
     void setUp()
     {
         PortalUrlGeneratorService portalUrlGeneratorService =
-            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), mock( ImageService.class ) );
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), mock( ImageService.class ), HmacTestHelper.createHmacService() );
 
         this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

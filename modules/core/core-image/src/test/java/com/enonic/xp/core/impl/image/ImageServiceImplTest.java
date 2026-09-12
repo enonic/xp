@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.HexFormat;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
@@ -113,10 +116,63 @@ class ImageServiceImplTest
 
     private ReadImageParams styledParams( final String format )
     {
+        return styledParams( format, false );
+    }
+
+    private ReadImageParams styledParams( final String format, final boolean cacheOnly )
+    {
         return ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
             .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
             .mimeType( "image/" + format ).scaleParams( new ScaleParams( "square", new Object[]{10} ) )
-            .style( "app:card" ).build();
+            .style( "app:card" ).cacheOnly( cacheOnly ).build();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"png", "jpeg", "webp", "avif"})
+    void cacheOnlyServesExistingRenditionButNeverRegenerates( final String format )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final ReadImageParams cacheOnly = styledParams( format, true );
+        final Path cache = temporaryFolder.resolve( "work/cache/img/sha256" );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( cacheOnly ) );
+        assertTrue( Files.notExists( cache ) );
+        verifyNoInteractions( contentService );
+
+        final byte[] expected = imageService.readImage( styledParams( format ) ).read();
+        // A cached response needs neither an enabled encoder nor the original source bytes.
+        when( imageConfig.encoding_enabled() ).thenReturn( false );
+        imageService = newImageService();
+        assertArrayEquals( expected, imageService.readImage( cacheOnly ).read() );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+
+        // A changed style must not cause a cache-only request to write another rendition.
+        processingStyle( 70 );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( cacheOnly ) );
+        processingStyle( 80 );
+        try (var paths = Files.walk( cache ))
+        {
+            for ( Path path : paths.filter( Files::isRegularFile ).toList() )
+            {
+                Files.delete( path );
+            }
+        }
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( cacheOnly ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        try (var paths = Files.walk( cache ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
+    }
+
+    @Test
+    void cacheOnlyDoesNotReadSourceToDiscoverMissingChecksum()
+    {
+        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .mimeType( "image/png" ).cacheOnly( true ).build();
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) );
+        verifyNoInteractions( contentService );
     }
 
     @Test

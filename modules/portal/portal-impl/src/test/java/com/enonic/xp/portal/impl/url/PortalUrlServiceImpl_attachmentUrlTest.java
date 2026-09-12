@@ -21,6 +21,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
@@ -67,7 +68,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
         this.contentService = mock( ContentService.class );
 
         this.webappService = mock( WebappService.class );
-        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ), mock( ImageService.class ) );
+        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ), mock( ImageService.class ), HmacTestHelper.createHmacService() );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

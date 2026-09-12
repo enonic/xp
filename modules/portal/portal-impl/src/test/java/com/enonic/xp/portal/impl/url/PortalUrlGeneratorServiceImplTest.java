@@ -28,6 +28,7 @@ import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.image.ImageService;
+import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.webapp.WebappService;
 
@@ -48,7 +49,7 @@ class PortalUrlGeneratorServiceImplTest
     void setUp()
     {
         this.imageService = mock( ImageService.class );
-        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), imageService );
+        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), imageService, HmacTestHelper.createHmacService() );
     }
 
     @AfterEach
@@ -63,10 +64,10 @@ class PortalUrlGeneratorServiceImplTest
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final ImageUrlGeneratorParams params = styleUrlParams().build();
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640/mycontent.png.webp?style=app%3Acard",
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640/mycontent.png.webp?style=app%3Acard",
                       service.imageUrl( params ) );
         final ImageUrlParts parts = service.imageUrlParts( params );
-        assertEquals( "f4774dff7b6ef5d0fc1f077cbec55899", parts.fingerprint() );
+        assertEquals( "b70c37373c28d80778129544e9b504a6a0560ed0", parts.fingerprint() );
         assertEquals( "width-640", parts.scale() );
         assertEquals( "mycontent.png.webp", parts.name() );
         assertEquals( "?style=app%3Acard", parts.queryString() );
@@ -126,7 +127,7 @@ class PortalUrlGeneratorServiceImplTest
         {
             final ImageUrlGeneratorParams params = styleUrlParams().setFormat( format ).build();
             final ImageUrlParts parts = service.imageUrlParts( params );
-            assertEquals( "f4774dff7b6ef5d0fc1f077cbec55899", parts.fingerprint() );
+            assertEquals( "b70c37373c28d80778129544e9b504a6a0560ed0", parts.fingerprint() );
             assertThat( service.imageUrl( params ) ).contains( "/" + parts.name() + "?style=app%3Acard" );
             assertThat( parts.name() ).endsWith( "." + format );
         }

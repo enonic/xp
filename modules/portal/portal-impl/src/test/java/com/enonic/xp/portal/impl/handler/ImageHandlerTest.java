@@ -30,6 +30,7 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.portal.impl.MediaHashResolver;
+import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalConfig;
@@ -51,6 +52,8 @@ import com.enonic.xp.web.WebResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -82,7 +85,7 @@ class ImageHandlerTest
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
 
-        this.handler = new ImageHandler( this.contentService, this.imageService );
+        this.handler = new ImageHandler( this.contentService, this.imageService, HmacTestHelper.createHmacService() );
 
         this.handler.activate( mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
 
@@ -216,15 +219,19 @@ class ImageHandlerTest
     {
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
         return MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ),
-            ImageStyle.create().name( "card" ).build(), new ScaleParams( "width", new Object[]{640} ) );
+            ImageStyle.create().name( "card" ).build(), new ScaleParams( "width", new Object[]{640} ), HmacTestHelper.createHmacService() );
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
-    void modernOutputRejectsMissingStaleAndAlteredFingerprintsBeforeReadingBinary( final String format )
+    void modernCacheMissWithInvalidFingerprintCannotRegenerate( final String format )
         throws Exception
     {
         setupContent();
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+            assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+            throw new IllegalArgumentException( "Image is not cached" );
+        } );
         when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         request.getParams().put( "style", "app:card" );
         final String valid = styledFingerprint();
@@ -233,7 +240,7 @@ class ImageHandlerTest
         {
             request.setMethod( method );
             for ( String path : new String[]{"123456/width-640", "123456:00000000000000000000000000000000/width-640",
-                "123456:" + source + "/width-640", "123456:" + valid + "/width-320"} )
+                "123456:" + source + "/width-640", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640", "123456:" + valid + "/width-320"} )
             {
                 request.setRawPath( "/_/image/" + path + "/image-name.jpg." + format );
                 assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
@@ -244,7 +251,36 @@ class ImageHandlerTest
             when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         }
         verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
-        verify( imageService, never() ).readImage( isA( ReadImageParams.class ) );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "jpeg", "png"})
+    void wrongFingerprintServesCacheHitWithoutImmutableHeaders( final String format )
+        throws Exception
+    {
+        setupContent();
+        final ByteSource cached = ByteSource.wrap( new byte[]{1, 2, 3} );
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+            assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+            return cached;
+        } );
+        request.getParams().put( "style", "app:card" );
+        for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
+        {
+            request.setMethod( method );
+            request.setRawPath( "/_/image/123456:00000000000000000000000000000000/width-640/image-name.jpg." + format );
+            final WebResponse response = handler.handle( request );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+            assertEquals( cached, response.getBody() );
+            assertNull( response.getHeaders().get( "Cache-Control" ) );
+            if ( "webp".equals( format ) || "avif".equals( format ) )
+            {
+                request.setRawPath( "/_/image/123456/width-640/image-name.jpg." + format );
+                assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+            }
+        }
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
     }
 
     @ParameterizedTest
@@ -262,6 +298,7 @@ class ImageHandlerTest
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "app:card", params.getValue().getStyle() );
+        assertFalse( params.getValue().isCacheOnly() );
         assertEquals( "image/" + format, params.getValue().getMimeType() );
     }
 
@@ -502,16 +539,15 @@ class ImageHandlerTest
 
     @ParameterizedTest
     @ValueSource(strings = {"webp", "avif"})
-    void originalModernImageRequiresMatchingFingerprint( final String format )
+    void originalModernImagePassesThroughWithoutRegeneration( final String format )
         throws Exception
     {
         setupImageContent( format );
         for ( String id : new String[]{"123456", "123456:00000000000000000000000000000000"} )
         {
             request.setRawPath( "/_/image/" + id + "/full/image-name." + format );
-            assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+            assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
         }
-        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
         verify( imageService, never() ).readImage( isA( ReadImageParams.class ) );
     }
 
