@@ -89,7 +89,9 @@ final class ImageMagickDecoder
             if ( raster == null )
             {
                 final Path output = process.file( "raster.png" );
-                process.run( List.of( "-background", "none", coder + ":" + input + "[0]", "-strip", "-depth", "8", "PNG32:" + output ), output );
+                process.run( List.of( "-limit", "area", Long.toString( maxPixels ),
+                    "-limit", "width", Long.toString( maxPixels ), "-limit", "height", Long.toString( maxPixels ),
+                    "-background", "none", coder + ":" + input + "[0]", "-strip", "-depth", "8", "PNG32:" + output ), output );
                 raster = NativeImageRaster.validate( output, width, height );
             }
             return raster;

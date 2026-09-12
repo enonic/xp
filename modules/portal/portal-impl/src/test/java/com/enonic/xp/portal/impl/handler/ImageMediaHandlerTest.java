@@ -185,7 +185,7 @@ class ImageMediaHandlerTest
         throws Exception
     {
         setupContent();
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640~app:card/image-name.jpg." + format );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card/image-name.jpg." + format );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final WebResponse response = handler.handle( request );
@@ -204,7 +204,7 @@ class ImageMediaHandlerTest
         setupContent();
         final ImageStyle style = ImageStyle.create().name( "card" ).build();
         when( imageService.getStyle( "app:card" ) ).thenReturn( style );
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640~app:card/image-name.jpg" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card/image-name.jpg" );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).quality( 70 ).build() );

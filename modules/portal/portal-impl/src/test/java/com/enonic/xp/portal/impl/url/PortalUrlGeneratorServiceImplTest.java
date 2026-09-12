@@ -64,10 +64,10 @@ class PortalUrlGeneratorServiceImplTest
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final ImageUrlGeneratorParams params = styleUrlParams().build();
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640~app:card/mycontent.png.webp",
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card/mycontent.png.webp",
                       service.imageUrl( params ) );
         final ImageUrlParts parts = service.imageUrlParts( params );
-        assertEquals( "b70c37373c28d80778129544e9b504a6a0560ed0", parts.fingerprint() );
+        assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", parts.fingerprint() );
         assertEquals( "width-640~app:card", parts.scale() );
         assertEquals( "mycontent.png.webp", parts.name() );
         assertEquals( "", parts.queryString() );
@@ -156,7 +156,7 @@ class PortalUrlGeneratorServiceImplTest
         {
             final ImageUrlGeneratorParams params = styleUrlParams().setFormat( format ).build();
             final ImageUrlParts parts = service.imageUrlParts( params );
-            assertEquals( "b70c37373c28d80778129544e9b504a6a0560ed0", parts.fingerprint() );
+            assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", parts.fingerprint() );
             assertThat( service.imageUrl( params ) ).contains( "/" + parts.name() + "" );
             assertThat( parts.name() ).endsWith( "." + format );
         }

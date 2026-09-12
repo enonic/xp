@@ -15,6 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MediaHashResolverTest
 {
     @Test
+    void equivalentStyleDefaultsHaveTheSameFingerprint()
+    {
+        final HmacService hmac = HmacTestHelper.createHmacService();
+        final ScaleParams scale = new ScaleParams( "width", new Object[]{640} );
+        final String imageHash = "0a350f43700951cdcca1574f448a7e22";
+        final String defaultFingerprint = MediaHashResolver.resolveStyledImageHash(
+            imageHash, ImageStyle.create().name( "card" ).build(), scale, hmac );
+        for ( String background : new String[]{"ffffff", "FFFFFF", "0xffffff"} )
+        {
+            final ImageStyle explicit = ImageStyle.create().name( "alias" ).quality( 85 ).background( background ).build();
+            assertEquals( defaultFingerprint, MediaHashResolver.resolveStyledImageHash( imageHash, explicit, scale, hmac ) );
+        }
+    }
+
+    @Test
     void styledFingerprintRequiresSharedSecretAndIsSeparatedFromRedirectChecksums()
     {
         final HmacService hmac = HmacTestHelper.createHmacService();
@@ -23,7 +38,7 @@ class MediaHashResolverTest
         final String imageHash = "0a350f43700951cdcca1574f448a7e22";
         final String unsigned = "f4774dff7b6ef5d0fc1f077cbec55899";
         final String fingerprint = MediaHashResolver.resolveStyledImageHash( imageHash, style, scale, hmac );
-        assertEquals( "b70c37373c28d80778129544e9b504a6a0560ed0", fingerprint );
+        assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", fingerprint );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, unsigned ) );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, hmac.generateChecksum( unsigned ) ) );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, null ) );
