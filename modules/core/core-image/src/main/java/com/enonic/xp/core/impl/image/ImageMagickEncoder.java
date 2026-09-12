@@ -62,7 +62,7 @@ final class ImageMagickEncoder
     private NativeImageProcess process() throws IOException
     {
         return new NativeImageProcess( executable, temporaryFolder, "encode", timeoutSeconds, "RGBA",
-            "JPEG,PNG,GIF,WEBP,AVIF,HEIC" );
+            "JPEG,PNG,PNG24,PNG32,GIF,WEBP,AVIF,HEIC" );
     }
 
     private void encode( final NativeImageProcess process, final NativeImageRaster raster, final String format,
@@ -78,7 +78,9 @@ final class ImageMagickEncoder
             "-define", "webp:method=4", "-define", "heic:speed=6",
             "-interlace", progressive && "jpeg".equals( format ) ? "Plane" : "None" ) );
         if ( quality >= 0 ) { operation.addAll( List.of( "-quality", Integer.toString( quality ) ) ); }
-        operation.add( format + ":" + result );
+        // Keep sRGB samples in RGB channels: ImageIO treats grayscale PNG samples as linear gray.
+        final String coder = "png".equals( format ) ? ( raster.alpha() ? "PNG32" : "PNG24" ) : format;
+        operation.add( coder + ":" + result );
         process.run( operation, result );
         Files.copy( result, output );
     }
