@@ -46,6 +46,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -230,7 +231,7 @@ class ImageMediaHandlerTest
         verify( imageService ).readImage( params.capture() );
         assertEquals( alias, params.getValue().getStyle() );
         assertEquals( "width", params.getValue().getScaleParams().getName() );
-        assertThat( params.getValue().getScaleParams().getArguments() ).containsExactly( 640 );
+        assertArrayEquals( new Object[]{640}, params.getValue().getScaleParams().getArguments() );
     }
 
     @Test
