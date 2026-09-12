@@ -58,16 +58,16 @@ class PortalUrlGeneratorServiceImplTest
     }
 
     @Test
-    void imageStyleUrlAndPartsUseCanonicalPlaceholder()
+    void imageStyleUrlAndPartsUseRequestedScale()
     {
         when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).build() );
+            ImageStyle.create().name( "card" ).build() );
         final ImageUrlGeneratorParams params = styleUrlParams().build();
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:6749e09d479eddfd560f05056d7bf8af/full/mycontent.png.webp?style=app%3Acard",
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640/mycontent.png.webp?style=app%3Acard",
                       service.imageUrl( params ) );
         final ImageUrlParts parts = service.imageUrlParts( params );
-        assertEquals( "6749e09d479eddfd560f05056d7bf8af", parts.fingerprint() );
-        assertEquals( "full", parts.scale() );
+        assertEquals( "f4774dff7b6ef5d0fc1f077cbec55899", parts.fingerprint() );
+        assertEquals( "width-640", parts.scale() );
         assertEquals( "mycontent.png.webp", parts.name() );
         assertEquals( "?style=app%3Acard", parts.queryString() );
     }
@@ -77,26 +77,37 @@ class PortalUrlGeneratorServiceImplTest
     {
         final ImageUrlGeneratorParams params = styleUrlParams().build();
         final var styles = List.of(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(320)" ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).quality( 60 ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).filter( "blur(1)" ).build(),
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).background( "000000" ).build() );
+            ImageStyle.create().name( "card" ).build(),
+            ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).build(),
+            ImageStyle.create().name( "card" ).quality( 60 ).build(),
+            ImageStyle.create().name( "card" ).filter( "blur(1)" ).build(),
+            ImageStyle.create().name( "card" ).background( "000000" ).build() );
         final var fingerprints = new java.util.HashSet<String>();
         for ( final ImageStyle style : styles )
         {
             when( imageService.getStyle( "app:card" ) ).thenReturn( style );
             final ImageUrlParts parts = service.imageUrlParts( params );
-            assertThat( service.imageUrl( params ) ).contains( ":" + parts.fingerprint() + "/full/" );
+            assertThat( service.imageUrl( params ) ).contains( ":" + parts.fingerprint() + "/width-640/" );
             fingerprints.add( parts.fingerprint() );
         }
         assertEquals( styles.size(), fingerprints.size() );
     }
 
     @Test
+    void requestedScaleChangesStyledFingerprint()
+    {
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).build() );
+        final ImageUrlParts wide = service.imageUrlParts( styleUrlParams().setScale( "width(640)" ).build() );
+        final ImageUrlParts small = service.imageUrlParts( styleUrlParams().setScale( "width(320)" ).build() );
+        assertThat( wide.fingerprint() ).isNotEqualTo( small.fingerprint() );
+        assertEquals( "width-320", small.scale() );
+        assertThrows( IllegalArgumentException.class,
+            () -> service.imageUrl( styleUrlParams().setScale( "square(640)" ).build() ) );
+    }
+
+    @Test
     void imageStyleUrlRejectsOverrides()
     {
-        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setScale( "max(100)" ).build() );
         assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setQuality( 90 ).build() );
         assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setFilter( "blur(1)" ).build() );
         assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setBackground( "ffffff" ).build() );
@@ -109,12 +120,12 @@ class PortalUrlGeneratorServiceImplTest
     void formatIsSelectedIndependentlyOfStyle()
     {
         when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).build() );
+            ImageStyle.create().name( "card" ).build() );
         for ( String format : new String[]{"jpeg", "png", "webp", "avif"} )
         {
             final ImageUrlGeneratorParams params = styleUrlParams().setFormat( format ).build();
             final ImageUrlParts parts = service.imageUrlParts( params );
-            assertEquals( "6749e09d479eddfd560f05056d7bf8af", parts.fingerprint() );
+            assertEquals( "f4774dff7b6ef5d0fc1f077cbec55899", parts.fingerprint() );
             assertThat( service.imageUrl( params ) ).contains( "/" + parts.name() + "?style=app%3Acard" );
             assertThat( parts.name() ).endsWith( "." + format );
         }
@@ -135,7 +146,7 @@ class PortalUrlGeneratorServiceImplTest
         return ImageUrlGeneratorParams.create().setBaseUrl( "baseUrl" )
             .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "draft" ) ).setStyle( "app:card" ).setFormat( "webp" );
+            .setBranch( () -> Branch.from( "draft" ) ).setStyle( "app:card" ).setScale( "width(640)" ).setFormat( "webp" );
     }
 
     @Test

@@ -12,6 +12,7 @@ import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
+import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
 
@@ -60,7 +61,7 @@ public final class MediaHashResolver
         return resolveImageHash( media, resolveAttachmentHash( attachment ) );
     }
 
-    public static String resolveStyledImageHash( final String imageHash, final ImageStyle style )
+    public static String resolveStyledImageHash( final String imageHash, final ImageStyle style, final ScaleParams scale )
     {
         if ( imageHash == null || style == null )
         {
@@ -69,7 +70,8 @@ public final class MediaHashResolver
         final MessageDigest digest = MessageDigests.sha512();
         digest.update( HexFormat.of().parseHex( imageHash ) );
         // Length-prefix fields to keep the fingerprint independent of delimiters in filters.
-        updateStyleField( digest, style.getScale() );
+        updateStyleField( digest, scale.toString() );
+        updateStyleField( digest, style.getAspectRatio() );
         updateStyleField( digest, style.getFilter() );
         updateStyleField( digest, style.getQuality() == null ? "85" : style.getQuality().toString() );
         updateStyleField( digest, style.getBackground() );

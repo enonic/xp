@@ -133,12 +133,11 @@ public class ImageServiceImpl
         {
             throw new IllegalArgumentException( "Unknown image style " + key );
         }
-        if ( style.getScale() == null || !style.getScale().replaceAll( "\\s", "" ).matches(
-            "(?:max|width|height|square)\\([1-9][0-9]*\\)|(?:block|wide)\\([1-9][0-9]*,[1-9][0-9]*\\)" ) ||
+        if ( style.getAspectRatio() != null && !style.getAspectRatio().matches( "[1-9][0-9]*:[1-9][0-9]*" ) ||
             style.getQuality() != null && ( style.getQuality() < 0 || style.getQuality() > 100 ) ||
             style.getBackground() != null && !style.getBackground().matches( "(?:0x)?[0-9a-fA-F]{1,6}" ) )
         {
-            throw new IllegalArgumentException( "Image style must define a fixed scale, with valid quality/background" );
+            throw new IllegalArgumentException( "Image style must define valid aspectRatio, quality and background" );
         }
         return style;
     }

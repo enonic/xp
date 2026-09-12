@@ -250,7 +250,6 @@ export interface StyleDescriptor {
         name: string;
         type: string;
         aspectRatio?: string | null;
-        scale?: string | null;
         quality?: number | null;
         background?: string | null;
         filter?: string | null;

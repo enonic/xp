@@ -50,8 +50,7 @@ public final class ImageUrlGeneratorParams
         this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
         this.branchSupplier = requireNonNull( builder.branchSupplier );
         this.style = emptyToNull( builder.style );
-        if ( style != null && ( builder.scale != null && !"full".equals( builder.scale ) ||
-            builder.quality != null || builder.filter != null || builder.background != null ) )
+        if ( style != null && ( builder.quality != null || builder.filter != null || builder.background != null ) )
         {
             throw new IllegalArgumentException( "Image styles cannot be combined with processing parameters" );
         }
@@ -59,7 +58,7 @@ public final class ImageUrlGeneratorParams
         {
             throw new IllegalArgumentException( "WebP and AVIF encoding requires a predefined image style" );
         }
-        this.scale = style == null ? requireNonNull( builder.scale ) : "full";
+        this.scale = requireNonNull( builder.scale );
         this.background = builder.background;
         this.quality = builder.quality;
         this.filter = builder.filter;

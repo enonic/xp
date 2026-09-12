@@ -109,7 +109,7 @@ export type ImageUrlParams = IdXorPath & {
     filter?: string;
     params?: object;
     type?: 'server' | 'absolute';
-    /** Fully qualified processing style (application:name). Controls scale, quality, filter, and background; format is selected separately. */
+    /** Fully qualified processing style (application:name). Controls aspect ratio, quality, filter, and background; scale and format are selected separately. */
     style?: string;
     scale?:
         | `block(${number},${number})`
@@ -166,7 +166,7 @@ interface ImageUrlHandler {
  * @param {string} [params.id] ID of the image content. Either `id` or `path` is required.
  * @param {string} [params.path] Path to the image. If `id` is specified, this parameter is not used.
  * @param {string} [params.style] Predefined processing style (application:name). Required for WebP/AVIF encoding.
- * @param {string} [params.scale] Required unless style is provided. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
+ * @param {string} params.scale Required. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
  * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Output format of the image. WebP and AVIF require a predefined style.
@@ -182,7 +182,7 @@ interface ImageUrlHandler {
 export function imageUrl(params: ImageUrlParams): string {
     const bean: ImageUrlHandler = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
 
-    const scale = params.style ? (params.scale ?? 'full') : checkRequired(params, 'scale');
+    const scale = checkRequired(params, 'scale');
 
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));

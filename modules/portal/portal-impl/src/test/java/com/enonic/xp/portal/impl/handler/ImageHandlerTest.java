@@ -28,6 +28,8 @@ import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.PortalConfig;
@@ -57,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -150,7 +153,8 @@ class ImageHandlerTest
         throws Exception
     {
         final Attachment attachment =
-            Attachment.create().name( "enonic-logo." + type ).mimeType( "image/" + type ).label( "source" ).build();
+            Attachment.create().name( "enonic-logo." + type ).mimeType( "image/" + type ).label( "source" )
+                .sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
 
         final Content content = createContent( "123456", "path/to/image-name." + type, attachment );
 
@@ -208,19 +212,53 @@ class ImageHandlerTest
         when( this.imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( imageBytes );
     }
 
+    private String styledFingerprint()
+    {
+        final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
+        return MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ),
+            ImageStyle.create().name( "card" ).build(), new ScaleParams( "width", new Object[]{640} ) );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
+    void modernOutputRejectsMissingStaleAndAlteredFingerprintsBeforeReadingBinary( final String format )
+        throws Exception
+    {
+        setupContent();
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        request.getParams().put( "style", "app:card" );
+        final String valid = styledFingerprint();
+        final String source = MediaHashResolver.resolveImageHash( (Media) contentService.getById( ContentId.from( "123456" ) ) );
+        for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
+        {
+            request.setMethod( method );
+            for ( String path : new String[]{"123456/width-640", "123456:00000000000000000000000000000000/width-640",
+                "123456:" + source + "/width-640", "123456:" + valid + "/width-320"} )
+            {
+                request.setRawPath( "/_/image/" + path + "/image-name.jpg." + format );
+                assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+            }
+            when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).quality( 70 ).build() );
+            request.setRawPath( "/_/image/123456:" + valid + "/width-640/image-name.jpg." + format );
+            assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+            when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        }
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
+        verify( imageService, never() ).readImage( isA( ReadImageParams.class ) );
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"webp", "avif", "jpeg", "png"})
     void styleAllowsRequestedOutputFormat( final String format )
         throws Exception
     {
         setupContent();
-        request.setRawPath( "/_/image/123456/full/image-name.jpg." + format );
+        request.setRawPath( "/_/image/123456:" + styledFingerprint() + "/width-640/image-name.jpg." + format );
         request.getParams().put( "style", "app:card" );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
-            ImageStyle.create().name( "card" ).scale( "max(640)" ).build() );
+            ImageStyle.create().name( "card" ).build() );
         final WebResponse response = handler.handle( request );
         assertEquals( MediaType.parse( "image/" + format ), response.getContentType() );
-        assertNull( response.getHeaders().get( "Cache-Control" ) );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "app:card", params.getValue().getStyle() );
@@ -240,12 +278,10 @@ class ImageHandlerTest
     }
 
     @Test
-    void styleRejectsScalePathAndDuplicateStyle()
+    void styleRejectsDuplicateStyle()
     {
-        request.setRawPath( "/_/image/123456/full/image-name.jpg".replace( "/full/", "/max-123/" ) );
+        request.setRawPath( "/_/image/123456/width-640/image-name.jpg" );
         request.getParams().put( "style", "app:card" );
-        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
-        request.setRawPath( "/_/image/123456/full/image-name.jpg" );
         request.getParams().put( "style", "app:other" );
         assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
         verifyNoInteractions( contentService, imageService );
@@ -464,13 +500,29 @@ class ImageHandlerTest
         assertNull( res.getHeaders().get( "Content-Encoding" ) );
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void originalModernImageRequiresMatchingFingerprint( final String format )
+        throws Exception
+    {
+        setupImageContent( format );
+        for ( String id : new String[]{"123456", "123456:00000000000000000000000000000000"} )
+        {
+            request.setRawPath( "/_/image/" + id + "/full/image-name." + format );
+            assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        }
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
+        verify( imageService, never() ).readImage( isA( ReadImageParams.class ) );
+    }
+
     @Test
     void webpImage()
         throws Exception
     {
         setupImageContent( "webp" );
 
-        this.request.setRawPath( "/_/image/123456/full/image-name.webp" );
+        this.request.setRawPath( "/_/image/123456:" + MediaHashResolver.resolveImageHash(
+            (Media) contentService.getById( ContentId.from( "123456" ) ) ) + "/full/image-name.webp" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );
@@ -486,7 +538,8 @@ class ImageHandlerTest
     {
         setupImageContent( "avif" );
 
-        this.request.setRawPath( "/_/image/123456/full/image-name.avif" );
+        this.request.setRawPath( "/_/image/123456:" + MediaHashResolver.resolveImageHash(
+            (Media) contentService.getById( ContentId.from( "123456" ) ) ) + "/full/image-name.avif" );
 
         final WebResponse res = this.handler.handle( this.request );
         assertNotNull( res );

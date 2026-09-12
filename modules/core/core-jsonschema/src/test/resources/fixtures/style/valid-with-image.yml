@@ -25,3 +25,6 @@ styles:
             100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
     label: "Sepia wide screen"
+    aspectRatio: "16:9"
+    quality: 80
+    background: "ffffff"

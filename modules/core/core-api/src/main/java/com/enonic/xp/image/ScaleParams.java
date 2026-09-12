@@ -28,6 +28,32 @@ public final class ScaleParams
         return this.args;
     }
 
+    /** Applies a style's aspect ratio to a single requested width or height. */
+    public ScaleParams withAspectRatio( final String aspectRatio )
+    {
+        if ( aspectRatio == null )
+        {
+            return this;
+        }
+        if ( !aspectRatio.matches( "[1-9][0-9]*:[1-9][0-9]*" ) ||
+            !( "width".equals( name ) || "height".equals( name ) ) || args.length != 1 || !( args[0] instanceof Number ) )
+        {
+            throw new IllegalArgumentException( "An image aspect ratio requires width or height with one positive dimension" );
+        }
+        final String[] ratio = aspectRatio.split( ":" );
+        final int horizontal = Integer.parseInt( ratio[0] );
+        final int vertical = Integer.parseInt( ratio[1] );
+        final int dimension = ((Number) args[0]).intValue();
+        final long derived = "width".equals( name ) ? Math.round( (double) dimension * vertical / horizontal ) :
+            Math.round( (double) dimension * horizontal / vertical );
+        if ( dimension <= 0 || derived <= 0 || derived > Integer.MAX_VALUE )
+        {
+            throw new IllegalArgumentException( "Invalid image dimensions for aspect ratio" );
+        }
+        return new ScaleParams( "block", "width".equals( name ) ? new Object[]{dimension, (int) derived} :
+            new Object[]{(int) derived, dimension} );
+    }
+
     @Override
     public String toString()
     {

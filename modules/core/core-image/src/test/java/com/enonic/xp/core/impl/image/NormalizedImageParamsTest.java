@@ -29,12 +29,12 @@ class NormalizedImageParamsTest
     }
 
     @Test
-    void resolvedStyleOwnsAllProcessingParameters()
+    void resolvedStyleUsesRequestedWidthAndOwnsEncodingParameters()
     {
-        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "block(640,360)" )
+        final ImageStyle style = ImageStyle.create().name( "card" ).aspectRatio( "16:9" )
             .quality( 75 ).filter( "grayscale()" ).build();
         final NormalizedImageParams params = new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" )
-            .scaleParams( new ScaleParams( "square", new Object[]{8000} ) ).filterParam( "blur(100)" )
+            .scaleParams( new ScaleParams( "width", new Object[]{640} ) ).filterParam( "blur(100)" )
             .quality( 100 ).backgroundColor( 0 ).build(), style );
         assertEquals( "block(640,360)", params.getScaleParams().toString() );
         assertEquals( "webp", params.getFormat() );
@@ -44,16 +44,40 @@ class NormalizedImageParamsTest
     }
 
     @Test
+    void aspectRatioDerivesHeightOrWidthAndRoundsToNearestPixel()
+    {
+        final ImageStyle style = ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).build();
+        for ( ScaleParams scale : new ScaleParams[]{new ScaleParams( "width", new Object[]{640} ),
+            new ScaleParams( "height", new Object[]{360} )} )
+        {
+            final NormalizedImageParams params = new NormalizedImageParams(
+                noFormatTemplate().mimeType( "image/webp" ).scaleParams( scale ).build(), style );
+            assertEquals( "block(640,360)", params.getScaleParams().toString() );
+        }
+        assertEquals( "block(650,366)", new ScaleParams( "width", new Object[]{650} ).withAspectRatio( "16:9" ).toString() );
+        for ( String scale : new String[]{"full", "max", "square", "block", "wide"} )
+        {
+            assertThrows( IllegalArgumentException.class, () -> new NormalizedImageParams(
+                noFormatTemplate().mimeType( "image/webp" ).scaleParams( new ScaleParams( scale, new Object[]{640} ) ).build(), style ) );
+        }
+        for ( String ratio : new String[]{"0:9", "16:0", "invalid", "99999999999999999999:1"} )
+        {
+            assertThrows( IllegalArgumentException.class,
+                () -> new ScaleParams( "width", new Object[]{640} ).withAspectRatio( ratio ) );
+        }
+    }
+
+    @Test
     void sameStyleSupportsEveryOutputFormat()
     {
-        final ImageStyle style = ImageStyle.create().name( "card" ).scale( "max(100)" ).build();
+        final ImageStyle style = ImageStyle.create().name( "card" ).build();
         for ( String format : new String[]{"jpeg", "png", "gif", "webp", "avif"} )
         {
             final NormalizedImageParams params = new NormalizedImageParams(
                 noFormatTemplate().mimeType( "image/" + format ).build(), style );
             assertEquals( format, params.getFormat() );
             assertEquals( 85, params.getQuality() );
-            assertEquals( "max", params.getScaleParams().getName() );
+            assertEquals( "full", params.getScaleParams().getName() );
         }
     }
 

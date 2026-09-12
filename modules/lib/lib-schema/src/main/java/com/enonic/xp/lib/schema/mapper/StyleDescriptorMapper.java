@@ -52,7 +52,6 @@ public class StyleDescriptorMapper
                     gen.value( "type", IMAGE_TYPE );
                     gen.value( "aspectRatio", imageStyle.getAspectRatio() );
                     gen.value( "filter", imageStyle.getFilter() );
-                    gen.value( "scale", imageStyle.getScale() );
                     gen.value( "quality", imageStyle.getQuality() );
                     gen.value( "background", imageStyle.getBackground() );
                 }

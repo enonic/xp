@@ -324,7 +324,7 @@ class UrlServiceScriptTest
         verify( portalUrlService ).imageUrl( captor.capture() );
         assertEquals( "app:card", captor.getValue().getStyle() );
         assertEquals( "avif", captor.getValue().getFormat() );
-        assertEquals( "full", captor.getValue().getScale() );
+        assertEquals( "width(640)", captor.getValue().getScale() );
     }
 
     @Test

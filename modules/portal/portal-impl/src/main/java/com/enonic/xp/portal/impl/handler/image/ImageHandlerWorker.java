@@ -69,7 +69,6 @@ public final class ImageHandlerWorker
         if ( styleParam != null )
         {
             if ( request.getParams().get( "style" ).size() != 1 ||
-                scaleParams == null || !"full".equals( scaleParams.getName() ) || scaleParams.getArguments().length != 0 ||
                 Set.of( "scale", "format", "quality", "filter", "background" ).stream()
                     .anyMatch( request.getParams()::containsKey ) )
             {
@@ -77,7 +76,8 @@ public final class ImageHandlerWorker
             }
             try
             {
-                this.style = imageService.getStyle( styleParam );
+                this.style = requireNonNull( imageService.getStyle( styleParam ), "Image style is required" );
+                scaleParams.withAspectRatio( style.getAspectRatio() );
             }
             catch ( IllegalArgumentException e )
             {
@@ -118,6 +118,13 @@ public final class ImageHandlerWorker
         if ( attachment == null )
         {
             throw WebException.notFound( String.format( "Attachment [%s] not found", content.getName() ) );
+        }
+        final boolean modern = "webp".equalsIgnoreCase( extension ) || "avif".equalsIgnoreCase( extension ) ||
+            "image/webp".equalsIgnoreCase( attachment.getMimeType() ) || "image/avif".equalsIgnoreCase( attachment.getMimeType() );
+        if ( modern && ( fingerprint == null || !fingerprint.equals(
+            resolveHash( (Media) content, attachment, attachment.getBinaryReference() ) ) ) )
+        {
+            throw WebException.badRequest( "WebP and AVIF require a matching image fingerprint in the path" );
         }
         return attachment;
     }
@@ -210,14 +217,15 @@ public final class ImageHandlerWorker
     @Override
     protected String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
     {
-        if ( legacyMode && style == null )
+        if ( legacyMode && style == null && !"image/webp".equalsIgnoreCase( attachment.getMimeType() ) &&
+            !"image/avif".equalsIgnoreCase( attachment.getMimeType() ) )
         {
             return null;
         }
         else
         {
             return MediaHashResolver.resolveStyledImageHash(
-                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style );
+                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style, scaleParams );
         }
     }
 

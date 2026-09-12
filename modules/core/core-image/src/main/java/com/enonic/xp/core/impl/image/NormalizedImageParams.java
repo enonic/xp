@@ -6,7 +6,6 @@ import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
-import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.util.BinaryReference;
@@ -49,8 +48,7 @@ class NormalizedImageParams
         this.contentId = readImageParams.getContentId();
         this.binaryReference = readImageParams.getBinaryReference();
         this.cropping = normalizeCropping( readImageParams.getCropping() );
-        this.scaleParams = style == null ? normalizeScaleParams( readImageParams ) :
-            new ScaleParamsParser().parse( style.getScale().replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" ) );
+        this.scaleParams = normalizeScaleParams( readImageParams ).withAspectRatio( style == null ? null : style.getAspectRatio() );
         this.focalPoint = readImageParams.getFocalPoint();
         this.filterParam = FilterSetExpr.parse( style == null ? readImageParams.getFilterParam() : style.getFilter() );
         this.format = normalizeFormat( readImageParams );

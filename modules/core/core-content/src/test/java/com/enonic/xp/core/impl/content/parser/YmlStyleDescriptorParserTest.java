@@ -30,13 +30,13 @@ public class YmlStyleDescriptorParserTest
             styles:
               - type: Image
                 name: card
-                scale: block(640,360)
+                aspectRatio: "16:9"
                 quality: 75
                 background: 'ffffff'
                 filter: grayscale()
             """, ApplicationKey.from( "myapp" ) ).build();
         final ImageStyle style = assertInstanceOf( ImageStyle.class, descriptor.getElements().getFirst() );
-        assertEquals( "block(640,360)", style.getScale() );
+        assertEquals( "16:9", style.getAspectRatio() );
         assertEquals( 75, style.getQuality() );
         assertEquals( "ffffff", style.getBackground() );
         assertEquals( "grayscale()", style.getFilter() );

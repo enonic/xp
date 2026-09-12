@@ -9,6 +9,8 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.MediaHashResolver;
+import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.style.ImageStyle;
 
@@ -69,9 +71,16 @@ final class ImageMediaPathSupplier
 
         final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 
-        return new MediaPathParts( context, media.getId().toString(), MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ),
-                                                                                styleSupplier.get() ),
-                                        resolveScale( scale ), resolveName( media, format ) );
+        final ImageStyle style = styleSupplier.get();
+        final String resolvedScale = resolveScale( scale );
+        final ScaleParams scaleParams = style == null ? null : new ScaleParamsParser().parse( resolvedScale );
+        if ( style != null )
+        {
+            requireNonNull( scaleParams, "Image scale is required" ).withAspectRatio( style.getAspectRatio() );
+        }
+        return new MediaPathParts( context, media.getId().toString(),
+                                   MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ), style, scaleParams ),
+                                   resolvedScale, resolveName( media, format ) );
     }
 
     private String resolveName( final Content media, final String format )
