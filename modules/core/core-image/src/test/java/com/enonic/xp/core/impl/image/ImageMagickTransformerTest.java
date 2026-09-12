@@ -34,6 +34,28 @@ class ImageMagickTransformerTest
     @TempDir
     Path temporaryFolder;
 
+    @Test
+    void nativeStagesPassRasterFilesWithoutJavaPixelReads() throws Exception
+    {
+        final var bytes = new java.io.ByteArrayOutputStream();
+        javax.imageio.ImageIO.write( image(), "png", bytes );
+        final var decoder = new ImageMagickDecoder( "embedded", temporaryFolder, 30, 10000, 100000 );
+        try (var source = decoder.open( com.google.common.io.ByteSource.wrap( bytes.toByteArray() ) ))
+        {
+            final var decoded = org.mockito.Mockito.spy( source.raster() );
+            try (var result = transformer().transform( decoded, plan( 32, 24, params( "invert" ), 10000 ) ))
+            {
+                final var transformed = org.mockito.Mockito.spy( result.raster() );
+                final var output = new java.io.ByteArrayOutputStream();
+                new ImageMagickEncoder( 30, temporaryFolder ).write( transformed, "png", 85, false, output );
+                assertEquals( 32, javax.imageio.ImageIO.read( new java.io.ByteArrayInputStream( output.toByteArray() ) ).getWidth() );
+                org.mockito.Mockito.verify( decoded, org.mockito.Mockito.never() ).read();
+                org.mockito.Mockito.verify( transformed, org.mockito.Mockito.never() ).read();
+            }
+        }
+        assertEmpty( temporaryFolder );
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"block(3)", "blur(2)", "border(2,0x00ff00)", "bump", "colorize(1,0.5,0)", "edge", "emboss",
         "fliph", "flipv", "rotate90", "rotate180", "rotate270", "gamma(1.2)", "grayscale", "hsbadjust(0.2,0.1,-0.1)",

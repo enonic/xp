@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.util.BinaryReference;
 
 import static java.util.Objects.requireNonNull;
@@ -194,6 +195,10 @@ public final class ReadImageParams
 
         private boolean cacheOnly;
 
+        private boolean qualitySet;
+
+        private boolean backgroundSet;
+
         /** Only read an existing rendition; never regenerate or populate the cache on a miss. */
         public Builder cacheOnly( final boolean cacheOnly )
         {
@@ -212,7 +217,7 @@ public final class ReadImageParams
          */
         public Builder style( final String style )
         {
-            this.style = style;
+            this.style = style == null || style.isEmpty() ? null : style;
             return this;
         }
 
@@ -276,6 +281,7 @@ public final class ReadImageParams
 
         public Builder backgroundColor( int backgroundColor )
         {
+            this.backgroundSet = true;
             this.backgroundColor = backgroundColor;
             return this;
         }
@@ -288,6 +294,7 @@ public final class ReadImageParams
 
         public Builder quality( int quality )
         {
+            this.qualitySet = true;
             this.quality = quality;
             return this;
         }
@@ -306,6 +313,8 @@ public final class ReadImageParams
 
         public ReadImageParams build()
         {
+            ImageStyleSettings.checkOverrides( style, qualitySet || quality != 0 || backgroundSet || filterParam != null );
+            Preconditions.checkArgument( expectedStyle == null || style != null, "expectedStyle requires a style key" );
             requireNonNull( contentId, "contentId is required" );
             requireNonNull( binaryReference, "binaryReference is required" );
             requireNonNull( mimeType, "mimeType is required" );

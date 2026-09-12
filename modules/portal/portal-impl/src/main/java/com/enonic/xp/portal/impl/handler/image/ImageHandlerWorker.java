@@ -228,7 +228,7 @@ public final class ImageHandlerWorker
             this.cacheOnly = !hashMatches && ( !nullToEmpty( fingerprint ).isBlank() ||
                 contentType.is( MediaType.WEBP ) || contentType.is( MediaType.AVIF ) );
 
-            final ReadImageParams readImageParams = ReadImageParams.newImageParams()
+            final ReadImageParams.Builder readImageParams = ReadImageParams.newImageParams()
                 .contentId( content.getId() )
                 .binaryReference( binaryReference )
                 .cropping( MediaUtils.readCropping( mediaData ) )
@@ -236,16 +236,16 @@ public final class ImageHandlerWorker
                 .attachmentSha512( attachment.getSha512() )
                 .orientation( imageOrientation )
                 .scaleParams( this.scaleParams )
-                .filterParam( this.filterParam )
-                .backgroundColor( backgroundColor )
-                .quality( imageQuality )
                 .mimeType( contentType.toString() )
                 .style( styleParam )
                 .expectedStyle( style )
-                .cacheOnly( cacheOnly )
-                .build();
+                .cacheOnly( cacheOnly );
+            if ( style == null )
+            {
+                readImageParams.filterParam( this.filterParam ).backgroundColor( backgroundColor ).quality( imageQuality );
+            }
 
-            return this.imageService.readImage( readImageParams );
+            return this.imageService.readImage( readImageParams.build() );
         }
         catch ( IllegalArgumentException e )
         {

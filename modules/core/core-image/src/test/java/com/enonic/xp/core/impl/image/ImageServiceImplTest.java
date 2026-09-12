@@ -271,6 +271,52 @@ class ImageServiceImplTest
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"encoding", "decoding", "transformation"})
+    void croppedResizeIsRejectedBeforeAllocatingOversizedRaster( final String backend ) throws Exception
+    {
+        final var bytes = new java.io.ByteArrayOutputStream();
+        ImageIO.write( new BufferedImage( 1000, 1000, BufferedImage.TYPE_INT_RGB ), "png", bytes );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        if ( "encoding".equals( backend ) ) { when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" ); }
+        if ( "decoding".equals( backend ) ) { when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" ); }
+        if ( "transformation".equals( backend ) ) { when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" ); }
+        imageService = newImageService();
+        final var params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/png" ).cropping( com.enonic.xp.image.Cropping.create().right( 0.01 ).build() )
+            .scaleParams( new ScaleParams( "width", new Object[]{1000} ) ).build();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) )
+            .getMessage().contains( "processing.maxPixels" ) );
+        try (var paths = Files.walk( temporaryFolder.resolve( "work/cache/img" ) ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
+    }
+
+    @Test
+    void nativePipelineReadsAttachmentOnlyOnce() throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final var reads = new java.util.concurrent.atomic.AtomicInteger();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( new ByteSource()
+        {
+            @Override public InputStream openStream()
+            {
+                assertEquals( 1, reads.incrementAndGet() );
+                return new ByteArrayInputStream( imageDataOriginal );
+            }
+        } );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        processingStyle( 80 );
+        assertTrue( imageService.readImage( styledParams( "webp" ) ).size() > 0 );
+        assertEquals( 1, reads.get() );
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"webp", "avif"})
     void nativeDecoderUsesExistingTransformsAndIndependentImageIoEncoder( final String sourceFormat )
         throws Exception

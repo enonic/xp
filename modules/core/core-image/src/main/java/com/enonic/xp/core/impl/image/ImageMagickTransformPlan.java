@@ -8,7 +8,6 @@ import java.util.Locale;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.impl.image.parser.CommandArgumentParser;
 import com.enonic.xp.core.impl.image.parser.FilterExpr;
-import com.enonic.xp.image.Cropping;
 import com.enonic.xp.media.ImageOrientation;
 
 /** A bounded plan containing only fixed operators and parsed numeric values, never caller-supplied expressions. */
@@ -29,21 +28,28 @@ final class ImageMagickTransformPlan
     ImageMagickTransformPlan( final int width, final int height, final NormalizedImageParams params,
                               final ImageScaleFunction scale, final long maxPixels )
     {
+        this( params, ImageGeometry.calculate( width, height, params, scale, maxPixels ), width, height, maxPixels );
+    }
+
+    static ImageMagickTransformPlan fromGeometry( final int width, final int height, final NormalizedImageParams params,
+                                                  final ImageGeometry geometry, final long maxPixels )
+    {
+        return new ImageMagickTransformPlan( params, geometry, width, height, maxPixels );
+    }
+
+    private ImageMagickTransformPlan( final NormalizedImageParams params, final ImageGeometry geometry,
+                                      final int width, final int height, final long maxPixels )
+    {
         this.maxPixels = maxPixels;
         dimensions( width, height );
         orient( params.getOrientation() );
-        final Cropping crop = params.getCropping();
-        if ( !crop.isUnmodified() )
+        if ( geometry.cropped() )
         {
-            final int x = (int) Math.max( 0, Math.min( (long) ( this.width * crop.left() ), this.width - 1 ) );
-            final int y = (int) Math.max( 0, Math.min( (long) ( this.height * crop.top() ), this.height - 1 ) );
-            final int w = (int) Math.max( 1, Math.min( (long) ( this.width * crop.width() ), this.width - x ) );
-            final int h = (int) Math.max( 1, Math.min( (long) ( this.height * crop.height() ), this.height - y ) );
-            crop( w, h, x, y );
+            crop( geometry.cropWidth(), geometry.cropHeight(), geometry.cropX(), geometry.cropY() );
         }
-        if ( scale != null )
+        if ( geometry.scale() != null )
         {
-            final var values = scale.calculate( this.width, this.height );
+            final var values = geometry.scale();
             dimensions( values.newWidth, values.newHeight );
             add( "-filter", "Lanczos", "-resize", geometry() + "!" );
             if ( values.subimage() )

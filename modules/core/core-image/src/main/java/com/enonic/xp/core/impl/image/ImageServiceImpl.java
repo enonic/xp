@@ -3,9 +3,7 @@ package com.enonic.xp.core.impl.image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -15,8 +13,6 @@ import java.util.HexFormat;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -25,18 +21,16 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 
-import org.jspecify.annotations.NonNull;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.internal.ByteSizeParser;
 import com.enonic.xp.core.internal.MemoryLimitParser;
@@ -53,6 +47,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 
@@ -62,8 +57,6 @@ import static java.util.Objects.requireNonNull;
 public class ImageServiceImpl
     implements ImageService
 {
-    private static final Logger LOG = LoggerFactory.getLogger( ImageServiceImpl.class );
-
     private final Path cacheFolder = HomeDir.get().toPath().resolve( "work" ).resolve( "cache" ).resolve( "img" );
 
     private final ImmutableFilesHelper immutableFilesHelper = new ImmutableFilesHelper( cacheFolder.resolve( "ingest" ) );
@@ -92,9 +85,9 @@ public class ImageServiceImpl
 
     private final ImageMagickTransformer nativeTransformer;
 
-    private final Semaphore processingRequests;
+    private final ImageProcessingGate processingGate;
 
-    private final Semaphore processingSlots;
+    private final long maxSourceBytes;
 
     private final int queueTimeoutSeconds;
 
@@ -138,8 +131,8 @@ public class ImageServiceImpl
             cacheFolder.resolve( "transformation" ) );
         this.nativeDecoder = new ImageMagickDecoder( "embedded", cacheFolder.resolve( "decoding" ),
             config.processing_timeoutSeconds(), config.processing_maxPixels(), ByteSizeParser.parse( config.decoding_maxBytes() ) );
-        this.processingSlots = new Semaphore( config.processing_maxConcurrent(), true );
-        this.processingRequests = new Semaphore( Math.addExact( config.processing_maxConcurrent(), config.processing_maxQueue() ) );
+        this.processingGate = new ImageProcessingGate( config.processing_maxConcurrent(), config.processing_maxQueue(), config.processing_queueTimeoutSeconds() );
+        this.maxSourceBytes = ByteSizeParser.parse( config.decoding_maxBytes() );
         this.queueTimeoutSeconds = config.processing_queueTimeoutSeconds();
         this.maxProcessingPixels = config.processing_maxPixels();
         this.nativeEncoder = new ImageMagickEncoder( useImageMagick ? "embedded" : "", config.processing_timeoutSeconds(),
@@ -166,12 +159,7 @@ public class ImageServiceImpl
         {
             throw new IllegalArgumentException( "Unknown image style " + key );
         }
-        if ( style.getAspectRatio() != null && !style.getAspectRatio().matches( "[1-9][0-9]*:[1-9][0-9]*" ) ||
-            style.getQuality() != null && ( style.getQuality() < 0 || style.getQuality() > 100 ) ||
-            style.getBackground() != null && !style.getBackground().matches( "(?:0x)?[0-9a-fA-F]{1,6}" ) )
-        {
-            throw new IllegalArgumentException( "Image style must define valid aspectRatio, quality and background" );
-        }
+        ImageStyleSettings.from( style );
         return style;
     }
 
@@ -180,7 +168,7 @@ public class ImageServiceImpl
         throws IOException
     {
         final ImageStyle style = readImageParams.getStyle() == null ? null : getStyle( readImageParams.getStyle() );
-        if ( readImageParams.getExpectedStyle() != null && !readImageParams.getExpectedStyle().equals( style ) )
+        if ( readImageParams.getExpectedStyle() != null && !ImageStyleSettings.from( readImageParams.getExpectedStyle() ).equals( ImageStyleSettings.from( style ) ) )
         {
             throw new IllegalArgumentException( "Image style changed during request; regenerate the image URL" );
         }
@@ -190,103 +178,73 @@ public class ImageServiceImpl
         {
             throw new IllegalArgumentException( "A source checksum is required for cache-only image requests" );
         }
-        final String resolvedSha512 = resolveAttachmentSha512( normalizedImageParams );
-        final Path path = getCachedImagePath( normalizedImageParams, resolvedSha512 );
-        if ( Files.exists( path ) )
-        {
-            return MoreFiles.asByteSource( path );
-        }
+        final String checksum = resolveAttachmentSha512( normalizedImageParams );
+        final Path path = checksum == null ? null : getCachedImagePath( normalizedImageParams, checksum );
+        if ( path != null && Files.exists( path ) ) { return MoreFiles.asByteSource( path ); }
         if ( readImageParams.isCacheOnly() )
         {
             throw new IllegalArgumentException( "Image is not cached; regeneration requires a matching image fingerprint" );
         }
-        if ( !useImageMagick && !useImageMagickDecoder && !useImageMagickTransformer && !isModernFormat( normalizedImageParams.getFormat() ) )
+        if ( isModernFormat( normalizedImageParams.getFormat() ) ) { nativeEncoder.checkEnabled(); }
+        if ( !nativeProcessing() ) { return generateImage( normalizedImageParams, checksum, path ); }
+        // Missing attachment metadata is resolved from source bytes only after bounded admission.
+        final Object key = path == null ? pendingKey( normalizedImageParams ) : path;
+        return processingGate.execute( key, () -> generateImage( normalizedImageParams, checksum, path ) );
+    }
+
+    private Object pendingKey( final NormalizedImageParams params )
+    {
+        final var context = ContextAccessor.current();
+        final MessageDigest digest = MessageDigests.sha512();
+        MessageDigests.updateWithString( digest, String.valueOf( context.getRepositoryId() ) );
+        MessageDigests.updateWithString( digest, String.valueOf( context.getBranch() ) );
+        MessageDigests.updateWithString( digest, params.getContentId().toString() );
+        MessageDigests.updateWithString( digest, params.getBinaryReference().toString() );
+        return "pending:" + getCachedImagePath( params, MessageDigests.formatHex( digest ) );
+    }
+
+    private String resolveAttachmentSha512( final NormalizedImageParams params )
+    {
+        if ( params.getAttachmentSha512() != null ) { return params.getAttachmentSha512(); }
+        return contentService.getById( params.getContentId() ).getAttachments()
+            .byName( params.getBinaryReference().toString() ).getSha512();
+    }
+
+    private ByteSource generateImage( final NormalizedImageParams params, final String checksum, final Path path ) throws IOException
+    {
+        if ( path != null )
         {
-            return immutableFilesHelper.computeIfAbsent( path, sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
+            return immutableFilesHelper.computeIfAbsent( path, sink -> {
+                try (var prepared = prepareSource( params, checksum ))
+                {
+                    writePrepared( prepared, params, sink );
+                }
+                catch ( IOException e ) { throw new UncheckedIOException( e ); }
+            }, nativeProcessing() ? queueTimeoutSeconds : 0 );
         }
-        if ( isModernFormat( normalizedImageParams.getFormat() ) )
+        try (var prepared = prepareSource( params, null ))
         {
-            nativeEncoder.checkEnabled();
-        }
-        if ( !processingRequests.tryAcquire() )
-        {
-            throw new ThrottlingException( "Image encoding queue is full" );
-        }
-        try
-        {
-            if ( !processingSlots.tryAcquire( queueTimeoutSeconds, TimeUnit.SECONDS ) )
-            {
-                throw new ThrottlingException( "Image encoding queue timed out" );
-            }
-            try
-            {
-                return immutableFilesHelper.computeIfAbsent( path,
-                    sink -> writeImage( normalizedImageParams, resolvedSha512, sink ), queueTimeoutSeconds );
-            }
-            finally
-            {
-                processingSlots.release();
-            }
-        }
-        catch ( InterruptedException e )
-        {
-            Thread.currentThread().interrupt();
-            throw new IOException( "Interrupted waiting for image encoder", e );
-        }
-        finally
-        {
-            processingRequests.release();
+            return immutableFilesHelper.computeIfAbsent( getCachedImagePath( params, prepared.checksum() ),
+                sink -> writePrepared( prepared, params, sink ), nativeProcessing() ? queueTimeoutSeconds : 0 );
         }
     }
 
-
-    private @NonNull String resolveAttachmentSha512( final NormalizedImageParams normalizedImageParams )
-        throws IOException
+    private PreparedImageSource prepareSource( final NormalizedImageParams params, final String checksum ) throws IOException
     {
-        String attachmentSha512 = normalizedImageParams.getAttachmentSha512();
-        if ( attachmentSha512 == null )
-        {
-            attachmentSha512 = contentService.getById( normalizedImageParams.getContentId() )
-                .getAttachments()
-                .byName( normalizedImageParams.getBinaryReference().toString() )
-                .getSha512();
-        }
-        if ( attachmentSha512 == null )
-        {
-            attachmentSha512 = MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha512(), contentService.getBinary(
-                normalizedImageParams.getContentId(), normalizedImageParams.getBinaryReference() )::openStream ) );
-        }
-        return attachmentSha512;
+        final ByteSource source = contentService.getBinary( params.getContentId(), params.getBinaryReference() );
+        if ( source == null ) { throw new IllegalArgumentException( "No binary found for content " + params.getContentId() ); }
+        return PreparedImageSource.copy( source, cacheFolder.resolve( "source" ), nativeProcessing() ? maxSourceBytes : Long.MAX_VALUE, checksum );
     }
 
-    private void writeImage( final NormalizedImageParams readImageParams, String expectedSha512, final ByteSink sink )
+    private void writePrepared( final PreparedImageSource source, final NormalizedImageParams params, final ByteSink sink )
     {
-        try
-        {
-            final ByteSource blob = contentService.getBinary( readImageParams.getContentId(), readImageParams.getBinaryReference() );
+        try { createImage( source.path(), params, sink ); }
+        catch ( IOException e ) { throw new UncheckedIOException( e ); }
+    }
 
-            if ( blob == null )
-            {
-                throw new IllegalArgumentException(
-                    "No binary found for content [" + readImageParams.getContentId() + "] and binary reference [" +
-                        readImageParams.getBinaryReference() + "]" );
-            }
-
-            final String resultingSha512 = MessageDigests.formatHex( MessageDigests.updateWithStream( MessageDigests.sha512(), blob::openStream ) );
-
-            if ( !expectedSha512.equals( resultingSha512 ) )
-            {
-                throw new IllegalStateException(
-                    "Attachment checksum mismatch for content [" + readImageParams.getContentId() + "] and binary reference" +
-                        readImageParams.getBinaryReference() + "]" );
-            }
-
-            createImage( blob, readImageParams, sink );
-        }
-        catch ( IOException e )
-        {
-            throw new UncheckedIOException( e );
-        }
+    private boolean nativeProcessing()
+    {
+        return useImageMagick || useImageMagickDecoder || useImageMagickTransformer;
     }
 
     private Path getCachedImagePath( final NormalizedImageParams readImageParams, final String attachmentSha512 )
@@ -334,193 +292,96 @@ public class ImageServiceImpl
             .resolve( hash );
     }
 
-    private void createImage( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )
-        throws IOException
+    private void createImage( final Path source, final NormalizedImageParams params, final ByteSink sink ) throws IOException
     {
-        try (ImageMagickDecoder.Source nativeSource = useImageMagickDecoder ? nativeDecoder.open( blob ) : null;
-             InputStream inputStream = nativeSource == null ? blob.openStream() : null;
-             ImageInputStream stream = inputStream == null ? null : ImageIO.createImageInputStream( inputStream ))
+        try (ImageMagickDecoder.Source nativeSource = useImageMagickDecoder ? nativeDecoder.open( source ) : null;
+             ImageInputStream stream = nativeSource == null ? ImageIO.createImageInputStream( source.toFile() ) : null)
         {
-            final ImageReader imageReader = nativeSource == null ? getImageReader( stream ) : null;
-
+            final ImageReader reader = nativeSource == null ? getImageReader( stream ) : null;
             try
             {
-                final int width = nativeSource == null ? imageReader.getWidth( 0 ) : nativeSource.width();
-                final int height = nativeSource == null ? imageReader.getHeight( 0 ) : nativeSource.height();
-                final boolean nativeProcessing = useImageMagick || useImageMagickDecoder || useImageMagickTransformer;
-                if ( nativeProcessing && (long) width * height > maxProcessingPixels )
+                final int width = nativeSource == null ? reader.getWidth( 0 ) : nativeSource.width();
+                final int height = nativeSource == null ? reader.getHeight( 0 ) : nativeSource.height();
+                if ( nativeProcessing() && (long) width * height > maxProcessingPixels )
                 {
                     throw new IllegalArgumentException( "Source image exceeds processing.maxPixels" );
                 }
-
-                final ImageTypeSpecifier rawImageType = nativeSource == null ? imageReader.getRawImageType( 0 ) : null;
-                final int pixelSize;
-                final boolean mayHaveAlpha;
-                if ( rawImageType != null && !useImageMagickTransformer )
-                {
-                    final ColorModel originalColorModel = rawImageType.getColorModel();
-                    pixelSize = originalColorModel.getPixelSize() / Byte.SIZE;
-                    mayHaveAlpha = originalColorModel.hasAlpha();
-                }
-                else
-                {
-                    // Fallback to 4 bytes per pixel and assume alpha channel
-                    pixelSize = 4;
-                    mayHaveAlpha = true;
-                }
-
-                final boolean toRotate = readImageParams.getOrientation() != ImageOrientation.TopLeft;
-                final boolean toApplyFilters = !readImageParams.getFilterParam().isEmpty();
-                final boolean toAddBackground = !NormalizedImageParams.supportsAlpha( readImageParams.getFormat() ) &&
-                    ( mayHaveAlpha || toApplyFilters );
-                final boolean toScale = !ScaleParams.NO_SCALE.getName().equals( readImageParams.getScaleParams().getName() );
-                final boolean toCrop = !readImageParams.getCropping().isUnmodified();
-
-                final int originalMultiplier = 1 + ( toRotate || ( !toScale && ( toApplyFilters || toAddBackground ) ) ? 1 : 0 );
-
-                final int originalMemoryRequirements = Math.max( toMegaBytes( (long) width * height * pixelSize * originalMultiplier ), 1 );
-
-                final ImageScaleFunction imageScaleFunction;
-                final int scaledMemoryRequirements;
-                final int intermediatesMemoryRequirements;
-                if ( toScale )
-                {
-                    // focalPoint is stored relative to the original image; the scale step runs on the
-                    // already-cropped image, so remap the point into the crop's coordinate frame first.
-                    final FocalPoint focalPoint =
-                        toCropRelativeFocalPoint( readImageParams.getFocalPoint(), readImageParams.getCropping() );
-                    imageScaleFunction = imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), focalPoint );
-                    if ( nativeProcessing && !useImageMagickTransformer && imageScaleFunction.estimateResolution( width, height ) > maxProcessingPixels )
-                    {
-                        throw new IllegalArgumentException( "Output image exceeds processing.maxPixels" );
-                    }
-                    final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
-                    scaledMemoryRequirements = useImageMagickTransformer ? 0 : Math.max(
-                        toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ), 1 );
-                    // ImageHelper.getScaledInstance does progressive halving on significant downscales, keeping
-                    // the previous intermediate alive while allocating the next one. Peak overhead is bounded by
-                    // the two largest intermediates (~1/4 + 1/16 = 5/16 of original area), rounded up to 1/3.
-                    intermediatesMemoryRequirements = useImageMagickTransformer ? 0 : Math.max( toMegaBytes( (long) width * height * pixelSize / 3 ), 1 );
-                }
-                else
-                {
-                    imageScaleFunction = null;
-                    scaledMemoryRequirements = 0;
-                    intermediatesMemoryRequirements = 0;
-                }
-
+                final ImageTypeSpecifier type = reader == null ? null : reader.getRawImageType( 0 );
+                final int pixelSize = type == null ? 4 : Math.max( 4, ( type.getColorModel().getPixelSize() + 7 ) / 8 );
+                final boolean mayHaveAlpha = type == null || type.getColorModel().hasAlpha();
+                final boolean rotate = params.getOrientation() != ImageOrientation.TopLeft;
+                final boolean filters = !params.getFilterParam().isEmpty();
+                final boolean background = !NormalizedImageParams.supportsAlpha( params.getFormat() ) && ( mayHaveAlpha || filters );
+                final ImageScaleFunction scale = ScaleParams.NO_SCALE.getName().equals( params.getScaleParams().getName() ) ? null :
+                    imageScaleFunctionBuilder.build( params.getScaleParams(), toCropRelativeFocalPoint( params.getFocalPoint(), params.getCropping() ) );
+                final ImageGeometry geometry = ImageGeometry.calculate( width, height, params, scale,
+                    nativeProcessing() ? maxProcessingPixels : Long.MAX_VALUE );
                 final ImageMagickTransformPlan nativePlan;
                 if ( useImageMagickTransformer )
                 {
-                    // Retain XP's filter count and argument validation before allocating any raster.
-                    imageFilterBuilder.build( readImageParams.getFilterParam() );
-                    nativePlan = new ImageMagickTransformPlan( width, height, readImageParams, imageScaleFunction, maxProcessingPixels );
+                    imageFilterBuilder.build( params.getFilterParam() );
+                    nativePlan = ImageMagickTransformPlan.fromGeometry( width, height, params, geometry, maxProcessingPixels );
                 }
-                else
-                {
-                    nativePlan = null;
-                }
-                final int totalMemoryRequirementsEstimate = nativePlan == null ?
-                    originalMemoryRequirements + scaledMemoryRequirements + intermediatesMemoryRequirements :
-                    toMegaBytes( (long) width * height * 4 + 1_048_575 ) + toMegaBytes( nativePlan.peakPixels() * 4 + 1_048_575 );
+                else { nativePlan = null; }
 
-                LOG.debug( "Estimated original {} scaled {} intermediates {} total {} requirements. With pixelSize {}",
-                           originalMemoryRequirements, scaledMemoryRequirements, intermediatesMemoryRequirements,
-                           totalMemoryRequirementsEstimate, pixelSize );
-
+                // Account for source storage, rotated copies, resize intermediates and filter output before any raster allocation.
+                final long peak = nativePlan == null ? geometry.peakPixels() : nativePlan.peakPixels();
+                final long memory = (long) width * height * pixelSize * ( rotate && nativePlan == null ? 2 : 1 ) +
+                    peak * pixelSize * 2 + ( scale == null || nativePlan != null ? 0 : (long) width * height * pixelSize / 3 );
+                final int required = Math.max( 1, toMegaBytes( memory + 1_048_575 ) );
                 final int permitted;
-                if ( nativeProcessing )
-                {
-                    circuitBreaker.tryAcquire( totalMemoryRequirementsEstimate );
-                    permitted = totalMemoryRequirementsEstimate;
-                }
-                else
-                {
-                    permitted = circuitBreaker.softTryAcquire( totalMemoryRequirementsEstimate );
-                }
+                if ( nativeProcessing() ) { circuitBreaker.tryAcquire( required ); permitted = required; }
+                else { permitted = circuitBreaker.softTryAcquire( required ); }
                 try
                 {
-                    BufferedImage bufferedImage = nativeSource == null ? imageReader.read( 0, imageReader.getDefaultReadParam() ) :
-                        nativeSource.read();
-                    if ( imageReader != null )
-                    {
-                        imageReader.dispose();
-                    }
-                    requireNonNull( bufferedImage, "BufferedImage is null" );
                     if ( nativePlan != null )
                     {
-                        bufferedImage = nativeTransformer.apply( bufferedImage, nativePlan );
+                        try (var transformed = nativeSource == null ?
+                            nativeTransformer.transform( reader.read( 0, reader.getDefaultReadParam() ), nativePlan ) :
+                            nativeTransformer.transform( nativeSource.raster(), nativePlan ))
+                        {
+                            encode( params, sink, transformed.raster(), null );
+                        }
+                    }
+                    else if ( nativeSource != null && useImageMagick && !rotate && !geometry.cropped() && scale == null && !filters && !background )
+                    {
+                        encode( params, sink, nativeSource.raster(), null );
                     }
                     else
                     {
-                        if ( toRotate )
+                        BufferedImage image = nativeSource == null ? reader.read( 0, reader.getDefaultReadParam() ) : nativeSource.read();
+                        requireNonNull( image, "BufferedImage is null" );
+                        if ( rotate ) { image = applyRotation( image, params.getOrientation() ); }
+                        image = geometry.apply( image );
+                        if ( filters ) { image = imageFilterBuilder.build( params.getFilterParam() ).apply( image ); }
+                        if ( background ) { image = ImageHelper.removeAlphaChannel( image, params.getBackgroundColor() ); }
+                        if ( nativeProcessing() && (long) image.getWidth() * image.getHeight() > maxProcessingPixels )
                         {
-                            bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
+                            throw new IllegalArgumentException( "Transformed image exceeds processing.maxPixels" );
                         }
-
-                        if ( toCrop )
-                        {
-                            bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
-                        }
-
-                        if ( toScale )
-                        {
-                            bufferedImage = imageScaleFunction.apply( bufferedImage );
-                        }
-
-                        if ( toApplyFilters )
-                        {
-                            bufferedImage = imageFilterBuilder.build( readImageParams.getFilterParam() ).apply( bufferedImage );
-                        }
-
-                        if ( toAddBackground )
-                        {
-                            bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
-                        }
+                        encode( params, sink, null, image );
                     }
-
-                    if ( nativeProcessing && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxProcessingPixels )
-                    {
-                        throw new IllegalArgumentException( "Transformed image exceeds processing.maxPixels" );
-                    }
-
-                    // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,
-                    // and anything below 0 as system default due to Exception swallow
-                    // New implementation supports 0 value (it means "best compression" for PNG),
-                    // but 0 quality in image service need to be retrofitted to "system default", otherwise JPEG with 0 quality
-                    // is over-compressed and looks way different from system default compressed image.
-                    final int writeImageQuality = readImageParams.getQuality() == 0 ? -1 : readImageParams.getQuality();
-
-                    final boolean progressive =
-                        progressiveOnFormats.stream().anyMatch( format -> format.equalsIgnoreCase( readImageParams.getFormat() ) );
-
-                    try (OutputStream outputStream = sink.openBufferedStream())
-                    {
-                        if ( useImageMagick )
-                        {
-                            nativeEncoder.write( bufferedImage, readImageParams.getFormat(),
-                                isModernFormat( readImageParams.getFormat() ) ? readImageParams.getQuality() : writeImageQuality,
-                                progressive, outputStream );
-                        }
-                        else
-                        {
-                            ImageHelper.writeImage( outputStream, bufferedImage, readImageParams.getFormat(), writeImageQuality, progressive );
-                        }
-                    }
-                    LOG.debug( "Finish writing" );
                 }
-                finally
-                {
-                    circuitBreaker.release( permitted );
-                }
+                finally { circuitBreaker.release( permitted ); }
             }
-            finally
+            finally { if ( reader != null ) { reader.dispose(); } }
+        }
+    }
+
+    private void encode( final NormalizedImageParams params, final ByteSink sink, final NativeImageRaster raster,
+                         final BufferedImage image ) throws IOException
+    {
+        // Preserve legacy quality=0 semantics; modern encoders accept zero as an explicit quality.
+        final int quality = params.getQuality() == 0 && !isModernFormat( params.getFormat() ) ? -1 : params.getQuality();
+        final boolean progressive = progressiveOnFormats.contains( params.getFormat() );
+        try (OutputStream output = sink.openBufferedStream())
+        {
+            if ( useImageMagick )
             {
-                if ( imageReader != null )
-                {
-                    imageReader.dispose();
-                }
+                if ( raster != null ) { nativeEncoder.write( raster, params.getFormat(), quality, progressive, output ); }
+                else { nativeEncoder.write( image, params.getFormat(), quality, progressive, output ); }
             }
+            else { ImageHelper.writeImage( output, raster == null ? image : raster.read(), params.getFormat(), quality, progressive ); }
         }
     }
 
@@ -543,19 +404,6 @@ public class ImageServiceImpl
         final double x = Math.clamp( ( focalPoint.xOffset() - cropping.left() ) / cropping.width(), 0.0, 1.0 );
         final double y = Math.clamp( ( focalPoint.yOffset() - cropping.top() ) / cropping.height(), 0.0, 1.0 );
         return new FocalPoint( x, y );
-    }
-
-    private static BufferedImage applyCropping( final BufferedImage bufferedImage, final Cropping cropping )
-    {
-        final int imageWidth = bufferedImage.getWidth();
-        final int imageHeight = bufferedImage.getHeight();
-
-        final int x = Math.clamp( (long) ( imageWidth * cropping.left() ), 0, imageWidth - 1 );
-        final int y = Math.clamp( (long) ( imageHeight * cropping.top() ), 0, imageHeight - 1 );
-        final int width = Math.clamp( (long) ( imageWidth * cropping.width() ), 1, imageWidth - x );
-        final int height = Math.clamp( (long) ( imageHeight * cropping.height() ), 1, imageHeight - y );
-
-        return bufferedImage.getSubimage( x, y, width, height );
     }
 
     private static BufferedImage applyRotation( final BufferedImage bufferedImage, final ImageOrientation orientation )

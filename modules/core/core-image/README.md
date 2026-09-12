@@ -107,7 +107,8 @@ decoder uses separate disk cache entries; existing ImageIO cache keys are unchan
 `ImageIO` retains XP's existing Java transformations. `ImageMagic` runs orientation,
 stored cropping, scaling, ordered filters, and background flattening in the bundled
 native executable. All three backend settings can be mixed. The stages exchange
-lossless PNG rasters; selecting native transformations alone does not enable native
+lossless PNG files directly between adjacent native stages. Java pixels are read or
+written only at a Java backend boundary. Selecting native transformations alone does not enable native
 source formats or WebP/AVIF output encoding.
 
 Native scaling reuses XP's dimension calculations, including aspect-ratio styles,
@@ -133,9 +134,13 @@ For compatibility, `flipv` retains the current Java implementation's horizontal-
 behavior; EXIF vertical mirroring uses a vertical flip. Use `ImageIO` where exact
 legacy rendering is required.
 
-Native source reads are bounded by `decoding.maxBytes` (`256mb`, or 256 MiB, by default).
+Requests using any native stage bound source reads by `decoding.maxBytes` (`256mb`, or 256 MiB, by default).
 It accepts XP's size syntax, such as `512mb`, `1gb`, or a plain byte count.
 Suffixes are case-insensitive and use powers of 1024.
+The source is copied and hashed once, within request admission, and that verified
+file is used for decoding. Missing checksum metadata never triggers an unbounded
+read before admission. Source copying and hashing are storage I/O; the native
+stage timeout starts when a native process is invoked.
 Native policy disables GIF, SVG and vector rendering coders, external delegates,
 loadable filters, indirect file reads, and unrelated coders. SVG output and
 compressed SVGZ input are not supported.
@@ -183,9 +188,14 @@ and pixel limits. The timeout bounds each native stage. A request holds one capa
 and encoding. The native decoder probes dimensions before Java raster allocation;
 probe and decode share one timeout budget. `ImageMagic` cache misses have bounded
 concurrency and a bounded waiting queue.
+Requests for the same rendition share the leader's result. Followers count against
+request capacity but do not hold processing slots. Cache locks use exact keys,
+so unrelated renditions cannot block each other through lock striping.
 Capacity exhaustion and queue timeout return HTTP 429. Source and output pixel
 counts are checked, and the existing heap memory estimate is a hard admission
-limit for native conversions. The external encoder receives only a generated
+limit for native conversions. Both transformation backends calculate orientation,
+crop and intermediate resize dimensions before allocation and use that geometry
+for execution. The external encoder receives only a generated
 PNG and fixed arguments, uses one configured ImageMagick thread, and is killed
 on timeout or interruption. Temporary files and failed cache entries are
 removed. ImageMagick pixel-cache memory/map/disk limits are also set; these are
@@ -200,6 +210,9 @@ fingerprint before applying the configured public/private immutable cache header
 Old fingerprints lose immutable caching after a style change and allow only
 existing cache entries to be served. Cache misses cannot regenerate the image. A style change during
 request processing is rejected before encoding.
+Style defaults and validation share an immutable processing specification with
+fingerprint generation. Both the core image API and URL API reject explicit
+quality, filter or background overrides when a style is selected.
 
 Tests cover HMAC fingerprints, redirect compatibility, cache-only hits/misses,
 style enforcement, cache coalescing, encoder/decoder failure and timeout cleanup,

@@ -15,6 +15,7 @@ import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -70,12 +71,13 @@ public final class MediaHashResolver
         }
         final MessageDigest digest = MessageDigests.sha512();
         digest.update( HexFormat.of().parseHex( imageHash ) );
+        final ImageStyleSettings settings = ImageStyleSettings.from( style );
         // Length-prefix fields to keep the fingerprint independent of delimiters in filters.
         updateStyleField( digest, scale.toString() );
-        updateStyleField( digest, style.getAspectRatio() );
-        updateStyleField( digest, style.getFilter() );
-        updateStyleField( digest, style.getQuality() == null ? "85" : style.getQuality().toString() );
-        updateStyleField( digest, style.getBackground() );
+        updateStyleField( digest, settings.aspectRatio() );
+        updateStyleField( digest, settings.filter() );
+        updateStyleField( digest, Integer.toString( settings.quality() ) );
+        updateStyleField( digest, Integer.toHexString( settings.background() ) );
         // Domain separation prevents a redirect checksum from authorizing an image rendition.
         return hmacService.generateChecksum( "image-fingerprint-v1\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
     }

@@ -16,6 +16,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class NormalizedImageParamsTest
 {
     @Test
+    void styledCoreRequestsRejectExplicitProcessingOverridesIncludingDefaults()
+    {
+        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( "app:card" ).quality( 0 ).build() );
+        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( "app:card" ).backgroundColor( 0xffffff ).build() );
+        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( "app:card" ).filterParam( "" ).build() );
+        assertEquals( "app:card", someFormatTemplate().style( "app:card" ).build().getStyle() );
+    }
+
+    @Test
     void modernFormatsRequireResolvedStyle()
     {
         for ( String format : new String[]{"webp", "avif"} )
@@ -34,8 +43,7 @@ class NormalizedImageParamsTest
         final ImageStyle style = ImageStyle.create().name( "card" ).aspectRatio( "16:9" )
             .quality( 75 ).filter( "grayscale()" ).build();
         final NormalizedImageParams params = new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" )
-            .scaleParams( new ScaleParams( "width", new Object[]{640} ) ).filterParam( "blur(100)" )
-            .quality( 100 ).backgroundColor( 0 ).build(), style );
+            .scaleParams( new ScaleParams( "width", new Object[]{640} ) ).style( "app:card" ).build(), style );
         assertEquals( "block(640,360)", params.getScaleParams().toString() );
         assertEquals( "webp", params.getFormat() );
         assertEquals( 75, params.getQuality() );

@@ -8,13 +8,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
-import com.google.common.util.concurrent.Striped;
 
 import com.enonic.xp.exception.ThrottlingException;
 
@@ -22,7 +23,13 @@ import static java.util.Objects.requireNonNull;
 
 public class ImmutableFilesHelper
 {
-    private static final Striped<Lock> FILE_LOCKS = Striped.lazyWeakLock( 100 );
+    private static final ConcurrentHashMap<Path, LockEntry> FILE_LOCKS = new ConcurrentHashMap<>();
+
+    private static final class LockEntry
+    {
+        final Lock lock = new ReentrantLock();
+        int users;
+    }
 
     final Path tmpDir;
 
@@ -48,7 +55,24 @@ public class ImmutableFilesHelper
             return MoreFiles.asByteSource( path );
         }
 
-        final Lock lock = FILE_LOCKS.get( path );
+        final LockEntry entry = FILE_LOCKS.compute( path, ( key, current ) -> {
+            final LockEntry result = current == null ? new LockEntry() : current;
+            result.users++;
+            return result;
+        } );
+        try
+        {
+            return computeLocked( path, consumer, lockTimeoutSeconds, entry.lock );
+        }
+        finally
+        {
+            FILE_LOCKS.compute( path, ( key, current ) -> --current.users == 0 ? null : current );
+        }
+    }
+
+    private ByteSource computeLocked( final Path path, final Consumer<ByteSink> consumer, final int lockTimeoutSeconds,
+                                      final Lock lock ) throws IOException
+    {
         if ( lockTimeoutSeconds > 0 )
         {
             try

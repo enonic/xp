@@ -8,6 +8,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.util.BinaryReference;
 
 /**
@@ -45,20 +46,20 @@ class NormalizedImageParams
 
     NormalizedImageParams( final ReadImageParams readImageParams, final ImageStyle style )
     {
+        final ImageStyleSettings settings = style == null ? null : ImageStyleSettings.from( style );
         this.contentId = readImageParams.getContentId();
         this.binaryReference = readImageParams.getBinaryReference();
         this.cropping = normalizeCropping( readImageParams.getCropping() );
-        this.scaleParams = normalizeScaleParams( readImageParams ).withAspectRatio( style == null ? null : style.getAspectRatio() );
+        this.scaleParams = normalizeScaleParams( readImageParams ).withAspectRatio( settings == null ? null : settings.aspectRatio() );
         this.focalPoint = readImageParams.getFocalPoint();
-        this.filterParam = FilterSetExpr.parse( style == null ? readImageParams.getFilterParam() : style.getFilter() );
+        this.filterParam = FilterSetExpr.parse( settings == null ? readImageParams.getFilterParam() : settings.filter() );
         this.format = normalizeFormat( readImageParams );
         if ( style == null && ( "webp".equals( format ) || "avif".equals( format ) ) )
         {
             throw new IllegalArgumentException( "WebP and AVIF encoding requires a predefined image style" );
         }
-        this.backgroundColor = supportsAlpha( format ) ? 0xFFFFFF : style == null ? readImageParams.getBackgroundColor() :
-            style.getBackground() == null ? 0xFFFFFF : Integer.parseInt( style.getBackground().replaceFirst( "^0x", "" ), 16 );
-        this.quality = style == null ? readImageParams.getQuality() : style.getQuality() == null ? 85 : style.getQuality();
+        this.backgroundColor = supportsAlpha( format ) ? 0xFFFFFF : settings == null ? readImageParams.getBackgroundColor() : settings.background();
+        this.quality = settings == null ? readImageParams.getQuality() : settings.quality();
         this.orientation = readImageParams.getOrientation();
         this.attachmentSha512 = readImageParams.getAttachmentSha512();
     }

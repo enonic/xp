@@ -190,7 +190,7 @@ final class EmbeddedImageMagick
         }
         finally
         {
-            ImageMagickEncoder.stop( process );
+            NativeImageProcess.stop( process );
         }
     }
 

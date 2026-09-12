@@ -50,10 +50,8 @@ public final class ImageUrlGeneratorParams
         this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
         this.branchSupplier = requireNonNull( builder.branchSupplier );
         this.style = emptyToNull( builder.style );
-        if ( style != null && ( builder.quality != null || builder.filter != null || builder.background != null ) )
-        {
-            throw new IllegalArgumentException( "Image styles cannot be combined with processing parameters" );
-        }
+        com.enonic.xp.style.ImageStyleSettings.checkOverrides( style,
+            builder.quality != null || builder.filter != null || builder.background != null );
         if ( style == null && ( "webp".equalsIgnoreCase( builder.format ) || "avif".equalsIgnoreCase( builder.format ) ) )
         {
             throw new IllegalArgumentException( "WebP and AVIF encoding requires a predefined image style" );
