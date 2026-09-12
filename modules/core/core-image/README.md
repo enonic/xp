@@ -76,6 +76,7 @@ Configure `com.enonic.xp.image.cfg`:
 ```properties
 decoding.backend = ImageMagic
 decoding.maxBytes = 67108864
+transformation.backend = ImageMagic
 encoding.backend = ImageMagic
 encoding.maxConcurrent = 2
 encoding.maxQueue = 8
@@ -93,11 +94,41 @@ served. JPEG/PNG/GIF cache entries are separate for each encoding backend.
 `decoding.backend` independently accepts `ImageIO` (default) or `ImageMagic`.
 The native decoder supports JPEG, PNG, GIF, BMP, TIFF, WebP, AVIF, and SVG inputs.
 It reads or rasterizes the first frame into an 8-bit RGBA image; XP then applies
-its existing orientation, crop, scale, filters, and background handling. It does
-not select a different transformation implementation. For example, native
+the transformation backend selected below. The decoding setting does not select
+a transformation implementation. For example, native
 WebP/AVIF/SVG decoding can be combined with ImageIO JPEG/PNG output. Native
 output encoding can also be combined with ImageIO input decoding. Switching the
 decoder uses separate disk cache entries; existing ImageIO cache keys are unchanged.
+
+`transformation.backend` independently accepts `ImageIO` (default) or `ImageMagic`.
+`ImageIO` retains XP's existing Java transformations. `ImageMagic` runs orientation,
+stored cropping, scaling, ordered filters, and background flattening in the bundled
+native executable. All three backend settings can be mixed. The stages exchange
+lossless PNG rasters; selecting native transformations alone does not enable native
+source formats or WebP/AVIF output encoding.
+
+Native scaling reuses XP's dimension calculations, including aspect-ratio styles,
+focal points, and crop-relative focal-point adjustment. Orientation is applied
+before the stored crop; scale follows the crop, filters follow scaling, and JPEG/GIF
+background flattening is last. Intermediate resize dimensions are checked before
+processing, even if the final crop is small. Native transformations have separate
+cache entries and share the native concurrency queue and heap admission limits.
+Cache-only requests still never regenerate a missing rendition.
+
+All existing filter names are supported: block, blur, border, bump, colorize, edge,
+emboss, fliph, flipv, rotate90/180/270, gamma, grayscale, hsbadjust, hsbcolorize, invert,
+rgbadjust, rounded, sepia, and sharpen. Existing filter count and argument limits
+apply; non-finite numeric arguments are rejected. Commands and expressions are
+constructed from fixed operators and parsed numbers, with no caller-supplied paths
+or ImageMagick programs. Native policy permits only PNG raster I/O and disables
+external delegates and loadable filters.
+
+Pixel output is not guaranteed to match the Java backend: native resizing uses
+Lanczos, and blur, edge, emboss, block sampling, convolution, and antialiasing use
+ImageMagick algorithms. Geometric dimensions and operation order remain the same.
+For compatibility, `flipv` retains the current Java implementation's horizontal-flip
+behavior; EXIF vertical mirroring uses a vertical flip. Use `ImageIO` where exact
+legacy rendering is required.
 
 Native source reads are bounded by `decoding.maxBytes` (64 MiB by default).
 SVG is additionally limited to 1 MiB and uses the internal ImageMagick renderer.
@@ -133,12 +164,12 @@ a build-time extractor (Homebrew's `7zz` is the macOS default).
 Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
-No process is started for cache hits or when both backends use `ImageIO`.
+No process is started for cache hits or when all three backends use `ImageIO`.
 Unstyled original WebP/AVIF/SVG files retain their pass-through behavior.
 Styled processing uses the configured decoder, and GIF styles process the first frame.
 
-Native decoding and encoding share the `encoding.*` concurrency, queue, timeout,
-and pixel limits. A request holds one capacity slot across decoding, XP transforms,
+Native decoding, transformations, and encoding share the `encoding.*` concurrency, queue, timeout,
+and pixel limits. The timeout bounds each native stage. A request holds one capacity slot across decoding, transformations,
 and encoding. The native decoder probes dimensions before Java raster allocation;
 probe and decode share one timeout budget. `ImageMagic` cache misses have bounded
 concurrency and a bounded waiting queue.
@@ -162,5 +193,5 @@ request processing is rejected before encoding.
 
 Tests cover HMAC fingerprints, redirect compatibility, cache-only hits/misses,
 style enforcement, cache coalescing, encoder/decoder failure and timeout cleanup,
-independent backend selection, decoder cache separation, SVG restrictions, actual
+independent backend selection, decoder cache separation, SVG restrictions, native geometry/orientation/filter operations, mixed backend combinations, actual
 PNG/JPEG/GIF/WebP/AVIF/SVG decoding, and WebP/AVIF output using the embedded distribution.

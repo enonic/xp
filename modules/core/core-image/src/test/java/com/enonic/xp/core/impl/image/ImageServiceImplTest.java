@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.google.common.io.ByteSource;
@@ -176,6 +177,90 @@ class ImageServiceImplTest
     {
         when( imageConfig.encoding_backend() ).thenReturn( "typo" );
         assertThrows( IllegalArgumentException.class, this::newImageService );
+    }
+
+    @Test
+    void rejectsUnknownTransformationBackend()
+    {
+        when( imageConfig.transformation_backend() ).thenReturn( "typo" );
+        assertThrows( IllegalArgumentException.class, this::newImageService );
+    }
+
+    @ParameterizedTest
+    @CsvSource({"ImageIO,ImageIO", "ImageIO,ImageMagic", "ImageMagic,ImageIO", "ImageMagic,ImageMagic"})
+    void nativeTransformsWorkWithEitherDecoderAndEncoder( final String decoding, final String encoding )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final BufferedImage source = new BufferedImage( 32, 24, BufferedImage.TYPE_INT_ARGB );
+        final var graphics = source.createGraphics();
+        graphics.setColor( java.awt.Color.RED );
+        graphics.fillRect( 0, 0, 32, 24 );
+        graphics.dispose();
+        final var bytes = new java.io.ByteArrayOutputStream();
+        ImageIO.write( source, "png", bytes );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        when( imageConfig.decoding_backend() ).thenReturn( decoding );
+        when( imageConfig.encoding_backend() ).thenReturn( encoding );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        when( styleDescriptorService.getByApplication( ApplicationKey.from( "app" ) ) ).thenReturn(
+            StyleDescriptor.create().application( ApplicationKey.from( "app" ) )
+                .addStyleElement( ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).filter( "invert" ).build() ).build() );
+        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/png" ).scaleParams( new ScaleParams( "width", new Object[]{16} ) ).style( "app:card" ).build();
+        final BufferedImage result = ImageIO.read( new ByteArrayInputStream( imageService.readImage( params ).read() ) );
+        assertEquals( 16, result.getWidth() );
+        assertEquals( 9, result.getHeight() );
+        assertEquals( 0xff00ffff, result.getRGB( 8, 4 ) );
+        // Transform selection alone cannot enable protected WebP encoding.
+        processingStyle( 80 );
+        if ( "ImageIO".equals( encoding ) )
+        {
+            assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+        }
+        else
+        {
+            assertEquals( "WEBP", new String( imageService.readImage( styledParams( "webp" ) ).read(), 8, 4,
+                java.nio.charset.StandardCharsets.US_ASCII ) );
+        }
+    }
+
+    @Test
+    void transformationCacheIsSeparateAndCacheOnlyCannotRegenerate()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final byte[] imageIo = imageService.readImage( styledParams( "png" ) ).read();
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        final byte[] transformed = imageService.readImage( styledParams( "png" ) ).read();
+        assertArrayEquals( transformed, imageService.readImage( styledParams( "png", true ) ).read() );
+        processingStyle( 70 );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        processingStyle( 80 );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageIO" );
+        imageService = newImageService();
+        assertArrayEquals( imageIo, imageService.readImage( styledParams( "png", true ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void nativeTransformationHeapAdmissionPrecedesRasterRead()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.memoryLimit() ).thenReturn( "0" );
+        imageService = newImageService();
+        assertThrows( ThrottlingException.class, () -> imageService.readImage( styledParams( "png" ) ) );
+        assertTrue( Files.notExists( temporaryFolder.resolve( "work/cache/img/transformation" ) ) );
     }
 
     @Test
@@ -387,7 +472,7 @@ class ImageServiceImplTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"encoding", "decoding"})
+    @ValueSource(strings = {"encoding", "decoding", "transformation"})
     void boundedQueueRejectsExcessRequestsAndReleasesSlotsAfterFailure( final String backend )
         throws Exception
     {
@@ -397,9 +482,13 @@ class ImageServiceImplTest
         {
             when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
         }
-        else
+        else if ( "decoding".equals( backend ) )
         {
             when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        }
+        else
+        {
+            when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
         }
         final String output = "encoding".equals( backend ) ? "webp" : "png";
         when( imageConfig.encoding_maxConcurrent() ).thenReturn( 1 );

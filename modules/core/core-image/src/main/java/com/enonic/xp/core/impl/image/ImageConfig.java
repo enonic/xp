@@ -18,6 +18,8 @@ public @interface ImageConfig
 
     long decoding_maxBytes() default 67_108_864;
 
+    String transformation_backend() default "ImageIO";
+
     int encoding_maxConcurrent() default 2;
 
     int encoding_maxQueue() default 8;

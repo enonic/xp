@@ -87,6 +87,10 @@ public class ImageServiceImpl
 
     private final ImageMagickDecoder nativeDecoder;
 
+    private final boolean useImageMagickTransformer;
+
+    private final ImageMagickTransformer nativeTransformer;
+
     private final Semaphore encodingRequests;
 
     private final Semaphore encodingSlots;
@@ -123,6 +127,14 @@ public class ImageServiceImpl
             case "ImageMagic" -> true;
             default -> throw new IllegalArgumentException( "decoding.backend must be ImageIO or ImageMagic" );
         };
+        this.useImageMagickTransformer = switch ( config.transformation_backend() )
+        {
+            case "ImageIO" -> false;
+            case "ImageMagic" -> true;
+            default -> throw new IllegalArgumentException( "transformation.backend must be ImageIO or ImageMagic" );
+        };
+        this.nativeTransformer = new ImageMagickTransformer( "embedded", config.encoding_timeoutSeconds(),
+            cacheFolder.resolve( "transformation" ) );
         this.nativeDecoder = new ImageMagickDecoder( "embedded", cacheFolder.resolve( "decoding" ),
             config.encoding_timeoutSeconds(), config.encoding_maxPixels(), config.decoding_maxBytes() );
         this.encodingSlots = new Semaphore( config.encoding_maxConcurrent(), true );
@@ -187,7 +199,7 @@ public class ImageServiceImpl
         {
             throw new IllegalArgumentException( "Image is not cached; regeneration requires a matching image fingerprint" );
         }
-        if ( !useImageMagick && !useImageMagickDecoder && !isModernFormat( normalizedImageParams.getFormat() ) )
+        if ( !useImageMagick && !useImageMagickDecoder && !useImageMagickTransformer && !isModernFormat( normalizedImageParams.getFormat() ) )
         {
             return immutableFilesHelper.computeIfAbsent( path, sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
         }
@@ -310,6 +322,10 @@ public class ImageServiceImpl
         {
             MessageDigests.updateWithString( digest, "decoding:ImageMagic" );
         }
+        if ( useImageMagickTransformer )
+        {
+            MessageDigests.updateWithString( digest, "transformation:ImageMagic" );
+        }
         final String hash = MessageDigests.formatHex( digest );
         return cacheFolder.resolve( "sha256" )
             .resolve( hash.substring( 0, 2 ) )
@@ -330,7 +346,7 @@ public class ImageServiceImpl
             {
                 final int width = nativeSource == null ? imageReader.getWidth( 0 ) : nativeSource.width();
                 final int height = nativeSource == null ? imageReader.getHeight( 0 ) : nativeSource.height();
-                final boolean nativeProcessing = useImageMagick || useImageMagickDecoder;
+                final boolean nativeProcessing = useImageMagick || useImageMagickDecoder || useImageMagickTransformer;
                 if ( nativeProcessing && (long) width * height > maxEncodingPixels )
                 {
                     throw new IllegalArgumentException( "Source image exceeds encoding.maxPixels" );
@@ -339,7 +355,7 @@ public class ImageServiceImpl
                 final ImageTypeSpecifier rawImageType = nativeSource == null ? imageReader.getRawImageType( 0 ) : null;
                 final int pixelSize;
                 final boolean mayHaveAlpha;
-                if ( rawImageType != null )
+                if ( rawImageType != null && !useImageMagickTransformer )
                 {
                     final ColorModel originalColorModel = rawImageType.getColorModel();
                     pixelSize = originalColorModel.getPixelSize() / Byte.SIZE;
@@ -373,17 +389,17 @@ public class ImageServiceImpl
                     final FocalPoint focalPoint =
                         toCropRelativeFocalPoint( readImageParams.getFocalPoint(), readImageParams.getCropping() );
                     imageScaleFunction = imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), focalPoint );
-                    if ( nativeProcessing && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
+                    if ( nativeProcessing && !useImageMagickTransformer && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
                     {
                         throw new IllegalArgumentException( "Output image exceeds encoding.maxPixels" );
                     }
                     final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
-                    scaledMemoryRequirements = Math.max(
+                    scaledMemoryRequirements = useImageMagickTransformer ? 0 : Math.max(
                         toMegaBytes( (long) imageScaleFunction.estimateResolution( width, height ) * pixelSize * scaledMultiplier ), 1 );
                     // ImageHelper.getScaledInstance does progressive halving on significant downscales, keeping
                     // the previous intermediate alive while allocating the next one. Peak overhead is bounded by
                     // the two largest intermediates (~1/4 + 1/16 = 5/16 of original area), rounded up to 1/3.
-                    intermediatesMemoryRequirements = Math.max( toMegaBytes( (long) width * height * pixelSize / 3 ), 1 );
+                    intermediatesMemoryRequirements = useImageMagickTransformer ? 0 : Math.max( toMegaBytes( (long) width * height * pixelSize / 3 ), 1 );
                 }
                 else
                 {
@@ -392,8 +408,20 @@ public class ImageServiceImpl
                     intermediatesMemoryRequirements = 0;
                 }
 
-                final int totalMemoryRequirementsEstimate =
-                    originalMemoryRequirements + scaledMemoryRequirements + intermediatesMemoryRequirements;
+                final ImageMagickTransformPlan nativePlan;
+                if ( useImageMagickTransformer )
+                {
+                    // Retain XP's filter count and argument validation before allocating any raster.
+                    imageFilterBuilder.build( readImageParams.getFilterParam() );
+                    nativePlan = new ImageMagickTransformPlan( width, height, readImageParams, imageScaleFunction, maxEncodingPixels );
+                }
+                else
+                {
+                    nativePlan = null;
+                }
+                final int totalMemoryRequirementsEstimate = nativePlan == null ?
+                    originalMemoryRequirements + scaledMemoryRequirements + intermediatesMemoryRequirements :
+                    toMegaBytes( (long) width * height * 4 + 1_048_575 ) + toMegaBytes( nativePlan.peakPixels() * 4 + 1_048_575 );
 
                 LOG.debug( "Estimated original {} scaled {} intermediates {} total {} requirements. With pixelSize {}",
                            originalMemoryRequirements, scaledMemoryRequirements, intermediatesMemoryRequirements,
@@ -418,29 +446,36 @@ public class ImageServiceImpl
                         imageReader.dispose();
                     }
                     requireNonNull( bufferedImage, "BufferedImage is null" );
-                    if ( toRotate )
+                    if ( nativePlan != null )
                     {
-                        bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
+                        bufferedImage = nativeTransformer.apply( bufferedImage, nativePlan );
                     }
-
-                    if ( toCrop )
+                    else
                     {
-                        bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
-                    }
+                        if ( toRotate )
+                        {
+                            bufferedImage = applyRotation( bufferedImage, readImageParams.getOrientation() );
+                        }
 
-                    if ( toScale )
-                    {
-                        bufferedImage = imageScaleFunction.apply( bufferedImage );
-                    }
+                        if ( toCrop )
+                        {
+                            bufferedImage = applyCropping( bufferedImage, readImageParams.getCropping() );
+                        }
 
-                    if ( toApplyFilters )
-                    {
-                        bufferedImage = imageFilterBuilder.build( readImageParams.getFilterParam() ).apply( bufferedImage );
-                    }
+                        if ( toScale )
+                        {
+                            bufferedImage = imageScaleFunction.apply( bufferedImage );
+                        }
 
-                    if ( toAddBackground )
-                    {
-                        bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
+                        if ( toApplyFilters )
+                        {
+                            bufferedImage = imageFilterBuilder.build( readImageParams.getFilterParam() ).apply( bufferedImage );
+                        }
+
+                        if ( toAddBackground )
+                        {
+                            bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
+                        }
                     }
 
                     if ( nativeProcessing && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxEncodingPixels )

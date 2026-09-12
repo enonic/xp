@@ -37,4 +37,10 @@ public class ScaledFunction
 
         return Math.multiplyExact( values.newWidth, values.newHeight );
     }
+
+    @Override
+    public ScaleCalculator.Values calculate( final int sourceWidth, final int sourceHeight )
+    {
+        return scaleCalculator.calc( sourceWidth, sourceHeight );
+    }
 }
