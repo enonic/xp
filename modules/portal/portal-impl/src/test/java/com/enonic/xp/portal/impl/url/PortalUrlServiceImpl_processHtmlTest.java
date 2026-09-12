@@ -757,9 +757,12 @@ class PortalUrlServiceImpl_processHtmlTest
         final Media media = ContentFixtures.newMedia();
         when( contentService.getById( media.getId() ) ).thenReturn( media );
         when( imageService.getStyle( "myapp:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
-        final String rendered = service.processHtml( new ProcessHtmlParams().imageBaseUrl( "/images" )
-            .value( "<a href=\"image://" + media.getId() + "?style=myapp%3Acard\">Image</a>" ) );
-        assertThat( rendered ).startsWith( "<a href=\"/images/media:image/" ).contains( "/width-768~myapp:card/" );
+        final String rendered = ContextBuilder.create().repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "draft" ) ).build().callWith( () ->
+                service.processHtml( new ProcessHtmlParams().imageBaseUrl( "/images" )
+                    .value( "<a href=\"image://" + media.getId() + "?style=myapp%3Acard\">Image</a>" ) ) );
+        assertThat( rendered ).startsWith( "<a href=\"/images/media:image/context-project:draft/" )
+            .contains( "/width-768~myapp:card/" );
     }
 
     @Test
