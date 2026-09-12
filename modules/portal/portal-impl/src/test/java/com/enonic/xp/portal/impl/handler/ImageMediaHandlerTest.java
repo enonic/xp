@@ -257,12 +257,14 @@ class ImageMediaHandlerTest
         assertArrayEquals( new Object[]{640}, params.getValue().getScaleParams().getArguments() );
     }
 
-    @Test
-    void unknownStyleIsBadRequest()
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "HEAD"})
+    void unknownStyleIsNotFound( final String method )
     {
+        request.setMethod( HttpMethod.valueOf( method ) );
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full~app:missing/image-name.jpg" );
-        when( imageService.getStyle( "app:missing" ) ).thenThrow( new IllegalArgumentException( "Unknown style" ) );
-        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        when( imageService.getStyle( "app:missing" ) ).thenThrow( new com.enonic.xp.style.ImageStyleNotFoundException( "app:missing" ) );
+        assertEquals( HttpStatus.NOT_FOUND, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
         verifyNoInteractions( contentService );
     }
 

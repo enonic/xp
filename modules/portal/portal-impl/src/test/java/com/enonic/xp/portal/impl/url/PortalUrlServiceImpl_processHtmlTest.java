@@ -69,6 +69,8 @@ class PortalUrlServiceImpl_processHtmlTest
 {
     private ContentService contentService;
 
+    private ImageService imageService;
+
     private PortalUrlService service;
 
     protected StyleDescriptorService styleDescriptorService;
@@ -88,7 +90,8 @@ class PortalUrlServiceImpl_processHtmlTest
         this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), mock( ImageService.class ), HmacTestHelper.createHmacService() );
+        imageService = mock( ImageService.class );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), imageService, HmacTestHelper.createHmacService() );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
@@ -727,6 +730,54 @@ class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "mystyle", imageProjection.get( "style:name" ) );
         assertEquals( "2:1", imageProjection.get( "style:aspectRatio" ) );
         assertEquals( "myfilter", imageProjection.get( "style:filter" ) );
+    }
+
+    @Test
+    void qualifiedImageStyleProducesSignedResponsiveUrls()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( imageService.getStyle( "myapp:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 70 ).filter( "grayscale" ).build() );
+        final String saved = "<img src=\"image://" + media.getId() + "?style=myapp:card\">";
+        final ProcessHtmlParams params = new ProcessHtmlParams().value( saved ).imageWidths( List.of( 320, 640 ) );
+        final String rendered = service.processHtml( params );
+        assertThat( rendered ).contains( "/width-768~myapp:card/", "/width-320~myapp:card/", "/width-640~myapp:card/" )
+            .doesNotContain( "?style=", "?filter=", "quality=", "block-" );
+        assertThat( rendered ).containsPattern( media.getId() + ":[0-9a-f]{40}/width-768~myapp:card/" );
+        assertEquals( saved, params.getValue() );
+        when( imageService.getStyle( "myapp:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 60 ).filter( "grayscale" ).build() );
+        assertThat( service.processHtml( params ) ).isNotEqualTo( rendered );
+    }
+
+    @Test
+    void qualifiedStyleSupportsEncodedReferencesAndImageBaseUrl()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( imageService.getStyle( "myapp:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        final String rendered = service.processHtml( new ProcessHtmlParams().imageBaseUrl( "/images" )
+            .value( "<a href=\"image://" + media.getId() + "?style=myapp%3Acard\">Image</a>" ) );
+        assertThat( rendered ).startsWith( "<a href=\"/images/media:image/" ).contains( "/width-768~myapp:card/" );
+    }
+
+    @Test
+    void qualifiedStyleDoesNotFallBackToRawParametersOrAnUnstyledImage()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        for ( String parameter : List.of( "scale=1:1", "filter=grayscale", "quality=70", "background=ffffff", "format=webp" ) )
+        {
+            final String saved = "<img src=\"image://" + media.getId() + "?style=myapp:card&amp;" + parameter + "\">";
+            org.junit.jupiter.api.Assertions.assertThrows( IllegalArgumentException.class,
+                () -> service.processHtml( new ProcessHtmlParams().value( saved ) ) );
+        }
+        when( imageService.getStyle( "myapp:missing" ) ).thenThrow(
+            new com.enonic.xp.style.ImageStyleNotFoundException( "myapp:missing" ) );
+        final String rendered = service.processHtml( new ProcessHtmlParams()
+            .value( "<img src=\"image://" + media.getId() + "?style=myapp:missing\">" ) );
+        assertThat( rendered ).startsWith( "<img src=\"/_/error/404?" ).doesNotContain( "/width-" );
     }
 
     @Test

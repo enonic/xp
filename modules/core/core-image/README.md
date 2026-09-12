@@ -31,6 +31,19 @@ separates scale from the fully qualified style alias. Unstyled URLs retain their
 existing scale segment. A `style` query parameter is rejected. Both the legacy image endpoint and `media:image`
 support this form. Scale remains required.
 
+Rich text stores new processing references as
+`image://<content-id>?style=<application>:<style>`, without copying scale, filters,
+quality, background or format into the saved link. `portal.processHtml` generates
+signed image URLs from that reference, including separate signatures for responsive
+widths. Editing the style changes generated fingerprints without rewriting content.
+Legacy links with raw parameters or unqualified style names retain their existing
+rendering behavior. Qualified references cannot be combined with raw parameters.
+
+A missing style in an image URL returns HTTP 404 for GET and HEAD, before source
+or cache access. There is no fallback to an unstyled image. Malformed references
+and conflicting parameters remain HTTP 400. Rich-text rendering of a missing
+qualified style produces the existing 404 error URL.
+
 When a style defines `aspectRatio`, the request must use `width(px)` or
 `height(px)`. XP calculates the other dimension, rounds to the nearest pixel,
 and applies a block crop: `16:9` with `width(640)` or `height(360)` becomes

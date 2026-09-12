@@ -10,7 +10,7 @@ public interface ImageService
 {
     /**
      * Resolves a predefined processing style by its application:name key.
-     * Throws IllegalArgumentException for an unknown or incomplete processing style.
+     * Throws ImageStyleNotFoundException for an unknown style, or IllegalArgumentException for invalid style settings.
      */
     ImageStyle getStyle( String key );
 

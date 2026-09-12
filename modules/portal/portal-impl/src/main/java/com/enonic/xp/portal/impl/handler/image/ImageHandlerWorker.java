@@ -104,8 +104,16 @@ public final class ImageHandlerWorker
             }
             try
             {
-                this.style = requireNonNull( imageService.getStyle( styleParam ), "Image style is required" );
+                this.style = imageService.getStyle( styleParam );
+                if ( style == null )
+                {
+                    throw new com.enonic.xp.style.ImageStyleNotFoundException( styleParam );
+                }
                 scaleParams.withAspectRatio( style.getAspectRatio() );
+            }
+            catch ( com.enonic.xp.style.ImageStyleNotFoundException e )
+            {
+                throw WebException.notFound( e.getMessage() );
             }
             catch ( IllegalArgumentException e )
             {
@@ -246,6 +254,10 @@ public final class ImageHandlerWorker
             }
 
             return this.imageService.readImage( readImageParams.build() );
+        }
+        catch ( com.enonic.xp.style.ImageStyleNotFoundException e )
+        {
+            throw WebException.notFound( e.getMessage() );
         }
         catch ( IllegalArgumentException e )
         {

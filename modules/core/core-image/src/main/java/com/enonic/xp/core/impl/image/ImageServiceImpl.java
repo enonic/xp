@@ -157,7 +157,7 @@ public class ImageServiceImpl
             .map( ImageStyle.class::cast ).findFirst().orElse( null );
         if ( style == null )
         {
-            throw new IllegalArgumentException( "Unknown image style " + key );
+            throw new com.enonic.xp.style.ImageStyleNotFoundException( key );
         }
         ImageStyleSettings.from( style );
         return style;

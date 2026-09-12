@@ -472,7 +472,7 @@ class ImageServiceImplTest
     @Test
     void rejectsUnknownAndInvalidStylesBeforeReadingContent()
     {
-        assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:missing" ) );
+        assertThrows( com.enonic.xp.style.ImageStyleNotFoundException.class, () -> imageService.getStyle( "app:missing" ) );
         processingStyle( -1 );
         assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
         processingStyle( 101 );
