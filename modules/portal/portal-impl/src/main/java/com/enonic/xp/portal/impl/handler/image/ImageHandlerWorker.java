@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
+import com.google.common.net.HttpHeaders;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
@@ -57,6 +58,8 @@ public final class ImageHandlerWorker
     private String styleParam;
 
     private ImageStyle style;
+
+    private boolean cacheOnly;
 
     public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService, final HmacService hmacService )
     {
@@ -141,6 +144,10 @@ public final class ImageHandlerWorker
     @Override
     protected void writeResponseContent( final PortalResponse.Builder portalResponse, final MediaType contentType, final ByteSource body )
     {
+        if ( cacheOnly )
+        {
+            portalResponse.removeHeader( HttpHeaders.CACHE_CONTROL );
+        }
         portalResponse.contentType( contentType );
         portalResponse.body( body );
     }
@@ -185,7 +192,7 @@ public final class ImageHandlerWorker
             final String currentFingerprint = MediaHashResolver.resolveStyledImageHash(
                 MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style, scaleParams, hmacService );
             final boolean hashMatches = MediaHashResolver.matchesFingerprint( currentFingerprint, fingerprint );
-            final boolean cacheOnly = !hashMatches && ( !nullToEmpty( fingerprint ).isBlank() ||
+            this.cacheOnly = !hashMatches && ( !nullToEmpty( fingerprint ).isBlank() ||
                 contentType.is( MediaType.WEBP ) || contentType.is( MediaType.AVIF ) );
 
             final ReadImageParams readImageParams = ReadImageParams.newImageParams()

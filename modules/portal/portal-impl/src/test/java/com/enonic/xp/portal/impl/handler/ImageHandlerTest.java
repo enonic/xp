@@ -636,7 +636,7 @@ class ImageHandlerTest
     }
 
     @Test
-    void cacheHeader_always_private()
+    void cacheHeader_wrongFingerprintHasNoImmutableCaching()
         throws Exception
     {
         mockCachableContent();
@@ -645,7 +645,7 @@ class ImageHandlerTest
 
         final WebResponse res = this.handler.handle( this.request );
 
-        assertEquals( "private, max-age=31536000, immutable", res.getHeaders().get( "Cache-Control" ) );
+        assertNull( res.getHeaders().get( "Cache-Control" ) );
     }
 
     @Test
@@ -654,7 +654,8 @@ class ImageHandlerTest
     {
         mockCachableContent();
 
-        this.request.setRawPath( "/_/image/123456:bb6d2c0f3112f562ec454654b9aebe7ab47ba865/scale-100-100/image-name.jpg.png" );
+        this.request.setRawPath( "/_/image/123456:" + MediaHashResolver.resolveImageHash(
+            (Media) contentService.getById( ContentId.from( "123456" ) ) ) + "/scale-100-100/image-name.jpg.png" );
 
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final WebResponse resDraft = this.handler.handle( this.request );
