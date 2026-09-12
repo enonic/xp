@@ -16,7 +16,7 @@ public @interface ImageConfig
     // Source decoding is independent of output encoding and transformations.
     String decoding_backend() default "ImageIO";
 
-    long decoding_maxBytes() default 268_435_456;
+    String decoding_maxBytes() default "256mb";
 
     String transformation_backend() default "ImageIO";
 

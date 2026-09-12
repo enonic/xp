@@ -38,6 +38,7 @@ import com.google.common.io.MoreFiles;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
+import com.enonic.xp.core.internal.ByteSizeParser;
 import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.core.internal.SimpleCsvParser;
 import com.enonic.xp.core.internal.security.MessageDigests;
@@ -136,7 +137,7 @@ public class ImageServiceImpl
         this.nativeTransformer = new ImageMagickTransformer( "embedded", config.processing_timeoutSeconds(),
             cacheFolder.resolve( "transformation" ) );
         this.nativeDecoder = new ImageMagickDecoder( "embedded", cacheFolder.resolve( "decoding" ),
-            config.processing_timeoutSeconds(), config.processing_maxPixels(), config.decoding_maxBytes() );
+            config.processing_timeoutSeconds(), config.processing_maxPixels(), ByteSizeParser.parse( config.decoding_maxBytes() ) );
         this.processingSlots = new Semaphore( config.processing_maxConcurrent(), true );
         this.processingRequests = new Semaphore( Math.addExact( config.processing_maxConcurrent(), config.processing_maxQueue() ) );
         this.queueTimeoutSeconds = config.processing_queueTimeoutSeconds();

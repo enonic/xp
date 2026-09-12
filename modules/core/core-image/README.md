@@ -75,7 +75,7 @@ Configure `com.enonic.xp.image.cfg`:
 
 ```properties
 decoding.backend = ImageMagic
-decoding.maxBytes = 268435456
+decoding.maxBytes = 256mb
 transformation.backend = ImageMagic
 encoding.backend = ImageMagic
 
@@ -133,7 +133,9 @@ For compatibility, `flipv` retains the current Java implementation's horizontal-
 behavior; EXIF vertical mirroring uses a vertical flip. Use `ImageIO` where exact
 legacy rendering is required.
 
-Native source reads are bounded by `decoding.maxBytes` (256 MiB by default).
+Native source reads are bounded by `decoding.maxBytes` (`256mb`, or 256 MiB, by default).
+It accepts XP's size syntax, such as `512mb`, `1gb`, or a plain byte count.
+Suffixes are case-insensitive and use powers of 1024.
 Native policy disables GIF, SVG and vector rendering coders, external delegates,
 loadable filters, indirect file reads, and unrelated coders. SVG output and
 compressed SVGZ input are not supported.
