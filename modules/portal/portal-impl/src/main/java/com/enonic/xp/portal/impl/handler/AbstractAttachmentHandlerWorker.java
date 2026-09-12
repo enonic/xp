@@ -208,7 +208,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
             throw WebException.notFound( String.format( "Binary [%s] not found for [%s]", binaryReference, id ) );
         }
 
-        return getBinary( content.getId(), binaryReference );
+        return binary;
     }
 
     private static MediaType parseMimeType( final String mimeType )
