@@ -20,18 +20,22 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
-import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.image.ImageService;
+import com.enonic.xp.portal.impl.HmacTestHelper;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.webapp.WebappService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,16 +43,146 @@ class PortalUrlGeneratorServiceImplTest
 {
     private PortalUrlGeneratorService service;
 
+    private ImageService imageService;
+
     @BeforeEach
     void setUp()
     {
-        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        this.imageService = mock( ImageService.class );
+        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), imageService, HmacTestHelper.createHmacService() );
     }
 
     @AfterEach
     void tearDown()
     {
         PortalRequestAccessor.remove();
+    }
+
+    @Test
+    void imageStyleUrlAndPartsUseRequestedScale()
+    {
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).build() );
+        final ImageUrlGeneratorParams params = styleUrlParams().build();
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card/mycontent.png.webp",
+                      service.imageUrl( params ) );
+        final ImageUrlParts parts = service.imageUrlParts( params );
+        assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", parts.fingerprint() );
+        assertEquals( "width-640~app:card", parts.scale() );
+        assertEquals( "mycontent.png.webp", parts.name() );
+        assertEquals( "", parts.queryString() );
+    }
+
+    @Test
+    void styleAliasIsInPathAndDoesNotChangeFingerprint()
+    {
+        final ImageStyle style = ImageStyle.create().name( "card" ).build();
+        when( imageService.getStyle( "app:card" ) ).thenReturn( style );
+        when( imageService.getStyle( "com.example.site:card-wide" ) ).thenReturn( style );
+        final ImageUrlParts first = service.imageUrlParts( styleUrlParams().build() );
+        final ImageUrlGeneratorParams alias = styleUrlParams().setStyle( "com.example.site:card-wide" )
+            .setQueryParam( "download", "true" ).build();
+        final ImageUrlParts second = service.imageUrlParts( alias );
+        assertEquals( first.fingerprint(), second.fingerprint() );
+        assertEquals( "width-640~com.example.site:card-wide", second.scale() );
+        assertEquals( "?download=true", second.queryString() );
+        assertThat( service.imageUrl( alias ) ).contains( "/width-640~com.example.site:card-wide/" ).endsWith( "?download=true" );
+        assertThat( second.path() ).contains( "/width-640~com.example.site:card-wide/" );
+    }
+
+    @Test
+    void queryStyleAndStyleEmbeddedInScaleAreRejected()
+    {
+        final ImageUrlGeneratorParams query = styleUrlParams().setStyle( null ).setFormat( "png" )
+            .setQueryParam( "style", "app:card" ).build();
+        assertThrows( IllegalArgumentException.class, () -> service.imageUrl( query ) );
+        assertThrows( IllegalArgumentException.class, () -> service.imageUrlParts( query ) );
+        final ImageUrlGeneratorParams scale = styleUrlParams().setStyle( null ).setFormat( "png" )
+            .setScale( "width-640~app:card" ).build();
+        assertThrows( IllegalArgumentException.class, () -> service.imageUrlParts( scale ) );
+    }
+
+    @Test
+    void changingStyleSettingsChangesUrlAndPartsFingerprint()
+    {
+        final ImageUrlGeneratorParams params = styleUrlParams().build();
+        final var styles = List.of(
+            ImageStyle.create().name( "card" ).build(),
+            ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).build(),
+            ImageStyle.create().name( "card" ).quality( 60 ).build(),
+            ImageStyle.create().name( "card" ).filter( "blur(1)" ).build(),
+            ImageStyle.create().name( "card" ).background( "000000" ).build() );
+        final var fingerprints = new java.util.HashSet<String>();
+        for ( final ImageStyle style : styles )
+        {
+            when( imageService.getStyle( "app:card" ) ).thenReturn( style );
+            final ImageUrlParts parts = service.imageUrlParts( params );
+            assertThat( service.imageUrl( params ) ).contains( ":" + parts.fingerprint() + "/width-640~app:card/" );
+            fingerprints.add( parts.fingerprint() );
+        }
+        assertEquals( styles.size(), fingerprints.size() );
+    }
+
+    @Test
+    void requestedScaleChangesStyledFingerprint()
+    {
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).build() );
+        final ImageUrlParts wide = service.imageUrlParts( styleUrlParams().setScale( "width(640)" ).build() );
+        final ImageUrlParts small = service.imageUrlParts( styleUrlParams().setScale( "width(320)" ).build() );
+        assertThat( wide.fingerprint() ).isNotEqualTo( small.fingerprint() );
+        assertEquals( "width-320~app:card", small.scale() );
+        for ( var scale : java.util.Map.of( "square(640)", "square-640", "block(640,480)", "block-640-480",
+            "max(640)", "max-640", "full()", "full-" ).entrySet() )
+        {
+            final ImageUrlGeneratorParams explicit = styleUrlParams().setScale( scale.getKey() ).build();
+            final ImageUrlParts parts = service.imageUrlParts( explicit );
+            assertThat( service.imageUrl( explicit ) ).contains( "/" + parts.scale() + "/" );
+            assertThat( parts.scale() ).isEqualTo( scale.getValue() + "~app:card" );
+        }
+    }
+
+    @Test
+    void imageStyleUrlRejectsOverrides()
+    {
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setQuality( 90 ).build() );
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setFilter( "blur(1)" ).build() );
+        assertThrows( IllegalArgumentException.class, () -> styleUrlParams().setBackground( "ffffff" ).build() );
+        final ImageUrlGeneratorParams queryOverride = styleUrlParams().setQueryParam( "quality", "90" ).build();
+        assertThrows( IllegalArgumentException.class, () -> service.imageUrl( queryOverride ) );
+        assertThrows( IllegalArgumentException.class, () -> service.imageUrlParts( queryOverride ) );
+    }
+
+    @Test
+    void formatIsSelectedIndependentlyOfStyle()
+    {
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).build() );
+        for ( String format : new String[]{"jpeg", "png", "webp", "avif"} )
+        {
+            final ImageUrlGeneratorParams params = styleUrlParams().setFormat( format ).build();
+            final ImageUrlParts parts = service.imageUrlParts( params );
+            assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", parts.fingerprint() );
+            assertThat( service.imageUrl( params ) ).contains( "/" + parts.name() + "" );
+            assertThat( parts.name() ).endsWith( "." + format );
+        }
+    }
+
+    @Test
+    void modernFormatRequiresStyleWhenGeneratingUrl()
+    {
+        for ( String format : new String[]{"webp", "avif", "WEBP", "AVIF"} )
+        {
+            assertThrows( IllegalArgumentException.class,
+                () -> styleUrlParams().setStyle( null ).setScale( "max(100)" ).setFormat( format ).build() );
+        }
+    }
+
+    private ImageUrlGeneratorParams.Builder styleUrlParams()
+    {
+        return ImageUrlGeneratorParams.create().setBaseUrl( "baseUrl" )
+            .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
+            .setProjectName( () -> ProjectName.from( "myproject" ) )
+            .setBranch( () -> Branch.from( "draft" ) ).setStyle( "app:card" ).setScale( "width(640)" ).setFormat( "webp" );
     }
 
     @Test
@@ -113,12 +247,12 @@ class PortalUrlGeneratorServiceImplTest
             .setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> Branch.from( "draft" ) )
             .setScale( "max(300)" )
-            .setFormat( "webp" )
+            .setFormat( "jpeg" )
             .build();
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png.webp", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png.jpeg", url );
     }
 
     @Test
@@ -406,7 +540,7 @@ class PortalUrlGeneratorServiceImplTest
             .setBranch( () -> Branch.from( "master" ) )
             .setScale( "block(800,200)" )
             .setFilter( "blur(3)" )
-            .setFormat( "webp" );
+            .setFormat( "jpeg" );
 
         final ImageUrlParts parts = this.service.imageUrlParts( builder.build() );
         final String url = this.service.imageUrl( builder.setMediaBaseUrl( "https://media.example.com" ).build() );

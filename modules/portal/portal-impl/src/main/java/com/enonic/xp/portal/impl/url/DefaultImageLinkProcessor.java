@@ -18,6 +18,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
@@ -44,6 +45,8 @@ final class DefaultImageLinkProcessor
     HtmlElement element;
 
     ImageStyle imageStyle;
+
+    String styleReference;
 
     String id;
 
@@ -105,6 +108,19 @@ final class DefaultImageLinkProcessor
                              final Supplier<ProjectName> projectNameSupplier, final Supplier<Branch> branchSupplier,
                              final DefaultQueryParamsSupplier queryParamsStrategy, final Integer imageWidth )
     {
+        if ( styleReference != null )
+        {
+            return portalUrlGeneratorService.imageUrl( ImageUrlGeneratorParams.create()
+                .setBaseUrl( params.getBaseUrl() )
+                .setMediaBaseUrl( params.getImageBaseUrl() )
+                .setUrlType( params.getType() )
+                .setMedia( imageSupplier )
+                .setProjectName( projectNameSupplier )
+                .setBranch( branchSupplier )
+                .setStyle( styleReference )
+                .setScale( "width(" + requireNonNullElse( imageWidth, DEFAULT_WIDTH ) + ")" )
+                .build() );
+        }
         final UrlGeneratorParams imageUrl = UrlGeneratorParams.create()
             .setBaseUrl( baseUrlSupplier )
             .setQueryString( queryParamsStrategy )

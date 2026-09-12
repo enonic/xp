@@ -109,6 +109,8 @@ export type ImageUrlParams = IdXorPath & {
     filter?: string;
     params?: object;
     type?: 'server' | 'absolute';
+    /** Fully qualified processing style (application:name). Controls aspect ratio, quality, filter, and background; scale and format are selected separately. Appears after ~ in the URL scale segment. */
+    style?: string;
     scale:
         | `block(${number},${number})`
         | `height(${number})`
@@ -150,6 +152,8 @@ interface ImageUrlHandler {
 
     setScale(value: string): void;
 
+    setStyle(value: string | null): void;
+
     createUrl(): string;
 }
 
@@ -161,10 +165,11 @@ interface ImageUrlHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] ID of the image content. Either `id` or `path` is required.
  * @param {string} [params.path] Path to the image. If `id` is specified, this parameter is not used.
+ * @param {string} [params.style] Predefined processing style (application:name). Required for WebP/AVIF encoding.
  * @param {string} params.scale Required. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
  * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
  * @param {string} [params.background] Background color.
- * @param {string} [params.format] Format of the image.
+ * @param {string} [params.format] Output format of the image. WebP and AVIF require a predefined style.
  * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Name of the project.
@@ -188,6 +193,7 @@ export function imageUrl(params: ImageUrlParams): string {
     bean.setFilter(__.nullOrValue(params.filter));
     bean.setFormat(__.nullOrValue(params.format));
     bean.setScale(scale);
+    bean.setStyle(__.nullOrValue(params.style));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
     bean.setBaseUrl(__.nullOrValue(params.baseUrl));

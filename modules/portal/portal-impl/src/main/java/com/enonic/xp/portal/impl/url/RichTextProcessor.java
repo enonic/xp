@@ -235,7 +235,16 @@ public class RichTextProcessor
     {
         final Map<String, String> urlParams = extractUrlParams( urlParamsString );
 
-        final ImageStyle imageStyle = getImageStyle( imageStylesSupplier.get(), urlParams );
+        final String savedStyle = urlParams.get( STYLE_PARAM );
+        final String decodedStyle = savedStyle == null ? null :
+            java.net.URLDecoder.decode( savedStyle, java.nio.charset.StandardCharsets.UTF_8 );
+        final String styleReference = decodedStyle != null && decodedStyle.contains( ":" ) ?
+            com.enonic.xp.descriptor.DescriptorKey.from( decodedStyle ).toString() : null;
+        if ( styleReference != null && urlParams.size() != 1 )
+        {
+            throw new IllegalArgumentException( "A rich-text image style reference cannot include raw image parameters" );
+        }
+        final ImageStyle imageStyle = styleReference == null ? getImageStyle( imageStylesSupplier.get(), urlParams ) : null;
 
         final String scaleFromQueryParams = urlParams.get( SCALE_PARAM );
 
@@ -247,6 +256,7 @@ public class RichTextProcessor
         imageLinkProcessor.params = params;
         imageLinkProcessor.element = element;
         imageLinkProcessor.imageStyle = imageStyle;
+        imageLinkProcessor.styleReference = styleReference;
         imageLinkProcessor.id = id;
         imageLinkProcessor.scaleFromQueryString = scaleFromQueryParams;
         imageLinkProcessor.process();
@@ -258,6 +268,10 @@ public class RichTextProcessor
             properties.put( "type", params.getType() );
             properties.put( "contentId", id );
             properties.put( "queryParams", urlParamsString );
+            if ( styleReference != null )
+            {
+                properties.put( "style:reference", styleReference );
+            }
             if ( imageStyle != null )
             {
                 properties.put( "style:name", imageStyle.getName() );

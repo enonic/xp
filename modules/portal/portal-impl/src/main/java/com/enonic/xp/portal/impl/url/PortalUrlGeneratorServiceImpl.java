@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.url;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Activate;
@@ -17,6 +18,8 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.image.ImageService;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
@@ -43,15 +46,22 @@ public class PortalUrlGeneratorServiceImpl
 
     private final SiteService siteService;
 
+    private final ImageService imageService;
+
+    private final HmacService hmacService;
+
     private volatile String defaultMediaBaseUrl;
 
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
-    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService )
+    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService,
+                                          @Reference final ImageService imageService, @Reference final HmacService hmacService )
     {
         this.webappService = webappService;
         this.siteService = siteService;
+        this.imageService = imageService;
+        this.hmacService = hmacService;
     }
 
     @Activate
@@ -74,6 +84,8 @@ public class PortalUrlGeneratorServiceImpl
                           .setBranch( params.getBranch() )
                           .setScale( params.getScale() )
                           .setFormat( params.getFormat() )
+                          .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                .setHmacService( hmacService )
                           .build() );
 
         builder.setQueryParams( imageQueryParams( params ) );
@@ -118,6 +130,8 @@ public class PortalUrlGeneratorServiceImpl
                 .setBranch( params.getBranch() )
                 .setScale( params.getScale() )
                 .setFormat( params.getFormat() )
+                .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                .setHmacService( hmacService )
                 .build()
                 .parts();
 
@@ -151,6 +165,19 @@ public class PortalUrlGeneratorServiceImpl
     private static Map<String, List<String>> imageQueryParams( final ImageUrlGeneratorParams params )
     {
         final Map<String, List<String>> queryParams = new LinkedHashMap<>( params.getQueryParams() );
+
+        if ( queryParams.containsKey( "style" ) )
+        {
+            throw new IllegalArgumentException( "Specify image style using the style argument" );
+        }
+        if ( params.getStyle() != null )
+        {
+            if ( Set.of( "style", "scale", "format", "quality", "filter", "background" ).stream()
+                .anyMatch( queryParams::containsKey ) )
+            {
+                throw new IllegalArgumentException( "Image style parameters cannot be overridden in query parameters" );
+            }
+        }
 
         if ( params.getQuality() != null )
         {

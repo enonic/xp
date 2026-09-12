@@ -10,3 +10,89 @@ jar {
              'Private-Package': 'com.jhlabs.*' )
     }
 }
+
+// Download pinned, complete portable distributions at build time, never on the server.
+def imageMagickResources = layout.buildDirectory.dir( 'generated/imagemagick' )
+def nativeManifest = file( 'native/distributions.json' )
+def packageImageMagick = tasks.register( 'packageImageMagick' ) {
+    inputs.file( nativeManifest )
+    inputs.files( fileTree( 'native' ) )
+    outputs.dir( imageMagickResources )
+    doLast {
+        def manifest = new groovy.json.JsonSlurper().parse( nativeManifest )
+        def directory = imageMagickResources.get().dir( 'native/imagemagick' ).asFile
+        delete( directory )
+        directory.mkdirs()
+        def sevenZip = providers.gradleProperty( 'imageMagickSevenZip' ).getOrElse(
+            System.getProperty( 'os.name' ).startsWith( 'Windows' ) ?
+                new File( System.getenv( 'ProgramFiles' ), '7-Zip/7z.exe' ).path :
+                System.getProperty( 'os.name' ).startsWith( 'Mac' ) ? '7zz' : '7z' )
+        manifest.platforms.each { platform, distribution ->
+            if ( distribution.packages ) {
+                com.enonic.gradle.MacImageMagickPackager.packageBundle(
+                    file( "native/" + distribution.packages ).toPath(),
+                    new File( directory, platform + ".zip" ).toPath(), sevenZip,
+                    layout.buildDirectory.dir( "imagemagick-downloads" ).get().asFile.toPath() )
+                new File( directory, platform + ".properties" ).setText( 'executable=' + distribution.executable + '\n', 'UTF-8' )
+                return
+            }
+            def suffix = distribution.file.endsWith( '.AppImage' ) ? '.AppImage' : '.zip'
+            def target = new File( directory, platform + suffix )
+            def temporary = new File( directory, platform + '.tmp' )
+            def digest = java.security.MessageDigest.getInstance( 'SHA-256' )
+            def url = new URI( distribution.url ?: "https://github.com/ImageMagick/ImageMagick/releases/download/${manifest.version}/${distribution.file}" ).toURL()
+            def connection = url.openConnection()
+            connection.connectTimeout = 120000
+            connection.readTimeout = 120000
+            try {
+                connection.inputStream.withCloseable { input ->
+                    new java.security.DigestInputStream( input, digest ).withCloseable { checked ->
+                        temporary.withOutputStream { output -> checked.transferTo( output ) }
+                    }
+                }
+                if ( java.util.HexFormat.of().formatHex( digest.digest() ) != distribution.sha256 ) {
+                    throw new GradleException( "ImageMagick checksum mismatch: ${platform}" )
+                }
+                if ( suffix == '.AppImage' ) {
+                    java.nio.file.Files.move( temporary.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING )
+                } else {
+                    // Upstream 7z uses BCJ2, which Java's 7z readers cannot decode.
+                    // Repack once at build time so the server needs only the JDK ZIP reader.
+                    def unpacked = java.nio.file.Files.createTempDirectory( layout.buildDirectory.get().asFile.toPath(), 'imagemagick-' ).toFile()
+                    try {
+                        def process = new ProcessBuilder( sevenZip, 'x', temporary.path, '-o' + unpacked.path, '-y' ).inheritIO().start()
+                        if ( !process.waitFor( 120, java.util.concurrent.TimeUnit.SECONDS ) ) {
+                            process.destroyForcibly().waitFor()
+                            throw new GradleException( "ImageMagick unpacking timed out: ${platform}" )
+                        }
+                        if ( process.exitValue() != 0 || !new File( unpacked, 'magick.exe' ).isFile() ) {
+                            throw new GradleException( "ImageMagick unpacking failed: ${platform}" )
+                        }
+                        new java.util.zip.ZipOutputStream( new FileOutputStream( target ) ).withCloseable { zip ->
+                            fileTree( unpacked ).files.sort { it.path }.each { file ->
+                                def entry = new java.util.zip.ZipEntry( unpacked.toPath().relativize( file.toPath() ).toString().replace( '\\', '/' ) )
+                                entry.time = 0
+                                zip.putNextEntry( entry )
+                                file.withInputStream { it.transferTo( zip ) }
+                                zip.closeEntry()
+                            }
+                        }
+                    } finally {
+                        delete( unpacked )
+                    }
+                }
+                new File( directory, platform + '.properties' ).setText( 'executable=' + distribution.executable + '\n', 'UTF-8' )
+            } finally {
+                temporary.delete()
+            }
+        }
+    }
+}
+sourceSets.main.resources.srcDir( imageMagickResources )
+tasks.named( 'processResources' ) {
+    dependsOn packageImageMagick
+}
+
+tasks.withType( Test ).configureEach {
+    testLogging.exceptionFormat = 'full'
+}

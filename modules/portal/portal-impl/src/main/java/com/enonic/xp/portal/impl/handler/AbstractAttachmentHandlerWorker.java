@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
@@ -65,7 +66,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         final T content = cast( getContent( this.id ) );
         final Attachment attachment = resolveAttachment( content, this.name );
         final BinaryReference binaryReference = attachment.getBinaryReference();
-        final ByteSource binary = getBinary( this.id, binaryReference );
 
         final boolean isSvgz = "svgz".equals( attachment.getExtension() );
 
@@ -73,16 +73,15 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) || attachmentMimeType.is( MediaType.WEBP ) ||
-            attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        if ( shouldBypassTransformation( attachmentMimeType ) )
         {
             contentType = attachmentMimeType;
-            body = binary;
+            body = getBinary( this.id, binaryReference );
         }
         else
         {
-            contentType = shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
-            body = transform( content, binaryReference, binary, contentType );
+            contentType = resolveContentType( content, attachmentMimeType );
+            body = transform( content, binaryReference, contentType );
         }
 
         final PortalResponse.Builder portalResponse = PortalResponse.create();
@@ -117,7 +116,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
                 {
                     portalResponse.header( HttpHeaders.CACHE_CONTROL, privateCacheControlHeaderConfig );
                 }
-                if ( this.fingerprint.equals( hash ) )
+                if ( MediaHashResolver.matchesFingerprint( hash, this.fingerprint ) )
                 {
                     portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
                 }
@@ -136,11 +135,21 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         return portalResponse.build();
     }
 
-    protected ByteSource transform( final T content, final BinaryReference binaryReference, final ByteSource binary,
-                                    final MediaType contentType )
+    protected ByteSource transform( final T content, final BinaryReference binaryReference, final MediaType contentType )
         throws IOException
     {
-        return binary;
+        return getBinary( content.getId(), binaryReference );
+    }
+
+    protected boolean shouldBypassTransformation( final MediaType attachmentMimeType )
+    {
+        return attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) ||
+            attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE );
+    }
+
+    protected MediaType resolveContentType( final T content, final MediaType attachmentMimeType )
+    {
+        return shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
     }
 
     protected abstract String resolveHash( T content, Attachment attachment, BinaryReference binaryReference );

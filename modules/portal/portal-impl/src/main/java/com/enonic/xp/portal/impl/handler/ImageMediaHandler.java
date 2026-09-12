@@ -9,7 +9,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.image.ImageService;
-import com.enonic.xp.image.ScaleParamsParser;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
@@ -28,12 +28,15 @@ public class ImageMediaHandler
 
     private final ImageService imageService;
 
+    private final HmacService hmacService;
+
     @Activate
     public ImageMediaHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
-                              @Reference final ImageService imageService )
+                              @Reference final ImageService imageService, @Reference final HmacService hmacService )
     {
         super( contentService, projectService );
         this.imageService = imageService;
+        this.hmacService = hmacService;
     }
 
     @Activate
@@ -62,11 +65,11 @@ public class ImageMediaHandler
             .branch( pathMetadata.branch )
             .build()
             .callWith( () -> {
-                final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
+                final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.hmacService );
 
                 worker.id = pathMetadata.contentId;
                 worker.fingerprint = pathMetadata.fingerprint;
-                worker.scaleParams = new ScaleParamsParser().parse( pathMetadata.scaleParams );
+                worker.setScalePath( pathMetadata.scaleParams );
                 worker.name = pathMetadata.name;
                 worker.filterParam = HandlerHelper.getParameter( webRequest, "filter" );
                 worker.qualityParam = HandlerHelper.getParameter( webRequest, "quality" );
@@ -90,7 +93,7 @@ public class ImageMediaHandler
     private static final class ImagePathParser
         extends MediaHandlerBase.PathParser<ImagePathMetadata>
     {
-        // Image path is: "/{project[:draft]}/{id[:fingerprint]}/{scaleFn}/{name}"
+        // Image path is: "/{project[:draft]}/{id[:fingerprint]}/{scaleFn[~application:style]}/{name}"
 
         static final int PATH_VARIABLES_LIMIT = 5;
 

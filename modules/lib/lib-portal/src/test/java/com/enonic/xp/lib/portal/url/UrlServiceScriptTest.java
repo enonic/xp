@@ -317,6 +317,17 @@ class UrlServiceScriptTest
     }
 
     @Test
+    void imageUrlStyleTest()
+    {
+        assertTrue( execute( "imageUrlStyleTest" ) );
+        final ArgumentCaptor<ImageUrlParams> captor = ArgumentCaptor.forClass( ImageUrlParams.class );
+        verify( portalUrlService ).imageUrl( captor.capture() );
+        assertEquals( "app:card", captor.getValue().getStyle() );
+        assertEquals( "avif", captor.getValue().getFormat() );
+        assertEquals( "width(640)", captor.getValue().getScale() );
+    }
+
+    @Test
     void imageUrlTest()
     {
         assertTrue( execute( "imageUrlTest" ) );

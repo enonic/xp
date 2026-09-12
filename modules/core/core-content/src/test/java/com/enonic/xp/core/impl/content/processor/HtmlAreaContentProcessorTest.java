@@ -139,6 +139,22 @@ class HtmlAreaContentProcessorTest
     }
 
     @Test
+    void savesImageStyleReferenceWithoutExpandingItAndRetainsLegacyParameters()
+    {
+        final String html = "<img src=\"image://image-id?style=myapp:card\">" +
+            "<img src=\"image://legacy-id?scale=21:9&amp;size=640\">";
+        final PropertyTree data = new PropertyTree();
+        data.addProperty( "htmlData", ValueFactory.newString( html ) );
+        final ProcessUpdateParams params = ProcessUpdateParams.create()
+            .content( Content.create().name( "name" ).type( contentTypeName ).parentPath( ContentPath.ROOT ).data( data ).build() )
+            .build();
+        final ProcessUpdateResult result = htmlAreaContentProcessor.processUpdate( params );
+        assertThat( result.getContent().getData().getString( "htmlData" ) ).isEqualTo( html );
+        assertThat( result.getContent().getProcessedReferences() )
+            .containsExactly( ContentId.from( "image-id" ), ContentId.from( "legacy-id" ) );
+    }
+
+    @Test
     void content_deep_data()
     {
 

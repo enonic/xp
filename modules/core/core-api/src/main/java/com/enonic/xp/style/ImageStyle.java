@@ -9,11 +9,17 @@ public final class ImageStyle
 
     private final String filter;
 
+    private final Integer quality;
+
+    private final String background;
+
     private ImageStyle( final Builder builder )
     {
         super( builder );
         this.aspectRatio = builder.aspectRatio;
         this.filter = builder.filter;
+        this.quality = builder.quality;
+        this.background = builder.background;
     }
 
     public String getAspectRatio()
@@ -24,6 +30,16 @@ public final class ImageStyle
     public String getFilter()
     {
         return filter;
+    }
+
+    public Integer getQuality()
+    {
+        return quality;
+    }
+
+    public String getBackground()
+    {
+        return background;
     }
 
     @Override
@@ -38,13 +54,14 @@ public final class ImageStyle
             return false;
         }
         final ImageStyle that = (ImageStyle) o;
-        return Objects.equals( aspectRatio, that.aspectRatio ) && Objects.equals( filter, that.filter );
+        return Objects.equals( aspectRatio, that.aspectRatio ) && Objects.equals( filter, that.filter ) &&
+            Objects.equals( quality, that.quality ) && Objects.equals( background, that.background );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( super.hashCode(), aspectRatio, filter );
+        return Objects.hash( super.hashCode(), aspectRatio, filter, quality, background );
     }
 
     public static Builder create()
@@ -58,6 +75,22 @@ public final class ImageStyle
         private String aspectRatio;
 
         private String filter;
+
+        private Integer quality;
+
+        private String background;
+
+        public Builder quality( final Integer quality )
+        {
+            this.quality = quality;
+            return this;
+        }
+
+        public Builder background( final String background )
+        {
+            this.background = background;
+            return this;
+        }
 
         public Builder aspectRatio( final String aspectRatio )
         {

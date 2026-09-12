@@ -41,6 +41,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Install native packaging tools
+        run: sudo apt-get update && sudo apt-get install -y p7zip-full zstd
+
       - name: Build with Gradle
         run: ./gradlew ci --scan
 

@@ -30,6 +30,8 @@ public final class ImageUrlHandler
 
     private String scale;
 
+    private String style;
+
     private String projectName;
 
     private String branch;
@@ -79,6 +81,11 @@ public final class ImageUrlHandler
         this.format = format;
     }
 
+    public void setStyle( final String style )
+    {
+        this.style = style;
+    }
+
     public void setScale( final String scale )
     {
         this.scale = scale;
@@ -118,6 +125,7 @@ public final class ImageUrlHandler
             .filter( this.filter )
             .format( this.format )
             .scale( this.scale )
+            .style( this.style )
             .projectName( this.projectName )
             .branch( this.branch )
             .baseUrl( this.baseUrl );

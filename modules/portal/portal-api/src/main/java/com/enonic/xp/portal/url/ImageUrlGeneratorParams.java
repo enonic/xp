@@ -13,7 +13,6 @@ import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
-
 public final class ImageUrlGeneratorParams
 {
     private final String baseUrl;
@@ -38,6 +37,8 @@ public final class ImageUrlGeneratorParams
 
     private final String scale;
 
+    private final String style;
+
     private final Map<String, List<String>> queryParams;
 
     private ImageUrlGeneratorParams( final Builder builder )
@@ -48,6 +49,13 @@ public final class ImageUrlGeneratorParams
         this.mediaSupplier = requireNonNull( builder.mediaSupplier );
         this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
         this.branchSupplier = requireNonNull( builder.branchSupplier );
+        this.style = emptyToNull( builder.style );
+        com.enonic.xp.style.ImageStyleSettings.checkOverrides( style,
+            builder.quality != null || builder.filter != null || builder.background != null );
+        if ( style == null && ( "webp".equalsIgnoreCase( builder.format ) || "avif".equalsIgnoreCase( builder.format ) ) )
+        {
+            throw new IllegalArgumentException( "WebP and AVIF encoding requires a predefined image style" );
+        }
         this.scale = requireNonNull( builder.scale );
         this.background = builder.background;
         this.quality = builder.quality;
@@ -106,6 +114,11 @@ public final class ImageUrlGeneratorParams
         return format;
     }
 
+    public String getStyle()
+    {
+        return style;
+    }
+
     public String getScale()
     {
         return scale;
@@ -144,6 +157,14 @@ public final class ImageUrlGeneratorParams
         private String format;
 
         private String scale;
+
+        private String style;
+
+        public Builder setStyle( final String style )
+        {
+            this.style = style;
+            return this;
+        }
 
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 

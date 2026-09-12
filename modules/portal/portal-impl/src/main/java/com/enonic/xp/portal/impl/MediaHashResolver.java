@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 
@@ -11,7 +12,10 @@ import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
+import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 
 import static java.util.Objects.requireNonNullElse;
 
@@ -56,6 +60,39 @@ public final class MediaHashResolver
         }
 
         return resolveImageHash( media, resolveAttachmentHash( attachment ) );
+    }
+
+    public static String resolveStyledImageHash( final String imageHash, final ImageStyle style, final ScaleParams scale,
+                                                 final HmacService hmacService )
+    {
+        if ( imageHash == null || style == null )
+        {
+            return imageHash;
+        }
+        final MessageDigest digest = MessageDigests.sha512();
+        digest.update( HexFormat.of().parseHex( imageHash ) );
+        final ImageStyleSettings settings = ImageStyleSettings.from( style );
+        // Length-prefix fields to keep the fingerprint independent of delimiters in filters.
+        updateStyleField( digest, scale.toString() );
+        updateStyleField( digest, settings.aspectRatio() );
+        updateStyleField( digest, settings.filter() );
+        updateStyleField( digest, Integer.toString( settings.quality() ) );
+        updateStyleField( digest, Integer.toHexString( settings.background() ) );
+        // Domain separation prevents a redirect checksum from authorizing an image rendition.
+        return hmacService.generateChecksum( "image-fingerprint-v1\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
+    }
+
+    public static boolean matchesFingerprint( final String expected, final String supplied )
+    {
+        return expected != null && supplied != null && MessageDigest.isEqual(
+            expected.getBytes( StandardCharsets.UTF_8 ), supplied.getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    private static void updateStyleField( final MessageDigest digest, final String value )
+    {
+        final byte[] bytes = value == null ? new byte[0] : value.getBytes( StandardCharsets.UTF_8 );
+        MessageDigests.updateWithIntLE( digest, bytes.length );
+        digest.update( bytes );
     }
 
     public static String resolveAttachmentHash( final Attachment attachment )

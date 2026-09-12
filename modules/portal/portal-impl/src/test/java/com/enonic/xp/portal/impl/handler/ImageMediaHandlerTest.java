@@ -4,6 +4,9 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.MediaType;
@@ -21,6 +24,9 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.portal.impl.MediaHashResolver;
+import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.project.ProjectName;
@@ -32,6 +38,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -39,7 +46,10 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -47,6 +57,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class ImageMediaHandlerTest
@@ -65,7 +78,7 @@ class ImageMediaHandlerTest
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
 
-        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class ), this.imageService );
+        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class ), this.imageService, HmacTestHelper.createHmacService() );
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( portalConfig );
 
@@ -75,6 +88,195 @@ class ImageMediaHandlerTest
         this.request.setBranch( ContentConstants.BRANCH_MASTER );
         this.request.setBaseUri( "/site" );
         this.request.setContentPath( ContentPath.from( "/" ) );
+    }
+
+    private String styledFingerprint()
+    {
+        final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
+        return MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ),
+            ImageStyle.create().name( "card" ).build(), new ScaleParams( "width", new Object[]{640} ), HmacTestHelper.createHmacService() );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "svg+xml"})
+    void styledModernSourceUsesConfiguredDecoder( final String sourceFormat )
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "source" ).mimeType( "image/" + sourceFormat )
+            .label( "source" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        final Content content = createContent( "123456", "path/to/image", attachment );
+        when( contentService.getById( content.getId() ) ).thenReturn( content );
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( new byte[]{1} ) );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint() +
+            "/width-640~app:card/image.png" );
+        final WebResponse response = handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( MediaType.PNG, response.getContentType() );
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( "app:card", params.getValue().getStyle() );
+        assertFalse( params.getValue().isCacheOnly() );
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
+    void modernCacheMissWithInvalidFingerprintCannotRegenerate( final String format )
+        throws Exception
+    {
+        setupContent();
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+            assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+            throw new IllegalArgumentException( "Image is not cached" );
+        } );
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        final String valid = styledFingerprint();
+        final String source = MediaHashResolver.resolveImageHash( (Media) contentService.getById( ContentId.from( "123456" ) ) );
+        for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
+        {
+            request.setMethod( method );
+            for ( String path : new String[]{"123456/width-640~app:card", "123456:00000000000000000000000000000000/width-640~app:card",
+                "123456:" + source + "/width-640~app:card", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640~app:card", "123456:" + valid + "/width-320~app:card"} )
+            {
+                request.setRawPath( "/site/myproject/master/_/media:image/myproject/" + path + "/image-name.jpg." + format );
+                assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+            }
+            when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).quality( 70 ).build() );
+            request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + valid + "/width-640~app:card/image-name.jpg." + format );
+            assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+            when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        }
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "jpeg", "png"})
+    void wrongFingerprintServesCacheHitWithoutImmutableHeaders( final String format )
+        throws Exception
+    {
+        setupContent();
+        final ByteSource cached = ByteSource.wrap( new byte[]{1, 2, 3} );
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+            assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+            return cached;
+        } );
+        for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
+        {
+            request.setMethod( method );
+            request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:00000000000000000000000000000000/width-640~app:card/image-name.jpg." + format );
+            final WebResponse response = handler.handle( request );
+            assertEquals( HttpStatus.OK, response.getStatus() );
+            assertEquals( cached, response.getBody() );
+            assertNull( response.getHeaders().get( "Cache-Control" ) );
+            if ( "webp".equals( format ) || "avif".equals( format ) )
+            {
+                request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640~app:card/image-name.jpg." + format );
+                assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+            }
+        }
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF", "jpeg", "png"})
+    void styleAllowsRequestedOutputFormat( final String format )
+        throws Exception
+    {
+        setupContent();
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card/image-name.jpg." + format );
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).build() );
+        final WebResponse response = handler.handle( request );
+        assertEquals( MediaType.parse( "image/" + format.toLowerCase( java.util.Locale.ROOT ) ), response.getContentType() );
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( "app:card", params.getValue().getStyle() );
+        assertFalse( params.getValue().isCacheOnly() );
+        assertEquals( "image/" + format.toLowerCase( java.util.Locale.ROOT ), params.getValue().getMimeType() );
+    }
+
+    @Test
+    void styleFingerprintControlsCaching()
+        throws Exception
+    {
+        setupContent();
+        final ImageStyle style = ImageStyle.create().name( "card" ).build();
+        when( imageService.getStyle( "app:card" ) ).thenReturn( style );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card/image-name.jpg" );
+        assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
+        when( imageService.getStyle( "app:card" ) ).thenReturn(
+            ImageStyle.create().name( "card" ).quality( 70 ).build() );
+        assertNull( handler.handle( request ).getHeaders().get( "Cache-Control" ) );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"scale", "format", "quality", "filter", "background"})
+    void styleRejectsEvenEmptyOverridesBeforeReadingContent( final String parameter )
+    {
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full~app:card/image-name.jpg" );
+        request.getParams().put( parameter, "" );
+        final WebException error = assertThrows( WebException.class, () -> handler.handle( request ) );
+        assertEquals( HttpStatus.BAD_REQUEST, error.getStatus() );
+        verifyNoInteractions( contentService, imageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "~app:card"})
+    void styleRejectsQueryStyle( final String suffix )
+    {
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640" + suffix + "/image-name.jpg" );
+        request.getParams().put( "style", "app:other" );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( contentService, imageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"width-640~", "~app:card", "width-640~card", "width-640~:card", "width-640~app:card~app:other"})
+    void malformedStyleSegmentIsRejectedBeforeReadingContent( final String segment )
+    {
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/" + segment + "/image-name.jpg" );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( contentService, imageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"com.example.site:card-wide", "com.example.site:card~wide"})
+    void pathStylePreservesQualifiedAliasAndScale( final String alias )
+        throws Exception
+    {
+        setupContent();
+        when( imageService.getStyle( alias ) ).thenReturn( ImageStyle.create().name( "card-wide" ).build() );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640~" + alias + "/image-name.jpg" );
+        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( alias, params.getValue().getStyle() );
+        assertEquals( "width", params.getValue().getScaleParams().getName() );
+        assertArrayEquals( new Object[]{640}, params.getValue().getScaleParams().getArguments() );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"GET", "HEAD"})
+    void unknownStyleIsNotFound( final String method )
+    {
+        request.setMethod( HttpMethod.valueOf( method ) );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full~app:missing/image-name.jpg" );
+        when( imageService.getStyle( "app:missing" ) ).thenThrow( new com.enonic.xp.style.ImageStyleNotFoundException( "app:missing" ) );
+        assertEquals( HttpStatus.NOT_FOUND, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( contentService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
+    void modernOutputRequiresStyle( final String format )
+        throws Exception
+    {
+        setupContent();
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg." + format );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( imageService );
     }
 
     @Test

@@ -1,7 +1,19 @@
+plugins {
+    id 'java'
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.eclipse.jgit:org.eclipse.jgit:7.7.1.202607240634-r'
+    implementation localGroovy()
+    implementation 'org.apache.commons:commons-compress:1.28.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.2'
+}
+
+tasks.withType( Test ).configureEach {
+    useJUnitPlatform()
 }
