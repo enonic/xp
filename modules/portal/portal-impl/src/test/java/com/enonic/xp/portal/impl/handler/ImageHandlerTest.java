@@ -230,7 +230,8 @@ class ImageHandlerTest
     {
         setupImageContent( sourceFormat );
         when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
-        request.setRawPath( "/_/image/123456:" + styledFingerprint() + "/width-640~app:card/image.png" );
+        request.setRawPath( "/_/image/123456:" + styledFingerprint() +
+            "/width-640~app:card/image-name." + sourceFormat + ".png" );
         final WebResponse response = handler.handle( request );
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertEquals( MediaType.PNG, response.getContentType() );
