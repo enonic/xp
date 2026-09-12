@@ -271,22 +271,14 @@ class ImageServiceImplTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"webp", "avif", "svg"})
+    @ValueSource(strings = {"webp", "avif"})
     void nativeDecoderUsesExistingTransformsAndIndependentImageIoEncoder( final String sourceFormat )
         throws Exception
     {
         mockOriginalImage( "original.png" );
         final var bytes = new java.io.ByteArrayOutputStream();
-        if ( "svg".equals( sourceFormat ) )
-        {
-            bytes.write( ( "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'>" +
-                "<rect width='32' height='24' fill='red'/></svg>" ).getBytes( java.nio.charset.StandardCharsets.UTF_8 ) );
-        }
-        else
-        {
-            new ImageMagickEncoder( 30, temporaryFolder.resolve( "source-encoding" ) ).write(
-                ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), sourceFormat, 85, bytes );
-        }
+        new ImageMagickEncoder( 30, temporaryFolder.resolve( "source-encoding" ) ).write(
+            ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), sourceFormat, 85, bytes );
         imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
         when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
@@ -308,6 +300,46 @@ class ImageServiceImplTest
         imageService = newImageService();
         final byte[] webp = imageService.readImage( styledParams( "webp" ) ).read();
         assertEquals( "WEBP", new String( webp, 8, 4, java.nio.charset.StandardCharsets.US_ASCII ) );
+    }
+
+    @Test
+    void imageIoStillDecodesGifButNativeDecoderRejectsIt()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final var bytes = new java.io.ByteArrayOutputStream();
+        ImageIO.write( ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), "gif", bytes );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( bytes.toByteArray() ) );
+        processingStyle( 80 );
+        final byte[] result = imageService.readImage( styledParams( "png" ) ).read();
+        assertEquals( 10, ImageIO.read( new ByteArrayInputStream( result ) ).getWidth() );
+
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png" ) ) )
+            .getMessage().contains( "Unsupported source image format" ) );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void nativeDecoderRejectsSvgWithoutCaching()
+        throws Exception
+    {
+        final byte[] svg = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'/>"
+            .getBytes( java.nio.charset.StandardCharsets.UTF_8 );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( svg ) );
+        processingStyle( 80 );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png" ) ) )
+            .getMessage().contains( "Unsupported source image format" ) );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        try (var paths = Files.walk( temporaryFolder.resolve( "work/cache/img" ) ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
     }
 
     @Test
@@ -336,8 +368,9 @@ class ImageServiceImplTest
     void nativeDecodingRejectsOversizedOutputAndReleasesResources()
         throws Exception
     {
-        imageDataOriginal = "<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/>"
-            .getBytes( java.nio.charset.StandardCharsets.UTF_8 );
+        final var bytes = new java.io.ByteArrayOutputStream();
+        ImageIO.write( new BufferedImage( 1, 1, BufferedImage.TYPE_INT_RGB ), "png", bytes );
+        imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
         processingStyle( 80 );
         when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );

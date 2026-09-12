@@ -10,24 +10,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
 
 import com.google.common.io.ByteSource;
 
 /** Decodes the first frame to a bounded, 8-bit RGBA raster in an isolated process. */
 final class ImageMagickDecoder
 {
-    private static final Pattern LOCAL_URL = Pattern.compile( "(?i)url\\s*\\(\\s*['\"]?#[^)'\"]+['\"]?\\s*\\)" );
-
-    private static final Pattern URL = Pattern.compile( "url\\s*\\(" );
-
     private final String executable;
 
     private final Path temporaryFolder;
@@ -204,18 +195,16 @@ final class ImageMagickDecoder
         private String policy()
         {
             // Input/output paths are fixed by XP. Reject delegates, indirect reads and other coders.
-            // SVG references are checked before invoking the renderer.
             return "<policymap>" +
                 "<policy domain=\"delegate\" rights=\"none\" pattern=\"*\"/>" +
                 "<policy domain=\"filter\" rights=\"none\" pattern=\"*\"/>" +
                 "<policy domain=\"coder\" rights=\"none\" pattern=\"*\"/>" +
-                "<policy domain=\"coder\" rights=\"read\" pattern=\"{JPEG,PNG,GIF,WEBP,AVIF,HEIC,BMP,TIFF,SVG,MSVG,MVG}\"/>" +
+                "<policy domain=\"coder\" rights=\"read\" pattern=\"{JPEG,PNG,WEBP,AVIF,HEIC,BMP,TIFF}\"/>" +
                 "<policy domain=\"coder\" rights=\"read|write\" pattern=\"{PNG,PNG32}\"/>" +
                 "<policy domain=\"coder\" rights=\"write\" pattern=\"INFO\"/>" +
                 "<policy domain=\"path\" rights=\"none\" pattern=\"@*\"/>" +
                 "<policy domain=\"path\" rights=\"none\" pattern=\"-\"/>" +
                 "<policy domain=\"path\" rights=\"none\" pattern=\"[Ff][Dd]:*\"/>" +
-                "<policy domain=\"system\" name=\"svg\" rights=\"none\" pattern=\"substitute-entities\"/>" +
                 "<policy domain=\"system\" name=\"max-memory-request\" value=\"256MiB\"/>" +
                 "</policymap>";
         }
@@ -273,10 +262,6 @@ final class ImageMagickDecoder
             {
                 return "JPEG";
             }
-            if ( magic.startsWith( "GIF8" ) )
-            {
-                return "GIF";
-            }
             if ( magic.startsWith( "RIFF" ) && magic.substring( 8, 12 ).equals( "WEBP" ) )
             {
                 return "WEBP";
@@ -294,84 +279,7 @@ final class ImageMagickDecoder
                 return "TIFF";
             }
         }
-        validateSvg( input );
-        return "MSVG";
-    }
-
-    static void validateSvg( final Path input )
-        throws IOException
-    {
-        if ( Files.size( input ) > 1_048_576 )
-        {
-            throw new IllegalArgumentException( "SVG source exceeds 1 MiB" );
-        }
-        final XMLInputFactory factory = XMLInputFactory.newDefaultFactory();
-        factory.setProperty( XMLInputFactory.IS_COALESCING, true );
-        factory.setProperty( XMLInputFactory.SUPPORT_DTD, false );
-        factory.setProperty( XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false );
-        factory.setXMLResolver( ( publicId, systemId, baseUri, namespace ) -> {
-            throw new XMLStreamException( "External SVG entities are not supported" );
-        } );
-        try (var stream = Files.newInputStream( input ))
-        {
-            final var reader = factory.createXMLStreamReader( stream );
-            try
-            {
-                boolean root = true;
-                final StringBuilder text = new StringBuilder();
-                while ( reader.hasNext() )
-                {
-                    final int event = reader.next();
-                    if ( event == XMLStreamConstants.DTD || event == XMLStreamConstants.ENTITY_REFERENCE ||
-                        event == XMLStreamConstants.PROCESSING_INSTRUCTION )
-                    {
-                        throw new IllegalArgumentException( "SVG entities and processing instructions are not supported" );
-                    }
-                    if ( event == XMLStreamConstants.START_ELEMENT )
-                    {
-                        if ( root && !"svg".equals( reader.getLocalName() ) ||
-                            "script".equals( reader.getLocalName() ) || "foreignObject".equals( reader.getLocalName() ) )
-                        {
-                            throw new IllegalArgumentException( "Unsupported SVG content" );
-                        }
-                        root = false;
-                        for ( int i = 0; i < reader.getAttributeCount(); i++ )
-                        {
-                            final String value = reader.getAttributeValue( i );
-                            if ( "base".equals( reader.getAttributeLocalName( i ) ) ||
-                                "href".equals( reader.getAttributeLocalName( i ) ) && !value.startsWith( "#" ) )
-                            {
-                                throw new IllegalArgumentException( "External SVG references are not supported" );
-                            }
-                            validateSvgValue( value );
-                        }
-                    }
-                    if ( event == XMLStreamConstants.CHARACTERS || event == XMLStreamConstants.CDATA )
-                    {
-                        text.append( reader.getText() );
-                    }
-                }
-                validateSvgValue( text.toString() );
-            }
-            finally
-            {
-                reader.close();
-            }
-        }
-        catch ( XMLStreamException e )
-        {
-            throw new IllegalArgumentException( "Unsupported or invalid source image", e );
-        }
-    }
-
-    private static void validateSvgValue( final String value )
-    {
-        final String remaining = LOCAL_URL.matcher( value ).replaceAll( "" ).toLowerCase( Locale.ROOT );
-        if ( URL.matcher( remaining ).find() || remaining.contains( "@import" ) ||
-            remaining.contains( "/*" ) || remaining.contains( "\\" ) )
-        {
-            throw new IllegalArgumentException( "External SVG resources are not supported" );
-        }
+        throw new IllegalArgumentException( "Unsupported source image format for ImageMagic decoding" );
     }
 
     private static void delete( final Path directory )

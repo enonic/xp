@@ -30,19 +30,12 @@ class ImageMagickDecoderTest
     Path temporaryFolder;
 
     @ParameterizedTest
-    @ValueSource(strings = {"png", "jpeg", "gif", "webp", "avif", "svg"})
+    @ValueSource(strings = {"png", "jpeg", "webp", "avif"})
     void decodesFirstRasterWithEmbeddedDistribution( final String format )
         throws Exception
     {
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        if ( "svg".equals( format ) )
-        {
-            bytes.write( svg( "<rect x='4' y='4' width='8' height='8' fill='red'/>" ) );
-        }
-        else
-        {
-            new ImageMagickEncoder( 30, temporaryFolder ).write( image(), format, 85, bytes );
-        }
+        new ImageMagickEncoder( 30, temporaryFolder ).write( image(), format, 85, bytes );
         try (var source = decoder( 1000, 1_048_576 ).open( ByteSource.wrap( bytes.toByteArray() ) ))
         {
             assertEquals( 32, source.width() );
@@ -50,7 +43,7 @@ class ImageMagickDecoderTest
             final BufferedImage result = source.read();
             assertEquals( 32, result.getWidth() );
             assertEquals( 24, result.getHeight() );
-            if ( "png".equals( format ) || "svg".equals( format ) )
+            if ( "png".equals( format ) )
             {
                 assertEquals( 0, result.getRGB( 0, 0 ) >>> 24 );
                 assertEquals( 0xffff0000, result.getRGB( 6, 6 ) );
@@ -69,8 +62,9 @@ class ImageMagickDecoderTest
         assertEmpty( temporaryFolder );
     }
 
-    @Test
-    void animatedGifUsesFirstFrame()
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    void rejectsStaticAndAnimatedGifBeforeStartingProcess( final int frames )
         throws Exception
     {
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -80,24 +74,25 @@ class ImageMagickDecoderTest
             writer.setOutput( output );
             writer.prepareWriteSequence( null );
             writer.writeToSequence( new javax.imageio.IIOImage( image(), null, null ), null );
-            writer.writeToSequence( new javax.imageio.IIOImage( new BufferedImage( 8, 8, BufferedImage.TYPE_INT_RGB ), null, null ), null );
+            if ( frames > 1 )
+            {
+                writer.writeToSequence( new javax.imageio.IIOImage( new BufferedImage( 8, 8, BufferedImage.TYPE_INT_RGB ), null, null ), null );
+            }
             writer.endWriteSequence();
         }
         finally
         {
             writer.dispose();
         }
-        try (var source = decoder( 1000, 1_048_576 ).open( ByteSource.wrap( bytes.toByteArray() ) ))
-        {
-            assertEquals( 32, source.width() );
-            assertEquals( 24, source.height() );
-            assertEquals( 0xffff0000, source.read().getRGB( 6, 6 ) );
-        }
+        final var decoder = new ImageMagickDecoder( "/missing", temporaryFolder, 1, 1000, 1_048_576 );
+        assertThrows( IllegalArgumentException.class, () -> decoder.open( ByteSource.wrap( bytes.toByteArray() ) ) );
         assertEmpty( temporaryFolder );
     }
 
     @ParameterizedTest
     @ValueSource(strings = {
+        "<rect x='4' y='4' width='8' height='8' fill='red'/>",
+        "<defs><linearGradient id='g'><stop stop-color='red'/></linearGradient></defs><rect fill='url(#g)'/>",
         "<image href='file:///etc/passwd'/>",
         "<image href='https://example.invalid/image.png'/>",
         "<image href='data:image/png;base64,AAAA'/>",
@@ -108,7 +103,7 @@ class ImageMagickDecoderTest
         "<style>rect { fill: u/**/rl(file:///etc/passwd); }</style>",
         "<script>alert(1)</script>",
         "<foreignObject/>"})
-    void rejectsExternalOrActiveSvgContentBeforeStartingProcess( final String content )
+    void rejectsSvgBeforeStartingProcess( final String content )
         throws Exception
     {
         final var decoder = new ImageMagickDecoder( "/missing", temporaryFolder, 1, 1000, 1_048_576 );
@@ -127,19 +122,6 @@ class ImageMagickDecoderTest
         final var decoder = new ImageMagickDecoder( "/missing", temporaryFolder, 1, 1000, 1_048_576 );
         assertThrows( IllegalArgumentException.class,
             () -> decoder.open( ByteSource.wrap( content.getBytes( StandardCharsets.UTF_8 ) ) ) );
-        assertEmpty( temporaryFolder );
-    }
-
-    @Test
-    void svgCanUseLocalGradientReferences()
-        throws Exception
-    {
-        final byte[] input = svg( "<defs><linearGradient id='g'><stop stop-color='red'/></linearGradient></defs>" +
-            "<rect width='32' height='24' fill='url(#g)'/>" );
-        try (var source = decoder( 1000, 1_048_576 ).open( ByteSource.wrap( input ) ))
-        {
-            assertEquals( 32, source.read().getWidth() );
-        }
         assertEmpty( temporaryFolder );
     }
 

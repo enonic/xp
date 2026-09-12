@@ -92,11 +92,12 @@ With `ImageIO`, new WebP/AVIF conversions are rejected; existing cached ones are
 served. JPEG/PNG/GIF cache entries are separate for each encoding backend.
 
 `decoding.backend` independently accepts `ImageIO` (default) or `ImageMagic`.
-The native decoder supports JPEG, PNG, GIF, BMP, TIFF, WebP, AVIF, and SVG inputs.
-It reads or rasterizes the first frame into an 8-bit RGBA image; XP then applies
+The native decoder supports JPEG, PNG, BMP, TIFF, WebP, and AVIF inputs.
+GIF and SVG inputs are rejected before starting a native process. Existing ImageIO
+GIF decoding is preserved. The native decoder reads the first frame into an 8-bit RGBA image; XP then applies
 the transformation backend selected below. The decoding setting does not select
 a transformation implementation. For example, native
-WebP/AVIF/SVG decoding can be combined with ImageIO JPEG/PNG output. Native
+WebP/AVIF decoding can be combined with ImageIO JPEG/PNG output. Native
 output encoding can also be combined with ImageIO input decoding. Switching the
 decoder uses separate disk cache entries; existing ImageIO cache keys are unchanged.
 
@@ -131,13 +132,9 @@ behavior; EXIF vertical mirroring uses a vertical flip. Use `ImageIO` where exac
 legacy rendering is required.
 
 Native source reads are bounded by `decoding.maxBytes` (64 MiB by default).
-SVG is additionally limited to 1 MiB and uses the internal ImageMagick renderer.
-External references, entities, processing instructions, scripts, foreign objects,
-CSS imports/comments/escapes, and XML base URIs are rejected. Local fragment and
-gradient references remain supported. Native policy disables external delegates,
-loadable filters, indirect file reads, and unrelated coders. SVG output is not
-supported: specify a raster output format in the styled URL. Compressed SVGZ
-input is not decoded.
+Native policy disables GIF, SVG and vector rendering coders, external delegates,
+loadable filters, indirect file reads, and unrelated coders. SVG output and
+compressed SVGZ input are not supported.
 
 The build downloads checksum-pinned portable distributions and embeds
 both the executable and its codec libraries in the image bundle. On first use,
@@ -174,7 +171,8 @@ upstream distribution and a native encoding test on that platform.
 
 No process is started for cache hits or when all three backends use `ImageIO`.
 Unstyled original WebP/AVIF/SVG files retain their pass-through behavior.
-Styled processing uses the configured decoder, and GIF styles process the first frame.
+Styled processing uses the configured decoder. GIF styles require ImageIO decoding
+and process the first frame.
 
 Native decoding, transformations, and encoding share the `encoding.*` concurrency, queue, timeout,
 and pixel limits. The timeout bounds each native stage. A request holds one capacity slot across decoding, transformations,
@@ -201,5 +199,7 @@ request processing is rejected before encoding.
 
 Tests cover HMAC fingerprints, redirect compatibility, cache-only hits/misses,
 style enforcement, cache coalescing, encoder/decoder failure and timeout cleanup,
-independent backend selection, decoder cache separation, SVG restrictions, native geometry/orientation/filter operations, mixed backend combinations, actual
-PNG/JPEG/GIF/WebP/AVIF/SVG decoding, and WebP/AVIF output using the embedded distribution.
+independent backend selection, decoder cache separation, native GIF/SVG rejection,
+preserved ImageIO GIF decoding, native geometry/orientation/filter operations, mixed
+backend combinations, actual PNG/JPEG/WebP/AVIF decoding, and WebP/AVIF output
+using the embedded distribution.
