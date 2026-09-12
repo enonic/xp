@@ -83,6 +83,10 @@ public class ImageServiceImpl
 
     private final boolean useImageMagick;
 
+    private final boolean useImageMagickDecoder;
+
+    private final ImageMagickDecoder nativeDecoder;
+
     private final Semaphore encodingRequests;
 
     private final Semaphore encodingSlots;
@@ -113,6 +117,14 @@ public class ImageServiceImpl
             case "ImageMagic" -> true;
             default -> throw new IllegalArgumentException( "encoding.backend must be ImageIO or ImageMagic" );
         };
+        this.useImageMagickDecoder = switch ( config.decoding_backend() )
+        {
+            case "ImageIO" -> false;
+            case "ImageMagic" -> true;
+            default -> throw new IllegalArgumentException( "decoding.backend must be ImageIO or ImageMagic" );
+        };
+        this.nativeDecoder = new ImageMagickDecoder( "embedded", cacheFolder.resolve( "decoding" ),
+            config.encoding_timeoutSeconds(), config.encoding_maxPixels(), config.decoding_maxBytes() );
         this.encodingSlots = new Semaphore( config.encoding_maxConcurrent(), true );
         this.encodingRequests = new Semaphore( Math.addExact( config.encoding_maxConcurrent(), config.encoding_maxQueue() ) );
         this.queueTimeoutSeconds = config.encoding_queueTimeoutSeconds();
@@ -175,11 +187,14 @@ public class ImageServiceImpl
         {
             throw new IllegalArgumentException( "Image is not cached; regeneration requires a matching image fingerprint" );
         }
-        if ( !useImageMagick && !isModernFormat( normalizedImageParams.getFormat() ) )
+        if ( !useImageMagick && !useImageMagickDecoder && !isModernFormat( normalizedImageParams.getFormat() ) )
         {
             return immutableFilesHelper.computeIfAbsent( path, sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
         }
-        nativeEncoder.checkEnabled();
+        if ( isModernFormat( normalizedImageParams.getFormat() ) )
+        {
+            nativeEncoder.checkEnabled();
+        }
         if ( !encodingRequests.tryAcquire() )
         {
             throw new ThrottlingException( "Image encoding queue is full" );
@@ -291,6 +306,10 @@ public class ImageServiceImpl
             MessageDigests.updateWithString( digest, "ImageMagic" );
             MessageDigests.updateWithString( digest, Boolean.toString( progressiveOnFormats.contains( readImageParams.getFormat() ) ) );
         }
+        if ( useImageMagickDecoder )
+        {
+            MessageDigests.updateWithString( digest, "decoding:ImageMagic" );
+        }
         final String hash = MessageDigests.formatHex( digest );
         return cacheFolder.resolve( "sha256" )
             .resolve( hash.substring( 0, 2 ) )
@@ -301,21 +320,23 @@ public class ImageServiceImpl
     private void createImage( final ByteSource blob, final NormalizedImageParams readImageParams, ByteSink sink )
         throws IOException
     {
-        try (InputStream inputStream = blob.openStream(); ImageInputStream stream = ImageIO.createImageInputStream( inputStream ))
+        try (ImageMagickDecoder.Source nativeSource = useImageMagickDecoder ? nativeDecoder.open( blob ) : null;
+             InputStream inputStream = nativeSource == null ? blob.openStream() : null;
+             ImageInputStream stream = inputStream == null ? null : ImageIO.createImageInputStream( inputStream ))
         {
-            final ImageReader imageReader = getImageReader( stream );
+            final ImageReader imageReader = nativeSource == null ? getImageReader( stream ) : null;
 
             try
             {
-                final int width = imageReader.getWidth( 0 );
-                final int height = imageReader.getHeight( 0 );
-                final boolean nativeEncoding = useImageMagick;
-                if ( nativeEncoding && (long) width * height > maxEncodingPixels )
+                final int width = nativeSource == null ? imageReader.getWidth( 0 ) : nativeSource.width();
+                final int height = nativeSource == null ? imageReader.getHeight( 0 ) : nativeSource.height();
+                final boolean nativeProcessing = useImageMagick || useImageMagickDecoder;
+                if ( nativeProcessing && (long) width * height > maxEncodingPixels )
                 {
                     throw new IllegalArgumentException( "Source image exceeds encoding.maxPixels" );
                 }
 
-                final ImageTypeSpecifier rawImageType = imageReader.getRawImageType( 0 );
+                final ImageTypeSpecifier rawImageType = nativeSource == null ? imageReader.getRawImageType( 0 ) : null;
                 final int pixelSize;
                 final boolean mayHaveAlpha;
                 if ( rawImageType != null )
@@ -352,7 +373,7 @@ public class ImageServiceImpl
                     final FocalPoint focalPoint =
                         toCropRelativeFocalPoint( readImageParams.getFocalPoint(), readImageParams.getCropping() );
                     imageScaleFunction = imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), focalPoint );
-                    if ( nativeEncoding && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
+                    if ( nativeProcessing && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
                     {
                         throw new IllegalArgumentException( "Output image exceeds encoding.maxPixels" );
                     }
@@ -379,7 +400,7 @@ public class ImageServiceImpl
                            totalMemoryRequirementsEstimate, pixelSize );
 
                 final int permitted;
-                if ( nativeEncoding )
+                if ( nativeProcessing )
                 {
                     circuitBreaker.tryAcquire( totalMemoryRequirementsEstimate );
                     permitted = totalMemoryRequirementsEstimate;
@@ -390,8 +411,12 @@ public class ImageServiceImpl
                 }
                 try
                 {
-                    BufferedImage bufferedImage = imageReader.read( 0, imageReader.getDefaultReadParam() );
-                    imageReader.dispose();
+                    BufferedImage bufferedImage = nativeSource == null ? imageReader.read( 0, imageReader.getDefaultReadParam() ) :
+                        nativeSource.read();
+                    if ( imageReader != null )
+                    {
+                        imageReader.dispose();
+                    }
                     requireNonNull( bufferedImage, "BufferedImage is null" );
                     if ( toRotate )
                     {
@@ -418,7 +443,7 @@ public class ImageServiceImpl
                         bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
                     }
 
-                    if ( nativeEncoding && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxEncodingPixels )
+                    if ( nativeProcessing && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxEncodingPixels )
                     {
                         throw new IllegalArgumentException( "Transformed image exceeds encoding.maxPixels" );
                     }
@@ -435,7 +460,7 @@ public class ImageServiceImpl
 
                     try (OutputStream outputStream = sink.openBufferedStream())
                     {
-                        if ( nativeEncoding )
+                        if ( useImageMagick )
                         {
                             nativeEncoder.write( bufferedImage, readImageParams.getFormat(),
                                 isModernFormat( readImageParams.getFormat() ) ? readImageParams.getQuality() : writeImageQuality,
@@ -455,7 +480,10 @@ public class ImageServiceImpl
             }
             finally
             {
-                imageReader.dispose();
+                if ( imageReader != null )
+                {
+                    imageReader.dispose();
+                }
             }
         }
     }

@@ -92,14 +92,7 @@ final class ImageMagickEncoder
                 arguments.addAll( List.of( "-quality", Integer.toString( quality ) ) );
             }
             arguments.add( format + ":" + result.toAbsolutePath() );
-            final ProcessBuilder builder = new ProcessBuilder( arguments );
-            if ( "embedded".equals( executable ) && System.getProperty( "os.name" ).startsWith( "Mac" ) )
-            {
-                final Path root = Path.of( command ).getParent().getParent();
-                builder.environment().put( "MAGICK_HOME", root.toString() );
-                builder.environment().put( "MAGICK_CONFIGURE_PATH", root.resolve( "etc/ImageMagick-7" ).toString() );
-                builder.environment().put( "LIBHEIF_PLUGIN_PATH", root.resolve( "lib/libheif" ).toString() );
-            }
+            final ProcessBuilder builder = processBuilder( arguments, "embedded".equals( executable ) );
             process = builder.redirectOutput( ProcessBuilder.Redirect.DISCARD )
                 .redirectError( ProcessBuilder.Redirect.DISCARD )
                 .start();
@@ -127,6 +120,19 @@ final class ImageMagickEncoder
             Files.deleteIfExists( result );
             Files.deleteIfExists( directory );
         }
+    }
+
+    static ProcessBuilder processBuilder( final List<String> arguments, final boolean embedded )
+    {
+        final ProcessBuilder builder = new ProcessBuilder( arguments );
+        if ( embedded && System.getProperty( "os.name" ).startsWith( "Mac" ) )
+        {
+            final Path root = Path.of( arguments.get( 0 ) ).getParent().getParent();
+            builder.environment().put( "MAGICK_HOME", root.toString() );
+            builder.environment().put( "MAGICK_CONFIGURE_PATH", root.resolve( "etc/ImageMagick-7" ).toString() );
+            builder.environment().put( "LIBHEIF_PLUGIN_PATH", root.resolve( "lib/libheif" ).toString() );
+        }
+        return builder;
     }
 
     static void stop( final Process process )

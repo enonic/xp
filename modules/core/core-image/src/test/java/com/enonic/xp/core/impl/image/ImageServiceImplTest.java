@@ -178,6 +178,94 @@ class ImageServiceImplTest
         assertThrows( IllegalArgumentException.class, this::newImageService );
     }
 
+    @Test
+    void rejectsUnknownDecodingBackend()
+    {
+        when( imageConfig.decoding_backend() ).thenReturn( "typo" );
+        assertThrows( IllegalArgumentException.class, this::newImageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "svg"})
+    void nativeDecoderUsesExistingTransformsAndIndependentImageIoEncoder( final String sourceFormat )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final var bytes = new java.io.ByteArrayOutputStream();
+        if ( "svg".equals( sourceFormat ) )
+        {
+            bytes.write( ( "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'>" +
+                "<rect width='32' height='24' fill='red'/></svg>" ).getBytes( java.nio.charset.StandardCharsets.UTF_8 ) );
+        }
+        else
+        {
+            new ImageMagickEncoder( 30, temporaryFolder.resolve( "source-encoding" ) ).write(
+                ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), sourceFormat, 85, bytes );
+        }
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        processingStyle( 80 );
+        for ( String output : new String[]{"png", "jpeg"} )
+        {
+            final byte[] encoded = imageService.readImage( styledParams( output ) ).read();
+            final BufferedImage result = ImageIO.read( new ByteArrayInputStream( encoded ) );
+            assertEquals( 10, result.getWidth() );
+            assertEquals( 10, result.getHeight() );
+            assertArrayEquals( encoded, imageService.readImage( styledParams( output, true ) ).read() );
+        }
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+        // Selecting native decoding alone does not enable the modern output encoder.
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        final byte[] webp = imageService.readImage( styledParams( "webp" ) ).read();
+        assertEquals( "WEBP", new String( webp, 8, 4, java.nio.charset.StandardCharsets.US_ASCII ) );
+    }
+
+    @Test
+    void decoderCacheEntriesAreSeparateAndCacheOnlyNeverReadsSource()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final byte[] imageIo = imageService.readImage( styledParams( "png" ) ).read();
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        final byte[] nativeResult = imageService.readImage( styledParams( "png" ) ).read();
+        assertArrayEquals( nativeResult, imageService.readImage( styledParams( "png", true ) ).read() );
+        processingStyle( 70 );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        processingStyle( 80 );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageIO" );
+        imageService = newImageService();
+        assertArrayEquals( imageIo, imageService.readImage( styledParams( "png", true ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void nativeDecodingRejectsOversizedOutputAndReleasesResources()
+        throws Exception
+    {
+        imageDataOriginal = "<svg xmlns='http://www.w3.org/2000/svg' width='1' height='1'/>"
+            .getBytes( java.nio.charset.StandardCharsets.UTF_8 );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        processingStyle( 80 );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.encoding_maxPixels() ).thenReturn( 50L );
+        imageService = newImageService();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png" ) ) )
+            .getMessage().contains( "Output image" ) );
+        try (var paths = Files.walk( temporaryFolder.resolve( "work/cache/img" ) ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"webp", "avif"})
     void imageIoBackendRejectsModernCacheMissBeforeReadingSource( final String format )
@@ -298,13 +386,22 @@ class ImageServiceImplTest
         assertTrue( error.getMessage().contains( "Source image" ) );
     }
 
-    @Test
-    void boundedQueueRejectsExcessRequestsAndReleasesSlotsAfterFailure()
+    @ParameterizedTest
+    @ValueSource(strings = {"encoding", "decoding"})
+    void boundedQueueRejectsExcessRequestsAndReleasesSlotsAfterFailure( final String backend )
         throws Exception
     {
         mockOriginalImage( "original.png" );
         processingStyle( 10 );
-        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        if ( "encoding".equals( backend ) )
+        {
+            when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        }
+        else
+        {
+            when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        }
+        final String output = "encoding".equals( backend ) ? "webp" : "png";
         when( imageConfig.encoding_maxConcurrent() ).thenReturn( 1 );
         when( imageConfig.encoding_maxQueue() ).thenReturn( 0 );
         imageService = newImageService();
@@ -318,11 +415,11 @@ class ImageServiceImplTest
         try (var executor = Executors.newSingleThreadExecutor())
         {
             final var first = executor.submit( () -> assertThrows( IOException.class,
-                () -> imageService.readImage( styledParams( "webp" ) ) ) );
+                () -> imageService.readImage( styledParams( output ) ) ) );
             try
             {
                 assertTrue( started.await( 5, TimeUnit.SECONDS ) );
-                assertThrows( ThrottlingException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+                assertThrows( ThrottlingException.class, () -> imageService.readImage( styledParams( output ) ) );
             }
             finally
             {
@@ -331,7 +428,7 @@ class ImageServiceImplTest
             first.get( 10, TimeUnit.SECONDS );
         }
         // A failed conversion neither leaves a cache entry nor consumes the next request's slot.
-        assertThrows( IOException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+        assertThrows( IOException.class, () -> imageService.readImage( styledParams( output ) ) );
         verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
     }
 

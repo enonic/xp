@@ -120,13 +120,7 @@ public final class ImageHandlerWorker
     {
         if ( style != null )
         {
-            // These formats have no decoder in the current ImageIO backend. Preserve the existing
-            // pass-through behaviour for unstyled requests, but never silently ignore a style.
-            if ( attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( MediaType.AVIF ) ||
-                attachmentMimeType.is( MediaType.SVG_UTF_8.withoutParameters() ) )
-            {
-                throw WebException.badRequest( "Source format does not support image styles" );
-            }
+            // The image service selects and validates the source decoder after the cache lookup.
             return false;
         }
         return super.shouldBypassTransformation( attachmentMimeType );

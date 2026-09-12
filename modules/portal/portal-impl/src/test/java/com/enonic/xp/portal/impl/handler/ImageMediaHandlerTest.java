@@ -98,6 +98,29 @@ class ImageMediaHandlerTest
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif", "svg+xml"})
+    void styledModernSourceUsesConfiguredDecoder( final String sourceFormat )
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "source" ).mimeType( "image/" + sourceFormat )
+            .label( "source" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        final Content content = createContent( "123456", "path/to/image", attachment );
+        when( contentService.getById( content.getId() ) ).thenReturn( content );
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( new byte[]{1} ) );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint() +
+            "/width-640~app:card/image.png" );
+        final WebResponse response = handler.handle( request );
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( MediaType.PNG, response.getContentType() );
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( "app:card", params.getValue().getStyle() );
+        assertFalse( params.getValue().isCacheOnly() );
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
     void modernCacheMissWithInvalidFingerprintCannotRegenerate( final String format )
         throws Exception

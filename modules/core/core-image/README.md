@@ -74,6 +74,8 @@ stored cropping, focal point, and orientation still apply.
 Configure `com.enonic.xp.image.cfg`:
 
 ```properties
+decoding.backend = ImageMagic
+decoding.maxBytes = 67108864
 encoding.backend = ImageMagic
 encoding.maxConcurrent = 2
 encoding.maxQueue = 8
@@ -84,9 +86,27 @@ encoding.maxPixels = 40000000
 
 `encoding.backend` accepts exactly `ImageIO` (default) or `ImageMagic`. Invalid
 values fail configuration. `ImageMagic` selects the bundled output encoder for
-JPEG, PNG, GIF, WebP, and AVIF. ImageIO still decodes and transforms source images.
+JPEG, PNG, GIF, WebP, and AVIF.
 With `ImageIO`, new WebP/AVIF conversions are rejected; existing cached ones are
-served. JPEG/PNG/GIF cache entries are separate for each backend.
+served. JPEG/PNG/GIF cache entries are separate for each encoding backend.
+
+`decoding.backend` independently accepts `ImageIO` (default) or `ImageMagic`.
+The native decoder supports JPEG, PNG, GIF, BMP, TIFF, WebP, AVIF, and SVG inputs.
+It reads or rasterizes the first frame into an 8-bit RGBA image; XP then applies
+its existing orientation, crop, scale, filters, and background handling. It does
+not select a different transformation implementation. For example, native
+WebP/AVIF/SVG decoding can be combined with ImageIO JPEG/PNG output. Native
+output encoding can also be combined with ImageIO input decoding. Switching the
+decoder uses separate disk cache entries; existing ImageIO cache keys are unchanged.
+
+Native source reads are bounded by `decoding.maxBytes` (64 MiB by default).
+SVG is additionally limited to 1 MiB and uses the internal ImageMagick renderer.
+External references, entities, processing instructions, scripts, foreign objects,
+CSS imports/comments/escapes, and XML base URIs are rejected. Local fragment and
+gradient references remain supported. Native policy disables external delegates,
+loadable filters, indirect file reads, and unrelated coders. SVG output is not
+supported: specify a raster output format in the styled URL. Compressed SVGZ
+input is not decoded.
 
 The build downloads checksum-pinned portable distributions and embeds
 both the executable and its codec libraries in the image bundle. On first use,
@@ -101,7 +121,7 @@ Bundled platforms cover Linux x86-64/ARM64, Windows x86-64/ARM64, and macOS ARM6
 Linux ARM64 uses pkgforge's ImageMagick 7.1.2-30 AppImage, with its self-update
 hook removed before use. Linux x86-64 and Windows use upstream 7.1.2-31.
 macOS ARM64 uses conda-forge 7.1.2-31 with its codec libraries. Other platforms
-report an unavailable encoder when `ImageMagic` is selected; `ImageIO` remains available. The complete upstream
+report an unavailable native backend when `ImageMagic` is selected; `ImageIO` remains available. The complete upstream
 archives retain their licenses and dependencies. Version and SHA-256 pins live
 in `native/distributions.json` and `native/macos-aarch64.json`.
 The macOS packager retains the executable, required library closure, HEIF plugins,
@@ -113,12 +133,15 @@ a build-time extractor (Homebrew's `7zz` is the macOS default).
 Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
-No process is started for cache hits or when encoding with `ImageIO`.
-Original WebP/AVIF/SVG files retain their pass-through behavior. Styled processing currently accepts formats decoded by
-the existing ImageIO backend; WebP/AVIF/SVG inputs are rejected, and GIF styles
-process the first frame.
+No process is started for cache hits or when both backends use `ImageIO`.
+Unstyled original WebP/AVIF/SVG files retain their pass-through behavior.
+Styled processing uses the configured decoder, and GIF styles process the first frame.
 
-`ImageMagic` cache misses have bounded concurrency and a bounded waiting queue.
+Native decoding and encoding share the `encoding.*` concurrency, queue, timeout,
+and pixel limits. A request holds one capacity slot across decoding, XP transforms,
+and encoding. The native decoder probes dimensions before Java raster allocation;
+probe and decode share one timeout budget. `ImageMagic` cache misses have bounded
+concurrency and a bounded waiting queue.
 Capacity exhaustion and queue timeout return HTTP 429. Source and output pixel
 counts are checked, and the existing heap memory estimate is a hard admission
 limit for native conversions. The external encoder receives only a generated
@@ -138,5 +161,6 @@ existing cache entries to be served. Cache misses cannot regenerate the image. A
 request processing is rejected before encoding.
 
 Tests cover HMAC fingerprints, redirect compatibility, cache-only hits/misses,
-style enforcement, cache coalescing, encoder failure
-and timeout cleanup, and actual WebP/AVIF output using the embedded distribution.
+style enforcement, cache coalescing, encoder/decoder failure and timeout cleanup,
+independent backend selection, decoder cache separation, SVG restrictions, actual
+PNG/JPEG/GIF/WebP/AVIF/SVG decoding, and WebP/AVIF output using the embedded distribution.
