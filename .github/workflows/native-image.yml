@@ -3,6 +3,7 @@ name: Embedded ImageMagick
 on:
   push:
     paths:
+      - 'buildSrc/**'
       - 'modules/core/core-image/**'
       - 'modules/core/core-api/src/main/java/com/enonic/xp/style/**'
       - 'modules/portal/**'
@@ -31,6 +32,8 @@ jobs:
         run: brew install sevenzip
       - name: Test bundled codecs and extraction
         run: ./gradlew :core:core-image:test --tests '*ImageMagickEncoderTest' --tests '*ImageMagickDecoderTest' --tests '*ImageMagickTransformerTest' --tests '*EmbeddedImageMagickTest'
+      - name: Test native packaging checks
+        run: ./gradlew -p buildSrc test
       - name: Test style enforcement, fingerprints, and resource limits
         if: runner.os != 'Windows'
         run: ./gradlew :core:core-image:test :portal:portal-impl:test --tests '*PortalUrlGeneratorServiceImplTest' --tests '*ImageMediaHandlerTest' --tests '*ImageHandlerTest' --tests '*HmacServiceTest' --tests '*RedirectChecksumServiceTest' --tests '*MediaHashResolverTest' :core:core-content:test --tests '*YmlStyleDescriptorParserTest' :lib:lib-portal:test --tests '*UrlServiceScriptTest'

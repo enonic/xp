@@ -29,21 +29,11 @@ def packageImageMagick = tasks.register( 'packageImageMagick' ) {
                 System.getProperty( 'os.name' ).startsWith( 'Mac' ) ? '7zz' : '7z' )
         manifest.platforms.each { platform, distribution ->
             if ( distribution.packages ) {
-                def python = providers.gradleProperty( 'imageMagickPython' ).getOrElse(
-                    System.getProperty( 'os.name' ).startsWith( 'Windows' ) ? 'python' : 'python3' )
-                def logFile = layout.buildDirectory.file( 'imagemagick-packaging.log' ).get().asFile
-                def process = new ProcessBuilder( python, file( 'native/package-macos.py' ).path,
-                    file( 'native/' + distribution.packages ).path, new File( directory, platform + '.zip' ).path,
-                    sevenZip, layout.buildDirectory.dir( 'imagemagick-downloads' ).get().asFile.path )
-                    .redirectErrorStream( true ).redirectOutput( logFile ).start()
-                if ( !process.waitFor( 600, java.util.concurrent.TimeUnit.SECONDS ) ) {
-                    process.destroyForcibly().waitFor()
-                    throw new GradleException( "ImageMagick packaging timed out: ${platform}" )
-                }
-                if ( process.exitValue() != 0 ) {
-                    throw new GradleException( "ImageMagick packaging failed: ${platform}\n" + logFile.getText( 'UTF-8' ) )
-                }
-                new File( directory, platform + '.properties' ).setText( 'executable=' + distribution.executable + '\n', 'UTF-8' )
+                com.enonic.gradle.MacImageMagickPackager.packageBundle(
+                    file( "native/" + distribution.packages ).toPath(),
+                    new File( directory, platform + ".zip" ).toPath(), sevenZip,
+                    layout.buildDirectory.dir( "imagemagick-downloads" ).get().asFile.toPath() )
+                new File( directory, platform + ".properties" ).setText( 'executable=' + distribution.executable + '\n', 'UTF-8' )
                 return
             }
             def suffix = distribution.file.endsWith( '.AppImage' ) ? '.AppImage' : '.zip'

@@ -156,11 +156,19 @@ report an unavailable native backend when `ImageMagic` is selected; `ImageIO` re
 archives retain their licenses and dependencies. Version and SHA-256 pins live
 in `native/distributions.json` and `native/macos-aarch64.json`.
 The macOS packager retains the executable, required library closure, HEIF plugins,
-and licenses without installing Conda. Building XP requires Python 3 and 7-Zip to repack upstream
-Windows archives as ZIP; production servers do not need it. Install `p7zip-full`
+and licenses without installing Conda. Gradle calls the Java packager in `buildSrc`;
+Python is not required. Commons Compress reads TAR/BZip2 packages, while Java handles
+checksum verification, archive links, Mach-O dependency traversal, and reproducible
+ZIP output. Native bytes and signatures are preserved. Packaging tests check library
+selection, licenses, invalid paths/dependencies/checksums, cleanup, and reproducibility
+across timezones.
+
+Building XP requires 7-Zip to repack upstream Windows archives as ZIP; production
+servers do not need it. The pinned Windows archives use multi-stream BCJ2 compression,
+which Commons Compress and FreeFair's Commons Compress-based 7-Zip plugin cannot read.
+Install `p7zip-full`
 and `zstd` on Linux or 7-Zip 24.01+ on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
 a build-time extractor (Homebrew's `7zz` is the macOS default).
-`-PimageMagickPython=/path/to/python3` selects the build-time Python executable.
 Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
