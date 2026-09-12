@@ -10,6 +10,7 @@ import io
 import json
 from pathlib import Path
 import posixpath
+import shutil
 import struct
 import subprocess
 import sys
@@ -40,7 +41,8 @@ def tar_streams(path, seven_zip):
                     with tempfile.TemporaryDirectory() as directory:
                         compressed = Path(directory) / 'package.tar.zst'
                         compressed.write_bytes(archive.read(name))
-                        result = subprocess.run([seven_zip, 'x', '-so', str(compressed)],
+                        command = ['zstd', '-d', '-c', str(compressed)] if shutil.which('zstd') else [seven_zip, 'x', '-so', str(compressed)]
+                        result = subprocess.run(command,
                                                 check=True, capture_output=True, timeout=120)
                         yield result.stdout, 'r:'
 

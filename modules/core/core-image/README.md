@@ -105,7 +105,7 @@ in `native/distributions.json` and `native/macos-aarch64.json`.
 The macOS packager retains the executable, required library closure, HEIF plugins,
 and licenses without installing Conda. Building XP requires Python 3 and 7-Zip to repack upstream
 Windows archives as ZIP; production servers do not need it. Install `p7zip-full`
-on Linux or 7-Zip on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
+and `zstd` on Linux or 7-Zip 24.01+ on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
 a build-time extractor (Homebrew's `7zz` is the macOS default).
 `-PimageMagickPython=/path/to/python3` selects the build-time Python executable.
 Adding another platform requires a portable
