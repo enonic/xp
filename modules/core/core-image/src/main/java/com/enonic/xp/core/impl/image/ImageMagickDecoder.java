@@ -103,7 +103,7 @@ final class ImageMagickDecoder
             this.height = Integer.parseInt( size[1] );
             if ( width < 1 || height < 1 || (long) width * height > maxPixels )
             {
-                throw new IllegalArgumentException( "Source image exceeds encoding.maxPixels" );
+                throw new IllegalArgumentException( "Source image exceeds processing.maxPixels" );
             }
         }
 

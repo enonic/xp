@@ -375,7 +375,7 @@ class ImageServiceImplTest
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
         processingStyle( 80 );
         when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
-        when( imageConfig.encoding_maxPixels() ).thenReturn( 50L );
+        when( imageConfig.processing_maxPixels() ).thenReturn( 50L );
         imageService = newImageService();
         assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png" ) ) )
             .getMessage().contains( "Output image" ) );
@@ -498,7 +498,7 @@ class ImageServiceImplTest
         mockOriginalImage( "original.png" );
         processingStyle( 10 );
         when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
-        when( imageConfig.encoding_maxPixels() ).thenReturn( 1L );
+        when( imageConfig.processing_maxPixels() ).thenReturn( 1L );
         imageService = newImageService();
         final IllegalArgumentException error = assertThrows( IllegalArgumentException.class,
             () -> imageService.readImage( styledParams( "webp" ) ) );
@@ -525,8 +525,8 @@ class ImageServiceImplTest
             when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
         }
         final String output = "encoding".equals( backend ) ? "webp" : "png";
-        when( imageConfig.encoding_maxConcurrent() ).thenReturn( 1 );
-        when( imageConfig.encoding_maxQueue() ).thenReturn( 0 );
+        when( imageConfig.processing_maxConcurrent() ).thenReturn( 1 );
+        when( imageConfig.processing_maxQueue() ).thenReturn( 0 );
         imageService = newImageService();
         final var started = new CountDownLatch( 1 );
         final var release = new CountDownLatch( 1 );

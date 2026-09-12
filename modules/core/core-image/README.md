@@ -75,14 +75,16 @@ Configure `com.enonic.xp.image.cfg`:
 
 ```properties
 decoding.backend = ImageMagic
-decoding.maxBytes = 67108864
+decoding.maxBytes = 268435456
 transformation.backend = ImageMagic
 encoding.backend = ImageMagic
-encoding.maxConcurrent = 2
-encoding.maxQueue = 8
-encoding.queueTimeoutSeconds = 5
-encoding.timeoutSeconds = 30
-encoding.maxPixels = 40000000
+
+# Shared across native decoding, transformations and encoding.
+processing.maxConcurrent = 2
+processing.maxQueue = 8
+processing.queueTimeoutSeconds = 5
+processing.timeoutSeconds = 30
+processing.maxPixels = 40000000
 ```
 
 `encoding.backend` accepts exactly `ImageIO` (default) or `ImageMagic`. Invalid
@@ -131,7 +133,7 @@ For compatibility, `flipv` retains the current Java implementation's horizontal-
 behavior; EXIF vertical mirroring uses a vertical flip. Use `ImageIO` where exact
 legacy rendering is required.
 
-Native source reads are bounded by `decoding.maxBytes` (64 MiB by default).
+Native source reads are bounded by `decoding.maxBytes` (256 MiB by default).
 Native policy disables GIF, SVG and vector rendering coders, external delegates,
 loadable filters, indirect file reads, and unrelated coders. SVG output and
 compressed SVGZ input are not supported.
@@ -174,7 +176,7 @@ Unstyled original WebP/AVIF/SVG files retain their pass-through behavior.
 Styled processing uses the configured decoder. GIF styles require ImageIO decoding
 and process the first frame.
 
-Native decoding, transformations, and encoding share the `encoding.*` concurrency, queue, timeout,
+Native decoding, transformations, and encoding share the `processing.*` concurrency, queue, timeout,
 and pixel limits. The timeout bounds each native stage. A request holds one capacity slot across decoding, transformations,
 and encoding. The native decoder probes dimensions before Java raster allocation;
 probe and decode share one timeout budget. `ImageMagic` cache misses have bounded

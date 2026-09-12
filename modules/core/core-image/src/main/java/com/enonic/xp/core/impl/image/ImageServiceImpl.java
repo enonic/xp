@@ -91,13 +91,13 @@ public class ImageServiceImpl
 
     private final ImageMagickTransformer nativeTransformer;
 
-    private final Semaphore encodingRequests;
+    private final Semaphore processingRequests;
 
-    private final Semaphore encodingSlots;
+    private final Semaphore processingSlots;
 
     private final int queueTimeoutSeconds;
 
-    private final long maxEncodingPixels;
+    private final long maxProcessingPixels;
 
     @Activate
     public ImageServiceImpl( @Reference final ContentService contentService,
@@ -110,10 +110,10 @@ public class ImageServiceImpl
         this.imageFilterBuilder = imageFilterBuilder;
         this.styleDescriptorService = styleDescriptorService;
 
-        if ( config.encoding_maxConcurrent() < 1 || config.encoding_maxQueue() < 0 ||
-            config.encoding_queueTimeoutSeconds() < 1 || config.encoding_maxPixels() < 1 )
+        if ( config.processing_maxConcurrent() < 1 || config.processing_maxQueue() < 0 ||
+            config.processing_queueTimeoutSeconds() < 1 || config.processing_maxPixels() < 1 )
         {
-            throw new IllegalArgumentException( "Invalid image encoding limits" );
+            throw new IllegalArgumentException( "Invalid image processing limits" );
         }
         this.useImageMagick = switch ( config.encoding_backend() )
         {
@@ -133,15 +133,15 @@ public class ImageServiceImpl
             case "ImageMagic" -> true;
             default -> throw new IllegalArgumentException( "transformation.backend must be ImageIO or ImageMagic" );
         };
-        this.nativeTransformer = new ImageMagickTransformer( "embedded", config.encoding_timeoutSeconds(),
+        this.nativeTransformer = new ImageMagickTransformer( "embedded", config.processing_timeoutSeconds(),
             cacheFolder.resolve( "transformation" ) );
         this.nativeDecoder = new ImageMagickDecoder( "embedded", cacheFolder.resolve( "decoding" ),
-            config.encoding_timeoutSeconds(), config.encoding_maxPixels(), config.decoding_maxBytes() );
-        this.encodingSlots = new Semaphore( config.encoding_maxConcurrent(), true );
-        this.encodingRequests = new Semaphore( Math.addExact( config.encoding_maxConcurrent(), config.encoding_maxQueue() ) );
-        this.queueTimeoutSeconds = config.encoding_queueTimeoutSeconds();
-        this.maxEncodingPixels = config.encoding_maxPixels();
-        this.nativeEncoder = new ImageMagickEncoder( useImageMagick ? "embedded" : "", config.encoding_timeoutSeconds(),
+            config.processing_timeoutSeconds(), config.processing_maxPixels(), config.decoding_maxBytes() );
+        this.processingSlots = new Semaphore( config.processing_maxConcurrent(), true );
+        this.processingRequests = new Semaphore( Math.addExact( config.processing_maxConcurrent(), config.processing_maxQueue() ) );
+        this.queueTimeoutSeconds = config.processing_queueTimeoutSeconds();
+        this.maxProcessingPixels = config.processing_maxPixels();
+        this.nativeEncoder = new ImageMagickEncoder( useImageMagick ? "embedded" : "", config.processing_timeoutSeconds(),
                                                     cacheFolder.resolve( "encoding" ) );
 
         this.circuitBreaker = new MemoryCircuitBreaker( toMegaBytes( MemoryLimitParser.maxHeap().parse( config.memoryLimit() ) ) );
@@ -207,13 +207,13 @@ public class ImageServiceImpl
         {
             nativeEncoder.checkEnabled();
         }
-        if ( !encodingRequests.tryAcquire() )
+        if ( !processingRequests.tryAcquire() )
         {
             throw new ThrottlingException( "Image encoding queue is full" );
         }
         try
         {
-            if ( !encodingSlots.tryAcquire( queueTimeoutSeconds, TimeUnit.SECONDS ) )
+            if ( !processingSlots.tryAcquire( queueTimeoutSeconds, TimeUnit.SECONDS ) )
             {
                 throw new ThrottlingException( "Image encoding queue timed out" );
             }
@@ -224,7 +224,7 @@ public class ImageServiceImpl
             }
             finally
             {
-                encodingSlots.release();
+                processingSlots.release();
             }
         }
         catch ( InterruptedException e )
@@ -234,7 +234,7 @@ public class ImageServiceImpl
         }
         finally
         {
-            encodingRequests.release();
+            processingRequests.release();
         }
     }
 
@@ -347,9 +347,9 @@ public class ImageServiceImpl
                 final int width = nativeSource == null ? imageReader.getWidth( 0 ) : nativeSource.width();
                 final int height = nativeSource == null ? imageReader.getHeight( 0 ) : nativeSource.height();
                 final boolean nativeProcessing = useImageMagick || useImageMagickDecoder || useImageMagickTransformer;
-                if ( nativeProcessing && (long) width * height > maxEncodingPixels )
+                if ( nativeProcessing && (long) width * height > maxProcessingPixels )
                 {
-                    throw new IllegalArgumentException( "Source image exceeds encoding.maxPixels" );
+                    throw new IllegalArgumentException( "Source image exceeds processing.maxPixels" );
                 }
 
                 final ImageTypeSpecifier rawImageType = nativeSource == null ? imageReader.getRawImageType( 0 ) : null;
@@ -389,9 +389,9 @@ public class ImageServiceImpl
                     final FocalPoint focalPoint =
                         toCropRelativeFocalPoint( readImageParams.getFocalPoint(), readImageParams.getCropping() );
                     imageScaleFunction = imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), focalPoint );
-                    if ( nativeProcessing && !useImageMagickTransformer && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
+                    if ( nativeProcessing && !useImageMagickTransformer && imageScaleFunction.estimateResolution( width, height ) > maxProcessingPixels )
                     {
-                        throw new IllegalArgumentException( "Output image exceeds encoding.maxPixels" );
+                        throw new IllegalArgumentException( "Output image exceeds processing.maxPixels" );
                     }
                     final int scaledMultiplier = 1 + ( ( toApplyFilters || toAddBackground ) ? 1 : 0 );
                     scaledMemoryRequirements = useImageMagickTransformer ? 0 : Math.max(
@@ -413,7 +413,7 @@ public class ImageServiceImpl
                 {
                     // Retain XP's filter count and argument validation before allocating any raster.
                     imageFilterBuilder.build( readImageParams.getFilterParam() );
-                    nativePlan = new ImageMagickTransformPlan( width, height, readImageParams, imageScaleFunction, maxEncodingPixels );
+                    nativePlan = new ImageMagickTransformPlan( width, height, readImageParams, imageScaleFunction, maxProcessingPixels );
                 }
                 else
                 {
@@ -478,9 +478,9 @@ public class ImageServiceImpl
                         }
                     }
 
-                    if ( nativeProcessing && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxEncodingPixels )
+                    if ( nativeProcessing && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxProcessingPixels )
                     {
-                        throw new IllegalArgumentException( "Transformed image exceeds encoding.maxPixels" );
+                        throw new IllegalArgumentException( "Transformed image exceeds processing.maxPixels" );
                     }
 
                     // Previous ImageHelper implementation interpreted 0 as system default quality explicitly,

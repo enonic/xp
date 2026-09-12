@@ -92,7 +92,7 @@ final class ImageMagickTransformPlan
         final long pixels = (long) width * height;
         if ( width < 1 || height < 1 || pixels > maxPixels )
         {
-            throw new IllegalArgumentException( "Transformation exceeds encoding.maxPixels or has invalid dimensions" );
+            throw new IllegalArgumentException( "Transformation exceeds processing.maxPixels or has invalid dimensions" );
         }
         this.width = width;
         this.height = height;

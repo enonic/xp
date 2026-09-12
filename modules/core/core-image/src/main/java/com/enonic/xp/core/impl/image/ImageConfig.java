@@ -13,20 +13,21 @@ public @interface ImageConfig
     // ImageIO preserves existing output. ImageMagic uses the bundled native output encoder.
     String encoding_backend() default "ImageIO";
 
-    // Source decoding is independent of output encoding. Transformations use XP's image pipeline.
+    // Source decoding is independent of output encoding and transformations.
     String decoding_backend() default "ImageIO";
 
-    long decoding_maxBytes() default 67_108_864;
+    long decoding_maxBytes() default 268_435_456;
 
     String transformation_backend() default "ImageIO";
 
-    int encoding_maxConcurrent() default 2;
+    // Shared limits for all native processing stages.
+    int processing_maxConcurrent() default 2;
 
-    int encoding_maxQueue() default 8;
+    int processing_maxQueue() default 8;
 
-    int encoding_queueTimeoutSeconds() default 5;
+    int processing_queueTimeoutSeconds() default 5;
 
-    int encoding_timeoutSeconds() default 30;
+    int processing_timeoutSeconds() default 30;
 
-    long encoding_maxPixels() default 40_000_000;
+    long processing_maxPixels() default 40_000_000;
 }
