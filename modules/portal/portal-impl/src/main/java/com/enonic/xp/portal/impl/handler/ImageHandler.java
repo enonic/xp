@@ -15,7 +15,6 @@ import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.portal.impl.HmacService;
-import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
@@ -100,7 +99,7 @@ public class ImageHandler
 
         worker.id = ContentId.from( matcher.group( 1 ) );
         worker.fingerprint = matcher.group( 2 );
-        worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );
+        worker.setScalePath( matcher.group( 3 ) );
         worker.name = matcher.group( 4 );
         worker.filterParam = HandlerHelper.getParameter( webRequest, "filter" );
         worker.qualityParam = HandlerHelper.getParameter( webRequest, "quality" );

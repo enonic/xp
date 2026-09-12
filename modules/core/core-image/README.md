@@ -25,8 +25,10 @@ portal.imageUrl({ id: imageId, style: 'com.example.site:card', scale: 'width(640
 
 The style contains neither scale nor output format. Supply both using the existing
 `scale` and `format` arguments to `portal.imageUrl`. The URL contains the requested
-scale (for example `width-640`), the output extension (`photo.jpg.webp`), and
-`?style=com.example.site%3Acard`. Both the legacy image endpoint and `media:image`
+scale and style in the same path segment (`width-640~com.example.site:card`),
+followed by the filename and output extension (`photo.jpg.webp`). The first `~`
+separates scale from the fully qualified style alias. Unstyled URLs retain their
+existing scale segment. A `style` query parameter is rejected. Both the legacy image endpoint and `media:image`
 support this form. Scale remains required.
 
 When a style defines `aspectRatio`, the request must use `width(px)` or
@@ -39,7 +41,7 @@ The same style can be reused at different responsive sizes.
 Optional `quality` defaults to 85; optional `filter` uses the existing filter
 syntax and limits. `background` is a hexadecimal RGB value used when flattening
 to JPEG/GIF; PNG/WebP/AVIF preserve transparency. Style URLs reject quality,
-filter, and background overrides, empty query overrides and duplicate styles.
+filter, and background overrides, including empty query overrides.
 Scale is supplied in the path; a raw `scale` or `format` query override is not
 supported. Output format is selected by the extension.
 

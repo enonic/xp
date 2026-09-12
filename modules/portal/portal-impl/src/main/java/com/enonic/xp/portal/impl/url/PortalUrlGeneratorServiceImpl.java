@@ -84,7 +84,7 @@ public class PortalUrlGeneratorServiceImpl
                           .setBranch( params.getBranch() )
                           .setScale( params.getScale() )
                           .setFormat( params.getFormat() )
-                          .setStyle( () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                          .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
                 .setHmacService( hmacService )
                           .build() );
 
@@ -130,7 +130,7 @@ public class PortalUrlGeneratorServiceImpl
                 .setBranch( params.getBranch() )
                 .setScale( params.getScale() )
                 .setFormat( params.getFormat() )
-                .setStyle( () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
                 .setHmacService( hmacService )
                 .build()
                 .parts();
@@ -166,6 +166,10 @@ public class PortalUrlGeneratorServiceImpl
     {
         final Map<String, List<String>> queryParams = new LinkedHashMap<>( params.getQueryParams() );
 
+        if ( queryParams.containsKey( "style" ) )
+        {
+            throw new IllegalArgumentException( "Specify image style using the style argument" );
+        }
         if ( params.getStyle() != null )
         {
             if ( Set.of( "style", "scale", "format", "quality", "filter", "background" ).stream()
@@ -173,7 +177,6 @@ public class PortalUrlGeneratorServiceImpl
             {
                 throw new IllegalArgumentException( "Image style parameters cannot be overridden in query parameters" );
             }
-            queryParams.put( "style", List.of( params.getStyle() ) );
         }
 
         if ( params.getQuality() != null )

@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
@@ -34,6 +35,8 @@ final class ImageMediaPathSupplier
 
     private final Supplier<ImageStyle> styleSupplier;
 
+    private final String styleKey;
+
     private final HmacService hmacService;
 
     private ImageMediaPathSupplier( final Builder builder )
@@ -44,6 +47,7 @@ final class ImageMediaPathSupplier
         this.branchSupplier = builder.branchSupplier;
         this.format = builder.format;
         this.styleSupplier = builder.styleSupplier;
+        this.styleKey = builder.styleKey;
         this.hmacService = builder.hmacService;
     }
 
@@ -84,7 +88,8 @@ final class ImageMediaPathSupplier
         }
         return new MediaPathParts( context, media.getId().toString(),
                                    MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ), style, scaleParams, hmacService ),
-                                   resolvedScale, resolveName( media, format ) );
+                                   styleKey == null ? resolvedScale : resolvedScale + "~" + DescriptorKey.from( styleKey ),
+                                   resolveName( media, format ) );
     }
 
     private String resolveName( final Content media, final String format )
@@ -104,6 +109,10 @@ final class ImageMediaPathSupplier
 
     private String resolveScale( final String scale )
     {
+        if ( scale.indexOf( '~' ) >= 0 )
+        {
+            throw new IllegalArgumentException( "Specify image style separately from scale" );
+        }
         return scale.replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" );
     }
 
@@ -121,6 +130,8 @@ final class ImageMediaPathSupplier
 
         private Supplier<ImageStyle> styleSupplier = () -> null;
 
+        private String styleKey;
+
         private HmacService hmacService;
 
         public Builder setHmacService( final HmacService hmacService )
@@ -129,9 +140,10 @@ final class ImageMediaPathSupplier
             return this;
         }
 
-        public Builder setStyle( final Supplier<ImageStyle> styleSupplier )
+        public Builder setStyle( final String styleKey, final Supplier<ImageStyle> styleSupplier )
         {
             this.styleSupplier = styleSupplier;
+            this.styleKey = styleKey;
             return this;
         }
 

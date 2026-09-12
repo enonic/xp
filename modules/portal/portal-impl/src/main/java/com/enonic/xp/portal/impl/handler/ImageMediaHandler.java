@@ -10,7 +10,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.portal.impl.HmacService;
-import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
@@ -70,7 +69,7 @@ public class ImageMediaHandler
 
                 worker.id = pathMetadata.contentId;
                 worker.fingerprint = pathMetadata.fingerprint;
-                worker.scaleParams = new ScaleParamsParser().parse( pathMetadata.scaleParams );
+                worker.setScalePath( pathMetadata.scaleParams );
                 worker.name = pathMetadata.name;
                 worker.filterParam = HandlerHelper.getParameter( webRequest, "filter" );
                 worker.qualityParam = HandlerHelper.getParameter( webRequest, "quality" );
@@ -94,7 +93,7 @@ public class ImageMediaHandler
     private static final class ImagePathParser
         extends MediaHandlerBase.PathParser<ImagePathMetadata>
     {
-        // Image path is: "/{project[:draft]}/{id[:fingerprint]}/{scaleFn}/{name}"
+        // Image path is: "/{project[:draft]}/{id[:fingerprint]}/{scaleFn[~application:style]}/{name}"
 
         static final int PATH_VARIABLES_LIMIT = 5;
 

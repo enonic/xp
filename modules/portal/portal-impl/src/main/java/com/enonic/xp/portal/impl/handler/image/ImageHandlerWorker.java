@@ -20,11 +20,12 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.image.ScaleParamsParser;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
-import com.enonic.xp.portal.impl.handler.HandlerHelper;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -68,15 +69,35 @@ public final class ImageHandlerWorker
         this.hmacService = hmacService;
     }
 
+    public void setScalePath( final String segment )
+    {
+        final int separator = segment.indexOf( '~' );
+        try
+        {
+            this.scaleParams = new ScaleParamsParser().parse( separator < 0 ? segment : segment.substring( 0, separator ) );
+            this.styleParam = separator < 0 ? null : DescriptorKey.from( segment.substring( separator + 1 ) ).toString();
+            if ( styleParam != null && scaleParams == null )
+            {
+                throw new IllegalArgumentException( "Image scale is required" );
+            }
+        }
+        catch ( IllegalArgumentException e )
+        {
+            throw WebException.badRequest( "Invalid image scale or style", e );
+        }
+    }
+
     @Override
     public PortalResponse execute()
         throws IOException
     {
-        this.styleParam = HandlerHelper.getParameter( request, "style" );
+        if ( request.getParams().containsKey( "style" ) )
+        {
+            throw WebException.badRequest( "Image style must be specified in the scale path segment" );
+        }
         if ( styleParam != null )
         {
-            if ( request.getParams().get( "style" ).size() != 1 ||
-                Set.of( "scale", "format", "quality", "filter", "background" ).stream()
+            if ( Set.of( "scale", "format", "quality", "filter", "background" ).stream()
                     .anyMatch( request.getParams()::containsKey ) )
             {
                 throw WebException.badRequest( "Image styles cannot be combined with processing parameters" );

@@ -109,7 +109,7 @@ export type ImageUrlParams = IdXorPath & {
     filter?: string;
     params?: object;
     type?: 'server' | 'absolute';
-    /** Fully qualified processing style (application:name). Controls aspect ratio, quality, filter, and background; scale and format are selected separately. */
+    /** Fully qualified processing style (application:name). Controls aspect ratio, quality, filter, and background; scale and format are selected separately. Appears after ~ in the URL scale segment. */
     style?: string;
     scale:
         | `block(${number},${number})`

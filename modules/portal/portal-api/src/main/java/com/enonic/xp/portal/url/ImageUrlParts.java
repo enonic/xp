@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
  * @param context     project context segment: {@code <project>} on the master branch, {@code <project>:<branch>} otherwise
  * @param id          content id
  * @param fingerprint media fingerprint; joined with the id as {@code <id>:<fingerprint>} in the path
- * @param scale       processed scale segment (for example {@code max-300})
+ * @param scale       processed scale segment, including an optional style (for example {@code width-640~com.example.site:card})
  * @param name        file name segment, with the requested format extension applied
  */
 @NullMarked

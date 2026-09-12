@@ -107,20 +107,19 @@ class ImageMediaHandlerTest
             throw new IllegalArgumentException( "Image is not cached" );
         } );
         when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
-        request.getParams().put( "style", "app:card" );
         final String valid = styledFingerprint();
         final String source = MediaHashResolver.resolveImageHash( (Media) contentService.getById( ContentId.from( "123456" ) ) );
         for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
         {
             request.setMethod( method );
-            for ( String path : new String[]{"123456/width-640", "123456:00000000000000000000000000000000/width-640",
-                "123456:" + source + "/width-640", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640", "123456:" + valid + "/width-320"} )
+            for ( String path : new String[]{"123456/width-640~app:card", "123456:00000000000000000000000000000000/width-640~app:card",
+                "123456:" + source + "/width-640~app:card", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640~app:card", "123456:" + valid + "/width-320~app:card"} )
             {
                 request.setRawPath( "/site/myproject/master/_/media:image/myproject/" + path + "/image-name.jpg." + format );
                 assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
             }
             when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).quality( 70 ).build() );
-            request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + valid + "/width-640/image-name.jpg." + format );
+            request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + valid + "/width-640~app:card/image-name.jpg." + format );
             assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
             when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         }
@@ -139,18 +138,17 @@ class ImageMediaHandlerTest
             assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
             return cached;
         } );
-        request.getParams().put( "style", "app:card" );
         for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
         {
             request.setMethod( method );
-            request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:00000000000000000000000000000000/width-640/image-name.jpg." + format );
+            request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:00000000000000000000000000000000/width-640~app:card/image-name.jpg." + format );
             final WebResponse response = handler.handle( request );
             assertEquals( HttpStatus.OK, response.getStatus() );
             assertEquals( cached, response.getBody() );
             assertNull( response.getHeaders().get( "Cache-Control" ) );
             if ( "webp".equals( format ) || "avif".equals( format ) )
             {
-                request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640/image-name.jpg." + format );
+                request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640~app:card/image-name.jpg." + format );
                 assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
             }
         }
@@ -163,8 +161,7 @@ class ImageMediaHandlerTest
         throws Exception
     {
         setupContent();
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640/image-name.jpg." + format );
-        request.getParams().put( "style", "app:card" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640~app:card/image-name.jpg." + format );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final WebResponse response = handler.handle( request );
@@ -183,8 +180,7 @@ class ImageMediaHandlerTest
         setupContent();
         final ImageStyle style = ImageStyle.create().name( "card" ).build();
         when( imageService.getStyle( "app:card" ) ).thenReturn( style );
-        request.getParams().put( "style", "app:card" );
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640/image-name.jpg" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:b70c37373c28d80778129544e9b504a6a0560ed0/width-640~app:card/image-name.jpg" );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).quality( 70 ).build() );
@@ -195,29 +191,51 @@ class ImageMediaHandlerTest
     @ValueSource(strings = {"scale", "format", "quality", "filter", "background"})
     void styleRejectsEvenEmptyOverridesBeforeReadingContent( final String parameter )
     {
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg" );
-        request.getParams().put( "style", "app:card" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full~app:card/image-name.jpg" );
         request.getParams().put( parameter, "" );
         final WebException error = assertThrows( WebException.class, () -> handler.handle( request ) );
         assertEquals( HttpStatus.BAD_REQUEST, error.getStatus() );
         verifyNoInteractions( contentService, imageService );
     }
 
-    @Test
-    void styleRejectsDuplicateStyle()
+    @ParameterizedTest
+    @ValueSource(strings = {"", "~app:card"})
+    void styleRejectsQueryStyle( final String suffix )
     {
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640/image-name.jpg" );
-        request.getParams().put( "style", "app:card" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640" + suffix + "/image-name.jpg" );
         request.getParams().put( "style", "app:other" );
         assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
         verifyNoInteractions( contentService, imageService );
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"width-640~", "~app:card", "width-640~card", "width-640~:card", "width-640~app:card~app:other"})
+    void malformedStyleSegmentIsRejectedBeforeReadingContent( final String segment )
+    {
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/" + segment + "/image-name.jpg" );
+        assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+        verifyNoInteractions( contentService, imageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"com.example.site:card-wide", "com.example.site%3Acard-wide"})
+    void pathStylePreservesQualifiedAliasAndScale( final String alias )
+        throws Exception
+    {
+        setupContent();
+        when( imageService.getStyle( "com.example.site:card-wide" ) ).thenReturn( ImageStyle.create().name( "card-wide" ).build() );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640~" + alias + "/image-name.jpg" );
+        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( "com.example.site:card-wide", params.getValue().getStyle() );
+        assertEquals( new ScaleParams( "width", new Object[]{640} ), params.getValue().getScaleParams() );
+    }
+
     @Test
     void unknownStyleIsBadRequest()
     {
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg" );
-        request.getParams().put( "style", "app:missing" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full~app:missing/image-name.jpg" );
         when( imageService.getStyle( "app:missing" ) ).thenThrow( new IllegalArgumentException( "Unknown style" ) );
         assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
         verifyNoInteractions( contentService );
