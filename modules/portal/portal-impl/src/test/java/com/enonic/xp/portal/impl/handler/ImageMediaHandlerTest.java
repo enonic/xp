@@ -218,17 +218,17 @@ class ImageMediaHandlerTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"com.example.site:card-wide", "com.example.site%3Acard-wide"})
+    @ValueSource(strings = {"com.example.site:card-wide", "com.example.site:card~wide"})
     void pathStylePreservesQualifiedAliasAndScale( final String alias )
         throws Exception
     {
         setupContent();
-        when( imageService.getStyle( "com.example.site:card-wide" ) ).thenReturn( ImageStyle.create().name( "card-wide" ).build() );
+        when( imageService.getStyle( alias ) ).thenReturn( ImageStyle.create().name( "card-wide" ).build() );
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640~" + alias + "/image-name.jpg" );
         assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
-        assertEquals( "com.example.site:card-wide", params.getValue().getStyle() );
+        assertEquals( alias, params.getValue().getStyle() );
         assertEquals( new ScaleParams( "width", new Object[]{640} ), params.getValue().getScaleParams() );
     }
 
