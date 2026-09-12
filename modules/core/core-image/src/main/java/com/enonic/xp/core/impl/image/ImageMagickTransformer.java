@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Owns transformed PNG files until the next backend has consumed them. */
+/** Owns transformed raw rasters until the next backend has consumed them. */
 final class ImageMagickTransformer
 {
     private final String executable;
@@ -32,7 +32,7 @@ final class ImageMagickTransformer
     Result transform( final BufferedImage source, final ImageMagickTransformPlan plan ) throws IOException
     {
         final NativeImageProcess process = process();
-        try { return transform( process, NativeImageRaster.write( source, process.file( "input.png" ) ), plan ); }
+        try { return transform( process, NativeImageRaster.write( source, process.file( "input.rgba" ) ), plan ); }
         catch ( IOException | RuntimeException | Error e ) { process.close(); throw e; }
     }
 
@@ -45,19 +45,19 @@ final class ImageMagickTransformer
 
     private NativeImageProcess process() throws IOException
     {
-        return new NativeImageProcess( executable, temporaryFolder, "transform", timeoutSeconds, "PNG", "PNG24,PNG32" );
+        return new NativeImageProcess( executable, temporaryFolder, "transform", timeoutSeconds, "RGBA", "RGBA" );
     }
 
     private Result transform( final NativeImageProcess process, final NativeImageRaster source,
                               final ImageMagickTransformPlan plan ) throws IOException
     {
-        final Path output = process.file( "output.png" );
-        final List<String> operation = new ArrayList<>( List.of( "PNG:" + source.path(),
-            "-strip", "-alpha", "on", "-virtual-pixel", "edge" ) );
+        final Path output = process.file( "output.rgba" );
+        final List<String> operation = new ArrayList<>( source.inputArguments() );
+        operation.addAll( List.of( "-strip", "-alpha", "on", "-virtual-pixel", "edge" ) );
         operation.addAll( plan.operations() );
-        operation.addAll( List.of( "-depth", "8", ( plan.alpha() ? "PNG32:" : "PNG24:" ) + output ) );
+        operation.addAll( NativeImageRaster.outputArguments( output, plan.alpha() ) );
         process.run( operation, output );
-        return new Result( process, NativeImageRaster.validate( output, plan.width(), plan.height() ) );
+        return new Result( process, NativeImageRaster.validate( output, plan.width(), plan.height(), plan.alpha() ) );
     }
 
     record Result(NativeImageProcess process, NativeImageRaster raster) implements AutoCloseable

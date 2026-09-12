@@ -32,7 +32,7 @@ final class NativeImageProcess implements AutoCloseable
                 "<policy domain=\"coder\" rights=\"none\" pattern=\"*\"/>" +
                 "<policy domain=\"coder\" rights=\"read\" pattern=\"{" + readCoders + "}\"/>" +
                 "<policy domain=\"coder\" rights=\"write\" pattern=\"{" + writeCoders + "}\"/>" +
-                "<policy domain=\"coder\" rights=\"read|write\" pattern=\"{PNG,PNG24,PNG32}\"/>" +
+                "<policy domain=\"coder\" rights=\"read|write\" pattern=\"RGBA\"/>" +
                 "<policy domain=\"path\" rights=\"none\" pattern=\"@*\"/>" +
                 "<policy domain=\"path\" rights=\"none\" pattern=\"-\"/>" +
                 "<policy domain=\"path\" rights=\"none\" pattern=\"[Ff][Dd]:*\"/>" +

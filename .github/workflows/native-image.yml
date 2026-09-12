@@ -31,7 +31,7 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install sevenzip
       - name: Test bundled codecs and extraction
-        run: ./gradlew :core:core-image:test --tests '*ImageMagickEncoderTest' --tests '*ImageMagickDecoderTest' --tests '*ImageMagickTransformerTest' --tests '*EmbeddedImageMagickTest' --tests '*ImageProcessingGateTest' --tests '*PreparedImageSourceTest' --tests '*ImageGeometryTest' --tests '*NormalizedImageParamsTest'
+        run: ./gradlew :core:core-image:test --tests '*ImageMagickEncoderTest' --tests '*ImageMagickDecoderTest' --tests '*ImageMagickTransformerTest' --tests '*EmbeddedImageMagickTest' --tests '*ImageProcessingGateTest' --tests '*PreparedImageSourceTest' --tests '*ImageGeometryTest' --tests '*NormalizedImageParamsTest' --tests '*NativeImageRasterTest'
       - name: Test native packaging checks
         run: ./gradlew -p buildSrc test
       - name: Test style enforcement, fingerprints, and resource limits

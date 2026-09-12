@@ -26,6 +26,28 @@ class ImageMagickEncoderTest
     @TempDir
     Path temporaryFolder;
 
+    @ParameterizedTest
+    @ValueSource(ints = {BufferedImage.TYPE_INT_ARGB, BufferedImage.TYPE_INT_ARGB_PRE,
+        BufferedImage.TYPE_4BYTE_ABGR_PRE, BufferedImage.TYPE_3BYTE_BGR, BufferedImage.TYPE_BYTE_GRAY})
+    void rawJavaAndNativeBoundariesPreservePixels( final int type ) throws Exception
+    {
+        final BufferedImage source = new BufferedImage( 3, 1, type );
+        source.setRGB( 0, 0, 0xff123456 );
+        source.setRGB( 1, 0, 0x804080c0 );
+        source.setRGB( 2, 0, 0x20102030 );
+        final int[] expected = source.getRGB( 0, 0, 3, 1, null, 0, 3 );
+        final var bytes = new ByteArrayOutputStream();
+        new ImageMagickEncoder( 30, temporaryFolder ).write( source, "png", 85, bytes );
+        final BufferedImage imageIo = javax.imageio.ImageIO.read( new java.io.ByteArrayInputStream( bytes.toByteArray() ) );
+        org.junit.jupiter.api.Assertions.assertArrayEquals( expected, imageIo.getRGB( 0, 0, 3, 1, null, 0, 3 ) );
+        final var decoder = new ImageMagickDecoder( "embedded", temporaryFolder, 30, 100, 100000 );
+        try (var decoded = decoder.open( com.google.common.io.ByteSource.wrap( bytes.toByteArray() ) ))
+        {
+            org.junit.jupiter.api.Assertions.assertArrayEquals( expected, decoded.read().getRGB( 0, 0, 3, 1, null, 0, 3 ) );
+        }
+        assertEmpty( temporaryFolder );
+    }
+
     @Test
     void disabledAndInvalidParametersDoNotCreateFiles()
         throws Exception

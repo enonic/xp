@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.ArrayList;
 
 import com.google.common.io.ByteSource;
 
@@ -60,7 +61,7 @@ final class ImageMagickDecoder
             this.ownedSource = ownedSource;
             this.coder = coder( input );
             process = new NativeImageProcess( executable, temporaryFolder, "decode", timeoutSeconds,
-                "JPEG,PNG,WEBP,AVIF,HEIC,BMP,TIFF", "PNG32,INFO" );
+                "JPEG,PNG,WEBP,AVIF,HEIC,BMP,TIFF", "RGBA,INFO" );
             try
             {
                 final Path dimensions = process.file( "dimensions.txt" );
@@ -88,10 +89,12 @@ final class ImageMagickDecoder
         {
             if ( raster == null )
             {
-                final Path output = process.file( "raster.png" );
-                process.run( List.of( "-limit", "area", Long.toString( maxPixels ),
+                final Path output = process.file( "raster.rgba" );
+                final List<String> operation = new ArrayList<>( List.of( "-limit", "area", Long.toString( maxPixels ),
                     "-limit", "width", Long.toString( maxPixels ), "-limit", "height", Long.toString( maxPixels ),
-                    "-background", "none", coder + ":" + input + "[0]", "-strip", "-depth", "8", "PNG32:" + output ), output );
+                    "-background", "none", coder + ":" + input + "[0]", "-strip" ) );
+                operation.addAll( NativeImageRaster.outputArguments( output, true ) );
+                process.run( operation, output );
                 raster = NativeImageRaster.validate( output, width, height );
             }
             return raster;

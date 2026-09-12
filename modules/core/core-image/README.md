@@ -106,9 +106,16 @@ decoder uses separate disk cache entries; existing ImageIO cache keys are unchan
 `transformation.backend` independently accepts `ImageIO` (default) or `ImageMagic`.
 `ImageIO` retains XP's existing Java transformations. `ImageMagic` runs orientation,
 stored cropping, scaling, ordered filters, and background flattening in the bundled
-native executable. All three backend settings can be mixed. The stages exchange
-lossless PNG files directly between adjacent native stages. Java pixels are read or
-written only at a Java backend boundary. Selecting native transformations alone does not enable native
+native executable. All three backend settings can be mixed. Adjacent Java stages pass
+the BufferedImage directly; adjacent native stages pass raw RGBA files directly.
+Java/native boundaries transfer 8-bit sRGB pixels with straight alpha in small,
+bounded buffers, without intermediate PNG compression or decompression. Java color
+models, channel layouts, palettes and premultiplied alpha are normalized during transfer.
+Dimensions and alpha presence are carried separately, and each raw file must contain
+exactly width × height × 4 bytes before consumption. A 1024 × 768 intermediate is
+3 MiB; a 40-million-pixel intermediate is about 153 MiB. Files remain temporary
+and are deleted when their owning stage closes.
+Selecting native transformations alone does not enable native
 source formats or WebP/AVIF output encoding.
 
 Native scaling reuses XP's dimension calculations, including aspect-ratio styles,
@@ -124,7 +131,7 @@ emboss, fliph, flipv, rotate90/180/270, gamma, grayscale, hsbadjust, hsbcolorize
 rgbadjust, rounded, sepia, and sharpen. Existing filter count and argument limits
 apply; non-finite numeric arguments are rejected. Commands and expressions are
 constructed from fixed operators and parsed numbers, with no caller-supplied paths
-or ImageMagick programs. Native policy permits only PNG raster I/O and disables
+or ImageMagick programs. The transformation policy permits only raw RGBA I/O and disables
 external delegates and loadable filters.
 
 Pixel output is not guaranteed to match the Java backend: native resizing uses
@@ -196,7 +203,7 @@ counts are checked, and the existing heap memory estimate is a hard admission
 limit for native conversions. Both transformation backends calculate orientation,
 crop and intermediate resize dimensions before allocation and use that geometry
 for execution. The external encoder receives only a generated
-PNG and fixed arguments, uses one configured ImageMagick thread, and is killed
+raw RGBA raster and fixed arguments, uses one configured ImageMagick thread, and is killed
 on timeout or interruption. Temporary files and failed cache entries are
 removed. ImageMagick pixel-cache memory/map/disk limits are also set; these are
 not an operating-system limit on all memory allocated by codec libraries.

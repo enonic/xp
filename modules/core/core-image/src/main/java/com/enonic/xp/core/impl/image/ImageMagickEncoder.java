@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/** Encodes a generated PNG without re-materializing rasters from adjacent native stages. */
+/** Encodes a raw raster without re-materializing pixels from adjacent native stages. */
 final class ImageMagickEncoder
 {
     private final String executable;
@@ -48,7 +48,7 @@ final class ImageMagickEncoder
         checkEnabled();
         try (var process = process())
         {
-            encode( process, NativeImageRaster.write( image, process.file( "input.png" ) ), format, quality, progressive, output );
+            encode( process, NativeImageRaster.write( image, process.file( "input.rgba" ) ), format, quality, progressive, output );
         }
     }
 
@@ -61,7 +61,7 @@ final class ImageMagickEncoder
 
     private NativeImageProcess process() throws IOException
     {
-        return new NativeImageProcess( executable, temporaryFolder, "encode", timeoutSeconds, "PNG",
+        return new NativeImageProcess( executable, temporaryFolder, "encode", timeoutSeconds, "RGBA",
             "JPEG,PNG,GIF,WEBP,AVIF,HEIC" );
     }
 
@@ -73,7 +73,8 @@ final class ImageMagickEncoder
             throw new IllegalArgumentException( "Invalid image encoding parameters" );
         }
         final Path result = process.file( "output." + format );
-        final List<String> operation = new ArrayList<>( List.of( "PNG:" + raster.path(), "-strip",
+        final List<String> operation = new ArrayList<>( raster.inputArguments() );
+        operation.addAll( List.of( "-strip",
             "-define", "webp:method=4", "-define", "heic:speed=6",
             "-interlace", progressive && "jpeg".equals( format ) ? "Plane" : "None" ) );
         if ( quality >= 0 ) { operation.addAll( List.of( "-quality", Integer.toString( quality ) ) ); }

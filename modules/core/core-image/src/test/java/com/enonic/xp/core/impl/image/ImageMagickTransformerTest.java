@@ -43,9 +43,11 @@ class ImageMagickTransformerTest
         try (var source = decoder.open( com.google.common.io.ByteSource.wrap( bytes.toByteArray() ) ))
         {
             final var decoded = org.mockito.Mockito.spy( source.raster() );
+            assertEquals( 32L * 24 * 4, Files.size( decoded.path() ) );
             try (var result = transformer().transform( decoded, plan( 32, 24, params( "invert" ), 10000 ) ))
             {
                 final var transformed = org.mockito.Mockito.spy( result.raster() );
+                assertEquals( 32L * 24 * 4, Files.size( transformed.path() ) );
                 final var output = new java.io.ByteArrayOutputStream();
                 new ImageMagickEncoder( 30, temporaryFolder ).write( transformed, "png", 85, false, output );
                 assertEquals( 32, javax.imageio.ImageIO.read( new java.io.ByteArrayInputStream( output.toByteArray() ) ).getWidth() );
