@@ -44,11 +44,13 @@ or cache access. There is no fallback to an unstyled image. Malformed references
 and conflicting parameters remain HTTP 400. Rich-text rendering of a missing
 qualified style produces the existing 404 error URL.
 
-When a style defines `aspectRatio`, the request must use `width(px)` or
-`height(px)`. XP calculates the other dimension, rounds to the nearest pixel,
+The style's `aspectRatio` is a hint for `width(px)` and `height(px)`.
+XP calculates the other dimension, rounds to the nearest pixel,
 and applies a block crop: `16:9` with `width(640)` or `height(360)` becomes
-`block(640,360)`. Two-dimensional scales, `max`, and `full` are rejected with
-an aspect ratio. Without an aspect ratio, all existing scales remain available.
+`block(640,360)`. Other scale modes retain their own geometry: explicit
+`block(640,480)`, `square(640)`, `max(640)`, and `full()` remain valid.
+The URL always retains the requested scale; applying the hint changes only
+processing geometry. The style settings still participate in the fingerprint.
 The same style can be reused at different responsive sizes.
 
 Optional `quality` defaults to 85; optional `filter` uses the existing filter

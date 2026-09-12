@@ -63,10 +63,13 @@ class NormalizedImageParamsTest
             assertEquals( "block(640,360)", params.getScaleParams().toString() );
         }
         assertEquals( "block(650,366)", new ScaleParams( "width", new Object[]{650} ).withAspectRatio( "16:9" ).toString() );
-        for ( String scale : new String[]{"full", "max", "square", "block", "wide"} )
+        for ( ScaleParams scale : new ScaleParams[]{ScaleParams.NO_SCALE,
+            new ScaleParams( "max", new Object[]{640} ), new ScaleParams( "square", new Object[]{640} ),
+            new ScaleParams( "block", new Object[]{640, 480} ), new ScaleParams( "wide", new Object[]{640, 480} )} )
         {
-            assertThrows( IllegalArgumentException.class, () -> new NormalizedImageParams(
-                noFormatTemplate().mimeType( "image/webp" ).scaleParams( new ScaleParams( scale, new Object[]{640} ) ).build(), style ) );
+            final NormalizedImageParams params = new NormalizedImageParams(
+                noFormatTemplate().mimeType( "image/webp" ).scaleParams( scale ).build(), style );
+            assertEquals( scale.toString(), params.getScaleParams().toString() );
         }
         for ( String ratio : new String[]{"0:9", "16:0", "invalid", "99999999999999999999:1"} )
         {

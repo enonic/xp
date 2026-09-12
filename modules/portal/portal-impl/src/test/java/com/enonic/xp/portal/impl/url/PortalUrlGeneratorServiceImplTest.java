@@ -131,9 +131,14 @@ class PortalUrlGeneratorServiceImplTest
         final ImageUrlParts small = service.imageUrlParts( styleUrlParams().setScale( "width(320)" ).build() );
         assertThat( wide.fingerprint() ).isNotEqualTo( small.fingerprint() );
         assertEquals( "width-320~app:card", small.scale() );
-        final ImageUrlGeneratorParams invalid = styleUrlParams().setScale( "square(640)" ).build();
-        assertThat( service.imageUrl( invalid ) ).startsWith( "/_/error/500?" );
-        assertThrows( IllegalArgumentException.class, () -> service.imageUrlParts( invalid ) );
+        for ( String scale : new String[]{"square(640)", "block(640,480)", "max(640)", "full()"} )
+        {
+            final ImageUrlGeneratorParams explicit = styleUrlParams().setScale( scale ).build();
+            final ImageUrlParts parts = service.imageUrlParts( explicit );
+            assertThat( service.imageUrl( explicit ) ).contains( "/" + parts.scale() + "/" );
+            assertThat( parts.scale() ).isEqualTo( scale.replace( "(", "-" ).replace( ",", "-" ).replace( ")", "" )
+                .replaceAll( "-$", "" ) + "~app:card" );
+        }
     }
 
     @Test
