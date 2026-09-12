@@ -131,13 +131,13 @@ class PortalUrlGeneratorServiceImplTest
         final ImageUrlParts small = service.imageUrlParts( styleUrlParams().setScale( "width(320)" ).build() );
         assertThat( wide.fingerprint() ).isNotEqualTo( small.fingerprint() );
         assertEquals( "width-320~app:card", small.scale() );
-        for ( String scale : new String[]{"square(640)", "block(640,480)", "max(640)", "full()"} )
+        for ( var scale : java.util.Map.of( "square(640)", "square-640", "block(640,480)", "block-640-480",
+            "max(640)", "max-640", "full()", "full-" ).entrySet() )
         {
-            final ImageUrlGeneratorParams explicit = styleUrlParams().setScale( scale ).build();
+            final ImageUrlGeneratorParams explicit = styleUrlParams().setScale( scale.getKey() ).build();
             final ImageUrlParts parts = service.imageUrlParts( explicit );
             assertThat( service.imageUrl( explicit ) ).contains( "/" + parts.scale() + "/" );
-            assertThat( parts.scale() ).isEqualTo( scale.replace( "(", "-" ).replace( ",", "-" ).replace( ")", "" )
-                .replaceAll( "-$", "" ) + "~app:card" );
+            assertThat( parts.scale() ).isEqualTo( scale.getValue() + "~app:card" );
         }
     }
 
