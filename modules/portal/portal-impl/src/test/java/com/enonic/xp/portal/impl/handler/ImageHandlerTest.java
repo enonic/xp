@@ -341,7 +341,8 @@ class ImageHandlerTest
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( alias, params.getValue().getStyle() );
-        assertEquals( new ScaleParams( "width", new Object[]{640} ), params.getValue().getScaleParams() );
+        assertEquals( "width", params.getValue().getScaleParams().getName() );
+        assertThat( params.getValue().getScaleParams().getArguments() ).containsExactly( 640 );
     }
 
     @Test
