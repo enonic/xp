@@ -309,7 +309,8 @@ class ImageServiceImplTest
         mockOriginalImage( "original.png" );
         final var bytes = new java.io.ByteArrayOutputStream();
         ImageIO.write( ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), "gif", bytes );
-        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( bytes.toByteArray() ) );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
         processingStyle( 80 );
         final byte[] result = imageService.readImage( styledParams( "png" ) ).read();
         assertEquals( 10, ImageIO.read( new ByteArrayInputStream( result ) ).getWidth() );
@@ -326,9 +327,9 @@ class ImageServiceImplTest
     void nativeDecoderRejectsSvgWithoutCaching()
         throws Exception
     {
-        final byte[] svg = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'/>"
+        imageDataOriginal = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'/>"
             .getBytes( java.nio.charset.StandardCharsets.UTF_8 );
-        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( svg ) );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
         processingStyle( 80 );
         when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
         imageService = newImageService();
