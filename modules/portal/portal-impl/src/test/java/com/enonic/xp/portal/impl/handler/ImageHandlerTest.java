@@ -284,7 +284,7 @@ class ImageHandlerTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"webp", "avif", "jpeg", "png"})
+    @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF", "jpeg", "png"})
     void styleAllowsRequestedOutputFormat( final String format )
         throws Exception
     {
@@ -294,12 +294,12 @@ class ImageHandlerTest
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final WebResponse response = handler.handle( request );
-        assertEquals( MediaType.parse( "image/" + format ), response.getContentType() );
+        assertEquals( MediaType.parse( "image/" + format.toLowerCase( java.util.Locale.ROOT ) ), response.getContentType() );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "app:card", params.getValue().getStyle() );
         assertFalse( params.getValue().isCacheOnly() );
-        assertEquals( "image/" + format, params.getValue().getMimeType() );
+        assertEquals( "image/" + format.toLowerCase( java.util.Locale.ROOT ), params.getValue().getMimeType() );
     }
 
     @ParameterizedTest

@@ -112,6 +112,24 @@ public final class ImageHandlerWorker
     }
 
     @Override
+    protected MediaType resolveContentType( final Media content, final MediaType attachmentMimeType )
+    {
+        if ( shouldConvert( content, name ) )
+        {
+            final String extension = Files.getFileExtension( name );
+            if ( "webp".equalsIgnoreCase( extension ) )
+            {
+                return MediaType.WEBP;
+            }
+            if ( "avif".equalsIgnoreCase( extension ) )
+            {
+                return MediaType.AVIF;
+            }
+        }
+        return super.resolveContentType( content, attachmentMimeType );
+    }
+
+    @Override
     protected Attachment resolveAttachment( final Content content, final String name )
     {
         // Validate explicit output extensions before pass-through sources can bypass conversion.
