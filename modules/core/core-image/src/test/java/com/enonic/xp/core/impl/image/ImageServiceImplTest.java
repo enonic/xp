@@ -140,9 +140,14 @@ class ImageServiceImplTest
         assertTrue( Files.notExists( cache ) );
         verifyNoInteractions( contentService );
 
+        if ( "webp".equals( format ) || "avif".equals( format ) )
+        {
+            when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+            imageService = newImageService();
+        }
         final byte[] expected = imageService.readImage( styledParams( format ) ).read();
         // A cached response needs neither an enabled encoder nor the original source bytes.
-        when( imageConfig.encoding_enabled() ).thenReturn( false );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageIO" );
         imageService = newImageService();
         assertArrayEquals( expected, imageService.readImage( cacheOnly ).read() );
         verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
@@ -164,6 +169,42 @@ class ImageServiceImplTest
         {
             assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
         }
+    }
+
+    @Test
+    void rejectsUnknownBackend()
+    {
+        when( imageConfig.encoding_backend() ).thenReturn( "typo" );
+        assertThrows( IllegalArgumentException.class, this::newImageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void imageIoBackendRejectsModernCacheMissBeforeReadingSource( final String format )
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( format ) ) );
+        verifyNoInteractions( contentService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"jpeg", "png", "gif"})
+    void switchingBackendUsesSeparateCacheEntries( final String format )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final byte[] original = imageService.readImage( styledParams( format ) ).read();
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        final byte[] nativeOutput = imageService.readImage( styledParams( format ) ).read();
+        assertEquals( 10, javax.imageio.ImageIO.read( new java.io.ByteArrayInputStream( nativeOutput ) ).getWidth() );
+        assertArrayEquals( nativeOutput, imageService.readImage( styledParams( format ) ).read() );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageIO" );
+        imageService = newImageService();
+        assertArrayEquals( original, imageService.readImage( styledParams( format ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
     }
 
     @Test
@@ -249,6 +290,7 @@ class ImageServiceImplTest
     {
         mockOriginalImage( "original.png" );
         processingStyle( 10 );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
         when( imageConfig.encoding_maxPixels() ).thenReturn( 1L );
         imageService = newImageService();
         final IllegalArgumentException error = assertThrows( IllegalArgumentException.class,
@@ -262,6 +304,7 @@ class ImageServiceImplTest
     {
         mockOriginalImage( "original.png" );
         processingStyle( 10 );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
         when( imageConfig.encoding_maxConcurrent() ).thenReturn( 1 );
         when( imageConfig.encoding_maxQueue() ).thenReturn( 0 );
         imageService = newImageService();

@@ -10,8 +10,8 @@ public @interface ImageConfig
 
     String progressive() default "jpeg";
 
-    // Bundled native encoding is enabled by default; no system executable is used.
-    boolean encoding_enabled() default true;
+    // ImageIO preserves existing output. ImageMagic uses the bundled native output encoder.
+    String encoding_backend() default "ImageIO";
 
     int encoding_maxConcurrent() default 2;
 

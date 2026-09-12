@@ -1,8 +1,8 @@
 # Predefined image processing styles
 
-WebP and AVIF output requires a predefined style and uses bundled ImageMagick.
-No separate ImageMagick installation or runtime download is required. Existing JPEG/PNG/GIF
-processing continues to use ImageIO.
+WebP and AVIF output requires a predefined style and the `ImageMagic` encoding backend.
+No separate ImageMagick installation or runtime download is required. The default
+`ImageIO` backend preserves existing JPEG/PNG/GIF encoding.
 
 Define the processing style in the application's `cms/style/style.yml`:
 
@@ -72,7 +72,7 @@ stored cropping, focal point, and orientation still apply.
 Configure `com.enonic.xp.image.cfg`:
 
 ```properties
-encoding.enabled = true
+encoding.backend = ImageMagic
 encoding.maxConcurrent = 2
 encoding.maxQueue = 8
 encoding.queueTimeoutSeconds = 5
@@ -80,7 +80,13 @@ encoding.timeoutSeconds = 30
 encoding.maxPixels = 40000000
 ```
 
-The build downloads checksum-pinned upstream portable distributions and embeds
+`encoding.backend` accepts exactly `ImageIO` (default) or `ImageMagic`. Invalid
+values fail configuration. `ImageMagic` selects the bundled output encoder for
+JPEG, PNG, GIF, WebP, and AVIF. ImageIO still decodes and transforms source images.
+With `ImageIO`, new WebP/AVIF conversions are rejected; existing cached ones are
+served. JPEG/PNG/GIF cache entries are separate for each backend.
+
+The build downloads checksum-pinned portable distributions and embeds
 both the executable and its codec libraries in the image bundle. On first use,
 XP selects the platform resource and extracts it into a private directory under
 `java.io.tmpdir`. That directory must allow execution. The extracted distribution
@@ -89,26 +95,31 @@ extraction does not require FUSE. This follows the platform-resource/extraction
 approach used by native-library loaders such as Brotli4j; conversion runs in an
 isolated process so timeouts can terminate native code.
 
-Bundled platforms currently cover Linux x86-64 and Windows x86-64/ARM64 using
-ImageMagick 7.1.2-31. Other platforms report an unavailable encoder for modern
-output; existing ImageIO processing remains available. The complete upstream
+Bundled platforms cover Linux x86-64/ARM64, Windows x86-64/ARM64, and macOS ARM64.
+Linux ARM64 uses pkgforge's ImageMagick 7.1.2-30 AppImage, with its self-update
+hook removed before use. Linux x86-64 and Windows use upstream 7.1.2-31.
+macOS ARM64 uses conda-forge 7.1.2-31 with its codec libraries. Other platforms
+report an unavailable encoder when `ImageMagic` is selected; `ImageIO` remains available. The complete upstream
 archives retain their licenses and dependencies. Version and SHA-256 pins live
-in `native/distributions.json`. Building XP requires 7-Zip to repack upstream
+in `native/distributions.json` and `native/macos-aarch64.json`.
+The macOS packager retains the executable, required library closure, HEIF plugins,
+and licenses without installing Conda. Building XP requires Python 3 and 7-Zip to repack upstream
 Windows archives as ZIP; production servers do not need it. Install `p7zip-full`
 on Linux or 7-Zip on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
-a build-time extractor (for example Homebrew's `7zz` on macOS).
+a build-time extractor (Homebrew's `7zz` is the macOS default).
+`-PimageMagickPython=/path/to/python3` selects the build-time Python executable.
 Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
-No process is started for ordinary formats or modern-format cache hits.
+No process is started for cache hits or when encoding with `ImageIO`.
 Original WebP/AVIF/SVG files retain their pass-through behavior. Styled processing currently accepts formats decoded by
 the existing ImageIO backend; WebP/AVIF/SVG inputs are rejected, and GIF styles
 process the first frame.
 
-Modern cache misses have bounded concurrency and a bounded waiting queue.
+`ImageMagic` cache misses have bounded concurrency and a bounded waiting queue.
 Capacity exhaustion and queue timeout return HTTP 429. Source and output pixel
 counts are checked, and the existing heap memory estimate is a hard admission
-limit for modern conversions. The external encoder receives only a generated
+limit for native conversions. The external encoder receives only a generated
 PNG and fixed arguments, uses one configured ImageMagick thread, and is killed
 on timeout or interruption. Temporary files and failed cache entries are
 removed. ImageMagick pixel-cache memory/map/disk limits are also set; these are

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -23,8 +24,8 @@ final class EmbeddedImageMagick
             return executable;
         }
         final String platform = platform( System.getProperty( "os.name" ), System.getProperty( "os.arch" ) );
-        final boolean windows = platform.startsWith( "windows-" );
-        final String suffix = windows ? ".zip" : ".AppImage";
+        final boolean linux = platform.startsWith( "linux-" );
+        final String suffix = linux ? ".AppImage" : ".zip";
         try (InputStream resource = EmbeddedImageMagick.class.getResourceAsStream( "/native/imagemagick/" + platform + suffix ))
         {
             if ( resource == null )
@@ -37,16 +38,25 @@ final class EmbeddedImageMagick
             {
                 final Path archive = directory.resolve( "distribution" + suffix );
                 Files.copy( resource, archive );
-                if ( windows )
+                if ( !linux )
                 {
-                    extractWindows( archive, directory );
+                    extractZip( archive, directory );
                 }
                 else
                 {
                     extractLinux( archive, directory );
                 }
                 Files.delete( archive );
-                final Path candidate = directory.resolve( windows ? "magick.exe" : "squashfs-root/AppRun" );
+                final Path appDirectory = linux ? directory.resolve( "squashfs-root" ) : directory;
+                if ( linux )
+                {
+                    removeUpdateHooks( appDirectory );
+                }
+                final Path candidate = resolveExecutable( appDirectory, platform );
+                if ( platform.startsWith( "osx-" ) && !candidate.toFile().setExecutable( true, true ) )
+                {
+                    throw new IOException( "Cannot make embedded ImageMagick executable" );
+                }
                 if ( !Files.isRegularFile( candidate ) || !Files.isExecutable( candidate ) )
                 {
                     throw new IOException( "Cannot execute embedded ImageMagick in " + directory );
@@ -59,6 +69,48 @@ final class EmbeddedImageMagick
             {
                 delete( directory );
                 throw e;
+            }
+        }
+    }
+
+    private static Path resolveExecutable( final Path directory, final String platform )
+        throws IOException
+    {
+        final Properties properties = new Properties();
+        try (InputStream metadata = EmbeddedImageMagick.class.getResourceAsStream( "/native/imagemagick/" + platform + ".properties" ))
+        {
+            if ( metadata == null )
+            {
+                throw new IOException( "Embedded ImageMagick metadata is unavailable for " + platform );
+            }
+            properties.load( metadata );
+        }
+        final String relativePath = properties.getProperty( "executable" );
+        if ( relativePath == null || relativePath.isBlank() )
+        {
+            throw new IOException( "Embedded ImageMagick executable is missing for " + platform );
+        }
+        final Path executable = directory.resolve( relativePath ).normalize();
+        if ( !executable.startsWith( directory ) )
+        {
+            throw new IOException( "Invalid embedded ImageMagick executable path" );
+        }
+        return executable;
+    }
+
+    static void removeUpdateHooks( final Path directory )
+        throws IOException
+    {
+        final Path binaries = directory.resolve( "bin" );
+        if ( Files.isDirectory( binaries ) )
+        {
+            // Embedded distributions must remain pinned and never prompt for or download updates.
+            try (var paths = Files.list( binaries ))
+            {
+                for ( Path path : paths.filter( path -> path.getFileName().toString().endsWith( "self-updater.hook" ) ).toList() )
+                {
+                    Files.delete( path );
+                }
             }
         }
     }
@@ -78,7 +130,7 @@ final class EmbeddedImageMagick
         return normalizedOs + "-" + normalizedArch;
     }
 
-    static void extractWindows( final Path archive, final Path directory )
+    static void extractZip( final Path archive, final Path directory )
         throws IOException
     {
         try (ZipInputStream zip = new ZipInputStream( Files.newInputStream( archive ) ))

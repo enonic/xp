@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
@@ -41,15 +44,22 @@ final class ImageMagickEncoder
     {
         if ( executable.isBlank() )
         {
-            throw new IllegalArgumentException( "Modern image encoding is disabled; set encoding.enabled=true" );
+            throw new IllegalArgumentException( "ImageMagick encoding is disabled; set encoding.backend=ImageMagic" );
         }
     }
 
     void write( final BufferedImage image, final String format, final int quality, final OutputStream output )
         throws IOException
     {
+        write( image, format, quality, false, output );
+    }
+
+    void write( final BufferedImage image, final String format, final int quality, final boolean progressive,
+                final OutputStream output )
+        throws IOException
+    {
         checkEnabled();
-        if ( !( "webp".equals( format ) || "avif".equals( format ) ) || quality < 0 || quality > 100 )
+        if ( !Set.of( "jpeg", "png", "gif", "webp", "avif" ).contains( format ) || quality < -1 || quality > 100 )
         {
             throw new IllegalArgumentException( "Invalid image encoding parameters" );
         }
@@ -66,19 +76,31 @@ final class ImageMagickEncoder
                 throw new IOException( "PNG writer is unavailable" );
             }
             final String command = "embedded".equals( executable ) ? EmbeddedImageMagick.executable().toString() : executable;
-            process = new ProcessBuilder( command,
+            final List<String> arguments = new ArrayList<>( List.of( command,
                                           "-limit", "thread", "1",
                                           "-limit", "memory", "256MiB",
                                           "-limit", "map", "0",
                                           "-limit", "disk", "0",
                                           "-limit", "time", Integer.toString( timeoutSeconds ),
                                           "png:" + input.toAbsolutePath(), "-strip",
-                                          "-quality", Integer.toString( quality ),
                                           "-define", "webp:method=4",
                                           "-define", "heic:speed=6",
                                           "-define", "heic:max-threads=1",
-                                          format + ":" + result.toAbsolutePath() )
-                .redirectOutput( ProcessBuilder.Redirect.DISCARD )
+                                          "-interlace", progressive && "jpeg".equals( format ) ? "Plane" : "None" ) );
+            if ( quality >= 0 )
+            {
+                arguments.addAll( List.of( "-quality", Integer.toString( quality ) ) );
+            }
+            arguments.add( format + ":" + result.toAbsolutePath() );
+            final ProcessBuilder builder = new ProcessBuilder( arguments );
+            if ( "embedded".equals( executable ) && System.getProperty( "os.name" ).startsWith( "Mac" ) )
+            {
+                final Path root = Path.of( command ).getParent().getParent();
+                builder.environment().put( "MAGICK_HOME", root.toString() );
+                builder.environment().put( "MAGICK_CONFIGURE_PATH", root.resolve( "etc/ImageMagick-7" ).toString() );
+                builder.environment().put( "LIBHEIF_PLUGIN_PATH", root.resolve( "lib/libheif" ).toString() );
+            }
+            process = builder.redirectOutput( ProcessBuilder.Redirect.DISCARD )
                 .redirectError( ProcessBuilder.Redirect.DISCARD )
                 .start();
             process.getOutputStream().close();

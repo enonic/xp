@@ -79,7 +79,9 @@ public class ImageServiceImpl
 
     private final StyleDescriptorService styleDescriptorService;
 
-    private final ImageMagickEncoder modernEncoder;
+    private final ImageMagickEncoder nativeEncoder;
+
+    private final boolean useImageMagick;
 
     private final Semaphore encodingRequests;
 
@@ -105,11 +107,17 @@ public class ImageServiceImpl
         {
             throw new IllegalArgumentException( "Invalid image encoding limits" );
         }
+        this.useImageMagick = switch ( config.encoding_backend() )
+        {
+            case "ImageIO" -> false;
+            case "ImageMagic" -> true;
+            default -> throw new IllegalArgumentException( "encoding.backend must be ImageIO or ImageMagic" );
+        };
         this.encodingSlots = new Semaphore( config.encoding_maxConcurrent(), true );
         this.encodingRequests = new Semaphore( Math.addExact( config.encoding_maxConcurrent(), config.encoding_maxQueue() ) );
         this.queueTimeoutSeconds = config.encoding_queueTimeoutSeconds();
         this.maxEncodingPixels = config.encoding_maxPixels();
-        this.modernEncoder = new ImageMagickEncoder( config.encoding_enabled() ? "embedded" : "", config.encoding_timeoutSeconds(),
+        this.nativeEncoder = new ImageMagickEncoder( useImageMagick ? "embedded" : "", config.encoding_timeoutSeconds(),
                                                     cacheFolder.resolve( "encoding" ) );
 
         this.circuitBreaker = new MemoryCircuitBreaker( toMegaBytes( MemoryLimitParser.maxHeap().parse( config.memoryLimit() ) ) );
@@ -167,11 +175,11 @@ public class ImageServiceImpl
         {
             throw new IllegalArgumentException( "Image is not cached; regeneration requires a matching image fingerprint" );
         }
-        if ( !isModernFormat( normalizedImageParams.getFormat() ) )
+        if ( !useImageMagick && !isModernFormat( normalizedImageParams.getFormat() ) )
         {
             return immutableFilesHelper.computeIfAbsent( path, sink -> writeImage( normalizedImageParams, resolvedSha512, sink ) );
         }
-        modernEncoder.checkEnabled();
+        nativeEncoder.checkEnabled();
         if ( !encodingRequests.tryAcquire() )
         {
             throw new ThrottlingException( "Image encoding queue is full" );
@@ -277,6 +285,12 @@ public class ImageServiceImpl
         MessageDigests.updateWithString( digest, readImageParams.getScaleParams().toString() );
         MessageDigests.updateWithString( digest, readImageParams.getFilterParam().toString() );
 
+        // Preserve existing ImageIO and modern cache keys. Native legacy encodings have their own entries.
+        if ( useImageMagick && !isModernFormat( readImageParams.getFormat() ) )
+        {
+            MessageDigests.updateWithString( digest, "ImageMagic" );
+            MessageDigests.updateWithString( digest, Boolean.toString( progressiveOnFormats.contains( readImageParams.getFormat() ) ) );
+        }
         final String hash = MessageDigests.formatHex( digest );
         return cacheFolder.resolve( "sha256" )
             .resolve( hash.substring( 0, 2 ) )
@@ -295,8 +309,8 @@ public class ImageServiceImpl
             {
                 final int width = imageReader.getWidth( 0 );
                 final int height = imageReader.getHeight( 0 );
-                final boolean modern = isModernFormat( readImageParams.getFormat() );
-                if ( modern && (long) width * height > maxEncodingPixels )
+                final boolean nativeEncoding = useImageMagick;
+                if ( nativeEncoding && (long) width * height > maxEncodingPixels )
                 {
                     throw new IllegalArgumentException( "Source image exceeds encoding.maxPixels" );
                 }
@@ -338,7 +352,7 @@ public class ImageServiceImpl
                     final FocalPoint focalPoint =
                         toCropRelativeFocalPoint( readImageParams.getFocalPoint(), readImageParams.getCropping() );
                     imageScaleFunction = imageScaleFunctionBuilder.build( readImageParams.getScaleParams(), focalPoint );
-                    if ( modern && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
+                    if ( nativeEncoding && imageScaleFunction.estimateResolution( width, height ) > maxEncodingPixels )
                     {
                         throw new IllegalArgumentException( "Output image exceeds encoding.maxPixels" );
                     }
@@ -365,7 +379,7 @@ public class ImageServiceImpl
                            totalMemoryRequirementsEstimate, pixelSize );
 
                 final int permitted;
-                if ( modern )
+                if ( nativeEncoding )
                 {
                     circuitBreaker.tryAcquire( totalMemoryRequirementsEstimate );
                     permitted = totalMemoryRequirementsEstimate;
@@ -404,7 +418,7 @@ public class ImageServiceImpl
                         bufferedImage = ImageHelper.removeAlphaChannel( bufferedImage, readImageParams.getBackgroundColor() );
                     }
 
-                    if ( modern && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxEncodingPixels )
+                    if ( nativeEncoding && (long) bufferedImage.getWidth() * bufferedImage.getHeight() > maxEncodingPixels )
                     {
                         throw new IllegalArgumentException( "Transformed image exceeds encoding.maxPixels" );
                     }
@@ -421,9 +435,11 @@ public class ImageServiceImpl
 
                     try (OutputStream outputStream = sink.openBufferedStream())
                     {
-                        if ( modern )
+                        if ( nativeEncoding )
                         {
-                            modernEncoder.write( bufferedImage, readImageParams.getFormat(), readImageParams.getQuality(), outputStream );
+                            nativeEncoder.write( bufferedImage, readImageParams.getFormat(),
+                                isModernFormat( readImageParams.getFormat() ) ? readImageParams.getQuality() : writeImageQuality,
+                                progressive, outputStream );
                         }
                         else
                         {

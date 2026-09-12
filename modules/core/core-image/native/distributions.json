@@ -6,6 +6,13 @@
       "sha256": "b22dee096a68e7eb6771a6f98c16490ea78d399ffa27f34ca2ec4f02e707fd9c",
       "executable": "AppRun"
     },
+    "linux-aarch64": {
+      "version": "7.1.2-30",
+      "file": "ImageMagick-7.1.2.30-1-anylinux-aarch64.AppImage",
+      "url": "https://github.com/pkgforge-dev/ImageMagick-AppImage/releases/download/7.1.2.30-1%402026-09-01_1788277582/ImageMagick-7.1.2.30-1-anylinux-aarch64.AppImage",
+      "sha256": "b414739af2a4ac1b022e8c2616c453bc77716d29a437712db1fc750837ef4c58",
+      "executable": "bin/magick"
+    },
     "windows-x86_64": {
       "file": "ImageMagick-7.1.2-31-portable-Q8-x64.7z",
       "sha256": "4eb7914050902c52bf388bae188fdbdb04154ca89d105b2f6200a29cb774241b",
@@ -15,6 +22,11 @@
       "file": "ImageMagick-7.1.2-31-portable-Q8-arm64.7z",
       "sha256": "35cae1eecc3caa2993b8213d846f4f3a8125f1d06e86a63c4992da1daaebb185",
       "executable": "magick.exe"
+    },
+    "osx-aarch64": {
+      "version": "7.1.2-31",
+      "packages": "macos-aarch64.json",
+      "executable": "bin/magick"
     }
   }
 }

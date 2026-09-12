@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-latest, windows-latest]
+        runner: [ubuntu-latest, ubuntu-24.04-arm, macos-14, windows-latest]
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v7
@@ -26,8 +26,11 @@ jobs:
       - name: Install native packaging tools
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y p7zip-full
+      - name: Install macOS packaging tools
+        if: runner.os == 'macOS'
+        run: brew install sevenzip
       - name: Test bundled encoder and extraction
         run: ./gradlew :core:core-image:test --tests '*ImageMagickEncoderTest' --tests '*EmbeddedImageMagickTest'
       - name: Test style enforcement, fingerprints, and resource limits
-        if: runner.os == 'Linux'
+        if: runner.os != 'Windows'
         run: ./gradlew :core:core-image:test :portal:portal-impl:test --tests '*PortalUrlGeneratorServiceImplTest' --tests '*ImageMediaHandlerTest' --tests '*ImageHandlerTest' --tests '*HmacServiceTest' --tests '*RedirectChecksumServiceTest' --tests '*MediaHashResolverTest' :core:core-content:test --tests '*YmlStyleDescriptorParserTest' :lib:lib-portal:test --tests '*UrlServiceScriptTest'
