@@ -32,6 +32,7 @@ import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.ImageStyleSettings;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
@@ -51,6 +52,8 @@ public final class ImageHandlerWorker
     private static final int DEFAULT_QUALITY = 85;
 
     private final ImageService imageService;
+
+    private final StyleDescriptorService styleDescriptorService;
 
     private final HmacService hmacService;
 
@@ -72,10 +75,12 @@ public final class ImageHandlerWorker
 
     private @Nullable String currentFingerprint;
 
-    public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService, final HmacService hmacService )
+    public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService,
+                               final StyleDescriptorService styleDescriptorService, final HmacService hmacService )
     {
         super( request, contentService );
         this.imageService = imageService;
+        this.styleDescriptorService = styleDescriptorService;
         this.hmacService = hmacService;
     }
 
@@ -114,11 +119,7 @@ public final class ImageHandlerWorker
             }
             try
             {
-                this.style = imageService.getStyle( styleParam );
-                if ( style == null )
-                {
-                    throw new ImageStyleNotFoundException( styleParam );
-                }
+                this.style = styleDescriptorService.getImageStyle( DescriptorKey.from( styleParam ) );
                 scaleParams.withAspectRatio( style.getAspectRatio() );
             }
             catch ( ImageStyleNotFoundException e )

@@ -22,7 +22,6 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.image.ImageService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -83,7 +82,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         webappService = mock( WebappService.class );
         siteService = mock( SiteService.class );
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, siteService, mock( ImageService.class ), HmacTestHelper.createHmacService() );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, siteService, mock( StyleDescriptorService.class ), HmacTestHelper.createHmacService() );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

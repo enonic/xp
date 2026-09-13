@@ -24,6 +24,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
@@ -46,6 +47,7 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.ImageStyleSettings;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
@@ -81,13 +83,16 @@ class ImageMediaHandlerTest
 
     private ImageService imageService;
 
+    private StyleDescriptorService styleDescriptorService;
+
     @BeforeEach
     final void setup()
     {
         this.contentService = mock( ContentService.class );
         this.imageService = mock( ImageService.class );
+        this.styleDescriptorService = mock( StyleDescriptorService.class );
 
-        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class ), this.imageService, HmacTestHelper.createHmacService() );
+        this.handler = new ImageMediaHandler( this.contentService, mock( ProjectService.class ), this.imageService, this.styleDescriptorService, HmacTestHelper.createHmacService() );
         final PortalConfig portalConfig = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
         this.handler.activate( portalConfig );
 
@@ -106,7 +111,7 @@ class ImageMediaHandlerTest
         throws Exception
     {
         setupContent();
-        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         final String signedFormat = "png".equals( format ) ? "jpeg" : "png";
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint( signedFormat ) +
             "/width-640~app:card/image-name.jpg." + format );
@@ -197,9 +202,9 @@ class ImageMediaHandlerTest
     {
         setupContent();
         final var generator = new PortalUrlGeneratorServiceImpl(
-            mock( WebappService.class ), mock( SiteService.class ), imageService,
+            mock( WebappService.class ), mock( SiteService.class ), styleDescriptorService,
             HmacTestHelper.createHmacService() );
-        when( imageService.getStyle( "app:card" ) ).thenReturn(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn(
             ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 70 ).filter( "grayscale" ).build() );
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
         for ( boolean styled : new boolean[]{true, false} )
@@ -247,7 +252,7 @@ class ImageMediaHandlerTest
         when( contentService.getById( media.getId() ) ).thenReturn( media );
         when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( ByteSource.empty() );
         final var generator = new PortalUrlGeneratorServiceImpl(
-            mock( WebappService.class ), mock( SiteService.class ), imageService,
+            mock( WebappService.class ), mock( SiteService.class ), styleDescriptorService,
             HmacTestHelper.createHmacService() );
         final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create()
             .setMedia( () -> media ).setProjectName( () -> ProjectName.from( "myproject" ) )
@@ -270,7 +275,7 @@ class ImageMediaHandlerTest
         throws Exception
     {
         setupContent();
-        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         final boolean modernFormat = "webp".equals( format ) || "avif".equals( format );
         // Verify the annotation default first, then both directions of a configuration update.
         for ( int configuration = 0; configuration < 3; configuration++ )
@@ -321,7 +326,7 @@ class ImageMediaHandlerTest
         setupContent();
         final ImageStyle authorized = ImageStyle.create().name( "card" ).build();
         final ImageStyle updated = ImageStyle.create().name( "card" ).quality( 70 ).build();
-        when( imageService.getStyle( "app:card" ) ).thenReturn( authorized, updated );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( authorized, updated );
         when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
             final ReadImageParams params = invocation.getArgument( 0 );
             assertFalse( params.isCacheOnly() );
@@ -331,7 +336,7 @@ class ImageMediaHandlerTest
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint( "png" ) +
             "/width-640~app:card/image-name.jpg" );
         assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
-        verify( imageService ).getStyle( "app:card" );
+        verify( styleDescriptorService ).getImageStyle( DescriptorKey.from( "app:card" ) );
     }
 
     private String styledFingerprint( final String format )
@@ -351,7 +356,7 @@ class ImageMediaHandlerTest
             .label( "source" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
         final Content content = createContent( "123456", "path/to/image", attachment );
         when( contentService.getById( content.getId() ) ).thenReturn( content );
-        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( new byte[]{1} ) );
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint( "png" ) +
             "/width-640~app:card/image.png" );
@@ -375,7 +380,7 @@ class ImageMediaHandlerTest
             assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
             throw new IllegalArgumentException( "Image is not cached" );
         } );
-        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         final String valid = styledFingerprint( format );
         final String source = MediaHashResolver.resolveImageHash( (Media) contentService.getById( ContentId.from( "123456" ) ) );
         for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
@@ -388,10 +393,10 @@ class ImageMediaHandlerTest
                 request.setRawPath( "/site/myproject/master/_/media:image/myproject/" + path + "/image-name.jpg." + format );
                 assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
             }
-            when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).quality( 70 ).build() );
+            when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).quality( 70 ).build() );
             request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + valid + "/width-640~app:card/image-name.jpg." + format );
             assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
-            when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+            when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         }
         verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
     }
@@ -403,7 +408,7 @@ class ImageMediaHandlerTest
     {
         setupContent();
         final ByteSource cached = ByteSource.wrap( new byte[]{1, 2, 3} );
-        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
             assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
             return cached;
@@ -432,7 +437,7 @@ class ImageMediaHandlerTest
     {
         setupContent();
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint( format ) + "/width-640~app:card/image-name.jpg." + format );
-        when( imageService.getStyle( "app:card" ) ).thenReturn(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final WebResponse response = handler.handle( request );
         assertEquals( MediaType.parse( "image/" + format.toLowerCase( Locale.ROOT ) ), response.getContentType() );
@@ -449,10 +454,10 @@ class ImageMediaHandlerTest
     {
         setupContent();
         final ImageStyle style = ImageStyle.create().name( "card" ).build();
-        when( imageService.getStyle( "app:card" ) ).thenReturn( style );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( style );
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint( "png" ) + "/width-640~app:card/image-name.jpg" );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
-        when( imageService.getStyle( "app:card" ) ).thenReturn(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn(
             ImageStyle.create().name( "card" ).quality( 70 ).build() );
         assertNull( handler.handle( request ).getHeaders().get( "Cache-Control" ) );
     }
@@ -493,7 +498,7 @@ class ImageMediaHandlerTest
         throws Exception
     {
         setupContent();
-        when( imageService.getStyle( alias ) ).thenReturn( ImageStyle.create().name( "card-wide" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( alias ) ) ).thenReturn( ImageStyle.create().name( "card-wide" ).build() );
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640~" + alias + "/image-name.jpg" );
         assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
@@ -509,7 +514,7 @@ class ImageMediaHandlerTest
     {
         request.setMethod( HttpMethod.valueOf( method ) );
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full~app:missing/image-name.jpg" );
-        when( imageService.getStyle( "app:missing" ) ).thenThrow( new ImageStyleNotFoundException( "app:missing" ) );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:missing" ) ) ).thenThrow( new ImageStyleNotFoundException( "app:missing" ) );
         assertEquals( HttpStatus.NOT_FOUND, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
         verifyNoInteractions( contentService );
     }

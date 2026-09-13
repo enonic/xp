@@ -28,7 +28,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.image.ImageService;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -71,8 +71,6 @@ class PortalUrlServiceImpl_processHtmlTest
 {
     private ContentService contentService;
 
-    private ImageService imageService;
-
     private PortalUrlService service;
 
     protected StyleDescriptorService styleDescriptorService;
@@ -88,12 +86,9 @@ class PortalUrlServiceImpl_processHtmlTest
     {
         this.contentService = mock( ContentService.class );
         this.styleDescriptorService = mock( StyleDescriptorService.class );
-
-        this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
-        imageService = mock( ImageService.class );
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), imageService, HmacTestHelper.createHmacService() );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), styleDescriptorService, HmacTestHelper.createHmacService() );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
@@ -739,7 +734,7 @@ class PortalUrlServiceImpl_processHtmlTest
     {
         final Media media = ContentFixtures.newMedia();
         when( contentService.getById( media.getId() ) ).thenReturn( media );
-        when( imageService.getStyle( "myapp:card" ) ).thenReturn(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:card" ) ) ).thenReturn(
             ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 70 ).filter( "grayscale" ).build() );
         final String saved = "<img src=\"image://" + media.getId() + "?style=myapp:card\">";
         final ProcessHtmlParams params = new ProcessHtmlParams().value( saved ).imageWidths( List.of( 320, 640 ) );
@@ -748,7 +743,7 @@ class PortalUrlServiceImpl_processHtmlTest
             .doesNotContain( "?style=", "?filter=", "quality=", "block-" );
         assertThat( rendered ).containsPattern( media.getId() + ":[0-9a-f]{40}/width-768~myapp:card/" );
         assertEquals( saved, params.getValue() );
-        when( imageService.getStyle( "myapp:card" ) ).thenReturn(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:card" ) ) ).thenReturn(
             ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 60 ).filter( "grayscale" ).build() );
         assertThat( service.processHtml( params ) ).isNotEqualTo( rendered );
     }
@@ -758,7 +753,7 @@ class PortalUrlServiceImpl_processHtmlTest
     {
         final Media media = ContentFixtures.newMedia();
         when( contentService.getById( media.getId() ) ).thenReturn( media );
-        when( imageService.getStyle( "myapp:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
         final String rendered = ContextBuilder.create().repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "draft" ) ).build().callWith( () ->
                 service.processHtml( new ProcessHtmlParams().imageBaseUrl( "/images" )
@@ -778,7 +773,7 @@ class PortalUrlServiceImpl_processHtmlTest
             assertThrows( IllegalArgumentException.class,
                 () -> service.processHtml( new ProcessHtmlParams().value( saved ) ) );
         }
-        when( imageService.getStyle( "myapp:missing" ) ).thenThrow(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:missing" ) ) ).thenThrow(
             new ImageStyleNotFoundException( "myapp:missing" ) );
         final String rendered = service.processHtml( new ProcessHtmlParams()
             .value( "<img src=\"image://" + media.getId() + "?style=myapp:missing\">" ) );

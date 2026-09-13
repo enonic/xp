@@ -29,7 +29,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.content.Content;
@@ -43,9 +42,6 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
-import com.enonic.xp.style.ImageStyleNotFoundException;
-import com.enonic.xp.style.StyleDescriptor;
-import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -54,7 +50,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -71,7 +66,7 @@ class ImageServiceImplTest extends ImageMagickTestSupport
 
     private ImageServiceImpl imageService;
 
-    private StyleDescriptorService styleDescriptorService;
+    private ImageStyle style;
 
     private ContentId contentId;
 
@@ -89,8 +84,6 @@ class ImageServiceImplTest extends ImageMagickTestSupport
         contentId = ContentId.from( "contentid" );
         binaryReference = BinaryReference.from( "binaryRef" );
         contentService = mock( ContentService.class );
-
-        styleDescriptorService = mock( StyleDescriptorService.class );
 
         imageConfig = mock( ImageConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
@@ -111,14 +104,12 @@ class ImageServiceImplTest extends ImageMagickTestSupport
 
         imageScaleFunctionBuilder.activate( imageConfig );
 
-        return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, styleDescriptorService, imageMagick, imageConfig );
+        return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, imageMagick, imageConfig );
     }
 
     private void processingStyle( final Integer quality )
     {
-        when( styleDescriptorService.getByApplication( ApplicationKey.from( "app" ) ) ).thenReturn(
-            StyleDescriptor.create().application( ApplicationKey.from( "app" ) )
-                .addStyleElement( ImageStyle.create().name( "card" ).quality( quality ).build() ).build() );
+        style = ImageStyle.create().name( "card" ).quality( quality ).build();
     }
 
     private ReadImageParams styledParams( final String format )
@@ -131,7 +122,7 @@ class ImageServiceImplTest extends ImageMagickTestSupport
         return ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
             .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
             .mimeType( "image/" + format ).scaleParams( new ScaleParams( "square", new Object[]{10} ) )
-            .style( imageService.getStyle( "app:card" ) ).cacheOnly( cacheOnly ).build();
+            .style( style ).cacheOnly( cacheOnly ).build();
     }
 
     @ParameterizedTest
@@ -213,12 +204,10 @@ class ImageServiceImplTest extends ImageMagickTestSupport
         when( imageConfig.encoding_backend() ).thenReturn( encoding );
         when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
         imageService = newImageService();
-        when( styleDescriptorService.getByApplication( ApplicationKey.from( "app" ) ) ).thenReturn(
-            StyleDescriptor.create().application( ApplicationKey.from( "app" ) )
-                .addStyleElement( ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).filter( "invert" ).build() ).build() );
+        style = ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).filter( "invert" ).build();
         final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
             .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
-            .mimeType( "image/png" ).scaleParams( new ScaleParams( "width", new Object[]{16} ) ).style( imageService.getStyle( "app:card" ) ).build();
+            .mimeType( "image/png" ).scaleParams( new ScaleParams( "width", new Object[]{16} ) ).style( style ).build();
         final BufferedImage result = ImageIO.read( new ByteArrayInputStream( imageService.readImage( params ).read() ) );
         assertEquals( 16, result.getWidth() );
         assertEquals( 9, result.getHeight() );
@@ -478,19 +467,6 @@ class ImageServiceImplTest extends ImageMagickTestSupport
     }
 
     @Test
-    void rejectsUnknownAndInvalidStylesBeforeReadingContent()
-    {
-        assertThrows( ImageStyleNotFoundException.class, () -> imageService.getStyle( "app:missing" ) );
-        processingStyle( -1 );
-        assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
-        processingStyle( 101 );
-        assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
-        processingStyle( null );
-        assertEquals( "card", imageService.getStyle( "app:card" ).getName() );
-        verifyNoInteractions( contentService );
-    }
-
-    @Test
     void directModernEncodingWithoutStyleIsRejected()
     {
         for ( String format : new String[]{"webp", "avif"} )
@@ -543,11 +519,9 @@ class ImageServiceImplTest extends ImageMagickTestSupport
         final ReadImageParams authorized = styledParams( "png" );
         final ReadImageParams authorizedCacheOnly = styledParams( "png", true );
         processingStyle( 20 );
-        clearInvocations( styleDescriptorService );
 
         final byte[] first = imageService.readImage( authorized ).read();
         assertArrayEquals( first, imageService.readImage( authorizedCacheOnly ).read() );
-        verifyNoInteractions( styleDescriptorService );
         verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
 
         final ReadImageParams currentCacheOnly = styledParams( "png", true );

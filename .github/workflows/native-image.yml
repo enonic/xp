@@ -8,6 +8,8 @@ on:
       - 'modules/core/core-image-im/**'
       - 'modules/core/core-internal/src/main/java/com/enonic/xp/core/internal/image/**'
       - 'modules/core/core-api/src/main/java/com/enonic/xp/style/**'
+      - 'modules/core/core-content/src/main/java/com/enonic/xp/core/impl/style/**'
+      - 'modules/core/core-content/src/test/java/com/enonic/xp/core/impl/style/**'
       - 'modules/portal/**'
       - 'gradle/libs.versions.toml'
       - '.github/workflows/native-image.yml'
@@ -38,7 +40,7 @@ jobs:
         run: ./gradlew -p buildSrc test
       - name: Test style enforcement, fingerprints, and resource limits
         if: runner.os != 'Windows'
-        run: ./gradlew :core:core-image:test :portal:portal-impl:test --tests '*PortalUrlGeneratorServiceImplTest' --tests '*PortalUrlServiceImpl_imageUrlTest' --tests '*ImageRendererTest' --tests '*PortalUrlServiceImpl_processHtmlTest' --tests '*ImageMediaHandlerTest' --tests '*ImageHandlerTest' --tests '*HmacServiceTest' --tests '*RedirectChecksumServiceTest' --tests '*MediaHashResolverTest' :core:core-content:test --tests '*YmlStyleDescriptorParserTest' --tests '*HtmlAreaContentProcessorTest' :lib:lib-portal:test --tests '*UrlServiceScriptTest'
+        run: ./gradlew :core:core-image:test :portal:portal-impl:test --tests '*PortalUrlGeneratorServiceImplTest' --tests '*PortalUrlServiceImpl_imageUrlTest' --tests '*ImageRendererTest' --tests '*PortalUrlServiceImpl_processHtmlTest' --tests '*ImageMediaHandlerTest' --tests '*ImageHandlerTest' --tests '*HmacServiceTest' --tests '*RedirectChecksumServiceTest' --tests '*MediaHashResolverTest' :core:core-content:test --tests '*StyleDescriptorServiceImplTest' --tests '*YmlStyleDescriptorParserTest' --tests '*HtmlAreaContentProcessorTest' :lib:lib-portal:test --tests '*UrlServiceScriptTest'
       - name: Validate public image API Javadoc
         if: matrix.runner == 'ubuntu-latest'
         run: ./gradlew :core:core-api:test --tests '*ReadImageParamsTest' :core:core-api:javadoc :portal:portal-api:javadoc

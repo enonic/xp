@@ -94,6 +94,8 @@ currently resolved rendition if it is cached; this does not retrieve historical
 renditions by their old URL fingerprint. Mismatched fingerprints do not receive
 immutable response caching headers.
 
+The portal resolves image styles through `StyleDescriptorService.getImageStyle(DescriptorKey)`.
+`ImageService` has no style lookup or style descriptor service dependency.
 The portal passes the resolved style snapshot used to validate the fingerprint to
 the image service. Content permissions,
 stored cropping, focal point, and orientation still apply.

@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.handler;
 
+import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -9,18 +10,20 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.image.ImageService;
-import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 
 @Component(service = UniversalApiHandler.class, property = {"key=" + ImageMediaHandler.IMAGE_API, "title=Image Media API",
     "allowedPrincipals=role:system.everyone", "mount=web"}, configurationPid = "com.enonic.xp.portal")
+@NullMarked
 public class ImageMediaHandler
     extends MediaHandlerBase
 {
@@ -28,16 +31,20 @@ public class ImageMediaHandler
 
     private final ImageService imageService;
 
+    private final StyleDescriptorService styleDescriptorService;
+
     private final HmacService hmacService;
 
     private volatile boolean allowHashlessGeneration;
 
     @Activate
     public ImageMediaHandler( @Reference final ContentService contentService, @Reference final ProjectService projectService,
-                              @Reference final ImageService imageService, @Reference final HmacService hmacService )
+                              @Reference final ImageService imageService, @Reference final StyleDescriptorService styleDescriptorService,
+                              @Reference final HmacService hmacService )
     {
         super( contentService, projectService );
         this.imageService = imageService;
+        this.styleDescriptorService = styleDescriptorService;
         this.hmacService = hmacService;
     }
 
@@ -68,7 +75,7 @@ public class ImageMediaHandler
             .branch( pathMetadata.branch )
             .build()
             .callWith( () -> {
-                final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.hmacService );
+                final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.styleDescriptorService, this.hmacService );
 
                 worker.id = pathMetadata.contentId;
                 worker.allowHashlessGeneration = this.allowHashlessGeneration;

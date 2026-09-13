@@ -35,11 +35,10 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.internal.ByteSizeParser;
-import com.enonic.xp.core.internal.image.ImageMagick;
 import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.core.internal.SimpleCsvParser;
+import com.enonic.xp.core.internal.image.ImageMagick;
 import com.enonic.xp.core.internal.security.MessageDigests;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.home.HomeDir;
 import com.enonic.xp.image.Cropping;
@@ -49,11 +48,6 @@ import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.style.ImageStyle;
-import com.enonic.xp.style.ImageStyleNotFoundException;
-import com.enonic.xp.style.ImageStyleSettings;
-import com.enonic.xp.style.StyleDescriptor;
-import com.enonic.xp.style.StyleDescriptorService;
 
 import static java.util.Objects.requireNonNull;
 
@@ -75,8 +69,6 @@ public class ImageServiceImpl
     private final MemoryCircuitBreaker circuitBreaker;
 
     private final Set<String> progressiveOnFormats;
-
-    private final StyleDescriptorService styleDescriptorService;
 
     private final ImageMagickEncoder nativeEncoder;
 
@@ -102,13 +94,11 @@ public class ImageServiceImpl
     public ImageServiceImpl( @Reference final ContentService contentService,
                              @Reference final ImageScaleFunctionBuilder imageScaleFunctionBuilder,
                              @Reference final ImageFilterBuilder imageFilterBuilder,
-                             @Reference final StyleDescriptorService styleDescriptorService,
                              @Reference final ImageMagick imageMagick, final ImageConfig config )
     {
         this.contentService = contentService;
         this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
         this.imageFilterBuilder = imageFilterBuilder;
-        this.styleDescriptorService = styleDescriptorService;
 
         if ( config.processing_maxConcurrent() < 1 || config.processing_maxQueue() < 0 ||
             config.processing_queueTimeoutSeconds() < 1 || config.processing_maxPixels() < 1 )
@@ -151,22 +141,6 @@ public class ImageServiceImpl
             .filter( Predicate.not( String::isEmpty ) )
             .map( s -> s.toLowerCase( Locale.ROOT ) )
             .collect( Collectors.toUnmodifiableSet() );
-    }
-
-    @Override
-    public ImageStyle getStyle( final String key )
-    {
-        final DescriptorKey descriptorKey = DescriptorKey.from( key );
-        final StyleDescriptor descriptor = styleDescriptorService.getByApplication( descriptorKey.getApplicationKey() );
-        final ImageStyle style = descriptor == null ? null : descriptor.getElements().stream()
-            .filter( element -> element instanceof ImageStyle && element.getName().equals( descriptorKey.getName() ) )
-            .map( ImageStyle.class::cast ).findFirst().orElse( null );
-        if ( style == null )
-        {
-            throw new ImageStyleNotFoundException( key );
-        }
-        ImageStyleSettings.from( style );
-        return style;
     }
 
     @Override

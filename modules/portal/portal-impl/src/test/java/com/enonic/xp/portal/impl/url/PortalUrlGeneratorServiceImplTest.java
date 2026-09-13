@@ -18,7 +18,6 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.image.ImageService;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
@@ -31,6 +30,7 @@ import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.webapp.WebappService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,13 +44,13 @@ class PortalUrlGeneratorServiceImplTest
 {
     private PortalUrlGeneratorService service;
 
-    private ImageService imageService;
+    private StyleDescriptorService styleDescriptorService;
 
     @BeforeEach
     void setUp()
     {
-        this.imageService = mock( ImageService.class );
-        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), imageService, HmacTestHelper.createHmacService() );
+        this.styleDescriptorService = mock( StyleDescriptorService.class );
+        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), styleDescriptorService, HmacTestHelper.createHmacService() );
     }
 
     @AfterEach
@@ -62,7 +62,7 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void imageStyleUrlAndPartsUseRequestedScale()
     {
-        when( imageService.getStyle( "app:card" ) ).thenReturn(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final ImageUrlGeneratorParams params = styleUrlParams().build();
         assertEquals( "baseUrl/_/media:image/myproject:draft/123456:137ddcdf20c236ef43e3d96167a6bc301fa3a660/width-640~app:card/mycontent.png.webp",
@@ -78,8 +78,8 @@ class PortalUrlGeneratorServiceImplTest
     void styleAliasIsInPathAndDoesNotChangeFingerprint()
     {
         final ImageStyle style = ImageStyle.create().name( "card" ).build();
-        when( imageService.getStyle( "app:card" ) ).thenReturn( style );
-        when( imageService.getStyle( "com.example.site:card-wide" ) ).thenReturn( style );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( style );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "com.example.site:card-wide" ) ) ).thenReturn( style );
         final ImageUrlParts first = service.imageUrlParts( styleUrlParams().build() );
         final ImageUrlGeneratorParams alias = styleUrlParams().setStyle( "com.example.site:card-wide" )
             .setQueryParam( "download", "true" ).build();
@@ -116,7 +116,7 @@ class PortalUrlGeneratorServiceImplTest
         final var fingerprints = new HashSet<String>();
         for ( final ImageStyle style : styles )
         {
-            when( imageService.getStyle( "app:card" ) ).thenReturn( style );
+            when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( style );
             final ImageUrlParts parts = service.imageUrlParts( params );
             assertThat( service.imageUrl( params ) ).contains( ":" + parts.fingerprint() + "/width-640~app:card/" );
             fingerprints.add( parts.fingerprint() );
@@ -127,7 +127,7 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void requestedScaleChangesStyledFingerprint()
     {
-        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).build() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).build() );
         final ImageUrlParts wide = service.imageUrlParts( styleUrlParams().setScale( "width(640)" ).build() );
         final ImageUrlParts small = service.imageUrlParts( styleUrlParams().setScale( "width(320)" ).build() );
         assertThat( wide.fingerprint() ).isNotEqualTo( small.fingerprint() );
@@ -156,7 +156,7 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void formatIsSelectedIndependentlyOfStyle()
     {
-        when( imageService.getStyle( "app:card" ) ).thenReturn(
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final var fingerprints = new HashSet<String>();
         for ( String format : new String[]{"jpeg", "png", "webp", "avif"} )

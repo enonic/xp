@@ -8,7 +8,6 @@ import java.util.concurrent.Callable;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -21,7 +20,6 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.image.ImageService;
 import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
@@ -34,6 +32,7 @@ import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.webapp.WebappService;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
@@ -50,7 +49,7 @@ public class PortalUrlGeneratorServiceImpl
 
     private final SiteService siteService;
 
-    private final ImageService imageService;
+    private final StyleDescriptorService styleDescriptorService;
 
     private final HmacService hmacService;
 
@@ -60,11 +59,11 @@ public class PortalUrlGeneratorServiceImpl
 
     @Activate
     public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService,
-                                          @Reference final ImageService imageService, @Reference final HmacService hmacService )
+                                          @Reference final StyleDescriptorService styleDescriptorService, @Reference final HmacService hmacService )
     {
         this.webappService = webappService;
         this.siteService = siteService;
-        this.imageService = imageService;
+        this.styleDescriptorService = styleDescriptorService;
         this.hmacService = hmacService;
     }
 
@@ -89,7 +88,8 @@ public class PortalUrlGeneratorServiceImpl
                           .setScale( params.getScale() )
                           .setFormat( params.getFormat() )
                 .setQueryParams( imageQueryParams( params ) )
-                          .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                          .setStyle( params.getStyle(), () -> params.getStyle() == null ? null :
+                              styleDescriptorService.getImageStyle( DescriptorKey.from( params.getStyle() ) ) )
                 .setHmacService( hmacService )
                           .build() );
 
@@ -136,7 +136,8 @@ public class PortalUrlGeneratorServiceImpl
                 .setScale( params.getScale() )
                 .setFormat( params.getFormat() )
                 .setQueryParams( imageQueryParams( params ) )
-                .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
+                .setStyle( params.getStyle(), () -> params.getStyle() == null ? null :
+                    styleDescriptorService.getImageStyle( DescriptorKey.from( params.getStyle() ) ) )
                 .setHmacService( hmacService )
                 .build()
                 .parts();

@@ -7,25 +7,13 @@ import org.jspecify.annotations.NullMarked;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.exception.ThrottlingException;
-import com.enonic.xp.style.ImageStyle;
-import com.enonic.xp.style.ImageStyleNotFoundException;
 
 /**
- * Resolves predefined image styles and reads or generates image renditions.
+ * Reads or generates image renditions.
  */
 @NullMarked
 public interface ImageService
 {
-    /**
-     * Resolves and validates a predefined image style.
-     *
-     * @param key fully qualified style key in {@code application:name} form
-     * @return the resolved style
-     * @throws ImageStyleNotFoundException if the style does not exist
-     * @throws IllegalArgumentException if the key or processing settings are invalid
-     */
-    ImageStyle getStyle( String key );
-
     /**
      * Reads an existing rendition or generates and caches one when permitted by the request.
      * WebP and AVIF output requires a resolved image style. A cache-only request never reads

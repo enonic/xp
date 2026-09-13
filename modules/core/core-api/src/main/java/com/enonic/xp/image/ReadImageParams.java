@@ -6,9 +6,11 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.ImageStyleSettings;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.util.BinaryReference;
 
 import static java.util.Objects.requireNonNull;
@@ -315,7 +317,7 @@ public final class ReadImageParams
          * without looking up the style again.
          * A styled request cannot also specify filters, quality or background overrides.
          *
-         * @param style the resolved style, obtainable through {@link ImageService#getStyle(String)}
+         * @param style the resolved style, obtainable through {@link StyleDescriptorService#getImageStyle(DescriptorKey)}
          * @return this builder
          */
         public Builder style( final @Nullable ImageStyle style )
