@@ -4,6 +4,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.ContentPropertyNames;
 import com.enonic.xp.content.Media;
@@ -18,9 +21,10 @@ import com.enonic.xp.style.ImageStyleSettings;
 
 import static java.util.Objects.requireNonNullElse;
 
+@NullMarked
 public final class MediaHashResolver
 {
-    public static String resolveImageHash( final Media media, final String hash )
+    public static @Nullable String resolveImageHash( final Media media, final @Nullable String hash )
     {
         if ( hash == null )
         {
@@ -49,7 +53,7 @@ public final class MediaHashResolver
         return HexFormat.of().formatHex( digest.digest(), 0, 16 );
     }
 
-    public static String resolveImageHash( final Media media )
+    public static @Nullable String resolveImageHash( final Media media )
     {
         final Attachment attachment = media.getAttachments().byLabel( "source" );
 
@@ -61,7 +65,7 @@ public final class MediaHashResolver
         return resolveImageHash( media, resolveAttachmentHash( attachment ) );
     }
 
-    public static String resolveImageFingerprint( final String imageHash, final ImageStyleSettings settings, final ScaleParams scale,
+    public static @Nullable String resolveImageFingerprint( final @Nullable String imageHash, final ImageStyleSettings settings, final @Nullable ScaleParams scale,
                                                  final String mimeType, final HmacService hmacService )
     {
         if ( imageHash == null )
@@ -81,20 +85,20 @@ public final class MediaHashResolver
         return hmacService.generateChecksum( "image-fingerprint-v2\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
     }
 
-    public static boolean matchesFingerprint( final String expected, final String supplied )
+    public static boolean matchesFingerprint( final @Nullable String expected, final @Nullable String supplied )
     {
         return expected != null && supplied != null && MessageDigest.isEqual(
             expected.getBytes( StandardCharsets.UTF_8 ), supplied.getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    private static void updateField( final MessageDigest digest, final String value )
+    private static void updateField( final MessageDigest digest, final @Nullable String value )
     {
         final byte[] bytes = value == null ? new byte[0] : value.getBytes( StandardCharsets.UTF_8 );
         MessageDigests.updateWithIntLE( digest, bytes.length );
         digest.update( bytes );
     }
 
-    public static String resolveAttachmentHash( final Attachment attachment )
+    public static @Nullable String resolveAttachmentHash( final @Nullable Attachment attachment )
     {
         return attachment == null || attachment.getSha512() == null ? null : attachment.getSha512().substring( 0, 32 );
     }

@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.image;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
 import com.enonic.xp.image.Cropping;
@@ -15,6 +18,7 @@ import com.enonic.xp.util.BinaryReference;
  * NormalizedImageParams normalizes {@link ReadImageParams} fields
  * It helps to generate fewer image cache files in {@link ImageServiceImpl}
  */
+@NullMarked
 class NormalizedImageParams
 {
     private final ContentId contentId;
@@ -37,14 +41,14 @@ class NormalizedImageParams
 
     private final ImageOrientation orientation;
 
-    private final String attachmentSha512;
+    private final @Nullable String attachmentSha512;
 
     NormalizedImageParams( ReadImageParams readImageParams )
     {
         this( readImageParams, null );
     }
 
-    NormalizedImageParams( final ReadImageParams readImageParams, final ImageStyle style )
+    NormalizedImageParams( final ReadImageParams readImageParams, final @Nullable ImageStyle style )
     {
         final ImageStyleSettings settings = style == null ? null : ImageStyleSettings.from( style );
         this.contentId = readImageParams.getContentId();
@@ -114,12 +118,12 @@ class NormalizedImageParams
         return orientation;
     }
 
-    public String getAttachmentSha512()
+    public @Nullable String getAttachmentSha512()
     {
         return attachmentSha512;
     }
 
-    private static Cropping normalizeCropping( final Cropping cropping )
+    private static Cropping normalizeCropping( final @Nullable Cropping cropping )
     {
         return cropping == null || cropping.isUnmodified() ? Cropping.DEFAULT : cropping;
     }

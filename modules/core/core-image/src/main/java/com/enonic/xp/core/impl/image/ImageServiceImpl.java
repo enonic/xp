@@ -21,6 +21,9 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -54,6 +57,7 @@ import com.enonic.xp.style.StyleDescriptorService;
 import static java.util.Objects.requireNonNull;
 
 @Component(configurationPid = "com.enonic.xp.image")
+@NullMarked
 public class ImageServiceImpl
     implements ImageService
 {
@@ -203,14 +207,14 @@ public class ImageServiceImpl
         return "pending:" + getCachedImagePath( params, MessageDigests.formatHex( digest ) );
     }
 
-    private String resolveAttachmentSha512( final NormalizedImageParams params )
+    private @Nullable String resolveAttachmentSha512( final NormalizedImageParams params )
     {
         if ( params.getAttachmentSha512() != null ) { return params.getAttachmentSha512(); }
         return contentService.getById( params.getContentId() ).getAttachments()
             .byName( params.getBinaryReference().toString() ).getSha512();
     }
 
-    private ByteSource generateImage( final NormalizedImageParams params, final String checksum, final Path path ) throws IOException
+    private ByteSource generateImage( final NormalizedImageParams params, final @Nullable String checksum, final @Nullable Path path ) throws IOException
     {
         if ( path != null )
         {
@@ -229,7 +233,7 @@ public class ImageServiceImpl
         }
     }
 
-    private PreparedImageSource prepareSource( final NormalizedImageParams params, final String checksum ) throws IOException
+    private PreparedImageSource prepareSource( final NormalizedImageParams params, final @Nullable String checksum ) throws IOException
     {
         final ByteSource source = contentService.getBinary( params.getContentId(), params.getBinaryReference() );
         if ( source == null ) { throw new IllegalArgumentException( "No binary found for content " + params.getContentId() ); }
@@ -368,8 +372,8 @@ public class ImageServiceImpl
         }
     }
 
-    private void encode( final NormalizedImageParams params, final ByteSink sink, final NativeImageRaster raster,
-                         final BufferedImage image ) throws IOException
+    private void encode( final NormalizedImageParams params, final ByteSink sink, final @Nullable NativeImageRaster raster,
+                         final @Nullable BufferedImage image ) throws IOException
     {
         // Preserve legacy quality=0 semantics; modern encoders accept zero as an explicit quality.
         final int quality = params.getQuality() == 0 && !isModernFormat( params.getFormat() ) ? -1 : params.getQuality();

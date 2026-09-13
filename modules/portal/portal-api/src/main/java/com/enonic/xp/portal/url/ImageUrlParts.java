@@ -11,8 +11,9 @@ import org.jspecify.annotations.Nullable;
  * @param queryString URL-escaped query string prefixed with {@code ?}; empty when there are no parameters
  * @param context     project context segment: {@code <project>} on the master branch, {@code <project>:<branch>} otherwise
  * @param id          content id
- * @param fingerprint media fingerprint; joined with the id as {@code <id>:<fingerprint>} in the path
- * @param scale       processed scale segment, including an optional style (for example {@code width-640~com.example.site:card})
+ * @param fingerprint modern rendition signature when the source checksum is available;
+ *                    joined with the id as {@code <id>:<fingerprint>} in the path
+ * @param scale       requested scale segment, including an optional style (for example {@code width-640~com.example.site:card})
  * @param name        file name segment, with the requested format extension applied
  */
 @NullMarked

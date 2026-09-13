@@ -3,6 +3,9 @@ package com.enonic.xp.portal.impl.url;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -55,6 +58,7 @@ import com.enonic.xp.style.StyleDescriptorService;
 import static java.util.Objects.requireNonNull;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
+@NullMarked
 public final class PortalUrlServiceImpl
     implements PortalUrlService
 {
@@ -74,7 +78,7 @@ public final class PortalUrlServiceImpl
 
     private final SiteService siteService;
 
-    private volatile String defaultMediaBaseUrl;
+    private volatile @Nullable String defaultMediaBaseUrl;
 
     private volatile boolean mediaApiAutoMount = true;
 
@@ -138,7 +142,7 @@ public final class PortalUrlServiceImpl
     }
 
     @Override
-    public String baseUrl( final BaseUrlParams params )
+    public @Nullable String baseUrl( final BaseUrlParams params )
     {
         if ( params.getApi() != null )
         {
@@ -152,7 +156,7 @@ public final class PortalUrlServiceImpl
             new ContentBaseUrlSupplier( contentService, projectService, params ).get() ) );
     }
 
-    private String resolveApiBaseUrl( final BaseUrlParams params )
+    private @Nullable String resolveApiBaseUrl( final BaseUrlParams params )
     {
         final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extract( params, null, true );
 

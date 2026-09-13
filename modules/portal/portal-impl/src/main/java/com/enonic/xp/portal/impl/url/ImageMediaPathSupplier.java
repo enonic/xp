@@ -5,6 +5,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
 
@@ -26,6 +29,7 @@ import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
+@NullMarked
 final class ImageMediaPathSupplier
     implements Supplier<String>
 {
@@ -37,13 +41,13 @@ final class ImageMediaPathSupplier
 
     private final String scale;
 
-    private final String format;
+    private final @Nullable String format;
 
     private final Map<String, List<String>> queryParams;
 
-    private final Supplier<ImageStyle> styleSupplier;
+    private final Supplier<@Nullable ImageStyle> styleSupplier;
 
-    private final String styleKey;
+    private final @Nullable String styleKey;
 
     private final HmacService hmacService;
 
@@ -110,13 +114,13 @@ final class ImageMediaPathSupplier
                                    name );
     }
 
-    private String parameter( final String name, final String fallback )
+    private @Nullable String parameter( final String name, final @Nullable String fallback )
     {
         final List<String> values = queryParams.get( name );
         return values == null || values.isEmpty() || values.getFirst().isEmpty() ? fallback : values.getFirst();
     }
 
-    private String resolveName( final Content media, final String format )
+    private String resolveName( final Content media, final @Nullable String format )
     {
         final String name = media.getName().toString();
 
@@ -142,23 +146,23 @@ final class ImageMediaPathSupplier
 
     static class Builder
     {
-        private Supplier<Media> mediaSupplier;
+        private @Nullable Supplier<Media> mediaSupplier;
 
-        private Supplier<ProjectName> projectNameSupplier;
+        private @Nullable Supplier<ProjectName> projectNameSupplier;
 
-        private Supplier<Branch> branchSupplier;
+        private @Nullable Supplier<Branch> branchSupplier;
 
-        private String scale;
+        private @Nullable String scale;
 
-        private String format;
+        private @Nullable String format;
 
         private Map<String, List<String>> queryParams = Map.of();
 
-        private Supplier<ImageStyle> styleSupplier = () -> null;
+        private Supplier<@Nullable ImageStyle> styleSupplier = () -> null;
 
-        private String styleKey;
+        private @Nullable String styleKey;
 
-        private HmacService hmacService;
+        private @Nullable HmacService hmacService;
 
         public Builder setHmacService( final HmacService hmacService )
         {
@@ -166,7 +170,7 @@ final class ImageMediaPathSupplier
             return this;
         }
 
-        public Builder setStyle( final String styleKey, final Supplier<ImageStyle> styleSupplier )
+        public Builder setStyle( final @Nullable String styleKey, final Supplier<@Nullable ImageStyle> styleSupplier )
         {
             this.styleSupplier = styleSupplier;
             this.styleKey = styleKey;
@@ -203,7 +207,7 @@ final class ImageMediaPathSupplier
             return this;
         }
 
-        public Builder setFormat( final String format )
+        public Builder setFormat( final @Nullable String format )
         {
             this.format = format;
             return this;

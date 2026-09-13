@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.project.ProjectName;
@@ -13,11 +16,17 @@ import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
+/**
+ * Parameters for generating an image URL from supplied media, project and branch values.
+ * Scale and output format are independent of the selected style. Styled requests cannot
+ * include explicit quality, filter or background overrides.
+ */
+@NullMarked
 public final class ImageUrlGeneratorParams
 {
-    private final String baseUrl;
+    private final @Nullable String baseUrl;
 
-    private final String mediaBaseUrl;
+    private final @Nullable String mediaBaseUrl;
 
     private final String urlType;
 
@@ -27,20 +36,27 @@ public final class ImageUrlGeneratorParams
 
     private final Supplier<Branch> branchSupplier;
 
-    private final String background;
+    private final @Nullable String background;
 
-    private final Integer quality;
+    private final @Nullable Integer quality;
 
-    private final String filter;
+    private final @Nullable String filter;
 
-    private final String format;
+    private final @Nullable String format;
 
     private final String scale;
 
-    private final String style;
+    private final @Nullable String style;
 
     private final Map<String, List<String>> queryParams;
 
+    /**
+     * Creates validated URL-generation parameters.
+     *
+     * @param builder the parameter builder
+     * @throws NullPointerException if a required supplier or scale is missing
+     * @throws IllegalArgumentException if a style has processing overrides, or WebP/AVIF is requested without a style
+     */
     private ImageUrlGeneratorParams( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
@@ -64,103 +80,184 @@ public final class ImageUrlGeneratorParams
         this.queryParams = builder.queryParams.build();
     }
 
-    public String getBaseUrl()
+    /**
+     * Returns the explicit mount base URL.
+     *
+     * @return the mount base URL
+     */
+    public @Nullable String getBaseUrl()
     {
         return baseUrl;
     }
 
-    public String getMediaBaseUrl()
+    /**
+     * Returns the explicit API root, which takes precedence over the mount base URL.
+     *
+     * @return the media API root
+     */
+    public @Nullable String getMediaBaseUrl()
     {
         return mediaBaseUrl;
     }
 
+    /**
+     * Returns the requested URL representation.
+     *
+     * @return the URL type; defaults to {@link UrlTypeConstants#SERVER_RELATIVE}
+     */
     public String getUrlType()
     {
         return urlType;
     }
 
+    /**
+     * Returns the supplier of the source media.
+     *
+     * @return the media supplier
+     */
     public Supplier<Media> getMedia()
     {
         return mediaSupplier;
     }
 
+    /**
+     * Returns the supplier of the source project.
+     *
+     * @return the project supplier
+     */
     public Supplier<ProjectName> getProjectName()
     {
         return projectNameSupplier;
     }
 
+    /**
+     * Returns the supplier of the source branch.
+     *
+     * @return the branch supplier
+     */
     public Supplier<Branch> getBranch()
     {
         return branchSupplier;
     }
 
-    public String getBackground()
+    /**
+     * Returns the explicit background color override.
+     *
+     * @return the hexadecimal RGB color
+     */
+    public @Nullable String getBackground()
     {
         return background;
     }
 
-    public Integer getQuality()
+    /**
+     * Returns the explicit encoder quality override.
+     *
+     * @return the encoder quality
+     */
+    public @Nullable Integer getQuality()
     {
         return quality;
     }
 
-    public String getFilter()
+    /**
+     * Returns the explicit filter override.
+     *
+     * @return the filter specification
+     */
+    public @Nullable String getFilter()
     {
         return filter;
     }
 
-    public String getFormat()
+    /**
+     * Returns the explicit output format, expressed as a filename extension.
+     *
+     * @return the requested output format
+     */
+    public @Nullable String getFormat()
     {
         return format;
     }
 
-    public String getStyle()
+    /**
+     * Returns the predefined image style selected for this request.
+     *
+     * @return the fully qualified {@code application:name} key
+     */
+    public @Nullable String getStyle()
     {
         return style;
     }
 
+    /**
+     * Returns the requested scaling operation.
+     *
+     * @return the scale expression
+     */
     public String getScale()
     {
         return scale;
     }
 
+    /**
+     * Returns the additional query parameters.
+     *
+     * @return an unmodifiable map with unmodifiable value lists
+     */
     public Map<String, List<String>> getQueryParams()
     {
         return queryParams;
     }
 
+    /**
+     * Creates a builder for image URL parameters.
+     *
+     * @return a new builder
+     */
     public static Builder create()
     {
         return new Builder();
     }
 
+    /**
+     * Builds image URL parameters. Media, project and branch suppliers and a scale are required.
+     * Values returned by the suppliers are resolved when a URL is generated.
+     */
     public static class Builder
     {
-        private String baseUrl;
+        private @Nullable String baseUrl;
 
-        private String mediaBaseUrl;
+        private @Nullable String mediaBaseUrl;
 
-        private String urlType;
+        private @Nullable String urlType;
 
-        private Supplier<Media> mediaSupplier;
+        private @Nullable Supplier<Media> mediaSupplier;
 
-        private Supplier<ProjectName> projectNameSupplier;
+        private @Nullable Supplier<ProjectName> projectNameSupplier;
 
-        private Supplier<Branch> branchSupplier;
+        private @Nullable Supplier<Branch> branchSupplier;
 
-        private String background;
+        private @Nullable String background;
 
-        private Integer quality;
+        private @Nullable Integer quality;
 
-        private String filter;
+        private @Nullable String filter;
 
-        private String format;
+        private @Nullable String format;
 
-        private String scale;
+        private @Nullable String scale;
 
-        private String style;
+        private @Nullable String style;
 
-        public Builder setStyle( final String style )
+        /**
+         * Selects a predefined image style. Its processing settings determine filter, quality
+         * and background, so those values cannot also be supplied explicitly.
+         *
+         * @param style the fully qualified {@code application:name} key
+         * @return this builder
+         */
+        public Builder setStyle( final @Nullable String style )
         {
             this.style = style;
             return this;
@@ -169,97 +266,179 @@ public final class ImageUrlGeneratorParams
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
         /**
-         * Base URL of a mount where the generated media URL lives under the "_"
-         * endpoint segment: {@code <baseUrl>/_/media:image/...}.
+         * Sets a mount base URL, producing URLs in the form {@code <baseUrl>/_/media:image/...}.
          *
-         * @deprecated use {@link #setMediaBaseUrl(String)} - append {@code /_} to the
-         * value to keep the mount form produced by this method.
+         * @param baseUrl the mount base URL
+         * @return this builder
+         * @deprecated use {@link #setMediaBaseUrl(String)}; append {@code /_} to retain the mount form
          */
         @Deprecated
-        public Builder setBaseUrl( final String baseUrl )
+        public Builder setBaseUrl( final @Nullable String baseUrl )
         {
             this.baseUrl = baseUrl;
             return this;
         }
 
         /**
-         * Base URL used verbatim as the API root of the generated media URL:
-         * {@code <mediaBaseUrl>/media:image/...} - no "_" endpoint segment is added.
-         * Takes precedence over {@code baseUrl}, which points at a mount where APIs
-         * live under the "_" endpoint segment: {@code <baseUrl>/_/media:image/...}.
+         * Sets the API root used verbatim: {@code <mediaBaseUrl>/media:image/...}.
+         * This takes precedence over {@link #setBaseUrl(String)}.
+         *
+         * @param mediaBaseUrl the media API root
+         * @return this builder
          */
-        public Builder setMediaBaseUrl( final String mediaBaseUrl )
+        public Builder setMediaBaseUrl( final @Nullable String mediaBaseUrl )
         {
             this.mediaBaseUrl = emptyToNull( mediaBaseUrl );
             return this;
         }
 
-        public Builder setUrlType( final String urlType )
+        /**
+         * Selects the URL representation.
+         *
+         * @param urlType a URL type from {@link UrlTypeConstants}; the default is server-relative
+         * @return this builder
+         */
+        public Builder setUrlType( final @Nullable String urlType )
         {
             this.urlType = urlType;
             return this;
         }
 
-        public Builder setMedia( final Supplier<Media> mediaSupplier )
+        /**
+         * Supplies the source media when generating the URL.
+         *
+         * @param mediaSupplier a supplier returning the source media
+         * @return this builder
+         */
+        public Builder setMedia( final @Nullable Supplier<Media> mediaSupplier )
         {
             this.mediaSupplier = mediaSupplier;
             return this;
         }
 
-        public Builder setProjectName( final Supplier<ProjectName> projectNameSupplier )
+        /**
+         * Supplies the project containing the source media.
+         *
+         * @param projectNameSupplier a supplier returning the project name
+         * @return this builder
+         */
+        public Builder setProjectName( final @Nullable Supplier<ProjectName> projectNameSupplier )
         {
             this.projectNameSupplier = projectNameSupplier;
             return this;
         }
 
-        public Builder setBranch( final Supplier<Branch> branchSupplier )
+        /**
+         * Supplies the branch containing the source media.
+         *
+         * @param branchSupplier a supplier returning the branch
+         * @return this builder
+         */
+        public Builder setBranch( final @Nullable Supplier<Branch> branchSupplier )
         {
             this.branchSupplier = branchSupplier;
             return this;
         }
 
-        public Builder setBackground( final String background )
+        /**
+         * Sets the background for an unstyled image when flattening transparency.
+         *
+         * @param background one to six hexadecimal RGB digits, optionally prefixed by {@code 0x}; the default is white
+         * @return this builder
+         */
+        public Builder setBackground( final @Nullable String background )
         {
             this.background = background;
             return this;
         }
 
-        public Builder setQuality( final Integer quality )
+        /**
+         * Sets the encoder quality for an unstyled image.
+         *
+         * @param quality a value from 0 through 100; the default is 85
+         * @return this builder
+         */
+        public Builder setQuality( final @Nullable Integer quality )
         {
             this.quality = quality;
             return this;
         }
 
-        public Builder setFilter( final String filter )
+        /**
+         * Sets the filter specification for an unstyled image.
+         *
+         * @param filter the filter specification
+         * @return this builder
+         */
+        public Builder setFilter( final @Nullable String filter )
         {
             this.filter = filter;
             return this;
         }
 
-        public Builder setFormat( final String format )
+        /**
+         * Selects the output format independently of the style. WebP and AVIF require a style.
+         * When no format is selected, the source format is retained.
+         *
+         * @param format an output extension such as {@code jpeg}, {@code png}, {@code gif}, {@code webp} or {@code avif}
+         * @return this builder
+         */
+        public Builder setFormat( final @Nullable String format )
         {
             this.format = format;
             return this;
         }
 
-        public Builder setScale( final String scale )
+        /**
+         * Sets the required scaling operation independently of the style.
+         * Examples include {@code width(640)} and {@code block(640,480)}.
+         * A style reference must be supplied through {@link #setStyle(String)}.
+         *
+         * @param scale the scaling expression
+         * @return this builder
+         */
+        public Builder setScale( final @Nullable String scale )
         {
             this.scale = scale;
             return this;
         }
 
+        /**
+         * Adds query parameters, replacing the values of any matching keys.
+         * Explicit quality, filter and background arguments take precedence over corresponding
+         * query entries. A styled URL rejects processing parameters in this map.
+         *
+         * @param queryParams query keys and their ordered value collections
+         * @return this builder
+         */
         public Builder setQueryParams( final Map<String, ? extends Collection<String>> queryParams )
         {
             this.queryParams.setQueryParams( queryParams );
             return this;
         }
 
+        /**
+         * Sets one query parameter, replacing any existing values for its key.
+         * Styled URLs reject processing overrides supplied as query parameters.
+         *
+         * @param key the query parameter name
+         * @param value the query parameter value
+         * @return this builder
+         */
         public Builder setQueryParam( final String key, final String value )
         {
             this.queryParams.setQueryParam( key, value );
             return this;
         }
 
+        /**
+         * Creates URL-generation parameters and validates required fields and style combinations.
+         * Style existence, scale syntax and processing values are checked when the URL is generated.
+         *
+         * @return the URL-generation parameters
+         * @throws NullPointerException if a required supplier or scale is missing, or a query key is missing
+         * @throws IllegalArgumentException if a style has processing overrides, or WebP/AVIF is requested without a style
+         */
         public ImageUrlGeneratorParams build()
         {
             return new ImageUrlGeneratorParams( this );

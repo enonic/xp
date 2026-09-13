@@ -7,6 +7,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.base.Suppliers;
 
 import com.enonic.xp.branch.Branch;
@@ -26,6 +29,7 @@ import com.enonic.xp.style.ImageStyle;
 
 import static java.util.Objects.requireNonNullElse;
 
+@NullMarked
 final class DefaultImageLinkProcessor
 {
     private static final Pattern ASPECT_RATIO_PATTEN = Pattern.compile( "^(?<horizontalProportion>\\d+):(?<verticalProportion>\\d+)$" );
@@ -44,13 +48,13 @@ final class DefaultImageLinkProcessor
 
     HtmlElement element;
 
-    ImageStyle imageStyle;
+    @Nullable ImageStyle imageStyle;
 
-    String styleReference;
+    @Nullable String styleReference;
 
     String id;
 
-    String scaleFromQueryString;
+    @Nullable String scaleFromQueryString;
 
     void process()
     {
@@ -106,7 +110,7 @@ final class DefaultImageLinkProcessor
 
     private String imageUrl( final Supplier<String> baseUrlSupplier, final Supplier<Media> imageSupplier,
                              final Supplier<ProjectName> projectNameSupplier, final Supplier<Branch> branchSupplier,
-                             final DefaultQueryParamsSupplier queryParamsStrategy, final Integer imageWidth )
+                             final DefaultQueryParamsSupplier queryParamsStrategy, final @Nullable Integer imageWidth )
     {
         if ( styleReference != null )
         {
@@ -135,7 +139,7 @@ final class DefaultImageLinkProcessor
         return portalUrlGeneratorService.generateUrl( imageUrl );
     }
 
-    private String getScale( final ImageStyle imageStyle, final Integer expectedWidth )
+    private String getScale( final @Nullable ImageStyle imageStyle, final @Nullable Integer expectedWidth )
     {
         final String aspectRatio =
             imageStyle != null && imageStyle.getAspectRatio() != null ? imageStyle.getAspectRatio() : scaleFromQueryString;

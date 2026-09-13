@@ -2,34 +2,71 @@ package com.enonic.xp.image;
 
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import static java.util.stream.Collectors.joining;
 
+/**
+ * A named image scaling operation and its arguments.
+ */
+@NullMarked
 public final class ScaleParams
 {
+    /**
+     * The {@code full()} operation, which preserves the source dimensions.
+     */
     public static final ScaleParams NO_SCALE = new ScaleParams( "full", null );
 
     private final String name;
 
-    private final Object[] args;
+    private final @Nullable Object[] args;
 
-    public ScaleParams( String name, Object[] args )
+    /**
+     * Creates a scaling operation without validating its name or arguments.
+     * The argument array is retained rather than copied.
+     *
+     * @param name the scaling function name, such as {@code width}, {@code block} or {@code full}
+     * @param args the function arguments
+     */
+    public ScaleParams( String name, @Nullable Object @Nullable [] args )
     {
         this.name = name;
         this.args = args != null ? args : new Object[0];
     }
 
+    /**
+     * Returns the scaling function name.
+     *
+     * @return the function name
+     */
     public String getName()
     {
         return this.name;
     }
 
-    public Object[] getArguments()
+    /**
+     * Returns the argument array. Changes to this array affect the operation.
+     *
+     * @return the arguments
+     */
+    public @Nullable Object[] getArguments()
     {
         return this.args;
     }
 
-    /** Uses a style's aspect ratio as a hint for width/height; other scale modes retain their own geometry. */
-    public ScaleParams withAspectRatio( final String aspectRatio )
+    /**
+     * Applies an aspect-ratio hint to a width or height operation without modifying this instance.
+     * The specified dimension is retained and the other dimension is rounded to the nearest
+     * pixel, producing a {@code block} crop. Other scaling operations retain their own geometry.
+     * The caller can keep this original operation when generating a URL.
+     *
+     * @param aspectRatio the positive integer ratio {@code width:height}
+     * @return a block operation for width/height with a ratio, or this instance otherwise
+     * @throws IllegalArgumentException if the ratio is malformed or outside the integer range,
+     *     or a derived width/height operation has invalid dimensions
+     */
+    public ScaleParams withAspectRatio( final @Nullable String aspectRatio )
     {
         if ( aspectRatio == null )
         {
@@ -61,13 +98,25 @@ public final class ScaleParams
             new Object[]{(int) derived, dimension} );
     }
 
+    /**
+     * Formats the operation as a function call, for example {@code width(640)}.
+     * String arguments are quoted.
+     *
+     * @return the function-call representation
+     */
     @Override
     public String toString()
     {
         return this.name + Stream.of( this.args ).map( this::encode ).collect( joining( ",", "(", ")" ) );
     }
 
-    private String encode( Object arg )
+    /**
+     * Encodes one argument for the function-call representation.
+     *
+     * @param arg the argument
+     * @return the encoded argument
+     */
+    private String encode( @Nullable Object arg )
     {
         if ( arg == null )
         {
@@ -84,6 +133,12 @@ public final class ScaleParams
         }
     }
 
+    /**
+     * Formats a quoted string argument.
+     *
+     * @param arg the string argument
+     * @return the quoted argument
+     */
     private String quote( String arg )
     {
         if ( arg.contains( "'" ) )

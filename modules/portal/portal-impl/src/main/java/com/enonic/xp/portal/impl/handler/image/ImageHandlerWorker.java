@@ -3,6 +3,9 @@ package com.enonic.xp.portal.impl.handler.image;
 import java.io.IOException;
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
 import com.google.common.net.MediaType;
@@ -38,6 +41,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
 
+@NullMarked
 public final class ImageHandlerWorker
     extends AbstractAttachmentHandlerWorker<Media>
 {
@@ -51,21 +55,21 @@ public final class ImageHandlerWorker
 
     public boolean allowHashlessGeneration;
 
-    public String filterParam;
+    public @Nullable String filterParam;
 
-    public String qualityParam;
+    public @Nullable String qualityParam;
 
-    public String backgroundParam;
+    public @Nullable String backgroundParam;
 
-    public ScaleParams scaleParams;
+    public @Nullable ScaleParams scaleParams;
 
-    private String styleParam;
+    private @Nullable String styleParam;
 
-    private ImageStyle style;
+    private @Nullable ImageStyle style;
 
     private boolean cacheOnly;
 
-    private String currentFingerprint;
+    private @Nullable String currentFingerprint;
 
     public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService, final HmacService hmacService )
     {
@@ -271,7 +275,7 @@ public final class ImageHandlerWorker
     }
 
     @Override
-    protected String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
+    protected @Nullable String resolveHash( final Media content, final Attachment attachment, final BinaryReference binaryReference )
     {
         if ( legacyMode && style == null )
         {

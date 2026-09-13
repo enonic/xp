@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -34,6 +37,7 @@ import com.enonic.xp.site.SiteService;
 import com.enonic.xp.webapp.WebappService;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
+@NullMarked
 public class PortalUrlGeneratorServiceImpl
     implements PortalUrlGeneratorService
 {
@@ -50,7 +54,7 @@ public class PortalUrlGeneratorServiceImpl
 
     private final HmacService hmacService;
 
-    private volatile String defaultMediaBaseUrl;
+    private volatile @Nullable String defaultMediaBaseUrl;
 
     private volatile boolean mediaApiAutoMount = true;
 
@@ -224,7 +228,7 @@ public class PortalUrlGeneratorServiceImpl
         return path.toString();
     }
 
-    static String resolveMediaBaseUrl( final String mediaBaseUrl, final String baseUrl )
+    static @Nullable String resolveMediaBaseUrl( final @Nullable String mediaBaseUrl, final @Nullable String baseUrl )
     {
         if ( mediaBaseUrl != null )
         {
@@ -256,7 +260,6 @@ public class PortalUrlGeneratorServiceImpl
                                 .setQueryString( queryParamsStrategy )
                                 .build() );
     }
-
 
     @Override
     public String apiUrl( final ApiUrlGeneratorParams params )
