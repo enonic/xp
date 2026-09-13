@@ -64,10 +64,10 @@ class PortalUrlGeneratorServiceImplTest
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final ImageUrlGeneratorParams params = styleUrlParams().build();
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card/mycontent.png.webp",
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:ff6412b26686b8e3e307d77ac9efed6d74fc217d/width-640~app:card/mycontent.png.webp",
                       service.imageUrl( params ) );
         final ImageUrlParts parts = service.imageUrlParts( params );
-        assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", parts.fingerprint() );
+        assertEquals( "ff6412b26686b8e3e307d77ac9efed6d74fc217d", parts.fingerprint() );
         assertEquals( "width-640~app:card", parts.scale() );
         assertEquals( "mycontent.png.webp", parts.name() );
         assertEquals( "", parts.queryString() );
@@ -157,11 +157,12 @@ class PortalUrlGeneratorServiceImplTest
     {
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
+        final var fingerprints = new java.util.HashSet<String>();
         for ( String format : new String[]{"jpeg", "png", "webp", "avif"} )
         {
             final ImageUrlGeneratorParams params = styleUrlParams().setFormat( format ).build();
             final ImageUrlParts parts = service.imageUrlParts( params );
-            assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", parts.fingerprint() );
+            assertThat( fingerprints.add( parts.fingerprint() ) ).isTrue();
             assertThat( service.imageUrl( params ) ).contains( "/" + parts.name() + "" );
             assertThat( parts.name() ).endsWith( "." + format );
         }
@@ -198,7 +199,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:b74c549e84fd433de1dc262cec3296277eb0ac7f/max-300/mycontent.png", url );
     }
 
     @Test
@@ -214,7 +215,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:image/myproject/123456:b74c549e84fd433de1dc262cec3296277eb0ac7f/max-300/mycontent.png", url );
     }
 
     @Test
@@ -234,7 +235,7 @@ class PortalUrlGeneratorServiceImplTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png?quality=85&background=0x000000&filter=blur%283%29",
+            "baseUrl/_/media:image/myproject:draft/123456:01ed9ad6f2bd87f0c5d32d6ce70754d83b56d662/max-300/mycontent.png?quality=85&background=0x000000&filter=blur%283%29",
             url );
     }
 
@@ -252,7 +253,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png.jpeg", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:8acbd7a19cebdc36d07afbc14a326f072e3caf6c/max-300/mycontent.png.jpeg", url );
     }
 
     @Test
@@ -269,7 +270,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png?ts=123", url );
+        assertEquals( "baseUrl/_/media:image/myproject:draft/123456:b74c549e84fd433de1dc262cec3296277eb0ac7f/max-300/mycontent.png?ts=123", url );
     }
 
     @Test
@@ -287,7 +288,7 @@ class PortalUrlGeneratorServiceImplTest
         final String url = this.service.imageUrl( params );
 
         // mediaBaseUrl points at the API root (no "_" segment) and takes precedence over baseUrl
-        assertEquals( "https://media.example.com/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "https://media.example.com/media:image/myproject:draft/123456:b74c549e84fd433de1dc262cec3296277eb0ac7f/max-300/mycontent.png",
                       url );
     }
 
@@ -521,12 +522,12 @@ class PortalUrlGeneratorServiceImplTest
 
         final ImageUrlParts parts = this.service.imageUrlParts( params );
 
-        assertEquals( "/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/media:image/myproject:draft/123456:b74c549e84fd433de1dc262cec3296277eb0ac7f/max-300/mycontent.png",
                       parts.path() );
         assertEquals( "?quality=85", parts.queryString() );
         assertEquals( "myproject:draft", parts.context() );
         assertEquals( "123456", parts.id() );
-        assertEquals( "0a350f43700951cdcca1574f448a7e22", parts.fingerprint() );
+        assertEquals( "b74c549e84fd433de1dc262cec3296277eb0ac7f", parts.fingerprint() );
         assertEquals( "max-300", parts.scale() );
         assertEquals( "mycontent.png", parts.name() );
     }

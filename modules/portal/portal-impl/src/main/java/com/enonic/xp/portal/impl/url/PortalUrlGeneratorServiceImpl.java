@@ -84,6 +84,7 @@ public class PortalUrlGeneratorServiceImpl
                           .setBranch( params.getBranch() )
                           .setScale( params.getScale() )
                           .setFormat( params.getFormat() )
+                .setQueryParams( imageQueryParams( params ) )
                           .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
                 .setHmacService( hmacService )
                           .build() );
@@ -130,6 +131,7 @@ public class PortalUrlGeneratorServiceImpl
                 .setBranch( params.getBranch() )
                 .setScale( params.getScale() )
                 .setFormat( params.getFormat() )
+                .setQueryParams( imageQueryParams( params ) )
                 .setStyle( params.getStyle(), () -> params.getStyle() == null ? null : imageService.getStyle( params.getStyle() ) )
                 .setHmacService( hmacService )
                 .build()

@@ -14,7 +14,6 @@ import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
-import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.ImageStyleSettings;
 
 import static java.util.Objects.requireNonNullElse;
@@ -62,24 +61,24 @@ public final class MediaHashResolver
         return resolveImageHash( media, resolveAttachmentHash( attachment ) );
     }
 
-    public static String resolveStyledImageHash( final String imageHash, final ImageStyle style, final ScaleParams scale,
-                                                 final HmacService hmacService )
+    public static String resolveImageFingerprint( final String imageHash, final ImageStyleSettings settings, final ScaleParams scale,
+                                                  final String mimeType, final HmacService hmacService )
     {
-        if ( imageHash == null || style == null )
+        if ( imageHash == null )
         {
             return imageHash;
         }
         final MessageDigest digest = MessageDigests.sha512();
         digest.update( HexFormat.of().parseHex( imageHash ) );
-        final ImageStyleSettings settings = ImageStyleSettings.from( style );
         // Length-prefix fields to keep the fingerprint independent of delimiters in filters.
-        updateStyleField( digest, scale.toString() );
+        updateStyleField( digest, scale == null ? null : scale.toString() );
+        updateStyleField( digest, mimeType );
         updateStyleField( digest, settings.aspectRatio() );
         updateStyleField( digest, settings.filter() );
         updateStyleField( digest, Integer.toString( settings.quality() ) );
         updateStyleField( digest, Integer.toHexString( settings.background() ) );
         // Domain separation prevents a redirect checksum from authorizing an image rendition.
-        return hmacService.generateChecksum( "image-fingerprint-v1\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
+        return hmacService.generateChecksum( "image-fingerprint-v2\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
     }
 
     public static boolean matchesFingerprint( final String expected, final String supplied )

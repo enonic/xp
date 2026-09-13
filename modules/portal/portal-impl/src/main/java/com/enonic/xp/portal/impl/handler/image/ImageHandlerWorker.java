@@ -27,6 +27,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.web.HttpStatus;
@@ -61,6 +62,8 @@ public final class ImageHandlerWorker
     private ImageStyle style;
 
     private boolean cacheOnly;
+
+    private String currentFingerprint;
 
     public ImageHandlerWorker( final WebRequest request, final ContentService contentService, final ImageService imageService, final HmacService hmacService )
     {
@@ -230,10 +233,11 @@ public final class ImageHandlerWorker
             final Attachment attachment =
                 requireNonNull( content.getAttachments().byLabel( "source" ), "Media content must have an attachment" );
 
-            final String currentFingerprint = MediaHashResolver.resolveStyledImageHash(
-                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style, scaleParams, hmacService );
+            this.currentFingerprint = MediaHashResolver.resolveImageFingerprint(
+                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style == null ? new ImageStyleSettings( null, filterParam, imageQuality, backgroundColor ) :
+                    ImageStyleSettings.from( style ), scaleParams, contentType.toString(), hmacService );
             final boolean hashMatches = MediaHashResolver.matchesFingerprint( currentFingerprint, fingerprint );
-            this.cacheOnly = !hashMatches && ( !nullToEmpty( fingerprint ).isBlank() ||
+            this.cacheOnly = !hashMatches && ( style != null || !nullToEmpty( fingerprint ).isBlank() ||
                 contentType.is( MediaType.WEBP ) || contentType.is( MediaType.AVIF ) );
 
             final ReadImageParams.Builder readImageParams = ReadImageParams.newImageParams()
@@ -278,8 +282,8 @@ public final class ImageHandlerWorker
         }
         else
         {
-            return MediaHashResolver.resolveStyledImageHash(
-                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style, scaleParams, hmacService );
+            // Pass-through originals have no generated rendition to authorize.
+            return currentFingerprint == null ? MediaHashResolver.resolveImageHash( content ) : currentFingerprint;
         }
     }
 

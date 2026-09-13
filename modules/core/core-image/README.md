@@ -60,20 +60,26 @@ filter, and background overrides, including empty query overrides.
 Scale is supplied in the path; a raw `scale` or `format` query override is not
 supported. Output format is selected by the extension.
 
-WebP/AVIF conversion requires a style and a valid signed path fingerprint on
-cache misses. Styled fingerprints cover the source, requested scale, aspect
+Every styled conversion requires a matching modern path fingerprint on cache
+misses, for every output format. WebP/AVIF additionally requires a style. New
+image URLs, including unstyled URLs and rich-text renditions, use modern
+fingerprints covering the source, requested scale, output MIME type, aspect
 ratio, quality, filter, and background, authenticated with HMAC-SHA512 using
 XP's existing `generic-hmac-sha512` key. The common HMAC service is also used by
 redirect checksums; an image-specific prefix separates the two uses. Existing
-redirect checksum values are unchanged. Styled path fingerprints are 40 hex
+redirect checksum values are unchanged. Modern path fingerprints are 40 hex
 characters and are compared in constant time.
 
 An existing rendition can be served even if the URL fingerprint is wrong or
-stale. A supplied mismatched fingerprint makes the request cache-only for every
-output format; missing fingerprints also mean cache-only for WebP/AVIF. A cache
+stale. All legacy fingerprints (even matching source hashes) and mismatched modern
+fingerprints make the request cache-only for every output format. Missing
+fingerprints also mean cache-only for every styled request. A cache
 miss returns HTTP 400 without reading source bytes, acquiring encoder capacity,
 or creating a cache file. Cache hits work even when modern encoding is disabled.
-Unsigned JPEG/PNG/GIF requests retain normal processing. These rules also apply
+Unsigned, unstyled JPEG/PNG/GIF requests retain normal processing. Removing both
+style and hash therefore still allows arbitrary supported legacy transformations.
+Changing output format invalidates a modern signature; format remains outside
+the style definition. These rules also apply
 to HEAD requests. Original-file pass-through needs no regeneration and remains
 available without a valid fingerprint.
 

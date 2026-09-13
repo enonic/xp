@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,12 +21,12 @@ class MediaHashResolverTest
         final HmacService hmac = HmacTestHelper.createHmacService();
         final ScaleParams scale = new ScaleParams( "width", new Object[]{640} );
         final String imageHash = "0a350f43700951cdcca1574f448a7e22";
-        final String defaultFingerprint = MediaHashResolver.resolveStyledImageHash(
-            imageHash, ImageStyle.create().name( "card" ).build(), scale, hmac );
+        final String defaultFingerprint = MediaHashResolver.resolveImageFingerprint(
+            imageHash, ImageStyleSettings.from( ImageStyle.create().name( "card" ).build() ), scale, "image/png", hmac );
         for ( String background : new String[]{"ffffff", "FFFFFF", "0xffffff"} )
         {
             final ImageStyle explicit = ImageStyle.create().name( "alias" ).quality( 85 ).background( background ).build();
-            assertEquals( defaultFingerprint, MediaHashResolver.resolveStyledImageHash( imageHash, explicit, scale, hmac ) );
+            assertEquals( defaultFingerprint, MediaHashResolver.resolveImageFingerprint( imageHash, ImageStyleSettings.from( explicit ), scale, "image/png", hmac ) );
         }
     }
 
@@ -37,14 +38,14 @@ class MediaHashResolverTest
         final ScaleParams scale = new ScaleParams( "width", new Object[]{640} );
         final String imageHash = "0a350f43700951cdcca1574f448a7e22";
         final String unsigned = "f4774dff7b6ef5d0fc1f077cbec55899";
-        final String fingerprint = MediaHashResolver.resolveStyledImageHash( imageHash, style, scale, hmac );
-        assertEquals( "09e13cd582eacd64dca2cf0c8543ecb359f9b80f", fingerprint );
+        final String fingerprint = MediaHashResolver.resolveImageFingerprint( imageHash, ImageStyleSettings.from( style ), scale, "image/png", hmac );
+        assertEquals( "8e4e644c301041bc3d6d3b58e5bfeb15efba6661", fingerprint );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, unsigned ) );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, hmac.generateChecksum( unsigned ) ) );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, null ) );
         assertTrue( MediaHashResolver.matchesFingerprint( fingerprint, fingerprint ) );
         final HmacService otherKey = HmacTestHelper.createHmacService( Base64.getEncoder().encodeToString( new byte[64] ) );
-        assertNotEquals( fingerprint, MediaHashResolver.resolveStyledImageHash( imageHash, style, scale, otherKey ) );
-        assertEquals( imageHash, MediaHashResolver.resolveStyledImageHash( imageHash, null, scale, hmac ) );
+        assertNotEquals( fingerprint, MediaHashResolver.resolveImageFingerprint( imageHash, ImageStyleSettings.from( style ), scale, "image/png", otherKey ) );
+        assertNotEquals( fingerprint, MediaHashResolver.resolveImageFingerprint( imageHash, ImageStyleSettings.from( style ), scale, "image/avif", hmac ) );
     }
 }

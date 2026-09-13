@@ -1,6 +1,11 @@
 package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Supplier;
+import java.util.List;
+import java.util.Map;
+
+import com.enonic.xp.style.ImageStyleSettings;
+import com.enonic.xp.util.MediaTypes;
 
 import com.google.common.io.Files;
 
@@ -33,6 +38,8 @@ final class ImageMediaPathSupplier
 
     private final String format;
 
+    private final Map<String, List<String>> queryParams;
+
     private final Supplier<ImageStyle> styleSupplier;
 
     private final String styleKey;
@@ -46,6 +53,7 @@ final class ImageMediaPathSupplier
         this.projectNameSupplier = builder.projectNameSupplier;
         this.branchSupplier = builder.branchSupplier;
         this.format = builder.format;
+        this.queryParams = builder.queryParams;
         this.styleSupplier = builder.styleSupplier;
         this.styleKey = builder.styleKey;
         this.hmacService = builder.hmacService;
@@ -81,15 +89,30 @@ final class ImageMediaPathSupplier
 
         final ImageStyle style = styleSupplier.get();
         final String resolvedScale = resolveScale( scale );
-        final ScaleParams scaleParams = style == null ? null : new ScaleParamsParser().parse( resolvedScale );
+        final ScaleParams scaleParams = new ScaleParamsParser().parse( resolvedScale );
         if ( style != null )
         {
             requireNonNull( scaleParams, "Image scale is required" ).withAspectRatio( style.getAspectRatio() );
         }
+        final String name = resolveName( media, format );
+        final String mimeType = name.equals( media.getName().toString() ) ?
+            com.google.common.net.MediaType.parse( media.getAttachments().byLabel( "source" ).getMimeType() ).toString() :
+            ( "webp".equalsIgnoreCase( format ) || "avif".equalsIgnoreCase( format ) ) ?
+                "image/" + format.toLowerCase( java.util.Locale.ROOT ) : MediaTypes.instance().fromFile( name ).toString();
+        final ImageStyleSettings settings = style == null ? new ImageStyleSettings( null, parameter( "filter", null ),
+            Integer.parseInt( parameter( "quality", "85" ) ),
+            Integer.parseInt( parameter( "background", "ffffff" ).replaceFirst( "^0x", "" ), 16 ) ) : ImageStyleSettings.from( style );
         return new MediaPathParts( context, media.getId().toString(),
-                                   MediaHashResolver.resolveStyledImageHash( MediaHashResolver.resolveImageHash( media ), style, scaleParams, hmacService ),
+                                   MediaHashResolver.resolveImageFingerprint( MediaHashResolver.resolveImageHash( media ), settings, scaleParams,
+                                       mimeType, hmacService ),
                                    styleKey == null ? resolvedScale : resolvedScale + "~" + DescriptorKey.from( styleKey ),
-                                   resolveName( media, format ) );
+                                   name );
+    }
+
+    private String parameter( final String name, final String fallback )
+    {
+        final List<String> values = queryParams.get( name );
+        return values == null || values.isEmpty() || values.getFirst().isEmpty() ? fallback : values.getFirst();
     }
 
     private String resolveName( final Content media, final String format )
@@ -127,6 +150,8 @@ final class ImageMediaPathSupplier
         private String scale;
 
         private String format;
+
+        private Map<String, List<String>> queryParams = Map.of();
 
         private Supplier<ImageStyle> styleSupplier = () -> null;
 
@@ -168,6 +193,12 @@ final class ImageMediaPathSupplier
         public Builder setScale( final String scale )
         {
             this.scale = scale;
+            return this;
+        }
+
+        public Builder setQueryParams( final Map<String, List<String>> queryParams )
+        {
+            this.queryParams = queryParams;
             return this;
         }
 

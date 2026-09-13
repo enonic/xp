@@ -124,12 +124,13 @@ final class DefaultImageLinkProcessor
         final UrlGeneratorParams imageUrl = UrlGeneratorParams.create()
             .setBaseUrl( baseUrlSupplier )
             .setQueryString( queryParamsStrategy )
-            .setPath( ImageMediaPathSupplier.create()
-                          .setMedia( imageSupplier )
-                          .setScale( getScale( imageStyle, imageWidth ) )
-                          .setProjectName( projectNameSupplier )
-                          .setBranch( branchSupplier )
-                          .build() )
+            .setPath( () -> portalUrlGeneratorService.imageUrlParts( ImageUrlGeneratorParams.create()
+                .setMedia( imageSupplier )
+                .setScale( getScale( imageStyle, imageWidth ) )
+                .setFilter( imageStyle == null ? null : imageStyle.getFilter() )
+                .setProjectName( projectNameSupplier )
+                .setBranch( branchSupplier )
+                .build() ).path().substring( "/media:image".length() ) )
             .build();
         return portalUrlGeneratorService.generateUrl( imageUrl );
     }
