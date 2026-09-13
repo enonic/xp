@@ -38,6 +38,55 @@ public final class ImageMagickPackager
     private ImageMagickPackager() {}
 
     /**
+     * Prepares a pinned Linux build extractor with SquashFS Zstandard support.
+     *
+     * @param bootstrap an installed 7-Zip able to decode XZ
+     * @param cache the build tool cache
+     * @param manifest the build tool pins
+     * @return the executable path
+     * @throws Exception if verification or unpacking fails
+     */
+    @SuppressWarnings("unchecked")
+    public static String prepareSevenZip( final String bootstrap, final Path cache, final Path manifest ) throws Exception
+    {
+        final String platform = "7zip-linux-" + switch ( System.getProperty( "os.arch" ) )
+        {
+            case "amd64", "x86_64" -> "x86_64";
+            case "arm64", "aarch64" -> "aarch64";
+            default -> throw new IOException( "Set imageMagickSevenZip for this build platform" );
+        };
+        Files.createDirectories( cache );
+        final Map<String, Map<String, String>> pins = (Map<String, Map<String, String>>) new JsonSlurper()
+            .parse( manifest.toFile(), "UTF-8" );
+        final Map<String, String> pin = pins.get( platform );
+        final Path archive = download( URI.create( pin.get( "url" ) ), pin.get( "sha256" ), cache );
+        final Path work = Files.createTempDirectory( cache, "7zip-" );
+        final Path executable = cache.resolve( pin.get( "sha256" ) + "-7zz" );
+        try
+        {
+            final Path tar = work.resolve( "tool.tar" );
+            final Path errors = work.resolve( "7zip.log" );
+            await( new ProcessBuilder( bootstrap, "x", "-so", archive.toString() )
+                .redirectOutput( tar.toFile() ).redirectError( errors.toFile() ).start(), errors );
+            try (var input = new TarArchiveInputStream( new BufferedInputStream( Files.newInputStream( tar ) ) ))
+            {
+                TarArchiveEntry entry;
+                while ( ( entry = input.getNextEntry() ) != null )
+                {
+                    if ( entry.isFile() && entry.getName().equals( "7zz" ) )
+                    {
+                        Files.copy( input, executable, StandardCopyOption.REPLACE_EXISTING );
+                        if ( !executable.toFile().setExecutable( true, true ) ) { throw new IOException( "Cannot execute 7-Zip" ); }
+                        return executable.toString();
+                    }
+                }
+            }
+            throw new IOException( "Missing 7-Zip executable" );
+        }
+        finally { delete( work ); }
+    }
+
+    /**
      * Downloads verified distributions and writes unpacked resources for every declared platform.
      *
      * @param manifest the distribution manifest
@@ -244,6 +293,8 @@ public final class ImageMagickPackager
             while ( ( member = input.getNextEntry() ) != null )
             {
                 if ( member.isDirectory() ) { continue; }
+                // Desktop integration is unused; this upstream filename is not portable to Windows.
+                if ( member.getName().equals( "icon.png?raw=true" ) ) { continue; }
                 final String name = safeName( member.getName() );
                 if ( files.containsKey( name ) || links.containsKey( name ) ) { throw new IOException( "Duplicate TAR entry" ); }
                 if ( member.isSymbolicLink() ) { links.put( name, member.getLinkName() ); }

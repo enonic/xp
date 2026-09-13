@@ -46,6 +46,12 @@ def packageImageMagick = tasks.register( 'packageImageMagick' ) {
             if ( executable == null ) { throw new GradleException( 'Install 7-Zip or set imageMagickSevenZip' ) }
             executable.path
         } ).get()
+        if ( System.getProperty( 'os.name' ).startsWith( 'Linux' ) &&
+            !providers.gradleProperty( 'imageMagickSevenZip' ).isPresent() ) {
+            sevenZip = com.enonic.gradle.ImageMagickPackager.prepareSevenZip( sevenZip,
+                layout.buildDirectory.dir( 'imagemagick-downloads' ).get().asFile.toPath(),
+                file( 'native/build-tools.json' ).toPath() )
+        }
         delete( imageMagickResources )
         com.enonic.gradle.ImageMagickPackager.packageDistributions(
             file( 'native/distributions.json' ).toPath(),

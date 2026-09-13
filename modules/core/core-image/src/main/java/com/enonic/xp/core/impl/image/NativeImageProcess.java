@@ -13,13 +13,14 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.core.internal.image.ImageMagick;
+import com.enonic.xp.core.internal.image.ImageMagick.Installation;
 
 /** Common process limits, policy, deadline and temporary-file ownership for every native stage. */
 @NullMarked
 final class NativeImageProcess implements AutoCloseable
 {
     private final ImageMagick imageMagick;
-    private @Nullable ImageMagick.Installation installation;
+    private @Nullable Installation installation;
     private final int timeoutSeconds;
     private final Path directory;
     private long deadline;

@@ -224,8 +224,10 @@ runtime bundle. SquashFS is read from the AppImage
 payload without executing its architecture-specific launcher. Archive links are
 resolved into ordinary files, including when building on Windows. The pinned Windows archives use multi-stream BCJ2 compression,
 which Commons Compress and FreeFair's Commons Compress-based 7-Zip plugin cannot read.
+Linux builds automatically prepare a checksum-pinned 7-Zip 26.03 with SquashFS
+Zstandard support, using the installed extractor to bootstrap its XZ archive.
 Install `7zip` (providing `7z` or `7zz`)
-and `zstd` on Linux or 7-Zip 24.01+ on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
+and `zstd` on Linux or a current 7-Zip on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
 a build-time extractor (Linux/macOS locate `7zz` or `7z` on PATH).
 Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
