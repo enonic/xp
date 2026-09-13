@@ -276,6 +276,9 @@ scaling with the focal point remapped into the crop. Stored orientation edits ta
 precedence over the source EXIF tag. AVIF/HEIF container transforms are distinct from
 EXIF orientation and remain part of decoding the container's image geometry.
 Native decoder cache version 2 separates corrected colour handling from earlier renditions.
+Native transformation cache version 5 also invalidates mirrored-rotation crops made
+with stale ImageMagick virtual-canvas offsets; transpose/transverse reset that canvas
+before the stored crop is applied.
 
 The cache key includes the source checksum and resolved processing parameters.
 Concurrent requests recheck the cache after obtaining the file lock, preventing

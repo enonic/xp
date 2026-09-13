@@ -114,13 +114,13 @@ final class ImageMagickTransformPlan
             case BottomLeft -> add( "-flip" );
             case LeftTop ->
             {
-                add( "-transpose" );
+                add( "-transpose", "+repage" );
                 dimensions( height, width );
             }
             case RightTop -> rotate( 90 );
             case RightBottom ->
             {
-                add( "-transverse" );
+                add( "-transverse", "+repage" );
                 dimensions( height, width );
             }
             case LeftBottom -> rotate( 270 );

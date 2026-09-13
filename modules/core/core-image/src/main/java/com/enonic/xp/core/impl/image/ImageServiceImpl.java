@@ -260,7 +260,7 @@ public class ImageServiceImpl
         }
         if ( useImageMagickTransformer )
         {
-            MessageDigests.updateWithString( digest, "transformation:ImageMagic:4" );
+            MessageDigests.updateWithString( digest, "transformation:ImageMagic:5" );
         }
         final String hash = MessageDigests.formatHex( digest );
         return cacheFolder.resolve( "sha256" )

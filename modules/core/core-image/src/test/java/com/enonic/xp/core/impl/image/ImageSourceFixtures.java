@@ -8,12 +8,31 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import javax.imageio.ImageIO;
 
 final class ImageSourceFixtures
 {
     private ImageSourceFixtures() {}
+
+    static byte[] avifWithContainerRotation()
+    {
+        // A 32x24 transparent raster with a red rectangle at (4,4)-(11,11), with explicit irot=3.
+        // Encoded once so decoding tests do not depend on the encoder's container-orientation support.
+        return Base64.getMimeDecoder().decode( """
+            AAAAHGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZgAAAaNtZXRhAAAAAAAAACFoZGxyAAAAAAAAAABw
+            aWN0AAAAAAAAAAAAAAAAAAAAAA5waXRtAAAAAAABAAAANGlsb2MAAAAAREAAAgACAAAAAAHHAAEA
+            AAAAAAAAHQABAAAAAAHkAAEAAAAAAAAAJQAAADhpaW5mAAAAAAACAAAAFWluZmUCAAAAAAEAAGF2
+            MDEAAAAAFWluZmUCAAAAAAIAAGF2MDEAAAAA4mlwcnAAAAC6aXBjbwAAABNjb2xybmNseAACAAIA
+            BoAAAAAMYXYxQ4FAfAAAAAAUaXNwZQAAAAAAAAAgAAAAGAAAAA5waXhpAAAAAAEMAAAAOGF1eEMA
+            AAAAdXJuOm1wZWc6bXBlZ0I6Y2ljcDpzeXN0ZW1zOmF1eGlsaWFyeTphbHBoYQAAAAAMYXYxQ4FA
+            bAAAAAAUaXNwZQAAAAAAAAAgAAAAGAAAABBwaXhpAAAAAAMMDAwAAAAJaXJvdAMAAAAgaXBtYQAA
+            AAAAAAACAAEFgYYHiIkAAgWCA4SFiQAAABppcmVmAAAAAAAAAA5hdXhsAAIAAQABAAAASm1kYXQS
+            AAoGWBE/drqAMhFF/AAASAS8SxjTAbMSlnz0MBIACglYET92tAgIG4QyFkX8AAASAAA/ZvM8eA6c
+            ok4mWQyPJKA=
+            """ );
+    }
 
     static byte[] jpegWithOrientation( final BufferedImage image, final int orientation ) throws IOException
     {
