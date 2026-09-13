@@ -23,6 +23,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.content.ContentId;
+import com.enonic.xp.core.impl.image.effect.ImageFilters;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
@@ -97,6 +98,41 @@ class ImageMagickTransformerTest extends ImageMagickTestSupport
         final var result = transformer().apply( image(), plan );
         assertEquals( width, result.getWidth() );
         assertEquals( height, result.getHeight() );
+    }
+
+    @ParameterizedTest
+    @CsvSource({"sharpen,17,13", "emboss,17,13", "emboss,1,1", "emboss,2,4", "emboss,4,2"})
+    void sharpenAndEmbossMatchImageIoAppearance( final String filter, final int width, final int height )
+        throws Exception
+    {
+        final var source = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
+        for ( int y = 0; y < height; y++ )
+        {
+            for ( int x = 0; x < width; x++ )
+            {
+                final int alpha = "emboss".equals( filter ) ? ( x * 41 + y * 73 ) & 255 : 255;
+                source.setRGB( x, y, alpha << 24 | ( ( x * 97 + y * 31 ) & 255 ) << 16 |
+                    ( ( x * 17 + y * 89 ) & 255 ) << 8 | ( ( x * 53 + y * 11 ) & 255 ) );
+            }
+        }
+        final var filters = new ImageFilters();
+        final var expected = ( "sharpen".equals( filter ) ? filters.sharpen() : filters.emboss() ).apply( source );
+        final var actual = transformer().apply( source, plan( width, height, params( filter ), 10000 ) );
+        for ( int y = 0; y < height; y++ )
+        {
+            for ( int x = 0; x < width; x++ )
+            {
+                final int expectedPixel = expected.getRGB( x, y );
+                final int actualPixel = actual.getRGB( x, y );
+                assertEquals( expectedPixel >>> 24, actualPixel >>> 24 );
+                for ( int shift = 0; shift <= 16; shift += 8 )
+                {
+                    assertTrue( Math.abs( ( ( expectedPixel >>> shift ) & 255 ) - ( ( actualPixel >>> shift ) & 255 ) ) <= 1,
+                                filter + " differs at " + x + "," + y + " channel " + shift );
+                }
+            }
+        }
+        assertEmpty( temporaryFolder );
     }
 
     @ParameterizedTest

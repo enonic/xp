@@ -162,10 +162,10 @@ final class ImageMagickTransformPlan
                     add( "-channel", "RGBA", "-blur", radius + "x" + ( radius / 3.0 ), "+channel" );
                 }
             }
-            case "sharpen" -> add( "-channel", "RGB", "-convolve", "0,-1,0,-1,5,-1,0,-1,0", "+channel" );
+            case "sharpen" -> add( "-channel", "RGB", "-convolve", "0,-0.2,0,-0.2,1.8,-0.2,0,-0.2,0", "+channel" );
             case "bump" -> add( "-channel", "RGB", "-convolve", "-1,-1,0,-1,1,1,0,1,1", "+channel" );
             case "edge" -> add( "-channel", "RGB", "-edge", "1", "+channel" );
-            case "emboss" -> add( "-channel", "RGB", "-emboss", "1", "+channel" );
+            case "emboss" -> emboss();
             case "block" -> {
                 final int size = integer( args, 0, 2 );
                 add( "-scale", Math.max( 1, ( width + size - 1 ) / size ) + "x" + Math.max( 1, ( height + size - 1 ) / size ) + "!",
@@ -207,6 +207,31 @@ final class ImageMagickTransformPlan
             }
             default -> throw new IllegalArgumentException( "Unsupported native transformation filter " + filter.getName() );
         }
+    }
+
+    private void emboss()
+    {
+        // Match JH Labs' integer brightness and default light vector (-156, 156, 127), with Nz = 510.
+        grayscaleFx( "floor((round(r*255)+round(g*255)+round(b*255))/3)/255" );
+        // Store signed slopes in R/G, biased into [0,1] so non-HDRI builds retain negative values too.
+        add( "-alpha", "off", "-define", "convolve:scale=0.16666666666666666", "-define", "convolve:bias=50%",
+             "-channel", "R", "-morphology", "Correlate", "3x3:1,0,-1,1,0,-1,1,0,-1",
+             "-channel", "G", "-morphology", "Correlate", "3x3:-1,-1,-1,0,0,0,1,1,1", "+channel",
+             "+define", "convolve:scale", "+define", "convolve:bias" );
+        // Its neighbourhood starts on the current row; the top/left edge and bottom/right two edges are flat.
+        grayscaleFx( """
+            nx=round(1530*(p[0,1].r-0.5));
+            ny=round(1530*(p[0,1].g-0.5));
+            (i==0||j==0||i>=w-2||j>=h-2)?127/255:
+                floor(max(0,-156*nx+156*ny+64770)/sqrt(nx*nx+ny*ny+260100))/255
+            """ );
+        add( "-alpha", "opaque" );
+    }
+
+    private void grayscaleFx( final String expression )
+    {
+        // Evaluate a grayscale result once per pixel, then replicate it into RGB for subsequent filters.
+        add( "-channel", "R", "-fx", expression, "-separate", "+channel", "-colorspace", "sRGB", "-type", "TrueColor" );
     }
 
     private void border( final int size, final int rgb )
