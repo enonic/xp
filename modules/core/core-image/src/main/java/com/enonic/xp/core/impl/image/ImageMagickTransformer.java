@@ -17,8 +17,10 @@ final class ImageMagickTransformer
     private final ImageMagick imageMagick;
     private final int timeoutSeconds;
     private final Path temporaryFolder;
+    private final long maxDiskBytes;
 
-    ImageMagickTransformer( final ImageMagick imageMagick, final int timeoutSeconds, final Path temporaryFolder )
+    ImageMagickTransformer( final ImageMagick imageMagick, final int timeoutSeconds, final Path temporaryFolder,
+                           final long maxDiskBytes )
     {
         if ( timeoutSeconds < 1 )
         {
@@ -27,6 +29,7 @@ final class ImageMagickTransformer
         this.imageMagick = imageMagick;
         this.timeoutSeconds = timeoutSeconds;
         this.temporaryFolder = temporaryFolder;
+        this.maxDiskBytes = maxDiskBytes;
     }
 
     BufferedImage apply( final BufferedImage source, final ImageMagickTransformPlan plan ) throws IOException
@@ -50,7 +53,7 @@ final class ImageMagickTransformer
 
     private NativeImageProcess process() throws IOException
     {
-        return new NativeImageProcess( imageMagick, temporaryFolder, "transform", timeoutSeconds, "RGBA", "RGBA" );
+        return new NativeImageProcess( imageMagick, temporaryFolder, "transform", timeoutSeconds, "RGBA", "RGBA", maxDiskBytes );
     }
 
     private Result transform( final NativeImageProcess process, final NativeImageRaster source,

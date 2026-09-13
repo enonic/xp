@@ -107,6 +107,67 @@ class ImageServiceImplTest extends ImageMagickTestSupport
         return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, imageMagick, imageConfig );
     }
 
+    @ParameterizedTest
+    @CsvSource({"ImageIO,ImageIO", "ImageIO,ImageMagic", "ImageMagic,ImageIO", "ImageMagic,ImageMagic"})
+    void storedOrientationThenCropAndFocalPointAreAppliedOnce( final String decoding, final String transformation ) throws Exception
+    {
+        final var image = new BufferedImage( 32, 24, BufferedImage.TYPE_INT_RGB );
+        for ( int y = 0; y < 24; y++ ) for ( int x = 0; x < 32; x++ )
+        {
+            image.setRGB( x, y, 0xff000000 | x * 6 << 16 | y * 8 << 8 | ( x + y ) * 4 );
+        }
+        // Deliberately keep the source EXIF tag fixed: persisted edits must override it.
+        imageDataOriginal = ImageSourceFixtures.jpegWithOrientation( image, 6 );
+        final BufferedImage decoded = ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) );
+        assertEquals( 32, decoded.getWidth() );
+        assertEquals( 24, decoded.getHeight() );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        when( imageConfig.decoding_backend() ).thenReturn( decoding );
+        when( imageConfig.transformation_backend() ).thenReturn( transformation );
+        imageService = newImageService();
+        for ( ImageOrientation orientation : ImageOrientation.values() )
+        {
+            final boolean swap = orientation.getValue() >= 5;
+            final int width = swap ? 24 : 32;
+            final int height = swap ? 32 : 24;
+            final int cropX = width / 4;
+            final int cropY = height / 4;
+            final int cropWidth = width - cropX;
+            final int cropHeight = height - cropY;
+            final int viewX = (int) ( cropWidth * ( ( 0.65 - 0.25 ) / 0.75 ) ) - 1;
+            final var params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+                .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+                .mimeType( "image/png" ).orientation( orientation )
+                .cropping( Cropping.create().left( 0.25 ).top( 0.25 ).build() )
+                .focalPoint( new FocalPoint( 0.65, 0.6 ) )
+                .scaleParams( new ScaleParams( "block", new Object[]{2, cropHeight} ) ).build();
+            final BufferedImage actual = ImageIO.read( new ByteArrayInputStream( imageService.readImage( params ).read() ) );
+            assertEquals( 2, actual.getWidth() );
+            assertEquals( cropHeight, actual.getHeight() );
+            for ( int y = 0; y < cropHeight; y++ ) for ( int x = 0; x < 2; x++ )
+            {
+                final int ox = cropX + viewX + x;
+                final int oy = cropY + y;
+                final int expected = switch ( orientation )
+                {
+                    case TopLeft -> decoded.getRGB( ox, oy );
+                    case TopRight -> decoded.getRGB( 31 - ox, oy );
+                    case BottomRight -> decoded.getRGB( 31 - ox, 23 - oy );
+                    case BottomLeft -> decoded.getRGB( ox, 23 - oy );
+                    case LeftTop -> decoded.getRGB( oy, ox );
+                    case RightTop -> decoded.getRGB( oy, 23 - ox );
+                    case RightBottom -> decoded.getRGB( 31 - oy, 23 - ox );
+                    case LeftBottom -> decoded.getRGB( 31 - oy, ox );
+                };
+                for ( int shift = 0; shift <= 16; shift += 8 )
+                {
+                    assertEquals( ( expected >>> shift ) & 255, ( actual.getRGB( x, y ) >>> shift ) & 255, 3,
+                        decoding + "/" + transformation + "/" + orientation + " at " + x + "," + y );
+                }
+            }
+        }
+    }
+
     private void processingStyle( final Integer quality )
     {
         style = ImageStyle.create().name( "card" ).quality( quality ).build();
@@ -320,7 +381,7 @@ class ImageServiceImplTest extends ImageMagickTestSupport
     {
         mockOriginalImage( "original.png" );
         final var bytes = new ByteArrayOutputStream();
-        new ImageMagickEncoder( imageMagick, 30, temporaryFolder.resolve( "source-encoding" ) ).write(
+        new ImageMagickEncoder( imageMagick, 30, temporaryFolder.resolve( "source-encoding" ), MAX_DISK_BYTES ).write(
             ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), sourceFormat, 85, bytes );
         imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );

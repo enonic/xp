@@ -22,14 +22,17 @@ final class NativeImageProcess implements AutoCloseable
     private final ImageMagick imageMagick;
     private @Nullable Installation installation;
     private final int timeoutSeconds;
+    private final long maxDiskBytes;
     private final Path directory;
     private long deadline;
 
     NativeImageProcess( final ImageMagick imageMagick, final Path folder, final String stage, final int timeoutSeconds,
-                        final String readCoders, final String writeCoders ) throws IOException
+                        final String readCoders, final String writeCoders, final long maxDiskBytes ) throws IOException
     {
+        if ( maxDiskBytes < 0 ) { throw new IllegalArgumentException( "Invalid native image disk limit" ); }
         this.imageMagick = imageMagick;
         this.timeoutSeconds = timeoutSeconds;
+        this.maxDiskBytes = maxDiskBytes;
         Files.createDirectories( folder );
         directory = Files.createTempDirectory( folder, stage + "-" ).toAbsolutePath();
         try
@@ -75,7 +78,8 @@ final class NativeImageProcess implements AutoCloseable
             throw new IOException( "Image processing exceeded " + timeoutSeconds + " seconds" );
         }
         final List<String> arguments = new ArrayList<>( List.of( command,
-            "-limit", "thread", "1", "-limit", "memory", "256MiB", "-limit", "map", "0", "-limit", "disk", "0",
+            "-limit", "thread", "1", "-limit", "memory", "256MiB", "-limit", "map", "0",
+            "-limit", "disk", Long.toString( maxDiskBytes ),
             "-limit", "list-length", "16", "-limit", "time",
             Long.toString( Math.max( 1, TimeUnit.NANOSECONDS.toSeconds( remaining ) ) ), "-define", "heic:max-threads=1" ) );
         arguments.addAll( operation );

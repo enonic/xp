@@ -114,6 +114,7 @@ processing.maxQueue = 8
 processing.queueTimeoutSeconds = 5
 processing.timeoutSeconds = 30
 processing.maxPixels = 40000000
+processing.maxDisk = 4gb
 ```
 
 `encoding.backend` accepts exactly `ImageIO` (default) or `ImageMagic`. Invalid
@@ -246,8 +247,10 @@ and pixel limits. The timeout bounds each native stage. A request holds one capa
 and encoding. The native decoder probes dimensions before Java raster allocation;
 probe and decode share one timeout budget. `ImageMagic` cache misses have bounded
 concurrency and a bounded waiting queue.
-Requests for the same rendition share the leader's result. Followers count against
-request capacity but do not hold processing slots. Cache locks use exact keys,
+Requests for the same rendition share the leader's result, including failures and
+native stage timeouts. The queue timeout only bounds the leader's wait for a
+processing slot; followers await that shared result and remain interruptible.
+Followers count against request capacity but do not hold processing slots. Cache locks use exact keys,
 so unrelated renditions cannot block each other through lock striping.
 Capacity exhaustion and queue timeout return HTTP 429. Source and output pixel
 counts are checked, and the existing heap memory estimate is a hard admission
@@ -256,8 +259,23 @@ crop and intermediate resize dimensions before allocation and use that geometry
 for execution. The external encoder receives only a generated
 raw RGBA raster and fixed arguments, uses one configured ImageMagick thread, and is killed
 on timeout or interruption. Temporary files and failed cache entries are
-removed. ImageMagick pixel-cache memory/map/disk limits are also set; these are
-not an operating-system limit on all memory allocated by codec libraries.
+removed. ImageMagick retains at most 256 MiB of pixel cache in memory and disables
+memory mapping. Larger pixel caches spill to the stage's private temporary directory
+under `work/cache/img/decoding`, `transformation` or `encoding`. `processing.maxDisk`
+limits this spill per native process (default `4gb`; `0` disables spill), so concurrent
+processes can each consume that budget. It excludes source copies, raw handoff files
+and final rendition files. Spill files are removed when the stage closes, including
+failure, interruption and timeout. These limits do not bound all memory allocated
+by codec libraries; source/pixel limits and heap admission still apply.
+
+Native decoding converts embedded ICC profiles to sRGB before discarding metadata.
+ImageIO does not apply EXIF orientation, and the native pipeline does not invoke
+`auto-orient`. Upload processing stores EXIF orientation in `media.orientation`. The transformer applies
+that stored rotation/flip once, then the stored crop in oriented coordinates, then
+scaling with the focal point remapped into the crop. Stored orientation edits take
+precedence over the source EXIF tag. AVIF/HEIF container transforms are distinct from
+EXIF orientation and remain part of decoding the container's image geometry.
+Native decoder cache version 2 separates corrected colour handling from earlier renditions.
 
 The cache key includes the source checksum and resolved processing parameters.
 Concurrent requests recheck the cache after obtaining the file lock, preventing

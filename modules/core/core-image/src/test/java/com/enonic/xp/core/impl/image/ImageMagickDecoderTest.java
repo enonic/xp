@@ -3,11 +3,13 @@ package com.enonic.xp.core.impl.image;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -31,13 +33,61 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
     @TempDir
     Path temporaryFolder;
 
+    @Test
+    void convertsEmbeddedColorProfileBeforeDiscardingMetadata() throws Exception
+    {
+        final byte[] jpeg = ImageSourceFixtures.jpegWithLinearProfile();
+        final int expected = ImageIO.read( new ByteArrayInputStream( jpeg ) ).getRGB( 0, 0 );
+        assertEquals( 188, expected & 255 );
+        try (var source = decoder( 1000, 1_048_576 ).open( ByteSource.wrap( jpeg ) ))
+        {
+            final int actual = source.read().getRGB( 0, 0 );
+            for ( int shift = 0; shift <= 16; shift += 8 )
+            {
+                assertEquals( ( expected >>> shift ) & 255, ( actual >>> shift ) & 255, 1 );
+            }
+        }
+        assertEmpty( temporaryFolder );
+    }
+
+    @Test
+    void decodesAvifContainerGeometryWithoutAnExtraExifTransform() throws Exception
+    {
+        final int width = 32;
+        final int height = 24;
+        final Path input = temporaryFolder.resolve( "source.png" );
+        final var image = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
+        final var graphics = image.createGraphics();
+        graphics.setColor( Color.RED );
+        graphics.fillRect( 4, 4, 8, 8 );
+        graphics.dispose();
+        ImageIO.write( image, "png", input.toFile() );
+        final Path work = temporaryFolder.resolve( "work" );
+        try (var encoder = new NativeImageProcess( imageMagick, work, "fixture", 30, "PNG", "AVIF,HEIC", MAX_DISK_BYTES ))
+        {
+            final Path avif = encoder.file( "source.avif" );
+            encoder.run( List.of( "PNG:" + input, "-orient", "RightTop", "AVIF:" + avif ), avif );
+            try (var source = decoder( 1000, 1_048_576 ).open( avif ))
+            {
+                assertEquals( height, source.width() );
+                assertEquals( width, source.height() );
+                final var result = source.read();
+                assertEquals( height, result.getWidth() );
+                assertEquals( width, result.getHeight() );
+                assertTrue( ( ( result.getRGB( 17, 6 ) >>> 16 ) & 255 ) > 200 );
+                assertEquals( 0, result.getRGB( 0, 0 ) >>> 24 );
+            }
+        }
+        assertEmpty( work );
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"png", "jpeg", "webp", "avif"})
     void decodesFirstRasterWithEmbeddedDistribution( final String format )
         throws Exception
     {
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        new ImageMagickEncoder( imageMagick, 30, temporaryFolder ).write( image(), format, 85, bytes );
+        new ImageMagickEncoder( imageMagick, 30, temporaryFolder, MAX_DISK_BYTES ).write( image(), format, 85, bytes );
         try (var source = decoder( 1000, 1_048_576 ).open( ByteSource.wrap( bytes.toByteArray() ) ))
         {
             assertEquals( 32, source.width() );
@@ -86,7 +136,7 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
         {
             writer.dispose();
         }
-        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576 );
+        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576, MAX_DISK_BYTES );
         assertThrows( IllegalArgumentException.class, () -> decoder.open( ByteSource.wrap( bytes.toByteArray() ) ) );
         assertEmpty( temporaryFolder );
     }
@@ -108,7 +158,7 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
     void rejectsSvgBeforeStartingProcess( final String content )
         throws Exception
     {
-        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576 );
+        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576, MAX_DISK_BYTES );
         assertThrows( IllegalArgumentException.class, () -> decoder.open( ByteSource.wrap( svg( content ) ) ) );
         assertEmpty( temporaryFolder );
     }
@@ -121,7 +171,7 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
     void rejectsUnsupportedSourcesAndXmlEntities( final String content )
         throws Exception
     {
-        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576 );
+        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576, MAX_DISK_BYTES );
         assertThrows( IllegalArgumentException.class,
             () -> decoder.open( ByteSource.wrap( content.getBytes( StandardCharsets.UTF_8 ) ) ) );
         assertEmpty( temporaryFolder );
@@ -131,7 +181,7 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
     void missingExecutableCleansUp()
         throws Exception
     {
-        final var decoder = new ImageMagickDecoder( external( temporaryFolder.resolve( "missing" ).toString() ), temporaryFolder, 1, 1000, 10000 );
+        final var decoder = new ImageMagickDecoder( external( temporaryFolder.resolve( "missing" ).toString() ), temporaryFolder, 1, 1000, 10000, MAX_DISK_BYTES );
         assertThrows( IOException.class, () -> decoder.open( png() ) );
         assertEmpty( temporaryFolder );
     }
@@ -150,7 +200,7 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
             """.formatted( pidFile ) );
         assertTrue( executable.toFile().setExecutable( true, true ) );
         final Path work = temporaryFolder.resolve( "work" );
-        final var decoder = new ImageMagickDecoder( external( executable.toString() ), work, 1, 1000, 10000 );
+        final var decoder = new ImageMagickDecoder( external( executable.toString() ), work, 1, 1000, 10000, MAX_DISK_BYTES );
         assertTimeout( Duration.ofSeconds( 10 ), () -> {
             final IOException error = assertThrows( IOException.class, () -> decoder.open( png() ) );
             assertTrue( error.getMessage().contains( "exceeded" ) );
@@ -162,7 +212,7 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
 
     private ImageMagickDecoder decoder( final long pixels, final long bytes )
     {
-        return new ImageMagickDecoder( imageMagick, temporaryFolder, 30, pixels, bytes );
+        return new ImageMagickDecoder( imageMagick, temporaryFolder, 30, pixels, bytes, MAX_DISK_BYTES );
     }
 
     private static ByteSource png()

@@ -15,6 +15,8 @@ import com.enonic.xp.core.internal.image.ImageMagick;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class ImageMagickTestSupport
 {
+    static final long MAX_DISK_BYTES = 4L * 1024 * 1024 * 1024;
+
     private Path installationStorage;
 
     ImageMagickFixture imageMagick;

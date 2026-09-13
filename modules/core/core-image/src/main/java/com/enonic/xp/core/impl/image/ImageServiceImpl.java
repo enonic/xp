@@ -123,16 +123,18 @@ public class ImageServiceImpl
             case "ImageMagic" -> true;
             default -> throw new IllegalArgumentException( "transformation.backend must be ImageIO or ImageMagic" );
         };
+        final long maxDiskBytes = ByteSizeParser.parse( config.processing_maxDisk() );
+        if ( maxDiskBytes < 0 ) { throw new IllegalArgumentException( "processing.maxDisk cannot be negative" ); }
         this.nativeTransformer = new ImageMagickTransformer( imageMagick, config.processing_timeoutSeconds(),
-            cacheFolder.resolve( "transformation" ) );
+            cacheFolder.resolve( "transformation" ), maxDiskBytes );
         this.nativeDecoder = new ImageMagickDecoder( imageMagick, cacheFolder.resolve( "decoding" ),
-            config.processing_timeoutSeconds(), config.processing_maxPixels(), ByteSizeParser.parse( config.decoding_maxBytes() ) );
+            config.processing_timeoutSeconds(), config.processing_maxPixels(), ByteSizeParser.parse( config.decoding_maxBytes() ), maxDiskBytes );
         this.processingGate = new ImageProcessingGate( config.processing_maxConcurrent(), config.processing_maxQueue(), config.processing_queueTimeoutSeconds() );
         this.maxSourceBytes = ByteSizeParser.parse( config.decoding_maxBytes() );
         this.queueTimeoutSeconds = config.processing_queueTimeoutSeconds();
         this.maxProcessingPixels = config.processing_maxPixels();
         this.nativeEncoder = new ImageMagickEncoder( useImageMagick ? imageMagick : null, config.processing_timeoutSeconds(),
-                                                    cacheFolder.resolve( "encoding" ) );
+                                                    cacheFolder.resolve( "encoding" ), maxDiskBytes );
 
         this.circuitBreaker = new MemoryCircuitBreaker( toMegaBytes( MemoryLimitParser.maxHeap().parse( config.memoryLimit() ) ) );
 
@@ -254,7 +256,7 @@ public class ImageServiceImpl
         }
         if ( useImageMagickDecoder )
         {
-            MessageDigests.updateWithString( digest, "decoding:ImageMagic" );
+            MessageDigests.updateWithString( digest, "decoding:ImageMagic:2" );
         }
         if ( useImageMagickTransformer )
         {

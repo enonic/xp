@@ -21,13 +21,16 @@ final class ImageMagickEncoder
     private final @Nullable ImageMagick imageMagick;
     private final int timeoutSeconds;
     private final Path temporaryFolder;
+    private final long maxDiskBytes;
 
-    ImageMagickEncoder( final @Nullable ImageMagick imageMagick, final int timeoutSeconds, final Path temporaryFolder )
+    ImageMagickEncoder( final @Nullable ImageMagick imageMagick, final int timeoutSeconds, final Path temporaryFolder,
+                       final long maxDiskBytes )
     {
         if ( timeoutSeconds < 1 ) { throw new IllegalArgumentException( "Invalid image encoder configuration" ); }
         this.imageMagick = imageMagick;
         this.timeoutSeconds = timeoutSeconds;
         this.temporaryFolder = temporaryFolder;
+        this.maxDiskBytes = maxDiskBytes;
     }
 
     void checkEnabled()
@@ -63,7 +66,7 @@ final class ImageMagickEncoder
     private NativeImageProcess process() throws IOException
     {
         return new NativeImageProcess( imageMagick, temporaryFolder, "encode", timeoutSeconds, "RGBA",
-            "JPEG,PNG,PNG24,PNG32,GIF,WEBP,AVIF,HEIC" );
+            "JPEG,PNG,PNG24,PNG32,GIF,WEBP,AVIF,HEIC", maxDiskBytes );
     }
 
     private void encode( final NativeImageProcess process, final NativeImageRaster raster, final String format,

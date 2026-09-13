@@ -30,4 +30,6 @@ public @interface ImageConfig
     int processing_timeoutSeconds() default 30;
 
     long processing_maxPixels() default 40_000_000;
+
+    String processing_maxDisk() default "4gb";
 }

@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import com.google.common.io.ByteSource;
 
@@ -18,14 +17,14 @@ final class ImageProcessingGate
 {
     private final Semaphore requests;
     private final Semaphore slots;
-    private final int timeoutSeconds;
+    private final int queueTimeoutSeconds;
     private final ConcurrentHashMap<Object, CompletableFuture<ByteSource>> pending = new ConcurrentHashMap<>();
 
-    ImageProcessingGate( final int concurrent, final int queued, final int timeoutSeconds )
+    ImageProcessingGate( final int concurrent, final int queued, final int queueTimeoutSeconds )
     {
         requests = new Semaphore( Math.addExact( concurrent, queued ) );
         slots = new Semaphore( concurrent, true );
-        this.timeoutSeconds = timeoutSeconds;
+        this.queueTimeoutSeconds = queueTimeoutSeconds;
     }
 
     ByteSource execute( final Object key, final Callable<ByteSource> operation ) throws IOException
@@ -37,13 +36,13 @@ final class ImageProcessingGate
         {
             if ( existing != null )
             {
-                try { return existing.get( timeoutSeconds, TimeUnit.SECONDS ); }
+                // The leader owns admission and processing deadlines; followers share its outcome.
+                try { return existing.get(); }
                 catch ( ExecutionException e ) { return rethrow( e.getCause() ); }
-                catch ( TimeoutException e ) { throw new ThrottlingException( "Image processing queue timed out" ); }
             }
             try
             {
-                if ( !slots.tryAcquire( timeoutSeconds, TimeUnit.SECONDS ) )
+                if ( !slots.tryAcquire( queueTimeoutSeconds, TimeUnit.SECONDS ) )
                 {
                     throw new ThrottlingException( "Image processing queue timed out" );
                 }
