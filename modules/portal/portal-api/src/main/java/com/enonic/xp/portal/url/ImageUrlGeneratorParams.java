@@ -18,8 +18,8 @@ import static java.util.Objects.requireNonNullElse;
 
 /**
  * Parameters for generating an image URL from supplied media, project and branch values.
- * Scale and output format are independent of the selected style. Styled requests cannot
- * include explicit quality, filter or background overrides.
+ * The selected style supplies quality, filter and background settings.
+ * Scale and output format are independent of the style.
  */
 @NullMarked
 public final class ImageUrlGeneratorParams
@@ -87,7 +87,7 @@ public final class ImageUrlGeneratorParams
     }
 
     /**
-     * Returns the explicit API root, which takes precedence over the mount base URL.
+     * Returns the explicit media API root.
      *
      * @return the media API root
      */
@@ -256,8 +256,8 @@ public final class ImageUrlGeneratorParams
         private @Nullable String style;
 
         /**
-         * Selects a predefined image style. Its processing settings determine filter, quality
-         * and background, so those values cannot also be supplied explicitly.
+         * Selects a predefined image style that supplies filter, quality and background settings.
+         * Scale and format remain separate request parameters.
          *
          * @param style the fully qualified {@code application:name} key
          * @return this builder
@@ -286,7 +286,6 @@ public final class ImageUrlGeneratorParams
 
         /**
          * Sets the API root used verbatim: {@code <mediaBaseUrl>/media:image/...}.
-         * This takes precedence over {@link #setBaseUrl(String)}.
          *
          * @param mediaBaseUrl the media API root
          * @return this builder
@@ -419,8 +418,7 @@ public final class ImageUrlGeneratorParams
 
         /**
          * Adds query parameters, replacing the values of any matching keys.
-         * Explicit quality, filter and background arguments take precedence over corresponding
-         * query entries. A styled URL rejects processing parameters in this map.
+         * A styled URL rejects processing parameters in this map.
          *
          * @param queryParams query keys and their ordered value collections
          * @return this builder

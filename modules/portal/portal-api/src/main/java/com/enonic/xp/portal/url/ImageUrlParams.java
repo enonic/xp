@@ -11,8 +11,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Mutable parameters for {@link PortalUrlService#imageUrl(ImageUrlParams)}.
  * The image may be identified by content ID or path. Scale is required, and a selected
- * style supplies filter, quality and background settings. Except for parsing a textual
- * quality value, validation occurs when the URL service consumes these parameters.
+ * style supplies filter, quality and background settings. The URL service validates
+ * the request when generating the URL.
  */
 @NullMarked
 public final class ImageUrlParams
@@ -122,8 +122,8 @@ public final class ImageUrlParams
     }
 
     /**
-     * Selects a predefined image style. A styled request cannot also set quality, filter
-     * or background overrides. Scale and format remain separate request parameters.
+     * Selects a predefined image style that supplies quality, filter and background settings.
+     * Scale and format remain separate request parameters.
      *
      * @param value the fully qualified {@code application:name} key
      * @return this parameter object
@@ -339,7 +339,6 @@ public final class ImageUrlParams
 
     /**
      * Sets the API root used verbatim: {@code <mediaBaseUrl>/media:image/...}.
-     * This takes precedence over {@link #baseUrl(String)}.
      *
      * @param mediaBaseUrl the media API root
      * @return this parameter object

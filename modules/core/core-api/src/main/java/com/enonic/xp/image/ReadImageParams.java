@@ -109,7 +109,7 @@ public final class ReadImageParams
     }
 
     /**
-     * Returns the explicit scaling operation, which takes precedence over the legacy scale options.
+     * Returns the requested scaling operation.
      *
      * @return the operation
      */
@@ -396,7 +396,7 @@ public final class ReadImageParams
         }
 
         /**
-         * Sets an explicit scaling operation, overriding the legacy size and shape options.
+         * Sets the scaling operation. Use {@link ScaleParams#NO_SCALE} to preserve the source dimensions.
          *
          * @param scaleParams the operation
          * @return this builder
