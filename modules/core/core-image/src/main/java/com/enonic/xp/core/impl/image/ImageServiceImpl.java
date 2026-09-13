@@ -35,6 +35,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.internal.ByteSizeParser;
+import com.enonic.xp.core.internal.image.ImageMagick;
 import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.core.internal.SimpleCsvParser;
 import com.enonic.xp.core.internal.security.MessageDigests;
@@ -101,7 +102,8 @@ public class ImageServiceImpl
     public ImageServiceImpl( @Reference final ContentService contentService,
                              @Reference final ImageScaleFunctionBuilder imageScaleFunctionBuilder,
                              @Reference final ImageFilterBuilder imageFilterBuilder,
-                             @Reference final StyleDescriptorService styleDescriptorService, final ImageConfig config )
+                             @Reference final StyleDescriptorService styleDescriptorService,
+                             @Reference final ImageMagick imageMagick, final ImageConfig config )
     {
         this.contentService = contentService;
         this.imageScaleFunctionBuilder = imageScaleFunctionBuilder;
@@ -131,15 +133,15 @@ public class ImageServiceImpl
             case "ImageMagic" -> true;
             default -> throw new IllegalArgumentException( "transformation.backend must be ImageIO or ImageMagic" );
         };
-        this.nativeTransformer = new ImageMagickTransformer( "embedded", config.processing_timeoutSeconds(),
+        this.nativeTransformer = new ImageMagickTransformer( imageMagick, config.processing_timeoutSeconds(),
             cacheFolder.resolve( "transformation" ) );
-        this.nativeDecoder = new ImageMagickDecoder( "embedded", cacheFolder.resolve( "decoding" ),
+        this.nativeDecoder = new ImageMagickDecoder( imageMagick, cacheFolder.resolve( "decoding" ),
             config.processing_timeoutSeconds(), config.processing_maxPixels(), ByteSizeParser.parse( config.decoding_maxBytes() ) );
         this.processingGate = new ImageProcessingGate( config.processing_maxConcurrent(), config.processing_maxQueue(), config.processing_queueTimeoutSeconds() );
         this.maxSourceBytes = ByteSizeParser.parse( config.decoding_maxBytes() );
         this.queueTimeoutSeconds = config.processing_queueTimeoutSeconds();
         this.maxProcessingPixels = config.processing_maxPixels();
-        this.nativeEncoder = new ImageMagickEncoder( useImageMagick ? "embedded" : "", config.processing_timeoutSeconds(),
+        this.nativeEncoder = new ImageMagickEncoder( useImageMagick ? imageMagick : null, config.processing_timeoutSeconds(),
                                                     cacheFolder.resolve( "encoding" ) );
 
         this.circuitBreaker = new MemoryCircuitBreaker( toMegaBytes( MemoryLimitParser.maxHeap().parse( config.memoryLimit() ) ) );

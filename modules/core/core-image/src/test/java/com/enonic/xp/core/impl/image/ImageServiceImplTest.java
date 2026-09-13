@@ -62,7 +62,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-class ImageServiceImplTest
+class ImageServiceImplTest extends ImageMagickTestSupport
 {
     @TempDir
     public Path temporaryFolder;
@@ -111,7 +111,7 @@ class ImageServiceImplTest
 
         imageScaleFunctionBuilder.activate( imageConfig );
 
-        return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, styleDescriptorService, imageConfig );
+        return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, styleDescriptorService, imageMagick, imageConfig );
     }
 
     private void processingStyle( final Integer quality )
@@ -331,7 +331,7 @@ class ImageServiceImplTest
     {
         mockOriginalImage( "original.png" );
         final var bytes = new ByteArrayOutputStream();
-        new ImageMagickEncoder( 30, temporaryFolder.resolve( "source-encoding" ) ).write(
+        new ImageMagickEncoder( imageMagick, 30, temporaryFolder.resolve( "source-encoding" ) ).write(
             ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), sourceFormat, 85, bytes );
         imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );

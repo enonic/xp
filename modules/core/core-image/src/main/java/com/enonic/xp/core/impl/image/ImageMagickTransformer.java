@@ -6,20 +6,25 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jspecify.annotations.NullMarked;
+
+import com.enonic.xp.core.internal.image.ImageMagick;
+
 /** Owns transformed raw rasters until the next backend has consumed them. */
+@NullMarked
 final class ImageMagickTransformer
 {
-    private final String executable;
+    private final ImageMagick imageMagick;
     private final int timeoutSeconds;
     private final Path temporaryFolder;
 
-    ImageMagickTransformer( final String executable, final int timeoutSeconds, final Path temporaryFolder )
+    ImageMagickTransformer( final ImageMagick imageMagick, final int timeoutSeconds, final Path temporaryFolder )
     {
-        if ( executable == null || executable.isBlank() || timeoutSeconds < 1 )
+        if ( timeoutSeconds < 1 )
         {
             throw new IllegalArgumentException( "Invalid image transformer configuration" );
         }
-        this.executable = executable;
+        this.imageMagick = imageMagick;
         this.timeoutSeconds = timeoutSeconds;
         this.temporaryFolder = temporaryFolder;
     }
@@ -45,7 +50,7 @@ final class ImageMagickTransformer
 
     private NativeImageProcess process() throws IOException
     {
-        return new NativeImageProcess( executable, temporaryFolder, "transform", timeoutSeconds, "RGBA", "RGBA" );
+        return new NativeImageProcess( imageMagick, temporaryFolder, "transform", timeoutSeconds, "RGBA", "RGBA" );
     }
 
     private Result transform( final NativeImageProcess process, final NativeImageRaster source,

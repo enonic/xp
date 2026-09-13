@@ -9,29 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import com.enonic.xp.core.internal.image.ImageMagick;
+
 /** Encodes a raw raster without re-materializing pixels from adjacent native stages. */
+@NullMarked
 final class ImageMagickEncoder
 {
-    private final String executable;
+    private final @Nullable ImageMagick imageMagick;
     private final int timeoutSeconds;
     private final Path temporaryFolder;
 
-    ImageMagickEncoder( final int timeoutSeconds, final Path temporaryFolder )
+    ImageMagickEncoder( final @Nullable ImageMagick imageMagick, final int timeoutSeconds, final Path temporaryFolder )
     {
-        this( "embedded", timeoutSeconds, temporaryFolder );
-    }
-
-    ImageMagickEncoder( final String executable, final int timeoutSeconds, final Path temporaryFolder )
-    {
-        if ( executable == null || timeoutSeconds < 1 ) { throw new IllegalArgumentException( "Invalid image encoder configuration" ); }
-        this.executable = executable;
+        if ( timeoutSeconds < 1 ) { throw new IllegalArgumentException( "Invalid image encoder configuration" ); }
+        this.imageMagick = imageMagick;
         this.timeoutSeconds = timeoutSeconds;
         this.temporaryFolder = temporaryFolder;
     }
 
     void checkEnabled()
     {
-        if ( executable.isBlank() )
+        if ( imageMagick == null )
         {
             throw new IllegalArgumentException( "ImageMagick encoding is disabled; set encoding.backend=ImageMagic" );
         }
@@ -61,7 +62,7 @@ final class ImageMagickEncoder
 
     private NativeImageProcess process() throws IOException
     {
-        return new NativeImageProcess( executable, temporaryFolder, "encode", timeoutSeconds, "RGBA",
+        return new NativeImageProcess( imageMagick, temporaryFolder, "encode", timeoutSeconds, "RGBA",
             "JPEG,PNG,PNG24,PNG32,GIF,WEBP,AVIF,HEIC" );
     }
 

@@ -21,6 +21,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.core.impl.image.im.ImageMagickFixture;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-class ImageMagickEncoderTest
+class ImageMagickEncoderTest extends ImageMagickTestSupport
 {
     @TempDir
     Path temporaryFolder;
@@ -44,10 +46,10 @@ class ImageMagickEncoderTest
         source.setRGB( 2, 0, 0x20102030 );
         final int[] expected = source.getRGB( 0, 0, 3, 1, null, 0, 3 );
         final var bytes = new ByteArrayOutputStream();
-        new ImageMagickEncoder( 30, temporaryFolder ).write( source, "png", 85, bytes );
+        new ImageMagickEncoder( imageMagick, 30, temporaryFolder ).write( source, "png", 85, bytes );
         final BufferedImage imageIo = ImageIO.read( new ByteArrayInputStream( bytes.toByteArray() ) );
         assertArrayEquals( expected, imageIo.getRGB( 0, 0, 3, 1, null, 0, 3 ) );
-        final var decoder = new ImageMagickDecoder( "embedded", temporaryFolder, 30, 100, 100000 );
+        final var decoder = new ImageMagickDecoder( imageMagick, temporaryFolder, 30, 100, 100000 );
         try (var decoded = decoder.open( ByteSource.wrap( bytes.toByteArray() ) ))
         {
             assertArrayEquals( expected, decoded.read().getRGB( 0, 0, 3, 1, null, 0, 3 ) );
@@ -59,9 +61,9 @@ class ImageMagickEncoderTest
     void disabledAndInvalidParametersDoNotCreateFiles()
         throws Exception
     {
-        final ImageMagickEncoder encoder = new ImageMagickEncoder( "", 1, temporaryFolder );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( null, 1, temporaryFolder );
         assertThrows( IllegalArgumentException.class, () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
-        final ImageMagickEncoder enabled = new ImageMagickEncoder( "/nonexistent", 1, temporaryFolder );
+        final ImageMagickEncoder enabled = new ImageMagickEncoder( external( "/nonexistent" ), 1, temporaryFolder );
         assertThrows( IllegalArgumentException.class, () -> enabled.write( image(), "png:/tmp/escape", 80, new ByteArrayOutputStream() ) );
         assertThrows( IllegalArgumentException.class, () -> enabled.write( image(), "webp", 101, new ByteArrayOutputStream() ) );
         assertEmpty( temporaryFolder );
@@ -71,7 +73,7 @@ class ImageMagickEncoderTest
     void missingExecutableCleansUp()
         throws Exception
     {
-        final ImageMagickEncoder encoder = new ImageMagickEncoder( temporaryFolder.resolve( "missing" ).toString(), 1, temporaryFolder );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( external( temporaryFolder.resolve( "missing" ).toString() ), 1, temporaryFolder );
         assertThrows( IOException.class, () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
         assertEmpty( temporaryFolder );
     }
@@ -83,7 +85,7 @@ class ImageMagickEncoderTest
     {
         final Path executable = script( "exit 7" );
         final Path work = temporaryFolder.resolve( "work" );
-        final ImageMagickEncoder encoder = new ImageMagickEncoder( executable.toString(), 1, work );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( external( executable.toString() ), 1, work );
         final IOException error = assertThrows( IOException.class,
             () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
         assertTrue( error.getMessage().contains( "exit 7" ) );
@@ -101,7 +103,7 @@ class ImageMagickEncoderTest
             exec sleep 30\
             """.formatted( pidFile ) );
         final Path work = temporaryFolder.resolve( "work" );
-        final ImageMagickEncoder encoder = new ImageMagickEncoder( executable.toString(), 1, work );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( external( executable.toString() ), 1, work );
         assertTimeout( Duration.ofSeconds( 10 ), () -> {
             final IOException error = assertThrows( IOException.class,
                 () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
@@ -118,9 +120,9 @@ class ImageMagickEncoderTest
     void nativeEncoderProducesRequestedFormat( final String format )
         throws Exception
     {
-        final String platform = EmbeddedImageMagick.platform( System.getProperty( "os.name" ), System.getProperty( "os.arch" ) );
+        final String platform = ImageMagickFixture.platform();
         assumeTrue( Set.of( "linux-x86_64", "linux-aarch64", "osx-aarch64", "windows-x86_64", "windows-aarch64" ).contains( platform ) );
-        final ImageMagickEncoder encoder = new ImageMagickEncoder( 30, temporaryFolder );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( imageMagick, 30, temporaryFolder );
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         encoder.write( image(), format, 80, output );
         final byte[] bytes = output.toByteArray();

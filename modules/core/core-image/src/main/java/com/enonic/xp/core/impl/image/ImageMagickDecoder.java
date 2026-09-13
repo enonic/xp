@@ -10,23 +10,28 @@ import java.util.ArrayList;
 
 import com.google.common.io.ByteSource;
 
+import org.jspecify.annotations.NullMarked;
+
+import com.enonic.xp.core.internal.image.ImageMagick;
+
 /** Decodes the first raster through the shared native process runner. */
+@NullMarked
 final class ImageMagickDecoder
 {
-    private final String executable;
+    private final ImageMagick imageMagick;
     private final Path temporaryFolder;
     private final int timeoutSeconds;
     private final long maxPixels;
     private final long maxBytes;
 
-    ImageMagickDecoder( final String executable, final Path temporaryFolder, final int timeoutSeconds,
+    ImageMagickDecoder( final ImageMagick imageMagick, final Path temporaryFolder, final int timeoutSeconds,
                         final long maxPixels, final long maxBytes )
     {
-        if ( executable == null || executable.isBlank() || timeoutSeconds < 1 || maxPixels < 1 || maxBytes < 1 )
+        if ( timeoutSeconds < 1 || maxPixels < 1 || maxBytes < 1 )
         {
             throw new IllegalArgumentException( "Invalid image decoder configuration" );
         }
-        this.executable = executable;
+        this.imageMagick = imageMagick;
         this.temporaryFolder = temporaryFolder;
         this.timeoutSeconds = timeoutSeconds;
         this.maxPixels = maxPixels;
@@ -60,7 +65,7 @@ final class ImageMagickDecoder
             this.input = input.toAbsolutePath();
             this.ownedSource = ownedSource;
             this.coder = coder( input );
-            process = new NativeImageProcess( executable, temporaryFolder, "decode", timeoutSeconds,
+            process = new NativeImageProcess( imageMagick, temporaryFolder, "decode", timeoutSeconds,
                 "JPEG,PNG,WEBP,AVIF,HEIC,BMP,TIFF", "RGBA,INFO" );
             try
             {

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ImageMagickDecoderTest
+class ImageMagickDecoderTest extends ImageMagickTestSupport
 {
     @TempDir
     Path temporaryFolder;
@@ -37,7 +37,7 @@ class ImageMagickDecoderTest
         throws Exception
     {
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        new ImageMagickEncoder( 30, temporaryFolder ).write( image(), format, 85, bytes );
+        new ImageMagickEncoder( imageMagick, 30, temporaryFolder ).write( image(), format, 85, bytes );
         try (var source = decoder( 1000, 1_048_576 ).open( ByteSource.wrap( bytes.toByteArray() ) ))
         {
             assertEquals( 32, source.width() );
@@ -86,7 +86,7 @@ class ImageMagickDecoderTest
         {
             writer.dispose();
         }
-        final var decoder = new ImageMagickDecoder( "/missing", temporaryFolder, 1, 1000, 1_048_576 );
+        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576 );
         assertThrows( IllegalArgumentException.class, () -> decoder.open( ByteSource.wrap( bytes.toByteArray() ) ) );
         assertEmpty( temporaryFolder );
     }
@@ -108,7 +108,7 @@ class ImageMagickDecoderTest
     void rejectsSvgBeforeStartingProcess( final String content )
         throws Exception
     {
-        final var decoder = new ImageMagickDecoder( "/missing", temporaryFolder, 1, 1000, 1_048_576 );
+        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576 );
         assertThrows( IllegalArgumentException.class, () -> decoder.open( ByteSource.wrap( svg( content ) ) ) );
         assertEmpty( temporaryFolder );
     }
@@ -121,7 +121,7 @@ class ImageMagickDecoderTest
     void rejectsUnsupportedSourcesAndXmlEntities( final String content )
         throws Exception
     {
-        final var decoder = new ImageMagickDecoder( "/missing", temporaryFolder, 1, 1000, 1_048_576 );
+        final var decoder = new ImageMagickDecoder( external( "/missing" ), temporaryFolder, 1, 1000, 1_048_576 );
         assertThrows( IllegalArgumentException.class,
             () -> decoder.open( ByteSource.wrap( content.getBytes( StandardCharsets.UTF_8 ) ) ) );
         assertEmpty( temporaryFolder );
@@ -131,7 +131,7 @@ class ImageMagickDecoderTest
     void missingExecutableCleansUp()
         throws Exception
     {
-        final var decoder = new ImageMagickDecoder( temporaryFolder.resolve( "missing" ).toString(), temporaryFolder, 1, 1000, 10000 );
+        final var decoder = new ImageMagickDecoder( external( temporaryFolder.resolve( "missing" ).toString() ), temporaryFolder, 1, 1000, 10000 );
         assertThrows( IOException.class, () -> decoder.open( png() ) );
         assertEmpty( temporaryFolder );
     }
@@ -150,7 +150,7 @@ class ImageMagickDecoderTest
             """.formatted( pidFile ) );
         assertTrue( executable.toFile().setExecutable( true, true ) );
         final Path work = temporaryFolder.resolve( "work" );
-        final var decoder = new ImageMagickDecoder( executable.toString(), work, 1, 1000, 10000 );
+        final var decoder = new ImageMagickDecoder( external( executable.toString() ), work, 1, 1000, 10000 );
         assertTimeout( Duration.ofSeconds( 10 ), () -> {
             final IOException error = assertThrows( IOException.class, () -> decoder.open( png() ) );
             assertTrue( error.getMessage().contains( "exceeded" ) );
@@ -162,7 +162,7 @@ class ImageMagickDecoderTest
 
     private ImageMagickDecoder decoder( final long pixels, final long bytes )
     {
-        return new ImageMagickDecoder( "embedded", temporaryFolder, 30, pixels, bytes );
+        return new ImageMagickDecoder( imageMagick, temporaryFolder, 30, pixels, bytes );
     }
 
     private static ByteSource png()

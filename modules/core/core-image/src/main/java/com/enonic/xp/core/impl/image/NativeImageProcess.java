@@ -9,18 +9,25 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import com.enonic.xp.core.internal.image.ImageMagick;
+
 /** Common process limits, policy, deadline and temporary-file ownership for every native stage. */
+@NullMarked
 final class NativeImageProcess implements AutoCloseable
 {
-    private final String executable;
+    private final ImageMagick imageMagick;
+    private @Nullable ImageMagick.Installation installation;
     private final int timeoutSeconds;
     private final Path directory;
     private long deadline;
 
-    NativeImageProcess( final String executable, final Path folder, final String stage, final int timeoutSeconds,
+    NativeImageProcess( final ImageMagick imageMagick, final Path folder, final String stage, final int timeoutSeconds,
                         final String readCoders, final String writeCoders ) throws IOException
     {
-        this.executable = executable;
+        this.imageMagick = imageMagick;
         this.timeoutSeconds = timeoutSeconds;
         Files.createDirectories( folder );
         directory = Files.createTempDirectory( folder, stage + "-" ).toAbsolutePath();
@@ -55,7 +62,8 @@ final class NativeImageProcess implements AutoCloseable
 
     void run( final List<String> operation, final Path result ) throws IOException
     {
-        final String command = "embedded".equals( executable ) ? EmbeddedImageMagick.executable().toString() : executable;
+        if ( installation == null ) { installation = imageMagick.acquire(); }
+        final String command = installation.executable().toString();
         if ( deadline == 0 )
         {
             deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos( timeoutSeconds );
@@ -71,13 +79,7 @@ final class NativeImageProcess implements AutoCloseable
             Long.toString( Math.max( 1, TimeUnit.NANOSECONDS.toSeconds( remaining ) ) ), "-define", "heic:max-threads=1" ) );
         arguments.addAll( operation );
         final ProcessBuilder builder = new ProcessBuilder( arguments );
-        if ( "embedded".equals( executable ) && System.getProperty( "os.name" ).startsWith( "Mac" ) )
-        {
-            final Path root = Path.of( command ).getParent().getParent();
-            builder.environment().put( "MAGICK_HOME", root.toString() );
-            builder.environment().put( "MAGICK_CONFIGURE_PATH", root.resolve( "etc/ImageMagick-7" ).toString() );
-            builder.environment().put( "LIBHEIF_PLUGIN_PATH", root.resolve( "lib/libheif" ).toString() );
-        }
+        builder.environment().putAll( installation.environment() );
         final String existing = builder.environment().get( "MAGICK_CONFIGURE_PATH" );
         builder.environment().put( "MAGICK_CONFIGURE_PATH", directory + ( existing == null ? "" : File.pathSeparator + existing ) );
         builder.environment().put( "MAGICK_TEMPORARY_PATH", directory.toString() );
@@ -136,6 +138,14 @@ final class NativeImageProcess implements AutoCloseable
             for ( Path path : paths.sorted( Comparator.reverseOrder() ).toList() )
             {
                 Files.deleteIfExists( path );
+            }
+        }
+        finally
+        {
+            if ( installation != null )
+            {
+                installation.close();
+                installation = null;
             }
         }
     }

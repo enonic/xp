@@ -40,7 +40,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-class ImageMagickTransformerTest
+class ImageMagickTransformerTest extends ImageMagickTestSupport
 {
     @TempDir
     Path temporaryFolder;
@@ -50,7 +50,7 @@ class ImageMagickTransformerTest
     {
         final var bytes = new ByteArrayOutputStream();
         ImageIO.write( image(), "png", bytes );
-        final var decoder = new ImageMagickDecoder( "embedded", temporaryFolder, 30, 10000, 100000 );
+        final var decoder = new ImageMagickDecoder( imageMagick, temporaryFolder, 30, 10000, 100000 );
         try (var source = decoder.open( ByteSource.wrap( bytes.toByteArray() ) ))
         {
             final var decoded = spy( source.raster() );
@@ -60,7 +60,7 @@ class ImageMagickTransformerTest
                 final var transformed = spy( result.raster() );
                 assertEquals( 32L * 24 * 4, Files.size( transformed.path() ) );
                 final var output = new ByteArrayOutputStream();
-                new ImageMagickEncoder( 30, temporaryFolder ).write( transformed, "png", 85, false, output );
+                new ImageMagickEncoder( imageMagick, 30, temporaryFolder ).write( transformed, "png", 85, false, output );
                 assertEquals( 32, ImageIO.read( new ByteArrayInputStream( output.toByteArray() ) ).getWidth() );
                 verify( decoded, never() ).read();
                 verify( transformed, never() ).read();
@@ -187,7 +187,7 @@ class ImageMagickTransformerTest
     void missingExecutableCleansUp()
         throws Exception
     {
-        final var transformer = new ImageMagickTransformer( temporaryFolder.resolve( "missing" ).toString(), 1, temporaryFolder );
+        final var transformer = new ImageMagickTransformer( external( temporaryFolder.resolve( "missing" ).toString() ), 1, temporaryFolder );
         assertThrows( IOException.class, () -> transformer.apply( image(), plan( 32, 24, params( "invert" ), 10000 ) ) );
         assertEmpty( temporaryFolder );
     }
@@ -206,7 +206,7 @@ class ImageMagickTransformerTest
             """.formatted( pidFile ) );
         assertTrue( executable.toFile().setExecutable( true, true ) );
         final Path work = temporaryFolder.resolve( "work" );
-        final var transformer = new ImageMagickTransformer( executable.toString(), 1, work );
+        final var transformer = new ImageMagickTransformer( external( executable.toString() ), 1, work );
         assertTimeout( Duration.ofSeconds( 10 ), () -> {
             final IOException error = assertThrows( IOException.class,
                 () -> transformer.apply( image(), plan( 32, 24, params( "invert" ), 10000 ) ) );
@@ -244,7 +244,7 @@ class ImageMagickTransformerTest
 
     private ImageMagickTransformer transformer()
     {
-        return new ImageMagickTransformer( "embedded", 30, temporaryFolder );
+        return new ImageMagickTransformer( imageMagick, 30, temporaryFolder );
     }
 
     private static BufferedImage image()

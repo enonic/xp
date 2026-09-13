@@ -65,9 +65,9 @@ misses, for every output format. WebP/AVIF additionally requires a style. New
 image URLs, including unstyled URLs and rich-text renditions, use modern
 fingerprints covering the source, requested scale, output MIME type, aspect
 ratio, quality, filter, and background, authenticated with HMAC-SHA512 using
-XP's existing `generic-hmac-sha512` key. The common HMAC service is also used by
-redirect checksums; an image-specific prefix separates the two uses. Existing
-redirect checksum values are unchanged. Modern path fingerprints are 40 hex
+a named key derived from XP's `generic-hmac-sha512` secret through HKDF-SHA512.
+Images use `image-fingerprint-v3`; redirects use the separate `redirect-checksum-v1`
+key. Redirect tickets issued with the previous key must be regenerated. Modern path fingerprints are 40 hex
 characters and are compared in constant time.
 
 An existing rendition can be served even if the URL fingerprint is wrong or
@@ -94,7 +94,8 @@ currently resolved rendition if it is cached; this does not retrieve historical
 renditions by their old URL fingerprint. Mismatched fingerprints do not receive
 immutable response caching headers.
 
-The image service resolves styles again before processing. Content permissions,
+The portal passes the resolved style snapshot used to validate the fingerprint to
+the image service. Content permissions,
 stored cropping, focal point, and orientation still apply.
 
 Configure `com.enonic.xp.image.cfg`:
@@ -178,22 +179,33 @@ Native policy disables GIF, SVG and vector rendering coders, external delegates,
 loadable filters, indirect file reads, and unrelated coders. SVG output and
 compressed SVGZ input are not supported.
 
-The build downloads checksum-pinned portable distributions and embeds
-both the executable and its codec libraries in the image bundle. On first use,
-XP selects the platform resource and extracts it into a private directory under
-`java.io.tmpdir`. That directory must allow execution. The extracted distribution
-is reused for the lifetime of the bundle and removed on JVM shutdown. Linux
-extraction does not require FUSE. This follows the platform-resource/extraction
-approach used by native-library loaders such as Brotli4j; conversion runs in an
-isolated process so timeouts can terminate native code.
+The separate `core-image-im` OSGi bundle owns the native distributions. The build
+unpacks every platform into ordinary executable and library resources before the
+bundle is assembled. There are no nested AppImage or ZIP distributions to unpack
+on the server, and no target-platform executables run during the build.
+
+On first native use, a Declarative Services component copies the selected
+platform's resources to a unique installation directory in its bundle data area
+(under XP's OSGi storage). That filesystem must allow execution. Executable
+permissions are restored from the build-generated file index. The installation
+is reused by that component. Bundle deactivation rejects new installation handles;
+existing handles keep the files until their processes finish, after which cleanup
+removes the installation. Bundle restart creates a fresh installation. There is no
+static executable cache or JVM shutdown hook. A crash can leave an old installation
+in the framework data area; XP's configured OSGi storage cleanup removes it on restart.
+
+`core-image` retains the image pipeline and obtains installations through the
+`ImageMagick` service contract in `core-internal`. No implementation package is
+shared between the two bundles. Conversion runs in a separate process so timeouts
+can terminate native code.
 
 Bundled platforms cover Linux x86-64/ARM64, Windows x86-64/ARM64, and macOS ARM64.
 Linux ARM64 uses pkgforge's ImageMagick 7.1.2-30 AppImage, with its self-update
-hook removed before use. Linux x86-64 and Windows use upstream 7.1.2-31.
+hook removed during packaging. Linux x86-64 and Windows use upstream 7.1.2-31.
 macOS ARM64 uses conda-forge 7.1.2-31 with its codec libraries. Other platforms
 report an unavailable native backend when `ImageMagic` is selected; `ImageIO` remains available. The complete upstream
 archives retain their licenses and dependencies. Version and SHA-256 pins live
-in `native/distributions.json` and `native/macos-aarch64.json`.
+in `../core-image-im/native/distributions.json` and `../core-image-im/native/macos-aarch64.json`.
 The macOS packager retains the executable, required library closure, HEIF plugins,
 and licenses without installing Conda. Gradle calls the Java packager in `buildSrc`;
 Python is not required. Commons Compress reads TAR/BZip2 packages, while Java handles
@@ -202,12 +214,14 @@ ZIP output. Native bytes and signatures are preserved. Packaging tests check lib
 selection, licenses, invalid paths/dependencies/checksums, cleanup, and reproducibility
 across timezones.
 
-Building XP requires 7-Zip to repack upstream Windows archives as ZIP; production
-servers do not need it. The pinned Windows archives use multi-stream BCJ2 compression,
+Building XP requires 7-Zip to unpack upstream Windows archives and Linux SquashFS
+filesystems; production servers do not need it. SquashFS is read from the AppImage
+payload without executing its architecture-specific launcher. Archive links are
+resolved into ordinary files, including when building on Windows. The pinned Windows archives use multi-stream BCJ2 compression,
 which Commons Compress and FreeFair's Commons Compress-based 7-Zip plugin cannot read.
-Install `p7zip-full`
+Install `7zip` (providing `7zz`)
 and `zstd` on Linux or 7-Zip 24.01+ on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
-a build-time extractor (Homebrew's `7zz` is the macOS default).
+a build-time extractor (`7zz` is the Linux/macOS default).
 Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
@@ -241,8 +255,7 @@ style's aspect ratio, quality, filter, background, and the requested output MIME
 type. Different output formats have distinct signatures and disk cache keys. The handler also checks the
 fingerprint before applying the configured public/private immutable cache header.
 Old fingerprints lose immutable caching after a style change and allow only
-existing cache entries to be served. Cache misses cannot regenerate the image. A style change during
-request processing is rejected before encoding.
+existing cache entries to be served. Cache misses cannot regenerate the image. Each request keeps its resolved style snapshot through processing.
 Style defaults and validation share an immutable processing specification with
 fingerprint generation. Both the core image API and URL API reject explicit
 quality, filter or background overrides when a style is selected.
