@@ -62,7 +62,7 @@ public final class MediaHashResolver
     }
 
     public static String resolveImageFingerprint( final String imageHash, final ImageStyleSettings settings, final ScaleParams scale,
-                                                  final String mimeType, final HmacService hmacService )
+                                                 final String mimeType, final HmacService hmacService )
     {
         if ( imageHash == null )
         {
@@ -71,12 +71,12 @@ public final class MediaHashResolver
         final MessageDigest digest = MessageDigests.sha512();
         digest.update( HexFormat.of().parseHex( imageHash ) );
         // Length-prefix fields to keep the fingerprint independent of delimiters in filters.
-        updateStyleField( digest, scale == null ? null : scale.toString() );
-        updateStyleField( digest, mimeType );
-        updateStyleField( digest, settings.aspectRatio() );
-        updateStyleField( digest, settings.filter() );
-        updateStyleField( digest, Integer.toString( settings.quality() ) );
-        updateStyleField( digest, Integer.toHexString( settings.background() ) );
+        updateField( digest, scale == null ? null : scale.toString() );
+        updateField( digest, mimeType );
+        updateField( digest, settings.aspectRatio() );
+        updateField( digest, settings.filter() );
+        updateField( digest, Integer.toString( settings.quality() ) );
+        updateField( digest, Integer.toHexString( settings.background() ) );
         // Domain separation prevents a redirect checksum from authorizing an image rendition.
         return hmacService.generateChecksum( "image-fingerprint-v2\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
     }
@@ -87,7 +87,7 @@ public final class MediaHashResolver
             expected.getBytes( StandardCharsets.UTF_8 ), supplied.getBytes( StandardCharsets.UTF_8 ) );
     }
 
-    private static void updateStyleField( final MessageDigest digest, final String value )
+    private static void updateField( final MessageDigest digest, final String value )
     {
         final byte[] bytes = value == null ? new byte[0] : value.getBytes( StandardCharsets.UTF_8 );
         MessageDigests.updateWithIntLE( digest, bytes.length );

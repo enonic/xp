@@ -1,13 +1,12 @@
 package com.enonic.xp.portal.impl.url;
 
-import java.util.function.Supplier;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-
-import com.enonic.xp.style.ImageStyleSettings;
-import com.enonic.xp.util.MediaTypes;
+import java.util.function.Supplier;
 
 import com.google.common.io.Files;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -20,6 +19,8 @@ import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
+import com.enonic.xp.util.MediaTypes;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -96,9 +97,9 @@ final class ImageMediaPathSupplier
         }
         final String name = resolveName( media, format );
         final String mimeType = name.equals( media.getName().toString() ) ?
-            com.google.common.net.MediaType.parse( media.getAttachments().byLabel( "source" ).getMimeType() ).toString() :
+            MediaType.parse( media.getAttachments().byLabel( "source" ).getMimeType() ).toString() :
             ( "webp".equalsIgnoreCase( format ) || "avif".equalsIgnoreCase( format ) ) ?
-                "image/" + format.toLowerCase( java.util.Locale.ROOT ) : MediaTypes.instance().fromFile( name ).toString();
+                "image/" + format.toLowerCase( Locale.ROOT ) : MediaTypes.instance().fromFile( name ).toString();
         final ImageStyleSettings settings = style == null ? new ImageStyleSettings( null, parameter( "filter", null ),
             Integer.parseInt( parameter( "quality", "85" ) ),
             Integer.parseInt( parameter( "background", "ffffff" ).replaceFirst( "^0x", "" ), 16 ) ) : ImageStyleSettings.from( style );

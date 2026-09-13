@@ -222,20 +222,15 @@ public final class ImageHandlerWorker
 
         try
         {
-            final int imageQuality =
-                nullToEmpty( this.qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( this.qualityParam );
-
-            final int backgroundColor = nullToEmpty( this.backgroundParam ).isEmpty()
-                ? DEFAULT_BACKGROUND
-                : Integer.parseInt( this.backgroundParam.startsWith( "0x" ) ? this.backgroundParam.substring( 2 ) : this.backgroundParam,
-                                    16 );
+            final ImageStyleSettings settings = resolveSettings();
 
             final Attachment attachment =
                 requireNonNull( content.getAttachments().byLabel( "source" ), "Media content must have an attachment" );
 
             this.currentFingerprint = MediaHashResolver.resolveImageFingerprint(
-                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ), style == null ? new ImageStyleSettings( null, filterParam, imageQuality, backgroundColor ) :
-                    ImageStyleSettings.from( style ), scaleParams, contentType.toString(), hmacService );
+                MediaHashResolver.resolveImageHash( content, MediaHashResolver.resolveAttachmentHash( attachment ) ),
+                settings,
+                scaleParams, contentType.toString(), hmacService );
             final boolean hashMatches = MediaHashResolver.matchesFingerprint( currentFingerprint, fingerprint );
             this.cacheOnly = !hashMatches && ( style != null || !nullToEmpty( fingerprint ).isBlank() ||
                 contentType.is( MediaType.WEBP ) || contentType.is( MediaType.AVIF ) );
@@ -254,7 +249,7 @@ public final class ImageHandlerWorker
                 .cacheOnly( cacheOnly );
             if ( style == null )
             {
-                readImageParams.filterParam( this.filterParam ).backgroundColor( backgroundColor ).quality( imageQuality );
+                readImageParams.filterParam( settings.filter() ).backgroundColor( settings.background() ).quality( settings.quality() );
             }
 
             return this.imageService.readImage( readImageParams.build() );
@@ -282,9 +277,29 @@ public final class ImageHandlerWorker
         }
         else
         {
-            // Pass-through originals have no generated rendition to authorize.
-            return currentFingerprint == null ? MediaHashResolver.resolveImageHash( content ) : currentFingerprint;
+            if ( currentFingerprint != null )
+            {
+                return currentFingerprint;
+            }
+            // Original-file pass-through performs no generation. Keep legacy original URLs cacheable,
+            // and recognize modern signatures emitted by the URL generator as well.
+            final String sourceHash = MediaHashResolver.resolveImageHash( content );
+            return MediaHashResolver.matchesFingerprint( sourceHash, fingerprint ) ? sourceHash :
+                MediaHashResolver.resolveImageFingerprint( sourceHash, resolveSettings(), scaleParams,
+                    resolveContentType( content, MediaType.parse( attachment.getMimeType() ) ).toString(), hmacService );
         }
+    }
+
+    private ImageStyleSettings resolveSettings()
+    {
+        if ( style != null )
+        {
+            return ImageStyleSettings.from( style );
+        }
+        final int quality = nullToEmpty( qualityParam ).isEmpty() ? DEFAULT_QUALITY : Integer.parseInt( qualityParam );
+        final int background = nullToEmpty( backgroundParam ).isEmpty() ? DEFAULT_BACKGROUND :
+            Integer.parseInt( backgroundParam.startsWith( "0x" ) ? backgroundParam.substring( 2 ) : backgroundParam, 16 );
+        return new ImageStyleSettings( null, filterParam, quality, background );
     }
 
     @Override

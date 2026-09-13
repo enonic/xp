@@ -286,7 +286,7 @@ class ImageHandlerTest
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
         final String signed = MediaHashResolver.resolveImageFingerprint( MediaHashResolver.resolveImageHash( media ),
             new ImageStyleSettings( null, null, 85, 0xffffff ), new ScaleParams( "width", new Object[]{640} ),
-            "image/jpeg", HmacTestHelper.createHmacService() );
+            "image/png", HmacTestHelper.createHmacService() );
         request.setRawPath( "/_/image/123456:" + signed + "/width-640/image-name.jpg" );
         when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
             assertFalse( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
@@ -352,7 +352,8 @@ class ImageHandlerTest
         {
             request.setMethod( method );
             for ( String path : new String[]{"123456/width-640~app:card", "123456:00000000000000000000000000000000/width-640~app:card",
-                "123456:" + source + "/width-640~app:card", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640~app:card", "123456:" + valid + "/width-320~app:card"} )
+                "123456:" + source + "/width-640~app:card", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640~app:card",
+                "123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card", "123456:" + valid + "/width-320~app:card"} )
             {
                 request.setRawPath( "/_/image/" + path + "/image-name.jpg." + format );
                 assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
@@ -789,8 +790,10 @@ class ImageHandlerTest
     {
         mockCachableContent();
 
-        this.request.setRawPath( "/_/image/123456:" + MediaHashResolver.resolveImageHash(
-            (Media) contentService.getById( ContentId.from( "123456" ) ) ) + "/scale-100-100/image-name.jpg.png" );
+        this.request.setRawPath( "/_/image/123456:" + MediaHashResolver.resolveImageFingerprint(
+            MediaHashResolver.resolveImageHash( (Media) contentService.getById( ContentId.from( "123456" ) ) ),
+            new ImageStyleSettings( null, null, 85, 0xffffff ), new ScaleParams( "scale", new Object[]{100, 100} ),
+            "image/png", HmacTestHelper.createHmacService() ) + "/scale-100-100/image-name.jpg.png" );
 
         this.request.setBranch( ContentConstants.BRANCH_DRAFT );
         final WebResponse resDraft = this.handler.handle( this.request );

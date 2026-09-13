@@ -232,8 +232,8 @@ not an operating-system limit on all memory allocated by codec libraries.
 The cache key includes the source checksum and resolved processing parameters.
 Concurrent requests recheck the cache after obtaining the file lock, preventing
 duplicate conversions. The URL fingerprint includes the requested scale and the
-style's aspect ratio, quality, filter, and background. Different output formats
-have distinct URL extensions and disk cache keys. The handler also checks the
+style's aspect ratio, quality, filter, background, and the requested output MIME
+type. Different output formats have distinct signatures and disk cache keys. The handler also checks the
 fingerprint before applying the configured public/private immutable cache header.
 Old fingerprints lose immutable caching after a style change and allow only
 existing cache entries to be served. Cache misses cannot regenerate the image. A style change during

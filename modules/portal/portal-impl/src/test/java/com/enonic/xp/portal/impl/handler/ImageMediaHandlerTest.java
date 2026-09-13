@@ -160,7 +160,7 @@ class ImageMediaHandlerTest
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
         final String signed = MediaHashResolver.resolveImageFingerprint( MediaHashResolver.resolveImageHash( media ),
             new ImageStyleSettings( null, null, 85, 0xffffff ), new ScaleParams( "width", new Object[]{640} ),
-            "image/jpeg", HmacTestHelper.createHmacService() );
+            "image/png", HmacTestHelper.createHmacService() );
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + signed + "/width-640/image-name.jpg" );
         when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
             assertFalse( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
@@ -227,6 +227,27 @@ class ImageMediaHandlerTest
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"gif", "webp", "avif", "svg+xml"})
+    void modernOriginalUrlsRemainCacheableWithoutGenerating( final String format )
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "source" ).label( "source" ).mimeType( "image/" + format )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        final Media media = (Media) createContent( "123456", "path/to/image", attachment );
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( ByteSource.empty() );
+        final var generator = new com.enonic.xp.portal.impl.url.PortalUrlGeneratorServiceImpl(
+            mock( com.enonic.xp.webapp.WebappService.class ), mock( com.enonic.xp.site.SiteService.class ), imageService,
+            HmacTestHelper.createHmacService() );
+        final var parts = generator.imageUrlParts( com.enonic.xp.portal.url.ImageUrlGeneratorParams.create()
+            .setMedia( () -> media ).setProjectName( () -> com.enonic.xp.project.ProjectName.from( "myproject" ) )
+            .setBranch( () -> ContentConstants.BRANCH_MASTER ).setScale( "width(640)" ).build() );
+        request.setRawPath( "/site/myproject/master/_" + parts.path() );
+        assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
+        verifyNoInteractions( imageService );
+    }
+
     private String styledFingerprint( final String format )
     {
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
@@ -275,7 +296,8 @@ class ImageMediaHandlerTest
         {
             request.setMethod( method );
             for ( String path : new String[]{"123456/width-640~app:card", "123456:00000000000000000000000000000000/width-640~app:card",
-                "123456:" + source + "/width-640~app:card", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640~app:card", "123456:" + valid + "/width-320~app:card"} )
+                "123456:" + source + "/width-640~app:card", "123456:f4774dff7b6ef5d0fc1f077cbec55899/width-640~app:card",
+                "123456:09e13cd582eacd64dca2cf0c8543ecb359f9b80f/width-640~app:card", "123456:" + valid + "/width-320~app:card"} )
             {
                 request.setRawPath( "/site/myproject/master/_/media:image/myproject/" + path + "/image-name.jpg." + format );
                 assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
@@ -342,7 +364,7 @@ class ImageMediaHandlerTest
         setupContent();
         final ImageStyle style = ImageStyle.create().name( "card" ).build();
         when( imageService.getStyle( "app:card" ) ).thenReturn( style );
-        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint( "jpeg" ) + "/width-640~app:card/image-name.jpg" );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" + styledFingerprint( "png" ) + "/width-640~app:card/image-name.jpg" );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).quality( 70 ).build() );
