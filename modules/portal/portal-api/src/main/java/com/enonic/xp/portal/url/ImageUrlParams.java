@@ -66,7 +66,10 @@ public final class ImageUrlParams
      * Returns the explicit background color override.
      *
      * @return the hexadecimal RGB color
+     * @deprecated use {@link #getStyle()} to identify predefined processing settings.
+     *     This accessor exposes only the legacy override, not the resolved style value.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable String getBackground()
     {
         return this.background;
@@ -76,7 +79,10 @@ public final class ImageUrlParams
      * Returns the explicit encoder quality override.
      *
      * @return the encoder quality
+     * @deprecated use {@link #getStyle()} to identify predefined processing settings.
+     *     This accessor exposes only the legacy override, not the resolved style value.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable Integer getQuality()
     {
         return this.quality;
@@ -86,7 +92,10 @@ public final class ImageUrlParams
      * Returns the explicit filter override.
      *
      * @return the filter specification
+     * @deprecated use {@link #getStyle()} to identify predefined processing settings.
+     *     This accessor exposes only the legacy override, not the resolved style value.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable String getFilter()
     {
         return this.filter;
@@ -159,7 +168,10 @@ public final class ImageUrlParams
      * Returns the explicit mount base URL.
      *
      * @return the mount base URL
+     * @deprecated use {@link #getMediaBaseUrl()}. The replacement addresses the media API root;
+     *     append {@code /_} when migrating a mount base URL.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable String getBaseUrl()
     {
         return baseUrl;
@@ -194,7 +206,10 @@ public final class ImageUrlParams
      *
      * @param value a value from 0 through 100; the default is 85
      * @return this parameter object
+     * @deprecated define quality in an image style and select it with {@link #style(String)}.
+     *     Retained for unstyled requests; cannot be combined with a style.
      */
+    @Deprecated( since = "8.2.0" )
     public ImageUrlParams quality( final @Nullable Integer value )
     {
         this.quality = value;
@@ -208,7 +223,10 @@ public final class ImageUrlParams
      * @param value the quality expressed as a decimal integer from 0 through 100
      * @return this parameter object
      * @throws NumberFormatException if a non-empty value is not a valid decimal integer
+     * @deprecated define quality in an image style and select it with {@link #style(String)}.
+     *     Retained for unstyled requests; cannot be combined with a style.
      */
+    @Deprecated( since = "8.2.0" )
     public ImageUrlParams quality( final @Nullable String value )
     {
         return isNullOrEmpty( value ) ? this : quality( Integer.valueOf( value ) );
@@ -232,7 +250,10 @@ public final class ImageUrlParams
      *
      * @param value one to six hexadecimal RGB digits, optionally prefixed by {@code 0x}; the default is white
      * @return this parameter object
+     * @deprecated define background in an image style and select it with {@link #style(String)}.
+     *     Retained for unstyled requests; cannot be combined with a style.
      */
+    @Deprecated( since = "8.2.0" )
     public ImageUrlParams background( final @Nullable String value )
     {
         this.background = Strings.emptyToNull( value );
@@ -244,7 +265,10 @@ public final class ImageUrlParams
      *
      * @param value the filter specification
      * @return this parameter object
+     * @deprecated define filter in an image style and select it with {@link #style(String)}.
+     *     Retained for unstyled requests; cannot be combined with a style.
      */
+    @Deprecated( since = "8.2.0" )
     public ImageUrlParams filter( final @Nullable String value )
     {
         this.filter = Strings.emptyToNull( value );

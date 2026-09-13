@@ -84,7 +84,10 @@ public final class ImageUrlGeneratorParams
      * Returns the explicit mount base URL.
      *
      * @return the mount base URL
+     * @deprecated use {@link #getMediaBaseUrl()}. The replacement addresses the media API root;
+     *     append {@code /_} when migrating a mount base URL.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable String getBaseUrl()
     {
         return baseUrl;
@@ -144,7 +147,10 @@ public final class ImageUrlGeneratorParams
      * Returns the explicit background color override.
      *
      * @return the hexadecimal RGB color
+     * @deprecated use {@link #getStyle()} to identify predefined processing settings.
+     *     This accessor exposes only the legacy override, not the resolved style value.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable String getBackground()
     {
         return background;
@@ -154,7 +160,10 @@ public final class ImageUrlGeneratorParams
      * Returns the explicit encoder quality override.
      *
      * @return the encoder quality
+     * @deprecated use {@link #getStyle()} to identify predefined processing settings.
+     *     This accessor exposes only the legacy override, not the resolved style value.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable Integer getQuality()
     {
         return quality;
@@ -164,7 +173,10 @@ public final class ImageUrlGeneratorParams
      * Returns the explicit filter override.
      *
      * @return the filter specification
+     * @deprecated use {@link #getStyle()} to identify predefined processing settings.
+     *     This accessor exposes only the legacy override, not the resolved style value.
      */
+    @Deprecated( since = "8.2.0" )
     public @Nullable String getFilter()
     {
         return filter;
@@ -345,7 +357,10 @@ public final class ImageUrlGeneratorParams
          *
          * @param background one to six hexadecimal RGB digits, optionally prefixed by {@code 0x}; the default is white
          * @return this builder
+         * @deprecated define background in an image style and select it with {@link #setStyle(String)}.
+         *     Retained for unstyled requests; cannot be combined with a style.
          */
+        @Deprecated( since = "8.2.0" )
         public Builder setBackground( final @Nullable String background )
         {
             this.background = background;
@@ -357,7 +372,10 @@ public final class ImageUrlGeneratorParams
          *
          * @param quality a value from 0 through 100; the default is 85
          * @return this builder
+         * @deprecated define quality in an image style and select it with {@link #setStyle(String)}.
+         *     Retained for unstyled requests; cannot be combined with a style.
          */
+        @Deprecated( since = "8.2.0" )
         public Builder setQuality( final @Nullable Integer quality )
         {
             this.quality = quality;
@@ -369,7 +387,10 @@ public final class ImageUrlGeneratorParams
          *
          * @param filter the filter specification
          * @return this builder
+         * @deprecated define filter in an image style and select it with {@link #setStyle(String)}.
+         *     Retained for unstyled requests; cannot be combined with a style.
          */
+        @Deprecated( since = "8.2.0" )
         public Builder setFilter( final @Nullable String filter )
         {
             this.filter = filter;

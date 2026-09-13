@@ -103,9 +103,12 @@ export function assetUrl(params: AssetUrlParams | string): string {
 }
 
 export type ImageUrlParams = IdXorPath & {
+    /** @deprecated Define quality in an image style and select it with `style`. Retained for unstyled requests; cannot be combined with a style. */
     quality?: number;
+    /** @deprecated Define background in an image style and select it with `style`. Retained for unstyled requests; cannot be combined with a style. */
     background?: string;
     format?: string;
+    /** @deprecated Define filter in an image style and select it with `style`. Retained for unstyled requests; cannot be combined with a style. */
     filter?: string;
     params?: object;
     type?: 'server' | 'absolute';
@@ -167,10 +170,10 @@ interface ImageUrlHandler {
  * @param {string} [params.path] Path to the image. If `id` is specified, this parameter is not used.
  * @param {string} [params.style] Predefined processing style (application:name). Required for WebP/AVIF encoding.
  * @param {string} params.scale Required. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
- * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
- * @param {string} [params.background] Background color.
+ * @param {number} [params.quality=85] Deprecated: define quality in the selected style. Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
+ * @param {string} [params.background] Deprecated: define the background color in the selected style.
  * @param {string} [params.format] Output format of the image. WebP and AVIF require a predefined style.
- * @param {string} [params.filter] A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
+ * @param {string} [params.filter] Deprecated: define filters in the selected style. A number of filters are available to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.

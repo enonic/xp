@@ -137,7 +137,9 @@ public final class ReadImageParams
      * Returns the legacy pixel size used when no explicit scaling operation is supplied.
      *
      * @return the requested size; zero or a negative value means no scaling
+     * @deprecated use {@link #getScaleParams()} for the explicit scaling operation.
      */
+    @Deprecated( since = "8.2.0" )
     public int getScaleSize()
     {
         return scaleSize;
@@ -147,7 +149,9 @@ public final class ReadImageParams
      * Returns whether legacy scaling requests a square crop.
      *
      * @return {@code true} for square scaling; takes precedence over the legacy width option
+     * @deprecated use {@link #getScaleParams()} and its operation name.
      */
+    @Deprecated( since = "8.2.0" )
     public boolean isScaleSquare()
     {
         return scaleSquare;
@@ -157,7 +161,9 @@ public final class ReadImageParams
      * Returns whether legacy scaling fixes the image width.
      *
      * @return {@code true} for width scaling when square scaling is not selected
+     * @deprecated use {@link #getScaleParams()} and its operation name.
      */
+    @Deprecated( since = "8.2.0" )
     public boolean isScaleWidth()
     {
         return scaleWidth;
@@ -296,9 +302,10 @@ public final class ReadImageParams
 
         /**
          * Explicit quality value from 0 through 100; defaults to 0.
-         * Prefer {@link #quality(int)} so an explicitly selected zero is also recognized
-         * as a processing override when validating styled requests.
+         *
+         * @deprecated use {@link #quality(int)} to record an explicit quality selection, including zero.
          */
+        @Deprecated( since = "8.2.0" )
         public int quality;
 
         private @Nullable String attachmentSha512;
@@ -425,7 +432,10 @@ public final class ReadImageParams
          *
          * @param scaleSize the size in pixels; zero or a negative value disables legacy scaling
          * @return this builder
+         * @deprecated use {@link #scaleParams(ScaleParams)} with a {@code max}, {@code width} or {@code square}
+         *     operation and one pixel-size argument. Use {@link ScaleParams#NO_SCALE} to disable scaling.
          */
+        @Deprecated( since = "8.2.0" )
         public Builder scaleSize( int scaleSize )
         {
             this.scaleSize = scaleSize;
@@ -437,7 +447,10 @@ public final class ReadImageParams
          *
          * @param scaleSquare {@code true} for square scaling; takes precedence over {@link #scaleWidth(boolean)}
          * @return this builder
+         * @deprecated use {@link #scaleParams(ScaleParams)} with
+         *     {@code new ScaleParams("square", new Object[]{size})} for a square crop.
          */
+        @Deprecated( since = "8.2.0" )
         public Builder scaleSquare( boolean scaleSquare )
         {
             this.scaleSquare = scaleSquare;
@@ -449,7 +462,11 @@ public final class ReadImageParams
          *
          * @param scaleWidth {@code true} for a fixed width; otherwise the legacy size bounds both dimensions
          * @return this builder
+         * @deprecated use {@link #scaleParams(ScaleParams)} with
+         *     {@code new ScaleParams("width", new Object[]{size})} for a fixed width,
+         *     or {@code new ScaleParams("max", new Object[]{size})} to bound both dimensions.
          */
+        @Deprecated( since = "8.2.0" )
         public Builder scaleWidth( boolean scaleWidth )
         {
             this.scaleWidth = scaleWidth;
