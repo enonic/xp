@@ -199,7 +199,11 @@ class ImageMagickTransformerTest
     {
         final Path executable = temporaryFolder.resolve( "transformer" );
         final Path pidFile = temporaryFolder.resolve( "pid" );
-        Files.writeString( executable, "#!/bin/sh\necho $$ > '" + pidFile + "'\nexec sleep 30\n" );
+        Files.writeString( executable, """
+            #!/bin/sh
+            echo $ > '%s'
+            exec sleep 30
+            """.formatted( pidFile ) );
         assertTrue( executable.toFile().setExecutable( true, true ) );
         final Path work = temporaryFolder.resolve( "work" );
         final var transformer = new ImageMagickTransformer( executable.toString(), 1, work );

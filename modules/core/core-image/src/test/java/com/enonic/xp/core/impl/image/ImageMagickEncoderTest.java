@@ -96,7 +96,10 @@ class ImageMagickEncoderTest
         throws Exception
     {
         final Path pidFile = temporaryFolder.resolve( "pid" );
-        final Path executable = script( "echo $$ > '" + pidFile + "'\nexec sleep 30" );
+        final Path executable = script( """
+            echo $ > '%s'
+            exec sleep 30\
+            """.formatted( pidFile ) );
         final Path work = temporaryFolder.resolve( "work" );
         final ImageMagickEncoder encoder = new ImageMagickEncoder( executable.toString(), 1, work );
         assertTimeout( Duration.ofSeconds( 10 ), () -> {
@@ -132,7 +135,10 @@ class ImageMagickEncoderTest
         throws IOException
     {
         final Path path = temporaryFolder.resolve( "encoder" );
-        Files.writeString( path, "#!/bin/sh\n" + command + "\n" );
+        Files.writeString( path, """
+            #!/bin/sh
+            %s
+            """.formatted( command ) );
         assertTrue( path.toFile().setExecutable( true, true ) );
         return path;
     }

@@ -143,7 +143,11 @@ class ImageMagickDecoderTest
     {
         final Path pidFile = temporaryFolder.resolve( "pid" );
         final Path executable = temporaryFolder.resolve( "decoder" );
-        Files.writeString( executable, "#!/bin/sh\necho $$ > '" + pidFile + "'\nexec sleep 30\n" );
+        Files.writeString( executable, """
+            #!/bin/sh
+            echo $ > '%s'
+            exec sleep 30
+            """.formatted( pidFile ) );
         assertTrue( executable.toFile().setExecutable( true, true ) );
         final Path work = temporaryFolder.resolve( "work" );
         final var decoder = new ImageMagickDecoder( executable.toString(), work, 1, 1000, 10000 );

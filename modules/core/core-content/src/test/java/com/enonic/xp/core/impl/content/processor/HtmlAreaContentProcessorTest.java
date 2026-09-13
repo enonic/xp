@@ -141,8 +141,10 @@ class HtmlAreaContentProcessorTest
     @Test
     void savesImageStyleReferenceWithoutExpandingItAndRetainsLegacyParameters()
     {
-        final String html = "<img src=\"image://image-id?style=myapp:card\">" +
-            "<img src=\"image://legacy-id?scale=21:9&amp;size=640\">";
+        final String html = """
+            <img src="image://image-id?style=myapp:card">\
+            <img src="image://legacy-id?scale=21:9&amp;size=640">\
+            """;
         final PropertyTree data = new PropertyTree();
         data.addProperty( "htmlData", ValueFactory.newString( html ) );
         final ProcessUpdateParams params = ProcessUpdateParams.create()

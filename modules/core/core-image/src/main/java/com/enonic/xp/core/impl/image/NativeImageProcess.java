@@ -26,18 +26,20 @@ final class NativeImageProcess implements AutoCloseable
         directory = Files.createTempDirectory( folder, stage + "-" ).toAbsolutePath();
         try
         {
-            Files.writeString( file( "policy.xml" ), "<policymap>" +
-                "<policy domain=\"delegate\" rights=\"none\" pattern=\"*\"/>" +
-                "<policy domain=\"filter\" rights=\"none\" pattern=\"*\"/>" +
-                "<policy domain=\"coder\" rights=\"none\" pattern=\"*\"/>" +
-                "<policy domain=\"coder\" rights=\"read\" pattern=\"{" + readCoders + "}\"/>" +
-                "<policy domain=\"coder\" rights=\"write\" pattern=\"{" + writeCoders + "}\"/>" +
-                "<policy domain=\"coder\" rights=\"read|write\" pattern=\"RGBA\"/>" +
-                "<policy domain=\"path\" rights=\"none\" pattern=\"@*\"/>" +
-                "<policy domain=\"path\" rights=\"none\" pattern=\"-\"/>" +
-                "<policy domain=\"path\" rights=\"none\" pattern=\"[Ff][Dd]:*\"/>" +
-                "<policy domain=\"system\" name=\"max-memory-request\" value=\"256MiB\"/>" +
-                "</policymap>" );
+            Files.writeString( file( "policy.xml" ), """
+                <policymap>
+                  <policy domain="delegate" rights="none" pattern="*"/>
+                  <policy domain="filter" rights="none" pattern="*"/>
+                  <policy domain="coder" rights="none" pattern="*"/>
+                  <policy domain="coder" rights="read" pattern="{%s}"/>
+                  <policy domain="coder" rights="write" pattern="{%s}"/>
+                  <policy domain="coder" rights="read|write" pattern="RGBA"/>
+                  <policy domain="path" rights="none" pattern="@*"/>
+                  <policy domain="path" rights="none" pattern="-"/>
+                  <policy domain="path" rights="none" pattern="[Ff][Dd]:*"/>
+                  <policy domain="system" name="max-memory-request" value="256MiB"/>
+                </policymap>
+                """.formatted( readCoders, writeCoders ) );
         }
         catch ( IOException | RuntimeException e )
         {
