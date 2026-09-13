@@ -22,11 +22,6 @@ public final class ImageStyle
 
     private final @Nullable String background;
 
-    /**
-     * Creates an image style with the selected metadata and settings.
-     *
-     * @param builder the style builder
-     */
     private ImageStyle( final Builder builder )
     {
         super( builder );

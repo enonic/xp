@@ -57,11 +57,6 @@ public final class ReadImageParams
 
     private final boolean cacheOnly;
 
-    /**
-     * Creates an image request with the selected parameters.
-     *
-     * @param builder validated request builder
-     */
     private ReadImageParams( final Builder builder )
     {
         this.contentId = builder.contentId;
@@ -360,9 +355,6 @@ public final class ReadImageParams
             return this;
         }
 
-        /**
-         * Creates a builder with the default image request settings.
-         */
         private Builder()
         {
         }

@@ -50,13 +50,6 @@ public final class ImageUrlGeneratorParams
 
     private final Map<String, List<String>> queryParams;
 
-    /**
-     * Creates validated URL-generation parameters.
-     *
-     * @param builder the parameter builder
-     * @throws NullPointerException if a required supplier or scale is missing
-     * @throws IllegalArgumentException if a style has processing overrides, or WebP/AVIF is requested without a style
-     */
     private ImageUrlGeneratorParams( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;

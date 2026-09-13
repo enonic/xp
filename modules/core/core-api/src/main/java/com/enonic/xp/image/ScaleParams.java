@@ -110,12 +110,6 @@ public final class ScaleParams
         return this.name + Stream.of( this.args ).map( this::encode ).collect( joining( ",", "(", ")" ) );
     }
 
-    /**
-     * Encodes one argument for the function-call representation.
-     *
-     * @param arg the argument
-     * @return the encoded argument
-     */
     private String encode( @Nullable Object arg )
     {
         if ( arg == null )
@@ -133,12 +127,6 @@ public final class ScaleParams
         }
     }
 
-    /**
-     * Formats a quoted string argument.
-     *
-     * @param arg the string argument
-     * @return the quoted argument
-     */
     private String quote( String arg )
     {
         if ( arg.contains( "'" ) )
