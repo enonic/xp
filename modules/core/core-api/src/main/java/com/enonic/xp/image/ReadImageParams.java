@@ -66,8 +66,8 @@ public final class ReadImageParams
         this.scaleSquare = builder.scaleSquare;
         this.scaleWidth = builder.scaleWidth;
         this.filterParam = builder.filterParam;
-        this.backgroundColor = builder.backgroundColor;
-        this.quality = builder.quality;
+        this.backgroundColor = builder.backgroundColor != null ? builder.backgroundColor : DEFAULT_BACKGROUND_COLOR;
+        this.quality = builder.quality != null ? builder.quality : 0;
         this.mimeType = builder.mimeType;
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
         this.attachmentSha512 = builder.attachmentSha512;
@@ -276,29 +276,25 @@ public final class ReadImageParams
 
         private @Nullable String filterParam;
 
-        private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
+        private @Nullable Integer backgroundColor;
 
         private @Nullable String mimeType;
 
         private @Nullable ImageOrientation orientation;
 
         /**
-         * Explicit quality value from 0 through 100; defaults to 0.
+         * Explicit quality value from 0 through 100. The request defaults to 0 when no value is supplied.
          *
-         * @deprecated use {@link #quality(int)} to record an explicit quality selection, including zero.
+         * @deprecated use {@link #quality(int)}.
          */
         @Deprecated( since = "8.2.0" )
-        public int quality;
+        public @Nullable Integer quality;
 
         private @Nullable String attachmentSha512;
 
         private @Nullable ImageStyle style;
 
         private boolean cacheOnly;
-
-        private boolean qualitySet;
-
-        private boolean backgroundSet;
 
         /**
          * Controls whether only an existing cached rendition may be read.
@@ -458,7 +454,6 @@ public final class ReadImageParams
          */
         public Builder backgroundColor( int backgroundColor )
         {
-            this.backgroundSet = true;
             this.backgroundColor = backgroundColor;
             return this;
         }
@@ -486,7 +481,6 @@ public final class ReadImageParams
          */
         public Builder quality( int quality )
         {
-            this.qualitySet = true;
             this.quality = quality;
             return this;
         }
@@ -527,12 +521,12 @@ public final class ReadImageParams
          */
         public ReadImageParams build()
         {
-            ImageStyleSettings.checkOverrides( style != null, qualitySet || quality != 0 || backgroundSet || filterParam != null );
+            ImageStyleSettings.checkOverrides( style != null, quality != null || backgroundColor != null || filterParam != null );
             requireNonNull( contentId, "contentId is required" );
             requireNonNull( binaryReference, "binaryReference is required" );
             requireNonNull( mimeType, "mimeType is required" );
-            Preconditions.checkArgument( quality >= 0 && quality <= 100, "Quality out of bounds 0-100" );
-            Preconditions.checkArgument( backgroundColor >= 0 && backgroundColor <= 0xFFFFFF, "Background color out of bounds 0-0xFFFFFF" );
+            Preconditions.checkArgument( quality == null || quality >= 0 && quality <= 100, "Quality out of bounds 0-100" );
+            Preconditions.checkArgument( backgroundColor == null || backgroundColor >= 0 && backgroundColor <= 0xFFFFFF, "Background color out of bounds 0-0xFFFFFF" );
             return new ReadImageParams( this );
         }
     }
