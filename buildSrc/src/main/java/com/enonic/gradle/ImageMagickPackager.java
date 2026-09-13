@@ -1,6 +1,7 @@
 package com.enonic.gradle;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +27,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+
 import groovy.json.JsonSlurper;
 
 /** Assembles ordinary bundle resources without executing any target-platform binary. */
@@ -40,10 +44,11 @@ public final class ImageMagickPackager
      * @param output the resource directory
      * @param cache the verified download cache
      * @param sevenZip the build host's 7-Zip executable
+     * @param dwarfsExtract an explicit DwarFS extractor, or an empty string to use the platform default
      * @throws Exception if downloading, verification or packaging fails
      */
     @SuppressWarnings("unchecked")
-    public static void packageDistributions( final Path manifest, final Path output, final Path cache, final String sevenZip )
+    public static void packageDistributions( final Path manifest, final Path output, final Path cache, final String sevenZip, final String dwarfsExtract )
         throws Exception
     {
         final Map<String, Object> data = (Map<String, Object>) new JsonSlurper().parse( manifest.toFile(), "UTF-8" );
@@ -53,6 +58,7 @@ public final class ImageMagickPackager
         for ( var item : platforms.entrySet() )
         {
             final String platform = safeName( item.getKey() );
+            System.out.println( "Packaging ImageMagick: " + platform );
             final Map<String, String> distribution = item.getValue();
             final Path target = Files.createDirectories( output.resolve( platform ) );
             final Path work = Files.createTempDirectory( cache, "unpack-" );
@@ -71,13 +77,21 @@ public final class ImageMagickPackager
                     final URI uri = URI.create( distribution.getOrDefault( "url",
                         "https://github.com/ImageMagick/ImageMagick/releases/download/" + data.get( "version" ) + "/" + name ) );
                     Path archive = download( uri, distribution.get( "sha256" ), cache );
-                    if ( name.endsWith( ".AppImage" ) )
+                    if ( "dwarfs".equals( distribution.get( "filesystem" ) ) )
                     {
-                        final Path squashfs = work.resolve( "distribution.squashfs" );
-                        copySquashFs( archive, squashfs );
-                        archive = squashfs;
+                        unpackDwarfs( archive, target, work, cache, manifest.getParent().resolve( "build-tools.json" ),
+                            sevenZip, dwarfsExtract );
                     }
-                    unpackSevenZip( archive, target, work, sevenZip );
+                    else
+                    {
+                        if ( name.endsWith( ".AppImage" ) )
+                        {
+                            final Path squashfs = work.resolve( "distribution.squashfs" );
+                            copySquashFs( archive, squashfs );
+                            archive = squashfs;
+                        }
+                        unpackSevenZip( archive, target, work, sevenZip );
+                    }
                 }
                 removeUpdateHooks( target );
                 writeIndex( target, distribution.get( "executable" ) );
@@ -153,7 +167,7 @@ public final class ImageMagickPackager
                 input.reset();
             }
         }
-        throw new IOException( "No valid SquashFS v4 filesystem in AppImage" );
+        throw new IOException( "No valid SquashFS v4 filesystem in AppImage: " + appImage );
     }
 
     private static void unpackZip( final Path archive, final Path target ) throws IOException
@@ -170,6 +184,85 @@ public final class ImageMagickPackager
                 try (var input = zip.getInputStream( entry )) { Files.copy( input, file ); }
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void unpackDwarfs( final Path archive, final Path target, final Path work, final Path cache,
+                                      final Path tools, final String sevenZip, final String override ) throws Exception
+    {
+        final List<String> command = new ArrayList<>();
+        if ( !override.isBlank() )
+        {
+            command.add( override );
+        }
+        else if ( System.getProperty( "os.name" ).startsWith( "Mac" ) )
+        {
+            command.add( "dwarfsextract" );
+        }
+        else
+        {
+            final boolean windows = System.getProperty( "os.name" ).startsWith( "Windows" );
+            final String platform = windows ? "windows" : "linux-" + switch ( System.getProperty( "os.arch" ) )
+            {
+                case "amd64", "x86_64" -> "x86_64";
+                case "aarch64", "arm64" -> "aarch64";
+                default -> throw new IOException( "Set imageMagickDwarfsExtract for this build platform" );
+            };
+            final Map<String, Map<String, String>> pins = (Map<String, Map<String, String>>) new JsonSlurper()
+                .parse( tools.toFile(), "UTF-8" );
+            final Map<String, String> pin = pins.get( platform );
+            final Path tool = download( URI.create( pin.get( "url" ) ), pin.get( "sha256" ), cache );
+            if ( windows )
+            {
+                final Path directory = Files.createDirectories( work.resolve( "dwarfs-tools" ) );
+                final Path unpack = Files.createDirectories( work.resolve( "dwarfs-unpack" ) );
+                unpackSevenZip( tool, directory, unpack, sevenZip );
+                try (var files = Files.walk( directory ))
+                {
+                    command.add( files.filter( path -> path.getFileName().toString().equals( "dwarfsextract.exe" ) )
+                        .findFirst().orElseThrow( () -> new IOException( "Missing DwarFS extractor" ) ).toString() );
+                }
+            }
+            else
+            {
+                if ( !tool.toFile().setExecutable( true, true ) ) { throw new IOException( "Cannot execute DwarFS build tool" ); }
+                command.add( tool.toString() );
+                command.add( "--tool=dwarfsextract" );
+            }
+        }
+        final Path tar = work.resolve( "distribution.tar" );
+        final Path errors = work.resolve( "dwarfs.log" );
+        command.addAll( List.of( "-i", archive.toString(), "-f", "pax", "-o", tar.toString(),
+            "--skip-devices", "--skip-specials" ) );
+        await( new ProcessBuilder( command ).redirectOutput( ProcessBuilder.Redirect.DISCARD )
+            .redirectError( errors.toFile() ).start(), errors );
+        final Map<String, Path> files = new LinkedHashMap<>();
+        final Map<String, String> links = new HashMap<>();
+        try (var input = new TarArchiveInputStream( new BufferedInputStream( Files.newInputStream( tar ) ) ))
+        {
+            TarArchiveEntry member;
+            while ( ( member = input.getNextEntry() ) != null )
+            {
+                if ( member.isDirectory() ) { continue; }
+                final String name = safeName( member.getName() );
+                if ( files.containsKey( name ) || links.containsKey( name ) ) { throw new IOException( "Duplicate TAR entry" ); }
+                if ( member.isSymbolicLink() ) { links.put( name, member.getLinkName() ); }
+                else if ( member.isLink() )
+                {
+                    final Path parent = Path.of( name ).getParent();
+                    final Path link = Path.of( safeName( member.getLinkName() ) );
+                    links.put( name, parent == null ? link.toString() : parent.relativize( link ).toString().replace( '\\', '/' ) );
+                }
+                else if ( member.isFile() )
+                {
+                    final Path file = work.resolve( "dwarfs-file-" + files.size() );
+                    Files.copy( input, file );
+                    files.put( name, file );
+                }
+                else { throw new IOException( "Unsupported TAR entry" ); }
+            }
+        }
+        materialize( target, files, links );
     }
 
     private static void unpackSevenZip( final Path archive, final Path target, final Path work, final String sevenZip )
@@ -212,7 +305,7 @@ public final class ImageMagickPackager
                         final String mode = member.getOrDefault( "Mode", "" );
                         if ( "+".equals( member.get( "Folder" ) ) || mode.startsWith( "d" ) ||
                             member.getOrDefault( "Attributes", "" ).contains( "D" ) ) { continue; }
-                        final String name = safeName( member.get( "Path" ) );
+                        final String name = safeName( member.get( "Path" ).replace( File.separatorChar, '/' ) );
                         final long size = Long.parseLong( member.get( "Size" ) );
                         if ( files.containsKey( name ) || links.containsKey( name ) ) { throw new IOException( "Duplicate archive path" ); }
                         if ( mode.startsWith( "l" ) )
@@ -242,6 +335,12 @@ public final class ImageMagickPackager
             worker.shutdownNow();
             worker.awaitTermination( 10, TimeUnit.SECONDS );
         }
+        materialize( target, files, links );
+    }
+
+    private static void materialize( final Path target, final Map<String, Path> files, final Map<String, String> links )
+        throws IOException
+    {
         final Set<String> names = new HashSet<>( files.keySet() );
         names.addAll( links.keySet() );
         for ( String name : names )

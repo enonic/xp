@@ -215,13 +215,18 @@ selection, licenses, invalid paths/dependencies/checksums, cleanup, and reproduc
 across timezones.
 
 Building XP requires 7-Zip to unpack upstream Windows archives and Linux SquashFS
-filesystems; production servers do not need it. SquashFS is read from the AppImage
+filesystems; production servers do not need it. Linux ARM64 uses DwarFS instead:
+the build obtains a checksum-pinned host extractor on Linux/Windows, while macOS
+uses `brew install dwarfs`. An explicit extractor can be selected with
+`-PimageMagickDwarfsExtract=/path/to/dwarfsextract`. The extractor writes a TAR
+stream whose links are resolved by Java. Neither extractor is included in the
+runtime bundle. SquashFS is read from the AppImage
 payload without executing its architecture-specific launcher. Archive links are
 resolved into ordinary files, including when building on Windows. The pinned Windows archives use multi-stream BCJ2 compression,
 which Commons Compress and FreeFair's Commons Compress-based 7-Zip plugin cannot read.
-Install `7zip` (providing `7zz`)
+Install `7zip` (providing `7z` or `7zz`)
 and `zstd` on Linux or 7-Zip 24.01+ on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
-a build-time extractor (`7zz` is the Linux/macOS default).
+a build-time extractor (Linux/macOS locate `7zz` or `7z` on PATH).
 Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 

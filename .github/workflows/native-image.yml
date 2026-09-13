@@ -31,7 +31,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y 7zip zstd
       - name: Install macOS packaging tools
         if: runner.os == 'macOS'
-        run: brew install sevenzip
+        run: brew install sevenzip dwarfs
       - name: Test bundled codecs and OSGi lifecycle
         run: ./gradlew :core:core-image:test --tests '*ImageMagickEncoderTest' --tests '*ImageMagickDecoderTest' --tests '*ImageMagickTransformerTest' --tests '*ImageProcessingGateTest' --tests '*PreparedImageSourceTest' --tests '*ImageGeometryTest' --tests '*NormalizedImageParamsTest' --tests '*NativeImageRasterTest' :core:core-image-im:test
       - name: Test native packaging checks

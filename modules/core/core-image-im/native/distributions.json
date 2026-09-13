@@ -11,7 +11,8 @@
       "file": "ImageMagick-7.1.2.30-1-anylinux-aarch64.AppImage",
       "url": "https://github.com/pkgforge-dev/ImageMagick-AppImage/releases/download/7.1.2.30-1%402026-09-01_1788277582/ImageMagick-7.1.2.30-1-anylinux-aarch64.AppImage",
       "sha256": "b414739af2a4ac1b022e8c2616c453bc77716d29a437712db1fc750837ef4c58",
-      "executable": "bin/magick"
+      "executable": "bin/magick",
+      "filesystem": "dwarfs"
     },
     "windows-x86_64": {
       "file": "ImageMagick-7.1.2-31-portable-Q8-x64.7z",
