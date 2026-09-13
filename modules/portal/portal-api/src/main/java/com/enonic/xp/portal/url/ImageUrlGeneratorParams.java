@@ -11,6 +11,7 @@ import org.jspecify.annotations.Nullable;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.style.ImageStyleSettings;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
@@ -59,7 +60,7 @@ public final class ImageUrlGeneratorParams
         this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
         this.branchSupplier = requireNonNull( builder.branchSupplier );
         this.style = emptyToNull( builder.style );
-        com.enonic.xp.style.ImageStyleSettings.checkOverrides( style != null,
+        ImageStyleSettings.checkOverrides( style != null,
             builder.quality != null || builder.filter != null || builder.background != null );
         if ( style == null && ( "webp".equalsIgnoreCase( builder.format ) || "avif".equalsIgnoreCase( builder.format ) ) )
         {

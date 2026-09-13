@@ -3,6 +3,8 @@ package com.enonic.xp.portal.impl.handler;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.HexFormat;
+import java.util.Locale;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,10 +31,10 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.image.ImageService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
-import com.enonic.xp.portal.impl.MediaHashResolver;
-import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.HmacTestHelper;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.PrincipalKey;
@@ -41,6 +43,7 @@ import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
@@ -54,13 +57,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -299,7 +302,7 @@ class ImageHandlerTest
             assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
             throw new IllegalArgumentException( "Image is not cached" );
         } );
-        for ( var parameter : java.util.Map.of( "quality", "70", "background", "000000", "filter", "blur(1)" ).entrySet() )
+        for ( var parameter : Map.of( "quality", "70", "background", "000000", "filter", "blur(1)" ).entrySet() )
         {
             request.getParams().put( parameter.getKey(), parameter.getValue() );
             assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
@@ -391,7 +394,7 @@ class ImageHandlerTest
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
         return MediaHashResolver.resolveImageFingerprint( MediaHashResolver.resolveImageHash( media ),
             ImageStyleSettings.from( ImageStyle.create().name( "card" ).build() ), new ScaleParams( "width", new Object[]{640} ),
-            "image/" + format.toLowerCase( java.util.Locale.ROOT ), HmacTestHelper.createHmacService() );
+            "image/" + format.toLowerCase( Locale.ROOT ), HmacTestHelper.createHmacService() );
     }
 
     @ParameterizedTest
@@ -484,12 +487,12 @@ class ImageHandlerTest
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
         final WebResponse response = handler.handle( request );
-        assertEquals( MediaType.parse( "image/" + format.toLowerCase( java.util.Locale.ROOT ) ), response.getContentType() );
+        assertEquals( MediaType.parse( "image/" + format.toLowerCase( Locale.ROOT ) ), response.getContentType() );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
         assertEquals( "card", params.getValue().getStyle().getName() );
         assertFalse( params.getValue().isCacheOnly() );
-        assertEquals( "image/" + format.toLowerCase( java.util.Locale.ROOT ), params.getValue().getMimeType() );
+        assertEquals( "image/" + format.toLowerCase( Locale.ROOT ), params.getValue().getMimeType() );
     }
 
     @ParameterizedTest
@@ -544,7 +547,7 @@ class ImageHandlerTest
     {
         request.setMethod( HttpMethod.valueOf( method ) );
         request.setRawPath( "/_/image/123456/full~app:missing/image-name.jpg" );
-        when( imageService.getStyle( "app:missing" ) ).thenThrow( new com.enonic.xp.style.ImageStyleNotFoundException( "app:missing" ) );
+        when( imageService.getStyle( "app:missing" ) ).thenThrow( new ImageStyleNotFoundException( "app:missing" ) );
         assertEquals( HttpStatus.NOT_FOUND, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
         verifyNoInteractions( contentService );
     }

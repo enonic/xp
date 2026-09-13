@@ -81,8 +81,8 @@ public final class MediaHashResolver
         updateField( digest, settings.filter() );
         updateField( digest, Integer.toString( settings.quality() ) );
         updateField( digest, Integer.toHexString( settings.background() ) );
-        // Domain separation prevents a redirect checksum from authorizing an image rendition.
-        return hmacService.generateChecksum( "image-fingerprint-v2\0" + HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
+        // Use a purpose-specific key so image signing does not expose the generic secret.
+        return hmacService.generateChecksum( "image-fingerprint-v3", HexFormat.of().formatHex( digest.digest(), 0, 16 ) );
     }
 
     public static boolean matchesFingerprint( final @Nullable String expected, final @Nullable String supplied )

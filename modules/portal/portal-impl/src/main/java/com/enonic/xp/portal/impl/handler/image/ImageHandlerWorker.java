@@ -8,8 +8,8 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.Files;
-import com.google.common.net.MediaType;
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
@@ -18,18 +18,19 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.content.MediaUtils;
 import com.enonic.xp.data.PropertySet;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.image.ImageService;
-import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.image.ScaleParamsParser;
-import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.AbstractAttachmentHandlerWorker;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.util.BinaryReference;
@@ -116,11 +117,11 @@ public final class ImageHandlerWorker
                 this.style = imageService.getStyle( styleParam );
                 if ( style == null )
                 {
-                    throw new com.enonic.xp.style.ImageStyleNotFoundException( styleParam );
+                    throw new ImageStyleNotFoundException( styleParam );
                 }
                 scaleParams.withAspectRatio( style.getAspectRatio() );
             }
-            catch ( com.enonic.xp.style.ImageStyleNotFoundException e )
+            catch ( ImageStyleNotFoundException e )
             {
                 throw WebException.notFound( e.getMessage() );
             }
@@ -259,7 +260,7 @@ public final class ImageHandlerWorker
 
             return this.imageService.readImage( readImageParams.build() );
         }
-        catch ( com.enonic.xp.style.ImageStyleNotFoundException e )
+        catch ( ImageStyleNotFoundException e )
         {
             throw WebException.notFound( e.getMessage() );
         }

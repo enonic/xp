@@ -23,7 +23,6 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -50,6 +49,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
@@ -161,7 +161,7 @@ public class ImageServiceImpl
             .map( ImageStyle.class::cast ).findFirst().orElse( null );
         if ( style == null )
         {
-            throw new com.enonic.xp.style.ImageStyleNotFoundException( key );
+            throw new ImageStyleNotFoundException( key );
         }
         ImageStyleSettings.from( style );
         return style;

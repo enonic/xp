@@ -39,7 +39,8 @@ class MediaHashResolverTest
         final String imageHash = "0a350f43700951cdcca1574f448a7e22";
         final String unsigned = "f4774dff7b6ef5d0fc1f077cbec55899";
         final String fingerprint = MediaHashResolver.resolveImageFingerprint( imageHash, ImageStyleSettings.from( style ), scale, "image/png", hmac );
-        assertEquals( "8e4e644c301041bc3d6d3b58e5bfeb15efba6661", fingerprint );
+        assertEquals( "a0d08e08c2fb73604365a4460c9833a054631806", fingerprint );
+        assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, "8e4e644c301041bc3d6d3b58e5bfeb15efba6661" ) );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, unsigned ) );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, hmac.generateChecksum( unsigned ) ) );
         assertFalse( MediaHashResolver.matchesFingerprint( fingerprint, null ) );

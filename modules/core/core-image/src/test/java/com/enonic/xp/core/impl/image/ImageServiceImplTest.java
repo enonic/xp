@@ -1,16 +1,19 @@
 package com.enonic.xp.core.impl.image;
 
+import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HexFormat;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 
@@ -18,10 +21,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.google.common.io.ByteSource;
 
@@ -39,6 +42,7 @@ import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.util.BinaryReference;
@@ -49,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -155,7 +160,9 @@ class ImageServiceImplTest
 
         // A changed style must not cause a cache-only request to write another rendition.
         processingStyle( 70 );
-        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( cacheOnly ) );
+        final ReadImageParams changedStyle = styledParams( format, true );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( changedStyle ) );
+        assertArrayEquals( expected, imageService.readImage( cacheOnly ).read() );
         processingStyle( 80 );
         try (var paths = Files.walk( cache ))
         {
@@ -194,10 +201,10 @@ class ImageServiceImplTest
         mockOriginalImage( "original.png" );
         final BufferedImage source = new BufferedImage( 32, 24, BufferedImage.TYPE_INT_ARGB );
         final var graphics = source.createGraphics();
-        graphics.setColor( java.awt.Color.RED );
+        graphics.setColor( Color.RED );
         graphics.fillRect( 0, 0, 32, 24 );
         graphics.dispose();
-        final var bytes = new java.io.ByteArrayOutputStream();
+        final var bytes = new ByteArrayOutputStream();
         ImageIO.write( source, "png", bytes );
         imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
@@ -274,7 +281,7 @@ class ImageServiceImplTest
     @ValueSource(strings = {"encoding", "decoding", "transformation"})
     void croppedResizeIsRejectedBeforeAllocatingOversizedRaster( final String backend ) throws Exception
     {
-        final var bytes = new java.io.ByteArrayOutputStream();
+        final var bytes = new ByteArrayOutputStream();
         ImageIO.write( new BufferedImage( 1000, 1000, BufferedImage.TYPE_INT_RGB ), "png", bytes );
         imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
@@ -298,7 +305,7 @@ class ImageServiceImplTest
     void nativePipelineReadsAttachmentOnlyOnce() throws Exception
     {
         mockOriginalImage( "original.png" );
-        final var reads = new java.util.concurrent.atomic.AtomicInteger();
+        final var reads = new AtomicInteger();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( new ByteSource()
         {
             @Override public InputStream openStream()
@@ -322,7 +329,7 @@ class ImageServiceImplTest
         throws Exception
     {
         mockOriginalImage( "original.png" );
-        final var bytes = new java.io.ByteArrayOutputStream();
+        final var bytes = new ByteArrayOutputStream();
         new ImageMagickEncoder( 30, temporaryFolder.resolve( "source-encoding" ) ).write(
             ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), sourceFormat, 85, bytes );
         imageDataOriginal = bytes.toByteArray();
@@ -353,7 +360,7 @@ class ImageServiceImplTest
         throws Exception
     {
         mockOriginalImage( "original.png" );
-        final var bytes = new java.io.ByteArrayOutputStream();
+        final var bytes = new ByteArrayOutputStream();
         ImageIO.write( ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), "gif", bytes );
         imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
@@ -415,7 +422,7 @@ class ImageServiceImplTest
     void nativeDecodingRejectsOversizedOutputAndReleasesResources()
         throws Exception
     {
-        final var bytes = new java.io.ByteArrayOutputStream();
+        final var bytes = new ByteArrayOutputStream();
         ImageIO.write( new BufferedImage( 1, 1, BufferedImage.TYPE_INT_RGB ), "png", bytes );
         imageDataOriginal = bytes.toByteArray();
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
@@ -452,7 +459,7 @@ class ImageServiceImplTest
         when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
         imageService = newImageService();
         final byte[] nativeOutput = imageService.readImage( styledParams( format ) ).read();
-        assertEquals( 10, javax.imageio.ImageIO.read( new java.io.ByteArrayInputStream( nativeOutput ) ).getWidth() );
+        assertEquals( 10, ImageIO.read( new ByteArrayInputStream( nativeOutput ) ).getWidth() );
         assertArrayEquals( nativeOutput, imageService.readImage( styledParams( format ) ).read() );
         when( imageConfig.encoding_backend() ).thenReturn( "ImageIO" );
         imageService = newImageService();
@@ -472,7 +479,7 @@ class ImageServiceImplTest
     @Test
     void rejectsUnknownAndInvalidStylesBeforeReadingContent()
     {
-        assertThrows( com.enonic.xp.style.ImageStyleNotFoundException.class, () -> imageService.getStyle( "app:missing" ) );
+        assertThrows( ImageStyleNotFoundException.class, () -> imageService.getStyle( "app:missing" ) );
         processingStyle( -1 );
         assertThrows( IllegalArgumentException.class, () -> imageService.getStyle( "app:card" ) );
         processingStyle( 101 );
@@ -535,7 +542,7 @@ class ImageServiceImplTest
         final ReadImageParams authorized = styledParams( "png" );
         final ReadImageParams authorizedCacheOnly = styledParams( "png", true );
         processingStyle( 20 );
-        org.mockito.Mockito.clearInvocations( styleDescriptorService );
+        clearInvocations( styleDescriptorService );
 
         final byte[] first = imageService.readImage( authorized ).read();
         assertArrayEquals( first, imageService.readImage( authorizedCacheOnly ).read() );

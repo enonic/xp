@@ -6,7 +6,9 @@ import org.jspecify.annotations.NullMarked;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 
 /**
  * Resolves predefined image styles and reads or generates image renditions.
@@ -19,7 +21,7 @@ public interface ImageService
      *
      * @param key fully qualified style key in {@code application:name} form
      * @return the resolved style
-     * @throws com.enonic.xp.style.ImageStyleNotFoundException if the style does not exist
+     * @throws ImageStyleNotFoundException if the style does not exist
      * @throws IllegalArgumentException if the key or processing settings are invalid
      */
     ImageStyle getStyle( String key );
@@ -38,7 +40,7 @@ public interface ImageService
      * @return the encoded image bytes
      * @throws IOException if reading, processing or caching the image fails
      * @throws IllegalArgumentException if parameters are invalid or a cache-only request cannot be satisfied
-     * @throws com.enonic.xp.exception.ThrottlingException if processing admission limits are exceeded
+     * @throws ThrottlingException if processing admission limits are exceeded
      */
     ByteSource readImage( ReadImageParams readImageParams )
         throws IOException;
