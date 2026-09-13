@@ -164,7 +164,7 @@ final class ImageMagickTransformPlan
             }
             case "sharpen" -> add( "-channel", "RGB", "-convolve", "0,-0.2,0,-0.2,1.8,-0.2,0,-0.2,0", "+channel" );
             case "bump" -> add( "-channel", "RGB", "-convolve", "-1,-1,0,-1,1,1,0,1,1", "+channel" );
-            case "edge" -> add( "-channel", "RGB", "-edge", "1", "+channel" );
+            case "edge" -> edge();
             case "emboss" -> emboss();
             case "block" -> {
                 final int size = integer( args, 0, 2 );
@@ -207,6 +207,22 @@ final class ImageMagickTransformPlan
             }
             default -> throw new IllegalArgumentException( "Unsupported native transformation filter " + filter.getName() );
         }
+    }
+
+    private void edge()
+    {
+        // Keep the source alpha while deriving signed Sobel gradients independently for each color channel.
+        add( "-define", "convolve:scale=0.125", "-define", "convolve:bias=50%",
+             "(", "+clone", "-alpha", "off", "-channel", "RGB", "-morphology", "Correlate",
+             "3x3:-1,0,1,-2,0,2,-1,0,1", ")",
+             "(", "-clone", "0", "-alpha", "off", "-channel", "RGB", "-morphology", "Correlate",
+             "3x3:-1,-2,-1,0,0,0,1,2,1", ")", "+channel",
+             "+define", "convolve:scale", "+define", "convolve:bias" );
+        fx( """
+            dx=round(2040*(u[1]-0.5));
+            dy=round(2040*(u[2]-0.5));
+            min(255,floor(sqrt(dx*dx+dy*dy)/1.8))/255
+            """ );
     }
 
     private void emboss()
