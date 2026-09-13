@@ -58,7 +58,13 @@ public final class ScaleParams
     /**
      * Applies an aspect-ratio hint to a width or height operation without modifying this instance.
      * The specified dimension is retained and the other dimension is rounded to the nearest
-     * pixel, producing a {@code block} crop. Other scaling operations retain their own geometry.
+     * pixel, producing a {@code block} crop. For example, {@code width(640)} with {@code 16:9}
+     * produces {@code block(640,360)}; {@code height(360)} with the same ratio produces the same crop.
+     * Without a hint, the operation is unchanged: width and height scaling preserve the proportions
+     * of the image being scaled, without additional aspect-ratio cropping.
+     * Other scaling operations retain their own geometry: {@code block} uses its explicit dimensions,
+     * {@code square} uses a 1:1 ratio, {@code max} fits within its bounds while preserving proportions,
+     * and {@code full} retains the image dimensions.
      * The caller can keep this original operation when generating a URL.
      *
      * @param aspectRatio the positive integer ratio {@code width:height}

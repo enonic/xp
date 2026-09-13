@@ -33,6 +33,14 @@ public final class ImageStyle
 
     /**
      * Returns the aspect-ratio hint for width or height scaling.
+     * With a hint, the requested dimension is retained and the other dimension is derived,
+     * rounded to the nearest pixel, and used for a block crop. For example, {@code width(640)}
+     * with {@code 16:9} crops to {@code 640x360}.
+     * Without a hint, width and height scaling preserve the proportions of the image being scaled,
+     * without additional aspect-ratio cropping.
+     * The hint does not affect other scaling operations: {@code block} uses its explicit dimensions,
+     * {@code square} uses a 1:1 ratio, {@code max} fits within its bounds while preserving proportions,
+     * and {@code full} retains the image dimensions. The requested scale in the URL is unchanged.
      *
      * @return the {@code width:height} ratio
      */
@@ -154,10 +162,13 @@ public final class ImageStyle
 
         /**
          * Sets an aspect-ratio hint for width or height scaling.
-         * Other scaling operations retain their own geometry; this does not prescribe a URL scale.
+         * The hint derives the missing dimension for a block crop; without a hint, scaling preserves
+         * the proportions of the image being scaled. Other scaling operations retain their own geometry.
+         * The requested scale in the URL is unchanged.
          *
          * @param aspectRatio a positive integer {@code width:height} ratio
          * @return this builder
+         * @see ImageStyle#getAspectRatio()
          */
         public Builder aspectRatio( final @Nullable String aspectRatio )
         {
