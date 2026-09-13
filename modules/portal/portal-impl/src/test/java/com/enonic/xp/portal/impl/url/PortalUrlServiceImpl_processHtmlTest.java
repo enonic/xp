@@ -51,6 +51,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -59,6 +60,7 @@ import com.enonic.xp.webapp.WebappService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -773,11 +775,11 @@ class PortalUrlServiceImpl_processHtmlTest
         for ( String parameter : List.of( "scale=1:1", "filter=grayscale", "quality=70", "background=ffffff", "format=webp" ) )
         {
             final String saved = "<img src=\"image://" + media.getId() + "?style=myapp:card&amp;" + parameter + "\">";
-            org.junit.jupiter.api.Assertions.assertThrows( IllegalArgumentException.class,
+            assertThrows( IllegalArgumentException.class,
                 () -> service.processHtml( new ProcessHtmlParams().value( saved ) ) );
         }
         when( imageService.getStyle( "myapp:missing" ) ).thenThrow(
-            new com.enonic.xp.style.ImageStyleNotFoundException( "myapp:missing" ) );
+            new ImageStyleNotFoundException( "myapp:missing" ) );
         final String rendered = service.processHtml( new ProcessHtmlParams()
             .value( "<img src=\"image://" + media.getId() + "?style=myapp:missing\">" ) );
         assertThat( rendered ).startsWith( "<img src=\"/_/error/404?" ).doesNotContain( "/width-" );

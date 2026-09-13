@@ -10,15 +10,13 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HexFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
-
-import groovy.json.JsonOutput;
-import groovy.json.JsonSlurper;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -28,6 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import groovy.json.JsonOutput;
+import groovy.json.JsonSlurper;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -172,7 +173,7 @@ class MacImageMagickPackagerTest
                 tar.closeArchiveEntry();
             }
         }
-        return new java.util.LinkedHashMap<>( Map.of( "name", name, "version", "1", "url", archive.toUri().toString(),
+        return new LinkedHashMap<>( Map.of( "name", name, "version", "1", "url", archive.toUri().toString(),
             "sha256", HexFormat.of().formatHex( MessageDigest.getInstance( "SHA-256" ).digest( Files.readAllBytes( archive ) ) ) ) );
     }
 

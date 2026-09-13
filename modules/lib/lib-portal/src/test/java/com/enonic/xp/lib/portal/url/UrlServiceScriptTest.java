@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -69,7 +71,7 @@ class UrlServiceScriptTest
     {
         try
         {
-            return java.net.URLEncoder.encode( value, java.nio.charset.StandardCharsets.UTF_8 );
+            return URLEncoder.encode( value, StandardCharsets.UTF_8 );
         }
         catch ( Exception e )
         {

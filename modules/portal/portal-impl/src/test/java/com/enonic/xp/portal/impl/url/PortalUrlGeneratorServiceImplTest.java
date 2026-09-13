@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +113,7 @@ class PortalUrlGeneratorServiceImplTest
             ImageStyle.create().name( "card" ).quality( 60 ).build(),
             ImageStyle.create().name( "card" ).filter( "blur(1)" ).build(),
             ImageStyle.create().name( "card" ).background( "000000" ).build() );
-        final var fingerprints = new java.util.HashSet<String>();
+        final var fingerprints = new HashSet<String>();
         for ( final ImageStyle style : styles )
         {
             when( imageService.getStyle( "app:card" ) ).thenReturn( style );
@@ -131,7 +132,7 @@ class PortalUrlGeneratorServiceImplTest
         final ImageUrlParts small = service.imageUrlParts( styleUrlParams().setScale( "width(320)" ).build() );
         assertThat( wide.fingerprint() ).isNotEqualTo( small.fingerprint() );
         assertEquals( "width-320~app:card", small.scale() );
-        for ( var scale : java.util.Map.of( "square(640)", "square-640", "block(640,480)", "block-640-480",
+        for ( var scale : Map.of( "square(640)", "square-640", "block(640,480)", "block-640-480",
             "max(640)", "max-640", "full()", "full-" ).entrySet() )
         {
             final ImageUrlGeneratorParams explicit = styleUrlParams().setScale( scale.getKey() ).build();
@@ -157,7 +158,7 @@ class PortalUrlGeneratorServiceImplTest
     {
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).build() );
-        final var fingerprints = new java.util.HashSet<String>();
+        final var fingerprints = new HashSet<String>();
         for ( String format : new String[]{"jpeg", "png", "webp", "avif"} )
         {
             final ImageUrlGeneratorParams params = styleUrlParams().setFormat( format ).build();

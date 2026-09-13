@@ -3,6 +3,7 @@ package com.enonic.gradle;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -30,11 +31,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import groovy.json.JsonOutput;
-import groovy.json.JsonSlurper;
-
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+
+import groovy.json.JsonOutput;
+import groovy.json.JsonSlurper;
 
 /** Build-only assembly of pinned macOS ARM64 libraries. Never modifies Mach-O bytes or creates filesystem links. */
 public final class MacImageMagickPackager
@@ -167,7 +169,7 @@ public final class MacImageMagickPackager
         final MessageDigest digest = MessageDigest.getInstance( "SHA-256" );
         try (var input = new DigestInputStream( Files.newInputStream( path ), digest ))
         {
-            input.transferTo( java.io.OutputStream.nullOutputStream() );
+            input.transferTo( OutputStream.nullOutputStream() );
         }
         return HexFormat.of().formatHex( digest.digest() );
     }
@@ -261,7 +263,7 @@ public final class MacImageMagickPackager
     {
         try (var tar = new TarArchiveInputStream( new BufferedInputStream( input ) ))
         {
-            org.apache.commons.compress.archivers.tar.TarArchiveEntry member;
+            TarArchiveEntry member;
             while ( ( member = tar.getNextEntry() ) != null )
             {
                 remainingSeconds();

@@ -31,6 +31,8 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.PortalConfig;
+import com.enonic.xp.portal.impl.url.PortalUrlGeneratorServiceImpl;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
@@ -40,6 +42,7 @@ import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.security.acl.Permission;
+import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.ImageStyleSettings;
@@ -49,6 +52,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.webapp.WebappService;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -192,8 +196,8 @@ class ImageMediaHandlerTest
         throws Exception
     {
         setupContent();
-        final var generator = new com.enonic.xp.portal.impl.url.PortalUrlGeneratorServiceImpl(
-            mock( com.enonic.xp.webapp.WebappService.class ), mock( com.enonic.xp.site.SiteService.class ), imageService,
+        final var generator = new PortalUrlGeneratorServiceImpl(
+            mock( WebappService.class ), mock( SiteService.class ), imageService,
             HmacTestHelper.createHmacService() );
         when( imageService.getStyle( "app:card" ) ).thenReturn(
             ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 70 ).filter( "grayscale" ).build() );
@@ -204,8 +208,8 @@ class ImageMediaHandlerTest
             {
                 continue;
             }
-            final var builder = com.enonic.xp.portal.url.ImageUrlGeneratorParams.create()
-                .setMedia( () -> media ).setProjectName( () -> com.enonic.xp.project.ProjectName.from( "myproject" ) )
+            final var builder = ImageUrlGeneratorParams.create()
+                .setMedia( () -> media ).setProjectName( () -> ProjectName.from( "myproject" ) )
                 .setBranch( () -> ContentConstants.BRANCH_MASTER ).setScale( "width(640)" ).setFormat( format );
             if ( styled )
             {
@@ -242,11 +246,11 @@ class ImageMediaHandlerTest
         final Media media = (Media) createContent( "123456", "path/to/image", attachment );
         when( contentService.getById( media.getId() ) ).thenReturn( media );
         when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( ByteSource.empty() );
-        final var generator = new com.enonic.xp.portal.impl.url.PortalUrlGeneratorServiceImpl(
-            mock( com.enonic.xp.webapp.WebappService.class ), mock( com.enonic.xp.site.SiteService.class ), imageService,
+        final var generator = new PortalUrlGeneratorServiceImpl(
+            mock( WebappService.class ), mock( SiteService.class ), imageService,
             HmacTestHelper.createHmacService() );
-        final var parts = generator.imageUrlParts( com.enonic.xp.portal.url.ImageUrlGeneratorParams.create()
-            .setMedia( () -> media ).setProjectName( () -> com.enonic.xp.project.ProjectName.from( "myproject" ) )
+        final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create()
+            .setMedia( () -> media ).setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> ContentConstants.BRANCH_MASTER ).setScale( "width(640)" ).build() );
         request.setRawPath( "/site/myproject/master/_" + parts.path() );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );

@@ -237,9 +237,9 @@ public class RichTextProcessor
 
         final String savedStyle = urlParams.get( STYLE_PARAM );
         final String decodedStyle = savedStyle == null ? null :
-            java.net.URLDecoder.decode( savedStyle, java.nio.charset.StandardCharsets.UTF_8 );
+            URLDecoder.decode( savedStyle, StandardCharsets.UTF_8 );
         final String styleReference = decodedStyle != null && decodedStyle.contains( ":" ) ?
-            com.enonic.xp.descriptor.DescriptorKey.from( decodedStyle ).toString() : null;
+            DescriptorKey.from( decodedStyle ).toString() : null;
         if ( styleReference != null && urlParams.size() != 1 )
         {
             throw new IllegalArgumentException( "A rich-text image style reference cannot include raw image parameters" );

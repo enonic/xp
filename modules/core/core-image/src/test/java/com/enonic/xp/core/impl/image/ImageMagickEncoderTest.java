@@ -1,12 +1,16 @@
 package com.enonic.xp.core.impl.image;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -15,6 +19,9 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.google.common.io.ByteSource;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
@@ -38,12 +45,12 @@ class ImageMagickEncoderTest
         final int[] expected = source.getRGB( 0, 0, 3, 1, null, 0, 3 );
         final var bytes = new ByteArrayOutputStream();
         new ImageMagickEncoder( 30, temporaryFolder ).write( source, "png", 85, bytes );
-        final BufferedImage imageIo = javax.imageio.ImageIO.read( new java.io.ByteArrayInputStream( bytes.toByteArray() ) );
-        org.junit.jupiter.api.Assertions.assertArrayEquals( expected, imageIo.getRGB( 0, 0, 3, 1, null, 0, 3 ) );
+        final BufferedImage imageIo = ImageIO.read( new ByteArrayInputStream( bytes.toByteArray() ) );
+        assertArrayEquals( expected, imageIo.getRGB( 0, 0, 3, 1, null, 0, 3 ) );
         final var decoder = new ImageMagickDecoder( "embedded", temporaryFolder, 30, 100, 100000 );
-        try (var decoded = decoder.open( com.google.common.io.ByteSource.wrap( bytes.toByteArray() ) ))
+        try (var decoded = decoder.open( ByteSource.wrap( bytes.toByteArray() ) ))
         {
-            org.junit.jupiter.api.Assertions.assertArrayEquals( expected, decoded.read().getRGB( 0, 0, 3, 1, null, 0, 3 ) );
+            assertArrayEquals( expected, decoded.read().getRGB( 0, 0, 3, 1, null, 0, 3 ) );
         }
         assertEmpty( temporaryFolder );
     }
@@ -109,7 +116,7 @@ class ImageMagickEncoderTest
         throws Exception
     {
         final String platform = EmbeddedImageMagick.platform( System.getProperty( "os.name" ), System.getProperty( "os.arch" ) );
-        assumeTrue( java.util.Set.of( "linux-x86_64", "linux-aarch64", "osx-aarch64", "windows-x86_64", "windows-aarch64" ).contains( platform ) );
+        assumeTrue( Set.of( "linux-x86_64", "linux-aarch64", "osx-aarch64", "windows-x86_64", "windows-aarch64" ).contains( platform ) );
         final ImageMagickEncoder encoder = new ImageMagickEncoder( 30, temporaryFolder );
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         encoder.write( image(), format, 80, output );

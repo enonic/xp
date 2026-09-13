@@ -2,10 +2,14 @@ package com.enonic.xp.core.impl.image;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+
+import javax.imageio.ImageIO;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -16,11 +20,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -28,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class ImageMagickTransformerTest
 {
@@ -37,22 +48,22 @@ class ImageMagickTransformerTest
     @Test
     void nativeStagesPassRasterFilesWithoutJavaPixelReads() throws Exception
     {
-        final var bytes = new java.io.ByteArrayOutputStream();
-        javax.imageio.ImageIO.write( image(), "png", bytes );
+        final var bytes = new ByteArrayOutputStream();
+        ImageIO.write( image(), "png", bytes );
         final var decoder = new ImageMagickDecoder( "embedded", temporaryFolder, 30, 10000, 100000 );
-        try (var source = decoder.open( com.google.common.io.ByteSource.wrap( bytes.toByteArray() ) ))
+        try (var source = decoder.open( ByteSource.wrap( bytes.toByteArray() ) ))
         {
-            final var decoded = org.mockito.Mockito.spy( source.raster() );
+            final var decoded = spy( source.raster() );
             assertEquals( 32L * 24 * 4, Files.size( decoded.path() ) );
             try (var result = transformer().transform( decoded, plan( 32, 24, params( "invert" ), 10000 ) ))
             {
-                final var transformed = org.mockito.Mockito.spy( result.raster() );
+                final var transformed = spy( result.raster() );
                 assertEquals( 32L * 24 * 4, Files.size( transformed.path() ) );
-                final var output = new java.io.ByteArrayOutputStream();
+                final var output = new ByteArrayOutputStream();
                 new ImageMagickEncoder( 30, temporaryFolder ).write( transformed, "png", 85, false, output );
-                assertEquals( 32, javax.imageio.ImageIO.read( new java.io.ByteArrayInputStream( output.toByteArray() ) ).getWidth() );
-                org.mockito.Mockito.verify( decoded, org.mockito.Mockito.never() ).read();
-                org.mockito.Mockito.verify( transformed, org.mockito.Mockito.never() ).read();
+                assertEquals( 32, ImageIO.read( new ByteArrayInputStream( output.toByteArray() ) ).getWidth() );
+                verify( decoded, never() ).read();
+                verify( transformed, never() ).read();
             }
         }
         assertEmpty( temporaryFolder );
@@ -218,8 +229,8 @@ class ImageMagickTransformerTest
 
     private static ReadImageParams.Builder requestBuilder()
     {
-        return ReadImageParams.newImageParams().contentId( com.enonic.xp.content.ContentId.from( "image" ) )
-            .binaryReference( com.enonic.xp.util.BinaryReference.from( "source" ) );
+        return ReadImageParams.newImageParams().contentId( ContentId.from( "image" ) )
+            .binaryReference( BinaryReference.from( "source" ) );
     }
 
     private static NormalizedImageParams params( final String filter )

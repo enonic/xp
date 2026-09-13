@@ -1,5 +1,6 @@
 package com.enonic.xp.core.impl.image;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 
 import org.junit.jupiter.api.Test;
@@ -73,10 +75,10 @@ class ImageMagickDecoderTest
         {
             writer.setOutput( output );
             writer.prepareWriteSequence( null );
-            writer.writeToSequence( new javax.imageio.IIOImage( image(), null, null ), null );
+            writer.writeToSequence( new IIOImage( image(), null, null ), null );
             if ( frames > 1 )
             {
-                writer.writeToSequence( new javax.imageio.IIOImage( new BufferedImage( 8, 8, BufferedImage.TYPE_INT_RGB ), null, null ), null );
+                writer.writeToSequence( new IIOImage( new BufferedImage( 8, 8, BufferedImage.TYPE_INT_RGB ), null, null ), null );
             }
             writer.endWriteSequence();
         }
@@ -171,7 +173,7 @@ class ImageMagickDecoderTest
     {
         final BufferedImage image = new BufferedImage( 32, 24, BufferedImage.TYPE_INT_ARGB );
         final var graphics = image.createGraphics();
-        graphics.setColor( java.awt.Color.RED );
+        graphics.setColor( Color.RED );
         graphics.fillRect( 4, 4, 8, 8 );
         graphics.dispose();
         return image;

@@ -1,8 +1,11 @@
 package com.enonic.xp.core.impl.image;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -13,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EmbeddedImageMagickTest
 {
@@ -57,8 +60,8 @@ class EmbeddedImageMagickTest
             assertNotNull( mac );
             final byte[] header = linux.readNBytes( 20 );
             assertEquals( 20, header.length );
-            assertArrayEquals( new byte[]{0x7f, 'E', 'L', 'F'}, java.util.Arrays.copyOf( header, 4 ) );
-            assertEquals( 183, java.nio.ByteBuffer.wrap( header ).order( java.nio.ByteOrder.LITTLE_ENDIAN ).getShort( 18 ) );
+            assertArrayEquals( new byte[]{0x7f, 'E', 'L', 'F'}, Arrays.copyOf( header, 4 ) );
+            assertEquals( 183, ByteBuffer.wrap( header ).order( ByteOrder.LITTLE_ENDIAN ).getShort( 18 ) );
         }
     }
 

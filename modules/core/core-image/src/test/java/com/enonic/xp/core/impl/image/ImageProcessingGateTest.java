@@ -1,14 +1,17 @@
 package com.enonic.xp.core.impl.image;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.common.io.ByteSource;
+
 import com.enonic.xp.exception.ThrottlingException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +25,7 @@ class ImageProcessingGateTest
         final var started = new CountDownLatch( 1 );
         final var release = new CountDownLatch( 1 );
         final var calls = new AtomicInteger();
-        final var duplicateThread = new java.util.concurrent.atomic.AtomicReference<Thread>();
+        final var duplicateThread = new AtomicReference<Thread>();
         final var duplicateEntering = new CountDownLatch( 1 );
         final ByteSource result = ByteSource.wrap( new byte[]{1} );
         try (var executor = Executors.newFixedThreadPool( 3 ))
@@ -41,7 +44,7 @@ class ImageProcessingGateTest
             try
             {
                 assertTrue( duplicateEntering.await( 2, TimeUnit.SECONDS ) );
-                assertTimeoutPreemptively( java.time.Duration.ofSeconds( 2 ), () -> {
+                assertTimeoutPreemptively( Duration.ofSeconds( 2 ), () -> {
                     while ( duplicateThread.get().getState() != Thread.State.TIMED_WAITING ) { Thread.sleep( 1 ); }
                 } );
                 assertSame( result, executor.submit( () -> gate.execute( "other", () -> result ) ).get( 2, TimeUnit.SECONDS ) );

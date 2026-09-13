@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HexFormat;
@@ -231,7 +232,7 @@ class ImageServiceImplTest
         else
         {
             assertEquals( "WEBP", new String( imageService.readImage( styledParams( "webp" ) ).read(), 8, 4,
-                java.nio.charset.StandardCharsets.US_ASCII ) );
+                StandardCharsets.US_ASCII ) );
         }
     }
 
@@ -291,7 +292,7 @@ class ImageServiceImplTest
         imageService = newImageService();
         final var params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
             .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
-            .mimeType( "image/png" ).cropping( com.enonic.xp.image.Cropping.create().right( 0.01 ).build() )
+            .mimeType( "image/png" ).cropping( Cropping.create().right( 0.01 ).build() )
             .scaleParams( new ScaleParams( "width", new Object[]{1000} ) ).build();
         assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) )
             .getMessage().contains( "processing.maxPixels" ) );
@@ -352,7 +353,7 @@ class ImageServiceImplTest
         when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
         imageService = newImageService();
         final byte[] webp = imageService.readImage( styledParams( "webp" ) ).read();
-        assertEquals( "WEBP", new String( webp, 8, 4, java.nio.charset.StandardCharsets.US_ASCII ) );
+        assertEquals( "WEBP", new String( webp, 8, 4, StandardCharsets.US_ASCII ) );
     }
 
     @Test
@@ -381,7 +382,7 @@ class ImageServiceImplTest
         throws Exception
     {
         imageDataOriginal = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'/>"
-            .getBytes( java.nio.charset.StandardCharsets.UTF_8 );
+            .getBytes( StandardCharsets.UTF_8 );
         when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
         processingStyle( 80 );
         when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );

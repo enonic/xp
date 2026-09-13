@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -567,7 +570,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // an attribute naming the API itself outranks the default media base
         assertEquals(
             "https://images.example.com/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
-            ContextBuilder.copyOf( com.enonic.xp.context.ContextAccessor.current() )
+            ContextBuilder.copyOf( ContextAccessor.current() )
                 .attribute( "portal.apiBaseUrl.media:image", "https://images.example.com" )
                 .build()
                 .callWith( () -> this.service.imageUrl( params ) ) );
@@ -845,10 +848,10 @@ class PortalUrlServiceImpl_imageUrlTest
 
     private String webappImageUrl()
     {
-        return webappImageUrl( java.util.Map.of() );
+        return webappImageUrl( Map.of() );
     }
 
-    private String webappImageUrl( final java.util.Map<String, Object> attributes )
+    private String webappImageUrl( final Map<String, Object> attributes )
     {
         final ImageUrlParams params = new ImageUrlParams().id( "123456" ).scale( "max(300)" );
 
@@ -871,7 +874,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // the more specific declaration wins, so exposing APIs elsewhere leaves media alone
         assertEquals(
             "https://media.example.com/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
+            webappImageUrl( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
     }
 
     @Test
@@ -884,7 +887,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // an attribute naming the API itself is more specific than the default media base
         assertEquals(
             "https://images.example.com/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
+            webappImageUrl( Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
     }
 
     @Test
@@ -895,7 +898,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // nothing more specific is declared: the bulk attribute applies
         assertEquals(
             "https://apis.example.com/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
+            webappImageUrl( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
     }
 
     @Test
@@ -906,7 +909,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // a single-API attribute is the root of that API alone: nothing is appended
         assertEquals(
             "https://images.example.com/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
+            webappImageUrl( Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
     }
 
     @Test
@@ -917,7 +920,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // no API location declared and no default media base: the webapp "_" form is kept
         assertEquals(
             "/webapp/myapp/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "someOtherAttribute", "value" ) ) );
+            webappImageUrl( Map.of( "someOtherAttribute", "value" ) ) );
     }
 
     @Test
