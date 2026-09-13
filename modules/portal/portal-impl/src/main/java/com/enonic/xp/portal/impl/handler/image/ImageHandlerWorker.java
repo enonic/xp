@@ -49,6 +49,8 @@ public final class ImageHandlerWorker
 
     private final HmacService hmacService;
 
+    public boolean allowHashlessGeneration;
+
     public String filterParam;
 
     public String qualityParam;
@@ -232,7 +234,7 @@ public final class ImageHandlerWorker
                 settings,
                 scaleParams, contentType.toString(), hmacService );
             final boolean hashMatches = MediaHashResolver.matchesFingerprint( currentFingerprint, fingerprint );
-            this.cacheOnly = !hashMatches && ( style != null || !nullToEmpty( fingerprint ).isBlank() ||
+            this.cacheOnly = !hashMatches && ( !allowHashlessGeneration || style != null || !nullToEmpty( fingerprint ).isBlank() ||
                 contentType.is( MediaType.WEBP ) || contentType.is( MediaType.AVIF ) );
 
             final ReadImageParams.Builder readImageParams = ReadImageParams.newImageParams()

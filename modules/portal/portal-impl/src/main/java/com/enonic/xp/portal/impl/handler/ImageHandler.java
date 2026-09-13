@@ -41,6 +41,8 @@ public class ImageHandler
 
     private final HmacService hmacService;
 
+    private volatile boolean allowHashlessGeneration;
+
     private volatile String privateCacheControlHeaderConfig;
 
     private volatile String publicCacheControlHeaderConfig;
@@ -61,6 +63,7 @@ public class ImageHandler
     @Modified
     public void activate( final PortalConfig config )
     {
+        allowHashlessGeneration = config.image_allowHashlessGeneration();
         privateCacheControlHeaderConfig = config.media_private_cacheControl();
         publicCacheControlHeaderConfig = config.media_public_cacheControl();
         contentSecurityPolicy = config.media_contentSecurityPolicy();
@@ -98,6 +101,7 @@ public class ImageHandler
         final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.hmacService );
 
         worker.id = ContentId.from( matcher.group( 1 ) );
+        worker.allowHashlessGeneration = this.allowHashlessGeneration;
         worker.fingerprint = matcher.group( 2 );
         worker.setScalePath( matcher.group( 3 ) );
         worker.name = matcher.group( 4 );

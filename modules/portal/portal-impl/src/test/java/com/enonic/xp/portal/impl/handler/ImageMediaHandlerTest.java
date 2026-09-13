@@ -121,10 +121,11 @@ class ImageMediaHandlerTest
 
     @ParameterizedTest
     @ValueSource(strings = {"jpeg", "png", "gif"})
-    void legacyHashIsCacheOnlyButUnsignedUnstyledRequestsCanGenerate( final String format )
+    void legacyHashRemainsCacheOnlyWhenHashlessGenerationIsEnabled( final String format )
         throws Exception
     {
         setupContent();
+        configureHashlessGeneration( true );
         final String legacy = MediaHashResolver.resolveImageHash( (Media) contentService.getById( ContentId.from( "123456" ) ) );
         for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
         {
@@ -246,6 +247,63 @@ class ImageMediaHandlerTest
         request.setRawPath( "/site/myproject/master/_" + parts.path() );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
         verifyNoInteractions( imageService );
+    }
+
+    private void configureHashlessGeneration( final boolean enabled )
+    {
+        final PortalConfig config = mock( PortalConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        when( config.image_allowHashlessGeneration() ).thenReturn( enabled );
+        handler.activate( config );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"jpeg", "png", "gif", "webp", "avif"})
+    void hashlessGenerationIsDisabledByDefaultAndOptInNeverBypassesStyleProtection( final String format )
+        throws Exception
+    {
+        setupContent();
+        when( imageService.getStyle( "app:card" ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        final boolean modernFormat = "webp".equals( format ) || "avif".equals( format );
+        // Verify the annotation default first, then both directions of a configuration update.
+        for ( int configuration = 0; configuration < 3; configuration++ )
+        {
+            final boolean enabled = configuration == 1;
+            if ( configuration > 0 )
+            {
+                configureHashlessGeneration( enabled );
+            }
+            for ( boolean styled : new boolean[]{false, true} )
+            {
+                if ( modernFormat && !styled )
+                {
+                    continue;
+                }
+                final boolean cacheOnly = !enabled || styled;
+                for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
+                {
+                    request.setMethod( method );
+                    request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/width-640" + ( styled ? "~app:card" : "" ) +
+                        "/image-name.jpg." + format );
+                    when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+                        assertEquals( cacheOnly, ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+                        return ByteSource.wrap( new byte[]{1} );
+                    } );
+                    final WebResponse response = handler.handle( request );
+                    assertEquals( HttpStatus.OK, response.getStatus() );
+                    assertNull( response.getHeaders().get( "Cache-Control" ) );
+                    if ( cacheOnly )
+                    {
+                        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+                            assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+                            throw new IllegalArgumentException( "Image is not cached" );
+                        } );
+                        assertEquals( HttpStatus.BAD_REQUEST,
+                            assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
+                    }
+                }
+            }
+        }
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
     }
 
     private String styledFingerprint( final String format )

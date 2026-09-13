@@ -76,8 +76,13 @@ fingerprints make the request cache-only for every output format. Missing
 fingerprints also mean cache-only for every styled request. A cache
 miss returns HTTP 400 without reading source bytes, acquiring encoder capacity,
 or creating a cache file. Cache hits work even when modern encoding is disabled.
-Unsigned, unstyled JPEG/PNG/GIF requests retain normal processing. Removing both
-style and hash therefore still allows arbitrary supported legacy transformations.
+Hashless regeneration is disabled by default. To restore unsigned, unstyled
+JPEG/PNG/GIF processing for compatibility, set
+`image.allowHashlessGeneration = true` in `com.enonic.xp.portal.cfg`. This option
+applies to both image endpoints and can be changed at runtime. It never permits
+unsigned styled generation, WebP/AVIF conversion without a style and signature,
+or generation with a supplied legacy or mismatched hash. With the default
+configuration, removing both style and hash still permits only cache reads.
 Changing output format invalidates a modern signature; format remains outside
 the style definition. These rules also apply
 to HEAD requests. Original-file pass-through needs no regeneration and remains
