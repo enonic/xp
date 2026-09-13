@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.ArrayList;
-
-import com.google.common.io.ByteSource;
+import java.util.List;
 
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.core.internal.image.ImageMagick;
 
@@ -53,14 +54,14 @@ final class ImageMagickDecoder
     final class Source implements AutoCloseable
     {
         private final NativeImageProcess process;
-        private final PreparedImageSource ownedSource;
+        private final @Nullable PreparedImageSource ownedSource;
         private final Path input;
         private final String coder;
         private final int width;
         private final int height;
-        private NativeImageRaster raster;
+        private @Nullable NativeImageRaster raster;
 
-        private Source( final Path input, final PreparedImageSource ownedSource ) throws IOException
+        private Source( final Path input, final @Nullable PreparedImageSource ownedSource ) throws IOException
         {
             this.input = input.toAbsolutePath();
             this.ownedSource = ownedSource;

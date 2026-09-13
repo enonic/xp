@@ -11,3 +11,7 @@ jar {
              'Private-Package': 'com.jhlabs.*' )
     }
 }
+
+tasks.withType( Test ).configureEach {
+    testLogging.exceptionFormat = 'full'
+}

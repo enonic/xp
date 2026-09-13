@@ -201,7 +201,7 @@ class ImageMagickTransformerTest extends ImageMagickTestSupport
         final Path pidFile = temporaryFolder.resolve( "pid" );
         Files.writeString( executable, """
             #!/bin/sh
-            echo $ > '%s'
+            echo $$ > '%s'
             exec sleep 30
             """.formatted( pidFile ) );
         assertTrue( executable.toFile().setExecutable( true, true ) );

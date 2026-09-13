@@ -12,11 +12,14 @@ configurations {
 }
 dependencies {
     osgiTestBundles libs.felix.scr
+    osgiTestBundles libs.osgi.service.component
+    osgiTestBundles libs.osgi.service.cm
     osgiTestBundles libs.osgi.util.promise
     osgiTestBundles libs.osgi.util.function
 }
 
 tasks.named( 'test' ) {
+    testLogging.exceptionFormat = 'full'
     dependsOn tasks.named( 'jar' )
     doFirst {
         systemProperty 'imagemagick.bundle', tasks.named( 'jar' ).get().archiveFile.get().asFile.absolutePath

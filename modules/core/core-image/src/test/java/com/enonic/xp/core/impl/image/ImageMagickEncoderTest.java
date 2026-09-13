@@ -99,7 +99,7 @@ class ImageMagickEncoderTest extends ImageMagickTestSupport
     {
         final Path pidFile = temporaryFolder.resolve( "pid" );
         final Path executable = script( """
-            echo $ > '%s'
+            echo $$ > '%s'
             exec sleep 30\
             """.formatted( pidFile ) );
         final Path work = temporaryFolder.resolve( "work" );

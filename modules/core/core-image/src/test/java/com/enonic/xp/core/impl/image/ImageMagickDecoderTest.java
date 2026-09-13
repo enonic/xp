@@ -145,7 +145,7 @@ class ImageMagickDecoderTest extends ImageMagickTestSupport
         final Path executable = temporaryFolder.resolve( "decoder" );
         Files.writeString( executable, """
             #!/bin/sh
-            echo $ > '%s'
+            echo $$ > '%s'
             exec sleep 30
             """.formatted( pidFile ) );
         assertTrue( executable.toFile().setExecutable( true, true ) );
