@@ -15,13 +15,13 @@
       "filesystem": "dwarfs"
     },
     "windows-x86_64": {
-      "file": "ImageMagick-7.1.2-31-portable-Q8-x64.7z",
-      "sha256": "4eb7914050902c52bf388bae188fdbdb04154ca89d105b2f6200a29cb774241b",
+      "file": "ImageMagick-7.1.2-31-portable-Q16-HDRI-x64.7z",
+      "sha256": "a6a83a77a5284a2cae5ca4a81d95e5fad21ecd56cdb647ee99f970e233504fff",
       "executable": "magick.exe"
     },
     "windows-aarch64": {
-      "file": "ImageMagick-7.1.2-31-portable-Q8-arm64.7z",
-      "sha256": "35cae1eecc3caa2993b8213d846f4f3a8125f1d06e86a63c4992da1daaebb185",
+      "file": "ImageMagick-7.1.2-31-portable-Q16-HDRI-arm64.7z",
+      "sha256": "4a54aca519fe1e0ef166c8315bf01ea4606a701701a6bed67f81cc75df153fa2",
       "executable": "magick.exe"
     },
     "osx-aarch64": {

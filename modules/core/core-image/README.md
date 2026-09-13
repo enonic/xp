@@ -202,6 +202,8 @@ can terminate native code.
 Bundled platforms cover Linux x86-64/ARM64, Windows x86-64/ARM64, and macOS ARM64.
 Linux ARM64 uses pkgforge's ImageMagick 7.1.2-30 AppImage, with its self-update
 hook removed during packaging. Linux x86-64 and Windows use upstream 7.1.2-31.
+Windows distributions use Q16-HDRI so edge and emboss retain sufficient precision
+in intermediate gradients; the raw transfer and final output still use 8-bit channels.
 macOS ARM64 uses conda-forge 7.1.2-31 with its codec libraries. Other platforms
 report an unavailable native backend when `ImageMagic` is selected; `ImageIO` remains available. The complete upstream
 archives retain their licenses and dependencies. Version and SHA-256 pins live
