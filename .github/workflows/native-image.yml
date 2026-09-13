@@ -39,4 +39,4 @@ jobs:
         run: ./gradlew :core:core-image:test :portal:portal-impl:test --tests '*PortalUrlGeneratorServiceImplTest' --tests '*PortalUrlServiceImpl_imageUrlTest' --tests '*ImageRendererTest' --tests '*PortalUrlServiceImpl_processHtmlTest' --tests '*ImageMediaHandlerTest' --tests '*ImageHandlerTest' --tests '*HmacServiceTest' --tests '*RedirectChecksumServiceTest' --tests '*MediaHashResolverTest' :core:core-content:test --tests '*YmlStyleDescriptorParserTest' --tests '*HtmlAreaContentProcessorTest' :lib:lib-portal:test --tests '*UrlServiceScriptTest'
       - name: Validate public image API Javadoc
         if: matrix.runner == 'ubuntu-latest'
-        run: ./gradlew :core:core-api:javadoc :portal:portal-api:javadoc
+        run: ./gradlew :core:core-api:test --tests '*ReadImageParamsTest' :core:core-api:javadoc :portal:portal-api:javadoc

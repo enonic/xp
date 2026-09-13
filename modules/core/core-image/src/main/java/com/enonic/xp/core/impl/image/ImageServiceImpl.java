@@ -171,12 +171,7 @@ public class ImageServiceImpl
     public ByteSource readImage( final ReadImageParams readImageParams )
         throws IOException
     {
-        final ImageStyle style = readImageParams.getStyle() == null ? null : getStyle( readImageParams.getStyle() );
-        if ( readImageParams.getExpectedStyle() != null && !ImageStyleSettings.from( readImageParams.getExpectedStyle() ).equals( ImageStyleSettings.from( style ) ) )
-        {
-            throw new IllegalArgumentException( "Image style changed during request; regenerate the image URL" );
-        }
-        final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams, style );
+        final NormalizedImageParams normalizedImageParams = new NormalizedImageParams( readImageParams );
         // Cache-only requests must not read the source to discover a missing checksum.
         if ( readImageParams.isCacheOnly() && normalizedImageParams.getAttachmentSha512() == null )
         {

@@ -43,13 +43,9 @@ class NormalizedImageParams
 
     private final @Nullable String attachmentSha512;
 
-    NormalizedImageParams( ReadImageParams readImageParams )
+    NormalizedImageParams( final ReadImageParams readImageParams )
     {
-        this( readImageParams, null );
-    }
-
-    NormalizedImageParams( final ReadImageParams readImageParams, final @Nullable ImageStyle style )
-    {
+        final ImageStyle style = readImageParams.getStyle();
         final ImageStyleSettings settings = style == null ? null : ImageStyleSettings.from( style );
         this.contentId = readImageParams.getContentId();
         this.binaryReference = readImageParams.getBinaryReference();

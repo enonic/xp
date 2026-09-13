@@ -18,10 +18,11 @@ class NormalizedImageParamsTest
     @Test
     void styledCoreRequestsRejectExplicitProcessingOverridesIncludingDefaults()
     {
-        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( "app:card" ).quality( 0 ).build() );
-        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( "app:card" ).backgroundColor( 0xffffff ).build() );
-        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( "app:card" ).filterParam( "" ).build() );
-        assertEquals( "app:card", someFormatTemplate().style( "app:card" ).build().getStyle() );
+        final ImageStyle style = ImageStyle.create().name( "card" ).build();
+        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( style ).quality( 0 ).build() );
+        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( style ).backgroundColor( 0xffffff ).build() );
+        assertThrows( IllegalArgumentException.class, () -> someFormatTemplate().style( style ).filterParam( "" ).build() );
+        assertEquals( style, someFormatTemplate().style( style ).build().getStyle() );
     }
 
     @Test
@@ -31,9 +32,9 @@ class NormalizedImageParamsTest
         {
             assertThrows( IllegalArgumentException.class,
                           () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/" + format ).build() ) );
-            // Merely supplying an unverified style name must not enable the encoder.
-            assertThrows( IllegalArgumentException.class,
-                          () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/" + format ).style( "app:card" ).build() ) );
+            final ImageStyle style = ImageStyle.create().name( "card" ).build();
+            assertEquals( format, new NormalizedImageParams(
+                noFormatTemplate().mimeType( "image/" + format ).style( style ).build() ).getFormat() );
         }
     }
 
@@ -43,7 +44,7 @@ class NormalizedImageParamsTest
         final ImageStyle style = ImageStyle.create().name( "card" ).aspectRatio( "16:9" )
             .quality( 75 ).filter( "grayscale()" ).build();
         final NormalizedImageParams params = new NormalizedImageParams( noFormatTemplate().mimeType( "image/webp" )
-            .scaleParams( new ScaleParams( "width", new Object[]{640} ) ).style( "app:card" ).build(), style );
+            .scaleParams( new ScaleParams( "width", new Object[]{640} ) ).style( style ).build() );
         assertEquals( "block(640,360)", params.getScaleParams().toString() );
         assertEquals( "webp", params.getFormat() );
         assertEquals( 75, params.getQuality() );
@@ -59,7 +60,7 @@ class NormalizedImageParamsTest
             new ScaleParams( "height", new Object[]{360} )} )
         {
             final NormalizedImageParams params = new NormalizedImageParams(
-                noFormatTemplate().mimeType( "image/webp" ).scaleParams( scale ).build(), style );
+                noFormatTemplate().mimeType( "image/webp" ).scaleParams( scale ).style( style ).build() );
             assertEquals( "block(640,360)", params.getScaleParams().toString() );
         }
         assertEquals( "block(650,366)", new ScaleParams( "width", new Object[]{650} ).withAspectRatio( "16:9" ).toString() );
@@ -68,7 +69,7 @@ class NormalizedImageParamsTest
             new ScaleParams( "block", new Object[]{640, 480} ), new ScaleParams( "wide", new Object[]{640, 480} )} )
         {
             final NormalizedImageParams params = new NormalizedImageParams(
-                noFormatTemplate().mimeType( "image/webp" ).scaleParams( scale ).build(), style );
+                noFormatTemplate().mimeType( "image/webp" ).scaleParams( scale ).style( style ).build() );
             assertEquals( scale.toString(), params.getScaleParams().toString() );
         }
         for ( String ratio : new String[]{"0:9", "16:0", "invalid", "99999999999999999999:1"} )
@@ -85,7 +86,7 @@ class NormalizedImageParamsTest
         for ( String format : new String[]{"jpeg", "png", "gif", "webp", "avif"} )
         {
             final NormalizedImageParams params = new NormalizedImageParams(
-                noFormatTemplate().mimeType( "image/" + format ).build(), style );
+                noFormatTemplate().mimeType( "image/" + format ).style( style ).build() );
             assertEquals( format, params.getFormat() );
             assertEquals( 85, params.getQuality() );
             assertEquals( "full", params.getScaleParams().getName() );

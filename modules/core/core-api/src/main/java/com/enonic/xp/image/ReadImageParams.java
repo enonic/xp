@@ -51,9 +51,7 @@ public final class ReadImageParams
 
     private final @Nullable String attachmentSha512;
 
-    private final @Nullable String style;
-
-    private final @Nullable ImageStyle expectedStyle;
+    private final @Nullable ImageStyle style;
 
     private final boolean cacheOnly;
 
@@ -74,7 +72,6 @@ public final class ReadImageParams
         this.orientation = builder.orientation != null ? builder.orientation : ImageOrientation.TopLeft;
         this.attachmentSha512 = builder.attachmentSha512;
         this.style = builder.style;
-        this.expectedStyle = builder.expectedStyle;
         this.cacheOnly = builder.cacheOnly;
     }
 
@@ -236,21 +233,11 @@ public final class ReadImageParams
     }
 
     /**
-     * Returns the style snapshot whose effective settings must still match at processing time.
+     * Returns the resolved image style used for processing.
      *
-     * @return the expected style
+     * @return the resolved image style
      */
-    public @Nullable ImageStyle getExpectedStyle()
-    {
-        return expectedStyle;
-    }
-
-    /**
-     * Returns the predefined style to resolve when reading the image.
-     *
-     * @return the fully qualified {@code application:name} key
-     */
-    public @Nullable String getStyle()
+    public @Nullable ImageStyle getStyle()
     {
         return style;
     }
@@ -305,9 +292,7 @@ public final class ReadImageParams
 
         private @Nullable String attachmentSha512;
 
-        private @Nullable String style;
-
-        private @Nullable ImageStyle expectedStyle;
+        private @Nullable ImageStyle style;
 
         private boolean cacheOnly;
 
@@ -330,28 +315,16 @@ public final class ReadImageParams
         }
 
         /**
-         * Sets a style snapshot to detect a change between URL validation and processing.
-         * Only effective processing settings are compared. Supplying a snapshot requires a style key.
-         *
-         * @param expectedStyle the expected style
-         * @return this builder
-         */
-        public Builder expectedStyle( final @Nullable ImageStyle expectedStyle )
-        {
-            this.expectedStyle = expectedStyle;
-            return this;
-        }
-
-        /**
-         * Selects a predefined style whose processing settings are resolved by the image service.
+         * Sets the resolved image style to use for processing. The image service uses this snapshot
+         * without looking up the style again.
          * A styled request cannot also specify filters, quality or background overrides.
          *
-         * @param style the {@code application:name} key; an empty key selects an unstyled request
+         * @param style the resolved style, obtainable through {@link ImageService#getStyle(String)}
          * @return this builder
          */
-        public Builder style( final @Nullable String style )
+        public Builder style( final @Nullable ImageStyle style )
         {
-            this.style = style == null || style.isEmpty() ? null : style;
+            this.style = style;
             return this;
         }
 
@@ -545,18 +518,16 @@ public final class ReadImageParams
 
         /**
          * Validates the supplied request fields and creates the image request.
-         * Style resolution, scale/filter validation and cache-only checksum requirements
+         * Style settings, scale/filter validation and cache-only checksum requirements
          * are checked by the image service when the request is read.
          *
          * @return a new image request
          * @throws NullPointerException if content identifier, binary reference or output MIME type is missing
-         * @throws IllegalArgumentException if quality or background is out of range, processing overrides
-         *     accompany a style, or an expected style is supplied without a style key
+         * @throws IllegalArgumentException if quality or background is out of range or processing overrides accompany a style
          */
         public ReadImageParams build()
         {
-            ImageStyleSettings.checkOverrides( style, qualitySet || quality != 0 || backgroundSet || filterParam != null );
-            Preconditions.checkArgument( expectedStyle == null || style != null, "expectedStyle requires a style key" );
+            ImageStyleSettings.checkOverrides( style != null, qualitySet || quality != 0 || backgroundSet || filterParam != null );
             requireNonNull( contentId, "contentId is required" );
             requireNonNull( binaryReference, "binaryReference is required" );
             requireNonNull( mimeType, "mimeType is required" );

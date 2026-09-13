@@ -250,8 +250,7 @@ public final class ImageHandlerWorker
                 .orientation( imageOrientation )
                 .scaleParams( this.scaleParams )
                 .mimeType( contentType.toString() )
-                .style( styleParam )
-                .expectedStyle( style )
+                .style( style )
                 .cacheOnly( cacheOnly );
             if ( style == null )
             {

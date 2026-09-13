@@ -125,7 +125,7 @@ class ImageServiceImplTest
         return ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
             .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
             .mimeType( "image/" + format ).scaleParams( new ScaleParams( "square", new Object[]{10} ) )
-            .style( "app:card" ).cacheOnly( cacheOnly ).build();
+            .style( imageService.getStyle( "app:card" ) ).cacheOnly( cacheOnly ).build();
     }
 
     @ParameterizedTest
@@ -210,7 +210,7 @@ class ImageServiceImplTest
                 .addStyleElement( ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).filter( "invert" ).build() ).build() );
         final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
             .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
-            .mimeType( "image/png" ).scaleParams( new ScaleParams( "width", new Object[]{16} ) ).style( "app:card" ).build();
+            .mimeType( "image/png" ).scaleParams( new ScaleParams( "width", new Object[]{16} ) ).style( imageService.getStyle( "app:card" ) ).build();
         final BufferedImage result = ImageIO.read( new ByteArrayInputStream( imageService.readImage( params ).read() ) );
         assertEquals( 16, result.getWidth() );
         assertEquals( 9, result.getHeight() );
@@ -527,15 +527,25 @@ class ImageServiceImplTest
     }
 
     @Test
-    void rejectsStyleChangedSinceFingerprintWasResolved()
+    void resolvedStyleKeepsGenerationAndCacheOnTheAuthorizedSettings()
+        throws Exception
     {
+        mockOriginalImage( "original.png" );
+        processingStyle( 10 );
+        final ReadImageParams authorized = styledParams( "png" );
+        final ReadImageParams authorizedCacheOnly = styledParams( "png", true );
         processingStyle( 20 );
-        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
-            .mimeType( "image/webp" ).style( "app:card" )
-            .expectedStyle( ImageStyle.create().name( "card" ).quality( 10 ).build() ).build();
-        final IllegalArgumentException error = assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) );
-        assertTrue( error.getMessage().contains( "changed during request" ) );
-        verifyNoInteractions( contentService );
+        org.mockito.Mockito.clearInvocations( styleDescriptorService );
+
+        final byte[] first = imageService.readImage( authorized ).read();
+        assertArrayEquals( first, imageService.readImage( authorizedCacheOnly ).read() );
+        verifyNoInteractions( styleDescriptorService );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+
+        final ReadImageParams currentCacheOnly = styledParams( "png", true );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( currentCacheOnly ) );
+        processingStyle( 10 );
+        assertArrayEquals( first, imageService.readImage( styledParams( "png", true ) ).read() );
     }
 
     @Test

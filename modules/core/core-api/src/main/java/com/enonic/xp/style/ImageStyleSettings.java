@@ -65,16 +65,16 @@ public record ImageStyleSettings(@Nullable String aspectRatio, @Nullable String 
     }
 
     /**
-     * Rejects explicit processing overrides when a style key is supplied.
-     * This checks only the combination of arguments, not the style key or the overrides themselves.
+     * Rejects explicit processing overrides when a style is supplied.
+     * This checks only the combination of arguments, not the processing values themselves.
      *
-     * @param style the style key
+     * @param hasStyle whether a style was supplied
      * @param hasOverrides whether explicit quality, filter or background values were supplied
-     * @throws IllegalArgumentException if a style key is combined with overrides
+     * @throws IllegalArgumentException if a style is combined with overrides
      */
-    public static void checkOverrides( final @Nullable String style, final boolean hasOverrides )
+    public static void checkOverrides( final boolean hasStyle, final boolean hasOverrides )
     {
-        if ( style != null && hasOverrides )
+        if ( hasStyle && hasOverrides )
         {
             throw new IllegalArgumentException( "Image styles cannot be combined with processing parameters" );
         }

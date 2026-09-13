@@ -59,7 +59,7 @@ public final class ImageUrlGeneratorParams
         this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
         this.branchSupplier = requireNonNull( builder.branchSupplier );
         this.style = emptyToNull( builder.style );
-        com.enonic.xp.style.ImageStyleSettings.checkOverrides( style,
+        com.enonic.xp.style.ImageStyleSettings.checkOverrides( style != null,
             builder.quality != null || builder.filter != null || builder.background != null );
         if ( style == null && ( "webp".equalsIgnoreCase( builder.format ) || "avif".equalsIgnoreCase( builder.format ) ) )
         {

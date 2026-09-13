@@ -59,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
@@ -365,6 +366,26 @@ class ImageHandlerTest
         verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
     }
 
+    @Test
+    void authorizedStyleSnapshotIsAvailableDuringProcessing()
+        throws Exception
+    {
+        setupImageContent( "png" );
+        final ImageStyle authorized = ImageStyle.create().name( "card" ).build();
+        final ImageStyle updated = ImageStyle.create().name( "card" ).quality( 70 ).build();
+        when( imageService.getStyle( "app:card" ) ).thenReturn( authorized, updated );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+            final ReadImageParams params = invocation.getArgument( 0 );
+            assertFalse( params.isCacheOnly() );
+            assertSame( authorized, params.getStyle() );
+            return ByteSource.wrap( new byte[]{1} );
+        } );
+        request.setRawPath( "/_/image/123456:" + styledFingerprint( "png" ) +
+            "/width-640~app:card/image-name.png" );
+        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+        verify( imageService ).getStyle( "app:card" );
+    }
+
     private String styledFingerprint( final String format )
     {
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
@@ -387,7 +408,7 @@ class ImageHandlerTest
         assertEquals( MediaType.PNG, response.getContentType() );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
-        assertEquals( "app:card", params.getValue().getStyle() );
+        assertEquals( "card", params.getValue().getStyle().getName() );
         assertEquals( "image/png", params.getValue().getMimeType() );
         assertFalse( params.getValue().isCacheOnly() );
         verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
@@ -466,7 +487,7 @@ class ImageHandlerTest
         assertEquals( MediaType.parse( "image/" + format.toLowerCase( java.util.Locale.ROOT ) ), response.getContentType() );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
-        assertEquals( "app:card", params.getValue().getStyle() );
+        assertEquals( "card", params.getValue().getStyle().getName() );
         assertFalse( params.getValue().isCacheOnly() );
         assertEquals( "image/" + format.toLowerCase( java.util.Locale.ROOT ), params.getValue().getMimeType() );
     }
@@ -512,7 +533,7 @@ class ImageHandlerTest
         assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
         final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
         verify( imageService ).readImage( params.capture() );
-        assertEquals( alias, params.getValue().getStyle() );
+        assertEquals( "card-wide", params.getValue().getStyle().getName() );
         assertEquals( "width", params.getValue().getScaleParams().getName() );
         assertArrayEquals( new Object[]{640}, params.getValue().getScaleParams().getArguments() );
     }
