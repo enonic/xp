@@ -1,5 +1,7 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -69,7 +71,7 @@ class UrlServiceScriptTest
     {
         try
         {
-            return java.net.URLEncoder.encode( value, java.nio.charset.StandardCharsets.UTF_8 );
+            return URLEncoder.encode( value, StandardCharsets.UTF_8 );
         }
         catch ( Exception e )
         {
@@ -314,6 +316,17 @@ class UrlServiceScriptTest
     {
         assertTrue( execute( "componentUrlTest_unknownProperty" ) );
         verifyComponentUrl( "mycomp" );
+    }
+
+    @Test
+    void imageUrlStyleTest()
+    {
+        assertTrue( execute( "imageUrlStyleTest" ) );
+        final ArgumentCaptor<ImageUrlParams> captor = ArgumentCaptor.forClass( ImageUrlParams.class );
+        verify( portalUrlService ).imageUrl( captor.capture() );
+        assertEquals( "app:card", captor.getValue().getStyle() );
+        assertEquals( "avif", captor.getValue().getFormat() );
+        assertEquals( "width(640)", captor.getValue().getScale() );
     }
 
     @Test

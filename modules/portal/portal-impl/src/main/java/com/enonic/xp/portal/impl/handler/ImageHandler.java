@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.NullMarked;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
@@ -14,19 +15,21 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.image.ImageService;
-import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.handler.WebHandlerHelper;
+import com.enonic.xp.portal.impl.HmacService;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.handler.image.ImageHandlerWorker;
+import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 
 @Component(service = ImageHandler.class, configurationPid = "com.enonic.xp.portal")
+@NullMarked
 public class ImageHandler
 {
     private static final Pattern PATTERN = Pattern.compile( "^([^/:]+)(?::([^/]+))?/([^/]+)/([^/]+)" );
@@ -39,6 +42,12 @@ public class ImageHandler
 
     private final ImageService imageService;
 
+    private final StyleDescriptorService styleDescriptorService;
+
+    private final HmacService hmacService;
+
+    private volatile boolean allowHashlessGeneration;
+
     private volatile String privateCacheControlHeaderConfig;
 
     private volatile String publicCacheControlHeaderConfig;
@@ -48,16 +57,20 @@ public class ImageHandler
     private volatile String contentSecurityPolicySvg;
 
     @Activate
-    public ImageHandler( @Reference final ContentService contentService, @Reference final ImageService imageService )
+    public ImageHandler( @Reference final ContentService contentService, @Reference final ImageService imageService, @Reference final StyleDescriptorService styleDescriptorService,
+                              @Reference final HmacService hmacService )
     {
         this.contentService = contentService;
         this.imageService = imageService;
+        this.styleDescriptorService = styleDescriptorService;
+        this.hmacService = hmacService;
     }
 
     @Activate
     @Modified
     public void activate( final PortalConfig config )
     {
+        allowHashlessGeneration = config.image_allowHashlessGeneration();
         privateCacheControlHeaderConfig = config.media_private_cacheControl();
         publicCacheControlHeaderConfig = config.media_public_cacheControl();
         contentSecurityPolicy = config.media_contentSecurityPolicy();
@@ -92,11 +105,12 @@ public class ImageHandler
             return HandlerHelper.handleDefaultOptions( ALLOWED_METHODS );
         }
 
-        final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService );
+        final ImageHandlerWorker worker = new ImageHandlerWorker( webRequest, this.contentService, this.imageService, this.styleDescriptorService, this.hmacService );
 
         worker.id = ContentId.from( matcher.group( 1 ) );
+        worker.allowHashlessGeneration = this.allowHashlessGeneration;
         worker.fingerprint = matcher.group( 2 );
-        worker.scaleParams = new ScaleParamsParser().parse( matcher.group( 3 ) );
+        worker.setScalePath( matcher.group( 3 ) );
         worker.name = matcher.group( 4 );
         worker.filterParam = HandlerHelper.getParameter( webRequest, "filter" );
         worker.qualityParam = HandlerHelper.getParameter( webRequest, "quality" );

@@ -1,11 +1,14 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.branch.Branch;
@@ -14,12 +17,17 @@ import com.enonic.xp.content.ContentName;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
+import com.enonic.xp.portal.impl.HmacTestHelper;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
@@ -41,10 +49,6 @@ import com.enonic.xp.site.SiteDescriptor;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.descriptor.DescriptorKeys;
-import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.webapp.WebappService;
 
@@ -78,7 +82,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         webappService = mock( WebappService.class );
         siteService = mock( SiteService.class );
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, siteService );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, siteService, mock( StyleDescriptorService.class ), HmacTestHelper.createHmacService() );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
@@ -141,7 +145,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -161,7 +165,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/api/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/api/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -181,7 +185,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/api/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/api/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -201,7 +205,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -276,7 +280,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.service.imageUrl( params );
 
-        assertEquals( "/api/media:image/explicit-project:explicit-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/api/media:image/explicit-project:explicit-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -312,7 +316,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // APIs are addressed as siblings of the current endpoint: the vhost exposes only the
         // endpoint itself, so the media API is expected to be mounted next to it
         assertEquals(
-            "http://localhost/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "http://localhost/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -345,7 +349,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -379,7 +383,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "http://localhost/api/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "http://localhost/api/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -404,7 +408,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "/webapp/myapp/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/webapp/myapp/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -437,7 +441,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/source/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/source/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -470,7 +474,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/api/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/api/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -499,7 +503,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -532,7 +536,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -549,7 +553,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // auto-mount disabled and the site does not mount media APIs: generation diverts
         // to the canonical /api form instead of a site URL that dispatch would 404
-        assertEquals( "/api/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "/api/media:image/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -564,8 +568,8 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // an attribute naming the API itself outranks the default media base
         assertEquals(
-            "https://images.example.com/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            ContextBuilder.copyOf( com.enonic.xp.context.ContextAccessor.current() )
+            "https://images.example.com/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
+            ContextBuilder.copyOf( ContextAccessor.current() )
                 .attribute( "portal.apiBaseUrl.media:image", "https://images.example.com" )
                 .build()
                 .callWith( () -> this.service.imageUrl( params ) ) );
@@ -583,7 +587,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "https://media.example.com/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "https://media.example.com/media:image/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -609,7 +613,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/site/request-project/request-branch/mysite/_/media:image/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -631,7 +635,7 @@ class PortalUrlServiceImpl_imageUrlTest
         // not mount media APIs: media anchors at the hosting tool's own "_" endpoint, staying
         // within the admin session (the media path carries the project:branch context)
         assertEquals(
-            "/admin/com.enonic.app.contentstudio/site/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/admin/com.enonic.app.contentstudio/site/_/media:image/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -702,7 +706,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "http://localhost/source/_/media:image/request-project:request-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "http://localhost/source/_/media:image/request-project:request-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -734,7 +738,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url = this.service.imageUrl( params );
 
         assertEquals(
-            "/site/request-project/request-branch/mysite/_/media:image/explicit-project:explicit-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/site/request-project/request-branch/mysite/_/media:image/explicit-project:explicit-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -764,7 +768,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+        assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
                       url );
     }
 
@@ -781,7 +785,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         final String url = this.portalUrlGeneratorService.imageUrl( params );
 
-        assertEquals( "baseUrl/_/media:image/project:branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", url );
+        assertEquals( "baseUrl/_/media:image/project:branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png", url );
     }
 
     private void mockWebappWithMediaApis()
@@ -825,7 +829,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals(
-            "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "https://media.example.com/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -843,10 +847,10 @@ class PortalUrlServiceImpl_imageUrlTest
 
     private String webappImageUrl()
     {
-        return webappImageUrl( java.util.Map.of() );
+        return webappImageUrl( Map.of() );
     }
 
-    private String webappImageUrl( final java.util.Map<String, Object> attributes )
+    private String webappImageUrl( final Map<String, Object> attributes )
     {
         final ImageUrlParams params = new ImageUrlParams().id( "123456" ).scale( "max(300)" );
 
@@ -868,8 +872,8 @@ class PortalUrlServiceImpl_imageUrlTest
         // the default media base names the media APIs, the bulk attribute names any API:
         // the more specific declaration wins, so exposing APIs elsewhere leaves media alone
         assertEquals(
-            "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
+            "https://media.example.com/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
+            webappImageUrl( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
     }
 
     @Test
@@ -881,8 +885,8 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // an attribute naming the API itself is more specific than the default media base
         assertEquals(
-            "https://images.example.com/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
+            "https://images.example.com/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
+            webappImageUrl( Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
     }
 
     @Test
@@ -892,8 +896,8 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // nothing more specific is declared: the bulk attribute applies
         assertEquals(
-            "https://apis.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
+            "https://apis.example.com/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
+            webappImageUrl( Map.of( "portal.apiBaseUrl", "https://apis.example.com" ) ) );
     }
 
     @Test
@@ -903,8 +907,8 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // a single-API attribute is the root of that API alone: nothing is appended
         assertEquals(
-            "https://images.example.com/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
+            "https://images.example.com/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
+            webappImageUrl( Map.of( "portal.apiBaseUrl.media:image", "https://images.example.com" ) ) );
     }
 
     @Test
@@ -914,8 +918,8 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // no API location declared and no default media base: the webapp "_" form is kept
         assertEquals(
-            "/webapp/myapp/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-            webappImageUrl( java.util.Map.of( "someOtherAttribute", "value" ) ) );
+            "/webapp/myapp/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
+            webappImageUrl( Map.of( "someOtherAttribute", "value" ) ) );
     }
 
     @Test
@@ -927,7 +931,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // nothing declared for the current context: the default media base applies
         assertEquals(
-            "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "https://media.example.com/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             webappImageUrl() );
     }
 
@@ -956,7 +960,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // the webapp declares the media APIs: its own "_" endpoint outranks the default media base
         assertEquals(
-            "/webapp/myapp/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/webapp/myapp/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -984,7 +988,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // the configured default media base outranks the sibling assumption on API endpoints
         assertEquals(
-            "https://media.example.com/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "https://media.example.com/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -1012,7 +1016,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // media URLs on admin mounts always stay "_"-anchored: within the authenticated admin session
         assertEquals(
-            "/admin/myapp/mytool/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/admin/myapp/mytool/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 
@@ -1040,7 +1044,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         // the auto-mount flag only affects site mounts: admin media URLs stay "_"-anchored
         assertEquals(
-            "/admin/myapp/mytool/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
+            "/admin/myapp/mytool/_/media:image/context-project:context-branch/123456:7642024d98151f8e7e1268980b0afb48f042dbf6/max-300/mycontent.png",
             url );
     }
 

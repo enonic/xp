@@ -1,11 +1,20 @@
 package com.enonic.xp.core.impl.image;
 
+import java.awt.Color;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HexFormat;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.imageio.ImageIO;
 
@@ -14,6 +23,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.google.common.io.ByteSource;
 
@@ -23,23 +35,29 @@ import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.core.internal.security.MessageDigests;
+import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.image.Cropping;
 import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
+import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-class ImageServiceImplTest
+class ImageServiceImplTest extends ImageMagickTestSupport
 {
     @TempDir
     public Path temporaryFolder;
@@ -47,6 +65,8 @@ class ImageServiceImplTest
     private ContentService contentService;
 
     private ImageServiceImpl imageService;
+
+    private ImageStyle style;
 
     private ContentId contentId;
 
@@ -72,6 +92,11 @@ class ImageServiceImplTest
             when( imageConfig.progressive() ).thenReturn( "" );
         }
 
+        imageService = newImageService();
+    }
+
+    private ImageServiceImpl newImageService()
+    {
         ImageFilterBuilderImpl imageFilterBuilder = new ImageFilterBuilderImpl();
         imageFilterBuilder.activate( imageConfig );
 
@@ -79,7 +104,559 @@ class ImageServiceImplTest
 
         imageScaleFunctionBuilder.activate( imageConfig );
 
-        imageService = new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, imageConfig );
+        return new ImageServiceImpl( contentService, imageScaleFunctionBuilder, imageFilterBuilder, imageMagick, imageConfig );
+    }
+
+    @ParameterizedTest
+    @CsvSource({"ImageIO,ImageIO", "ImageIO,ImageMagic", "ImageMagic,ImageIO", "ImageMagic,ImageMagic"})
+    void storedOrientationThenCropAndFocalPointAreAppliedOnce( final String decoding, final String transformation ) throws Exception
+    {
+        final var image = new BufferedImage( 32, 24, BufferedImage.TYPE_INT_RGB );
+        for ( int y = 0; y < 24; y++ ) for ( int x = 0; x < 32; x++ )
+        {
+            image.setRGB( x, y, 0xff000000 | x * 6 << 16 | y * 8 << 8 | ( x + y ) * 4 );
+        }
+        // Deliberately keep the source EXIF tag fixed: persisted edits must override it.
+        imageDataOriginal = ImageSourceFixtures.jpegWithOrientation( image, 6 );
+        final BufferedImage decoded = ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) );
+        assertEquals( 32, decoded.getWidth() );
+        assertEquals( 24, decoded.getHeight() );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        when( imageConfig.decoding_backend() ).thenReturn( decoding );
+        when( imageConfig.transformation_backend() ).thenReturn( transformation );
+        imageService = newImageService();
+        for ( ImageOrientation orientation : ImageOrientation.values() )
+        {
+            final boolean swap = orientation.getValue() >= 5;
+            final int width = swap ? 24 : 32;
+            final int height = swap ? 32 : 24;
+            final int cropX = width / 4;
+            final int cropY = height / 4;
+            final int cropWidth = width - cropX;
+            final int cropHeight = height - cropY;
+            final int viewX = (int) ( cropWidth * ( ( 0.65 - 0.25 ) / 0.75 ) ) - 1;
+            final var params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+                .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+                .mimeType( "image/png" ).orientation( orientation )
+                .cropping( Cropping.create().left( 0.25 ).top( 0.25 ).build() )
+                .focalPoint( new FocalPoint( 0.65, 0.6 ) )
+                .scaleParams( new ScaleParams( "block", new Object[]{2, cropHeight} ) ).build();
+            final BufferedImage actual = ImageIO.read( new ByteArrayInputStream( imageService.readImage( params ).read() ) );
+            assertEquals( 2, actual.getWidth() );
+            assertEquals( cropHeight, actual.getHeight() );
+            for ( int y = 0; y < cropHeight; y++ ) for ( int x = 0; x < 2; x++ )
+            {
+                final int ox = cropX + viewX + x;
+                final int oy = cropY + y;
+                final int expected = switch ( orientation )
+                {
+                    case TopLeft -> decoded.getRGB( ox, oy );
+                    case TopRight -> decoded.getRGB( 31 - ox, oy );
+                    case BottomRight -> decoded.getRGB( 31 - ox, 23 - oy );
+                    case BottomLeft -> decoded.getRGB( ox, 23 - oy );
+                    case LeftTop -> decoded.getRGB( oy, ox );
+                    case RightTop -> decoded.getRGB( oy, 23 - ox );
+                    case RightBottom -> decoded.getRGB( 31 - oy, 23 - ox );
+                    case LeftBottom -> decoded.getRGB( 31 - oy, ox );
+                };
+                for ( int shift = 0; shift <= 16; shift += 8 )
+                {
+                    assertEquals( ( expected >>> shift ) & 255, ( actual.getRGB( x, y ) >>> shift ) & 255, 3,
+                        decoding + "/" + transformation + "/" + orientation + " at " + x + "," + y );
+                }
+            }
+        }
+    }
+
+    private void processingStyle( final Integer quality )
+    {
+        style = ImageStyle.create().name( "card" ).quality( quality ).build();
+    }
+
+    private ReadImageParams styledParams( final String format )
+    {
+        return styledParams( format, false );
+    }
+
+    private ReadImageParams styledParams( final String format, final boolean cacheOnly )
+    {
+        return ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/" + format ).scaleParams( new ScaleParams( "square", new Object[]{10} ) )
+            .style( style ).cacheOnly( cacheOnly ).build();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"png", "jpeg", "webp", "avif"})
+    void cacheOnlyServesExistingRenditionButNeverRegenerates( final String format )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final ReadImageParams cacheOnly = styledParams( format, true );
+        final Path cache = temporaryFolder.resolve( "work/cache/img/sha256" );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( cacheOnly ) );
+        assertTrue( Files.notExists( cache ) );
+        verifyNoInteractions( contentService );
+
+        if ( "webp".equals( format ) || "avif".equals( format ) )
+        {
+            when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+            imageService = newImageService();
+        }
+        final byte[] expected = imageService.readImage( styledParams( format ) ).read();
+        // A cached response needs neither an enabled encoder nor the original source bytes.
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageIO" );
+        imageService = newImageService();
+        assertArrayEquals( expected, imageService.readImage( cacheOnly ).read() );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+
+        // A changed style must not cause a cache-only request to write another rendition.
+        processingStyle( 70 );
+        final ReadImageParams changedStyle = styledParams( format, true );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( changedStyle ) );
+        assertArrayEquals( expected, imageService.readImage( cacheOnly ).read() );
+        processingStyle( 80 );
+        try (var paths = Files.walk( cache ))
+        {
+            for ( Path path : paths.filter( Files::isRegularFile ).toList() )
+            {
+                Files.delete( path );
+            }
+        }
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( cacheOnly ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        try (var paths = Files.walk( cache ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
+    }
+
+    @Test
+    void rejectsUnknownBackend()
+    {
+        when( imageConfig.encoding_backend() ).thenReturn( "typo" );
+        assertThrows( IllegalArgumentException.class, this::newImageService );
+    }
+
+    @Test
+    void rejectsUnknownTransformationBackend()
+    {
+        when( imageConfig.transformation_backend() ).thenReturn( "typo" );
+        assertThrows( IllegalArgumentException.class, this::newImageService );
+    }
+
+    @ParameterizedTest
+    @CsvSource({"ImageIO,ImageIO", "ImageIO,ImageMagic", "ImageMagic,ImageIO", "ImageMagic,ImageMagic"})
+    void nativeTransformsWorkWithEitherDecoderAndEncoder( final String decoding, final String encoding )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final BufferedImage source = new BufferedImage( 32, 24, BufferedImage.TYPE_INT_ARGB );
+        final var graphics = source.createGraphics();
+        graphics.setColor( Color.RED );
+        graphics.fillRect( 0, 0, 32, 24 );
+        graphics.dispose();
+        final var bytes = new ByteArrayOutputStream();
+        ImageIO.write( source, "png", bytes );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        when( imageConfig.decoding_backend() ).thenReturn( decoding );
+        when( imageConfig.encoding_backend() ).thenReturn( encoding );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        style = ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).filter( "invert" ).build();
+        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/png" ).scaleParams( new ScaleParams( "width", new Object[]{16} ) ).style( style ).build();
+        final BufferedImage result = ImageIO.read( new ByteArrayInputStream( imageService.readImage( params ).read() ) );
+        assertEquals( 16, result.getWidth() );
+        assertEquals( 9, result.getHeight() );
+        assertEquals( 0xff00ffff, result.getRGB( 8, 4 ) );
+        // Transform selection alone cannot enable protected WebP encoding.
+        processingStyle( 80 );
+        if ( "ImageIO".equals( encoding ) )
+        {
+            assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+        }
+        else
+        {
+            assertEquals( "WEBP", new String( imageService.readImage( styledParams( "webp" ) ).read(), 8, 4,
+                StandardCharsets.US_ASCII ) );
+        }
+    }
+
+    @Test
+    void transformationCacheIsSeparateAndCacheOnlyCannotRegenerate()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final byte[] imageIo = imageService.readImage( styledParams( "png" ) ).read();
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        final byte[] transformed = imageService.readImage( styledParams( "png" ) ).read();
+        assertArrayEquals( transformed, imageService.readImage( styledParams( "png", true ) ).read() );
+        processingStyle( 70 );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        processingStyle( 80 );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageIO" );
+        imageService = newImageService();
+        assertArrayEquals( imageIo, imageService.readImage( styledParams( "png", true ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void nativeTransformationHeapAdmissionPrecedesRasterRead()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.memoryLimit() ).thenReturn( "0" );
+        imageService = newImageService();
+        assertThrows( ThrottlingException.class, () -> imageService.readImage( styledParams( "png" ) ) );
+        assertTrue( Files.notExists( temporaryFolder.resolve( "work/cache/img/transformation" ) ) );
+    }
+
+    @Test
+    void rejectsUnknownDecodingBackend()
+    {
+        when( imageConfig.decoding_backend() ).thenReturn( "typo" );
+        assertThrows( IllegalArgumentException.class, this::newImageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"encoding", "decoding", "transformation"})
+    void croppedResizeIsRejectedBeforeAllocatingOversizedRaster( final String backend ) throws Exception
+    {
+        final var bytes = new ByteArrayOutputStream();
+        ImageIO.write( new BufferedImage( 1000, 1000, BufferedImage.TYPE_INT_RGB ), "png", bytes );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        if ( "encoding".equals( backend ) ) { when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" ); }
+        if ( "decoding".equals( backend ) ) { when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" ); }
+        if ( "transformation".equals( backend ) ) { when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" ); }
+        imageService = newImageService();
+        final var params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/png" ).cropping( Cropping.create().right( 0.01 ).build() )
+            .scaleParams( new ScaleParams( "width", new Object[]{1000} ) ).build();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) )
+            .getMessage().contains( "processing.maxPixels" ) );
+        try (var paths = Files.walk( temporaryFolder.resolve( "work/cache/img" ) ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
+    }
+
+    @Test
+    void nativePipelineReadsAttachmentOnlyOnce() throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final var reads = new AtomicInteger();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( new ByteSource()
+        {
+            @Override public InputStream openStream()
+            {
+                assertEquals( 1, reads.incrementAndGet() );
+                return new ByteArrayInputStream( imageDataOriginal );
+            }
+        } );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        processingStyle( 80 );
+        assertTrue( imageService.readImage( styledParams( "webp" ) ).size() > 0 );
+        assertEquals( 1, reads.get() );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void nativeDecoderUsesExistingTransformsAndIndependentImageIoEncoder( final String sourceFormat )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final var bytes = new ByteArrayOutputStream();
+        new ImageMagickEncoder( imageMagick, 30, temporaryFolder.resolve( "source-encoding" ), MAX_DISK_BYTES ).write(
+            ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), sourceFormat, 85, bytes );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        processingStyle( 80 );
+        for ( String output : new String[]{"png", "jpeg"} )
+        {
+            final byte[] encoded = imageService.readImage( styledParams( output ) ).read();
+            final BufferedImage result = ImageIO.read( new ByteArrayInputStream( encoded ) );
+            assertEquals( 10, result.getWidth() );
+            assertEquals( 10, result.getHeight() );
+            assertArrayEquals( encoded, imageService.readImage( styledParams( output, true ) ).read() );
+        }
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+        // Selecting native decoding alone does not enable the modern output encoder.
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "webp" ) ) );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        final byte[] webp = imageService.readImage( styledParams( "webp" ) ).read();
+        assertEquals( "WEBP", new String( webp, 8, 4, StandardCharsets.US_ASCII ) );
+    }
+
+    @Test
+    void imageIoStillDecodesGifButNativeDecoderRejectsIt()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        final var bytes = new ByteArrayOutputStream();
+        ImageIO.write( ImageIO.read( new ByteArrayInputStream( imageDataOriginal ) ), "gif", bytes );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        processingStyle( 80 );
+        final byte[] result = imageService.readImage( styledParams( "png" ) ).read();
+        assertEquals( 10, ImageIO.read( new ByteArrayInputStream( result ) ).getWidth() );
+
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png" ) ) )
+            .getMessage().contains( "Unsupported source image format" ) );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void nativeDecoderRejectsSvgWithoutCaching()
+        throws Exception
+    {
+        imageDataOriginal = "<svg xmlns='http://www.w3.org/2000/svg' width='32' height='24'/>"
+            .getBytes( StandardCharsets.UTF_8 );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        processingStyle( 80 );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png" ) ) )
+            .getMessage().contains( "Unsupported source image format" ) );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        try (var paths = Files.walk( temporaryFolder.resolve( "work/cache/img" ) ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
+    }
+
+    @Test
+    void decoderCacheEntriesAreSeparateAndCacheOnlyNeverReadsSource()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final byte[] imageIo = imageService.readImage( styledParams( "png" ) ).read();
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+        final byte[] nativeResult = imageService.readImage( styledParams( "png" ) ).read();
+        assertArrayEquals( nativeResult, imageService.readImage( styledParams( "png", true ) ).read() );
+        processingStyle( 70 );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png", true ) ) );
+        processingStyle( 80 );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageIO" );
+        imageService = newImageService();
+        assertArrayEquals( imageIo, imageService.readImage( styledParams( "png", true ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void nativeDecodingRejectsOversizedOutputAndReleasesResources()
+        throws Exception
+    {
+        final var bytes = new ByteArrayOutputStream();
+        ImageIO.write( new BufferedImage( 1, 1, BufferedImage.TYPE_INT_RGB ), "png", bytes );
+        imageDataOriginal = bytes.toByteArray();
+        when( contentService.getBinary( contentId, binaryReference ) ).thenReturn( ByteSource.wrap( imageDataOriginal ) );
+        processingStyle( 80 );
+        when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.processing_maxPixels() ).thenReturn( 50L );
+        imageService = newImageService();
+        assertTrue( assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( "png" ) ) )
+            .getMessage().contains( "Output image" ) );
+        try (var paths = Files.walk( temporaryFolder.resolve( "work/cache/img" ) ))
+        {
+            assertEquals( 0, paths.filter( Files::isRegularFile ).count() );
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void imageIoBackendRejectsModernCacheMissBeforeReadingSource( final String format )
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( styledParams( format ) ) );
+        verifyNoInteractions( contentService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"jpeg", "png", "gif"})
+    void switchingBackendUsesSeparateCacheEntries( final String format )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 80 );
+        final byte[] original = imageService.readImage( styledParams( format ) ).read();
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+        final byte[] nativeOutput = imageService.readImage( styledParams( format ) ).read();
+        assertEquals( 10, ImageIO.read( new ByteArrayInputStream( nativeOutput ) ).getWidth() );
+        assertArrayEquals( nativeOutput, imageService.readImage( styledParams( format ) ).read() );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageIO" );
+        imageService = newImageService();
+        assertArrayEquals( original, imageService.readImage( styledParams( format ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void cacheOnlyDoesNotReadSourceToDiscoverMissingChecksum()
+    {
+        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .mimeType( "image/png" ).cacheOnly( true ).build();
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( params ) );
+        verifyNoInteractions( contentService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void modernEncodingWithoutStyleUsesRequestParameters( final String format )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+
+        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/" + format ).scaleParams( new ScaleParams( "square", new Object[]{10} ) ).quality( 70 ).build();
+
+        final byte[] bytes = imageService.readImage( params ).read();
+        assertEquals( "webp".equals( format ) ? "WEBP" : "avif", new String( bytes, 8, 4, StandardCharsets.US_ASCII ) );
+    }
+
+    @Test
+    void styleChangeInvalidatesCachedImage()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 10 );
+        final byte[] first = imageService.readImage( styledParams( "png" ) ).read();
+        assertEquals( 10, ImageIO.read( new ByteArrayInputStream( first ) ).getWidth() );
+        imageService.readImage( styledParams( "png" ) ).read();
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+
+        processingStyle( 20 );
+        final byte[] second = imageService.readImage( styledParams( "png" ) ).read();
+        assertEquals( 10, ImageIO.read( new ByteArrayInputStream( second ) ).getWidth() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void sameStyleCachesDifferentOutputFormatsSeparately()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 10 );
+        final byte[] png = imageService.readImage( styledParams( "png" ) ).read();
+        final byte[] jpeg = imageService.readImage( styledParams( "jpeg" ) ).read();
+        assertEquals( 0x89, Byte.toUnsignedInt( png[0] ) );
+        assertEquals( 0xff, Byte.toUnsignedInt( jpeg[0] ) );
+        assertArrayEquals( png, imageService.readImage( styledParams( "png" ) ).read() );
+        assertArrayEquals( jpeg, imageService.readImage( styledParams( "jpeg" ) ).read() );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
+    }
+
+    @Test
+    void resolvedStyleKeepsGenerationAndCacheOnTheAuthorizedSettings()
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 10 );
+        final ReadImageParams authorized = styledParams( "png" );
+        final ReadImageParams authorizedCacheOnly = styledParams( "png", true );
+        processingStyle( 20 );
+
+        final byte[] first = imageService.readImage( authorized ).read();
+        assertArrayEquals( first, imageService.readImage( authorizedCacheOnly ).read() );
+        verify( contentService, times( 1 ) ).getBinary( contentId, binaryReference );
+
+        final ReadImageParams currentCacheOnly = styledParams( "png", true );
+        assertThrows( IllegalArgumentException.class, () -> imageService.readImage( currentCacheOnly ) );
+        processingStyle( 10 );
+        assertArrayEquals( first, imageService.readImage( styledParams( "png", true ) ).read() );
+    }
+
+    @Test
+    void oversizedSourceRejectedBeforeStartingEncoder()
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 10 );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        when( imageConfig.processing_maxPixels() ).thenReturn( 1L );
+        imageService = newImageService();
+        final IllegalArgumentException error = assertThrows( IllegalArgumentException.class,
+            () -> imageService.readImage( styledParams( "webp" ) ) );
+        assertTrue( error.getMessage().contains( "Source image" ) );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"encoding", "decoding", "transformation"})
+    void boundedQueueRejectsExcessRequestsAndReleasesSlotsAfterFailure( final String backend )
+        throws Exception
+    {
+        mockOriginalImage( "original.png" );
+        processingStyle( 10 );
+        if ( "encoding".equals( backend ) )
+        {
+            when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        }
+        else if ( "decoding".equals( backend ) )
+        {
+            when( imageConfig.decoding_backend() ).thenReturn( "ImageMagic" );
+        }
+        else
+        {
+            when( imageConfig.transformation_backend() ).thenReturn( "ImageMagic" );
+        }
+        final String output = "encoding".equals( backend ) ? "webp" : "png";
+        when( imageConfig.processing_maxConcurrent() ).thenReturn( 1 );
+        when( imageConfig.processing_maxQueue() ).thenReturn( 0 );
+        imageService = newImageService();
+        final var started = new CountDownLatch( 1 );
+        final var release = new CountDownLatch( 1 );
+        when( contentService.getBinary( contentId, binaryReference ) ).thenAnswer( invocation -> {
+            started.countDown();
+            assertTrue( release.await( 10, TimeUnit.SECONDS ) );
+            throw new IOException( "Source read failed" );
+        } );
+        try (var executor = Executors.newSingleThreadExecutor())
+        {
+            final var first = executor.submit( () -> assertThrows( IOException.class,
+                () -> imageService.readImage( styledParams( output ) ) ) );
+            try
+            {
+                assertTrue( started.await( 5, TimeUnit.SECONDS ) );
+                assertThrows( ThrottlingException.class, () -> imageService.readImage( styledParams( output ) ) );
+            }
+            finally
+            {
+                release.countDown();
+            }
+            first.get( 10, TimeUnit.SECONDS );
+        }
+        // A failed conversion neither leaves a cache entry nor consumes the next request's slot.
+        assertThrows( IOException.class, () -> imageService.readImage( styledParams( output ) ) );
+        verify( contentService, times( 2 ) ).getBinary( contentId, binaryReference );
     }
 
     private byte[] readImage( final String path )

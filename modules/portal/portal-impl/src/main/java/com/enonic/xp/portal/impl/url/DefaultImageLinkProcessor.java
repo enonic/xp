@@ -7,6 +7,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.base.Suppliers;
 
 import com.enonic.xp.branch.Branch;
@@ -17,6 +20,8 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.html.HtmlElement;
+import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
+import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
@@ -25,6 +30,7 @@ import com.enonic.xp.style.ImageStyle;
 
 import static java.util.Objects.requireNonNullElse;
 
+@NullMarked
 final class DefaultImageLinkProcessor
 {
     private static final Pattern ASPECT_RATIO_PATTEN = Pattern.compile( "^(?<horizontalProportion>\\d+):(?<verticalProportion>\\d+)$" );
@@ -43,11 +49,13 @@ final class DefaultImageLinkProcessor
 
     HtmlElement element;
 
-    ImageStyle imageStyle;
+    @Nullable ImageStyle imageStyle;
+
+    @Nullable String styleReference;
 
     String id;
 
-    String scaleFromQueryString;
+    @Nullable String scaleFromQueryString;
 
     void process()
     {
@@ -74,9 +82,18 @@ final class DefaultImageLinkProcessor
             throw new IllegalStateException( String.format( "Content with id '%s' is not an image", id ) );
         } );
 
+        final String linkAttribute = element.hasAttribute( "href" ) ? "href" : "src";
+
+        if ( styleReference == null && PortalUrlGeneratorServiceImpl.servesOriginalOnly( imageSupplier ) )
+        {
+            // A single original, so responsive widths would repeat one URL. Address the attachment directly.
+            element.setAttribute( linkAttribute, attachmentUrl( imageSupplier, projectNameSupplier, branchSupplier ) );
+            return;
+        }
+
         final String imageUrl = imageUrl( baseUrlSupplier, imageSupplier, projectNameSupplier, branchSupplier, queryParamsStrategy, null );
 
-        element.setAttribute( element.hasAttribute( "href" ) ? "href" : "src", imageUrl );
+        element.setAttribute( linkAttribute, imageUrl );
 
         if ( "img".equals( element.getTagName() ) )
         {
@@ -101,24 +118,51 @@ final class DefaultImageLinkProcessor
         }
     }
 
+    private String attachmentUrl( final Supplier<Media> imageSupplier, final Supplier<ProjectName> projectNameSupplier,
+                                 final Supplier<Branch> branchSupplier )
+    {
+        return portalUrlGeneratorService.attachmentUrl( AttachmentUrlGeneratorParams.create()
+                                                            .setBaseUrl( params.getBaseUrl() )
+                                                            .setMediaBaseUrl( params.getAttachmentBaseUrl() )
+                                                            .setUrlType( params.getType() )
+                                                            .setContent( imageSupplier::get )
+                                                            .setProjectName( projectNameSupplier )
+                                                            .setBranch( branchSupplier )
+                                                            .build() );
+    }
+
     private String imageUrl( final Supplier<String> baseUrlSupplier, final Supplier<Media> imageSupplier,
                              final Supplier<ProjectName> projectNameSupplier, final Supplier<Branch> branchSupplier,
-                             final DefaultQueryParamsSupplier queryParamsStrategy, final Integer imageWidth )
+                             final DefaultQueryParamsSupplier queryParamsStrategy, final @Nullable Integer imageWidth )
     {
+        if ( styleReference != null )
+        {
+            return portalUrlGeneratorService.imageUrl( ImageUrlGeneratorParams.create()
+                .setBaseUrl( params.getBaseUrl() )
+                .setMediaBaseUrl( params.getImageBaseUrl() )
+                .setUrlType( params.getType() )
+                .setMedia( imageSupplier )
+                .setProjectName( projectNameSupplier )
+                .setBranch( branchSupplier )
+                .setStyle( styleReference )
+                .setScale( "width(" + requireNonNullElse( imageWidth, DEFAULT_WIDTH ) + ")" )
+                .build() );
+        }
         final UrlGeneratorParams imageUrl = UrlGeneratorParams.create()
             .setBaseUrl( baseUrlSupplier )
             .setQueryString( queryParamsStrategy )
-            .setPath( ImageMediaPathSupplier.create()
-                          .setMedia( imageSupplier )
-                          .setScale( getScale( imageStyle, imageWidth ) )
-                          .setProjectName( projectNameSupplier )
-                          .setBranch( branchSupplier )
-                          .build() )
+            .setPath( () -> portalUrlGeneratorService.imageUrlParts( ImageUrlGeneratorParams.create()
+                .setMedia( imageSupplier )
+                .setScale( getScale( imageStyle, imageWidth ) )
+                .setFilter( imageStyle == null ? null : imageStyle.getFilter() )
+                .setProjectName( projectNameSupplier )
+                .setBranch( branchSupplier )
+                .build() ).path().substring( "/media:image".length() ) )
             .build();
         return portalUrlGeneratorService.generateUrl( imageUrl );
     }
 
-    private String getScale( final ImageStyle imageStyle, final Integer expectedWidth )
+    private String getScale( final @Nullable ImageStyle imageStyle, final @Nullable Integer expectedWidth )
     {
         final String aspectRatio =
             imageStyle != null && imageStyle.getAspectRatio() != null ? imageStyle.getAspectRatio() : scaleFromQueryString;

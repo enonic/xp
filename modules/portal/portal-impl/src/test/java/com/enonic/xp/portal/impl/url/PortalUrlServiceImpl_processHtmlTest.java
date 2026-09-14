@@ -21,19 +21,21 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
+import com.enonic.xp.portal.impl.HmacTestHelper;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
@@ -49,6 +51,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -57,6 +60,7 @@ import com.enonic.xp.webapp.WebappService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -82,11 +86,9 @@ class PortalUrlServiceImpl_processHtmlTest
     {
         this.contentService = mock( ContentService.class );
         this.styleDescriptorService = mock( StyleDescriptorService.class );
-
-        this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), styleDescriptorService, HmacTestHelper.createHmacService() );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
@@ -165,7 +167,7 @@ class PortalUrlServiceImpl_processHtmlTest
             .callWith( () -> service.processHtml( params ) );
 
         assertEquals(
-            "<a href=\"/site/context-project/context-branch/a/b/mycontent\">Content</a><img alt=\"Alt text\" src=\"/api/media:image/context-project:context-branch/id:0a350f43700951cdcca1574f448a7e22/width-768/logo.png\">",
+            "<a href=\"/site/context-project/context-branch/a/b/mycontent\">Content</a><img alt=\"Alt text\" src=\"/api/media:image/context-project:context-branch/id:ba83f5a940b441c7e1567690439fff2ae698841d/width-768/logo.png\">",
             html );
     }
 
@@ -439,12 +441,28 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
-                media.getId() + ":0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" " +
+                media.getId() + ":ba83f5a940b441c7e1567690439fff2ae698841d/width-768/mycontent\" " +
                 "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-                ":0a350f43700951cdcca1574f448a7e22/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
+                ":55e2830fa4c4e4404e4f2f688441881ecdc49b3f/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
+                ":63a15a22aa9e5be6feeda38dc5e80f668907bb52/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
+    }
+
+    @Test
+    void processHtml_responsiveWidthsAreOmittedForSourcesWithoutRasterRendition()
+    {
+        final Media media = ContentFixtures.newMedia( "logo.gif", "image/gif" );
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams().value(
+            "<img alt=\"Alt text\" src=\"image://" + media.getId() + "\"/>" ).imageWidths( List.of( 660, 1024 ) ).imageSizes( "100vw" );
+
+        final String processedHtml = this.service.processHtml( params );
+
+        assertThat( processedHtml ).contains( "/_/media:attachment/myproject:draft/" + media.getId() )
+            .doesNotContain( "srcset" )
+            .doesNotContain( "sizes" );
     }
 
     @Test
@@ -475,7 +493,7 @@ class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
+            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":ba83f5a940b441c7e1567690439fff2ae698841d/" +
                 "width-768" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
@@ -665,7 +683,7 @@ class PortalUrlServiceImpl_processHtmlTest
         //Checks that the page URL of the content is returned
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
-            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
+            "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":179a624fcdc0cf1f3c9f6c998c5115854b5413f0/" +
                 "block-768-324" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
@@ -711,10 +729,10 @@ class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the page URL of the content is returned
         final String expectedResult1 =
-            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
+            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":98d037836aa60cd3b98af4eb1e82c011516eb0d3/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
         final String expectedResult2 = "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-            ":0a350f43700951cdcca1574f448a7e22/width-768/" + media.getName() + "\">Image</a>";
+            ":ba83f5a940b441c7e1567690439fff2ae698841d/width-768/" + media.getName() + "\">Image</a>";
         assertEquals( expectedResult1, processedLink1 );
         assertEquals( expectedResult2, processedLink2 );
 
@@ -725,6 +743,57 @@ class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "mystyle", imageProjection.get( "style:name" ) );
         assertEquals( "2:1", imageProjection.get( "style:aspectRatio" ) );
         assertEquals( "myfilter", imageProjection.get( "style:filter" ) );
+    }
+
+    @Test
+    void qualifiedImageStyleProducesSignedResponsiveUrls()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:card" ) ) ).thenReturn(
+            ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 70 ).filter( "grayscale" ).build() );
+        final String saved = "<img src=\"image://" + media.getId() + "?style=myapp:card\">";
+        final ProcessHtmlParams params = new ProcessHtmlParams().value( saved ).imageWidths( List.of( 320, 640 ) );
+        final String rendered = service.processHtml( params );
+        assertThat( rendered ).contains( "/width-768~myapp:card/", "/width-320~myapp:card/", "/width-640~myapp:card/" )
+            .doesNotContain( "?style=", "?filter=", "quality=", "block-" );
+        assertThat( rendered ).containsPattern( media.getId() + ":[0-9a-f]{40}/width-768~myapp:card/" );
+        assertEquals( saved, params.getValue() );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:card" ) ) ).thenReturn(
+            ImageStyle.create().name( "card" ).aspectRatio( "16:9" ).quality( 60 ).filter( "grayscale" ).build() );
+        assertThat( service.processHtml( params ) ).isNotEqualTo( rendered );
+    }
+
+    @Test
+    void qualifiedStyleSupportsEncodedReferencesAndImageBaseUrl()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:card" ) ) ).thenReturn( ImageStyle.create().name( "card" ).build() );
+        final String rendered = ContextBuilder.create().repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "draft" ) ).build().callWith( () ->
+                service.processHtml( new ProcessHtmlParams().imageBaseUrl( "/images" )
+                    .value( "<a href=\"image://" + media.getId() + "?style=myapp%3Acard\">Image</a>" ) ) );
+        assertThat( rendered ).startsWith( "<a href=\"/images/media:image/context-project:draft/" )
+            .contains( "/width-768~myapp:card/" );
+    }
+
+    @Test
+    void qualifiedStyleDoesNotFallBackToRawParametersOrAnUnstyledImage()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        for ( String parameter : List.of( "scale=1:1", "filter=grayscale", "quality=70", "background=ffffff", "format=webp" ) )
+        {
+            final String saved = "<img src=\"image://" + media.getId() + "?style=myapp:card&amp;" + parameter + "\">";
+            assertThrows( IllegalArgumentException.class,
+                () -> service.processHtml( new ProcessHtmlParams().value( saved ) ) );
+        }
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "myapp:missing" ) ) ).thenThrow(
+            new ImageStyleNotFoundException( "myapp:missing" ) );
+        final String rendered = service.processHtml( new ProcessHtmlParams()
+            .value( "<img src=\"image://" + media.getId() + "?style=myapp:missing\">" ) );
+        assertThat( rendered ).startsWith( "<img src=\"/_/error/404?" ).doesNotContain( "/width-" );
     }
 
     @Test
@@ -743,11 +812,11 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
-                media.getId() + ":0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" " +
+                media.getId() + ":ba83f5a940b441c7e1567690439fff2ae698841d/width-768/mycontent\" " +
                 "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-                ":0a350f43700951cdcca1574f448a7e22/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
+                ":55e2830fa4c4e4404e4f2f688441881ecdc49b3f/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
+                ":63a15a22aa9e5be6feeda38dc5e80f668907bb52/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
     }
 
@@ -769,11 +838,11 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<figure class=\"editor-align-justify\">" + "<img alt=\"Alt text\" src=\"/site/myproject/draft/_/media:image/myproject:draft/" +
-                media.getId() + ":0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" " +
+                media.getId() + ":ba83f5a940b441c7e1567690439fff2ae698841d/width-768/mycontent\" " +
                 "srcset=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
-                ":0a350f43700951cdcca1574f448a7e22/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
+                ":55e2830fa4c4e4404e4f2f688441881ecdc49b3f/width-660/mycontent 660w," + "/site/myproject/draft/_/media:image/myproject:draft/" +
                 media.getId() +
-                ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
+                ":63a15a22aa9e5be6feeda38dc5e80f668907bb52/width-1024/mycontent 1024w\" sizes=\"(max-width: 960px) 660px\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
     }
 
@@ -952,7 +1021,7 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedLink = this.service.processHtml( params );
 
         final String expectedResult =
-            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
+            "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":98d037836aa60cd3b98af4eb1e82c011516eb0d3/" +
                 "block-768-384" + "/" + media.getName() + "?filter=myfilter\" data-image-ref=\"imageRef\">";
 
         assertEquals( expectedResult, processedLink );

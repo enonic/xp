@@ -4,14 +4,47 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ReadImageParamsTest
 {
+    @Test
+    void defaultsDoNotBecomeExplicitOverridesWhenBuilderIsReused()
+    {
+        final ReadImageParams.Builder builder = ReadImageParams.newImageParams()
+            .contentId( ContentId.from( "contentid" ) ).binaryReference( BinaryReference.from( "source" ) ).mimeType( "image/png" );
+        assertNull( builder.quality );
+        final ReadImageParams unstyled = builder.build();
+        assertEquals( 0, unstyled.getQuality() );
+        assertEquals( 0xFFFFFF, unstyled.getBackgroundColor() );
+        assertNull( builder.quality );
+        final ImageStyle style = ImageStyle.create().name( "card" ).build();
+        assertSame( style, builder.style( style ).build().getStyle() );
+    }
+
+    @Test
+    void explicitDefaultsConflictWithStyleIncludingDirectQualityAssignment()
+    {
+        final ReadImageParams.Builder builder = ReadImageParams.newImageParams()
+            .contentId( ContentId.from( "contentid" ) ).binaryReference( BinaryReference.from( "source" ) ).mimeType( "image/png" )
+            .style( ImageStyle.create().name( "card" ).build() );
+        builder.quality = 0;
+        assertThrows( IllegalArgumentException.class, builder::build );
+        builder.quality = null;
+        builder.quality( 0 );
+        assertThrows( IllegalArgumentException.class, builder::build );
+        builder.quality = null;
+        builder.backgroundColor( 0xFFFFFF );
+        assertThrows( IllegalArgumentException.class, builder::build );
+    }
+
     @Test
     void test()
     {

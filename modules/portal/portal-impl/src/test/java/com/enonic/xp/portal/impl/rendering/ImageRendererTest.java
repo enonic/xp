@@ -59,8 +59,12 @@ class ImageRendererTest
     @Test
     void imageComponentWithImage()
     {
-        String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" alt=\"logo.png\"/><figcaption>Image Title</figcaption></figure>";
+        String expected = """
+            <figure data-portal-component-type="image">\
+            <img style="width: 100%" src="/site/myproject/draft/_/media:image/myproject:draft/\
+            123456:ba83f5a940b441c7e1567690439fff2ae698841d/width-768/mycontent" alt="logo.png"/>\
+            <figcaption>Image Title</figcaption></figure>\
+            """;
 
         testImageComponentWithImage( createContent(), expected );
     }
@@ -71,8 +75,12 @@ class ImageRendererTest
         final Content content = createContent();
         content.getData().setString( "altText", "alternative" );
 
-        String expected =
-            "<figure data-portal-component-type=\"image\"><img style=\"width: 100%\" src=\"/site/myproject/draft/_/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/width-768/mycontent\" alt=\"alternative\"/><figcaption>Image Title</figcaption></figure>";
+        String expected = """
+            <figure data-portal-component-type="image">\
+            <img style="width: 100%" src="/site/myproject/draft/_/media:image/myproject:draft/\
+            123456:ba83f5a940b441c7e1567690439fff2ae698841d/width-768/mycontent" alt="alternative"/>\
+            <figcaption>Image Title</figcaption></figure>\
+            """;
 
         testImageComponentWithImage( content, expected );
     }

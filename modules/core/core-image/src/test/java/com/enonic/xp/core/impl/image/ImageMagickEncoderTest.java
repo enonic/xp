@@ -1,0 +1,163 @@
+package com.enonic.xp.core.impl.image;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Set;
+
+import javax.imageio.ImageIO;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import com.google.common.io.ByteSource;
+
+import com.enonic.xp.core.impl.image.im.ImageMagickFixture;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
+class ImageMagickEncoderTest extends ImageMagickTestSupport
+{
+    @TempDir
+    Path temporaryFolder;
+
+    @ParameterizedTest
+    @ValueSource(ints = {BufferedImage.TYPE_INT_ARGB, BufferedImage.TYPE_INT_ARGB_PRE,
+        BufferedImage.TYPE_4BYTE_ABGR_PRE, BufferedImage.TYPE_3BYTE_BGR, BufferedImage.TYPE_BYTE_GRAY})
+    void rawJavaAndNativeBoundariesPreservePixels( final int type ) throws Exception
+    {
+        final BufferedImage source = new BufferedImage( 3, 1, type );
+        source.setRGB( 0, 0, 0xff123456 );
+        source.setRGB( 1, 0, 0x804080c0 );
+        source.setRGB( 2, 0, 0x20102030 );
+        final int[] expected = source.getRGB( 0, 0, 3, 1, null, 0, 3 );
+        final var bytes = new ByteArrayOutputStream();
+        new ImageMagickEncoder( imageMagick, 30, temporaryFolder, MAX_DISK_BYTES ).write( source, "png", 85, bytes );
+        final BufferedImage imageIo = ImageIO.read( new ByteArrayInputStream( bytes.toByteArray() ) );
+        assertArrayEquals( expected, imageIo.getRGB( 0, 0, 3, 1, null, 0, 3 ) );
+        final var decoder = new ImageMagickDecoder( imageMagick, temporaryFolder, 30, 100, 100000, MAX_DISK_BYTES );
+        try (var decoded = decoder.open( ByteSource.wrap( bytes.toByteArray() ) ))
+        {
+            assertArrayEquals( expected, decoded.read().getRGB( 0, 0, 3, 1, null, 0, 3 ) );
+        }
+        assertEmpty( temporaryFolder );
+    }
+
+    @Test
+    void disabledAndInvalidParametersDoNotCreateFiles()
+        throws Exception
+    {
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( null, 1, temporaryFolder, MAX_DISK_BYTES );
+        assertThrows( IllegalArgumentException.class, () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
+        final ImageMagickEncoder enabled = new ImageMagickEncoder( external( "/nonexistent" ), 1, temporaryFolder, MAX_DISK_BYTES );
+        assertThrows( IllegalArgumentException.class, () -> enabled.write( image(), "png:/tmp/escape", 80, new ByteArrayOutputStream() ) );
+        assertThrows( IllegalArgumentException.class, () -> enabled.write( image(), "webp", 101, new ByteArrayOutputStream() ) );
+        assertEmpty( temporaryFolder );
+    }
+
+    @Test
+    void missingExecutableCleansUp()
+        throws Exception
+    {
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( external( temporaryFolder.resolve( "missing" ).toString() ), 1, temporaryFolder, MAX_DISK_BYTES );
+        assertThrows( IOException.class, () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
+        assertEmpty( temporaryFolder );
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    void failedProcessCleansUp()
+        throws Exception
+    {
+        final Path executable = script( "exit 7" );
+        final Path work = temporaryFolder.resolve( "work" );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( external( executable.toString() ), 1, work, MAX_DISK_BYTES );
+        final IOException error = assertThrows( IOException.class,
+            () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
+        assertTrue( error.getMessage().contains( "exit 7" ) );
+        assertEmpty( work );
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    void timeoutKillsProcessAndCleansUp()
+        throws Exception
+    {
+        final Path pidFile = temporaryFolder.resolve( "pid" );
+        final Path executable = script( """
+            echo $$ > '%s'
+            exec sleep 30\
+            """.formatted( pidFile ) );
+        final Path work = temporaryFolder.resolve( "work" );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( external( executable.toString() ), 1, work, MAX_DISK_BYTES );
+        assertTimeout( Duration.ofSeconds( 10 ), () -> {
+            final IOException error = assertThrows( IOException.class,
+                () -> encoder.write( image(), "webp", 80, new ByteArrayOutputStream() ) );
+            assertTrue( error.getMessage().contains( "exceeded" ) );
+        } );
+        final long pid = Long.parseLong( Files.readString( pidFile ).trim() );
+        assertTrue( ProcessHandle.of( pid ).isEmpty() || !ProcessHandle.of( pid ).orElseThrow().isAlive() );
+        assertEmpty( work );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    @EnabledOnOs({OS.LINUX, OS.WINDOWS, OS.MAC})
+    void nativeEncoderProducesRequestedFormat( final String format )
+        throws Exception
+    {
+        final String platform = ImageMagickFixture.platform();
+        assumeTrue( Set.of( "linux-x86_64", "linux-aarch64", "osx-aarch64", "windows-x86_64", "windows-aarch64" ).contains( platform ) );
+        final ImageMagickEncoder encoder = new ImageMagickEncoder( imageMagick, 30, temporaryFolder, MAX_DISK_BYTES );
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        encoder.write( image(), format, 80, output );
+        final byte[] bytes = output.toByteArray();
+        assertTrue( bytes.length > 12 );
+        assertEquals( "webp".equals( format ) ? "RIFF" : "ftyp",
+                      new String( bytes, "webp".equals( format ) ? 0 : 4, 4, StandardCharsets.US_ASCII ) );
+        assertEquals( "webp".equals( format ) ? "WEBP" : "avif", new String( bytes, 8, 4, StandardCharsets.US_ASCII ) );
+        assertEmpty( temporaryFolder );
+    }
+
+    private Path script( final String command )
+        throws IOException
+    {
+        final Path path = temporaryFolder.resolve( "encoder" );
+        Files.writeString( path, """
+            #!/bin/sh
+            %s
+            """.formatted( command ) );
+        assertTrue( path.toFile().setExecutable( true, true ) );
+        return path;
+    }
+
+    private static BufferedImage image()
+    {
+        final BufferedImage image = new BufferedImage( 8, 8, BufferedImage.TYPE_INT_ARGB );
+        image.setRGB( 4, 4, 0xffff0000 );
+        return image;
+    }
+
+    private static void assertEmpty( final Path folder )
+        throws IOException
+    {
+        try (var files = Files.list( folder ))
+        {
+            assertEquals( 0, files.count() );
+        }
+    }
+}

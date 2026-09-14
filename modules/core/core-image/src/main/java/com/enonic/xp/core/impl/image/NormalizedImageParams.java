@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.image;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.core.impl.image.parser.FilterSetExpr;
 import com.enonic.xp.image.Cropping;
@@ -7,12 +10,15 @@ import com.enonic.xp.image.FocalPoint;
 import com.enonic.xp.image.ReadImageParams;
 import com.enonic.xp.image.ScaleParams;
 import com.enonic.xp.media.ImageOrientation;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
 import com.enonic.xp.util.BinaryReference;
 
 /**
  * NormalizedImageParams normalizes {@link ReadImageParams} fields
  * It helps to generate fewer image cache files in {@link ImageServiceImpl}
  */
+@NullMarked
 class NormalizedImageParams
 {
     private final ContentId contentId;
@@ -35,19 +41,21 @@ class NormalizedImageParams
 
     private final ImageOrientation orientation;
 
-    private final String attachmentSha512;
+    private final @Nullable String attachmentSha512;
 
-    NormalizedImageParams( ReadImageParams readImageParams )
+    NormalizedImageParams( final ReadImageParams readImageParams )
     {
+        final ImageStyle style = readImageParams.getStyle();
+        final ImageStyleSettings settings = style == null ? null : ImageStyleSettings.from( style );
         this.contentId = readImageParams.getContentId();
         this.binaryReference = readImageParams.getBinaryReference();
         this.cropping = normalizeCropping( readImageParams.getCropping() );
-        this.scaleParams = normalizeScaleParams( readImageParams );
+        this.scaleParams = normalizeScaleParams( readImageParams ).withAspectRatio( settings == null ? null : settings.aspectRatio() );
         this.focalPoint = readImageParams.getFocalPoint();
-        this.filterParam = FilterSetExpr.parse( readImageParams.getFilterParam() );
+        this.filterParam = FilterSetExpr.parse( settings == null ? readImageParams.getFilterParam() : settings.filter() );
         this.format = normalizeFormat( readImageParams );
-        this.backgroundColor = normalizeBackgroundColor( this.format, readImageParams );
-        this.quality = readImageParams.getQuality();
+        this.backgroundColor = supportsAlpha( format ) ? 0xFFFFFF : settings == null ? readImageParams.getBackgroundColor() : settings.background();
+        this.quality = settings == null ? readImageParams.getQuality() : settings.quality();
         this.orientation = readImageParams.getOrientation();
         this.attachmentSha512 = readImageParams.getAttachmentSha512();
     }
@@ -102,12 +110,12 @@ class NormalizedImageParams
         return orientation;
     }
 
-    public String getAttachmentSha512()
+    public @Nullable String getAttachmentSha512()
     {
         return attachmentSha512;
     }
 
-    private static Cropping normalizeCropping( final Cropping cropping )
+    private static Cropping normalizeCropping( final @Nullable Cropping cropping )
     {
         return cropping == null || cropping.isUnmodified() ? Cropping.DEFAULT : cropping;
     }
@@ -115,7 +123,7 @@ class NormalizedImageParams
     private static String normalizeFormat( final ReadImageParams readImageParams )
     {
         // Limit to web formats we support. Leave WBMP and BMP support behind.
-        // Tip: WEBP is not supported by ImageService implementation yet. Throw IllegalArgumentException here.
+        // Modern encoders must only be reached through a predefined processing style.
         final String mimeType = readImageParams.getMimeType();
 
         return switch ( mimeType )
@@ -123,6 +131,8 @@ class NormalizedImageParams
             case "image/png" -> "png";
             case "image/jpeg" -> "jpeg";
             case "image/gif" -> "gif";
+            case "image/webp" -> "webp";
+            case "image/avif" -> "avif";
             default -> throw new IllegalArgumentException( "Unsupported type " + mimeType );
         };
     }
@@ -172,10 +182,8 @@ class NormalizedImageParams
         }
     }
 
-    private static int normalizeBackgroundColor( final String format, final ReadImageParams readImageParams )
+    static boolean supportsAlpha( final String format )
     {
-        // For output format different from png there is no point to have background color, because it is not used.
-        // But historically most often value is 0xFFFFFF, as it is a default in Web Image Service.
-        return "png".equals( format ) ? 0xFFFFFF : readImageParams.getBackgroundColor();
+        return "png".equals( format ) || "webp".equals( format ) || "avif".equals( format );
     }
 }

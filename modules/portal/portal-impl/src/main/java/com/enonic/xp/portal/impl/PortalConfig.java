@@ -12,6 +12,8 @@ public @interface PortalConfig
 
     String media_contentSecurityPolicy_svg() default "default-src 'none'; base-uri 'none'; form-action 'none'; style-src 'self' 'unsafe-inline'";
 
+    boolean image_allowHashlessGeneration() default false;
+
     String media_defaultBaseUrl() default "";
 
     boolean legacy_mediaApiAutoMount_enabled() default true;

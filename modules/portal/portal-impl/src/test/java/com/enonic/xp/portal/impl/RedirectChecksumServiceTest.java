@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,14 +25,19 @@ class RedirectChecksumServiceTest
     @Mock
     private NodeService nodeService;
 
-    @InjectMocks
     private RedirectChecksumService redirectChecksumService;
+
+    @BeforeEach
+    void setup()
+    {
+        redirectChecksumService = new RedirectChecksumService( new HmacService( nodeService ) );
+    }
 
     @Test
     void generateChecksum_returnsExpectedChecksum()
     {
         String redirect = "https://example.com/";
-        String expectedChecksum = "cc0fe2d62c8dccdf75b8d07393ecec2b5f8e70e3";
+        String expectedChecksum = "21b0f177dbf5014444db8df4b0687b8fbc5f36ec";
 
         when( nodeService.getByPath( GENERIC_KEY_PATH ) ).thenReturn( genericKeyNode() );
 
@@ -46,7 +51,7 @@ class RedirectChecksumServiceTest
     void verifyChecksum_returnsTrueWhenChecksumIsValid()
     {
         String redirect = "https://example.com/";
-        String validChecksum = "cc0fe2d62c8dccdf75b8d07393ecec2b5f8e70e3";
+        String validChecksum = "21b0f177dbf5014444db8df4b0687b8fbc5f36ec";
 
         when( nodeService.getByPath( GENERIC_KEY_PATH ) ).thenReturn( genericKeyNode() );
 
@@ -66,6 +71,16 @@ class RedirectChecksumServiceTest
         boolean result = redirectChecksumService.verifyChecksum( redirect, invalidChecksum );
 
         assertFalse( result );
+    }
+
+    @Test
+    void rejectsGenericAndImageKeyChecksums()
+    {
+        when( nodeService.getByPath( GENERIC_KEY_PATH ) ).thenReturn( genericKeyNode() );
+        final HmacService hmac = HmacTestHelper.createHmacService();
+        final String redirect = "https://example.com/";
+        assertFalse( redirectChecksumService.verifyChecksum( redirect, hmac.generateChecksum( redirect ) ) );
+        assertFalse( redirectChecksumService.verifyChecksum( redirect, hmac.generateChecksum( "image-fingerprint-v3", redirect ) ) );
     }
 
     private Node genericKeyNode()

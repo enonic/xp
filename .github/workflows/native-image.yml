@@ -1,0 +1,46 @@
+name: Embedded ImageMagick
+
+on:
+  push:
+    paths:
+      - 'buildSrc/**'
+      - 'modules/core/core-image/**'
+      - 'modules/core/core-image-im/**'
+      - 'modules/core/core-internal/src/main/java/com/enonic/xp/core/internal/image/**'
+      - 'modules/core/core-api/src/main/java/com/enonic/xp/style/**'
+      - 'modules/core/core-content/src/main/java/com/enonic/xp/core/impl/style/**'
+      - 'modules/core/core-content/src/test/java/com/enonic/xp/core/impl/style/**'
+      - 'modules/portal/**'
+      - 'gradle/libs.versions.toml'
+      - '.github/workflows/native-image.yml'
+
+jobs:
+  native:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm, macos-14, windows-latest]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          distribution: graalvm-community
+          java-version: 25
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Install native packaging tools
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y 7zip zstd
+      - name: Install macOS packaging tools
+        if: runner.os == 'macOS'
+        run: brew install sevenzip dwarfs
+      - name: Test bundled codecs and OSGi lifecycle
+        run: ./gradlew :core:core-image:test --tests '*ImageMagickEncoderTest' --tests '*ImageMagickDecoderTest' --tests '*ImageMagickTransformerTest' --tests '*ImageProcessingGateTest' --tests '*PreparedImageSourceTest' --tests '*ImageGeometryTest' --tests '*NormalizedImageParamsTest' --tests '*NativeImageRasterTest' --tests '*NativeImageProcessTest' :core:core-image-im:test
+      - name: Test native packaging checks
+        run: ./gradlew -p buildSrc test
+      - name: Test style enforcement, fingerprints, and resource limits
+        if: runner.os != 'Windows'
+        run: ./gradlew :core:core-image:test :portal:portal-impl:test --tests '*PortalUrlGeneratorServiceImplTest' --tests '*PortalUrlServiceImpl_imageUrlTest' --tests '*ImageRendererTest' --tests '*PortalUrlServiceImpl_processHtmlTest' --tests '*ImageMediaHandlerTest' --tests '*ImageHandlerTest' --tests '*HmacServiceTest' --tests '*RedirectChecksumServiceTest' --tests '*MediaHashResolverTest' :core:core-content:test --tests '*StyleDescriptorServiceImplTest' --tests '*YmlStyleDescriptorParserTest' --tests '*HtmlAreaContentProcessorTest' :lib:lib-portal:test --tests '*UrlServiceScriptTest'
+      - name: Validate public image API Javadoc
+        if: matrix.runner == 'ubuntu-latest'
+        run: ./gradlew :core:core-api:test --tests '*ReadImageParamsTest' :core:core-api:javadoc :portal:portal-api:javadoc

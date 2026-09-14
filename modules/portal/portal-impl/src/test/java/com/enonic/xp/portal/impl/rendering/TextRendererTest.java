@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
@@ -16,6 +17,8 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.url.PortalUrlServiceImpl;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.region.TextComponent;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleNotFoundException;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -198,6 +201,12 @@ class TextRendererTest
     private static class MockStyleDescriptorService
         implements StyleDescriptorService
     {
+        @Override
+        public ImageStyle getImageStyle( final DescriptorKey key )
+        {
+            throw new ImageStyleNotFoundException( key.toString() );
+        }
+
         @Override
         public StyleDescriptor getByApplication( final ApplicationKey key )
         {

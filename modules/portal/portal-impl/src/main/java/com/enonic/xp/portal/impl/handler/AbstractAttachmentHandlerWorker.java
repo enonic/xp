@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.Set;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
@@ -14,6 +15,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
@@ -27,7 +29,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 {
-    private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
+    protected static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
     protected ContentService contentService;
 
@@ -65,7 +67,6 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         final T content = cast( getContent( this.id ) );
         final Attachment attachment = resolveAttachment( content, this.name );
         final BinaryReference binaryReference = attachment.getBinaryReference();
-        final ByteSource binary = getBinary( this.id, binaryReference );
 
         final boolean isSvgz = "svgz".equals( attachment.getExtension() );
 
@@ -73,16 +74,15 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) || attachmentMimeType.is( MediaType.WEBP ) ||
-            attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        if ( shouldBypassTransformation( attachmentMimeType ) )
         {
             contentType = attachmentMimeType;
-            body = binary;
+            body = getBinary( this.id, binaryReference );
         }
         else
         {
-            contentType = shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
-            body = transform( content, binaryReference, binary, contentType );
+            contentType = resolveContentType( content, attachmentMimeType );
+            body = transform( content, binaryReference, contentType );
         }
 
         final PortalResponse.Builder portalResponse = PortalResponse.create();
@@ -105,9 +105,12 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
-            final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-                ContentConstants.BRANCH_MASTER.equals( branch );
-            final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
+            // An unrecognized parameter changes no byte of the response but does add a shared-cache
+            // key, so an arbitrary number of them would each be stored separately and immutably.
+            final boolean sharedCacheable = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
+                ContentConstants.BRANCH_MASTER.equals( branch ) &&
+                recognizedParameters().containsAll( request.getParams().keySet() );
+            final String cacheControlHeaderConfig = sharedCacheable ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
             if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() )
             {
@@ -117,7 +120,7 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
                 {
                     portalResponse.header( HttpHeaders.CACHE_CONTROL, privateCacheControlHeaderConfig );
                 }
-                if ( this.fingerprint.equals( hash ) )
+                if ( MediaHashResolver.matchesFingerprint( hash, this.fingerprint ) )
                 {
                     portalResponse.header( HttpHeaders.CACHE_CONTROL, cacheControlHeaderConfig );
                 }
@@ -136,11 +139,32 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         return portalResponse.build();
     }
 
-    protected ByteSource transform( final T content, final BinaryReference binaryReference, final ByteSource binary,
-                                    final MediaType contentType )
+    protected ByteSource transform( final T content, final BinaryReference binaryReference, final MediaType contentType )
         throws IOException
     {
-        return binary;
+        return getBinary( content.getId(), binaryReference );
+    }
+
+    /**
+     * Returns the query parameters this endpoint acts on. Any other parameter leaves the response
+     * unchanged, so the response is withheld from shared caches rather than stored under its key.
+     *
+     * @return the recognized parameter names
+     */
+    protected Set<String> recognizedParameters()
+    {
+        return Set.of();
+    }
+
+    protected boolean shouldBypassTransformation( final MediaType attachmentMimeType )
+    {
+        return attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) ||
+            attachmentMimeType.is( MediaType.WEBP ) || attachmentMimeType.is( SVG_MEDIA_TYPE );
+    }
+
+    protected MediaType resolveContentType( final T content, final MediaType attachmentMimeType )
+    {
+        return shouldConvert( content, this.name ) ? MediaTypes.instance().fromFile( this.name ) : attachmentMimeType;
     }
 
     protected abstract String resolveHash( T content, Attachment attachment, BinaryReference binaryReference );

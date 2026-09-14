@@ -1,20 +1,35 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.io.Files;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.portal.impl.MediaHashResolver;
+import com.enonic.xp.portal.impl.HmacService;
+import com.enonic.xp.image.ScaleParams;
+import com.enonic.xp.image.ScaleParamsParser;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.style.ImageStyle;
+import com.enonic.xp.style.ImageStyleSettings;
+import com.enonic.xp.util.MediaTypes;
 
 import static com.enonic.xp.portal.impl.url.UrlBuilderHelper.appendPart;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
+@NullMarked
 final class ImageMediaPathSupplier
     implements Supplier<String>
 {
@@ -26,7 +41,15 @@ final class ImageMediaPathSupplier
 
     private final String scale;
 
-    private final String format;
+    private final @Nullable String format;
+
+    private final Map<String, List<String>> queryParams;
+
+    private final Supplier<@Nullable ImageStyle> styleSupplier;
+
+    private final @Nullable String styleKey;
+
+    private final HmacService hmacService;
 
     private ImageMediaPathSupplier( final Builder builder )
     {
@@ -35,6 +58,10 @@ final class ImageMediaPathSupplier
         this.projectNameSupplier = builder.projectNameSupplier;
         this.branchSupplier = builder.branchSupplier;
         this.format = builder.format;
+        this.queryParams = builder.queryParams;
+        this.styleSupplier = builder.styleSupplier;
+        this.styleKey = builder.styleKey;
+        this.hmacService = builder.hmacService;
     }
 
     public static Builder create()
@@ -65,11 +92,35 @@ final class ImageMediaPathSupplier
 
         final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 
-        return new MediaPathParts( context, media.getId().toString(), MediaHashResolver.resolveImageHash( media ),
-                                        resolveScale( scale ), resolveName( media, format ) );
+        final ImageStyle style = styleSupplier.get();
+        final String resolvedScale = resolveScale( scale );
+        final ScaleParams scaleParams = new ScaleParamsParser().parse( resolvedScale );
+        if ( style != null )
+        {
+            requireNonNull( scaleParams, "Image scale is required" ).withAspectRatio( style.getAspectRatio() );
+        }
+        final String name = resolveName( media, format );
+        final String mimeType = name.equals( media.getName().toString() ) ?
+            MediaType.parse( media.getAttachments().byLabel( "source" ).getMimeType() ).toString() :
+            ( "webp".equalsIgnoreCase( format ) || "avif".equalsIgnoreCase( format ) ) ?
+                "image/" + format.toLowerCase( Locale.ROOT ) : MediaTypes.instance().fromFile( name ).toString();
+        final ImageStyleSettings settings = style == null ? new ImageStyleSettings( null, parameter( "filter", null ),
+            Integer.parseInt( parameter( "quality", "85" ) ),
+            Integer.parseInt( parameter( "background", "ffffff" ).replaceFirst( "^0x", "" ), 16 ) ) : ImageStyleSettings.from( style );
+        return new MediaPathParts( context, media.getId().toString(),
+                                   MediaHashResolver.resolveImageFingerprint( MediaHashResolver.resolveImageHash( media ), settings, scaleParams,
+                                       mimeType, hmacService ),
+                                   styleKey == null ? resolvedScale : resolvedScale + "~" + DescriptorKey.from( styleKey ),
+                                   name );
     }
 
-    private String resolveName( final Content media, final String format )
+    private @Nullable String parameter( final String name, final @Nullable String fallback )
+    {
+        final List<String> values = queryParams.get( name );
+        return values == null || values.isEmpty() || values.getFirst().isEmpty() ? fallback : values.getFirst();
+    }
+
+    private String resolveName( final Content media, final @Nullable String format )
     {
         final String name = media.getName().toString();
 
@@ -86,20 +137,45 @@ final class ImageMediaPathSupplier
 
     private String resolveScale( final String scale )
     {
+        if ( scale.indexOf( '~' ) >= 0 )
+        {
+            throw new IllegalArgumentException( "Specify image style separately from scale" );
+        }
         return scale.replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" );
     }
 
     static class Builder
     {
-        private Supplier<Media> mediaSupplier;
+        private @Nullable Supplier<Media> mediaSupplier;
 
-        private Supplier<ProjectName> projectNameSupplier;
+        private @Nullable Supplier<ProjectName> projectNameSupplier;
 
-        private Supplier<Branch> branchSupplier;
+        private @Nullable Supplier<Branch> branchSupplier;
 
-        private String scale;
+        private @Nullable String scale;
 
-        private String format;
+        private @Nullable String format;
+
+        private Map<String, List<String>> queryParams = Map.of();
+
+        private Supplier<@Nullable ImageStyle> styleSupplier = () -> null;
+
+        private @Nullable String styleKey;
+
+        private @Nullable HmacService hmacService;
+
+        public Builder setHmacService( final HmacService hmacService )
+        {
+            this.hmacService = hmacService;
+            return this;
+        }
+
+        public Builder setStyle( final @Nullable String styleKey, final Supplier<@Nullable ImageStyle> styleSupplier )
+        {
+            this.styleSupplier = styleSupplier;
+            this.styleKey = styleKey;
+            return this;
+        }
 
         public Builder setMedia( final Supplier<Media> mediaSupplier )
         {
@@ -125,7 +201,13 @@ final class ImageMediaPathSupplier
             return this;
         }
 
-        public Builder setFormat( final String format )
+        public Builder setQueryParams( final Map<String, List<String>> queryParams )
+        {
+            this.queryParams = queryParams;
+            return this;
+        }
+
+        public Builder setFormat( final @Nullable String format )
         {
             this.format = format;
             return this;

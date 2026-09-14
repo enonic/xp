@@ -61,9 +61,14 @@ public final class ContentFixtures
 
     public static Media newMedia()
     {
+        return newMedia( "logo.png", "image/png" );
+    }
+
+    public static Media newMedia( final String attachmentName, final String mimeType )
+    {
         final Attachment attachment = Attachment.create()
-            .name( "logo.png" )
-            .mimeType( "image/png" )
+            .name( attachmentName )
+            .mimeType( mimeType )
             .label( "source" )
             .sha512( "ec25d6e4126c7064f82aaab8b34693fc" )
             .build();

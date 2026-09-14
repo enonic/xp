@@ -6,4 +6,6 @@ public interface ImageScaleFunction
     extends ImageFunction
 {
     int estimateResolution( int sourceWidth, int sourceHeight );
+
+    ScaleCalculator.Values calculate( int sourceWidth, int sourceHeight );
 }

@@ -1,5 +1,6 @@
 dependencies {
     api libs.osgi.core
+    api libs.jspecify
     api libs.jackson.databind
     compileOnlyApi libs.osgi.service.componentannotations
     implementation libs.jsoup
