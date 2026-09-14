@@ -10,6 +10,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.enonic.xp.core.impl.export.writer.ZipExportWriter;
 import com.enonic.xp.vfs.VirtualFile;
+import com.enonic.xp.vfs.VirtualFilePaths;
 import com.enonic.xp.vfs.VirtualFiles;
 
 import static java.nio.file.Files.createDirectories;
@@ -18,6 +19,8 @@ import static java.nio.file.Files.writeString;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ExportReaderTest
 {
@@ -64,5 +67,30 @@ class ExportReaderTest
 
         assertEquals( 1, children.size() );
         assertTrue( children.stream().anyMatch( child -> "mynode".equals( child.getName() ) ) );
+    }
+
+    @Test
+    void testGetChildrenFiltersSystemFolderWhenNameHasTrailingSlash()
+    {
+        // Emulates VirtualFile implementations (e.g. bundle resources) where folder paths end with "/"
+        // and getName() may not return the last path element
+        final VirtualFile systemFolder = folderWithBrokenName( "/import/features/_/" );
+        final VirtualFile contentFolder = folderWithBrokenName( "/import/features/child/" );
+
+        final VirtualFile parent = mock( VirtualFile.class );
+        when( parent.getChildren() ).thenReturn( List.of( systemFolder, contentFolder ) );
+
+        final List<VirtualFile> children = new ExportReader().getChildren( parent ).collect( Collectors.toList() );
+
+        assertEquals( List.of( contentFolder ), children );
+    }
+
+    private static VirtualFile folderWithBrokenName( final String path )
+    {
+        final VirtualFile folder = mock( VirtualFile.class );
+        when( folder.isFolder() ).thenReturn( true );
+        when( folder.getName() ).thenReturn( "" );
+        when( folder.getPath() ).thenReturn( VirtualFilePaths.from( path, "/" ) );
+        return folder;
     }
 }
