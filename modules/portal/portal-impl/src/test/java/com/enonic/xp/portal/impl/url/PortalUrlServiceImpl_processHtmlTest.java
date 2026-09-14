@@ -450,6 +450,22 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
+    void processHtml_responsiveWidthsAreOmittedForSourcesWithoutRasterRendition()
+    {
+        final Media media = ContentFixtures.newMedia( "logo.gif", "image/gif" );
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams().value(
+            "<img alt=\"Alt text\" src=\"image://" + media.getId() + "\"/>" ).imageWidths( List.of( 660, 1024 ) ).imageSizes( "100vw" );
+
+        final String processedHtml = this.service.processHtml( params );
+
+        assertThat( processedHtml ).contains( "/_/media:attachment/myproject:draft/" + media.getId() )
+            .doesNotContain( "srcset" )
+            .doesNotContain( "sizes" );
+    }
+
+    @Test
     void process_single_content()
     {
         //Creates a content

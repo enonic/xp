@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.attachment.Attachment;
@@ -169,14 +173,60 @@ class PortalUrlGeneratorServiceImplTest
         }
     }
 
-    @Test
-    void modernFormatRequiresStyleWhenGeneratingUrl()
+
+    @ParameterizedTest
+    @ValueSource(strings = {"image/gif", "image/svg+xml"})
+    void imageUrlParts_sourceWithoutRasterRenditionUsesAttachmentEndpoint( final String mimeType )
     {
-        for ( String format : new String[]{"webp", "avif", "WEBP", "AVIF"} )
-        {
-            assertThrows( IllegalArgumentException.class,
-                () -> styleUrlParams().setStyle( null ).setScale( "max(100)" ).setFormat( format ).build() );
-        }
+        final Media media = mockMediaOfType( "123456", "mycontent.gif", mimeType );
+
+        final ImageUrlParts parts = this.service.imageUrlParts( ImageUrlGeneratorParams.create()
+                                                                    .setMedia( () -> media )
+                                                                    .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                    .setBranch( () -> Branch.from( "master" ) )
+                                                                    .setScale( "square(128)" )
+                                                                    .build() );
+
+        assertThat( parts.path() ).startsWith( "/media:attachment/myproject/123456:" ).endsWith( "/mycontent.gif" );
+        assertNull( parts.scale() );
+    }
+
+    @Test
+    void imageUrlParts_resolvesTheSourceOnlyOnce()
+    {
+        final AtomicInteger resolutions = new AtomicInteger();
+
+        this.service.imageUrlParts( ImageUrlGeneratorParams.create()
+                                        .setMedia( () -> {
+                                            resolutions.incrementAndGet();
+                                            return mockMedia( "123456", "mycontent.png" );
+                                        } )
+                                        .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                        .setBranch( () -> Branch.from( "draft" ) )
+                                        .setScale( "max(300)" )
+                                        .build() );
+
+        assertEquals( 1, resolutions.get() );
+    }
+
+    @Test
+    void imageUrlParts_styledSourceWithoutRasterRenditionKeepsImageEndpoint()
+    {
+        when( styleDescriptorService.getImageStyle( DescriptorKey.from( "app:card" ) ) ).thenReturn(
+            ImageStyle.create().name( "card" ).build() );
+        final Media media = mockMediaOfType( "123456", "mycontent.gif", "image/gif" );
+
+        final ImageUrlParts parts = this.service.imageUrlParts( ImageUrlGeneratorParams.create()
+                                                                    .setMedia( () -> media )
+                                                                    .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                    .setBranch( () -> Branch.from( "master" ) )
+                                                                    .setStyle( "app:card" )
+                                                                    .setScale( "square(128)" )
+                                                                    .setFormat( "webp" )
+                                                                    .build() );
+
+        assertThat( parts.path() ).startsWith( "/media:image/myproject/123456:" );
+        assertEquals( "square-128~app:card", parts.scale() );
     }
 
     private ImageUrlGeneratorParams.Builder styleUrlParams()
@@ -185,6 +235,59 @@ class PortalUrlGeneratorServiceImplTest
             .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> Branch.from( "draft" ) ).setStyle( "app:card" ).setScale( "width(640)" ).setFormat( "webp" );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"image/gif", "image/svg+xml"})
+    void imageUrl_sourceWithoutRasterRenditionUsesAttachmentEndpoint( final String mimeType )
+    {
+        final Media media = mockMediaOfType( "123456", "mycontent.gif", mimeType );
+
+        final String url = this.service.imageUrl( ImageUrlGeneratorParams.create()
+                                                      .setBaseUrl( "baseUrl" )
+                                                      .setMedia( () -> media )
+                                                      .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                      .setBranch( () -> Branch.from( "draft" ) )
+                                                      .setScale( "square(128)" )
+                                                      .build() );
+
+        assertEquals( "baseUrl/_/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.gif", url );
+    }
+
+    @Test
+    void imageUrl_resolvesTheSourceOnlyOnce()
+    {
+        final AtomicInteger resolutions = new AtomicInteger();
+
+        this.service.imageUrl( ImageUrlGeneratorParams.create()
+                                   .setBaseUrl( "baseUrl" )
+                                   .setMedia( () -> {
+                                       resolutions.incrementAndGet();
+                                       return mockMedia( "123456", "mycontent.png" );
+                                   } )
+                                   .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                   .setBranch( () -> Branch.from( "draft" ) )
+                                   .setScale( "max(300)" )
+                                   .build() );
+
+        assertEquals( 1, resolutions.get() );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void imageUrl_unstyledModernFormatIsSigned( final String format )
+    {
+        final String url = this.service.imageUrl( ImageUrlGeneratorParams.create()
+                                                      .setBaseUrl( "baseUrl" )
+                                                      .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
+                                                      .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                      .setBranch( () -> Branch.from( "draft" ) )
+                                                      .setScale( "max(300)" )
+                                                      .setFormat( format )
+                                                      .build() );
+
+        assertThat( url ).startsWith( "baseUrl/_/media:image/myproject:draft/123456:" )
+            .endsWith( "/max-300/mycontent.png." + format );
     }
 
     @Test
@@ -587,8 +690,13 @@ class PortalUrlGeneratorServiceImplTest
 
     private Media mockMedia( final String id, final String name )
     {
+        return mockMediaOfType( id, name, "image/png" );
+    }
+
+    private Media mockMediaOfType( final String id, final String name, final String mimeType )
+    {
         final Attachment attachment =
-            Attachment.create().name( name ).mimeType( "image/png" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).label( "source" ).build();
+            Attachment.create().name( name ).mimeType( mimeType ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).label( "source" ).build();
 
         final Media media = mock( Media.class );
 

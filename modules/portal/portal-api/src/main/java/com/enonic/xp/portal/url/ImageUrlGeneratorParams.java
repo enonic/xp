@@ -62,10 +62,6 @@ public final class ImageUrlGeneratorParams
         this.style = emptyToNull( builder.style );
         ImageStyleSettings.checkOverrides( style != null,
             builder.quality != null || builder.filter != null || builder.background != null );
-        if ( style == null && ( "webp".equalsIgnoreCase( builder.format ) || "avif".equalsIgnoreCase( builder.format ) ) )
-        {
-            throw new IllegalArgumentException( "WebP and AVIF encoding requires a predefined image style" );
-        }
         this.scale = requireNonNull( builder.scale );
         this.background = builder.background;
         this.quality = builder.quality;

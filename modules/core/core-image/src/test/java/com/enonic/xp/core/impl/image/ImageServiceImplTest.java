@@ -527,16 +527,21 @@ class ImageServiceImplTest extends ImageMagickTestSupport
         verifyNoInteractions( contentService );
     }
 
-    @Test
-    void directModernEncodingWithoutStyleIsRejected()
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void modernEncodingWithoutStyleUsesRequestParameters( final String format )
+        throws Exception
     {
-        for ( String format : new String[]{"webp", "avif"} )
-        {
-            assertThrows( IllegalArgumentException.class, () -> imageService.readImage(
-                ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
-                    .mimeType( "image/" + format ).build() ) );
-        }
-        verifyNoInteractions( contentService );
+        mockOriginalImage( "original.png" );
+        when( imageConfig.encoding_backend() ).thenReturn( "ImageMagic" );
+        imageService = newImageService();
+
+        final ReadImageParams params = ReadImageParams.newImageParams().contentId( contentId ).binaryReference( binaryReference )
+            .attachmentSha512( HexFormat.of().formatHex( MessageDigests.sha512().digest( imageDataOriginal ) ) )
+            .mimeType( "image/" + format ).scaleParams( new ScaleParams( "square", new Object[]{10} ) ).quality( 70 ).build();
+
+        final byte[] bytes = imageService.readImage( params ).read();
+        assertEquals( "webp".equals( format ) ? "WEBP" : "avif", new String( bytes, 8, 4, StandardCharsets.US_ASCII ) );
     }
 
     @Test

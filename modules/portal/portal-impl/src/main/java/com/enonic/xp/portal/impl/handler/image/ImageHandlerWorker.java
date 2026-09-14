@@ -71,6 +71,8 @@ public final class ImageHandlerWorker
 
     private @Nullable ImageStyle style;
 
+    private boolean converting;
+
     private boolean cacheOnly;
 
     private @Nullable String currentFingerprint;
@@ -135,6 +137,12 @@ public final class ImageHandlerWorker
     }
 
     @Override
+    protected Set<String> recognizedParameters()
+    {
+        return Set.of( "filter", "quality", "background" );
+    }
+
+    @Override
     protected boolean shouldBypassTransformation( final MediaType attachmentMimeType )
     {
         if ( style != null )
@@ -142,7 +150,24 @@ public final class ImageHandlerWorker
             // The image service selects and validates the source decoder after the cache lookup.
             return false;
         }
-        return super.shouldBypassTransformation( attachmentMimeType );
+        if ( converting )
+        {
+            // A requested output format is real work whatever the source is.
+            return false;
+        }
+        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        {
+            // Animated GIF and vector SVG have no raster rendition. URL generation directs these
+            // sources to the attachment endpoint; already published image URLs keep passing through.
+            return true;
+        }
+        // A raster original passes through only when the URL requests no scaling.
+        return super.shouldBypassTransformation( attachmentMimeType ) && !isScaleRequested();
+    }
+
+    private boolean isScaleRequested()
+    {
+        return scaleParams != null && !ScaleParams.NO_SCALE.getName().equals( scaleParams.getName() );
     }
 
     @Override
@@ -166,13 +191,8 @@ public final class ImageHandlerWorker
     @Override
     protected Attachment resolveAttachment( final Content content, final String name )
     {
-        // Validate explicit output extensions before pass-through sources can bypass conversion.
-        final String extension = Files.getFileExtension( name );
-        if ( style == null && ( "webp".equalsIgnoreCase( extension ) || "avif".equalsIgnoreCase( extension ) ) &&
-            shouldConvert( content, name ) )
-        {
-            throw WebException.badRequest( "WebP and AVIF encoding requires a predefined image style" );
-        }
+        // Record the requested conversion before pass-through sources can bypass it.
+        this.converting = shouldConvert( content, name );
         final Attachment attachment = content.getAttachments().byLabel( "source" );
         if ( attachment == null )
         {

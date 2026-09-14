@@ -209,10 +209,6 @@ class ImageMediaHandlerTest
         final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
         for ( boolean styled : new boolean[]{true, false} )
         {
-            if ( !styled && ( "webp".equalsIgnoreCase( format ) || "avif".equalsIgnoreCase( format ) ) )
-            {
-                continue;
-            }
             final var builder = ImageUrlGeneratorParams.create()
                 .setMedia( () -> media ).setProjectName( () -> ProjectName.from( "myproject" ) )
                 .setBranch( () -> ContentConstants.BRANCH_MASTER ).setScale( "width(640)" ).setFormat( format );
@@ -242,7 +238,7 @@ class ImageMediaHandlerTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"gif", "webp", "avif", "svg+xml"})
+    @ValueSource(strings = {"webp", "avif"})
     void modernOriginalUrlsRemainCacheableWithoutGenerating( final String format )
         throws Exception
     {
@@ -256,10 +252,128 @@ class ImageMediaHandlerTest
             HmacTestHelper.createHmacService() );
         final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create()
             .setMedia( () -> media ).setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> ContentConstants.BRANCH_MASTER ).setScale( "width(640)" ).build() );
+            .setBranch( () -> ContentConstants.BRANCH_MASTER ).setScale( "full()" ).build() );
         request.setRawPath( "/site/myproject/master/_" + parts.path() );
         assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
         verifyNoInteractions( imageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"gif", "svg+xml"})
+    void publishedScaledUrlsForSourcesWithoutRasterRenditionStillPassThrough( final String format )
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "source" ).label( "source" ).mimeType( "image/" + format )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        final Media media = (Media) createContent( "123456", "path/to/image", attachment );
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( ByteSource.empty() );
+        request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456:" +
+                                "00000000000000000000000000000000000000ff" + "/width-640/image" );
+        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+        verifyNoInteractions( imageService );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"webp", "avif"})
+    void scaledModernSourceIsTransformedInsteadOfPassedThrough( final String sourceFormat )
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "1." + sourceFormat ).label( "source" )
+            .mimeType( "image/" + sourceFormat ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        final Media media = (Media) createContent( "123456", "path/to/1." + sourceFormat, attachment );
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) )
+            .thenReturn( ByteSource.wrap( new byte[]{2} ) );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( new byte[]{1} ) );
+
+        final var generator = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ),
+                                                                 styleDescriptorService, HmacTestHelper.createHmacService() );
+        final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create().setMedia( () -> media )
+                                                       .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                       .setBranch( () -> ContentConstants.BRANCH_MASTER )
+                                                       .setScale( "square(128)" ).build() );
+        request.setRawPath( "/site/myproject/master/_" + parts.path() );
+
+        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( "square(128)", params.getValue().getScaleParams().toString() );
+        assertFalse( params.getValue().isCacheOnly() );
+    }
+
+    @Test
+    void unstyledConversionFromSourceWithoutRasterRenditionIsNotPassedThrough()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "1.gif" ).label( "source" ).mimeType( "image/gif" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        final Media media = (Media) createContent( "123456", "path/to/1.gif", attachment );
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) )
+            .thenReturn( ByteSource.wrap( new byte[]{2} ) );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( new byte[]{1} ) );
+
+        final var generator = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ),
+                                                                 styleDescriptorService, HmacTestHelper.createHmacService() );
+        final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create().setMedia( () -> media )
+                                                       .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                       .setBranch( () -> ContentConstants.BRANCH_MASTER )
+                                                       .setScale( "width(640)" ).setFormat( "webp" ).build() );
+        request.setRawPath( "/site/myproject/master/_" + parts.path() );
+
+        final WebResponse response = handler.handle( request );
+
+        assertEquals( HttpStatus.OK, response.getStatus() );
+        assertEquals( MediaType.WEBP, response.getContentType() );
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertFalse( params.getValue().isCacheOnly() );
+    }
+
+    @Test
+    void unrecognizedQueryParametersAreNotSharedCacheable()
+        throws Exception
+    {
+        final Attachment attachment = Attachment.create().name( "source" ).label( "source" ).mimeType( "image/webp" )
+            .sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        final Media media = (Media) createContent( "123456", "path/to/image", attachment );
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) ).thenReturn( ByteSource.empty() );
+        final var generator = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ),
+                                                                 styleDescriptorService, HmacTestHelper.createHmacService() );
+        final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create().setMedia( () -> media )
+                                                       .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                       .setBranch( () -> ContentConstants.BRANCH_MASTER )
+                                                       .setScale( "full()" ).build() );
+        request.setRawPath( "/site/myproject/master/_" + parts.path() );
+
+        assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
+
+        request.getParams().put( "size", "128" );
+        request.getParams().put( "crop", "false" );
+
+        assertEquals( "private, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
+    }
+
+    @Test
+    void signedProcessingParametersRemainSharedCacheable()
+        throws Exception
+    {
+        setupContent();
+        final var generator = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ),
+                                                                 styleDescriptorService, HmacTestHelper.createHmacService() );
+        final Media media = (Media) contentService.getById( ContentId.from( "123456" ) );
+        final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create().setMedia( () -> media )
+                                                       .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                       .setBranch( () -> ContentConstants.BRANCH_MASTER )
+                                                       .setScale( "width(640)" ).setQuality( 70 ).build() );
+        request.setRawPath( "/site/myproject/master/_" + parts.path() );
+        request.getParams().put( "quality", "70" );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( new byte[]{1} ) );
+
+        assertEquals( "public, max-age=31536000, immutable", handler.handle( request ).getHeaders().get( "Cache-Control" ) );
     }
 
     private void configureHashlessGeneration( final boolean enabled )
@@ -271,7 +385,7 @@ class ImageMediaHandlerTest
 
     @ParameterizedTest
     @ValueSource(strings = {"jpeg", "png", "gif", "webp", "avif"})
-    void hashlessGenerationIsDisabledByDefaultAndOptInNeverBypassesStyleProtection( final String format )
+    void hashlessGenerationIsDisabledByDefaultAndOptInNeverCoversModernFormats( final String format )
         throws Exception
     {
         setupContent();
@@ -287,11 +401,8 @@ class ImageMediaHandlerTest
             }
             for ( boolean styled : new boolean[]{false, true} )
             {
-                if ( modernFormat && !styled )
-                {
-                    continue;
-                }
-                final boolean cacheOnly = !enabled || styled;
+                // WebP and AVIF always require a matching signature, whatever the opt-in allows.
+                final boolean cacheOnly = !enabled || styled || modernFormat;
                 for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
                 {
                     request.setMethod( method );
@@ -521,13 +632,17 @@ class ImageMediaHandlerTest
 
     @ParameterizedTest
     @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
-    void modernOutputRequiresStyle( final String format )
+    void unsignedModernOutputIsCacheOnly( final String format )
         throws Exception
     {
         setupContent();
         request.setRawPath( "/site/myproject/master/_/media:image/myproject/123456/full/image-name.jpg." + format );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+            assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+            throw new IllegalArgumentException( "Image is not cached" );
+        } );
         assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
-        verifyNoInteractions( imageService );
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
     }
 
     @Test

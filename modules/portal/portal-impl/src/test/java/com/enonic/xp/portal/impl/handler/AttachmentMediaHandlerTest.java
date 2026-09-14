@@ -92,6 +92,27 @@ class AttachmentMediaHandlerTest
     }
 
     @Test
+    void unrecognizedQueryParametersAreNotSharedCacheable()
+    {
+        setupMedia();
+
+        final WebRequest request = new WebRequest();
+        request.setMethod( HttpMethod.GET );
+        request.setRawPath( "/api/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/logo.png" );
+
+        assertEquals( "public, max-age=31536000, immutable",
+                      this.handler.handle( request ).getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
+
+        request.getParams().put( "download", "" );
+        assertEquals( "public, max-age=31536000, immutable",
+                      this.handler.handle( request ).getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
+
+        request.getParams().put( "utm_source", "newsletter" );
+        assertEquals( "private, max-age=31536000, immutable",
+                      this.handler.handle( request ).getHeaders().get( HttpHeaders.CACHE_CONTROL ) );
+    }
+
+    @Test
     void testInvalidUrl()
     {
         this.request.setBaseUri( "" );

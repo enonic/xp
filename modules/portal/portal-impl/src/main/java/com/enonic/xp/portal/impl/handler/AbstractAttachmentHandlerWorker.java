@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.Set;
 
 import com.google.common.io.ByteSource;
 import com.google.common.net.HttpHeaders;
@@ -28,7 +29,7 @@ import static com.google.common.base.Strings.nullToEmpty;
 
 public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 {
-    private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
+    protected static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
     protected ContentService contentService;
 
@@ -104,9 +105,12 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         if ( !nullToEmpty( this.fingerprint ).isBlank() )
         {
-            final boolean isPublic = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
-                ContentConstants.BRANCH_MASTER.equals( branch );
-            final String cacheControlHeaderConfig = isPublic ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
+            // An unrecognized parameter changes no byte of the response but does add a shared-cache
+            // key, so an arbitrary number of them would each be stored separately and immutably.
+            final boolean sharedCacheable = content.getPermissions().isAllowedFor( RoleKeys.EVERYONE, Permission.READ ) &&
+                ContentConstants.BRANCH_MASTER.equals( branch ) &&
+                recognizedParameters().containsAll( request.getParams().keySet() );
+            final String cacheControlHeaderConfig = sharedCacheable ? publicCacheControlHeaderConfig : privateCacheControlHeaderConfig;
 
             if ( !nullToEmpty( cacheControlHeaderConfig ).isBlank() )
             {
@@ -139,6 +143,17 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         throws IOException
     {
         return getBinary( content.getId(), binaryReference );
+    }
+
+    /**
+     * Returns the query parameters this endpoint acts on. Any other parameter leaves the response
+     * unchanged, so the response is withheld from shared caches rather than stored under its key.
+     *
+     * @return the recognized parameter names
+     */
+    protected Set<String> recognizedParameters()
+    {
+        return Set.of();
     }
 
     protected boolean shouldBypassTransformation( final MediaType attachmentMimeType )

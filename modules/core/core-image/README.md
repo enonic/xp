@@ -1,6 +1,8 @@
 # Predefined image processing styles
 
-WebP and AVIF output requires a predefined style and the `ImageMagic` encoding backend.
+WebP and AVIF output requires the `ImageMagic` encoding backend and a matching path
+fingerprint; a predefined style is optional. Unstyled WebP/AVIF URLs take quality,
+filter and background from the request, like any other unstyled output format.
 No separate ImageMagick installation or runtime download is required. The default
 `ImageIO` backend preserves existing JPEG/PNG/GIF encoding.
 
@@ -61,7 +63,7 @@ Scale is supplied in the path; a raw `scale` or `format` query override is not
 supported. Output format is selected by the extension.
 
 Every styled conversion requires a matching modern path fingerprint on cache
-misses, for every output format. WebP/AVIF additionally requires a style. New
+misses, for every output format. WebP/AVIF always requires one, styled or not. New
 image URLs, including unstyled URLs and rich-text renditions, use modern
 fingerprints covering the source, requested scale, output MIME type, aspect
 ratio, quality, filter, and background, authenticated with HMAC-SHA512 using
@@ -80,13 +82,23 @@ Hashless regeneration is disabled by default. To restore unsigned, unstyled
 JPEG/PNG/GIF processing for compatibility, set
 `image.allowHashlessGeneration = true` in `com.enonic.xp.portal.cfg`. This option
 applies to both image endpoints and can be changed at runtime. It never permits
-unsigned styled generation, WebP/AVIF conversion without a style and signature,
-or generation with a supplied legacy or mismatched hash. With the default
-configuration, removing both style and hash still permits only cache reads.
+unsigned styled generation, WebP/AVIF conversion without a matching signature,
+or generation with a supplied legacy or mismatched hash. The option covers no
+WebP/AVIF request: those formats are generated only for a signature XP issued.
+With the default configuration, removing both style and hash still permits only
+cache reads.
 Changing output format invalidates a modern signature; format remains outside
 the style definition. These rules also apply
 to HEAD requests. Original-file pass-through needs no regeneration and remains
-available without a valid fingerprint.
+available without a valid fingerprint. A URL passes through only when it requests
+neither scaling nor format conversion: a scale other than `full()` is processed
+like any other request, so the returned bytes always match what the URL asks for.
+
+Immutable `Cache-Control` is sent only for a request whose query parameters the
+endpoint acts on: `filter`, `quality` and `background` for images, `download` for
+attachments. Any other parameter leaves the response unchanged but adds a shared-cache
+key, so those responses fall back to the private header and shared caches do not store
+them. Tampering with a signed parameter already invalidates the fingerprint instead.
 
 The disk cache is keyed by the actual source checksum and resolved processing
 settings, not by an untrusted URL hash. A stale URL can therefore serve the
@@ -238,7 +250,12 @@ Adding another platform requires a portable
 upstream distribution and a native encoding test on that platform.
 
 No process is started for cache hits or when all three backends use `ImageIO`.
-Unstyled original WebP/AVIF/SVG files retain their pass-through behavior.
+Unstyled WebP/AVIF originals retain their pass-through behavior when the URL requests
+no scaling or conversion; a requested scale is applied like any other raster source.
+GIF and SVG have no raster rendition without a style, so `portal.imageUrl` addresses
+those sources through the attachment endpoint rather than signing a scale the image
+endpoint would ignore, and rich text emits a single `src` for them with no `srcset`.
+Already published image URLs for GIF and SVG keep passing through unchanged.
 Styled processing uses the configured decoder. GIF styles require ImageIO decoding
 and process the first frame.
 

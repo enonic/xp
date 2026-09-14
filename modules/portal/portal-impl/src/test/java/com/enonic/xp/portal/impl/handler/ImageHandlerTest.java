@@ -326,7 +326,7 @@ class ImageHandlerTest
 
     @ParameterizedTest
     @ValueSource(strings = {"jpeg", "png", "gif", "webp", "avif"})
-    void hashlessGenerationIsDisabledByDefaultAndOptInNeverBypassesStyleProtection( final String format )
+    void hashlessGenerationIsDisabledByDefaultAndOptInNeverCoversModernFormats( final String format )
         throws Exception
     {
         setupContent();
@@ -342,11 +342,8 @@ class ImageHandlerTest
             }
             for ( boolean styled : new boolean[]{false, true} )
             {
-                if ( modernFormat && !styled )
-                {
-                    continue;
-                }
-                final boolean cacheOnly = !enabled || styled;
+                // WebP and AVIF always require a matching signature, whatever the opt-in allows.
+                final boolean cacheOnly = !enabled || styled || modernFormat;
                 for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.HEAD} )
                 {
                     request.setMethod( method );
@@ -559,13 +556,17 @@ class ImageHandlerTest
 
     @ParameterizedTest
     @ValueSource(strings = {"webp", "avif", "WEBP", "AVIF"})
-    void modernOutputRequiresStyle( final String format )
+    void unsignedModernOutputIsCacheOnly( final String format )
         throws Exception
     {
         setupContent();
         request.setRawPath( "/_/image/123456/full/image-name.jpg." + format );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenAnswer( invocation -> {
+            assertTrue( ((ReadImageParams) invocation.getArgument( 0 )).isCacheOnly() );
+            throw new IllegalArgumentException( "Image is not cached" );
+        } );
         assertEquals( HttpStatus.BAD_REQUEST, assertThrows( WebException.class, () -> handler.handle( request ) ).getStatus() );
-        verifyNoInteractions( imageService );
+        verify( contentService, never() ).getBinary( isA( ContentId.class ), isA( BinaryReference.class ) );
     }
 
     @Test

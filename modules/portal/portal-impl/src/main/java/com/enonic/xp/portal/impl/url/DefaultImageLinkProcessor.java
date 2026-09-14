@@ -20,8 +20,9 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.html.HtmlElement;
-import com.enonic.xp.portal.url.PortalUrlGeneratorService;
+import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
+import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
@@ -81,9 +82,18 @@ final class DefaultImageLinkProcessor
             throw new IllegalStateException( String.format( "Content with id '%s' is not an image", id ) );
         } );
 
+        final String linkAttribute = element.hasAttribute( "href" ) ? "href" : "src";
+
+        if ( styleReference == null && PortalUrlGeneratorServiceImpl.servesOriginalOnly( imageSupplier ) )
+        {
+            // A single original, so responsive widths would repeat one URL. Address the attachment directly.
+            element.setAttribute( linkAttribute, attachmentUrl( imageSupplier, projectNameSupplier, branchSupplier ) );
+            return;
+        }
+
         final String imageUrl = imageUrl( baseUrlSupplier, imageSupplier, projectNameSupplier, branchSupplier, queryParamsStrategy, null );
 
-        element.setAttribute( element.hasAttribute( "href" ) ? "href" : "src", imageUrl );
+        element.setAttribute( linkAttribute, imageUrl );
 
         if ( "img".equals( element.getTagName() ) )
         {
@@ -106,6 +116,19 @@ final class DefaultImageLinkProcessor
                 element.setAttribute( "sizes", imageSizes );
             }
         }
+    }
+
+    private String attachmentUrl( final Supplier<Media> imageSupplier, final Supplier<ProjectName> projectNameSupplier,
+                                 final Supplier<Branch> branchSupplier )
+    {
+        return portalUrlGeneratorService.attachmentUrl( AttachmentUrlGeneratorParams.create()
+                                                            .setBaseUrl( params.getBaseUrl() )
+                                                            .setMediaBaseUrl( params.getAttachmentBaseUrl() )
+                                                            .setUrlType( params.getType() )
+                                                            .setContent( imageSupplier::get )
+                                                            .setProjectName( projectNameSupplier )
+                                                            .setBranch( branchSupplier )
+                                                            .build() );
     }
 
     private String imageUrl( final Supplier<String> baseUrlSupplier, final Supplier<Media> imageSupplier,

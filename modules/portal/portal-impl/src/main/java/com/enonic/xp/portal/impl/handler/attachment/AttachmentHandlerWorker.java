@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler.attachment;
 
+import java.util.Set;
+
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentService;
@@ -15,6 +17,12 @@ public final class AttachmentHandlerWorker
     public AttachmentHandlerWorker( final WebRequest request, final ContentService contentService )
     {
         super( request, contentService );
+    }
+
+    @Override
+    protected Set<String> recognizedParameters()
+    {
+        return Set.of( "download" );
     }
 
     @Override

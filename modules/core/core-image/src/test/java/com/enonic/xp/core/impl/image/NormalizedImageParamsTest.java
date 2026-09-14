@@ -26,12 +26,15 @@ class NormalizedImageParamsTest
     }
 
     @Test
-    void modernFormatsRequireResolvedStyle()
+    void modernFormatsUseRequestParametersWithoutStyle()
     {
         for ( String format : new String[]{"webp", "avif"} )
         {
-            assertThrows( IllegalArgumentException.class,
-                          () -> new NormalizedImageParams( noFormatTemplate().mimeType( "image/" + format ).build() ) );
+            final NormalizedImageParams unstyled =
+                new NormalizedImageParams( noFormatTemplate().mimeType( "image/" + format ).quality( 70 ).build() );
+            assertEquals( format, unstyled.getFormat() );
+            assertEquals( 70, unstyled.getQuality() );
+
             final ImageStyle style = ImageStyle.create().name( "card" ).build();
             assertEquals( format, new NormalizedImageParams(
                 noFormatTemplate().mimeType( "image/" + format ).style( style ).build() ).getFormat() );

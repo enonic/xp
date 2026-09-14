@@ -54,10 +54,6 @@ class NormalizedImageParams
         this.focalPoint = readImageParams.getFocalPoint();
         this.filterParam = FilterSetExpr.parse( settings == null ? readImageParams.getFilterParam() : settings.filter() );
         this.format = normalizeFormat( readImageParams );
-        if ( style == null && ( "webp".equals( format ) || "avif".equals( format ) ) )
-        {
-            throw new IllegalArgumentException( "WebP and AVIF encoding requires a predefined image style" );
-        }
         this.backgroundColor = supportsAlpha( format ) ? 0xFFFFFF : settings == null ? readImageParams.getBackgroundColor() : settings.background();
         this.quality = settings == null ? readImageParams.getQuality() : settings.quality();
         this.orientation = readImageParams.getOrientation();

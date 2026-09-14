@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -14,8 +15,12 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Suppliers;
+import com.google.common.net.MediaType;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.attachment.Attachment;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -41,6 +46,8 @@ public class PortalUrlGeneratorServiceImpl
     implements PortalUrlGeneratorService
 {
     private static final DescriptorKey MEDIA_IMAGE_API_DESCRIPTOR_KEY = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+
+    private static final MediaType SVG_MEDIA_TYPE = MediaType.SVG_UTF_8.withoutParameters();
 
     private static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
         DescriptorKey.from( ApplicationKey.from( "media" ), "attachment" );
@@ -78,11 +85,27 @@ public class PortalUrlGeneratorServiceImpl
     @Override
     public String imageUrl( final ImageUrlGeneratorParams params )
     {
+        final Supplier<Media> media = Suppliers.memoize( params.getMedia()::get );
+
+        if ( addressesOriginal( params, media ) )
+        {
+            // Validated even though an unprocessed original cannot apply processing parameters.
+            imageQueryParams( params );
+            return attachmentUrl( AttachmentUrlGeneratorParams.create()
+                                      .setBaseUrl( params.getBaseUrl() )
+                                      .setMediaBaseUrl( params.getMediaBaseUrl() )
+                                      .setUrlType( params.getUrlType() )
+                                      .setContent( media::get )
+                                      .setProjectName( params.getProjectName() )
+                                      .setBranch( params.getBranch() )
+                                      .build() );
+        }
+
         final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
             .setUrlType( params.getUrlType() )
             .setDescriptorKey( MEDIA_IMAGE_API_DESCRIPTOR_KEY )
             .setPath( ImageMediaPathSupplier.create()
-                          .setMedia( params.getMedia() )
+                          .setMedia( media )
                           .setProjectName( params.getProjectName() )
                           .setBranch( params.getBranch() )
                           .setScale( params.getScale() )
@@ -129,8 +152,26 @@ public class PortalUrlGeneratorServiceImpl
     public ImageUrlParts imageUrlParts( final ImageUrlGeneratorParams params )
     {
         return runWithAdminRole( () -> {
+            final Supplier<Media> media = Suppliers.memoize( params.getMedia()::get );
+
+            if ( addressesOriginal( params, media ) )
+            {
+                // Validated even though an unprocessed original cannot apply processing parameters.
+                imageQueryParams( params );
+                final MediaPathParts original = AttachmentMediaPathSupplier.create()
+                    .setContent( media::get )
+                    .setProjectName( params.getProjectName() )
+                    .setBranch( params.getBranch() )
+                    .build()
+                    .parts();
+
+                return new ImageUrlParts( mediaPath( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY, original ), "",
+                                          UrlBuilderHelper.urlEncodePathSegment( original.context() ), original.id(), original.hash(),
+                                          original.scale(), UrlBuilderHelper.urlEncodePathSegment( original.name() ) );
+            }
+
             final MediaPathParts parts = ImageMediaPathSupplier.create()
-                .setMedia( params.getMedia() )
+                .setMedia( media )
                 .setProjectName( params.getProjectName() )
                 .setBranch( params.getBranch() )
                 .setScale( params.getScale() )
@@ -167,6 +208,34 @@ public class PortalUrlGeneratorServiceImpl
                                            UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
         } );
+    }
+
+    private static boolean addressesOriginal( final ImageUrlGeneratorParams params, final Supplier<Media> media )
+    {
+        return params.getStyle() == null && params.getFormat() == null && servesOriginalOnly( media );
+    }
+
+    /**
+     * Reports whether the image endpoint would serve this source unprocessed, so that a scaled image
+     * URL would promise processing that never happens. An unresolvable or malformed source is not
+     * reported: the image URL path handles it and reports the failure.
+     */
+    static boolean servesOriginalOnly( final Supplier<Media> media )
+    {
+        try
+        {
+            final Attachment source = media.get().getAttachments().byLabel( "source" );
+            if ( source == null || source.getMimeType() == null )
+            {
+                return false;
+            }
+            final MediaType mimeType = MediaType.parse( source.getMimeType() );
+            return mimeType.is( MediaType.GIF ) || mimeType.is( SVG_MEDIA_TYPE );
+        }
+        catch ( RuntimeException e )
+        {
+            return false;
+        }
     }
 
     private static Map<String, List<String>> imageQueryParams( final ImageUrlGeneratorParams params )
