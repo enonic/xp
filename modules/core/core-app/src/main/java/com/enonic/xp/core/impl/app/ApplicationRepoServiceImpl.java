@@ -3,7 +3,9 @@ package com.enonic.xp.core.impl.app;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.io.ByteSource;
 
@@ -62,33 +64,31 @@ public class ApplicationRepoServiceImpl
 
     /**
      * The previously persisted schema is replaced by the new one. A failure while writing leaves no schema at all
-     * (the {@code cms} node is removed again), never a mix of old and new: reinstalling a fixed version repairs it.
+     * (the persisted nodes are removed again), never a mix of old and new: reinstalling a fixed version repairs it.
+     * The {@code cms} node always exists once a schema is persisted, it marks the application as node backed.
      */
     @Override
     public void persistApplicationSchema( final ApplicationKey applicationKey, final Map<String, ByteSource> resources )
     {
         ApplicationHelper.runAsAdmin( () -> {
             final NodePath appPath = new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
-            final NodePath cmsPath = new NodePath( appPath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
 
-            deleteIfExists( cmsPath );
+            deletePersistedSchema( appPath );
 
             try
             {
-                this.nodeService.create( CreateNodeParams.create()
-                                             .parent( appPath )
-                                             .name( VirtualAppConstants.CMS_ROOT_NAME )
-                                             .inheritPermissions( true )
-                                             .refresh( RefreshMode.ALL )
-                                             .build() );
+                // the persisted tree was just removed: the folders created on the way to the resources are tracked here,
+                // the cms folder is always created as the marker of a persisted schema
+                final Set<NodePath> folders = new HashSet<>();
+                folders.add( createFolderNode( appPath, VirtualAppConstants.CMS_ROOT_NAME ) );
 
-                resources.forEach( ( path, content ) -> createResourceNode( cmsPath, path, content ) );
+                resources.forEach( ( path, content ) -> createResourceNode( appPath, path, content, folders ) );
             }
             catch ( RuntimeException e )
             {
                 try
                 {
-                    deleteIfExists( cmsPath );
+                    deletePersistedSchema( appPath );
                 }
                 catch ( Exception cleanupFailure )
                 {
@@ -104,9 +104,16 @@ public class ApplicationRepoServiceImpl
     @Override
     public void deleteApplicationSchema( final ApplicationKey applicationKey )
     {
-        ApplicationHelper.runAsAdmin( () -> deleteIfExists(
-            new NodePath( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ),
-                          NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) ) ) );
+        ApplicationHelper.runAsAdmin(
+            () -> deletePersistedSchema( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ) ) );
+    }
+
+    private void deletePersistedSchema( final NodePath appPath )
+    {
+        for ( final String name : SchemaResourcePaths.PERSISTED_ROOT_NAMES )
+        {
+            deleteIfExists( new NodePath( appPath, NodeName.from( name ) ) );
+        }
     }
 
     private void deleteIfExists( final NodePath nodePath )
@@ -117,22 +124,29 @@ public class ApplicationRepoServiceImpl
         }
     }
 
-    private void createResourceNode( final NodePath cmsPath, final String resourcePath, final ByteSource content )
+    private NodePath createFolderNode( final NodePath parent, final String name )
+    {
+        this.nodeService.create( CreateNodeParams.create()
+                                     .name( name )
+                                     .parent( parent )
+                                     .inheritPermissions( true )
+                                     .refresh( RefreshMode.ALL )
+                                     .build() );
+        return new NodePath( parent, NodeName.from( name ) );
+    }
+
+    private void createResourceNode( final NodePath appPath, final String resourcePath, final ByteSource content,
+                                     final Set<NodePath> folders )
     {
         final String[] elements = resourcePath.split( "/" );
 
-        NodePath parent = cmsPath;
+        NodePath parent = appPath;
         for ( int i = 0; i < elements.length - 1; i++ )
         {
             final NodePath folderPath = new NodePath( parent, NodeName.from( elements[i] ) );
-            if ( !this.nodeService.nodeExists( folderPath ) )
+            if ( folders.add( folderPath ) )
             {
-                this.nodeService.create( CreateNodeParams.create()
-                                             .name( elements[i] )
-                                             .parent( parent )
-                                             .inheritPermissions( true )
-                                             .refresh( RefreshMode.ALL )
-                                             .build() );
+                createFolderNode( parent, elements[i] );
             }
             parent = folderPath;
         }

@@ -1,98 +1,78 @@
 package com.enonic.xp.core.impl.app;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
-
-import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.resource.Resource;
 
+/**
+ * Builds the {@link ApplicationDescriptor} from the application descriptor and icon resources, resolved the same way as any other
+ * application resource: from the persisted schema nodes when the application owns its schema, from the bundle otherwise.
+ */
 final class ApplicationDescriptorBuilder
 {
-    private static final String APP_ICON_FILENAME = "application.svg";
+    private static final List<String> APP_ICON_PATHS = List.of( SchemaResourcePaths.APP_ICON_NAME, "application.svg" );
 
-    private static final String ENONIC_APP_ICON_FILENAME = "enonic.svg";
-
-    private Bundle bundle;
-
-    public ApplicationDescriptorBuilder bundle( final Bundle value )
+    private ApplicationDescriptorBuilder()
     {
-        this.bundle = value;
-        return this;
     }
 
-    public ApplicationDescriptor build()
+    static ApplicationDescriptor build( final ApplicationKey applicationKey, final ApplicationUrlResolver urlResolver )
     {
-        final String applicationName = ApplicationBundleUtils.getApplicationName( bundle );
-        final ApplicationKey applicationKey = ApplicationKey.from( applicationName );
+        final Resource descriptorResource = findFirst( urlResolver, ApplicationBundleUtils.DESCRIPTOR_PATHS );
 
-        final URL url = resolveDescriptorUrl( bundle );
-
-        final ApplicationDescriptor.Builder appDescriptorBuilder;
-        if ( url != null )
+        final ApplicationDescriptor.Builder builder;
+        if ( descriptorResource != null )
         {
-            final String yaml = readAppYml( url );
-            appDescriptorBuilder = YmlApplicationDescriptorParser.parse( yaml, applicationKey );
+            builder = YmlApplicationDescriptorParser.parse( readDescriptor( descriptorResource ), applicationKey );
         }
         else
         {
-            appDescriptorBuilder = ApplicationDescriptor.create().key( applicationKey );
+            builder = ApplicationDescriptor.create().key( applicationKey );
         }
 
-        if ( hasAppIcon( bundle ) )
+        final Resource iconResource = findFirst( urlResolver, APP_ICON_PATHS );
+        if ( iconResource != null )
         {
-            final URL iconUrl = Objects.requireNonNullElseGet( bundle.getResource( ENONIC_APP_ICON_FILENAME ),
-                                                               () -> bundle.getResource( APP_ICON_FILENAME ) );
-            try (InputStream stream = iconUrl.openStream())
+            try
             {
-                final byte[] iconData = stream.readAllBytes();
-                final Icon icon = Icon.from( iconData, "image/svg+xml", Instant.ofEpochMilli( this.bundle.getLastModified() ) );
-                appDescriptorBuilder.icon( icon );
+                builder.icon( Icon.from( iconResource.readBytes(), SchemaResourcePaths.SVG_MIME_TYPE,
+                                         Instant.ofEpochMilli( Math.max( iconResource.getTimestamp(), 0 ) ) ) );
             }
-            catch ( IOException e )
+            catch ( final Exception e )
             {
-                throw new RuntimeException( "Unable to load application icon for " + applicationName, e );
+                throw new RuntimeException( "Unable to load application icon for " + applicationKey, e );
             }
         }
 
-        return appDescriptorBuilder.build();
+        return builder.build();
     }
 
-    private static URL resolveDescriptorUrl( final Bundle bundle )
+    private static Resource findFirst( final ApplicationUrlResolver urlResolver, final List<String> paths )
     {
-        return ApplicationBundleUtils.DESCRIPTOR_PATHS.stream()
-            .filter( path -> bundle.getEntry( path ) != null )
+        return paths.stream()
+            .map( path -> urlResolver.findResource( "/" + path ) )
+            .filter( Objects::nonNull )
+            .filter( Resource::exists )
             .findFirst()
-            .map( bundle::getResource )
             .orElse( null );
     }
 
-    private String readAppYml( final URL yamlURL )
+    private static String readDescriptor( final Resource resource )
     {
-        try (InputStream stream = yamlURL.openStream())
+        try
         {
-            return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
+            return resource.readString();
         }
         catch ( final Exception e )
         {
             throw new RuntimeException( "Invalid application descriptor file", e );
         }
-    }
-
-    public static boolean hasAppDescriptor( final Bundle bundle )
-    {
-        return ApplicationBundleUtils.DESCRIPTOR_PATHS.stream().anyMatch( path -> bundle.getEntry( path ) != null );
-    }
-
-    private boolean hasAppIcon( final Bundle bundle )
-    {
-        return bundle.getEntry( ENONIC_APP_ICON_FILENAME ) != null || bundle.getEntry( APP_ICON_FILENAME ) != null;
     }
 }

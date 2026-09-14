@@ -31,24 +31,28 @@ class AppSchemaResolverTest
             {"cms/unknown/mything/mything.yaml", "ignored"}, {"cms/i18n/phrases/phrases.properties", "phrases-default"},
             {"cms/i18n/phrases/phrases_en.properties", "phrases-en"}, {"i18n/phrases/phrases.properties", "ignored"},
             {"i18n/phrases.properties", "ignored"}, {"cms/i18n/loose.properties", "ignored"},
-            {"cms/i18n/phrases/nested/deep.properties", "ignored"}, {"cms/i18n/phrases/phrases.yaml", "ignored"}} );
+            {"cms/i18n/phrases/nested/deep.properties", "ignored"}, {"cms/i18n/phrases/phrases.yaml", "ignored"},
+            {"enonic.yaml", "app-descriptor"}, {"enonic.svg", "app-icon"}, {"application.yaml", "ignored"}, {"application.svg", "ignored"},
+            {"enonic.png", "ignored"}, {"assets/enonic.yaml", "ignored"}} );
 
         final Map<String, ByteSource> resources = AppSchemaResolver.resolve( byteSource );
 
-        assertEquals( 13, resources.size() );
-        assertEquals( "cms-descriptor", read( resources, "cms.yaml" ) );
-        assertEquals( "styles", read( resources, "style/style.yaml" ) );
-        assertEquals( "content-type-yaml", read( resources, "content-types/mytype/mytype.yaml" ) );
-        assertEquals( "layout-yaml", read( resources, "layouts/mylayout/mylayout.yaml" ) );
-        assertEquals( "macro-yml", read( resources, "macros/mymacro/mymacro.yaml" ) );
-        assertEquals( "part", read( resources, "parts/mypart/mypart.yaml" ) );
-        assertEquals( "page", read( resources, "pages/mypage/mypage.yaml" ) );
-        assertEquals( "fragment", read( resources, "form-fragments/myfragment/myfragment.yaml" ) );
-        assertEquals( "mixin", read( resources, "mixins/mymixin/mymixin.yaml" ) );
-        assertEquals( "phrases-default", read( resources, "i18n/phrases/phrases.properties" ) );
-        assertEquals( "phrases-en", read( resources, "i18n/phrases/phrases_en.properties" ) );
-        assertEquals( "type-icon", read( resources, "content-types/mytype/mytype.svg" ) );
-        assertEquals( "part-icon", read( resources, "parts/mypart/mypart.png" ) );
+        assertEquals( 15, resources.size() );
+        assertEquals( "app-descriptor", read( resources, "enonic.yaml" ) );
+        assertEquals( "app-icon", read( resources, "enonic.svg" ) );
+        assertEquals( "cms-descriptor", read( resources, "cms/cms.yaml" ) );
+        assertEquals( "styles", read( resources, "cms/style/style.yaml" ) );
+        assertEquals( "content-type-yaml", read( resources, "cms/content-types/mytype/mytype.yaml" ) );
+        assertEquals( "layout-yaml", read( resources, "cms/layouts/mylayout/mylayout.yaml" ) );
+        assertEquals( "macro-yml", read( resources, "cms/macros/mymacro/mymacro.yaml" ) );
+        assertEquals( "part", read( resources, "cms/parts/mypart/mypart.yaml" ) );
+        assertEquals( "page", read( resources, "cms/pages/mypage/mypage.yaml" ) );
+        assertEquals( "fragment", read( resources, "cms/form-fragments/myfragment/myfragment.yaml" ) );
+        assertEquals( "mixin", read( resources, "cms/mixins/mymixin/mymixin.yaml" ) );
+        assertEquals( "phrases-default", read( resources, "cms/i18n/phrases/phrases.properties" ) );
+        assertEquals( "phrases-en", read( resources, "cms/i18n/phrases/phrases_en.properties" ) );
+        assertEquals( "type-icon", read( resources, "cms/content-types/mytype/mytype.svg" ) );
+        assertEquals( "part-icon", read( resources, "cms/parts/mypart/mypart.png" ) );
     }
 
     private static String read( final Map<String, ByteSource> resources, final String path )
@@ -61,7 +65,7 @@ class AppSchemaResolverTest
     void resolve_no_schema_resources()
         throws Exception
     {
-        final ByteSource byteSource = zip( new String[][]{{"enonic.yaml", "kind: \"Application\""}, {"assets/app.js", "js"}} );
+        final ByteSource byteSource = zip( new String[][]{{"application.yaml", "kind: \"Application\""}, {"assets/app.js", "js"}} );
 
         assertTrue( AppSchemaResolver.resolve( byteSource ).isEmpty() );
     }
@@ -70,14 +74,26 @@ class AppSchemaResolverTest
     void resolve_normalizes_yml_to_yaml_only_for_descriptors()
         throws Exception
     {
-        final ByteSource byteSource =
-            zip( new String[][]{{"cms/parts/mypart/mypart.yml", "part"}, {"cms/parts/mypart/mypart.png", "icon"}} );
+        final ByteSource byteSource = zip( new String[][]{{"enonic.yml", "app-descriptor"}, {"cms/parts/mypart/mypart.yml", "part"},
+            {"cms/parts/mypart/mypart.png", "icon"}} );
 
         final Map<String, ByteSource> resources = AppSchemaResolver.resolve( byteSource );
 
-        assertEquals( 2, resources.size() );
-        assertEquals( "part", read( resources, "parts/mypart/mypart.yaml" ) );
-        assertEquals( "icon", read( resources, "parts/mypart/mypart.png" ) );
+        assertEquals( 3, resources.size() );
+        assertEquals( "app-descriptor", read( resources, "enonic.yaml" ) );
+        assertEquals( "part", read( resources, "cms/parts/mypart/mypart.yaml" ) );
+        assertEquals( "icon", read( resources, "cms/parts/mypart/mypart.png" ) );
+    }
+
+    @Test
+    void resolve_app_descriptor_yaml_wins_over_yml_regardless_of_order()
+        throws Exception
+    {
+        final ByteSource ymlFirst = zip( new String[][]{{"enonic.yml", "yml"}, {"enonic.yaml", "yaml"}} );
+        final ByteSource yamlFirst = zip( new String[][]{{"enonic.yaml", "yaml"}, {"enonic.yml", "yml"}} );
+
+        assertEquals( "yaml", read( AppSchemaResolver.resolve( ymlFirst ), "enonic.yaml" ) );
+        assertEquals( "yaml", read( AppSchemaResolver.resolve( yamlFirst ), "enonic.yaml" ) );
     }
 
     private static ByteSource zip( final String[][] entries )

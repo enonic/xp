@@ -88,9 +88,10 @@ class ApplicationRepoServiceImplTest
     void persist_schema_creates_cms_tree()
     {
         final Map<String, ByteSource> resources = new LinkedHashMap<>();
-        resources.put( "cms.yaml", ByteSource.wrap( "cms-descriptor".getBytes( StandardCharsets.UTF_8 ) ) );
-        resources.put( "content-types/mytype/mytype.yaml", ByteSource.wrap( "content-type".getBytes( StandardCharsets.UTF_8 ) ) );
-        resources.put( "i18n/phrases/phrases_en.properties", ByteSource.wrap( "phrases".getBytes( StandardCharsets.UTF_8 ) ) );
+        resources.put( "enonic.yaml", ByteSource.wrap( "app-descriptor".getBytes( StandardCharsets.UTF_8 ) ) );
+        resources.put( "cms/cms.yaml", ByteSource.wrap( "cms-descriptor".getBytes( StandardCharsets.UTF_8 ) ) );
+        resources.put( "cms/content-types/mytype/mytype.yaml", ByteSource.wrap( "content-type".getBytes( StandardCharsets.UTF_8 ) ) );
+        resources.put( "cms/i18n/phrases/phrases_en.properties", ByteSource.wrap( "phrases".getBytes( StandardCharsets.UTF_8 ) ) );
 
         stubCreate();
 
@@ -99,15 +100,21 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService, Mockito.never() ).delete( Mockito.any( DeleteNodeParams.class ) );
 
         final ArgumentCaptor<CreateNodeParams> captor = ArgumentCaptor.forClass( CreateNodeParams.class );
-        Mockito.verify( this.nodeService, Mockito.times( 8 ) ).create( captor.capture() );
+        Mockito.verify( this.nodeService, Mockito.times( 9 ) ).create( captor.capture() );
 
         final List<CreateNodeParams> created = captor.getAllValues();
-        assertEquals( List.of( "/applications/myBundle/cms", "/applications/myBundle/cms/cms.yaml", "/applications/myBundle/cms/content-types",
-                               "/applications/myBundle/cms/content-types/mytype", "/applications/myBundle/cms/content-types/mytype/mytype.yaml",
-                               "/applications/myBundle/cms/i18n", "/applications/myBundle/cms/i18n/phrases",
-                               "/applications/myBundle/cms/i18n/phrases/phrases_en.properties" ),
+        assertEquals( List.of( "/applications/myBundle/cms", "/applications/myBundle/enonic.yaml", "/applications/myBundle/cms/cms.yaml",
+                               "/applications/myBundle/cms/content-types", "/applications/myBundle/cms/content-types/mytype",
+                               "/applications/myBundle/cms/content-types/mytype/mytype.yaml", "/applications/myBundle/cms/i18n",
+                               "/applications/myBundle/cms/i18n/phrases", "/applications/myBundle/cms/i18n/phrases/phrases_en.properties" ),
                       created.stream().map( params -> new NodePath( params.getParent(), params.getName() ).toString() ).toList() );
 
+        assertEquals( "app-descriptor", created.stream()
+            .filter( params -> "enonic.yaml".equals( params.getName().toString() ) )
+            .findFirst()
+            .orElseThrow()
+            .getData()
+            .getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( "content-type", created.stream()
             .filter( params -> "mytype.yaml".equals( params.getName().toString() ) )
             .findFirst()
@@ -127,8 +134,9 @@ class ApplicationRepoServiceImplTest
     @Test
     void persist_schema_stores_icons_as_binaries()
     {
-        final Map<String, ByteSource> resources =
-            Map.of( "content-types/mytype/mytype.svg", ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
+        final Map<String, ByteSource> resources = new LinkedHashMap<>();
+        resources.put( "enonic.svg", ByteSource.wrap( "<svg>app</svg>".getBytes( StandardCharsets.UTF_8 ) ) );
+        resources.put( "cms/content-types/mytype/mytype.svg", ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
 
         stubCreate();
 
@@ -137,35 +145,51 @@ class ApplicationRepoServiceImplTest
         final ArgumentCaptor<CreateNodeParams> captor = ArgumentCaptor.forClass( CreateNodeParams.class );
         Mockito.verify( this.nodeService, Mockito.atLeastOnce() ).create( captor.capture() );
 
-        final CreateNodeParams iconParams = captor.getAllValues()
-            .stream()
-            .filter( params -> "mytype.svg".equals( params.getName().toString() ) )
-            .findFirst()
-            .orElseThrow();
+        for ( final String iconName : List.of( "mytype.svg", "enonic.svg" ) )
+        {
+            final CreateNodeParams iconParams = captor.getAllValues()
+                .stream()
+                .filter( params -> iconName.equals( params.getName().toString() ) )
+                .findFirst()
+                .orElseThrow();
 
-        assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, iconParams.getData().getString( SchemaNodePropertyNames.MIME_TYPE ) );
-        assertEquals( VirtualAppConstants.ICON_BINARY_REFERENCE,
-                      iconParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
-        assertNull( iconParams.getData().getString( SchemaNodePropertyNames.RESOURCE ) );
-        assertNotNull( iconParams.getBinaryAttachments().get( VirtualAppConstants.ICON_BINARY_REFERENCE ) );
+            assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, iconParams.getData().getString( SchemaNodePropertyNames.MIME_TYPE ), iconName );
+            assertEquals( VirtualAppConstants.ICON_BINARY_REFERENCE, iconParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ),
+                          iconName );
+            assertNull( iconParams.getData().getString( SchemaNodePropertyNames.RESOURCE ), iconName );
+            assertNotNull( iconParams.getBinaryAttachments().get( VirtualAppConstants.ICON_BINARY_REFERENCE ), iconName );
+        }
+
+        // the application icon is a direct child of the application node
+        assertEquals( new NodePath( "/applications/myBundle" ), captor.getAllValues()
+            .stream()
+            .filter( params -> "enonic.svg".equals( params.getName().toString() ) )
+            .findFirst()
+            .orElseThrow()
+            .getParent() );
     }
 
     @Test
-    void persist_schema_replaces_existing_cms()
+    void persist_schema_replaces_existing_schema()
     {
         final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
+        final NodePath descriptorPath = new NodePath( "/applications/myBundle/enonic.yaml" );
+        final NodePath iconPath = new NodePath( "/applications/myBundle/enonic.svg" );
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
+        Mockito.when( this.nodeService.nodeExists( descriptorPath ) ).thenReturn( true );
+        Mockito.when( this.nodeService.nodeExists( iconPath ) ).thenReturn( true );
 
         stubCreate();
 
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), Map.of() );
 
-        // the old schema is removed before the new one is written
+        // the old schema (cms subtree, application descriptor and icon) is removed before the new one is written
         final InOrder inOrder = Mockito.inOrder( this.nodeService );
 
         final ArgumentCaptor<DeleteNodeParams> deleteCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
-        inOrder.verify( this.nodeService ).delete( deleteCaptor.capture() );
-        assertEquals( cmsPath, deleteCaptor.getValue().getNodePath() );
+        inOrder.verify( this.nodeService, Mockito.times( 3 ) ).delete( deleteCaptor.capture() );
+        assertEquals( List.of( cmsPath, descriptorPath, iconPath ),
+                      deleteCaptor.getAllValues().stream().map( DeleteNodeParams::getNodePath ).toList() );
 
         final ArgumentCaptor<CreateNodeParams> createCaptor = ArgumentCaptor.forClass( CreateNodeParams.class );
         inOrder.verify( this.nodeService ).create( createCaptor.capture() );
@@ -177,8 +201,10 @@ class ApplicationRepoServiceImplTest
     void persist_schema_failure_leaves_no_schema()
     {
         final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
-        // the old schema exists before the call; the freshly created cms node exists at cleanup time
+        final NodePath descriptorPath = new NodePath( "/applications/myBundle/enonic.yaml" );
+        // the old schema exists before the call; the freshly created cms and enonic.yaml nodes exist at cleanup time
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
+        Mockito.when( this.nodeService.nodeExists( descriptorPath ) ).thenReturn( true );
 
         final Node cmsNode = cmsNode();
         Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenAnswer( invocation -> {
@@ -190,30 +216,34 @@ class ApplicationRepoServiceImplTest
             return cmsNode;
         } );
 
-        final Map<String, ByteSource> resources =
-            Map.of( "content-types/mytype/mytype.yaml", ByteSource.wrap( "content-type".getBytes( StandardCharsets.UTF_8 ) ) );
+        final Map<String, ByteSource> resources = new LinkedHashMap<>();
+        resources.put( "enonic.yaml", ByteSource.wrap( "app-descriptor".getBytes( StandardCharsets.UTF_8 ) ) );
+        resources.put( "cms/content-types/mytype/mytype.yaml", ByteSource.wrap( "content-type".getBytes( StandardCharsets.UTF_8 ) ) );
 
         assertThrows( RuntimeException.class,
                       () -> this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), resources ) );
 
         // the old schema is removed up front and the half-written new one is removed on failure: no schema is left behind
         final ArgumentCaptor<DeleteNodeParams> deleteCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
-        Mockito.verify( this.nodeService, Mockito.times( 2 ) ).delete( deleteCaptor.capture() );
-        assertEquals( List.of( cmsPath, cmsPath ), deleteCaptor.getAllValues().stream().map( DeleteNodeParams::getNodePath ).toList() );
+        Mockito.verify( this.nodeService, Mockito.times( 4 ) ).delete( deleteCaptor.capture() );
+        assertEquals( List.of( cmsPath, descriptorPath, cmsPath, descriptorPath ),
+                      deleteCaptor.getAllValues().stream().map( DeleteNodeParams::getNodePath ).toList() );
         Mockito.verify( this.nodeService, Mockito.never() ).refresh( Mockito.any() );
     }
 
     @Test
-    void delete_schema_removes_cms()
+    void delete_schema_removes_persisted_nodes()
     {
         final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
+        final NodePath iconPath = new NodePath( "/applications/myBundle/enonic.svg" );
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
+        Mockito.when( this.nodeService.nodeExists( iconPath ) ).thenReturn( true );
 
         this.service.deleteApplicationSchema( ApplicationKey.from( "myBundle" ) );
 
         final ArgumentCaptor<DeleteNodeParams> deleteCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
-        Mockito.verify( this.nodeService ).delete( deleteCaptor.capture() );
-        assertEquals( cmsPath, deleteCaptor.getValue().getNodePath() );
+        Mockito.verify( this.nodeService, Mockito.times( 2 ) ).delete( deleteCaptor.capture() );
+        assertEquals( List.of( cmsPath, iconPath ), deleteCaptor.getAllValues().stream().map( DeleteNodeParams::getNodePath ).toList() );
         Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
     }
 

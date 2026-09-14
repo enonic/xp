@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Defines which application resources are "schema resources": descriptors, schema icons and i18n phrases located under {@code cms/}.
+ * Defines which application resources are "schema resources": the application descriptor and icon in the root of the application,
+ * and descriptors, schema icons and i18n phrases located under {@code cms/}.
  * These are the resources persisted as nodes for applications that own their schema (shipping {@code cms/cms.yaml}).
  */
 public final class SchemaResourcePaths
@@ -15,6 +16,21 @@ public final class SchemaResourcePaths
     public static final List<String> CMS_DESCRIPTOR_PATHS =
         List.of( VirtualAppConstants.CMS_ROOT_NAME + "/" + VirtualAppConstants.CMS_ROOT_NAME + ".yaml",
                  VirtualAppConstants.CMS_ROOT_NAME + "/" + VirtualAppConstants.CMS_ROOT_NAME + ".yml" );
+
+    /**
+     * Name of the node the application descriptor ({@code enonic.yaml} or {@code enonic.yml}) is persisted as.
+     */
+    public static final String APP_DESCRIPTOR_NAME = "enonic.yaml";
+
+    /**
+     * Name of the node the application icon is persisted as.
+     */
+    public static final String APP_ICON_NAME = "enonic.svg";
+
+    /**
+     * Names of the nodes below the application node that make up the persisted schema. They are replaced as a whole.
+     */
+    public static final List<String> PERSISTED_ROOT_NAMES = List.of( VirtualAppConstants.CMS_ROOT_NAME, APP_DESCRIPTOR_NAME, APP_ICON_NAME );
 
     public static final String MACROS_ROOT_NAME = "macros";
 
@@ -45,6 +61,15 @@ public final class SchemaResourcePaths
     // phrases .properties path relative to the cms root, with extension
     public static final String PHRASES_PATH_GROUP = "phrasesPath";
 
+    // application descriptor in the application root, without extension (always "enonic")
+    public static final String APP_DESCRIPTOR_GROUP = "appDescriptor";
+
+    // application descriptor extension: yaml or yml
+    public static final String APP_DESCRIPTOR_EXTENSION_GROUP = "appDescriptorExtension";
+
+    // application icon in the application root, with extension
+    public static final String APP_ICON_PATH_GROUP = "appIconPath";
+
     private static final String SCHEMA_NAME_2_GROUP = "iconName";
 
     private static final String DESCRIPTOR_ROOTS =
@@ -57,13 +82,18 @@ public final class SchemaResourcePaths
         String.join( "|", VirtualAppConstants.CONTENT_TYPE_ROOT_NAME, VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME,
                      VirtualAppConstants.MIXINS_ROOT_NAME, VirtualAppConstants.PART_ROOT_NAME, MACROS_ROOT_NAME );
 
-    public static final Pattern SCHEMA_RESOURCE_PATTERN = Pattern.compile(
-        "^" + VirtualAppConstants.CMS_ROOT_NAME + "/(?:(?<" + DESCRIPTOR_PATH_GROUP + ">(?:" + DESCRIPTOR_ROOTS + ")/(?<" +
-            SCHEMA_NAME_GROUP + ">[^/]+)/\\k<" + SCHEMA_NAME_GROUP + ">|" + VirtualAppConstants.CMS_ROOT_NAME + "|" +
-            VirtualAppConstants.STYLE_ROOT_NAME + "/" + VirtualAppConstants.STYLE_NAME + ")\\.(?<" + EXTENSION_GROUP + ">yaml|yml)|(?<" +
-            ICON_PATH_GROUP + ">(?:" + ICON_ROOTS + ")/(?<" + SCHEMA_NAME_2_GROUP + ">[^/]+)/\\k<" + SCHEMA_NAME_2_GROUP + ">\\.(?:" +
-            SVG_EXTENSION + "|" + PNG_EXTENSION + "))|(?<" + PHRASES_PATH_GROUP + ">" + I18N_ROOT_NAME + "/" + PHRASES_ROOT_NAME +
-            "/[^/]+\\.properties))$" );
+    private static final String CMS_RESOURCES =
+        VirtualAppConstants.CMS_ROOT_NAME + "/(?:(?<" + DESCRIPTOR_PATH_GROUP + ">(?:" + DESCRIPTOR_ROOTS + ")/(?<" + SCHEMA_NAME_GROUP +
+            ">[^/]+)/\\k<" + SCHEMA_NAME_GROUP + ">|" + VirtualAppConstants.CMS_ROOT_NAME + "|" + VirtualAppConstants.STYLE_ROOT_NAME + "/" +
+            VirtualAppConstants.STYLE_NAME + ")\\.(?<" + EXTENSION_GROUP + ">yaml|yml)|(?<" + ICON_PATH_GROUP + ">(?:" + ICON_ROOTS +
+            ")/(?<" + SCHEMA_NAME_2_GROUP + ">[^/]+)/\\k<" + SCHEMA_NAME_2_GROUP + ">\\.(?:" + SVG_EXTENSION + "|" + PNG_EXTENSION +
+            "))|(?<" + PHRASES_PATH_GROUP + ">" + I18N_ROOT_NAME + "/" + PHRASES_ROOT_NAME + "/[^/]+\\.properties))";
+
+    private static final String ROOT_RESOURCES =
+        "(?<" + APP_DESCRIPTOR_GROUP + ">enonic)\\.(?<" + APP_DESCRIPTOR_EXTENSION_GROUP + ">yaml|yml)|(?<" + APP_ICON_PATH_GROUP + ">" +
+            APP_ICON_NAME + ")";
+
+    public static final Pattern SCHEMA_RESOURCE_PATTERN = Pattern.compile( "^(?:" + CMS_RESOURCES + "|" + ROOT_RESOURCES + ")$" );
 
     private SchemaResourcePaths()
     {
@@ -71,8 +101,17 @@ public final class SchemaResourcePaths
 
     public static boolean isSchemaResourcePath( final String path )
     {
-        final String normalized = path.startsWith( "/" ) ? path.substring( 1 ) : path;
-        return SCHEMA_RESOURCE_PATTERN.matcher( normalized ).matches();
+        return SCHEMA_RESOURCE_PATTERN.matcher( normalize( path ) ).matches();
+    }
+
+    /**
+     * {@code true} for the paths of the persisted application descriptor and icon ({@code enonic.yaml}, {@code enonic.svg}),
+     * the only persisted resources outside {@code cms/}.
+     */
+    public static boolean isPersistedRootResource( final String path )
+    {
+        final String normalized = normalize( path );
+        return APP_DESCRIPTOR_NAME.equals( normalized ) || APP_ICON_NAME.equals( normalized );
     }
 
     /**
@@ -89,5 +128,10 @@ public final class SchemaResourcePaths
             return PNG_MIME_TYPE;
         }
         return null;
+    }
+
+    private static String normalize( final String path )
+    {
+        return path.startsWith( "/" ) ? path.substring( 1 ) : path;
     }
 }

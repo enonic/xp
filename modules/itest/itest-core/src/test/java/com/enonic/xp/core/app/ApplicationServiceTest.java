@@ -21,11 +21,13 @@ import org.junit.jupiter.api.io.TempDir;
 import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.ComponentContext;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.audit.AuditLogService;
@@ -36,6 +38,7 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
+import com.enonic.xp.core.impl.app.ApplicationDescriptorServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
@@ -63,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ApplicationServiceTest
     extends AbstractNodeTest
@@ -77,6 +81,8 @@ class ApplicationServiceTest
     private ApplicationService applicationService;
 
     private ResourceService resourceService;
+
+    private ApplicationDescriptorServiceImpl applicationDescriptorService;
 
     private Felix felix;
 
@@ -101,6 +107,11 @@ class ApplicationServiceTest
         applicationFactoryService.activate();
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
+
+        final ComponentContext componentContext = mock( ComponentContext.class );
+        when( componentContext.getBundleContext() ).thenReturn( bundleContext );
+        this.applicationDescriptorService = new ApplicationDescriptorServiceImpl( nodeService, appConfig );
+        this.applicationDescriptorService.start( componentContext );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         applicationAuditLogSupport.activate( appConfig );
@@ -156,13 +167,29 @@ class ApplicationServiceTest
 
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
-                "enonic.yaml", APP_DESCRIPTOR, //
+                "enonic.yml", APP_DESCRIPTOR, //
+                "enonic.svg", "<svg>app</svg>", //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
                 "cms/content-types/mytype/mytype.yml", "kind: \"ContentType\"\ndisplayName: \"My type\"", //
                 "cms/content-types/mytype/mytype.svg", "<svg/>", //
                 "cms/i18n/phrases/phrases_en.properties", "key=value", //
                 "i18n/phrases_en.properties", "root=value", //
                 "assets/app.js", "console.log()" ) ) );
+
+            // the application descriptor and icon are persisted as direct children of the application node (.yml normalized to .yaml)
+            assertEquals( APP_DESCRIPTOR, appChildNode( "staticapp", "enonic.yaml" ).data().getString( "resource" ) );
+            final Node appIconNode = appChildNode( "staticapp", "enonic.svg" );
+            assertEquals( "image/svg+xml", appIconNode.data().getString( "mimeType" ) );
+            assertNotNull( appIconNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "icon" ) ) );
+
+            // and served from there, the bundle's copies are hidden
+            final Resource appDescriptor = resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) );
+            assertEquals( "node", appDescriptor.getResolverName() );
+            assertEquals( APP_DESCRIPTOR, appDescriptor.readString() );
+            final Resource appIcon = resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) );
+            assertEquals( "node", appIcon.getResolverName() );
+            assertEquals( "<svg>app</svg>", appIcon.readString() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.yml" ) ).exists() );
 
             // schema resources are persisted below the application node in system-repo
             assertEquals( "kind: \"CMS\"", schemaNode( "staticapp", "cms.yaml" ).data().getString( "resource" ) );
@@ -305,10 +332,53 @@ class ApplicationServiceTest
 
             assertNotNull( appNode( "staticapp" ) );
             assertNull( appChildNode( "staticapp", "cms" ) );
+            assertNull( appChildNode( "staticapp", "enonic.yaml" ) );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
 
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
             assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/lib/util.js" ) ).getResolverName() );
             assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/assets/app.js" ) ).getResolverName() );
+        } );
+    }
+
+    @Test
+    void applicationDescriptorIsReadFromPersistedSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ndescription: \"Persisted\"\n", //
+                "enonic.svg", "<svg>app</svg>", //
+                "cms/cms.yaml", CMS_DESCRIPTOR ) ) );
+
+            // the descriptor service picks the descriptor and icon up from the nodes persisted before the bundle is installed
+            final ApplicationDescriptor descriptor = applicationDescriptorService.get( appKey );
+            assertNotNull( descriptor );
+            assertEquals( "Persisted", descriptor.getDescription() );
+            assertNotNull( descriptor.getIcon() );
+            assertEquals( "<svg>app</svg>", new String( descriptor.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+
+            // a new version replaces the persisted descriptor and the service follows
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ndescription: \"Updated\"\n", //
+                "cms/cms.yaml", CMS_DESCRIPTOR ) ) );
+
+            final ApplicationDescriptor updated = applicationDescriptorService.get( appKey );
+            assertEquals( "Updated", updated.getDescription() );
+            assertNull( updated.getIcon() );
+
+            // without cms/cms.yaml nothing is persisted and the descriptor comes from the bundle again
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.2", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ndescription: \"Bundled\"\n", //
+                "enonic.svg", "<svg>bundled</svg>" ) ) );
+
+            final ApplicationDescriptor bundled = applicationDescriptorService.get( appKey );
+            assertEquals( "Bundled", bundled.getDescription() );
+            assertEquals( "<svg>bundled</svg>", new String( bundled.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+
+            applicationService.uninstallApplication( appKey );
+            assertNull( applicationDescriptorService.get( appKey ) );
         } );
     }
 

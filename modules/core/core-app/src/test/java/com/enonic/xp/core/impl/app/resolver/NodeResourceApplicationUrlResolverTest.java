@@ -44,7 +44,7 @@ class NodeResourceApplicationUrlResolverTest
     private NodeService nodeService;
 
     @Test
-    void findFiles_lists_the_cms_subtree()
+    void findFiles_lists_the_application_subtree()
     {
         when( this.nodeService.list( any() ) ).thenAnswer( invocation -> result( "/myapp/cms/content-types/mytype/mytype.yaml" ) );
 
@@ -53,7 +53,17 @@ class NodeResourceApplicationUrlResolverTest
         final ArgumentCaptor<ListNodesParams> params = ArgumentCaptor.forClass( ListNodesParams.class );
         verify( this.nodeService ).list( params.capture() );
 
-        assertEquals( new NodePath( "/myapp/cms" ), params.getValue().getParentPath() );
+        assertEquals( new NodePath( "/myapp" ), params.getValue().getParentPath() );
+    }
+
+    @Test
+    void findFiles_lists_the_application_descriptor_and_icon_but_no_other_root_resources()
+    {
+        when( this.nodeService.list( any() ) ).thenAnswer(
+            invocation -> result( "/applications/myapp/enonic.yaml", "/applications/myapp/enonic.svg", "/applications/myapp/other.yaml",
+                                  "/applications/myapp/cms", "/applications/myapp/cms/cms.yaml" ) );
+
+        assertEquals( Set.of( "/enonic.yaml", "/enonic.svg", "/cms/cms.yaml" ), staticAppResolver().findFiles() );
     }
 
     @Test
@@ -98,7 +108,30 @@ class NodeResourceApplicationUrlResolverTest
 
         final ArgumentCaptor<ListNodesParams> params = ArgumentCaptor.forClass( ListNodesParams.class );
         verify( this.nodeService ).list( params.capture() );
-        assertEquals( new NodePath( "/applications/myapp/cms" ), params.getValue().getParentPath() );
+        assertEquals( new NodePath( "/applications/myapp" ), params.getValue().getParentPath() );
+    }
+
+    @Test
+    void findResource_returns_the_persisted_application_descriptor_and_icon()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"" );
+        final Node node = Node.create()
+            .id( new NodeId() )
+            .parentPath( new NodePath( "/applications/myapp" ) )
+            .name( "enonic.yaml" )
+            .data( data )
+            .timestamp( Instant.now() )
+            .build();
+        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( node );
+
+        final Resource resource = staticAppResolver().findResource( "/enonic.yaml" );
+
+        assertEquals( "myapp:/enonic.yaml", resource.getKey().toString() );
+        assertEquals( "kind: \"Application\"", resource.readString() );
+        assertEquals( "node", resource.getResolverName() );
+
+        assertNull( staticAppResolver().findResource( "/enonic.svg" ) );
     }
 
     @Test
@@ -160,6 +193,8 @@ class NodeResourceApplicationUrlResolverTest
     void findResource_returns_null_outside_cms()
     {
         assertNull( staticAppResolver().findResource( "/assets/app.js" ) );
+        assertNull( staticAppResolver().findResource( "/enonic.yml" ) );
+        assertNull( staticAppResolver().findResource( "/application.yaml" ) );
         verify( this.nodeService, org.mockito.Mockito.never() ).getByPath( any() );
     }
 

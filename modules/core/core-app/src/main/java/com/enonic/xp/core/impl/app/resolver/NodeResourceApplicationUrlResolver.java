@@ -11,6 +11,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.core.impl.app.NodeValueResource;
+import com.enonic.xp.core.impl.app.SchemaResourcePaths;
 import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.node.ListNodesParams;
@@ -23,7 +24,8 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 
 /**
- * Serves application resources stored as nodes below {@code <appNodePath>/cms}.
+ * Serves application resources stored as nodes below the application node: the {@code cms} subtree and the persisted
+ * application descriptor and icon ({@code enonic.yaml}, {@code enonic.svg}).
  * Resource paths are relative to the application node, e.g. {@code /cms/content-types/mytype/mytype.yaml}.
  */
 public final class NodeResourceApplicationUrlResolver
@@ -59,14 +61,14 @@ public final class NodeResourceApplicationUrlResolver
     @Override
     public Set<String> findFiles()
     {
-        final NodePath cmsPath = new NodePath( appNodePath, NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
         final int appPathLength = appNodePath.toString().length();
 
         return contextSupplier.get().callWith( () -> {
-            return this.nodeService.list( ListNodesParams.create().parentPath( cmsPath ).build() )
+            return this.nodeService.list( ListNodesParams.create().parentPath( appNodePath ).build() )
                 .map( NodeListEntry::nodePath )
                 .filter( NodeResourceApplicationUrlResolver::isResource )
                 .map( nodePath -> nodePath.toString().substring( appPathLength ) )
+                .filter( NodeResourceApplicationUrlResolver::isServedPath )
                 .collect( Collectors.toCollection( LinkedHashSet::new ) );
         } );
     }
@@ -79,10 +81,19 @@ public final class NodeResourceApplicationUrlResolver
         return nodePath.getName().toString().contains( "." );
     }
 
+    /**
+     * Only the {@code cms} subtree and the persisted application descriptor and icon are served, never other children
+     * of the application node.
+     */
+    private static boolean isServedPath( final String path )
+    {
+        return path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) || SchemaResourcePaths.isPersistedRootResource( path );
+    }
+
     @Override
     public Resource findResource( final String path )
     {
-        if ( !path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) )
+        if ( !isServedPath( path ) )
         {
             return null;
         }

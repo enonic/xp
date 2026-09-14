@@ -296,10 +296,9 @@ public final class ApplicationServiceImpl
 
         repoService.upsertApplicationNode( appInfo, byteSource );
 
-        this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
-
-        final Application application = doInstallApplication( byteSource, applicationKey, false );
-
+        // the schema is persisted before the bundle is installed: the application created for the bundle (and the
+        // application descriptor built on bundle install) must see the persisted nodes from the start, on this
+        // cluster node as well as on the others receiving the install event
         if ( schemaResources != null )
         {
             repoService.persistApplicationSchema( applicationKey, schemaResources );
@@ -308,6 +307,10 @@ public final class ApplicationServiceImpl
         {
             repoService.deleteApplicationSchema( applicationKey );
         }
+
+        this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
+
+        final Application application = doInstallApplication( byteSource, applicationKey, false );
 
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 

@@ -16,16 +16,18 @@ public interface ApplicationRepoService
     void deleteApplicationNode( ApplicationKey application );
 
     /**
-     * Stores schema resources of the application as nodes below the application node ({@code /applications/<name>/cms}).
-     * An existing {@code cms} subtree is replaced.
+     * Stores schema resources of the application as nodes below the application node ({@code /applications/<name>}):
+     * the application descriptor and icon ({@code enonic.yaml}, {@code enonic.svg}) and the {@code cms} subtree.
+     * A previously persisted schema is replaced.
      *
      * @param applicationKey application key
-     * @param resources      schema resources, paths relative to the {@code cms} root mapped to resource content
+     * @param resources      schema resources, paths relative to the application root mapped to resource content
      */
     void persistApplicationSchema( ApplicationKey applicationKey, Map<String, ByteSource> resources );
 
     /**
-     * Removes the schema persisted for the application ({@code /applications/<name>/cms}), if any.
+     * Removes the schema persisted for the application ({@code enonic.yaml}, {@code enonic.svg} and {@code cms} below the
+     * application node), if any.
      */
     void deleteApplicationSchema( ApplicationKey applicationKey );
 

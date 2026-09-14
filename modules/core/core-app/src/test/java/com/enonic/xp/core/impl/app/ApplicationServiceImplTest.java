@@ -13,6 +13,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 import org.osgi.framework.Bundle;
@@ -426,12 +427,20 @@ class ApplicationServiceImplTest
         assertFalse( this.service.isLocalApplication( applicationKey ) );
 
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
-            resources -> resources.size() == 5 && "cms-descriptor".equals( readResource( resources, "cms.yaml" ) ) &&
-                "content-type".equals( readResource( resources, "content-types/mytype/mytype.yaml" ) ) &&
-                "<svg/>".equals( readResource( resources, "content-types/mytype/mytype.svg" ) ) &&
-                "macro".equals( readResource( resources, "macros/mymacro/mymacro.yaml" ) ) &&
-                "phrases".equals( readResource( resources, "i18n/phrases/phrases_en.properties" ) ) ) );
+            resources -> resources.size() == 7 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
+                "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) &&
+                "cms-descriptor".equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                "content-type".equals( readResource( resources, "cms/content-types/mytype/mytype.yaml" ) ) &&
+                "<svg/>".equals( readResource( resources, "cms/content-types/mytype/mytype.svg" ) ) &&
+                "macro".equals( readResource( resources, "cms/macros/mymacro/mymacro.yaml" ) ) &&
+                "phrases".equals( readResource( resources, "cms/i18n/phrases/phrases_en.properties" ) ) ) );
         verify( this.repoService, never() ).deleteApplicationSchema( any() );
+
+        // the schema is persisted before the bundle is installed (install event published, bundle tracked)
+        final InOrder inOrder = Mockito.inOrder( this.repoService, this.eventPublisher );
+        inOrder.verify( this.repoService ).upsertApplicationNode( any(), any() );
+        inOrder.verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), any() );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationClusterEvents.install( applicationKey ) ) ) );
     }
 
     @Test
@@ -471,8 +480,8 @@ class ApplicationServiceImplTest
                                                          .build() ) );
 
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
-            resources -> resources.size() == 2 && "cms-descriptor".equals( readResource( resources, "cms.yaml" ) ) &&
-                "part".equals( readResource( resources, "parts/mypart/mypart.yaml" ) ) ) );
+            resources -> resources.size() == 2 && "cms-descriptor".equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                "part".equals( readResource( resources, "cms/parts/mypart/mypart.yaml" ) ) ) );
     }
 
     @Test
@@ -1064,6 +1073,7 @@ class ApplicationServiceImplTest
     private ByteSource createSchemaBundleSource( final String bundleName )
     {
         return wrap( newBundle( bundleName, true ).addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
+                         .addResource( "enonic.svg", stream( "<svg>app</svg>" ) )
                          .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) )
                          .addResource( "cms/content-types/mytype/mytype.yml", stream( "content-type" ) )
                          .addResource( "cms/content-types/mytype/mytype.svg", stream( "<svg/>" ) )

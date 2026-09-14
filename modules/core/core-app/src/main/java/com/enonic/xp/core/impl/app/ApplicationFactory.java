@@ -113,8 +113,8 @@ public final class ApplicationFactory
                                                        ApplicationHelper::createAdminContext );
     }
 
-    // Schema resources (descriptors and i18n phrases) must not be contributed by the bundle
-    // when the persisted schema (cms node below the application node) exists in system-repo
+    // Schema resources (application descriptor and icon, cms descriptors, schema icons and i18n phrases) must not be
+    // contributed by the bundle when the persisted schema (cms node below the application node) exists in system-repo
     private Predicate<String> schemaResourceFilter( final ApplicationKey applicationKey )
     {
         final Supplier<Boolean> schemaNodeExists = Suppliers.memoize( () -> schemaNodeExists( applicationKey ) );
