@@ -11,9 +11,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.component.ComponentContext;
 
+import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.node.NodeService;
+import com.enonic.xp.server.RunMode;
+import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.support.ResourceTestHelper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -30,6 +35,8 @@ class ApplicationDescriptorServiceImplTest
     @BeforeEach
     void setup()
     {
+        RunModeSupport.set( RunMode.PROD );
+
         resourceTestHelper = new ResourceTestHelper( this );
 
         final Bundle appBundle = mockAppBundle( "com.enonic.myapp" );
@@ -41,7 +48,8 @@ class ApplicationDescriptorServiceImplTest
         componentContext = Mockito.mock( ComponentContext.class );
         Mockito.when( componentContext.getBundleContext() ).thenReturn( bundleContext );
 
-        appDescriptorService = new ApplicationDescriptorServiceImpl();
+        final AppConfig appConfig = Mockito.mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
+        appDescriptorService = new ApplicationDescriptorServiceImpl( Mockito.mock( NodeService.class ), appConfig );
     }
 
     @Test
@@ -49,7 +57,9 @@ class ApplicationDescriptorServiceImplTest
     {
         appDescriptorService.start( componentContext );
 
-        assertNotNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.myapp" ) ) );
+        final ApplicationDescriptor descriptor = appDescriptorService.get( ApplicationKey.from( "com.enonic.myapp" ) );
+        assertNotNull( descriptor );
+        assertEquals( "My app description", descriptor.getDescription() );
         assertNull( appDescriptorService.get( ApplicationKey.from( "com.enonic.nonapp" ) ) );
     }
 
@@ -94,8 +104,9 @@ class ApplicationDescriptorServiceImplTest
         final Bundle bundle = Mockito.mock( Bundle.class );
         Mockito.when( bundle.getSymbolicName() ).thenReturn( symbolicName );
         final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_FILENAME );
-        Mockito.when( bundle.getResource( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
+        // getEntry marks the bundle as an application, getResource serves it through the bundle url resolver
         Mockito.when( bundle.getEntry( APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
+        Mockito.when( bundle.getResource( "/" + APP_DESCRIPTOR_FILENAME ) ).thenReturn( resource );
         Mockito.when( bundle.getState() ).thenReturn( Bundle.ACTIVE );
         Mockito.when( bundle.getHeaders() ).thenReturn( new Hashtable<>() );
         return bundle;

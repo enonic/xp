@@ -26,9 +26,37 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
+    private static final String LOCAL_BUNDLE_LOCATION_PREFIX = "local:";
+
     public static ApplicationKey getApplicationKey( final Bundle bundle )
     {
         return ApplicationKey.from( ApplicationBundleUtils.getApplicationName( bundle ) );
+    }
+
+    /**
+     * {@code true} when the bundle ships a cms descriptor ({@code cms/cms.yaml}), i.e. the application owns its schema.
+     */
+    static boolean hasCmsDescriptor( final Bundle bundle )
+    {
+        return SchemaResourcePaths.CMS_DESCRIPTOR_PATHS.stream().anyMatch( path -> bundle.getEntry( path ) != null );
+    }
+
+    /**
+     * Location of an application bundle. Local applications are marked by a location prefix,
+     * the only channel that reaches the bundle tracker creating the application.
+     */
+    static String toBundleLocation( final ApplicationKey applicationKey, final boolean local )
+    {
+        return ( local ? LOCAL_BUNDLE_LOCATION_PREFIX : "" ) + applicationKey.getName();
+    }
+
+    /**
+     * {@code true} when the bundle was installed as a local application, see {@link #toBundleLocation(ApplicationKey, boolean)}.
+     */
+    static boolean isLocalApplication( final Bundle bundle )
+    {
+        final String location = bundle.getLocation();
+        return location != null && location.startsWith( LOCAL_BUNDLE_LOCATION_PREFIX );
     }
 
     static String getAttribute( final Manifest manifest, final String name, final String defValue )
@@ -105,7 +133,7 @@ public final class ApplicationHelper
         createAdminContext().runWith( runnable );
     }
 
-    private static Context createAdminContext()
+    static Context createAdminContext()
     {
         return ContextBuilder.create()
             .branch( SystemConstants.BRANCH_SYSTEM )
