@@ -8,7 +8,8 @@ import java.util.List;
 
 import org.jspecify.annotations.NullMarked;
 
-import com.enonic.xp.core.internal.image.ImageMagick;
+import com.enonic.im4j.ImageMagick;
+import com.enonic.im4j.ImageMagickProcess;
 
 /** Owns transformed raw rasters until the next backend has consumed them. */
 @NullMarked
@@ -39,24 +40,24 @@ final class ImageMagickTransformer
 
     Result transform( final BufferedImage source, final ImageMagickTransformPlan plan ) throws IOException
     {
-        final NativeImageProcess process = process();
+        final ImageMagickProcess process = process();
         try { return transform( process, NativeImageRaster.write( source, process.file( "input.rgba" ) ), plan ); }
         catch ( IOException | RuntimeException | Error e ) { process.close(); throw e; }
     }
 
     Result transform( final NativeImageRaster source, final ImageMagickTransformPlan plan ) throws IOException
     {
-        final NativeImageProcess process = process();
+        final ImageMagickProcess process = process();
         try { return transform( process, source, plan ); }
         catch ( IOException | RuntimeException | Error e ) { process.close(); throw e; }
     }
 
-    private NativeImageProcess process() throws IOException
+    private ImageMagickProcess process() throws IOException
     {
-        return new NativeImageProcess( imageMagick, temporaryFolder, "transform", timeoutSeconds, "RGBA", "RGBA", maxDiskBytes );
+        return new ImageMagickProcess( imageMagick, temporaryFolder, "transform", timeoutSeconds, "RGBA", "RGBA", maxDiskBytes );
     }
 
-    private Result transform( final NativeImageProcess process, final NativeImageRaster source,
+    private Result transform( final ImageMagickProcess process, final NativeImageRaster source,
                               final ImageMagickTransformPlan plan ) throws IOException
     {
         final Path output = process.file( "output.rgba" );
@@ -68,7 +69,7 @@ final class ImageMagickTransformer
         return new Result( process, NativeImageRaster.validate( output, plan.width(), plan.height(), plan.alpha() ) );
     }
 
-    record Result(NativeImageProcess process, NativeImageRaster raster) implements AutoCloseable
+    record Result(ImageMagickProcess process, NativeImageRaster raster) implements AutoCloseable
     {
         @Override
         public void close() throws IOException { process.close(); }

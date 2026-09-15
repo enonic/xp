@@ -194,10 +194,10 @@ Native policy disables GIF, SVG and vector rendering coders, external delegates,
 loadable filters, indirect file reads, and unrelated coders. SVG output and
 compressed SVGZ input are not supported.
 
-The separate `core-image-im` OSGi bundle owns the native distributions. The build
-unpacks every platform into ordinary executable and library resources before the
-bundle is assembled. There are no nested AppImage or ZIP distributions to unpack
-on the server, and no target-platform executables run during the build.
+The native distributions now live in `im4j`'s per-platform fragment bundles, published
+as ordinary executable and library resources rather than nested AppImage or ZIP
+archives. Nothing is unpacked on the server, and no target-platform
+executables run during XP's build.
 
 On first native use, a Declarative Services component copies the selected
 platform's resources to a unique installation directory in its bundle data area
@@ -210,44 +210,26 @@ static executable cache or JVM shutdown hook. A crash can leave an old installat
 in the framework data area; XP's configured OSGi storage cleanup removes it on restart.
 
 `core-image` retains the image pipeline and obtains installations through the
-`ImageMagick` service contract in `core-internal`. No implementation package is
-shared between the two bundles. Conversion runs in a separate process so timeouts
-can terminate native code.
+`com.enonic.im4j.ImageMagick` service contract, provided by the `im4j` bundle.
+No implementation package is shared between `core-image` and `core-image-im`.
+Conversion runs in a separate process so timeouts can terminate native code.
 
-Bundled platforms cover Linux x86-64/ARM64, Windows x86-64/ARM64, and macOS ARM64.
+The five supported platforms are Linux x86-64/ARM64, Windows x86-64/ARM64, and macOS
+ARM64; each XP distribution bundles only its own platform's fragment, not all five.
 Linux ARM64 uses pkgforge's ImageMagick 7.1.2-30 AppImage, with its self-update
 hook removed during packaging. Linux x86-64 and Windows use upstream 7.1.2-31.
 Windows distributions use Q16-HDRI so edge and emboss retain sufficient precision
 in intermediate gradients; the raw transfer and final output still use 8-bit channels.
 macOS ARM64 uses conda-forge 7.1.2-31 with its codec libraries. Other platforms
 report an unavailable native backend when `ImageMagic` is selected; `ImageIO` remains available. The complete upstream
-archives retain their licenses and dependencies. Version and SHA-256 pins live
-in `../core-image-im/native/distributions.json` and `../core-image-im/native/macos-aarch64.json`.
-The macOS packager retains the executable, required library closure, HEIF plugins,
-and licenses without installing Conda. Gradle calls the Java packager in `buildSrc`;
-Python is not required. Commons Compress reads TAR/BZip2 packages, while Java handles
-checksum verification, archive links, Mach-O dependency traversal, and reproducible
-ZIP output. Native bytes and signatures are preserved. Packaging tests check library
-selection, licenses, invalid paths/dependencies/checksums, cleanup, and reproducibility
-across timezones.
+archives retain their licenses and dependencies, and the packaging logic and
+version/SHA-256 pins that produce each artifact now live in the `im4j` project.
 
-Building XP requires 7-Zip to unpack upstream Windows archives and Linux SquashFS
-filesystems; production servers do not need it. Linux ARM64 uses DwarFS instead:
-the build obtains a checksum-pinned host extractor on Linux/Windows, while macOS
-uses `brew install dwarfs`. An explicit extractor can be selected with
-`-PimageMagickDwarfsExtract=/path/to/dwarfsextract`. The extractor writes a TAR
-stream whose links are resolved by Java. Neither extractor is included in the
-runtime bundle. SquashFS is read from the AppImage
-payload without executing its architecture-specific launcher. Archive links are
-resolved into ordinary files, including when building on Windows. The pinned Windows archives use multi-stream BCJ2 compression,
-which Commons Compress and FreeFair's Commons Compress-based 7-Zip plugin cannot read.
-Linux builds automatically prepare a checksum-pinned 7-Zip 26.03 with SquashFS
-Zstandard support, using the installed extractor to bootstrap its XZ archive.
-Install `7zip` (providing `7z` or `7zz`)
-and `zstd` on Linux or a current 7-Zip on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
-a build-time extractor (Linux/macOS locate `7zz` or `7z` on PATH).
-Adding another platform requires a portable
-upstream distribution and a native encoding test on that platform.
+Building XP requires no ImageMagick tooling. The native distributions are packaged
+by the `im4j` project, which publishes one checksum-pinned artifact per platform;
+XP depends on them and `xp-distro` selects the one matching its target. Adding a
+platform is an im4j change: a portable upstream distribution, a manifest entry, and
+a native encoding test on that platform.
 
 No process is started for cache hits or when all three backends use `ImageIO`.
 Unstyled WebP/AVIF originals retain their pass-through behavior when the URL requests

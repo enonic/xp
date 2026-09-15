@@ -9,8 +9,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 
-import com.enonic.xp.core.impl.image.im.ImageMagickFixture;
-import com.enonic.xp.core.internal.image.ImageMagick;
+import com.enonic.im4j.BundledImageMagick;
+import com.enonic.im4j.ImageMagick;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class ImageMagickTestSupport
@@ -19,13 +19,13 @@ abstract class ImageMagickTestSupport
 
     private Path installationStorage;
 
-    ImageMagickFixture imageMagick;
+    BundledImageMagick imageMagick;
 
     @BeforeAll
     void startImageMagick() throws IOException
     {
         installationStorage = Files.createTempDirectory( "image-test-installation-" );
-        imageMagick = new ImageMagickFixture( installationStorage );
+        imageMagick = new BundledImageMagick( installationStorage );
     }
 
     @AfterAll
