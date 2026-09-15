@@ -23,6 +23,23 @@ dependencyResolutionManagement {
                 includeGroup( 'org.jvnet.mock-javamail' )
             }
         }
+        maven {
+            url = uri( 'https://repo.enonic.com/public' )
+            content {
+                includeGroup( 'com.enonic.im4j' )
+            }
+        }
+        maven {
+            url = uri( 'https://repo.enonic.com/snapshot' )
+            content {
+                includeGroup( 'com.enonic.im4j' )
+            }
+        }
+        mavenLocal {
+            content {
+                includeGroup( 'com.enonic.im4j' )
+            }
+        }
     }
 }
 
@@ -154,4 +171,14 @@ def configureProject( p )
     String dirName = p.path.substring( 1 ).replace( ':', '/' )
     p.projectDir = new File( settingsDir, "modules/${dirName}" )
     assert p.projectDir.isDirectory()
+}
+
+gradle.ext.im4jHostPlatform = {
+    def os = System.getProperty( 'os.name' ).toLowerCase( Locale.ROOT )
+    def arch = System.getProperty( 'os.arch' ).toLowerCase( Locale.ROOT )
+    def normalizedOs = os.startsWith( 'windows' ) ? 'windows' : os.startsWith( 'linux' ) ? 'linux' :
+        os.startsWith( 'mac' ) ? 'osx' : os
+    def normalizedArch = ( arch == 'amd64' || arch == 'x86_64' ) ? 'x86_64' :
+        ( arch == 'arm64' || arch == 'aarch64' ) ? 'aarch64' : arch
+    return "$normalizedOs-$normalizedArch"
 }

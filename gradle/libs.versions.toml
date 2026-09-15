@@ -13,6 +13,7 @@ prometheus = "1.8.0"
 graalvm = "25.3.4.1"
 caffeine = "3.2.4"
 guava = "33.7.1-jre"
+im4j = "1.0.0-SNAPSHOT"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
@@ -166,5 +167,12 @@ prometheus-metrics-tracer-common = { module = "io.prometheus:prometheus-metrics-
 
 ethlo-time = { module = "com.ethlo.time:itu", version = "1.14.0" }
 networknt-jsv = { module = "com.networknt:json-schema-validator", version = "2.0.0" }
+
+im4j = { module = "com.enonic.im4j:im4j", version.ref = "im4j" }
+im4j-natives-linux-x86_64 = { module = "com.enonic.im4j:im4j-natives-linux-x86_64", version.ref = "im4j" }
+im4j-natives-linux-aarch64 = { module = "com.enonic.im4j:im4j-natives-linux-aarch64", version.ref = "im4j" }
+im4j-natives-osx-aarch64 = { module = "com.enonic.im4j:im4j-natives-osx-aarch64", version.ref = "im4j" }
+im4j-natives-windows-x86_64 = { module = "com.enonic.im4j:im4j-natives-windows-x86_64", version.ref = "im4j" }
+im4j-natives-windows-aarch64 = { module = "com.enonic.im4j:im4j-natives-windows-aarch64", version.ref = "im4j" }
 
 [plugins]
