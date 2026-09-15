@@ -7,13 +7,27 @@ export interface NestedRecord {
 declare global {
     interface XpBeans {}
 
-    type XpLayoutMap = Record<ComponentDescriptor, NestedRecord>;
+    // These must stay interfaces, so applications can add their own descriptors with declaration merging.
+    // A type alias like Record<ComponentDescriptor, NestedRecord> can't be merged.
+    /* eslint-disable @typescript-eslint/consistent-indexed-object-style -- see comment above */
+    interface XpLayoutMap {
+        [layoutDescriptor: ComponentDescriptor]: NestedRecord;
+    }
 
     interface XpLibraries {}
 
-    type XpPageMap = Record<ComponentDescriptor, NestedRecord>;
-    type XpPartMap = Record<ComponentDescriptor, NestedRecord>;
-    type XpMixin = Record<string, Record<string, Record<string, unknown>>>;
+    interface XpPageMap {
+        [pageDescriptor: ComponentDescriptor]: NestedRecord;
+    }
+
+    interface XpPartMap {
+        [partDescriptor: ComponentDescriptor]: NestedRecord;
+    }
+
+    interface XpMixin {
+        [applicationKey: string]: Record<string, Record<string, unknown>>;
+    }
+    /* eslint-enable @typescript-eslint/consistent-indexed-object-style */
 }
 
 export type AppConfig = Readonly<Record<string, string | undefined>>;
