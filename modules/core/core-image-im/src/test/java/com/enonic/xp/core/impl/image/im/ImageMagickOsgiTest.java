@@ -56,12 +56,12 @@ class ImageMagickOsgiTest
             final Bundle bundle = context.installBundle( Path.of( System.getProperty( "imagemagick.bundle" ) ).toUri().toString() );
             bundle.start();
             // The bundle under test imports com.enonic.im4j from the im4j bundle, not from the system bundle, so
-            // only a context wired to that import (the tested bundle's own) can see the service; the framework's
-            // context is used only for ungetService, which does not require class-space visibility.
+            // only a context wired to that import (the tested bundle's own) can see and load the service.
             final String className = ImageMagick.class.getName();
             final ServiceReference<?> reference = reference( bundle.getBundleContext(), className );
-            final ImageMagick service = bridge( bundle.getBundleContext().getService( reference ), ImageMagick.class );
-            assertNotNull( service );
+            final Object rawService = bundle.getBundleContext().getService( reference );
+            assertNotNull( rawService );
+            final ImageMagick service = bridge( rawService, ImageMagick.class );
             final Path previous;
             try (var handle = service.acquire())
             {
@@ -73,18 +73,17 @@ class ImageMagickOsgiTest
                 assertThrows( IOException.class, service::acquire );
             }
             assertFalse( Files.exists( previous ) );
-            context.ungetService( reference );
             bundle.start();
             final ServiceReference<?> nextReference = reference( bundle.getBundleContext(), className );
-            final ImageMagick next = bridge( bundle.getBundleContext().getService( nextReference ), ImageMagick.class );
-            assertNotNull( next );
+            final Object rawNext = bundle.getBundleContext().getService( nextReference );
+            assertNotNull( rawNext );
+            final ImageMagick next = bridge( rawNext, ImageMagick.class );
             try (var handle = next.acquire())
             {
                 assertFalse( previous.equals( handle.executable() ) );
                 assertTrue( Files.isExecutable( handle.executable() ) );
             }
             bundle.stop();
-            context.ungetService( nextReference );
         }
         finally
         {
@@ -111,6 +110,9 @@ class ImageMagickOsgiTest
         final Object proxy = Proxy.newProxyInstance( type.getClassLoader(), new Class<?>[]{ type }, ( p, method, args ) -> {
             try
             {
+                // getMethod() is resolved using this test's own Class objects for the parameter types, which only
+                // matches the im4j bundle's method because every method on ImageMagick and ImageMagick.Installation
+                // is zero-argument today. A method taking an im4j type would need matching by parameter type name.
                 final var real = target.getClass().getMethod( method.getName(), method.getParameterTypes() );
                 real.setAccessible( true );
                 final Object result = real.invoke( target, args );

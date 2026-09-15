@@ -231,23 +231,11 @@ ZIP output. Native bytes and signatures are preserved. Packaging tests check lib
 selection, licenses, invalid paths/dependencies/checksums, cleanup, and reproducibility
 across timezones.
 
-Building XP requires 7-Zip to unpack upstream Windows archives and Linux SquashFS
-filesystems; production servers do not need it. Linux ARM64 uses DwarFS instead:
-the build obtains a checksum-pinned host extractor on Linux/Windows, while macOS
-uses `brew install dwarfs`. An explicit extractor can be selected with
-`-PimageMagickDwarfsExtract=/path/to/dwarfsextract`. The extractor writes a TAR
-stream whose links are resolved by Java. Neither extractor is included in the
-runtime bundle. SquashFS is read from the AppImage
-payload without executing its architecture-specific launcher. Archive links are
-resolved into ordinary files, including when building on Windows. The pinned Windows archives use multi-stream BCJ2 compression,
-which Commons Compress and FreeFair's Commons Compress-based 7-Zip plugin cannot read.
-Linux builds automatically prepare a checksum-pinned 7-Zip 26.03 with SquashFS
-Zstandard support, using the installed extractor to bootstrap its XZ archive.
-Install `7zip` (providing `7z` or `7zz`)
-and `zstd` on Linux or a current 7-Zip on Windows. Use `-PimageMagickSevenZip=/path/to/7z` to select
-a build-time extractor (Linux/macOS locate `7zz` or `7z` on PATH).
-Adding another platform requires a portable
-upstream distribution and a native encoding test on that platform.
+Building XP requires no ImageMagick tooling. The native distributions are packaged
+by the `im4j` project, which publishes one checksum-pinned artifact per platform;
+XP depends on them and `xp-distro` selects the one matching its target. Adding a
+platform is an im4j change: a portable upstream distribution, a manifest entry, and
+a native encoding test on that platform.
 
 No process is started for cache hits or when all three backends use `ImageIO`.
 Unstyled WebP/AVIF originals retain their pass-through behavior when the URL requests

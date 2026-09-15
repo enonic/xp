@@ -1,5 +1,7 @@
 dependencies {
-    implementation project( ':core:core-internal' )
+    implementation libs.osgi.core
+    implementation libs.jspecify
+    compileOnly libs.osgi.service.componentannotations
     api libs.im4j
     testImplementation libs.felix.framework
     testImplementation libs.felix.scr
