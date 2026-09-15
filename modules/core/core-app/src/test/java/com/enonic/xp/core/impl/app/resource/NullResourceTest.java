@@ -28,4 +28,17 @@ class NullResourceTest
         assertEquals( "ost", fisk.getName() );
     }
 
+    @Test
+    void name_with_trailing_slash()
+    {
+        final NullResource fisk = new NullResource( "/fisk/ost/" );
+        assertEquals( "ost", fisk.getName() );
+    }
+
+    @Test
+    void name_of_root()
+    {
+        final NullResource root = new NullResource( "/" );
+        assertEquals( "", root.getName() );
+    }
 }
