@@ -194,10 +194,10 @@ Native policy disables GIF, SVG and vector rendering coders, external delegates,
 loadable filters, indirect file reads, and unrelated coders. SVG output and
 compressed SVGZ input are not supported.
 
-The separate `core-image-im` OSGi bundle owns the native distributions. The build
-unpacks every platform into ordinary executable and library resources before the
-bundle is assembled. There are no nested AppImage or ZIP distributions to unpack
-on the server, and no target-platform executables run during the build.
+The separate `core-image-im` OSGi bundle owns the native distributions, published
+by `im4j` as ordinary executable and library resources rather than nested AppImage
+or ZIP archives. Nothing is unpacked on the server, and no target-platform
+executables run during XP's build.
 
 On first native use, a Declarative Services component copies the selected
 platform's resources to a unique installation directory in its bundle data area
@@ -210,9 +210,9 @@ static executable cache or JVM shutdown hook. A crash can leave an old installat
 in the framework data area; XP's configured OSGi storage cleanup removes it on restart.
 
 `core-image` retains the image pipeline and obtains installations through the
-`ImageMagick` service contract in `core-internal`. No implementation package is
-shared between the two bundles. Conversion runs in a separate process so timeouts
-can terminate native code.
+`com.enonic.im4j.ImageMagick` service contract, provided by the `im4j` bundle.
+No implementation package is shared between `core-image` and `core-image-im`.
+Conversion runs in a separate process so timeouts can terminate native code.
 
 Bundled platforms cover Linux x86-64/ARM64, Windows x86-64/ARM64, and macOS ARM64.
 Linux ARM64 uses pkgforge's ImageMagick 7.1.2-30 AppImage, with its self-update
