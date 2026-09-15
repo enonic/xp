@@ -105,6 +105,7 @@ repackBundle( libs.hazelcast.hazelcast, 8 ) {
     forceOptional = ["javax.annotation"]
 }
 addBundle( libs.jparsec, 8 )
+addBundle( libs.im4j, 8 )
 
 addBundle( project( ':repack:repack-elasticsearch' ), 9 )
 addBundle( project( ':core:core-internal' ), 9 )

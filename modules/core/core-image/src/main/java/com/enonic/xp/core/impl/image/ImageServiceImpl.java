@@ -31,13 +31,13 @@ import com.google.common.io.ByteSink;
 import com.google.common.io.ByteSource;
 import com.google.common.io.MoreFiles;
 
+import com.enonic.im4j.ImageMagick;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.image.effect.ImageScaleFunction;
 import com.enonic.xp.core.internal.ByteSizeParser;
 import com.enonic.xp.core.internal.MemoryLimitParser;
 import com.enonic.xp.core.internal.SimpleCsvParser;
-import com.enonic.xp.core.internal.image.ImageMagick;
 import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.exception.ThrottlingException;
 import com.enonic.xp.home.HomeDir;

@@ -21,7 +21,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.impl.image.im.ImageMagickFixture;
+import com.enonic.im4j.Platform;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -120,7 +120,7 @@ class ImageMagickEncoderTest extends ImageMagickTestSupport
     void nativeEncoderProducesRequestedFormat( final String format )
         throws Exception
     {
-        final String platform = ImageMagickFixture.platform();
+        final String platform = Platform.current();
         assumeTrue( Set.of( "linux-x86_64", "linux-aarch64", "osx-aarch64", "windows-x86_64", "windows-aarch64" ).contains( platform ) );
         final ImageMagickEncoder encoder = new ImageMagickEncoder( imageMagick, 30, temporaryFolder, MAX_DISK_BYTES );
         final ByteArrayOutputStream output = new ByteArrayOutputStream();

@@ -1,6 +1,6 @@
 dependencies {
     implementation project( ':core:core-internal' )
-    testFixturesApi project( ':core:core-internal' )
+    api libs.im4j
     testImplementation libs.felix.framework
     testImplementation libs.felix.scr
     testImplementation libs.osgi.util.promise
@@ -9,6 +9,7 @@ dependencies {
 
 configurations {
     osgiTestBundles { transitive = false }
+    im4jTestBundles { transitive = false }
 }
 dependencies {
     osgiTestBundles libs.felix.scr
@@ -16,6 +17,8 @@ dependencies {
     osgiTestBundles libs.osgi.service.cm
     osgiTestBundles libs.osgi.util.promise
     osgiTestBundles libs.osgi.util.function
+    im4jTestBundles libs.im4j
+    im4jTestBundles "com.enonic.im4j:im4j-natives-${gradle.ext.im4jHostPlatform()}:${libs.versions.im4j.get()}"
 }
 
 tasks.named( 'test' ) {
@@ -24,7 +27,7 @@ tasks.named( 'test' ) {
     doFirst {
         systemProperty 'imagemagick.bundle', tasks.named( 'jar' ).get().archiveFile.get().asFile.absolutePath
         systemProperty 'imagemagick.osgi.bundles', configurations.osgiTestBundles.asPath
-        systemProperty 'imagemagick.api.version', project.version.toString().replace( '-SNAPSHOT', '' )
+        systemProperty 'imagemagick.im4j.bundles', configurations.im4jTestBundles.asPath
     }
 }
 
@@ -32,38 +35,4 @@ jar {
     bundle {
         bnd( 'Bundle-Name': 'Enonic XP Core - ImageMagick' )
     }
-}
-
-def imageMagickResources = layout.buildDirectory.dir( 'generated/imagemagick' )
-def packageImageMagick = tasks.register( 'packageImageMagick' ) {
-    inputs.files( fileTree( 'native' ) )
-    outputs.dir( imageMagickResources )
-    doLast {
-        def sevenZip = providers.gradleProperty( 'imageMagickSevenZip' ).orElse( providers.provider {
-            if ( System.getProperty( 'os.name' ).startsWith( 'Windows' ) ) {
-                return new File( System.getenv( 'ProgramFiles' ), '7-Zip/7z.exe' ).path
-            }
-            def paths = System.getenv( 'PATH' ).split( File.pathSeparator )
-            def executable = [ '7zz', '7z' ].collectMany { name -> paths.collect { new File( it, name ) } }
-                .find { it.isFile() && it.canExecute() }
-            if ( executable == null ) { throw new GradleException( 'Install 7-Zip or set imageMagickSevenZip' ) }
-            executable.path
-        } ).get()
-        if ( System.getProperty( 'os.name' ).startsWith( 'Linux' ) &&
-            !providers.gradleProperty( 'imageMagickSevenZip' ).isPresent() ) {
-            sevenZip = com.enonic.gradle.ImageMagickPackager.prepareSevenZip( sevenZip,
-                layout.buildDirectory.dir( 'imagemagick-downloads' ).get().asFile.toPath(),
-                file( 'native/build-tools.json' ).toPath() )
-        }
-        delete( imageMagickResources )
-        com.enonic.gradle.ImageMagickPackager.packageDistributions(
-            file( 'native/distributions.json' ).toPath(),
-            imageMagickResources.get().dir( 'native/imagemagick' ).asFile.toPath(),
-            layout.buildDirectory.dir( 'imagemagick-downloads' ).get().asFile.toPath(), sevenZip,
-            providers.gradleProperty( 'imageMagickDwarfsExtract' ).getOrElse( '' ) )
-    }
-}
-sourceSets.main.resources.srcDir( imageMagickResources )
-tasks.named( 'processResources' ) {
-    dependsOn packageImageMagick
 }

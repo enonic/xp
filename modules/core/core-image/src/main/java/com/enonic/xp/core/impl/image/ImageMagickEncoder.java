@@ -12,7 +12,8 @@ import java.util.Set;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.enonic.xp.core.internal.image.ImageMagick;
+import com.enonic.im4j.ImageMagick;
+import com.enonic.im4j.ImageMagickProcess;
 
 /** Encodes a raw raster without re-materializing pixels from adjacent native stages. */
 @NullMarked
@@ -63,13 +64,13 @@ final class ImageMagickEncoder
         try (var process = process()) { encode( process, raster, format, quality, progressive, output ); }
     }
 
-    private NativeImageProcess process() throws IOException
+    private ImageMagickProcess process() throws IOException
     {
-        return new NativeImageProcess( imageMagick, temporaryFolder, "encode", timeoutSeconds, "RGBA",
+        return new ImageMagickProcess( imageMagick, temporaryFolder, "encode", timeoutSeconds, "RGBA",
             "JPEG,PNG,PNG24,PNG32,GIF,WEBP,AVIF,HEIC", maxDiskBytes );
     }
 
-    private void encode( final NativeImageProcess process, final NativeImageRaster raster, final String format,
+    private void encode( final ImageMagickProcess process, final NativeImageRaster raster, final String format,
                          final int quality, final boolean progressive, final OutputStream output ) throws IOException
     {
         if ( !Set.of( "jpeg", "png", "gif", "webp", "avif" ).contains( format ) || quality < -1 || quality > 100 )
