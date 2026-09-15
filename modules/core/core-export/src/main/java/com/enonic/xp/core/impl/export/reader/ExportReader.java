@@ -24,6 +24,6 @@ public class ExportReader
         return parent.getChildren()
             .stream()
             .filter( VirtualFile::isFolder )
-            .filter( ( folder ) -> !folder.getName().equals( SYSTEM_FOLDER_NAME ) );
+            .filter( ( folder ) -> !SYSTEM_FOLDER_NAME.equals( folder.getPath().getName() ) );
     }
 }

@@ -32,14 +32,7 @@ final class NullResource
     @Override
     public String getName()
     {
-        if ( this.path.equals( "/" ) )
-        {
-            return "";
-        }
-        else
-        {
-            return this.path.substring( this.path.lastIndexOf( '/' ) + 1 );
-        }
+        return this.virtualFilePath.size() == 0 ? "" : this.virtualFilePath.getName();
     }
 
     @Override
