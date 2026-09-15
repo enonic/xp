@@ -221,15 +221,8 @@ Windows distributions use Q16-HDRI so edge and emboss retain sufficient precisio
 in intermediate gradients; the raw transfer and final output still use 8-bit channels.
 macOS ARM64 uses conda-forge 7.1.2-31 with its codec libraries. Other platforms
 report an unavailable native backend when `ImageMagic` is selected; `ImageIO` remains available. The complete upstream
-archives retain their licenses and dependencies. Version and SHA-256 pins live
-in `../core-image-im/native/distributions.json` and `../core-image-im/native/macos-aarch64.json`.
-The macOS packager retains the executable, required library closure, HEIF plugins,
-and licenses without installing Conda. Gradle calls the Java packager in `buildSrc`;
-Python is not required. Commons Compress reads TAR/BZip2 packages, while Java handles
-checksum verification, archive links, Mach-O dependency traversal, and reproducible
-ZIP output. Native bytes and signatures are preserved. Packaging tests check library
-selection, licenses, invalid paths/dependencies/checksums, cleanup, and reproducibility
-across timezones.
+archives retain their licenses and dependencies, and the packaging logic and
+version/SHA-256 pins that produce each artifact now live in the `im4j` project.
 
 Building XP requires no ImageMagick tooling. The native distributions are packaged
 by the `im4j` project, which publishes one checksum-pinned artifact per platform;
