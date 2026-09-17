@@ -3,6 +3,7 @@ dependencies {
     implementation libs.jspecify
     compileOnly libs.osgi.service.componentannotations
     api libs.im4j
+    compileOnly libs.slf4j.api
     testImplementation libs.felix.framework
     testImplementation libs.felix.scr
     testImplementation libs.osgi.util.promise

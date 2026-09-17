@@ -36,7 +36,9 @@ class ImageMagickOsgiTest
     {
         final var framework = new FrameworkFactory().newFramework( Map.of(
             Constants.FRAMEWORK_STORAGE, storage.resolve( "felix" ).toString(),
-            Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA, "org.jspecify.annotations;version=1.0.0" ) );
+            Constants.FRAMEWORK_SYSTEMPACKAGES_EXTRA,
+            // Ambient in a real XP runtime; the framework supplies them here.
+            "org.jspecify.annotations;version=1.0.0,org.slf4j;version=2.0.18" ) );
         framework.start();
         try
         {
