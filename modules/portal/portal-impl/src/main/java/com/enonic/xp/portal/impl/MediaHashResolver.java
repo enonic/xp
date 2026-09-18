@@ -24,16 +24,22 @@ import static java.util.Objects.requireNonNullElse;
 @NullMarked
 public final class MediaHashResolver
 {
-    public static @Nullable String resolveImageHash( final Media media, final @Nullable String hash )
+    public static String resolveImageHash( final Media media, final @Nullable String hash )
     {
-        if ( hash == null )
-        {
-            return null;
-        }
-
         final MessageDigest digest = MessageDigests.sha512();
 
-        digest.update( HexFormat.of().parseHex( hash ) );
+        if ( hash == null )
+        {
+            // Media imported from an export that predates attachment checksums carries none. Hash the
+            // content id instead of refusing: an unhashed media gets an unsigned URL, and an unsigned
+            // URL can never render a modern format. Renditions of it are still left uncached, since
+            // the disk cache keys on a real source checksum.
+            digest.update( media.getId().toString().getBytes( StandardCharsets.UTF_8 ) );
+        }
+        else
+        {
+            digest.update( HexFormat.of().parseHex( hash ) );
+        }
 
         final PropertySet mediaData = media.getData().getSet( ContentPropertyNames.MEDIA );
         final FocalPoint focalPoint = requireNonNullElse( MediaUtils.readFocalPoint( mediaData ), FocalPoint.DEFAULT );
@@ -57,7 +63,7 @@ public final class MediaHashResolver
     {
         final Attachment attachment = media.getAttachments().byLabel( "source" );
 
-        if ( attachment == null || attachment.getSha512() == null )
+        if ( attachment == null )
         {
             return null;
         }
