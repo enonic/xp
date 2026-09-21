@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 
 import com.enonic.im4j.BundledImageMagick;
+import com.enonic.im4j.ExternalImageMagick;
 import com.enonic.im4j.ImageMagick;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -19,19 +20,37 @@ abstract class ImageMagickTestSupport
 
     private Path installationStorage;
 
-    BundledImageMagick imageMagick;
+    ImageMagick imageMagick;
 
+    /**
+     * Runs the suite against the bundled distribution, or against an externally installed
+     * ImageMagick when {@code -Dim4j.external=<path>} names one. The second form is an
+     * acceptance harness: it answers whether a candidate build supports every operation XP
+     * performs, by running XP's own encoder, decoder and transformer against it.
+     */
     @BeforeAll
     void startImageMagick() throws IOException
     {
-        installationStorage = Files.createTempDirectory( "image-test-installation-" );
-        imageMagick = new BundledImageMagick( installationStorage );
+        final String external = System.getProperty( "im4j.external", "" ).trim();
+        if ( external.isEmpty() )
+        {
+            installationStorage = Files.createTempDirectory( "image-test-installation-" );
+            imageMagick = new BundledImageMagick( installationStorage );
+        }
+        else
+        {
+            imageMagick = new ExternalImageMagick( Path.of( external ) );
+        }
     }
 
     @AfterAll
     void stopImageMagick() throws IOException
     {
-        imageMagick.close();
+        if ( installationStorage == null )
+        {
+            return;
+        }
+        ( (BundledImageMagick) imageMagick ).close();
         Files.delete( installationStorage );
     }
 

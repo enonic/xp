@@ -15,4 +15,6 @@ jar {
 
 tasks.withType( Test ).configureEach {
     testLogging.exceptionFormat = 'full'
+    // Forward to the forked test JVM so the suite can run against an external ImageMagick.
+    systemProperty 'im4j.external', providers.systemProperty( 'im4j.external' ).getOrElse( '' )
 }
