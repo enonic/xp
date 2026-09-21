@@ -20,7 +20,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.node.NodeService;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.app")
+@Component(immediate = true)
 public class ApplicationDescriptorServiceImpl
     implements ApplicationDescriptorService, SynchronousBundleListener
 {
@@ -33,10 +33,10 @@ public class ApplicationDescriptorServiceImpl
     private final ApplicationFactory factory;
 
     @Activate
-    public ApplicationDescriptorServiceImpl( @Reference final NodeService nodeService, final AppConfig config )
+    public ApplicationDescriptorServiceImpl( @Reference final NodeService nodeService )
     {
         this.appDescriptorMap = new ConcurrentHashMap<>();
-        this.factory = new ApplicationFactory( nodeService, config );
+        this.factory = new ApplicationFactory( nodeService );
     }
 
     @Override

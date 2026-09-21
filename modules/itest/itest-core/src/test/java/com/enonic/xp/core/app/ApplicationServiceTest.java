@@ -45,7 +45,6 @@ import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
-import com.enonic.xp.core.impl.app.VirtualAppService;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.node.Node;
@@ -103,14 +102,14 @@ class ApplicationServiceTest
         BundleContext bundleContext = felix.getBundleContext();
 
         ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+            new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
 
         final ComponentContext componentContext = mock( ComponentContext.class );
         when( componentContext.getBundleContext() ).thenReturn( bundleContext );
-        this.applicationDescriptorService = new ApplicationDescriptorServiceImpl( nodeService, appConfig );
+        this.applicationDescriptorService = new ApplicationDescriptorServiceImpl( nodeService );
         this.applicationDescriptorService.start( componentContext );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -119,7 +118,7 @@ class ApplicationServiceTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), applicationAuditLogSupport );
+            applicationAuditLogSupport );
     }
 
     @AfterEach
@@ -227,7 +226,8 @@ class ApplicationServiceTest
 
             // non-schema resources are still served from the bundle
             assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/assets/app.js" ) ).getResolverName() );
-            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/i18n/phrases_en.properties" ) ).getResolverName() );
+            assertEquals( "bundle",
+                          resourceService.getResource( ResourceKey.from( appKey, "/i18n/phrases_en.properties" ) ).getResolverName() );
 
             assertTrue( resourceService.findFiles( appKey, "^/cms/.*\\.yaml$" )
                             .contains( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ) );
@@ -270,8 +270,8 @@ class ApplicationServiceTest
             assertNotNull( schemaNode( "staticapp", "content-types/newtype/newtype.yaml" ) );
 
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
-            assertEquals( "node",
-                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/newtype/newtype.yaml" ) ).getResolverName() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/newtype/newtype.yaml" ) )
+                .getResolverName() );
         } );
     }
 
@@ -303,10 +303,12 @@ class ApplicationServiceTest
             assertNull( schemaNode( "staticapp", "parts/mypart/mypart.js" ) );
 
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/newtype/newtype.yaml" ) )
+                .getResolverName() );
             assertEquals( "node",
-                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/newtype/newtype.yaml" ) ).getResolverName() );
-            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.yaml" ) ).getResolverName() );
-            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.yaml" ) ).getResolverName() );
+            assertEquals( "bundle",
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
         } );
     }
 
@@ -439,10 +441,12 @@ class ApplicationServiceTest
             assertNull( schemaNode( "schemabundleapp", "parts/mypart/mypart.js" ) );
 
             assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) ).getResolverName() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) )
+                .getResolverName() );
             assertEquals( "node",
-                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).getResolverName() );
-            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.yaml" ) ).getResolverName() );
-            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.yaml" ) ).getResolverName() );
+            assertEquals( "bundle",
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
         } );
     }
 
@@ -495,8 +499,8 @@ class ApplicationServiceTest
                 "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
 
             assertNotNull( schemaNode( "overriddenapp", "content-types/mytype/mytype.yaml" ) );
-            assertEquals( "node",
-                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).getResolverName() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) )
+                .getResolverName() );
 
             // a local build of the same application, shipping its own schema, is deployed on top of the global one
             applicationService.installLocalApplication( createAppSource( "overriddenapp", "1.0.1-SNAPSHOT", Map.of( //
@@ -510,17 +514,18 @@ class ApplicationServiceTest
             assertNotNull( schemaNode( "overriddenapp", "content-types/mytype/mytype.yaml" ) );
             // ...but ignored: the local bundle is the only schema source
             assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) ).getResolverName() );
-            assertEquals( "bundle",
-                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/othertype/othertype.yaml" ) ).getResolverName() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/othertype/othertype.yaml" ) )
+                .getResolverName() );
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
 
             // removing the local application brings the stored one, and its persisted schema, back
             applicationService.uninstallLocalApplication( appKey );
 
             assertFalse( applicationService.isLocalApplication( appKey ) );
-            assertEquals( "node",
-                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).getResolverName() );
-            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/othertype/othertype.yaml" ) ).exists() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) )
+                .getResolverName() );
+            assertFalse(
+                resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/othertype/othertype.yaml" ) ).exists() );
         } );
     }
 
@@ -539,8 +544,8 @@ class ApplicationServiceTest
             assertNull( appNode( "localbundleapp" ) );
 
             assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) ).getResolverName() );
-            assertEquals( "bundle",
-                          resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).getResolverName() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) )
+                .getResolverName() );
         } );
     }
 
@@ -594,8 +599,7 @@ class ApplicationServiceTest
                                                              .setHeader( Constants.BUNDLE_SYMBOLICNAME, "appName" )
                                                              .setHeader( Constants.BUNDLE_VERSION, appVersion )
                                                              .setHeader( "X-Bundle-Type", "application" )
-                                                             .addResource( "cms/site.yml",
-                                                                           getClass().getResource( "/myapp/cms/site.yml" ) )
+                                                             .addResource( "cms/site.yml", getClass().getResource( "/myapp/cms/site.yml" ) )
                                                              .build() ) );
     }
 

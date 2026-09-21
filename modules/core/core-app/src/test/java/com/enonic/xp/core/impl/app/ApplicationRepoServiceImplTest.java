@@ -154,10 +154,10 @@ class ApplicationRepoServiceImplTest
                 .orElseThrow();
 
             assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, iconParams.getData().getString( SchemaNodePropertyNames.MIME_TYPE ), iconName );
-            assertEquals( VirtualAppConstants.ICON_BINARY_REFERENCE, iconParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ),
+            assertEquals( SchemaResourceNames.ICON_BINARY_REFERENCE, iconParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ),
                           iconName );
             assertNull( iconParams.getData().getString( SchemaNodePropertyNames.RESOURCE ), iconName );
-            assertNotNull( iconParams.getBinaryAttachments().get( VirtualAppConstants.ICON_BINARY_REFERENCE ), iconName );
+            assertNotNull( iconParams.getBinaryAttachments().get( SchemaResourceNames.ICON_BINARY_REFERENCE ), iconName );
         }
 
         // the application icon is a direct child of the application node
@@ -193,7 +193,7 @@ class ApplicationRepoServiceImplTest
 
         final ArgumentCaptor<CreateNodeParams> createCaptor = ArgumentCaptor.forClass( CreateNodeParams.class );
         inOrder.verify( this.nodeService ).create( createCaptor.capture() );
-        assertEquals( VirtualAppConstants.CMS_ROOT_NAME, createCaptor.getValue().getName().toString() );
+        assertEquals( SchemaResourceNames.CMS_ROOT_NAME, createCaptor.getValue().getName().toString() );
         assertEquals( new NodePath( "/applications/myBundle" ), createCaptor.getValue().getParent() );
     }
 
@@ -266,7 +266,7 @@ class ApplicationRepoServiceImplTest
     {
         return Node.create()
             .id( new NodeId() )
-            .name( VirtualAppConstants.CMS_ROOT_NAME )
+            .name( SchemaResourceNames.CMS_ROOT_NAME )
             .parentPath( new NodePath( "/applications/myBundle" ) )
             .build();
     }

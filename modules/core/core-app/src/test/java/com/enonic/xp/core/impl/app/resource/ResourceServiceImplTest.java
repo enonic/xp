@@ -22,7 +22,6 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
@@ -237,8 +236,7 @@ class ResourceServiceImplTest
             .runWith( () -> {
                 assertNull( processResource( "segment1", "/cms/parts/a/a.yml", "1" ) );
 
-                final ApplicationUrlResolver applicationUrlResolver =
-                    NodeResourceApplicationUrlResolver.forVirtualApp( ApplicationKey.from( "myapp" ), nodeService );
+                final ApplicationUrlResolver applicationUrlResolver = nodeResolver( nodeService );
 
                 doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
                     .findResolver( ApplicationKey.from( "myapp" ), "node" );
@@ -271,15 +269,14 @@ class ResourceServiceImplTest
             final RepositoryId repositoryId = invocation.getArgument( 0 );
             return Repository.create()
                 .id( repositoryId )
-                .branches( Branches.from( VirtualAppConstants.VIRTUAL_APP_BRANCH, Branch.from( "master" ) ) )
+                .branches( Branches.from( Branch.from( "master" ) ) )
                 .build();
         } );
 
         when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
         when( nodeService.getByPath( new NodePath( "/myapp/cms/parts/my-part/my-part.yml" ) ) ).thenReturn( partSchemaNode );
 
-        final ApplicationUrlResolver applicationUrlResolver =
-            NodeResourceApplicationUrlResolver.forVirtualApp( ApplicationKey.from( "myapp" ), nodeService );
+        final ApplicationUrlResolver applicationUrlResolver = nodeResolver( nodeService );
 
         doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
             .findResolver( ApplicationKey.from( "myapp" ), null );
@@ -297,6 +294,13 @@ class ResourceServiceImplTest
 
         final String value = processResource( "segment1", "cms/parts/my-part/my-part.yml", "1" );
         assertEquals( "myapp:/cms/parts/my-part/my-part.yml->1", value );
+    }
+
+    // resources of "myapp" stored as nodes below the application node /myapp
+    private static ApplicationUrlResolver nodeResolver( final NodeService nodeService )
+    {
+        return new NodeResourceApplicationUrlResolver( ApplicationKey.from( "myapp" ), nodeService, new NodePath( "/myapp" ),
+                                                       ContextAccessor::current );
     }
 
     @Test

@@ -16,7 +16,6 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.FakeCmsYamlUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
@@ -29,12 +28,9 @@ public final class ApplicationFactory
 {
     private final NodeService nodeService;
 
-    private final AppConfig appConfig;
-
-    ApplicationFactory( final NodeService nodeService, final AppConfig appConfig )
+    ApplicationFactory( final NodeService nodeService )
     {
         this.nodeService = nodeService;
-        this.appConfig = appConfig;
     }
 
     public ApplicationImpl create( final Bundle bundle )
@@ -52,22 +48,12 @@ public final class ApplicationFactory
         final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
         final ApplicationUrlResolver bundleUrlResolver = createBundleUrlResolver( bundle );
 
-        final ApplicationUrlResolver appUrlResolver = hasNodeBackedSchema( bundle )
+        return hasNodeBackedSchema( bundle )
             // schema resources are served from nodes below the application node in system-repo,
             // the bundle's own schema resources are hidden as soon as the persisted schema exists.
-            ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey ),
+            ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey, nodeService ),
                                                new FilteredApplicationUrlResolver( bundleUrlResolver, () -> schemaResourceFilter( appKey ) ) )
             : bundleUrlResolver;
-
-        if ( appConfig.virtual_enabled() && appConfig.virtual_schema_override() )
-        {
-            return new MultiApplicationUrlResolver( NodeResourceApplicationUrlResolver.forVirtualApp( appKey, nodeService ),
-                                                    appUrlResolver, new FakeCmsYamlUrlResolver( appKey, nodeService ) );
-        }
-        else
-        {
-            return appUrlResolver;
-        }
     }
 
     /**
@@ -82,19 +68,11 @@ public final class ApplicationFactory
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
     {
-        switch ( source )
+        if ( "bundle".equals( source ) )
         {
-            case "bundle":
-                return createBundleUrlResolver( bundle );
-            case "virtual":
-                if ( !appConfig.virtual_enabled() )
-                {
-                    throw new IllegalStateException( "virtual apps are disabled" );
-                }
-                return NodeResourceApplicationUrlResolver.forVirtualApp( ApplicationHelper.getApplicationKey( bundle ), nodeService );
-            default:
-                throw new IllegalArgumentException( "invalid application resolver source: " + source );
+            return createBundleUrlResolver( bundle );
         }
+        throw new IllegalArgumentException( "invalid application resolver source: " + source );
     }
 
     private ApplicationUrlResolver createBundleUrlResolver( final Bundle bundle )
@@ -107,9 +85,14 @@ public final class ApplicationFactory
             : bundleUrlResolver;
     }
 
-    private NodeResourceApplicationUrlResolver createPersistedSchemaResolver( final ApplicationKey applicationKey )
+    /**
+     * Resolver serving the schema persisted below the application node in system-repo.
+     */
+    static NodeResourceApplicationUrlResolver createPersistedSchemaResolver( final ApplicationKey applicationKey,
+                                                                            final NodeService nodeService )
     {
-        return new NodeResourceApplicationUrlResolver( applicationKey, nodeService, applicationNodePath( applicationKey ),
+        return new NodeResourceApplicationUrlResolver( applicationKey, nodeService,
+                                                       ApplicationRepoServiceImpl.applicationNodePath( applicationKey ),
                                                        ApplicationHelper::createAdminContext );
     }
 
@@ -123,13 +106,9 @@ public final class ApplicationFactory
 
     private boolean schemaNodeExists( final ApplicationKey applicationKey )
     {
-        final NodePath cmsPath = new NodePath( applicationNodePath( applicationKey ), NodeName.from( VirtualAppConstants.CMS_ROOT_NAME ) );
+        final NodePath cmsPath =
+            new NodePath( ApplicationRepoServiceImpl.applicationNodePath( applicationKey ), NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) );
         return ApplicationHelper.runAsAdmin( () -> nodeService.nodeExists( cmsPath ) );
-    }
-
-    private static NodePath applicationNodePath( final ApplicationKey applicationKey )
-    {
-        return new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
     }
 
     private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )

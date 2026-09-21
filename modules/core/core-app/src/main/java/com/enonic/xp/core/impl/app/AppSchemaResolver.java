@@ -96,7 +96,7 @@ final class AppSchemaResolver
 
     private static String cmsPath( final String cmsRelativePath )
     {
-        return VirtualAppConstants.CMS_ROOT_NAME + "/" + cmsRelativePath;
+        return SchemaResourceNames.CMS_ROOT_NAME + "/" + cmsRelativePath;
     }
 
     private static String firstNonNull( final String first, final String second )

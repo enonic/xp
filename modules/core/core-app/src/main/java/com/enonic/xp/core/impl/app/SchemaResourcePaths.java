@@ -14,8 +14,8 @@ public final class SchemaResourcePaths
      * Paths of the cms descriptor inside an application jar/bundle. An application shipping one of these owns its schema.
      */
     public static final List<String> CMS_DESCRIPTOR_PATHS =
-        List.of( VirtualAppConstants.CMS_ROOT_NAME + "/" + VirtualAppConstants.CMS_ROOT_NAME + ".yaml",
-                 VirtualAppConstants.CMS_ROOT_NAME + "/" + VirtualAppConstants.CMS_ROOT_NAME + ".yml" );
+        List.of( SchemaResourceNames.CMS_ROOT_NAME + "/" + SchemaResourceNames.CMS_ROOT_NAME + ".yaml",
+                 SchemaResourceNames.CMS_ROOT_NAME + "/" + SchemaResourceNames.CMS_ROOT_NAME + ".yml" );
 
     /**
      * Name of the node the application descriptor ({@code enonic.yaml} or {@code enonic.yml}) is persisted as.
@@ -30,7 +30,7 @@ public final class SchemaResourcePaths
     /**
      * Names of the nodes below the application node that make up the persisted schema. They are replaced as a whole.
      */
-    public static final List<String> PERSISTED_ROOT_NAMES = List.of( VirtualAppConstants.CMS_ROOT_NAME, APP_DESCRIPTOR_NAME, APP_ICON_NAME );
+    public static final List<String> PERSISTED_ROOT_NAMES = List.of( SchemaResourceNames.CMS_ROOT_NAME, APP_DESCRIPTOR_NAME, APP_ICON_NAME );
 
     public static final String MACROS_ROOT_NAME = "macros";
 
@@ -73,19 +73,19 @@ public final class SchemaResourcePaths
     private static final String SCHEMA_NAME_2_GROUP = "iconName";
 
     private static final String DESCRIPTOR_ROOTS =
-        String.join( "|", VirtualAppConstants.CONTENT_TYPE_ROOT_NAME, VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME,
-                     VirtualAppConstants.MIXINS_ROOT_NAME, VirtualAppConstants.PART_ROOT_NAME, VirtualAppConstants.LAYOUT_ROOT_NAME,
-                     VirtualAppConstants.PAGE_ROOT_NAME, MACROS_ROOT_NAME );
+        String.join( "|", SchemaResourceNames.CONTENT_TYPE_ROOT_NAME, SchemaResourceNames.FORM_FRAGMENTS_ROOT_NAME,
+                     SchemaResourceNames.MIXINS_ROOT_NAME, SchemaResourceNames.PART_ROOT_NAME, SchemaResourceNames.LAYOUT_ROOT_NAME,
+                     SchemaResourceNames.PAGE_ROOT_NAME, MACROS_ROOT_NAME );
 
     // icons exist for content types, form fragments, mixins, parts and macros
     private static final String ICON_ROOTS =
-        String.join( "|", VirtualAppConstants.CONTENT_TYPE_ROOT_NAME, VirtualAppConstants.FORM_FRAGMENTS_ROOT_NAME,
-                     VirtualAppConstants.MIXINS_ROOT_NAME, VirtualAppConstants.PART_ROOT_NAME, MACROS_ROOT_NAME );
+        String.join( "|", SchemaResourceNames.CONTENT_TYPE_ROOT_NAME, SchemaResourceNames.FORM_FRAGMENTS_ROOT_NAME,
+                     SchemaResourceNames.MIXINS_ROOT_NAME, SchemaResourceNames.PART_ROOT_NAME, MACROS_ROOT_NAME );
 
     private static final String CMS_RESOURCES =
-        VirtualAppConstants.CMS_ROOT_NAME + "/(?:(?<" + DESCRIPTOR_PATH_GROUP + ">(?:" + DESCRIPTOR_ROOTS + ")/(?<" + SCHEMA_NAME_GROUP +
-            ">[^/]+)/\\k<" + SCHEMA_NAME_GROUP + ">|" + VirtualAppConstants.CMS_ROOT_NAME + "|" + VirtualAppConstants.STYLE_ROOT_NAME + "/" +
-            VirtualAppConstants.STYLE_NAME + ")\\.(?<" + EXTENSION_GROUP + ">yaml|yml)|(?<" + ICON_PATH_GROUP + ">(?:" + ICON_ROOTS +
+        SchemaResourceNames.CMS_ROOT_NAME + "/(?:(?<" + DESCRIPTOR_PATH_GROUP + ">(?:" + DESCRIPTOR_ROOTS + ")/(?<" + SCHEMA_NAME_GROUP +
+            ">[^/]+)/\\k<" + SCHEMA_NAME_GROUP + ">|" + SchemaResourceNames.CMS_ROOT_NAME + "|" + SchemaResourceNames.STYLE_ROOT_NAME + "/" +
+            SchemaResourceNames.STYLE_NAME + ")\\.(?<" + EXTENSION_GROUP + ">yaml|yml)|(?<" + ICON_PATH_GROUP + ">(?:" + ICON_ROOTS +
             ")/(?<" + SCHEMA_NAME_2_GROUP + ">[^/]+)/\\k<" + SCHEMA_NAME_2_GROUP + ">\\.(?:" + SVG_EXTENSION + "|" + PNG_EXTENSION +
             "))|(?<" + PHRASES_PATH_GROUP + ">" + I18N_ROOT_NAME + "/" + PHRASES_ROOT_NAME + "/[^/]+\\.properties))";
 

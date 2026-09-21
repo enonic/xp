@@ -11,9 +11,8 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.core.impl.app.NodeValueResource;
+import com.enonic.xp.core.impl.app.SchemaResourceNames;
 import com.enonic.xp.core.impl.app.SchemaResourcePaths;
-import com.enonic.xp.core.impl.app.VirtualAppConstants;
-import com.enonic.xp.core.impl.app.VirtualAppContext;
 import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeListEntry;
@@ -48,16 +47,6 @@ public final class NodeResourceApplicationUrlResolver
         this.contextSupplier = contextSupplier;
     }
 
-    /**
-     * Resolver for a virtual application stored in the {@code system.app} repository.
-     */
-    public static NodeResourceApplicationUrlResolver forVirtualApp( final ApplicationKey applicationKey, final NodeService nodeService )
-    {
-        return new NodeResourceApplicationUrlResolver( applicationKey, nodeService, new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT,
-                                                                                                  NodeName.from( applicationKey.toString() ) ),
-                                                       VirtualAppContext::createContext );
-    }
-
     @Override
     public Set<String> findFiles()
     {
@@ -87,7 +76,7 @@ public final class NodeResourceApplicationUrlResolver
      */
     private static boolean isServedPath( final String path )
     {
-        return path.startsWith( "/" + VirtualAppConstants.CMS_ROOT_NAME + "/" ) || SchemaResourcePaths.isPersistedRootResource( path );
+        return path.startsWith( "/" + SchemaResourceNames.CMS_ROOT_NAME + "/" ) || SchemaResourcePaths.isPersistedRootResource( path );
     }
 
     @Override
@@ -112,9 +101,9 @@ public final class NodeResourceApplicationUrlResolver
 
             final ResourceKey resourceKey = ResourceKey.from( applicationKey, path );
 
-            if ( resourceNode.getAttachedBinaries().getByBinaryReference( VirtualAppConstants.ICON_BINARY_REFERENCE ) != null )
+            if ( resourceNode.getAttachedBinaries().getByBinaryReference( SchemaResourceNames.ICON_BINARY_REFERENCE ) != null )
             {
-                final ByteSource binary = nodeService.getBinary( resourceNode.id(), VirtualAppConstants.ICON_BINARY_REFERENCE );
+                final ByteSource binary = nodeService.getBinary( resourceNode.id(), SchemaResourceNames.ICON_BINARY_REFERENCE );
                 return new NodeValueResource( resourceKey, binary, resourceNode.getTimestamp() );
             }
 

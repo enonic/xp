@@ -48,8 +48,7 @@ class ApplicationDescriptorServiceImplTest
         componentContext = Mockito.mock( ComponentContext.class );
         Mockito.when( componentContext.getBundleContext() ).thenReturn( bundleContext );
 
-        final AppConfig appConfig = Mockito.mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        appDescriptorService = new ApplicationDescriptorServiceImpl( Mockito.mock( NodeService.class ), appConfig );
+        appDescriptorService = new ApplicationDescriptorServiceImpl( Mockito.mock( NodeService.class ) );
     }
 
     @Test

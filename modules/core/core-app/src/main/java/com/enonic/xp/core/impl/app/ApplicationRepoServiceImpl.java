@@ -53,11 +53,19 @@ public class ApplicationRepoServiceImpl
         }
     }
 
+    /**
+     * Node of an application in system-repo, the parent of its persisted schema ({@code cms}).
+     */
+    static NodePath applicationNodePath( final ApplicationKey applicationKey )
+    {
+        return new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
+    }
+
     @Override
     public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
         this.nodeService.delete( DeleteNodeParams.create()
-                                           .nodePath( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ) )
+                                           .nodePath( applicationNodePath( applicationKey ) )
                                            .refresh( RefreshMode.ALL )
                                            .build() );
     }
@@ -71,7 +79,7 @@ public class ApplicationRepoServiceImpl
     public void persistApplicationSchema( final ApplicationKey applicationKey, final Map<String, ByteSource> resources )
     {
         ApplicationHelper.runAsAdmin( () -> {
-            final NodePath appPath = new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
+            final NodePath appPath = applicationNodePath( applicationKey );
 
             deletePersistedSchema( appPath );
 
@@ -80,7 +88,7 @@ public class ApplicationRepoServiceImpl
                 // the persisted tree was just removed: the folders created on the way to the resources are tracked here,
                 // the cms folder is always created as the marker of a persisted schema
                 final Set<NodePath> folders = new HashSet<>();
-                folders.add( createFolderNode( appPath, VirtualAppConstants.CMS_ROOT_NAME ) );
+                folders.add( createFolderNode( appPath, SchemaResourceNames.CMS_ROOT_NAME ) );
 
                 resources.forEach( ( path, content ) -> createResourceNode( appPath, path, content, folders ) );
             }
@@ -104,8 +112,7 @@ public class ApplicationRepoServiceImpl
     @Override
     public void deleteApplicationSchema( final ApplicationKey applicationKey )
     {
-        ApplicationHelper.runAsAdmin(
-            () -> deletePersistedSchema( new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) ) ) );
+        ApplicationHelper.runAsAdmin( () -> deletePersistedSchema( applicationNodePath( applicationKey ) ) );
     }
 
     private void deletePersistedSchema( final NodePath appPath )
@@ -166,8 +173,8 @@ public class ApplicationRepoServiceImpl
         {
             // icons are stored as node binaries, the descriptors and phrases as a text property
             data.setString( SchemaNodePropertyNames.MIME_TYPE, iconMimeType );
-            data.setBinaryReference( SchemaNodePropertyNames.ICON, VirtualAppConstants.ICON_BINARY_REFERENCE );
-            params.attachBinary( VirtualAppConstants.ICON_BINARY_REFERENCE, content );
+            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.ICON_BINARY_REFERENCE );
+            params.attachBinary( SchemaResourceNames.ICON_BINARY_REFERENCE, content );
         }
         else
         {
