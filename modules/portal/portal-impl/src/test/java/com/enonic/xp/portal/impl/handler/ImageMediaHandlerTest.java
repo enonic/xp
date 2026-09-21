@@ -275,6 +275,41 @@ class ImageMediaHandlerTest
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"jpeg", "webp", "avif"})
+    void mediaWithoutASourceChecksumStillRenders( final String format )
+        throws Exception
+    {
+        // Content imported from an export that predates attachment checksums has no sha512. Its URLs
+        // must still carry a fingerprint, or every request degrades to cache-only and never renders.
+        final Attachment attachment = Attachment.create().name( "1.jpg" ).label( "source" ).mimeType( "image/jpeg" ).build();
+        final Media media = (Media) createContent( "123456", "path/to/1.jpg", attachment );
+        when( contentService.getById( media.getId() ) ).thenReturn( media );
+        when( contentService.getBinary( isA( ContentId.class ), isA( BinaryReference.class ) ) )
+            .thenReturn( ByteSource.wrap( new byte[]{2} ) );
+        when( imageService.readImage( isA( ReadImageParams.class ) ) ).thenReturn( ByteSource.wrap( new byte[]{1} ) );
+
+        final var generator = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ),
+                                                                 styleDescriptorService, HmacTestHelper.createHmacService() );
+        final var parts = generator.imageUrlParts( ImageUrlGeneratorParams.create()
+                                                       .setMedia( () -> media )
+                                                       .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                       .setBranch( () -> ContentConstants.BRANCH_MASTER )
+                                                       .setScale( "width(600)" )
+                                                       .setFormat( format )
+                                                       .build() );
+        request.setRawPath( "/site/myproject/master/_" + parts.path() );
+
+        assertEquals( HttpStatus.OK, handler.handle( request ).getStatus() );
+
+        final ArgumentCaptor<ReadImageParams> params = ArgumentCaptor.forClass( ReadImageParams.class );
+        verify( imageService ).readImage( params.capture() );
+        assertEquals( "width(600)", params.getValue().getScaleParams().toString() );
+        assertFalse( params.getValue().isCacheOnly() );
+        // No checksum means no disk-cache key, so the rendition is produced but never stored.
+        assertNull( params.getValue().getAttachmentSha512() );
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"webp", "avif"})
     void scaledModernSourceIsTransformedInsteadOfPassedThrough( final String sourceFormat )
         throws Exception

@@ -15,7 +15,8 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.io.ByteSource;
 
-import com.enonic.xp.core.internal.image.ImageMagick;
+import com.enonic.im4j.ImageMagick;
+import com.enonic.im4j.ImageMagickProcess;
 
 /** Decodes the first raster through the shared native process runner. */
 @NullMarked
@@ -57,7 +58,7 @@ final class ImageMagickDecoder
 
     final class Source implements AutoCloseable
     {
-        private final NativeImageProcess process;
+        private final ImageMagickProcess process;
         private final @Nullable PreparedImageSource ownedSource;
         private final Path input;
         private final String coder;
@@ -71,7 +72,7 @@ final class ImageMagickDecoder
             this.input = input.toAbsolutePath();
             this.ownedSource = ownedSource;
             this.coder = coder( input );
-            process = new NativeImageProcess( imageMagick, temporaryFolder, "decode", timeoutSeconds,
+            process = new ImageMagickProcess( imageMagick, temporaryFolder, "decode", timeoutSeconds,
                 "JPEG,PNG,WEBP,AVIF,HEIC,BMP,TIFF,ICC", "RGBA,INFO", maxDiskBytes );
             try
             {

@@ -1,7 +1,8 @@
 dependencies {
     implementation project( ':core:core-api' )
     implementation project( ':core:core-internal' )
-    testImplementation( testFixtures( project( ':core:core-image-im' ) ) )
+    implementation libs.im4j
+    testImplementation "com.enonic.im4j:im4j-natives-${gradle.ext.im4jHostPlatform()}:${libs.versions.im4j.get()}"
     implementation libs.jhlabs.filters
 }
 
@@ -14,4 +15,6 @@ jar {
 
 tasks.withType( Test ).configureEach {
     testLogging.exceptionFormat = 'full'
+    // Forward to the forked test JVM so the suite can run against an external ImageMagick.
+    systemProperty 'im4j.external', providers.systemProperty( 'im4j.external' ).getOrElse( '' )
 }
