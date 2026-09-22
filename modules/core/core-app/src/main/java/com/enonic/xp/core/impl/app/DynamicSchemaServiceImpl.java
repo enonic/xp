@@ -74,11 +74,15 @@ public class DynamicSchemaServiceImpl
 
     private final DynamicResourceParser dynamicResourceParser;
 
+    private final DynamicSchemaAuditLogSupport auditLogSupport;
+
     @Activate
-    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService )
+    public DynamicSchemaServiceImpl( @Reference final NodeService nodeService,
+                                     @Reference final DynamicSchemaAuditLogSupport auditLogSupport )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService );
         this.dynamicResourceParser = new DynamicResourceParser();
+        this.auditLogSupport = auditLogSupport;
     }
 
     @Override
@@ -116,8 +120,12 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return doSetIcon( createComponentFolderPath( params.getKey(), DynamicComponentType.PART ), params.getKey().getName(),
-                          params.getData(), params.getMimeType(), params.getKey().toString() );
+        final Icon icon = doSetIcon( createComponentFolderPath( params.getKey(), DynamicComponentType.PART ), params.getKey().getName(),
+                                     params.getData(), params.getMimeType(), params.getKey().toString() );
+
+        auditLogSupport.setComponentIcon( params.getKey(), DynamicComponentType.PART, params.getMimeType(), icon.getSize() );
+
+        return icon;
     }
 
     @Override
@@ -133,7 +141,14 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return doDeleteIcon( createComponentFolderPath( key, DynamicComponentType.PART ), key.getName() );
+        final boolean deleted = doDeleteIcon( createComponentFolderPath( key, DynamicComponentType.PART ), key.getName() );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteComponentIcon( key, DynamicComponentType.PART );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -351,7 +366,12 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), null ), resource );
+        final DynamicSchemaResult<T> result =
+            new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), null ), resource );
+
+        auditLogSupport.createComponent( params, type, result );
+
+        return result;
     }
 
     private <T extends ComponentDescriptor> DynamicSchemaResult<T> doUpdateComponent( final UpdateDynamicComponentParams params,
@@ -367,7 +387,12 @@ public class DynamicSchemaServiceImpl
 
         final Icon icon = hasIcon( type ) ? loadIcon( resourceFolderPath, params.getKey().getName() ) : null;
 
-        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), icon ), resource );
+        final DynamicSchemaResult<T> result =
+            new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), icon ), resource );
+
+        auditLogSupport.updateComponent( params, type, result );
+
+        return result;
     }
 
     private <T extends ComponentDescriptor> DynamicSchemaResult<T> doGetComponent( final DescriptorKey key, final DynamicComponentType type )
@@ -404,7 +429,14 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.deleteResource( createComponentFolderPath( key, type ), key.getName(), true );
+        final boolean deleted = dynamicResourceManager.deleteResource( createComponentFolderPath( key, type ), key.getName(), true );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteComponent( key, type );
+        }
+
+        return deleted;
     }
 
     private <T extends BaseSchema<?>> DynamicSchemaResult<T> doCreateSchema( final CreateDynamicContentSchemaParams params,
@@ -419,7 +451,11 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp(), null ), resource );
+        final DynamicSchemaResult<T> result = new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp(), null ), resource );
+
+        auditLogSupport.createContentSchema( params, type, result );
+
+        return result;
     }
 
     private <T extends BaseSchema<?>> DynamicSchemaResult<T> doUpdateSchema( final UpdateDynamicContentSchemaParams params,
@@ -436,7 +472,11 @@ public class DynamicSchemaServiceImpl
 
         final Icon icon = loadIcon( resourceFolderPath, params.getName().getLocalName() );
 
-        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp(), icon ), resource );
+        final DynamicSchemaResult<T> result = new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp(), icon ), resource );
+
+        auditLogSupport.updateContentSchema( params, type, result );
+
+        return result;
     }
 
     private <T extends BaseSchema<?>> DynamicSchemaResult<T> doGetSchema( final BaseSchemaName name, final DynamicContentSchemaType type )
@@ -474,7 +514,14 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.deleteResource( createSchemaFolderPath( name, type ), name.getLocalName(), true );
+        final boolean deleted = dynamicResourceManager.deleteResource( createSchemaFolderPath( name, type ), name.getLocalName(), true );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteContentSchema( name, type );
+        }
+
+        return deleted;
     }
 
     private Icon doSetSchemaIcon( final SetDynamicContentSchemaIconParams params, final DynamicContentSchemaType type )
@@ -482,8 +529,12 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
         requireSchemaName( params.getName(), type );
 
-        return doSetIcon( createSchemaFolderPath( params.getName(), type ), params.getName().getLocalName(), params.getData(),
-                          params.getMimeType(), params.getName().toString() );
+        final Icon icon = doSetIcon( createSchemaFolderPath( params.getName(), type ), params.getName().getLocalName(), params.getData(),
+                                     params.getMimeType(), params.getName().toString() );
+
+        auditLogSupport.setContentSchemaIcon( params.getName(), type, params.getMimeType(), icon.getSize() );
+
+        return icon;
     }
 
     private Icon doGetSchemaIcon( final BaseSchemaName name, final DynamicContentSchemaType type )
@@ -497,7 +548,14 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return doDeleteIcon( createSchemaFolderPath( name, type ), name.getLocalName() );
+        final boolean deleted = doDeleteIcon( createSchemaFolderPath( name, type ), name.getLocalName() );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteContentSchemaIcon( name, type );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -511,8 +569,12 @@ public class DynamicSchemaServiceImpl
         final Resource createdResource =
             dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<CmsDescriptor> result = new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
+
+        auditLogSupport.createCms( params, result );
+
+        return result;
     }
 
     @Override
@@ -528,8 +590,12 @@ public class DynamicSchemaServiceImpl
             ? dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() )
             : dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<CmsDescriptor> result = new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        auditLogSupport.updateCms( params, result );
+
+        return result;
     }
 
     @Override
@@ -543,8 +609,12 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<StyleDescriptor> result = new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        auditLogSupport.createStyles( params, result );
+
+        return result;
     }
 
     @Override
@@ -558,8 +628,12 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, params.getResource() );
 
-        return new DynamicSchemaResult<>(
+        final DynamicSchemaResult<StyleDescriptor> result = new DynamicSchemaResult<>(
             StyleDescriptor.copyOf( styles ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
+
+        auditLogSupport.updateStyles( params, result );
+
+        return result;
     }
 
     @Override
@@ -603,7 +677,14 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createCmsFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, false );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, false );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteCms( key );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -612,7 +693,14 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createStylesFolderPath( key );
-        return dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, false );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, false );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteStyles( key );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -626,7 +714,12 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), null ), resource );
+        final DynamicSchemaResult<MacroDescriptor> result =
+            new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), null ), resource );
+
+        auditLogSupport.createMacro( params, result );
+
+        return result;
     }
 
     @Override
@@ -642,7 +735,12 @@ public class DynamicSchemaServiceImpl
 
         final Icon icon = loadIcon( resourceFolderPath, params.getKey().getName() );
 
-        return new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), icon ), resource );
+        final DynamicSchemaResult<MacroDescriptor> result =
+            new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), icon ), resource );
+
+        auditLogSupport.updateMacro( params, result );
+
+        return result;
     }
 
     @Override
@@ -681,7 +779,14 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.deleteResource( createMacroFolderPath( key ), key.getName(), true );
+        final boolean deleted = dynamicResourceManager.deleteResource( createMacroFolderPath( key ), key.getName(), true );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteMacro( key );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -689,8 +794,12 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return doSetIcon( createMacroFolderPath( params.getKey() ), params.getKey().getName(), params.getData(), params.getMimeType(),
-                          params.getKey().toString() );
+        final Icon icon = doSetIcon( createMacroFolderPath( params.getKey() ), params.getKey().getName(), params.getData(),
+                                     params.getMimeType(), params.getKey().toString() );
+
+        auditLogSupport.setMacroIcon( params.getKey(), params.getMimeType(), icon.getSize() );
+
+        return icon;
     }
 
     @Override
@@ -706,7 +815,14 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return doDeleteIcon( createMacroFolderPath( key ), key.getName() );
+        final boolean deleted = doDeleteIcon( createMacroFolderPath( key ), key.getName() );
+
+        if ( deleted )
+        {
+            auditLogSupport.deleteMacroIcon( key );
+        }
+
+        return deleted;
     }
 
     @Override
@@ -714,8 +830,13 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.createResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
-                                                          params.getResource() );
+        final Resource resource =
+            dynamicResourceManager.createResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
+                                                       params.getResource() );
+
+        auditLogSupport.createPhrases( params, resource );
+
+        return resource;
     }
 
     @Override
@@ -723,8 +844,13 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        return dynamicResourceManager.updateResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
-                                                          params.getResource() );
+        final Resource resource =
+            dynamicResourceManager.updateResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
+                                                       params.getResource() );
+
+        auditLogSupport.updatePhrases( params, resource );
+
+        return resource;
     }
 
     @Override
@@ -754,8 +880,15 @@ public class DynamicSchemaServiceImpl
         final NodePath folderPath = createPhrasesFolderPath( params.getKey() );
         final String fileName = phrasesFileName( params.getName() );
 
-        return dynamicResourceManager.resourceFileNodeExists( folderPath, fileName ) &&
+        final boolean deleted = dynamicResourceManager.resourceFileNodeExists( folderPath, fileName ) &&
             dynamicResourceManager.deleteResourceFile( folderPath, fileName, false );
+
+        if ( deleted )
+        {
+            auditLogSupport.deletePhrases( params );
+        }
+
+        return deleted;
     }
 
     /**

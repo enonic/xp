@@ -27,7 +27,9 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationHelper;
 import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.CreateDynamicCmsParams;
+import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
+import com.enonic.xp.core.impl.app.SchemaConfig;
 import com.enonic.xp.core.impl.app.SchemaResourceNames;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
@@ -249,7 +251,13 @@ class DynamicSchemaServiceImplTest
 
         ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
 
-        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService );
+        final SchemaConfig schemaConfig = mock( SchemaConfig.class, withSettings().stubOnly()
+            .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
+
+        final DynamicSchemaAuditLogSupportImpl schemaAuditLogSupport = new DynamicSchemaAuditLogSupportImpl( mock( AuditLogService.class ) );
+        schemaAuditLogSupport.activate( schemaConfig );
+
+        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
             .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
