@@ -14,6 +14,7 @@ import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.core.impl.schema.YmlMacroDescriptorParser;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;

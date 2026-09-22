@@ -1,5 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,10 +10,15 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
@@ -21,25 +28,35 @@ import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
+import com.enonic.xp.resource.CreateDynamicMacroParams;
+import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.DeleteDynamicComponentParams;
 import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
+import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.GetDynamicComponentParams;
 import com.enonic.xp.resource.GetDynamicContentSchemaParams;
+import com.enonic.xp.resource.GetDynamicPhrasesParams;
 import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.SetDynamicComponentIconParams;
+import com.enonic.xp.resource.SetDynamicContentSchemaIconParams;
+import com.enonic.xp.resource.SetDynamicMacroIconParams;
 import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
+import com.enonic.xp.resource.UpdateDynamicMacroParams;
+import com.enonic.xp.resource.UpdateDynamicPhrasesParams;
 import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
+import com.enonic.xp.schema.SchemaNotFoundException;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
@@ -55,6 +72,12 @@ import com.enonic.xp.style.StyleDescriptor;
 public class DynamicSchemaServiceImpl
     implements DynamicSchemaService, DynamicSchemaServiceInternal
 {
+    private static final long MAX_ICON_SIZE = 100 * 1024;
+
+    private static final String YAML_EXTENSION = "yaml";
+
+    private static final String PROPERTIES_EXTENSION = ".properties";
+
     private final DynamicResourceManager dynamicResourceManager;
 
     private final DynamicResourceParser dynamicResourceParser;
@@ -78,7 +101,7 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), null ), resource );
 
     }
 
@@ -94,9 +117,43 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+        final Icon icon = hasIcon( params.getType() ) ? loadIcon( resourceFolderPath, params.getKey().getName() ) : null;
+
+        return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), icon ), resource );
     }
 
+    @Override
+    public Icon setComponentIcon( final SetDynamicComponentIconParams params )
+    {
+        requireAdminRole();
+
+        if ( !hasIcon( params.getType() ) )
+        {
+            throw new IllegalArgumentException( String.format( "icons are not supported for component type: %s", params.getType() ) );
+        }
+
+        return doSetIcon( createComponentFolderPath( params.getKey(), params.getType() ), params.getKey().getName(), params.getData(),
+                          params.getMimeType(), params.getKey().toString() );
+    }
+
+    @Override
+    public Icon getComponentIcon( final GetDynamicComponentParams params )
+    {
+        requireAdminRole();
+
+        return hasIcon( params.getType() )
+            ? loadIcon( createComponentFolderPath( params.getKey(), params.getType() ), params.getKey().getName() )
+            : null;
+    }
+
+    @Override
+    public boolean deleteComponentIcon( final DeleteDynamicComponentParams params )
+    {
+        requireAdminRole();
+
+        return hasIcon( params.getType() ) &&
+            doDeleteIcon( createComponentFolderPath( params.getKey(), params.getType() ), params.getKey().getName() );
+    }
 
     @Override
     public <T extends BaseSchema<?>> DynamicSchemaResult<T> createContentSchema( final CreateDynamicContentSchemaParams params )
@@ -109,7 +166,7 @@ public class DynamicSchemaServiceImpl
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
 
-        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp(), null ), resource );
     }
 
     @Override
@@ -122,7 +179,35 @@ public class DynamicSchemaServiceImpl
         final NodePath resourceFolderPath = createSchemaFolderPath( params.getName(), params.getType() );
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, params.getName().getLocalName(), params.getResource() );
-        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+
+        final Icon icon = loadIcon( resourceFolderPath, params.getName().getLocalName() );
+
+        return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp(), icon ), resource );
+    }
+
+    @Override
+    public Icon setContentSchemaIcon( final SetDynamicContentSchemaIconParams params )
+    {
+        requireAdminRole();
+
+        return doSetIcon( createSchemaFolderPath( params.getName(), params.getType() ), params.getName().getLocalName(), params.getData(),
+                          params.getMimeType(), params.getName().toString() );
+    }
+
+    @Override
+    public Icon getContentSchemaIcon( final GetDynamicContentSchemaParams params )
+    {
+        requireAdminRole();
+
+        return loadIcon( createSchemaFolderPath( params.getName(), params.getType() ), params.getName().getLocalName() );
+    }
+
+    @Override
+    public boolean deleteContentSchemaIcon( final DeleteDynamicContentSchemaParams params )
+    {
+        requireAdminRole();
+
+        return doDeleteIcon( createSchemaFolderPath( params.getName(), params.getType() ), params.getName().getLocalName() );
     }
 
     @Override
@@ -164,8 +249,7 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
+        final NodePath resourceFolderPath = createStylesFolderPath( params.getKey() );
         final Resource resource =
             dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, params.getResource() );
 
@@ -180,8 +264,7 @@ public class DynamicSchemaServiceImpl
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
-        final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( params.getKey() ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
+        final NodePath resourceFolderPath = createStylesFolderPath( params.getKey() );
         final Resource resource =
             dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, params.getResource() );
 
@@ -201,7 +284,8 @@ public class DynamicSchemaServiceImpl
         {
             final ComponentDescriptor descriptor =
                 dynamicResourceParser.parseComponent( params.getKey(), params.getType(), resource.readString() );
-            return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+            final Icon icon = hasIcon( params.getType() ) ? loadIcon( resourceFolderPath, params.getKey().getName() ) : null;
+            return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), icon ), resource );
         }
         return null;
     }
@@ -214,11 +298,14 @@ public class DynamicSchemaServiceImpl
         return dynamicResourceManager.listResources( createComponentRootPath( params.getKey(), params.getType() ) )
             .stream()
             .map( resource -> {
+                final DescriptorKey descriptorKey = DescriptorKey.from( params.getKey(), getResourceName( resource.getKey() ) );
                 final ComponentDescriptor descriptor =
-                    dynamicResourceParser.parseComponent( DescriptorKey.from( params.getKey(), getResourceName( resource.getKey() ) ),
-                                                          params.getType(), resource.readString() );
+                    dynamicResourceParser.parseComponent( descriptorKey, params.getType(), resource.readString() );
+                final Icon icon = hasIcon( params.getType() )
+                    ? loadIcon( createComponentFolderPath( descriptorKey, params.getType() ), descriptorKey.getName() )
+                    : null;
 
-                return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp() ), resource );
+                return new DynamicSchemaResult<>( (T) wrapDescriptor( descriptor, resource.getTimestamp(), icon ), resource );
             } )
             .collect( Collectors.<DynamicSchemaResult<T>>toList() );
     }
@@ -235,7 +322,8 @@ public class DynamicSchemaServiceImpl
         if ( resource.exists() && resource.getSize() > 0 )
         {
             final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), params.getType(), resource.readString() );
-            return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+            final Icon icon = loadIcon( resourceFolderPath, params.getName().getLocalName() );
+            return new DynamicSchemaResult<>( (T) wrapSchema( schema, resource.getTimestamp(), icon ), resource );
         }
 
         return null;
@@ -264,8 +352,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( key ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
+        final NodePath resourceFolderPath = createStylesFolderPath( key );
         final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME );
 
         if ( resource.exists() && resource.getSize() > 0 )
@@ -304,11 +391,11 @@ public class DynamicSchemaServiceImpl
 
         return dynamicResourceManager.listResources( componentRootPath ).stream().map( resource -> {
 
-            final BaseSchema<?> schema =
-                dynamicResourceParser.parseSchema( getSchemaName( params.getKey(), params.getType(), getResourceName( resource.getKey() ) ),
-                                                   params.getType(), resource.readString() );
+            final BaseSchemaName schemaName = getSchemaName( params.getKey(), params.getType(), getResourceName( resource.getKey() ) );
+            final BaseSchema<?> schema = dynamicResourceParser.parseSchema( schemaName, params.getType(), resource.readString() );
+            final Icon icon = loadIcon( createSchemaFolderPath( schemaName, params.getType() ), schemaName.getLocalName() );
 
-            return new DynamicSchemaResult<T>( (T) wrapSchema( schema, resource.getTimestamp() ), resource );
+            return new DynamicSchemaResult<T>( (T) wrapSchema( schema, resource.getTimestamp(), icon ), resource );
         } ).collect( Collectors.<DynamicSchemaResult<T>>toList() );
     }
 
@@ -326,9 +413,264 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath =
-            NodePath.create( createCmsFolderPath( key ) ).addElement( SchemaResourceNames.STYLE_ROOT_NAME ).build();
+        final NodePath resourceFolderPath = createStylesFolderPath( key );
         return dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, false );
+    }
+
+    @Override
+    public DynamicSchemaResult<MacroDescriptor> createMacro( final CreateDynamicMacroParams params )
+    {
+        requireAdminRole();
+
+        final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), params.getResource() );
+
+        final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
+        final Resource resource =
+            dynamicResourceManager.createResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
+
+        return new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), null ), resource );
+    }
+
+    @Override
+    public DynamicSchemaResult<MacroDescriptor> updateMacro( final UpdateDynamicMacroParams params )
+    {
+        requireAdminRole();
+
+        final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), params.getResource() );
+
+        final NodePath resourceFolderPath = createMacroFolderPath( params.getKey() );
+        final Resource resource =
+            dynamicResourceManager.updateResource( resourceFolderPath, params.getKey().getName(), params.getResource() );
+
+        final Icon icon = loadIcon( resourceFolderPath, params.getKey().getName() );
+
+        return new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), icon ), resource );
+    }
+
+    @Override
+    public DynamicSchemaResult<MacroDescriptor> getMacro( final MacroKey key )
+    {
+        requireAdminRole();
+
+        final NodePath resourceFolderPath = createMacroFolderPath( key );
+        final Resource resource = dynamicResourceManager.getResource( resourceFolderPath, key.getName() );
+
+        if ( resource.exists() && resource.getSize() > 0 )
+        {
+            final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( key, resource.readString() );
+            final Icon icon = loadIcon( resourceFolderPath, key.getName() );
+            return new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), icon ), resource );
+        }
+        return null;
+    }
+
+    @Override
+    public List<DynamicSchemaResult<MacroDescriptor>> listMacros( final ApplicationKey key )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.listResources( createMacroRootPath( key ) ).stream().map( resource -> {
+            final MacroKey macroKey = MacroKey.from( key, getResourceName( resource.getKey() ) );
+            final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( macroKey, resource.readString() );
+            final Icon icon = loadIcon( createMacroFolderPath( macroKey ), macroKey.getName() );
+
+            return new DynamicSchemaResult<>( wrapMacro( descriptor, resource.getTimestamp(), icon ), resource );
+        } ).collect( Collectors.toList() );
+    }
+
+    @Override
+    public boolean deleteMacro( final MacroKey key )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.deleteResource( createMacroFolderPath( key ), key.getName(), true );
+    }
+
+    @Override
+    public Icon setMacroIcon( final SetDynamicMacroIconParams params )
+    {
+        requireAdminRole();
+
+        return doSetIcon( createMacroFolderPath( params.getKey() ), params.getKey().getName(), params.getData(), params.getMimeType(),
+                          params.getKey().toString() );
+    }
+
+    @Override
+    public Icon getMacroIcon( final MacroKey key )
+    {
+        requireAdminRole();
+
+        return loadIcon( createMacroFolderPath( key ), key.getName() );
+    }
+
+    @Override
+    public boolean deleteMacroIcon( final MacroKey key )
+    {
+        requireAdminRole();
+
+        return doDeleteIcon( createMacroFolderPath( key ), key.getName() );
+    }
+
+    @Override
+    public Resource createPhrases( final CreateDynamicPhrasesParams params )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.createResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
+                                                          params.getResource() );
+    }
+
+    @Override
+    public Resource updatePhrases( final UpdateDynamicPhrasesParams params )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.updateResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
+                                                          params.getResource() );
+    }
+
+    @Override
+    public Resource getPhrases( final GetDynamicPhrasesParams params )
+    {
+        requireAdminRole();
+
+        final Resource resource =
+            dynamicResourceManager.getResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ) );
+
+        return resource.exists() ? resource : null;
+    }
+
+    @Override
+    public List<Resource> listPhrases( final ApplicationKey key )
+    {
+        requireAdminRole();
+
+        return dynamicResourceManager.listResourceFiles( createPhrasesFolderPath( key ), "[^/]+\\" + PROPERTIES_EXTENSION );
+    }
+
+    @Override
+    public boolean deletePhrases( final DeleteDynamicPhrasesParams params )
+    {
+        requireAdminRole();
+
+        final NodePath folderPath = createPhrasesFolderPath( params.getKey() );
+        final String fileName = phrasesFileName( params.getName() );
+
+        return dynamicResourceManager.resourceFileNodeExists( folderPath, fileName ) &&
+            dynamicResourceManager.deleteResourceFile( folderPath, fileName, false );
+    }
+
+    /**
+     * The icon is stored next to the descriptor as {@code <name>.svg} or {@code <name>.png}. An icon of the other format is removed,
+     * so a schema never has two icons. The descriptor node is touched so that the descriptor is re-read with the new icon.
+     */
+    private Icon doSetIcon( final NodePath folderPath, final String localName, final ByteSource data, final String mimeType,
+                            final String schemaId )
+    {
+        final String extension = iconExtension( mimeType );
+        final long size = iconSize( data );
+
+        if ( size == 0 )
+        {
+            throw new IllegalArgumentException( "icon data is required" );
+        }
+        if ( size > MAX_ICON_SIZE )
+        {
+            throw new IllegalArgumentException( String.format( "icon size exceeds the maximum allowed %d bytes", MAX_ICON_SIZE ) );
+        }
+
+        final String descriptorFileName = localName + "." + YAML_EXTENSION;
+        if ( !dynamicResourceManager.resourceFileNodeExists( folderPath, descriptorFileName ) )
+        {
+            throw new SchemaNotFoundException( String.format( "Schema [%s] not found", schemaId ) );
+        }
+
+        final String oppositeFileName = localName + "." +
+            ( SchemaResourcePaths.SVG_EXTENSION.equals( extension ) ? SchemaResourcePaths.PNG_EXTENSION : SchemaResourcePaths.SVG_EXTENSION );
+        if ( dynamicResourceManager.resourceFileNodeExists( folderPath, oppositeFileName ) )
+        {
+            dynamicResourceManager.deleteResourceFile( folderPath, oppositeFileName, false );
+        }
+
+        final Resource resource = dynamicResourceManager.putBinaryResourceFile( folderPath, localName + "." + extension, data, mimeType );
+
+        dynamicResourceManager.touchResourceFile( folderPath, descriptorFileName );
+
+        return Icon.from( resource.readBytes(), mimeType, Instant.ofEpochMilli( resource.getTimestamp() ) );
+    }
+
+    private boolean doDeleteIcon( final NodePath folderPath, final String localName )
+    {
+        boolean deleted = false;
+        for ( final String extension : List.of( SchemaResourcePaths.SVG_EXTENSION, SchemaResourcePaths.PNG_EXTENSION ) )
+        {
+            final String fileName = localName + "." + extension;
+            if ( dynamicResourceManager.resourceFileNodeExists( folderPath, fileName ) )
+            {
+                deleted |= dynamicResourceManager.deleteResourceFile( folderPath, fileName, false );
+            }
+        }
+
+        final String descriptorFileName = localName + "." + YAML_EXTENSION;
+        if ( deleted && dynamicResourceManager.resourceFileNodeExists( folderPath, descriptorFileName ) )
+        {
+            dynamicResourceManager.touchResourceFile( folderPath, descriptorFileName );
+        }
+
+        return deleted;
+    }
+
+    private Icon loadIcon( final NodePath folderPath, final String localName )
+    {
+        final Icon svgIcon = loadIcon( dynamicResourceManager.getResourceFile( folderPath, localName + "." + SchemaResourcePaths.SVG_EXTENSION ),
+                                       SchemaResourcePaths.SVG_MIME_TYPE );
+        if ( svgIcon != null )
+        {
+            return svgIcon;
+        }
+
+        return loadIcon( dynamicResourceManager.getResourceFile( folderPath, localName + "." + SchemaResourcePaths.PNG_EXTENSION ),
+                         SchemaResourcePaths.PNG_MIME_TYPE );
+    }
+
+    private static Icon loadIcon( final Resource resource, final String mimeType )
+    {
+        if ( !resource.exists() )
+        {
+            return null;
+        }
+        return Icon.from( resource.readBytes(), mimeType, Instant.ofEpochMilli( resource.getTimestamp() ) );
+    }
+
+    private static String iconExtension( final String mimeType )
+    {
+        switch ( mimeType )
+        {
+            case SchemaResourcePaths.SVG_MIME_TYPE:
+                return SchemaResourcePaths.SVG_EXTENSION;
+            case SchemaResourcePaths.PNG_MIME_TYPE:
+                return SchemaResourcePaths.PNG_EXTENSION;
+            default:
+                throw new IllegalArgumentException( String.format( "unsupported icon mime type: %s", mimeType ) );
+        }
+    }
+
+    private static long iconSize( final ByteSource data )
+    {
+        try
+        {
+            return data.size();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    // only parts have icons among the components
+    private static boolean hasIcon( final DynamicComponentType type )
+    {
+        return type == DynamicComponentType.PART;
     }
 
     private BaseSchemaName getSchemaName( final ApplicationKey applicationKey, final DynamicContentSchemaType type, final String name )
@@ -351,6 +693,11 @@ public class DynamicSchemaServiceImpl
         return resourceKey.getName().substring( 0, resourceKey.getName().lastIndexOf( "." + resourceKey.getExtension() ) );
     }
 
+    private static String phrasesFileName( final String name )
+    {
+        return name.endsWith( PROPERTIES_EXTENSION ) ? name : name + PROPERTIES_EXTENSION;
+    }
+
     private NodePath createComponentFolderPath( final DescriptorKey key, final DynamicComponentType dynamicType )
     {
         final NodePath componentRootPath = createComponentRootPath( key.getApplicationKey(), dynamicType );
@@ -371,6 +718,29 @@ public class DynamicSchemaServiceImpl
     private NodePath createSchemaRootPath( final ApplicationKey key, final DynamicContentSchemaType dynamicType )
     {
         return new NodePath( createCmsFolderPath( key ), NodeName.from( getSchemaRootName( dynamicType ) ) );
+    }
+
+    private NodePath createMacroFolderPath( final MacroKey key )
+    {
+        return new NodePath( createMacroRootPath( key.getApplicationKey() ), NodeName.from( key.getName() ) );
+    }
+
+    private NodePath createMacroRootPath( final ApplicationKey key )
+    {
+        return new NodePath( createCmsFolderPath( key ), NodeName.from( SchemaResourcePaths.MACROS_ROOT_NAME ) );
+    }
+
+    private NodePath createPhrasesFolderPath( final ApplicationKey key )
+    {
+        return NodePath.create( createCmsFolderPath( key ) )
+            .addElement( SchemaResourcePaths.I18N_ROOT_NAME )
+            .addElement( SchemaResourcePaths.PHRASES_ROOT_NAME )
+            .build();
+    }
+
+    private NodePath createStylesFolderPath( final ApplicationKey key )
+    {
+        return new NodePath( createCmsFolderPath( key ), NodeName.from( SchemaResourceNames.STYLE_ROOT_NAME ) );
     }
 
     // the persisted schema of an application lives below its node in system-repo
@@ -419,7 +789,7 @@ public class DynamicSchemaServiceImpl
         }
     }
 
-    private ComponentDescriptor wrapDescriptor( final ComponentDescriptor componentDescriptor, final long modifiedTime )
+    private ComponentDescriptor wrapDescriptor( final ComponentDescriptor componentDescriptor, final long modifiedTime, final Icon icon )
     {
         if ( componentDescriptor instanceof PageDescriptor )
         {
@@ -431,6 +801,7 @@ public class DynamicSchemaServiceImpl
         {
             return PartDescriptor.copyOf( (PartDescriptor) componentDescriptor )
                 .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
+                .icon( icon )
                 .build();
         }
         if ( componentDescriptor instanceof LayoutDescriptor )
@@ -443,23 +814,32 @@ public class DynamicSchemaServiceImpl
         throw new IllegalArgumentException( "unknown type of ComponentDescriptor: " + componentDescriptor.getKey() );
     }
 
-    private BaseSchema<?> wrapSchema( final BaseSchema<?> baseSchema, final long modifiedTime )
+    private BaseSchema<?> wrapSchema( final BaseSchema<?> baseSchema, final long modifiedTime, final Icon icon )
     {
         if ( baseSchema instanceof ContentType )
         {
-            return ContentType.create( (ContentType) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+            return ContentType.create( (ContentType) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).icon( icon ).build();
         }
         if ( baseSchema instanceof FormFragmentDescriptor )
         {
             return FormFragmentDescriptor.create( (FormFragmentDescriptor) baseSchema )
                 .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
+                .icon( icon )
                 .build();
         }
         if ( baseSchema instanceof MixinDescriptor )
         {
-            return MixinDescriptor.create( (MixinDescriptor) baseSchema ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).build();
+            return MixinDescriptor.create( (MixinDescriptor) baseSchema )
+                .modifiedTime( Instant.ofEpochMilli( modifiedTime ) )
+                .icon( icon )
+                .build();
         }
 
         throw new IllegalArgumentException( "unknown type of BaseSchema: " + baseSchema.getName() );
+    }
+
+    private static MacroDescriptor wrapMacro( final MacroDescriptor descriptor, final long modifiedTime, final Icon icon )
+    {
+        return MacroDescriptor.copyOf( descriptor ).modifiedTime( Instant.ofEpochMilli( modifiedTime ) ).icon( icon ).build();
     }
 }

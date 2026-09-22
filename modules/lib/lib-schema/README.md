@@ -30,9 +30,9 @@ global objects, e.g. `log`, `app`, `__`, etc, requiring a library by the default
 `example.ts`
 
 ```ts
-const { 
-    createSchema, 
-    createComponent, 
+const {
+    createSchema,
+    createComponent,
     createStyles,
     getSchema,
     getComponent,
@@ -40,13 +40,38 @@ const {
     getStyles,
     deleteSchema,
     deleteComponent,
-    deleteStyles, 
+    deleteStyles,
     updateSchema,
     updateComponent,
     updateSite,
     updateStyles,
-    listComponents, 
-    listSchemas
+    listComponents,
+    listSchemas,
+    createMacro,
+    updateMacro,
+    getMacro,
+    listMacros,
+    deleteMacro,
+    createPhrases,
+    updatePhrases,
+    getPhrases,
+    listPhrases,
+    deletePhrases,
+    setContentTypeIcon,
+    getContentTypeIcon,
+    deleteContentTypeIcon,
+    setFormFragmentIcon,
+    getFormFragmentIcon,
+    deleteFormFragmentIcon,
+    setMixinIcon,
+    getMixinIcon,
+    deleteMixinIcon,
+    setPartIcon,
+    getPartIcon,
+    deletePartIcon,
+    setMacroIcon,
+    getMacroIcon,
+    deleteMacroIcon
 } = require('/lib/xp/schema');
 ```
 
@@ -91,7 +116,32 @@ import {
     updateSite,
     updateStyles,
     listComponents,
-    listSchemas
+    listSchemas,
+    createMacro,
+    updateMacro,
+    getMacro,
+    listMacros,
+    deleteMacro,
+    createPhrases,
+    updatePhrases,
+    getPhrases,
+    listPhrases,
+    deletePhrases,
+    setContentTypeIcon,
+    getContentTypeIcon,
+    deleteContentTypeIcon,
+    setFormFragmentIcon,
+    getFormFragmentIcon,
+    deleteFormFragmentIcon,
+    setMixinIcon,
+    getMixinIcon,
+    deleteMixinIcon,
+    setPartIcon,
+    getPartIcon,
+    deletePartIcon,
+    setMacroIcon,
+    getMacroIcon,
+    deleteMacroIcon
 } from '/lib/xp/schema';
 ```
 

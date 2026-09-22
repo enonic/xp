@@ -3,6 +3,9 @@ package com.enonic.xp.resource;
 import java.util.List;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.icon.Icon;
+import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.site.CmsDescriptor;
@@ -20,6 +23,12 @@ public interface DynamicSchemaService
 
     boolean deleteComponent( DeleteDynamicComponentParams params );
 
+    Icon setComponentIcon( SetDynamicComponentIconParams params );
+
+    Icon getComponentIcon( GetDynamicComponentParams params );
+
+    boolean deleteComponentIcon( DeleteDynamicComponentParams params );
+
     <T extends BaseSchema<?>> DynamicSchemaResult<T> createContentSchema( CreateDynamicContentSchemaParams params );
 
     <T extends BaseSchema<?>> DynamicSchemaResult<T> updateContentSchema( UpdateDynamicContentSchemaParams params );
@@ -29,6 +38,12 @@ public interface DynamicSchemaService
     <T extends BaseSchema<?>> List<DynamicSchemaResult<T>> listContentSchemas( ListDynamicContentSchemasParams params );
 
     boolean deleteContentSchema( DeleteDynamicContentSchemaParams params );
+
+    Icon setContentSchemaIcon( SetDynamicContentSchemaIconParams params );
+
+    Icon getContentSchemaIcon( GetDynamicContentSchemaParams params );
+
+    boolean deleteContentSchemaIcon( DeleteDynamicContentSchemaParams params );
 
     DynamicSchemaResult<CmsDescriptor> updateCms( UpdateDynamicCmsParams params );
 
@@ -42,5 +57,29 @@ public interface DynamicSchemaService
 
     boolean deleteStyles( ApplicationKey key );
 
+    DynamicSchemaResult<MacroDescriptor> createMacro( CreateDynamicMacroParams params );
 
+    DynamicSchemaResult<MacroDescriptor> updateMacro( UpdateDynamicMacroParams params );
+
+    DynamicSchemaResult<MacroDescriptor> getMacro( MacroKey key );
+
+    List<DynamicSchemaResult<MacroDescriptor>> listMacros( ApplicationKey key );
+
+    boolean deleteMacro( MacroKey key );
+
+    Icon setMacroIcon( SetDynamicMacroIconParams params );
+
+    Icon getMacroIcon( MacroKey key );
+
+    boolean deleteMacroIcon( MacroKey key );
+
+    Resource createPhrases( CreateDynamicPhrasesParams params );
+
+    Resource updatePhrases( UpdateDynamicPhrasesParams params );
+
+    Resource getPhrases( GetDynamicPhrasesParams params );
+
+    List<Resource> listPhrases( ApplicationKey key );
+
+    boolean deletePhrases( DeleteDynamicPhrasesParams params );
 }
