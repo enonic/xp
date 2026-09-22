@@ -25,7 +25,7 @@ class UpdateDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.updateComponent( isA( UpdateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( dynamicSchemaService.updatePart( isA( UpdateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicComponentParams componentParams = params.getArgument( 0, UpdateDynamicComponentParams.class );
 
             final PartDescriptor.Builder builder =
@@ -48,7 +48,7 @@ class UpdateDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.updateComponent( isA( UpdateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( dynamicSchemaService.updateLayout( isA( UpdateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicComponentParams componentParams = params.getArgument( 0, UpdateDynamicComponentParams.class );
 
             final LayoutDescriptor.Builder builder =
@@ -71,7 +71,7 @@ class UpdateDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.updateComponent( isA( UpdateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( dynamicSchemaService.updatePage( isA( UpdateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final UpdateDynamicComponentParams componentParams = params.getArgument( 0, UpdateDynamicComponentParams.class );
 
             final DescriptorKey descriptorKey =

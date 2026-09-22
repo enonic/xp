@@ -5,10 +5,6 @@ import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.resource.DynamicComponentType;
-import com.enonic.xp.resource.DynamicContentSchemaType;
-import com.enonic.xp.resource.GetDynamicComponentParams;
-import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -25,53 +21,49 @@ class GetDynamicIconHandlerTest
     @Test
     void testContentType()
     {
-        when( dynamicSchemaService.getContentSchemaIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.getContentTypeIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/getContentTypeIcon.js" );
 
-        final ArgumentCaptor<GetDynamicContentSchemaParams> captor = ArgumentCaptor.forClass( GetDynamicContentSchemaParams.class );
-        verify( dynamicSchemaService ).getContentSchemaIcon( captor.capture() );
-        assertEquals( ContentTypeName.from( "myapp:mytype" ), captor.getValue().getName() );
-        assertEquals( DynamicContentSchemaType.CONTENT_TYPE, captor.getValue().getType() );
+        final ArgumentCaptor<ContentTypeName> captor = ArgumentCaptor.forClass( ContentTypeName.class );
+        verify( dynamicSchemaService ).getContentTypeIcon( captor.capture() );
+        assertEquals( ContentTypeName.from( "myapp:mytype" ), captor.getValue() );
     }
 
     @Test
     void testFormFragment()
     {
-        when( dynamicSchemaService.getContentSchemaIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.getFormFragmentIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/getFormFragmentIcon.js" );
 
-        final ArgumentCaptor<GetDynamicContentSchemaParams> captor = ArgumentCaptor.forClass( GetDynamicContentSchemaParams.class );
-        verify( dynamicSchemaService ).getContentSchemaIcon( captor.capture() );
-        assertEquals( FormFragmentName.from( "myapp:myfragment" ), captor.getValue().getName() );
-        assertEquals( DynamicContentSchemaType.FORM_FRAGMENT, captor.getValue().getType() );
+        final ArgumentCaptor<FormFragmentName> captor = ArgumentCaptor.forClass( FormFragmentName.class );
+        verify( dynamicSchemaService ).getFormFragmentIcon( captor.capture() );
+        assertEquals( FormFragmentName.from( "myapp:myfragment" ), captor.getValue() );
     }
 
     @Test
     void testMixin()
     {
-        when( dynamicSchemaService.getContentSchemaIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.getMixinIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/getMixinIcon.js" );
 
-        final ArgumentCaptor<GetDynamicContentSchemaParams> captor = ArgumentCaptor.forClass( GetDynamicContentSchemaParams.class );
-        verify( dynamicSchemaService ).getContentSchemaIcon( captor.capture() );
-        assertEquals( MixinName.from( "myapp:mymixin" ), captor.getValue().getName() );
-        assertEquals( DynamicContentSchemaType.MIXIN, captor.getValue().getType() );
+        final ArgumentCaptor<MixinName> captor = ArgumentCaptor.forClass( MixinName.class );
+        verify( dynamicSchemaService ).getMixinIcon( captor.capture() );
+        assertEquals( MixinName.from( "myapp:mymixin" ), captor.getValue() );
     }
 
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.getComponentIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.getPartIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/getPartIcon.js" );
 
-        final ArgumentCaptor<GetDynamicComponentParams> captor = ArgumentCaptor.forClass( GetDynamicComponentParams.class );
-        verify( dynamicSchemaService ).getComponentIcon( captor.capture() );
-        assertEquals( DescriptorKey.from( "myapp:mypart" ), captor.getValue().getKey() );
-        assertEquals( DynamicComponentType.PART, captor.getValue().getType() );
+        final ArgumentCaptor<DescriptorKey> captor = ArgumentCaptor.forClass( DescriptorKey.class );
+        verify( dynamicSchemaService ).getPartIcon( captor.capture() );
+        assertEquals( DescriptorKey.from( "myapp:mypart" ), captor.getValue() );
     }
 
     @Test

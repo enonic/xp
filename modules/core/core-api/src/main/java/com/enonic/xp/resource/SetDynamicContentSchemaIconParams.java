@@ -10,8 +10,6 @@ public final class SetDynamicContentSchemaIconParams
 {
     private final BaseSchemaName name;
 
-    private final DynamicContentSchemaType type;
-
     private final ByteSource data;
 
     private final String mimeType;
@@ -19,7 +17,6 @@ public final class SetDynamicContentSchemaIconParams
     private SetDynamicContentSchemaIconParams( final Builder builder )
     {
         this.name = builder.name;
-        this.type = builder.type;
         this.data = builder.data;
         this.mimeType = builder.mimeType;
     }
@@ -32,11 +29,6 @@ public final class SetDynamicContentSchemaIconParams
     public BaseSchemaName getName()
     {
         return name;
-    }
-
-    public DynamicContentSchemaType getType()
-    {
-        return type;
     }
 
     public ByteSource getData()
@@ -53,8 +45,6 @@ public final class SetDynamicContentSchemaIconParams
     {
         private BaseSchemaName name;
 
-        private DynamicContentSchemaType type;
-
         private ByteSource data;
 
         private String mimeType;
@@ -66,12 +56,6 @@ public final class SetDynamicContentSchemaIconParams
         public Builder name( final BaseSchemaName name )
         {
             this.name = name;
-            return this;
-        }
-
-        public Builder type( final DynamicContentSchemaType type )
-        {
-            this.type = type;
             return this;
         }
 
@@ -90,7 +74,6 @@ public final class SetDynamicContentSchemaIconParams
         private void validate()
         {
             requireNonNull( name, "name is required" );
-            requireNonNull( type, "type is required" );
             requireNonNull( data, "data is required" );
             requireNonNull( mimeType, "mimeType is required" );
         }

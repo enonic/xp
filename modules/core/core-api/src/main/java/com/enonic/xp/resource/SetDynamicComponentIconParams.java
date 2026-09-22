@@ -10,8 +10,6 @@ public final class SetDynamicComponentIconParams
 {
     private final DescriptorKey key;
 
-    private final DynamicComponentType type;
-
     private final ByteSource data;
 
     private final String mimeType;
@@ -19,7 +17,6 @@ public final class SetDynamicComponentIconParams
     private SetDynamicComponentIconParams( final Builder builder )
     {
         this.key = builder.key;
-        this.type = builder.type;
         this.data = builder.data;
         this.mimeType = builder.mimeType;
     }
@@ -32,11 +29,6 @@ public final class SetDynamicComponentIconParams
     public DescriptorKey getKey()
     {
         return key;
-    }
-
-    public DynamicComponentType getType()
-    {
-        return type;
     }
 
     public ByteSource getData()
@@ -53,8 +45,6 @@ public final class SetDynamicComponentIconParams
     {
         private DescriptorKey key;
 
-        private DynamicComponentType type;
-
         private ByteSource data;
 
         private String mimeType;
@@ -66,12 +56,6 @@ public final class SetDynamicComponentIconParams
         public Builder descriptorKey( final DescriptorKey key )
         {
             this.key = key;
-            return this;
-        }
-
-        public Builder type( final DynamicComponentType type )
-        {
-            this.type = type;
             return this;
         }
 
@@ -90,7 +74,6 @@ public final class SetDynamicComponentIconParams
         private void validate()
         {
             requireNonNull( key, "key is required" );
-            requireNonNull( type, "type is required" );
             requireNonNull( data, "data is required" );
             requireNonNull( mimeType, "mimeType is required" );
         }

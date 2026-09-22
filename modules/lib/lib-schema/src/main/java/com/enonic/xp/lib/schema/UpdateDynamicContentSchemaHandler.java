@@ -3,10 +3,10 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.lib.schema.mapper.SchemaConverter;
-import com.enonic.xp.resource.DynamicContentSchemaType;
+import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
-import com.enonic.xp.schema.BaseSchemaName;
+import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinName;
@@ -41,27 +41,20 @@ public final class UpdateDynamicContentSchemaHandler
 
     public Object execute()
     {
-        final DynamicContentSchemaType dynamicContentSchemaType = DynamicContentSchemaType.valueOf( type );
-        BaseSchemaName schemaName;
-        switch ( dynamicContentSchemaType )
+        final DynamicSchemaService service = dynamicSchemaServiceSupplier.get();
+
+        final DynamicSchemaResult<? extends BaseSchema<?>> result = switch ( type )
         {
-            case FORM_FRAGMENT:
-                schemaName = FormFragmentName.from( name );
-                break;
-            case CONTENT_TYPE:
-                schemaName = ContentTypeName.from( name );
-                break;
-            case MIXIN:
-                schemaName = MixinName.from( name );
-                break;
-            default:
-                throw new IllegalArgumentException( "illegal schema type: " + dynamicContentSchemaType );
+            case "CONTENT_TYPE" -> service.updateContentType(
+                UpdateDynamicContentSchemaParams.create().name( ContentTypeName.from( name ) ).resource( resource ).build() );
+            case "FORM_FRAGMENT" -> service.updateFormFragment(
+                UpdateDynamicContentSchemaParams.create().name( FormFragmentName.from( name ) ).resource( resource ).build() );
+            case "MIXIN" -> service.updateMixin(
+                UpdateDynamicContentSchemaParams.create().name( MixinName.from( name ) ).resource( resource ).build() );
+            default -> throw new IllegalArgumentException( "illegal schema type: " + type );
+        };
 
-        }
-        final UpdateDynamicContentSchemaParams params =
-            UpdateDynamicContentSchemaParams.create().name( schemaName ).type( dynamicContentSchemaType ).resource( resource ).build();
-
-        return SchemaConverter.convert( dynamicSchemaServiceSupplier.get().updateContentSchema( params ) );
+        return SchemaConverter.convert( result );
     }
 
     @Override

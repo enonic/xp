@@ -4,12 +4,12 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// Fetch virtual site.
-var result = schemaLib.getSite({
+// Fetch dynamic CMS.
+var result = schemaLib.getCms({
     application: 'myapp'
 });
 
-log.info('Fetched site: myapp');
+log.info('Fetched CMS: myapp');
 
 // END
 

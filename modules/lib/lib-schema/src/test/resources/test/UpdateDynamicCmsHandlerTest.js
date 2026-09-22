@@ -3,8 +3,8 @@ var assert = require('/lib/xp/testing');
 
 /* global log*/
 
-exports.updateInvalidSite = function () {
-    assert.assertThrows(() => schemaLib.updateSite({
+exports.updateInvalidCms = function () {
+    assert.assertThrows(() => schemaLib.updateCms({
         application: 'myapp',
         resource: `unsupportedField: "value"`
     }));

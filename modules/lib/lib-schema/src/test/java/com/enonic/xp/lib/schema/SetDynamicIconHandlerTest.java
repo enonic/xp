@@ -9,8 +9,6 @@ import org.mockito.ArgumentCaptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.resource.DynamicComponentType;
-import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.SetDynamicComponentIconParams;
 import com.enonic.xp.resource.SetDynamicContentSchemaIconParams;
 import com.enonic.xp.resource.SetDynamicMacroIconParams;
@@ -34,14 +32,13 @@ class SetDynamicIconHandlerTest
     void testContentType()
         throws Exception
     {
-        when( dynamicSchemaService.setContentSchemaIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.setContentTypeIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/setContentTypeIcon.js" );
 
         final ArgumentCaptor<SetDynamicContentSchemaIconParams> captor = ArgumentCaptor.forClass( SetDynamicContentSchemaIconParams.class );
-        verify( dynamicSchemaService ).setContentSchemaIcon( captor.capture() );
+        verify( dynamicSchemaService ).setContentTypeIcon( captor.capture() );
         assertEquals( ContentTypeName.from( "myapp:mytype" ), captor.getValue().getName() );
-        assertEquals( DynamicContentSchemaType.CONTENT_TYPE, captor.getValue().getType() );
         assertEquals( "image/svg+xml", captor.getValue().getMimeType() );
         assertArrayEquals( "<svg/>".getBytes( StandardCharsets.UTF_8 ), captor.getValue().getData().read() );
     }
@@ -49,40 +46,37 @@ class SetDynamicIconHandlerTest
     @Test
     void testFormFragment()
     {
-        when( dynamicSchemaService.setContentSchemaIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.setFormFragmentIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/setFormFragmentIcon.js" );
 
         final ArgumentCaptor<SetDynamicContentSchemaIconParams> captor = ArgumentCaptor.forClass( SetDynamicContentSchemaIconParams.class );
-        verify( dynamicSchemaService ).setContentSchemaIcon( captor.capture() );
+        verify( dynamicSchemaService ).setFormFragmentIcon( captor.capture() );
         assertEquals( FormFragmentName.from( "myapp:myfragment" ), captor.getValue().getName() );
-        assertEquals( DynamicContentSchemaType.FORM_FRAGMENT, captor.getValue().getType() );
     }
 
     @Test
     void testMixin()
     {
-        when( dynamicSchemaService.setContentSchemaIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.setMixinIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/setMixinIcon.js" );
 
         final ArgumentCaptor<SetDynamicContentSchemaIconParams> captor = ArgumentCaptor.forClass( SetDynamicContentSchemaIconParams.class );
-        verify( dynamicSchemaService ).setContentSchemaIcon( captor.capture() );
+        verify( dynamicSchemaService ).setMixinIcon( captor.capture() );
         assertEquals( MixinName.from( "myapp:mymixin" ), captor.getValue().getName() );
-        assertEquals( DynamicContentSchemaType.MIXIN, captor.getValue().getType() );
     }
 
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.setComponentIcon( any() ) ).thenReturn( ICON );
+        when( dynamicSchemaService.setPartIcon( any() ) ).thenReturn( ICON );
 
         runScript( "/lib/xp/examples/schema/setPartIcon.js" );
 
         final ArgumentCaptor<SetDynamicComponentIconParams> captor = ArgumentCaptor.forClass( SetDynamicComponentIconParams.class );
-        verify( dynamicSchemaService ).setComponentIcon( captor.capture() );
+        verify( dynamicSchemaService ).setPartIcon( captor.capture() );
         assertEquals( DescriptorKey.from( "myapp:mypart" ), captor.getValue().getKey() );
-        assertEquals( DynamicComponentType.PART, captor.getValue().getType() );
     }
 
     @Test
