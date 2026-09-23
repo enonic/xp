@@ -192,19 +192,34 @@ public final class PortalUrlServiceImpl
     @Override
     public PageUrlParts pageUrlParts( final PageUrlParams params )
     {
+        if ( params.getBase() == null )
+        {
+            // resolved from configuration alone, so nothing else could say which site the URL belongs to
+            throw new IllegalArgumentException( "Page URL parts require a base: the site or project the URL belongs to" );
+        }
+
         return runWithAdminRole( () -> {
-            // an explicit empty base disables resolution from configuration and from the request:
-            // the result is the escaped path relative to the site the URL belongs to, with a
-            // leading slash
-            final String path =
-                new ContentBaseUrlResolver( contentService, projectService, PageBase.params( params ), "", false ).resolve(
-                    metadata -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
-                                                                     PageBase.level( params, metadata ) ) );
+            final BaseUrlMetadata metadata =
+                new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params.getBase() );
+
+            final String path = ContextBuilder.copyOf( ContextAccessor.current() )
+                .repositoryId( metadata.getProjectName().getRepoId() )
+                .branch( metadata.getBranch() )
+                .build()
+                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
+                                                                       metadata.getAnchorPath() ) );
+
+            final StringBuilder escapedPath = new StringBuilder();
+            UrlBuilderHelper.appendAndEncodePathParts( escapedPath, path );
 
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getParams() );
 
-            return new PageUrlParts( path, queryParamsStrategy.get() );
+            final String baseUrl = metadata.getBaseUrl();
+
+            return new PageUrlParts( Strings.isNullOrEmpty( baseUrl ) ? null : UrlGenerator.removeTrailingSlash( baseUrl ),
+                                     escapedPath.toString(),
+                                     queryParamsStrategy.get() );
         } );
     }
 

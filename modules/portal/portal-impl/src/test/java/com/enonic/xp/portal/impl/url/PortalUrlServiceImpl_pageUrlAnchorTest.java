@@ -28,6 +28,7 @@ import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -140,8 +141,9 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         assertEquals( "https://features.com", this.service.baseUrl( base ) );
         assertEquals( "https://features.com/subsite/folder", this.service.pageUrl(
             new PageUrlParams().path( FOLDER.toString() ).base( base ) ) );
-        assertEquals( "/subsite/folder", this.service.pageUrlParts(
-            new PageUrlParams().path( FOLDER.toString() ).base( base ) ).path() );
+        final PageUrlParts parts = this.service.pageUrlParts( new PageUrlParams().path( FOLDER.toString() ).base( base ) );
+        assertEquals( "https://features.com", parts.baseUrl() );
+        assertEquals( "/subsite/folder", parts.path() );
     }
 
     @Test
@@ -152,7 +154,11 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         // the Base URL of the nested site does not apply to a URL that belongs to its parent
         assertEquals( "/site/myproject/draft/features", this.service.baseUrl( siteBase( FEATURES.toString() ) ) );
         assertEquals( "/site/myproject/draft/features/subsite/folder", pageUrlAnchoredAtFeatures() );
-        assertEquals( "/subsite/folder", pageUrlPartsAnchoredAtFeatures().path() );
+
+        // the parts come from configuration alone, and there is none for the selected site
+        final PageUrlParts parts = pageUrlPartsAnchoredAtFeatures();
+        assertNull( parts.baseUrl() );
+        assertEquals( "/subsite/folder", parts.path() );
     }
 
     @Test
@@ -170,6 +176,7 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         mockNestedSites( "https://features.com", null );
 
         assertEquals( "https://features.com/subsite/folder", pageUrlAnchoredAtFeatures() );
+        assertEquals( "https://features.com", pageUrlPartsAnchoredAtFeatures().baseUrl() );
         assertEquals( "/subsite/folder", pageUrlPartsAnchoredAtFeatures().path() );
     }
 
@@ -181,6 +188,7 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() ).base( siteBase( SUBSITE.toString() ) );
 
         assertEquals( "https://subsite.com/folder", this.service.pageUrl( params ) );
+        assertEquals( "https://subsite.com", this.service.pageUrlParts( params ).baseUrl() );
         assertEquals( "/folder", this.service.pageUrlParts( params ).path() );
     }
 
@@ -192,7 +200,9 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() );
 
         assertEquals( "https://subsite.com/folder", this.service.pageUrl( params ) );
-        assertEquals( "/folder", this.service.pageUrlParts( params ).path() );
+
+        // the parts are resolved from configuration alone, so nothing would say which site they belong to
+        assertThatThrownBy( () -> this.service.pageUrlParts( params ) ).isInstanceOf( IllegalArgumentException.class );
     }
 
     @Test
@@ -203,7 +213,6 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() );
 
         assertEquals( "/site/myproject/draft/features/subsite/folder", this.service.pageUrl( params ) );
-        assertEquals( "/folder", this.service.pageUrlParts( params ).path() );
     }
 
     @Test
@@ -215,6 +224,7 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
 
         // no site is selected, so the project decides and the full content path follows
         assertEquals( "/site/myproject/draft/features/subsite/folder", this.service.pageUrl( params ) );
+        assertNull( this.service.pageUrlParts( params ).baseUrl() );
         assertEquals( "/features/subsite/folder", this.service.pageUrlParts( params ).path() );
     }
 

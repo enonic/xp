@@ -33,7 +33,22 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
     BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest )
     {
-        final boolean noExplicitContext = baseUrl == null && params.getProjectName() == null && params.getBranch() == null;
+        return extract( params, baseUrl, followRequest, baseUrl == null );
+    }
+
+    /**
+     * Resolves from configuration alone: the project and branch come from the params or the
+     * current context, and the Base URL is the one configured, {@code null} when there is none.
+     */
+    BaseUrlMetadata extractFromConfiguration( final BaseUrlParams params )
+    {
+        return extract( params, null, false, false );
+    }
+
+    private BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest,
+                                     final boolean contextFromRequest )
+    {
+        final boolean noExplicitContext = contextFromRequest && params.getProjectName() == null && params.getBranch() == null;
 
         final ProjectName projectName = ContentProjectResolver.create()
             .setProjectName( params.getProjectName() )

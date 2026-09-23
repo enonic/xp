@@ -75,9 +75,9 @@ public final class PageUrlParams
      * <p>
      * A project contains sites and a site can contain further sites, so this picks a level of
      * that containment: {@code "/"} names the project, a site path or id names that site.
-     * Without it the URL belongs to the innermost level containing the content. Configuration is
-     * never inherited from a level above, so the selected one alone decides which Base URL
-     * applies.
+     * Without it {@link PortalUrlService#pageUrl} gives the URL to the innermost level containing
+     * the content; {@link PortalUrlService#pageUrlParts} requires it. Configuration is never
+     * inherited from a level above, so the selected one alone decides which Base URL applies.
      * <p>
      * The content has to be inside the selected level, or be that level itself. The base URL of
      * the level does not lead to a content elsewhere, so there is no URL for one: see

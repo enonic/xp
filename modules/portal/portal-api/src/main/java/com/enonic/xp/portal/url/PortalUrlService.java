@@ -30,10 +30,14 @@ public interface PortalUrlService
 
     /**
      * Resolves the parts of a page URL, for building the full URL from segments:
-     * {@code url = <baseUrl> + path + queryString}. The path is the URL-escaped content path
-     * relative to the site or project the URL belongs to; base URL resolution from configuration
-     * and from the current request is not involved.
+     * {@code url = baseUrl + path + queryString}.
+     * <p>
+     * Resolution is from configuration alone. The site or project the URL belongs to is the one
+     * {@link PageUrlParams#base} selects, project and branch come from the params or the current
+     * context, and the current request is never consulted. The base URL is the one configured
+     * there, {@code null} when none is; the path is the URL-escaped content path relative to it.
      *
+     * @throws IllegalArgumentException   if no base is given
      * @throws ContentOutOfScopeException if the site or project the URL is asked to belong to
      * does not contain the content
      */

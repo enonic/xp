@@ -30,6 +30,8 @@ import com.enonic.xp.web.vhost.VirtualHost;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -348,17 +350,64 @@ class PortalUrlServiceImpl_pageUrlTest
                 when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
-                final PageUrlParams params = new PageUrlParams().path( "/mycontent" ).param( "a", "1" );
+                final BaseUrlParams base = BaseUrlParams.create().setPath( "/mycontent" ).build();
+                final PageUrlParams params = new PageUrlParams().path( "/mycontent" ).param( "a", "1" ).base( base );
 
                 final PageUrlParts parts = this.service.pageUrlParts( params );
+                // nothing is configured, so the caller supplies the origin
+                assertNull( parts.baseUrl() );
                 assertEquals( "/b/mycontent", parts.path() );
                 assertEquals( "?a=1", parts.queryString() );
 
-                // the invariant, against the base the service itself resolves
-                final String base = this.service.baseUrl( BaseUrlParams.create().setPath( "/mycontent" ).build() );
-                assertEquals( "/site/myproject/draft/a", base );
-                assertEquals( this.service.pageUrl( params ), base + parts.path() + parts.queryString() );
+                // pageUrl falls back to the site engine address for the same site
+                assertEquals( "/site/myproject/draft/a", this.service.baseUrl( base ) );
+                assertEquals( this.service.pageUrl( params ), this.service.baseUrl( base ) + parts.path() + parts.queryString() );
             } );
+    }
+
+    @Test
+    void testPageUrlPartsWithConfiguredBaseUrl()
+    {
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .runWith( () -> {
+                PortalRequestAccessor.set( null );
+
+                final Content content = ContentFixtures.newContent();
+
+                final Site site = mock( Site.class );
+                when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+                when( site.getPermissions() ).thenReturn(
+                    AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+
+                final PropertyTree config = new PropertyTree();
+                config.addString( "baseUrl", "https://example.com/" );
+                mockDataWithSiteConfig(
+                    SiteConfigs.from( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() ),
+                    site );
+
+                when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+                when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+
+                final PageUrlParams params = new PageUrlParams().path( "/mycontent" )
+                    .param( "a", "1" )
+                    .base( BaseUrlParams.create().setPath( "/mycontent" ).build() );
+
+                final PageUrlParts parts = this.service.pageUrlParts( params );
+                assertEquals( "https://example.com", parts.baseUrl() );
+                assertEquals( "/b/mycontent", parts.path() );
+                assertEquals( "?a=1", parts.queryString() );
+
+                assertEquals( this.service.pageUrl( params ), parts.baseUrl() + parts.path() + parts.queryString() );
+            } );
+    }
+
+    @Test
+    void testPageUrlPartsRequireBase()
+    {
+        assertThrows( IllegalArgumentException.class, () -> this.service.pageUrlParts( new PageUrlParams().path( "/mycontent" ) ) );
     }
 
     @Test
@@ -376,9 +425,11 @@ class PortalUrlServiceImpl_pageUrlTest
                 when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( null );
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
-                final PageUrlParams params = new PageUrlParams().path( "/mycontent" );
+                final PageUrlParams params =
+                    new PageUrlParams().path( "/mycontent" ).base( BaseUrlParams.create().setPath( "/mycontent" ).build() );
 
                 final PageUrlParts parts = this.service.pageUrlParts( params );
+                assertNull( parts.baseUrl() );
                 // no site to relativise against: the full content path
                 assertEquals( "/a/b/mycontent", parts.path() );
                 assertEquals( "", parts.queryString() );
