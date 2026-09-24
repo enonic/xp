@@ -5,10 +5,8 @@ import java.util.function.Supplier;
 import com.google.common.base.MoreObjects;
 
 import com.enonic.xp.content.Content;
-import com.enonic.xp.descriptor.DescriptorKey;
 
 import static java.util.Objects.requireNonNullElse;
-
 
 /**
  * Names a content, and through it the level of the content tree its URLs belong to: the nearest
@@ -29,8 +27,6 @@ public final class BaseUrlParams
 
     private final Supplier<Content> contentSupplier;
 
-    private final DescriptorKey api;
-
     private BaseUrlParams( final Builder builder )
     {
         this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
@@ -39,7 +35,6 @@ public final class BaseUrlParams
         this.id = builder.id;
         this.path = builder.path;
         this.contentSupplier = builder.contentSupplier;
-        this.api = builder.api;
     }
 
     public String getUrlType()
@@ -72,11 +67,6 @@ public final class BaseUrlParams
         return contentSupplier;
     }
 
-    public DescriptorKey getApi()
-    {
-        return api;
-    }
-
     public static Builder create()
     {
         return new Builder();
@@ -95,8 +85,6 @@ public final class BaseUrlParams
         private String path;
 
         private Supplier<Content> contentSupplier;
-
-        private DescriptorKey api;
 
         public Builder setUrlType( final String urlType )
         {
@@ -141,23 +129,6 @@ public final class BaseUrlParams
             return this;
         }
 
-        /**
-         * Requests the base URL of an API mount instead of the content base URL.
-         * <p>
-         * The result is the prefix that the API descriptor ({@code <application>:<name>}) gets appended to.
-         * It is resolved to {@code <baseUrl>/_} when a Base URL is configured for the site (or project) the
-         * content belongs to and the API is mounted on the site. Media APIs fall back to the {@code media.defaultBaseUrl}
-         * configuration, when set. Otherwise the result is {@code null}: URLs should then stay request-based.
-         *
-         * @param api descriptor key of the API
-         * @return this builder
-         */
-        public Builder setApi( final DescriptorKey api )
-        {
-            this.api = api;
-            return this;
-        }
-
         public BaseUrlParams build()
         {
             return new BaseUrlParams( this );
@@ -174,7 +145,6 @@ public final class BaseUrlParams
         helper.add( "path", this.path );
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
-        helper.add( "api", this.api );
         return helper.toString();
     }
 }

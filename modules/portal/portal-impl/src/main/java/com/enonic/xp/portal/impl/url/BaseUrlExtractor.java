@@ -31,9 +31,23 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         this.projectService = requireNonNull( projectService );
     }
 
-    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest )
+    BaseUrlMetadata extract( final BaseUrlParams params, final boolean followRequest )
     {
-        final boolean noExplicitContext = baseUrl == null && params.getProjectName() == null && params.getBranch() == null;
+        return extract( params, followRequest, true );
+    }
+
+    /**
+     * Resolves from configuration alone: the project and branch come from the params or the
+     * current context, and the Base URL is the one configured, {@code null} when there is none.
+     */
+    BaseUrlMetadata extractFromConfiguration( final BaseUrlParams params )
+    {
+        return extract( params, false, false );
+    }
+
+    private BaseUrlMetadata extract( final BaseUrlParams params, final boolean followRequest, final boolean contextFromRequest )
+    {
+        final boolean noExplicitContext = contextFromRequest && params.getProjectName() == null && params.getBranch() == null;
 
         final ProjectName projectName = ContentProjectResolver.create()
             .setProjectName( params.getProjectName() )
@@ -51,7 +65,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( followRequest && noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( followRequest && noExplicitContext && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
@@ -79,26 +93,19 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
                 builder.setNearestSite( site );
             }
 
-            if ( baseUrl != null )
+            final SiteConfigs siteConfigs;
+            if ( site != null )
             {
-                builder.setBaseUrl( baseUrl );
+                siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
             }
             else
             {
-                final SiteConfigs siteConfigs;
-                if ( site != null )
-                {
-                    siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
-                }
-                else
-                {
-                    final Project resolvedProject = resolveProject( projectName, portalRequest );
-                    siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
-                }
-
-                builder.setSiteConfigs( siteConfigs );
-                builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
+                final Project resolvedProject = resolveProject( projectName, portalRequest );
+                siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
             }
+
+            builder.setSiteConfigs( siteConfigs );
+            builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
         }
 
         return builder.build();

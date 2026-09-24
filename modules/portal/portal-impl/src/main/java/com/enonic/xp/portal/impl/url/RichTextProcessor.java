@@ -18,7 +18,12 @@ import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
@@ -27,17 +32,23 @@ import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.html.HtmlParser;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
+import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
 import com.enonic.xp.portal.url.HtmlProcessorParams;
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
+
+import static com.google.common.base.Strings.nullToEmpty;
 
 public class RichTextProcessor
 {
@@ -94,19 +105,22 @@ public class RichTextProcessor
 
     private final MacroService macroService;
 
+    private final String defaultMediaBaseUrl;
+
     private Supplier<Map<String, ImageStyle>> imageStylesSupplier;
 
     private Supplier<String> imageBaseUrlSupplier;
 
     public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
                               final PortalUrlGeneratorService portalUrlGeneratorService, final MacroService macroService,
-                              final ContentService contentService )
+                              final ContentService contentService, final String defaultMediaBaseUrl )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
         this.portalUrlGeneratorService = portalUrlGeneratorService;
         this.macroService = macroService;
         this.contentService = contentService;
+        this.defaultMediaBaseUrl = defaultMediaBaseUrl;
     }
 
     private void defaultElementProcessing( HtmlElement element, ProcessHtmlParams params, HtmlElementPostProcessor postProcessor )
@@ -165,6 +179,13 @@ public class RichTextProcessor
         } );
 
         this.imageBaseUrlSupplier = Suppliers.memoize( () -> {
+            if ( params.getPageBase() != null )
+            {
+                // configuration alone: the given image base, the default media base, or the bare
+                // media API path when neither is set - never a site mount or the request
+                return mediaApiRoot( params.getImageBaseUrl(), MEDIA_IMAGE_API_DESCRIPTOR_KEY );
+            }
+
             final String imageBaseUrl =
                 PortalUrlGeneratorServiceImpl.resolveMediaBaseUrl( params.getImageBaseUrl(), params.getBaseUrl() );
             if ( imageBaseUrl != null )
@@ -208,10 +229,9 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final String rawPageUrl =
-            portalUrlService.pageUrl( new PageUrlParams().type( params.getType() )
-                                          .id( id )
-                                          .base( params.getPageBase() ) );
+        final String rawPageUrl = params.getPageBase() != null
+            ? configuredPageUrl( new PageUrlParams().id( id ).base( params.getPageBase() ) )
+            : portalUrlService.pageUrl( new PageUrlParams().type( params.getType() ).id( id ) );
 
         final String pageUrl = addQueryParamsIfPresent( rawPageUrl, urlParamsString );
 
@@ -274,13 +294,13 @@ public class RichTextProcessor
     {
         final String originalUri = element.getAttribute( getLinkAttribute( element ) );
 
-        final AttachmentUrlParams attachmentUrlParams = new AttachmentUrlParams().baseUrl( params.getBaseUrl() )
-            .mediaBaseUrl( params.getAttachmentBaseUrl() )
-            .type( params.getType() )
-            .id( id )
-            .download( DOWNLOAD_MODE.equals( mode ) );
-
-        final String attachmentUrl = portalUrlService.attachmentUrl( attachmentUrlParams );
+        final String attachmentUrl = params.getPageBase() != null
+            ? configuredAttachmentUrl( params, id, DOWNLOAD_MODE.equals( mode ) )
+            : portalUrlService.attachmentUrl( new AttachmentUrlParams().baseUrl( params.getBaseUrl() )
+                                                  .mediaBaseUrl( params.getAttachmentBaseUrl() )
+                                                  .type( params.getType() )
+                                                  .id( id )
+                                                  .download( DOWNLOAD_MODE.equals( mode ) ) );
 
         element.setAttribute( getLinkAttribute( element ), attachmentUrl );
 
@@ -298,6 +318,63 @@ public class RichTextProcessor
         }
     }
 
+
+    /**
+     * @return the configured Base URL of the selected level followed by the content path relative to it, or that path
+     * alone when no Base URL is configured - the root of the level when the content is that level itself
+     */
+    private String configuredPageUrl( final PageUrlParams pageUrlParams )
+    {
+        final PageUrlParts parts = portalUrlService.pageUrlParts( pageUrlParams );
+        final String url = nullToEmpty( parts.baseUrl() ) + parts.path();
+        return url.isEmpty() ? "/" : url;
+    }
+
+    /**
+     * @return the attachment URL from configuration alone: the given attachment base, the default media base, or the
+     * bare media API path when neither is set
+     */
+    private String configuredAttachmentUrl( final ProcessHtmlParams params, final String id, final boolean download )
+    {
+        // project and branch come from the context, never from a site request
+        final ProjectName projectName = ContentProjectResolver.create().setPreferSiteRequest( false ).build().resolve();
+        final Branch branch = ContentBranchResolver.create().setPreferSiteRequest( false ).build().resolve();
+
+        final Supplier<Content> content = () -> ContextBuilder.copyOf( ContextAccessor.current() )
+            .repositoryId( projectName.getRepoId() )
+            .branch( branch )
+            .build()
+            .callWith( () -> contentService.getById( ContentId.from( id ) ) );
+
+        final AttachmentUrlParts parts = portalUrlGeneratorService.attachmentUrlParts( AttachmentUrlGeneratorParams.create()
+                                                                                          .setContent( content )
+                                                                                          .setProjectName( () -> projectName )
+                                                                                          .setBranch( () -> branch )
+                                                                                          .setDownload( download )
+                                                                                          .build() );
+
+        return configuredMediaBaseUrl( params.getAttachmentBaseUrl() ) + parts.path() + parts.queryString();
+    }
+
+    /**
+     * @return the root of a media API from configuration alone: the given base, the default media base, or nothing when
+     * neither is set - so the media API path follows directly, such as {@code /media:image}
+     */
+    private String mediaApiRoot( final String givenBaseUrl, final DescriptorKey api )
+    {
+        final StringBuilder url = new StringBuilder( configuredMediaBaseUrl( givenBaseUrl ) );
+        UrlBuilderHelper.appendPart( url, api.toString() );
+        return url.toString();
+    }
+
+    /**
+     * @return the given base, the default media base, or an empty string when neither is set - never a site mount
+     */
+    private String configuredMediaBaseUrl( final String givenBaseUrl )
+    {
+        final String base = givenBaseUrl != null ? givenBaseUrl : defaultMediaBaseUrl;
+        return base == null ? "" : UrlGenerator.removeTrailingSlash( base );
+    }
 
     private String getLinkValue( final HtmlElement element )
     {

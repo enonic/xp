@@ -54,11 +54,14 @@ final class DefaultImageLinkProcessor
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         Optional.ofNullable( imageStyle ).map( ImageStyle::getFilter ).ifPresent( filter -> queryParamsStrategy.param( "filter", filter ) );
 
-        final Supplier<ProjectName> projectNameSupplier = Suppliers.memoize(
-            () -> ContentProjectResolver.create().setPreferSiteRequest( params.getBaseUrl() == null && params.getImageBaseUrl() == null ).build().resolve() );
+        // a selected page base resolves from configuration alone: project and branch come from the context
+        final boolean preferSiteRequest = params.getBaseUrl() == null && params.getImageBaseUrl() == null && params.getPageBase() == null;
+
+        final Supplier<ProjectName> projectNameSupplier =
+            Suppliers.memoize( () -> ContentProjectResolver.create().setPreferSiteRequest( preferSiteRequest ).build().resolve() );
 
         final Supplier<Branch> branchSupplier =
-            Suppliers.memoize( () -> ContentBranchResolver.create().setPreferSiteRequest( params.getBaseUrl() == null && params.getImageBaseUrl() == null ).build().resolve() );
+            Suppliers.memoize( () -> ContentBranchResolver.create().setPreferSiteRequest( preferSiteRequest ).build().resolve() );
 
         final Supplier<Media> imageSupplier = Suppliers.memoize( () -> {
             final Content content = ContextBuilder.copyOf( ContextAccessor.current() )

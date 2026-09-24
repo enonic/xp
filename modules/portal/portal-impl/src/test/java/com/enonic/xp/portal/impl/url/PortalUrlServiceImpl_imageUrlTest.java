@@ -82,7 +82,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ), portalUrlGeneratorService, mock( SiteService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 

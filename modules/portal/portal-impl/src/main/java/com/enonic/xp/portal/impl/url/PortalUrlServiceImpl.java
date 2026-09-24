@@ -11,7 +11,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 
-import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -49,7 +48,6 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
-import com.enonic.xp.site.SiteService;
 import com.enonic.xp.style.StyleDescriptorService;
 
 import static java.util.Objects.requireNonNull;
@@ -72,19 +70,14 @@ public final class PortalUrlServiceImpl
 
     private final PortalUrlGeneratorService portalUrlGeneratorService;
 
-    private final SiteService siteService;
-
     private volatile String defaultMediaBaseUrl;
-
-    private volatile boolean mediaApiAutoMount = true;
 
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
                                  @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
                                  @Reference final RedirectChecksumService redirectChecksumService,
                                  @Reference final ProjectService projectService,
-                                 @Reference final PortalUrlGeneratorService portalUrlGeneratorService,
-                                 @Reference final SiteService siteService )
+                                 @Reference final PortalUrlGeneratorService portalUrlGeneratorService )
     {
         this.contentService = contentService;
         this.resourceService = resourceService;
@@ -93,7 +86,6 @@ public final class PortalUrlServiceImpl
         this.redirectChecksumService = redirectChecksumService;
         this.projectService = projectService;
         this.portalUrlGeneratorService = portalUrlGeneratorService;
-        this.siteService = siteService;
     }
 
     @Activate
@@ -101,7 +93,6 @@ public final class PortalUrlServiceImpl
     public void activate( final PortalConfig config )
     {
         this.defaultMediaBaseUrl = Strings.emptyToNull( config.media_defaultBaseUrl() );
-        this.mediaApiAutoMount = config.legacy_mediaApiAutoMount_enabled();
     }
 
     @Override
@@ -140,41 +131,11 @@ public final class PortalUrlServiceImpl
     @Override
     public String baseUrl( final BaseUrlParams params )
     {
-        if ( params.getApi() != null )
-        {
-            return runWithAdminRole( () -> resolveApiBaseUrl( params ) );
-        }
-
         // a base URL is a prefix of other URLs, so a failure is reported to the caller instead
         // of being encoded into the result: an error URL used as a base would silently prefix
         // every URL built from it
         return runWithAdminRole( () -> UrlGenerator.removeTrailingSlash(
             new ContentBaseUrlSupplier( contentService, projectService, params ).get() ) );
-    }
-
-    private String resolveApiBaseUrl( final BaseUrlParams params )
-    {
-        final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extract( params, null, true );
-
-        final String configuredBaseUrl = metadata.getBaseUrl();
-
-        if ( configuredBaseUrl != null &&
-            ApiMountVerifier.isApiMountedOnSite( params.getApi(), metadata.getSiteConfigs(), siteService, mediaApiAutoMount ) )
-        {
-            // the configured Base URL is a mount base: APIs live under its "_" endpoint segment
-            final StringBuilder url = new StringBuilder(
-                configuredBaseUrl.endsWith( "/" ) ? configuredBaseUrl.substring( 0, configuredBaseUrl.length() - 1 ) : configuredBaseUrl );
-            UrlBuilderHelper.appendPart( url, "_" );
-            return url.toString();
-        }
-
-        if ( ApplicationKey.MEDIA_MOD.equals( params.getApi().getApplicationKey() ) )
-        {
-            // the default media base points directly at the API root: no "_" endpoint segment
-            return defaultMediaBaseUrl;
-        }
-
-        return null;
     }
 
     @Override
@@ -192,19 +153,34 @@ public final class PortalUrlServiceImpl
     @Override
     public PageUrlParts pageUrlParts( final PageUrlParams params )
     {
+        if ( params.getBase() == null )
+        {
+            // resolved from configuration alone, so nothing else could say which site the URL belongs to
+            throw new IllegalArgumentException( "Page URL parts require a base: the site or project the URL belongs to" );
+        }
+
         return runWithAdminRole( () -> {
-            // an explicit empty base disables resolution from configuration and from the request:
-            // the result is the escaped path relative to the site the URL belongs to, with a
-            // leading slash
-            final String path =
-                new ContentBaseUrlResolver( contentService, projectService, PageBase.params( params ), "", false ).resolve(
-                    metadata -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
-                                                                     PageBase.level( params, metadata ) ) );
+            final BaseUrlMetadata metadata =
+                new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params.getBase() );
+
+            final String path = ContextBuilder.copyOf( ContextAccessor.current() )
+                .repositoryId( metadata.getProjectName().getRepoId() )
+                .branch( metadata.getBranch() )
+                .build()
+                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
+                                                                       metadata.getAnchorPath() ) );
+
+            final StringBuilder escapedPath = new StringBuilder();
+            UrlBuilderHelper.appendAndEncodePathParts( escapedPath, path );
 
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getParams() );
 
-            return new PageUrlParts( path, queryParamsStrategy.get() );
+            final String baseUrl = metadata.getBaseUrl();
+
+            return new PageUrlParts( Strings.isNullOrEmpty( baseUrl ) ? null : UrlGenerator.removeTrailingSlash( baseUrl ),
+                                     escapedPath.toString(),
+                                     queryParamsStrategy.get() );
         } );
     }
 
@@ -392,8 +368,8 @@ public final class PortalUrlServiceImpl
     @Override
     public String processHtml( final ProcessHtmlParams params )
     {
-        return new RichTextProcessor( styleDescriptorService, this, portalUrlGeneratorService, macroService, contentService ).process(
-            params );
+        return new RichTextProcessor( styleDescriptorService, this, portalUrlGeneratorService, macroService, contentService,
+                                      defaultMediaBaseUrl ).process( params );
     }
 
     @Override

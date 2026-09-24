@@ -121,7 +121,8 @@ public class PortalUrlGeneratorServiceImpl
                 .build()
                 .parts();
 
-            return new ImageUrlParts( mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ), queryString( imageQueryParams( params ) ),
+            return new ImageUrlParts( configuredMediaBaseUrl(), mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ),
+                                      queryString( imageQueryParams( params ) ),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.scale() ),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
@@ -141,11 +142,20 @@ public class PortalUrlGeneratorServiceImpl
                 .build()
                 .parts();
 
-            return new AttachmentUrlParts( mediaPath( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY, parts ),
+            return new AttachmentUrlParts( configuredMediaBaseUrl(), mediaPath( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY, parts ),
                                            queryString( attachmentQueryParams( params ) ),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
         } );
+    }
+
+    /**
+     * @return where configuration says the media APIs are served, or {@code null} when it does not say: site mounts
+     * are not considered, so this never carries a {@code "_"} endpoint segment
+     */
+    String configuredMediaBaseUrl()
+    {
+        return defaultMediaBaseUrl == null ? null : UrlGenerator.removeTrailingSlash( defaultMediaBaseUrl );
     }
 
     private static Map<String, List<String>> imageQueryParams( final ImageUrlGeneratorParams params )

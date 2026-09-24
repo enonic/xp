@@ -18,30 +18,21 @@ final class ContentBaseUrlResolver
 
     private final BaseUrlParams params;
 
-    private final String baseUrl;
-
     private final boolean followRequest;
 
     ContentBaseUrlResolver( final ContentService contentService, final ProjectService projectService, final BaseUrlParams params,
                             final boolean followRequest )
     {
-        this( contentService, projectService, params, null, followRequest );
-    }
-
-    ContentBaseUrlResolver( final ContentService contentService, final ProjectService projectService, final BaseUrlParams params,
-                            final String baseUrl, final boolean followRequest )
-    {
         this.contentService = contentService;
         this.projectService = projectService;
         this.params = params;
-        this.baseUrl = baseUrl;
         this.followRequest = followRequest;
     }
 
     public String resolve( final Function<BaseUrlMetadata, String> pathResolver )
     {
         final BaseUrlMetadata baseUrlMetadata =
-            new BaseUrlExtractor( contentService, projectService ).extract( params, baseUrl, followRequest );
+            new BaseUrlExtractor( contentService, projectService ).extract( params, followRequest );
 
         final String resolvedBaseUrl = resolveBaseUrl( baseUrlMetadata );
 
@@ -60,11 +51,6 @@ final class ContentBaseUrlResolver
 
     private String resolveBaseUrl( final BaseUrlMetadata baseUrlMetadata )
     {
-        if ( baseUrl != null )
-        {
-            return baseUrl;
-        }
-
         final String resolvedBaseUrl = baseUrlMetadata.getBaseUrl();
 
         if ( resolvedBaseUrl == null )

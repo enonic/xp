@@ -55,7 +55,7 @@ class PortalUrlServiceImpl_apiUrlTest
 
         this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ), portalUrlGeneratorService, mock( SiteService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 

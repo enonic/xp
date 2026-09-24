@@ -5,8 +5,10 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Parts of an image URL, for building the full URL from segments:
- * {@code url = <baseUrl> + path + queryString}. All values are URL-escaped as they appear in the URL.
+ * {@code url = apiUrl + path + queryString}. All values are URL-escaped as they appear in the URL.
  *
+ * @param apiUrl      the configured {@code media.defaultBaseUrl}, without a trailing slash; {@code null} when none is
+ *                    configured, and the caller supplies where the media API is served. Site mounts are not considered
  * @param path        the full media API path with a leading slash: {@code /media:image/<context>/<id>:<fingerprint>/<scale>/<name>}
  * @param queryString URL-escaped query string prefixed with {@code ?}; empty when there are no parameters
  * @param context     project context segment: {@code <project>} on the master branch, {@code <project>:<branch>} otherwise
@@ -16,7 +18,7 @@ import org.jspecify.annotations.Nullable;
  * @param name        file name segment, with the requested format extension applied
  */
 @NullMarked
-public record ImageUrlParts(String path, String queryString, String context, String id, @Nullable String fingerprint, String scale,
+public record ImageUrlParts(@Nullable String apiUrl, String path, String queryString, String context, String id, @Nullable String fingerprint, String scale,
                             String name)
 {
 }
