@@ -22,6 +22,7 @@ assert.assertJsonEquals({
     maxSystemVersion: '3.0.0',
     modifiedTime: '2020-09-25T10:00:00Z',
     started: true,
-    system: true
+    system: true,
+    schema: false
 }, result);
 

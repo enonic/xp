@@ -36,6 +36,7 @@ export interface Application {
     modifiedTime: string | null;
     started: boolean;
     system: boolean;
+    schema: boolean;
 }
 
 export interface GetApplicationParams {

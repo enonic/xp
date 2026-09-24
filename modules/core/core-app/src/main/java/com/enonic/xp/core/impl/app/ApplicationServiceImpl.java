@@ -108,6 +108,7 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
+        requireNotSchemaApplication( key, "start" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -134,6 +135,7 @@ public final class ApplicationServiceImpl
         {
             throw new IllegalArgumentException( "Cannot stop system application: " + key );
         }
+        requireNotSchemaApplication( key, "stop" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -359,11 +361,23 @@ public final class ApplicationServiceImpl
         return application;
     }
 
+    // a schema application is always started, whatever state was stored for it
+    private void requireNotSchemaApplication( final ApplicationKey key, final String action )
+    {
+        final Application app = registry.get( key );
+        if ( app != null && app.isSchema() )
+        {
+            throw new IllegalArgumentException( "Cannot " + action + " schema application: " + key );
+        }
+    }
+
     private void doInstallAndStartStoredApplication( final Node applicationNode )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( applicationNode.name().toString() );
         doInstallStoredApplication( applicationKey );
-        final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) );
+        final Application application = registry.get( applicationKey );
+        final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) ||
+            application != null && application.isSchema();
         if ( started )
         {
             tryStartApplication( applicationKey );

@@ -30,6 +30,8 @@ public class ApplicationResourceService
 {
     private static final Logger LOG = LoggerFactory.getLogger( ApplicationResourceService.class );
 
+    static final String SCHEMA_APPLICATION_MESSAGE = "Schema application is always started and cannot be started or stopped";
+
     private final ApplicationService applicationService;
 
     private final ApplicationDescriptorService applicationDescriptorService;
@@ -91,6 +93,11 @@ public class ApplicationResourceService
         final List<ApplicationActionResultJson.ActionResult> results = new ArrayList<>();
         for ( final String key : params.getKey() )
         {
+            if ( isSchemaApplication( key ) )
+            {
+                results.add( new ApplicationActionResultJson.ActionResult( key, false, SCHEMA_APPLICATION_MESSAGE ) );
+                continue;
+            }
             try
             {
                 this.applicationService.startApplication( ApplicationKey.from( key ) );
@@ -110,6 +117,11 @@ public class ApplicationResourceService
         final List<ApplicationActionResultJson.ActionResult> results = new ArrayList<>();
         for ( final String key : params.getKey() )
         {
+            if ( isSchemaApplication( key ) )
+            {
+                results.add( new ApplicationActionResultJson.ActionResult( key, false, SCHEMA_APPLICATION_MESSAGE ) );
+                continue;
+            }
             try
             {
                 this.applicationService.stopApplication( ApplicationKey.from( key ) );
@@ -122,6 +134,12 @@ public class ApplicationResourceService
             }
         }
         return new ApplicationActionResultJson( results );
+    }
+
+    private boolean isSchemaApplication( final String key )
+    {
+        final Application application = applicationService.getInstalledApplication( ApplicationKey.from( key ) );
+        return application != null && application.isSchema();
     }
 
     public List<ApplicationInfoJson> getInstalledApplications()

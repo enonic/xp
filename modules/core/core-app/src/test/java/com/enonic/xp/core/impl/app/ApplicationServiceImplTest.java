@@ -282,6 +282,89 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void stopApplication_schemaApp_throws()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "schemaApp",
+                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) );
+
+        applicationRegistry.registerApplication( bundle );
+
+        bundle.start();
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
+
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
+        verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
+        verifyNoEvents( ApplicationClusterEvents.stop( applicationKey ) );
+    }
+
+    @Test
+    void startApplication_schemaApp_throws()
+    {
+        final Bundle bundle = deploy( "schemaApp",
+                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) );
+
+        applicationRegistry.registerApplication( bundle );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
+
+        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
+    }
+
+    @Test
+    void stopApplication_gradleBuiltAppWithCmsDescriptor_stops()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "gradleApp", buildWithoutBnd( newBundle( "gradleApp", true ).setHeader( "Bnd-LastModified", "1783360499694" )
+                                                                    .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) );
+
+        applicationRegistry.registerApplication( bundle );
+
+        bundle.start();
+
+        this.service.stopApplication( ApplicationKey.from( "gradleApp" ) );
+
+        assertEquals( Bundle.RESOLVED, bundle.getState() );
+    }
+
+    @Test
+    void install_stored_schema_application_is_started()
+    {
+        final String bundleName = "schemaApp";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        // stored as stopped: a schema application is started regardless
+        final PropertyTree data = new PropertyTree();
+        data.setBoolean( ApplicationPropertyNames.STARTED, false );
+        final Node node = Node.create()
+            .id( NodeId.from( "mynodeid3" ) )
+            .name( bundleName )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .data( data )
+            .build();
+
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( node ) );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( node );
+        when( this.repoService.getApplicationSource( node.id() ) ).thenReturn(
+            wrap( buildWithoutBnd( newBundle( bundleName, true ).addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) ) );
+
+        this.service.installAllStoredApplications();
+
+        final Application application = this.service.getInstalledApplication( applicationKey );
+        assertNotNull( application );
+        assertTrue( application.isSchema() );
+        assertTrue( application.isStarted() );
+    }
+
+    @Test
     void install_global()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
@@ -876,6 +959,11 @@ class ApplicationServiceImplTest
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
         verify( this.eventPublisher, never ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
+    }
+
+    private void verifyNoEvents( final Event event )
+    {
+        verify( this.eventPublisher, never() ).publish( argThat( new ApplicationEventMatcher( event ) ) );
     }
 
     private void mockRepoCreateNode( final Node node )
