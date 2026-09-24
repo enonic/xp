@@ -14,7 +14,8 @@ public interface PortalUrlService
      * When {@code api} is set on the params, resolves the mount point of that API there instead:
      * {@code <baseUrl>/_} when a Base URL is configured and the API is mounted on the site, the
      * {@code media.defaultBaseUrl} configuration for media APIs when set, or {@code null} when
-     * URLs should stay request-based.
+     * neither is configured. The address of the current request takes no part; project and
+     * branch default to those of a site request when the params do not name them.
      * <p>
      * Never returns an error URL: failures are reported to the caller.
      *
