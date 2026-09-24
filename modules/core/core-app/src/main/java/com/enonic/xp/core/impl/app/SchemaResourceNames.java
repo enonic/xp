@@ -20,6 +20,12 @@ public final class SchemaResourceNames
 
     public static final String LAYOUT_ROOT_NAME = "layouts";
 
+    public static final String MACROS_ROOT_NAME = "macros";
+
+    public static final String I18N_ROOT_NAME = "i18n";
+
+    public static final String PHRASES_ROOT_NAME = "phrases";
+
     public static final String STYLE_NAME = "style";
 
     public static final BinaryReference ICON_BINARY_REFERENCE = BinaryReference.from( "icon" );

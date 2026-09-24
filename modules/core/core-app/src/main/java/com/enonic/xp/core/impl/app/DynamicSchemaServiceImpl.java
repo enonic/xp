@@ -1074,14 +1074,14 @@ public class DynamicSchemaServiceImpl
 
     private NodePath createMacroRootPath( final ApplicationKey key )
     {
-        return new NodePath( createCmsFolderPath( key ), NodeName.from( SchemaResourcePaths.MACROS_ROOT_NAME ) );
+        return new NodePath( createCmsFolderPath( key ), NodeName.from( SchemaResourceNames.MACROS_ROOT_NAME ) );
     }
 
     private NodePath createPhrasesFolderPath( final ApplicationKey key )
     {
         return NodePath.create( createCmsFolderPath( key ) )
-            .addElement( SchemaResourcePaths.I18N_ROOT_NAME )
-            .addElement( SchemaResourcePaths.PHRASES_ROOT_NAME )
+            .addElement( SchemaResourceNames.I18N_ROOT_NAME )
+            .addElement( SchemaResourceNames.PHRASES_ROOT_NAME )
             .build();
     }
 

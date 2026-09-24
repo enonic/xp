@@ -32,12 +32,6 @@ public final class SchemaResourcePaths
      */
     public static final List<String> PERSISTED_ROOT_NAMES = List.of( SchemaResourceNames.CMS_ROOT_NAME, APP_DESCRIPTOR_NAME, APP_ICON_NAME );
 
-    public static final String MACROS_ROOT_NAME = "macros";
-
-    public static final String I18N_ROOT_NAME = "i18n";
-
-    public static final String PHRASES_ROOT_NAME = "phrases";
-
     public static final String SVG_EXTENSION = "svg";
 
     public static final String PNG_EXTENSION = "png";
@@ -75,19 +69,20 @@ public final class SchemaResourcePaths
     private static final String DESCRIPTOR_ROOTS =
         String.join( "|", SchemaResourceNames.CONTENT_TYPE_ROOT_NAME, SchemaResourceNames.FORM_FRAGMENTS_ROOT_NAME,
                      SchemaResourceNames.MIXINS_ROOT_NAME, SchemaResourceNames.PART_ROOT_NAME, SchemaResourceNames.LAYOUT_ROOT_NAME,
-                     SchemaResourceNames.PAGE_ROOT_NAME, MACROS_ROOT_NAME );
+                     SchemaResourceNames.PAGE_ROOT_NAME, SchemaResourceNames.MACROS_ROOT_NAME );
 
     // icons exist for content types, form fragments, mixins, parts and macros
     private static final String ICON_ROOTS =
         String.join( "|", SchemaResourceNames.CONTENT_TYPE_ROOT_NAME, SchemaResourceNames.FORM_FRAGMENTS_ROOT_NAME,
-                     SchemaResourceNames.MIXINS_ROOT_NAME, SchemaResourceNames.PART_ROOT_NAME, MACROS_ROOT_NAME );
+                     SchemaResourceNames.MIXINS_ROOT_NAME, SchemaResourceNames.PART_ROOT_NAME, SchemaResourceNames.MACROS_ROOT_NAME );
 
     private static final String CMS_RESOURCES =
         SchemaResourceNames.CMS_ROOT_NAME + "/(?:(?<" + DESCRIPTOR_PATH_GROUP + ">(?:" + DESCRIPTOR_ROOTS + ")/(?<" + SCHEMA_NAME_GROUP +
             ">[^/]+)/\\k<" + SCHEMA_NAME_GROUP + ">|" + SchemaResourceNames.CMS_ROOT_NAME + "|" + SchemaResourceNames.STYLE_ROOT_NAME + "/" +
             SchemaResourceNames.STYLE_NAME + ")\\.(?<" + EXTENSION_GROUP + ">yaml|yml)|(?<" + ICON_PATH_GROUP + ">(?:" + ICON_ROOTS +
             ")/(?<" + SCHEMA_NAME_2_GROUP + ">[^/]+)/\\k<" + SCHEMA_NAME_2_GROUP + ">\\.(?:" + SVG_EXTENSION + "|" + PNG_EXTENSION +
-            "))|(?<" + PHRASES_PATH_GROUP + ">" + I18N_ROOT_NAME + "/" + PHRASES_ROOT_NAME + "/[^/]+\\.properties))";
+            "))|(?<" + PHRASES_PATH_GROUP + ">" + SchemaResourceNames.I18N_ROOT_NAME + "/" +
+            SchemaResourceNames.PHRASES_ROOT_NAME + "/[^/]+\\.properties))";
 
     private static final String ROOT_RESOURCES =
         "(?<" + APP_DESCRIPTOR_GROUP + ">enonic)\\.(?<" + APP_DESCRIPTOR_EXTENSION_GROUP + ">yaml|yml)|(?<" + APP_ICON_PATH_GROUP + ">" +

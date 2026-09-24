@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,7 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -101,5 +105,60 @@ class ApplicationFactoryServiceImplTest
 
         bundle.stop();
         assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+    }
+
+    @Test
+    void findResolver_inactiveWithPersistedSchema()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        final Bundle bundle = deploy( appName, newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
+
+        // installed but not started: the persisted schema is served
+        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
+
+        bundle.start();
+        assertThat( service.findResolver( applicationKey, null ) ).isNotEmpty()
+            .get()
+            .isNotInstanceOf( NodeResourceApplicationUrlResolver.class );
+
+        // stopped: the persisted schema is still served, bundle resources are not
+        bundle.stop();
+        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
+    }
+
+    @Test
+    void findResolver_inactiveLocalWithCmsDescriptor()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        final Bundle bundle = deploy( ApplicationHelper.toBundleLocation( applicationKey, true ),
+                                      newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
+
+        bundle.start();
+        assertThat( service.findResolver( applicationKey, null ) ).isNotEmpty();
+
+        // a local application is never persisted: nothing is served once stopped
+        bundle.stop();
+        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+    }
+
+    private static InputStream stream( final String content )
+    {
+        return new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) );
     }
 }

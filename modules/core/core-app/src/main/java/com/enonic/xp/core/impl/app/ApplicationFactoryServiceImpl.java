@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -77,20 +78,31 @@ public class ApplicationFactoryServiceImpl
 
         if ( source == null )
         {
-            return adaptorEntry.map( Map.Entry::getValue ).map( ApplicationAdaptor::getUrlResolver );
+            return adaptorEntry.map( Map.Entry::getValue )
+                .map( ApplicationAdaptor::getUrlResolver )
+                .or( () -> findInactiveResolver( applicationKey ) );
         }
 
         return adaptorEntry.map( Map.Entry::getKey ).map( bundle -> factory.createUrlResolver( bundle, source ) );
     }
 
+    // a stopped application still serves its persisted schema, the schema belongs to the installation, not to the running bundle
+    private Optional<ApplicationUrlResolver> findInactiveResolver( final ApplicationKey applicationKey )
+    {
+        return entries( applicationKey ).findAny().map( Map.Entry::getKey ).map( factory::createInactiveUrlResolver );
+    }
+
     private Optional<Map.Entry<Bundle, ApplicationAdaptor>> findActiveEntry( final ApplicationKey applicationKey )
+    {
+        return entries( applicationKey ).filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE ).findAny();
+    }
+
+    private Stream<Map.Entry<Bundle, ApplicationAdaptor>> entries( final ApplicationKey applicationKey )
     {
         return bundleTracker.getTracked()
             .entrySet()
             .stream()
-            .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) )
-            .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
-            .findAny();
+            .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) );
     }
 
     private static class Customizer

@@ -66,6 +66,17 @@ public final class ApplicationFactory
         return ApplicationHelper.hasCmsDescriptor( bundle ) && !ApplicationHelper.isLocalApplication( bundle );
     }
 
+    /**
+     * Resolver for an application whose bundle is not active: only the persisted schema is served,
+     * bundle resources (controllers, assets, ...) are not available until the application is started.
+     */
+    ApplicationUrlResolver createInactiveUrlResolver( final Bundle bundle )
+    {
+        return hasNodeBackedSchema( bundle )
+            ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService )
+            : null;
+    }
+
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
     {
         if ( "bundle".equals( source ) )
