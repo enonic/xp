@@ -11,12 +11,6 @@ public interface PortalUrlService
      * nearest site at or above it, or for the project when it is in no site, and the site engine
      * address of that site or project when none is configured.
      * <p>
-     * When {@code api} is set on the params, resolves the mount point of that API there instead:
-     * {@code <baseUrl>/_} when a Base URL is configured and the API is mounted on the site, the
-     * {@code media.defaultBaseUrl} configuration for media APIs when set, or {@code null} when
-     * neither is configured. The address of the current request takes no part; project and
-     * branch default to those of a site request when the params do not name them.
-     * <p>
      * Never returns an error URL: failures are reported to the caller.
      *
      * @throws com.enonic.xp.content.ContentNotFoundException if the content does not exist

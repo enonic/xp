@@ -18,6 +18,7 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.portal.PortalRequestAccessor;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
@@ -395,6 +396,38 @@ class PortalUrlGeneratorServiceImplTest
         assertEquals( "0a350f43700951cdcca1574f448a7e22", parts.fingerprint() );
         assertEquals( "max-300", parts.scale() );
         assertEquals( "mycontent.png", parts.name() );
+
+        // no media base is configured: the caller supplies where the media API is served
+        assertNull( parts.apiUrl() );
+    }
+
+    @Test
+    void mediaUrlParts_apiUrlIsTheConfiguredDefaultMediaBaseUrl()
+    {
+        final PortalConfig config = mock( PortalConfig.class );
+        when( config.media_defaultBaseUrl() ).thenReturn( "https://cdn.example.com/api/" );
+        when( config.legacy_mediaApiAutoMount_enabled() ).thenReturn( true );
+        ( (PortalUrlGeneratorServiceImpl) this.service ).activate( config );
+
+        final ImageUrlParts imageParts = this.service.imageUrlParts( ImageUrlGeneratorParams.create()
+                                                                         .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
+                                                                         .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                         .setBranch( () -> Branch.from( "draft" ) )
+                                                                         .setScale( "max(300)" )
+                                                                         .setBaseUrl( "https://site.example.com" )
+                                                                         .build() );
+
+        final AttachmentUrlParts attachmentParts = this.service.attachmentUrlParts( AttachmentUrlGeneratorParams.create()
+                                                                                        .setContent(
+                                                                                            () -> mockMedia( "123456", "mycontent.png" ) )
+                                                                                        .setProjectName(
+                                                                                            () -> ProjectName.from( "myproject" ) )
+                                                                                        .setBranch( () -> Branch.from( "draft" ) )
+                                                                                        .build() );
+
+        // the configured value without its trailing slash; a base URL parameter - a mount - is not considered
+        assertEquals( "https://cdn.example.com/api", imageParts.apiUrl() );
+        assertEquals( "https://cdn.example.com/api", attachmentParts.apiUrl() );
     }
 
     @Test

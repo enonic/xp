@@ -65,7 +65,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( followRequest && noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( followRequest && noExplicitContext && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 

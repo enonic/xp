@@ -34,6 +34,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
@@ -90,8 +91,7 @@ class PortalUrlServiceImpl_processHtmlTest
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
-                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService,
-                                      mock( SiteService.class ) );
+                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -343,17 +343,109 @@ class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "<a href=\"https://parent.example.com/b/mycontent\">Content</a>", html );
     }
 
+    private String processInContext( final ProcessHtmlParams params )
+    {
+        return ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
+            .branch( Branch.from( "context-branch" ) )
+            .build()
+            .callWith( () -> service.processHtml( params ) );
+    }
+
+    @Test
+    void testContentLinkWithPageBaseWithoutBaseUrl()
+    {
+        // setUp binds a site request for myproject/draft: a selected page base ignores it
+        final Content content = Content.create( ContentFixtures.newContent() ).build();
+        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
+
+        final Site nestedSite = mockSiteWithBaseUrl( ContentPath.from( "/a/b" ), null );
+        mockSiteWithBaseUrl( ContentPath.from( "/a" ), null );
+
+        when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( nestedSite );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams();
+        params.value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) );
+        params.pageBase( BaseUrlParams.create().setPath( "/a" ).build() );
+
+        // no Base URL is configured for /a: the href is the content path relative to it, with no
+        // site engine address in front
+        assertEquals( "<a href=\"/b/mycontent\">Content</a>", processInContext( params ) );
+    }
+
+    @Test
+    void testContentLinkWithPageBaseToTheSelectedLevel()
+    {
+        final Site site = Site.create( ContentFixtures.newSite() ).parentPath( ContentPath.ROOT ).name( "a" ).build();
+        when( this.contentService.getById( site.getId() ) ).thenReturn( site );
+        when( this.contentService.getByPath( ContentPath.from( "/a" ) ) ).thenReturn( site );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams();
+        params.value( String.format( "<a href=\"content://%s\">Site</a>", site.getId() ) );
+        params.pageBase( BaseUrlParams.create().setPath( "/a" ).build() );
+
+        // the relative path of the level itself is empty: its root is linked instead of the document
+        assertEquals( "<a href=\"/\">Site</a>", processInContext( params ) );
+    }
+
+    @Test
+    void testMediaLinksWithPageBaseWithoutMediaBaseUrl()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams().value(
+            "<img src=\"image://" + media.getId() + "\"/><a href=\"media://download/" + media.getId() + "\">Download</a>" )
+            .imageWidths( List.of( 660 ) )
+            .imageSizes( " " );
+        params.pageBase( BaseUrlParams.create().setPath( "/" ).build() );
+
+        final String html = processInContext( params );
+
+        // no media base is configured: the bare media API paths, with the context's project and
+        // branch - neither the site request nor a site mount contributes
+        final String image = "/media:image/context-project:context-branch/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22";
+        assertThat( html ).startsWith( "<img src=\"" + image + "/width-768/mycontent\" srcset=\"" + image + "/width-660/mycontent 660w\"" );
+        assertThat( html ).contains( "<a href=\"/media:attachment/context-project:context-branch/" + media.getId() );
+        assertThat( html ).contains( "?download\">Download</a>" );
+        assertThat( html ).doesNotContain( "/_/" ).doesNotContain( "/site/" );
+    }
+
+    @Test
+    void testMediaLinksWithPageBaseWithDefaultMediaBaseUrl()
+    {
+        final PortalConfig config = mock( PortalConfig.class );
+        when( config.media_defaultBaseUrl() ).thenReturn( "https://cdn.example.com/api/" );
+        ( (PortalUrlServiceImpl) this.service ).activate( config );
+
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams().value(
+            "<img src=\"image://" + media.getId() + "\"/><a href=\"media://download/" + media.getId() + "\">Download</a>" );
+        params.pageBase( BaseUrlParams.create().setPath( "/" ).build() );
+
+        final String html = processInContext( params );
+
+        assertThat( html ).startsWith( "<img src=\"https://cdn.example.com/api/media:image/context-project:context-branch/" );
+        assertThat( html ).contains(
+            "<a href=\"https://cdn.example.com/api/media:attachment/context-project:context-branch/" + media.getId() );
+        assertThat( html ).doesNotContain( "/_/" );
+    }
+
     private Site mockSiteWithBaseUrl( final ContentPath path, final String baseUrl )
     {
         final Site site = mock( Site.class );
         when( site.getPath() ).thenReturn( path );
 
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", baseUrl );
-
-        final SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
-            .build();
+        final SiteConfigs.Builder siteConfigsBuilder = SiteConfigs.create();
+        if ( baseUrl != null )
+        {
+            final PropertyTree config = new PropertyTree();
+            config.addString( "baseUrl", baseUrl );
+            siteConfigsBuilder.add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() );
+        }
+        final SiteConfigs siteConfigs = siteConfigsBuilder.build();
 
         final PropertyTree data = new PropertyTree();
         when( site.getData() ).thenReturn( data );

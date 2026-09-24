@@ -163,7 +163,16 @@ public final class ProcessHtmlParams
     }
 
     /**
-     * Selects the site - or the project - the content links of the processed HTML belong to.
+     * Selects the site - or the project - the processed HTML belongs to, and with it resolves
+     * every link from configuration alone; the current request is not consulted.
+     * <p>
+     * Content links are built as {@link PortalUrlService#pageUrlParts} gives them: the Base URL
+     * configured for the selected level followed by the content path relative to it, or that
+     * path alone when none is configured. Image and attachment URLs start with
+     * {@link #imageBaseUrl(String)} or {@link #attachmentBaseUrl(String)} when given, the
+     * configured {@code media.defaultBaseUrl} otherwise, and are the bare media API path - such
+     * as {@code /media:image/...} - when neither is set. Site mounts of the media APIs are not
+     * considered, so no {@code "_"} endpoint segment appears.
      *
      * @see PageUrlParams#base(BaseUrlParams)
      */
