@@ -21,8 +21,10 @@ import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
+import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
+import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.security.RoleKeys;
@@ -76,7 +78,8 @@ public class PortalUrlGeneratorServiceImpl
                           .setFormat( params.getFormat() )
                           .build() );
 
-        builder.setQueryParams( imageQueryParams( params ) );
+        builder.setQueryParams(
+            imageQueryParams( params.getQueryParams(), params.getQuality(), params.getBackground(), params.getFilter() ) );
 
         final String mediaBaseUrl = resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
         return mediaBaseUrl != null ? generateMediaUrl( mediaBaseUrl, builder.build() ) : apiUrl( builder.build() );
@@ -97,19 +100,14 @@ public class PortalUrlGeneratorServiceImpl
             .setUrlType( params.getUrlType() )
             .setDescriptorKey( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY )
             .setPath( pathStrategy )
-            .setQueryParams( params.getQueryParams() );
-
-        if ( params.isDownload() )
-        {
-            builder.setQueryParams( Map.of( "download", List.of() ) );
-        }
+            .setQueryParams( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) );
 
         final String mediaBaseUrl = resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
         return mediaBaseUrl != null ? generateMediaUrl( mediaBaseUrl, builder.build() ) : apiUrl( builder.build() );
     }
 
     @Override
-    public ImageUrlParts imageUrlParts( final ImageUrlGeneratorParams params )
+    public ImageUrlParts imageUrlParts( final ImageUrlPartsParams params )
     {
         return runWithAdminRole( () -> {
             final MediaPathParts parts = ImageMediaPathSupplier.create()
@@ -121,7 +119,8 @@ public class PortalUrlGeneratorServiceImpl
                 .build()
                 .parts();
 
-            return new ImageUrlParts( mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ), queryString( imageQueryParams( params ) ),
+            return new ImageUrlParts( mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ), queryString(
+                imageQueryParams( params.getQueryParams(), params.getQuality(), params.getBackground(), params.getFilter() ) ),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.scale() ),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
@@ -129,7 +128,7 @@ public class PortalUrlGeneratorServiceImpl
     }
 
     @Override
-    public AttachmentUrlParts attachmentUrlParts( final AttachmentUrlGeneratorParams params )
+    public AttachmentUrlParts attachmentUrlParts( final AttachmentUrlPartsParams params )
     {
         return runWithAdminRole( () -> {
             final MediaPathParts parts = AttachmentMediaPathSupplier.create()
@@ -142,39 +141,43 @@ public class PortalUrlGeneratorServiceImpl
                 .parts();
 
             return new AttachmentUrlParts( mediaPath( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY, parts ),
-                                           queryString( attachmentQueryParams( params ) ),
+                                           queryString( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) ),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
         } );
     }
 
-    private static Map<String, List<String>> imageQueryParams( final ImageUrlGeneratorParams params )
+    private static Map<String, List<String>> imageQueryParams( final Map<String, List<String>> params, final Integer quality,
+                                                               final String background, final String filter )
     {
-        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params.getQueryParams() );
+        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
 
-        if ( params.getQuality() != null )
+        if ( quality != null )
         {
-            queryParams.put( "quality", List.of( params.getQuality().toString() ) );
+            queryParams.put( "quality", List.of( quality.toString() ) );
         }
-        if ( params.getBackground() != null )
+        if ( background != null )
         {
-            queryParams.put( "background", List.of( params.getBackground() ) );
+            queryParams.put( "background", List.of( background ) );
         }
-        if ( params.getFilter() != null )
+        if ( filter != null )
         {
-            queryParams.put( "filter", List.of( params.getFilter() ) );
+            queryParams.put( "filter", List.of( filter ) );
         }
 
         return queryParams;
     }
 
-    private static Map<String, List<String>> attachmentQueryParams( final AttachmentUrlGeneratorParams params )
+    private static Map<String, List<String>> attachmentQueryParams( final Map<String, List<String>> params, final boolean download )
     {
-        if ( params.isDownload() )
+        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
+
+        if ( download )
         {
-            return Map.of( "download", List.of() );
+            queryParams.put( "download", List.of() );
         }
-        return params.getQueryParams();
+
+        return queryParams;
     }
 
     private static String queryString( final Map<String, List<String>> queryParams )

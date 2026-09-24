@@ -22,7 +22,9 @@ import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
+import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
+import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
@@ -377,7 +379,7 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void imageUrlParts_basic()
     {
-        final ImageUrlGeneratorParams params = ImageUrlGeneratorParams.create()
+        final ImageUrlPartsParams params = ImageUrlPartsParams.create()
             .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> Branch.from( "draft" ) )
@@ -400,16 +402,25 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void imageUrlParts_matchImageUrl()
     {
-        final ImageUrlGeneratorParams.Builder builder = ImageUrlGeneratorParams.create()
-            .setMedia( () -> mockMedia( "123456", "my content.png" ) )
-            .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "master" ) )
-            .setScale( "block(800,200)" )
-            .setFilter( "blur(3)" )
-            .setFormat( "webp" );
-
-        final ImageUrlParts parts = this.service.imageUrlParts( builder.build() );
-        final String url = this.service.imageUrl( builder.setMediaBaseUrl( "https://media.example.com" ).build() );
+        final ImageUrlParts parts = this.service.imageUrlParts( ImageUrlPartsParams.create()
+                                                                    .setMedia( () -> mockMedia( "123456", "my content.png" ) )
+                                                                    .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                    .setBranch( () -> Branch.from( "master" ) )
+                                                                    .setScale( "block(800,200)" )
+                                                                    .setFilter( "blur(3)" )
+                                                                    .setFormat( "webp" )
+                                                                    .setQueryParam( "a", "1" )
+                                                                    .build() );
+        final String url = this.service.imageUrl( ImageUrlGeneratorParams.create()
+                                                      .setMedia( () -> mockMedia( "123456", "my content.png" ) )
+                                                      .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                      .setBranch( () -> Branch.from( "master" ) )
+                                                      .setScale( "block(800,200)" )
+                                                      .setFilter( "blur(3)" )
+                                                      .setFormat( "webp" )
+                                                      .setQueryParam( "a", "1" )
+                                                      .setMediaBaseUrl( "https://media.example.com" )
+                                                      .build() );
 
         // the invariant for building URLs from parts
         assertEquals( url, "https://media.example.com" + parts.path() + parts.queryString() );
@@ -418,7 +429,7 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void attachmentUrlParts_basic()
     {
-        final AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
+        final AttachmentUrlPartsParams params = AttachmentUrlPartsParams.create()
             .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> Branch.from( "master" ) )
@@ -438,13 +449,21 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void attachmentUrlParts_matchAttachmentUrl()
     {
-        final AttachmentUrlGeneratorParams.Builder builder = AttachmentUrlGeneratorParams.create()
-            .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
-            .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "draft" ) );
-
-        final AttachmentUrlParts parts = this.service.attachmentUrlParts( builder.build() );
-        final String url = this.service.attachmentUrl( builder.setMediaBaseUrl( "https://media.example.com" ).build() );
+        final AttachmentUrlParts parts = this.service.attachmentUrlParts( AttachmentUrlPartsParams.create()
+                                                                              .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
+                                                                              .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                              .setBranch( () -> Branch.from( "draft" ) )
+                                                                              .setDownload( true )
+                                                                              .setQueryParam( "a", "1" )
+                                                                              .build() );
+        final String url = this.service.attachmentUrl( AttachmentUrlGeneratorParams.create()
+                                                           .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
+                                                           .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                           .setBranch( () -> Branch.from( "draft" ) )
+                                                           .setDownload( true )
+                                                           .setQueryParam( "a", "1" )
+                                                           .setMediaBaseUrl( "https://media.example.com" )
+                                                           .build() );
 
         assertEquals( url, "https://media.example.com" + parts.path() + parts.queryString() );
     }
