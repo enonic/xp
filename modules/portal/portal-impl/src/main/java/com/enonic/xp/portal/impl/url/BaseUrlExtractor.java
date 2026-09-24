@@ -31,9 +31,9 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         this.projectService = requireNonNull( projectService );
     }
 
-    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest )
+    BaseUrlMetadata extract( final BaseUrlParams params, final boolean followRequest )
     {
-        return extract( params, baseUrl, followRequest, baseUrl == null );
+        return extract( params, followRequest, true );
     }
 
     /**
@@ -42,11 +42,10 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
      */
     BaseUrlMetadata extractFromConfiguration( final BaseUrlParams params )
     {
-        return extract( params, null, false, false );
+        return extract( params, false, false );
     }
 
-    private BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest,
-                                     final boolean contextFromRequest )
+    private BaseUrlMetadata extract( final BaseUrlParams params, final boolean followRequest, final boolean contextFromRequest )
     {
         final boolean noExplicitContext = contextFromRequest && params.getProjectName() == null && params.getBranch() == null;
 
@@ -94,26 +93,19 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
                 builder.setNearestSite( site );
             }
 
-            if ( baseUrl != null )
+            final SiteConfigs siteConfigs;
+            if ( site != null )
             {
-                builder.setBaseUrl( baseUrl );
+                siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
             }
             else
             {
-                final SiteConfigs siteConfigs;
-                if ( site != null )
-                {
-                    siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
-                }
-                else
-                {
-                    final Project resolvedProject = resolveProject( projectName, portalRequest );
-                    siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
-                }
-
-                builder.setSiteConfigs( siteConfigs );
-                builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
+                final Project resolvedProject = resolveProject( projectName, portalRequest );
+                siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
             }
+
+            builder.setSiteConfigs( siteConfigs );
+            builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
         }
 
         return builder.build();

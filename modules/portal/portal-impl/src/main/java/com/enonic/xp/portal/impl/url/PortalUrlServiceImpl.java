@@ -154,7 +154,7 @@ public final class PortalUrlServiceImpl
 
     private String resolveApiBaseUrl( final BaseUrlParams params )
     {
-        final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extract( params, null, true );
+        final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extract( params, true );
 
         final String configuredBaseUrl = metadata.getBaseUrl();
 
