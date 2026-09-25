@@ -76,6 +76,11 @@ public abstract class BundleBasedTest
     }
 
 
+    protected final InputStream buildWithoutBnd( final TinyBundle bundle )
+    {
+        return bundle.setHeader( Constants.BUNDLE_MANIFESTVERSION, "2" ).build( TinyBundles.rawBuilder() );
+    }
+
     protected final TinyBundle newBundle( final String name, final boolean isApp )
     {
         return doCreateNewBundle( name, isApp, "1.0.0" );

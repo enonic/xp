@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -136,6 +137,37 @@ class ApplicationResourceServiceTest
         verify( applicationService ).uninstallApplication( ApplicationKey.from( "com.enonic.app2" ) );
         assertThat( result.getResults() ).containsExactlyInAnyOrder( new ApplicationActionResultJson.ActionResult( "com.enonic.app1", true ),
                                                             new ApplicationActionResultJson.ActionResult( "com.enonic.app2", true ) );
+    }
+
+    @Test
+    void start_stop_schema_application_rejected()
+    {
+        final Application schemaApp = mock( Application.class );
+        when( schemaApp.isSchema() ).thenReturn( true );
+        when( applicationService.getInstalledApplication( ApplicationKey.from( "com.enonic.schema" ) ) ).thenReturn( schemaApp );
+
+        final ApplicationParams params = createApplicationParams( "com.enonic.app1", "com.enonic.schema" );
+
+        final ApplicationActionResultJson.ActionResult rejected =
+            new ApplicationActionResultJson.ActionResult( "com.enonic.schema", false, ApplicationResourceService.SCHEMA_APPLICATION_MESSAGE );
+
+        assertThat( service.start( params ).getResults() ).containsExactlyInAnyOrder(
+            new ApplicationActionResultJson.ActionResult( "com.enonic.app1", true ), rejected );
+        assertThat( service.stop( params ).getResults() ).containsExactlyInAnyOrder(
+            new ApplicationActionResultJson.ActionResult( "com.enonic.app1", true ), rejected );
+
+        verify( applicationService, never() ).startApplication( ApplicationKey.from( "com.enonic.schema" ) );
+        verify( applicationService, never() ).stopApplication( ApplicationKey.from( "com.enonic.schema" ) );
+    }
+
+    @Test
+    void installed_application_schema_flag()
+    {
+        final Application application = createApplication();
+        when( application.isSchema() ).thenReturn( true );
+        when( applicationService.getInstalledApplication( application.getKey() ) ).thenReturn( application );
+
+        assertThat( service.getInstalledApplication( application.getKey() ).getSchema() ).isTrue();
     }
 
     @Test

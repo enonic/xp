@@ -133,6 +133,12 @@ public final class ApplicationImpl
     }
 
     @Override
+    public boolean isSchema()
+    {
+        return ApplicationHelper.isSchemaApplication( this.bundle );
+    }
+
+    @Override
     public ServiceRegistration<Application> getRegistration()
     {
         return reference;

@@ -5,7 +5,7 @@ var assert = require('/lib/xp/testing');
 
 let resource = `kind: "Layout"
 title:
-  text: "Virtual Layout"
+  text: "Dynamic Layout"
   i18n: "key.display-name"
 description:
   text: "My Layout Description"
@@ -61,10 +61,9 @@ regions:
 - "footer"`;
 
 // BEGIN
-// Create virtual layout.
-var result = schemaLib.createComponent({
+// Create dynamic layout.
+var result = schemaLib.createLayout({
     key: 'myapp:mylayout',
-    type: 'LAYOUT',
     resource
 
 });
@@ -76,7 +75,7 @@ log.info('Created layout: ' + result.key);
 
 assert.assertJsonEquals({
     key: 'myapp:mylayout',
-    title: 'Virtual Layout',
+    title: 'Dynamic Layout',
     titleI18nKey: 'key.display-name',
     description: 'My Layout Description',
     descriptionI18nKey: 'key.description',
@@ -84,7 +83,7 @@ assert.assertJsonEquals({
     modifiedTime: '2021-09-25T10:00:00Z',
     resource: 'kind: "Layout"\n' +
               'title:\n' +
-              '  text: "Virtual Layout"\n' +
+              '  text: "Dynamic Layout"\n' +
               '  i18n: "key.display-name"\n' +
               'description:\n' +
               '  text: "My Layout Description"\n' +

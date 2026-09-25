@@ -1,12 +1,10 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -19,22 +17,16 @@ import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.Nodes;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 
 @Component
 public final class ApplicationServiceImpl
@@ -52,21 +44,18 @@ public final class ApplicationServiceImpl
 
     private final AppFilterService appFilterService;
 
-    private final VirtualAppService virtualAppService;
-
     private final ApplicationAuditLogSupport applicationAuditLogSupport;
 
     @Activate
     public ApplicationServiceImpl( @Reference final ApplicationRegistry applicationRegistry,
                                    @Reference final ApplicationRepoService repoService, @Reference final EventPublisher eventPublisher,
-                                   @Reference final AppFilterService appFilterService, @Reference final VirtualAppService virtualAppService,
+                                   @Reference final AppFilterService appFilterService,
                                    @Reference final ApplicationAuditLogSupport applicationAuditLogSupport )
     {
         this.registry = applicationRegistry;
         this.repoService = repoService;
         this.eventPublisher = eventPublisher;
         this.appFilterService = appFilterService;
-        this.virtualAppService = virtualAppService;
         this.applicationAuditLogSupport = applicationAuditLogSupport;
     }
 
@@ -95,8 +84,7 @@ public final class ApplicationServiceImpl
     @Override
     public Application get( final ApplicationKey key )
     {
-        final Application installedApplication = this.registry.get( key );
-        return installedApplication != null ? installedApplication : virtualAppService.get( key );
+        return this.registry.get( key );
     }
 
     @Override
@@ -108,9 +96,7 @@ public final class ApplicationServiceImpl
     @Override
     public Applications list()
     {
-        return Applications.from( Stream.concat( this.registry.getAll().stream(), virtualAppService.list().stream() )
-                                      .collect( Collectors.toMap( Application::getKey, Function.identity(), ( first, second ) -> first ) )
-                                      .values() );
+        return Applications.from( this.registry.getAll() );
     }
 
     @Override
@@ -122,6 +108,7 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
+        requireNotSchemaApplication( key, "start" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -148,6 +135,7 @@ public final class ApplicationServiceImpl
         {
             throw new IllegalArgumentException( "Cannot stop system application: " + key );
         }
+        requireNotSchemaApplication( key, "stop" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -220,46 +208,6 @@ public final class ApplicationServiceImpl
         ApplicationHelper.runWithContext( () -> doReinstallStoredApplication( key ) );
     }
 
-    @Override
-    public Application createVirtualApplication( final CreateVirtualApplicationParams params )
-    {
-        return this.virtualAppService.create( params );
-    }
-
-    @Override
-    public boolean deleteVirtualApplication( final ApplicationKey key )
-    {
-        return this.virtualAppService.delete( key );
-    }
-
-    @Override
-    public ApplicationMode getApplicationMode( final ApplicationKey applicationKey )
-    {
-        requireSchemaAdminRole();
-
-        final boolean hasReal = this.registry.get( applicationKey ) != null;
-        final boolean hasVirtual =
-            VirtualAppContext.createAdminContext().callWith( () -> this.virtualAppService.get( applicationKey ) ) != null;
-
-        if ( hasReal )
-        {
-            if ( hasVirtual )
-            {
-                return ApplicationMode.AUGMENTED;
-            }
-            else
-            {
-                return ApplicationMode.BUNDLED;
-            }
-        }
-        else if ( hasVirtual )
-        {
-            return ApplicationMode.VIRTUAL;
-        }
-
-        return null;
-    }
-
     private Application doInstallGlobalApplication( final ByteSource byteSource )
     {
         final AppInfo appInfo = getAppInfo( byteSource );
@@ -282,11 +230,40 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
         }
 
+        // an application shipping cms/cms.yaml owns its schema: the schema is persisted in nodes and served from there
+        final Map<String, ByteSource> schemaResources;
+        try
+        {
+            schemaResources = appInfo.hasCmsDescriptor ? AppSchemaResolver.resolve( byteSource ) : null;
+        }
+        catch ( Exception e )
+        {
+            throw new ApplicationBundleException( "Cannot install application", e );
+        }
+
+        // a descriptor declaring another kind than its path reserves rejects the installation before anything is written
+        if ( schemaResources != null )
+        {
+            AppSchemaValidator.validate( schemaResources );
+        }
+
         repoService.upsertApplicationNode( appInfo, byteSource );
+
+        // the schema is persisted before the bundle is installed: the application created for the bundle (and the
+        // application descriptor built on bundle install) must see the persisted nodes from the start, on this
+        // cluster node as well as on the others receiving the install event
+        if ( schemaResources != null )
+        {
+            repoService.persistApplicationSchema( applicationKey, schemaResources );
+        }
+        else
+        {
+            repoService.deleteApplicationSchema( applicationKey );
+        }
 
         this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
 
-        final Application application = doInstallApplication( byteSource, applicationKey );
+        final Application application = doInstallApplication( byteSource, applicationKey, false );
 
         LOG.info( "Global Application [{}] installed successfully", applicationKey );
 
@@ -335,7 +312,7 @@ public final class ApplicationServiceImpl
                 "Cannot install application [" + applicationKey + "], system app must not be stored" );
         }
 
-        doInstallApplication( byteSource, applicationKey );
+        doInstallApplication( byteSource, applicationKey, false );
 
         LOG.info( "Stored application [{}] installed successfully", applicationKey );
     }
@@ -381,7 +358,7 @@ public final class ApplicationServiceImpl
     {
         final ApplicationKey applicationKey = ApplicationKey.from( getAppInfo( byteSource ).name );
 
-        final Application application = doInstallApplication( byteSource, applicationKey );
+        final Application application = doInstallApplication( byteSource, applicationKey, true );
         localApplicationSet.add( applicationKey );
 
         LOG.info( "Local application [{}] installed successfully", applicationKey );
@@ -390,20 +367,32 @@ public final class ApplicationServiceImpl
         return application;
     }
 
+    // a schema application is always started, whatever state was stored for it
+    private void requireNotSchemaApplication( final ApplicationKey key, final String action )
+    {
+        final Application app = registry.get( key );
+        if ( app != null && app.isSchema() )
+        {
+            throw new IllegalArgumentException( "Cannot " + action + " schema application: " + key );
+        }
+    }
+
     private void doInstallAndStartStoredApplication( final Node applicationNode )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( applicationNode.name().toString() );
         doInstallStoredApplication( applicationKey );
-        final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) );
+        final Application application = registry.get( applicationKey );
+        final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) ||
+            application != null && application.isSchema();
         if ( started )
         {
             tryStartApplication( applicationKey );
         }
     }
 
-    private Application doInstallApplication( final ByteSource byteSource, final ApplicationKey applicationKey )
+    private Application doInstallApplication( final ByteSource byteSource, final ApplicationKey applicationKey, final boolean local )
     {
-        final Application application = this.registry.install( applicationKey, byteSource );
+        final Application application = this.registry.install( applicationKey, byteSource, local );
         this.eventPublisher.publish( ApplicationEvents.installed( applicationKey ) );
         return application;
     }
@@ -472,15 +461,6 @@ public final class ApplicationServiceImpl
         }
     }
 
-    private void requireSchemaAdminRole()
-    {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
-        if ( !hasAdminRole )
-        {
-            throw new ForbiddenAccessException( authInfo.getUser() );
-        }
-    }
 
     @Override
     public void onEvent( final Event event )

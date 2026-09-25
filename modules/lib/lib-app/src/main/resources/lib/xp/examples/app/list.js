@@ -4,7 +4,7 @@ var assert = require('/lib/xp/testing');
 /* global log*/
 
 // BEGIN
-// List virtual apps.
+// List apps.
 var result = appLib.list();
 
 log.info('Listed apps: ' + result.map((app) => app.key).join(', '));
@@ -21,7 +21,8 @@ assert.assertJsonEquals([
         maxSystemVersion: '3.0.0',
         modifiedTime: '2020-09-25T10:00:00Z',
         started: true,
-        system: false
+        system: false,
+        schema: false
     },
     {
         key: 'app2',
@@ -31,7 +32,8 @@ assert.assertJsonEquals([
         maxSystemVersion: '3.0.6',
         modifiedTime: '2021-09-25T10:00:00Z',
         started: false,
-        system: true
+        system: true,
+        schema: false
     }
 ], result);
 

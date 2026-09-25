@@ -47,7 +47,7 @@ class ApplicationServiceSystemAppGuardsTest
         final NodeService nodeService = mock( NodeService.class );
 
         final ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+            new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -55,8 +55,7 @@ class ApplicationServiceSystemAppGuardsTest
 
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ),
-            mock( ApplicationRepoService.class ), mock( EventPublisher.class ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), auditLogSupport );
+            mock( ApplicationRepoService.class ), mock( EventPublisher.class ), new AppFilterServiceImpl( appConfig ), auditLogSupport );
     }
 
     @Test
@@ -70,8 +69,10 @@ class ApplicationServiceSystemAppGuardsTest
         assertThat( installed ).isNotNull();
         assertThat( installed.isSystem() ).isTrue();
 
-        final Bundle bundle = getBundleContext().getBundle( SYSTEM_APP_NAME );
+        // local applications are installed under a marked bundle location
+        final Bundle bundle = getBundleContext().getBundle( ApplicationHelper.toBundleLocation( key, true ) );
         assertThat( bundle ).isNotNull();
+        assertThat( ApplicationHelper.isLocalApplication( bundle ) ).isTrue();
         assertThat( bundle.getState() ).isEqualTo( Bundle.ACTIVE );
 
         adminContext().runWith( () -> {

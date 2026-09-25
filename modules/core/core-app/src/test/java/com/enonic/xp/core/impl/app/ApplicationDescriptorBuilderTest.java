@@ -1,23 +1,33 @@
 package com.enonic.xp.core.impl.app;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.osgi.framework.Bundle;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationDescriptor;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.support.ResourceTestHelper;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ApplicationDescriptorBuilderTest
 {
-    private ResourceTestHelper resourceTestHelper;
+    private static final ApplicationKey APP_KEY = ApplicationKey.from( "myapplication" );
 
     private static final String APP_DESCRIPTOR_PATH_YML = "application.yml";
 
@@ -29,6 +39,10 @@ class ApplicationDescriptorBuilderTest
 
     private static final String APP_ICON_FILENAME = "application.svg";
 
+    private static final String ENONIC_APP_ICON_FILENAME = "enonic.svg";
+
+    private ResourceTestHelper resourceTestHelper;
+
     @BeforeEach
     void setup()
     {
@@ -38,47 +52,29 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptor()
     {
-        final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_PATH_YML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( APP_DESCRIPTOR_PATH_YML ) ).thenReturn( resource );
-        when( bundle.getResource( APP_DESCRIPTOR_PATH_YML ) ).thenReturn( resource );
-        when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-        final URL resourceIcon = resourceTestHelper.getTestResource( APP_ICON_FILENAME );
-        when( bundle.getResource( APP_ICON_FILENAME ) ).thenReturn( resourceIcon );
-        when( bundle.getEntry( APP_ICON_FILENAME ) ).thenReturn( resourceIcon );
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( APP_DESCRIPTOR_PATH_YML, APP_ICON_FILENAME ) );
 
-        final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().bundle( bundle ).build();
-
+        assertEquals( APP_KEY, appDescriptor.getKey() );
         assertEquals( "My app description", appDescriptor.getDescription() );
+        assertNotNull( appDescriptor.getIcon() );
+        assertEquals( "image/svg+xml", appDescriptor.getIcon().getMimeType() );
     }
 
     @Test
     void buildApplicationDescriptorWithYamlExtension()
     {
-        final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_PATH_YAML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( resource );
-        when( bundle.getEntry( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( resource );
-        when( bundle.getResource( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( resource );
-        when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-
-        final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().bundle( bundle ).build();
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( APP_DESCRIPTOR_PATH_YAML ) );
 
         assertEquals( "My app description yaml", appDescriptor.getDescription() );
+        assertNull( appDescriptor.getIcon() );
     }
 
     @Test
     void buildApplicationDescriptorYamlTakesPriorityOverYml()
     {
-        final URL yamlResource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_PATH_YAML );
-        final URL ymlResource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_PATH_YML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( yamlResource );
-        when( bundle.getResource( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( yamlResource );
-        when( bundle.getResource( APP_DESCRIPTOR_PATH_YML ) ).thenReturn( ymlResource );
-        when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-
-        final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().bundle( bundle ).build();
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( APP_DESCRIPTOR_PATH_YML, APP_DESCRIPTOR_PATH_YAML ) );
 
         assertEquals( "My app description yaml", appDescriptor.getDescription() );
     }
@@ -86,14 +82,8 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorWithEnonicYmlExtension()
     {
-        final URL resource = resourceTestHelper.getTestResource( ENONIC_APP_DESCRIPTOR_PATH_YML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( null );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YML ) ).thenReturn( resource );
-        when( bundle.getResource( ENONIC_APP_DESCRIPTOR_PATH_YML ) ).thenReturn( resource );
-        when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-
-        final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().bundle( bundle ).build();
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YML ) );
 
         assertEquals( "My app description", appDescriptor.getDescription() );
     }
@@ -101,14 +91,8 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorWithEnonicYamlExtension()
     {
-        final URL resource = resourceTestHelper.getTestResource( ENONIC_APP_DESCRIPTOR_PATH_YAML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YML ) ).thenReturn( null );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( resource );
-        when( bundle.getResource( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( resource );
-        when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-
-        final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().bundle( bundle ).build();
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YAML ) );
 
         assertEquals( "My app description YAML", appDescriptor.getDescription() );
     }
@@ -116,16 +100,8 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorEnonicYamlTakesPriorityOverEnonicYml()
     {
-        final URL enonicYamlResource = resourceTestHelper.getTestResource( ENONIC_APP_DESCRIPTOR_PATH_YAML );
-        final URL enonicYmlResource = resourceTestHelper.getTestResource( ENONIC_APP_DESCRIPTOR_PATH_YML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( enonicYamlResource );
-        when( bundle.getResource( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( enonicYamlResource );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YML ) ).thenReturn( enonicYmlResource );
-        when( bundle.getResource( ENONIC_APP_DESCRIPTOR_PATH_YML ) ).thenReturn( enonicYmlResource );
-        when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-
-        final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().bundle( bundle ).build();
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YML,
+                                                                                                           ENONIC_APP_DESCRIPTOR_PATH_YAML ) );
 
         assertEquals( "My app description YAML", appDescriptor.getDescription() );
     }
@@ -133,65 +109,93 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorEnonicTakesPriorityOverApplication()
     {
-        final URL enonicYamlResource = resourceTestHelper.getTestResource( ENONIC_APP_DESCRIPTOR_PATH_YAML );
-        final URL applicationYamlResource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_PATH_YAML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( enonicYamlResource );
-        when( bundle.getResource( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( enonicYamlResource );
-        when( bundle.getEntry( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( applicationYamlResource );
-        when( bundle.getResource( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( applicationYamlResource );
-        when( bundle.getSymbolicName() ).thenReturn( "myapplication" );
-
-        final ApplicationDescriptor appDescriptor = new ApplicationDescriptorBuilder().bundle( bundle ).build();
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( APP_DESCRIPTOR_PATH_YAML,
+                                                                                                           ENONIC_APP_DESCRIPTOR_PATH_YAML ) );
 
         assertEquals( "My app description YAML", appDescriptor.getDescription() );
     }
 
     @Test
-    void hasAppDescriptorWithEnonicYamlExtension()
+    void buildApplicationDescriptorEnonicIconTakesPriorityOverApplicationIcon()
+        throws Exception
     {
-        final URL resource = resourceTestHelper.getTestResource( ENONIC_APP_DESCRIPTOR_PATH_YAML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( resource );
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YAML, APP_ICON_FILENAME, ENONIC_APP_ICON_FILENAME ) );
 
-        assertTrue( ApplicationDescriptorBuilder.hasAppDescriptor( bundle ) );
+        assertArrayEquals( resourceTestHelper.getTestResource( ENONIC_APP_ICON_FILENAME ).openStream().readAllBytes(),
+                           appDescriptor.getIcon().toByteArray() );
     }
 
     @Test
-    void hasAppDescriptorWithEnonicYmlExtension()
+    void buildApplicationDescriptorWithoutDescriptorFile()
     {
-        final URL resource = resourceTestHelper.getTestResource( ENONIC_APP_DESCRIPTOR_PATH_YML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( ENONIC_APP_DESCRIPTOR_PATH_YML ) ).thenReturn( resource );
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver() );
 
-        assertTrue( ApplicationDescriptorBuilder.hasAppDescriptor( bundle ) );
+        assertEquals( APP_KEY, appDescriptor.getKey() );
+        assertEquals( "", appDescriptor.getDescription() );
+        assertNull( appDescriptor.getIcon() );
     }
 
     @Test
-    void hasAppDescriptorWithYamlExtension()
+    void buildApplicationDescriptorFromNodeResource()
     {
-        final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_PATH_YAML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( APP_DESCRIPTOR_PATH_YAML ) ).thenReturn( resource );
+        // the descriptor and icon may be served from nodes rather than the bundle: any Resource implementation works
+        final Instant timestamp = Instant.parse( "2026-09-11T10:00:00Z" );
+        final Map<String, Resource> resources = Map.of( //
+            "/enonic.yaml", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.yaml" ), ByteSource.wrap(
+                "kind: \"Application\"\ndescription: \"From node\"\n".getBytes( StandardCharsets.UTF_8 ) ), timestamp ), //
+            "/enonic.svg",
+            new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.svg" ), ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ),
+                                   timestamp ) );
 
-        assertTrue( ApplicationDescriptorBuilder.hasAppDescriptor( bundle ) );
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) );
+
+        assertEquals( "From node", appDescriptor.getDescription() );
+        assertArrayEquals( "<svg/>".getBytes( StandardCharsets.UTF_8 ), appDescriptor.getIcon().toByteArray() );
+        assertEquals( timestamp, appDescriptor.getIcon().getModifiedTime() );
     }
 
     @Test
-    void hasAppDescriptorWithYmlExtension()
+    void buildApplicationDescriptorNameMismatch()
     {
-        final URL resource = resourceTestHelper.getTestResource( APP_DESCRIPTOR_PATH_YML );
-        Bundle bundle = mock( Bundle.class );
-        when( bundle.getEntry( APP_DESCRIPTOR_PATH_YML ) ).thenReturn( resource );
+        final Map<String, Resource> resources = Map.of( "/enonic.yaml", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.yaml" ),
+                                                                                                ByteSource.wrap(
+                                                                                                    "kind: \"Application\"\nname: \"otherapp\"\n".getBytes(
+                                                                                                        StandardCharsets.UTF_8 ) ),
+                                                                                                Instant.EPOCH ) );
 
-        assertTrue( ApplicationDescriptorBuilder.hasAppDescriptor( bundle ) );
+        assertThrows( RuntimeException.class, () -> ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) ) );
     }
 
-    @Test
-    void hasAppDescriptorWhenNeitherExists()
+    /**
+     * Resolver serving the given test files under their own names in the application root.
+     */
+    private ApplicationUrlResolver resolver( final String... fileNames )
     {
-        Bundle bundle = mock( Bundle.class );
+        final Map<String, Resource> resources = new java.util.HashMap<>();
+        for ( final String fileName : fileNames )
+        {
+            final URL url = resourceTestHelper.getTestResource( fileName );
+            resources.put( "/" + fileName, new UrlResource( ResourceKey.from( APP_KEY, "/" + fileName ), url, "test" ) );
+        }
+        return resolver( resources );
+    }
 
-        assertFalse( ApplicationDescriptorBuilder.hasAppDescriptor( bundle ) );
+    private static ApplicationUrlResolver resolver( final Map<String, Resource> resources )
+    {
+        return new ApplicationUrlResolver()
+        {
+            @Override
+            public Set<String> findFiles()
+            {
+                return resources.keySet();
+            }
+
+            @Override
+            public Resource findResource( final String path )
+            {
+                return resources.get( path );
+            }
+        };
     }
 }
