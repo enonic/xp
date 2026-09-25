@@ -11,6 +11,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.descriptor.DescriptorKeyLocator;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
@@ -101,20 +102,16 @@ public final class MacroDescriptorServiceImpl
             .flatMap( a -> getByApplication( a.getKey() ).stream() ) ).collect( MacroDescriptors.collector() );
     }
 
+    // the controller stays in the folder of the macro, the descriptor may be flat or in that folder
     @Override
     public ResourceKey getControllerResourceKey( final MacroKey key )
     {
-        return toResourceKey( key, "js" );
+        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + ".js" );
     }
 
     private ResourceKey getDescriptorResourceKey( final MacroKey key )
     {
-        final ResourceKey yamlKey = toResourceKey( key, "yaml" );
-        if ( resourceService.getResource( yamlKey ).exists() )
-        {
-            return yamlKey;
-        }
-        return toResourceKey( key, "yml" );
+        return CmsResourceKeys.descriptorKey( resourceService, key.getApplicationKey(), PATH, key.getName() );
     }
 
     private boolean isSystem( ApplicationKey applicationKey )
@@ -140,17 +137,12 @@ public final class MacroDescriptorServiceImpl
             .build();
     }
 
-    private ResourceKey toResourceKey( final MacroKey key, final String extension )
-    {
-        return ResourceKey.from( key.getApplicationKey(), PATH + "/" + key.getName() + "/" + key.getName() + "." + extension );
-    }
-
     private MacroDescriptor loadDescriptor( final MacroKey key, final Resource resource )
     {
         final MacroDescriptor.Builder builder =
             YmlMacroDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() );
 
-        builder.key( key ).icon( IconLoader.loadIcon( key, this.resourceService, PATH ) );
+        builder.key( key ).icon( IconLoader.loadIcon( key, resource, this.resourceService ) );
 
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         builder.modifiedTime( modifiedTime );

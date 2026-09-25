@@ -156,10 +156,11 @@ class PersistedSchemaLookupTest
                 "cms/content-types/broken/broken.yaml", INVALID_CONTENT_TYPE ) ) );
 
             // the descriptor is discovered, but loading it fails and ContentTypeRegistry logs the error and drops the type
-            assertEquals( List.of( "staticapp:broken", "staticapp:mytype" ), resourceService.findFiles( appKey,
-                                                                                                        "^/cms/content-types/(?<name>[^/]+)/\\k<name>\\.(?:yaml|yml)$" )
+            // the persisted schema is flat: cms/content-types/<name>.yaml
+            assertEquals( List.of( "staticapp:broken", "staticapp:mytype" ),
+                          resourceService.findFiles( appKey, "^/cms/content-types/[^/]+\\.(?:yaml|yml)$" )
                 .stream()
-                .map( key -> key.getApplicationKey() + ":" + key.getPath().split( "/" )[3] )
+                .map( key -> key.getApplicationKey() + ":" + key.getName().substring( 0, key.getName().lastIndexOf( '.' ) ) )
                 .sorted()
                 .toList() );
 

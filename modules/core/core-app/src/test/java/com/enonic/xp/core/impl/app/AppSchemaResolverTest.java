@@ -37,22 +37,65 @@ class AppSchemaResolverTest
 
         final Map<String, ByteSource> resources = AppSchemaResolver.resolve( byteSource );
 
+        // the legacy folder structure is persisted flat
         assertEquals( 15, resources.size() );
         assertEquals( "app-descriptor", read( resources, "enonic.yaml" ) );
         assertEquals( "app-icon", read( resources, "enonic.svg" ) );
         assertEquals( "cms-descriptor", read( resources, "cms/cms.yaml" ) );
         assertEquals( "styles", read( resources, "cms/style/style.yaml" ) );
-        assertEquals( "content-type-yaml", read( resources, "cms/content-types/mytype/mytype.yaml" ) );
-        assertEquals( "layout-yaml", read( resources, "cms/layouts/mylayout/mylayout.yaml" ) );
-        assertEquals( "macro-yml", read( resources, "cms/macros/mymacro/mymacro.yaml" ) );
-        assertEquals( "part", read( resources, "cms/parts/mypart/mypart.yaml" ) );
-        assertEquals( "page", read( resources, "cms/pages/mypage/mypage.yaml" ) );
-        assertEquals( "fragment", read( resources, "cms/form-fragments/myfragment/myfragment.yaml" ) );
-        assertEquals( "mixin", read( resources, "cms/mixins/mymixin/mymixin.yaml" ) );
+        assertEquals( "content-type-yaml", read( resources, "cms/content-types/mytype.yaml" ) );
+        assertEquals( "layout-yaml", read( resources, "cms/layouts/mylayout.yaml" ) );
+        assertEquals( "macro-yml", read( resources, "cms/macros/mymacro.yaml" ) );
+        assertEquals( "part", read( resources, "cms/parts/mypart.yaml" ) );
+        assertEquals( "page", read( resources, "cms/pages/mypage.yaml" ) );
+        assertEquals( "fragment", read( resources, "cms/form-fragments/myfragment.yaml" ) );
+        assertEquals( "mixin", read( resources, "cms/mixins/mymixin.yaml" ) );
         assertEquals( "phrases-default", read( resources, "cms/i18n/phrases/phrases.properties" ) );
         assertEquals( "phrases-en", read( resources, "cms/i18n/phrases/phrases_en.properties" ) );
-        assertEquals( "type-icon", read( resources, "cms/content-types/mytype/mytype.svg" ) );
-        assertEquals( "part-icon", read( resources, "cms/parts/mypart/mypart.png" ) );
+        assertEquals( "type-icon", read( resources, "cms/content-types/mytype.svg" ) );
+        assertEquals( "part-icon", read( resources, "cms/parts/mypart.png" ) );
+    }
+
+    @Test
+    void resolve_flat()
+        throws Exception
+    {
+        final ByteSource byteSource = zip( new String[][]{{"cms/cms.yaml", "cms-descriptor"}, {"cms/style/style.yml", "styles"},
+            {"cms/style.yaml", "ignored"},
+            {"cms/content-types/mytype.yml", "content-type"}, {"cms/content-types/mytype.svg", "type-icon"},
+            {"cms/parts/mypart.yaml", "part"}, {"cms/parts/mypart.png", "part-icon"}, {"cms/parts/mypart/mypart.js", "ignored"},
+            {"cms/pages/mypage.yaml", "page"}, {"cms/pages/mypage.svg", "ignored"}, {"cms/macros/mymacro.yaml", "macro"}} );
+
+        final Map<String, ByteSource> resources = AppSchemaResolver.resolve( byteSource );
+
+        assertEquals( 8, resources.size() );
+        assertEquals( "cms-descriptor", read( resources, "cms/cms.yaml" ) );
+        // the style descriptor keeps its folder, cms/style.yaml is not a schema resource
+        assertEquals( "styles", read( resources, "cms/style/style.yaml" ) );
+        assertEquals( "content-type", read( resources, "cms/content-types/mytype.yaml" ) );
+        assertEquals( "type-icon", read( resources, "cms/content-types/mytype.svg" ) );
+        assertEquals( "part", read( resources, "cms/parts/mypart.yaml" ) );
+        assertEquals( "part-icon", read( resources, "cms/parts/mypart.png" ) );
+        assertEquals( "page", read( resources, "cms/pages/mypage.yaml" ) );
+        assertEquals( "macro", read( resources, "cms/macros/mymacro.yaml" ) );
+    }
+
+    @Test
+    void resolve_flat_wins_over_legacy_regardless_of_order()
+        throws Exception
+    {
+        final String[][] legacyFirst = {{"cms/parts/mypart/mypart.yaml", "legacy-part"}, {"cms/parts/mypart.yml", "flat-part"},
+            {"cms/parts/mypart/mypart.svg", "legacy-icon"}, {"cms/parts/mypart.svg", "flat-icon"}};
+        final String[][] flatFirst = {legacyFirst[1], legacyFirst[0], legacyFirst[3], legacyFirst[2]};
+
+        for ( final String[][] entries : new String[][][]{legacyFirst, flatFirst} )
+        {
+            final Map<String, ByteSource> resources = AppSchemaResolver.resolve( zip( entries ) );
+
+            assertEquals( 2, resources.size() );
+            assertEquals( "flat-part", read( resources, "cms/parts/mypart.yaml" ) );
+            assertEquals( "flat-icon", read( resources, "cms/parts/mypart.svg" ) );
+        }
     }
 
     private static String read( final Map<String, ByteSource> resources, final String path )
@@ -65,7 +108,8 @@ class AppSchemaResolverTest
     void resolve_no_schema_resources()
         throws Exception
     {
-        final ByteSource byteSource = zip( new String[][]{{"application.yaml", "kind: \"Application\""}, {"assets/app.js", "js"}} );
+        final ByteSource byteSource =
+            zip( new String[][]{{"assets/application.yaml", "kind: \"Application\""}, {"application.png", "png"}, {"assets/app.js", "js"}} );
 
         assertTrue( AppSchemaResolver.resolve( byteSource ).isEmpty() );
     }
@@ -81,8 +125,41 @@ class AppSchemaResolverTest
 
         assertEquals( 3, resources.size() );
         assertEquals( "app-descriptor", read( resources, "enonic.yaml" ) );
-        assertEquals( "part", read( resources, "cms/parts/mypart/mypart.yaml" ) );
-        assertEquals( "icon", read( resources, "cms/parts/mypart/mypart.png" ) );
+        assertEquals( "part", read( resources, "cms/parts/mypart.yaml" ) );
+        assertEquals( "icon", read( resources, "cms/parts/mypart.png" ) );
+    }
+
+    @Test
+    void resolve_legacy_app_descriptor_and_icon_persisted_as_enonic()
+        throws Exception
+    {
+        final ByteSource byteSource = zip( new String[][]{{"application.yml", "legacy-descriptor"}, {"application.svg", "legacy-icon"}} );
+
+        final Map<String, ByteSource> resources = AppSchemaResolver.resolve( byteSource );
+
+        assertEquals( 2, resources.size() );
+        assertEquals( "legacy-descriptor", read( resources, "enonic.yaml" ) );
+        assertEquals( "legacy-icon", read( resources, "enonic.svg" ) );
+    }
+
+    @Test
+    void resolve_enonic_wins_over_legacy_application_regardless_of_order()
+        throws Exception
+    {
+        // enonic.yml wins over application.yaml: the name counts before the extension
+        final String[][] legacyFirst =
+            {{"application.yaml", "legacy-descriptor"}, {"enonic.yml", "descriptor"}, {"application.svg", "legacy-icon"},
+                {"enonic.svg", "icon"}};
+        final String[][] enonicFirst = {legacyFirst[1], legacyFirst[0], legacyFirst[3], legacyFirst[2]};
+
+        for ( final String[][] entries : new String[][][]{legacyFirst, enonicFirst} )
+        {
+            final Map<String, ByteSource> resources = AppSchemaResolver.resolve( zip( entries ) );
+
+            assertEquals( 2, resources.size() );
+            assertEquals( "descriptor", read( resources, "enonic.yaml" ) );
+            assertEquals( "icon", read( resources, "enonic.svg" ) );
+        }
     }
 
     @Test

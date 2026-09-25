@@ -241,6 +241,12 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( "Cannot install application", e );
         }
 
+        // a descriptor declaring another kind than its path reserves rejects the installation before anything is written
+        if ( schemaResources != null )
+        {
+            AppSchemaValidator.validate( schemaResources );
+        }
+
         repoService.upsertApplicationNode( appInfo, byteSource );
 
         // the schema is persisted before the bundle is installed: the application created for the bundle (and the

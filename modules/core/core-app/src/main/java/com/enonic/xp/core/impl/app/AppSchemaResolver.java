@@ -14,6 +14,14 @@ import com.google.common.io.ByteSource;
  * Extracts schema resources (see {@link SchemaResourcePaths}) from an application jar.
  * Keys of the returned map are paths relative to the application root ({@code enonic.yaml}, {@code cms/cms.yaml}, ...),
  * values are the resource contents.
+ * <p>
+ * Schemas are returned in the flat structure the persisted schema uses: {@code cms/<kind>/<name>.yaml} and its icon
+ * {@code cms/<kind>/<name>.svg|png}. Schemas of the legacy folder structure ({@code cms/<kind>/<name>/<name>.yaml}) are moved to
+ * the flat structure; {@code cms/cms.yaml} and {@code cms/style/style.yaml} keep their paths. The legacy application descriptor and icon
+ * ({@code application.yaml|yml}, {@code application.svg}) are returned as {@code enonic.yaml} and {@code enonic.svg}.
+ * Descriptors are normalized to {@code .yaml}.
+ * When a jar holds several variants of a resource, the flat structure (and {@code enonic.*}) wins over the legacy one, then {@code .yaml}
+ * over {@code .yml}, regardless of the zip entry order.
  */
 final class AppSchemaResolver
 {
@@ -23,7 +31,7 @@ final class AppSchemaResolver
 
     static Map<String, ByteSource> resolve( final ByteSource byteSource )
     {
-        final Map<String, ByteSource> resources = new LinkedHashMap<>();
+        final Map<String, Candidate> resources = new LinkedHashMap<>();
         try (ZipInputStream zip = new ZipInputStream( byteSource.openBufferedStream() ))
         {
             ZipEntry entry;
@@ -42,56 +50,82 @@ final class AppSchemaResolver
 
                 final ByteSource content = ByteSource.wrap( zip.readAllBytes() );
 
-                if ( matcher.group( SchemaResourcePaths.APP_DESCRIPTOR_GROUP ) != null )
+                // enonic.yaml|yml or the legacy application.yaml|yml, persisted as enonic.yaml
+                final String appDescriptor = matcher.group( SchemaResourcePaths.APP_DESCRIPTOR_GROUP );
+                if ( appDescriptor != null )
                 {
-                    putDescriptor( resources, SchemaResourcePaths.APP_DESCRIPTOR_NAME,
-                                   matcher.group( SchemaResourcePaths.APP_DESCRIPTOR_EXTENSION_GROUP ), content );
+                    put( resources, SchemaResourcePaths.APP_DESCRIPTOR_NAME,
+                         rank( isLegacyAppResource( appDescriptor ), matcher.group( SchemaResourcePaths.APP_DESCRIPTOR_EXTENSION_GROUP ) ),
+                         content );
                     continue;
                 }
 
-                final String appIconPath = matcher.group( SchemaResourcePaths.APP_ICON_PATH_GROUP );
-                if ( appIconPath != null )
+                // enonic.svg or the legacy application.svg, persisted as enonic.svg
+                final String appIcon = matcher.group( SchemaResourcePaths.APP_ICON_GROUP );
+                if ( appIcon != null )
                 {
-                    resources.put( appIconPath, content );
+                    put( resources, SchemaResourcePaths.APP_ICON_NAME, isLegacyAppResource( appIcon ) ? 1 : 0, content );
                     continue;
                 }
 
-                final String verbatimPath = firstNonNull( matcher.group( SchemaResourcePaths.PHRASES_PATH_GROUP ),
-                                                          matcher.group( SchemaResourcePaths.ICON_PATH_GROUP ) );
-                if ( verbatimPath != null )
+                final String phrasesPath = matcher.group( SchemaResourcePaths.PHRASES_PATH_GROUP );
+                if ( phrasesPath != null )
                 {
-                    resources.put( cmsPath( verbatimPath ), content );
+                    put( resources, cmsPath( phrasesPath ), 0, content );
+                    continue;
                 }
-                else
+
+                final String kind = matcher.group( SchemaResourcePaths.KIND_GROUP );
+                if ( kind != null )
                 {
-                    putDescriptor( resources, cmsPath( matcher.group( SchemaResourcePaths.DESCRIPTOR_PATH_GROUP ) + ".yaml" ),
-                                   matcher.group( SchemaResourcePaths.EXTENSION_GROUP ), content );
+                    final String legacyName = matcher.group( SchemaResourcePaths.NAME_GROUP );
+                    final String name = legacyName != null ? legacyName : matcher.group( SchemaResourcePaths.FLAT_NAME_GROUP );
+                    put( resources, cmsPath( kind + "/" + name + ".yaml" ),
+                         rank( legacyName != null, matcher.group( SchemaResourcePaths.EXTENSION_GROUP ) ), content );
+                    continue;
                 }
+
+                final String iconKind = matcher.group( SchemaResourcePaths.ICON_KIND_GROUP );
+                if ( iconKind != null )
+                {
+                    final String legacyName = matcher.group( SchemaResourcePaths.ICON_NAME_GROUP );
+                    final String name = legacyName != null ? legacyName : matcher.group( SchemaResourcePaths.FLAT_ICON_NAME_GROUP );
+                    put( resources, cmsPath( iconKind + "/" + name + "." + matcher.group( SchemaResourcePaths.ICON_EXTENSION_GROUP ) ),
+                         legacyName != null ? 1 : 0, content );
+                    continue;
+                }
+
+                // cms/cms.yaml or cms/style/style.yaml
+                put( resources, cmsPath( matcher.group( SchemaResourcePaths.CMS_DESCRIPTOR_GROUP ) + ".yaml" ),
+                     rank( false, matcher.group( SchemaResourcePaths.CMS_DESCRIPTOR_EXTENSION_GROUP ) ), content );
             }
         }
         catch ( IOException e )
         {
             throw new UncheckedIOException( e );
         }
-        return resources;
+
+        final Map<String, ByteSource> result = new LinkedHashMap<>();
+        resources.forEach( ( path, candidate ) -> result.put( path, candidate.content() ) );
+        return result;
     }
 
-    /**
-     * Both .yaml and .yml descriptors normalize to the same ".yaml" key.
-     * If a JAR contains both variants, .yaml wins regardless of zip entry order:
-     * put() lets .yaml overwrite, putIfAbsent() keeps .yml from replacing it.
-     */
-    private static void putDescriptor( final Map<String, ByteSource> resources, final String path, final String extension,
-                                       final ByteSource content )
+    private static boolean isLegacyAppResource( final String name )
     {
-        if ( "yaml".equals( extension ) )
-        {
-            resources.put( path, content );
-        }
-        else
-        {
-            resources.putIfAbsent( path, content );
-        }
+        return SchemaResourcePaths.LEGACY_APP_RESOURCE_NAME.equals( name );
+    }
+
+    // lower wins: flat (or enonic) before legacy (or application), then yaml before yml
+    private static int rank( final boolean legacy, final String extension )
+    {
+        return ( legacy ? 2 : 0 ) + ( "yaml".equals( extension ) ? 0 : 1 );
+    }
+
+    private static void put( final Map<String, Candidate> resources, final String path, final int rank, final ByteSource content )
+    {
+        resources.merge( path, new Candidate( rank, content ), ( existing, candidate ) -> candidate.rank() < existing.rank()
+            ? candidate
+            : existing );
     }
 
     private static String cmsPath( final String cmsRelativePath )
@@ -99,8 +133,7 @@ final class AppSchemaResolver
         return SchemaResourceNames.CMS_ROOT_NAME + "/" + cmsRelativePath;
     }
 
-    private static String firstNonNull( final String first, final String second )
+    private record Candidate(int rank, ByteSource content)
     {
-        return first != null ? first : second;
     }
 }

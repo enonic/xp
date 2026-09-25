@@ -429,7 +429,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final boolean deleted = dynamicResourceManager.deleteResource( createComponentFolderPath( key, type ), key.getName(), true );
+        final boolean deleted = deleteSchemaResources( createComponentFolderPath( key, type ), key.getName() );
 
         if ( deleted )
         {
@@ -514,7 +514,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final boolean deleted = dynamicResourceManager.deleteResource( createSchemaFolderPath( name, type ), name.getLocalName(), true );
+        final boolean deleted = deleteSchemaResources( createSchemaFolderPath( name, type ), name.getLocalName() );
 
         if ( deleted )
         {
@@ -677,7 +677,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createCmsFolderPath( key );
-        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, false );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME );
 
         if ( deleted )
         {
@@ -693,7 +693,7 @@ public class DynamicSchemaServiceImpl
         requireAdminRole();
 
         final NodePath resourceFolderPath = createStylesFolderPath( key );
-        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME, false );
+        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.STYLE_NAME );
 
         if ( deleted )
         {
@@ -779,7 +779,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
 
-        final boolean deleted = dynamicResourceManager.deleteResource( createMacroFolderPath( key ), key.getName(), true );
+        final boolean deleted = deleteSchemaResources( createMacroFolderPath( key ), key.getName() );
 
         if ( deleted )
         {
@@ -881,7 +881,7 @@ public class DynamicSchemaServiceImpl
         final String fileName = phrasesFileName( params.getName() );
 
         final boolean deleted = dynamicResourceManager.resourceFileNodeExists( folderPath, fileName ) &&
-            dynamicResourceManager.deleteResourceFile( folderPath, fileName, false );
+            dynamicResourceManager.deleteResourceFile( folderPath, fileName );
 
         if ( deleted )
         {
@@ -920,7 +920,7 @@ public class DynamicSchemaServiceImpl
             ( SchemaResourcePaths.SVG_EXTENSION.equals( extension ) ? SchemaResourcePaths.PNG_EXTENSION : SchemaResourcePaths.SVG_EXTENSION );
         if ( dynamicResourceManager.resourceFileNodeExists( folderPath, oppositeFileName ) )
         {
-            dynamicResourceManager.deleteResourceFile( folderPath, oppositeFileName, false );
+            dynamicResourceManager.deleteResourceFile( folderPath, oppositeFileName );
         }
 
         final Resource resource = dynamicResourceManager.putBinaryResourceFile( folderPath, localName + "." + extension, data, mimeType );
@@ -928,6 +928,27 @@ public class DynamicSchemaServiceImpl
         dynamicResourceManager.touchResourceFile( folderPath, descriptorFileName );
 
         return Icon.from( resource.readBytes(), mimeType, Instant.ofEpochMilli( resource.getTimestamp() ) );
+    }
+
+    // the descriptor and its icon
+    private boolean deleteSchemaResources( final NodePath folderPath, final String localName )
+    {
+        final String descriptorFileName = localName + "." + YAML_EXTENSION;
+        if ( !dynamicResourceManager.resourceFileNodeExists( folderPath, descriptorFileName ) )
+        {
+            return false;
+        }
+
+        for ( final String extension : List.of( SchemaResourcePaths.SVG_EXTENSION, SchemaResourcePaths.PNG_EXTENSION ) )
+        {
+            final String fileName = localName + "." + extension;
+            if ( dynamicResourceManager.resourceFileNodeExists( folderPath, fileName ) )
+            {
+                dynamicResourceManager.deleteResourceFile( folderPath, fileName );
+            }
+        }
+
+        return dynamicResourceManager.deleteResourceFile( folderPath, descriptorFileName );
     }
 
     private boolean doDeleteIcon( final NodePath folderPath, final String localName )
@@ -938,7 +959,7 @@ public class DynamicSchemaServiceImpl
             final String fileName = localName + "." + extension;
             if ( dynamicResourceManager.resourceFileNodeExists( folderPath, fileName ) )
             {
-                deleted |= dynamicResourceManager.deleteResourceFile( folderPath, fileName, false );
+                deleted |= dynamicResourceManager.deleteResourceFile( folderPath, fileName );
             }
         }
 
@@ -1045,10 +1066,10 @@ public class DynamicSchemaServiceImpl
         return name.endsWith( PROPERTIES_EXTENSION ) ? name : name + PROPERTIES_EXTENSION;
     }
 
+    // schemas are stored flat: the descriptor <root>/<name>.yaml and its icon <root>/<name>.svg|png live in the root folder of their kind
     private NodePath createComponentFolderPath( final DescriptorKey key, final DynamicComponentType dynamicType )
     {
-        final NodePath componentRootPath = createComponentRootPath( key.getApplicationKey(), dynamicType );
-        return new NodePath( componentRootPath, NodeName.from( key.getName() ) );
+        return createComponentRootPath( key.getApplicationKey(), dynamicType );
     }
 
     private NodePath createComponentRootPath( final ApplicationKey key, final DynamicComponentType dynamicType )
@@ -1058,8 +1079,7 @@ public class DynamicSchemaServiceImpl
 
     private NodePath createSchemaFolderPath( final BaseSchemaName key, final DynamicContentSchemaType dynamicType )
     {
-        final NodePath schemaRootPath = createSchemaRootPath( key.getApplicationKey(), dynamicType );
-        return new NodePath( schemaRootPath, NodeName.from( key.getLocalName() ) );
+        return createSchemaRootPath( key.getApplicationKey(), dynamicType );
     }
 
     private NodePath createSchemaRootPath( final ApplicationKey key, final DynamicContentSchemaType dynamicType )
@@ -1069,7 +1089,7 @@ public class DynamicSchemaServiceImpl
 
     private NodePath createMacroFolderPath( final MacroKey key )
     {
-        return new NodePath( createMacroRootPath( key.getApplicationKey() ), NodeName.from( key.getName() ) );
+        return createMacroRootPath( key.getApplicationKey() );
     }
 
     private NodePath createMacroRootPath( final ApplicationKey key )
@@ -1085,6 +1105,7 @@ public class DynamicSchemaServiceImpl
             .build();
     }
 
+    // the style descriptor keeps its folder: cms/style/style.yaml
     private NodePath createStylesFolderPath( final ApplicationKey key )
     {
         return new NodePath( createCmsFolderPath( key ), NodeName.from( SchemaResourceNames.STYLE_ROOT_NAME ) );

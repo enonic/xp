@@ -286,7 +286,7 @@ class ApplicationServiceImplTest
         throws Exception
     {
         final Bundle bundle = deploy( "schemaApp",
-                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) );
+                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
 
         applicationRegistry.registerApplication( bundle );
 
@@ -306,7 +306,7 @@ class ApplicationServiceImplTest
     void startApplication_schemaApp_throws()
     {
         final Bundle bundle = deploy( "schemaApp",
-                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) );
+                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
 
         applicationRegistry.registerApplication( bundle );
 
@@ -324,7 +324,7 @@ class ApplicationServiceImplTest
         throws Exception
     {
         final Bundle bundle = deploy( "gradleApp", buildWithoutBnd( newBundle( "gradleApp", true ).setHeader( "Bnd-LastModified", "1783360499694" )
-                                                                    .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) );
+                                                                    .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
 
         applicationRegistry.registerApplication( bundle );
 
@@ -354,7 +354,7 @@ class ApplicationServiceImplTest
         when( this.repoService.getApplications() ).thenReturn( Nodes.from( node ) );
         when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( node );
         when( this.repoService.getApplicationSource( node.id() ) ).thenReturn(
-            wrap( buildWithoutBnd( newBundle( bundleName, true ).addResource( "cms/cms.yaml", stream( "cms-descriptor" ) ) ) ) );
+            wrap( buildWithoutBnd( newBundle( bundleName, true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) ) );
 
         this.service.installAllStoredApplications();
 
@@ -408,10 +408,10 @@ class ApplicationServiceImplTest
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
             resources -> resources.size() == 7 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
                 "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) &&
-                "cms-descriptor".equals( readResource( resources, "cms/cms.yaml" ) ) &&
-                "content-type".equals( readResource( resources, "cms/content-types/mytype/mytype.yaml" ) ) &&
-                "<svg/>".equals( readResource( resources, "cms/content-types/mytype/mytype.svg" ) ) &&
-                "macro".equals( readResource( resources, "cms/macros/mymacro/mymacro.yaml" ) ) &&
+                CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                CONTENT_TYPE.equals( readResource( resources, "cms/content-types/mytype.yaml" ) ) &&
+                "<svg/>".equals( readResource( resources, "cms/content-types/mytype.svg" ) ) &&
+                MACRO.equals( readResource( resources, "cms/macros/mymacro.yaml" ) ) &&
                 "phrases".equals( readResource( resources, "cms/i18n/phrases/phrases_en.properties" ) ) ) );
         verify( this.repoService, never() ).deleteApplicationSchema( any() );
 
@@ -453,14 +453,50 @@ class ApplicationServiceImplTest
 
         // no application descriptor at all, cms/cms.yml variant: still owns the schema
         this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
-                                                         .addResource( "cms/cms.yml", stream( "cms-descriptor" ) )
-                                                         .addResource( "cms/parts/mypart/mypart.yaml", stream( "part" ) )
+                                                         .addResource( "cms/cms.yml", stream( CMS_DESCRIPTOR ) )
+                                                         .addResource( "cms/parts/mypart/mypart.yaml", stream( PART ) )
                                                          .addResource( "cms/parts/mypart/mypart.js", stream( "controller" ) )
                                                          .build() ) );
 
         verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
-            resources -> resources.size() == 2 && "cms-descriptor".equals( readResource( resources, "cms/cms.yaml" ) ) &&
-                "part".equals( readResource( resources, "cms/parts/mypart/mypart.yaml" ) ) ) );
+            resources -> resources.size() == 2 && CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                PART.equals( readResource( resources, "cms/parts/mypart.yaml" ) ) ) );
+    }
+
+    @Test
+    void install_global_with_wrong_kind_changes_nothing()
+    {
+        // cms/style/style.yaml is reserved for the Style descriptor, a schema declares the kind of its folder
+        final ByteSource byteSource = wrap( newBundle( "my.bundle", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
+                                                .addResource( "cms/style/style.yaml", stream( CMS_DESCRIPTOR ) )
+                                                .addResource( "cms/content-types/mytype/mytype.yaml", stream( PART ) )
+                                                .addResource( "cms/parts/mypart.yaml", stream( PART ) )
+                                                .build() );
+
+        assertThatThrownBy( () -> this.service.installGlobalApplication( byteSource ) ).isInstanceOf( ApplicationBundleException.class )
+            .hasMessageContaining( "cms/style/style.yaml: invalid kind \"CMS\", expected \"Style\"" )
+            .hasMessageContaining( "cms/content-types/mytype.yaml: invalid kind \"Part\", expected \"ContentType\"" )
+            .hasMessageNotContaining( "cms/parts/mypart.yaml" );
+
+        // nothing of the application is persisted: no node writes, no events, no bundle
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
+    }
+
+    @Test
+    void install_global_with_missing_kind_changes_nothing()
+    {
+        final ByteSource byteSource = wrap( newBundle( "my.bundle", true ).addResource( "cms/cms.yaml", stream( "title: \"no kind\"" ) )
+                                                .build() );
+
+        assertThatThrownBy( () -> this.service.installGlobalApplication( byteSource ) ).isInstanceOf( ApplicationBundleException.class )
+            .hasMessageContaining( "cms/cms.yaml: missing kind" );
+
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
     }
 
     @Test
@@ -468,7 +504,7 @@ class ApplicationServiceImplTest
     {
         final ByteSource bundleSource = wrap( newBundle( "my.bundle", true )
                                                   .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
-                                                  .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) )
+                                                  .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
                                                   .build() );
 
         // readable while AppInfo is resolved (first open), unreadable when the schema is extracted
@@ -986,14 +1022,22 @@ class ApplicationServiceImplTest
         return wrap( newBundle( bundleName, isApp ).build() );
     }
 
+    private static final String CMS_DESCRIPTOR = "kind: \"CMS\"\n";
+
+    private static final String CONTENT_TYPE = "kind: \"ContentType\"\n";
+
+    private static final String MACRO = "kind: \"Macro\"\n";
+
+    private static final String PART = "kind: \"Part\"\n";
+
     private ByteSource createSchemaBundleSource( final String bundleName )
     {
         return wrap( newBundle( bundleName, true ).addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
                          .addResource( "enonic.svg", stream( "<svg>app</svg>" ) )
-                         .addResource( "cms/cms.yaml", stream( "cms-descriptor" ) )
-                         .addResource( "cms/content-types/mytype/mytype.yml", stream( "content-type" ) )
+                         .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
+                         .addResource( "cms/content-types/mytype/mytype.yml", stream( CONTENT_TYPE ) )
                          .addResource( "cms/content-types/mytype/mytype.svg", stream( "<svg/>" ) )
-                         .addResource( "cms/macros/mymacro/mymacro.yaml", stream( "macro" ) )
+                         .addResource( "cms/macros/mymacro/mymacro.yaml", stream( MACRO ) )
                          .addResource( "cms/i18n/phrases/phrases_en.properties", stream( "phrases" ) )
                          .addResource( "i18n/phrases_en.properties", stream( "root-phrases" ) )
                          .build() );

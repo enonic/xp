@@ -166,11 +166,11 @@ final class DynamicResourceManager
     }
 
     /**
-     * The descriptors below a root folder: {@code <folder>/<name>/<name>.yaml}.
+     * The descriptors in a root folder, stored flat: {@code <folder>/<name>.yaml}.
      */
     List<Resource> listResources( final NodePath folderPath )
     {
-        return listResourceFiles( folderPath, ".+/.+\\.yaml" );
+        return listResourceFiles( folderPath, "[^/]+\\.yaml" );
     }
 
     /**
@@ -189,17 +189,15 @@ final class DynamicResourceManager
             .collect( Collectors.toList() );
     }
 
-    boolean deleteResource( final NodePath folderPath, final String name, final boolean deleteFolder )
+    boolean deleteResource( final NodePath folderPath, final String name )
     {
-        return deleteResourceFile( folderPath, name + YAML_EXTENSION, deleteFolder );
+        return deleteResourceFile( folderPath, name + YAML_EXTENSION );
     }
 
-    boolean deleteResourceFile( final NodePath folderPath, final String fileName, final boolean deleteFolder )
+    boolean deleteResourceFile( final NodePath folderPath, final String fileName )
     {
         return ApplicationHelper.runAsAdmin( () -> nodeService.delete( DeleteNodeParams.create()
-                                                                           .nodePath( deleteFolder
-                                                                                          ? folderPath
-                                                                                          : new NodePath( folderPath, NodeName.from( fileName ) ) )
+                                                                           .nodePath( new NodePath( folderPath, NodeName.from( fileName ) ) )
                                                                            .refresh( RefreshMode.ALL )
                                                                            .build() ) )
             .getNodeIds()
