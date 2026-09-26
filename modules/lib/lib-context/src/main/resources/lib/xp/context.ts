@@ -39,7 +39,7 @@ export type ContextAttributeValue = string | number | boolean | ContextAttribute
  */
 export type ContextAttributes = Record<string, ContextAttributeValue>;
 
-export interface Context {
+export interface Context<Attributes extends object = ContextAttributes> {
     branch?: string;
     repository?: string;
     authInfo?: AuthInfo;
@@ -48,7 +48,7 @@ export interface Context {
      * `setCustomLocalAttribute` (keyed `custom.<name>`), and any session attributes, merged in that
      * order of precedence.
      */
-    attributes: ContextAttributes;
+    attributes: ContextAttributes & Partial<Attributes>;
 }
 
 export interface ContextUserParams {
@@ -81,12 +81,18 @@ interface ContextRunParams {
 }
 
 /**
- * Value accepted by {@link setCustomLocalAttribute}.
+ * Value accepted by {@link setCustomLocalAttribute}: the JSON-like shape of `T`, where functions and
+ * non-JSON objects (like `Date`) become `never`.
  */
-export type CustomAttributeValue = ContextAttributeValue;
+export type CustomAttributeValue<T = ContextAttributeValue> =
+    T extends string | number | boolean ? T :
+    T extends (...args: never[]) => unknown ? never :
+    T extends readonly (infer U)[] ? readonly CustomAttributeValue<U>[] :
+    T extends object ? {[K in keyof T]: CustomAttributeValue<T[K]>} :
+    never;
 
 interface ContextHandler {
-    get(): Context;
+    get<Attributes extends object>(): Context<Attributes>;
 
     run<T>(params: ContextRunParams): T;
 
@@ -151,9 +157,8 @@ export function run<T>(context: ContextParams, callback: () => T): T {
  *
  * @returns {object} Return the current context as JSON object.
  */
-export function get(): Context {
-    const result = bean.get();
-    return __.toNativeObject(result);
+export function get<Attributes extends object = ContextAttributes>(): Context<Attributes> {
+    return __.toNativeObject(bean.get<Attributes>());
 }
 
 /**
@@ -176,7 +181,6 @@ export function get(): Context {
  * @param {string} name Attribute name, stored with the `custom.` prefix.
  * @param {string|number|boolean|array|object|null} [value] JSON-like value to store, or null/undefined to remove the attribute.
  */
-export function setCustomLocalAttribute(name: string, value?: CustomAttributeValue | null): void {
+export function setCustomLocalAttribute<Value = ContextAttributeValue>(name: string, value?: CustomAttributeValue<Value> | null): void {
     bean.setCustomLocalAttribute(name, value === null || value === undefined ? null : __.toScriptValue(value));
 }
-
