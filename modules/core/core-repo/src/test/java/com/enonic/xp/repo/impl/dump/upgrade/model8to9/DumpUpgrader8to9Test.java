@@ -1,20 +1,31 @@
 package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.index.IndexConfig;
+import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.index.PathIndexConfig;
+import com.enonic.xp.index.PatternIndexConfigDocument;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.project.ProjectConstants;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
+import com.enonic.xp.repo.impl.dump.reader.DumpReaderModel8;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.acl.AccessControlEntry;
+import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class DumpUpgrader8to9Test
 {
@@ -161,6 +172,34 @@ class DumpUpgrader8to9Test
 
         assertThat( entry ).isNotNull();
         assertThat( entry.getValue().icon() ).isNull();
+    }
+
+    @Test
+    void upgradeNodeVersion_keeps_changes_of_every_upgrader()
+    {
+        final PatternIndexConfigDocument indexConfig = PatternIndexConfigDocument.create()
+            .defaultConfig( IndexConfig.MINIMAL )
+            .add( PathIndexConfig.create()
+                      .path( IndexPath.from( "data" ) )
+                      .indexConfig( IndexConfig.create().enabled( true ).fulltext( true ).addLanguage( Locale.forLanguageTag( "no" ) ).build() )
+                      .build() )
+            .build();
+        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
+            .id( NodeId.from( "content" ) )
+            .nodeType( ContentConstants.CONTENT_NODE_COLLECTION )
+            .data( new PropertyTree() )
+            .indexConfigDocument( indexConfig )
+            .permissions(
+                AccessControlList.of( AccessControlEntry.create().allowAll().principal( RoleKeys.CONTENT_MANAGER_APP ).build() ) )
+            .build();
+
+        final NodeStoreVersion result =
+            new DumpUpgrader8to9( mock( DumpReaderModel8.class ) ).upgradeNodeVersion( RepositoryId.from( "com.enonic.cms.default" ),
+                                                                                      nodeVersion );
+
+        assertThat( result.permissions().contains( RoleKeys.CONTENT_MANAGER_APP ) ).isFalse();
+        assertThat( ( (PatternIndexConfigDocument) result.indexConfigDocument() ).getConfigForPath( IndexPath.from( "data" ) )
+                        .getLanguages() ).containsExactly( Locale.forLanguageTag( "nb" ) );
     }
 
     private static NodeStoreVersion createV8ProjectRepoConfigNode( final String repoId, final String displayName, final String description )

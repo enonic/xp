@@ -684,7 +684,7 @@ public class DumpUpgrader8to9
                                                       new ImageUpgrader( dumpReader ), new ProjectMetadataStripperUpgrader(),
                                                       new RepositoryBranchesRemovalUpgrader(), new RepositoryModelVersionUpgrader() ) )
         {
-            final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, dumpEntry );
+            final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, result );
             if ( upgraded != null )
             {
                 result = upgraded;
