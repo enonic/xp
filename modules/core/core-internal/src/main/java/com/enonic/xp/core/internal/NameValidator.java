@@ -113,7 +113,7 @@ public final class NameValidator
             throw new IllegalArgumentException( typeOverride + " must not be longer than " + maxLength + " characters" );
         }
 
-        name.chars().filter( this::isInvalidChar ).findFirst().ifPresent( cp -> {
+        name.codePoints().filter( this::isInvalidChar ).findFirst().ifPresent( cp -> {
             throw new IllegalArgumentException( typeOverride + " must not contain '" + toUCode( cp ) + "'" );
         } );
 
