@@ -98,6 +98,10 @@ public abstract class BaseWebHandler
             .build();
     }
 
+    /**
+     * @deprecated Response trace info is recorded by XP. This method will be removed.
+     */
+    @Deprecated(forRemoval = true)
     protected Long getSize( final WebResponse webResponse )
     {
         final String length = webResponse.getHeaders().get( HttpHeaders.CONTENT_LENGTH );
@@ -118,6 +122,10 @@ public abstract class BaseWebHandler
         }
     }
 
+    /**
+     * @deprecated Response trace info is recorded by XP. This method will be removed.
+     */
+    @Deprecated(forRemoval = true)
     protected Long getBodyLength( final Object body )
         throws IOException
     {
@@ -133,7 +141,7 @@ public abstract class BaseWebHandler
 
         if ( body instanceof Map )
         {
-            return null; // TODO
+            return null;
         }
 
         if ( body instanceof byte[] )
@@ -148,13 +156,21 @@ public abstract class BaseWebHandler
         return 0L;
     }
 
+    /**
+     * @deprecated Response trace info is recorded by XP. This method will be removed.
+     */
+    @Deprecated(forRemoval = true)
     protected void addTraceInfo( final Trace trace, final WebResponse webResponse )
     {
         if ( trace != null )
         {
             trace.attribute( "status", webResponse.getStatus().value() );
             trace.attribute( "type", webResponse.getContentType().toString() );
-            trace.attribute( "size", getSize( webResponse ) );
+            final Long size = getSize( webResponse );
+            if ( size != null )
+            {
+                trace.attribute( "size", size );
+            }
         }
     }
 

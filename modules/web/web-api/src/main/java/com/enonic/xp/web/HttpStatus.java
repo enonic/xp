@@ -1,5 +1,8 @@
 package com.enonic.xp.web;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public enum HttpStatus
 {
     // Informational
@@ -132,7 +135,7 @@ public enum HttpStatus
             }
         }
 
-        return null;
+        throw new IllegalArgumentException( "Unknown HTTP status [" + value + "]" );
     }
 
     boolean familyOf( final int family )

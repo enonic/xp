@@ -5,6 +5,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
@@ -17,22 +20,22 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 
 import static java.util.Objects.requireNonNull;
 
-
+@NullMarked
 public class WebResponse
 {
     private final HttpStatus status;
 
     private final MediaType contentType;
 
-    private final Object body;
+    private final @Nullable Object body;
 
     private final ImmutableMap<String, String> headers;
 
     private final ImmutableList<Cookie> cookies;
 
-    private final WebSocketConfig webSocket;
+    private final @Nullable WebSocketConfig webSocket;
 
-    private final SseConfig sse;
+    private final @Nullable SseConfig sse;
 
     protected WebResponse( final Builder<?> builder )
     {
@@ -65,7 +68,7 @@ public class WebResponse
         return this.contentType;
     }
 
-    public Object getBody()
+    public @Nullable Object getBody()
     {
         return this.body;
     }
@@ -80,19 +83,19 @@ public class WebResponse
         return cookies;
     }
 
-    public WebSocketConfig getWebSocket()
+    public @Nullable WebSocketConfig getWebSocket()
     {
         return this.webSocket;
     }
 
-    public SseConfig getSse()
+    public @Nullable SseConfig getSse()
     {
         return this.sse;
     }
 
     public static class Builder<T extends Builder<T>>
     {
-        private Object body;
+        private @Nullable Object body;
 
         private final Map<String, String> headers = new TreeMap<>( String.CASE_INSENSITIVE_ORDER );
 
@@ -102,9 +105,9 @@ public class WebResponse
 
         private ImmutableList.Builder<Cookie> cookies = ImmutableList.builder();
 
-        private WebSocketConfig webSocket;
+        private @Nullable WebSocketConfig webSocket;
 
-        private SseConfig sse;
+        private @Nullable SseConfig sse;
 
         protected Builder()
         {
@@ -121,7 +124,7 @@ public class WebResponse
             this.sse = source.sse;
         }
 
-        public T body( final Object body )
+        public T body( final @Nullable Object body )
         {
             this.body = body;
             return (T) this;
@@ -169,7 +172,7 @@ public class WebResponse
             return (T) this;
         }
 
-        public T contentType( MediaType contentType )
+        public T contentType( final MediaType contentType )
         {
             this.contentType = contentType;
             return (T) this;
@@ -181,13 +184,13 @@ public class WebResponse
             return (T) this;
         }
 
-        public T webSocket( final WebSocketConfig webSocket )
+        public T webSocket( final @Nullable WebSocketConfig webSocket )
         {
             this.webSocket = webSocket;
             return (T) this;
         }
 
-        public T sse( final SseConfig sse )
+        public T sse( final @Nullable SseConfig sse )
         {
             this.sse = sse;
             return (T) this;
