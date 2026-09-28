@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.dump.BranchLoadResult;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
