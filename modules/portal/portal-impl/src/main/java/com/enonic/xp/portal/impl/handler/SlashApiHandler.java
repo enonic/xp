@@ -163,7 +163,8 @@ public class SlashApiHandler
         final WebResponse response = handleAPIRequest( portalRequest, supplier );
         Tracer.withCurrent( trace -> {
             trace.attribute( "app", descriptorKey.getApplicationKey().toString() ).attribute( "api", descriptorKey.getName() );
-            HandlerHelper.addTraceInfo( trace, response );
+            trace.attribute( "status", response.getStatus().value() );
+            trace.attribute( "type", response.getContentType().toString() );
         } );
         return response;
     }

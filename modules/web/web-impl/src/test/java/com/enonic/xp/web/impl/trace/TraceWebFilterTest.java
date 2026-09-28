@@ -1,8 +1,17 @@
 package com.enonic.xp.web.impl.trace;
 
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.google.common.io.ByteSource;
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
+
+import com.enonic.xp.resource.Resource;
 import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
 import com.enonic.xp.web.HttpMethod;
@@ -14,6 +23,7 @@ import com.enonic.xp.web.handler.WebHandlerChain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -93,5 +103,63 @@ class TraceWebFilterTest
 
         assertSame( chainResponse, result );
         assertEquals( 404L, trace.get( "status" ) );
+    }
+
+    @Test
+    void doHandleSkipsUnknownSize()
+        throws Exception
+    {
+        final WebResponse chainResponse = WebResponse.create().body( Map.of( "key", "value" ) ).build();
+        when( this.chain.handle( this.request, this.response ) ).thenReturn( chainResponse );
+
+        final TestTrace trace = TestTrace.of( "portalRequest" );
+        final WebResponse result = Tracer.traceEx( trace, () -> this.filter.doHandle( this.request, this.response, this.chain ) );
+
+        assertSame( chainResponse, result );
+        assertEquals( 200L, trace.get( "status" ) );
+        assertFalse( trace.containsKey( "size" ) );
+    }
+
+    @Test
+    void responseSize()
+    {
+        assertEquals( 100L, TraceWebFilter.responseSize( WebResponse.create().header( HttpHeaders.CONTENT_LENGTH, "100" ).build() ) );
+        assertNull( TraceWebFilter.responseSize( WebResponse.create().header( HttpHeaders.CONTENT_LENGTH, "abc" ).build() ) );
+        assertEquals( 4L, TraceWebFilter.responseSize( WebResponse.create().body( "body" ).build() ) );
+    }
+
+    @Test
+    void bodySize()
+        throws Exception
+    {
+        final Resource resource = mock( Resource.class );
+        when( resource.getSize() ).thenReturn( 10L );
+        assertEquals( 10L, TraceWebFilter.bodySize( resource, MediaType.PLAIN_TEXT_UTF_8 ) );
+
+        final Resource unknownSizeResource = mock( Resource.class );
+        when( unknownSizeResource.getSize() ).thenReturn( -1L );
+        assertNull( TraceWebFilter.bodySize( unknownSizeResource, MediaType.PLAIN_TEXT_UTF_8 ) );
+
+        final ByteSource byteSource = mock( ByteSource.class );
+        when( byteSource.size() ).thenReturn( 20L );
+        assertEquals( 20L, TraceWebFilter.bodySize( byteSource, MediaType.PLAIN_TEXT_UTF_8 ) );
+
+        assertEquals( 10L, TraceWebFilter.bodySize( new byte[10], MediaType.PLAIN_TEXT_UTF_8 ) );
+        assertEquals( 0L, TraceWebFilter.bodySize( null, MediaType.PLAIN_TEXT_UTF_8 ) );
+        assertNull( TraceWebFilter.bodySize( Map.of( "key", "value" ), MediaType.JSON_UTF_8 ) );
+        assertNull( TraceWebFilter.bodySize( List.of( "a", "b" ), MediaType.JSON_UTF_8 ) );
+    }
+
+    @Test
+    void bodySizeText()
+        throws Exception
+    {
+        assertEquals( 8L, TraceWebFilter.bodySize( "blåbær", MediaType.PLAIN_TEXT_UTF_8 ) );
+        assertEquals( 6L, TraceWebFilter.bodySize( "blåbær", MediaType.PLAIN_TEXT_UTF_8.withCharset( StandardCharsets.ISO_8859_1 ) ) );
+        assertEquals( 12L, TraceWebFilter.bodySize( "blåbær", MediaType.PLAIN_TEXT_UTF_8.withCharset( StandardCharsets.UTF_16BE ) ) );
+        assertNull( TraceWebFilter.bodySize( "blåbær", MediaType.JSON_UTF_8.withoutParameters() ) );
+
+        // unpaired surrogate is replaced when the response is written, so it must not fail the trace
+        assertEquals( 1L, TraceWebFilter.bodySize( "\uD800", MediaType.PLAIN_TEXT_UTF_8 ) );
     }
 }

@@ -74,7 +74,10 @@ public final class AdminToolHandler
         worker.descriptorKey = descriptorKey;
 
         final PortalResponse response = worker.execute();
-        Tracer.withCurrent( trace -> addTraceInfo( trace, response ) );
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "status", response.getStatus().value() );
+            trace.attribute( "type", response.getContentType().toString() );
+        } );
         return response;
     }
 

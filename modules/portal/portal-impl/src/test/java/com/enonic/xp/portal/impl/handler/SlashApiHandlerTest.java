@@ -68,6 +68,7 @@ import com.enonic.xp.webapp.WebappService;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -251,7 +252,7 @@ class SlashApiHandlerTest
         assertEquals( "api-key", trace.get( "api" ) );
         assertEquals( 200L, trace.get( "status" ) );
         assertInstanceOf( String.class, trace.get( "type" ) );
-        assertInstanceOf( Long.class, trace.get( "size" ) );
+        assertFalse( trace.containsKey( "size" ) );
     }
 
     @Test

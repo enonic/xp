@@ -144,7 +144,7 @@ class IdentityHandlerTest
         assertEquals( "localhost", trace.get( "host" ) );
         assertEquals( 200L, trace.get( "status" ) );
         assertEquals( "text/plain; charset=utf-8", trace.get( "type" ) );
-        assertEquals( 0L, trace.get( "size" ) );
+        assertFalse( trace.containsKey( "size" ) );
     }
 
     @Test
