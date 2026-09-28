@@ -121,7 +121,10 @@ public class IdentityHandler
                 String.format( "ID Provider function [%s] not found for id provider [%s]", idProviderFunction, idProviderKey ) );
         }
 
-        Tracer.withCurrent( trace -> HandlerHelper.addTraceInfo( trace, portalResponse ) );
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "status", portalResponse.getStatus().value() );
+            trace.attribute( "type", portalResponse.getContentType().toString() );
+        } );
         return portalResponse;
     }
 

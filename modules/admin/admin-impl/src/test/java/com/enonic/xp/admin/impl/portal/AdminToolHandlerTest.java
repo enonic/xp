@@ -172,7 +172,7 @@ class AdminToolHandlerTest
         assertEquals( "localhost", trace.get( "host" ) );
         assertEquals( 200L, trace.get( "status" ) );
         assertInstanceOf( String.class, trace.get( "type" ) );
-        assertInstanceOf( Long.class, trace.get( "size" ) );
+        assertFalse( trace.containsKey( "size" ) );
     }
 
     @Test

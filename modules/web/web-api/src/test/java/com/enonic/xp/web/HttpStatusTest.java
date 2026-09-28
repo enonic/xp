@@ -2,6 +2,7 @@ package com.enonic.xp.web;
 
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -390,6 +391,18 @@ class HttpStatusTest
     {
         assertTrue( HttpStatus.GATEWAY_TIMEOUT.is5xxServerError() );
         assertFalse( HttpStatus.GATEWAY_TIMEOUT.is1xxInformational() );
+    }
+
+    @Test
+    void testFrom()
+    {
+        assertEquals( HttpStatus.NOT_FOUND, HttpStatus.from( 404 ) );
+    }
+
+    @Test
+    void testFromUnknown()
+    {
+        assertThatThrownBy( () -> HttpStatus.from( 299 ) ).isInstanceOf( IllegalArgumentException.class ).hasMessageContaining( "299" );
     }
 
     private void testEnum( final HttpStatus status, final int value, final String reason )
