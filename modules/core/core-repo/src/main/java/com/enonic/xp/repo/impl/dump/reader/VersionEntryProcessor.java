@@ -115,7 +115,7 @@ public class VersionEntryProcessor
                                                               .nodeCommitId( version.nodeCommitId() )
                                                               .attributes( version.attributes() )
                                                               .build() ) );
-            branchResult.successful( branchResult.build().getSuccessful() + 1 );
+            branchResult.successful( 1 );
         }
         catch ( Exception e )
         {
