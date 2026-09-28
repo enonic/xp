@@ -269,15 +269,15 @@ public class DumpUpgrader8to9
         v8MetasByNode.clear();
 
         repoInScope = repositoryId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX );
-        final NodePathTrimUpgrader nodePathTrimUpgrader = new NodePathTrimUpgrader();
+        final NodePathNormalizeUpgrader nodePathNormalizeUpgrader = new NodePathNormalizeUpgrader();
         final List<NodeVersionEntryUpgrader> versionUpgraders = new ArrayList<>();
         final List<BranchEntryUpgrader> branchUpgraders = new ArrayList<>();
         if ( repoInScope )
         {
             branchUpgraders.add( new VersionHistoryMigrationUpgrader() );
         }
-        versionUpgraders.add( nodePathTrimUpgrader );
-        branchUpgraders.add( nodePathTrimUpgrader );
+        versionUpgraders.add( nodePathNormalizeUpgrader );
+        branchUpgraders.add( nodePathNormalizeUpgrader );
         versionEntryUpgraders = List.copyOf( versionUpgraders );
         branchEntryUpgraders = List.copyOf( branchUpgraders );
 
@@ -455,9 +455,16 @@ public class DumpUpgrader8to9
         return VersionDumpEntryJson.create( entry ).version( new NodeVersionId().toString() ).build();
     }
 
-    private VersionDumpEntryJson processVersionMeta( final VersionDumpEntryJson versionDumpEntryJson, final RepositoryId repositoryId,
+    private VersionDumpEntryJson processVersionMeta( final VersionDumpEntryJson sourceEntry, final RepositoryId repositoryId,
                                                      final VersionHistoryMigrationUpgrader.@Nullable ContentHistoryContext historyContext )
     {
+        // Entry upgraders fix the node path, so they must run before the path is parsed
+        VersionDumpEntryJson versionDumpEntryJson = sourceEntry;
+        for ( NodeVersionEntryUpgrader upgrader : versionEntryUpgraders )
+        {
+            versionDumpEntryJson = upgrader.upgradeVersionEntry( versionDumpEntryJson );
+        }
+
         final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
         final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
@@ -495,11 +502,6 @@ public class DumpUpgrader8to9
             .indexConfigBlobKey( newIndexConfigBlobKey.toString() )
             .accessControlBlobKey( newAccessControlBlobKey.toString() )
             .build();
-
-        for ( NodeVersionEntryUpgrader upgrader : versionEntryUpgraders )
-        {
-            result = upgrader.upgradeVersionEntry( result );
-        }
 
         if ( repoInScope )
         {
@@ -677,8 +679,9 @@ public class DumpUpgrader8to9
     protected @Nullable NodeStoreVersion upgradeNodeVersion( RepositoryId repositoryId, final NodeStoreVersion dumpEntry )
     {
         NodeStoreVersion result = dumpEntry;
-        for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new AuditLogMillisUpgrader(), new SchedulerUpgrader(),
-                                                      new ReferenceLowercaseUpgrader(), new DefaultProjectPermissionsUpgrader(),
+        for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new ArchivedContentNameUpgrader(), new AuditLogMillisUpgrader(),
+                                                      new SchedulerUpgrader(), new ReferenceLowercaseUpgrader(),
+                                                      new DefaultProjectPermissionsUpgrader(),
                                                       new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
                                                       new AttachmentSha512Upgrader( dumpReader ), new AttachmentTextToMediaUpgrader(),
                                                       new ImageUpgrader( dumpReader ), new ProjectMetadataStripperUpgrader(),
