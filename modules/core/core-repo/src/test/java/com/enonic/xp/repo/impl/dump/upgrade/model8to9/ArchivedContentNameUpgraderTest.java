@@ -33,6 +33,18 @@ class ArchivedContentNameUpgraderTest
     }
 
     @Test
+    void original_name_with_whitespace_is_trimmed()
+    {
+        final NodeStoreVersion nodeVersion = createVersion( ContentConstants.CONTENT_NODE_COLLECTION, "ga\u030Ard ", " /content" );
+
+        final NodeStoreVersion result = upgrader.upgradeNodeVersion( PROJECT_REPO, nodeVersion );
+
+        assertThat( result ).isSameAs( nodeVersion );
+        assertThat( result.data().getString( ContentPropertyNames.ORIGINAL_NAME ) ).isEqualTo( "g\u00E5rd" );
+        assertThat( result.data().getString( ContentPropertyNames.ORIGINAL_PARENT_PATH ) ).isEqualTo( "/content" );
+    }
+
+    @Test
     void composed_names_are_unchanged()
     {
         final NodeStoreVersion nodeVersion = createVersion( ContentConstants.CONTENT_NODE_COLLECTION, "gård.jpg", "/content" );

@@ -39,22 +39,30 @@ public class NodePathNormalizeUpgrader
             return entry;
         }
 
-        final String trimmed = nodePath.trim();
-        if ( !trimmed.equals( nodePath ) )
-        {
-            LOG.info( "Trimming nodePath [{}] to [{}]", nodePath, trimmed );
-        }
-
-        final String normalized = Normalizer.normalize( trimmed, Normalizer.Form.NFC );
-        if ( !normalized.equals( trimmed ) )
-        {
-            LOG.warn( "Normalizing nodePath [{}] to Unicode NFC [{}]. URLs and references by path may change", trimmed, normalized );
-        }
-
+        final String normalized = normalize( nodePath );
         if ( normalized.equals( nodePath ) )
         {
             return entry;
         }
         return VersionDumpEntryJson.create( entry ).nodePath( normalized ).build();
+    }
+
+    /**
+     * Trims the value and normalizes it to Unicode NFC, logging what was changed.
+     */
+    static String normalize( final String value )
+    {
+        final String trimmed = value.trim();
+        if ( !trimmed.equals( value ) )
+        {
+            LOG.info( "Trimming [{}] to [{}]", value, trimmed );
+        }
+
+        final String normalized = Normalizer.normalize( trimmed, Normalizer.Form.NFC );
+        if ( !normalized.equals( trimmed ) )
+        {
+            LOG.warn( "Normalizing [{}] to Unicode NFC [{}]. URLs and references by path may change", trimmed, normalized );
+        }
+        return normalized;
     }
 }

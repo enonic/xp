@@ -1,6 +1,5 @@
 package com.enonic.xp.repo.impl.dump.upgrade.model8to9;
 
-import java.text.Normalizer;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -15,7 +14,7 @@ import com.enonic.xp.repo.impl.dump.upgrade.NodeVersionUpgrader;
 import com.enonic.xp.repository.RepositoryId;
 
 /**
- * Normalizes the original name and parent path of archived content to Unicode NFC, the same way
+ * Trims and normalizes the original name and parent path of archived content to Unicode NFC, the same way
  * {@link NodePathNormalizeUpgrader} does for node paths, so archived content can still be restored.
  */
 public class ArchivedContentNameUpgrader
@@ -42,11 +41,10 @@ public class ArchivedContentNameUpgrader
             final String value = data.getString( propertyName );
             if ( value != null )
             {
-                final String normalized = Normalizer.normalize( value, Normalizer.Form.NFC );
+                final String normalized = NodePathNormalizeUpgrader.normalize( value );
                 if ( !normalized.equals( value ) )
                 {
-                    LOG.warn( "Normalizing [{}] [{}] to Unicode NFC [{}] for node [{}] in repository [{}]", propertyName, value, normalized,
-                              nodeVersion.id(), repositoryId );
+                    LOG.info( "Normalized [{}] for node [{}] in repository [{}]", propertyName, nodeVersion.id(), repositoryId );
                     data.setString( propertyName, normalized );
                     modified = true;
                 }
