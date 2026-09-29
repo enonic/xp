@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.support.AbstractEqualsTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -55,6 +57,26 @@ class NodeNameTest
     void start_with_number()
     {
         NodeName.from( "1myname" );
+    }
+
+    @Test
+    void emojiAllowed()
+    {
+        assertThat( NodeName.from( "cat\uD83D\uDE00" ) ).hasToString( "cat\uD83D\uDE00" );
+    }
+
+    @Test
+    void loneSurrogateNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "cat\uD83D" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain 'U+D83D'" );
+    }
+
+    @Test
+    void combiningMarkNotAllowed()
+    {
+        assertThatThrownBy( () -> NodeName.from( "a\u030A" ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "NodeName must not contain 'U+030A'" );
     }
 
     @Test
