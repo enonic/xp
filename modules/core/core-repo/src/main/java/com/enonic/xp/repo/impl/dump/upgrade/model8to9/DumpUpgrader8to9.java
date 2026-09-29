@@ -117,6 +117,8 @@ public class DumpUpgrader8to9
     private final ProjectContentRootMetadataUpgrader contentRootMetadataUpgrader =
         new ProjectContentRootMetadataUpgrader( projectMetadata );
 
+    private final SystemIdProviderConfigUpgrader systemIdProviderConfigUpgrader = new SystemIdProviderConfigUpgrader();
+
     public DumpUpgrader8to9( final DumpReaderModel8 dumpReader )
     {
         this.dumpReader = dumpReader;
@@ -466,7 +468,9 @@ public class DumpUpgrader8to9
 
         final NodePath entryPath = versionDumpEntryJson.getNodePath() != null ? new NodePath( versionDumpEntryJson.getNodePath() ) : null;
         final NodeStoreVersion rootMetadataApplied = contentRootMetadataUpgrader.upgrade( repositoryId, entryPath, dumpEntry );
-        final NodeStoreVersion base = rootMetadataApplied != null ? rootMetadataApplied : dumpEntry;
+        final NodeStoreVersion rootMetadataBase = rootMetadataApplied != null ? rootMetadataApplied : dumpEntry;
+        final NodeStoreVersion systemIdProviderApplied = systemIdProviderConfigUpgrader.upgrade( repositoryId, entryPath, rootMetadataBase );
+        final NodeStoreVersion base = systemIdProviderApplied != null ? systemIdProviderApplied : rootMetadataBase;
 
         final NodeStoreVersion upgraded = upgradeNodeVersion( repositoryId, base );
 
