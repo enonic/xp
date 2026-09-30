@@ -1,8 +1,10 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,22 +16,13 @@ import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
-import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.NodeService;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -39,21 +32,12 @@ class ApplicationFactoryServiceImplTest
     @Mock(stubOnly = true)
     private NodeService nodeService;
 
-    private AppConfig appConfig;
-
-    @BeforeEach
-    void init()
-    {
-        appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-    }
-
     @Test
     void lifecycle()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -77,11 +61,8 @@ class ApplicationFactoryServiceImplTest
     void findActiveApplication()
         throws Exception
     {
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -103,8 +84,7 @@ class ApplicationFactoryServiceImplTest
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.findByQuery( any( NodeQuery.class ) ) ).thenReturn( FindNodesByQueryResult.create().build() );
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
         final String appName = "app1";
@@ -117,47 +97,68 @@ class ApplicationFactoryServiceImplTest
         bundle.start();
         Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
         assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( MultiApplicationUrlResolver.class );
+        assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
 
-        activeResolver = service.findResolver( applicationKey, "virtual" );
+        activeResolver = service.findResolver( applicationKey, "bundle" );
         assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
 
         bundle.stop();
         assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
     }
 
     @Test
-    void findDisabledVirtualApplication()
+    void findResolver_inactiveWithPersistedSchema()
+        throws Exception
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        when( appConfig.virtual_enabled() ).thenReturn( false );
-
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
 
-        assertTrue( service.findActiveApplication( applicationKey ).isEmpty() );
+        final Bundle bundle = deploy( appName, newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
+
+        // installed but not started: the persisted schema is served
+        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
+
+        bundle.start();
+        assertThat( service.findResolver( applicationKey, null ) ).isNotEmpty()
+            .get()
+            .isNotInstanceOf( NodeResourceApplicationUrlResolver.class );
+
+        // stopped: the persisted schema is still served, bundle resources are not
+        bundle.stop();
+        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
     }
 
     @Test
-    void findVirtualApplication()
+    void findResolver_inactiveLocalWithCmsDescriptor()
+        throws Exception
     {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         final BundleContext bundleContext = getBundleContext();
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        when( appConfig.virtual_enabled() ).thenReturn( true );
-        when( appConfig.virtual_schema_override() ).thenReturn( false );
-
-        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         service.activate();
 
-        assertEquals( applicationKey, service.findActiveApplication( applicationKey ).get().getKey() );
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        final Bundle bundle = deploy( ApplicationHelper.toBundleLocation( applicationKey, true ),
+                                      newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
+
+        bundle.start();
+        assertThat( service.findResolver( applicationKey, null ) ).isNotEmpty();
+
+        // a local application is never persisted: nothing is served once stopped
+        bundle.stop();
+        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+    }
+
+    private static InputStream stream( final String content )
+    {
+        return new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) );
     }
 }

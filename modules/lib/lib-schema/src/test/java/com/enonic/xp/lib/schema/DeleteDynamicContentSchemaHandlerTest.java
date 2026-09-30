@@ -1,10 +1,10 @@
 package com.enonic.xp.lib.schema;
 
-
 import org.junit.jupiter.api.Test;
 
-import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
-import com.enonic.xp.resource.DynamicContentSchemaType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
+import com.enonic.xp.schema.mixin.MixinName;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
@@ -15,11 +15,7 @@ class DeleteDynamicContentSchemaHandlerTest
     @Test
     void testContentType()
     {
-        when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
-            final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
-
-            return DynamicContentSchemaType.CONTENT_TYPE == schemaParams.getType();
-        } );
+        when( dynamicSchemaService.deleteContentType( isA( ContentTypeName.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deleteContentType.js" );
     }
@@ -27,11 +23,7 @@ class DeleteDynamicContentSchemaHandlerTest
     @Test
     void testFormFragment()
     {
-        when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
-            final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
-
-            return DynamicContentSchemaType.FORM_FRAGMENT == schemaParams.getType();
-        } );
+        when( dynamicSchemaService.deleteFormFragment( isA( FormFragmentName.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deleteFormFragment.js" );
     }
@@ -39,15 +31,10 @@ class DeleteDynamicContentSchemaHandlerTest
     @Test
     void testMixin()
     {
-        when( dynamicSchemaService.deleteContentSchema( isA( DeleteDynamicContentSchemaParams.class ) ) ).thenAnswer( params -> {
-            final DeleteDynamicContentSchemaParams schemaParams = params.getArgument( 0, DeleteDynamicContentSchemaParams.class );
-
-            return DynamicContentSchemaType.MIXIN == schemaParams.getType();
-        } );
+        when( dynamicSchemaService.deleteMixin( isA( MixinName.class ) ) ).thenReturn( true );
 
         runScript( "/lib/xp/examples/schema/deleteMixin.js" );
     }
-
 
     @Test
     void testInvalidSchemaType()

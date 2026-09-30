@@ -13,7 +13,9 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AppInfoResolverTest
     extends BundleBasedTest
@@ -93,6 +95,67 @@ class AppInfoResolverTest
         final AppInfo appInfo = AppInfoResolver.resolve( source );
 
         assertEquals( "Application title", appInfo.title );
+    }
+
+    @Test
+    void descriptor_name_matches_bundle()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle( newBundle( "myBundle", true ).addResource( "enonic.yaml", content(
+            "kind: \"Application\"\nname: \"myBundle\"\ntitle: \"Title\"\n" ) ) );
+
+        final AppInfo appInfo = AppInfoResolver.resolve( source );
+
+        assertEquals( "myBundle", appInfo.name );
+        assertEquals( "Title", appInfo.title );
+    }
+
+    @Test
+    void descriptor_name_not_matching_bundle_is_invalid()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle(
+            newBundle( "myBundle", true ).addResource( "enonic.yaml", content( "kind: \"Application\"\nname: \"otherBundle\"\n" ) ) );
+
+        final Exception ex = assertThrows( Exception.class, () -> AppInfoResolver.resolve( source ) );
+        assertTrue( ex.getMessage().contains( "does not match application \"myBundle\"" ), ex.getMessage() );
+    }
+
+    @Test
+    void has_cms_descriptor_yaml()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle( newBundle( "myBundle", true ).addResource( "cms/cms.yaml", content( "kind: \"CMS\"" ) ) );
+
+        assertTrue( AppInfoResolver.resolve( source ).hasCmsDescriptor );
+    }
+
+    @Test
+    void has_cms_descriptor_yml()
+        throws Exception
+    {
+        final ByteSource source = wrapBundle( newBundle( "myBundle", true ).addResource( "cms/cms.yml", content( "kind: \"CMS\"" ) ) );
+
+        assertTrue( AppInfoResolver.resolve( source ).hasCmsDescriptor );
+    }
+
+    @Test
+    void has_cms_descriptor_missing()
+        throws Exception
+    {
+        final ByteSource withoutCms = wrapBundle( newBundle( "myBundle", true ).addResource( "enonic.yaml", descriptorYaml( "title" ) )
+                                                      .addResource( "cms/content-types/mytype/mytype.yaml", content( "kind: \"ContentType\"" ) ) );
+        assertFalse( AppInfoResolver.resolve( withoutCms ).hasCmsDescriptor );
+
+        // cms.yaml is only recognized below the cms root
+        final ByteSource rootCms = wrapBundle( newBundle( "myBundle", true ).addResource( "cms.yaml", content( "kind: \"CMS\"" ) ) );
+        assertFalse( AppInfoResolver.resolve( rootCms ).hasCmsDescriptor );
+    }
+
+    private static InputStream content( final String value )
+        throws IOException
+    {
+        return ByteSource.wrap( value.getBytes( StandardCharsets.UTF_8 ) ).openStream();
     }
 
     private static InputStream descriptorYaml( final String title )

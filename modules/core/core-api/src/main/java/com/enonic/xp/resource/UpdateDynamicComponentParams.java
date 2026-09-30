@@ -9,14 +9,11 @@ public final class UpdateDynamicComponentParams
 {
     private final DescriptorKey key;
 
-    private final DynamicComponentType type;
-
     private final String resource;
 
     private UpdateDynamicComponentParams( final Builder builder )
     {
         this.key = builder.key;
-        this.type = builder.type;
         this.resource = builder.resource;
     }
 
@@ -35,16 +32,9 @@ public final class UpdateDynamicComponentParams
         return resource;
     }
 
-    public DynamicComponentType getType()
-    {
-        return type;
-    }
-
     public static final class Builder
     {
         private DescriptorKey key;
-
-        private DynamicComponentType type;
 
         private String resource;
 
@@ -64,16 +54,9 @@ public final class UpdateDynamicComponentParams
             return this;
         }
 
-        public Builder type( final DynamicComponentType type )
-        {
-            this.type = type;
-            return this;
-        }
-
         private void validate()
         {
             requireNonNull( key, "key is required" );
-            requireNonNull( type, "type is required" );
         }
 
         public UpdateDynamicComponentParams build()

@@ -2,10 +2,11 @@ package com.enonic.xp.lib.schema;
 
 import java.util.function.Supplier;
 
-import com.enonic.xp.lib.schema.mapper.DescriptorConverter;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.lib.schema.mapper.DescriptorConverter;
+import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.DynamicComponentType;
+import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -38,13 +39,19 @@ public final class CreateDynamicComponentHandler
 
     public Object execute()
     {
-        final CreateDynamicComponentParams params = CreateDynamicComponentParams.create()
-            .descriptorKey( DescriptorKey.from( key ) )
-            .type( DynamicComponentType.valueOf( type ) )
-            .resource( resource )
-            .build();
+        final DynamicSchemaService service = dynamicSchemaServiceSupplier.get();
+        final CreateDynamicComponentParams params =
+            CreateDynamicComponentParams.create().descriptorKey( DescriptorKey.from( key ) ).resource( resource ).build();
 
-        return DescriptorConverter.convert( dynamicSchemaServiceSupplier.get().createComponent( params ) );
+        final DynamicSchemaResult<? extends ComponentDescriptor> result = switch ( type )
+        {
+            case "PART" -> service.createPart( params );
+            case "LAYOUT" -> service.createLayout( params );
+            case "PAGE" -> service.createPage( params );
+            default -> throw new IllegalArgumentException( "illegal component type: " + type );
+        };
+
+        return DescriptorConverter.convert( result );
     }
 
     @Override

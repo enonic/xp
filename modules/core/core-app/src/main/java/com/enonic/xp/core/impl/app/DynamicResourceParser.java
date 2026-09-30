@@ -9,13 +9,14 @@ import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlStyleDescriptorParser;
 import com.enonic.xp.core.impl.content.parser.YmlMixinDescriptorParser;
 import com.enonic.xp.core.impl.schema.YmlFormFragmentParser;
+import com.enonic.xp.core.impl.schema.YmlMacroDescriptorParser;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.page.PageDescriptor;
 import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
-import com.enonic.xp.resource.DynamicComponentType;
-import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.schema.content.ContentType;
@@ -67,6 +68,11 @@ final class DynamicResourceParser
     StyleDescriptor parseStyles( final ApplicationKey applicationKey, final String resource )
     {
         return parseStylesDescriptor( applicationKey, resource );
+    }
+
+    MacroDescriptor parseMacro( final MacroKey key, final String resource )
+    {
+        return YmlMacroDescriptorParser.parse( resource, key.getApplicationKey() ).key( key ).build();
     }
 
 

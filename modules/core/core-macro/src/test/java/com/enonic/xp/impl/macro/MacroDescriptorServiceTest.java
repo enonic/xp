@@ -49,6 +49,26 @@ class MacroDescriptorServiceTest
     }
 
     @Test
+    void testFlatStructure()
+    {
+        // cms/macros/<name>.yaml with its icon next to it, the controller stays in the folder of the macro; flat wins over legacy
+        addApplication( "flatapp", "/apps/flatapp" );
+        final ApplicationKey appKey = ApplicationKey.from( "flatapp" );
+
+        final MacroDescriptor flat = this.service.getByKey( MacroKey.from( appKey, "flatmacro" ) );
+        assertNotNull( flat );
+        assertEquals( "Flat macro", flat.getTitle() );
+        assertNotNull( flat.getIcon() );
+        assertEquals( "image/svg+xml", flat.getIcon().getMimeType() );
+        assertEquals( "flatapp:/cms/macros/flatmacro/flatmacro.js",
+                      this.service.getControllerResourceKey( MacroKey.from( appKey, "flatmacro" ) ).toString() );
+
+        assertEquals( "Flat", this.service.getByKey( MacroKey.from( appKey, "mixed" ) ).getTitle() );
+
+        assertEquals( 2, this.service.getByApplication( appKey ).getSize() );
+    }
+
+    @Test
     void testGetBySystemKey()
     {
         final MacroKey macroKey = MacroKey.from( ApplicationKey.SYSTEM, "disable" );

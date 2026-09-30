@@ -26,7 +26,7 @@ final class MixinDescriptorLoader
         final Instant modifiedTime = Instant.ofEpochMilli( resource.getTimestamp() );
         builder.modifiedTime( modifiedTime );
         builder.createdTime( modifiedTime );
-        builder.icon( loadIcon( name ) );
+        builder.icon( loadIcon( name, resource ) );
         return builder.name( name ).build();
     }
 

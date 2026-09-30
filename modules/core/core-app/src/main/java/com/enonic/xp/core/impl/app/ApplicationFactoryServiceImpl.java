@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.app;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -18,11 +19,9 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 
-@Component(immediate = true, configurationPid = "com.enonic.xp.app")
+@Component(immediate = true)
 public class ApplicationFactoryServiceImpl
     implements ApplicationFactoryService
 {
@@ -30,19 +29,12 @@ public class ApplicationFactoryServiceImpl
 
     private final BundleTracker<ApplicationAdaptor> bundleTracker;
 
-    private final NodeService nodeService;
-
-    private final AppConfig appConfig;
-
     private final ApplicationFactory factory;
 
     @Activate
-    public ApplicationFactoryServiceImpl( final BundleContext context, @Reference final NodeService nodeService, final AppConfig config )
+    public ApplicationFactoryServiceImpl( final BundleContext context, @Reference final NodeService nodeService )
     {
-        this.nodeService = nodeService;
-        this.appConfig = config;
-
-        this.factory = new ApplicationFactory( nodeService, appConfig );
+        this.factory = new ApplicationFactory( nodeService );
 
         this.bundleTracker =
             new BundleTracker<>( context, Bundle.INSTALLED + Bundle.RESOLVED + Bundle.STARTING + Bundle.STOPPING + Bundle.ACTIVE,
@@ -70,60 +62,47 @@ public class ApplicationFactoryServiceImpl
     @Override
     public Optional<ApplicationAdaptor> findActiveApplication( final ApplicationKey applicationKey )
     {
-        return bundleTracker.getTracked()
-            .entrySet()
-            .stream()
-            .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) )
-            .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
-            .findAny()
-            .map( Map.Entry::getValue )
-            .or( () -> findVirtualApp( applicationKey ) );
+        return findActiveEntry( applicationKey ).map( Map.Entry::getValue );
     }
 
     @Override
     public Optional<Bundle> findActiveBundle( final ApplicationKey applicationKey )
     {
-        return bundleTracker.getTracked()
-            .keySet()
-            .stream()
-            .filter( bundle -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundle ) ) )
-            .filter( bundle -> bundle.getState() == Bundle.ACTIVE )
-            .findAny();
+        return findActiveEntry( applicationKey ).map( Map.Entry::getKey );
     }
 
     @Override
     public Optional<ApplicationUrlResolver> findResolver( final ApplicationKey applicationKey, final String source )
     {
-        final Optional<Map.Entry<Bundle, ApplicationAdaptor>> adaptorEntry = bundleTracker.getTracked()
-            .entrySet()
-            .stream()
-            .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) )
-            .filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE )
-            .findAny();
+        final Optional<Map.Entry<Bundle, ApplicationAdaptor>> adaptorEntry = findActiveEntry( applicationKey );
 
         if ( source == null )
         {
             return adaptorEntry.map( Map.Entry::getValue )
-                .or( () -> findVirtualApp( applicationKey ) )
-                .map( ApplicationAdaptor::getUrlResolver );
+                .map( ApplicationAdaptor::getUrlResolver )
+                .or( () -> findInactiveResolver( applicationKey ) );
         }
 
         return adaptorEntry.map( Map.Entry::getKey ).map( bundle -> factory.createUrlResolver( bundle, source ) );
     }
 
-    private Optional<ApplicationAdaptor> findVirtualApp( final ApplicationKey applicationKey )
+    // a stopped application still serves its persisted schema, the schema belongs to the installation, not to the running bundle
+    private Optional<ApplicationUrlResolver> findInactiveResolver( final ApplicationKey applicationKey )
     {
-        if ( !appConfig.virtual_enabled() )
-        {
-            return Optional.empty();
-        }
+        return entries( applicationKey ).findAny().map( Map.Entry::getKey ).map( factory::createInactiveUrlResolver );
+    }
 
-        return VirtualAppContext.createContext().callWith( () -> {
-            final NodePath appPath = new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) );
-            return this.nodeService.nodeExists( appPath )
-                ? Optional.of( VirtualAppFactory.create( applicationKey, nodeService ) )
-                : Optional.empty();
-        } );
+    private Optional<Map.Entry<Bundle, ApplicationAdaptor>> findActiveEntry( final ApplicationKey applicationKey )
+    {
+        return entries( applicationKey ).filter( bundleEntry -> bundleEntry.getKey().getState() == Bundle.ACTIVE ).findAny();
+    }
+
+    private Stream<Map.Entry<Bundle, ApplicationAdaptor>> entries( final ApplicationKey applicationKey )
+    {
+        return bundleTracker.getTracked()
+            .entrySet()
+            .stream()
+            .filter( bundleEntry -> applicationKey.equals( ApplicationHelper.getApplicationKey( bundleEntry.getKey() ) ) );
     }
 
     private static class Customizer

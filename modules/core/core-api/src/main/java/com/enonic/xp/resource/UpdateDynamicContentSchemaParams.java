@@ -9,14 +9,11 @@ public final class UpdateDynamicContentSchemaParams
 {
     private final BaseSchemaName name;
 
-    private final DynamicContentSchemaType type;
-
     private final String resource;
 
     private UpdateDynamicContentSchemaParams( final Builder builder )
     {
         this.name = builder.name;
-        this.type = builder.type;
         this.resource = builder.resource;
     }
 
@@ -35,16 +32,9 @@ public final class UpdateDynamicContentSchemaParams
         return resource;
     }
 
-    public DynamicContentSchemaType getType()
-    {
-        return type;
-    }
-
     public static final class Builder
     {
         private BaseSchemaName name;
-
-        private DynamicContentSchemaType type;
 
         private String resource;
 
@@ -64,16 +54,9 @@ public final class UpdateDynamicContentSchemaParams
             return this;
         }
 
-        public Builder type( final DynamicContentSchemaType type )
-        {
-            this.type = type;
-            return this;
-        }
-
         private void validate()
         {
             requireNonNull( name, "name is required" );
-            requireNonNull( type, "type is required" );
         }
 
         public UpdateDynamicContentSchemaParams build()

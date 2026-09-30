@@ -25,5 +25,6 @@ public class ApplicationMapper
         gen.value( "modifiedTime", application.getModifiedTime() );
         gen.value( "started", application.isStarted() );
         gen.value( "system", application.isSystem() );
+        gen.value( "schema", application.isSchema() );
     }
 }

@@ -22,4 +22,27 @@ exports.createInvalidComponentType = function () {
     }));
 };
 
+exports.createComponentWithoutKey = function () {
+    assert.assertThrows(() => schemaLib.createPart({
+        resource: 'kind: "Part"'
+    }));
+    assert.assertThrows(() => schemaLib.createLayout({
+        resource: 'kind: "Layout"'
+    }));
+    assert.assertThrows(() => schemaLib.createPage({
+        resource: 'kind: "Page"'
+    }));
+};
+
+exports.createComponentWithInvalidKey = function () {
+    assert.assertThrows(() => schemaLib.createPart({
+        key: 'mypart',
+        resource: 'kind: "Part"'
+    }));
+    assert.assertThrows(() => schemaLib.createPart({
+        key: 'myapp:my part',
+        resource: 'kind: "Part"'
+    }));
+};
+
 
