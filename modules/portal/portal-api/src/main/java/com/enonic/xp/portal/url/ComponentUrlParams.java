@@ -60,12 +60,28 @@ public final class ComponentUrlParams
         return this;
     }
 
+    /**
+     * Sets the project of the page the component is on. The URL is then resolved from configuration in place of the
+     * request.
+     *
+     * @deprecated a component URL addresses a component of the page the request renders, in the project and branch
+     * of that request
+     */
+    @Deprecated
     public ComponentUrlParams projectName( final String projectName )
     {
         this.projectName = projectName;
         return this;
     }
 
+    /**
+     * Sets the branch of the page the component is on. The URL is then resolved from configuration in place of the
+     * request.
+     *
+     * @deprecated a component URL addresses a component of the page the request renders, in the project and branch
+     * of that request
+     */
+    @Deprecated
     public ComponentUrlParams branch( final String branch )
     {
         this.branch = branch;
