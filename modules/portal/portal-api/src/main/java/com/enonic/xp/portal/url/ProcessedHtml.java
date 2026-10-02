@@ -13,7 +13,8 @@ import com.enonic.xp.style.ImageStyle;
  * <p>
  * Each internal link and image of the HTML holds a placeholder. The element carries a {@value #LINK_REF_ATTRIBUTE} or
  * {@value #IMAGE_REF_ATTRIBUTE} attribute holding the {@code ref} of its entry in {@link #links()} or {@link #images()};
- * the caller renders the element from the parts of that entry.
+ * the caller renders the element from the parts of that entry. An entry has no parts for a link or image that does not
+ * resolve, such as one to a content that is missing: the caller decides how to render it.
  *
  * @param html    the processed HTML, with placeholders for its internal links and images
  * @param baseUrl the Base URL configured for the site or project the HTML belongs to, without a trailing slash;
@@ -70,10 +71,11 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      * @param ref       value of the {@value #LINK_REF_ATTRIBUTE} attribute of the element
      * @param uri       the link as written in the HTML
      * @param contentId id of the linked content
-     * @param page      parts of the page URL; its query string is the one the link carries
+     * @param page      parts of the page URL, with the query string the link carries; {@code null} when the link does not
+     *                  resolve
      * @param fragment  fragment of the link, without {@code #}; {@code null} when it has none
      */
-    public record ContentLink(String ref, String uri, String contentId, PageUrlParts page, @Nullable String fragment)
+    public record ContentLink(String ref, String uri, String contentId, @Nullable PageUrlParts page, @Nullable String fragment)
         implements Link
     {
     }
@@ -84,10 +86,11 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      * @param ref        value of the {@value #LINK_REF_ATTRIBUTE} attribute of the element
      * @param uri        the link as written in the HTML
      * @param contentId  id of the media content
-     * @param attachment parts of the attachment URL
+     * @param attachment parts of the attachment URL; {@code null} when the link does not resolve
      * @param download   whether the link asks for the attachment to be downloaded
      */
-    public record AttachmentLink(String ref, String uri, String contentId, AttachmentUrlParts attachment, boolean download)
+    public record AttachmentLink(String ref, String uri, String contentId, @Nullable AttachmentUrlParts attachment,
+                                 boolean download)
         implements Link
     {
     }
@@ -98,11 +101,13 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      * @param ref       value of the {@value #IMAGE_REF_ATTRIBUTE} attribute of the element
      * @param contentId id of the image content
      * @param style     the image style applied, or {@code null} for none
-     * @param src       parts of the URL of the image as it appears in {@code src}
+     * @param src       parts of the URL of the image as it appears in {@code src}; {@code null} when the image does not
+     *                  resolve
      * @param srcset    parts of the URLs in {@code srcset}, one for each of the image widths; empty for an image the
-     *                  image API serves as stored
+     *                  image API serves as stored, and for one that does not resolve
      */
-    public record Image(String ref, String contentId, @Nullable ImageStyle style, ImageUrlParts src, List<Source> srcset)
+    public record Image(String ref, String contentId, @Nullable ImageStyle style, @Nullable ImageUrlParts src,
+                        List<Source> srcset)
     {
         public Image
         {

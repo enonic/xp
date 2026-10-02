@@ -138,15 +138,15 @@ final class RichTextPartsProcessor
         properties.put( "queryParams", link.urlParamsString() );
         properties.put( "ref", ref );
 
-        // a link that does not resolve is left as written, and its element keeps no ref
         try
         {
             processLink( element, link, ref, properties );
         }
         catch ( RuntimeException e )
         {
-            LOG.debug( "Link [{}] left as written", link.uri(), e );
-            return;
+            // a link that does not resolve is left as written, with a ref to an entry without parts
+            LOG.debug( "Link [{}] does not resolve", link.uri(), e );
+            unresolved( element, link, ref );
         }
 
         if ( postProcessor != null )
@@ -186,6 +186,42 @@ final class RichTextPartsProcessor
                 }
             }
             default -> throw new IllegalStateException( "Unknown type " + link.type() );
+        }
+    }
+
+    private void unresolved( final HtmlElement element, final RichTextLinks.Link link, final String ref )
+    {
+        switch ( link.type() )
+        {
+            case RichTextLinks.CONTENT_TYPE ->
+            {
+                element.setAttribute( ProcessedHtml.LINK_REF_ATTRIBUTE, ref );
+                links.add( new ProcessedHtml.ContentLink( ref, link.uri(), link.id(), null, fragment( link ) ) );
+            }
+            case RichTextLinks.MEDIA_TYPE ->
+            {
+                element.setAttribute( ProcessedHtml.LINK_REF_ATTRIBUTE, ref );
+                links.add( new ProcessedHtml.AttachmentLink( ref, link.uri(), link.id(), null,
+                                                             RichTextLinks.DOWNLOAD_MODE.equals( link.mode() ) ) );
+            }
+            case RichTextLinks.IMAGE_TYPE ->
+            {
+                element.setAttribute( ProcessedHtml.IMAGE_REF_ATTRIBUTE, ref );
+                images.add( new ProcessedHtml.Image( ref, link.id(), null, null, List.of() ) );
+            }
+            default -> throw new IllegalStateException( "Unknown type " + link.type() );
+        }
+    }
+
+    private static String fragment( final RichTextLinks.Link link )
+    {
+        try
+        {
+            return RichTextLinks.validQueryOrFragment( link.urlParams().get( "fragment" ) );
+        }
+        catch ( RuntimeException e )
+        {
+            return null;
         }
     }
 

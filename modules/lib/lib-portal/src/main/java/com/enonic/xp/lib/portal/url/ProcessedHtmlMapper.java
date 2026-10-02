@@ -37,14 +37,20 @@ final class ProcessedHtmlMapper
                 {
                     gen.value( "type", "content" );
                     serializeLink( gen, link );
-                    serialize( gen, "page", content.page() );
+                    if ( content.page() != null )
+                    {
+                        serialize( gen, "page", content.page() );
+                    }
                     gen.value( "fragment", content.fragment() );
                 }
                 case ProcessedHtml.AttachmentLink attachment ->
                 {
                     gen.value( "type", "attachment" );
                     serializeLink( gen, link );
-                    serialize( gen, "attachment", attachment.attachment() );
+                    if ( attachment.attachment() != null )
+                    {
+                        serialize( gen, "attachment", attachment.attachment() );
+                    }
                     gen.value( "download", attachment.download() );
                 }
             }
@@ -62,7 +68,10 @@ final class ProcessedHtmlMapper
             {
                 serialize( gen, "style", image.style() );
             }
-            serialize( gen, "src", image.src() );
+            if ( image.src() != null )
+            {
+                serialize( gen, "src", image.src() );
+            }
             gen.array( "srcset" );
             for ( final ProcessedHtml.Source source : image.srcset() )
             {
