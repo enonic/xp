@@ -1064,7 +1064,13 @@ export function apiUrl(params: ApiUrlParams): string {
 
 export interface BaseUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
+    /**
+     * @deprecated Use {@link urlBase} with `key`.
+     */
     id?: string;
+    /**
+     * @deprecated Use {@link urlBase} with `key`.
+     */
     path?: string;
     /**
      * @deprecated Use {@link urlBase} with `project`.
@@ -1091,37 +1097,32 @@ interface BaseUrlHandler {
 }
 
 /**
- * This function generates the base URL of the site - or project - a content belongs to: the
- * nearest site at or above it, and the project when no site is above it.
+ * This function generates the base URL of the current site request: the address of the site - or
+ * project - the matched virtual host mapping points at, rewritten for that host.
  *
- * The result is the Base URL configured for that site or project. With none configured, it is the
- * address the site engine serves it at, `/site/<project>/<branch>/<site path>`. On a site request
- * it is the address of whatever the matched virtual host mapping points at.
- *
- * Content paths are relative to the same site or project, so the full URL of a content is this
- * base URL followed by its path below that site.
- *
- * Raises an error when the content does not exist.
+ * Page URLs following the request, and their paths, are relative to it, and so are routes the site
+ * serves outside the content tree, such as controller mappings. Without a site request, it is the
+ * Base URL configured for the project of the current context, or else its site engine address.
  *
  * @example-ref examples/portal/baseUrl.js
  *
- * @param {object} params Input parameters as JSON.
+ * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
- * @param {string} [params.id] ID of the content.
- * @param {string} [params.path] Path to the content.
+ * @param {string} [params.id] Deprecated. Use {@link urlBase} with `key` instead.
+ * @param {string} [params.path] Deprecated. Use {@link urlBase} with `key` instead.
  * @param {string} [params.project] Deprecated. Use {@link urlBase} with `project` instead.
  * @param {string} [params.branch] Deprecated. Use {@link urlBase} with `branch` instead.
  *
  * @returns {string} The generated URL.
  */
-export function baseUrl(params: BaseUrlParams): string {
+export function baseUrl(params?: BaseUrlParams): string {
     const bean: BaseUrlHandler = __.newBean<BaseUrlHandler>('com.enonic.xp.lib.portal.url.BaseUrlHandler');
 
-    bean.setUrlType(__.nullOrValue(params.type));
-    bean.setProjectName(__.nullOrValue(params.project));
-    bean.setBranch(__.nullOrValue(params.branch));
-    bean.setId(__.nullOrValue(params.id));
-    bean.setPath(__.nullOrValue(params.path));
+    bean.setUrlType(__.nullOrValue(params?.type));
+    bean.setProjectName(__.nullOrValue(params?.project));
+    bean.setBranch(__.nullOrValue(params?.branch));
+    bean.setId(__.nullOrValue(params?.id));
+    bean.setPath(__.nullOrValue(params?.path));
 
     return bean.createUrl();
 }

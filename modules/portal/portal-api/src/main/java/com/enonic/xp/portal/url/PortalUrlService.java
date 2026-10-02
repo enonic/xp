@@ -30,19 +30,20 @@ public interface PortalUrlService
     String serviceUrl( ServiceUrlParams params );
 
     /**
-     * Resolves the base URL a content is addressed under: the Base URL configured for the
-     * nearest site at or above it, or for the project when it is in no site, and the site engine
-     * address of that site or project when none is configured. On a site request it follows the
-     * request: it is the address of the level the matched virtual host mapping points at.
+     * Resolves the base URL of the current site request: the address of the level of the content tree the matched
+     * virtual host mapping points at, rewritten for that host, or the site engine address of the project when no
+     * virtual host narrows the request. Page URLs following the request, and their paths, are relative to it, and so
+     * are routes the site serves outside the content tree. Without a site request, it is the Base URL configured for
+     * the project of the current context, or else its site engine address.
      * <p>
-     * A project or branch in the params resolves the base URL from configuration in place of the request, which is
-     * deprecated: {@link #urlBase(UrlBaseParams)} resolves the configured Base URL for a project and branch.
+     * A content, project or branch in the params resolves the base URL from configuration in place of the request:
+     * the Base URL configured for the nearest site of the content, or for the project. This use is deprecated:
+     * {@link #urlBase(UrlBaseParams)} resolves it.
      * <p>
      * Failures are reported to the caller as exceptions.
      *
-     * @param params the content, and through it the site or project
+     * @param params the URL type
      * @return the base URL, without a trailing slash
-     * @throws com.enonic.xp.content.ContentNotFoundException if the content does not exist
      */
     String baseUrl( BaseUrlParams params );
 

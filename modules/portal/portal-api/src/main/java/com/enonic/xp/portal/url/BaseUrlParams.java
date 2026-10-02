@@ -8,12 +8,11 @@ import com.google.common.base.MoreObjects;
 import static java.util.Objects.requireNonNullElse;
 
 /**
- * Names a content, and through it the level of the content tree its URLs belong to: the nearest
- * site at or above it, or the project when no site is. That level carries the Base URL
- * configuration, so it decides both the base URL and what content paths are relative to.
+ * Parameters of {@link PortalUrlService#baseUrl(BaseUrlParams)}: the {@link Builder#setUrlType(String) URL type} of
+ * the base URL of the current site request.
  * <p>
- * The content is named by {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, the id
- * taking precedence. The path {@code "/"} names the root of the project: the level is then the project itself.
+ * The content, project and branch setters are deprecated: they resolve the base URL from configuration, which
+ * {@link PortalUrlService#urlBase(UrlBaseParams)} does.
  *
  * @see PortalUrlService#baseUrl(BaseUrlParams)
  */
@@ -144,11 +143,13 @@ public final class BaseUrlParams
         }
 
         /**
-         * Names the content by its id.
+         * Names the content by its id, whose nearest site the base URL belongs to off a site request.
          *
          * @param id content id
          * @return this builder
+         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the content set on its params
          */
+        @Deprecated
         public Builder setId( final @Nullable String id )
         {
             this.id = id;
@@ -156,11 +157,14 @@ public final class BaseUrlParams
         }
 
         /**
-         * Names the content by its path within the project; {@code "/"} names the project itself.
+         * Names the content by its path within the project, whose nearest site the base URL belongs to off a site
+         * request; {@code "/"} names the project itself.
          *
          * @param path content path
          * @return this builder
+         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the content set on its params
          */
+        @Deprecated
         public Builder setPath( final @Nullable String path )
         {
             this.path = path;
