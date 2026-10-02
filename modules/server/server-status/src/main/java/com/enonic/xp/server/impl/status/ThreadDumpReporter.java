@@ -24,6 +24,12 @@ public final class ThreadDumpReporter
     }
 
     @Override
+    public boolean isSensitive()
+    {
+        return true;
+    }
+
+    @Override
     public MediaType getMediaType()
     {
         return MediaType.PLAIN_TEXT_UTF_8;

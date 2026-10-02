@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -27,7 +28,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.enonic.xp.annotation.Order;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.status.StatusReporter;
+import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.vhost.VirtualHostService;
 
 @Component(immediate = true, service = Servlet.class, property = {"connector=status"})
 @Order(-200)
@@ -38,6 +43,14 @@ public final class StatusServlet
     private static final String PATH_PREFIX = "/";
 
     private final Map<String, StatusReporter> reporters = new ConcurrentHashMap<>();
+
+    private final VirtualHostService virtualHostService;
+
+    @Activate
+    public StatusServlet( @Reference final VirtualHostService virtualHostService )
+    {
+        this.virtualHostService = virtualHostService;
+    }
 
     @Override
     protected void doGet( final HttpServletRequest req, final HttpServletResponse res )
@@ -72,6 +85,12 @@ public final class StatusServlet
             return;
         }
 
+        if ( reporter.isSensitive() && hasStatisticsVirtualHost() && !ContextAccessor.current().getAuthInfo().hasRole( RoleKeys.ADMIN ) )
+        {
+            serializeError( res, 403, String.format( "Reporter [%s] requires the admin role", name ) );
+            return;
+        }
+
         try
         {
             serialize( req, res, reporter );
@@ -84,6 +103,13 @@ public final class StatusServlet
         {
             serializeError( res, 500, e.getMessage() );
         }
+    }
+
+    private boolean hasStatisticsVirtualHost()
+    {
+        return virtualHostService.isEnabled() && virtualHostService.getVirtualHosts()
+            .stream()
+            .anyMatch( virtualHost -> DispatchConstants.STATISTICS_CONNECTOR.equals( virtualHost.getConnector() ) );
     }
 
     private void serialize( final HttpServletRequest req, final HttpServletResponse res, final StatusReporter reporter )
