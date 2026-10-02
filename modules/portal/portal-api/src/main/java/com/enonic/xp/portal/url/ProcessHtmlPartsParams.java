@@ -186,8 +186,7 @@ public final class ProcessHtmlPartsParams
 
         /**
          * Replaces the default processing. The function receives the parsed document along with the default
-         * processors, which it may apply to all elements or to single ones, and returns the resulting HTML. Applied
-         * to all elements, the default processing also removes empty {@code figcaption} elements.
+         * processors, which it may apply to all elements or to single ones, and returns the resulting HTML.
          *
          * @param customHtmlProcessor the processor; {@code null} for the default processing
          * @return this builder

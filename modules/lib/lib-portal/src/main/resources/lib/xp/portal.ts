@@ -602,8 +602,7 @@ interface ProcessHtmlHandler {
 }
 
 /**
- * This function replaces abstract internal links contained in an HTML text by generated URLs, and
- * removes empty `figcaption` elements.
+ * This function replaces abstract internal links contained in an HTML text by generated URLs.
  *
  * Links to content are generated the same way {@link pageUrl} generates them, and links to media
  * the same way {@link attachmentUrl} and {@link imageUrl} do.
@@ -726,8 +725,8 @@ interface ProcessHtmlPartsHandler {
 
 /**
  * This function resolves the parts of the internal links of an HTML text - to contents, images and
- * attachments - from configuration alone, for the site or project named by `base`, replaces each
- * link with a placeholder, and removes empty `figcaption` elements.
+ * attachments - from configuration alone, for the site or project named by `base`, and replaces each
+ * link with a placeholder.
  *
  * Each such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in
  * `links` or `images`; render the element from the parts of that entry.
