@@ -6,7 +6,8 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
-import com.enonic.xp.portal.url.PortalUrlGeneratorService;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -19,7 +20,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public final class ImageUrlPartsHandler
     implements ScriptBean
 {
-    private Supplier<PortalUrlGeneratorService> urlGeneratorServiceSupplier;
+    private Supplier<PortalUrlService> urlServiceSupplier;
 
     private String id;
 
@@ -28,6 +29,8 @@ public final class ImageUrlPartsHandler
     private String projectName;
 
     private String branch;
+
+    private UrlBase base;
 
     private String scale;
 
@@ -44,7 +47,7 @@ public final class ImageUrlPartsHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.urlGeneratorServiceSupplier = context.getService( PortalUrlGeneratorService.class );
+        this.urlServiceSupplier = context.getService( PortalUrlService.class );
     }
 
     public void setId( final String id )
@@ -65,6 +68,11 @@ public final class ImageUrlPartsHandler
     public void setBranch( final String branch )
     {
         this.branch = branch;
+    }
+
+    public void setBase( final UrlBase base )
+    {
+        this.base = base;
     }
 
     public void setScale( final String scale )
@@ -108,6 +116,7 @@ public final class ImageUrlPartsHandler
             .setFormat( this.format )
             .setFilter( this.filter );
 
+        params.setBase( this.base );
         if ( this.projectName != null )
         {
             final ProjectName projectName = ProjectName.from( this.projectName );
@@ -123,6 +132,6 @@ public final class ImageUrlPartsHandler
             params.setQueryParams( this.queryParams );
         }
 
-        return UrlPartsMapper.of( urlGeneratorServiceSupplier.get().imageUrlParts( params.build() ) );
+        return UrlPartsMapper.of( urlServiceSupplier.get().imageUrlParts( params.build() ) );
     }
 }

@@ -35,6 +35,14 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.webapp.WebappService;
+import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.portal.url.UrlBase;
+import com.enonic.xp.macro.MacroService;
+import com.enonic.xp.style.StyleDescriptorService;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.impl.RedirectChecksumService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,13 +55,21 @@ class PortalUrlGeneratorServiceImplTest
 {
     private PortalUrlGeneratorService service;
 
+    /**
+     * Resolves the URL parts, which build on this generator
+     */
+    private PortalUrlService urlService;
+
     private ContentService contentService;
 
     @BeforeEach
     void setUp()
     {
         this.contentService = mock( ContentService.class );
-        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), this.contentService );
+        this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        this.urlService = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
+                                                    mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
+                                                    mock( ProjectService.class ), this.service );
     }
 
     @AfterEach
@@ -360,7 +376,7 @@ class PortalUrlGeneratorServiceImplTest
             .setQuality( 85 )
             .build();
 
-        final ImageUrlParts parts = this.service.imageUrlParts( params );
+        final ImageUrlParts parts = this.urlService.imageUrlParts( params );
 
         assertEquals( "/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       parts.path() );
@@ -375,7 +391,7 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void imageUrlParts_matchImageUrl()
     {
-        final ImageUrlParts parts = this.service.imageUrlParts( ImageUrlPartsParams.create()
+        final ImageUrlParts parts = this.urlService.imageUrlParts( ImageUrlPartsParams.create()
                                                                     .setMedia( () -> mockMedia( "123456", "my content.png" ) )
                                                                     .setProjectName( () -> ProjectName.from( "myproject" ) )
                                                                     .setBranch( () -> Branch.from( "master" ) )
@@ -409,7 +425,7 @@ class PortalUrlGeneratorServiceImplTest
             .setDownload( true )
             .build();
 
-        final AttachmentUrlParts parts = this.service.attachmentUrlParts( params );
+        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( params );
 
         assertEquals( "/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", parts.path() );
         assertEquals( "?download", parts.queryString() );
@@ -433,9 +449,51 @@ class PortalUrlGeneratorServiceImplTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .branch( Branch.from( "draft" ) )
             .build()
-            .callWith( () -> this.service.imageUrlParts( ImageUrlPartsParams.create().setId( "123456" ).setScale( "max(300)" ).build() ) );
+            .callWith( () -> this.urlService.imageUrlParts( ImageUrlPartsParams.create().setId( "123456" ).setScale( "max(300)" ).build() ) );
 
         assertEquals( "/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", parts.path() );
+    }
+
+    @Test
+    void imageUrlParts_byIdInTheProjectAndBranchOfTheBase()
+    {
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( ContentId.from( "123456" ) ) ).thenAnswer( invocation -> {
+            assertEquals( "com.enonic.cms.baseproject", ContextAccessor.current().getRepositoryId().toString() );
+            assertEquals( "master", ContextAccessor.current().getBranch().toString() );
+            return media;
+        } );
+
+        final UrlBase base =
+            new UrlBase( ProjectName.from( "baseproject" ), Branch.from( "master" ), ContentPath.ROOT, null, SiteConfigs.empty() );
+
+        // the base applies where the params set no project or branch, in place of the context
+        final ImageUrlParts parts = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .callWith( () -> this.urlService.imageUrlParts(
+                ImageUrlPartsParams.create().setId( "123456" ).setBase( base ).setScale( "max(300)" ).build() ) );
+
+        assertEquals( "/media:image/baseproject/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", parts.path() );
+    }
+
+    @Test
+    void attachmentUrlParts_projectSetWinsOverTheBase()
+    {
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( ContentId.from( "123456" ) ) ).thenReturn( media );
+
+        final UrlBase base =
+            new UrlBase( ProjectName.from( "baseproject" ), Branch.from( "draft" ), ContentPath.ROOT, null, SiteConfigs.empty() );
+
+        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( AttachmentUrlPartsParams.create()
+                                                                                 .setId( "123456" )
+                                                                                 .setBase( base )
+                                                                                 .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                                 .build() );
+
+        assertEquals( "myproject:draft", parts.context() );
     }
 
     @Test
@@ -451,7 +509,7 @@ class PortalUrlGeneratorServiceImplTest
             .setScale( "max(300)" )
             .build();
 
-        assertThrows( IllegalArgumentException.class, () -> this.service.imageUrlParts( params ) );
+        assertThrows( IllegalArgumentException.class, () -> this.urlService.imageUrlParts( params ) );
     }
 
     @Test
@@ -475,7 +533,7 @@ class PortalUrlGeneratorServiceImplTest
             .build();
 
         // served as stored: one URL, whatever the processing asked for
-        final ImageUrlParts parts = this.service.imageUrlParts( params );
+        final ImageUrlParts parts = this.urlService.imageUrlParts( params );
         assertEquals( "/media:image/myproject/123456:0a350f43700951cdcca1574f448a7e22/full/logo.gif", parts.path() );
         assertEquals( "full", parts.scale() );
         assertEquals( "?a=1", parts.queryString() );
@@ -511,7 +569,7 @@ class PortalUrlGeneratorServiceImplTest
         final Media media = mockMedia( "123456", "mycontent.png" );
         when( contentService.getByPath( ContentPath.from( "/a/mycontent.png" ) ) ).thenReturn( media );
 
-        final AttachmentUrlParts parts = this.service.attachmentUrlParts( AttachmentUrlPartsParams.create()
+        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( AttachmentUrlPartsParams.create()
                                                                               .setPath( "/a/mycontent.png" )
                                                                               .setProjectName( () -> ProjectName.from( "myproject" ) )
                                                                               .setBranch( () -> Branch.from( "master" ) )
@@ -531,13 +589,13 @@ class PortalUrlGeneratorServiceImplTest
             .setBranch( () -> Branch.from( "master" ) )
             .build();
 
-        assertThrows( ContentNotFoundException.class, () -> this.service.attachmentUrlParts( params ) );
+        assertThrows( ContentNotFoundException.class, () -> this.urlService.attachmentUrlParts( params ) );
     }
 
     @Test
     void attachmentUrlParts_matchAttachmentUrl()
     {
-        final AttachmentUrlParts parts = this.service.attachmentUrlParts( AttachmentUrlPartsParams.create()
+        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( AttachmentUrlPartsParams.create()
                                                                               .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
                                                                               .setProjectName( () -> ProjectName.from( "myproject" ) )
                                                                               .setBranch( () -> Branch.from( "draft" ) )

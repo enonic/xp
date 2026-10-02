@@ -6,7 +6,8 @@ import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
-import com.enonic.xp.portal.url.PortalUrlGeneratorService;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -19,7 +20,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 public final class AttachmentUrlPartsHandler
     implements ScriptBean
 {
-    private Supplier<PortalUrlGeneratorService> urlGeneratorServiceSupplier;
+    private Supplier<PortalUrlService> urlServiceSupplier;
 
     private String id;
 
@@ -28,6 +29,8 @@ public final class AttachmentUrlPartsHandler
     private String projectName;
 
     private String branch;
+
+    private UrlBase base;
 
     private String name;
 
@@ -40,7 +43,7 @@ public final class AttachmentUrlPartsHandler
     @Override
     public void initialize( final BeanContext context )
     {
-        this.urlGeneratorServiceSupplier = context.getService( PortalUrlGeneratorService.class );
+        this.urlServiceSupplier = context.getService( PortalUrlService.class );
     }
 
     public void setId( final String id )
@@ -61,6 +64,11 @@ public final class AttachmentUrlPartsHandler
     public void setBranch( final String branch )
     {
         this.branch = branch;
+    }
+
+    public void setBase( final UrlBase base )
+    {
+        this.base = base;
     }
 
     public void setName( final String name )
@@ -92,6 +100,7 @@ public final class AttachmentUrlPartsHandler
             .setLabel( this.label )
             .setDownload( this.download );
 
+        params.setBase( this.base );
         if ( this.projectName != null )
         {
             final ProjectName projectName = ProjectName.from( this.projectName );
@@ -107,6 +116,6 @@ public final class AttachmentUrlPartsHandler
             params.setQueryParams( this.queryParams );
         }
 
-        return UrlPartsMapper.of( urlGeneratorServiceSupplier.get().attachmentUrlParts( params.build() ) );
+        return UrlPartsMapper.of( urlServiceSupplier.get().attachmentUrlParts( params.build() ) );
     }
 }

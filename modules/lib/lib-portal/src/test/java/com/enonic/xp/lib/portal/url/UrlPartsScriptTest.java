@@ -14,7 +14,6 @@ import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
-import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
@@ -36,8 +35,6 @@ class UrlPartsScriptTest
 {
     private PortalUrlService portalUrlService;
 
-    private PortalUrlGeneratorService portalUrlGeneratorService;
-
     @Override
     protected void initialize()
         throws Exception
@@ -45,7 +42,6 @@ class UrlPartsScriptTest
         super.initialize();
 
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
-        this.portalUrlGeneratorService = Mockito.mock( PortalUrlGeneratorService.class );
 
         when( portalUrlService.urlBase( any( UrlBaseParams.class ) ) ).thenAnswer( invocation -> {
             final UrlBaseParams params = invocation.getArgument( 0 );
@@ -60,7 +56,7 @@ class UrlPartsScriptTest
                 new ProcessedHtml.ContentLink( "ref", "content://123456", "123456", new PageUrlParts( null, "/posts/first-post", "" ),
                                                null ) ), List.of() ) );
 
-        when( portalUrlGeneratorService.imageUrlParts( any( ImageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
+        when( portalUrlService.imageUrlParts( any( ImageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
             final ImageUrlPartsParams params = invocation.getArgument( 0 );
             final String id = params.getId();
             final String context = context( params.getProjectName().get(), params.getBranch().get() );
@@ -68,7 +64,7 @@ class UrlPartsScriptTest
                                       "hash", "block-1024-768", "photo.jpg" );
         } );
 
-        when( portalUrlGeneratorService.attachmentUrlParts( any( AttachmentUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
+        when( portalUrlService.attachmentUrlParts( any( AttachmentUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
             final AttachmentUrlPartsParams params = invocation.getArgument( 0 );
             final String id = "/my-site/documents/report".equals( params.getPath() ) ? "reportid" : params.getId();
             final String context = context( params.getProjectName().get(), params.getBranch().get() );
@@ -77,7 +73,6 @@ class UrlPartsScriptTest
         } );
 
         addService( PortalUrlService.class, this.portalUrlService );
-        addService( PortalUrlGeneratorService.class, this.portalUrlGeneratorService );
     }
 
     private static String context( final ProjectName projectName, final Branch branch )
@@ -144,7 +139,7 @@ class UrlPartsScriptTest
         runScript( "/lib/xp/examples/portal/imageUrlParts.js" );
 
         final ArgumentCaptor<ImageUrlPartsParams> captor = ArgumentCaptor.forClass( ImageUrlPartsParams.class );
-        verify( portalUrlGeneratorService ).imageUrlParts( captor.capture() );
+        verify( portalUrlService ).imageUrlParts( captor.capture() );
 
         final ImageUrlPartsParams params = captor.getValue();
         assertEquals( "block(1024,768)", params.getScale() );
@@ -159,7 +154,7 @@ class UrlPartsScriptTest
         runScript( "/lib/xp/examples/portal/attachmentUrlParts.js" );
 
         final ArgumentCaptor<AttachmentUrlPartsParams> captor = ArgumentCaptor.forClass( AttachmentUrlPartsParams.class );
-        verify( portalUrlGeneratorService ).attachmentUrlParts( captor.capture() );
+        verify( portalUrlService ).attachmentUrlParts( captor.capture() );
 
         assertTrue( captor.getValue().isDownload() );
         assertEquals( "/my-site/documents/report", captor.getValue().getPath() );

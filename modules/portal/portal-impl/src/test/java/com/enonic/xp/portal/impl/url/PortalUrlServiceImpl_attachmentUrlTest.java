@@ -67,7 +67,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
         this.contentService = mock( ContentService.class );
 
         this.webappService = mock( WebappService.class );
-        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ), this.contentService );
+        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ) );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
