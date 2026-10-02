@@ -8,7 +8,7 @@ import com.google.common.base.Strings;
 
 /**
  * Parameters of a page URL: the content it addresses, by {@link #id(String) id} or
- * {@link #path(String) path}, and the project and branch it is in.
+ * {@link #path(String) path}. The project and branch are those of the request or the context.
  *
  * @see PortalUrlService#pageUrl(PageUrlParams)
  * @see PageUrlPartsParams
@@ -82,11 +82,14 @@ public final class PageUrlParams
     }
 
     /**
-     * Sets the project of the content.
+     * Sets the project of the content. The URL is then resolved from configuration in place of the request: the
+     * Base URL configured for the site of the content, or the site engine address of that site.
      *
      * @param value project name; {@code null} or empty takes it from the context
      * @return these params
+     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a base naming the project
      */
+    @Deprecated
     public PageUrlParams projectName( final @Nullable String value )
     {
         this.projectName = Strings.emptyToNull( value );
@@ -94,11 +97,14 @@ public final class PageUrlParams
     }
 
     /**
-     * Sets the branch of the content.
+     * Sets the branch of the content. The URL is then resolved from configuration in place of the request: the
+     * Base URL configured for the site of the content, or the site engine address of that site.
      *
      * @param value branch name; {@code null} or empty takes it from the context
      * @return these params
+     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a base naming the branch
      */
+    @Deprecated
     public PageUrlParams branch( final @Nullable String value )
     {
         this.branch = Strings.emptyToNull( value );

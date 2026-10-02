@@ -322,7 +322,13 @@ export function attachmentUrl(params: AttachmentUrlParams): string {
 export type PageUrlParams = IdXorPath & {
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
+    /**
+     * @deprecated Use {@link pageUrlParts} with `base.project`.
+     */
     project?: string;
+    /**
+     * @deprecated Use {@link pageUrlParts} with `base.branch`.
+     */
     branch?: string;
 };
 
@@ -354,8 +360,8 @@ interface PageUrlHandler {
  * @param {string} [params.id] Id to the page. If id is set, then path is not used.
  * @param {string} [params.path] Path to the page. Relative paths is resolved using the context page.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {string} [params.project] Project of the context.
- * @param {string} [params.branch] Branch of the project for context.
+ * @param {string} [params.project] Deprecated. Use {@link pageUrlParts} with `base.project` instead.
+ * @param {string} [params.branch] Deprecated. Use {@link pageUrlParts} with `base.branch` instead.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL; one answered with 404 when the page does not resolve.
