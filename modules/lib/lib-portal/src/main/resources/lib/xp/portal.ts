@@ -1277,7 +1277,6 @@ export type ImageUrlPartsParams = IdXorPath & {
     params?: object;
     project?: string;
     branch?: string;
-    base?: UrlBase;
 };
 
 /**
@@ -1309,8 +1308,6 @@ interface ImageUrlPartsHandler {
     setProjectName(value: string | null): void;
 
     setBranch(value: string | null): void;
-
-    setBase(value: UrlBase | null): void;
 
     setScale(value: string): void;
 
@@ -1349,9 +1346,8 @@ interface ImageUrlPartsHandler {
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] Filters to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
- * @param {string} [params.project] Name of the project. Defaults to the project of `base`, or of the current context.
- * @param {string} [params.branch] Name of the branch. Defaults to the branch of `base`, or of the current context.
- * @param {object} [params.base] A base resolved by {@link urlBase}, whose project and branch apply where none is given.
+ * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
+ * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
  * @param {object} [params.params] Custom query parameters of the URL.
  *
  * @returns {object} The parts: `path`, `queryString`, `context`, `id`, `fingerprint`, `scale` and `name`.
@@ -1365,7 +1361,6 @@ export function imageUrlParts(params: ImageUrlPartsParams): ImageUrlParts {
     bean.setPath(__.nullOrValue(params.path));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-    bean.setBase(__.nullOrValue(params.base));
     bean.setScale(scale);
     bean.setQuality(__.nullOrValue(params.quality));
     bean.setBackground(__.nullOrValue(params.background));
@@ -1383,7 +1378,6 @@ export type AttachmentUrlPartsParams = IdXorPath & {
     params?: object;
     project?: string;
     branch?: string;
-    base?: UrlBase;
 };
 
 /**
@@ -1414,8 +1408,6 @@ interface AttachmentUrlPartsHandler {
 
     setBranch(value: string | null): void;
 
-    setBase(value: UrlBase | null): void;
-
     setName(value: string | null): void;
 
     setLabel(value: string | null): void;
@@ -1444,9 +1436,8 @@ interface AttachmentUrlPartsHandler {
  * @param {string} [params.name] Name of the attachment. Picks the attachment by name, before `label`.
  * @param {string} [params.label=source] Label of the attachment, used when `name` is absent.
  * @param {boolean} [params.download=false] Set to true to ask for the attachment to be downloaded.
- * @param {string} [params.project] Name of the project. Defaults to the project of `base`, or of the current context.
- * @param {string} [params.branch] Name of the branch. Defaults to the branch of `base`, or of the current context.
- * @param {object} [params.base] A base resolved by {@link urlBase}, whose project and branch apply where none is given.
+ * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
+ * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
  * @param {object} [params.params] Custom query parameters of the URL.
  *
  * @returns {object} The parts: `path`, `queryString`, `context`, `id`, `fingerprint` and `name`.
@@ -1458,7 +1449,6 @@ export function attachmentUrlParts(params: AttachmentUrlPartsParams): Attachment
     bean.setPath(__.nullOrValue(params.path));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-    bean.setBase(__.nullOrValue(params.base));
     bean.setName(__.nullOrValue(params.name));
     bean.setLabel(__.nullOrValue(params.label));
     bean.setDownload(params.download || false);

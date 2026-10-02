@@ -266,7 +266,12 @@ final class RichTextPartsProcessor
     {
         final boolean download = RichTextLinks.DOWNLOAD_MODE.equals( link.mode() );
         final AttachmentUrlParts parts = portalUrlService.attachmentUrlParts(
-            AttachmentUrlPartsParams.create().setId( link.id() ).setBase( base ).setDownload( download ).build() );
+            AttachmentUrlPartsParams.create()
+                .setId( link.id() )
+                .setProjectName( base::getProjectName )
+                .setBranch( base::getBranch )
+                .setDownload( download )
+                .build() );
 
         links.add( new ProcessedHtml.AttachmentLink( ref, link.uri(), link.id(), parts, download ) );
 
@@ -329,7 +334,8 @@ final class RichTextPartsProcessor
     {
         return portalUrlService.imageUrlParts( ImageUrlPartsParams.create()
                                                    .setMedia( media )
-                                                   .setBase( base )
+                                                   .setProjectName( base::getProjectName )
+                                                   .setBranch( base::getBranch )
                                                    .setScale( scale )
                                                    .setFilter( style == null ? null : style.getFilter() )
                                                    .build() );

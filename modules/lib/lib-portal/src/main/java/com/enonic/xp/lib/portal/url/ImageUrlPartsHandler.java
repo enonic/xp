@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -30,7 +29,6 @@ public final class ImageUrlPartsHandler
 
     private String branch;
 
-    private UrlBase base;
 
     private String scale;
 
@@ -68,11 +66,6 @@ public final class ImageUrlPartsHandler
     public void setBranch( final String branch )
     {
         this.branch = branch;
-    }
-
-    public void setBase( final UrlBase base )
-    {
-        this.base = base;
     }
 
     public void setScale( final String scale )
@@ -116,7 +109,6 @@ public final class ImageUrlPartsHandler
             .setFormat( this.format )
             .setFilter( this.filter );
 
-        params.setBase( this.base );
         if ( this.projectName != null )
         {
             final ProjectName projectName = ProjectName.from( this.projectName );

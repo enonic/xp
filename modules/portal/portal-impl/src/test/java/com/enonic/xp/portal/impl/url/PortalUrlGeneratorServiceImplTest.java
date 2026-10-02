@@ -35,8 +35,6 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.webapp.WebappService;
-import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.resource.ResourceService;
@@ -452,48 +450,6 @@ class PortalUrlGeneratorServiceImplTest
             .callWith( () -> this.urlService.imageUrlParts( ImageUrlPartsParams.create().setId( "123456" ).setScale( "max(300)" ).build() ) );
 
         assertEquals( "/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", parts.path() );
-    }
-
-    @Test
-    void imageUrlParts_byIdInTheProjectAndBranchOfTheBase()
-    {
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( ContentId.from( "123456" ) ) ).thenAnswer( invocation -> {
-            assertEquals( "com.enonic.cms.baseproject", ContextAccessor.current().getRepositoryId().toString() );
-            assertEquals( "master", ContextAccessor.current().getBranch().toString() );
-            return media;
-        } );
-
-        final UrlBase base =
-            new UrlBase( ProjectName.from( "baseproject" ), Branch.from( "master" ), ContentPath.ROOT, null, SiteConfigs.empty() );
-
-        // the base applies where the params set no project or branch, in place of the context
-        final ImageUrlParts parts = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
-            .branch( Branch.from( "draft" ) )
-            .build()
-            .callWith( () -> this.urlService.imageUrlParts(
-                ImageUrlPartsParams.create().setId( "123456" ).setBase( base ).setScale( "max(300)" ).build() ) );
-
-        assertEquals( "/media:image/baseproject/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", parts.path() );
-    }
-
-    @Test
-    void attachmentUrlParts_projectSetWinsOverTheBase()
-    {
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( ContentId.from( "123456" ) ) ).thenReturn( media );
-
-        final UrlBase base =
-            new UrlBase( ProjectName.from( "baseproject" ), Branch.from( "draft" ), ContentPath.ROOT, null, SiteConfigs.empty() );
-
-        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( AttachmentUrlPartsParams.create()
-                                                                                 .setId( "123456" )
-                                                                                 .setBase( base )
-                                                                                 .setProjectName( () -> ProjectName.from( "myproject" ) )
-                                                                                 .build() );
-
-        assertEquals( "myproject:draft", parts.context() );
     }
 
     @Test

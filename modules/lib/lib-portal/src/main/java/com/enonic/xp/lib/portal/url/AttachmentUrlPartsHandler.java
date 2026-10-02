@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
@@ -30,7 +29,6 @@ public final class AttachmentUrlPartsHandler
 
     private String branch;
 
-    private UrlBase base;
 
     private String name;
 
@@ -66,11 +64,6 @@ public final class AttachmentUrlPartsHandler
         this.branch = branch;
     }
 
-    public void setBase( final UrlBase base )
-    {
-        this.base = base;
-    }
-
     public void setName( final String name )
     {
         this.name = name;
@@ -100,7 +93,6 @@ public final class AttachmentUrlPartsHandler
             .setLabel( this.label )
             .setDownload( this.download );
 
-        params.setBase( this.base );
         if ( this.projectName != null )
         {
             final ProjectName projectName = ProjectName.from( this.projectName );

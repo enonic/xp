@@ -18,8 +18,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Parameters of {@link PortalUrlService#imageUrlParts(ImageUrlPartsParams)}: the image, and how the image
- * API is asked to process it. The image is supplied, or named by id or path and looked up in the project and branch:
- * those set, or else those of the {@link Builder#setBase(UrlBase) base}, or else those of the current context.
+ * API is asked to process it. The image is supplied, or named by id or path and looked up in the project and branch.
  * The caller supplies the base URL.
  */
 @NullMarked
@@ -34,8 +33,6 @@ public final class ImageUrlPartsParams
     private final @Nullable Supplier<ProjectName> projectNameSupplier;
 
     private final @Nullable Supplier<Branch> branchSupplier;
-
-    private final @Nullable UrlBase base;
 
     private final @Nullable String background;
 
@@ -60,7 +57,6 @@ public final class ImageUrlPartsParams
         this.path = builder.path;
         this.projectNameSupplier = builder.projectNameSupplier;
         this.branchSupplier = builder.branchSupplier;
-        this.base = builder.base;
         this.scale = requireNonNull( builder.scale );
         this.background = builder.background;
         this.quality = builder.quality;
@@ -109,15 +105,6 @@ public final class ImageUrlPartsParams
     public @Nullable Supplier<Branch> getBranch()
     {
         return branchSupplier;
-    }
-
-    /**
-     * @return the base whose project and branch apply where none is set, or {@code null} for those of the current
-     * context
-     */
-    public @Nullable UrlBase getBase()
-    {
-        return base;
     }
 
     /**
@@ -191,8 +178,6 @@ public final class ImageUrlPartsParams
 
         private @Nullable Supplier<Branch> branchSupplier;
 
-        private @Nullable UrlBase base;
-
         private @Nullable String background;
 
         private @Nullable Integer quality;
@@ -242,8 +227,8 @@ public final class ImageUrlPartsParams
         }
 
         /**
-         * @param projectNameSupplier supplier of the project of the image; the project of the base, or of the current
-         *                            context, when not set
+         * @param projectNameSupplier supplier of the project of the image; the project of the current context when not
+         *                            set
          * @return this builder
          */
         public Builder setProjectName( final Supplier<ProjectName> projectNameSupplier )
@@ -253,27 +238,12 @@ public final class ImageUrlPartsParams
         }
 
         /**
-         * @param branchSupplier supplier of the branch of the image; the branch of the base, or of the current context,
-         *                       when not set
+         * @param branchSupplier supplier of the branch of the image; the branch of the current context when not set
          * @return this builder
          */
         public Builder setBranch( final Supplier<Branch> branchSupplier )
         {
             this.branchSupplier = branchSupplier;
-            return this;
-        }
-
-        /**
-         * Takes the project and branch the image is looked up in from a base, where none is set: a caller holding the
-         * base of its page URLs and rich text passes it here too.
-         *
-         * @param base the base, resolved by {@link PortalUrlService#urlBase(UrlBaseParams)}; {@code null} for the
-         *             project and branch of the current context
-         * @return this builder
-         */
-        public Builder setBase( final @Nullable UrlBase base )
-        {
-            this.base = base;
             return this;
         }
 
