@@ -90,7 +90,8 @@ final class DefaultImageLinkProcessor
         if ( "img".equals( element.getTagName() ) && isScalable( imageSupplier ) )
         {
             final List<Integer> imageWidths = params.getImageWidths();
-            if ( imageWidths != null )
+            // sizes goes with the width descriptors of a srcset, so both are written, or neither
+            if ( imageWidths != null && !imageWidths.isEmpty() )
             {
                 final String srcsetValues = imageWidths.stream().map( imageWidth -> {
                     final String scaledImageUrl =
@@ -100,12 +101,12 @@ final class DefaultImageLinkProcessor
                 } ).collect( Collectors.joining( "," ) );
 
                 element.setAttribute( "srcset", srcsetValues );
-            }
 
-            final String imageSizes = params.getImageSizes();
-            if ( imageSizes != null && !imageSizes.trim().isEmpty() )
-            {
-                element.setAttribute( "sizes", imageSizes );
+                final String imageSizes = params.getImageSizes();
+                if ( imageSizes != null && !imageSizes.trim().isEmpty() )
+                {
+                    element.setAttribute( "sizes", imageSizes );
+                }
             }
         }
     }

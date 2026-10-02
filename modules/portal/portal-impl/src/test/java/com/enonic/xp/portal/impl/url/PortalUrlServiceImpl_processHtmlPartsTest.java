@@ -3,6 +3,7 @@ package com.enonic.xp.portal.impl.url;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -358,6 +359,25 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         assertThat( result.html() ).contains(
             "<a href=\"" + attachment.attachment().path() + "?download\" data-link-ref=\"" + attachment.ref() + "\">Download</a>" );
         assertThat( result.html() ).startsWith( "<img src=\"/media:image/" ).doesNotContain( "/_/" ).doesNotContain( "/site/" );
+    }
+
+    @Test
+    void testImageSizesWithoutImageWidths()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        // sizes goes with a srcset: without widths, or with none, neither is written
+        for ( final List<Integer> imageWidths : Arrays.asList( null, List.<Integer>of() ) )
+        {
+            final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
+                                                      .value( "<img src=\"image://" + media.getId() + "\"/>" )
+                                                      .imageWidths( imageWidths )
+                                                      .imageSizes( "(max-width: 960px) 660px" ) );
+
+            assertThat( result.images().get( 0 ).srcset() ).isEmpty();
+            assertThat( result.html() ).doesNotContain( "srcset" ).doesNotContain( "sizes" );
+        }
     }
 
     @Test

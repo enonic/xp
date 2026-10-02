@@ -105,7 +105,7 @@ public final class ProcessHtmlParams
     }
 
     /**
-     * Sets the {@code sizes} attribute of every image, which goes with {@link #imageWidths(List)}.
+     * Sets the {@code sizes} attribute of every image that gets a {@code srcset} from {@link #imageWidths(List)}.
      *
      * @param imageSizes value of the attribute; {@code null} or blank for none
      * @return these params
