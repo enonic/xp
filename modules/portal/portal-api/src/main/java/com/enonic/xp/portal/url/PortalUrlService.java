@@ -111,7 +111,7 @@ public interface PortalUrlService
 
     /**
      * Replaces the internal links of an HTML fragment - to contents, images and attachments -
-     * with URLs, removes empty {@code figcaption} elements, and processes its macros.
+     * with URLs, and processes its macros.
      * {@link #processHtmlParts(ProcessHtmlPartsParams)} resolves the links from configuration alone.
      *
      * @param params the HTML and how to process it
@@ -121,8 +121,7 @@ public interface PortalUrlService
 
     /**
      * Resolves the parts of the internal links of an HTML fragment - to contents, images and attachments - from
-     * configuration alone, replaces each link with a placeholder, removes empty {@code figcaption} elements, and
-     * processes its macros.
+     * configuration alone, replaces each link with a placeholder, and processes its macros.
      * <p>
      * Everything is resolved for the site or project {@link ProcessHtmlPartsParams#getBase()} names: the Base URL, the
      * content path each content link is relative to, the project and branch contents are looked up in, and the
