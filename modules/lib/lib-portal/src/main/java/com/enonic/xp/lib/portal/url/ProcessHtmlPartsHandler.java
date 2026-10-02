@@ -3,9 +3,9 @@ package com.enonic.xp.lib.portal.url;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
+import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -20,13 +20,7 @@ public final class ProcessHtmlPartsHandler
 
     private String value;
 
-    private String baseId;
-
-    private String basePath;
-
-    private String baseProjectName;
-
-    private String baseBranch;
+    private UrlBase base;
 
     private List<Integer> imageWidths;
 
@@ -43,24 +37,9 @@ public final class ProcessHtmlPartsHandler
         this.value = value;
     }
 
-    public void setBaseId( final String baseId )
+    public void setBase( final UrlBase base )
     {
-        this.baseId = baseId;
-    }
-
-    public void setBasePath( final String basePath )
-    {
-        this.basePath = basePath;
-    }
-
-    public void setBaseProjectName( final String baseProjectName )
-    {
-        this.baseProjectName = baseProjectName;
-    }
-
-    public void setBaseBranch( final String baseBranch )
-    {
-        this.baseBranch = baseBranch;
+        this.base = base;
     }
 
     public void setImageWidths( final List<Integer> imageWidths )
@@ -75,17 +54,10 @@ public final class ProcessHtmlPartsHandler
 
     public MapSerializable process()
     {
-        final BaseUrlParams base = BaseUrlParams.create()
-            .setId( this.baseId )
-            .setPath( this.basePath )
-            .setProjectName( this.baseProjectName )
-            .setBranch( this.baseBranch )
-            .build();
-
         return new ProcessedHtmlMapper( urlServiceSupplier.get()
                                             .processHtmlParts( ProcessHtmlPartsParams.create()
                                                                    .value( this.value )
-                                                                   .base( base )
+                                                                   .base( this.base )
                                                                    .imageWidths( this.imageWidths )
                                                                    .imageSizes( this.imageSizes )
                                                                    .build() ) );

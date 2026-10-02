@@ -11,8 +11,6 @@ import com.google.common.base.Strings;
 
 import com.enonic.xp.style.StyleDescriptors;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * Parameters of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the HTML fragment, the site or
  * project it belongs to, and how its images and macros are processed.
@@ -22,7 +20,7 @@ public final class ProcessHtmlPartsParams
 {
     private final @Nullable String value;
 
-    private final BaseUrlParams base;
+    private final @Nullable UrlBase base;
 
     private final @Nullable List<Integer> imageWidths;
 
@@ -37,7 +35,7 @@ public final class ProcessHtmlPartsParams
     private ProcessHtmlPartsParams( final Builder builder )
     {
         this.value = builder.value;
-        this.base = requireNonNull( builder.base, "base" );
+        this.base = builder.base;
         this.imageWidths = builder.imageWidths == null ? null : List.copyOf( builder.imageWidths );
         this.imageSizes = builder.imageSizes;
         this.customHtmlProcessor = builder.customHtmlProcessor;
@@ -54,9 +52,10 @@ public final class ProcessHtmlPartsParams
     }
 
     /**
-     * @return the site or project the HTML belongs to
+     * @return the site or project the HTML belongs to, or {@code null} for the project of the current context
+     * @see Builder#base(UrlBase)
      */
-    public BaseUrlParams getBase()
+    public @Nullable UrlBase getBase()
     {
         return base;
     }
@@ -111,13 +110,13 @@ public final class ProcessHtmlPartsParams
     }
 
     /**
-     * Builder of {@link ProcessHtmlPartsParams}. The base is required.
+     * Builder of {@link ProcessHtmlPartsParams}.
      */
     public static final class Builder
     {
         private @Nullable String value;
 
-        private @Nullable BaseUrlParams base;
+        private @Nullable UrlBase base;
 
         private @Nullable List<Integer> imageWidths;
 
@@ -144,16 +143,16 @@ public final class ProcessHtmlPartsParams
         }
 
         /**
-         * Selects the site - or the project - the HTML belongs to, by the same parameters
-         * {@link PortalUrlService#baseUrl(BaseUrlParams)} takes. Its configuration decides the Base URL, what content
-         * links are relative to, the project and branch contents are looked up in, and the applications image styles
-         * come from.
+         * Sets the site - or the project - the HTML belongs to. Its configuration decides the Base URL, what content
+         * links are relative to, and the applications image styles come from; contents are looked up in its project
+         * and branch.
          *
-         * @param base the site or project the HTML belongs to
+         * @param base the base, resolved by {@link PortalUrlService#urlBase(UrlBaseParams)}; {@code null} for the
+         *             project of the current context
          * @return this builder
-         * @see PageUrlPartsParams.Builder#setBase(BaseUrlParams)
+         * @see PageUrlPartsParams.Builder#setBase(UrlBase)
          */
-        public Builder base( final BaseUrlParams base )
+        public Builder base( final @Nullable UrlBase base )
         {
             this.base = base;
             return this;
@@ -225,7 +224,6 @@ public final class ProcessHtmlPartsParams
 
         /**
          * @return the params
-         * @throws NullPointerException if the base is not set
          */
         public ProcessHtmlPartsParams build()
         {

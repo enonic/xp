@@ -2,14 +2,17 @@ var portalLib = require('/lib/xp/portal');
 var t = require('/lib/xp/testing');
 
 // BEGIN
+// The site the URLs belong to: resolve it once, and pass it to every call of the same request
+var base = portalLib.urlBase({
+    key: '/my-site',
+    project: 'myproject',
+    branch: 'master'
+});
+
 // Process rich text of a site: each link in the HTML is a placeholder, rendered from the parts of its entry
 var result = portalLib.processHtmlParts({
     value: '<a href="content://123456">Post</a>',
-    base: {
-        path: '/my-site',
-        project: 'myproject',
-        branch: 'master'
-    }
+    base: base
 });
 
 // The site's configured Base URL, or the origin the frontend serves the site from

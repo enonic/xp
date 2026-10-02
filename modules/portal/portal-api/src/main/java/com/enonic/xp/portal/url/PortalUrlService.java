@@ -35,9 +35,8 @@ public interface PortalUrlService
      * address of that site or project when none is configured. On a site request it follows the
      * request: it is the address of the level the matched virtual host mapping points at.
      * <p>
-     * A project or branch in the params resolves the base URL from configuration in place of the request. This use is
-     * deprecated: {@link #pageUrlParts(PageUrlPartsParams)}, with a base naming the project and branch, resolves the
-     * configured Base URL.
+     * A project or branch in the params resolves the base URL from configuration in place of the request, which is
+     * deprecated: {@link #urlBase(UrlBaseParams)} resolves the configured Base URL for a project and branch.
      * <p>
      * Failures are reported to the caller as exceptions.
      *
@@ -59,13 +58,24 @@ public interface PortalUrlService
     String pageUrl( PageUrlParams params );
 
     /**
+     * Resolves the site or project URLs belong to, from configuration alone, for
+     * {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)}. Resolve it once
+     * and pass it to every call of the same request.
+     *
+     * @param params the site or project, and the project and branch it is in
+     * @return the resolved base
+     * @throws com.enonic.xp.content.ContentNotFoundException if the content the key names does not exist
+     */
+    UrlBase urlBase( UrlBaseParams params );
+
+    /**
      * Resolves the parts of a page URL, for building the full URL from segments:
      * {@code url = baseUrl + path + queryString}.
      * <p>
-     * Resolution is from configuration alone. The site or project the URL belongs to is the one
-     * {@link PageUrlPartsParams#getBase()} selects, in the project and branch it names or the
-     * current context. The base URL is the one configured there, {@code null} when none is; the
-     * path is the URL-escaped content path relative to it.
+     * Resolution is from configuration alone. The URL belongs to the {@link PageUrlPartsParams#getBase() base},
+     * the project of the current context unless given, and the content is looked up in its project
+     * and branch. The base URL is the one configured there, {@code null} when none is; the path is
+     * the URL-escaped content path relative to it.
      *
      * @param params the content and the site or project the URL belongs to
      * @return the parts of the URL
@@ -130,9 +140,9 @@ public interface PortalUrlService
      * Resolves the parts of the internal links of an HTML fragment - to contents, images and attachments - from
      * configuration alone, replaces each link with a placeholder, and processes its macros.
      * <p>
-     * Everything is resolved for the site or project {@link ProcessHtmlPartsParams#getBase()} names: the Base URL, the
-     * content path each content link is relative to, the project and branch contents are looked up in, and the
-     * applications image styles come from.
+     * Everything is resolved for the {@link ProcessHtmlPartsParams#getBase() base}, the project of the current context
+     * unless given: the Base URL, the content path each content link is relative to, the project and branch contents are
+     * looked up in, and the applications image styles come from. The base is resolved once for every link.
      * <p>
      * The caller renders each element from the parts of its entry in {@link ProcessedHtml#links()} or
      * {@link ProcessedHtml#images()}, which the {@value ProcessedHtml#LINK_REF_ATTRIBUTE} or

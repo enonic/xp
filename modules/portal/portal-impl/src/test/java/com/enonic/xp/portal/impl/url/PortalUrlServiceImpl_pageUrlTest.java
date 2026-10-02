@@ -351,17 +351,17 @@ class PortalUrlServiceImpl_pageUrlTest
                 when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
-                final BaseUrlParams base = BaseUrlParams.create().setPath( "/mycontent" ).build();
+                final String base = "/mycontent";
                 final PageUrlParts parts = this.service.pageUrlParts(
-                    PageUrlPartsParams.create().setPath( "/mycontent" ).setQueryParam( "a", "1" ).setBase( base ).build() );
+                    PageUrlPartsParams.create().setPath( "/mycontent" ).setQueryParam( "a", "1" ).setBase( base( base ) ).build() );
                 assertNull( parts.baseUrl() );
                 assertEquals( "/b/mycontent", parts.path() );
                 assertEquals( "?a=1", parts.queryString() );
 
                 // pageUrl addresses the same site through the site engine
-                assertEquals( "/site/myproject/draft/a", this.service.baseUrl( base ) );
+                assertEquals( "/site/myproject/draft/a", this.service.baseUrl( BaseUrlParams.create().setPath( base ).build() ) );
                 assertEquals( this.service.pageUrl( new PageUrlParams().path( "/mycontent" ).param( "a", "1" ) ),
-                              this.service.baseUrl( base ) + parts.path() + parts.queryString() );
+                              this.service.baseUrl( BaseUrlParams.create().setPath( base ).build() ) + parts.path() + parts.queryString() );
             } );
     }
 
@@ -394,7 +394,7 @@ class PortalUrlServiceImpl_pageUrlTest
                 final PageUrlParts parts = this.service.pageUrlParts( PageUrlPartsParams.create()
                                                                           .setPath( "/mycontent" )
                                                                           .setQueryParam( "a", "1" )
-                                                                          .setBase( BaseUrlParams.create().setPath( "/mycontent" ).build() )
+                                                                          .setBase( base( "/mycontent" ) )
                                                                           .build() );
                 assertEquals( "https://example.com", parts.baseUrl() );
                 assertEquals( "/b/mycontent", parts.path() );
@@ -406,9 +406,24 @@ class PortalUrlServiceImpl_pageUrlTest
     }
 
     @Test
-    void testPageUrlPartsRequireBase()
+    void testPageUrlPartsWithoutBaseBelongToTheProject()
     {
-        assertThrows( NullPointerException.class, () -> PageUrlPartsParams.create().setPath( "/mycontent" ).build() );
+        ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .runWith( () -> {
+                PortalRequestAccessor.set( null );
+
+                final Content content = ContentFixtures.newContent();
+                when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+
+                final PageUrlParts parts = this.service.pageUrlParts( PageUrlPartsParams.create().setPath( "/mycontent" ).build() );
+                assertNull( parts.baseUrl() );
+                assertEquals( "/a/b/mycontent", parts.path() );
+                assertEquals( parts, this.service.pageUrlParts(
+                    PageUrlPartsParams.create().setPath( "/mycontent" ).setBase( base( "/" ) ).build() ) );
+            } );
     }
 
     @Test
@@ -427,7 +442,7 @@ class PortalUrlServiceImpl_pageUrlTest
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
                 final PageUrlParts parts = this.service.pageUrlParts(
-                    PageUrlPartsParams.create().setPath( "/mycontent" ).setBase( BaseUrlParams.create().setPath( "/mycontent" ).build() ).build() );
+                    PageUrlPartsParams.create().setPath( "/mycontent" ).setBase( base( "/mycontent" ) ).build() );
                 assertNull( parts.baseUrl() );
                 // no site to relativise against: the full content path
                 assertEquals( "/a/b/mycontent", parts.path() );

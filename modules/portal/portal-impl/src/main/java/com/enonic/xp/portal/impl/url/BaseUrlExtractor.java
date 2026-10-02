@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.concurrent.Callable;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -33,7 +35,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
     BaseUrlMetadata extract( final BaseUrlParams params, final boolean followRequest )
     {
-        return extract( params, followRequest, true );
+        return extract( params.getProjectName(), params.getBranch(), () -> resolveContentAnchor( params ), followRequest, true );
     }
 
     /**
@@ -41,23 +43,27 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
      * current context, the configuration of a project is read from the project service, and the
      * Base URL is the one configured, {@code null} when there is none.
      */
-    BaseUrlMetadata extractFromConfiguration( final BaseUrlParams params )
+    BaseUrlMetadata extractFromConfiguration( final String baseKey, final String projectName, final String branch )
     {
-        return extract( params, false, false );
+        return extract( projectName, branch, () -> resolveContent( baseKey ), false, false );
     }
 
-    private BaseUrlMetadata extract( final BaseUrlParams params, final boolean followRequest, final boolean contextFromRequest )
+    /**
+     * @param anchor the content the URL is anchored to, looked up in the resolved project and branch
+     */
+    private BaseUrlMetadata extract( final String explicitProjectName, final String explicitBranch,
+                                     final Callable<Content> anchor, final boolean followRequest, final boolean contextFromRequest )
     {
-        final boolean noExplicitContext = contextFromRequest && params.getProjectName() == null && params.getBranch() == null;
+        final boolean noExplicitContext = contextFromRequest && explicitProjectName == null && explicitBranch == null;
 
         final ProjectName projectName = ContentProjectResolver.create()
-            .setProjectName( params.getProjectName() )
+            .setProjectName( explicitProjectName )
             .setPreferSiteRequest( noExplicitContext )
             .build()
             .resolve();
 
         final Branch branch =
-            ContentBranchResolver.create().setBranch( params.getBranch() ).setPreferSiteRequest( noExplicitContext ).build().resolve();
+            ContentBranchResolver.create().setBranch( explicitBranch ).setPreferSiteRequest( noExplicitContext ).build().resolve();
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
@@ -74,7 +80,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         final Context context =
             ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
 
-        final Content content = context.callWith( () -> resolveContentAnchor( params ) );
+        final Content content = context.callWith( anchor );
 
         // the base URL belongs to the site of this content, and the URL is anchored there.
         // Configuration of a site is never inherited from a parent site, so that site decides

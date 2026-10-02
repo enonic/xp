@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
+import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -38,7 +40,6 @@ import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
@@ -64,6 +65,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class PortalUrlServiceImpl_processHtmlPartsTest
@@ -117,13 +120,30 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         ContextAccessorSupport.getInstance().remove();
     }
 
+    /**
+     * Processes in the context project and branch, with the project as the base.
+     */
     private ProcessedHtml process( final ProcessHtmlPartsParams.Builder params )
+    {
+        return inContext( () -> service.processHtmlParts( params.build() ) );
+    }
+
+    /**
+     * Processes in the context project and branch, for the base the key names.
+     */
+    private ProcessedHtml process( final ProcessHtmlPartsParams.Builder params, final String baseKey )
+    {
+        return inContext(
+            () -> service.processHtmlParts( params.base( service.urlBase( UrlBaseParams.create().setKey( baseKey ).build() ) ).build() ) );
+    }
+
+    private static <T> T inContext( final Callable<T> callable )
     {
         return ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
             .branch( Branch.from( "context-branch" ) )
             .build()
-            .callWith( () -> service.processHtmlParts( params.build() ) );
+            .callWith( callable );
     }
 
     private Content contentInNestedSites( final String parentBaseUrl )
@@ -144,7 +164,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     {
         mockSiteWithBaseUrl( ContentPath.from( "/a" ), "https://parent.example.com" );
 
-        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().base( BaseUrlParams.create().setPath( "/a" ).build() ) );
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create(), "/a" );
 
         assertEquals( "", result.html() );
         assertEquals( "https://parent.example.com", result.baseUrl() );
@@ -158,8 +178,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         final Content content = contentInNestedSites( "https://parent.example.com/" );
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
-                                                  .value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) )
-                                                  .base( BaseUrlParams.create().setPath( "/a" ).build() ) );
+                                                  .value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) ), "/a" );
 
         // the link is the content path relative to /a; the Base URL of /a comes with the result
         assertEquals( "https://parent.example.com", result.baseUrl() );
@@ -175,13 +194,25 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     @Test
+    void testBaseIsResolvedOnceForEveryLink()
+    {
+        final Content content = contentInNestedSites( "https://parent.example.com" );
+        final String link = String.format( "<a href=\"content://%s\">Content</a>", content.getId() );
+
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( link + link + link ), "/a" );
+
+        assertEquals( 3, result.links().size() );
+        verify( this.contentService, times( 1 ) ).getByPath( ContentPath.from( "/a" ) );
+    }
+
+    @Test
     void testLinksThatDoNotResolveHaveEntriesWithoutParts()
     {
         final Content content = contentInNestedSites( null );
         final String html = String.format( "<a href=\"content://missing?fragment=top\">Gone</a>" + "<a href=\"media://download/missing\">Gone</a>" +
                                                "<img src=\"image://missing\">" + "<a href=\"content://%s\">Content</a>", content.getId() );
 
-        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ).base( BaseUrlParams.create().setPath( "/a" ).build() ) );
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ), "/a" );
 
         assertEquals( 3, result.links().size() );
         final ProcessedHtml.ContentLink gone = (ProcessedHtml.ContentLink) result.links().get( 0 );
@@ -209,7 +240,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         mockSiteWithBaseUrl( ContentPath.from( "/c" ), null );
 
         final String html = String.format( "<a href=\"content://%s\">Content</a>", content.getId() );
-        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ).base( BaseUrlParams.create().setPath( "/c" ).build() ) );
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ), "/c" );
 
         final ProcessedHtml.ContentLink link = (ProcessedHtml.ContentLink) result.links().get( 0 );
         assertNull( link.page() );
@@ -224,8 +255,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         final Content content = contentInNestedSites( null );
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
-                                                  .value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) )
-                                                  .base( BaseUrlParams.create().setPath( "/a" ).build() ) );
+                                                  .value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) ), "/a" );
 
         assertNull( result.baseUrl() );
         assertNull( ( (ProcessedHtml.ContentLink) result.links().get( 0 ) ).page().baseUrl() );
@@ -240,8 +270,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
                                                   .value( String.format(
                                                       "<a href=\"content://%s?query=a%%3D1&amp;fragment=top\">Content</a>",
-                                                      content.getId() ) )
-                                                  .base( BaseUrlParams.create().setPath( "/a" ).build() ) );
+                                                      content.getId() ) ), "/a" );
 
         final ProcessedHtml.ContentLink link = (ProcessedHtml.ContentLink) result.links().get( 0 );
         assertEquals( "?a=1", link.page().queryString() );
@@ -254,8 +283,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     {
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
                                                   .value( "<p>[correct_macro/]</p>" )
-                                                  .processMacros( false )
-                                                  .base( BaseUrlParams.create().setPath( "/" ).build() ) );
+                                                  .processMacros( false ) );
 
         assertEquals( "<p>[correct_macro/]</p>", result.html() );
     }
@@ -268,8 +296,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                   .customHtmlProcessor( processor -> {
                                                       processor.processDefault();
                                                       return processor.getDocument().getInnerHtml() + "[correct_macro/]";
-                                                  } )
-                                                  .base( BaseUrlParams.create().setPath( "/" ).build() ) );
+                                                  } ) );
 
         assertEquals( "<p>Text</p><!--#MACRO _name=\"correct_macro\" _document=\"__macroDocument1\" _body=\"\"-->", result.html() );
     }
@@ -279,8 +306,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     {
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
                                                   .value( "<figure><img src=\"src\"/><figcaption></figcaption></figure>" +
-                                                              "<figure><img src=\"src\"/><figcaption>Caption text</figcaption></figure>" )
-                                                  .base( BaseUrlParams.create().setPath( "/" ).build() ) );
+                                                              "<figure><img src=\"src\"/><figcaption>Caption text</figcaption></figure>" ) );
 
         assertEquals( "<figure><img src=\"src\"></figure><figure><img src=\"src\"><figcaption>Caption text</figcaption></figure>",
                       result.html() );
@@ -294,8 +320,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         when( this.contentService.getByPath( ContentPath.from( "/a" ) ) ).thenReturn( site );
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
-                                                  .value( String.format( "<a href=\"content://%s\">Site</a>", site.getId() ) )
-                                                  .base( BaseUrlParams.create().setPath( "/a" ).build() ) );
+                                                  .value( String.format( "<a href=\"content://%s\">Site</a>", site.getId() ) ), "/a" );
 
         // the relative path of the level itself is empty: its root is linked instead of the document
         assertEquals( "", ( (ProcessedHtml.ContentLink) result.links().get( 0 ) ).page().path() );
@@ -312,8 +337,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                   .value( "<img src=\"image://" + media.getId() + "\"/><a href=\"media://download/" +
                                                               media.getId() + "\">Download</a>" )
                                                   .imageWidths( List.of( 660 ) )
-                                                  .imageSizes( " " )
-                                                  .base( BaseUrlParams.create().setPath( "/" ).build() ) );
+                                                  .imageSizes( " " ) );
 
         // the bare media API paths, with the context's project and branch
         final String image = "/media:image/context-project:context-branch/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22";
@@ -345,8 +369,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
                                                   .value( "<img src=\"image://" + media.getId() + "\"/>" )
                                                   .imageWidths( List.of( 660 ) )
-                                                  .imageSizes( "(max-width: 960px) 660px" )
-                                                  .base( BaseUrlParams.create().setPath( "/" ).build() ) );
+                                                  .imageSizes( "(max-width: 960px) 660px" ) );
 
         assertThat( result.images().get( 0 ).srcset() ).isEmpty();
         assertThat( result.html() ).contains( "/full/mycontent\"" ).doesNotContain( "srcset" ).doesNotContain( "sizes" );
@@ -365,8 +388,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         when( this.contentService.getById( media.getId() ) ).thenReturn( media );
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
-                                                  .value( "<img src=\"image://" + media.getId() + "\"/>" )
-                                                  .base( BaseUrlParams.create().setPath( "/" ).build() ) );
+                                                  .value( "<img src=\"image://" + media.getId() + "\"/>" ) );
 
         // media.defaultBaseUrl stands for vhost configuration: the parts are built without it
         assertThat( result.html() ).startsWith( "<img src=\"/media:image/context-project:context-branch/" ).doesNotContain( "cdn.example.com" );

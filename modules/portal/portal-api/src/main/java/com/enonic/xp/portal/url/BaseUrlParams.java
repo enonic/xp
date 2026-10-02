@@ -16,8 +16,6 @@ import static java.util.Objects.requireNonNullElse;
  * taking precedence. The path {@code "/"} names the root of the project: the level is then the project itself.
  *
  * @see PortalUrlService#baseUrl(BaseUrlParams)
- * @see PageUrlPartsParams.Builder#setBase(BaseUrlParams)
- * @see ProcessHtmlPartsParams.Builder#base(BaseUrlParams)
  */
 @NullMarked
 public final class BaseUrlParams
@@ -118,9 +116,13 @@ public final class BaseUrlParams
         }
 
         /**
+         * Sets the project of the content. The base URL is then resolved from configuration in place of the request.
+         *
          * @param projectName project of the content; {@code null} to take it from the context
          * @return this builder
+         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the project set on its params
          */
+        @Deprecated
         public Builder setProjectName( final @Nullable String projectName )
         {
             this.projectName = projectName;
@@ -128,9 +130,13 @@ public final class BaseUrlParams
         }
 
         /**
+         * Sets the branch of the content. The base URL is then resolved from configuration in place of the request.
+         *
          * @param branch branch of the content; {@code null} to take it from the context
          * @return this builder
+         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the branch set on its params
          */
+        @Deprecated
         public Builder setBranch( final @Nullable String branch )
         {
             this.branch = branch;
