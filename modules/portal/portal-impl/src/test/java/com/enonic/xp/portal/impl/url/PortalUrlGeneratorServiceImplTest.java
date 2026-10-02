@@ -243,7 +243,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -259,7 +259,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/unknownName", url );
     }
 
     @Test

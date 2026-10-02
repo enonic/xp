@@ -81,7 +81,8 @@ public interface PortalUrlService
      * Generates the URL of a processed image: an image or a vector image.
      *
      * @param params the image and how to process it
-     * @return the URL, or an error URL when it cannot be generated
+     * @return the URL; one the image API answers with 404 when the image does not resolve,
+     *         and an error URL when no URL can be generated
      */
     String imageUrl( ImageUrlParams params );
 
@@ -89,7 +90,8 @@ public interface PortalUrlService
      * Generates the URL of an attachment.
      *
      * @param params the content and the attachment of it
-     * @return the URL, or an error URL when it cannot be generated
+     * @return the URL; one the attachment API answers with 404 when the attachment does not resolve,
+     *         and an error URL when no URL can be generated
      */
     String attachmentUrl( AttachmentUrlParams params );
 

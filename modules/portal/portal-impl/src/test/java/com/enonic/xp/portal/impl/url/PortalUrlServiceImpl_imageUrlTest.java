@@ -165,7 +165,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         // only images and vector images have an image URL
-        assertThat( url ).startsWith( "/_/error/500" );
+        assertEquals( "baseUrl/_/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -244,7 +244,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:image/_error/_error/max-300/_error", url );
     }
 
     @Test
@@ -262,7 +262,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -280,7 +280,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:image/_error/_error/max-300/_error", url );
     }
 
     @Test

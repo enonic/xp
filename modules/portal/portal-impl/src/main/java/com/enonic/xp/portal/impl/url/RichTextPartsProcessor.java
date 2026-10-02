@@ -200,16 +200,36 @@ final class RichTextPartsProcessor
             }
             case RichTextLinks.MEDIA_TYPE ->
             {
+                final boolean download = RichTextLinks.DOWNLOAD_MODE.equals( link.mode() );
                 element.setAttribute( ProcessedHtml.LINK_REF_ATTRIBUTE, ref );
-                links.add( new ProcessedHtml.AttachmentLink( ref, link.uri(), link.id(), null,
-                                                             RichTextLinks.DOWNLOAD_MODE.equals( link.mode() ) ) );
+                element.setAttribute( link.attribute(),
+                                      MediaPathParts.unresolved( link.id(), null, null )
+                                          .path( PortalUrlGeneratorServiceImpl.MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY ) +
+                                          ( download ? "?download" : "" ) );
+                links.add( new ProcessedHtml.AttachmentLink( ref, link.uri(), link.id(), null, download ) );
             }
             case RichTextLinks.IMAGE_TYPE ->
             {
                 element.setAttribute( ProcessedHtml.IMAGE_REF_ATTRIBUTE, ref );
+                element.setAttribute( link.attribute(), MediaPathParts.unresolved( link.id(), unresolvedScale( link ), null )
+                    .path( PortalUrlGeneratorServiceImpl.MEDIA_IMAGE_API_DESCRIPTOR_KEY ) );
                 images.add( new ProcessedHtml.Image( ref, link.id(), null, null, List.of() ) );
             }
             default -> throw new IllegalStateException( "Unknown type " + link.type() );
+        }
+    }
+
+    private String unresolvedScale( final RichTextLinks.Link link )
+    {
+        try
+        {
+            final String styleName = link.urlParams().get( "style" );
+            final ImageStyle style = styleName == null ? null : imageStyles.get().get( styleName );
+            return ImageMediaPathSupplier.resolveScale( DefaultImageLinkProcessor.scale( style, link.urlParams().get( "scale" ), null ) );
+        }
+        catch ( RuntimeException e )
+        {
+            return ImageMediaPathSupplier.FULL_SCALE;
         }
     }
 
