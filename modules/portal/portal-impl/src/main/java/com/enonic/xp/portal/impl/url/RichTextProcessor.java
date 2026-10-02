@@ -47,7 +47,7 @@ public class RichTextProcessor
 
     private final MacroService macroService;
 
-    private Supplier<Map<String, ImageStyle>> imageStylesSupplier;
+    private Supplier<ImageStyles> imageStylesSupplier;
 
     private Supplier<String> imageBaseUrlSupplier;
 

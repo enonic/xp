@@ -131,6 +131,9 @@ public interface PortalUrlService
      * Replaces the internal links of an HTML fragment - to contents, images and attachments -
      * with URLs, and processes its macros.
      * {@link #processHtmlParts(ProcessHtmlPartsParams)} resolves the links from configuration alone.
+     * <p>
+     * An image names its style in its {@code style} parameter: {@code <application>:<name>} for the style of that
+     * application, or a name alone for the first style of that name.
      *
      * @param params the HTML and how to process it
      * @return the processed HTML; empty when there is no HTML
@@ -144,6 +147,9 @@ public interface PortalUrlService
      * Everything is resolved for the {@link ProcessHtmlPartsParams#getBase() base}, the project of the current context
      * unless given: the Base URL, the content path each content link is relative to, the project and branch contents are
      * looked up in, and the applications image styles come from. The base is resolved once for every link.
+     * <p>
+     * An image names its style in its {@code style} parameter: {@code <application>:<name>} for the style of that
+     * application, or a name alone for the first style of that name.
      * <p>
      * The caller renders each element from the parts of its entry in {@link ProcessedHtml#links()} or
      * {@link ProcessedHtml#images()}, which the {@value ProcessedHtml#LINK_REF_ATTRIBUTE} or

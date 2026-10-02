@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Splitter;
 
@@ -18,7 +17,6 @@ import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
 
@@ -129,12 +127,8 @@ final class RichTextLinks
         return styleDescriptorService.getByApplications( ApplicationKeys.from( appKeys ) );
     }
 
-    static Map<String, ImageStyle> imageStyles( final StyleDescriptors styleDescriptors )
+    static ImageStyles imageStyles( final StyleDescriptors styleDescriptors )
     {
-        return styleDescriptors.stream()
-            .flatMap( styleDescriptor -> styleDescriptor.getElements().stream() )
-            .filter( element -> element instanceof ImageStyle )
-            .map( ImageStyle.class::cast )
-            .collect( Collectors.toUnmodifiableMap( ImageStyle::getName, style -> style, ( first, second ) -> first ) );
+        return new ImageStyles( styleDescriptors );
     }
 }

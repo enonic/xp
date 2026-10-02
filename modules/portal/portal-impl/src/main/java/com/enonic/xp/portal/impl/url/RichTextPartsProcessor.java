@@ -59,7 +59,7 @@ final class RichTextPartsProcessor
 
     private final UrlBase base;
 
-    private final Supplier<Map<String, ImageStyle>> imageStyles;
+    private final Supplier<ImageStyles> imageStyles;
 
     private final List<ProcessedHtml.Link> links = new ArrayList<>();
 
