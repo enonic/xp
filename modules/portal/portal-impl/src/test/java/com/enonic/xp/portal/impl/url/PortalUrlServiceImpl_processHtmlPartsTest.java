@@ -175,23 +175,33 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     @Test
-    void testLinksThatDoNotResolveAreLeftAsWritten()
+    void testLinksThatDoNotResolveHaveEntriesWithoutParts()
     {
         final Content content = contentInNestedSites( null );
-        final String html = String.format( "<a href=\"content://missing\">Gone</a>" + "<a href=\"media://download/missing\">Gone</a>" +
+        final String html = String.format( "<a href=\"content://missing?fragment=top\">Gone</a>" + "<a href=\"media://download/missing\">Gone</a>" +
                                                "<img src=\"image://missing\">" + "<a href=\"content://%s\">Content</a>", content.getId() );
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ).base( BaseUrlParams.create().setPath( "/a" ).build() ) );
 
-        assertEquals( 1, result.links().size() );
-        assertThat( result.images() ).isEmpty();
+        assertEquals( 3, result.links().size() );
+        final ProcessedHtml.ContentLink gone = (ProcessedHtml.ContentLink) result.links().get( 0 );
+        assertNull( gone.page() );
+        assertEquals( "top", gone.fragment() );
+        final ProcessedHtml.AttachmentLink goneMedia = (ProcessedHtml.AttachmentLink) result.links().get( 1 );
+        assertNull( goneMedia.attachment() );
+        assertThat( goneMedia.download() ).isTrue();
+        assertNull( result.images().get( 0 ).src() );
+        assertThat( result.images().get( 0 ).srcset() ).isEmpty();
+
+        // the links are left as written, with a ref to their entries; the rest of the text is processed
         assertThat( result.html() ).startsWith(
-            "<a href=\"content://missing\">Gone</a><a href=\"media://download/missing\">Gone</a><img src=\"image://missing\">" );
-        assertThat( result.html() ).contains( "<a href=\"/b/mycontent\" data-link-ref=\"" + result.links().get( 0 ).ref() + "\">" );
+            "<a href=\"content://missing?fragment=top\" data-link-ref=\"" + gone.ref() + "\">Gone</a>" + "<a href=\"media://download/missing\" data-link-ref=\"" + goneMedia.ref() +
+                "\">Gone</a><img src=\"image://missing\" data-image-ref=\"" + result.images().get( 0 ).ref() + "\">" );
+        assertThat( result.html() ).contains( "<a href=\"/b/mycontent\" data-link-ref=\"" + result.links().get( 2 ).ref() + "\">" );
     }
 
     @Test
-    void testContentLinkOutsideTheBaseIsLeftAsWritten()
+    void testContentLinkOutsideTheBaseHasNoParts()
     {
         final Content content = contentInNestedSites( null );
         mockSiteWithBaseUrl( ContentPath.from( "/c" ), null );
@@ -199,8 +209,9 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         final String html = String.format( "<a href=\"content://%s\">Content</a>", content.getId() );
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ).base( BaseUrlParams.create().setPath( "/c" ).build() ) );
 
-        assertThat( result.links() ).isEmpty();
-        assertEquals( html, result.html() );
+        final ProcessedHtml.ContentLink link = (ProcessedHtml.ContentLink) result.links().get( 0 );
+        assertNull( link.page() );
+        assertEquals( String.format( "<a href=\"content://%s\" data-link-ref=\"%s\">Content</a>", content.getId(), link.ref() ), result.html() );
     }
 
     @Test

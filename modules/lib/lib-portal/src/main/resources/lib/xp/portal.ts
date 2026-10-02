@@ -653,8 +653,8 @@ interface ProcessedHtmlLinkBase {
  */
 export interface ProcessedHtmlContentLink extends ProcessedHtmlLinkBase {
     type: 'content';
-    /** Parts of the page URL, with the query string the link carries. */
-    page: PageUrlParts;
+    /** Parts of the page URL, with the query string the link carries; `null` when the link does not resolve. */
+    page: PageUrlParts | null;
     /** Fragment of the link, without `#`; `null` when it has none. */
     fragment: string | null;
 }
@@ -664,8 +664,8 @@ export interface ProcessedHtmlContentLink extends ProcessedHtmlLinkBase {
  */
 export interface ProcessedHtmlAttachmentLink extends ProcessedHtmlLinkBase {
     type: 'attachment';
-    /** Parts of the attachment URL. */
-    attachment: AttachmentUrlParts;
+    /** Parts of the attachment URL; `null` when the link does not resolve. */
+    attachment: AttachmentUrlParts | null;
     /** Whether the link asks for the attachment to be downloaded. */
     download: boolean;
 }
@@ -685,8 +685,8 @@ export interface ProcessedHtmlImage {
     contentId: string;
     /** The image style applied; `null` for none. */
     style: {name: string; aspectRatio: string | null; filter: string | null} | null;
-    /** Parts of the URL in `src`. */
-    src: ImageUrlParts;
+    /** Parts of the URL in `src`; `null` when the image does not resolve. */
+    src: ImageUrlParts | null;
     /** Parts of the URLs in `srcset`, one for each image width; empty for an image the image API serves as stored. */
     srcset: {width: number; url: ImageUrlParts}[];
 }
@@ -770,7 +770,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
                 ref: link.ref,
                 uri: link.uri,
                 contentId: link.contentId,
-                page: toPageUrlParts(link.page),
+                page: link.page ? toPageUrlParts(link.page) : null,
                 fragment: link.fragment ?? null,
             }
             : {
@@ -778,7 +778,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
                 ref: link.ref,
                 uri: link.uri,
                 contentId: link.contentId,
-                attachment: toAttachmentUrlParts(link.attachment),
+                attachment: link.attachment ? toAttachmentUrlParts(link.attachment) : null,
                 download: link.download,
             }),
         images: (result.images || []).map((image) => ({
@@ -787,7 +787,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
             style: image.style
                 ? {name: image.style.name, aspectRatio: image.style.aspectRatio ?? null, filter: image.style.filter ?? null}
                 : null,
-            src: toImageUrlParts(image.src),
+            src: image.src ? toImageUrlParts(image.src) : null,
             srcset: (image.srcset || []).map((source) => ({width: source.width, url: toImageUrlParts(source.url)})),
         })),
     };

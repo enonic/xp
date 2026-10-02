@@ -15,7 +15,8 @@ var result = portalLib.processHtmlParts({
 // The site's configured Base URL, or the origin the frontend serves the site from
 var origin = result.baseUrl || 'https://www.example.com';
 var link = result.links[0];
-var href = link.type === 'content' ? origin + link.page.path + link.page.queryString : null;
+// a link that does not resolve has no parts
+var href = link.type === 'content' && link.page ? origin + link.page.path + link.page.queryString : null;
 // END
 
 t.assertEquals('<a href="/posts/first-post" data-link-ref="ref">Post</a>', result.html);
