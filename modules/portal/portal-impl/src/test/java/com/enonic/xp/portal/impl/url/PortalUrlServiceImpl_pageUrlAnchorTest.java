@@ -17,6 +17,8 @@ import com.enonic.xp.portal.url.ContentOutOfScopeException;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -266,5 +268,34 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         final PageUrlParts parts = parts( FOLDER, FEATURES.toString() );
         assertEquals( "https://features.com", parts.baseUrl() );
         assertEquals( "/subsite/folder", parts.path() );
+    }
+
+    @Test
+    void testPartsAtProjectRootReadTheProjectFromTheProjectService()
+    {
+        PortalRequestAccessor.set( this.portalRequest );
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
+        portalRequest.setBranch( Branch.from( "draft" ) );
+        portalRequest.setProject( project( "https://stale.com" ) );
+
+        final Project current = project( "https://current.com" );
+        when( this.projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( current );
+
+        mockNestedSites( null, null );
+
+        final PageUrlParts parts = parts( FOLDER, "/" );
+        assertEquals( "https://current.com", parts.baseUrl() );
+        assertEquals( "/features/subsite/folder", parts.path() );
+    }
+
+    private static Project project( final String baseUrl )
+    {
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", baseUrl );
+        return Project.create()
+            .name( ProjectName.from( "myproject" ) )
+            .addSiteConfig( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
+            .build();
     }
 }
