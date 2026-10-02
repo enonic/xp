@@ -1080,7 +1080,13 @@ export interface BaseUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
     id?: string;
     path?: string;
+    /**
+     * @deprecated Use {@link pageUrlParts} with `base.project`.
+     */
     project?: string;
+    /**
+     * @deprecated Use {@link pageUrlParts} with `base.branch`.
+     */
     branch?: string;
 }
 
@@ -1117,8 +1123,8 @@ interface BaseUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {string} [params.id] ID of the content.
  * @param {string} [params.path] Path to the content.
- * @param {string} [params.project] Name of the project to use for resolving the URL.
- * @param {string} [params.branch] Name of the branch to use for resolving the URL.
+ * @param {string} [params.project] Deprecated. Use {@link pageUrlParts} with `base.project` instead.
+ * @param {string} [params.branch] Deprecated. Use {@link pageUrlParts} with `base.branch` instead.
  *
  * @returns {string} The generated URL.
  */

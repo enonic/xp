@@ -32,7 +32,12 @@ public interface PortalUrlService
     /**
      * Resolves the base URL a content is addressed under: the Base URL configured for the
      * nearest site at or above it, or for the project when it is in no site, and the site engine
-     * address of that site or project when none is configured.
+     * address of that site or project when none is configured. On a site request it follows the
+     * request: it is the address of the level the matched virtual host mapping points at.
+     * <p>
+     * A project or branch in the params resolves the base URL from configuration in place of the request. This use is
+     * deprecated: {@link #pageUrlParts(PageUrlPartsParams)}, with a base naming the project and branch, resolves the
+     * configured Base URL.
      * <p>
      * Failures are reported to the caller as exceptions.
      *
