@@ -11,6 +11,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.api.ApiDescriptor;
@@ -46,6 +48,7 @@ import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.dispatch.DispatchConstants;
+import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -70,6 +73,8 @@ public class SlashApiHandler
 
     private final SseManager sseManager;
 
+    private final WebSerializerService webSerializerService;
+
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
@@ -78,7 +83,7 @@ public class SlashApiHandler
                             @Reference final WebappService webappService,
                             @Reference final AdminToolDescriptorService adminToolDescriptorService,
                             @Reference final DynamicUniversalApiHandlerRegistry universalApiHandlerRegistry,
-                            @Reference final SseManager sseManager )
+                            @Reference final SseManager sseManager, @Reference final WebSerializerService webSerializerService )
     {
         this.controllerScriptFactory = controllerScriptFactory;
         this.apiDescriptorService = apiDescriptorService;
@@ -87,6 +92,7 @@ public class SlashApiHandler
         this.adminToolDescriptorService = adminToolDescriptorService;
         this.universalApiHandlerRegistry = universalApiHandlerRegistry;
         this.sseManager = sseManager;
+        this.webSerializerService = webSerializerService;
     }
 
     @Activate
@@ -144,11 +150,28 @@ public class SlashApiHandler
         verifyAccessToApi( apiDescriptor, portalRequest, mountContext );
         verifyRequestMounted( apiDescriptor, portalRequest, mountContext );
 
+        if ( portalRequest.getBody() == null && portalRequest.getRawRequest() != null )
+        {
+            portalRequest.setBody( readBody( portalRequest.getRawRequest() ) );
+        }
+
         final Supplier<WebResponse> handler = dynamicApiHandler != null
             ? () -> executeDynamicApiHandler( portalRequest, dynamicApiHandler )
             : () -> executeController( portalRequest, descriptorKey );
 
         return execute( portalRequest, descriptorKey, handler );
+    }
+
+    private Object readBody( final HttpServletRequest rawRequest )
+    {
+        try
+        {
+            return webSerializerService.readBody( rawRequest );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     private ApiDescriptor resolveApiDescriptor( DynamicUniversalApiHandler dynamicApiHandler, final DescriptorKey descriptorKey )
