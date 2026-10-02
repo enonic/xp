@@ -118,10 +118,10 @@ public abstract class AbstractPortalUrlServiceImplTest
     }
 
     /**
-     * @return the base the key names, resolved in the current context
+     * @return the base the path names, resolved in the current context
      */
-    protected UrlBase base( final String key )
+    protected UrlBase base( final String path )
     {
-        return this.service.urlBase( UrlBaseParams.create().setKey( key ).build() );
+        return this.service.urlBase( UrlBaseParams.create().setContentPath( ContentPath.from( path ) ).build() );
     }
 }

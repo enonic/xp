@@ -17,6 +17,7 @@ import com.enonic.xp.portal.url.ContentOutOfScopeException;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
+import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
@@ -109,10 +110,23 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         when( this.contentService.getNearestSite( eq( this.folder.getId() ) ) ).thenReturn( subsite );
     }
 
-    private PageUrlParts parts( final ContentPath content, final String base )
+    /**
+     * @param baseKey id or path of the content naming the base
+     */
+    private PageUrlParts parts( final ContentPath content, final String baseKey )
     {
+        final UrlBaseParams.Builder base = UrlBaseParams.create();
+        if ( baseKey.startsWith( "/" ) )
+        {
+            base.setContentPath( ContentPath.from( baseKey ) );
+        }
+        else
+        {
+            base.setContentId( ContentId.from( baseKey ) );
+        }
+
         return this.service.pageUrlParts(
-            PageUrlPartsParams.create().setPath( content.toString() ).setBase( base( base ) ).build() );
+            PageUrlPartsParams.create().setPath( content.toString() ).setBase( this.service.urlBase( base.build() ) ).build() );
     }
 
     private PageUrlParts pageUrlPartsAnchoredAtFeatures()

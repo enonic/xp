@@ -3,41 +3,54 @@ package com.enonic.xp.portal.url;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import com.google.common.base.Strings;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.project.ProjectName;
 
 /**
- * Parameters of {@link PortalUrlService#urlBase(UrlBaseParams)}: the site or project URLs belong to, and the project
- * and branch it is in.
+ * Parameters of {@link PortalUrlService#urlBase(UrlBaseParams)}: the site or project URLs belong to, named by a content
+ * at or below it, and the project and branch it is in.
  */
 @NullMarked
 public final class UrlBaseParams
 {
-    private final String key;
+    private final @Nullable ContentId contentId;
 
-    private final @Nullable String projectName;
+    private final @Nullable ContentPath contentPath;
 
-    private final @Nullable String branch;
+    private final @Nullable ProjectName projectName;
+
+    private final @Nullable Branch branch;
 
     private UrlBaseParams( final Builder builder )
     {
-        this.key = builder.key;
+        this.contentId = builder.contentId;
+        this.contentPath = builder.contentPath;
         this.projectName = builder.projectName;
         this.branch = builder.branch;
     }
 
     /**
-     * @return key of a content naming the site or project: an id, or a path; {@code "/"} is the project
-     * @see Builder#setKey(String)
+     * @return id of the content naming the site or project, or {@code null} when it is named by path or is the project
      */
-    public String getKey()
+    public @Nullable ContentId getContentId()
     {
-        return key;
+        return contentId;
+    }
+
+    /**
+     * @return path of the content naming the site or project, or {@code null} when it is named by id or is the project
+     */
+    public @Nullable ContentPath getContentPath()
+    {
+        return contentPath;
     }
 
     /**
      * @return the project, or {@code null} to take it from the context
      */
-    public @Nullable String getProjectName()
+    public @Nullable ProjectName getProjectName()
     {
         return projectName;
     }
@@ -45,7 +58,7 @@ public final class UrlBaseParams
     /**
      * @return the branch, or {@code null} to take it from the context
      */
-    public @Nullable String getBranch()
+    public @Nullable Branch getBranch()
     {
         return branch;
     }
@@ -61,55 +74,71 @@ public final class UrlBaseParams
     /**
      * Builder of {@link UrlBaseParams}. Every parameter is optional: by default the base is the project of the current
      * context.
+     * <p>
+     * The site or project is the nearest one at or above the content named by {@link #setContentId(ContentId) id} or
+     * {@link #setContentPath(ContentPath) path}, the id taking precedence. A project contains sites and a site can
+     * contain further sites, so this picks a level of that containment: the root path names the project, a site, or a
+     * content inside it, names that site.
      */
     public static final class Builder
     {
-        private String key = "/";
+        private @Nullable ContentId contentId;
 
-        private @Nullable String projectName;
+        private @Nullable ContentPath contentPath;
 
-        private @Nullable String branch;
+        private @Nullable ProjectName projectName;
+
+        private @Nullable Branch branch;
 
         private Builder()
         {
         }
 
         /**
-         * Selects the site - or the project - URLs belong to: the nearest one at or above the content the key names.
-         * A project contains sites and a site can contain further sites, so this picks a level of that containment:
-         * {@code "/"} names the project, a site path or id names that site. Defaults to the project.
+         * Names the site, or a content inside it, by id; takes precedence over the path.
          *
-         * @param key key of a content: an id, or a path, starting with {@code "/"}; {@code null} or empty selects the
-         *            project
+         * @param contentId content id; {@code null} clears it
          * @return this builder
          */
-        public Builder setKey( final @Nullable String key )
+        public Builder setContentId( final @Nullable ContentId contentId )
         {
-            this.key = Strings.isNullOrEmpty( key ) ? "/" : key;
+            this.contentId = contentId;
+            return this;
+        }
+
+        /**
+         * Names the site, or a content inside it, by path; the root path names the project.
+         *
+         * @param contentPath content path; {@code null} clears it
+         * @return this builder
+         */
+        public Builder setContentPath( final @Nullable ContentPath contentPath )
+        {
+            this.contentPath = contentPath;
             return this;
         }
 
         /**
          * Sets the project the base, and the contents addressed from it, are looked up in.
          *
-         * @param projectName project name; {@code null} or empty takes it from the context
+         * @param projectName the project; {@code null} takes it from the context
          * @return this builder
          */
-        public Builder setProjectName( final @Nullable String projectName )
+        public Builder setProjectName( final @Nullable ProjectName projectName )
         {
-            this.projectName = Strings.emptyToNull( projectName );
+            this.projectName = projectName;
             return this;
         }
 
         /**
          * Sets the branch the base, and the contents addressed from it, are looked up in.
          *
-         * @param branch branch name; {@code null} or empty takes it from the context
+         * @param branch the branch; {@code null} takes it from the context
          * @return this builder
          */
-        public Builder setBranch( final @Nullable String branch )
+        public Builder setBranch( final @Nullable Branch branch )
         {
-            this.branch = Strings.emptyToNull( branch );
+            this.branch = branch;
             return this;
         }
 

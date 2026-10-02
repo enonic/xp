@@ -64,7 +64,7 @@ public interface PortalUrlService
      *
      * @param params the site or project, and the project and branch it is in
      * @return the resolved base
-     * @throws com.enonic.xp.content.ContentNotFoundException if the content the key names does not exist
+     * @throws com.enonic.xp.content.ContentNotFoundException if the content the params name does not exist
      */
     UrlBase urlBase( UrlBaseParams params );
 
