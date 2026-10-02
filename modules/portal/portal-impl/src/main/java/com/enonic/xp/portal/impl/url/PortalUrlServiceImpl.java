@@ -43,6 +43,8 @@ import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
 import com.enonic.xp.portal.url.ServiceUrlParams;
+import com.enonic.xp.portal.url.UrlBase;
+import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -143,18 +145,39 @@ public final class PortalUrlServiceImpl
     }
 
     @Override
-    public PageUrlParts pageUrlParts( final PageUrlPartsParams params )
+    public UrlBase urlBase( final UrlBaseParams params )
     {
         return runWithAdminRole( () -> {
-            final BaseUrlMetadata metadata =
-                new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params.getBase() );
+            final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration(
+                params.getKey(), params.getProjectName(), params.getBranch() );
 
+            final String baseUrl = metadata.baseUrl();
+
+            return new UrlBase( metadata.projectName(), metadata.branch(), metadata.anchorPath(),
+                                Strings.isNullOrEmpty( baseUrl ) ? null : UrlGenerator.removeTrailingSlash( baseUrl ),
+                                metadata.siteConfigs() );
+        } );
+    }
+
+    /**
+     * @return the given base, or else the project of the current context
+     */
+    private UrlBase baseOrProject( final UrlBase base )
+    {
+        return base != null ? base : urlBase( UrlBaseParams.create().build() );
+    }
+
+    @Override
+    public PageUrlParts pageUrlParts( final PageUrlPartsParams params )
+    {
+        final UrlBase base = baseOrProject( params.getBase() );
+
+        return runWithAdminRole( () -> {
             final String path = ContextBuilder.copyOf( ContextAccessor.current() )
-                .repositoryId( metadata.projectName().getRepoId() )
-                .branch( metadata.branch() )
+                .repositoryId( base.getProjectName().getRepoId() )
+                .branch( base.getBranch() )
                 .build()
-                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ),
-                                                                       metadata.anchorPath() ) );
+                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ), base.getPath() ) );
 
             final StringBuilder escapedPath = new StringBuilder();
             UrlBuilderHelper.appendAndEncodePathParts( escapedPath, path );
@@ -162,11 +185,7 @@ public final class PortalUrlServiceImpl
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getQueryParams() );
 
-            final String baseUrl = metadata.baseUrl();
-
-            return new PageUrlParts( Strings.isNullOrEmpty( baseUrl ) ? null : UrlGenerator.removeTrailingSlash( baseUrl ),
-                                     escapedPath.toString(),
-                                     queryParamsStrategy.get() );
+            return new PageUrlParts( base.getBaseUrl(), escapedPath.toString(), queryParamsStrategy.get() );
         } );
     }
 
@@ -356,11 +375,8 @@ public final class PortalUrlServiceImpl
     @Override
     public ProcessedHtml processHtmlParts( final ProcessHtmlPartsParams params )
     {
-        final BaseUrlMetadata metadata =
-            runWithAdminRole( () -> new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params.getBase() ) );
-
         return new RichTextPartsProcessor( styleDescriptorService, this, portalUrlGeneratorService, macroService, contentService, params,
-                                           metadata ).process();
+                                           baseOrProject( params.getBase() ) ).process();
     }
 
     @Override

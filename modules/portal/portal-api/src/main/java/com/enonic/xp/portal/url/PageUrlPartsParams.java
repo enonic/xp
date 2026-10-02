@@ -9,11 +9,10 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Strings;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * Parameters of {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}: the content a page URL addresses, by
- * {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, and the site or project the URL belongs to.
+ * {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, and the {@link UrlBase site or project}
+ * the URL belongs to.
  */
 @NullMarked
 public final class PageUrlPartsParams
@@ -22,7 +21,7 @@ public final class PageUrlPartsParams
 
     private final @Nullable String path;
 
-    private final BaseUrlParams base;
+    private final @Nullable UrlBase base;
 
     private final Map<String, List<String>> queryParams;
 
@@ -34,7 +33,7 @@ public final class PageUrlPartsParams
         }
         this.id = builder.id;
         this.path = builder.path;
-        this.base = requireNonNull( builder.base, "base" );
+        this.base = builder.base;
         this.queryParams = builder.queryParams.build();
     }
 
@@ -55,10 +54,10 @@ public final class PageUrlPartsParams
     }
 
     /**
-     * @return the site or project the URL belongs to
-     * @see Builder#setBase(BaseUrlParams)
+     * @return the site or project the URL belongs to, or {@code null} for the project of the current context
+     * @see Builder#setBase(UrlBase)
      */
-    public BaseUrlParams getBase()
+    public @Nullable UrlBase getBase()
     {
         return base;
     }
@@ -80,7 +79,7 @@ public final class PageUrlPartsParams
     }
 
     /**
-     * Builder of {@link PageUrlPartsParams}. The base, and either the id or the path, are required.
+     * Builder of {@link PageUrlPartsParams}. Either the id or the path is required.
      */
     public static final class Builder
     {
@@ -88,7 +87,7 @@ public final class PageUrlPartsParams
 
         private @Nullable String path;
 
-        private @Nullable BaseUrlParams base;
+        private @Nullable UrlBase base;
 
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
@@ -121,20 +120,17 @@ public final class PageUrlPartsParams
         }
 
         /**
-         * Selects the site - or the project - the URL belongs to, by the same parameters
-         * {@link PortalUrlService#baseUrl(BaseUrlParams)} takes: the nearest one at or above the content they name.
-         * A project contains sites and a site can contain further sites, so this picks a level of that containment:
-         * {@code "/"} names the project, a site path or id names that site. The project and branch it names are the
-         * ones the content is looked up in.
+         * Sets the site - or the project - the URL belongs to. The content is looked up in its project and branch.
          * <p>
-         * Each level carries its own configuration, so the Base URL configured on the selected level applies, and the
-         * path of the URL is relative to it. The content has to be inside the selected level, or be that level itself;
-         * for a content elsewhere {@link ContentOutOfScopeException} is thrown.
+         * Each level carries its own configuration, so the Base URL configured on the base applies, and the path of
+         * the URL is relative to it. The content has to be inside the base, or be the base itself; for a content
+         * elsewhere {@link ContentOutOfScopeException} is thrown.
          *
-         * @param base the site or project the URL belongs to
+         * @param base the base, resolved by {@link PortalUrlService#urlBase(UrlBaseParams)}; {@code null} for the
+         *             project of the current context
          * @return this builder
          */
-        public Builder setBase( final BaseUrlParams base )
+        public Builder setBase( final @Nullable UrlBase base )
         {
             this.base = base;
             return this;
@@ -163,7 +159,6 @@ public final class PageUrlPartsParams
 
         /**
          * @return the params
-         * @throws NullPointerException     if the base is not set
          * @throws IllegalArgumentException if neither the id nor the path is set
          */
         public PageUrlPartsParams build()

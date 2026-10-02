@@ -7,17 +7,21 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
-import com.enonic.xp.portal.url.PageUrlPartsParams;
 import com.enonic.xp.portal.url.PageUrlParts;
+import com.enonic.xp.portal.url.PageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
+import com.enonic.xp.portal.url.UrlBase;
+import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +46,12 @@ class UrlPartsScriptTest
 
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
         this.portalUrlGeneratorService = Mockito.mock( PortalUrlGeneratorService.class );
+
+        when( portalUrlService.urlBase( any( UrlBaseParams.class ) ) ).thenAnswer( invocation -> {
+            final UrlBaseParams params = invocation.getArgument( 0 );
+            return new UrlBase( ProjectName.from( params.getProjectName() ), Branch.from( params.getBranch() ),
+                                ContentPath.from( params.getKey() ), null, SiteConfigs.empty() );
+        } );
 
         when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenReturn(
             new PageUrlParts( null, "/posts/first-post", "?a=1" ) );
@@ -86,10 +96,34 @@ class UrlPartsScriptTest
 
         final PageUrlPartsParams params = captor.getValue();
         assertEquals( "/my-site/posts/first-post", params.getPath() );
-        assertEquals( "/my-site", params.getBase().getPath() );
-        assertEquals( "myproject", params.getBase().getProjectName() );
-        assertEquals( "master", params.getBase().getBranch() );
+        assertBase( params.getBase() );
         assertTrue( params.getQueryParams().get( "a" ).contains( "1" ) );
+    }
+
+    @Test
+    void testExample_urlBase()
+    {
+        runScript( "/lib/xp/examples/portal/urlBase.js" );
+
+        final ArgumentCaptor<UrlBaseParams> base = ArgumentCaptor.forClass( UrlBaseParams.class );
+        verify( portalUrlService ).urlBase( base.capture() );
+        assertEquals( "/my-site", base.getValue().getKey() );
+        assertEquals( "myproject", base.getValue().getProjectName() );
+        assertEquals( "master", base.getValue().getBranch() );
+
+        final ArgumentCaptor<PageUrlPartsParams> captor = ArgumentCaptor.forClass( PageUrlPartsParams.class );
+        verify( portalUrlService ).pageUrlParts( captor.capture() );
+        assertBase( captor.getValue().getBase() );
+    }
+
+    /**
+     * The base resolved by the script comes back as is.
+     */
+    private static void assertBase( final UrlBase base )
+    {
+        assertEquals( ProjectName.from( "myproject" ), base.getProjectName() );
+        assertEquals( Branch.from( "master" ), base.getBranch() );
+        assertEquals( ContentPath.from( "/my-site" ), base.getPath() );
     }
 
     @Test
@@ -102,8 +136,7 @@ class UrlPartsScriptTest
 
         final ProcessHtmlPartsParams params = captor.getValue();
         assertEquals( "<a href=\"content://123456\">Post</a>", params.getValue() );
-        assertEquals( "/my-site", params.getBase().getPath() );
-        assertEquals( "myproject", params.getBase().getProjectName() );
+        assertBase( params.getBase() );
     }
 
     @Test

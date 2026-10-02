@@ -2,14 +2,17 @@ var portalLib = require('/lib/xp/portal');
 var t = require('/lib/xp/testing');
 
 // BEGIN
+// The site the URLs belong to: resolve it once, and pass it to every call of the same request
+var base = portalLib.urlBase({
+    key: '/my-site',
+    project: 'myproject',
+    branch: 'master'
+});
+
 // Parts of the URL of a page, relative to the site it belongs to
 var parts = portalLib.pageUrlParts({
     path: '/my-site/posts/first-post',
-    base: {
-        path: '/my-site',
-        project: 'myproject',
-        branch: 'master'
-    },
+    base: base,
     params: {
         a: 1
     }

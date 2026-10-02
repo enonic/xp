@@ -32,6 +32,7 @@ import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
+import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -56,7 +57,7 @@ final class RichTextPartsProcessor
 
     private final ProcessHtmlPartsParams params;
 
-    private final BaseUrlMetadata metadata;
+    private final UrlBase base;
 
     private final Supplier<Map<String, ImageStyle>> imageStyles;
 
@@ -66,7 +67,7 @@ final class RichTextPartsProcessor
 
     RichTextPartsProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
                             final PortalUrlGeneratorService portalUrlGeneratorService, final MacroService macroService,
-                            final ContentService contentService, final ProcessHtmlPartsParams params, final BaseUrlMetadata metadata )
+                            final ContentService contentService, final ProcessHtmlPartsParams params, final UrlBase base )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
@@ -74,13 +75,13 @@ final class RichTextPartsProcessor
         this.macroService = macroService;
         this.contentService = contentService;
         this.params = params;
-        this.metadata = metadata;
+        this.base = base;
         this.imageStyles = Suppliers.memoize( () -> RichTextLinks.imageStyles( styleDescriptors() ) );
     }
 
     ProcessedHtml process()
     {
-        final String baseUrl = baseUrl();
+        final String baseUrl = base.getBaseUrl();
 
         if ( params.getValue() == null )
         {
@@ -108,12 +109,6 @@ final class RichTextPartsProcessor
         final String html = params.isProcessMacros() ? new HtmlMacroProcessor( macroService ).process( processed ) : processed;
 
         return new ProcessedHtml( html, baseUrl, links, images );
-    }
-
-    private String baseUrl()
-    {
-        final String configured = metadata.baseUrl();
-        return configured == null || configured.isEmpty() ? null : UrlGenerator.removeTrailingSlash( configured );
     }
 
     private void processDocument( final HtmlDocument document, final HtmlElementPostProcessor postProcessor )
@@ -255,7 +250,7 @@ final class RichTextPartsProcessor
     private String contentLink( final String ref, final RichTextLinks.Link link )
     {
         final PageUrlParts parts =
-            portalUrlService.pageUrlParts( PageUrlPartsParams.create().setId( link.id() ).setBase( params.getBase() ).build() );
+            portalUrlService.pageUrlParts( PageUrlPartsParams.create().setId( link.id() ).setBase( base ).build() );
 
         final Map<String, String> urlParams = link.urlParams();
         final String query = RichTextLinks.validQueryOrFragment( urlParams.get( "query" ) );
@@ -275,8 +270,8 @@ final class RichTextPartsProcessor
         final boolean download = RichTextLinks.DOWNLOAD_MODE.equals( link.mode() );
         final AttachmentUrlParts parts = portalUrlGeneratorService.attachmentUrlParts( AttachmentUrlPartsParams.create()
                                                                                           .setId( link.id() )
-                                                                                          .setProjectName( metadata::projectName )
-                                                                                          .setBranch( metadata::branch )
+                                                                                          .setProjectName( base::getProjectName )
+                                                                                          .setBranch( base::getBranch )
                                                                                           .setDownload( download )
                                                                                           .build() );
 
@@ -295,7 +290,7 @@ final class RichTextPartsProcessor
 
         // looked up once for the src and every srcset width
         final Supplier<Media> media =
-            Suppliers.memoize( () -> MediaLookup.media( contentService, metadata.projectName(), metadata.branch(), id ) );
+            Suppliers.memoize( () -> MediaLookup.media( contentService, base.getProjectName(), base.getBranch(), id ) );
 
         final ImageUrlParts src = imageParts( media, style, DefaultImageLinkProcessor.scale( style, scaleFromQueryString, null ) );
 
@@ -332,8 +327,8 @@ final class RichTextPartsProcessor
     {
         return portalUrlGeneratorService.imageUrlParts( ImageUrlPartsParams.create()
                                                             .setMedia( media )
-                                                            .setProjectName( metadata::projectName )
-                                                            .setBranch( metadata::branch )
+                                                            .setProjectName( base::getProjectName )
+                                                            .setBranch( base::getBranch )
                                                             .setScale( scale )
                                                             .setFilter( style == null ? null : style.getFilter() )
                                                             .build() );
@@ -347,6 +342,6 @@ final class RichTextPartsProcessor
     {
         return params.getCustomStyleDescriptorsCallback() != null
             ? params.getCustomStyleDescriptorsCallback().get()
-            : RichTextLinks.styleDescriptors( styleDescriptorService, metadata.siteConfigs() );
+            : RichTextLinks.styleDescriptors( styleDescriptorService, base.getSiteConfigs() );
     }
 }

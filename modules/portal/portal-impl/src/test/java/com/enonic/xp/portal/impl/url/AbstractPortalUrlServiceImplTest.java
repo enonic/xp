@@ -19,6 +19,8 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
+import com.enonic.xp.portal.url.UrlBase;
+import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -113,5 +115,13 @@ public abstract class AbstractPortalUrlServiceImplTest
     {
         PortalRequestAccessor.remove();
         ContextAccessorSupport.getInstance().remove();
+    }
+
+    /**
+     * @return the base the key names, resolved in the current context
+     */
+    protected UrlBase base( final String key )
+    {
+        return this.service.urlBase( UrlBaseParams.create().setKey( key ).build() );
     }
 }

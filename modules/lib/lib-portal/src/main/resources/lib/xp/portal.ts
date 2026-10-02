@@ -323,11 +323,11 @@ export type PageUrlParams = IdXorPath & {
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     /**
-     * @deprecated Use {@link pageUrlParts} with `base.project`.
+     * @deprecated Use {@link pageUrlParts} with a `base` from {@link urlBase} with `project`.
      */
     project?: string;
     /**
-     * @deprecated Use {@link pageUrlParts} with `base.branch`.
+     * @deprecated Use {@link pageUrlParts} with a `base` from {@link urlBase} with `branch`.
      */
     branch?: string;
 };
@@ -360,8 +360,8 @@ interface PageUrlHandler {
  * @param {string} [params.id] Id to the page. If id is set, then path is not used.
  * @param {string} [params.path] Path to the page. Relative paths is resolved using the context page.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {string} [params.project] Deprecated. Use {@link pageUrlParts} with `base.project` instead.
- * @param {string} [params.branch] Deprecated. Use {@link pageUrlParts} with `base.branch` instead.
+ * @param {string} [params.project] Deprecated. Use {@link pageUrlParts} with a `base` from {@link urlBase} with `project` instead.
+ * @param {string} [params.branch] Deprecated. Use {@link pageUrlParts} with a `base` from {@link urlBase} with `branch` instead.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL; one answered with 404 when the page does not resolve.
@@ -640,7 +640,7 @@ export function processHtml(params: ProcessHtmlParams): string {
 
 export interface ProcessHtmlPartsParams {
     value: string;
-    base: UrlPartsBase;
+    base?: UrlBase;
     imageWidths?: number[];
     imageSizes?: string;
 }
@@ -714,13 +714,7 @@ export interface ProcessedHtml {
 interface ProcessHtmlPartsHandler {
     setValue(value: string): void;
 
-    setBaseId(value: string | null): void;
-
-    setBasePath(value: string | null): void;
-
-    setBaseProjectName(value: string | null): void;
-
-    setBaseBranch(value: string | null): void;
+    setBase(value: UrlBase | null): void;
 
     setImageWidths(value: number[] | null): void;
 
@@ -731,8 +725,8 @@ interface ProcessHtmlPartsHandler {
 
 /**
  * This function resolves the parts of the internal links of an HTML text - to contents, images and
- * attachments - from configuration alone, for the site or project named by `base`, and replaces each
- * link with a placeholder.
+ * attachments - from configuration alone, for the site or project `base` stands for, and replaces
+ * each link with a placeholder.
  *
  * Each such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in
  * `links` or `images`; render the element from the parts of that entry.
@@ -741,11 +735,7 @@ interface ProcessHtmlPartsHandler {
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.value Html value string to process.
- * @param {object} params.base Required. The site or project the HTML belongs to.
- * @param {string} [params.base.id] Id of the site, or of a content inside it.
- * @param {string} [params.base.path] Path of the site, or of a content inside it; `/` names the project.
- * @param {string} [params.base.project] Name of the project. Defaults to the project of the current context.
- * @param {string} [params.base.branch] Name of the branch. Defaults to the branch of the current context.
+ * @param {object} [params.base] The site or project the HTML belongs to, resolved by {@link urlBase}. Defaults to the project of the current context.
  * @param {number[]} [params.imageWidths] Image widths for the `srcset` attribute of `img` tags, for images the image API scales.
  * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags.
  *
@@ -755,13 +745,9 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
     const bean: ProcessHtmlPartsHandler = __.newBean<ProcessHtmlPartsHandler>('com.enonic.xp.lib.portal.url.ProcessHtmlPartsHandler');
 
     const value = checkRequired(params, 'value');
-    const base = checkRequired(params, 'base');
 
     bean.setValue(value);
-    bean.setBaseId(__.nullOrValue(base.id));
-    bean.setBasePath(__.nullOrValue(base.path));
-    bean.setBaseProjectName(__.nullOrValue(base.project));
-    bean.setBaseBranch(__.nullOrValue(base.branch));
+    bean.setBase(__.nullOrValue(params.base));
     bean.setImageWidths(__.nullOrValue(params.imageWidths));
     bean.setImageSizes(__.nullOrValue(params.imageSizes));
 
@@ -1081,11 +1067,11 @@ export interface BaseUrlParams {
     id?: string;
     path?: string;
     /**
-     * @deprecated Use {@link pageUrlParts} with `base.project`.
+     * @deprecated Use {@link urlBase} with `project`.
      */
     project?: string;
     /**
-     * @deprecated Use {@link pageUrlParts} with `base.branch`.
+     * @deprecated Use {@link urlBase} with `branch`.
      */
     branch?: string;
 }
@@ -1123,8 +1109,8 @@ interface BaseUrlHandler {
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
  * @param {string} [params.id] ID of the content.
  * @param {string} [params.path] Path to the content.
- * @param {string} [params.project] Deprecated. Use {@link pageUrlParts} with `base.project` instead.
- * @param {string} [params.branch] Deprecated. Use {@link pageUrlParts} with `base.branch` instead.
+ * @param {string} [params.project] Deprecated. Use {@link urlBase} with `project` instead.
+ * @param {string} [params.branch] Deprecated. Use {@link urlBase} with `branch` instead.
  *
  * @returns {string} The generated URL.
  */
@@ -1172,17 +1158,56 @@ function toAttachmentUrlParts(parts: AttachmentUrlParts): AttachmentUrlParts {
     };
 }
 
-/**
- * The site - or the project - a page URL belongs to, named by a content at or above the page: the
- * nearest site at or above it, or the project for the path `/`.
- */
-export type UrlPartsBase = IdXorPath & {
+export interface UrlBaseParams {
+    key?: string;
     project?: string;
     branch?: string;
-};
+}
+
+/**
+ * The site or project URLs belong to, resolved by {@link urlBase}.
+ */
+export interface UrlBase {
+    /** Base URL configured for the site or project, without a trailing slash; `null` when none is configured. */
+    readonly baseUrl: string | null;
+}
+
+interface UrlBaseHandler {
+    setKey(value: string | null): void;
+
+    setProjectName(value: string | null): void;
+
+    setBranch(value: string | null): void;
+
+    resolve(): UrlBase;
+}
+
+/**
+ * This function resolves the site - or the project - URLs belong to, from configuration alone, for
+ * {@link pageUrlParts} and {@link processHtmlParts}. Resolve it once and pass it as `base` to every
+ * call of the same request.
+ *
+ * @example-ref examples/portal/urlBase.js
+ *
+ * @param {object} [params] Input parameters as JSON.
+ * @param {string} [params.key=/] Id or path of the site, or of a content inside it; `/` selects the project.
+ * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
+ * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
+ *
+ * @returns {object} The resolved base, with the `baseUrl` configured there.
+ */
+export function urlBase(params?: UrlBaseParams): UrlBase {
+    const bean: UrlBaseHandler = __.newBean<UrlBaseHandler>('com.enonic.xp.lib.portal.url.UrlBaseHandler');
+
+    bean.setKey(__.nullOrValue(params?.key));
+    bean.setProjectName(__.nullOrValue(params?.project));
+    bean.setBranch(__.nullOrValue(params?.branch));
+
+    return bean.resolve();
+}
 
 export type PageUrlPartsParams = IdXorPath & {
-    base: UrlPartsBase;
+    base?: UrlBase;
     params?: object;
 };
 
@@ -1203,13 +1228,7 @@ interface PageUrlPartsHandler {
 
     setPath(value: string | null): void;
 
-    setBaseId(value: string | null): void;
-
-    setBasePath(value: string | null): void;
-
-    setBaseProjectName(value: string | null): void;
-
-    setBaseBranch(value: string | null): void;
+    setBase(value: UrlBase | null): void;
 
     setQueryParams(value: ScriptValue | null): void;
 
@@ -1220,11 +1239,11 @@ interface PageUrlPartsHandler {
  * This function resolves the parts of a page URL, for building the URL from segments:
  * `url = baseUrl + path + queryString`.
  *
- * The parts are resolved from configuration alone, for the site or project named by `base`. The
+ * The parts are resolved from configuration alone, for the site or project `base` stands for. The
  * base URL is the one configured there, or `null`, in which case the caller supplies the origin the
  * site is served from. The path is the content path relative to that site or project.
  *
- * The page has to be inside the site or project named by `base`, or be it; for a page elsewhere an
+ * The page has to be inside the site or project `base` stands for, or be it; for a page elsewhere an
  * error is raised.
  *
  * @example-ref examples/portal/pageUrlParts.js
@@ -1232,11 +1251,7 @@ interface PageUrlPartsHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id of the page. Either `id` or `path` is required.
  * @param {string} [params.path] Path of the page within the project.
- * @param {object} params.base Required. The site or project the URL belongs to.
- * @param {string} [params.base.id] Id of the site, or of a content inside it.
- * @param {string} [params.base.path] Path of the site, or of a content inside it; `/` names the project.
- * @param {string} [params.base.project] Name of the project. Defaults to the project of the current context.
- * @param {string} [params.base.branch] Name of the branch. Defaults to the branch of the current context.
+ * @param {object} [params.base] The site or project the URL belongs to, resolved by {@link urlBase}; the page is looked up in its project and branch. Defaults to the project of the current context.
  * @param {object} [params.params] Custom query parameters of the URL.
  *
  * @returns {object} The parts: `baseUrl`, `path` and `queryString`.
@@ -1244,14 +1259,9 @@ interface PageUrlPartsHandler {
 export function pageUrlParts(params: PageUrlPartsParams): PageUrlParts {
     const bean: PageUrlPartsHandler = __.newBean<PageUrlPartsHandler>('com.enonic.xp.lib.portal.url.PageUrlPartsHandler');
 
-    const base = checkRequired(params, 'base');
-
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
-    bean.setBaseId(__.nullOrValue(base.id));
-    bean.setBasePath(__.nullOrValue(base.path));
-    bean.setBaseProjectName(__.nullOrValue(base.project));
-    bean.setBaseBranch(__.nullOrValue(base.branch));
+    bean.setBase(__.nullOrValue(params.base));
     bean.setQueryParams(__.toScriptValue(params.params));
 
     return toPageUrlParts(__.toNativeObject(bean.createParts()));

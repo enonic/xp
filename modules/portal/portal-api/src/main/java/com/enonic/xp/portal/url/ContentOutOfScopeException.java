@@ -6,7 +6,7 @@ import org.jspecify.annotations.NullMarked;
  * Thrown when the content a URL addresses lies outside the site - or project - the URL is asked
  * to belong to. A URL exists only for a content inside the site or project it belongs to.
  *
- * @see PageUrlPartsParams.Builder#setBase(BaseUrlParams)
+ * @see PageUrlPartsParams.Builder#setBase(UrlBase)
  */
 @NullMarked
 public class ContentOutOfScopeException

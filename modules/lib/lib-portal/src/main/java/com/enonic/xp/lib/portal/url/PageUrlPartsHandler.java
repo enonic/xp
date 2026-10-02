@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -24,13 +24,7 @@ public final class PageUrlPartsHandler
 
     private String path;
 
-    private String baseId;
-
-    private String basePath;
-
-    private String baseProjectName;
-
-    private String baseBranch;
+    private UrlBase base;
 
     private Map<String, List<String>> queryParams;
 
@@ -50,24 +44,9 @@ public final class PageUrlPartsHandler
         this.path = path;
     }
 
-    public void setBaseId( final String baseId )
+    public void setBase( final UrlBase base )
     {
-        this.baseId = baseId;
-    }
-
-    public void setBasePath( final String basePath )
-    {
-        this.basePath = basePath;
-    }
-
-    public void setBaseProjectName( final String baseProjectName )
-    {
-        this.baseProjectName = baseProjectName;
-    }
-
-    public void setBaseBranch( final String baseBranch )
-    {
-        this.baseBranch = baseBranch;
+        this.base = base;
     }
 
     public void setQueryParams( final ScriptValue params )
@@ -77,14 +56,7 @@ public final class PageUrlPartsHandler
 
     public MapSerializable createParts()
     {
-        final BaseUrlParams base = BaseUrlParams.create()
-            .setId( this.baseId )
-            .setPath( this.basePath )
-            .setProjectName( this.baseProjectName )
-            .setBranch( this.baseBranch )
-            .build();
-
-        final PageUrlPartsParams.Builder params = PageUrlPartsParams.create().setId( this.id ).setPath( this.path ).setBase( base );
+        final PageUrlPartsParams.Builder params = PageUrlPartsParams.create().setId( this.id ).setPath( this.path ).setBase( this.base );
 
         if ( this.queryParams != null )
         {

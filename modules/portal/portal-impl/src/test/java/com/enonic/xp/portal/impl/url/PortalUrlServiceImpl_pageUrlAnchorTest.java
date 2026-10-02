@@ -109,24 +109,10 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         when( this.contentService.getNearestSite( eq( this.folder.getId() ) ) ).thenReturn( subsite );
     }
 
-    private static BaseUrlParams siteBase( final String contentKey )
-    {
-        final BaseUrlParams.Builder builder = BaseUrlParams.create();
-        if ( contentKey.startsWith( "/" ) )
-        {
-            builder.setPath( contentKey );
-        }
-        else
-        {
-            builder.setId( contentKey );
-        }
-        return builder.build();
-    }
-
     private PageUrlParts parts( final ContentPath content, final String base )
     {
         return this.service.pageUrlParts(
-            PageUrlPartsParams.create().setPath( content.toString() ).setBase( siteBase( base ) ).build() );
+            PageUrlPartsParams.create().setPath( content.toString() ).setBase( base( base ) ).build() );
     }
 
     private PageUrlParts pageUrlPartsAnchoredAtFeatures()
@@ -139,7 +125,7 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        assertEquals( "https://features.com", this.service.baseUrl( siteBase( FEATURES.toString() ) ) );
+        assertEquals( "https://features.com", this.service.baseUrl( BaseUrlParams.create().setPath( FEATURES.toString() ).build() ) );
         final PageUrlParts parts = pageUrlPartsAnchoredAtFeatures();
         assertEquals( "https://features.com", parts.baseUrl() );
         assertEquals( "/subsite/folder", parts.path() );

@@ -148,7 +148,7 @@ class PortalUrlServiceImpl_vhostLevelTest
         mountVhost( "/source", "/site/myproject/draft/features/subsite" );
 
         final PageUrlParts parts = this.service.pageUrlParts(
-            PageUrlPartsParams.create().setId( "folderid" ).setBase( BaseUrlParams.create().setPath( "/features" ).build() ).build() );
+            PageUrlPartsParams.create().setId( "folderid" ).setBase( base( "/features" ) ).build() );
 
         assertEquals( "/subsite/folder", parts.path() );
         assertNull( parts.baseUrl() );
