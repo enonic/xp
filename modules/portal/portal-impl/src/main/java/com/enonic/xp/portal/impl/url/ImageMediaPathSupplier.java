@@ -2,6 +2,9 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.io.Files;
 
 import com.enonic.xp.branch.Branch;
@@ -19,7 +22,9 @@ import static java.util.Objects.requireNonNull;
 final class ImageMediaPathSupplier
     implements Supplier<String>
 {
-    private static final String FULL_SCALE = "full";
+    private static final Logger LOG = LoggerFactory.getLogger( ImageMediaPathSupplier.class );
+
+    static final String FULL_SCALE = "full";
 
     private final Supplier<Media> mediaSupplier;
 
@@ -48,7 +53,7 @@ final class ImageMediaPathSupplier
     @Override
     public String get()
     {
-        final MediaPathParts parts = parts();
+        final MediaPathParts parts = partsOrUnresolved();
 
         final StringBuilder url = new StringBuilder();
 
@@ -60,11 +65,47 @@ final class ImageMediaPathSupplier
         return url.toString();
     }
 
+    /**
+     * @return the segments of the URL, or of a URL the media API answers with 404 when the image does not resolve
+     */
+    MediaPathParts partsOrUnresolved()
+    {
+        requireNonNull( projectNameSupplier.get() );
+        requireNonNull( branchSupplier.get() );
+        try
+        {
+            return parts();
+        }
+        catch ( RuntimeException e )
+        {
+            final String id = resolvedId();
+            LOG.warn( "Media [{}] does not resolve", id, e );
+            return MediaPathParts.unresolved( id, resolveScale( scale ), null );
+        }
+    }
+
+    private String resolvedId()
+    {
+        final String id = IdentifiedSupplier.contentId( mediaSupplier );
+        if ( id != null )
+        {
+            return id;
+        }
+        try
+        {
+            return mediaSupplier.get().getId().toString();
+        }
+        catch ( RuntimeException e )
+        {
+            return null;
+        }
+    }
+
     MediaPathParts parts()
     {
-        final Media media = MediaLookup.image( requireNonNull( mediaSupplier.get() ) );
         final ProjectName project = requireNonNull( projectNameSupplier.get() );
         final Branch branch = requireNonNull( branchSupplier.get() );
+        final Media media = MediaLookup.image( requireNonNull( mediaSupplier.get() ) );
 
         final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 
@@ -90,7 +131,7 @@ final class ImageMediaPathSupplier
         return name;
     }
 
-    private String resolveScale( final String scale )
+    static String resolveScale( final String scale )
     {
         return scale.replaceAll( "\\s", "" ).replaceAll( "[(,]", "-" ).replace( ")", "" );
     }

@@ -215,7 +215,7 @@ public final class PortalUrlServiceImpl
             .build()
             .resolve();
 
-        final Supplier<Media> mediaSupplier = () -> {
+        final Supplier<Media> mediaSupplier = IdentifiedSupplier.of( params.getId(), () -> {
             final ProjectName projectName = projectNameSupplier.get();
             final Branch branch = branchSupplier.get();
 
@@ -236,7 +236,7 @@ public final class PortalUrlServiceImpl
                 .branch( branch )
                 .contentId( content.getId() )
                 .build();
-        };
+        } );
 
         final ImageUrlGeneratorParams generatorParams = ImageUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )
@@ -272,7 +272,7 @@ public final class PortalUrlServiceImpl
             .build()
             .resolve();
 
-        final Supplier<Content> contentSupplier = () -> {
+        final Supplier<Content> contentSupplier = IdentifiedSupplier.of( params.getId(), () -> {
             final ProjectName projectName = projectNameSupplier.get();
             final Branch branch = branchSupplier.get();
 
@@ -282,7 +282,7 @@ public final class PortalUrlServiceImpl
                 .setPath( params.getPath() )
                 .build()
                 .resolve();
-        };
+        } );
 
         final AttachmentUrlGeneratorParams generatorParams = AttachmentUrlGeneratorParams.create()
             .setBaseUrl( params.getBaseUrl() )

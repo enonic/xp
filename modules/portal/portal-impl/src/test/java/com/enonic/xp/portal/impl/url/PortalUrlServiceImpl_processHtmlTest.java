@@ -509,7 +509,7 @@ class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the error 500 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Media</a>" );
+        assertEquals( "<a href=\"/site/myproject/draft/_/media:attachment/_error/123/123\">Media</a>", processedHtml );
     }
 
     @Test
@@ -527,9 +527,27 @@ class PortalUrlServiceImpl_processHtmlTest
         //Process an html text containing a link to an unknown media
         final ProcessHtmlParams params = new ProcessHtmlParams().value( "<a href=\"image://123\">Image</a>" );
 
-        //Checks that the error 404 page is returned
         final String processedHtml = this.service.processHtml( params );
-        assertThat( processedHtml ).matches( "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+?\">Image</a>" );
+        assertEquals( "<a href=\"/site/myproject/draft/_/media:image/_error/123/width-768/123\">Image</a>", processedHtml );
+    }
+
+    @Test
+    void process_unknown_responsive_image()
+    {
+        when( contentService.getById( isA( ContentId.class ) ) ).thenAnswer( ( params ) -> {
+            final ContentId contentId = params.getArgument( 0 );
+            throw ContentNotFoundException.create()
+                .contentId( contentId )
+                .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+                .branch( ContentConstants.BRANCH_DRAFT )
+                .build();
+        } );
+
+        final ProcessHtmlParams params =
+            new ProcessHtmlParams().value( "<img src=\"image://123\">" ).imageWidths( List.of( 400, 800 ) ).imageSizes( "100vw" );
+
+        final String processedHtml = this.service.processHtml( params );
+        assertEquals( "<img src=\"/site/myproject/draft/_/media:image/_error/123/width-768/123\">", processedHtml );
     }
 
     @Test

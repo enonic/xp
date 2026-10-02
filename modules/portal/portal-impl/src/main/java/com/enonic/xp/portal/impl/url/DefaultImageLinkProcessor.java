@@ -59,7 +59,7 @@ final class DefaultImageLinkProcessor
         final Supplier<Branch> branchSupplier =
             Suppliers.memoize( () -> ContentBranchResolver.create().setPreferSiteRequest( params.getBaseUrl() == null ).build().resolve() );
 
-        final Supplier<Media> imageSupplier = Suppliers.memoize( () -> {
+        final Supplier<Media> imageSupplier = IdentifiedSupplier.of( id, Suppliers.memoize( () -> {
             final Content content = ContextBuilder.copyOf( ContextAccessor.current() )
                 .repositoryId( projectNameSupplier.get().getRepoId() )
                 .branch( branchSupplier.get() )
@@ -71,7 +71,7 @@ final class DefaultImageLinkProcessor
                 return media;
             }
             throw new IllegalStateException( String.format( "Content with id '%s' is not an image", id ) );
-        } );
+        } ) );
 
         // an image served as stored takes no filter
         final Supplier<String> queryParamsStrategy = () -> {
@@ -111,7 +111,7 @@ final class DefaultImageLinkProcessor
     }
 
     /**
-     * @return whether the image API scales the image; an image that fails to resolve keeps its error URLs
+     * @return whether the image resolves and the image API scales it
      */
     private static boolean isScalable( final Supplier<Media> imageSupplier )
     {
@@ -121,7 +121,7 @@ final class DefaultImageLinkProcessor
         }
         catch ( RuntimeException e )
         {
-            return true;
+            return false;
         }
     }
 

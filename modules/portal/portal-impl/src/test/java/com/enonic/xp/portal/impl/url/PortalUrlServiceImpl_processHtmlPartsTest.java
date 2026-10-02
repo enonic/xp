@@ -195,8 +195,8 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         // the links are left as written, with a ref to their entries; the rest of the text is processed
         assertThat( result.html() ).startsWith(
-            "<a href=\"content://missing?fragment=top\" data-link-ref=\"" + gone.ref() + "\">Gone</a>" + "<a href=\"media://download/missing\" data-link-ref=\"" + goneMedia.ref() +
-                "\">Gone</a><img src=\"image://missing\" data-image-ref=\"" + result.images().get( 0 ).ref() + "\">" );
+            "<a href=\"content://missing?fragment=top\" data-link-ref=\"" + gone.ref() + "\">Gone</a>" + "<a href=\"/media:attachment/_error/missing/missing?download\" data-link-ref=\"" + goneMedia.ref() +
+                "\">Gone</a><img src=\"/media:image/_error/missing/width-768/missing\" data-image-ref=\"" + result.images().get( 0 ).ref() + "\">" );
         assertThat( result.html() ).contains( "<a href=\"/b/mycontent\" data-link-ref=\"" + result.links().get( 2 ).ref() + "\">" );
     }
 

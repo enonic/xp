@@ -172,7 +172,7 @@ interface ImageUrlHandler {
  * @param {string} [params.baseUrl] Deprecated. Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
- * @returns {string} The generated URL.
+ * @returns {string} The generated URL; one the image API answers with 404 when the image does not resolve.
  */
 export function imageUrl(params: ImageUrlParams): string {
     const bean: ImageUrlHandler = __.newBean<ImageUrlHandler>('com.enonic.xp.lib.portal.url.ImageUrlHandler');
@@ -300,7 +300,7 @@ interface AttachmentUrlHandler {
  * @param {string} [params.baseUrl] Deprecated. Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
- * @returns {string} The generated URL.
+ * @returns {string} The generated URL; one the attachment API answers with 404 when the attachment does not resolve.
  */
 export function attachmentUrl(params: AttachmentUrlParams): string {
     const bean: AttachmentUrlHandler = __.newBean<AttachmentUrlHandler>('com.enonic.xp.lib.portal.url.AttachmentUrlHandler');

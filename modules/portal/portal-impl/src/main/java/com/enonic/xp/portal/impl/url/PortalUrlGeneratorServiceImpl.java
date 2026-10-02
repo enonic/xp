@@ -46,9 +46,9 @@ import static java.util.Objects.requireNonNull;
 public class PortalUrlGeneratorServiceImpl
     implements PortalUrlGeneratorService
 {
-    private static final DescriptorKey MEDIA_IMAGE_API_DESCRIPTOR_KEY = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+    static final DescriptorKey MEDIA_IMAGE_API_DESCRIPTOR_KEY = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
 
-    private static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
+    static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
         DescriptorKey.from( ApplicationKey.from( "media" ), "attachment" );
 
     private final WebappService webappService;
@@ -81,7 +81,8 @@ public class PortalUrlGeneratorServiceImpl
     @Override
     public String imageUrl( final ImageUrlGeneratorParams params )
     {
-        final Supplier<Media> media = Suppliers.memoize( () -> params.getMedia().get() );
+        final Supplier<Media> media =
+            IdentifiedSupplier.of( IdentifiedSupplier.contentId( params.getMedia() ), Suppliers.memoize( params.getMedia()::get ) );
 
         final Supplier<String> path = ImageMediaPathSupplier.create()
             .setMedia( media )
@@ -92,7 +93,8 @@ public class PortalUrlGeneratorServiceImpl
             .build();
 
         final Supplier<String> queryString = () -> queryString(
-            imageQueryParams( params.getQueryParams(), media.get(), params.getQuality(), params.getBackground(), params.getFilter() ) );
+            imageQueryParams( params.getQueryParams(), isScalable( media ), params.getQuality(), params.getBackground(),
+                              params.getFilter() ) );
 
         return generateUrl( UrlGeneratorParams.create()
                                 .setBaseUrl( apiBaseUrl( params.getUrlType(), params.getBaseUrl(), MEDIA_IMAGE_API_DESCRIPTOR_KEY ) )
@@ -141,8 +143,11 @@ public class PortalUrlGeneratorServiceImpl
                 .build()
                 .parts();
 
-            return new ImageUrlParts( mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ), queryString(
-                imageQueryParams( params.getQueryParams(), media.get(), params.getQuality(), params.getBackground(), params.getFilter() ) ),
+            final String queryString = queryString(
+                imageQueryParams( params.getQueryParams(), ImageScaling.isScalable( media.get() ), params.getQuality(),
+                                  params.getBackground(), params.getFilter() ) );
+
+            return new ImageUrlParts( parts.path( MEDIA_IMAGE_API_DESCRIPTOR_KEY ), queryString,
                                       UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.scale() ),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
@@ -168,7 +173,7 @@ public class PortalUrlGeneratorServiceImpl
                 .build()
                 .parts();
 
-            return new AttachmentUrlParts( mediaPath( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY, parts ),
+            return new AttachmentUrlParts( parts.path( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY ),
                                            queryString( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) ),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
@@ -215,12 +220,12 @@ public class PortalUrlGeneratorServiceImpl
     /**
      * @return the query params of an image URL; an image served as stored takes none of the processing params
      */
-    private static Map<String, List<String>> imageQueryParams( final Map<String, List<String>> params, final Media media,
+    private static Map<String, List<String>> imageQueryParams( final Map<String, List<String>> params, final boolean scalable,
                                                                final Integer quality, final String background, final String filter )
     {
         final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
 
-        if ( !ImageScaling.isScalable( media ) )
+        if ( !scalable )
         {
             return queryParams;
         }
@@ -241,6 +246,21 @@ public class PortalUrlGeneratorServiceImpl
         return queryParams;
     }
 
+    /**
+     * @return whether the image resolves and the image API scales it
+     */
+    private static boolean isScalable( final Supplier<Media> media )
+    {
+        try
+        {
+            return ImageScaling.isScalable( MediaLookup.image( media.get() ) );
+        }
+        catch ( RuntimeException e )
+        {
+            return false;
+        }
+    }
+
     private static Map<String, List<String>> attachmentQueryParams( final Map<String, List<String>> params, final boolean download )
     {
         final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
@@ -258,17 +278,6 @@ public class PortalUrlGeneratorServiceImpl
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         queryParamsStrategy.params( queryParams );
         return queryParamsStrategy.get();
-    }
-
-    private static String mediaPath( final DescriptorKey descriptorKey, final MediaPathParts parts )
-    {
-        final StringBuilder path = new StringBuilder();
-        UrlBuilderHelper.appendPart( path, descriptorKey.toString() );
-        UrlBuilderHelper.appendPart( path, parts.context() );
-        UrlBuilderHelper.appendPart( path, parts.idWithHash() );
-        UrlBuilderHelper.appendPart( path, parts.scale() );
-        UrlBuilderHelper.appendPart( path, parts.name() );
-        return path.toString();
     }
 
     @Override

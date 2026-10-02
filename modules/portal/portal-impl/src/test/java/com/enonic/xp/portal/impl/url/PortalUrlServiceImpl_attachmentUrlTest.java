@@ -207,7 +207,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/_error/_error", url );
     }
 
     @Test
@@ -225,7 +225,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -243,7 +243,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:attachment/_error/_error/_error", url );
     }
 
     @Test
@@ -716,7 +716,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = this.portalUrlGeneratorService.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/123456?download", url );
     }
 
     @Test
@@ -733,7 +733,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = this.portalUrlGeneratorService.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/unknownName?download", url );
     }
 
     private Media mockMedia( String id, String name )

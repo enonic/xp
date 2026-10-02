@@ -19,7 +19,8 @@ public interface PortalUrlGeneratorService
      * a single URL, with the {@code full} scale and none of the processing params.
      *
      * @param params the image and how to process it
-     * @return the URL, or an error URL when it cannot be generated
+     * @return the URL; one the image API answers with 404 when the image does not resolve,
+     *         and an error URL when no URL can be generated
      */
     String imageUrl( ImageUrlGeneratorParams params );
 
@@ -27,7 +28,8 @@ public interface PortalUrlGeneratorService
      * Generates the URL of an attachment.
      *
      * @param params the content and the attachment of it
-     * @return the URL, or an error URL when it cannot be generated
+     * @return the URL; one the attachment API answers with 404 when the attachment does not resolve,
+     *         and an error URL when no URL can be generated
      */
     String attachmentUrl( AttachmentUrlGeneratorParams params );
 
