@@ -117,13 +117,24 @@ final class RichTextLinks
     }
 
     /**
-     * @return the style descriptors of the system application and of the applications the site configs name
+     * @return the applications the site configs name, in their order
      */
-    static StyleDescriptors styleDescriptors( final StyleDescriptorService styleDescriptorService, final SiteConfigs siteConfigs )
+    static ApplicationKeys applications( final SiteConfigs siteConfigs )
+    {
+        final List<ApplicationKey> appKeys = new ArrayList<>();
+        siteConfigs.forEach( siteConfig -> appKeys.add( siteConfig.getApplicationKey() ) );
+        return ApplicationKeys.from( appKeys );
+    }
+
+    /**
+     * @return the style descriptors of the system application and of the applications
+     */
+    static StyleDescriptors styleDescriptors( final StyleDescriptorService styleDescriptorService,
+                                              final ApplicationKeys applications )
     {
         final List<ApplicationKey> appKeys = new ArrayList<>();
         appKeys.add( SYSTEM_APPLICATION_KEY );
-        siteConfigs.forEach( siteConfig -> appKeys.add( siteConfig.getApplicationKey() ) );
+        applications.forEach( appKeys::add );
         return styleDescriptorService.getByApplications( ApplicationKeys.from( appKeys ) );
     }
 
