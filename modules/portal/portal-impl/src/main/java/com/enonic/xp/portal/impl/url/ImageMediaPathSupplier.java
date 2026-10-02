@@ -70,8 +70,6 @@ final class ImageMediaPathSupplier
      */
     MediaPathParts partsOrUnresolved()
     {
-        requireNonNull( projectNameSupplier.get() );
-        requireNonNull( branchSupplier.get() );
         try
         {
             return parts();

@@ -29,6 +29,7 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -96,7 +97,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -111,7 +112,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -208,6 +209,25 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .callWith( () -> this.service.attachmentUrl( params ) );
 
         assertEquals( "baseUrl/_/media:attachment/_error/_error/_error", url );
+    }
+
+    @Test
+    void testNoRequestAndRepositoryNotFound()
+    {
+        PortalRequestAccessor.set( null );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" );
+
+        when( contentService.getById( any( ContentId.class ) ) ).thenThrow(
+            new RepositoryNotFoundException( RepositoryId.from( "com.enonic.cms.context-project" ) ) );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
