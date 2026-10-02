@@ -38,7 +38,8 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
 
     /**
      * Resolves from configuration alone: the project and branch come from the params or the
-     * current context, and the Base URL is the one configured, {@code null} when there is none.
+     * current context, the configuration of a project is read from the project service, and the
+     * Base URL is the one configured, {@code null} when there is none.
      */
     BaseUrlMetadata extractFromConfiguration( final BaseUrlParams params )
     {
@@ -87,7 +88,8 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         }
         else
         {
-            final Project resolvedProject = resolveProject( projectName, portalRequest );
+            final Project resolvedProject =
+                contextFromRequest ? resolveProject( projectName, portalRequest ) : projectService.get( projectName );
             siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
         }
 
@@ -109,6 +111,9 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         return null;
     }
 
+    /**
+     * @return the project, reusing the one on the request when it is the same
+     */
     private Project resolveProject( final ProjectName projectName, final PortalRequest portalRequest )
     {
         if ( portalRequest != null )
