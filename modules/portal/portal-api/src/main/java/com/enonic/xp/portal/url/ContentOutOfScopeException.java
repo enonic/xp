@@ -1,12 +1,20 @@
 package com.enonic.xp.portal.url;
 
+import org.jspecify.annotations.NullMarked;
+
 /**
- * Thrown when a URL is asked for at a site - or project - that does not contain the content the
- * URL addresses. The base URL of that site does not lead to the content, so no such URL exists.
+ * Thrown when the content a URL addresses lies outside the site - or project - the URL is asked
+ * to belong to. A URL exists only for a content inside the site or project it belongs to.
+ *
+ * @see PageUrlPartsParams.Builder#setBase(BaseUrlParams)
  */
+@NullMarked
 public class ContentOutOfScopeException
     extends RuntimeException
 {
+    /**
+     * @param message names the content and the site or project it lies outside of
+     */
     public ContentOutOfScopeException( final String message )
     {
         super( message );

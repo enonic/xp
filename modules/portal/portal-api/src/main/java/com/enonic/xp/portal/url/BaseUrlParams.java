@@ -1,35 +1,36 @@
 package com.enonic.xp.portal.url;
 
-import java.util.function.Supplier;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.MoreObjects;
 
-import com.enonic.xp.content.Content;
-import com.enonic.xp.descriptor.DescriptorKey;
-
 import static java.util.Objects.requireNonNullElse;
-
 
 /**
  * Names a content, and through it the level of the content tree its URLs belong to: the nearest
  * site at or above it, or the project when no site is. That level carries the Base URL
  * configuration, so it decides both the base URL and what content paths are relative to.
+ * <p>
+ * The content is named by {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, the id
+ * taking precedence. The path {@code "/"} names the root of the project: the level is then the project itself.
+ *
+ * @see PortalUrlService#baseUrl(BaseUrlParams)
+ * @see PageUrlPartsParams.Builder#setBase(BaseUrlParams)
+ * @see ProcessHtmlPartsParams.Builder#base(BaseUrlParams)
  */
+@NullMarked
 public final class BaseUrlParams
 {
     private final String urlType;
 
-    private final String projectName;
+    private final @Nullable String projectName;
 
-    private final String branch;
+    private final @Nullable String branch;
 
-    private final String id;
+    private final @Nullable String id;
 
-    private final String path;
-
-    private final Supplier<Content> contentSupplier;
-
-    private final DescriptorKey api;
+    private final @Nullable String path;
 
     private BaseUrlParams( final Builder builder )
     {
@@ -38,126 +39,131 @@ public final class BaseUrlParams
         this.branch = builder.branch;
         this.id = builder.id;
         this.path = builder.path;
-        this.contentSupplier = builder.contentSupplier;
-        this.api = builder.api;
     }
 
+    /**
+     * @return one of {@link UrlTypeConstants}, {@link UrlTypeConstants#SERVER_RELATIVE} unless set. It applies only
+     * to a base URL that follows the current request; a configured Base URL is used as it is
+     */
     public String getUrlType()
     {
         return urlType;
     }
 
-    public String getProjectName()
+    /**
+     * @return project of the content, or {@code null} to take it from the context
+     */
+    public @Nullable String getProjectName()
     {
         return projectName;
     }
 
-    public String getBranch()
+    /**
+     * @return branch of the content, or {@code null} to take it from the context
+     */
+    public @Nullable String getBranch()
     {
         return branch;
     }
 
-    public String getId()
+    /**
+     * @return id of the content, or {@code null} when it is named by path
+     */
+    public @Nullable String getId()
     {
         return id;
     }
 
-    public String getPath()
+    /**
+     * @return path of the content within the project, or {@code null} when it is named by id
+     */
+    public @Nullable String getPath()
     {
         return path;
     }
 
-    public Supplier<Content> getContent()
-    {
-        return contentSupplier;
-    }
-
-    public DescriptorKey getApi()
-    {
-        return api;
-    }
+    /**
+     * @return a new builder
+     */
 
     public static Builder create()
     {
         return new Builder();
     }
 
+    /**
+     * Builder of {@link BaseUrlParams}.
+     */
     public static class Builder
     {
-        private String urlType;
+        private @Nullable String urlType;
 
-        private String projectName;
+        private @Nullable String projectName;
 
-        private String branch;
+        private @Nullable String branch;
 
-        private String id;
+        private @Nullable String id;
 
-        private String path;
+        private @Nullable String path;
 
-        private Supplier<Content> contentSupplier;
-
-        private DescriptorKey api;
-
-        public Builder setUrlType( final String urlType )
+        /**
+         * @param urlType one of {@link UrlTypeConstants}, for a base URL that follows the current request;
+         *                {@code null} for {@link UrlTypeConstants#SERVER_RELATIVE}
+         * @return this builder
+         */
+        public Builder setUrlType( final @Nullable String urlType )
         {
             this.urlType = urlType;
             return this;
         }
 
-        public Builder setProjectName( final String projectName )
+        /**
+         * @param projectName project of the content; {@code null} to take it from the context
+         * @return this builder
+         */
+        public Builder setProjectName( final @Nullable String projectName )
         {
             this.projectName = projectName;
             return this;
         }
 
-        public Builder setBranch( final String branch )
+        /**
+         * @param branch branch of the content; {@code null} to take it from the context
+         * @return this builder
+         */
+        public Builder setBranch( final @Nullable String branch )
         {
             this.branch = branch;
             return this;
         }
 
-        public Builder setId( final String id )
+        /**
+         * Names the content by its id.
+         *
+         * @param id content id
+         * @return this builder
+         */
+        public Builder setId( final @Nullable String id )
         {
             this.id = id;
             return this;
         }
 
-        public Builder setPath( final String path )
+        /**
+         * Names the content by its path within the project; {@code "/"} names the project itself.
+         *
+         * @param path content path
+         * @return this builder
+         */
+        public Builder setPath( final @Nullable String path )
         {
             this.path = path;
             return this;
         }
 
         /**
-         * Names the content directly, as an alternative to {@link #setId(String)} and {@link #setPath(String)}.
-         * Useful when the caller already holds the content: no extra lookup is made.
-         *
-         * @param contentSupplier supplier of the content
-         * @return this builder
+         * @return the params
          */
-        public Builder setContent( final Supplier<Content> contentSupplier )
-        {
-            this.contentSupplier = contentSupplier;
-            return this;
-        }
-
-        /**
-         * Requests the base URL of an API mount instead of the content base URL.
-         * <p>
-         * The result is the prefix that the API descriptor ({@code <application>:<name>}) gets appended to.
-         * It is resolved to {@code <baseUrl>/_} when a Base URL is configured for the site (or project) the
-         * content belongs to and the API is mounted on the site. Media APIs fall back to the {@code media.defaultBaseUrl}
-         * configuration, when set. Otherwise the result is {@code null}: URLs should then stay request-based.
-         *
-         * @param api descriptor key of the API
-         * @return this builder
-         */
-        public Builder setApi( final DescriptorKey api )
-        {
-            this.api = api;
-            return this;
-        }
-
         public BaseUrlParams build()
         {
             return new BaseUrlParams( this );
@@ -174,7 +180,6 @@ public final class BaseUrlParams
         helper.add( "path", this.path );
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
-        helper.add( "api", this.api );
         return helper.toString();
     }
 }

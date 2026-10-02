@@ -30,9 +30,7 @@ final class PageBaseUrlSupplier
     {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        // selecting a level is a statement about where the URL belongs, which is what following
-        // the request would otherwise decide - so it takes the request out of play
-        final boolean preferSiteRequest = params.getBase() == null && PortalRequestHelper.isSiteBase( portalRequest ) &&
+        final boolean preferSiteRequest = PortalRequestHelper.isSiteBase( portalRequest ) &&
             params.getProjectName() == null && params.getBranch() == null;
 
         final String baseUrl =
@@ -48,8 +46,7 @@ final class PageBaseUrlSupplier
                             .toString();
                     }
 
-                    return ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params, metadata ),
-                                                                 PageBase.level( params, metadata ) );
+                    return ContentPathResolver.relativeToAnchor( metadata.content().getPath(), PageBase.level( metadata ) );
                 } );
 
         return preferSiteRequest ? UrlBuilderHelper.rewriteUri( portalRequest.getRawRequest(), params.getType(), baseUrl ) : baseUrl;
