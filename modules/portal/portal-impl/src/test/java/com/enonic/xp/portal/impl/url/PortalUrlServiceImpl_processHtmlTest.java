@@ -139,7 +139,7 @@ class PortalUrlServiceImpl_processHtmlTest
         params.type( UrlTypeConstants.ABSOLUTE );
 
         final String html = ContextBuilder.create().build().callWith( () -> service.processHtml( params ) );
-        assertThat( html ).startsWith( "<a href=\"/_/error/500?message=Something+went+wrong." );
+        assertThat( html ).startsWith( "<a href=\"/_/error/404?message=Not+Found." );
     }
 
     @Test

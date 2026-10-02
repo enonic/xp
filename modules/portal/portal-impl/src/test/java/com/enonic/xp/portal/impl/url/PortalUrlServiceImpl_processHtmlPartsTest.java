@@ -194,9 +194,11 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         assertThat( result.images().get( 0 ).srcset() ).isEmpty();
 
         // the links are left as written, with a ref to their entries; the rest of the text is processed
-        assertThat( result.html() ).startsWith(
-            "<a href=\"content://missing?fragment=top\" data-link-ref=\"" + gone.ref() + "\">Gone</a>" + "<a href=\"/media:attachment/_error/missing/missing?download\" data-link-ref=\"" + goneMedia.ref() +
-                "\">Gone</a><img src=\"/media:image/_error/missing/width-768/missing\" data-image-ref=\"" + result.images().get( 0 ).ref() + "\">" );
+        assertThat( result.html() ).matches(
+            "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+\" data-link-ref=\"" + gone.ref() + "\">Gone</a>" +
+                "<a href=\"/media:attachment/_error/missing/missing\\?download\" data-link-ref=\"" + goneMedia.ref() +
+                "\">Gone</a><img src=\"/media:image/_error/missing/width-768/missing\" data-image-ref=\"" + result.images().get( 0 ).ref() +
+                "\">.*" );
         assertThat( result.html() ).contains( "<a href=\"/b/mycontent\" data-link-ref=\"" + result.links().get( 2 ).ref() + "\">" );
     }
 
@@ -211,7 +213,8 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         final ProcessedHtml.ContentLink link = (ProcessedHtml.ContentLink) result.links().get( 0 );
         assertNull( link.page() );
-        assertEquals( String.format( "<a href=\"content://%s\" data-link-ref=\"%s\">Content</a>", content.getId(), link.ref() ), result.html() );
+        assertThat( result.html() ).matches(
+            "<a href=\"/_/error/404\\?message=Not\\+Found\\.\\+\\w+\" data-link-ref=\"" + link.ref() + "\">Content</a>" );
     }
 
     @Test

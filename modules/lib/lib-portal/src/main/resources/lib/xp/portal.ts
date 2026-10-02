@@ -358,7 +358,7 @@ interface PageUrlHandler {
  * @param {string} [params.branch] Branch of the project for context.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
- * @returns {string} The generated URL.
+ * @returns {string} The generated URL; one answered with 404 when the page does not resolve.
  */
 export function pageUrl(params: PageUrlParams): string {
     const bean: PageUrlHandler = __.newBean<PageUrlHandler>('com.enonic.xp.lib.portal.url.PageUrlHandler');

@@ -144,9 +144,7 @@ final class RichTextPartsProcessor
         }
         catch ( RuntimeException e )
         {
-            // a link that does not resolve is left as written, with a ref to an entry without parts
-            LOG.debug( "Link [{}] does not resolve", link.uri(), e );
-            unresolved( element, link, ref );
+            unresolved( element, link, ref, e );
         }
 
         if ( postProcessor != null )
@@ -189,13 +187,22 @@ final class RichTextPartsProcessor
         }
     }
 
-    private void unresolved( final HtmlElement element, final RichTextLinks.Link link, final String ref )
+    /**
+     * Writes a link that does not resolve as a URL answered with 404, with a ref to an entry without parts.
+     */
+    private void unresolved( final HtmlElement element, final RichTextLinks.Link link, final String ref, final RuntimeException e )
     {
+        if ( !RichTextLinks.CONTENT_TYPE.equals( link.type() ) )
+        {
+            LOG.warn( "Link [{}] does not resolve", link.uri(), e );
+        }
+
         switch ( link.type() )
         {
             case RichTextLinks.CONTENT_TYPE ->
             {
                 element.setAttribute( ProcessedHtml.LINK_REF_ATTRIBUTE, ref );
+                element.setAttribute( link.attribute(), UrlGenerator.notFoundUrl( e ) );
                 links.add( new ProcessedHtml.ContentLink( ref, link.uri(), link.id(), null, fragment( link ) ) );
             }
             case RichTextLinks.MEDIA_TYPE ->

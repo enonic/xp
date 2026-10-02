@@ -50,7 +50,7 @@ class PortalUrlServiceImpl_pageUrlTest
 
             final String url = this.service.pageUrl( params );
             // Not possible to resolve project
-            assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+            assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
         } );
     }
 
@@ -68,7 +68,7 @@ class PortalUrlServiceImpl_pageUrlTest
 
                 final String url = this.service.pageUrl( params );
                 // Not possible to resolve branch
-                assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+                assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
             } );
     }
 
@@ -82,7 +82,7 @@ class PortalUrlServiceImpl_pageUrlTest
 
             final String url = this.service.pageUrl( params );
             // Not possible to resolve branch
-            assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+            assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
         } );
     }
 

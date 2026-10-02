@@ -3,9 +3,11 @@ package com.enonic.xp.portal.impl.url;
 import java.util.function.Supplier;
 
 import com.enonic.xp.content.ContentService;
+import com.enonic.xp.exception.NotFoundException;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
+import com.enonic.xp.portal.url.ContentOutOfScopeException;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.project.ProjectService;
 
@@ -25,8 +27,27 @@ final class PageBaseUrlSupplier
         this.params = params;
     }
 
+    /**
+     * @throws PageNotFoundException if the page URL cannot be generated, so that it is answered with 404
+     */
     @Override
     public String get()
+    {
+        try
+        {
+            return resolve();
+        }
+        catch ( ContentOutOfScopeException | NotFoundException e )
+        {
+            throw e;
+        }
+        catch ( RuntimeException e )
+        {
+            throw new PageNotFoundException( e );
+        }
+    }
+
+    private String resolve()
     {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 

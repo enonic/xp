@@ -49,7 +49,7 @@ public interface PortalUrlService
      * from configuration alone.
      *
      * @param params the content, and the project and branch it is in
-     * @return the URL, or an error URL when it cannot be generated
+     * @return the URL, or an error URL answered with 404 when the page does not resolve
      */
     String pageUrl( PageUrlParams params );
 
