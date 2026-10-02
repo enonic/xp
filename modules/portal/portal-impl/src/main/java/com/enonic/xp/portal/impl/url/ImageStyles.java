@@ -14,9 +14,9 @@ import com.enonic.xp.style.StyleDescriptors;
  */
 final class ImageStyles
 {
-    private final Map<ApplicationKey, Map<String, ImageStyle>> byApplication = new HashMap<>();
+    private final Map<ApplicationKey, Map<String, Resolved>> byApplication = new HashMap<>();
 
-    private final Map<String, ImageStyle> byName = new HashMap<>();
+    private final Map<String, Resolved> byName = new HashMap<>();
 
     ImageStyles( final StyleDescriptors styleDescriptors )
     {
@@ -26,25 +26,26 @@ final class ImageStyles
                 .stream()
                 .filter( ImageStyle.class::isInstance )
                 .map( ImageStyle.class::cast )
-                .forEach( style -> {
-                    byApplication.computeIfAbsent( styleDescriptor.getApplicationKey(), key -> new HashMap<>() )
-                        .putIfAbsent( style.getName(), style );
-                    byName.putIfAbsent( style.getName(), style );
+                .map( style -> new Resolved( styleDescriptor.getApplicationKey(), style ) )
+                .forEach( resolved -> {
+                    byApplication.computeIfAbsent( resolved.application(), key -> new HashMap<>() )
+                        .putIfAbsent( resolved.style().getName(), resolved );
+                    byName.putIfAbsent( resolved.style().getName(), resolved );
                 } );
         }
     }
 
     /**
      * @param reference {@code <application>:<name>}, or a name alone
-     * @return the style, or {@code null} when there is none: a qualified reference names the style of its
-     * application only, and is otherwise read as a name
+     * @return the style with the application it belongs to, or {@code null} when there is none: a qualified reference
+     * names the style of its application only, and is otherwise read as a name
      */
-    ImageStyle get( final String reference )
+    Resolved get( final String reference )
     {
         final int separator = reference.indexOf( ':' );
         if ( separator > 0 )
         {
-            final Map<String, ImageStyle> styles = byApplication.get( applicationKey( reference.substring( 0, separator ) ) );
+            final Map<String, Resolved> styles = byApplication.get( applicationKey( reference.substring( 0, separator ) ) );
             if ( styles != null )
             {
                 return styles.get( reference.substring( separator + 1 ) );
@@ -62,6 +63,20 @@ final class ImageStyles
         catch ( IllegalArgumentException e )
         {
             return null;
+        }
+    }
+
+    /**
+     * A style, with the application it belongs to.
+     */
+    record Resolved(ApplicationKey application, ImageStyle style)
+    {
+        /**
+         * @return {@code <application>:<name>}, naming the style unambiguously
+         */
+        String qualifiedName()
+        {
+            return application + ":" + style.getName();
         }
     }
 }

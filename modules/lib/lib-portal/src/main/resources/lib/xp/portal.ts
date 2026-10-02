@@ -689,7 +689,7 @@ export interface ProcessedHtmlImage {
     ref: string;
     /** Id of the image content. */
     contentId: string;
-    /** The image style applied; `null` for none. */
+    /** The image style applied, its name qualified by the application it belongs to: `<application>:<name>`; `null` for none. */
     style: {name: string; aspectRatio: string | null; filter: string | null} | null;
     /** Parts of the URL in `src`; `null` when the image does not resolve. */
     src: ImageUrlParts | null;

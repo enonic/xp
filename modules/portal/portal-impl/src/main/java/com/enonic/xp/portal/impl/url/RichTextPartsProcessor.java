@@ -170,12 +170,12 @@ final class RichTextPartsProcessor
             }
             case RichTextLinks.IMAGE_TYPE ->
             {
-                final ImageStyle style = image( element, ref, link );
+                final ProcessedHtml.Style style = image( element, ref, link );
                 if ( style != null )
                 {
-                    properties.put( "style:name", style.getName() );
-                    properties.put( "style:aspectRatio", style.getAspectRatio() );
-                    properties.put( "style:filter", style.getFilter() );
+                    properties.put( "style:name", style.name() );
+                    properties.put( "style:aspectRatio", style.aspectRatio() );
+                    properties.put( "style:filter", style.filter() );
                 }
             }
             default -> throw new IllegalStateException( "Unknown type " + link.type() );
@@ -226,7 +226,8 @@ final class RichTextPartsProcessor
         try
         {
             final String styleName = link.urlParams().get( "style" );
-            final ImageStyle style = styleName == null ? null : imageStyles.get().get( styleName );
+            final ImageStyles.Resolved resolved = styleName == null ? null : imageStyles.get().get( styleName );
+            final ImageStyle style = resolved == null ? null : resolved.style();
             return ImageMediaPathSupplier.resolveScale( DefaultImageLinkProcessor.scale( style, link.urlParams().get( "scale" ), null ) );
         }
         catch ( RuntimeException e )
@@ -280,12 +281,16 @@ final class RichTextPartsProcessor
         return parts.path() + parts.queryString();
     }
 
-    private ImageStyle image( final HtmlElement element, final String ref, final RichTextLinks.Link link )
+    /**
+     * @return the style applied, named {@code <application>:<name>}, or {@code null} for none
+     */
+    private ProcessedHtml.Style image( final HtmlElement element, final String ref, final RichTextLinks.Link link )
     {
         final String id = link.id();
         final Map<String, String> urlParams = link.urlParams();
         final String styleName = urlParams.get( "style" );
-        final ImageStyle style = styleName == null ? null : imageStyles.get().get( styleName );
+        final ImageStyles.Resolved resolved = styleName == null ? null : imageStyles.get().get( styleName );
+        final ImageStyle style = resolved == null ? null : resolved.style();
         final String scaleFromQueryString = urlParams.get( "scale" );
 
         // looked up once for the src and every srcset width
@@ -320,9 +325,12 @@ final class RichTextPartsProcessor
             }
         }
 
-        images.add( new ProcessedHtml.Image( ref, id, style, src, srcset ) );
+        final ProcessedHtml.Style processedStyle =
+            resolved == null ? null : new ProcessedHtml.Style( resolved.qualifiedName(), style.getAspectRatio(), style.getFilter() );
 
-        return style;
+        images.add( new ProcessedHtml.Image( ref, id, processedStyle, src, srcset ) );
+
+        return processedStyle;
     }
 
     private ImageUrlParts imageParts( final Supplier<Media> media, final ImageStyle style, final String scale )
