@@ -4,16 +4,12 @@ const assert = require('/lib/xp/testing');
 // BEGIN
 const urlById = portalLib.baseUrl({
     type: 'server',
-    path: 'contentId',
-    project: 'explicit-project',
-    branch: 'explicit-branch',
+    id: 'contentId'
 });
 
 const urlByPath = portalLib.baseUrl({
     type: 'server',
-    path: '/path',
-    project: 'explicit-project',
-    branch: 'explicit-branch',
+    path: '/path'
 });
 
 // END
