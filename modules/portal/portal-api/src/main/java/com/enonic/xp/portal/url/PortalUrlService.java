@@ -128,15 +128,12 @@ public interface PortalUrlService
      * content path each content link is relative to, the project and branch contents are looked up in, and the
      * applications image styles come from.
      * <p>
-     * A placeholder is a readable value, useful for debugging: a content link shows its path relative to that site or
-     * project, an image or attachment its media API path. The caller renders each element from the parts of its entry
-     * in {@link ProcessedHtml#links()} or {@link ProcessedHtml#images()}, which the
-     * {@value ProcessedHtml#LINK_REF_ATTRIBUTE} or {@value ProcessedHtml#IMAGE_REF_ATTRIBUTE} attribute of the element
-     * names.
+     * The caller renders each element from the parts of its entry in {@link ProcessedHtml#links()} or
+     * {@link ProcessedHtml#images()}, which the {@value ProcessedHtml#LINK_REF_ATTRIBUTE} or
+     * {@value ProcessedHtml#IMAGE_REF_ATTRIBUTE} attribute of the element names.
      *
      * @param params the HTML, the site or project it belongs to, and how to process it
      * @return the processed HTML and the parts of each link and image in it
-     * @throws ContentOutOfScopeException if a content link addresses a content outside the site or project
      */
     ProcessedHtml processHtmlParts( ProcessHtmlPartsParams params );
 

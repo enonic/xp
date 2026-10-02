@@ -11,11 +11,9 @@ import com.enonic.xp.style.ImageStyle;
  * Result of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the processed HTML, and the parts of
  * every link and image in it.
  * <p>
- * Each internal link and image of the HTML holds a placeholder, a readable value useful for debugging: a content link
- * shows its path relative to the site or project the HTML belongs to, an image or attachment its media API path, such
- * as {@code /media:image/...}. The element carries a {@value #LINK_REF_ATTRIBUTE} or {@value #IMAGE_REF_ATTRIBUTE}
- * attribute holding the {@code ref} of its entry in {@link #links()} or {@link #images()}; the caller renders the
- * element from the parts of that entry.
+ * Each internal link and image of the HTML holds a placeholder. The element carries a {@value #LINK_REF_ATTRIBUTE} or
+ * {@value #IMAGE_REF_ATTRIBUTE} attribute holding the {@code ref} of its entry in {@link #links()} or {@link #images()};
+ * the caller renders the element from the parts of that entry.
  *
  * @param html    the processed HTML, with placeholders for its internal links and images
  * @param baseUrl the Base URL configured for the site or project the HTML belongs to, without a trailing slash;

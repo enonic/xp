@@ -729,12 +729,8 @@ interface ProcessHtmlPartsHandler {
  * attachments - from configuration alone, for the site or project named by `base`, replaces each
  * link with a placeholder, and removes empty `figcaption` elements.
  *
- * A placeholder is a readable value, useful for debugging: a content link shows its path relative to
- * that site or project, an image or attachment its media API path, such as `/media:image/...`. Each
- * such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in `links` or
- * `images`; render the element from the parts of that entry.
- *
- * A content link to a content outside the site or project named by `base` raises an error.
+ * Each such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in
+ * `links` or `images`; render the element from the parts of that entry.
  *
  * @example-ref examples/portal/processHtmlParts.js
  *
