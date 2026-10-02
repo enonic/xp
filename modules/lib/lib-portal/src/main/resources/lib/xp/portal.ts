@@ -621,7 +621,7 @@ interface ProcessHtmlHandler {
  * @param {string} params.value Html value string to process.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
  * @param {number[]} [params.imageWidths] List of image width. Allows to generate image URLs for given image widths and use them in the `srcset` attribute of a `img` tag, for images the image API scales.
- * @param {string} [params.imageSizes] Specifies the width for an image depending on browser dimensions. The value has the following format: (media-condition) width. Multiple sizes are comma-separated.
+ * @param {string} [params.imageSizes] Specifies the width for an image depending on browser dimensions. The value has the following format: (media-condition) width. Multiple sizes are comma-separated. Written along with the `srcset` that `imageWidths` adds.
  *
  * @returns {string} The processed HTML.
  */
@@ -737,7 +737,7 @@ interface ProcessHtmlPartsHandler {
  * @param {string} params.value Html value string to process.
  * @param {object} [params.base] The site or project the HTML belongs to, resolved by {@link urlBase}. Defaults to the project of the current context.
  * @param {number[]} [params.imageWidths] Image widths for the `srcset` attribute of `img` tags, for images the image API scales.
- * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags.
+ * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags. Written along with the `srcset` that `imageWidths` adds.
  *
  * @returns {object} The processed `html`, the `baseUrl`, and the `links` and `images` with their parts.
  */

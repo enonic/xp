@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -682,6 +683,24 @@ class PortalUrlServiceImpl_processHtmlTest
 
         final String processedHtml = this.service.processHtml( params );
         assertThat( processedHtml ).contains( "/full/mycontent\"" ).doesNotContain( "srcset" ).doesNotContain( "sizes" );
+    }
+
+    @Test
+    void processHtml_image_imageSizes_without_imageWidths()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        // sizes goes with a srcset: without widths, or with none, neither is written
+        for ( final List<Integer> imageWidths : Arrays.asList( null, List.<Integer>of() ) )
+        {
+            final ProcessHtmlParams params = new ProcessHtmlParams().value( "<img src=\"image://" + media.getId() + "\"/>" )
+                .imageWidths( imageWidths )
+                .imageSizes( "(max-width: 960px) 660px" );
+
+            assertEquals( "<img src=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() +
+                              ":0a350f43700951cdcca1574f448a7e22/width-768/mycontent\">", this.service.processHtml( params ) );
+        }
     }
 
     @Test

@@ -307,15 +307,17 @@ final class RichTextPartsProcessor
 
         element.setAttribute( ProcessedHtml.IMAGE_REF_ATTRIBUTE, ref );
         element.setAttribute( link.attribute(), src.path() + src.queryString() );
-        if ( responsive && params.getImageWidths() != null )
+        // sizes goes with the width descriptors of a srcset, so both are written, or neither
+        if ( !srcset.isEmpty() )
         {
             element.setAttribute( "srcset", srcset.stream()
                 .map( source -> source.url().path() + source.url().queryString() + " " + source.width() + "w" )
                 .collect( Collectors.joining( "," ) ) );
-        }
-        if ( responsive && params.getImageSizes() != null && !params.getImageSizes().isBlank() )
-        {
-            element.setAttribute( "sizes", params.getImageSizes() );
+
+            if ( params.getImageSizes() != null && !params.getImageSizes().isBlank() )
+            {
+                element.setAttribute( "sizes", params.getImageSizes() );
+            }
         }
 
         images.add( new ProcessedHtml.Image( ref, id, style, src, srcset ) );
