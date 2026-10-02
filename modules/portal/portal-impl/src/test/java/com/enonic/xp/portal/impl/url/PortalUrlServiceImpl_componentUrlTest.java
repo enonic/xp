@@ -44,7 +44,7 @@ class PortalUrlServiceImpl_componentUrlTest
         PortalRequestAccessor.set( null );
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.componentUrl( new ComponentUrlParams() ) );
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -57,7 +57,7 @@ class PortalUrlServiceImpl_componentUrlTest
             .branch( Branch.from( "branch" ) )
             .build()
             .callWith( () -> this.service.componentUrl( new ComponentUrlParams() ) );
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
     }
 
     @Test
@@ -69,7 +69,7 @@ class PortalUrlServiceImpl_componentUrlTest
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
             .build()
             .callWith( () -> this.service.componentUrl( new ComponentUrlParams() ) );
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
     }
 
     @Test
