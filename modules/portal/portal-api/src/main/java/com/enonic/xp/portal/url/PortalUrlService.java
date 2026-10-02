@@ -7,8 +7,10 @@ import org.jspecify.annotations.NullMarked;
  * <p>
  * Unless a method says otherwise, URLs are generated as XP serves them: they follow the current
  * request and its virtual host mapping, and a URL that cannot be generated is returned as an error
- * URL. {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)} are resolved
- * from configuration alone, for callers that serve content somewhere else.
+ * URL. The {@code ...Parts} methods - {@link #pageUrlParts(PageUrlPartsParams)},
+ * {@link #imageUrlParts(ImageUrlPartsParams)}, {@link #attachmentUrlParts(AttachmentUrlPartsParams)} and
+ * {@link #processHtmlParts(ProcessHtmlPartsParams)} - are resolved from configuration alone, for callers that serve
+ * content somewhere else, for the {@link #urlBase(UrlBaseParams) base} they are given.
  */
 @NullMarked
 public interface PortalUrlService
@@ -110,6 +112,30 @@ public interface PortalUrlService
      *         and an error URL when no URL can be generated
      */
     String attachmentUrl( AttachmentUrlParams params );
+
+    /**
+     * Resolves the parts of an image URL, for building the full URL from segments:
+     * {@code url = <mediaBaseUrl> + path + queryString}, where {@code mediaBaseUrl} is supplied by the caller.
+     * Resolution is from configuration alone. An image the image API serves as stored has a single URL, with the
+     * {@code full} scale and none of the processing params.
+     *
+     * @param params the image and how to process it
+     * @return the parts of the URL
+     * @throws IllegalArgumentException                       unless the media is an image or a vector image
+     * @throws com.enonic.xp.content.ContentNotFoundException if the media the params name by id or path is missing
+     */
+    ImageUrlParts imageUrlParts( ImageUrlPartsParams params );
+
+    /**
+     * Resolves the parts of an attachment URL, for building the full URL from segments:
+     * {@code url = <mediaBaseUrl> + path + queryString}, where {@code mediaBaseUrl} is supplied by the caller.
+     * Resolution is from configuration alone.
+     *
+     * @param params the content and the attachment of it
+     * @return the parts of the URL
+     * @throws com.enonic.xp.content.ContentNotFoundException if the content the params name by id or path is missing
+     */
+    AttachmentUrlParts attachmentUrlParts( AttachmentUrlPartsParams params );
 
     /**
      * Generates the URL of an identity provider function, such as login or logout.

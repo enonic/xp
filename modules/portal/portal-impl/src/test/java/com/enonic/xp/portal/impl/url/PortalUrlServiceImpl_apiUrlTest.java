@@ -51,7 +51,7 @@ class PortalUrlServiceImpl_apiUrlTest
     void setUp()
     {
         PortalUrlGeneratorService portalUrlGeneratorService =
-            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), mock( ContentService.class ) );
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
         this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

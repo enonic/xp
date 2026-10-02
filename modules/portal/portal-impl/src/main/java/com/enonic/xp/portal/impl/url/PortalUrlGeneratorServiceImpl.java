@@ -15,9 +15,6 @@ import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.branch.Branch;
-import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -27,20 +24,13 @@ import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
-import com.enonic.xp.portal.url.AttachmentUrlParts;
-import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
-import com.enonic.xp.portal.url.ImageUrlParts;
-import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
-import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.webapp.WebappService;
-
-import static java.util.Objects.requireNonNull;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public class PortalUrlGeneratorServiceImpl
@@ -55,19 +45,15 @@ public class PortalUrlGeneratorServiceImpl
 
     private final SiteService siteService;
 
-    private final ContentService contentService;
-
     private volatile String defaultMediaBaseUrl;
 
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
-    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService,
-                                          @Reference final ContentService contentService )
+    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService )
     {
         this.webappService = webappService;
         this.siteService = siteService;
-        this.contentService = contentService;
     }
 
     @Activate
@@ -123,63 +109,6 @@ public class PortalUrlGeneratorServiceImpl
         return apiUrl( builder.setBaseUrl( params.getBaseUrl() ).build() );
     }
 
-    @Override
-    public ImageUrlParts imageUrlParts( final ImageUrlPartsParams params )
-    {
-        final Supplier<ProjectName> projectName = projectName( params.getProjectName() );
-        final Supplier<Branch> branch = branch( params.getBranch() );
-        final Supplier<Media> media = Suppliers.memoize( params.getMedia() != null
-                                                             ? params.getMedia()::get
-                                                             : () -> MediaLookup.media( contentService, projectName.get(), branch.get(),
-                                                                                        key( params.getId(), params.getPath() ) ) );
-
-        return runWithAdminRole( () -> {
-            final MediaPathParts parts = ImageMediaPathSupplier.create()
-                .setMedia( media )
-                .setProjectName( projectName )
-                .setBranch( branch )
-                .setScale( params.getScale() )
-                .setFormat( params.getFormat() )
-                .build()
-                .parts();
-
-            final String queryString = queryString(
-                imageQueryParams( params.getQueryParams(), ImageScaling.isScalable( media.get() ), params.getQuality(),
-                                  params.getBackground(), params.getFilter() ) );
-
-            return new ImageUrlParts( parts.path( MEDIA_IMAGE_API_DESCRIPTOR_KEY ), queryString,
-                                      UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
-                                      UrlBuilderHelper.urlEncodePathSegment( parts.scale() ),
-                                      UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
-        } );
-    }
-
-    @Override
-    public AttachmentUrlParts attachmentUrlParts( final AttachmentUrlPartsParams params )
-    {
-        final Supplier<ProjectName> projectName = projectName( params.getProjectName() );
-        final Supplier<Branch> branch = branch( params.getBranch() );
-        final Supplier<Content> content = params.getContentSupplier() != null
-            ? params.getContentSupplier()
-            : () -> MediaLookup.content( contentService, projectName.get(), branch.get(), key( params.getId(), params.getPath() ) );
-
-        return runWithAdminRole( () -> {
-            final MediaPathParts parts = AttachmentMediaPathSupplier.create()
-                .setContent( content )
-                .setProjectName( projectName )
-                .setBranch( branch )
-                .setName( params.getName() )
-                .setLabel( params.getLabel() )
-                .build()
-                .parts();
-
-            return new AttachmentUrlParts( parts.path( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY ),
-                                           queryString( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) ),
-                                           UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
-                                           UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
-        } );
-    }
-
     private ApiUrlBaseUrlResolver apiBaseUrl( final String urlType, final String baseUrl, final DescriptorKey descriptorKey )
     {
         return ApiUrlBaseUrlResolver.create()
@@ -194,33 +123,9 @@ public class PortalUrlGeneratorServiceImpl
     }
 
     /**
-     * @return the project the params name, or else the project of the current context
-     */
-    private static Supplier<ProjectName> projectName( final Supplier<ProjectName> projectName )
-    {
-        return projectName != null
-            ? projectName
-            : Suppliers.memoize(
-                () -> ProjectName.from( requireNonNull( ContextAccessor.current().getRepositoryId(), "Project must be provided" ) ) );
-    }
-
-    /**
-     * @return the branch the params name, or else the branch of the current context
-     */
-    private static Supplier<Branch> branch( final Supplier<Branch> branch )
-    {
-        return branch != null ? branch : Suppliers.memoize( () -> requireNonNull( ContextAccessor.current().getBranch(), "Branch must be provided" ) );
-    }
-
-    private static String key( final String id, final String path )
-    {
-        return id != null ? id : path;
-    }
-
-    /**
      * @return the query params of an image URL; an image served as stored takes none of the processing params
      */
-    private static Map<String, List<String>> imageQueryParams( final Map<String, List<String>> params, final boolean scalable,
+    static Map<String, List<String>> imageQueryParams( final Map<String, List<String>> params, final boolean scalable,
                                                                final Integer quality, final String background, final String filter )
     {
         final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
@@ -261,7 +166,7 @@ public class PortalUrlGeneratorServiceImpl
         }
     }
 
-    private static Map<String, List<String>> attachmentQueryParams( final Map<String, List<String>> params, final boolean download )
+    static Map<String, List<String>> attachmentQueryParams( final Map<String, List<String>> params, final boolean download )
     {
         final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
 
@@ -273,7 +178,7 @@ public class PortalUrlGeneratorServiceImpl
         return queryParams;
     }
 
-    private static String queryString( final Map<String, List<String>> queryParams )
+    static String queryString( final Map<String, List<String>> queryParams )
     {
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         queryParamsStrategy.params( queryParams );

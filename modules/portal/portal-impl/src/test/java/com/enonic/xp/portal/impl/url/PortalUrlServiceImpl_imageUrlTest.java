@@ -80,7 +80,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         webappService = mock( WebappService.class );
         siteService = mock( SiteService.class );
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, siteService, this.contentService );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, siteService );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),

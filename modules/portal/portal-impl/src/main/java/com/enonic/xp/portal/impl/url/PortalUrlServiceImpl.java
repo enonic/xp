@@ -28,12 +28,16 @@ import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
+import com.enonic.xp.portal.url.AttachmentUrlParts;
+import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.ComponentUrlParams;
 import com.enonic.xp.portal.url.GenerateUrlParams;
 import com.enonic.xp.portal.url.IdentityUrlParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
+import com.enonic.xp.portal.url.ImageUrlParts;
+import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
 import com.enonic.xp.portal.url.PageUrlParams;
@@ -318,6 +322,18 @@ public final class PortalUrlServiceImpl
     }
 
     @Override
+    public ImageUrlParts imageUrlParts( final ImageUrlPartsParams params )
+    {
+        return runWithAdminRole( () -> new MediaUrlParts( contentService ).image( params ) );
+    }
+
+    @Override
+    public AttachmentUrlParts attachmentUrlParts( final AttachmentUrlPartsParams params )
+    {
+        return runWithAdminRole( () -> new MediaUrlParts( contentService ).attachment( params ) );
+    }
+
+    @Override
     public String identityUrl( final IdentityUrlParams params )
     {
         final Supplier<String> baseUrlSupplier = new IdentityBaseUrlSupplier( params.getType() );
@@ -374,7 +390,7 @@ public final class PortalUrlServiceImpl
     @Override
     public ProcessedHtml processHtmlParts( final ProcessHtmlPartsParams params )
     {
-        return new RichTextPartsProcessor( styleDescriptorService, this, portalUrlGeneratorService, macroService, contentService, params,
+        return new RichTextPartsProcessor( styleDescriptorService, this, macroService, contentService, params,
                                            baseOrProject( params.getBase() ) ).process();
     }
 

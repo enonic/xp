@@ -91,7 +91,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.siteService = mock( SiteService.class );
 
         PortalUrlGeneratorService portalUrlGeneratorService =
-            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService, this.contentService );
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,

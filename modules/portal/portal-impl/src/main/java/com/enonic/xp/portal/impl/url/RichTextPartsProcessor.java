@@ -28,7 +28,6 @@ import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
-import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
@@ -49,8 +48,6 @@ final class RichTextPartsProcessor
 
     private final PortalUrlService portalUrlService;
 
-    private final PortalUrlGeneratorService portalUrlGeneratorService;
-
     private final MacroService macroService;
 
     private final ContentService contentService;
@@ -66,12 +63,11 @@ final class RichTextPartsProcessor
     private final List<ProcessedHtml.Image> images = new ArrayList<>();
 
     RichTextPartsProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
-                            final PortalUrlGeneratorService portalUrlGeneratorService, final MacroService macroService,
-                            final ContentService contentService, final ProcessHtmlPartsParams params, final UrlBase base )
+                            final MacroService macroService, final ContentService contentService, final ProcessHtmlPartsParams params,
+                            final UrlBase base )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
-        this.portalUrlGeneratorService = portalUrlGeneratorService;
         this.macroService = macroService;
         this.contentService = contentService;
         this.params = params;
@@ -269,12 +265,8 @@ final class RichTextPartsProcessor
     private String attachmentLink( final String ref, final RichTextLinks.Link link )
     {
         final boolean download = RichTextLinks.DOWNLOAD_MODE.equals( link.mode() );
-        final AttachmentUrlParts parts = portalUrlGeneratorService.attachmentUrlParts( AttachmentUrlPartsParams.create()
-                                                                                          .setId( link.id() )
-                                                                                          .setProjectName( base::getProjectName )
-                                                                                          .setBranch( base::getBranch )
-                                                                                          .setDownload( download )
-                                                                                          .build() );
+        final AttachmentUrlParts parts = portalUrlService.attachmentUrlParts(
+            AttachmentUrlPartsParams.create().setId( link.id() ).setBase( base ).setDownload( download ).build() );
 
         links.add( new ProcessedHtml.AttachmentLink( ref, link.uri(), link.id(), parts, download ) );
 
@@ -335,13 +327,12 @@ final class RichTextPartsProcessor
 
     private ImageUrlParts imageParts( final Supplier<Media> media, final ImageStyle style, final String scale )
     {
-        return portalUrlGeneratorService.imageUrlParts( ImageUrlPartsParams.create()
-                                                            .setMedia( media )
-                                                            .setProjectName( base::getProjectName )
-                                                            .setBranch( base::getBranch )
-                                                            .setScale( scale )
-                                                            .setFilter( style == null ? null : style.getFilter() )
-                                                            .build() );
+        return portalUrlService.imageUrlParts( ImageUrlPartsParams.create()
+                                                   .setMedia( media )
+                                                   .setBase( base )
+                                                   .setScale( scale )
+                                                   .setFilter( style == null ? null : style.getFilter() )
+                                                   .build() );
     }
 
     /**
