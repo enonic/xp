@@ -158,7 +158,7 @@ public final class PortalUrlServiceImpl
 
             return new UrlBase( metadata.projectName(), metadata.branch(), metadata.anchorPath(),
                                 Strings.isNullOrEmpty( baseUrl ) ? null : UrlGenerator.removeTrailingSlash( baseUrl ),
-                                metadata.siteConfigs() );
+                                RichTextLinks.applications( metadata.siteConfigs() ) );
         } );
     }
 

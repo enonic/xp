@@ -233,7 +233,7 @@ public class RichTextProcessor
         final SiteConfigs siteConfigs = portalRequest != null && portalRequest.getSite() != null
             ? SiteConfigsDataSerializer.fromData( portalRequest.getSite().getData().getRoot() )
             : SiteConfigs.empty();
-        return RichTextLinks.styleDescriptors( styleDescriptorService, siteConfigs );
+        return RichTextLinks.styleDescriptors( styleDescriptorService, RichTextLinks.applications( siteConfigs ) );
     }
 
     private static String addQueryParamsIfPresent( final String url, final Map<String, String> urlParams )

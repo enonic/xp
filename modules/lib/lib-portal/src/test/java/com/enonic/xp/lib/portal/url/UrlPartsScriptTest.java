@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
@@ -20,7 +21,6 @@ import com.enonic.xp.portal.url.ProcessedHtml;
 import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +45,7 @@ class UrlPartsScriptTest
 
         when( portalUrlService.urlBase( any( UrlBaseParams.class ) ) ).thenAnswer( invocation -> {
             final UrlBaseParams params = invocation.getArgument( 0 );
-            return new UrlBase( params.getProjectName(), params.getBranch(), params.getContentPath(), null, SiteConfigs.empty() );
+            return new UrlBase( params.getProjectName(), params.getBranch(), params.getContentPath(), null, ApplicationKeys.empty() );
         } );
 
         when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenReturn(

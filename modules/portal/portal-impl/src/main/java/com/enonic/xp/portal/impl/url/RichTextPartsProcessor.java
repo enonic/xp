@@ -349,6 +349,6 @@ final class RichTextPartsProcessor
     {
         return params.getCustomStyleDescriptorsCallback() != null
             ? params.getCustomStyleDescriptorsCallback().get()
-            : RichTextLinks.styleDescriptors( styleDescriptorService, base.getSiteConfigs() );
+            : RichTextLinks.styleDescriptors( styleDescriptorService, base.getApplications() );
     }
 }
