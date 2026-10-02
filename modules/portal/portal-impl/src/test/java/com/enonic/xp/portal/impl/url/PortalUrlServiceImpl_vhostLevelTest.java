@@ -12,6 +12,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.PageUrlParts;
+import com.enonic.xp.portal.url.PageUrlPartsParams;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -22,6 +24,7 @@ import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -87,11 +90,6 @@ class PortalUrlServiceImpl_vhostLevelTest
         return this.service.pageUrl( new PageUrlParams().id( "folderid" ) );
     }
 
-    private String path()
-    {
-        return this.service.pageUrlParts( new PageUrlParams().id( "folderid" ) ).path();
-    }
-
     private String baseUrl()
     {
         return this.service.baseUrl( BaseUrlParams.create().setId( "folderid" ).build() );
@@ -103,7 +101,6 @@ class PortalUrlServiceImpl_vhostLevelTest
         mountVhost( "/source", "/site/myproject/draft/features/subsite" );
 
         assertEquals( "/source/folder", url() );
-        assertEquals( "/folder", path() );
         assertEquals( "/source", baseUrl() );
     }
 
@@ -114,7 +111,6 @@ class PortalUrlServiceImpl_vhostLevelTest
 
         // the host mounts /features, so that is the level - the nested site stays in the path
         assertEquals( "/source/subsite/folder", url() );
-        assertEquals( "/subsite/folder", path() );
         assertEquals( "/source", baseUrl() );
     }
 
@@ -124,7 +120,6 @@ class PortalUrlServiceImpl_vhostLevelTest
         mountVhost( "/source", "/site/myproject/draft" );
 
         assertEquals( "/source/features/subsite/folder", url() );
-        assertEquals( "/features/subsite/folder", path() );
         assertEquals( "/source", baseUrl() );
     }
 
@@ -134,7 +129,6 @@ class PortalUrlServiceImpl_vhostLevelTest
         mountVhost( "/", "/site/myproject/draft/features" );
 
         assertEquals( "/subsite/folder", url() );
-        assertEquals( "/subsite/folder", path() );
         // the level is the whole host, so its base is the host itself
         assertEquals( "", baseUrl() );
     }
@@ -145,19 +139,18 @@ class PortalUrlServiceImpl_vhostLevelTest
         // nothing narrows the request, so the site engine serves the whole project: that is the
         // level, and the full content path follows it
         assertEquals( "/site/myproject/draft/features/subsite/folder", url() );
-        assertEquals( "/features/subsite/folder", path() );
         assertEquals( "/site/myproject/draft", baseUrl() );
     }
 
     @Test
-    void testSelectedLevelOutranksTheVhost()
+    void testPartsFollowTheSelectedLevel()
     {
         mountVhost( "/source", "/site/myproject/draft/features/subsite" );
 
-        final PageUrlParams params =
-            new PageUrlParams().id( "folderid" ).base( BaseUrlParams.create().setPath( "/features" ).build() );
+        final PageUrlParts parts = this.service.pageUrlParts(
+            PageUrlPartsParams.create().setId( "folderid" ).setBase( BaseUrlParams.create().setPath( "/features" ).build() ).build() );
 
-        assertEquals( "/site/myproject/draft/features/subsite/folder", this.service.pageUrl( params ) );
-        assertEquals( "/subsite/folder", this.service.pageUrlParts( params ).path() );
+        assertEquals( "/subsite/folder", parts.path() );
+        assertNull( parts.baseUrl() );
     }
 }

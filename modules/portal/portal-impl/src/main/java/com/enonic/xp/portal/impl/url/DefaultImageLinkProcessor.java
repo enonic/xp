@@ -17,6 +17,7 @@ import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.html.HtmlElement;
+import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
@@ -51,14 +52,12 @@ final class DefaultImageLinkProcessor
 
     void process()
     {
-        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        Optional.ofNullable( imageStyle ).map( ImageStyle::getFilter ).ifPresent( filter -> queryParamsStrategy.param( "filter", filter ) );
 
         final Supplier<ProjectName> projectNameSupplier = Suppliers.memoize(
-            () -> ContentProjectResolver.create().setPreferSiteRequest( params.getBaseUrl() == null && params.getImageBaseUrl() == null ).build().resolve() );
+            () -> ContentProjectResolver.create().setPreferSiteRequest( params.getBaseUrl() == null ).build().resolve() );
 
         final Supplier<Branch> branchSupplier =
-            Suppliers.memoize( () -> ContentBranchResolver.create().setPreferSiteRequest( params.getBaseUrl() == null && params.getImageBaseUrl() == null ).build().resolve() );
+            Suppliers.memoize( () -> ContentBranchResolver.create().setPreferSiteRequest( params.getBaseUrl() == null ).build().resolve() );
 
         final Supplier<Media> imageSupplier = Suppliers.memoize( () -> {
             final Content content = ContextBuilder.copyOf( ContextAccessor.current() )
@@ -74,11 +73,21 @@ final class DefaultImageLinkProcessor
             throw new IllegalStateException( String.format( "Content with id '%s' is not an image", id ) );
         } );
 
+        // an image served as stored takes no filter
+        final Supplier<String> queryParamsStrategy = () -> {
+            final DefaultQueryParamsSupplier queryParams = new DefaultQueryParamsSupplier();
+            if ( isScalable( imageSupplier ) )
+            {
+                Optional.ofNullable( imageStyle ).map( ImageStyle::getFilter ).ifPresent( filter -> queryParams.param( "filter", filter ) );
+            }
+            return queryParams.get();
+        };
+
         final String imageUrl = imageUrl( baseUrlSupplier, imageSupplier, projectNameSupplier, branchSupplier, queryParamsStrategy, null );
 
         element.setAttribute( element.hasAttribute( "href" ) ? "href" : "src", imageUrl );
 
-        if ( "img".equals( element.getTagName() ) )
+        if ( "img".equals( element.getTagName() ) && isScalable( imageSupplier ) )
         {
             final List<Integer> imageWidths = params.getImageWidths();
             if ( imageWidths != null )
@@ -101,9 +110,24 @@ final class DefaultImageLinkProcessor
         }
     }
 
+    /**
+     * @return whether the image API scales the image; an image that fails to resolve keeps its error URLs
+     */
+    private static boolean isScalable( final Supplier<Media> imageSupplier )
+    {
+        try
+        {
+            return ImageScaling.isScalable( imageSupplier.get() );
+        }
+        catch ( RuntimeException e )
+        {
+            return true;
+        }
+    }
+
     private String imageUrl( final Supplier<String> baseUrlSupplier, final Supplier<Media> imageSupplier,
                              final Supplier<ProjectName> projectNameSupplier, final Supplier<Branch> branchSupplier,
-                             final DefaultQueryParamsSupplier queryParamsStrategy, final Integer imageWidth )
+                             final Supplier<String> queryParamsStrategy, final Integer imageWidth )
     {
         final UrlGeneratorParams imageUrl = UrlGeneratorParams.create()
             .setBaseUrl( baseUrlSupplier )
@@ -119,6 +143,15 @@ final class DefaultImageLinkProcessor
     }
 
     private String getScale( final ImageStyle imageStyle, final Integer expectedWidth )
+    {
+        return scale( imageStyle, scaleFromQueryString, expectedWidth );
+    }
+
+    /**
+     * @return the scale of an image in processed HTML: a block of the aspect ratio of the style, or of the one the link
+     * carries, at the width - {@code 768} unless given - and otherwise that width
+     */
+    static String scale( final ImageStyle imageStyle, final String scaleFromQueryString, final Integer expectedWidth )
     {
         final String aspectRatio =
             imageStyle != null && imageStyle.getAspectRatio() != null ? imageStyle.getAspectRatio() : scaleFromQueryString;

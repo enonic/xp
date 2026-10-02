@@ -154,7 +154,7 @@ interface ImageUrlHandler {
 }
 
 /**
- * This function generates a URL pointing to an image.
+ * This function generates a URL pointing to an image: an image or a vector image.
  *
  * @example-ref examples/portal/imageUrl.js
  *
@@ -602,7 +602,8 @@ interface ProcessHtmlHandler {
 }
 
 /**
- * This function replaces abstract internal links contained in an HTML text by generated URLs.
+ * This function replaces abstract internal links contained in an HTML text by generated URLs, and
+ * removes empty `figcaption` elements.
  *
  * Links to content are generated the same way {@link pageUrl} generates them, and links to media
  * the same way {@link attachmentUrl} and {@link imageUrl} do.
@@ -614,7 +615,7 @@ interface ProcessHtmlHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} params.value Html value string to process.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {number[]} [params.imageWidths] List of image width. Allows to generate image URLs for given image widths and use them in the `srcset` attribute of a `img` tag.
+ * @param {number[]} [params.imageWidths] List of image width. Allows to generate image URLs for given image widths and use them in the `srcset` attribute of a `img` tag, for images the image API scales.
  * @param {string} [params.imageSizes] Specifies the width for an image depending on browser dimensions. The value has the following format: (media-condition) width. Multiple sizes are comma-separated.
  *
  * @returns {string} The processed HTML.
@@ -630,6 +631,171 @@ export function processHtml(params: ProcessHtmlParams): string {
     bean.setImageSizes(__.nullOrValue(params.imageSizes));
 
     return bean.createUrl();
+}
+
+export interface ProcessHtmlPartsParams {
+    value: string;
+    base: UrlPartsBase;
+    imageWidths?: number[];
+    imageSizes?: string;
+}
+
+interface ProcessedHtmlLinkBase {
+    /** Value of the `data-link-ref` attribute of the element. */
+    ref: string;
+    /** The link as written in the HTML, such as `content://<id>`. */
+    uri: string;
+    /** Id of the linked content. */
+    contentId: string;
+}
+
+/**
+ * A link of processed HTML to a content page, written as `content://<id>`.
+ */
+export interface ProcessedHtmlContentLink extends ProcessedHtmlLinkBase {
+    type: 'content';
+    /** Parts of the page URL, with the query string the link carries. */
+    page: PageUrlParts;
+    /** Fragment of the link, without `#`; `null` when it has none. */
+    fragment: string | null;
+}
+
+/**
+ * A link of processed HTML to the attachment of a media content, written as `media://<mode>/<id>`.
+ */
+export interface ProcessedHtmlAttachmentLink extends ProcessedHtmlLinkBase {
+    type: 'attachment';
+    /** Parts of the attachment URL. */
+    attachment: AttachmentUrlParts;
+    /** Whether the link asks for the attachment to be downloaded. */
+    download: boolean;
+}
+
+/**
+ * An internal link of processed HTML, told apart by its `type`.
+ */
+export type ProcessedHtmlLink = ProcessedHtmlContentLink | ProcessedHtmlAttachmentLink;
+
+/**
+ * An internal image of processed HTML.
+ */
+export interface ProcessedHtmlImage {
+    /** Value of the `data-image-ref` attribute of the element. */
+    ref: string;
+    /** Id of the image content. */
+    contentId: string;
+    /** The image style applied; `null` for none. */
+    style: {name: string; aspectRatio: string | null; filter: string | null} | null;
+    /** Parts of the URL in `src`. */
+    src: ImageUrlParts;
+    /** Parts of the URLs in `srcset`, one for each image width; empty for an image the image API serves as stored. */
+    srcset: {width: number; url: ImageUrlParts}[];
+}
+
+/**
+ * Processed HTML and the parts of every link and image in it.
+ */
+export interface ProcessedHtml {
+    /** The processed HTML, with placeholders for its internal links and images. */
+    html: string;
+    /** Base URL configured for the site or project the HTML belongs to, without a trailing slash; `null` when none is configured. The `baseUrl` of the page parts of every content link. */
+    baseUrl: string | null;
+    /** Internal links to contents and attachments, in document order. */
+    links: ProcessedHtmlLink[];
+    /** Internal images, in document order. */
+    images: ProcessedHtmlImage[];
+}
+
+interface ProcessHtmlPartsHandler {
+    setValue(value: string): void;
+
+    setBaseId(value: string | null): void;
+
+    setBasePath(value: string | null): void;
+
+    setBaseProjectName(value: string | null): void;
+
+    setBaseBranch(value: string | null): void;
+
+    setImageWidths(value: number[] | null): void;
+
+    setImageSizes(value: string | null): void;
+
+    process(): ProcessedHtml;
+}
+
+/**
+ * This function resolves the parts of the internal links of an HTML text - to contents, images and
+ * attachments - from configuration alone, for the site or project named by `base`, replaces each
+ * link with a placeholder, and removes empty `figcaption` elements.
+ *
+ * A placeholder is a readable value, useful for debugging: a content link shows its path relative to
+ * that site or project, an image or attachment its media API path, such as `/media:image/...`. Each
+ * such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in `links` or
+ * `images`; render the element from the parts of that entry.
+ *
+ * A content link to a content outside the site or project named by `base` raises an error.
+ *
+ * @example-ref examples/portal/processHtmlParts.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} params.value Html value string to process.
+ * @param {object} params.base Required. The site or project the HTML belongs to.
+ * @param {string} [params.base.id] Id of the site, or of a content inside it.
+ * @param {string} [params.base.path] Path of the site, or of a content inside it; `/` names the project.
+ * @param {string} [params.base.project] Name of the project. Defaults to the project of the current context.
+ * @param {string} [params.base.branch] Name of the branch. Defaults to the branch of the current context.
+ * @param {number[]} [params.imageWidths] Image widths for the `srcset` attribute of `img` tags, for images the image API scales.
+ * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags.
+ *
+ * @returns {object} The processed `html`, the `baseUrl`, and the `links` and `images` with their parts.
+ */
+export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml {
+    const bean: ProcessHtmlPartsHandler = __.newBean<ProcessHtmlPartsHandler>('com.enonic.xp.lib.portal.url.ProcessHtmlPartsHandler');
+
+    const value = checkRequired(params, 'value');
+    const base = checkRequired(params, 'base');
+
+    bean.setValue(value);
+    bean.setBaseId(__.nullOrValue(base.id));
+    bean.setBasePath(__.nullOrValue(base.path));
+    bean.setBaseProjectName(__.nullOrValue(base.project));
+    bean.setBaseBranch(__.nullOrValue(base.branch));
+    bean.setImageWidths(__.nullOrValue(params.imageWidths));
+    bean.setImageSizes(__.nullOrValue(params.imageSizes));
+
+    const result = __.toNativeObject(bean.process());
+
+    return {
+        html: result.html,
+        baseUrl: result.baseUrl ?? null,
+        links: (result.links || []).map((link): ProcessedHtmlLink => link.type === 'content'
+            ? {
+                type: 'content',
+                ref: link.ref,
+                uri: link.uri,
+                contentId: link.contentId,
+                page: toPageUrlParts(link.page),
+                fragment: link.fragment ?? null,
+            }
+            : {
+                type: 'attachment',
+                ref: link.ref,
+                uri: link.uri,
+                contentId: link.contentId,
+                attachment: toAttachmentUrlParts(link.attachment),
+                download: link.download,
+            }),
+        images: (result.images || []).map((image) => ({
+            ref: image.ref,
+            contentId: image.contentId,
+            style: image.style
+                ? {name: image.style.name, aspectRatio: image.style.aspectRatio ?? null, filter: image.style.filter ?? null}
+                : null,
+            src: toImageUrlParts(image.src),
+            srcset: (image.srcset || []).map((source) => ({width: source.width, url: toImageUrlParts(source.url)})),
+        })),
+    };
 }
 
 interface SanitizeHtmlHandler {
@@ -942,7 +1108,7 @@ interface BaseUrlHandler {
  * Content paths are relative to the same site or project, so the full URL of a content is this
  * base URL followed by its path below that site.
  *
- * Never returns an error URL: raises an error when the content does not exist.
+ * Raises an error when the content does not exist.
  *
  * @example-ref examples/portal/baseUrl.js
  *
@@ -965,6 +1131,312 @@ export function baseUrl(params: BaseUrlParams): string {
     bean.setPath(__.nullOrValue(params.path));
 
     return bean.createUrl();
+}
+
+// The script serializer leaves null values out: absent nullable parts become null
+function toPageUrlParts(parts: PageUrlParts): PageUrlParts {
+    return {
+        baseUrl: parts.baseUrl ?? null,
+        path: parts.path,
+        queryString: parts.queryString,
+    };
+}
+
+function toImageUrlParts(parts: ImageUrlParts): ImageUrlParts {
+    return {
+        path: parts.path,
+        queryString: parts.queryString,
+        context: parts.context,
+        id: parts.id,
+        fingerprint: parts.fingerprint ?? null,
+        scale: parts.scale,
+        name: parts.name,
+    };
+}
+
+function toAttachmentUrlParts(parts: AttachmentUrlParts): AttachmentUrlParts {
+    return {
+        path: parts.path,
+        queryString: parts.queryString,
+        context: parts.context,
+        id: parts.id,
+        fingerprint: parts.fingerprint ?? null,
+        name: parts.name,
+    };
+}
+
+/**
+ * The site - or the project - a page URL belongs to, named by a content at or above the page: the
+ * nearest site at or above it, or the project for the path `/`.
+ */
+export type UrlPartsBase = IdXorPath & {
+    project?: string;
+    branch?: string;
+};
+
+export type PageUrlPartsParams = IdXorPath & {
+    base: UrlPartsBase;
+    params?: object;
+};
+
+/**
+ * Parts of a page URL: `url = baseUrl + path + queryString`.
+ */
+export interface PageUrlParts {
+    /** Base URL configured for the site or project the URL belongs to, without a trailing slash; `null` when none is configured. */
+    baseUrl: string | null;
+    /** URL-escaped content path relative to that site or project, with a leading slash; empty for the site itself, so that `baseUrl + path` is the Base URL, without a trailing slash. */
+    path: string;
+    /** URL-escaped query string prefixed with `?`; empty when there are no parameters. */
+    queryString: string;
+}
+
+interface PageUrlPartsHandler {
+    setId(value: string | null): void;
+
+    setPath(value: string | null): void;
+
+    setBaseId(value: string | null): void;
+
+    setBasePath(value: string | null): void;
+
+    setBaseProjectName(value: string | null): void;
+
+    setBaseBranch(value: string | null): void;
+
+    setQueryParams(value: ScriptValue | null): void;
+
+    createParts(): PageUrlParts;
+}
+
+/**
+ * This function resolves the parts of a page URL, for building the URL from segments:
+ * `url = baseUrl + path + queryString`.
+ *
+ * The parts are resolved from configuration alone, for the site or project named by `base`. The
+ * base URL is the one configured there, or `null`, in which case the caller supplies the origin the
+ * site is served from. The path is the content path relative to that site or project.
+ *
+ * The page has to be inside the site or project named by `base`, or be it; for a page elsewhere an
+ * error is raised.
+ *
+ * @example-ref examples/portal/pageUrlParts.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} [params.id] Id of the page. Either `id` or `path` is required.
+ * @param {string} [params.path] Path of the page within the project.
+ * @param {object} params.base Required. The site or project the URL belongs to.
+ * @param {string} [params.base.id] Id of the site, or of a content inside it.
+ * @param {string} [params.base.path] Path of the site, or of a content inside it; `/` names the project.
+ * @param {string} [params.base.project] Name of the project. Defaults to the project of the current context.
+ * @param {string} [params.base.branch] Name of the branch. Defaults to the branch of the current context.
+ * @param {object} [params.params] Custom query parameters of the URL.
+ *
+ * @returns {object} The parts: `baseUrl`, `path` and `queryString`.
+ */
+export function pageUrlParts(params: PageUrlPartsParams): PageUrlParts {
+    const bean: PageUrlPartsHandler = __.newBean<PageUrlPartsHandler>('com.enonic.xp.lib.portal.url.PageUrlPartsHandler');
+
+    const base = checkRequired(params, 'base');
+
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+    bean.setBaseId(__.nullOrValue(base.id));
+    bean.setBasePath(__.nullOrValue(base.path));
+    bean.setBaseProjectName(__.nullOrValue(base.project));
+    bean.setBaseBranch(__.nullOrValue(base.branch));
+    bean.setQueryParams(__.toScriptValue(params.params));
+
+    return toPageUrlParts(__.toNativeObject(bean.createParts()));
+}
+
+export type ImageUrlPartsParams = IdXorPath & {
+    scale: ImageUrlParams['scale'];
+    quality?: number;
+    background?: string;
+    format?: string;
+    filter?: string;
+    params?: object;
+    project?: string;
+    branch?: string;
+};
+
+/**
+ * Parts of an image URL: `url = mediaBaseUrl + path + queryString`, with the media base supplied by the caller.
+ * All values are URL-escaped as they appear in the URL.
+ */
+export interface ImageUrlParts {
+    /** The media API path with a leading slash: `/media:image/<context>/<id>:<fingerprint>/<scale>/<name>`. */
+    path: string;
+    /** Query string prefixed with `?`; empty when there are no parameters. */
+    queryString: string;
+    /** Project context segment: `<project>` on the master branch, `<project>:<branch>` otherwise. */
+    context: string;
+    /** Content id. */
+    id: string;
+    /** Media fingerprint, joined with the id as `<id>:<fingerprint>` in the path. */
+    fingerprint: string | null;
+    /** Processed scale segment, for example `max-300`. */
+    scale: string;
+    /** File name segment, with the requested format extension applied. */
+    name: string;
+}
+
+interface ImageUrlPartsHandler {
+    setId(value: string | null): void;
+
+    setPath(value: string | null): void;
+
+    setProjectName(value: string | null): void;
+
+    setBranch(value: string | null): void;
+
+    setScale(value: string): void;
+
+    setQuality(value: number | null): void;
+
+    setBackground(value: string | null): void;
+
+    setFormat(value: string | null): void;
+
+    setFilter(value: string | null): void;
+
+    setQueryParams(value: ScriptValue | null): void;
+
+    createParts(): ImageUrlParts;
+}
+
+/**
+ * This function resolves the parts of an image URL, for building the URL from segments:
+ * `url = mediaBaseUrl + path + queryString`, where `mediaBaseUrl` is the root of the media APIs as
+ * the caller serves them. The parts are built from the parameters alone.
+ *
+ * The parts also hold the segments of the path - `context`, `id`, `fingerprint`, `scale` and `name` -
+ * for hosts that serve the media API with leading segments hidden by a virtual host mapping, such as
+ * `https://img.example.com/<context>/<id>:<fingerprint>/<scale>/<name>`.
+ *
+ * The content has to be an image or a vector image; for other content an error is raised. An image the
+ * image API serves as stored has a single URL, with the `full` scale and none of the processing params.
+ *
+ * @example-ref examples/portal/imageUrlParts.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} [params.id] ID of the image content. Either `id` or `path` is required.
+ * @param {string} [params.path] Path of the image content within the project.
+ * @param {string} params.scale Required. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
+ * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
+ * @param {string} [params.background] Background color.
+ * @param {string} [params.format] Format of the image.
+ * @param {string} [params.filter] Filters to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
+ * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
+ * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
+ * @param {object} [params.params] Custom query parameters of the URL.
+ *
+ * @returns {object} The parts: `path`, `queryString`, `context`, `id`, `fingerprint`, `scale` and `name`.
+ */
+export function imageUrlParts(params: ImageUrlPartsParams): ImageUrlParts {
+    const bean: ImageUrlPartsHandler = __.newBean<ImageUrlPartsHandler>('com.enonic.xp.lib.portal.url.ImageUrlPartsHandler');
+
+    const scale = checkRequired(params, 'scale');
+
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+    bean.setScale(scale);
+    bean.setQuality(__.nullOrValue(params.quality));
+    bean.setBackground(__.nullOrValue(params.background));
+    bean.setFormat(__.nullOrValue(params.format));
+    bean.setFilter(__.nullOrValue(params.filter));
+    bean.setQueryParams(__.toScriptValue(params.params));
+
+    return toImageUrlParts(__.toNativeObject(bean.createParts()));
+}
+
+export type AttachmentUrlPartsParams = IdXorPath & {
+    name?: string;
+    label?: string;
+    download?: boolean;
+    params?: object;
+    project?: string;
+    branch?: string;
+};
+
+/**
+ * Parts of an attachment URL: `url = mediaBaseUrl + path + queryString`, with the media base supplied by the caller.
+ * All values are URL-escaped as they appear in the URL.
+ */
+export interface AttachmentUrlParts {
+    /** The media API path with a leading slash: `/media:attachment/<context>/<id>:<fingerprint>/<name>`. */
+    path: string;
+    /** Query string prefixed with `?`, holding `download` when requested; empty when there are no parameters. */
+    queryString: string;
+    /** Project context segment: `<project>` on the master branch, `<project>:<branch>` otherwise. */
+    context: string;
+    /** Content id. */
+    id: string;
+    /** Media fingerprint, joined with the id as `<id>:<fingerprint>` in the path. */
+    fingerprint: string | null;
+    /** Attachment file name segment. */
+    name: string;
+}
+
+interface AttachmentUrlPartsHandler {
+    setId(value: string | null): void;
+
+    setPath(value: string | null): void;
+
+    setProjectName(value: string | null): void;
+
+    setBranch(value: string | null): void;
+
+    setName(value: string | null): void;
+
+    setLabel(value: string | null): void;
+
+    setDownload(value: boolean): void;
+
+    setQueryParams(value: ScriptValue | null): void;
+
+    createParts(): AttachmentUrlParts;
+}
+
+/**
+ * This function resolves the parts of an attachment URL, for building the URL from segments:
+ * `url = mediaBaseUrl + path + queryString`, where `mediaBaseUrl` is the root of the media APIs as
+ * the caller serves them. The parts are built from the parameters alone.
+ *
+ * The parts also hold the segments of the path - `context`, `id`, `fingerprint` and `name` - for
+ * hosts that serve the media API with leading segments hidden by a virtual host mapping, such as
+ * `https://cdn.example.com/<context>/<id>:<fingerprint>/<name>`.
+ *
+ * @example-ref examples/portal/attachmentUrlParts.js
+ *
+ * @param {object} params Input parameters as JSON.
+ * @param {string} [params.id] Id of the content holding the attachment. Either `id` or `path` is required.
+ * @param {string} [params.path] Path of the content holding the attachment, within the project.
+ * @param {string} [params.name] Name of the attachment. Picks the attachment by name, before `label`.
+ * @param {string} [params.label=source] Label of the attachment, used when `name` is absent.
+ * @param {boolean} [params.download=false] Set to true to ask for the attachment to be downloaded.
+ * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
+ * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
+ * @param {object} [params.params] Custom query parameters of the URL.
+ *
+ * @returns {object} The parts: `path`, `queryString`, `context`, `id`, `fingerprint` and `name`.
+ */
+export function attachmentUrlParts(params: AttachmentUrlPartsParams): AttachmentUrlParts {
+    const bean: AttachmentUrlPartsHandler = __.newBean<AttachmentUrlPartsHandler>('com.enonic.xp.lib.portal.url.AttachmentUrlPartsHandler');
+
+    bean.setId(__.nullOrValue(params.id));
+    bean.setPath(__.nullOrValue(params.path));
+    bean.setProjectName(__.nullOrValue(params.project));
+    bean.setBranch(__.nullOrValue(params.branch));
+    bean.setName(__.nullOrValue(params.name));
+    bean.setLabel(__.nullOrValue(params.label));
+    bean.setDownload(params.download || false);
+    bean.setQueryParams(__.toScriptValue(params.params));
+
+    return toAttachmentUrlParts(__.toNativeObject(bean.createParts()));
 }
 
 export interface MacroContext {

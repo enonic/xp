@@ -8,6 +8,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.impl.MediaHashResolver;
 import com.enonic.xp.project.ProjectName;
 
@@ -18,6 +19,8 @@ import static java.util.Objects.requireNonNull;
 final class ImageMediaPathSupplier
     implements Supplier<String>
 {
+    private static final String FULL_SCALE = "full";
+
     private final Supplier<Media> mediaSupplier;
 
     private final Supplier<ProjectName> projectNameSupplier;
@@ -59,14 +62,17 @@ final class ImageMediaPathSupplier
 
     MediaPathParts parts()
     {
-        final Media media = requireNonNull( mediaSupplier.get() );
+        final Media media = MediaLookup.image( requireNonNull( mediaSupplier.get() ) );
         final ProjectName project = requireNonNull( projectNameSupplier.get() );
         final Branch branch = requireNonNull( branchSupplier.get() );
 
         final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 
+        // an image served as stored has one URL, whatever the scale and format asked for
+        final boolean scalable = ImageScaling.isScalable( media );
+
         return new MediaPathParts( context, media.getId().toString(), MediaHashResolver.resolveImageHash( media ),
-                                        resolveScale( scale ), resolveName( media, format ) );
+                                   scalable ? resolveScale( scale ) : FULL_SCALE, resolveName( media, scalable ? format : null ) );
     }
 
     private String resolveName( final Content media, final String format )

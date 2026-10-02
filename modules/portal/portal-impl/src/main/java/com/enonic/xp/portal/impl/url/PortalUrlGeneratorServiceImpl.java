@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -11,24 +12,35 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.Content;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
+import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
+import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.webapp.WebappService;
+
+import static java.util.Objects.requireNonNull;
 
 @Component(immediate = true, configurationPid = "com.enonic.xp.portal")
 public class PortalUrlGeneratorServiceImpl
@@ -43,15 +55,19 @@ public class PortalUrlGeneratorServiceImpl
 
     private final SiteService siteService;
 
+    private final ContentService contentService;
+
     private volatile String defaultMediaBaseUrl;
 
     private volatile boolean mediaApiAutoMount = true;
 
     @Activate
-    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService )
+    public PortalUrlGeneratorServiceImpl( @Reference final WebappService webappService, @Reference final SiteService siteService,
+                                          @Reference final ContentService contentService )
     {
         this.webappService = webappService;
         this.siteService = siteService;
+        this.contentService = contentService;
     }
 
     @Activate
@@ -65,21 +81,24 @@ public class PortalUrlGeneratorServiceImpl
     @Override
     public String imageUrl( final ImageUrlGeneratorParams params )
     {
-        final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
-            .setUrlType( params.getUrlType() )
-            .setDescriptorKey( MEDIA_IMAGE_API_DESCRIPTOR_KEY )
-            .setPath( ImageMediaPathSupplier.create()
-                          .setMedia( params.getMedia() )
-                          .setProjectName( params.getProjectName() )
-                          .setBranch( params.getBranch() )
-                          .setScale( params.getScale() )
-                          .setFormat( params.getFormat() )
-                          .build() );
+        final Supplier<Media> media = Suppliers.memoize( () -> params.getMedia().get() );
 
-        builder.setQueryParams( imageQueryParams( params ) );
+        final Supplier<String> path = ImageMediaPathSupplier.create()
+            .setMedia( media )
+            .setProjectName( params.getProjectName() )
+            .setBranch( params.getBranch() )
+            .setScale( params.getScale() )
+            .setFormat( params.getFormat() )
+            .build();
 
-        final String mediaBaseUrl = resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
-        return mediaBaseUrl != null ? generateMediaUrl( mediaBaseUrl, builder.build() ) : apiUrl( builder.build() );
+        final Supplier<String> queryString = () -> queryString(
+            imageQueryParams( params.getQueryParams(), media.get(), params.getQuality(), params.getBackground(), params.getFilter() ) );
+
+        return generateUrl( UrlGeneratorParams.create()
+                                .setBaseUrl( apiBaseUrl( params.getUrlType(), params.getBaseUrl(), MEDIA_IMAGE_API_DESCRIPTOR_KEY ) )
+                                .setPath( path )
+                                .setQueryString( queryString )
+                                .build() );
     }
 
     @Override
@@ -97,31 +116,33 @@ public class PortalUrlGeneratorServiceImpl
             .setUrlType( params.getUrlType() )
             .setDescriptorKey( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY )
             .setPath( pathStrategy )
-            .setQueryParams( params.getQueryParams() );
+            .setQueryParams( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) );
 
-        if ( params.isDownload() )
-        {
-            builder.setQueryParams( Map.of( "download", List.of() ) );
-        }
-
-        final String mediaBaseUrl = resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
-        return mediaBaseUrl != null ? generateMediaUrl( mediaBaseUrl, builder.build() ) : apiUrl( builder.build() );
+        return apiUrl( builder.setBaseUrl( params.getBaseUrl() ).build() );
     }
 
     @Override
-    public ImageUrlParts imageUrlParts( final ImageUrlGeneratorParams params )
+    public ImageUrlParts imageUrlParts( final ImageUrlPartsParams params )
     {
+        final Supplier<ProjectName> projectName = projectName( params.getProjectName() );
+        final Supplier<Branch> branch = branch( params.getBranch() );
+        final Supplier<Media> media = Suppliers.memoize( params.getMedia() != null
+                                                             ? params.getMedia()::get
+                                                             : () -> MediaLookup.media( contentService, projectName.get(), branch.get(),
+                                                                                        key( params.getId(), params.getPath() ) ) );
+
         return runWithAdminRole( () -> {
             final MediaPathParts parts = ImageMediaPathSupplier.create()
-                .setMedia( params.getMedia() )
-                .setProjectName( params.getProjectName() )
-                .setBranch( params.getBranch() )
+                .setMedia( media )
+                .setProjectName( projectName )
+                .setBranch( branch )
                 .setScale( params.getScale() )
                 .setFormat( params.getFormat() )
                 .build()
                 .parts();
 
-            return new ImageUrlParts( mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ), queryString( imageQueryParams( params ) ),
+            return new ImageUrlParts( mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ), queryString(
+                imageQueryParams( params.getQueryParams(), media.get(), params.getQuality(), params.getBackground(), params.getFilter() ) ),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.scale() ),
                                       UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
@@ -129,52 +150,107 @@ public class PortalUrlGeneratorServiceImpl
     }
 
     @Override
-    public AttachmentUrlParts attachmentUrlParts( final AttachmentUrlGeneratorParams params )
+    public AttachmentUrlParts attachmentUrlParts( final AttachmentUrlPartsParams params )
     {
+        final Supplier<ProjectName> projectName = projectName( params.getProjectName() );
+        final Supplier<Branch> branch = branch( params.getBranch() );
+        final Supplier<Content> content = params.getContentSupplier() != null
+            ? params.getContentSupplier()
+            : () -> MediaLookup.content( contentService, projectName.get(), branch.get(), key( params.getId(), params.getPath() ) );
+
         return runWithAdminRole( () -> {
             final MediaPathParts parts = AttachmentMediaPathSupplier.create()
-                .setContent( params.getContentSupplier() )
-                .setProjectName( params.getProjectName() )
-                .setBranch( params.getBranch() )
+                .setContent( content )
+                .setProjectName( projectName )
+                .setBranch( branch )
                 .setName( params.getName() )
                 .setLabel( params.getLabel() )
                 .build()
                 .parts();
 
             return new AttachmentUrlParts( mediaPath( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY, parts ),
-                                           queryString( attachmentQueryParams( params ) ),
+                                           queryString( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) ),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                            UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
         } );
     }
 
-    private static Map<String, List<String>> imageQueryParams( final ImageUrlGeneratorParams params )
+    private ApiUrlBaseUrlResolver apiBaseUrl( final String urlType, final String baseUrl, final DescriptorKey descriptorKey )
     {
-        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params.getQueryParams() );
+        return ApiUrlBaseUrlResolver.create()
+            .setBaseUrl( baseUrl )
+            .setDescriptorKey( descriptorKey )
+            .setUrlType( urlType )
+            .setDefaultMediaBaseUrl( defaultMediaBaseUrl )
+            .setMediaApiAutoMount( mediaApiAutoMount )
+            .setWebappService( webappService )
+            .setSiteService( siteService )
+            .build();
+    }
 
-        if ( params.getQuality() != null )
+    /**
+     * @return the project the params name, or else the project of the current context
+     */
+    private static Supplier<ProjectName> projectName( final Supplier<ProjectName> projectName )
+    {
+        return projectName != null
+            ? projectName
+            : Suppliers.memoize(
+                () -> ProjectName.from( requireNonNull( ContextAccessor.current().getRepositoryId(), "Project must be provided" ) ) );
+    }
+
+    /**
+     * @return the branch the params name, or else the branch of the current context
+     */
+    private static Supplier<Branch> branch( final Supplier<Branch> branch )
+    {
+        return branch != null ? branch : Suppliers.memoize( () -> requireNonNull( ContextAccessor.current().getBranch(), "Branch must be provided" ) );
+    }
+
+    private static String key( final String id, final String path )
+    {
+        return id != null ? id : path;
+    }
+
+    /**
+     * @return the query params of an image URL; an image served as stored takes none of the processing params
+     */
+    private static Map<String, List<String>> imageQueryParams( final Map<String, List<String>> params, final Media media,
+                                                               final Integer quality, final String background, final String filter )
+    {
+        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
+
+        if ( !ImageScaling.isScalable( media ) )
         {
-            queryParams.put( "quality", List.of( params.getQuality().toString() ) );
+            return queryParams;
         }
-        if ( params.getBackground() != null )
+
+        if ( quality != null )
         {
-            queryParams.put( "background", List.of( params.getBackground() ) );
+            queryParams.put( "quality", List.of( quality.toString() ) );
         }
-        if ( params.getFilter() != null )
+        if ( background != null )
         {
-            queryParams.put( "filter", List.of( params.getFilter() ) );
+            queryParams.put( "background", List.of( background ) );
+        }
+        if ( filter != null )
+        {
+            queryParams.put( "filter", List.of( filter ) );
         }
 
         return queryParams;
     }
 
-    private static Map<String, List<String>> attachmentQueryParams( final AttachmentUrlGeneratorParams params )
+    private static Map<String, List<String>> attachmentQueryParams( final Map<String, List<String>> params, final boolean download )
     {
-        if ( params.isDownload() )
+        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
+
+        if ( download )
         {
-            return Map.of( "download", List.of() );
+            queryParams.put( "download", List.of() );
         }
-        return params.getQueryParams();
+
+        return queryParams;
     }
 
     private static String queryString( final Map<String, List<String>> queryParams )
@@ -195,40 +271,6 @@ public class PortalUrlGeneratorServiceImpl
         return path.toString();
     }
 
-    static String resolveMediaBaseUrl( final String mediaBaseUrl, final String baseUrl )
-    {
-        if ( mediaBaseUrl != null )
-        {
-            return mediaBaseUrl;
-        }
-        if ( baseUrl == null )
-        {
-            return null;
-        }
-        // baseUrl points at a mount: media APIs live under its "_" endpoint segment
-        final StringBuilder url = new StringBuilder( baseUrl );
-        UrlBuilderHelper.appendPart( url, "_" );
-        return url.toString();
-    }
-
-    private String generateMediaUrl( final String mediaBaseUrl, final ApiUrlGeneratorParams params )
-    {
-        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        queryParamsStrategy.params( params.getQueryParams() );
-
-        // mediaBaseUrl points directly at the API root: no "_" endpoint segment is added
-        return generateUrl( UrlGeneratorParams.create()
-                                .setBaseUrl( () -> {
-                                    final StringBuilder url = new StringBuilder( mediaBaseUrl );
-                                    UrlBuilderHelper.appendPart( url, params.getDescriptorKey().toString() );
-                                    return url.toString();
-                                } )
-                                .setPath( params.getPath() )
-                                .setQueryString( queryParamsStrategy )
-                                .build() );
-    }
-
-
     @Override
     public String apiUrl( final ApiUrlGeneratorParams params )
     {
@@ -236,16 +278,7 @@ public class PortalUrlGeneratorServiceImpl
         queryParamsStrategy.params( params.getQueryParams() );
 
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
-            .setBaseUrl( ApiUrlBaseUrlResolver.create()
-                             .setBaseUrl( params.getBaseUrl() )
-                             .setApiBaseUrl( params.getApiBaseUrl() )
-                             .setDescriptorKey( params.getDescriptorKey() )
-                             .setUrlType( params.getUrlType() )
-                             .setDefaultMediaBaseUrl( defaultMediaBaseUrl )
-                             .setMediaApiAutoMount( mediaApiAutoMount )
-                             .setWebappService( webappService )
-                             .setSiteService( siteService )
-                             .build() )
+            .setBaseUrl( apiBaseUrl( params.getUrlType(), params.getBaseUrl(), params.getDescriptorKey() ) )
             .setPath( params.getPath() )
             .setQueryString( queryParamsStrategy )
             .build();

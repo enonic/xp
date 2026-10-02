@@ -66,11 +66,11 @@ class PortalUrlServiceImpl_attachmentUrlTest
         this.contentService = mock( ContentService.class );
 
         this.webappService = mock( WebappService.class );
-        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ) );
+        this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ), this.contentService );
 
         this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ), portalUrlGeneratorService, mock( SiteService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -189,26 +189,6 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .callWith( () -> this.service.attachmentUrl( params ) );
 
         assertEquals( "/_/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", url );
-    }
-
-    @Test
-    void testNoRequestAndWithMediaBaseUrl()
-    {
-        PortalRequestAccessor.set( null );
-
-        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" ).mediaBaseUrl( "https://media.example.com/" );
-
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final String url = ContextBuilder.create()
-            .repositoryId( "com.enonic.cms.context-project" )
-            .branch( "context-branch" )
-            .build()
-            .callWith( () -> this.service.attachmentUrl( params ) );
-
-        assertEquals( "https://media.example.com/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
-                      url );
     }
 
     @Test

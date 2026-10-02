@@ -34,6 +34,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.impl.ContentFixtures;
+import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
@@ -86,12 +87,11 @@ class PortalUrlServiceImpl_processHtmlTest
         this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
-        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ), this.contentService );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
-                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService,
-                                      mock( SiteService.class ) );
+                                      mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -246,125 +246,6 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
-    void testMediaLinksWithDivergedBaseUrls()
-    {
-        portalRequest.setMode( null );
-        portalRequest.setBaseUri( "/api/guillotine:graphql" );
-        portalRequest.setRepositoryId( null );
-        portalRequest.setBranch( null );
-        portalRequest.setRawPath( "/api/guillotine:graphql" );
-
-        final Attachment attachment = Attachment.create().label( "source" ).name( "picture.jpg" ).mimeType( "image/jpeg" ).build();
-
-        final Attachments attachments = Attachments.from( attachment );
-        final Content content = Content.create( ContentFixtures.newMedia() ).attachments( attachments ).build();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        final ProcessHtmlParams params = new ProcessHtmlParams();
-        params.value( String.format( "<img src=\"image://%s\"/><a href=\"media://download/%s\">Download</a>", content.getId(),
-                                     content.getId() ) );
-        params.imageBaseUrl( "https://site.example.com/_" );
-        params.attachmentBaseUrl( "https://media.example.com" );
-
-        final String html = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
-            .branch( Branch.from( "context-branch" ) )
-            .build()
-            .callWith( () -> service.processHtml( params ) );
-
-        // the two media APIs can be mounted at different locations: each link kind follows its own base
-        assertThat( html ).startsWith( "<img src=\"https://site.example.com/_/media:image/context-project:context-branch/" );
-        assertThat( html ).contains(
-            String.format( "<a href=\"https://media.example.com/media:attachment/context-project:context-branch/%s/picture.jpg?download\">",
-                           content.getId() ) );
-    }
-
-    @Test
-    void testMediaLinksWithMediaBaseUrl()
-    {
-        portalRequest.setMode( null );
-        portalRequest.setBaseUri( "/api/guillotine:graphql" );
-        portalRequest.setRepositoryId( null );
-        portalRequest.setBranch( null );
-        portalRequest.setRawPath( "/api/guillotine:graphql" );
-
-        final Attachment attachment = Attachment.create().label( "source" ).name( "picture.jpg" ).mimeType( "image/jpeg" ).build();
-
-        final Attachments attachments = Attachments.from( attachment );
-        final Content content = Content.create( ContentFixtures.newContent() ).attachments( attachments ).build();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        final ProcessHtmlParams params = new ProcessHtmlParams();
-        params.value( String.format( "<a href=\"media://download/%s\">Download</a>", content.getId() ) );
-        params.baseUrl( "ignoredBaseUrl" );
-        params.attachmentBaseUrl( "https://media.example.com/" );
-
-        final String html = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
-            .branch( Branch.from( "context-branch" ) )
-            .build()
-            .callWith( () -> service.processHtml( params ) );
-
-        // attachmentBaseUrl points at the API root (no "_" segment) and takes precedence over baseUrl for attachments
-        assertEquals( String.format(
-            "<a href=\"https://media.example.com/media:attachment/context-project:context-branch/%s/picture.jpg?download\">Download</a>",
-            content.getId() ), html );
-    }
-
-    @Test
-    void testContentLinkWithPageBase()
-    {
-        portalRequest.setMode( null );
-        portalRequest.setBaseUri( "/api/guillotine:graphql" );
-        portalRequest.setRepositoryId( null );
-        portalRequest.setBranch( null );
-        portalRequest.setRawPath( "/api/guillotine:graphql" );
-
-        final Content content = Content.create( ContentFixtures.newContent() ).build();
-        when( this.contentService.getById( content.getId() ) ).thenReturn( content );
-
-        // the content sits in the nested site /a/b, itself inside the site /a
-        final Site nestedSite = mockSiteWithBaseUrl( ContentPath.from( "/a/b" ), "https://nested.example.com" );
-        mockSiteWithBaseUrl( ContentPath.from( "/a" ), "https://parent.example.com" );
-
-        when( this.contentService.getNearestSite( content.getId() ) ).thenReturn( nestedSite );
-
-        final ProcessHtmlParams params = new ProcessHtmlParams();
-        params.value( String.format( "<a href=\"content://%s\">Content</a>", content.getId() ) );
-        params.pageBase( BaseUrlParams.create().setPath( "/a" ).build() );
-
-        final String html = ContextBuilder.create()
-            .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )
-            .branch( Branch.from( "context-branch" ) )
-            .build()
-            .callWith( () -> service.processHtml( params ) );
-
-        // the URL belongs to /a: its Base URL, and the content path relative to it
-        assertEquals( "<a href=\"https://parent.example.com/b/mycontent\">Content</a>", html );
-    }
-
-    private Site mockSiteWithBaseUrl( final ContentPath path, final String baseUrl )
-    {
-        final Site site = mock( Site.class );
-        when( site.getPath() ).thenReturn( path );
-
-        final PropertyTree config = new PropertyTree();
-        config.addString( "baseUrl", baseUrl );
-
-        final SiteConfigs siteConfigs = SiteConfigs.create()
-            .add( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
-            .build();
-
-        final PropertyTree data = new PropertyTree();
-        when( site.getData() ).thenReturn( data );
-        SiteConfigsDataSerializer.toData( siteConfigs, data.getRoot() );
-
-        when( this.contentService.getByPath( path ) ).thenReturn( site );
-
-        return site;
-    }
-
-    @Test
     void testMultipleLinksWithRequestWithContextWithoutBaseUrl()
     {
         portalRequest.setMode( null );
@@ -445,6 +326,26 @@ class PortalUrlServiceImpl_processHtmlTest
                 media.getId() +
                 ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
+    }
+
+    @Test
+    void processHtml_withoutMacroProcessing()
+    {
+        assertEquals( "<p>[correct_macro/]</p>",
+                      this.service.processHtml( new ProcessHtmlParams().value( "<p>[correct_macro/]</p>" ).processMacros( false ) ) );
+        assertEquals( "<p><!--#MACRO _name=\"correct_macro\" _document=\"__macroDocument1\" _body=\"\"--></p>",
+                      this.service.processHtml( new ProcessHtmlParams().value( "<p>[correct_macro/]</p>" ) ) );
+    }
+
+    @Test
+    void processHtml_removesEmptyCaptions()
+    {
+        final ProcessHtmlParams params = new ProcessHtmlParams().value(
+            "<figure><img src=\"src\"/><figcaption style=\"text-align: left;\"></figcaption></figure>" +
+                "<figure><img src=\"src\"/><figcaption>Caption text</figcaption></figure>" );
+
+        assertEquals( "<figure><img src=\"src\"></figure><figure><img src=\"src\"><figcaption>Caption text</figcaption></figure>",
+                      this.service.processHtml( params ) );
     }
 
     @Test
@@ -752,6 +653,20 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
+    void processHtml_image_imageWidths_ofImageServedAsStored()
+    {
+        final Media media = unscaledMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final ProcessHtmlParams params = new ProcessHtmlParams().value( "<img alt=\"Alt text\" src=\"image://" + media.getId() + "\"/>" )
+            .imageWidths( List.of( 660, 1024 ) )
+            .imageSizes( "(max-width: 960px) 660px" );
+
+        final String processedHtml = this.service.processHtml( params );
+        assertThat( processedHtml ).contains( "/full/mycontent\"" ).doesNotContain( "srcset" ).doesNotContain( "sizes" );
+    }
+
+    @Test
     void processHtml_image_imageWidths_with_imageSizes()
     {
         //Creates a content
@@ -986,5 +901,13 @@ class PortalUrlServiceImpl_processHtmlTest
 
         //Checks that the processed text is equal to the expected output
         assertEquals( expected, processedHtml );
+    }
+
+    private static Media unscaledMedia()
+    {
+        final Media media = ContentFixtures.newMedia();
+        final Attachment animation =
+            Attachment.create().name( "logo.gif" ).mimeType( "image/gif" ).label( "source" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).build();
+        return Media.create( media ).attachments( Attachments.from( animation ) ).build();
     }
 }

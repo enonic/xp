@@ -89,11 +89,11 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.siteService = mock( SiteService.class );
 
         PortalUrlGeneratorService portalUrlGeneratorService =
-            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService );
+            new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService, this.contentService );
 
         this.service =
             new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
-                                      this.redirectChecksumService, this.projectService, portalUrlGeneratorService, this.siteService );
+                                      this.redirectChecksumService, this.projectService, portalUrlGeneratorService );
 
         PortalRequestAccessor.set( this.portalRequest );
 
