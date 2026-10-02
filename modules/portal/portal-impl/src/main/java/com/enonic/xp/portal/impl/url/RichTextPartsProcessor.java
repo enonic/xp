@@ -8,6 +8,9 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Suppliers;
 
 import com.enonic.xp.content.ContentService;
@@ -39,6 +42,8 @@ import com.enonic.xp.style.StyleDescriptors;
  */
 final class RichTextPartsProcessor
 {
+    private static final Logger LOG = LoggerFactory.getLogger( RichTextPartsProcessor.class );
+
     private final StyleDescriptorService styleDescriptorService;
 
     private final PortalUrlService portalUrlService;
@@ -133,24 +138,45 @@ final class RichTextPartsProcessor
         properties.put( "queryParams", link.urlParamsString() );
         properties.put( "ref", ref );
 
+        // a link that does not resolve is left as written, and its element keeps no ref
+        try
+        {
+            processLink( element, link, ref, properties );
+        }
+        catch ( RuntimeException e )
+        {
+            LOG.debug( "Link [{}] left as written", link.uri(), e );
+            return;
+        }
+
+        if ( postProcessor != null )
+        {
+            postProcessor.process( element, properties );
+        }
+    }
+
+    private void processLink( final HtmlElement element, final RichTextLinks.Link link, final String ref,
+                              final Map<String, String> properties )
+    {
         switch ( link.type() )
         {
             case RichTextLinks.CONTENT_TYPE ->
             {
+                final String href = contentLink( ref, link );
                 element.setAttribute( ProcessedHtml.LINK_REF_ATTRIBUTE, ref );
-                element.setAttribute( link.attribute(), contentLink( ref, link ) );
+                element.setAttribute( link.attribute(), href );
                 properties.put( "uri", link.uri() );
             }
             case RichTextLinks.MEDIA_TYPE ->
             {
+                final String href = attachmentLink( ref, link );
                 element.setAttribute( ProcessedHtml.LINK_REF_ATTRIBUTE, ref );
-                element.setAttribute( link.attribute(), attachmentLink( ref, link ) );
+                element.setAttribute( link.attribute(), href );
                 properties.put( "uri", link.uri() );
                 properties.put( "mode", link.mode() );
             }
             case RichTextLinks.IMAGE_TYPE ->
             {
-                element.setAttribute( ProcessedHtml.IMAGE_REF_ATTRIBUTE, ref );
                 final ImageStyle style = image( element, ref, link );
                 if ( style != null )
                 {
@@ -160,11 +186,6 @@ final class RichTextPartsProcessor
                 }
             }
             default -> throw new IllegalStateException( "Unknown type " + link.type() );
-        }
-
-        if ( postProcessor != null )
-        {
-            postProcessor.process( element, properties );
         }
     }
 
@@ -214,27 +235,29 @@ final class RichTextPartsProcessor
             Suppliers.memoize( () -> MediaLookup.media( contentService, metadata.projectName(), metadata.branch(), id ) );
 
         final ImageUrlParts src = imageParts( media, style, DefaultImageLinkProcessor.scale( style, scaleFromQueryString, null ) );
-        element.setAttribute( link.attribute(), src.path() + src.queryString() );
 
+        final boolean responsive = "img".equals( element.getTagName() ) && ImageScaling.isScalable( media.get() );
         final List<ProcessedHtml.Source> srcset = new ArrayList<>();
-        if ( "img".equals( element.getTagName() ) && ImageScaling.isScalable( media.get() ) )
+        if ( responsive && params.getImageWidths() != null )
         {
-            if ( params.getImageWidths() != null )
+            for ( final Integer width : params.getImageWidths() )
             {
-                for ( final Integer width : params.getImageWidths() )
-                {
-                    final String scale = DefaultImageLinkProcessor.scale( style, scaleFromQueryString, width );
-                    srcset.add( new ProcessedHtml.Source( width, imageParts( media, style, scale ) ) );
-                }
-                element.setAttribute( "srcset", srcset.stream()
-                    .map( source -> source.url().path() + source.url().queryString() + " " + source.width() + "w" )
-                    .collect( Collectors.joining( "," ) ) );
+                final String scale = DefaultImageLinkProcessor.scale( style, scaleFromQueryString, width );
+                srcset.add( new ProcessedHtml.Source( width, imageParts( media, style, scale ) ) );
             }
+        }
 
-            if ( params.getImageSizes() != null && !params.getImageSizes().isBlank() )
-            {
-                element.setAttribute( "sizes", params.getImageSizes() );
-            }
+        element.setAttribute( ProcessedHtml.IMAGE_REF_ATTRIBUTE, ref );
+        element.setAttribute( link.attribute(), src.path() + src.queryString() );
+        if ( responsive && params.getImageWidths() != null )
+        {
+            element.setAttribute( "srcset", srcset.stream()
+                .map( source -> source.url().path() + source.url().queryString() + " " + source.width() + "w" )
+                .collect( Collectors.joining( "," ) ) );
+        }
+        if ( responsive && params.getImageSizes() != null && !params.getImageSizes().isBlank() )
+        {
+            element.setAttribute( "sizes", params.getImageSizes() );
         }
 
         images.add( new ProcessedHtml.Image( ref, id, style, src, srcset ) );

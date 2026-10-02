@@ -175,6 +175,35 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     @Test
+    void testLinksThatDoNotResolveAreLeftAsWritten()
+    {
+        final Content content = contentInNestedSites( null );
+        final String html = String.format( "<a href=\"content://missing\">Gone</a>" + "<a href=\"media://download/missing\">Gone</a>" +
+                                               "<img src=\"image://missing\">" + "<a href=\"content://%s\">Content</a>", content.getId() );
+
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ).base( BaseUrlParams.create().setPath( "/a" ).build() ) );
+
+        assertEquals( 1, result.links().size() );
+        assertThat( result.images() ).isEmpty();
+        assertThat( result.html() ).startsWith(
+            "<a href=\"content://missing\">Gone</a><a href=\"media://download/missing\">Gone</a><img src=\"image://missing\">" );
+        assertThat( result.html() ).contains( "<a href=\"/b/mycontent\" data-link-ref=\"" + result.links().get( 0 ).ref() + "\">" );
+    }
+
+    @Test
+    void testContentLinkOutsideTheBaseIsLeftAsWritten()
+    {
+        final Content content = contentInNestedSites( null );
+        mockSiteWithBaseUrl( ContentPath.from( "/c" ), null );
+
+        final String html = String.format( "<a href=\"content://%s\">Content</a>", content.getId() );
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( html ).base( BaseUrlParams.create().setPath( "/c" ).build() ) );
+
+        assertThat( result.links() ).isEmpty();
+        assertEquals( html, result.html() );
+    }
+
+    @Test
     void testContentLinkWithoutBaseUrl()
     {
         // setUp binds a site request for myproject/draft: the parts are resolved from configuration regardless
