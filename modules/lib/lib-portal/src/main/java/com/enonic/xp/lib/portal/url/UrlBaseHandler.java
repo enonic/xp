@@ -2,9 +2,13 @@ package com.enonic.xp.lib.portal.url;
 
 import java.util.function.Supplier;
 
+import com.enonic.xp.branch.Branch;
+import com.enonic.xp.content.ContentId;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.portal.url.UrlBaseParams;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -46,7 +50,20 @@ public final class UrlBaseHandler
 
     public UrlBase resolve()
     {
-        return urlServiceSupplier.get()
-            .urlBase( UrlBaseParams.create().setKey( this.key ).setProjectName( this.projectName ).setBranch( this.branch ).build() );
+        final UrlBaseParams.Builder params = UrlBaseParams.create()
+            .setProjectName( this.projectName == null ? null : ProjectName.from( this.projectName ) )
+            .setBranch( this.branch == null ? null : Branch.from( this.branch ) );
+
+        // a key is an id, or a path when it starts with a slash
+        if ( this.key != null && this.key.startsWith( "/" ) )
+        {
+            params.setContentPath( ContentPath.from( this.key ) );
+        }
+        else if ( this.key != null )
+        {
+            params.setContentId( ContentId.from( this.key ) );
+        }
+
+        return urlServiceSupplier.get().urlBase( params.build() );
     }
 }

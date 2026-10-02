@@ -148,8 +148,7 @@ public final class PortalUrlServiceImpl
     public UrlBase urlBase( final UrlBaseParams params )
     {
         return runWithAdminRole( () -> {
-            final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration(
-                params.getKey(), params.getProjectName(), params.getBranch() );
+            final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params );
 
             final String baseUrl = metadata.baseUrl();
 

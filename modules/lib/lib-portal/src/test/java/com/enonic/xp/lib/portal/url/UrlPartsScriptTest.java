@@ -49,8 +49,7 @@ class UrlPartsScriptTest
 
         when( portalUrlService.urlBase( any( UrlBaseParams.class ) ) ).thenAnswer( invocation -> {
             final UrlBaseParams params = invocation.getArgument( 0 );
-            return new UrlBase( ProjectName.from( params.getProjectName() ), Branch.from( params.getBranch() ),
-                                ContentPath.from( params.getKey() ), null, SiteConfigs.empty() );
+            return new UrlBase( params.getProjectName(), params.getBranch(), params.getContentPath(), null, SiteConfigs.empty() );
         } );
 
         when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenReturn(
@@ -107,9 +106,9 @@ class UrlPartsScriptTest
 
         final ArgumentCaptor<UrlBaseParams> base = ArgumentCaptor.forClass( UrlBaseParams.class );
         verify( portalUrlService ).urlBase( base.capture() );
-        assertEquals( "/my-site", base.getValue().getKey() );
-        assertEquals( "myproject", base.getValue().getProjectName() );
-        assertEquals( "master", base.getValue().getBranch() );
+        assertEquals( ContentPath.from( "/my-site" ), base.getValue().getContentPath() );
+        assertEquals( ProjectName.from( "myproject" ), base.getValue().getProjectName() );
+        assertEquals( Branch.from( "master" ), base.getValue().getBranch() );
 
         final ArgumentCaptor<PageUrlPartsParams> captor = ArgumentCaptor.forClass( PageUrlPartsParams.class );
         verify( portalUrlService ).pageUrlParts( captor.capture() );

@@ -129,12 +129,12 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     /**
-     * Processes in the context project and branch, for the base the key names.
+     * Processes in the context project and branch, for the base the path names.
      */
-    private ProcessedHtml process( final ProcessHtmlPartsParams.Builder params, final String baseKey )
+    private ProcessedHtml process( final ProcessHtmlPartsParams.Builder params, final String basePath )
     {
-        return inContext(
-            () -> service.processHtmlParts( params.base( service.urlBase( UrlBaseParams.create().setKey( baseKey ).build() ) ).build() ) );
+        return inContext( () -> service.processHtmlParts(
+            params.base( service.urlBase( UrlBaseParams.create().setContentPath( ContentPath.from( basePath ) ).build() ) ).build() ) );
     }
 
     private static <T> T inContext( final Callable<T> callable )
