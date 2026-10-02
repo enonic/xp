@@ -686,6 +686,29 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
+    void processHtml_image_qualifiedStyle()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        when( styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.from(
+            StyleDescriptor.create()
+                .application( ApplicationKey.from( "myapp1" ) )
+                .addStyleElement( ImageStyle.create().name( "wide" ).aspectRatio( "2:1" ).build() )
+                .build(), StyleDescriptor.create()
+                .application( ApplicationKey.from( "myapp2" ) )
+                .addStyleElement( ImageStyle.create().name( "wide" ).aspectRatio( "3:1" ).build() )
+                .build() ) );
+
+        final String bare = this.service.processHtml( new ProcessHtmlParams().value( "<img src=\"image://" + media.getId() + "?style=wide\">" ) );
+        final String qualified =
+            this.service.processHtml( new ProcessHtmlParams().value( "<img src=\"image://" + media.getId() + "?style=myapp2:wide\">" ) );
+
+        assertThat( bare ).contains( "/block-768-384/" );
+        assertThat( qualified ).contains( "/block-768-256/" );
+    }
+
+    @Test
     void processHtml_image_imageSizes_without_imageWidths()
     {
         final Media media = ContentFixtures.newMedia();

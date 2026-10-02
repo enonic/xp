@@ -362,6 +362,33 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     @Test
+    void testImageStylesAreNamedByTheirApplication()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        when( styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.from(
+            StyleDescriptor.create()
+                .application( ApplicationKey.from( "myapp1" ) )
+                .addStyleElement( ImageStyle.create().name( "wide" ).aspectRatio( "2:1" ).build() )
+                .build(), StyleDescriptor.create()
+                .application( ApplicationKey.from( "myapp2" ) )
+                .addStyleElement( ImageStyle.create().name( "wide" ).aspectRatio( "3:1" ).filter( "grayscale()" ).build() )
+                .build() ) );
+
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
+                                                  .value( "<img src=\"image://" + media.getId() + "?style=wide\">" +
+                                                              "<img src=\"image://" + media.getId() + "?style=myapp2:wide\">" ) );
+
+        // a name alone is the first style of that name; the entry names it with its application
+        assertEquals( new ProcessedHtml.Style( "myapp1:wide", "2:1", null ), result.images().get( 0 ).style() );
+        assertEquals( "block-768-384", result.images().get( 0 ).src().scale() );
+
+        assertEquals( new ProcessedHtml.Style( "myapp2:wide", "3:1", "grayscale()" ), result.images().get( 1 ).style() );
+        assertEquals( "block-768-256", result.images().get( 1 ).src().scale() );
+    }
+
+    @Test
     void testImageSizesWithoutImageWidths()
     {
         final Media media = ContentFixtures.newMedia();

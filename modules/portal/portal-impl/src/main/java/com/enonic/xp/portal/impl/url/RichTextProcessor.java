@@ -166,7 +166,8 @@ public class RichTextProcessor
         final Map<String, String> urlParams = link.urlParams();
 
         final String styleName = urlParams.get( STYLE_PARAM );
-        final ImageStyle imageStyle = styleName != null ? imageStylesSupplier.get().get( styleName ) : null;
+        final ImageStyles.Resolved resolvedStyle = styleName != null ? imageStylesSupplier.get().get( styleName ) : null;
+        final ImageStyle imageStyle = resolvedStyle != null ? resolvedStyle.style() : null;
 
         final String scaleFromQueryParams = urlParams.get( SCALE_PARAM );
 

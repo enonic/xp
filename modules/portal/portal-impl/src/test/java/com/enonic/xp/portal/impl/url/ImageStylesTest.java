@@ -7,6 +7,7 @@ import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.style.StyleDescriptors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -26,15 +27,23 @@ class ImageStylesTest
     @Test
     void nameAloneIsTheFirstStyleOfThatName()
     {
-        assertSame( FIRST_WIDE, styles.get( "wide" ) );
-        assertSame( SECOND_SQUARE, styles.get( "square" ) );
+        assertSame( FIRST_WIDE, styles.get( "wide" ).style() );
+        assertSame( SECOND_SQUARE, styles.get( "square" ).style() );
     }
 
     @Test
     void qualifiedNameIsTheStyleOfThatApplication()
     {
-        assertSame( FIRST_WIDE, styles.get( "com.example.first:wide" ) );
-        assertSame( SECOND_WIDE, styles.get( "com.example.second:wide" ) );
+        assertSame( FIRST_WIDE, styles.get( "com.example.first:wide" ).style() );
+        assertSame( SECOND_WIDE, styles.get( "com.example.second:wide" ).style() );
+    }
+
+    @Test
+    void resolvedStyleIsNamedByItsApplication()
+    {
+        assertEquals( "com.example.first:wide", styles.get( "wide" ).qualifiedName() );
+        assertEquals( "com.example.second:wide", styles.get( "com.example.second:wide" ).qualifiedName() );
+        assertEquals( "com.example.first:x:y", styles.get( "x:y" ).qualifiedName() );
     }
 
     @Test
@@ -47,7 +56,7 @@ class ImageStylesTest
     @Test
     void nameWithColonResolvesAsName()
     {
-        assertSame( COLON_NAMED, styles.get( "x:y" ) );
+        assertSame( COLON_NAMED, styles.get( "x:y" ).style() );
         assertNull( styles.get( "missing" ) );
     }
 
