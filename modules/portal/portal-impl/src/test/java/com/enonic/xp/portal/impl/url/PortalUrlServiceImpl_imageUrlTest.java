@@ -29,6 +29,7 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.RoleKeys;
@@ -109,7 +110,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -122,7 +123,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url =
             ContextBuilder.create().repositoryId( "com.enonic.cms.context-repo" ).build().callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -245,6 +246,25 @@ class PortalUrlServiceImpl_imageUrlTest
             .callWith( () -> this.service.imageUrl( params ) );
 
         assertEquals( "baseUrl/_/media:image/_error/_error/max-300/_error", url );
+    }
+
+    @Test
+    void testNoRequestAndRepositoryNotFound()
+    {
+        PortalRequestAccessor.set( null );
+
+        final ImageUrlParams params = new ImageUrlParams().id( "123456" ).scale( "max(300)" );
+
+        when( contentService.getById( any( ContentId.class ) ) ).thenThrow(
+            new RepositoryNotFoundException( RepositoryId.from( "com.enonic.cms.context-project" ) ) );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.imageUrl( params ) );
+
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test

@@ -60,8 +60,6 @@ final class AttachmentMediaPathSupplier
      */
     MediaPathParts partsOrUnresolved()
     {
-        requireNonNull( projectNameSupplier.get() );
-        requireNonNull( branchSupplier.get() );
         try
         {
             return parts();
