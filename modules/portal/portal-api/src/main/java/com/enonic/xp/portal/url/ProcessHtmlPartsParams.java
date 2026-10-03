@@ -211,7 +211,9 @@ public final class ProcessHtmlPartsParams
 
         /**
          * Sets whether macros are processed, in the processed HTML: the default processing's, or the HTML a
-         * {@link #customHtmlProcessor(Function) custom HTML processor} returns. Defaults to {@code true}.
+         * {@link #customHtmlProcessor(Function) custom HTML processor} returns. Each macro an application of the base
+         * provides is replaced by a placeholder and gets an entry in {@link ProcessedHtml#macros()}; other macros stay
+         * as written. Without processing, every macro stays as written. Defaults to {@code true}.
          *
          * @param processMacros whether to process macros
          * @return this builder

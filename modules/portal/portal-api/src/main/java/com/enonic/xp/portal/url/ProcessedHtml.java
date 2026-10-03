@@ -1,20 +1,28 @@
 package com.enonic.xp.portal.url;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.macro.MacroKey;
 
 /**
  * Result of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the processed HTML, and the parts of
- * every link and image in it.
+ * every link, image and macro in it.
  * <p>
  * Each internal link and image of the HTML holds a placeholder. The element carries a {@value #LINK_REF_ATTRIBUTE} or
  * {@value #IMAGE_REF_ATTRIBUTE} attribute holding the {@code ref} of its entry in {@link #links()} or {@link #images()};
  * the caller renders the element from the parts of that entry. An entry has no parts for a link or image that does not
  * resolve, such as one to a content that is missing: the caller decides how to render it.
+ * <p>
+ * Each macro of the HTML is replaced by a {@value #MACRO_ELEMENT} element holding its body, with a
+ * {@value #MACRO_NAME_ATTRIBUTE} attribute holding the name of its descriptor and a {@value #MACRO_REF_ATTRIBUTE}
+ * attribute holding the {@code ref} of its entry in {@link #macros()}; the caller renders the macro from that entry.
  *
  * @param html    the processed HTML, with placeholders for its internal links and images
  * @param baseUrl the Base URL configured for the site or project the HTML belongs to, without a trailing slash;
@@ -22,9 +30,10 @@ import com.enonic.xp.app.ApplicationKey;
  *                parts of every content link
  * @param links   internal links to contents and attachments, in document order
  * @param images  internal images, in document order
+ * @param macros  macros, in document order
  */
 @NullMarked
-public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> links, List<Image> images)
+public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> links, List<Image> images, List<Macro> macros)
 {
     /**
      * Name of the attribute holding the {@link Link#ref() ref} of a link.
@@ -36,10 +45,26 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      */
     public static final String IMAGE_REF_ATTRIBUTE = "data-image-ref";
 
+    /**
+     * Name of the element standing for a macro.
+     */
+    public static final String MACRO_ELEMENT = "editor-macro";
+
+    /**
+     * Name of the attribute holding the name of the descriptor of a macro.
+     */
+    public static final String MACRO_NAME_ATTRIBUTE = "data-macro-name";
+
+    /**
+     * Name of the attribute holding the {@link Macro#ref() ref} of a macro.
+     */
+    public static final String MACRO_REF_ATTRIBUTE = "data-macro-ref";
+
     public ProcessedHtml
     {
         links = List.copyOf( links );
         images = List.copyOf( images );
+        macros = List.copyOf( macros );
     }
 
     /**
@@ -125,6 +150,25 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      */
     public record Style(ApplicationKey application, String name, @Nullable String aspectRatio, @Nullable String filter)
     {
+    }
+
+    /**
+     * A macro, resolved among the applications of the site or project the HTML belongs to.
+     *
+     * @param ref        value of the {@value #MACRO_REF_ATTRIBUTE} attribute of the element
+     * @param descriptor the descriptor of the macro
+     * @param params     parameters of the macro, each with its values in the order written; a parameter matching an
+     *                   input of the descriptor's form, ignoring case, is named as that input
+     * @param body       body of the macro as written; empty for a macro without one
+     */
+    public record Macro(String ref, MacroKey descriptor, Map<String, List<String>> params, String body)
+    {
+        public Macro
+        {
+            final Map<String, List<String>> copy = new LinkedHashMap<>();
+            params.forEach( ( name, values ) -> copy.put( name, List.copyOf( values ) ) );
+            params = Collections.unmodifiableMap( copy );
+        }
     }
 
     /**

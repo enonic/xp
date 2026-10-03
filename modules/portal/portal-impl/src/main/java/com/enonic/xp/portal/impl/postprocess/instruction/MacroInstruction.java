@@ -1,21 +1,16 @@
 package com.enonic.xp.portal.impl.postprocess.instruction;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.form.Form;
-import com.enonic.xp.form.FormItem;
-import com.enonic.xp.form.FormItemPath;
 import com.enonic.xp.macro.Macro;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.macro.MacroParamNames;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroContext;
 import com.enonic.xp.portal.macro.MacroProcessor;
@@ -113,13 +108,7 @@ public final class MacroInstruction
     private MacroContext createContext( final Instruction macroInstruction, final MacroDescriptor macroDescriptor,
                                         final PortalRequest request )
     {
-        final Form macroForm = macroDescriptor.getForm();
-        final Map<String, String> paramCaseTranslator = new HashMap<>( macroForm.size() );
-        for ( FormItem formItem : macroForm )
-        {
-            final String name = formItem.getName();
-            paramCaseTranslator.put( name.toLowerCase(), name );
-        }
+        final MacroParamNames paramNames = new MacroParamNames( macroDescriptor );
 
         final MacroContext.Builder context = MacroContext.create().name( macroDescriptor.getName() );
         for ( String name : macroInstruction.attributeNames() )
@@ -130,15 +119,7 @@ public final class MacroInstruction
                 continue;
             }
 
-            String contextParamName = name;
-            if ( macroForm.getFormItem( FormItemPath.from( name ) ) == null )
-            {
-                final String normalizedName = paramCaseTranslator.get( name.toLowerCase() );
-                if ( normalizedName != null )
-                {
-                    contextParamName = normalizedName;
-                }
-            }
+            final String contextParamName = paramNames.of( name );
             for ( String attribute : macroInstruction.attributes( name ) )
             {
                 context.param( contextParamName, attribute );

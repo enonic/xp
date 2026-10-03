@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
+import com.enonic.xp.inputtype.InputTypeName;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Form;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -298,6 +301,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                   .processMacros( false ) );
 
         assertEquals( "<p>[correct_macro/]</p>", result.html() );
+        assertThat( result.macros() ).isEmpty();
     }
 
     @Test
@@ -310,7 +314,49 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                       return processor.getDocument().getInnerHtml() + "[correct_macro/]";
                                                   } ) );
 
-        assertEquals( "<p>Text</p><!--#MACRO _name=\"correct_macro\" _descriptor=\"system:correct_macro\" _document=\"__macroDocument1\" _body=\"\"-->", result.html() );
+        final ProcessedHtml.Macro macro = result.macros().get( 0 );
+        assertEquals( MacroKey.from( "system:correct_macro" ), macro.descriptor() );
+        assertEquals( "<p>Text</p><editor-macro data-macro-name=\"correct_macro\" data-macro-ref=\"" + macro.ref() + "\"></editor-macro>",
+                      result.html() );
+    }
+
+    @Test
+    void testMacroEntries()
+    {
+        final MacroKey key = MacroKey.from( "system:mymacro" );
+        when( this.macroDescriptorService.getByKey( key ) ).thenReturn( MacroDescriptor.create()
+                                                                             .key( key )
+                                                                             .form( Form.create()
+                                                                                        .addFormItem( Input.create()
+                                                                                                          .name( "videoId" )
+                                                                                                          .label( "Video" )
+                                                                                                          .inputType( InputTypeName.TEXT_LINE )
+                                                                                                          .build() )
+                                                                                        .build() )
+                                                                             .build() );
+        when( this.macroDescriptorService.getByKey( MacroKey.from( "system:unknown" ) ) ).thenReturn( null );
+
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
+                                                  .value( "<p>[mymacro videoid=\"a\" other=\"b\" videoId=\"c\"]Some &lt;b&gt;body[/mymacro]</p>" +
+                                                              "<p>[unknown/]</p><p>[mymacro/]</p>" ) );
+
+        assertThat( result.macros() ).hasSize( 2 );
+
+        // the parameters are named as the inputs of the form
+        final ProcessedHtml.Macro first = result.macros().get( 0 );
+        assertEquals( key, first.descriptor() );
+        assertEquals( Map.of( "videoId", List.of( "a", "c" ), "other", List.of( "b" ) ), first.params() );
+        assertEquals( "Some &lt;b&gt;body", first.body() );
+
+        final ProcessedHtml.Macro second = result.macros().get( 1 );
+        assertThat( second.params() ).isEmpty();
+        assertEquals( "", second.body() );
+        assertThat( second.ref() ).isNotEqualTo( first.ref() );
+
+        assertEquals( "<p><editor-macro data-macro-name=\"mymacro\" data-macro-ref=\"" + first.ref() + "\">Some &lt;b&gt;body</editor-macro></p>" +
+                          "<p>[unknown/]</p>" +
+                          "<p><editor-macro data-macro-name=\"mymacro\" data-macro-ref=\"" + second.ref() + "\"></editor-macro></p>",
+                      result.html() );
     }
 
     @Test
@@ -329,7 +375,8 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( "<p>[mymacro/]</p>" ), "/a" );
 
-        assertEquals( "<p><!--#MACRO _name=\"mymacro\" _descriptor=\"myapp:mymacro\" _document=\"__macroDocument1\" _body=\"\"--></p>",
+        assertEquals( key, result.macros().get( 0 ).descriptor() );
+        assertEquals( "<p><editor-macro data-macro-name=\"mymacro\" data-macro-ref=\"" + result.macros().get( 0 ).ref() + "\"></editor-macro></p>",
                       result.html() );
     }
 
@@ -340,6 +387,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         assertEquals( "<p><!-- #MACRO _name=\"mymacro\" _descriptor=\"system:mymacro\" _body=\"\"--></p>",
                       process( ProcessHtmlPartsParams.create().value( html ) ).html() );
+        assertThat( process( ProcessHtmlPartsParams.create().value( html ) ).macros() ).isEmpty();
         assertEquals( "<p><!-- #MACRO _name=\"mymacro\" _descriptor=\"system:mymacro\" _body=\"\"--></p>",
                       process( ProcessHtmlPartsParams.create().value( html ).processMacros( false ) ).html() );
     }

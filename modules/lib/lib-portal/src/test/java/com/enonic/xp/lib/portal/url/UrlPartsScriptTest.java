@@ -1,6 +1,7 @@
 package com.enonic.xp.lib.portal.url;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -9,6 +10,7 @@ import org.mockito.Mockito;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
@@ -33,6 +35,8 @@ import static org.mockito.Mockito.when;
 class UrlPartsScriptTest
     extends ScriptTestSupport
 {
+    private static final String MACRO_PLACEHOLDER = "<editor-macro data-macro-name=\"youtube\" data-macro-ref=\"macroref\"></editor-macro>";
+
     private PortalUrlService portalUrlService;
 
     @Override
@@ -52,9 +56,11 @@ class UrlPartsScriptTest
             new PageUrlParts( null, "/posts/first-post", "?a=1" ) );
 
         when( portalUrlService.processHtmlParts( any( ProcessHtmlPartsParams.class ) ) ).thenReturn(
-            new ProcessedHtml( "<a href=\"/posts/first-post\" data-link-ref=\"ref\">Post</a>", null, List.of(
+            new ProcessedHtml( "<a href=\"/posts/first-post\" data-link-ref=\"ref\">Post</a>" + MACRO_PLACEHOLDER, null, List.of(
                 new ProcessedHtml.ContentLink( "ref", "content://123456", "123456", new PageUrlParts( null, "/posts/first-post", "" ),
-                                               null ) ), List.of() ) );
+                                               null ) ), List.of(),
+                               List.of( new ProcessedHtml.Macro( "macroref", MacroKey.from( "com.example.myapp:youtube" ),
+                                                                   Map.of( "videoId", List.of( "abc" ) ), "" ) ) ) );
 
         when( portalUrlService.imageUrlParts( any( ImageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
             final ImageUrlPartsParams params = invocation.getArgument( 0 );
@@ -129,7 +135,7 @@ class UrlPartsScriptTest
         verify( portalUrlService ).processHtmlParts( captor.capture() );
 
         final ProcessHtmlPartsParams params = captor.getValue();
-        assertEquals( "<a href=\"content://123456\">Post</a>", params.getValue() );
+        assertEquals( "<a href=\"content://123456\">Post</a>[youtube videoid=\"abc\"/]", params.getValue() );
         assertBase( params.getBase() );
     }
 
