@@ -643,6 +643,7 @@ class PortalUrlServiceImpl_processHtmlTest
         assertNull( imageProjection.get( "mode" ) );
         assertEquals( "?style=mystyle", imageProjection.get( "queryParams" ) );
         assertEquals( "mystyle", imageProjection.get( "style:name" ) );
+        assertEquals( "myapp", imageProjection.get( "style:application" ) );
         assertEquals( "2:1", imageProjection.get( "style:aspectRatio" ) );
         assertEquals( "myfilter", imageProjection.get( "style:filter" ) );
     }
@@ -935,6 +936,7 @@ class PortalUrlServiceImpl_processHtmlTest
         assertEquals( "server", imageProjection.get( "type" ) );
         assertNull( imageProjection.get( "mode" ) );
         assertEquals( "?style=mystyle", imageProjection.get( "queryParams" ) );
+        assertEquals( "myapp1", imageProjection.get( "style:application" ) );
         assertEquals( "mystyle", imageProjection.get( "style:name" ) );
         assertEquals( "2:1", imageProjection.get( "style:aspectRatio" ) );
         assertEquals( "myfilter", imageProjection.get( "style:filter" ) );
