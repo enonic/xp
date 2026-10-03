@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -53,7 +54,7 @@ class PortalUrlServiceImpl_apiUrlTest
         PortalUrlGeneratorService portalUrlGeneratorService =
             new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
-        this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
+        this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ), mock( MacroDescriptorService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
                                                  mock( ProjectService.class ), portalUrlGeneratorService );
 

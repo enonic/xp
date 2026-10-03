@@ -19,6 +19,7 @@ public final class MacroServiceImpl
     }
 
     @Override
+    @Deprecated
     public String postProcessInstructionSerialize( final Macro macro )
     {
         return new MacroPostProcessInstructionSerializer().serialize( macro );

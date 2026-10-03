@@ -20,9 +20,11 @@ import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.macro.MacroDescriptorResolver;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.ApiUrlParams;
 import com.enonic.xp.portal.url.AssetUrlParams;
@@ -69,6 +71,8 @@ public final class PortalUrlServiceImpl
 
     private final MacroService macroService;
 
+    private final MacroDescriptorResolver macroDescriptorResolver;
+
     private final StyleDescriptorService styleDescriptorService;
 
     private final RedirectChecksumService redirectChecksumService;
@@ -79,7 +83,8 @@ public final class PortalUrlServiceImpl
 
     @Activate
     public PortalUrlServiceImpl( @Reference final ContentService contentService, @Reference final ResourceService resourceService,
-                                 @Reference final MacroService macroService, @Reference final StyleDescriptorService styleDescriptorService,
+                                 @Reference final MacroService macroService, @Reference final MacroDescriptorService macroDescriptorService,
+                                 @Reference final StyleDescriptorService styleDescriptorService,
                                  @Reference final RedirectChecksumService redirectChecksumService,
                                  @Reference final ProjectService projectService,
                                  @Reference final PortalUrlGeneratorService portalUrlGeneratorService )
@@ -87,6 +92,7 @@ public final class PortalUrlServiceImpl
         this.contentService = contentService;
         this.resourceService = resourceService;
         this.macroService = macroService;
+        this.macroDescriptorResolver = new MacroDescriptorResolver( macroDescriptorService );
         this.styleDescriptorService = styleDescriptorService;
         this.redirectChecksumService = redirectChecksumService;
         this.projectService = projectService;
@@ -383,14 +389,15 @@ public final class PortalUrlServiceImpl
     @Override
     public String processHtml( final ProcessHtmlParams params )
     {
-        return new RichTextProcessor( styleDescriptorService, this, portalUrlGeneratorService, macroService, contentService ).process(
+        return new RichTextProcessor( styleDescriptorService, this, portalUrlGeneratorService, macroService, macroDescriptorResolver,
+                                      contentService ).process(
             params );
     }
 
     @Override
     public ProcessedHtml processHtmlParts( final ProcessHtmlPartsParams params )
     {
-        return new RichTextPartsProcessor( styleDescriptorService, this, macroService, contentService, params,
+        return new RichTextPartsProcessor( styleDescriptorService, this, macroService, macroDescriptorResolver, contentService, params,
                                            baseOrProject( params.getBase() ) ).process();
     }
 

@@ -7,6 +7,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroService;
@@ -15,6 +16,7 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.html.HtmlParser;
+import com.enonic.xp.portal.impl.macro.MacroDescriptorResolver;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
@@ -47,18 +49,22 @@ public class RichTextProcessor
 
     private final MacroService macroService;
 
+    private final MacroDescriptorResolver macroDescriptorResolver;
+
     private Supplier<ImageStyles> imageStylesSupplier;
 
     private Supplier<String> imageBaseUrlSupplier;
 
     public RichTextProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
                               final PortalUrlGeneratorService portalUrlGeneratorService, final MacroService macroService,
+                              final MacroDescriptorResolver macroDescriptorResolver,
                               final ContentService contentService )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
         this.portalUrlGeneratorService = portalUrlGeneratorService;
         this.macroService = macroService;
+        this.macroDescriptorResolver = macroDescriptorResolver;
         this.contentService = contentService;
     }
 
@@ -115,7 +121,7 @@ public class RichTextProcessor
             defaultProcessing( document, params, null );
             if ( !params.isProcessMacros() )
             {
-                return document.getInnerHtml();
+                return HtmlMacroProcessor.withoutInstructions( document.getInnerHtml() );
             }
         }
         else
@@ -129,10 +135,10 @@ public class RichTextProcessor
                             .build() );
             if ( !params.isProcessMacros() )
             {
-                return html;
+                return HtmlMacroProcessor.withoutInstructions( html );
             }
         }
-        return new HtmlMacroProcessor( macroService ).process( document.getInnerHtml() );
+        return new HtmlMacroProcessor( macroService, macroDescriptorResolver, siteApplications() ).process( document.getInnerHtml() );
     }
 
     private void defaultLinkProcessingForContent( HtmlElement element, ProcessHtmlParams params, RichTextLinks.Link link,
@@ -230,11 +236,20 @@ public class RichTextProcessor
 
     private StyleDescriptors getStyleDescriptors()
     {
+        return RichTextLinks.styleDescriptors( styleDescriptorService, siteApplications() );
+    }
+
+    /**
+     * @return the applications of the site of the current request, which image styles and macros come from; none
+     * without a site request
+     */
+    private static ApplicationKeys siteApplications()
+    {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
         final SiteConfigs siteConfigs = portalRequest != null && portalRequest.getSite() != null
             ? SiteConfigsDataSerializer.fromData( portalRequest.getSite().getData().getRoot() )
             : SiteConfigs.empty();
-        return RichTextLinks.styleDescriptors( styleDescriptorService, RichTextLinks.applications( siteConfigs ) );
+        return RichTextLinks.applications( siteConfigs );
     }
 
     private static String addQueryParamsIfPresent( final String url, final Map<String, String> urlParams )

@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -69,7 +70,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
         this.webappService = mock( WebappService.class );
         this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ) );
 
-        this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
+        this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ), mock( MacroDescriptorService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
                                                  mock( ProjectService.class ), portalUrlGeneratorService );
 

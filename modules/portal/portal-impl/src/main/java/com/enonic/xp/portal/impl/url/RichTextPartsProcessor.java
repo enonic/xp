@@ -20,6 +20,7 @@ import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.impl.html.HtmlParser;
+import com.enonic.xp.portal.impl.macro.MacroDescriptorResolver;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
@@ -50,6 +51,8 @@ final class RichTextPartsProcessor
 
     private final MacroService macroService;
 
+    private final MacroDescriptorResolver macroDescriptorResolver;
+
     private final ContentService contentService;
 
     private final ProcessHtmlPartsParams params;
@@ -63,12 +66,14 @@ final class RichTextPartsProcessor
     private final List<ProcessedHtml.Image> images = new ArrayList<>();
 
     RichTextPartsProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
-                            final MacroService macroService, final ContentService contentService, final ProcessHtmlPartsParams params,
+                            final MacroService macroService, final MacroDescriptorResolver macroDescriptorResolver,
+                            final ContentService contentService, final ProcessHtmlPartsParams params,
                             final UrlBase base )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
         this.macroService = macroService;
+        this.macroDescriptorResolver = macroDescriptorResolver;
         this.contentService = contentService;
         this.params = params;
         this.base = base;
@@ -102,7 +107,9 @@ final class RichTextPartsProcessor
                             .build() );
         }
 
-        final String html = params.isProcessMacros() ? new HtmlMacroProcessor( macroService ).process( processed ) : processed;
+        final String html = params.isProcessMacros()
+            ? new HtmlMacroProcessor( macroService, macroDescriptorResolver, base.getApplications() ).process( processed )
+            : HtmlMacroProcessor.withoutInstructions( processed );
 
         return new ProcessedHtml( html, baseUrl, links, images );
     }
