@@ -689,8 +689,8 @@ export interface ProcessedHtmlImage {
     ref: string;
     /** Id of the image content. */
     contentId: string;
-    /** The image style applied, its name qualified by the application it belongs to: `<application>:<name>`; `null` for none. */
-    style: {name: string; aspectRatio: string | null; filter: string | null} | null;
+    /** The image style applied: the application whose style descriptor holds it, and its name there; `null` for none. */
+    style: {application: string; name: string; aspectRatio: string | null; filter: string | null} | null;
     /** Parts of the URL in `src`; `null` when the image does not resolve. */
     src: ImageUrlParts | null;
     /** Parts of the URLs in `srcset`, one for each image width; empty for an image the image API serves as stored. */
@@ -777,7 +777,12 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
             ref: image.ref,
             contentId: image.contentId,
             style: image.style
-                ? {name: image.style.name, aspectRatio: image.style.aspectRatio ?? null, filter: image.style.filter ?? null}
+                ? {
+                    application: image.style.application,
+                    name: image.style.name,
+                    aspectRatio: image.style.aspectRatio ?? null,
+                    filter: image.style.filter ?? null,
+                }
                 : null,
             src: image.src ? toImageUrlParts(image.src) : null,
             srcset: (image.srcset || []).map((source) => ({width: source.width, url: toImageUrlParts(source.url)})),

@@ -116,6 +116,7 @@ final class ProcessedHtmlMapper
     private static void serialize( final MapGenerator gen, final String key, final ProcessedHtml.Style style )
     {
         gen.map( key );
+        gen.value( "application", style.application().toString() );
         gen.value( "name", style.name() );
         gen.value( "aspectRatio", style.aspectRatio() );
         gen.value( "filter", style.filter() );

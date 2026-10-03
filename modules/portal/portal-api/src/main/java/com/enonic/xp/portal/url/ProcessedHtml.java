@@ -5,6 +5,8 @@ import java.util.List;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import com.enonic.xp.app.ApplicationKey;
+
 /**
  * Result of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the processed HTML, and the parts of
  * every link and image in it.
@@ -114,13 +116,14 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
     }
 
     /**
-     * The style applied to an image.
+     * The style applied to an image: a style of the style descriptor of an application.
      *
-     * @param name        name of the style, qualified by the application it belongs to: {@code <application>:<name>}
+     * @param application the application whose style descriptor holds the style
+     * @param name        name of the style within that style descriptor
      * @param aspectRatio aspect ratio the image is cropped to, such as {@code 16:9}, or {@code null} for none
      * @param filter      image filter, or {@code null} for none
      */
-    public record Style(String name, @Nullable String aspectRatio, @Nullable String filter)
+    public record Style(ApplicationKey application, String name, @Nullable String aspectRatio, @Nullable String filter)
     {
     }
 

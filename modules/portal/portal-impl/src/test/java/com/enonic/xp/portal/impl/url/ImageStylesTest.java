@@ -39,11 +39,11 @@ class ImageStylesTest
     }
 
     @Test
-    void resolvedStyleIsNamedByItsApplication()
+    void resolvedStyleGivesItsApplication()
     {
-        assertEquals( "com.example.first:wide", styles.get( "wide" ).qualifiedName() );
-        assertEquals( "com.example.second:wide", styles.get( "com.example.second:wide" ).qualifiedName() );
-        assertEquals( "com.example.first:x:y", styles.get( "x:y" ).qualifiedName() );
+        assertEquals( ApplicationKey.from( "com.example.first" ), styles.get( "wide" ).application() );
+        assertEquals( ApplicationKey.from( "com.example.second" ), styles.get( "com.example.second:wide" ).application() );
+        assertEquals( ApplicationKey.from( "com.example.first" ), styles.get( "x:y" ).application() );
     }
 
     @Test

@@ -192,6 +192,7 @@ public class RichTextProcessor
             properties.put( "queryParams", link.urlParamsString() );
             if ( imageStyle != null )
             {
+                properties.put( "style:application", resolvedStyle.application().toString() );
                 properties.put( "style:name", imageStyle.getName() );
                 properties.put( "style:aspectRatio", imageStyle.getAspectRatio() );
                 properties.put( "style:filter", imageStyle.getFilter() );

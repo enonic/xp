@@ -169,6 +169,7 @@ final class RichTextPartsProcessor
                 final ProcessedHtml.Style style = image( element, ref, link );
                 if ( style != null )
                 {
+                    properties.put( "style:application", style.application().toString() );
                     properties.put( "style:name", style.name() );
                     properties.put( "style:aspectRatio", style.aspectRatio() );
                     properties.put( "style:filter", style.filter() );
@@ -279,7 +280,7 @@ final class RichTextPartsProcessor
     }
 
     /**
-     * @return the style applied, named {@code <application>:<name>}, or {@code null} for none
+     * @return the style applied, with its application, or {@code null} for none
      */
     private ProcessedHtml.Style image( final HtmlElement element, final String ref, final RichTextLinks.Link link )
     {
@@ -322,8 +323,9 @@ final class RichTextPartsProcessor
             }
         }
 
-        final ProcessedHtml.Style processedStyle =
-            resolved == null ? null : new ProcessedHtml.Style( resolved.qualifiedName(), style.getAspectRatio(), style.getFilter() );
+        final ProcessedHtml.Style processedStyle = resolved == null
+            ? null
+            : new ProcessedHtml.Style( resolved.application(), style.getName(), style.getAspectRatio(), style.getFilter() );
 
         images.add( new ProcessedHtml.Image( ref, id, processedStyle, src, srcset ) );
 

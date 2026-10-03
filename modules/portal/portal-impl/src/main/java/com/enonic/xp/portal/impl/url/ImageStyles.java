@@ -71,12 +71,5 @@ final class ImageStyles
      */
     record Resolved(ApplicationKey application, ImageStyle style)
     {
-        /**
-         * @return {@code <application>:<name>}, naming the style unambiguously
-         */
-        String qualifiedName()
-        {
-            return application + ":" + style.getName();
-        }
     }
 }
