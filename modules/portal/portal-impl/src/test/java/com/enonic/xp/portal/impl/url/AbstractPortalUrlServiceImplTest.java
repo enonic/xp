@@ -14,11 +14,14 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
+import com.enonic.xp.portal.url.UrlBase;
+import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -47,6 +50,8 @@ public abstract class AbstractPortalUrlServiceImplTest
     protected ResourceService resourceService;
 
     protected StyleDescriptorService styleDescriptorService;
+
+    protected MacroDescriptorService macroDescriptorService;
 
     protected RedirectChecksumService redirectChecksumService;
 
@@ -79,6 +84,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
         this.styleDescriptorService = mock( StyleDescriptorService.class );
+        this.macroDescriptorService = mock( MacroDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
         this.applicationService = mock( ApplicationService.class );
@@ -92,8 +98,8 @@ public abstract class AbstractPortalUrlServiceImplTest
             new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService );
 
         this.service =
-            new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
-                                      this.redirectChecksumService, this.projectService, portalUrlGeneratorService, this.siteService );
+            new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.macroDescriptorService, this.styleDescriptorService,
+                                      this.redirectChecksumService, this.projectService, portalUrlGeneratorService );
 
         PortalRequestAccessor.set( this.portalRequest );
 
@@ -113,5 +119,13 @@ public abstract class AbstractPortalUrlServiceImplTest
     {
         PortalRequestAccessor.remove();
         ContextAccessorSupport.getInstance().remove();
+    }
+
+    /**
+     * @return the base the path names, resolved in the current context
+     */
+    protected UrlBase base( final String path )
+    {
+        return this.service.urlBase( UrlBaseParams.create().setContentPath( ContentPath.from( path ) ).build() );
     }
 }

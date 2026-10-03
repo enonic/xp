@@ -7,9 +7,7 @@ var url = portalLib.pageUrl({
     params: {
         a: 1,
         b: [1, 2]
-    },
-    project: 'myproject',
-    branch: 'draft'
+    }
 });
 // END
 

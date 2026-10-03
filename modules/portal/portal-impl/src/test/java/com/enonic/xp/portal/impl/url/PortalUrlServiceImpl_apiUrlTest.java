@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -53,9 +54,9 @@ class PortalUrlServiceImpl_apiUrlTest
         PortalUrlGeneratorService portalUrlGeneratorService =
             new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
-        this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ),
+        this.service = new PortalUrlServiceImpl( mock( ContentService.class ), mock( ResourceService.class ), mock( MacroService.class ), mock( MacroDescriptorService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ), portalUrlGeneratorService, mock( SiteService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -110,72 +111,6 @@ class PortalUrlServiceImpl_apiUrlTest
 
         final String url = this.service.apiUrl( params );
         assertEquals( "baseUrl/_/com.enonic.app.myapp:myapi/path", url );
-    }
-
-    @Test
-    void testNoRequestWithApiBaseUrl()
-    {
-        PortalRequestAccessor.set( null );
-
-        final ApiUrlParams params = ApiUrlParams.create()
-            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
-            .setPath( "path" )
-            .setQueryParam( "k", "v" )
-            .setApiBaseUrl( "https://myapi.example.com" )
-            .build();
-
-        // the API root is used verbatim: no "_" segment and no descriptor are appended
-        final String url = this.service.apiUrl( params );
-        assertEquals( "https://myapi.example.com/path?k=v", url );
-    }
-
-    @Test
-    void testNoRequestWithApiBaseUrlWithTrailingSlash()
-    {
-        PortalRequestAccessor.set( null );
-
-        final ApiUrlParams params = ApiUrlParams.create()
-            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
-            .setPath( "path" )
-            .setApiBaseUrl( "https://apis.example.com/my:api/" )
-            .build();
-
-        final String url = this.service.apiUrl( params );
-        assertEquals( "https://apis.example.com/my:api/path", url );
-    }
-
-    @Test
-    void testSiteRequestWithApiBaseUrl()
-    {
-        portalRequest.setBaseUri( "/site" );
-        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.request-project" ) );
-        portalRequest.setBranch( Branch.from( "request-branch" ) );
-        portalRequest.setRawPath( "/site/request-project/request-branch/sitePath" );
-        portalRequest.setContentPath( ContentPath.from( "/sitePath" ) );
-
-        final ApiUrlParams params = ApiUrlParams.create()
-            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
-            .setApiBaseUrl( "https://apis.example.com/myapi" )
-            .build();
-
-        // an explicit API root skips all resolution, request or not
-        final String url = this.service.apiUrl( params );
-        assertEquals( "https://apis.example.com/myapi", url );
-    }
-
-    @Test
-    void testApiBaseUrlTakesPrecedenceOverBaseUrl()
-    {
-        PortalRequestAccessor.set( null );
-
-        final ApiUrlParams params = ApiUrlParams.create()
-            .setApi( DescriptorKey.from( "com.enonic.app.myapp:myapi" ) )
-            .setBaseUrl( "baseUrl" )
-            .setApiBaseUrl( "https://myapi.example.com" )
-            .build();
-
-        final String url = this.service.apiUrl( params );
-        assertEquals( "https://myapi.example.com", url );
     }
 
     private void setupApiRequest()
