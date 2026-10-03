@@ -2,6 +2,9 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.branch.Branch;
@@ -17,6 +20,8 @@ import static java.util.Objects.requireNonNullElse;
 final class AttachmentMediaPathSupplier
     implements Supplier<String>
 {
+    private static final Logger LOG = LoggerFactory.getLogger( AttachmentMediaPathSupplier.class );
+
     private final Supplier<Content> contentSupplier;
 
     private final Supplier<ProjectName> projectNameSupplier;
@@ -39,7 +44,7 @@ final class AttachmentMediaPathSupplier
     @Override
     public String get()
     {
-        final MediaPathParts parts = parts();
+        final MediaPathParts parts = partsOrUnresolved();
 
         final StringBuilder url = new StringBuilder();
 
@@ -50,11 +55,45 @@ final class AttachmentMediaPathSupplier
         return url.toString();
     }
 
+    /**
+     * @return the segments of the URL, or of a URL the media API answers with 404 when the attachment does not resolve
+     */
+    MediaPathParts partsOrUnresolved()
+    {
+        try
+        {
+            return parts();
+        }
+        catch ( RuntimeException e )
+        {
+            final String id = resolvedId();
+            LOG.warn( "Media [{}] does not resolve", id, e );
+            return MediaPathParts.unresolved( id, null, name );
+        }
+    }
+
+    private String resolvedId()
+    {
+        final String id = IdentifiedSupplier.contentId( contentSupplier );
+        if ( id != null )
+        {
+            return id;
+        }
+        try
+        {
+            return contentSupplier.get().getId().toString();
+        }
+        catch ( RuntimeException e )
+        {
+            return null;
+        }
+    }
+
     MediaPathParts parts()
     {
-        final Content content = requireNonNull( contentSupplier.get() );
         final ProjectName project = requireNonNull( projectNameSupplier.get() );
         final Branch branch = requireNonNull( branchSupplier.get() );
+        final Content content = requireNonNull( contentSupplier.get() );
 
         final String context = project + ( ContentConstants.BRANCH_MASTER.equals( branch ) ? "" : ":" + branch );
 

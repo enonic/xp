@@ -1,5 +1,6 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -27,8 +28,10 @@ import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -470,5 +473,13 @@ class UrlServiceScriptTest
     void testExample_baseUrl()
     {
         runScript( "/lib/xp/examples/portal/baseUrl.js" );
+
+        final ArgumentCaptor<BaseUrlParams> captor = ArgumentCaptor.forClass( BaseUrlParams.class );
+        verify( portalUrlService, times( 2 ) ).baseUrl( captor.capture() );
+        assertEquals( List.of( "server", "absolute" ), captor.getAllValues().stream().map( BaseUrlParams::getUrlType ).toList() );
+        captor.getAllValues().forEach( params -> {
+            assertNull( params.getId() );
+            assertNull( params.getPath() );
+        } );
     }
 }

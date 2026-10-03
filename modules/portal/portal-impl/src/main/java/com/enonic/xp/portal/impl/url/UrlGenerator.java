@@ -62,16 +62,31 @@ final class UrlGenerator
         return !path.startsWith( "/" ) ? "/" + path : path;
     }
 
-    private static String buildErrorUrl( final Exception e )
+    /**
+     * @return an error URL answered with 404, logging the failure under the log reference the URL carries
+     */
+    static String notFoundUrl( final Exception e )
+    {
+        final String logRef = logFailure( e );
+        return buildErrorUrl( 404, String.join( " ", "Not Found.", logRef ) );
+    }
+
+    private static String logFailure( final Exception e )
     {
         final String logRef = LOG.isWarnEnabled() ? newLogRef() : "";
         LOG.warn( "Portal url build failed. Logref: {}", logRef, e );
+        return logRef;
+    }
 
+    private static String buildErrorUrl( final Exception e )
+    {
         if ( e instanceof NotFoundException )
         {
-            return buildErrorUrl( 404, String.join( " ", "Not Found.", logRef ) );
+            return notFoundUrl( e );
         }
-        else if ( e instanceof OutOfScopeException )
+
+        final String logRef = logFailure( e );
+        if ( e instanceof OutOfScopeException )
         {
             return buildErrorUrl( 400, String.join( " ", "Out of scope.", logRef ) );
         }

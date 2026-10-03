@@ -4,102 +4,166 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
 import com.enonic.xp.style.StyleDescriptors;
 
-
+/**
+ * Parameters of {@link PortalUrlService#processHtml(ProcessHtmlParams)}: the HTML fragment, and how
+ * its internal links - {@code content://}, {@code image://} and {@code media://} - and macros are
+ * processed.
+ */
+@NullMarked
 public final class ProcessHtmlParams
     extends AbstractUrlParams<ProcessHtmlParams>
 {
-    private String value;
+    private @Nullable String value;
 
-    private List<Integer> imageWidths;
+    private @Nullable List<Integer> imageWidths;
 
-    private String imageSizes;
+    private @Nullable String imageSizes;
 
-    private Function<HtmlProcessorParams, String> customHtmlProcessor;
+    private @Nullable Function<HtmlProcessorParams, String> customHtmlProcessor;
 
-    private Supplier<StyleDescriptors> customStyleDescriptorsCallback;
+    private @Nullable Supplier<StyleDescriptors> customStyleDescriptorsCallback;
 
     private boolean processMacros = true;
 
-    private String baseUrl;
+    private @Nullable String baseUrl;
 
-    private String imageBaseUrl;
-
-    private String attachmentBaseUrl;
-
-    private BaseUrlParams pageBase;
-
-    public String getValue()
+    /**
+     * @return the HTML to process, or {@code null} when there is none
+     */
+    public @Nullable String getValue()
     {
         return this.value;
     }
 
-    public ProcessHtmlParams value( final String value )
+    /**
+     * @param value the HTML to process; {@code null} or empty processes to an empty string
+     * @return these params
+     */
+    public ProcessHtmlParams value( final @Nullable String value )
     {
         this.value = Strings.emptyToNull( value );
         return this;
     }
 
-    public List<Integer> getImageWidths()
+    /**
+     * @return widths of the {@code srcset} of images, or {@code null} for no {@code srcset}
+     */
+    public @Nullable List<Integer> getImageWidths()
     {
         return imageWidths;
     }
 
-    public Supplier<StyleDescriptors> getCustomStyleDescriptorsCallback()
+    /**
+     * @return supplier of the style descriptors image styles are looked up in, or {@code null} to use those of the
+     * system application and of the site of the current request
+     */
+    public @Nullable Supplier<StyleDescriptors> getCustomStyleDescriptorsCallback()
     {
         return customStyleDescriptorsCallback;
     }
 
-    public ProcessHtmlParams imageWidths( final List<Integer> imageWidths )
+    /**
+     * Adds a {@code srcset} to every image the image API scales, with a URL of the image scaled to each of the widths.
+     * The other images, served as stored, keep their {@code src} alone.
+     *
+     * @param imageWidths widths in pixels; {@code null} for no {@code srcset}
+     * @return these params
+     */
+    public ProcessHtmlParams imageWidths( final @Nullable List<Integer> imageWidths )
     {
         this.imageWidths = imageWidths;
         return this;
     }
 
-    public ProcessHtmlParams customStyleDescriptorsCallback( final Supplier<StyleDescriptors> customStyleDescriptorsCallback )
+    /**
+     * Sets where the image styles referenced by images are looked up.
+     *
+     * @param customStyleDescriptorsCallback supplier of the style descriptors; {@code null} to use those of the
+     *                                       system application and of the site of the current request
+     * @return these params
+     */
+    public ProcessHtmlParams customStyleDescriptorsCallback( final @Nullable Supplier<StyleDescriptors> customStyleDescriptorsCallback )
     {
         this.customStyleDescriptorsCallback = customStyleDescriptorsCallback;
         return this;
     }
 
-    public String getImageSizes()
+    /**
+     * @return the {@code sizes} attribute of images, or {@code null} for none
+     */
+    public @Nullable String getImageSizes()
     {
         return imageSizes;
     }
 
-    public ProcessHtmlParams imageSizes( final String imageSizes )
+    /**
+     * Sets the {@code sizes} attribute of every image that gets a {@code srcset} from {@link #imageWidths(List)}.
+     *
+     * @param imageSizes value of the attribute; {@code null} or blank for none
+     * @return these params
+     */
+    public ProcessHtmlParams imageSizes( final @Nullable String imageSizes )
     {
         this.imageSizes = imageSizes;
         return this;
     }
 
-    public Function<HtmlProcessorParams, String> getCustomHtmlProcessor()
+    /**
+     * @return the custom HTML processor, or {@code null} when the default processing applies
+     */
+    public @Nullable Function<HtmlProcessorParams, String> getCustomHtmlProcessor()
     {
         return customHtmlProcessor;
     }
 
-    public ProcessHtmlParams customHtmlProcessor( final Function<HtmlProcessorParams, String> customHtmlProcessor )
+    /**
+     * Replaces the default processing. The function receives the parsed document along with the default processors,
+     * which it may apply to all elements or to single ones, and returns the resulting HTML.
+     *
+     * @param customHtmlProcessor the processor; {@code null} for the default processing
+     * @return these params
+     */
+    public ProcessHtmlParams customHtmlProcessor( final @Nullable Function<HtmlProcessorParams, String> customHtmlProcessor )
     {
         this.customHtmlProcessor = customHtmlProcessor;
         return this;
     }
 
+    /**
+     * @return whether macros are processed
+     */
     public boolean isProcessMacros()
     {
         return processMacros;
     }
 
+    /**
+     * Sets whether macros are processed. With a {@link #customHtmlProcessor(Function) custom HTML processor}, macros
+     * are processed in the parsed document after it, and with {@code false} the HTML the processor returns is the
+     * result. Defaults to {@code true}.
+     *
+     * @param processMacros whether to process macros
+     * @return these params
+     */
     public ProcessHtmlParams processMacros( final boolean processMacros )
     {
         this.processMacros = processMacros;
         return this;
     }
 
-    public String getBaseUrl()
+    /**
+     * @return the mount base URL of media URLs, or {@code null} when not set
+     * @see #baseUrl(String)
+     */
+    public @Nullable String getBaseUrl()
     {
         return baseUrl;
     }
@@ -107,69 +171,17 @@ public final class ProcessHtmlParams
     /**
      * Base URL of a mount where media URLs generated for the processed HTML live under
      * the "_" endpoint segment: {@code <baseUrl>/_/media:image/...}. Despite its generic
-     * name it only affects media URLs - content links are not affected.
+     * name it applies to media URLs only.
      * Trailing slash is appended if missing. Empty value is treated as unspecified.
      *
-     * @deprecated use {@link #imageBaseUrl(String)} and {@link #attachmentBaseUrl(String)}
-     * for media URLs (append {@code /_} to the value to keep the mount form produced by
-     * this method) and {@link #pageBase(BaseUrlParams)} for content links.
+     * @deprecated configure where the media APIs are served with a virtual host mapping, or
+     * {@code media.defaultBaseUrl} in {@code com.enonic.xp.portal.cfg}; use
+     * {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)} to resolve every link from configuration.
      */
     @Deprecated
-    public ProcessHtmlParams baseUrl( final String baseUrl )
+    public ProcessHtmlParams baseUrl( final @Nullable String baseUrl )
     {
         this.baseUrl = Strings.emptyToNull( baseUrl );
-        return this;
-    }
-
-    public String getImageBaseUrl()
-    {
-        return imageBaseUrl;
-    }
-
-    /**
-     * Base URL used verbatim as the API root of image URLs generated for the processed HTML:
-     * {@code <imageBaseUrl>/media:image/...} - no "_" endpoint segment is added.
-     * Takes precedence over {@code baseUrl}, which points at a mount where APIs
-     * live under the "_" endpoint segment: {@code <baseUrl>/_/media:image/...}.
-     * <p>
-     * Image and attachment bases are separate because the two media APIs can be
-     * mounted (and therefore served) at different locations.
-     */
-    public ProcessHtmlParams imageBaseUrl( final String imageBaseUrl )
-    {
-        this.imageBaseUrl = Strings.emptyToNull( imageBaseUrl );
-        return this;
-    }
-
-    public String getAttachmentBaseUrl()
-    {
-        return attachmentBaseUrl;
-    }
-
-    /**
-     * Base URL used verbatim as the API root of attachment URLs generated for the processed
-     * HTML: {@code <attachmentBaseUrl>/media:attachment/...} - no "_" endpoint segment is added.
-     * Takes precedence over {@code baseUrl}.
-     */
-    public ProcessHtmlParams attachmentBaseUrl( final String attachmentBaseUrl )
-    {
-        this.attachmentBaseUrl = Strings.emptyToNull( attachmentBaseUrl );
-        return this;
-    }
-
-    public BaseUrlParams getPageBase()
-    {
-        return pageBase;
-    }
-
-    /**
-     * Selects the site - or the project - the content links of the processed HTML belong to.
-     *
-     * @see PageUrlParams#base(BaseUrlParams)
-     */
-    public ProcessHtmlParams pageBase( final BaseUrlParams pageBase )
-    {
-        this.pageBase = pageBase;
         return this;
     }
 
