@@ -34,6 +34,10 @@ import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
+import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.macro.MacroKey;
+import com.enonic.xp.macro.MacroDescriptors;
+import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -78,6 +82,8 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
     protected StyleDescriptorService styleDescriptorService;
 
+    protected MacroDescriptorService macroDescriptorService;
+
     private PortalRequest portalRequest;
 
     private HttpServletRequest req;
@@ -88,7 +94,12 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     void setUp()
     {
         this.contentService = mock( ContentService.class );
-        this.styleDescriptorService = mock( StyleDescriptorService.class );
+        this.macroDescriptorService = mock( MacroDescriptorService.class );
+        when( this.macroDescriptorService.getByApplication( any() ) ).thenReturn( MacroDescriptors.empty() );
+        when( this.macroDescriptorService.getByKey( any() ) ).thenAnswer( invocation -> {
+            final MacroKey key = invocation.getArgument( 0 );
+            return ApplicationKey.SYSTEM.equals( key.getApplicationKey() ) ? MacroDescriptor.create().key( key ).build() : null;
+        } );
 
         this.styleDescriptorService = mock( StyleDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
@@ -96,7 +107,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
 
         this.service =
-            new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), styleDescriptorService,
+            new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), new MacroServiceImpl(), this.macroDescriptorService, styleDescriptorService,
                                       mock( RedirectChecksumService.class ), mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
@@ -299,7 +310,38 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                       return processor.getDocument().getInnerHtml() + "[correct_macro/]";
                                                   } ) );
 
-        assertEquals( "<p>Text</p><!--#MACRO _name=\"correct_macro\" _document=\"__macroDocument1\" _body=\"\"-->", result.html() );
+        assertEquals( "<p>Text</p><!--#MACRO _name=\"correct_macro\" _descriptor=\"system:correct_macro\" _document=\"__macroDocument1\" _body=\"\"-->", result.html() );
+    }
+
+    @Test
+    void testMacrosAreResolvedAmongTheApplicationsOfTheBase()
+    {
+        final Site site = mock( Site.class );
+        when( site.getPath() ).thenReturn( ContentPath.from( "/a" ) );
+        final PropertyTree data = new PropertyTree();
+        SiteConfigsDataSerializer.toData( SiteConfigs.from(
+            SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( new PropertyTree() ).build() ), data.getRoot() );
+        when( site.getData() ).thenReturn( data );
+        when( this.contentService.getByPath( ContentPath.from( "/a" ) ) ).thenReturn( site );
+
+        final MacroKey key = MacroKey.from( "myapp:mymacro" );
+        when( this.macroDescriptorService.getByKey( key ) ).thenReturn( MacroDescriptor.create().key( key ).build() );
+
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( "<p>[mymacro/]</p>" ), "/a" );
+
+        assertEquals( "<p><!--#MACRO _name=\"mymacro\" _descriptor=\"myapp:mymacro\" _document=\"__macroDocument1\" _body=\"\"--></p>",
+                      result.html() );
+    }
+
+    @Test
+    void testInstructionsInTheTextAreNotExecuted()
+    {
+        final String html = "<p><!--#MACRO _name=\"mymacro\" _descriptor=\"system:mymacro\" _body=\"\"--></p>";
+
+        assertEquals( "<p><!-- #MACRO _name=\"mymacro\" _descriptor=\"system:mymacro\" _body=\"\"--></p>",
+                      process( ProcessHtmlPartsParams.create().value( html ) ).html() );
+        assertEquals( "<p><!-- #MACRO _name=\"mymacro\" _descriptor=\"system:mymacro\" _body=\"\"--></p>",
+                      process( ProcessHtmlPartsParams.create().value( html ).processMacros( false ) ).html() );
     }
 
     @Test

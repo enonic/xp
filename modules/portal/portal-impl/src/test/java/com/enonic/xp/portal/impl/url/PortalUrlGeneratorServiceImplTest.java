@@ -35,6 +35,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.webapp.WebappService;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.resource.ResourceService;
@@ -65,7 +66,7 @@ class PortalUrlGeneratorServiceImplTest
     {
         this.contentService = mock( ContentService.class );
         this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
-        this.urlService = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
+        this.urlService = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ), mock( MacroDescriptorService.class ),
                                                     mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
                                                     mock( ProjectService.class ), this.service );
     }

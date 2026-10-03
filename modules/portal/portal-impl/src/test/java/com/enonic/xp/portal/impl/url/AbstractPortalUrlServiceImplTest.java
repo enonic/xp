@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
@@ -50,6 +51,8 @@ public abstract class AbstractPortalUrlServiceImplTest
 
     protected StyleDescriptorService styleDescriptorService;
 
+    protected MacroDescriptorService macroDescriptorService;
+
     protected RedirectChecksumService redirectChecksumService;
 
     protected SiteService siteService;
@@ -81,6 +84,7 @@ public abstract class AbstractPortalUrlServiceImplTest
         this.projectService = mock( ProjectService.class );
         this.resourceService = mock( ResourceService.class );
         this.styleDescriptorService = mock( StyleDescriptorService.class );
+        this.macroDescriptorService = mock( MacroDescriptorService.class );
         when( this.styleDescriptorService.getByApplications( any() ) ).thenReturn( StyleDescriptors.empty() );
 
         this.applicationService = mock( ApplicationService.class );
@@ -94,7 +98,7 @@ public abstract class AbstractPortalUrlServiceImplTest
             new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), this.siteService );
 
         this.service =
-            new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.styleDescriptorService,
+            new PortalUrlServiceImpl( this.contentService, this.resourceService, new MacroServiceImpl(), this.macroDescriptorService, this.styleDescriptorService,
                                       this.redirectChecksumService, this.projectService, portalUrlGeneratorService );
 
         PortalRequestAccessor.set( this.portalRequest );
