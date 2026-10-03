@@ -2,8 +2,10 @@ package com.enonic.xp.portal.impl.url;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -15,12 +17,15 @@ import com.google.common.base.Suppliers;
 
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.macro.Macro;
+import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.html.HtmlDocument;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.impl.html.HtmlParser;
 import com.enonic.xp.portal.impl.macro.MacroDescriptorResolver;
+import com.enonic.xp.portal.impl.macro.MacroParamNames;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.HtmlElementPostProcessor;
@@ -39,7 +44,8 @@ import com.enonic.xp.style.StyleDescriptors;
 
 /**
  * Processes rich text for {@link PortalUrlService#processHtmlParts}: resolves every internal link from configuration,
- * for the site or project the HTML belongs to, and writes a placeholder for each one.
+ * and every macro among the applications, for the site or project the HTML belongs to, and writes a placeholder for each
+ * one.
  */
 final class RichTextPartsProcessor
 {
@@ -65,6 +71,8 @@ final class RichTextPartsProcessor
 
     private final List<ProcessedHtml.Image> images = new ArrayList<>();
 
+    private final List<ProcessedHtml.Macro> macros = new ArrayList<>();
+
     RichTextPartsProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
                             final MacroService macroService, final MacroDescriptorResolver macroDescriptorResolver,
                             final ContentService contentService, final ProcessHtmlPartsParams params,
@@ -86,7 +94,7 @@ final class RichTextPartsProcessor
 
         if ( params.getValue() == null )
         {
-            return new ProcessedHtml( "", baseUrl, List.of(), List.of() );
+            return new ProcessedHtml( "", baseUrl, List.of(), List.of(), List.of() );
         }
 
         final HtmlDocument document = HtmlParser.parse( params.getValue() );
@@ -107,11 +115,32 @@ final class RichTextPartsProcessor
                             .build() );
         }
 
-        final String html = params.isProcessMacros()
-            ? new HtmlMacroProcessor( macroService, macroDescriptorResolver, base.getApplications() ).process( processed )
-            : HtmlMacroProcessor.withoutInstructions( processed );
+        final String safeHtml = HtmlMacroProcessor.withoutInstructions( processed );
+        final String html = params.isProcessMacros() ? macroService.evaluateMacros( safeHtml, this::processMacro ) : safeHtml;
 
-        return new ProcessedHtml( html, baseUrl, links, images );
+        return new ProcessedHtml( html, baseUrl, links, images, macros );
+    }
+
+    private String processMacro( final Macro macro )
+    {
+        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( base.getApplications(), macro.getName() );
+        if ( descriptor == null )
+        {
+            return macro.toString();
+        }
+
+        final MacroParamNames paramNames = new MacroParamNames( descriptor );
+        final Map<String, List<String>> macroParams = new LinkedHashMap<>();
+        macro.getParameters()
+            .forEach( ( name, value ) -> macroParams.computeIfAbsent( paramNames.of( name ), key -> new ArrayList<>() ).add( value ) );
+
+        final String ref = UUID.randomUUID().toString();
+        final String body = Objects.requireNonNullElse( macro.getBody(), "" );
+        macros.add( new ProcessedHtml.Macro( ref, descriptor.getKey(), macroParams, body ) );
+
+        return "<" + ProcessedHtml.MACRO_ELEMENT + " " + ProcessedHtml.MACRO_NAME_ATTRIBUTE + "=\"" + descriptor.getName() + "\" " +
+            ProcessedHtml.MACRO_REF_ATTRIBUTE + "=\"" + ref + "\">" + body + "</" +
+            ProcessedHtml.MACRO_ELEMENT + ">";
     }
 
     private void processDocument( final HtmlDocument document, final HtmlElementPostProcessor postProcessor )

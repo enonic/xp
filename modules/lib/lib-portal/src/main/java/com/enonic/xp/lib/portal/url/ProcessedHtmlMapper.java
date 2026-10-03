@@ -83,6 +83,24 @@ final class ProcessedHtmlMapper
             gen.end();
         }
         gen.end();
+
+        gen.array( "macros" );
+        for ( final ProcessedHtml.Macro macro : processedHtml.macros() )
+        {
+            gen.map();
+            gen.value( "ref", macro.ref() );
+            gen.value( "descriptor", macro.descriptor().toString() );
+            gen.map( "params" );
+            macro.params().forEach( ( name, values ) -> {
+                gen.array( name );
+                values.forEach( gen::value );
+                gen.end();
+            } );
+            gen.end();
+            gen.value( "body", macro.body() );
+            gen.end();
+        }
+        gen.end();
     }
 
     private static void serializeLink( final MapGenerator gen, final ProcessedHtml.Link link )

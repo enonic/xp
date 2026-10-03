@@ -698,10 +698,24 @@ export interface ProcessedHtmlImage {
 }
 
 /**
- * Processed HTML and the parts of every link and image in it.
+ * A macro of processed HTML, resolved among the applications of the site or project the HTML belongs to.
+ */
+export interface ProcessedHtmlMacro {
+    /** Value of the `data-macro-ref` attribute of the `editor-macro` element. */
+    ref: string;
+    /** Key of the macro descriptor, such as `system:embed`. */
+    descriptor: string;
+    /** Parameters of the macro, each with its values in the order written. A parameter matching an input of the descriptor's form, ignoring case, is named as that input. */
+    params: Record<string, string[]>;
+    /** Body of the macro as written; empty for a macro without one. */
+    body: string;
+}
+
+/**
+ * Processed HTML and the parts of every link, image and macro in it.
  */
 export interface ProcessedHtml {
-    /** The processed HTML, with placeholders for its internal links and images. */
+    /** The processed HTML, with placeholders for its internal links, images and macros. */
     html: string;
     /** Base URL configured for the site or project the HTML belongs to, without a trailing slash; `null` when none is configured. The `baseUrl` of the page parts of every content link. */
     baseUrl: string | null;
@@ -709,6 +723,8 @@ export interface ProcessedHtml {
     links: ProcessedHtmlLink[];
     /** Internal images, in document order. */
     images: ProcessedHtmlImage[];
+    /** Macros, in document order. */
+    macros: ProcessedHtmlMacro[];
 }
 
 interface ProcessHtmlPartsHandler {
@@ -726,10 +742,13 @@ interface ProcessHtmlPartsHandler {
 /**
  * This function resolves the parts of the internal links of an HTML text - to contents, images and
  * attachments - from configuration alone, for the site or project `base` stands for, and replaces
- * each link with a placeholder.
+ * each link and macro with a placeholder.
  *
  * Each such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in
- * `links` or `images`; render the element from the parts of that entry.
+ * `links` or `images`; render the element from the parts of that entry. Each macro an application
+ * of the site or project provides becomes an `editor-macro` element holding its body, with a
+ * `data-macro-name` attribute and a `data-macro-ref` attribute naming its entry in `macros`;
+ * other macros stay as written.
  *
  * @example-ref examples/portal/processHtmlParts.js
  *
@@ -739,7 +758,7 @@ interface ProcessHtmlPartsHandler {
  * @param {number[]} [params.imageWidths] Image widths for the `srcset` attribute of `img` tags, for images the image API scales.
  * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags. Written along with the `srcset` that `imageWidths` adds.
  *
- * @returns {object} The processed `html`, the `baseUrl`, and the `links` and `images` with their parts.
+ * @returns {object} The processed `html`, the `baseUrl`, the `links` and `images` with their parts, and the `macros`.
  */
 export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml {
     const bean: ProcessHtmlPartsHandler = __.newBean<ProcessHtmlPartsHandler>('com.enonic.xp.lib.portal.url.ProcessHtmlPartsHandler');
@@ -786,6 +805,12 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
                 : null,
             src: image.src ? toImageUrlParts(image.src) : null,
             srcset: (image.srcset || []).map((source) => ({width: source.width, url: toImageUrlParts(source.url)})),
+        })),
+        macros: (result.macros || []).map((macro) => ({
+            ref: macro.ref,
+            descriptor: macro.descriptor,
+            params: macro.params || {},
+            body: macro.body,
         })),
     };
 }
