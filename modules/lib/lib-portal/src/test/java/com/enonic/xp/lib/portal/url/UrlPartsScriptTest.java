@@ -122,7 +122,7 @@ class UrlPartsScriptTest
     }
 
     @Test
-    void testExample_urlBase()
+    void testExample_portalScope()
     {
         runScript( "/lib/xp/examples/portal/portalScope.js" );
 
@@ -138,7 +138,7 @@ class UrlPartsScriptTest
     }
 
     @Test
-    void testUrlBaseUrl()
+    void testPortalScopeBaseUrl()
     {
         runFunction( "/test/portal-scope-test.js", "baseUrl" );
 
@@ -150,15 +150,15 @@ class UrlPartsScriptTest
     }
 
     @Test
-    void testUrlBaseWithoutBaseUrl()
+    void testPortalScopeWithoutBaseUrl()
     {
         runFunction( "/test/portal-scope-test.js", "noBaseUrl" );
     }
 
     @Test
-    void testBaseNotResolvedByUrlBase()
+    void testScopeNotResolvedByPortalScope()
     {
-        runFunction( "/test/portal-scope-test.js", "baseNotResolved" );
+        runFunction( "/test/portal-scope-test.js", "scopeNotResolved" );
         verify( portalUrlService, never() ).pageUrlParts( any() );
     }
 
