@@ -17,7 +17,7 @@ exports.noBaseUrl = function () {
     assert.assertTrue(scope.baseUrl === null);
 };
 
-exports.baseNotResolved = function () {
+exports.scopeNotResolved = function () {
     try {
         portal.pageUrlParts({path: '/my-site/post', scope: {baseUrl: 'https://www.example.com'}});
     } catch (e) {
