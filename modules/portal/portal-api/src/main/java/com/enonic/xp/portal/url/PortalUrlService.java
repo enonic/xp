@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
  * URL. The {@code ...Parts} methods - {@link #pageUrlParts(PageUrlPartsParams)},
  * {@link #imageUrlParts(ImageUrlPartsParams)}, {@link #attachmentUrlParts(AttachmentUrlPartsParams)} and
  * {@link #processHtmlParts(ProcessHtmlPartsParams)} - are resolved from configuration alone, for callers that serve
- * content somewhere else, for the {@link #urlBase(UrlBaseParams) base} they are given.
+ * content somewhere else, for the {@link #portalScope(PortalScopeParams) scope} they are given.
  */
 @NullMarked
 public interface PortalUrlService
@@ -40,7 +40,7 @@ public interface PortalUrlService
      * <p>
      * A content, project or branch in the params resolves the base URL from configuration in place of the request:
      * the Base URL configured for the nearest site of the content, or for the project. This use is deprecated:
-     * {@link #urlBase(UrlBaseParams)} resolves it.
+     * {@link #portalScope(PortalScopeParams)} resolves it.
      * <p>
      * Failures are reported to the caller as exceptions.
      *
@@ -61,21 +61,22 @@ public interface PortalUrlService
     String pageUrl( PageUrlParams params );
 
     /**
-     * Resolves the site or project URLs belong to, from configuration alone, for
-     * {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)}: what a site
-     * request would provide them, without one. Resolve it once and pass it to every call for the same site.
+     * Resolves a {@link PortalScope}: an immutable, request-independent context for resolving page URLs and processing
+     * rich text for a selected site or project, from configuration alone. It provides
+     * {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)} what a site
+     * request would, without one. Resolve it once and pass it to every call for the same site.
      *
      * @param params the site or project, and the project and branch it is in
-     * @return the resolved base
+     * @return the resolved scope
      * @throws com.enonic.xp.content.ContentNotFoundException if the content the params name does not exist
      */
-    UrlBase urlBase( UrlBaseParams params );
+    PortalScope portalScope( PortalScopeParams params );
 
     /**
      * Resolves the parts of a page URL, for building the full URL from segments:
      * {@code url = baseUrl + path + queryString}.
      * <p>
-     * Resolution is from configuration alone. The URL belongs to the {@link PageUrlPartsParams#getBase() base},
+     * Resolution is from configuration alone. The URL belongs to the {@link PageUrlPartsParams#getScope() scope},
      * the project of the current context unless given, and the content is looked up in its project
      * and branch. The base URL is the one configured there, {@code null} when none is; the path is
      * the URL-escaped content path relative to it.
@@ -170,9 +171,9 @@ public interface PortalUrlService
      * Resolves the parts of the internal links of an HTML fragment - to contents, images and attachments - from
      * configuration alone, and replaces each link and macro with a placeholder.
      * <p>
-     * Everything is resolved for the {@link ProcessHtmlPartsParams#getBase() base}, the project of the current context
+     * Everything is resolved for the {@link ProcessHtmlPartsParams#getScope() scope}, the project of the current context
      * unless given: the Base URL, the content path each content link is relative to, the project and branch contents are
-     * looked up in, and the applications image styles and macros come from. The base is resolved once for every link.
+     * looked up in, and the applications image styles and macros come from. The scope is resolved once for every link.
      * <p>
      * An image names its style in its {@code style} parameter: {@code <application>:<name>} for the style of that
      * application, or a name alone for the first style of that name.

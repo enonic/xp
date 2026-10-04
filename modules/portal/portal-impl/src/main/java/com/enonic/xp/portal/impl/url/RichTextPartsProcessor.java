@@ -34,10 +34,10 @@ import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
+import com.enonic.xp.portal.url.PortalScope;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
-import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
@@ -63,7 +63,7 @@ final class RichTextPartsProcessor
 
     private final ProcessHtmlPartsParams params;
 
-    private final UrlBase base;
+    private final PortalScope scope;
 
     private final Supplier<ImageStyles> imageStyles;
 
@@ -76,7 +76,7 @@ final class RichTextPartsProcessor
     RichTextPartsProcessor( final StyleDescriptorService styleDescriptorService, final PortalUrlService portalUrlService,
                             final MacroService macroService, final MacroDescriptorResolver macroDescriptorResolver,
                             final ContentService contentService, final ProcessHtmlPartsParams params,
-                            final UrlBase base )
+                            final PortalScope scope )
     {
         this.styleDescriptorService = styleDescriptorService;
         this.portalUrlService = portalUrlService;
@@ -84,13 +84,13 @@ final class RichTextPartsProcessor
         this.macroDescriptorResolver = macroDescriptorResolver;
         this.contentService = contentService;
         this.params = params;
-        this.base = base;
+        this.scope = scope;
         this.imageStyles = Suppliers.memoize( () -> RichTextLinks.imageStyles( styleDescriptors() ) );
     }
 
     ProcessedHtml process()
     {
-        final String baseUrl = base.baseUrl();
+        final String baseUrl = scope.baseUrl();
 
         if ( params.getValue() == null )
         {
@@ -123,7 +123,7 @@ final class RichTextPartsProcessor
 
     private String processMacro( final Macro macro )
     {
-        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( base.applications(), macro.getName() );
+        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( scope.applications(), macro.getName() );
         if ( descriptor == null )
         {
             return macro.toString();
@@ -284,7 +284,7 @@ final class RichTextPartsProcessor
     private String contentLink( final String ref, final RichTextLinks.Link link )
     {
         final PageUrlParts parts =
-            portalUrlService.pageUrlParts( PageUrlPartsParams.create().setId( link.id() ).setBase( base ).build() );
+            portalUrlService.pageUrlParts( PageUrlPartsParams.create().setId( link.id() ).setScope( scope ).build() );
 
         final Map<String, String> urlParams = link.urlParams();
         final String query = RichTextLinks.validQueryOrFragment( urlParams.get( "query" ) );
@@ -305,8 +305,8 @@ final class RichTextPartsProcessor
         final AttachmentUrlParts parts = portalUrlService.attachmentUrlParts(
             AttachmentUrlPartsParams.create()
                 .setId( link.id() )
-                .setProjectName( base::projectName )
-                .setBranch( base::branch )
+                .setProjectName( scope::projectName )
+                .setBranch( scope::branch )
                 .setDownload( download )
                 .build() );
 
@@ -328,7 +328,7 @@ final class RichTextPartsProcessor
 
         // looked up once for the src and every srcset width
         final Supplier<Media> media =
-            Suppliers.memoize( () -> MediaLookup.media( contentService, base.projectName(), base.branch(), id ) );
+            Suppliers.memoize( () -> MediaLookup.media( contentService, scope.projectName(), scope.branch(), id ) );
 
         final ImageUrlParts src = imageParts( media, style, DefaultImageLinkProcessor.scale( style, scaleFromQueryString, null ) );
 
@@ -371,8 +371,8 @@ final class RichTextPartsProcessor
     {
         return portalUrlService.imageUrlParts( ImageUrlPartsParams.create()
                                                    .setMedia( media )
-                                                   .setProjectName( base::projectName )
-                                                   .setBranch( base::branch )
+                                                   .setProjectName( scope::projectName )
+                                                   .setBranch( scope::branch )
                                                    .setScale( scale )
                                                    .setFilter( style == null ? null : style.getFilter() )
                                                    .build() );
@@ -386,6 +386,6 @@ final class RichTextPartsProcessor
     {
         return params.getCustomStyleDescriptorsCallback() != null
             ? params.getCustomStyleDescriptorsCallback().get()
-            : RichTextLinks.styleDescriptors( styleDescriptorService, base.applications() );
+            : RichTextLinks.styleDescriptors( styleDescriptorService, scope.applications() );
     }
 }

@@ -16,7 +16,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.BaseUrlParams;
-import com.enonic.xp.portal.url.UrlBaseParams;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -45,7 +45,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
      * current context, the configuration of a project is read from the project service, and the
      * Base URL is the one configured, {@code null} when there is none.
      */
-    BaseUrlMetadata extractFromConfiguration( final UrlBaseParams params )
+    BaseUrlMetadata extractFromConfiguration( final PortalScopeParams params )
     {
         return extract( Objects.toString( params.getProjectName(), null ), Objects.toString( params.getBranch(), null ),
                         () -> resolveContentAnchor( params ), false, false );
@@ -169,7 +169,7 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
     /**
      * @return the content the params name, or {@code null} for the project itself
      */
-    private Content resolveContentAnchor( final UrlBaseParams params )
+    private Content resolveContentAnchor( final PortalScopeParams params )
     {
         if ( params.getContentId() != null )
         {

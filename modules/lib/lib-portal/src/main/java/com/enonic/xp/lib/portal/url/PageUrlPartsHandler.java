@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.portal.url.PageUrlPartsParams;
+import com.enonic.xp.portal.url.PortalScope;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -24,7 +24,7 @@ public final class PageUrlPartsHandler
 
     private String path;
 
-    private UrlBase base;
+    private PortalScope scope;
 
     private Map<String, List<String>> queryParams;
 
@@ -44,9 +44,9 @@ public final class PageUrlPartsHandler
         this.path = path;
     }
 
-    public void setBase( final UrlBase base )
+    public void setScope( final PortalScope scope )
     {
-        this.base = base;
+        this.scope = scope;
     }
 
     public void setQueryParams( final ScriptValue params )
@@ -56,7 +56,7 @@ public final class PageUrlPartsHandler
 
     public MapSerializable createParts()
     {
-        final PageUrlPartsParams.Builder params = PageUrlPartsParams.create().setId( this.id ).setPath( this.path ).setBase( this.base );
+        final PageUrlPartsParams.Builder params = PageUrlPartsParams.create().setId( this.id ).setPath( this.path ).setScope( this.scope );
 
         if ( this.queryParams != null )
         {

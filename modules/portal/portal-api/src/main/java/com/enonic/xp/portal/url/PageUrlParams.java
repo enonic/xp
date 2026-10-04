@@ -87,7 +87,7 @@ public final class PageUrlParams
      *
      * @param value project name; {@code null} or empty takes it from the context
      * @return these params
-     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a {@link UrlBase} resolved for the project
+     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a {@link PortalScope} resolved for the project
      */
     @Deprecated
     public PageUrlParams projectName( final @Nullable String value )
@@ -102,7 +102,7 @@ public final class PageUrlParams
      *
      * @param value branch name; {@code null} or empty takes it from the context
      * @return these params
-     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a {@link UrlBase} resolved for the branch
+     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a {@link PortalScope} resolved for the branch
      */
     @Deprecated
     public PageUrlParams branch( final @Nullable String value )

@@ -5,19 +5,19 @@ import java.util.function.Supplier;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.portal.url.PortalScope;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.url.UrlBase;
-import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
 /**
- * Backs {@code urlBase} of {@code /lib/xp/portal}. The script keeps the resolved base hidden in the object it returns,
+ * Backs {@code portalScope} of {@code /lib/xp/portal}. The script keeps the resolved scope hidden in the object it returns,
  * to pass it on to {@code pageUrlParts} and {@code processHtmlParts}, and reads its Base URL with {@link #baseUrlOf}, so
- * that no script engine reads the base itself.
+ * that no script engine reads the scope itself.
  */
-public final class UrlBaseHandler
+public final class PortalScopeHandler
     implements ScriptBean
 {
     private Supplier<PortalUrlService> urlServiceSupplier;
@@ -49,9 +49,9 @@ public final class UrlBaseHandler
         this.branch = branch;
     }
 
-    public UrlBase resolve()
+    public PortalScope resolve()
     {
-        final UrlBaseParams.Builder params = UrlBaseParams.create()
+        final PortalScopeParams.Builder params = PortalScopeParams.create()
             .setProjectName( this.projectName == null ? null : ProjectName.from( this.projectName ) )
             .setBranch( this.branch == null ? null : Branch.from( this.branch ) );
 
@@ -65,11 +65,11 @@ public final class UrlBaseHandler
             params.setContentId( ContentId.from( this.key ) );
         }
 
-        return urlServiceSupplier.get().urlBase( params.build() );
+        return urlServiceSupplier.get().portalScope( params.build() );
     }
 
-    public String baseUrlOf( final UrlBase base )
+    public String baseUrlOf( final PortalScope scope )
     {
-        return base.baseUrl();
+        return scope.baseUrl();
     }
 }

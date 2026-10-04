@@ -3,9 +3,9 @@ package com.enonic.xp.lib.portal.url;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.enonic.xp.portal.url.PortalScope;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
-import com.enonic.xp.portal.url.UrlBase;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -20,7 +20,7 @@ public final class ProcessHtmlPartsHandler
 
     private String value;
 
-    private UrlBase base;
+    private PortalScope scope;
 
     private List<Integer> imageWidths;
 
@@ -37,9 +37,9 @@ public final class ProcessHtmlPartsHandler
         this.value = value;
     }
 
-    public void setBase( final UrlBase base )
+    public void setScope( final PortalScope scope )
     {
-        this.base = base;
+        this.scope = scope;
     }
 
     public void setImageWidths( final List<Integer> imageWidths )
@@ -57,7 +57,7 @@ public final class ProcessHtmlPartsHandler
         return new ProcessedHtmlMapper( urlServiceSupplier.get()
                                             .processHtmlParts( ProcessHtmlPartsParams.create()
                                                                    .value( this.value )
-                                                                   .base( this.base )
+                                                                   .scope( this.scope )
                                                                    .imageWidths( this.imageWidths )
                                                                    .imageSizes( this.imageSizes )
                                                                    .build() ) );

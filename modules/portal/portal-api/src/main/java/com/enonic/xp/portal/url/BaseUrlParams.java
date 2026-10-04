@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNullElse;
  * the base URL of the current site request.
  * <p>
  * The content, project and branch setters are deprecated: they resolve the base URL from configuration, which
- * {@link PortalUrlService#urlBase(UrlBaseParams)} does.
+ * {@link PortalUrlService#portalScope(PortalScopeParams)} does.
  *
  * @see PortalUrlService#baseUrl(BaseUrlParams)
  */
@@ -119,7 +119,7 @@ public final class BaseUrlParams
          *
          * @param projectName project of the content; {@code null} to take it from the context
          * @return this builder
-         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the project set on its params
+         * @deprecated use {@link PortalUrlService#portalScope(PortalScopeParams)}, with the project set on its params
          */
         @Deprecated
         public Builder setProjectName( final @Nullable String projectName )
@@ -133,7 +133,7 @@ public final class BaseUrlParams
          *
          * @param branch branch of the content; {@code null} to take it from the context
          * @return this builder
-         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the branch set on its params
+         * @deprecated use {@link PortalUrlService#portalScope(PortalScopeParams)}, with the branch set on its params
          */
         @Deprecated
         public Builder setBranch( final @Nullable String branch )
@@ -147,7 +147,7 @@ public final class BaseUrlParams
          *
          * @param id content id
          * @return this builder
-         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the content set on its params
+         * @deprecated use {@link PortalUrlService#portalScope(PortalScopeParams)}, with the content set on its params
          */
         @Deprecated
         public Builder setId( final @Nullable String id )
@@ -162,7 +162,7 @@ public final class BaseUrlParams
          *
          * @param path content path
          * @return this builder
-         * @deprecated use {@link PortalUrlService#urlBase(UrlBaseParams)}, with the content set on its params
+         * @deprecated use {@link PortalUrlService#portalScope(PortalScopeParams)}, with the content set on its params
          */
         @Deprecated
         public Builder setPath( final @Nullable String path )
