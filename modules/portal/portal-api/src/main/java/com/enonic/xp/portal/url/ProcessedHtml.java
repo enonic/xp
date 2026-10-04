@@ -98,9 +98,10 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      * @param contentId id of the linked content
      * @param page      parts of the page URL, with the query string the link carries; {@code null} when the link does not
      *                  resolve
-     * @param fragment  fragment of the link, without {@code #}; {@code null} when it has none
+     * @param fragment  fragment of the link, prefixed with {@code #}; empty when it has none. It is not part of the page
+     *                  URL: the href of the link is {@code baseUrl + path + queryString + fragment}
      */
-    public record ContentLink(String ref, String uri, String contentId, @Nullable PageUrlParts page, @Nullable String fragment)
+    public record ContentLink(String ref, String uri, String contentId, @Nullable PageUrlParts page, String fragment)
         implements Link
     {
     }
