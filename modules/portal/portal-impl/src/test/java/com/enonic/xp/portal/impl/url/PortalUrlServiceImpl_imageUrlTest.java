@@ -51,7 +51,6 @@ import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.webapp.WebappService;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -844,7 +843,6 @@ class PortalUrlServiceImpl_imageUrlTest
         when( config.legacy_mediaApiAutoMount_enabled() ).thenReturn( true );
         ( (PortalUrlGeneratorServiceImpl) portalUrlGeneratorService ).activate( config );
     }
-
 
     @Test
     void testWithWebappRequestWithoutMediaApiMountsWithDefaultMediaBaseUrl()
