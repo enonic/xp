@@ -62,8 +62,8 @@ public interface PortalUrlService
 
     /**
      * Resolves the site or project URLs belong to, from configuration alone, for
-     * {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)}. Resolve it once
-     * and pass it to every call of the same request.
+     * {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)}: what a site
+     * request would provide them, without one. Resolve it once and pass it to every call for the same site.
      *
      * @param params the site or project, and the project and branch it is in
      * @return the resolved base

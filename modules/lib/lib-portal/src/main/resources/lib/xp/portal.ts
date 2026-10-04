@@ -1196,7 +1196,8 @@ export interface UrlBaseParams {
 }
 
 /**
- * The site or project URLs belong to, resolved by {@link urlBase}.
+ * The site or project URLs belong to, resolved by {@link urlBase}. It stands in for a site request:
+ * what request-following URLs take from the request, the URL parts take from the base.
  */
 export interface UrlBase {
     /** Base URL configured for the site or project, without a trailing slash; `null` when none is configured. */
@@ -1233,8 +1234,9 @@ function urlBaseHandle(base: UrlBase | null | undefined): UrlBaseHandle | null {
 
 /**
  * This function resolves the site - or the project - URLs belong to, from configuration alone, for
- * {@link pageUrlParts} and {@link processHtmlParts}. Resolve it once and pass it as `base` to every
- * call of the same request.
+ * {@link pageUrlParts} and {@link processHtmlParts}: what a site request would provide them - the
+ * project, the branch, the site and its configuration - without one. Resolve it once and pass it as
+ * `base` to every call for the same site.
  *
  * @example-ref examples/portal/urlBase.js
  *

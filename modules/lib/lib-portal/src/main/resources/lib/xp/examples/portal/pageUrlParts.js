@@ -2,7 +2,7 @@ var portalLib = require('/lib/xp/portal');
 var t = require('/lib/xp/testing');
 
 // BEGIN
-// The site the URLs belong to: resolve it once, and pass it to every call of the same request
+// The site the URLs belong to, in place of a site request: resolve it once, and pass it to every call for that site
 var base = portalLib.urlBase({
     key: '/my-site',
     project: 'myproject',
