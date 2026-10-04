@@ -183,10 +183,10 @@ public final class PortalUrlServiceImpl
 
         return runWithAdminRole( () -> {
             final String path = ContextBuilder.copyOf( ContextAccessor.current() )
-                .repositoryId( base.getProjectName().getRepoId() )
-                .branch( base.getBranch() )
+                .repositoryId( base.projectName().getRepoId() )
+                .branch( base.branch() )
                 .build()
-                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ), base.getPath() ) );
+                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ), base.path() ) );
 
             final StringBuilder escapedPath = new StringBuilder();
             UrlBuilderHelper.appendAndEncodePathParts( escapedPath, path );
@@ -194,7 +194,7 @@ public final class PortalUrlServiceImpl
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getQueryParams() );
 
-            return new PageUrlParts( base.getBaseUrl(), escapedPath.toString(), queryParamsStrategy.get() );
+            return new PageUrlParts( base.baseUrl(), escapedPath.toString(), queryParamsStrategy.get() );
         } );
     }
 
