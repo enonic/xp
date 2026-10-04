@@ -11,7 +11,7 @@ import com.google.common.base.Strings;
 
 /**
  * Parameters of {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}: the content a page URL addresses, by
- * {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, and the {@link UrlBase site or project}
+ * {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, and the {@link PortalScope site or project}
  * the URL belongs to.
  */
 @NullMarked
@@ -21,7 +21,7 @@ public final class PageUrlPartsParams
 
     private final @Nullable String path;
 
-    private final @Nullable UrlBase base;
+    private final @Nullable PortalScope scope;
 
     private final Map<String, List<String>> queryParams;
 
@@ -33,7 +33,7 @@ public final class PageUrlPartsParams
         }
         this.id = builder.id;
         this.path = builder.path;
-        this.base = builder.base;
+        this.scope = builder.scope;
         this.queryParams = builder.queryParams.build();
     }
 
@@ -55,11 +55,11 @@ public final class PageUrlPartsParams
 
     /**
      * @return the site or project the URL belongs to, or {@code null} for the project of the current context
-     * @see Builder#setBase(UrlBase)
+     * @see Builder#setScope(PortalScope)
      */
-    public @Nullable UrlBase getBase()
+    public @Nullable PortalScope getScope()
     {
-        return base;
+        return scope;
     }
 
     /**
@@ -87,7 +87,7 @@ public final class PageUrlPartsParams
 
         private @Nullable String path;
 
-        private @Nullable UrlBase base;
+        private @Nullable PortalScope scope;
 
         private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
@@ -122,17 +122,17 @@ public final class PageUrlPartsParams
         /**
          * Sets the site - or the project - the URL belongs to. The content is looked up in its project and branch.
          * <p>
-         * Each level carries its own configuration, so the Base URL configured on the base applies, and the path of
-         * the URL is relative to it. The content has to be inside the base, or be the base itself; for a content
+         * Each level carries its own configuration, so the Base URL configured on the scope applies, and the path of
+         * the URL is relative to it. The content has to be inside the scope, or be the scope itself; for a content
          * elsewhere {@link ContentOutOfScopeException} is thrown.
          *
-         * @param base the base, resolved by {@link PortalUrlService#urlBase(UrlBaseParams)}; {@code null} for the
+         * @param scope the scope, resolved by {@link PortalUrlService#portalScope(PortalScopeParams)}; {@code null} for the
          *             project of the current context
          * @return this builder
          */
-        public Builder setBase( final @Nullable UrlBase base )
+        public Builder setScope( final @Nullable PortalScope scope )
         {
-            this.base = base;
+            this.scope = scope;
             return this;
         }
 

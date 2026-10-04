@@ -3,7 +3,7 @@ var t = require('/lib/xp/testing');
 
 // BEGIN
 // The site the URLs belong to, in place of a site request: resolve it once, and pass it to every call for that site
-var base = portalLib.urlBase({
+var scope = portalLib.portalScope({
     key: '/my-site',
     project: 'myproject',
     branch: 'master'
@@ -12,7 +12,7 @@ var base = portalLib.urlBase({
 // Process rich text of a site: each link and macro in the HTML is a placeholder, rendered from its entry
 var result = portalLib.processHtmlParts({
     value: '<a href="content://123456">Post</a>[youtube videoid="abc"/]',
-    base: base
+    scope: scope
 });
 
 // The site's configured Base URL, or the origin the frontend serves the site from

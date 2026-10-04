@@ -323,11 +323,11 @@ export type PageUrlParams = IdXorPath & {
     type?: 'server' | 'absolute' | 'websocket';
     params?: object;
     /**
-     * @deprecated Use {@link pageUrlParts} with a `base` from {@link urlBase} with `project`.
+     * @deprecated Use {@link pageUrlParts} with a `scope` from {@link portalScope} with `project`.
      */
     project?: string;
     /**
-     * @deprecated Use {@link pageUrlParts} with a `base` from {@link urlBase} with `branch`.
+     * @deprecated Use {@link pageUrlParts} with a `scope` from {@link portalScope} with `branch`.
      */
     branch?: string;
 };
@@ -360,8 +360,8 @@ interface PageUrlHandler {
  * @param {string} [params.id] Id to the page. If id is set, then path is not used.
  * @param {string} [params.path] Path to the page. Relative paths is resolved using the context page.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
- * @param {string} [params.project] Deprecated. Use {@link pageUrlParts} with a `base` from {@link urlBase} with `project` instead.
- * @param {string} [params.branch] Deprecated. Use {@link pageUrlParts} with a `base` from {@link urlBase} with `branch` instead.
+ * @param {string} [params.project] Deprecated. Use {@link pageUrlParts} with a `scope` from {@link portalScope} with `project` instead.
+ * @param {string} [params.branch] Deprecated. Use {@link pageUrlParts} with a `scope` from {@link portalScope} with `branch` instead.
  * @param {object} [params.params] Custom query parameters to append to the URL.
  *
  * @returns {string} The generated URL; one answered with 404 when the page does not resolve.
@@ -640,7 +640,7 @@ export function processHtml(params: ProcessHtmlParams): string {
 
 export interface ProcessHtmlPartsParams {
     value: string;
-    base?: UrlBase;
+    scope?: PortalScope;
     imageWidths?: number[];
     imageSizes?: string;
 }
@@ -730,7 +730,7 @@ export interface ProcessedHtml {
 interface ProcessHtmlPartsHandler {
     setValue(value: string): void;
 
-    setBase(value: UrlBaseHandle | null): void;
+    setScope(value: PortalScopeHandle | null): void;
 
     setImageWidths(value: number[] | null): void;
 
@@ -741,7 +741,7 @@ interface ProcessHtmlPartsHandler {
 
 /**
  * This function resolves the parts of the internal links of an HTML text - to contents, images and
- * attachments - from configuration alone, for the site or project `base` stands for, and replaces
+ * attachments - from configuration alone, for the site or project `scope` stands for, and replaces
  * each link and macro with a placeholder.
  *
  * Each such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in
@@ -754,7 +754,7 @@ interface ProcessHtmlPartsHandler {
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.value Html value string to process.
- * @param {object} [params.base] The site or project the HTML belongs to, resolved by {@link urlBase}. Defaults to the project of the current context.
+ * @param {object} [params.scope] The site or project the HTML belongs to, resolved by {@link portalScope}. Defaults to the project of the current context.
  * @param {number[]} [params.imageWidths] Image widths for the `srcset` attribute of `img` tags, for images the image API scales.
  * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags. Written along with the `srcset` that `imageWidths` adds.
  *
@@ -766,7 +766,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
     const value = checkRequired(params, 'value');
 
     bean.setValue(value);
-    bean.setBase(urlBaseHandle(params.base));
+    bean.setScope(portalScopeHandle(params.scope));
     bean.setImageWidths(__.nullOrValue(params.imageWidths));
     bean.setImageSizes(__.nullOrValue(params.imageSizes));
 
@@ -1095,19 +1095,19 @@ export function apiUrl(params: ApiUrlParams): string {
 export interface BaseUrlParams {
     type?: 'server' | 'absolute' | 'websocket';
     /**
-     * @deprecated Use {@link urlBase} with `key`.
+     * @deprecated Use {@link portalScope} with `key`.
      */
     id?: string;
     /**
-     * @deprecated Use {@link urlBase} with `key`.
+     * @deprecated Use {@link portalScope} with `key`.
      */
     path?: string;
     /**
-     * @deprecated Use {@link urlBase} with `project`.
+     * @deprecated Use {@link portalScope} with `project`.
      */
     project?: string;
     /**
-     * @deprecated Use {@link urlBase} with `branch`.
+     * @deprecated Use {@link portalScope} with `branch`.
      */
     branch?: string;
 }
@@ -1138,10 +1138,10 @@ interface BaseUrlHandler {
  *
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute` or `websocket`.
- * @param {string} [params.id] Deprecated. Use {@link urlBase} with `key` instead.
- * @param {string} [params.path] Deprecated. Use {@link urlBase} with `key` instead.
- * @param {string} [params.project] Deprecated. Use {@link urlBase} with `project` instead.
- * @param {string} [params.branch] Deprecated. Use {@link urlBase} with `branch` instead.
+ * @param {string} [params.id] Deprecated. Use {@link portalScope} with `key` instead.
+ * @param {string} [params.path] Deprecated. Use {@link portalScope} with `key` instead.
+ * @param {string} [params.project] Deprecated. Use {@link portalScope} with `project` instead.
+ * @param {string} [params.branch] Deprecated. Use {@link portalScope} with `branch` instead.
  *
  * @returns {string} The generated URL.
  */
@@ -1189,79 +1189,81 @@ function toAttachmentUrlParts(parts: AttachmentUrlParts): AttachmentUrlParts {
     };
 }
 
-export interface UrlBaseParams {
+export interface PortalScopeParams {
     key?: string;
     project?: string;
     branch?: string;
 }
 
 /**
- * The site or project URLs belong to, resolved by {@link urlBase}. It stands in for a site request:
- * what request-following URLs take from the request, the URL parts take from the base.
+ * An immutable, request-independent context for resolving page URLs and processing rich text for a
+ * selected site or project, resolved by {@link portalScope}. It stands in for a site request: what
+ * request-following URLs take from the request, the URL parts take from the scope.
  */
-export interface UrlBase {
+export interface PortalScope {
     /** Base URL configured for the site or project, without a trailing slash; `null` when none is configured. */
     readonly baseUrl: string | null;
 }
 
-// The Java base a UrlBase keeps hidden, for the handlers: scripts never read it, as script engines read Java objects differently
-type UrlBaseHandle = object;
+// The Java PortalScope a script's scope keeps hidden, for the handlers: scripts never read it, as script engines read Java objects differently
+type PortalScopeHandle = object;
 
-const URL_BASE_HANDLE = '__urlBaseHandle';
+const PORTAL_SCOPE_HANDLE = '__portalScopeHandle';
 
-interface UrlBaseHandler {
+interface PortalScopeHandler {
     setKey(value: string | null): void;
 
     setProjectName(value: string | null): void;
 
     setBranch(value: string | null): void;
 
-    resolve(): UrlBaseHandle;
+    resolve(): PortalScopeHandle;
 
-    baseUrlOf(value: UrlBaseHandle): string | null;
+    baseUrlOf(value: PortalScopeHandle): string | null;
 }
 
-function urlBaseHandle(base: UrlBase | null | undefined): UrlBaseHandle | null {
-    if (base == null) {
+function portalScopeHandle(scope: PortalScope | null | undefined): PortalScopeHandle | null {
+    if (scope == null) {
         return null;
     }
-    const handle = (base as unknown as Record<string, UrlBaseHandle | undefined>)[URL_BASE_HANDLE];
+    const handle = (scope as unknown as Record<string, PortalScopeHandle | undefined>)[PORTAL_SCOPE_HANDLE];
     if (handle == null) {
-        throw new Error(`Parameter 'base' must be resolved by urlBase()`);
+        throw new Error(`Parameter 'scope' must be resolved by portalScope()`);
     }
     return handle;
 }
 
 /**
- * This function resolves the site - or the project - URLs belong to, from configuration alone, for
+ * This function resolves a portal scope: an immutable, request-independent context for resolving page
+ * URLs and processing rich text for a selected site or project, from configuration alone. It is for
  * {@link pageUrlParts} and {@link processHtmlParts}: what a site request would provide them - the
  * project, the branch, the site and its configuration - without one. Resolve it once and pass it as
- * `base` to every call for the same site.
+ * `scope` to every call for the same site.
  *
- * @example-ref examples/portal/urlBase.js
+ * @example-ref examples/portal/portalScope.js
  *
  * @param {object} [params] Input parameters as JSON.
  * @param {string} [params.key=/] Id or path of the site, or of a content inside it; `/` selects the project.
  * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
  * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
  *
- * @returns {object} The resolved base, with the `baseUrl` configured there.
+ * @returns {object} The resolved scope, with the `baseUrl` configured there.
  */
-export function urlBase(params?: UrlBaseParams): UrlBase {
-    const bean: UrlBaseHandler = __.newBean<UrlBaseHandler>('com.enonic.xp.lib.portal.url.UrlBaseHandler');
+export function portalScope(params?: PortalScopeParams): PortalScope {
+    const bean: PortalScopeHandler = __.newBean<PortalScopeHandler>('com.enonic.xp.lib.portal.url.PortalScopeHandler');
 
     bean.setKey(__.nullOrValue(params?.key));
     bean.setProjectName(__.nullOrValue(params?.project));
     bean.setBranch(__.nullOrValue(params?.branch));
 
     const handle = bean.resolve();
-    const base = {baseUrl: bean.baseUrlOf(handle) ?? null};
-    Object.defineProperty(base, URL_BASE_HANDLE, {value: handle});
-    return Object.freeze(base);
+    const scope = {baseUrl: bean.baseUrlOf(handle) ?? null};
+    Object.defineProperty(scope, PORTAL_SCOPE_HANDLE, {value: handle});
+    return Object.freeze(scope);
 }
 
 export type PageUrlPartsParams = IdXorPath & {
-    base?: UrlBase;
+    scope?: PortalScope;
     params?: object;
 };
 
@@ -1282,7 +1284,7 @@ interface PageUrlPartsHandler {
 
     setPath(value: string | null): void;
 
-    setBase(value: UrlBaseHandle | null): void;
+    setScope(value: PortalScopeHandle | null): void;
 
     setQueryParams(value: ScriptValue | null): void;
 
@@ -1293,11 +1295,11 @@ interface PageUrlPartsHandler {
  * This function resolves the parts of a page URL, for building the URL from segments:
  * `url = baseUrl + path + queryString`.
  *
- * The parts are resolved from configuration alone, for the site or project `base` stands for. The
+ * The parts are resolved from configuration alone, for the site or project `scope` stands for. The
  * base URL is the one configured there, or `null`, in which case the caller supplies the origin the
  * site is served from. The path is the content path relative to that site or project.
  *
- * The page has to be inside the site or project `base` stands for, or be it; for a page elsewhere an
+ * The page has to be inside the site or project `scope` stands for, or be it; for a page elsewhere an
  * error is raised.
  *
  * @example-ref examples/portal/pageUrlParts.js
@@ -1305,7 +1307,7 @@ interface PageUrlPartsHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id of the page. Either `id` or `path` is required.
  * @param {string} [params.path] Path of the page within the project.
- * @param {object} [params.base] The site or project the URL belongs to, resolved by {@link urlBase}; the page is looked up in its project and branch. Defaults to the project of the current context.
+ * @param {object} [params.scope] The site or project the URL belongs to, resolved by {@link portalScope}; the page is looked up in its project and branch. Defaults to the project of the current context.
  * @param {object} [params.params] Custom query parameters of the URL.
  *
  * @returns {object} The parts: `baseUrl`, `path` and `queryString`.
@@ -1315,7 +1317,7 @@ export function pageUrlParts(params: PageUrlPartsParams): PageUrlParts {
 
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
-    bean.setBase(urlBaseHandle(params.base));
+    bean.setScope(portalScopeHandle(params.scope));
     bean.setQueryParams(__.toScriptValue(params.params));
 
     return toPageUrlParts(__.toNativeObject(bean.createParts()));

@@ -8,9 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import com.enonic.xp.app.ApplicationKeys;
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
@@ -18,12 +19,14 @@ import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
+import com.enonic.xp.portal.url.PortalScope;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
-import com.enonic.xp.portal.url.UrlBase;
-import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.site.SiteConfig;
+import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,10 +52,11 @@ class UrlPartsScriptTest
 
         this.portalUrlService = Mockito.mock( PortalUrlService.class );
 
-        when( portalUrlService.urlBase( any( UrlBaseParams.class ) ) ).thenAnswer( invocation -> {
-            final UrlBaseParams params = invocation.getArgument( 0 );
-            final String baseUrl = ContentPath.from( "/configured" ).equals( params.getContentPath() ) ? "https://www.example.com" : null;
-            return new UrlBase( params.getProjectName(), params.getBranch(), params.getContentPath(), baseUrl, ApplicationKeys.empty() );
+        when( portalUrlService.portalScope( any( PortalScopeParams.class ) ) ).thenAnswer( invocation -> {
+            final PortalScopeParams params = invocation.getArgument( 0 );
+            final SiteConfigs siteConfigs = ContentPath.from( "/configured" ).equals( params.getContentPath() ) ? portalConfig(
+                "https://www.example.com" ) : SiteConfigs.empty();
+            return new PortalScope( params.getProjectName(), params.getBranch(), params.getContentPath(), siteConfigs );
         } );
 
         when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
@@ -91,6 +95,13 @@ class UrlPartsScriptTest
         addService( PortalUrlService.class, this.portalUrlService );
     }
 
+    private static SiteConfigs portalConfig( final String baseUrl )
+    {
+        final PropertyTree config = new PropertyTree();
+        config.setString( "baseUrl", baseUrl );
+        return SiteConfigs.from( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() );
+    }
+
     private static String context( final ProjectName projectName, final Branch branch )
     {
         return projectName + ( "master".equals( branch.toString() ) ? "" : ":" + branch );
@@ -106,59 +117,59 @@ class UrlPartsScriptTest
 
         final PageUrlPartsParams params = captor.getValue();
         assertEquals( "/my-site/posts/first-post", params.getPath() );
-        assertBase( params.getBase() );
+        assertScope( params.getScope() );
         assertTrue( params.getQueryParams().get( "a" ).contains( "1" ) );
     }
 
     @Test
     void testExample_urlBase()
     {
-        runScript( "/lib/xp/examples/portal/urlBase.js" );
+        runScript( "/lib/xp/examples/portal/portalScope.js" );
 
-        final ArgumentCaptor<UrlBaseParams> base = ArgumentCaptor.forClass( UrlBaseParams.class );
-        verify( portalUrlService ).urlBase( base.capture() );
-        assertEquals( ContentPath.from( "/my-site" ), base.getValue().getContentPath() );
-        assertEquals( ProjectName.from( "myproject" ), base.getValue().getProjectName() );
-        assertEquals( Branch.from( "master" ), base.getValue().getBranch() );
+        final ArgumentCaptor<PortalScopeParams> scope = ArgumentCaptor.forClass( PortalScopeParams.class );
+        verify( portalUrlService ).portalScope( scope.capture() );
+        assertEquals( ContentPath.from( "/my-site" ), scope.getValue().getContentPath() );
+        assertEquals( ProjectName.from( "myproject" ), scope.getValue().getProjectName() );
+        assertEquals( Branch.from( "master" ), scope.getValue().getBranch() );
 
         final ArgumentCaptor<PageUrlPartsParams> captor = ArgumentCaptor.forClass( PageUrlPartsParams.class );
         verify( portalUrlService ).pageUrlParts( captor.capture() );
-        assertBase( captor.getValue().getBase() );
+        assertScope( captor.getValue().getScope() );
     }
 
     @Test
     void testUrlBaseUrl()
     {
-        runFunction( "/test/url-base-test.js", "baseUrl" );
+        runFunction( "/test/portal-scope-test.js", "baseUrl" );
 
-        // the script reads the Base URL as a string, and hands the base on as it was resolved
+        // the script reads the Base URL as a string, and hands the scope on as it was resolved
         final ArgumentCaptor<PageUrlPartsParams> captor = ArgumentCaptor.forClass( PageUrlPartsParams.class );
         verify( portalUrlService ).pageUrlParts( captor.capture() );
-        assertEquals( "https://www.example.com", captor.getValue().getBase().baseUrl() );
-        assertEquals( ContentPath.from( "/configured" ), captor.getValue().getBase().path() );
+        assertEquals( "https://www.example.com", captor.getValue().getScope().baseUrl() );
+        assertEquals( ContentPath.from( "/configured" ), captor.getValue().getScope().path() );
     }
 
     @Test
     void testUrlBaseWithoutBaseUrl()
     {
-        runFunction( "/test/url-base-test.js", "noBaseUrl" );
+        runFunction( "/test/portal-scope-test.js", "noBaseUrl" );
     }
 
     @Test
     void testBaseNotResolvedByUrlBase()
     {
-        runFunction( "/test/url-base-test.js", "baseNotResolved" );
+        runFunction( "/test/portal-scope-test.js", "baseNotResolved" );
         verify( portalUrlService, never() ).pageUrlParts( any() );
     }
 
     /**
-     * The base resolved by the script comes back as is.
+     * The scope resolved by the script comes back as is.
      */
-    private static void assertBase( final UrlBase base )
+    private static void assertScope( final PortalScope scope )
     {
-        assertEquals( ProjectName.from( "myproject" ), base.projectName() );
-        assertEquals( Branch.from( "master" ), base.branch() );
-        assertEquals( ContentPath.from( "/my-site" ), base.path() );
+        assertEquals( ProjectName.from( "myproject" ), scope.projectName() );
+        assertEquals( Branch.from( "master" ), scope.branch() );
+        assertEquals( ContentPath.from( "/my-site" ), scope.path() );
     }
 
     @Test
@@ -171,7 +182,7 @@ class UrlPartsScriptTest
 
         final ProcessHtmlPartsParams params = captor.getValue();
         assertEquals( "<a href=\"content://123456\">Post</a>[youtube videoid=\"abc\"/]", params.getValue() );
-        assertBase( params.getBase() );
+        assertScope( params.getScope() );
     }
 
     @Test

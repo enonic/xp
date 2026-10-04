@@ -19,9 +19,9 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.url.PortalScope;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
-import com.enonic.xp.portal.url.UrlBase;
-import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -122,10 +122,10 @@ public abstract class AbstractPortalUrlServiceImplTest
     }
 
     /**
-     * @return the base the path names, resolved in the current context
+     * @return the scope the path names, resolved in the current context
      */
-    protected UrlBase base( final String path )
+    protected PortalScope scope( final String path )
     {
-        return this.service.urlBase( UrlBaseParams.create().setContentPath( ContentPath.from( path ) ).build() );
+        return this.service.portalScope( PortalScopeParams.create().setContentPath( ContentPath.from( path ) ).build() );
     }
 }

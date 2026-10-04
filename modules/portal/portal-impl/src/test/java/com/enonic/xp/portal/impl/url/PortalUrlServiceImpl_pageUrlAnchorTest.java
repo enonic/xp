@@ -17,7 +17,7 @@ import com.enonic.xp.portal.url.ContentOutOfScopeException;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
-import com.enonic.xp.portal.url.UrlBaseParams;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
@@ -111,22 +111,22 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     }
 
     /**
-     * @param baseKey id or path of the content naming the base
+     * @param baseKey id or path of the content naming the scope
      */
     private PageUrlParts parts( final ContentPath content, final String baseKey )
     {
-        final UrlBaseParams.Builder base = UrlBaseParams.create();
+        final PortalScopeParams.Builder scope = PortalScopeParams.create();
         if ( baseKey.startsWith( "/" ) )
         {
-            base.setContentPath( ContentPath.from( baseKey ) );
+            scope.setContentPath( ContentPath.from( baseKey ) );
         }
         else
         {
-            base.setContentId( ContentId.from( baseKey ) );
+            scope.setContentId( ContentId.from( baseKey ) );
         }
 
         return this.service.pageUrlParts(
-            PageUrlPartsParams.create().setPath( content.toString() ).setBase( this.service.urlBase( base.build() ) ).build() );
+            PageUrlPartsParams.create().setPath( content.toString() ).setScope( this.service.portalScope( scope.build() ) ).build() );
     }
 
     private PageUrlParts pageUrlPartsAnchoredAtFeatures()

@@ -1,8 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
-import com.enonic.xp.inputtype.InputTypeName;
-import com.enonic.xp.form.Input;
 import com.enonic.xp.form.Form;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.inputtype.InputTypeName;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
-import com.enonic.xp.portal.url.ProcessedHtml;
-import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
@@ -29,18 +26,21 @@ import com.enonic.xp.context.ContextAccessorSupport;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.impl.macro.MacroServiceImpl;
-import com.enonic.xp.macro.MacroDescriptorService;
-import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroDescriptor;
+import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.macro.MacroDescriptors;
+import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
+import com.enonic.xp.portal.url.ProcessedHtml;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.resource.ResourceService;
@@ -123,7 +123,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     /**
-     * Processes in the context project and branch, with the project as the base.
+     * Processes in the context project and branch, with the project as the scope.
      */
     private ProcessedHtml process( final ProcessHtmlPartsParams.Builder params )
     {
@@ -131,12 +131,12 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     /**
-     * Processes in the context project and branch, for the base the path names.
+     * Processes in the context project and branch, for the scope the path names.
      */
     private ProcessedHtml process( final ProcessHtmlPartsParams.Builder params, final String basePath )
     {
         return inContext( () -> service.processHtmlParts(
-            params.base( service.urlBase( UrlBaseParams.create().setContentPath( ContentPath.from( basePath ) ).build() ) ).build() ) );
+            params.scope( service.portalScope( PortalScopeParams.create().setContentPath( ContentPath.from( basePath ) ).build() ) ).build() ) );
     }
 
     private static <T> T inContext( final Callable<T> callable )

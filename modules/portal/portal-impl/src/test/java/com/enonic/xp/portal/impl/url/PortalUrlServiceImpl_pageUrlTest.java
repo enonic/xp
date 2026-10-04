@@ -15,9 +15,9 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.url.BaseUrlParams;
+import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
-import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.RoleKeys;
@@ -323,7 +323,7 @@ class PortalUrlServiceImpl_pageUrlTest
                 when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( null );
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
-                // the project is the level, so the full content path follows its base
+                // the project is the level, so the full content path follows its base URL
                 assertEquals( "/site/myproject/draft/a/b/mycontent", this.service.pageUrl( new PageUrlParams().path( "/mycontent" ) ) );
             } );
     }
@@ -350,17 +350,17 @@ class PortalUrlServiceImpl_pageUrlTest
                 when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
-                final String base = "/mycontent";
+                final String scopePath = "/mycontent";
                 final PageUrlParts parts = this.service.pageUrlParts(
-                    PageUrlPartsParams.create().setPath( "/mycontent" ).setQueryParam( "a", "1" ).setBase( base( base ) ).build() );
+                    PageUrlPartsParams.create().setPath( "/mycontent" ).setQueryParam( "a", "1" ).setScope( scope( scopePath ) ).build() );
                 assertNull( parts.baseUrl() );
                 assertEquals( "/b/mycontent", parts.path() );
                 assertEquals( "?a=1", parts.queryString() );
 
                 // pageUrl addresses the same site through the site engine
-                assertEquals( "/site/myproject/draft/a", this.service.baseUrl( BaseUrlParams.create().setPath( base ).build() ) );
+                assertEquals( "/site/myproject/draft/a", this.service.baseUrl( BaseUrlParams.create().setPath( scopePath ).build() ) );
                 assertEquals( this.service.pageUrl( new PageUrlParams().path( "/mycontent" ).param( "a", "1" ) ),
-                              this.service.baseUrl( BaseUrlParams.create().setPath( base ).build() ) + parts.path() + parts.queryString() );
+                              this.service.baseUrl( BaseUrlParams.create().setPath( scopePath ).build() ) + parts.path() + parts.queryString() );
             } );
     }
 
@@ -393,7 +393,7 @@ class PortalUrlServiceImpl_pageUrlTest
                 final PageUrlParts parts = this.service.pageUrlParts( PageUrlPartsParams.create()
                                                                           .setPath( "/mycontent" )
                                                                           .setQueryParam( "a", "1" )
-                                                                          .setBase( base( "/mycontent" ) )
+                                                                          .setScope( scope( "/mycontent" ) )
                                                                           .build() );
                 assertEquals( "https://example.com", parts.baseUrl() );
                 assertEquals( "/b/mycontent", parts.path() );
@@ -421,7 +421,7 @@ class PortalUrlServiceImpl_pageUrlTest
                 assertNull( parts.baseUrl() );
                 assertEquals( "/a/b/mycontent", parts.path() );
                 assertEquals( parts, this.service.pageUrlParts(
-                    PageUrlPartsParams.create().setPath( "/mycontent" ).setBase( base( "/" ) ).build() ) );
+                    PageUrlPartsParams.create().setPath( "/mycontent" ).setScope( scope( "/" ) ).build() ) );
             } );
     }
 
@@ -441,7 +441,7 @@ class PortalUrlServiceImpl_pageUrlTest
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
                 final PageUrlParts parts = this.service.pageUrlParts(
-                    PageUrlPartsParams.create().setPath( "/mycontent" ).setBase( base( "/mycontent" ) ).build() );
+                    PageUrlPartsParams.create().setPath( "/mycontent" ).setScope( scope( "/mycontent" ) ).build() );
                 assertNull( parts.baseUrl() );
                 // no site to relativise against: the full content path
                 assertEquals( "/a/b/mycontent", parts.path() );

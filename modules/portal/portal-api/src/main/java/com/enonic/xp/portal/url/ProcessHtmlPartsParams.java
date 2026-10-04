@@ -20,7 +20,7 @@ public final class ProcessHtmlPartsParams
 {
     private final @Nullable String value;
 
-    private final @Nullable UrlBase base;
+    private final @Nullable PortalScope scope;
 
     private final @Nullable List<Integer> imageWidths;
 
@@ -35,7 +35,7 @@ public final class ProcessHtmlPartsParams
     private ProcessHtmlPartsParams( final Builder builder )
     {
         this.value = builder.value;
-        this.base = builder.base;
+        this.scope = builder.scope;
         this.imageWidths = builder.imageWidths == null ? null : List.copyOf( builder.imageWidths );
         this.imageSizes = builder.imageSizes;
         this.customHtmlProcessor = builder.customHtmlProcessor;
@@ -53,11 +53,11 @@ public final class ProcessHtmlPartsParams
 
     /**
      * @return the site or project the HTML belongs to, or {@code null} for the project of the current context
-     * @see Builder#base(UrlBase)
+     * @see Builder#scope(PortalScope)
      */
-    public @Nullable UrlBase getBase()
+    public @Nullable PortalScope getScope()
     {
-        return base;
+        return scope;
     }
 
     /**
@@ -116,7 +116,7 @@ public final class ProcessHtmlPartsParams
     {
         private @Nullable String value;
 
-        private @Nullable UrlBase base;
+        private @Nullable PortalScope scope;
 
         private @Nullable List<Integer> imageWidths;
 
@@ -147,14 +147,14 @@ public final class ProcessHtmlPartsParams
          * links are relative to, and the applications image styles come from; contents are looked up in its project
          * and branch.
          *
-         * @param base the base, resolved by {@link PortalUrlService#urlBase(UrlBaseParams)}; {@code null} for the
+         * @param scope the scope, resolved by {@link PortalUrlService#portalScope(PortalScopeParams)}; {@code null} for the
          *             project of the current context
          * @return this builder
-         * @see PageUrlPartsParams.Builder#setBase(UrlBase)
+         * @see PageUrlPartsParams.Builder#setScope(PortalScope)
          */
-        public Builder base( final @Nullable UrlBase base )
+        public Builder scope( final @Nullable PortalScope scope )
         {
-            this.base = base;
+            this.scope = scope;
             return this;
         }
 
@@ -211,7 +211,7 @@ public final class ProcessHtmlPartsParams
 
         /**
          * Sets whether macros are processed, in the processed HTML: the default processing's, or the HTML a
-         * {@link #customHtmlProcessor(Function) custom HTML processor} returns. Each macro an application of the base
+         * {@link #customHtmlProcessor(Function) custom HTML processor} returns. Each macro an application of the scope
          * provides is replaced by a placeholder and gets an entry in {@link ProcessedHtml#macros()}; other macros stay
          * as written. Without processing, every macro stays as written. Defaults to {@code true}.
          *

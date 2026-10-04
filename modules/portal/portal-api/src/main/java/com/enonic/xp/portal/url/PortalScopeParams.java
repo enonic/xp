@@ -9,11 +9,11 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.project.ProjectName;
 
 /**
- * Parameters of {@link PortalUrlService#urlBase(UrlBaseParams)}: the site or project URLs belong to, named by a content
- * at or below it, and the project and branch it is in.
+ * Parameters of {@link PortalUrlService#portalScope(PortalScopeParams)}: the site or project of the scope, named by a
+ * content at or below it, and the project and branch it is in.
  */
 @NullMarked
-public final class UrlBaseParams
+public final class PortalScopeParams
 {
     private final @Nullable ContentId contentId;
 
@@ -23,7 +23,7 @@ public final class UrlBaseParams
 
     private final @Nullable Branch branch;
 
-    private UrlBaseParams( final Builder builder )
+    private PortalScopeParams( final Builder builder )
     {
         this.contentId = builder.contentId;
         this.contentPath = builder.contentPath;
@@ -72,7 +72,7 @@ public final class UrlBaseParams
     }
 
     /**
-     * Builder of {@link UrlBaseParams}. Every parameter is optional: by default the base is the project of the current
+     * Builder of {@link PortalScopeParams}. Every parameter is optional: by default the scope is the project of the current
      * context.
      * <p>
      * The site or project is the nearest one at or above the content named by {@link #setContentId(ContentId) id} or
@@ -119,7 +119,7 @@ public final class UrlBaseParams
         }
 
         /**
-         * Sets the project the base, and the contents addressed from it, are looked up in.
+         * Sets the project the scope, and the contents addressed from it, are looked up in.
          *
          * @param projectName the project; {@code null} takes it from the context
          * @return this builder
@@ -131,7 +131,7 @@ public final class UrlBaseParams
         }
 
         /**
-         * Sets the branch the base, and the contents addressed from it, are looked up in.
+         * Sets the branch the scope, and the contents addressed from it, are looked up in.
          *
          * @param branch the branch; {@code null} takes it from the context
          * @return this builder
@@ -145,9 +145,9 @@ public final class UrlBaseParams
         /**
          * @return the params
          */
-        public UrlBaseParams build()
+        public PortalScopeParams build()
         {
-            return new UrlBaseParams( this );
+            return new PortalScopeParams( this );
         }
     }
 }

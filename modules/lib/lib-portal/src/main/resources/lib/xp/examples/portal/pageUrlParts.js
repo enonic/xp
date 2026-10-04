@@ -3,7 +3,7 @@ var t = require('/lib/xp/testing');
 
 // BEGIN
 // The site the URLs belong to, in place of a site request: resolve it once, and pass it to every call for that site
-var base = portalLib.urlBase({
+var scope = portalLib.portalScope({
     key: '/my-site',
     project: 'myproject',
     branch: 'master'
@@ -12,7 +12,7 @@ var base = portalLib.urlBase({
 // Parts of the URL of a page, relative to the site it belongs to
 var parts = portalLib.pageUrlParts({
     path: '/my-site/posts/first-post',
-    base: base,
+    scope: scope,
     params: {
         a: 1
     }

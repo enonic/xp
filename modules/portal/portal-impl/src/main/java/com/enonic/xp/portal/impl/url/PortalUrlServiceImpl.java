@@ -7,17 +7,16 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 
 import com.enonic.xp.branch.Branch;
-import com.enonic.xp.context.Context;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
+import com.enonic.xp.context.Context;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -38,17 +37,17 @@ import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
+import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
-import com.enonic.xp.portal.url.PageUrlParams;
+import com.enonic.xp.portal.url.PortalScope;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
 import com.enonic.xp.portal.url.ServiceUrlParams;
-import com.enonic.xp.portal.url.UrlBase;
-import com.enonic.xp.portal.url.UrlBaseParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -153,38 +152,34 @@ public final class PortalUrlServiceImpl
     }
 
     @Override
-    public UrlBase urlBase( final UrlBaseParams params )
+    public PortalScope portalScope( final PortalScopeParams params )
     {
         return runWithAdminRole( () -> {
             final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params );
 
-            final String baseUrl = metadata.baseUrl();
-
-            return new UrlBase( metadata.projectName(), metadata.branch(), metadata.anchorPath(),
-                                Strings.isNullOrEmpty( baseUrl ) ? null : UrlGenerator.removeTrailingSlash( baseUrl ),
-                                RichTextLinks.applications( metadata.siteConfigs() ) );
+            return new PortalScope( metadata.projectName(), metadata.branch(), metadata.anchorPath(), metadata.siteConfigs() );
         } );
     }
 
     /**
-     * @return the given base, or else the project of the current context
+     * @return the given scope, or else the project of the current context
      */
-    private UrlBase baseOrProject( final UrlBase base )
+    private PortalScope scopeOrProject( final PortalScope scope )
     {
-        return base != null ? base : urlBase( UrlBaseParams.create().build() );
+        return scope != null ? scope : portalScope( PortalScopeParams.create().build() );
     }
 
     @Override
     public PageUrlParts pageUrlParts( final PageUrlPartsParams params )
     {
-        final UrlBase base = baseOrProject( params.getBase() );
+        final PortalScope scope = scopeOrProject( params.getScope() );
 
         return runWithAdminRole( () -> {
             final String path = ContextBuilder.copyOf( ContextAccessor.current() )
-                .repositoryId( base.projectName().getRepoId() )
-                .branch( base.branch() )
+                .repositoryId( scope.projectName().getRepoId() )
+                .branch( scope.branch() )
                 .build()
-                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ), base.path() ) );
+                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ), scope.path() ) );
 
             final StringBuilder escapedPath = new StringBuilder();
             UrlBuilderHelper.appendAndEncodePathParts( escapedPath, path );
@@ -192,7 +187,7 @@ public final class PortalUrlServiceImpl
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getQueryParams() );
 
-            return new PageUrlParts( base.baseUrl(), escapedPath.toString(), queryParamsStrategy.get() );
+            return new PageUrlParts( scope.baseUrl(), escapedPath.toString(), queryParamsStrategy.get() );
         } );
     }
 
@@ -396,7 +391,7 @@ public final class PortalUrlServiceImpl
     public ProcessedHtml processHtmlParts( final ProcessHtmlPartsParams params )
     {
         return new RichTextPartsProcessor( styleDescriptorService, this, macroService, macroDescriptorResolver, contentService, params,
-                                           baseOrProject( params.getBase() ) ).process();
+                                           scopeOrProject( params.getScope() ) ).process();
     }
 
     @Override
