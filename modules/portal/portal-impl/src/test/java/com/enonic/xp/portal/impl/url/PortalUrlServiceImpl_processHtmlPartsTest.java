@@ -440,6 +440,27 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     @Test
+    void testImageServedAsAttachment()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        // an image the editor leaves unprocessed links to the media itself
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
+                                                  .value( "<figure><img src=\"media://" + media.getId() + "\"></figure>" )
+                                                  .imageWidths( List.of( 660 ) ) );
+
+        assertThat( result.images() ).isEmpty();
+        final ProcessedHtml.AttachmentLink attachment = (ProcessedHtml.AttachmentLink) result.links().get( 0 );
+        assertThat( attachment.download() ).isFalse();
+        assertEquals( "", attachment.attachment().queryString() );
+        assertThat( attachment.attachment().path() ).startsWith( "/media:attachment/context-project:context-branch/" );
+
+        assertEquals( "<figure><img src=\"" + attachment.attachment().path() + "\" data-link-ref=\"" + attachment.ref() + "\"></figure>",
+                      result.html() );
+    }
+
+    @Test
     void testImageStylesAreNamedByTheirApplication()
     {
         final Media media = ContentFixtures.newMedia();
