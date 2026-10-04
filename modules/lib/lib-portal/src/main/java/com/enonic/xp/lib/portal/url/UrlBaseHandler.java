@@ -13,8 +13,9 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
 /**
- * Backs {@code urlBase} of {@code /lib/xp/portal}. The resolved base goes back to the script as is, to be passed to
- * {@code pageUrlParts} and {@code processHtmlParts}.
+ * Backs {@code urlBase} of {@code /lib/xp/portal}. The script keeps the resolved base hidden in the object it returns,
+ * to pass it on to {@code pageUrlParts} and {@code processHtmlParts}, and reads its Base URL with {@link #baseUrlOf}, so
+ * that no script engine reads the base itself.
  */
 public final class UrlBaseHandler
     implements ScriptBean
@@ -65,5 +66,10 @@ public final class UrlBaseHandler
         }
 
         return urlServiceSupplier.get().urlBase( params.build() );
+    }
+
+    public String baseUrlOf( final UrlBase base )
+    {
+        return base.baseUrl();
     }
 }

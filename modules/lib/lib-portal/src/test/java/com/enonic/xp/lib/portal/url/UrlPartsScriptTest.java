@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +50,8 @@ class UrlPartsScriptTest
 
         when( portalUrlService.urlBase( any( UrlBaseParams.class ) ) ).thenAnswer( invocation -> {
             final UrlBaseParams params = invocation.getArgument( 0 );
-            return new UrlBase( params.getProjectName(), params.getBranch(), params.getContentPath(), null, ApplicationKeys.empty() );
+            final String baseUrl = ContentPath.from( "/configured" ).equals( params.getContentPath() ) ? "https://www.example.com" : null;
+            return new UrlBase( params.getProjectName(), params.getBranch(), params.getContentPath(), baseUrl, ApplicationKeys.empty() );
         } );
 
         when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenReturn(
@@ -116,14 +118,39 @@ class UrlPartsScriptTest
         assertBase( captor.getValue().getBase() );
     }
 
+    @Test
+    void testUrlBaseUrl()
+    {
+        runFunction( "/test/url-base-test.js", "baseUrl" );
+
+        // the script reads the Base URL as a string, and hands the base on as it was resolved
+        final ArgumentCaptor<PageUrlPartsParams> captor = ArgumentCaptor.forClass( PageUrlPartsParams.class );
+        verify( portalUrlService ).pageUrlParts( captor.capture() );
+        assertEquals( "https://www.example.com", captor.getValue().getBase().baseUrl() );
+        assertEquals( ContentPath.from( "/configured" ), captor.getValue().getBase().path() );
+    }
+
+    @Test
+    void testUrlBaseWithoutBaseUrl()
+    {
+        runFunction( "/test/url-base-test.js", "noBaseUrl" );
+    }
+
+    @Test
+    void testBaseNotResolvedByUrlBase()
+    {
+        runFunction( "/test/url-base-test.js", "baseNotResolved" );
+        verify( portalUrlService, never() ).pageUrlParts( any() );
+    }
+
     /**
      * The base resolved by the script comes back as is.
      */
     private static void assertBase( final UrlBase base )
     {
-        assertEquals( ProjectName.from( "myproject" ), base.getProjectName() );
-        assertEquals( Branch.from( "master" ), base.getBranch() );
-        assertEquals( ContentPath.from( "/my-site" ), base.getPath() );
+        assertEquals( ProjectName.from( "myproject" ), base.projectName() );
+        assertEquals( Branch.from( "master" ), base.branch() );
+        assertEquals( ContentPath.from( "/my-site" ), base.path() );
     }
 
     @Test

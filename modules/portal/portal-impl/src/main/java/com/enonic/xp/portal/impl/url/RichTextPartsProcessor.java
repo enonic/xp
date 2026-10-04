@@ -90,7 +90,7 @@ final class RichTextPartsProcessor
 
     ProcessedHtml process()
     {
-        final String baseUrl = base.getBaseUrl();
+        final String baseUrl = base.baseUrl();
 
         if ( params.getValue() == null )
         {
@@ -123,7 +123,7 @@ final class RichTextPartsProcessor
 
     private String processMacro( final Macro macro )
     {
-        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( base.getApplications(), macro.getName() );
+        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( base.applications(), macro.getName() );
         if ( descriptor == null )
         {
             return macro.toString();
@@ -305,8 +305,8 @@ final class RichTextPartsProcessor
         final AttachmentUrlParts parts = portalUrlService.attachmentUrlParts(
             AttachmentUrlPartsParams.create()
                 .setId( link.id() )
-                .setProjectName( base::getProjectName )
-                .setBranch( base::getBranch )
+                .setProjectName( base::projectName )
+                .setBranch( base::branch )
                 .setDownload( download )
                 .build() );
 
@@ -329,7 +329,7 @@ final class RichTextPartsProcessor
 
         // looked up once for the src and every srcset width
         final Supplier<Media> media =
-            Suppliers.memoize( () -> MediaLookup.media( contentService, base.getProjectName(), base.getBranch(), id ) );
+            Suppliers.memoize( () -> MediaLookup.media( contentService, base.projectName(), base.branch(), id ) );
 
         final ImageUrlParts src = imageParts( media, style, DefaultImageLinkProcessor.scale( style, scaleFromQueryString, null ) );
 
@@ -372,8 +372,8 @@ final class RichTextPartsProcessor
     {
         return portalUrlService.imageUrlParts( ImageUrlPartsParams.create()
                                                    .setMedia( media )
-                                                   .setProjectName( base::getProjectName )
-                                                   .setBranch( base::getBranch )
+                                                   .setProjectName( base::projectName )
+                                                   .setBranch( base::branch )
                                                    .setScale( scale )
                                                    .setFilter( style == null ? null : style.getFilter() )
                                                    .build() );
@@ -387,6 +387,6 @@ final class RichTextPartsProcessor
     {
         return params.getCustomStyleDescriptorsCallback() != null
             ? params.getCustomStyleDescriptorsCallback().get()
-            : RichTextLinks.styleDescriptors( styleDescriptorService, base.getApplications() );
+            : RichTextLinks.styleDescriptors( styleDescriptorService, base.applications() );
     }
 }

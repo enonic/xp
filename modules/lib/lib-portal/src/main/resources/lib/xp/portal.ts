@@ -730,7 +730,7 @@ export interface ProcessedHtml {
 interface ProcessHtmlPartsHandler {
     setValue(value: string): void;
 
-    setBase(value: UrlBase | null): void;
+    setBase(value: UrlBaseHandle | null): void;
 
     setImageWidths(value: number[] | null): void;
 
@@ -766,7 +766,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
     const value = checkRequired(params, 'value');
 
     bean.setValue(value);
-    bean.setBase(__.nullOrValue(params.base));
+    bean.setBase(urlBaseHandle(params.base));
     bean.setImageWidths(__.nullOrValue(params.imageWidths));
     bean.setImageSizes(__.nullOrValue(params.imageSizes));
 
@@ -1203,6 +1203,11 @@ export interface UrlBase {
     readonly baseUrl: string | null;
 }
 
+// The Java base a UrlBase keeps hidden, for the handlers: scripts never read it, as script engines read Java objects differently
+type UrlBaseHandle = object;
+
+const URL_BASE_HANDLE = '__urlBaseHandle';
+
 interface UrlBaseHandler {
     setKey(value: string | null): void;
 
@@ -1210,7 +1215,20 @@ interface UrlBaseHandler {
 
     setBranch(value: string | null): void;
 
-    resolve(): UrlBase;
+    resolve(): UrlBaseHandle;
+
+    baseUrlOf(value: UrlBaseHandle): string | null;
+}
+
+function urlBaseHandle(base: UrlBase | null | undefined): UrlBaseHandle | null {
+    if (base == null) {
+        return null;
+    }
+    const handle = (base as unknown as Record<string, UrlBaseHandle | undefined>)[URL_BASE_HANDLE];
+    if (handle == null) {
+        throw new Error(`Parameter 'base' must be resolved by urlBase()`);
+    }
+    return handle;
 }
 
 /**
@@ -1234,7 +1252,10 @@ export function urlBase(params?: UrlBaseParams): UrlBase {
     bean.setProjectName(__.nullOrValue(params?.project));
     bean.setBranch(__.nullOrValue(params?.branch));
 
-    return bean.resolve();
+    const handle = bean.resolve();
+    const base = {baseUrl: bean.baseUrlOf(handle) ?? null};
+    Object.defineProperty(base, URL_BASE_HANDLE, {value: handle});
+    return Object.freeze(base);
 }
 
 export type PageUrlPartsParams = IdXorPath & {
@@ -1259,7 +1280,7 @@ interface PageUrlPartsHandler {
 
     setPath(value: string | null): void;
 
-    setBase(value: UrlBase | null): void;
+    setBase(value: UrlBaseHandle | null): void;
 
     setQueryParams(value: ScriptValue | null): void;
 
@@ -1292,7 +1313,7 @@ export function pageUrlParts(params: PageUrlPartsParams): PageUrlParts {
 
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
-    bean.setBase(__.nullOrValue(params.base));
+    bean.setBase(urlBaseHandle(params.base));
     bean.setQueryParams(__.toScriptValue(params.params));
 
     return toPageUrlParts(__.toNativeObject(bean.createParts()));
