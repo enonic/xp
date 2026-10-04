@@ -468,7 +468,9 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
                                                   .value( "<img src=\"image://" + media.getId() + "?style=wide\">" +
-                                                              "<img src=\"image://" + media.getId() + "?style=myapp2:wide\">" ) );
+                                                              "<img src=\"image://" + media.getId() + "?style=myapp2:wide\">" +
+                                                              "<img src=\"image://" + media.getId() + "?style=myapp2%3Awide\">" +
+                                                              "<img src=\"image://" + media.getId() + "?scale=16%3A9\">" ) );
 
         // a name alone is the first style of that name; the entry gives the application it belongs to
         assertEquals( new ProcessedHtml.Style( ApplicationKey.from( "myapp1" ), "wide", "2:1", null ), result.images().get( 0 ).style() );
@@ -476,6 +478,11 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         assertEquals( new ProcessedHtml.Style( ApplicationKey.from( "myapp2" ), "wide", "3:1", "grayscale()" ), result.images().get( 1 ).style() );
         assertEquals( "block-768-256", result.images().get( 1 ).src().scale() );
+
+        // parameters are percent-decoded
+        assertEquals( new ProcessedHtml.Style( ApplicationKey.from( "myapp2" ), "wide", "3:1", "grayscale()" ), result.images().get( 2 ).style() );
+        assertEquals( "block-768-256", result.images().get( 2 ).src().scale() );
+        assertEquals( "block-768-432", result.images().get( 3 ).src().scale() );
     }
 
     @Test
