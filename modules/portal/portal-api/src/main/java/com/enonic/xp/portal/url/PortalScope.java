@@ -33,8 +33,6 @@ import static java.util.Objects.requireNonNull;
 @NullMarked
 public record PortalScope(ProjectName projectName, Branch branch, ContentPath path, SiteConfigs siteConfigs)
 {
-    private static final ApplicationKey PORTAL_APPLICATION = ApplicationKey.from( "portal" );
-
     public PortalScope
     {
         requireNonNull( projectName );
@@ -49,7 +47,7 @@ public record PortalScope(ProjectName projectName, Branch branch, ContentPath pa
      */
     public @Nullable String baseUrl()
     {
-        final SiteConfig portalConfig = siteConfigs.get( PORTAL_APPLICATION );
+        final SiteConfig portalConfig = siteConfigs.get( ApplicationKey.PORTAL );
         final String baseUrl = portalConfig != null ? portalConfig.getConfig().getString( "baseUrl" ) : null;
         if ( baseUrl == null || baseUrl.isEmpty() )
         {
