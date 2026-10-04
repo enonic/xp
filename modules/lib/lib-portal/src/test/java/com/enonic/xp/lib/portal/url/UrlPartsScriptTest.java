@@ -2,6 +2,7 @@ package com.enonic.xp.lib.portal.url;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -54,8 +55,15 @@ class UrlPartsScriptTest
             return new UrlBase( params.getProjectName(), params.getBranch(), params.getContentPath(), baseUrl, ApplicationKeys.empty() );
         } );
 
-        when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenReturn(
-            new PageUrlParts( null, "/posts/first-post", "?a=1" ) );
+        when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
+            final PageUrlPartsParams params = invocation.getArgument( 0 );
+            final String query = params.getQueryParams()
+                .entrySet()
+                .stream()
+                .flatMap( entry -> entry.getValue().stream().map( value -> entry.getKey() + "=" + value ) )
+                .collect( Collectors.joining( "&" ) );
+            return new PageUrlParts( null, "/posts/first-post", query.isEmpty() ? "" : "?" + query );
+        } );
 
         when( portalUrlService.processHtmlParts( any( ProcessHtmlPartsParams.class ) ) ).thenReturn(
             new ProcessedHtml( "<a href=\"/posts/first-post\" data-link-ref=\"ref\">Post</a>" + MACRO_PLACEHOLDER, null, List.of(

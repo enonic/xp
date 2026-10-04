@@ -43,10 +43,8 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

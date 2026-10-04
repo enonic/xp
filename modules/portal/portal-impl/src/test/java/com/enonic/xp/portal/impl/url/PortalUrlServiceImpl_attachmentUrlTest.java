@@ -41,7 +41,6 @@ import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.webapp.WebappService;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

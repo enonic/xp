@@ -17,4 +17,4 @@ var url = origin + post.path + post.queryString;
 // END
 
 t.assertEquals('https://www.example.com', origin);
-t.assertEquals('https://www.example.com/posts/first-post?a=1', url);
+t.assertEquals('https://www.example.com/posts/first-post', url);
