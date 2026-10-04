@@ -661,8 +661,8 @@ export interface ProcessedHtmlContentLink extends ProcessedHtmlLinkBase {
     type: 'content';
     /** Parts of the page URL, with the query string the link carries; `null` when the link does not resolve. */
     page: PageUrlParts | null;
-    /** Fragment of the link, without `#`; `null` when it has none. */
-    fragment: string | null;
+    /** Fragment of the link, prefixed with `#`; empty when it has none. The href of the link is `baseUrl + path + queryString + fragment`. */
+    fragment: string;
 }
 
 /**
@@ -782,7 +782,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
                 uri: link.uri,
                 contentId: link.contentId,
                 page: link.page ? toPageUrlParts(link.page) : null,
-                fragment: link.fragment ?? null,
+                fragment: link.fragment ?? '',
             }
             : {
                 type: 'attachment',

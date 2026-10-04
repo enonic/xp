@@ -19,7 +19,7 @@ var result = portalLib.processHtmlParts({
 var origin = result.baseUrl || 'https://www.example.com';
 var link = result.links[0];
 // a link that does not resolve has no parts
-var href = link.type === 'content' && link.page ? origin + link.page.path + link.page.queryString : null;
+var href = link.type === 'content' && link.page ? origin + link.page.path + link.page.queryString + link.fragment : null;
 
 // a macro of an application of the site, rendered by the frontend in place of its editor-macro element
 var macro = result.macros[0];
@@ -32,6 +32,7 @@ t.assertEquals('<a href="/posts/first-post" data-link-ref="ref">Post</a>' +
 t.assertEquals(null, result.baseUrl);
 t.assertEquals('123456', result.links[0].contentId);
 t.assertEquals('content', result.links[0].type);
+t.assertEquals('', link.fragment);
 t.assertEquals('https://www.example.com/posts/first-post', href);
 t.assertEquals('macroref', macro.ref);
 t.assertJsonEquals({videoId: ['abc']}, macro.params);

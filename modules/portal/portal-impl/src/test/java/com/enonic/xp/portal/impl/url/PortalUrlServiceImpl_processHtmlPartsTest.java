@@ -190,6 +190,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         assertEquals( "content://" + content.getId(), link.uri() );
         assertEquals( "https://parent.example.com", link.page().baseUrl() );
         assertEquals( "/b/mycontent", link.page().path() );
+        assertEquals( "", link.fragment() );
         assertEquals( "", link.page().queryString() );
 
         assertEquals( "<a href=\"/b/mycontent\" data-link-ref=\"" + link.ref() + "\">Content</a>", result.html() );
@@ -219,7 +220,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         assertEquals( 3, result.links().size() );
         final ProcessedHtml.ContentLink gone = (ProcessedHtml.ContentLink) result.links().get( 0 );
         assertNull( gone.page() );
-        assertEquals( "top", gone.fragment() );
+        assertEquals( "#top", gone.fragment() );
         final ProcessedHtml.AttachmentLink goneMedia = (ProcessedHtml.AttachmentLink) result.links().get( 1 );
         assertNull( goneMedia.attachment() );
         assertThat( goneMedia.download() ).isTrue();
@@ -276,7 +277,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         final ProcessedHtml.ContentLink link = (ProcessedHtml.ContentLink) result.links().get( 0 );
         assertEquals( "?a=1", link.page().queryString() );
-        assertEquals( "top", link.fragment() );
+        assertEquals( "#top", link.fragment() );
         assertThat( result.html() ).startsWith( "<a href=\"/b/mycontent?a=1#top\"" );
     }
 

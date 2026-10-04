@@ -72,7 +72,7 @@ class UrlPartsScriptTest
         when( portalUrlService.processHtmlParts( any( ProcessHtmlPartsParams.class ) ) ).thenReturn(
             new ProcessedHtml( "<a href=\"/posts/first-post\" data-link-ref=\"ref\">Post</a>" + MACRO_PLACEHOLDER, null, List.of(
                 new ProcessedHtml.ContentLink( "ref", "content://123456", "123456", new PageUrlParts( null, "/posts/first-post", "" ),
-                                               null ) ), List.of(),
+                                               "" ) ), List.of(),
                                List.of( new ProcessedHtml.Macro( "macroref", MacroKey.from( "com.example.myapp:youtube" ),
                                                                    Map.of( "videoId", List.of( "abc" ) ), "" ) ) ) );
 

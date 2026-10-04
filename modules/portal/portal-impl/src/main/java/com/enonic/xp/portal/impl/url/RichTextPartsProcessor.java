@@ -269,15 +269,19 @@ final class RichTextPartsProcessor
         }
     }
 
+    /**
+     * @return the fragment of the link prefixed with {@code #}, or empty when it has none
+     */
     private static String fragment( final RichTextLinks.Link link )
     {
         try
         {
-            return RichTextLinks.validQueryOrFragment( link.urlParams().get( "fragment" ) );
+            final String fragment = RichTextLinks.validQueryOrFragment( link.urlParams().get( "fragment" ) );
+            return fragment == null ? "" : "#" + fragment;
         }
         catch ( RuntimeException e )
         {
-            return null;
+            return "";
         }
     }
 
@@ -288,7 +292,7 @@ final class RichTextPartsProcessor
 
         final Map<String, String> urlParams = link.urlParams();
         final String query = RichTextLinks.validQueryOrFragment( urlParams.get( "query" ) );
-        final String fragment = RichTextLinks.validQueryOrFragment( urlParams.get( "fragment" ) );
+        final String fragment = fragment( link );
         final String queryString = query == null ? "" : "?" + query;
 
         links.add( new ProcessedHtml.ContentLink( ref, link.uri(), link.id(),
@@ -296,7 +300,7 @@ final class RichTextPartsProcessor
 
         // the level itself has an empty relative path: its root is linked instead of the document
         final String path = parts.path().isEmpty() ? "/" : parts.path();
-        return path + queryString + ( fragment == null ? "" : "#" + fragment );
+        return path + queryString + fragment;
     }
 
     private String attachmentLink( final String ref, final RichTextLinks.Link link )
