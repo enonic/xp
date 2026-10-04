@@ -739,6 +739,11 @@ class PortalUrlServiceImpl_processHtmlTest
 
         assertThat( bare ).contains( "/block-768-384/" );
         assertThat( qualified ).contains( "/block-768-256/" );
+
+        // the parameter is percent-decoded
+        final String encoded =
+            this.service.processHtml( new ProcessHtmlParams().value( "<img src=\"image://" + media.getId() + "?style=myapp2%3Awide\">" ) );
+        assertThat( encoded ).contains( "/block-768-256/" );
     }
 
     @Test

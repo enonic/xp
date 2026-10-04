@@ -66,6 +66,27 @@ final class RichTextLinks
         {
             return extractUrlParams( urlParamsString );
         }
+
+        /**
+         * @return the percent-decoded value of a parameter of the link, as written when it does not decode; {@code null}
+         * when the link has none
+         */
+        String decodedParam( final String name )
+        {
+            final String value = urlParams().get( name );
+            if ( value == null )
+            {
+                return null;
+            }
+            try
+            {
+                return URLDecoder.decode( value, StandardCharsets.UTF_8 );
+            }
+            catch ( IllegalArgumentException e )
+            {
+                return value;
+            }
+        }
     }
 
     /**

@@ -258,10 +258,10 @@ final class RichTextPartsProcessor
     {
         try
         {
-            final String styleName = link.urlParams().get( "style" );
+            final String styleName = link.decodedParam( "style" );
             final ImageStyles.Resolved resolved = styleName == null ? null : imageStyles.get().get( styleName );
             final ImageStyle style = resolved == null ? null : resolved.style();
-            return ImageMediaPathSupplier.resolveScale( DefaultImageLinkProcessor.scale( style, link.urlParams().get( "scale" ), null ) );
+            return ImageMediaPathSupplier.resolveScale( DefaultImageLinkProcessor.scale( style, link.decodedParam( "scale" ), null ) );
         }
         catch ( RuntimeException e )
         {
@@ -321,11 +321,10 @@ final class RichTextPartsProcessor
     private ProcessedHtml.Style image( final HtmlElement element, final String ref, final RichTextLinks.Link link )
     {
         final String id = link.id();
-        final Map<String, String> urlParams = link.urlParams();
-        final String styleName = urlParams.get( "style" );
+        final String styleName = link.decodedParam( "style" );
         final ImageStyles.Resolved resolved = styleName == null ? null : imageStyles.get().get( styleName );
         final ImageStyle style = resolved == null ? null : resolved.style();
-        final String scaleFromQueryString = urlParams.get( "scale" );
+        final String scaleFromQueryString = link.decodedParam( "scale" );
 
         // looked up once for the src and every srcset width
         final Supplier<Media> media =

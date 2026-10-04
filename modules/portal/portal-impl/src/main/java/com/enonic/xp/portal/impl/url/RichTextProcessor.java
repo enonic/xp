@@ -169,13 +169,11 @@ public class RichTextProcessor
                                          HtmlElementPostProcessor callback )
     {
         final String id = link.id();
-        final Map<String, String> urlParams = link.urlParams();
-
-        final String styleName = urlParams.get( STYLE_PARAM );
+        final String styleName = link.decodedParam( STYLE_PARAM );
         final ImageStyles.Resolved resolvedStyle = styleName != null ? imageStylesSupplier.get().get( styleName ) : null;
         final ImageStyle imageStyle = resolvedStyle != null ? resolvedStyle.style() : null;
 
-        final String scaleFromQueryParams = urlParams.get( SCALE_PARAM );
+        final String scaleFromQueryParams = link.decodedParam( SCALE_PARAM );
 
         final DefaultImageLinkProcessor imageLinkProcessor = new DefaultImageLinkProcessor();
 
