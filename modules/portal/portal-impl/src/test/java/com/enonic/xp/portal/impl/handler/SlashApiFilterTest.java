@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.handler;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +18,8 @@ import com.enonic.xp.web.websocket.WebSocketConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
 import com.enonic.xp.web.websocket.WebSocketContextFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -144,5 +149,45 @@ class SlashApiFilterTest
         verify( slashApiHandler ).handle( webRequest );
         verify( webSerializerService ).request( req );
         verify( webSerializerService, never() ).response( any(), any(), any() );
+    }
+
+    @Test
+    void readsJsonBody()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+
+        when( req.getPathInfo() ).thenReturn( "/server:app/start" );
+        when( req.getContentType() ).thenReturn( "application/json; charset=UTF-8" );
+        when( req.getReader() ).thenReturn( new BufferedReader( new StringReader( "{\"key\":\"myapp\"}" ) ) );
+
+        final WebRequest webRequest = new WebRequest();
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
+        when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( WebResponse.create().build() );
+
+        filter.doFilter( req, res, mock() );
+
+        assertEquals( "{\"key\":\"myapp\"}", webRequest.getBodyAsString() );
+    }
+
+    @Test
+    void doesNotReadNonTextBody()
+        throws Exception
+    {
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        final HttpServletResponse res = mock( HttpServletResponse.class );
+
+        when( req.getPathInfo() ).thenReturn( "/server:app/install" );
+        when( req.getContentType() ).thenReturn( "multipart/form-data; boundary=abc" );
+
+        final WebRequest webRequest = new WebRequest();
+        when( webSerializerService.request( req ) ).thenReturn( webRequest );
+        when( slashApiHandler.handle( any( WebRequest.class ) ) ).thenReturn( WebResponse.create().build() );
+
+        filter.doFilter( req, res, mock() );
+
+        assertNull( webRequest.getBody() );
+        verify( req, never() ).getReader();
     }
 }
