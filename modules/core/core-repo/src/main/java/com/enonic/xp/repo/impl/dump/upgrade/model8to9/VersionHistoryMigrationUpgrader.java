@@ -14,7 +14,6 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
-import com.enonic.xp.repo.impl.dump.upgrade.BranchEntryUpgrader;
 import com.enonic.xp.vacuum.VacuumConstants;
 
 /**
@@ -35,7 +34,6 @@ import com.enonic.xp.vacuum.VacuumConstants;
  * {@code com.enonic.cms.}.
  */
 public final class VersionHistoryMigrationUpgrader
-    implements BranchEntryUpgrader
 {
     public record CommitInfo(@Nullable String message, @Nullable String committer, @Nullable String timestamp)
     {
@@ -58,6 +56,10 @@ public final class VersionHistoryMigrationUpgrader
     private static final String USER_PROPERTY = "user";
 
     private static final String OPTIME_PROPERTY = "optime";
+
+    private VersionHistoryMigrationUpgrader()
+    {
+    }
 
     public static VersionDumpEntryJson stampVersion( final NodeStoreVersion nodeVersion, final VersionDumpEntryJson entry,
                                                      @Nullable final CommitInfo commitInfo )
@@ -173,18 +175,6 @@ public final class VersionHistoryMigrationUpgrader
         }
     }
 
-
-    @Override
-    public VersionDumpEntryJson upgradeBranchMeta( final NodeStoreVersion nodeVersion, final VersionDumpEntryJson meta )
-    {
-        if ( !ContentConstants.CONTENT_NODE_COLLECTION.equals( nodeVersion.nodeType() ) )
-        {
-            return meta;
-        }
-        return VersionDumpEntryJson.create( meta )
-            .attributes( Map.of( VacuumConstants.VACUUM_SKIP_ATTRIBUTE, Map.of() ) )
-            .build();
-    }
 
     private static String resolveAttrKey( final CommitInfo commitInfo )
     {
