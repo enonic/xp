@@ -50,7 +50,7 @@ public final class ImageUrlPartsParams
     {
         if ( ( builder.mediaSupplier == null ) == ( builder.id == null && builder.path == null ) )
         {
-            throw new IllegalArgumentException( "Either the media, or its id or path, is required" );
+            throw new IllegalArgumentException( "Either media or id/path must be provided, but not both" );
         }
         this.mediaSupplier = builder.mediaSupplier;
         this.id = builder.id;
@@ -164,7 +164,7 @@ public final class ImageUrlPartsParams
     }
 
     /**
-     * Builder of {@link ImageUrlPartsParams}. The scale, and either the media or its id or path, are required.
+     * Builder of {@link ImageUrlPartsParams}. The scale is required, and either the media or its id/path, but not both.
      */
     public static class Builder
     {
