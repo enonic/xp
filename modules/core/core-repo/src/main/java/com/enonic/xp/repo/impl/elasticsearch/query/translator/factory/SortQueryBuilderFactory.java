@@ -42,14 +42,18 @@ public class SortQueryBuilderFactory
         }
 
         List<SortBuilder> sortBuilders = new ArrayList<>();
+        List<SortBuilder> fallbackSortBuilders = new ArrayList<>();
 
         for ( final OrderExpr orderExpr : orderExpressions )
         {
             if ( orderExpr instanceof FieldOrderExpr )
             {
                 final FieldOrderExpr fieldOrderExpr = (FieldOrderExpr) orderExpr;
-                sortBuilders.addAll( createFieldSortBuilders( fieldNameResolver, fieldOrderExpr.getField().getIndexPath(),
-                                                              fieldOrderExpr.getDirection(), fieldOrderExpr.getLanguage() ) );
+                final IndexPath field = fieldOrderExpr.getField().getIndexPath();
+                sortBuilders.add(
+                    createFieldSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(), fieldOrderExpr.getLanguage() ) );
+                addIfNotNull( fallbackSortBuilders, createFallbackSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(),
+                                                                               fieldOrderExpr.getLanguage() ) );
             }
             else if ( orderExpr instanceof DynamicOrderExpr )
             {
@@ -57,32 +61,42 @@ public class SortQueryBuilderFactory
             }
             else if ( orderExpr instanceof DslOrderExpr )
             {
-                sortBuilders.addAll( new DslSortBuilderFactory( fieldNameResolver ).create( (DslOrderExpr) orderExpr ) );
+                final DslSortBuilderFactory dslSortBuilderFactory = new DslSortBuilderFactory( fieldNameResolver );
+                sortBuilders.add( dslSortBuilderFactory.create( (DslOrderExpr) orderExpr ) );
+                addIfNotNull( fallbackSortBuilders, dslSortBuilderFactory.createFallback( (DslOrderExpr) orderExpr ) );
             }
         }
 
+        // Fallbacks go last, so they only order documents that all requested sorts leave tied
+        sortBuilders.addAll( fallbackSortBuilders );
         return sortBuilders;
     }
 
     /**
      * Creates a sort on the order-by value of a field. When a language is given, documents are sorted by the collation of that
-     * language. Documents without the language-specific value (indexed without that language) fall back to binary order.
+     * language.
      */
-    public static List<SortBuilder> createFieldSortBuilders( final QueryFieldNameResolver fieldNameResolver, final IndexPath field,
-                                                             final OrderExpr.@Nullable Direction direction, final @Nullable Locale language )
+    public static SortBuilder createFieldSortBuilder( final QueryFieldNameResolver fieldNameResolver, final IndexPath field,
+                                                      final OrderExpr.@Nullable Direction direction, final @Nullable Locale language )
     {
-        final String fieldName = fieldNameResolver.resolveOrderByFieldName( field, language );
+        return createFieldSortBuilder( fieldNameResolver.resolveOrderByFieldName( field, language ), direction );
+    }
+
+    /**
+     * Creates the binary order fallback for a sort with a language. Documents indexed without that language have no
+     * language-specific order-by value, and would otherwise be returned in arbitrary order.
+     */
+    public static @Nullable SortBuilder createFallbackSortBuilder( final QueryFieldNameResolver fieldNameResolver, final IndexPath field,
+                                                                   final OrderExpr.@Nullable Direction direction,
+                                                                   final @Nullable Locale language )
+    {
         if ( language == null )
         {
-            return List.of( createFieldSortBuilder( fieldName, direction ) );
+            return null;
         }
-
+        final String fieldName = fieldNameResolver.resolveOrderByFieldName( field, language );
         final String fallbackFieldName = fieldNameResolver.resolveOrderByFieldName( field, null );
-        if ( fallbackFieldName.equals( fieldName ) )
-        {
-            return List.of( createFieldSortBuilder( fieldName, direction ) );
-        }
-        return List.of( createFieldSortBuilder( fieldName, direction ), createFieldSortBuilder( fallbackFieldName, direction ) );
+        return fallbackFieldName.equals( fieldName ) ? null : createFieldSortBuilder( fallbackFieldName, direction );
     }
 
     private static FieldSortBuilder createFieldSortBuilder( final String fieldName, final OrderExpr.@Nullable Direction direction )
@@ -96,4 +110,11 @@ public class SortQueryBuilderFactory
         return fieldSortBuilder;
     }
 
+    private static void addIfNotNull( final List<SortBuilder> sortBuilders, final @Nullable SortBuilder sortBuilder )
+    {
+        if ( sortBuilder != null )
+        {
+            sortBuilders.add( sortBuilder );
+        }
+    }
 }

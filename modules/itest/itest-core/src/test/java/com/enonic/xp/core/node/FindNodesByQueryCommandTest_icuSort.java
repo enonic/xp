@@ -24,6 +24,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
+import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -46,6 +47,8 @@ class FindNodesByQueryCommandTest_icuSort
     extends AbstractNodeTest
 {
     private static final String FIELD_STRING = "fieldString";
+
+    private static final String FIELD_PRIORITY = "priority";
 
     static Stream<Arguments> languageSortTestCases()
     {
@@ -119,6 +122,26 @@ class FindNodesByQueryCommandTest_icuSort
             .containsExactly( "node-ol", "node-alfa", "node-zeta", "node-delta", "node-beta" );
     }
 
+    /**
+     * The binary fallback must not override a requested secondary sort when language-specific values tie.
+     * Both nodes have "alfa" as their lowest value, but different first values.
+     */
+    @Test
+    void sort_with_language_keeps_secondary_sort_for_tied_values()
+    {
+        createNodeWithLanguage( "node-a", List.of( "zeta", "alfa" ), 1L, "no" );
+        createNodeWithLanguage( "node-b", List.of( "beta", "alfa" ), 2L, "no" );
+        nodeService.refresh( RefreshMode.ALL );
+
+        final QueryExpr queryExpr = QueryExpr.from( QueryParser.parseCostraintExpression( "_parentPath=\"/\"" ),
+                                                    FieldOrderExpr.create( IndexPath.from( FIELD_STRING ), OrderExpr.Direction.ASC,
+                                                                           Locale.forLanguageTag( "no" ) ),
+                                                    new FieldOrderExpr( FieldExpr.from( FIELD_PRIORITY ), OrderExpr.Direction.ASC ) );
+
+        assertThat( getNodes( doFindByQuery( NodeQuery.create().query( queryExpr ).build() ).getNodeIds() ) ).extracting(
+            node -> node.name().toString() ).containsExactly( "node-a", "node-b" );
+    }
+
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
     {
         final OrderExpr.Direction dir = OrderExpr.Direction.valueOf( direction );
@@ -165,6 +188,25 @@ class FindNodesByQueryCommandTest_icuSort
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );
     }
 
+
+    private void createNodeWithLanguage( final String name, final List<String> fieldValues, final long priority, final String language )
+    {
+        final PropertyTree data = new PropertyTree();
+        fieldValues.forEach( value -> data.addString( FIELD_STRING, value ) );
+        data.addLong( FIELD_PRIORITY, priority );
+
+        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( language ) ).build();
+
+        createNode( CreateNodeParams.create()
+                        .parent( NodePath.ROOT )
+                        .name( name )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .add( FIELD_STRING, fieldIndexConfig )
+                                                  .build() )
+                        .build() );
+    }
 
     private void createStringNode( final String name, final String fieldValue )
     {

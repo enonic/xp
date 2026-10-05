@@ -91,6 +91,24 @@ class SortBuilderFactoryTest
     }
 
     @Test
+    void languageFallbackGoesAfterAllRequestedSorts()
+        throws Exception
+    {
+        final FieldOrderExpr languageOrderExpr =
+            FieldOrderExpr.create( IndexPath.from( "myField" ), OrderExpr.Direction.ASC, Locale.forLanguageTag( "no" ) );
+        final FieldOrderExpr secondaryOrderExpr = new FieldOrderExpr( FieldExpr.from( "priority" ), OrderExpr.Direction.ASC );
+
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create(
+            List.of( languageOrderExpr, secondaryOrderExpr ) );
+
+        assertEquals( 3, sortBuilders.size() );
+        assertTrue( toJson( sortBuilders.get( 1 ) ).contains(
+            SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "priority" ), null ) ) );
+        assertTrue( toJson( sortBuilders.get( 2 ) ).contains(
+            SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ), null ) ) );
+    }
+
+    @Test
     void createDslFieldSortWithLanguage()
     {
         final PropertyTree expression = new PropertyTree();

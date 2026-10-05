@@ -1,8 +1,7 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import java.util.List;
-
 import org.elasticsearch.search.sort.SortBuilder;
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.expr.DslOrderExpr;
@@ -18,7 +17,7 @@ public class DslSortBuilderFactory
         super( fieldNameResolver );
     }
 
-    public List<SortBuilder> create( final DslOrderExpr orderExpr )
+    public SortBuilder create( final DslOrderExpr orderExpr )
     {
         final String type = orderExpr.getType();
 
@@ -29,12 +28,22 @@ public class DslSortBuilderFactory
 
         if ( "geoDistance".equals( type ) || orderExpr.getLat() != null )
         {
-            return List.of( GeoDistanceSortFunction.create( orderExpr ) );
+            return GeoDistanceSortFunction.create( orderExpr );
         }
         else
         {
-            return SortQueryBuilderFactory.createFieldSortBuilders( fieldNameResolver, IndexPath.from( orderExpr.getField() ),
-                                                                    orderExpr.getDirection(), orderExpr.getLanguage() );
+            return SortQueryBuilderFactory.createFieldSortBuilder( fieldNameResolver, IndexPath.from( orderExpr.getField() ),
+                                                                   orderExpr.getDirection(), orderExpr.getLanguage() );
         }
+    }
+
+    public @Nullable SortBuilder createFallback( final DslOrderExpr orderExpr )
+    {
+        if ( "geoDistance".equals( orderExpr.getType() ) || orderExpr.getLat() != null )
+        {
+            return null;
+        }
+        return SortQueryBuilderFactory.createFallbackSortBuilder( fieldNameResolver, IndexPath.from( orderExpr.getField() ),
+                                                                  orderExpr.getDirection(), orderExpr.getLanguage() );
     }
 }
