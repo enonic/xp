@@ -1,10 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.elasticsearch.common.xcontent.ToXContent;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -69,6 +73,7 @@ class SortBuilderFactoryTest
 
     @Test
     void createFieldSortWithLanguage()
+        throws Exception
     {
         final FieldOrderExpr orderExpr =
             FieldOrderExpr.create( IndexPath.from( "myField" ), OrderExpr.Direction.ASC, Locale.forLanguageTag( "no" ) );
@@ -78,10 +83,10 @@ class SortBuilderFactoryTest
 
         // Collation of the language first, binary order for documents indexed without that language
         assertEquals( 2, sortBuilders.size() );
-        assertTrue( sortBuilders.get( 0 ).toString()
+        assertTrue( toJson( sortBuilders.get( 0 ) )
                         .contains( SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ),
                                                                                                 Locale.forLanguageTag( "no" ) ) ) );
-        assertTrue( sortBuilders.get( 1 ).toString()
+        assertTrue( toJson( sortBuilders.get( 1 ) )
                         .contains( SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ), null ) ) );
     }
 
@@ -197,5 +202,13 @@ class SortBuilderFactoryTest
         assertThrows( IllegalArgumentException.class,
                       () -> new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( unknownOrderExpr ) ) );
 
+    }
+
+    private static String toJson( final SortBuilder sortBuilder )
+        throws IOException
+    {
+        final XContentBuilder builder = XContentFactory.jsonBuilder().startObject();
+        sortBuilder.toXContent( builder, ToXContent.EMPTY_PARAMS );
+        return builder.endObject().string();
     }
 }
