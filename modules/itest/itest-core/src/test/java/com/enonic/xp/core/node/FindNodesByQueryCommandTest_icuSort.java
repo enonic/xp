@@ -123,14 +123,15 @@ class FindNodesByQueryCommandTest_icuSort
     }
 
     /**
-     * The binary fallback must not override a requested secondary sort when language-specific values tie.
-     * Both nodes have "alfa" as their lowest value, but different first values.
+     * Nodes without the sort language are ordered by the requested field (binary order) before any following sort.
      */
     @Test
-    void sort_with_language_keeps_secondary_sort_for_tied_values()
+    void sort_with_language_orders_nodes_without_language_by_field_before_secondary_sort()
     {
-        createNodeWithLanguage( "node-a", List.of( "zeta", "alfa" ), 1L, "no" );
-        createNodeWithLanguage( "node-b", List.of( "beta", "alfa" ), 2L, "no" );
+        createNodeWithLanguage( "node-ol", List.of( "øl" ), 1L, "no" );
+        createStringNode( "node-zeta", "zeta", 1L );
+        createStringNode( "node-beta", "beta", 2L );
+        createStringNode( "node-delta", "delta", 3L );
         nodeService.refresh( RefreshMode.ALL );
 
         final QueryExpr queryExpr = QueryExpr.from( QueryParser.parseCostraintExpression( "_parentPath=\"/\"" ),
@@ -139,7 +140,7 @@ class FindNodesByQueryCommandTest_icuSort
                                                     new FieldOrderExpr( FieldExpr.from( FIELD_PRIORITY ), OrderExpr.Direction.ASC ) );
 
         assertThat( getNodes( doFindByQuery( NodeQuery.create().query( queryExpr ).build() ).getNodeIds() ) ).extracting(
-            node -> node.name().toString() ).containsExactly( "node-a", "node-b" );
+            node -> node.name().toString() ).containsExactly( "node-ol", "node-beta", "node-delta", "node-zeta" );
     }
 
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
@@ -212,6 +213,15 @@ class FindNodesByQueryCommandTest_icuSort
     {
         final PropertyTree data = new PropertyTree();
         data.addString( FIELD_STRING, fieldValue );
+
+        createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( name ).data( data ).build() );
+    }
+
+    private void createStringNode( final String name, final String fieldValue, final long priority )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( FIELD_STRING, fieldValue );
+        data.addLong( FIELD_PRIORITY, priority );
 
         createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( name ).data( data ).build() );
     }

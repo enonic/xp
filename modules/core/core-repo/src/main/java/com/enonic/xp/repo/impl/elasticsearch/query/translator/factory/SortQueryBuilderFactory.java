@@ -42,7 +42,6 @@ public class SortQueryBuilderFactory
         }
 
         List<SortBuilder> sortBuilders = new ArrayList<>();
-        List<SortBuilder> fallbackSortBuilders = new ArrayList<>();
 
         for ( final OrderExpr orderExpr : orderExpressions )
         {
@@ -52,8 +51,8 @@ public class SortQueryBuilderFactory
                 final IndexPath field = fieldOrderExpr.getField().getIndexPath();
                 sortBuilders.add(
                     createFieldSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(), fieldOrderExpr.getLanguage() ) );
-                addIfNotNull( fallbackSortBuilders, createFallbackSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(),
-                                                                               fieldOrderExpr.getLanguage() ) );
+                addIfNotNull( sortBuilders, createFallbackSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(),
+                                                                       fieldOrderExpr.getLanguage() ) );
             }
             else if ( orderExpr instanceof DynamicOrderExpr )
             {
@@ -63,12 +62,10 @@ public class SortQueryBuilderFactory
             {
                 final DslSortBuilderFactory dslSortBuilderFactory = new DslSortBuilderFactory( fieldNameResolver );
                 sortBuilders.add( dslSortBuilderFactory.create( (DslOrderExpr) orderExpr ) );
-                addIfNotNull( fallbackSortBuilders, dslSortBuilderFactory.createFallback( (DslOrderExpr) orderExpr ) );
+                addIfNotNull( sortBuilders, dslSortBuilderFactory.createFallback( (DslOrderExpr) orderExpr ) );
             }
         }
 
-        // Fallbacks go last, so they only order documents that all requested sorts leave tied
-        sortBuilders.addAll( fallbackSortBuilders );
         return sortBuilders;
     }
 
@@ -85,6 +82,10 @@ public class SortQueryBuilderFactory
     /**
      * Creates the binary order fallback for a sort with a language. Documents indexed without that language have no
      * language-specific order-by value, and would otherwise be returned in arbitrary order.
+     * <p>
+     * The fallback goes right after its language sort, so documents without the language are still ordered by the requested field
+     * before any following sort. For multi-valued fields this can break ties between documents that do have the language before
+     * the following sort does, as the binary order-by value is the first value, not the one the language sort compared.
      */
     public static @Nullable SortBuilder createFallbackSortBuilder( final QueryFieldNameResolver fieldNameResolver, final IndexPath field,
                                                                    final OrderExpr.@Nullable Direction direction,

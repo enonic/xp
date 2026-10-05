@@ -91,7 +91,7 @@ class SortBuilderFactoryTest
     }
 
     @Test
-    void languageFallbackGoesAfterAllRequestedSorts()
+    void languageFallbackGoesRightAfterItsLanguageSort()
         throws Exception
     {
         final FieldOrderExpr languageOrderExpr =
@@ -103,9 +103,9 @@ class SortBuilderFactoryTest
 
         assertEquals( 3, sortBuilders.size() );
         assertTrue( toJson( sortBuilders.get( 1 ) ).contains(
-            SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "priority" ), null ) ) );
-        assertTrue( toJson( sortBuilders.get( 2 ) ).contains(
             SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ), null ) ) );
+        assertTrue( toJson( sortBuilders.get( 2 ) ).contains(
+            SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "priority" ), null ) ) );
     }
 
     @Test
