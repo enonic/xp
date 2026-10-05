@@ -98,7 +98,7 @@ class MacroParserTest
 
         assertEquals( List.of( "zeta", "alpha", "mid", "Zeta" ), List.copyOf( parsedMacro.getParameters().keySet() ) );
         assertEquals( List.of( "2", "4" ), parsedMacro.getParameter( "alpha" ) );
-        assertEquals( "[macroName zeta=\"1\" alpha=\"2\" alpha=\"4\" mid=\"3\" Zeta=\"5\"/]", parsedMacro.toString() );
+        assertEquals( "[macroName zeta=\"1\" alpha=\"2\" mid=\"3\" alpha=\"4\" Zeta=\"5\"/]", parsedMacro.toString() );
     }
 
     @Test

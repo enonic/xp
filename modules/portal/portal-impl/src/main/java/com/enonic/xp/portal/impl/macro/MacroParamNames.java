@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
@@ -26,9 +27,21 @@ public final class MacroParamNames
     public MacroParamNames( final MacroDescriptor descriptor )
     {
         this.form = descriptor.getForm();
-        for ( final FormItem formItem : form )
+        index( form );
+    }
+
+    private void index( final Iterable<FormItem> formItems )
+    {
+        for ( final FormItem formItem : formItems )
         {
-            namesIgnoringCase.put( formItem.getName().toLowerCase( Locale.ROOT ), formItem.getName() );
+            if ( formItem instanceof FieldSet fieldSet )
+            {
+                index( fieldSet );
+            }
+            else
+            {
+                namesIgnoringCase.put( formItem.getName().toLowerCase( Locale.ROOT ), formItem.getName() );
+            }
         }
     }
 

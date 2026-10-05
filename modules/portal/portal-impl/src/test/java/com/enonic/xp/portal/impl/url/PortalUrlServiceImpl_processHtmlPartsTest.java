@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
@@ -319,11 +320,14 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                                                                           .label( "Video" )
                                                                                                           .inputType( InputTypeName.TEXT_LINE )
                                                                                                           .build() )
-                                                                                        .addFormItem( Input.create()
-                                                                                                          .name( "tags" )
-                                                                                                          .label( "Tags" )
-                                                                                                          .inputType( InputTypeName.TEXT_LINE )
-                                                                                                          .occurrences( 0, 0 )
+                                                                                        .addFormItem( FieldSet.create()
+                                                                                                          .label( "More" )
+                                                                                                          .addFormItem( Input.create()
+                                                                                                                            .name( "tags" )
+                                                                                                                            .label( "Tags" )
+                                                                                                                            .inputType( InputTypeName.TEXT_LINE )
+                                                                                                                            .occurrences( 0, 0 )
+                                                                                                                            .build() )
                                                                                                           .build() )
                                                                                         .build() )
                                                                              .build() );
@@ -335,7 +339,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         assertThat( result.macros() ).hasSize( 2 );
 
-        // the parameters are named as the inputs of the form, with a list of values for an input taking several
+        // the parameters are named as the inputs of the form, also inside a field set, with a list of values for an input taking several
         final ProcessedHtml.Macro first = result.macros().get( 0 );
         assertEquals( key, first.descriptor() );
         assertEquals( "a", first.config().property( "videoId" ).asString() );
