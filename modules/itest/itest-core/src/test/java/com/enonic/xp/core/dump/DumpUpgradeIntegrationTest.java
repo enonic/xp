@@ -76,6 +76,11 @@ class DumpUpgradeIntegrationTest
     {
         // Same dump as dump-7, but made without versions: it has no versions.tar.gz files
         upgradeLoadAndVerify( "dump-7-noversions" );
+
+        // Verify NodePathNormalizeUpgrader on branch-only nodes: the draft branch entry of this node has a decomposed (NFD) name
+        final Node node =
+            contentDraftContext().callWith( () -> nodeService.getById( NodeId.from( "40dc840a-1307-464e-b812-3eb4d2b802fc" ) ) );
+        assertEquals( new NodePath( "/bl\u00E5b\u00E6r" ), node.path() );
     }
 
     private void upgradeLoadAndVerify( final String dumpName )
