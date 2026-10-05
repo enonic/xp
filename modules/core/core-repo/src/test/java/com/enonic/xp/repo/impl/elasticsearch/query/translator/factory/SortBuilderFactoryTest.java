@@ -1,10 +1,14 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.elasticsearch.common.xcontent.ToXContent;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -69,6 +73,7 @@ class SortBuilderFactoryTest
 
     @Test
     void createFieldSortWithLanguage()
+        throws Exception
     {
         final FieldOrderExpr orderExpr =
             FieldOrderExpr.create( IndexPath.from( "myField" ), OrderExpr.Direction.ASC, Locale.forLanguageTag( "no" ) );
@@ -76,8 +81,47 @@ class SortBuilderFactoryTest
         final List<SortBuilder> sortBuilders =
             new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( orderExpr ) );
 
-        assertEquals( 1, sortBuilders.size() );
+        // Collation of the language first, binary order for documents indexed without that language
+        assertEquals( 2, sortBuilders.size() );
+        assertTrue( toJson( sortBuilders.get( 0 ) )
+                        .contains( SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ),
+                                                                                                Locale.forLanguageTag( "no" ) ) ) );
+        assertTrue( toJson( sortBuilders.get( 1 ) )
+                        .contains( SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ), null ) ) );
+    }
+
+    @Test
+    void languageFallbackGoesRightAfterItsLanguageSort()
+        throws Exception
+    {
+        final FieldOrderExpr languageOrderExpr =
+            FieldOrderExpr.create( IndexPath.from( "myField" ), OrderExpr.Direction.ASC, Locale.forLanguageTag( "no" ) );
+        final FieldOrderExpr secondaryOrderExpr = new FieldOrderExpr( FieldExpr.from( "priority" ), OrderExpr.Direction.ASC );
+
+        final List<SortBuilder> sortBuilders = new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create(
+            List.of( languageOrderExpr, secondaryOrderExpr ) );
+
+        assertEquals( 3, sortBuilders.size() );
+        assertTrue( toJson( sortBuilders.get( 1 ) ).contains(
+            SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ), null ) ) );
+        assertTrue( toJson( sortBuilders.get( 2 ) ).contains(
+            SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "priority" ), null ) ) );
+    }
+
+    @Test
+    void createDslFieldSortWithLanguage()
+    {
+        final PropertyTree expression = new PropertyTree();
+        expression.addString( "field", "myField" );
+        expression.addString( "direction", "DESC" );
+        expression.addString( "language", "no" );
+
+        final List<SortBuilder> sortBuilders =
+            new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( DslOrderExpr.from( expression ) ) );
+
+        assertEquals( 2, sortBuilders.size() );
         assertTrue( sortBuilders.get( 0 ) instanceof FieldSortBuilder );
+        assertTrue( sortBuilders.get( 1 ) instanceof FieldSortBuilder );
     }
 
     @Test
@@ -176,5 +220,13 @@ class SortBuilderFactoryTest
         assertThrows( IllegalArgumentException.class,
                       () -> new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( unknownOrderExpr ) ) );
 
+    }
+
+    private static String toJson( final SortBuilder sortBuilder )
+        throws IOException
+    {
+        final XContentBuilder builder = XContentFactory.jsonBuilder().startObject();
+        sortBuilder.toXContent( builder, ToXContent.EMPTY_PARAMS );
+        return builder.endObject().string();
     }
 }

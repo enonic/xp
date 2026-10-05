@@ -1,19 +1,17 @@
 package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.function;
 
-import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
+import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.AbstractBuilderFactory;
+import com.enonic.xp.repo.impl.elasticsearch.query.translator.factory.SortQueryBuilderFactory;
 import com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver.QueryFieldNameResolver;
 
 public class DslSortBuilderFactory
     extends AbstractBuilderFactory
 {
-    private static final String UNMAPPED_TYPE = "long";
-
     public DslSortBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
@@ -34,16 +32,18 @@ public class DslSortBuilderFactory
         }
         else
         {
-            final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder(
-                fieldNameResolver.resolveOrderByFieldName( IndexPath.from( orderExpr.getField() ), orderExpr.getLanguage() ) );
-
-            if ( orderExpr.getDirection() != null )
-            {
-                fieldSortBuilder.order( SortOrder.valueOf( orderExpr.getDirection().name() ) );
-            }
-            fieldSortBuilder.unmappedType( UNMAPPED_TYPE );
-
-            return fieldSortBuilder;
+            return SortQueryBuilderFactory.createFieldSortBuilder( fieldNameResolver, IndexPath.from( orderExpr.getField() ),
+                                                                   orderExpr.getDirection(), orderExpr.getLanguage() );
         }
+    }
+
+    public @Nullable SortBuilder createFallback( final DslOrderExpr orderExpr )
+    {
+        if ( "geoDistance".equals( orderExpr.getType() ) || orderExpr.getLat() != null )
+        {
+            return null;
+        }
+        return SortQueryBuilderFactory.createFallbackSortBuilder( fieldNameResolver, IndexPath.from( orderExpr.getField() ),
+                                                                  orderExpr.getDirection(), orderExpr.getLanguage() );
     }
 }
