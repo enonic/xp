@@ -2,11 +2,7 @@ package com.enonic.xp.portal.impl.url;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
-import com.enonic.xp.context.ContextAccessor;
-import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
@@ -39,7 +35,10 @@ final class MediaResolver
         this.path = builder.path;
     }
 
-    public MediaResolverResult resolve()
+    /**
+     * @return the content the key - the id, the path, or the current content of a site request - names
+     */
+    public Content resolve()
     {
         final String contentKey = requireNonNullElseGet( id, () -> {
             if ( hasExplicitBaseUrl )
@@ -57,22 +56,7 @@ final class MediaResolver
             } );
         } );
 
-        final Content content = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( projectName.getRepoId() )
-            .branch( branch )
-            .build()
-            .callWith( () -> {
-                if ( contentKey.startsWith( "/" ) )
-                {
-                    return contentService.getByPath( ContentPath.from( contentKey ) );
-                }
-                else
-                {
-                    return contentService.getById( ContentId.from( contentKey ) );
-                }
-            } );
-
-        return new MediaResolverResult( content, contentKey );
+        return MediaLookup.content( contentService, projectName, branch, contentKey );
     }
 
     public static Builder create( final ProjectName projectName, final Branch branch, final ContentService contentService )

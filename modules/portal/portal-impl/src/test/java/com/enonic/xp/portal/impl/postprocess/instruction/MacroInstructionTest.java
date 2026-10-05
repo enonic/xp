@@ -5,15 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.content.ContentId;
-import com.enonic.xp.content.ContentPath;
-import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroDescriptorService;
-import com.enonic.xp.macro.MacroDescriptors;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalResponse;
@@ -21,17 +17,12 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.rendering.RenderException;
 import com.enonic.xp.portal.macro.MacroProcessor;
 import com.enonic.xp.portal.macro.MacroProcessorFactory;
-import com.enonic.xp.schema.content.ContentTypeName;
-import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.site.Site;
-import com.enonic.xp.site.SiteConfig;
-import com.enonic.xp.site.SiteConfigs;
-import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class MacroInstructionTest
@@ -56,9 +47,6 @@ class MacroInstructionTest
 
         portalRequest = new PortalRequest();
         portalRequest.setMode( RenderMode.LIVE );
-        Site site = createSite( "site-id", "site-name", "myapplication:content-type" );
-        portalRequest.setSite( site );
-        portalRequest.setContent( site );
     }
 
     @Test
@@ -69,12 +57,13 @@ class MacroInstructionTest
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create()
-            .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() )
+            .body( ctx.getName() + ": params=" + ctx.getParameters() + ", body=" + ctx.getBody() )
             .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        assertEquals( "mymacro: param1=value1, body=body",
-                      macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody() );
+        assertEquals( "mymacro: params={param1=[value1]}, body=body", macroInstruction.evaluate( portalRequest,
+                                                                                               "MACRO _name=\"mymacro\" param1=\"value1\" _descriptor=\"myapp:mymacro\" _body=\"body\"" )
+            .getBody() );
     }
 
     @Test
@@ -101,18 +90,33 @@ class MacroInstructionTest
     }
 
     @Test
-    void testMacroInstructionNotSiteContext()
+    void testMacroInstructionWithoutDescriptor()
     {
-        portalRequest.setSite( null );
-        try
-        {
-            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" );
-            fail( "Expected exception" );
-        }
-        catch ( RenderException e )
-        {
-            assertEquals( "Macro controller script could not be resolved, context site could not be found.", e.getMessage() );
-        }
+        MacroKey key = MacroKey.from( ApplicationKey.SYSTEM, "mymacro" );
+        when( macroDescriptorService.getByKey( key ) ).thenReturn( MacroDescriptor.create().key( key ).build() );
+
+        String outputHtml =
+            (String) macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody();
+        assertEquals( "[mymacro param1=\"value1\"]body[/mymacro]", outputHtml );
+        verifyNoInteractions( macroProcessorFactory );
+    }
+
+    @Test
+    void testMacroInstructionUnknownDescriptor()
+    {
+        String outputHtml = (String) macroInstruction.evaluate( portalRequest,
+                                                                "MACRO _name=\"mymacro\" param1=\"value1\" _descriptor=\"myapp:mymacro\" _body=\"body\"" )
+            .getBody();
+        assertEquals( "[mymacro param1=\"value1\"]body[/mymacro]", outputHtml );
+    }
+
+    @Test
+    void testMacroInstructionInvalidDescriptor()
+    {
+        String outputHtml = (String) macroInstruction.evaluate( portalRequest,
+                                                                "MACRO _name=\"mymacro\" _descriptor=\"mymacro\" _body=\"\"" )
+            .getBody();
+        assertEquals( "[mymacro/]", outputHtml );
     }
 
     @Test
@@ -122,16 +126,9 @@ class MacroInstructionTest
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
-        try
-        {
-            macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" );
-
-            fail( "Expected exception" );
-        }
-        catch ( RenderException e )
-        {
-            assertEquals( "Macro controller not found: mymacro", e.getMessage() );
-        }
+        final RenderException e = assertThrows( RenderException.class, () -> macroInstruction.evaluate( portalRequest,
+                                                                                                        "MACRO _name=\"mymacro\" param1=\"value1\" _descriptor=\"myapp:mymacro\" _body=\"body\"" ) );
+        assertEquals( "Macro controller not found: mymacro", e.getMessage() );
     }
 
     @Test
@@ -140,30 +137,16 @@ class MacroInstructionTest
         MacroKey key = MacroKey.from( ApplicationKey.SYSTEM, "mymacro" );
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
-        when( macroDescriptorService.getByApplication( any() ) ).thenReturn( MacroDescriptors.empty() );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create()
             .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() )
             .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        String outputHtml =
-            (String) macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody();
+        String outputHtml = (String) macroInstruction.evaluate( portalRequest,
+                                                                "MACRO _name=\"mymacro\" param1=\"value1\" _descriptor=\"system:mymacro\" _body=\"body\"" )
+            .getBody();
         assertEquals( "mymacro: param1=[value1], body=body", outputHtml );
-    }
-
-    @Test
-    void testInstructionMissingMacro()
-    {
-        MacroKey key = MacroKey.from( "myapp:somemacro" );
-        Form form = Form.empty();
-        MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).form( form ).build();
-        when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
-        when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );
-
-        String outputHtml =
-            (String) macroInstruction.evaluate( portalRequest, "MACRO _name=\"mymacro\" param1=\"value1\" _body=\"body\"" ).getBody();
-        assertEquals( "[mymacro param1=\"value1\"]body[/mymacro]", outputHtml );
     }
 
     @Test
@@ -173,20 +156,18 @@ class MacroInstructionTest
         Form form = Form.create()
             .addFormItem( createTextLineInput( "param1", "Param 1" ).occurrences( 1, 1 ).build() )
             .addFormItem( createTextLineInput( "param2", "Param 2" ).occurrences( 1, 1 ).build() )
-            .
-
-                build();
+            .build();
         MacroDescriptor macroDescriptor = MacroDescriptor.create().key( key ).form( form ).build();
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
-        when( macroDescriptorService.getByApplication( key.getApplicationKey() ) ).thenReturn( MacroDescriptors.from( macroDescriptor ) );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create()
             .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() )
             .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        assertEquals( "mymacro: param1=[value1], body=body",
-                      macroInstruction.evaluate( portalRequest, "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _body=\"body\"" ).getBody() );
+        assertEquals( "mymacro: param1=[value1], body=body", macroInstruction.evaluate( portalRequest,
+                                                                                        "MACRO _name=\"MYMACRO\" PARAM1=\"value1\" _descriptor=\"myapp:mymacro\" _body=\"body\"" )
+            .getBody() );
     }
 
     @Test
@@ -197,30 +178,13 @@ class MacroInstructionTest
         when( macroDescriptorService.getByKey( key ) ).thenReturn( macroDescriptor );
 
         MacroProcessor macro = ( ctx ) -> PortalResponse.create()
-            .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ).get( 0 ) + ", body=" + ctx.getBody() )
+            .body( ctx.getName() + ": param1=" + ctx.getParameter( "param1" ) + ", body=" + ctx.getBody() )
             .build();
         when( macroProcessorFactory.fromScript( any() ) ).thenReturn( macro );
 
-        assertEquals( "mymacro: param1=value1, body=body", macroInstruction.evaluate( portalRequest,
-                                                                                      "MACRO _name=\"mymacro\" param1=\"value1\" param1=\"value2\" param2=\"other\" _body=\"body\"" )
+        assertEquals( "mymacro: param1=[value1, value2], body=body", macroInstruction.evaluate( portalRequest,
+                                                                                                "MACRO _name=\"mymacro\" param1=\"value1\" param1=\"value2\" param2=\"other\" _descriptor=\"myapp:mymacro\" _body=\"body\"" )
             .getBody() );
-    }
-
-    private Site createSite( final String id, final String name, final String contentTypeName )
-    {
-        PropertyTree rootDataSet = new PropertyTree();
-        SiteConfig siteConfig = SiteConfig.create().application( ApplicationKey.from( "myapp" ) ).config( new PropertyTree() ).build();
-        SiteConfigsDataSerializer.toData( SiteConfigs.from( siteConfig ), rootDataSet.getRoot() );
-
-        return Site.create()
-            .id( ContentId.from( id ) )
-            .path( ContentPath.from( name ) )
-            .owner( PrincipalKey.from( "user:myStore:me" ) )
-            .displayName( "My Content" )
-            .modifier( PrincipalKey.from( "user:system:admin" ) )
-            .type( ContentTypeName.from( contentTypeName ) )
-            .data( rootDataSet )
-            .build();
     }
 
     private Input.Builder createTextLineInput( final String name, final String label )

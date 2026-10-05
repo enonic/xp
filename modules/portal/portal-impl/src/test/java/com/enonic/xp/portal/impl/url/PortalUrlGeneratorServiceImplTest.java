@@ -7,6 +7,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.attachment.Attachment;
 import com.enonic.xp.attachment.Attachments;
 import com.enonic.xp.branch.Branch;
@@ -22,16 +26,25 @@ import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
+import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.ImageUrlParts;
+import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteService;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.webapp.WebappService;
+import com.enonic.xp.macro.MacroDescriptorService;
+import com.enonic.xp.macro.MacroService;
+import com.enonic.xp.style.StyleDescriptorService;
+import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.project.ProjectService;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.portal.impl.RedirectChecksumService;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,10 +52,21 @@ class PortalUrlGeneratorServiceImplTest
 {
     private PortalUrlGeneratorService service;
 
+    /**
+     * Resolves the URL parts, which build on this generator
+     */
+    private PortalUrlService urlService;
+
+    private ContentService contentService;
+
     @BeforeEach
     void setUp()
     {
+        this.contentService = mock( ContentService.class );
         this.service = new PortalUrlGeneratorServiceImpl( mock( WebappService.class ), mock( SiteService.class ) );
+        this.urlService = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ), mock( MacroDescriptorService.class ),
+                                                    mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
+                                                    mock( ProjectService.class ), this.service );
     }
 
     @AfterEach
@@ -139,42 +163,6 @@ class PortalUrlGeneratorServiceImplTest
     }
 
     @Test
-    void imageUrl_withMediaBaseUrl()
-    {
-        final ImageUrlGeneratorParams params = ImageUrlGeneratorParams.create()
-            .setBaseUrl( "ignoredBaseUrl" )
-            .setMediaBaseUrl( "https://media.example.com/" )
-            .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
-            .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "draft" ) )
-            .setScale( "max(300)" )
-            .build();
-
-        final String url = this.service.imageUrl( params );
-
-        // mediaBaseUrl points at the API root (no "_" segment) and takes precedence over baseUrl
-        assertEquals( "https://media.example.com/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
-                      url );
-    }
-
-    @Test
-    void attachmentUrl_withMediaBaseUrl()
-    {
-        final AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
-            .setMediaBaseUrl( "https://media.example.com" )
-            .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
-            .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "draft" ) )
-            .setDownload( true )
-            .build();
-
-        final String url = this.service.attachmentUrl( params );
-
-        assertEquals( "https://media.example.com/media:attachment/myproject:draft/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png?download",
-                      url );
-    }
-
-    @Test
     void attachmentUrl_basic()
     {
         final AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
@@ -268,7 +256,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -284,7 +272,7 @@ class PortalUrlGeneratorServiceImplTest
 
         final String url = this.service.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/unknownName", url );
     }
 
     @Test
@@ -377,7 +365,7 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void imageUrlParts_basic()
     {
-        final ImageUrlGeneratorParams params = ImageUrlGeneratorParams.create()
+        final ImageUrlPartsParams params = ImageUrlPartsParams.create()
             .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> Branch.from( "draft" ) )
@@ -385,7 +373,7 @@ class PortalUrlGeneratorServiceImplTest
             .setQuality( 85 )
             .build();
 
-        final ImageUrlParts parts = this.service.imageUrlParts( params );
+        final ImageUrlParts parts = this.urlService.imageUrlParts( params );
 
         assertEquals( "/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       parts.path() );
@@ -400,32 +388,41 @@ class PortalUrlGeneratorServiceImplTest
     @Test
     void imageUrlParts_matchImageUrl()
     {
-        final ImageUrlGeneratorParams.Builder builder = ImageUrlGeneratorParams.create()
-            .setMedia( () -> mockMedia( "123456", "my content.png" ) )
-            .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "master" ) )
-            .setScale( "block(800,200)" )
-            .setFilter( "blur(3)" )
-            .setFormat( "webp" );
+        final ImageUrlParts parts = this.urlService.imageUrlParts( ImageUrlPartsParams.create()
+                                                                    .setMedia( () -> mockMedia( "123456", "my content.png" ) )
+                                                                    .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                    .setBranch( () -> Branch.from( "master" ) )
+                                                                    .setScale( "block(800,200)" )
+                                                                    .setFilter( "blur(3)" )
+                                                                    .setFormat( "webp" )
+                                                                    .setQueryParam( "a", "1" )
+                                                                    .build() );
+        final String url = this.service.imageUrl( ImageUrlGeneratorParams.create()
+                                                      .setMedia( () -> mockMedia( "123456", "my content.png" ) )
+                                                      .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                      .setBranch( () -> Branch.from( "master" ) )
+                                                      .setScale( "block(800,200)" )
+                                                      .setFilter( "blur(3)" )
+                                                      .setFormat( "webp" )
+                                                      .setQueryParam( "a", "1" )
+                                                      .setBaseUrl( "https://media.example.com" )
+                                                      .build() );
 
-        final ImageUrlParts parts = this.service.imageUrlParts( builder.build() );
-        final String url = this.service.imageUrl( builder.setMediaBaseUrl( "https://media.example.com" ).build() );
-
-        // the invariant for building URLs from parts
-        assertEquals( url, "https://media.example.com" + parts.path() + parts.queryString() );
+        // the invariant for building URLs from parts, with the media APIs served under the mount's "_" segment
+        assertEquals( url, "https://media.example.com/_" + parts.path() + parts.queryString() );
     }
 
     @Test
     void attachmentUrlParts_basic()
     {
-        final AttachmentUrlGeneratorParams params = AttachmentUrlGeneratorParams.create()
+        final AttachmentUrlPartsParams params = AttachmentUrlPartsParams.create()
             .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
             .setProjectName( () -> ProjectName.from( "myproject" ) )
             .setBranch( () -> Branch.from( "master" ) )
             .setDownload( true )
             .build();
 
-        final AttachmentUrlParts parts = this.service.attachmentUrlParts( params );
+        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( params );
 
         assertEquals( "/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", parts.path() );
         assertEquals( "?download", parts.queryString() );
@@ -436,17 +433,140 @@ class PortalUrlGeneratorServiceImplTest
     }
 
     @Test
+    void imageUrlParts_byIdInTheContextProjectAndBranch()
+    {
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getById( ContentId.from( "123456" ) ) ).thenAnswer( invocation -> {
+            assertEquals( "com.enonic.cms.myproject", ContextAccessor.current().getRepositoryId().toString() );
+            assertEquals( "draft", ContextAccessor.current().getBranch().toString() );
+            return media;
+        } );
+
+        final ImageUrlParts parts = ContextBuilder.create()
+            .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
+            .branch( Branch.from( "draft" ) )
+            .build()
+            .callWith( () -> this.urlService.imageUrlParts( ImageUrlPartsParams.create().setId( "123456" ).setScale( "max(300)" ).build() ) );
+
+        assertEquals( "/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png", parts.path() );
+    }
+
+    @Test
+    void imageUrlParts_ofAnotherMediaFails()
+    {
+        final Media document = mockMedia( "123456", "report.pdf" );
+        when( document.getType() ).thenReturn( ContentTypeName.documentMedia() );
+
+        final ImageUrlPartsParams params = ImageUrlPartsParams.create()
+            .setMedia( () -> document )
+            .setProjectName( () -> ProjectName.from( "myproject" ) )
+            .setBranch( () -> Branch.from( "master" ) )
+            .setScale( "max(300)" )
+            .build();
+
+        assertThrows( IllegalArgumentException.class, () -> this.urlService.imageUrlParts( params ) );
+    }
+
+    @Test
+    void imageUrlParts_ofImageServedAsStored()
+    {
+        final Attachment animation =
+            Attachment.create().name( "logo.gif" ).mimeType( "image/gif" ).sha512( "ec25d6e4126c7064f82aaab8b34693fc" ).label( "source" ).build();
+        final Media media = mockMedia( "123456", "logo.gif" );
+        when( media.getAttachments() ).thenReturn( Attachments.from( animation ) );
+
+        final ImageUrlPartsParams params = ImageUrlPartsParams.create()
+            .setMedia( () -> media )
+            .setProjectName( () -> ProjectName.from( "myproject" ) )
+            .setBranch( () -> Branch.from( "master" ) )
+            .setScale( "block(800,200)" )
+            .setFilter( "blur(3)" )
+            .setQuality( 85 )
+            .setBackground( "ff0000" )
+            .setFormat( "webp" )
+            .setQueryParam( "a", "1" )
+            .build();
+
+        // served as stored: one URL, whatever the processing asked for
+        final ImageUrlParts parts = this.urlService.imageUrlParts( params );
+        assertEquals( "/media:image/myproject/123456:0a350f43700951cdcca1574f448a7e22/full/logo.gif", parts.path() );
+        assertEquals( "full", parts.scale() );
+        assertEquals( "?a=1", parts.queryString() );
+
+        final String url = this.service.imageUrl( ImageUrlGeneratorParams.create()
+                                                      .setMedia( () -> media )
+                                                      .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                      .setBranch( () -> Branch.from( "master" ) )
+                                                      .setScale( "block(800,200)" )
+                                                      .setFilter( "blur(3)" )
+                                                      .setQuality( 85 )
+                                                      .setFormat( "webp" )
+                                                      .setQueryParam( "a", "1" )
+                                                      .setBaseUrl( "https://media.example.com" )
+                                                      .build() );
+        assertEquals( "https://media.example.com/_" + parts.path() + parts.queryString(), url );
+    }
+
+    @Test
+    void imageUrlParts_requireMediaOrKey()
+    {
+        assertThrows( IllegalArgumentException.class, () -> ImageUrlPartsParams.create().setScale( "max(300)" ).build() );
+        assertThrows( IllegalArgumentException.class, () -> ImageUrlPartsParams.create()
+            .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
+            .setId( "123456" )
+            .setScale( "max(300)" )
+            .build() );
+    }
+
+    @Test
+    void attachmentUrlParts_byPath()
+    {
+        final Media media = mockMedia( "123456", "mycontent.png" );
+        when( contentService.getByPath( ContentPath.from( "/a/mycontent.png" ) ) ).thenReturn( media );
+
+        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( AttachmentUrlPartsParams.create()
+                                                                              .setPath( "/a/mycontent.png" )
+                                                                              .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                              .setBranch( () -> Branch.from( "master" ) )
+                                                                              .build() );
+
+        assertEquals( "/media:attachment/myproject/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png", parts.path() );
+    }
+
+    @Test
+    void attachmentUrlParts_ofMissingContentFails()
+    {
+        when( contentService.getById( ContentId.from( "missing" ) ) ).thenReturn( null );
+
+        final AttachmentUrlPartsParams params = AttachmentUrlPartsParams.create()
+            .setId( "missing" )
+            .setProjectName( () -> ProjectName.from( "myproject" ) )
+            .setBranch( () -> Branch.from( "master" ) )
+            .build();
+
+        assertThrows( ContentNotFoundException.class, () -> this.urlService.attachmentUrlParts( params ) );
+    }
+
+    @Test
     void attachmentUrlParts_matchAttachmentUrl()
     {
-        final AttachmentUrlGeneratorParams.Builder builder = AttachmentUrlGeneratorParams.create()
-            .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
-            .setProjectName( () -> ProjectName.from( "myproject" ) )
-            .setBranch( () -> Branch.from( "draft" ) );
+        final AttachmentUrlParts parts = this.urlService.attachmentUrlParts( AttachmentUrlPartsParams.create()
+                                                                              .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
+                                                                              .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                              .setBranch( () -> Branch.from( "draft" ) )
+                                                                              .setDownload( true )
+                                                                              .setQueryParam( "a", "1" )
+                                                                              .build() );
+        final String url = this.service.attachmentUrl( AttachmentUrlGeneratorParams.create()
+                                                           .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
+                                                           .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                           .setBranch( () -> Branch.from( "draft" ) )
+                                                           .setDownload( true )
+                                                           .setQueryParam( "a", "1" )
+                                                           .setBaseUrl( "https://media.example.com" )
+                                                           .build() );
 
-        final AttachmentUrlParts parts = this.service.attachmentUrlParts( builder.build() );
-        final String url = this.service.attachmentUrl( builder.setMediaBaseUrl( "https://media.example.com" ).build() );
-
-        assertEquals( url, "https://media.example.com" + parts.path() + parts.queryString() );
+        assertEquals( url, "https://media.example.com/_" + parts.path() + parts.queryString() );
     }
 
     private Media mockMedia( final String id, final String name )
@@ -461,6 +581,7 @@ class PortalUrlGeneratorServiceImplTest
         when( media.getId() ).thenReturn( contentId );
         when( media.getPath() ).thenReturn( ContentPath.from( "/" + id ) );
         when( media.getName() ).thenReturn( ContentName.from( name ) );
+        when( media.getType() ).thenReturn( ContentTypeName.imageMedia() );
         when( media.getData() ).thenReturn( new PropertyTree() );
         when( media.getAttachments() ).thenReturn( Attachments.from( attachment ) );
 
@@ -479,6 +600,7 @@ class PortalUrlGeneratorServiceImplTest
         when( media.getId() ).thenReturn( contentId );
         when( media.getPath() ).thenReturn( ContentPath.from( "/" + id ) );
         when( media.getName() ).thenReturn( ContentName.from( name ) );
+        when( media.getType() ).thenReturn( ContentTypeName.imageMedia() );
         when( media.getData() ).thenReturn( new PropertyTree() );
         when( media.getAttachments() ).thenReturn( Attachments.from( attachment ) );
 

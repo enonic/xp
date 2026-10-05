@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -29,7 +30,9 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -48,7 +51,6 @@ import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.webapp.WebappDescriptor;
 import com.enonic.xp.webapp.WebappService;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -80,9 +82,9 @@ class PortalUrlServiceImpl_imageUrlTest
         siteService = mock( SiteService.class );
         portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, siteService );
 
-        this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
+        this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ), mock( MacroDescriptorService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ), portalUrlGeneratorService, mock( SiteService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -108,7 +110,7 @@ class PortalUrlServiceImpl_imageUrlTest
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -121,7 +123,7 @@ class PortalUrlServiceImpl_imageUrlTest
         final String url =
             ContextBuilder.create().repositoryId( "com.enonic.cms.context-repo" ).build().callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -143,6 +145,28 @@ class PortalUrlServiceImpl_imageUrlTest
 
         assertEquals( "baseUrl/_/media:image/context-project:context-branch/123456:0a350f43700951cdcca1574f448a7e22/max-300/mycontent.png",
                       url );
+    }
+
+    @Test
+    void testImageUrlOfAnotherMedia()
+    {
+        PortalRequestAccessor.set( null );
+
+        final ImageUrlParams params =
+            new ImageUrlParams().type( UrlTypeConstants.ABSOLUTE ).id( "123456" ).scale( "max(300)" ).baseUrl( "baseUrl" );
+
+        final Media document = mockMedia( "123456", "report.pdf" );
+        when( document.getType() ).thenReturn( ContentTypeName.documentMedia() );
+        when( contentService.getById( eq( document.getId() ) ) ).thenReturn( document );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.imageUrl( params ) );
+
+        // only images and vector images have an image URL
+        assertEquals( "baseUrl/_/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -221,7 +245,26 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:image/_error/0/max-300/_error", url );
+    }
+
+    @Test
+    void testNoRequestAndRepositoryNotFound()
+    {
+        PortalRequestAccessor.set( null );
+
+        final ImageUrlParams params = new ImageUrlParams().id( "123456" ).scale( "max(300)" );
+
+        when( contentService.getById( any( ContentId.class ) ) ).thenThrow(
+            new RepositoryNotFoundException( RepositoryId.from( "com.enonic.cms.context-project" ) ) );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.imageUrl( params ) );
+
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -239,7 +282,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:image/_error/123456/max-300/123456", url );
     }
 
     @Test
@@ -257,7 +300,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:image/_error/0/max-300/_error", url );
     }
 
     @Test
@@ -801,7 +844,6 @@ class PortalUrlServiceImpl_imageUrlTest
         ( (PortalUrlGeneratorServiceImpl) portalUrlGeneratorService ).activate( config );
     }
 
-
     @Test
     void testWithWebappRequestWithoutMediaApiMountsWithDefaultMediaBaseUrl()
     {
@@ -1056,6 +1098,7 @@ class PortalUrlServiceImpl_imageUrlTest
         when( media.getId() ).thenReturn( contentId );
         when( media.getPath() ).thenReturn( ContentPath.from( "/" + id ) );
         when( media.getName() ).thenReturn( ContentName.from( name ) );
+        when( media.getType() ).thenReturn( ContentTypeName.imageMedia() );
         when( media.getData() ).thenReturn( new PropertyTree() );
         when( media.getAttachments() ).thenReturn( Attachments.from( attachment ) );
 

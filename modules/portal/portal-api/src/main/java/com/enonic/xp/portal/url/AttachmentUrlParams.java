@@ -5,7 +5,6 @@ import com.google.common.base.Strings;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-
 public final class AttachmentUrlParams
     extends AbstractUrlParams<AttachmentUrlParams>
 {
@@ -24,8 +23,6 @@ public final class AttachmentUrlParams
     private String branch;
 
     private String baseUrl;
-
-    private String mediaBaseUrl;
 
     public String getId()
     {
@@ -118,31 +115,13 @@ public final class AttachmentUrlParams
      * Base URL of a mount where the generated media URL lives under the "_" endpoint segment:
      * {@code <baseUrl>/_/media:attachment/...}.
      *
-     * @deprecated configure {@code media.defaultBaseUrl} in {@code com.enonic.xp.portal.cfg},
-     * or a Base URL on the site, instead. Use {@link #mediaBaseUrl(String)} to address the media
-     * API root directly.
+     * @deprecated configure where the media APIs are served with a virtual host mapping, or
+     * {@code media.defaultBaseUrl} in {@code com.enonic.xp.portal.cfg}.
      */
     @Deprecated
     public AttachmentUrlParams baseUrl( final String baseUrl )
     {
         this.baseUrl = Strings.emptyToNull( baseUrl );
-        return this;
-    }
-
-    public String getMediaBaseUrl()
-    {
-        return mediaBaseUrl;
-    }
-
-    /**
-     * Base URL used verbatim as the API root of the generated media URL:
-     * {@code <mediaBaseUrl>/media:attachment/...} - no "_" endpoint segment is added.
-     * Takes precedence over {@code baseUrl}, which points at a mount where APIs
-     * live under the "_" endpoint segment: {@code <baseUrl>/_/media:attachment/...}.
-     */
-    public AttachmentUrlParams mediaBaseUrl( final String mediaBaseUrl )
-    {
-        this.mediaBaseUrl = Strings.emptyToNull( mediaBaseUrl );
         return this;
     }
 

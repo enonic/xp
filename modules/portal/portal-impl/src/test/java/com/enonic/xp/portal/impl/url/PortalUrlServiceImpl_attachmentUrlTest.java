@@ -16,6 +16,7 @@ import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.macro.MacroDescriptorService;
 import com.enonic.xp.macro.MacroService;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
@@ -29,6 +30,7 @@ import com.enonic.xp.portal.url.UrlTypeConstants;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.repository.RepositoryNotFoundException;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
@@ -39,7 +41,6 @@ import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.webapp.WebappService;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -68,9 +69,9 @@ class PortalUrlServiceImpl_attachmentUrlTest
         this.webappService = mock( WebappService.class );
         this.portalUrlGeneratorService = new PortalUrlGeneratorServiceImpl( webappService, mock( SiteService.class ) );
 
-        this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ),
+        this.service = new PortalUrlServiceImpl( this.contentService, mock( ResourceService.class ), mock( MacroService.class ), mock( MacroDescriptorService.class ),
                                                  mock( StyleDescriptorService.class ), mock( RedirectChecksumService.class ),
-                                                 mock( ProjectService.class ), portalUrlGeneratorService, mock( SiteService.class ) );
+                                                 mock( ProjectService.class ), portalUrlGeneratorService );
 
         req = mock( HttpServletRequest.class );
 
@@ -96,7 +97,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = ContextBuilder.create().build().callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -111,7 +112,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -192,26 +193,6 @@ class PortalUrlServiceImpl_attachmentUrlTest
     }
 
     @Test
-    void testNoRequestAndWithMediaBaseUrl()
-    {
-        PortalRequestAccessor.set( null );
-
-        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" ).mediaBaseUrl( "https://media.example.com/" );
-
-        final Media media = mockMedia( "123456", "mycontent.png" );
-        when( contentService.getById( eq( media.getId() ) ) ).thenReturn( media );
-
-        final String url = ContextBuilder.create()
-            .repositoryId( "com.enonic.cms.context-project" )
-            .branch( "context-branch" )
-            .build()
-            .callWith( () -> this.service.attachmentUrl( params ) );
-
-        assertEquals( "https://media.example.com/media:attachment/context-project:context-branch/123456:ec25d6e4126c7064f82aaab8b34693fc/mycontent.png",
-                      url );
-    }
-
-    @Test
     void testNoRequestAndWithBaseUrlButWithoutIdAndPath()
     {
         PortalRequestAccessor.set( null );
@@ -227,7 +208,26 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/0/_error", url );
+    }
+
+    @Test
+    void testNoRequestAndRepositoryNotFound()
+    {
+        PortalRequestAccessor.set( null );
+
+        final AttachmentUrlParams params = new AttachmentUrlParams().id( "123456" );
+
+        when( contentService.getById( any( ContentId.class ) ) ).thenThrow(
+            new RepositoryNotFoundException( RepositoryId.from( "com.enonic.cms.context-project" ) ) );
+
+        final String url = ContextBuilder.create()
+            .repositoryId( "com.enonic.cms.context-project" )
+            .branch( "context-branch" )
+            .build()
+            .callWith( () -> this.service.attachmentUrl( params ) );
+
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -245,7 +245,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:attachment/_error/123456/123456", url );
     }
 
     @Test
@@ -263,7 +263,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertThat( url ).startsWith( "/_/error/404?message=Not+Found." );
+        assertEquals( "/api/media:attachment/_error/0/_error", url );
     }
 
     @Test
@@ -736,7 +736,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = this.portalUrlGeneratorService.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/123456?download", url );
     }
 
     @Test
@@ -753,7 +753,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
 
         final String url = this.portalUrlGeneratorService.attachmentUrl( params );
 
-        assertThat( url ).startsWith( "/_/error/500?message=Something+went+wrong." );
+        assertEquals( "baseUrl/_/media:attachment/_error/123456/unknownName?download", url );
     }
 
     private Media mockMedia( String id, String name )

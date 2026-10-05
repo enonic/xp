@@ -1,5 +1,8 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Objects;
+import java.util.concurrent.Callable;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
@@ -13,6 +16,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.url.BaseUrlParams;
+import com.enonic.xp.portal.url.PortalScopeParams;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.project.ProjectService;
@@ -31,77 +35,76 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         this.projectService = requireNonNull( projectService );
     }
 
-    BaseUrlMetadata extract( final BaseUrlParams params, final String baseUrl, final boolean followRequest )
+    BaseUrlMetadata extract( final BaseUrlParams params, final boolean followRequest )
     {
-        final boolean noExplicitContext = baseUrl == null && params.getProjectName() == null && params.getBranch() == null;
+        return extract( params.getProjectName(), params.getBranch(), () -> resolveContentAnchor( params ), followRequest, true );
+    }
+
+    /**
+     * Resolves from configuration alone: the project and branch come from the params or the
+     * current context, the configuration of a project is read from the project service, and the
+     * Base URL is the one configured, {@code null} when there is none.
+     */
+    BaseUrlMetadata extractFromConfiguration( final PortalScopeParams params )
+    {
+        return extract( Objects.toString( params.getProjectName(), null ), Objects.toString( params.getBranch(), null ),
+                        () -> resolveContentAnchor( params ), false, false );
+    }
+
+    /**
+     * @param anchor the content the URL is anchored to, looked up in the resolved project and branch
+     */
+    private BaseUrlMetadata extract( final String explicitProjectName, final String explicitBranch,
+                                     final Callable<Content> anchor, final boolean followRequest, final boolean contextFromRequest )
+    {
+        final boolean noExplicitContext = contextFromRequest && explicitProjectName == null && explicitBranch == null;
 
         final ProjectName projectName = ContentProjectResolver.create()
-            .setProjectName( params.getProjectName() )
+            .setProjectName( explicitProjectName )
             .setPreferSiteRequest( noExplicitContext )
             .build()
             .resolve();
 
         final Branch branch =
-            ContentBranchResolver.create().setBranch( params.getBranch() ).setPreferSiteRequest( noExplicitContext ).build().resolve();
-
-        final BaseUrlMetadata.Builder builder = BaseUrlMetadata.create();
-
-        builder.setProjectName( projectName );
-        builder.setBranch( branch );
+            ContentBranchResolver.create().setBranch( explicitBranch ).setPreferSiteRequest( noExplicitContext ).build().resolve();
 
         final PortalRequest portalRequest = PortalRequestAccessor.get();
 
-        if ( followRequest && noExplicitContext && params.getApi() == null && PortalRequestHelper.isSiteBase( portalRequest ) )
+        if ( followRequest && noExplicitContext && PortalRequestHelper.isSiteBase( portalRequest ) )
         {
             final StringBuilder str = new StringBuilder( portalRequest.getBaseUri() );
 
             UrlBuilderHelper.appendSubPath( str, projectName.toString() );
             UrlBuilderHelper.appendSubPath( str, branch.toString() );
 
-            builder.setBaseUrl( str.toString() );
+            return new BaseUrlMetadata( projectName, branch, str.toString(), null, ContentPath.ROOT, SiteConfigs.empty() );
+        }
+
+        final Context context =
+            ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
+
+        final Content content = context.callWith( anchor );
+
+        // the base URL belongs to the site of this content, and the URL is anchored there.
+        // Configuration of a site is never inherited from a parent site, so that site decides
+        // on its own which Base URL applies
+        final Site site = context.callWith( () -> resolveSite( content ) );
+
+        final SiteConfigs siteConfigs;
+        if ( site != null )
+        {
+            siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
         }
         else
         {
-            final Context context =
-                ContextBuilder.copyOf( ContextAccessor.current() ).repositoryId( projectName.getRepoId() ).branch( branch ).build();
-
-            final Content content = context.callWith( () -> resolveContentAnchor( params ) );
-
-            builder.setContent( content );
-
-            // the base URL belongs to the site of this content, and the URL is anchored there.
-            // Configuration of a site is never inherited from a parent site, so that site decides
-            // on its own which Base URL applies
-            final Site site = context.callWith( () -> resolveSite( content ) );
-
-            if ( site != null )
-            {
-                builder.setNearestSite( site );
-            }
-
-            if ( baseUrl != null )
-            {
-                builder.setBaseUrl( baseUrl );
-            }
-            else
-            {
-                final SiteConfigs siteConfigs;
-                if ( site != null )
-                {
-                    siteConfigs = SiteConfigsDataSerializer.fromData( site.getData().getRoot() );
-                }
-                else
-                {
-                    final Project resolvedProject = resolveProject( projectName, portalRequest );
-                    siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
-                }
-
-                builder.setSiteConfigs( siteConfigs );
-                builder.setBaseUrl( extractBaseUrl( siteConfigs ) );
-            }
+            final Project resolvedProject =
+                contextFromRequest ? resolveProject( projectName, portalRequest ) : projectService.get( projectName );
+            siteConfigs = resolvedProject != null ? resolvedProject.getSiteConfigs() : SiteConfigs.empty();
         }
 
-        return builder.build();
+        final ContentPath anchorPath = site != null ? site.getPath() : ContentPath.ROOT;
+
+        return new BaseUrlMetadata( projectName, branch, extractBaseUrl( siteConfigs ), content, anchorPath, siteConfigs );
     }
 
     private Site resolveSite( final Content content )
@@ -117,6 +120,9 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         return null;
     }
 
+    /**
+     * @return the project, reusing the one on the request when it is the same
+     */
     private Project resolveProject( final ProjectName projectName, final PortalRequest portalRequest )
     {
         if ( portalRequest != null )
@@ -147,11 +153,6 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
      */
     private Content resolveContentAnchor( final BaseUrlParams params )
     {
-        if ( params.getContent() != null )
-        {
-            return params.getContent().get();
-        }
-
         if ( params.getId() != null )
         {
             return contentService.getById( ContentId.from( params.getId() ) );
@@ -163,6 +164,20 @@ record BaseUrlExtractor(ContentService contentService, ProjectService projectSer
         }
 
         return null;
+    }
+
+    /**
+     * @return the content the params name, or {@code null} for the project itself
+     */
+    private Content resolveContentAnchor( final PortalScopeParams params )
+    {
+        if ( params.getContentId() != null )
+        {
+            return contentService.getById( params.getContentId() );
+        }
+
+        final ContentPath path = params.getContentPath();
+        return path == null || path.isRoot() ? null : contentService.getByPath( path );
     }
 
     /**

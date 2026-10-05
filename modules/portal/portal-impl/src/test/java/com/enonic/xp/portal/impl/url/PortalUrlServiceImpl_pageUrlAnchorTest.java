@@ -16,6 +16,10 @@ import com.enonic.xp.portal.url.BaseUrlParams;
 import com.enonic.xp.portal.url.ContentOutOfScopeException;
 import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
+import com.enonic.xp.portal.url.PageUrlPartsParams;
+import com.enonic.xp.portal.url.PortalScopeParams;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -28,6 +32,7 @@ import com.enonic.xp.site.SiteConfigsDataSerializer;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,7 +43,7 @@ import static org.mockito.Mockito.when;
  * <p>
  * Configuration of a site is never inherited from a parent site, so which of the two sites a URL
  * belongs to decides both its base URL and the path that follows: the site selected through
- * {@link com.enonic.xp.portal.url.PageUrlParams#base}, and the site of the content otherwise.
+ * {@link PageUrlPartsParams.Builder#setBase} for the parts, and the site of the content for the page URL.
  */
 class PortalUrlServiceImpl_pageUrlAnchorTest
     extends AbstractPortalUrlServiceImplTest
@@ -105,28 +110,28 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
         when( this.contentService.getNearestSite( eq( this.folder.getId() ) ) ).thenReturn( subsite );
     }
 
-    private static BaseUrlParams siteBase( final String contentKey )
+    /**
+     * @param baseKey id or path of the content naming the scope
+     */
+    private PageUrlParts parts( final ContentPath content, final String baseKey )
     {
-        final BaseUrlParams.Builder builder = BaseUrlParams.create();
-        if ( contentKey.startsWith( "/" ) )
+        final PortalScopeParams.Builder scope = PortalScopeParams.create();
+        if ( baseKey.startsWith( "/" ) )
         {
-            builder.setPath( contentKey );
+            scope.setContentPath( ContentPath.from( baseKey ) );
         }
         else
         {
-            builder.setId( contentKey );
+            scope.setContentId( ContentId.from( baseKey ) );
         }
-        return builder.build();
-    }
 
-    private String pageUrlAnchoredAtFeatures()
-    {
-        return this.service.pageUrl( new PageUrlParams().path( FOLDER.toString() ).base( siteBase( FEATURES.toString() ) ) );
+        return this.service.pageUrlParts(
+            PageUrlPartsParams.create().setPath( content.toString() ).setScope( this.service.portalScope( scope.build() ) ).build() );
     }
 
     private PageUrlParts pageUrlPartsAnchoredAtFeatures()
     {
-        return this.service.pageUrlParts( new PageUrlParams().path( FOLDER.toString() ).base( siteBase( FEATURES.toString() ) ) );
+        return parts( FOLDER, FEATURES.toString() );
     }
 
     @Test
@@ -134,14 +139,10 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        // the very same params drive baseUrl() and the page URL, so the parts reassemble
-        final BaseUrlParams base = siteBase( FEATURES.toString() );
-
-        assertEquals( "https://features.com", this.service.baseUrl( base ) );
-        assertEquals( "https://features.com/subsite/folder", this.service.pageUrl(
-            new PageUrlParams().path( FOLDER.toString() ).base( base ) ) );
-        assertEquals( "/subsite/folder", this.service.pageUrlParts(
-            new PageUrlParams().path( FOLDER.toString() ).base( base ) ).path() );
+        assertEquals( "https://features.com", this.service.baseUrl( BaseUrlParams.create().setPath( FEATURES.toString() ).build() ) );
+        final PageUrlParts parts = pageUrlPartsAnchoredAtFeatures();
+        assertEquals( "https://features.com", parts.baseUrl() );
+        assertEquals( "/subsite/folder", parts.path() );
     }
 
     @Test
@@ -149,10 +150,10 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( null, "https://subsite.com" );
 
-        // the Base URL of the nested site does not apply to a URL that belongs to its parent
-        assertEquals( "/site/myproject/draft/features", this.service.baseUrl( siteBase( FEATURES.toString() ) ) );
-        assertEquals( "/site/myproject/draft/features/subsite/folder", pageUrlAnchoredAtFeatures() );
-        assertEquals( "/subsite/folder", pageUrlPartsAnchoredAtFeatures().path() );
+        // the parts come from configuration alone, and the Base URL of the nested site belongs to the nested site
+        final PageUrlParts parts = pageUrlPartsAnchoredAtFeatures();
+        assertNull( parts.baseUrl() );
+        assertEquals( "/subsite/folder", parts.path() );
     }
 
     @Test
@@ -160,7 +161,7 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( null, null );
 
-        assertEquals( "/site/myproject/draft/features/subsite/folder", pageUrlAnchoredAtFeatures() );
+        assertNull( pageUrlPartsAnchoredAtFeatures().baseUrl() );
         assertEquals( "/subsite/folder", pageUrlPartsAnchoredAtFeatures().path() );
     }
 
@@ -169,7 +170,7 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", null );
 
-        assertEquals( "https://features.com/subsite/folder", pageUrlAnchoredAtFeatures() );
+        assertEquals( "https://features.com", pageUrlPartsAnchoredAtFeatures().baseUrl() );
         assertEquals( "/subsite/folder", pageUrlPartsAnchoredAtFeatures().path() );
     }
 
@@ -178,32 +179,28 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() ).base( siteBase( SUBSITE.toString() ) );
+        final PageUrlParts parts = parts( FOLDER, SUBSITE.toString() );
 
-        assertEquals( "https://subsite.com/folder", this.service.pageUrl( params ) );
-        assertEquals( "/folder", this.service.pageUrlParts( params ).path() );
+        assertEquals( "https://subsite.com", parts.baseUrl() );
+        assertEquals( "/folder", parts.path() );
+        assertEquals( this.service.pageUrl( new PageUrlParams().path( FOLDER.toString() ) ), parts.baseUrl() + parts.path() );
     }
 
     @Test
-    void testWithoutAnchorUsesSiteOfContent()
+    void testPageUrlUsesSiteOfContent()
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() );
-
-        assertEquals( "https://subsite.com/folder", this.service.pageUrl( params ) );
-        assertEquals( "/folder", this.service.pageUrlParts( params ).path() );
+        assertEquals( "https://subsite.com/folder", this.service.pageUrl( new PageUrlParams().path( FOLDER.toString() ) ) );
     }
 
     @Test
-    void testWithoutAnchorUsesSiteOfContentWithoutBaseUrls()
+    void testPageUrlUsesSiteOfContentWithoutBaseUrls()
     {
         mockNestedSites( null, null );
 
-        final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() );
-
-        assertEquals( "/site/myproject/draft/features/subsite/folder", this.service.pageUrl( params ) );
-        assertEquals( "/folder", this.service.pageUrlParts( params ).path() );
+        assertEquals( "/site/myproject/draft/features/subsite/folder",
+                      this.service.pageUrl( new PageUrlParams().path( FOLDER.toString() ) ) );
     }
 
     @Test
@@ -211,11 +208,10 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() ).base( siteBase( "/" ) );
-
-        // no site is selected, so the project decides and the full content path follows
-        assertEquals( "/site/myproject/draft/features/subsite/folder", this.service.pageUrl( params ) );
-        assertEquals( "/features/subsite/folder", this.service.pageUrlParts( params ).path() );
+        // the project is selected, so its configuration applies and the full content path follows
+        final PageUrlParts parts = parts( FOLDER, "/" );
+        assertNull( parts.baseUrl() );
+        assertEquals( "/features/subsite/folder", parts.path() );
     }
 
     @Test
@@ -223,27 +219,24 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        // selecting a content that is not itself a site selects the site it belongs to
-        final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() ).base( siteBase( this.folder.getId().toString() ) );
+        // selecting a content inside a site selects the site it belongs to
+        final PageUrlParts parts = parts( FOLDER, this.folder.getId().toString() );
 
-        assertEquals( "https://subsite.com/folder", this.service.pageUrl( params ) );
+        assertEquals( "https://subsite.com", parts.baseUrl() );
+        assertEquals( "/folder", parts.path() );
     }
 
     @Test
-    void testSelectedSiteDoesNotContainTheContent()
+    void testSelectedSiteBesideTheContent()
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        // /features/sub is a sibling of /features/subsite, not an ancestor of the content
+        // /features/sub is a sibling of /features/subsite
         mockSite( ContentPath.from( "/features/sub" ), "https://sub.com" );
 
-        final PageUrlParams params = new PageUrlParams().path( FOLDER.toString() ).base( siteBase( "/features/sub" ) );
-
-        // the Base URL of that site does not lead to the content, so there is no URL to give
-        assertThatThrownBy( () -> this.service.pageUrl( params ) ).isInstanceOf( ContentOutOfScopeException.class )
+        assertThatThrownBy( () -> parts( FOLDER, "/features/sub" ) ).isInstanceOf( ContentOutOfScopeException.class )
             .hasMessageContaining( "/features/subsite/folder" )
             .hasMessageContaining( "/features/sub" );
-        assertThatThrownBy( () -> this.service.pageUrlParts( params ) ).isInstanceOf( ContentOutOfScopeException.class );
     }
 
     @Test
@@ -251,15 +244,12 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        // the content is the parent site, above the selected one - equally unreachable from it
-        final PageUrlParams params = new PageUrlParams().path( FEATURES.toString() ).base( siteBase( SUBSITE.toString() ) );
-
-        assertThatThrownBy( () -> this.service.pageUrl( params ) ).isInstanceOf( ContentOutOfScopeException.class );
-        assertThatThrownBy( () -> this.service.pageUrlParts( params ) ).isInstanceOf( ContentOutOfScopeException.class );
+        // the content is the parent site, above the selected one
+        assertThatThrownBy( () -> parts( FEATURES, SUBSITE.toString() ) ).isInstanceOf( ContentOutOfScopeException.class );
     }
 
     @Test
-    void testAnchorOutranksSiteRequest()
+    void testPartsFollowTheSelectedSiteUnderSiteRequest()
     {
         PortalRequestAccessor.set( this.portalRequest );
         portalRequest.setBaseUri( "/site" );
@@ -273,9 +263,39 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
 
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        // the request is followed - and rewritten by the virtual host - only without a selected site
+        // pageUrl follows the request, rewritten by the virtual host; the parts follow configuration
         assertEquals( "/source/folder", this.service.pageUrl( new PageUrlParams().id( this.folder.getId().toString() ) ) );
-        assertEquals( "https://features.com/subsite/folder",
-                      this.service.pageUrl( new PageUrlParams().id( this.folder.getId().toString() ).base( siteBase( FEATURES.toString() ) ) ) );
+        final PageUrlParts parts = parts( FOLDER, FEATURES.toString() );
+        assertEquals( "https://features.com", parts.baseUrl() );
+        assertEquals( "/subsite/folder", parts.path() );
+    }
+
+    @Test
+    void testPartsAtProjectRootReadTheProjectFromTheProjectService()
+    {
+        PortalRequestAccessor.set( this.portalRequest );
+        portalRequest.setBaseUri( "/site" );
+        portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) );
+        portalRequest.setBranch( Branch.from( "draft" ) );
+        portalRequest.setProject( project( "https://stale.com" ) );
+
+        final Project current = project( "https://current.com" );
+        when( this.projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( current );
+
+        mockNestedSites( null, null );
+
+        final PageUrlParts parts = parts( FOLDER, "/" );
+        assertEquals( "https://current.com", parts.baseUrl() );
+        assertEquals( "/features/subsite/folder", parts.path() );
+    }
+
+    private static Project project( final String baseUrl )
+    {
+        final PropertyTree config = new PropertyTree();
+        config.addString( "baseUrl", baseUrl );
+        return Project.create()
+            .name( ProjectName.from( "myproject" ) )
+            .addSiteConfig( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
+            .build();
     }
 }

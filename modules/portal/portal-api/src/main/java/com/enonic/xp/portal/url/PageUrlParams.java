@@ -1,91 +1,113 @@
 package com.enonic.xp.portal.url;
 
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
-
+/**
+ * Parameters of a page URL: the content it addresses, by {@link #id(String) id} or
+ * {@link #path(String) path}. The project and branch are those of the request or the context.
+ *
+ * @see PortalUrlService#pageUrl(PageUrlParams)
+ * @see PageUrlPartsParams
+ */
+@NullMarked
 public final class PageUrlParams
     extends AbstractUrlParams<PageUrlParams>
 {
-    private String id;
+    private @Nullable String id;
 
-    private String path;
+    private @Nullable String path;
 
-    private String projectName;
+    private @Nullable String projectName;
 
-    private String branch;
+    private @Nullable String branch;
 
-    private BaseUrlParams base;
-
-    public String getId()
+    /**
+     * @return id of the content the URL addresses, or {@code null} when it is named by path
+     */
+    public @Nullable String getId()
     {
         return this.id;
     }
 
-    public String getPath()
+    /**
+     * @return path of the content the URL addresses, or {@code null} when it is named by id
+     */
+    public @Nullable String getPath()
     {
         return this.path;
     }
 
-    public String getProjectName()
+    /**
+     * @return project of the content, or {@code null} to take it from the context
+     */
+    public @Nullable String getProjectName()
     {
         return projectName;
     }
 
-    public String getBranch()
+    /**
+     * @return branch of the content, or {@code null} to take it from the context
+     */
+    public @Nullable String getBranch()
     {
         return branch;
     }
 
-    public BaseUrlParams getBase()
-    {
-        return base;
-    }
-
-    public PageUrlParams id( final String value )
+    /**
+     * Names the content the URL addresses by its id.
+     *
+     * @param value content id; {@code null} or empty clears it
+     * @return these params
+     */
+    public PageUrlParams id( final @Nullable String value )
     {
         this.id = Strings.emptyToNull( value );
         return this;
     }
 
-    public PageUrlParams path( final String value )
+    /**
+     * Names the content the URL addresses by its path within the project.
+     *
+     * @param value content path, such as {@code /my-site/posts/first-post}; {@code null} or empty clears it
+     * @return these params
+     */
+    public PageUrlParams path( final @Nullable String value )
     {
         this.path = Strings.emptyToNull( value );
         return this;
     }
 
-    public PageUrlParams projectName( final String value )
+    /**
+     * Sets the project of the content. The URL is then resolved from configuration in place of the request: the
+     * Base URL configured for the site of the content, or the site engine address of that site.
+     *
+     * @param value project name; {@code null} or empty takes it from the context
+     * @return these params
+     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a {@link PortalScope} resolved for the project
+     */
+    @Deprecated
+    public PageUrlParams projectName( final @Nullable String value )
     {
         this.projectName = Strings.emptyToNull( value );
         return this;
     }
 
-    public PageUrlParams branch( final String value )
+    /**
+     * Sets the branch of the content. The URL is then resolved from configuration in place of the request: the
+     * Base URL configured for the site of the content, or the site engine address of that site.
+     *
+     * @param value branch name; {@code null} or empty takes it from the context
+     * @return these params
+     * @deprecated use {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}, with a {@link PortalScope} resolved for the branch
+     */
+    @Deprecated
+    public PageUrlParams branch( final @Nullable String value )
     {
         this.branch = Strings.emptyToNull( value );
-        return this;
-    }
-
-    /**
-     * Selects the site - or the project - the URL belongs to, by the same parameters
-     * {@link PortalUrlService#baseUrl(BaseUrlParams)} takes: the nearest one at or above the
-     * content they name. The URL then starts with the base URL that one resolves to, followed by
-     * the content path relative to it. Passing the very same parameters to both calls is what
-     * makes {@code pageUrl = baseUrl + path + queryString} hold.
-     * <p>
-     * A project contains sites and a site can contain further sites, so this picks a level of
-     * that containment: {@code "/"} names the project, a site path or id names that site.
-     * Without it the URL belongs to the innermost level containing the content. Configuration is
-     * never inherited from a level above, so the selected one alone decides which Base URL
-     * applies.
-     * <p>
-     * The content has to be inside the selected level, or be that level itself. The base URL of
-     * the level does not lead to a content elsewhere, so there is no URL for one: see
-     * {@link ContentOutOfScopeException}.
-     */
-    public PageUrlParams base( final BaseUrlParams value )
-    {
-        this.base = value;
         return this;
     }
 
@@ -100,7 +122,6 @@ public final class PageUrlParams
         helper.add( "path", this.path );
         helper.add( "project", this.projectName );
         helper.add( "branch", this.branch );
-        helper.add( "base", this.base );
         return helper.toString();
     }
 }

@@ -18,38 +18,29 @@ final class ContentBaseUrlResolver
 
     private final BaseUrlParams params;
 
-    private final String baseUrl;
-
     private final boolean followRequest;
 
     ContentBaseUrlResolver( final ContentService contentService, final ProjectService projectService, final BaseUrlParams params,
                             final boolean followRequest )
     {
-        this( contentService, projectService, params, null, followRequest );
-    }
-
-    ContentBaseUrlResolver( final ContentService contentService, final ProjectService projectService, final BaseUrlParams params,
-                            final String baseUrl, final boolean followRequest )
-    {
         this.contentService = contentService;
         this.projectService = projectService;
         this.params = params;
-        this.baseUrl = baseUrl;
         this.followRequest = followRequest;
     }
 
     public String resolve( final Function<BaseUrlMetadata, String> pathResolver )
     {
         final BaseUrlMetadata baseUrlMetadata =
-            new BaseUrlExtractor( contentService, projectService ).extract( params, baseUrl, followRequest );
+            new BaseUrlExtractor( contentService, projectService ).extract( params, followRequest );
 
         final String resolvedBaseUrl = resolveBaseUrl( baseUrlMetadata );
 
         final StringBuilder result = new StringBuilder( resolvedBaseUrl );
 
         final String path = ContextBuilder.copyOf( ContextAccessor.current() )
-            .repositoryId( baseUrlMetadata.getProjectName().getRepoId() )
-            .branch( baseUrlMetadata.getBranch() )
+            .repositoryId( baseUrlMetadata.projectName().getRepoId() )
+            .branch( baseUrlMetadata.branch() )
             .build()
             .callWith( () -> pathResolver.apply( baseUrlMetadata ) );
 
@@ -60,20 +51,15 @@ final class ContentBaseUrlResolver
 
     private String resolveBaseUrl( final BaseUrlMetadata baseUrlMetadata )
     {
-        if ( baseUrl != null )
-        {
-            return baseUrl;
-        }
-
-        final String resolvedBaseUrl = baseUrlMetadata.getBaseUrl();
+        final String resolvedBaseUrl = baseUrlMetadata.baseUrl();
 
         if ( resolvedBaseUrl == null )
         {
             // no Base URL is configured: the site engine serves the anchor, so the base is its
             // address there - paths stay relative to the anchor as with a configured Base URL
             final StringBuilder url = new StringBuilder(
-                PathMatchers.SITE_PREFIX + baseUrlMetadata.getProjectName() + "/" + baseUrlMetadata.getBranch() );
-            final ContentPath anchorPath = baseUrlMetadata.getAnchorPath();
+                PathMatchers.SITE_PREFIX + baseUrlMetadata.projectName() + "/" + baseUrlMetadata.branch() );
+            final ContentPath anchorPath = baseUrlMetadata.anchorPath();
             if ( !anchorPath.isRoot() )
             {
                 UrlBuilderHelper.appendAndEncodePathParts( url, anchorPath.toString() );

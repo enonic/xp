@@ -41,7 +41,7 @@ final class ContentBaseUrlSupplier
             {
                 return null;
             }
-            final ContentPath mounted = VhostLevel.resolve( metadata.getProjectName(), metadata.getBranch() );
+            final ContentPath mounted = VhostLevel.resolve( metadata.projectName(), metadata.branch() );
             return mounted != null && !mounted.isRoot() ? mounted.toString() : null;
         } );
 
