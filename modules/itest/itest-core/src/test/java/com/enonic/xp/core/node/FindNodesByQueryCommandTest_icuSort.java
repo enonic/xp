@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -97,6 +98,27 @@ class FindNodesByQueryCommandTest_icuSort
             .containsExactlyElementsOf( descendingWords.stream().map( w -> "node-" + w ).toList() );
     }
 
+    /**
+     * Nodes indexed without the sort language have no {@code _orderby_XX} field. They sort after the nodes that have it,
+     * in binary order of the default {@code _orderby} field, instead of in arbitrary order.
+     */
+    @Test
+    void sort_with_language_falls_back_to_binary_order_for_nodes_without_language()
+    {
+        createStringNodeWithLanguage( "node-ol", "øl", "no" );
+        createStringNodeWithLanguage( "node-alfa", "alfa", "no" );
+        createStringNode( "node-zeta", "zeta" );
+        createStringNode( "node-beta", "beta" );
+        createStringNode( "node-delta", "delta" );
+        nodeService.refresh( RefreshMode.ALL );
+
+        assertThat( getNodes( sortByStringWithLanguage( "ASC", "no" ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactly( "node-alfa", "node-ol", "node-beta", "node-delta", "node-zeta" );
+
+        assertThat( getNodes( sortByStringWithLanguage( "DESC", "no" ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactly( "node-ol", "node-alfa", "node-zeta", "node-delta", "node-beta" );
+    }
+
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
     {
         final OrderExpr.Direction dir = OrderExpr.Direction.valueOf( direction );
@@ -143,6 +165,14 @@ class FindNodesByQueryCommandTest_icuSort
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );
     }
 
+
+    private void createStringNode( final String name, final String fieldValue )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( FIELD_STRING, fieldValue );
+
+        createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( name ).data( data ).build() );
+    }
 
     private void createStringNodeWithLanguage( final String name, final String fieldValue, final String language )
     {

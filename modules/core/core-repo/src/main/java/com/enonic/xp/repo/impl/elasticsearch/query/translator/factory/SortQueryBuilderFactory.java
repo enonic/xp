@@ -3,11 +3,14 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.jspecify.annotations.Nullable;
 
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.DynamicOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
@@ -44,7 +47,9 @@ public class SortQueryBuilderFactory
         {
             if ( orderExpr instanceof FieldOrderExpr )
             {
-                sortBuilders.add( createFieldSortBuilder( (FieldOrderExpr) orderExpr ) );
+                final FieldOrderExpr fieldOrderExpr = (FieldOrderExpr) orderExpr;
+                sortBuilders.addAll( createFieldSortBuilders( fieldNameResolver, fieldOrderExpr.getField().getIndexPath(),
+                                                              fieldOrderExpr.getDirection(), fieldOrderExpr.getLanguage() ) );
             }
             else if ( orderExpr instanceof DynamicOrderExpr )
             {
@@ -52,23 +57,42 @@ public class SortQueryBuilderFactory
             }
             else if ( orderExpr instanceof DslOrderExpr )
             {
-                sortBuilders.add( new DslSortBuilderFactory( fieldNameResolver ).create( (DslOrderExpr) orderExpr ) );
+                sortBuilders.addAll( new DslSortBuilderFactory( fieldNameResolver ).create( (DslOrderExpr) orderExpr ) );
             }
         }
 
         return sortBuilders;
     }
 
-    private SortBuilder createFieldSortBuilder( final FieldOrderExpr fieldOrderExpr )
+    /**
+     * Creates a sort on the order-by value of a field. When a language is given, documents are sorted by the collation of that
+     * language. Documents without the language-specific value (indexed without that language) fall back to binary order.
+     */
+    public static List<SortBuilder> createFieldSortBuilders( final QueryFieldNameResolver fieldNameResolver, final IndexPath field,
+                                                             final OrderExpr.@Nullable Direction direction, final @Nullable Locale language )
     {
-        final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder(
-            fieldNameResolver.resolveOrderByFieldName( fieldOrderExpr.getField().getIndexPath(), fieldOrderExpr.getLanguage() ) );
-        if ( fieldOrderExpr.getDirection() != null )
+        final String fieldName = fieldNameResolver.resolveOrderByFieldName( field, language );
+        if ( language == null )
         {
-            fieldSortBuilder.order( SortOrder.valueOf( fieldOrderExpr.getDirection().name() ) );
+            return List.of( createFieldSortBuilder( fieldName, direction ) );
+        }
+
+        final String fallbackFieldName = fieldNameResolver.resolveOrderByFieldName( field, null );
+        if ( fallbackFieldName.equals( fieldName ) )
+        {
+            return List.of( createFieldSortBuilder( fieldName, direction ) );
+        }
+        return List.of( createFieldSortBuilder( fieldName, direction ), createFieldSortBuilder( fallbackFieldName, direction ) );
+    }
+
+    private static FieldSortBuilder createFieldSortBuilder( final String fieldName, final OrderExpr.@Nullable Direction direction )
+    {
+        final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder( fieldName );
+        if ( direction != null )
+        {
+            fieldSortBuilder.order( SortOrder.valueOf( direction.name() ) );
         }
         fieldSortBuilder.unmappedType( UNMAPPED_TYPE );
-
         return fieldSortBuilder;
     }
 

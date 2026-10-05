@@ -76,8 +76,29 @@ class SortBuilderFactoryTest
         final List<SortBuilder> sortBuilders =
             new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( orderExpr ) );
 
-        assertEquals( 1, sortBuilders.size() );
+        // Collation of the language first, binary order for documents indexed without that language
+        assertEquals( 2, sortBuilders.size() );
+        assertTrue( sortBuilders.get( 0 ).toString()
+                        .contains( SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ),
+                                                                                                Locale.forLanguageTag( "no" ) ) ) );
+        assertTrue( sortBuilders.get( 1 ).toString()
+                        .contains( SearchQueryFieldNameResolver.INSTANCE.resolveOrderByFieldName( IndexPath.from( "myField" ), null ) ) );
+    }
+
+    @Test
+    void createDslFieldSortWithLanguage()
+    {
+        final PropertyTree expression = new PropertyTree();
+        expression.addString( "field", "myField" );
+        expression.addString( "direction", "DESC" );
+        expression.addString( "language", "no" );
+
+        final List<SortBuilder> sortBuilders =
+            new SortQueryBuilderFactory( SearchQueryFieldNameResolver.INSTANCE ).create( List.of( DslOrderExpr.from( expression ) ) );
+
+        assertEquals( 2, sortBuilders.size() );
         assertTrue( sortBuilders.get( 0 ) instanceof FieldSortBuilder );
+        assertTrue( sortBuilders.get( 1 ) instanceof FieldSortBuilder );
     }
 
     @Test
