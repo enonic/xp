@@ -13,6 +13,8 @@ record MediaPathParts(String context, String id, String hash, String scale, Stri
      */
     static final String UNRESOLVED_CONTEXT = "_error";
 
+    private static final String UNRESOLVED_ID = "0";
+
     /**
      * @param id    id of the content, or {@code null} when the URL named it otherwise
      * @param scale scale segment, {@code null} for an attachment
@@ -21,8 +23,9 @@ record MediaPathParts(String context, String id, String hash, String scale, Stri
      */
     static MediaPathParts unresolved( final String id, final String scale, final String name )
     {
-        final String key = id != null ? id : UNRESOLVED_CONTEXT;
-        return new MediaPathParts( UNRESOLVED_CONTEXT, key, null, scale, name != null ? name : key );
+        final String key = id != null ? id : UNRESOLVED_ID;
+        final String fallbackName = id != null ? id : UNRESOLVED_CONTEXT;
+        return new MediaPathParts( UNRESOLVED_CONTEXT, key, null, scale, name != null ? name : fallbackName );
     }
 
     /**

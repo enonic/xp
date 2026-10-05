@@ -245,7 +245,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:image/_error/_error/max-300/_error", url );
+        assertEquals( "baseUrl/_/media:image/_error/0/max-300/_error", url );
     }
 
     @Test
@@ -300,7 +300,7 @@ class PortalUrlServiceImpl_imageUrlTest
             .build()
             .callWith( () -> this.service.imageUrl( params ) );
 
-        assertEquals( "/api/media:image/_error/_error/max-300/_error", url );
+        assertEquals( "/api/media:image/_error/0/max-300/_error", url );
     }
 
     @Test
