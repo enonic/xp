@@ -84,8 +84,7 @@ public class SortQueryBuilderFactory
      * language-specific order-by value, and would otherwise be returned in arbitrary order.
      * <p>
      * The fallback goes right after its language sort, so documents without the language are still ordered by the requested field
-     * before any following sort. For multi-valued fields this can break ties between documents that do have the language before
-     * the following sort does, as the binary order-by value is the first value, not the one the language sort compared.
+     * before any following sort, the same way they would be ordered without a language.
      */
     public static @Nullable SortBuilder createFallbackSortBuilder( final QueryFieldNameResolver fieldNameResolver, final IndexPath field,
                                                                    final OrderExpr.@Nullable Direction direction,
