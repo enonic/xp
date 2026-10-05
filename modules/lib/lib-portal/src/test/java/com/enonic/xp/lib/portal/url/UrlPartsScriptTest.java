@@ -12,6 +12,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
@@ -73,7 +74,7 @@ class UrlPartsScriptTest
             new ProcessedHtml( "<a href=\"/posts/first-post\" data-link-ref=\"ref\">Post</a>" + MACRO_PLACEHOLDER, null, List.of(
                 new ProcessedHtml.ContentLink( "ref", "content://123456", "123456", new PageUrlParts( null, "/posts/first-post", "" ),
                                                "" ) ), List.of(),
-                               List.of( new ProcessedHtml.Macro( "macroref", MacroKey.from( "com.example.myapp:youtube" ),
+                               List.of( new ProcessedHtml.Macro( "macroref", MacroDescriptor.create().key( MacroKey.from( "com.example.myapp:youtube" ) ).build(),
                                                                    Map.of( "videoId", List.of( "abc" ) ), "" ) ) ) );
 
         when( portalUrlService.imageUrlParts( any( ImageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {

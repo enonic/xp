@@ -9,7 +9,7 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.macro.MacroKey;
+import com.enonic.xp.macro.MacroDescriptor;
 
 /**
  * Result of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the processed HTML, and the parts of
@@ -162,7 +162,7 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      *                   input of the descriptor's form, ignoring case, is named as that input
      * @param body       body of the macro as written; empty for a macro without one
      */
-    public record Macro(String ref, MacroKey descriptor, Map<String, List<String>> params, String body)
+    public record Macro(String ref, MacroDescriptor descriptor, Map<String, List<String>> params, String body)
     {
         public Macro
         {

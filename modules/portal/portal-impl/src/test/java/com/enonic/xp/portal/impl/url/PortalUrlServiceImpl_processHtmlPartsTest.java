@@ -303,7 +303,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                   } ) );
 
         final ProcessedHtml.Macro macro = result.macros().get( 0 );
-        assertEquals( MacroKey.from( "system:correct_macro" ), macro.descriptor() );
+        assertEquals( MacroKey.from( "system:correct_macro" ), macro.descriptor().getKey() );
         assertEquals( "<p>Text</p><editor-macro data-macro-name=\"correct_macro\" data-macro-ref=\"" + macro.ref() + "\"></editor-macro>",
                       result.html() );
     }
@@ -332,7 +332,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         // the parameters are named as the inputs of the form
         final ProcessedHtml.Macro first = result.macros().get( 0 );
-        assertEquals( key, first.descriptor() );
+        assertEquals( key, first.descriptor().getKey() );
         assertEquals( Map.of( "videoId", List.of( "a", "c" ), "other", List.of( "b" ) ), first.params() );
         assertEquals( "Some &lt;b&gt;body", first.body() );
 
@@ -363,7 +363,7 @@ class PortalUrlServiceImpl_processHtmlPartsTest
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create().value( "<p>[mymacro/]</p>" ), "/a" );
 
-        assertEquals( key, result.macros().get( 0 ).descriptor() );
+        assertEquals( key, result.macros().get( 0 ).descriptor().getKey() );
         assertEquals( "<p><editor-macro data-macro-name=\"mymacro\" data-macro-ref=\"" + result.macros().get( 0 ).ref() + "\"></editor-macro></p>",
                       result.html() );
     }

@@ -136,7 +136,7 @@ final class RichTextPartsProcessor
 
         final String ref = UUID.randomUUID().toString();
         final String body = Objects.requireNonNullElse( macro.getBody(), "" );
-        macros.add( new ProcessedHtml.Macro( ref, descriptor.getKey(), macroParams, body ) );
+        macros.add( new ProcessedHtml.Macro( ref, descriptor, macroParams, body ) );
 
         return "<" + ProcessedHtml.MACRO_ELEMENT + " " + ProcessedHtml.MACRO_NAME_ATTRIBUTE + "=\"" + descriptor.getName() + "\" " +
             ProcessedHtml.MACRO_REF_ATTRIBUTE + "=\"" + ref + "\">" + body + "</" +

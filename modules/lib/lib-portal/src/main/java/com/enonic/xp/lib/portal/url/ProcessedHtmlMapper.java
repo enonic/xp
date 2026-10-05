@@ -89,7 +89,7 @@ final class ProcessedHtmlMapper
         {
             gen.map();
             gen.value( "ref", macro.ref() );
-            gen.value( "descriptor", macro.descriptor().toString() );
+            gen.value( "descriptor", macro.descriptor().getKey().toString() );
             gen.map( "params" );
             macro.params().forEach( ( name, values ) -> {
                 gen.array( name );
