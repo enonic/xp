@@ -44,7 +44,7 @@ public final class AttachmentUrlPartsParams
     {
         if ( ( builder.contentSupplier == null ) == ( builder.id == null && builder.path == null ) )
         {
-            throw new IllegalArgumentException( "Either the content, or its id or path, is required" );
+            throw new IllegalArgumentException( "Either content or id/path must be provided, but not both" );
         }
         this.contentSupplier = builder.contentSupplier;
         this.id = builder.id;
@@ -140,7 +140,7 @@ public final class AttachmentUrlPartsParams
     }
 
     /**
-     * Builder of {@link AttachmentUrlPartsParams}. Either the content or its id or path is required.
+     * Builder of {@link AttachmentUrlPartsParams}. Either the content or its id/path is required, but not both.
      */
     public static class Builder
     {
