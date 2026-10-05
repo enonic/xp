@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,6 +24,7 @@ import com.enonic.xp.node.NodeQuery;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.ConstraintExpr;
 import com.enonic.xp.query.expr.DslOrderExpr;
+import com.enonic.xp.query.expr.FieldExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
 import com.enonic.xp.query.expr.QueryExpr;
@@ -45,6 +47,8 @@ class FindNodesByQueryCommandTest_icuSort
     extends AbstractNodeTest
 {
     private static final String FIELD_STRING = "fieldString";
+
+    private static final String FIELD_PRIORITY = "priority";
 
     static Stream<Arguments> languageSortTestCases()
     {
@@ -97,6 +101,48 @@ class FindNodesByQueryCommandTest_icuSort
             .containsExactlyElementsOf( descendingWords.stream().map( w -> "node-" + w ).toList() );
     }
 
+    /**
+     * Nodes indexed without the sort language have no {@code _orderby_XX} field. They sort after the nodes that have it,
+     * in binary order of the default {@code _orderby} field, instead of in arbitrary order.
+     */
+    @Test
+    void sort_with_language_falls_back_to_binary_order_for_nodes_without_language()
+    {
+        createStringNodeWithLanguage( "node-ol", "øl", "no" );
+        createStringNodeWithLanguage( "node-alfa", "alfa", "no" );
+        createStringNode( "node-zeta", "zeta" );
+        createStringNode( "node-beta", "beta" );
+        createStringNode( "node-delta", "delta" );
+        nodeService.refresh( RefreshMode.ALL );
+
+        assertThat( getNodes( sortByStringWithLanguage( "ASC", "no" ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactly( "node-alfa", "node-ol", "node-beta", "node-delta", "node-zeta" );
+
+        assertThat( getNodes( sortByStringWithLanguage( "DESC", "no" ).getNodeIds() ) ).extracting( node -> node.name().toString() )
+            .containsExactly( "node-ol", "node-alfa", "node-zeta", "node-delta", "node-beta" );
+    }
+
+    /**
+     * Nodes without the sort language are ordered by the requested field (binary order) before any following sort.
+     */
+    @Test
+    void sort_with_language_orders_nodes_without_language_by_field_before_secondary_sort()
+    {
+        createNodeWithLanguage( "node-ol", List.of( "øl" ), 1L, "no" );
+        createStringNode( "node-zeta", "zeta", 1L );
+        createStringNode( "node-beta", "beta", 2L );
+        createStringNode( "node-delta", "delta", 3L );
+        nodeService.refresh( RefreshMode.ALL );
+
+        final QueryExpr queryExpr = QueryExpr.from( QueryParser.parseCostraintExpression( "_parentPath=\"/\"" ),
+                                                    FieldOrderExpr.create( IndexPath.from( FIELD_STRING ), OrderExpr.Direction.ASC,
+                                                                           Locale.forLanguageTag( "no" ) ),
+                                                    new FieldOrderExpr( FieldExpr.from( FIELD_PRIORITY ), OrderExpr.Direction.ASC ) );
+
+        assertThat( getNodes( doFindByQuery( NodeQuery.create().query( queryExpr ).build() ).getNodeIds() ) ).extracting(
+            node -> node.name().toString() ).containsExactly( "node-ol", "node-beta", "node-delta", "node-zeta" );
+    }
+
     private FindNodesByQueryResult sortByStringWithLanguage( final String direction, final String language )
     {
         final OrderExpr.Direction dir = OrderExpr.Direction.valueOf( direction );
@@ -143,6 +189,42 @@ class FindNodesByQueryCommandTest_icuSort
         return doFindByQuery( NodeQuery.create().query( queryExpr ).build() );
     }
 
+
+    private void createNodeWithLanguage( final String name, final List<String> fieldValues, final long priority, final String language )
+    {
+        final PropertyTree data = new PropertyTree();
+        fieldValues.forEach( value -> data.addString( FIELD_STRING, value ) );
+        data.addLong( FIELD_PRIORITY, priority );
+
+        final IndexConfig fieldIndexConfig = IndexConfig.create().enabled( true ).addLanguage( Locale.forLanguageTag( language ) ).build();
+
+        createNode( CreateNodeParams.create()
+                        .parent( NodePath.ROOT )
+                        .name( name )
+                        .data( data )
+                        .indexConfigDocument( PatternIndexConfigDocument.create()
+                                                  .defaultConfig( IndexConfig.BY_TYPE )
+                                                  .add( FIELD_STRING, fieldIndexConfig )
+                                                  .build() )
+                        .build() );
+    }
+
+    private void createStringNode( final String name, final String fieldValue )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( FIELD_STRING, fieldValue );
+
+        createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( name ).data( data ).build() );
+    }
+
+    private void createStringNode( final String name, final String fieldValue, final long priority )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.addString( FIELD_STRING, fieldValue );
+        data.addLong( FIELD_PRIORITY, priority );
+
+        createNode( CreateNodeParams.create().parent( NodePath.ROOT ).name( name ).data( data ).build() );
+    }
 
     private void createStringNodeWithLanguage( final String name, final String fieldValue, final String language )
     {
