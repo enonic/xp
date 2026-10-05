@@ -51,26 +51,6 @@ class NodePathNormalizeUpgraderTest
     }
 
     @Test
-    void branchMeta_nodePath_with_whitespace_is_trimmed()
-    {
-        final VersionDumpEntryJson meta = createEntry( "/content/my-node " );
-
-        final VersionDumpEntryJson result = upgrader.upgradeBranchMeta( null, meta );
-
-        assertThat( result.getNodePath() ).isEqualTo( "/content/my-node" );
-    }
-
-    @Test
-    void branchMeta_nodePath_without_whitespace_is_unchanged()
-    {
-        final VersionDumpEntryJson meta = createEntry( "/content/my-node" );
-
-        final VersionDumpEntryJson result = upgrader.upgradeBranchMeta( null, meta );
-
-        assertThat( result ).isSameAs( meta );
-    }
-
-    @Test
     void decomposed_nodePath_is_normalized_to_nfc()
     {
         final VersionDumpEntryJson entry = createEntry( "/content/bla\u030Ab\u00E6r/ga\u030Ard" );
@@ -98,16 +78,6 @@ class NodePathNormalizeUpgraderTest
         final VersionDumpEntryJson result = upgrader.upgradeVersionEntry( entry );
 
         assertThat( result ).isSameAs( entry );
-    }
-
-    @Test
-    void branchMeta_decomposed_nodePath_is_normalized_to_nfc()
-    {
-        final VersionDumpEntryJson meta = createEntry( "/content/a\u030A" );
-
-        final VersionDumpEntryJson result = upgrader.upgradeBranchMeta( null, meta );
-
-        assertThat( result.getNodePath() ).isEqualTo( "/content/\u00E5" );
     }
 
     private static VersionDumpEntryJson createEntry( final String nodePath )

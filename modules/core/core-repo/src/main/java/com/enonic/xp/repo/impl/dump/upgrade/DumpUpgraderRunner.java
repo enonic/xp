@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.dump.DumpUpgradeResult;
+import com.enonic.xp.dump.DumpUpgradeStepResult;
 import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repo.impl.dump.RepoLoadException;
 import com.enonic.xp.repo.impl.dump.reader.DumpReaderModel8;
@@ -56,8 +57,17 @@ public class DumpUpgraderRunner
             try (DumpWriter dumpWriter = ZipDumpWriterModel9.create( basePath, targetDumpName ))
             {
                 LOG.info( "Running upgrade step [{}]...", dumpUpgrader.getName() );
-                dumpUpgrader.upgrade( dumpWriter );
-                LOG.info( "Finished upgrade step [{}]", dumpUpgrader.getName() );
+                final DumpUpgradeStepResult stepResult = dumpUpgrader.upgrade( dumpWriter );
+                result.stepResult( stepResult );
+                if ( stepResult.getErrors() > 0 )
+                {
+                    LOG.warn( "Finished upgrade step [{}] with [{}] errors out of [{}] processed entries. See the log for details",
+                              dumpUpgrader.getName(), stepResult.getErrors(), stepResult.getProcessed() );
+                }
+                else
+                {
+                    LOG.info( "Finished upgrade step [{}]", dumpUpgrader.getName() );
+                }
             }
 
             if ( upgradeListener != null )

@@ -9,7 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPropertyNames;
+import com.enonic.xp.data.Property;
+import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.data.ValueTypes;
 import com.enonic.xp.issue.IssueConstants;
 import com.enonic.xp.issue.IssuePropertyNames;
 import com.enonic.xp.node.NodeType;
@@ -79,21 +83,45 @@ public class ContentUpgrader
 
         for ( String propertyName : timeProperties )
         {
-            final Instant value = data.getInstant( propertyName );
-            if ( value != null )
+            final Property property = data.getProperty( propertyName );
+            if ( property == null || property.getValue().isNull() )
             {
-                final Instant truncated = value.truncatedTo( ChronoUnit.MILLIS );
-                if ( !truncated.equals( value ) )
-                {
-                    data.setInstant( propertyName, truncated );
-                    modified = true;
-                }
+                continue;
+            }
+
+            final Instant value;
+            try
+            {
+                value = property.getInstant();
+            }
+            catch ( RuntimeException e )
+            {
+                LOG.warn( "Cannot convert [{}] value [{}] to DateTime for node [{}] in repository [{}]. Value left as is", propertyName,
+                          property.getValue().asString(), nodeVersion.id(), repositoryId );
+                continue;
+            }
+
+            final Instant truncated = value.truncatedTo( ChronoUnit.MILLIS );
+            if ( !ValueTypes.DATE_TIME.equals( property.getType() ) )
+            {
+                // Legacy (e.g. imported) content may have time properties stored as String.
+                // A PropertyArray is single-typed, so the whole array has to be replaced to store a DateTime.
+                final PropertySet parent = property.getParent();
+                parent.removeProperties( property.getName() );
+                parent.addInstant( property.getName(), truncated );
+                modified = true;
+            }
+            else if ( !truncated.equals( value ) )
+            {
+                property.setValue( ValueFactory.newDateTime( truncated ) );
+                modified = true;
             }
         }
 
         if ( modified )
         {
-            LOG.info( "Truncated time properties to millis for node [{}] in repository [{}]", nodeVersion.id(), repositoryId );
+            LOG.info( "Normalized time properties to DateTime with millis precision for node [{}] in repository [{}]", nodeVersion.id(),
+                      repositoryId );
         }
         return modified ? nodeVersion : null;
     }
