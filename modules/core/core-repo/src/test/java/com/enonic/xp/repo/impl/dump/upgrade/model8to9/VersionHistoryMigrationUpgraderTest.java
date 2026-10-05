@@ -32,8 +32,6 @@ class VersionHistoryMigrationUpgraderTest
 
     private static final String MODIFIER = "user:system:writer";
 
-    private final VersionHistoryMigrationUpgrader upgrader = new VersionHistoryMigrationUpgrader();
-
     @Test
     void content_version_without_commit_gets_only_vacuum_skip()
     {
@@ -123,31 +121,6 @@ class VersionHistoryMigrationUpgraderTest
         final VersionDumpEntryJson result = VersionHistoryMigrationUpgrader.stampVersion( nodeVersion, entry, null );
 
         assertThat( result ).isSameAs( entry );
-    }
-
-    @Test
-    void branchMeta_for_content_node_gets_only_vacuum_skip()
-    {
-        final NodeStoreVersion nodeVersion = contentVersion( MODIFIER );
-
-        final VersionDumpEntryJson result = upgrader.upgradeBranchMeta( nodeVersion, contentEntry() );
-
-        assertThat( result.getAttributes() ).containsOnlyKeys( VacuumConstants.VACUUM_SKIP_ATTRIBUTE );
-        assertThat( result.getNodePath() ).isEqualTo( "/content/my-node" );
-    }
-
-    @Test
-    void branchMeta_for_non_content_node_is_unchanged()
-    {
-        final NodeStoreVersion nodeVersion = NodeStoreVersion.create()
-            .id( NodeId.from( "node-1" ) )
-            .nodeType( NodeType.from( "media" ) )
-            .build();
-        final VersionDumpEntryJson meta = contentEntry();
-
-        final VersionDumpEntryJson result = upgrader.upgradeBranchMeta( nodeVersion, meta );
-
-        assertThat( result ).isSameAs( meta );
     }
 
     @Test

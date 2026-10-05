@@ -5,9 +5,7 @@ import java.text.Normalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.enonic.xp.repo.impl.NodeStoreVersion;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
-import com.enonic.xp.repo.impl.dump.upgrade.BranchEntryUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.NodeVersionEntryUpgrader;
 
 /**
@@ -15,7 +13,7 @@ import com.enonic.xp.repo.impl.dump.upgrade.NodeVersionEntryUpgrader;
  * e.g. {@code a} followed by combining ring above instead of {@code å}, which are no longer valid node names.
  */
 public class NodePathNormalizeUpgrader
-    implements NodeVersionEntryUpgrader, BranchEntryUpgrader
+    implements NodeVersionEntryUpgrader
 {
     private static final Logger LOG = LoggerFactory.getLogger( NodePathNormalizeUpgrader.class );
 
@@ -23,12 +21,6 @@ public class NodePathNormalizeUpgrader
     public VersionDumpEntryJson upgradeVersionEntry( final VersionDumpEntryJson versionEntry )
     {
         return normalizeNodePath( versionEntry );
-    }
-
-    @Override
-    public VersionDumpEntryJson upgradeBranchMeta( final NodeStoreVersion nodeVersion, final VersionDumpEntryJson meta )
-    {
-        return normalizeNodePath( meta );
     }
 
     private VersionDumpEntryJson normalizeNodePath( final VersionDumpEntryJson entry )

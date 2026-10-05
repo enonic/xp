@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import com.enonic.xp.dump.DumpUpgradeResult;
 import com.enonic.xp.dump.SystemDumpUpgradeParams;
 import com.enonic.xp.dump.SystemLoadParams;
 import com.enonic.xp.dump.SystemLoadResult;
+import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -60,20 +62,33 @@ class DumpUpgradeIntegrationTest
                                  this.nodeRepositoryService, this.storageService, this.branchService, repoConfiguration );
 
         copyClasspathResource( "dump-7.zip", temporaryFolder );
+        copyClasspathResource( "dump-7-noversions.zip", temporaryFolder );
     }
 
     @Test
     void upgradeAndLoadDump7()
     {
+        upgradeLoadAndVerify( "dump-7" );
+    }
+
+    @Test
+    void upgradeAndLoadDump7WithoutVersions()
+    {
+        // Same dump as dump-7, but made without versions: it has no versions.tar.gz files
+        upgradeLoadAndVerify( "dump-7-noversions" );
+    }
+
+    private void upgradeLoadAndVerify( final String dumpName )
+    {
         // Upgrade
         final DumpUpgradeResult upgradeResult =
-            NodeHelper.runAsAdmin( () -> this.dumpService.upgrade( SystemDumpUpgradeParams.create().dumpName( "dump-7" ).build() ) );
+            NodeHelper.runAsAdmin( () -> this.dumpService.upgrade( SystemDumpUpgradeParams.create().dumpName( dumpName ).build() ) );
 
         assertEquals( new Version( 8, 0, 0 ), upgradeResult.getInitialVersion() );
         assertEquals( Version.parseVersion( "9" ), upgradeResult.getUpgradedVersion() );
 
         final String upgradedDumpName = upgradeResult.getDumpName();
-        assertThat( upgradedDumpName ).startsWith( "dump-7-upgraded-to-" );
+        assertThat( upgradedDumpName ).startsWith( dumpName + "-upgraded-to-" );
 
         // Load upgraded dump
         final SystemLoadResult loadResult = NodeHelper.runAsAdmin(
@@ -102,6 +117,11 @@ class DumpUpgradeIntegrationTest
             return nodeService.getById( result.getNodeIds().first() );
         } );
         assertEquals( "en-GB", contentFolder.data().getString( ContentPropertyNames.LANGUAGE ) );
+
+        // Verify DisplayNameIndexConfigUpgrader: displayName is indexed with the content language, for language-aware ordering
+        assertThat( contentFolder.getIndexConfigDocument()
+                        .getConfigForPath( IndexPath.from( ContentPropertyNames.DISPLAY_NAME ) )
+                        .getLanguages() ).contains( Locale.forLanguageTag( "en-GB" ) );
 
         // Verify DefaultProjectPermissionsUpgrader: system-repo should have project role nodes
         systemRepoContext().callWith( () -> {

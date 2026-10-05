@@ -44,7 +44,6 @@ import com.enonic.xp.repo.impl.dump.reader.DumpReaderModel8;
 import com.enonic.xp.repo.impl.dump.serializer.json.CommitDumpEntryJson;
 import com.enonic.xp.repo.impl.dump.serializer.json.JsonDumpSerializer;
 import com.enonic.xp.repo.impl.dump.serializer.json.VersionDumpEntryJson;
-import com.enonic.xp.repo.impl.dump.upgrade.BranchEntryUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgradeException;
 import com.enonic.xp.repo.impl.dump.upgrade.DumpUpgrader;
 import com.enonic.xp.repo.impl.dump.upgrade.NodeVersionEntryUpgrader;
@@ -89,15 +88,13 @@ public class DumpUpgrader8to9
 
     /**
      * Per-repository: the v8 meta blob keyed by (nodeId, versionId). Used to materialize orphan versions
-     * (nodes referenced by branches whose v8 versions tar entry is missing).
+     * (nodes referenced by branches whose v8 versions tar entry is missing, e.g. all nodes of a dump made without versions).
      */
     private final Map<String, Map<String, VersionDumpEntryJson>> v8MetasByNode = new HashMap<>();
 
     private boolean repoInScope;
 
     private List<NodeVersionEntryUpgrader> versionEntryUpgraders = List.of();
-
-    private List<BranchEntryUpgrader> branchEntryUpgraders = List.of();
 
     /**
      * Per-project legacy metadata harvested from the system repo's project config nodes (v8 stored
@@ -271,17 +268,7 @@ public class DumpUpgrader8to9
         v8MetasByNode.clear();
 
         repoInScope = repositoryId.toString().startsWith( ProjectConstants.PROJECT_REPO_ID_PREFIX );
-        final NodePathNormalizeUpgrader nodePathNormalizeUpgrader = new NodePathNormalizeUpgrader();
-        final List<NodeVersionEntryUpgrader> versionUpgraders = new ArrayList<>();
-        final List<BranchEntryUpgrader> branchUpgraders = new ArrayList<>();
-        if ( repoInScope )
-        {
-            branchUpgraders.add( new VersionHistoryMigrationUpgrader() );
-        }
-        versionUpgraders.add( nodePathNormalizeUpgrader );
-        branchUpgraders.add( nodePathNormalizeUpgrader );
-        versionEntryUpgraders = List.copyOf( versionUpgraders );
-        branchEntryUpgraders = List.copyOf( branchUpgraders );
+        versionEntryUpgraders = List.of( new NodePathNormalizeUpgrader() );
 
         dumpReader.getCommits( repositoryId ).ifPresent( ref -> upgradeCommitEntries( repositoryId, ref ) );
 
@@ -297,7 +284,8 @@ public class DumpUpgrader8to9
         // Materialize default project roles (or other synthetic nodes) as additional version entries.
         createAdditionalNodes( repositoryId );
 
-        // Emit synthesized versions for nodes referenced by branches but absent from the v8 versions tar.
+        // Emit versions for nodes referenced by branches but absent from the v8 versions tar.
+        // For a dump made without versions this is every node.
         writeSynthesizedOrphanVersions( repositoryId );
     }
 
@@ -337,18 +325,42 @@ public class DumpUpgrader8to9
                 {
                     continue;
                 }
-                final List<VersionDumpEntryJson> synthesized = new ArrayList<>();
-                for ( Map.Entry<String, VersionDumpEntryJson> versionEntry : nodeEntry.getValue().entrySet() )
+                result.processed();
+                try
                 {
-                    synthesized.add( upgradeOrphanMeta( repositoryId, versionEntry.getValue(), versionEntry.getKey() ) );
+                    processOrphanNode( repositoryId, nodeId, nodeEntry.getValue() );
                 }
-                writeVersionsJsonl( nodeId, synthesized );
+                catch ( Exception e )
+                {
+                    result.error();
+                    LOG.error( "Error while upgrading branch entries of node [{}]", nodeId, e );
+                }
             }
         }
         finally
         {
             dumpWriter.closeMeta();
         }
+    }
+
+    /**
+     * Branch entries carry the same meta as version entries, so the versions they point to go through the same upgrade as
+     * versions read from the v8 versions tar.
+     */
+    private void processOrphanNode( final RepositoryId repositoryId, final String nodeId,
+                                    final Map<String, VersionDumpEntryJson> v8MetasByVersionId )
+    {
+        final VersionHistoryMigrationUpgrader.ContentHistoryContext historyContext = repoInScope
+            ? VersionHistoryMigrationUpgrader.buildContext( branchActivations.getOrDefault( nodeId, Map.of() ) )
+            : null;
+
+        final List<VersionDumpEntryJson> upgradedVersions = new ArrayList<>();
+        for ( VersionDumpEntryJson v8Meta : v8MetasByVersionId.values() )
+        {
+            upgradedVersions.add( processVersionMeta( v8Meta, repositoryId, historyContext ) );
+        }
+
+        writeVersionsJsonl( nodeId, upgradedVersions );
     }
 
     private void writeVersionsJsonl( final String nodeId, final List<VersionDumpEntryJson> versions )
@@ -515,44 +527,6 @@ public class DumpUpgrader8to9
         return LayerBaseCommitDropUpgrader.clearDroppedCommitId( droppedCommitIds, result );
     }
 
-    private VersionDumpEntryJson upgradeOrphanMeta( final RepositoryId repositoryId, final VersionDumpEntryJson v8Meta,
-                                                    final String versionId )
-    {
-        final Segment nodeSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.NODE_SEGMENT_LEVEL );
-        final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
-        final Segment accessControlSegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
-
-        final NodeStoreVersion nodeVersion = readNodeVersion( v8Meta, nodeSegment, indexConfigSegment, accessControlSegment );
-
-        final VersionDumpEntryJson.Builder metaBuilder = VersionDumpEntryJson.create( v8Meta ).version( versionId );
-
-        final String newNodeBlobKey = blobKeyMapping.get( v8Meta.getNodeBlobKey() );
-        if ( newNodeBlobKey != null )
-        {
-            metaBuilder.nodeBlobKey( newNodeBlobKey );
-        }
-
-        final String newIndexConfigBlobKey = blobKeyMapping.get( v8Meta.getIndexConfigBlobKey() );
-        if ( newIndexConfigBlobKey != null )
-        {
-            metaBuilder.indexConfigBlobKey( newIndexConfigBlobKey );
-        }
-
-        final String newAccessControlBlobKey = blobKeyMapping.get( v8Meta.getAccessControlBlobKey() );
-        if ( newAccessControlBlobKey != null )
-        {
-            metaBuilder.accessControlBlobKey( newAccessControlBlobKey );
-        }
-        VersionDumpEntryJson result = metaBuilder.build();
-
-        for ( BranchEntryUpgrader upgrader : branchEntryUpgraders )
-        {
-            result = upgrader.upgradeBranchMeta( nodeVersion, result );
-        }
-
-        return LayerBaseCommitDropUpgrader.clearDroppedCommitId( droppedCommitIds, result );
-    }
-
     private @Nullable NodeStoreVersion copyBinaryBlobs( final NodeStoreVersion dumpEntry, final RepositoryId repositoryId )
     {
         final Segment binarySegment = RepositorySegmentUtils.toSegment( repositoryId, NodeConstants.BINARY_SEGMENT_LEVEL );
@@ -682,22 +656,36 @@ public class DumpUpgrader8to9
 
     protected @Nullable NodeStoreVersion upgradeNodeVersion( RepositoryId repositoryId, final NodeStoreVersion dumpEntry )
     {
-        NodeStoreVersion result = dumpEntry;
+        NodeStoreVersion current = dumpEntry;
         for ( NodeVersionUpgrader upgrader : List.of( new ContentUpgrader(), new ArchivedContentNameUpgrader(), new AuditLogMillisUpgrader(),
                                                       new SchedulerUpgrader(), new ReferenceLowercaseUpgrader(),
                                                       new DefaultProjectPermissionsUpgrader(),
-                                                      new LanguageTagUpgrader(), new IndexConfigLanguageUpgrader(),
+                                                      new LanguageTagUpgrader(), new DisplayNameIndexConfigUpgrader(),
+                                                      new IndexConfigLanguageUpgrader(),
                                                       new AttachmentSha512Upgrader( dumpReader ), new AttachmentTextToMediaUpgrader(),
                                                       new ImageUpgrader( dumpReader ), new ProjectMetadataStripperUpgrader(),
                                                       new RepositoryBranchesRemovalUpgrader(), new RepositoryModelVersionUpgrader() ) )
         {
-            final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, result );
-            if ( upgraded != null )
+            // A failing upgrader must not drop the whole node: keep the version as upgraded so far and report the error
+            try
             {
-                result = upgraded;
+                final NodeStoreVersion upgraded = upgrader.upgradeNodeVersion( repositoryId, current );
+                if ( upgraded != null )
+                {
+                    current = upgraded;
+                }
+            }
+            catch ( Exception e )
+            {
+                if ( result != null )
+                {
+                    result.error();
+                }
+                LOG.error( "Upgrader [{}] failed for node [{}] in repository [{}]. Upgrade skipped for this node version",
+                           upgrader.getClass().getSimpleName(), dumpEntry.id(), repositoryId, e );
             }
         }
-        return result;
+        return current;
     }
 
     @Override
