@@ -208,7 +208,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertEquals( "baseUrl/_/media:attachment/_error/_error/_error", url );
+        assertEquals( "baseUrl/_/media:attachment/_error/0/_error", url );
     }
 
     @Test
@@ -263,7 +263,7 @@ class PortalUrlServiceImpl_attachmentUrlTest
             .build()
             .callWith( () -> this.service.attachmentUrl( params ) );
 
-        assertEquals( "/api/media:attachment/_error/_error/_error", url );
+        assertEquals( "/api/media:attachment/_error/0/_error", url );
     }
 
     @Test
