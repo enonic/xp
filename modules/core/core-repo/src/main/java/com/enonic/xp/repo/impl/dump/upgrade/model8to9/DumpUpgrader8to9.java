@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -156,21 +157,46 @@ public class DumpUpgrader8to9
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( systemRepoId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
         final Segment accessControlSegment = RepositorySegmentUtils.toSegment( systemRepoId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
 
-        dumpReader.getVersions( systemRepoId ).ifPresent( ref -> processEntries( ( entryContent, entryName ) -> {
-            try
-            {
-                final Model8VersionsDumpEntryJson v8Entry = JsonDumpSerializer.readValue( entryContent, Model8VersionsDumpEntryJson.class );
-                for ( VersionDumpEntryJson version : v8Entry.getVersions() )
+        final Optional<PathRef> versions = dumpReader.getVersions( systemRepoId );
+        if ( versions.isPresent() )
+        {
+            processEntries( ( entryContent, entryName ) -> {
+                try
                 {
-                    final NodeStoreVersion nv = readNodeVersion( version, nodeSegment, indexConfigSegment, accessControlSegment );
+                    final Model8VersionsDumpEntryJson v8Entry =
+                        JsonDumpSerializer.readValue( entryContent, Model8VersionsDumpEntryJson.class );
+                    for ( VersionDumpEntryJson version : v8Entry.getVersions() )
+                    {
+                        final NodeStoreVersion nv = readNodeVersion( version, nodeSegment, indexConfigSegment, accessControlSegment );
+                        extractProjectMetadata( nv );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    result.error();
+                    LOG.error( "Error while pre-scanning system repo entry [{}] for project metadata", entryName, e );
+                }
+            }, versions.get() );
+            return;
+        }
+
+        // Dump made without versions: the branch entries hold the only copy of the project config nodes
+        for ( Branch branch : dumpReader.getBranches( systemRepoId ) )
+        {
+            dumpReader.getBranchEntries( systemRepoId, branch ).ifPresent( ref -> processEntries( ( entryContent, entryName ) -> {
+                try
+                {
+                    final Model8BranchDumpEntryJson v8Entry = JsonDumpSerializer.readValue( entryContent, Model8BranchDumpEntryJson.class );
+                    final NodeStoreVersion nv = readNodeVersion( v8Entry.getMeta(), nodeSegment, indexConfigSegment, accessControlSegment );
                     extractProjectMetadata( nv );
                 }
-            }
-            catch ( Exception e )
-            {
-                LOG.error( "Error while pre-scanning system repo entry [{}] for project metadata", entryName, e );
-            }
-        }, ref ) );
+                catch ( Exception e )
+                {
+                    result.error();
+                    LOG.error( "Error while pre-scanning system repo branch entry [{}] for project metadata", entryName, e );
+                }
+            }, ref ) );
+        }
     }
 
     private void extractProjectMetadata( final NodeStoreVersion nodeVersion )
@@ -308,6 +334,8 @@ public class DumpUpgrader8to9
             }
             catch ( Exception e )
             {
+                // A node without readable branch entries is missing from a dump made without versions
+                result.error();
                 LOG.error( "Error while reading v8 branch entry [{}]", entryName, e );
             }
         }, entriesFile );

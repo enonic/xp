@@ -72,6 +72,20 @@ class DisplayNameIndexConfigUpgraderTest
     }
 
     @Test
+    void replaces_disabled_display_name_config_with_language()
+    {
+        final PatternIndexConfigDocument indexConfig = PatternIndexConfigDocument.create()
+            .add( ContentPropertyNames.DISPLAY_NAME, IndexConfig.create( IndexConfig.NONE ).addLanguage( Locale.ENGLISH ).build() )
+            .build();
+
+        final NodeStoreVersion result =
+            upgrader.upgradeNodeVersion( DEFAULT_REPO, createNodeVersion( ContentConstants.CONTENT_NODE_COLLECTION, "en", indexConfig ) );
+
+        assertThat( result ).isNotNull();
+        assertThat( result.indexConfigDocument().getConfigForPath( DISPLAY_NAME ).isEnabled() ).isTrue();
+    }
+
+    @Test
     void skips_content_without_language()
     {
         assertThat( upgrader.upgradeNodeVersion( DEFAULT_REPO, createNodeVersion( ContentConstants.CONTENT_NODE_COLLECTION, null,

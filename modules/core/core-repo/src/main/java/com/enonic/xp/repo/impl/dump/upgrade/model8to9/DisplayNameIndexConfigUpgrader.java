@@ -64,7 +64,8 @@ public class DisplayNameIndexConfigUpgrader
         {
             if ( DISPLAY_NAME_PATH.equals( pathIndexConfig.getIndexPath() ) )
             {
-                if ( pathIndexConfig.getIndexConfig().getLanguages().contains( language ) )
+                final IndexConfig indexConfig = pathIndexConfig.getIndexConfig();
+                if ( indexConfig.isEnabled() && indexConfig.getLanguages().contains( language ) )
                 {
                     return null;
                 }
