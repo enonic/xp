@@ -10,7 +10,6 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
-import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.html.HtmlBuilder;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
@@ -57,11 +56,7 @@ public final class TextRenderer
             }
             else
             {
-                ProcessHtmlParams params = new ProcessHtmlParams().value( text ).customHtmlProcessor( processor -> {
-                    processor.processDefault();
-                    processor.getDocument().select( "figcaption:empty" ).forEach( HtmlElement::remove );
-                    return processor.getDocument().getInnerHtml();
-                } );
+                final ProcessHtmlParams params = new ProcessHtmlParams().value( text );
 
                 final String processedHtml = PortalRequestAccessor.callWith( portalRequest, () -> portalUrlService.processHtml( params ) );
                 portalResponseBuilder.body( renderHtml( textComponent, processedHtml ) );

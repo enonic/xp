@@ -9,16 +9,12 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.project.ProjectName;
 
-import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.Objects.requireNonNullElse;
-
 
 public final class ImageUrlGeneratorParams
 {
     private final String baseUrl;
-
-    private final String mediaBaseUrl;
 
     private final String urlType;
 
@@ -43,7 +39,6 @@ public final class ImageUrlGeneratorParams
     private ImageUrlGeneratorParams( final Builder builder )
     {
         this.baseUrl = builder.baseUrl;
-        this.mediaBaseUrl = builder.mediaBaseUrl;
         this.urlType = requireNonNullElse( builder.urlType, UrlTypeConstants.SERVER_RELATIVE );
         this.mediaSupplier = requireNonNull( builder.mediaSupplier );
         this.projectNameSupplier = requireNonNull( builder.projectNameSupplier );
@@ -59,11 +54,6 @@ public final class ImageUrlGeneratorParams
     public String getBaseUrl()
     {
         return baseUrl;
-    }
-
-    public String getMediaBaseUrl()
-    {
-        return mediaBaseUrl;
     }
 
     public String getUrlType()
@@ -125,8 +115,6 @@ public final class ImageUrlGeneratorParams
     {
         private String baseUrl;
 
-        private String mediaBaseUrl;
-
         private String urlType;
 
         private Supplier<Media> mediaSupplier;
@@ -151,25 +139,13 @@ public final class ImageUrlGeneratorParams
          * Base URL of a mount where the generated media URL lives under the "_"
          * endpoint segment: {@code <baseUrl>/_/media:image/...}.
          *
-         * @deprecated use {@link #setMediaBaseUrl(String)} - append {@code /_} to the
-         * value to keep the mount form produced by this method.
+         * @deprecated configure where the media APIs are served with a virtual host mapping, or
+         * {@code media.defaultBaseUrl} in {@code com.enonic.xp.portal.cfg}.
          */
         @Deprecated
         public Builder setBaseUrl( final String baseUrl )
         {
             this.baseUrl = baseUrl;
-            return this;
-        }
-
-        /**
-         * Base URL used verbatim as the API root of the generated media URL:
-         * {@code <mediaBaseUrl>/media:image/...} - no "_" endpoint segment is added.
-         * Takes precedence over {@code baseUrl}, which points at a mount where APIs
-         * live under the "_" endpoint segment: {@code <baseUrl>/_/media:image/...}.
-         */
-        public Builder setMediaBaseUrl( final String mediaBaseUrl )
-        {
-            this.mediaBaseUrl = emptyToNull( mediaBaseUrl );
             return this;
         }
 

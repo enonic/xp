@@ -5,7 +5,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Parts of an image URL, for building the full URL from segments:
- * {@code url = <baseUrl> + path + queryString}. All values are URL-escaped as they appear in the URL.
+ * {@code url = <mediaBaseUrl> + path + queryString}, where {@code mediaBaseUrl} is supplied by the caller
+ * and points at the root of the media APIs. All values are URL-escaped as they appear in the URL.
  *
  * @param path        the full media API path with a leading slash: {@code /media:image/<context>/<id>:<fingerprint>/<scale>/<name>}
  * @param queryString URL-escaped query string prefixed with {@code ?}; empty when there are no parameters

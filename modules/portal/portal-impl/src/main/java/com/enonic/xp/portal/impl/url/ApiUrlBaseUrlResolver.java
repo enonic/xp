@@ -21,8 +21,6 @@ final class ApiUrlBaseUrlResolver
 
     private final String baseUrl;
 
-    private final String apiBaseUrl;
-
     private final String urlType;
 
     private final String defaultMediaBaseUrl;
@@ -37,7 +35,6 @@ final class ApiUrlBaseUrlResolver
     {
         this.descriptorKey = requireNonNull( builder.descriptorKey, "DescriptorKey must be set" );
         this.baseUrl = builder.baseUrl;
-        this.apiBaseUrl = builder.apiBaseUrl;
         this.urlType = builder.urlType;
         this.defaultMediaBaseUrl = builder.defaultMediaBaseUrl;
         this.mediaApiAutoMount = builder.mediaApiAutoMount;
@@ -55,8 +52,6 @@ final class ApiUrlBaseUrlResolver
         private DescriptorKey descriptorKey;
 
         private String baseUrl;
-
-        private String apiBaseUrl;
 
         private String urlType;
 
@@ -77,12 +72,6 @@ final class ApiUrlBaseUrlResolver
         Builder setBaseUrl( final String baseUrl )
         {
             this.baseUrl = baseUrl;
-            return this;
-        }
-
-        Builder setApiBaseUrl( final String apiBaseUrl )
-        {
-            this.apiBaseUrl = apiBaseUrl;
             return this;
         }
 
@@ -126,12 +115,6 @@ final class ApiUrlBaseUrlResolver
     public String get()
     {
         final PortalRequest portalRequest = PortalRequestAccessor.get();
-
-        // the root where this API is exposed, verbatim: nothing but path and query follow
-        if ( apiBaseUrl != null )
-        {
-            return apiBaseUrl;
-        }
 
         if ( baseUrl != null )
         {

@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -11,18 +12,19 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.impl.PortalConfig;
 import com.enonic.xp.portal.url.ApiUrlGeneratorParams;
 import com.enonic.xp.portal.url.AttachmentUrlGeneratorParams;
-import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.ImageUrlGeneratorParams;
-import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
 import com.enonic.xp.security.RoleKeys;
@@ -34,9 +36,9 @@ import com.enonic.xp.webapp.WebappService;
 public class PortalUrlGeneratorServiceImpl
     implements PortalUrlGeneratorService
 {
-    private static final DescriptorKey MEDIA_IMAGE_API_DESCRIPTOR_KEY = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
+    static final DescriptorKey MEDIA_IMAGE_API_DESCRIPTOR_KEY = DescriptorKey.from( ApplicationKey.from( "media" ), "image" );
 
-    private static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
+    static final DescriptorKey MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY =
         DescriptorKey.from( ApplicationKey.from( "media" ), "attachment" );
 
     private final WebappService webappService;
@@ -65,21 +67,26 @@ public class PortalUrlGeneratorServiceImpl
     @Override
     public String imageUrl( final ImageUrlGeneratorParams params )
     {
-        final ApiUrlGeneratorParams.Builder builder = ApiUrlGeneratorParams.create()
-            .setUrlType( params.getUrlType() )
-            .setDescriptorKey( MEDIA_IMAGE_API_DESCRIPTOR_KEY )
-            .setPath( ImageMediaPathSupplier.create()
-                          .setMedia( params.getMedia() )
-                          .setProjectName( params.getProjectName() )
-                          .setBranch( params.getBranch() )
-                          .setScale( params.getScale() )
-                          .setFormat( params.getFormat() )
-                          .build() );
+        final Supplier<Media> media =
+            IdentifiedSupplier.of( IdentifiedSupplier.contentId( params.getMedia() ), Suppliers.memoize( params.getMedia()::get ) );
 
-        builder.setQueryParams( imageQueryParams( params ) );
+        final Supplier<String> path = ImageMediaPathSupplier.create()
+            .setMedia( media )
+            .setProjectName( params.getProjectName() )
+            .setBranch( params.getBranch() )
+            .setScale( params.getScale() )
+            .setFormat( params.getFormat() )
+            .build();
 
-        final String mediaBaseUrl = resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
-        return mediaBaseUrl != null ? generateMediaUrl( mediaBaseUrl, builder.build() ) : apiUrl( builder.build() );
+        final Supplier<String> queryString = () -> queryString(
+            imageQueryParams( params.getQueryParams(), isScalable( media ), params.getQuality(), params.getBackground(),
+                              params.getFilter() ) );
+
+        return generateUrl( UrlGeneratorParams.create()
+                                .setBaseUrl( apiBaseUrl( params.getUrlType(), params.getBaseUrl(), MEDIA_IMAGE_API_DESCRIPTOR_KEY ) )
+                                .setPath( path )
+                                .setQueryString( queryString )
+                                .build() );
     }
 
     @Override
@@ -97,137 +104,86 @@ public class PortalUrlGeneratorServiceImpl
             .setUrlType( params.getUrlType() )
             .setDescriptorKey( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY )
             .setPath( pathStrategy )
-            .setQueryParams( params.getQueryParams() );
+            .setQueryParams( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) );
 
-        if ( params.isDownload() )
-        {
-            builder.setQueryParams( Map.of( "download", List.of() ) );
-        }
-
-        final String mediaBaseUrl = resolveMediaBaseUrl( params.getMediaBaseUrl(), params.getBaseUrl() );
-        return mediaBaseUrl != null ? generateMediaUrl( mediaBaseUrl, builder.build() ) : apiUrl( builder.build() );
+        return apiUrl( builder.setBaseUrl( params.getBaseUrl() ).build() );
     }
 
-    @Override
-    public ImageUrlParts imageUrlParts( final ImageUrlGeneratorParams params )
+    private ApiUrlBaseUrlResolver apiBaseUrl( final String urlType, final String baseUrl, final DescriptorKey descriptorKey )
     {
-        return runWithAdminRole( () -> {
-            final MediaPathParts parts = ImageMediaPathSupplier.create()
-                .setMedia( params.getMedia() )
-                .setProjectName( params.getProjectName() )
-                .setBranch( params.getBranch() )
-                .setScale( params.getScale() )
-                .setFormat( params.getFormat() )
-                .build()
-                .parts();
-
-            return new ImageUrlParts( mediaPath( MEDIA_IMAGE_API_DESCRIPTOR_KEY, parts ), queryString( imageQueryParams( params ) ),
-                                      UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
-                                      UrlBuilderHelper.urlEncodePathSegment( parts.scale() ),
-                                      UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
-        } );
+        return ApiUrlBaseUrlResolver.create()
+            .setBaseUrl( baseUrl )
+            .setDescriptorKey( descriptorKey )
+            .setUrlType( urlType )
+            .setDefaultMediaBaseUrl( defaultMediaBaseUrl )
+            .setMediaApiAutoMount( mediaApiAutoMount )
+            .setWebappService( webappService )
+            .setSiteService( siteService )
+            .build();
     }
 
-    @Override
-    public AttachmentUrlParts attachmentUrlParts( final AttachmentUrlGeneratorParams params )
+    /**
+     * @return the query params of an image URL; an image served as stored takes none of the processing params
+     */
+    static Map<String, List<String>> imageQueryParams( final Map<String, List<String>> params, final boolean scalable,
+                                                               final Integer quality, final String background, final String filter )
     {
-        return runWithAdminRole( () -> {
-            final MediaPathParts parts = AttachmentMediaPathSupplier.create()
-                .setContent( params.getContentSupplier() )
-                .setProjectName( params.getProjectName() )
-                .setBranch( params.getBranch() )
-                .setName( params.getName() )
-                .setLabel( params.getLabel() )
-                .build()
-                .parts();
+        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
 
-            return new AttachmentUrlParts( mediaPath( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY, parts ),
-                                           queryString( attachmentQueryParams( params ) ),
-                                           UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
-                                           UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
-        } );
-    }
-
-    private static Map<String, List<String>> imageQueryParams( final ImageUrlGeneratorParams params )
-    {
-        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params.getQueryParams() );
-
-        if ( params.getQuality() != null )
+        if ( !scalable )
         {
-            queryParams.put( "quality", List.of( params.getQuality().toString() ) );
+            return queryParams;
         }
-        if ( params.getBackground() != null )
+
+        if ( quality != null )
         {
-            queryParams.put( "background", List.of( params.getBackground() ) );
+            queryParams.put( "quality", List.of( quality.toString() ) );
         }
-        if ( params.getFilter() != null )
+        if ( background != null )
         {
-            queryParams.put( "filter", List.of( params.getFilter() ) );
+            queryParams.put( "background", List.of( background ) );
+        }
+        if ( filter != null )
+        {
+            queryParams.put( "filter", List.of( filter ) );
         }
 
         return queryParams;
     }
 
-    private static Map<String, List<String>> attachmentQueryParams( final AttachmentUrlGeneratorParams params )
+    /**
+     * @return whether the image resolves and the image API scales it
+     */
+    private static boolean isScalable( final Supplier<Media> media )
     {
-        if ( params.isDownload() )
+        try
         {
-            return Map.of( "download", List.of() );
+            return ImageScaling.isScalable( MediaLookup.image( media.get() ) );
         }
-        return params.getQueryParams();
+        catch ( RuntimeException e )
+        {
+            return false;
+        }
     }
 
-    private static String queryString( final Map<String, List<String>> queryParams )
+    static Map<String, List<String>> attachmentQueryParams( final Map<String, List<String>> params, final boolean download )
+    {
+        final Map<String, List<String>> queryParams = new LinkedHashMap<>( params );
+
+        if ( download )
+        {
+            queryParams.put( "download", List.of() );
+        }
+
+        return queryParams;
+    }
+
+    static String queryString( final Map<String, List<String>> queryParams )
     {
         final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
         queryParamsStrategy.params( queryParams );
         return queryParamsStrategy.get();
     }
-
-    private static String mediaPath( final DescriptorKey descriptorKey, final MediaPathParts parts )
-    {
-        final StringBuilder path = new StringBuilder();
-        UrlBuilderHelper.appendPart( path, descriptorKey.toString() );
-        UrlBuilderHelper.appendPart( path, parts.context() );
-        UrlBuilderHelper.appendPart( path, parts.idWithHash() );
-        UrlBuilderHelper.appendPart( path, parts.scale() );
-        UrlBuilderHelper.appendPart( path, parts.name() );
-        return path.toString();
-    }
-
-    static String resolveMediaBaseUrl( final String mediaBaseUrl, final String baseUrl )
-    {
-        if ( mediaBaseUrl != null )
-        {
-            return mediaBaseUrl;
-        }
-        if ( baseUrl == null )
-        {
-            return null;
-        }
-        // baseUrl points at a mount: media APIs live under its "_" endpoint segment
-        final StringBuilder url = new StringBuilder( baseUrl );
-        UrlBuilderHelper.appendPart( url, "_" );
-        return url.toString();
-    }
-
-    private String generateMediaUrl( final String mediaBaseUrl, final ApiUrlGeneratorParams params )
-    {
-        final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
-        queryParamsStrategy.params( params.getQueryParams() );
-
-        // mediaBaseUrl points directly at the API root: no "_" endpoint segment is added
-        return generateUrl( UrlGeneratorParams.create()
-                                .setBaseUrl( () -> {
-                                    final StringBuilder url = new StringBuilder( mediaBaseUrl );
-                                    UrlBuilderHelper.appendPart( url, params.getDescriptorKey().toString() );
-                                    return url.toString();
-                                } )
-                                .setPath( params.getPath() )
-                                .setQueryString( queryParamsStrategy )
-                                .build() );
-    }
-
 
     @Override
     public String apiUrl( final ApiUrlGeneratorParams params )
@@ -236,16 +192,7 @@ public class PortalUrlGeneratorServiceImpl
         queryParamsStrategy.params( params.getQueryParams() );
 
         final UrlGeneratorParams generatorParams = UrlGeneratorParams.create()
-            .setBaseUrl( ApiUrlBaseUrlResolver.create()
-                             .setBaseUrl( params.getBaseUrl() )
-                             .setApiBaseUrl( params.getApiBaseUrl() )
-                             .setDescriptorKey( params.getDescriptorKey() )
-                             .setUrlType( params.getUrlType() )
-                             .setDefaultMediaBaseUrl( defaultMediaBaseUrl )
-                             .setMediaApiAutoMount( mediaApiAutoMount )
-                             .setWebappService( webappService )
-                             .setSiteService( siteService )
-                             .build() )
+            .setBaseUrl( apiBaseUrl( params.getUrlType(), params.getBaseUrl(), params.getDescriptorKey() ) )
             .setPath( params.getPath() )
             .setQueryString( queryParamsStrategy )
             .build();

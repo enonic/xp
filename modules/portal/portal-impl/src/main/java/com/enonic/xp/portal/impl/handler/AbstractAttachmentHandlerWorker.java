@@ -14,6 +14,7 @@ import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentId;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalResponse;
+import com.enonic.xp.portal.impl.ImageScaling;
 import com.enonic.xp.portal.impl.handler.attachment.RangeRequestHelper;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.Permission;
@@ -69,12 +70,11 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
 
         final boolean isSvgz = "svgz".equals( attachment.getExtension() );
 
-        final MediaType attachmentMimeType = isSvgz ? SVG_MEDIA_TYPE : parseMimeType( attachment.getMimeType() );
+        final MediaType attachmentMimeType = ImageScaling.mimeType( attachment );
 
         final MediaType contentType;
         final ByteSource body;
-        if ( attachmentMimeType.is( MediaType.GIF ) || attachmentMimeType.is( MediaType.AVIF ) || attachmentMimeType.is( MediaType.WEBP ) ||
-            attachmentMimeType.is( SVG_MEDIA_TYPE ) )
+        if ( !ImageScaling.isScalable( attachmentMimeType ) )
         {
             contentType = attachmentMimeType;
             body = binary;
@@ -200,17 +200,5 @@ public abstract class AbstractAttachmentHandlerWorker<T extends Content>
         }
 
         return binary;
-    }
-
-    private static MediaType parseMimeType( final String mimeType )
-    {
-        try
-        {
-            return MediaType.parse( mimeType );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            return MediaType.OCTET_STREAM;
-        }
     }
 }
