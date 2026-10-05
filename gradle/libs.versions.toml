@@ -11,7 +11,7 @@ log4j = "2.26.1"
 micrometer = "1.17.1"
 prometheus = "1.9.0"
 graalvm = "25.4.4.1.1"
-caffeine = "3.2.4"
+caffeine = "3.3.0"
 guava = "33.7.1-jre"
 
 [libraries]
