@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -144,7 +143,7 @@ public class DumpUpgrader8to9
     }
 
     /**
-     * Pre-pass over the system repo's v8 versions tar to harvest per-project {@code displayName}
+     * Pre-pass over the system repo's v8 versions tar and branch entries to harvest per-project {@code displayName}
      * and {@code description}, which v8 stored on the project's repository config node. The values
      * are written onto the project's {@code /content} node by {@link ProjectContentRootMetadataUpgrader}
      * during the per-repo loop, and removed from the system repo entries by
@@ -157,30 +156,25 @@ public class DumpUpgrader8to9
         final Segment indexConfigSegment = RepositorySegmentUtils.toSegment( systemRepoId, NodeConstants.INDEX_CONFIG_SEGMENT_LEVEL );
         final Segment accessControlSegment = RepositorySegmentUtils.toSegment( systemRepoId, NodeConstants.ACCESS_CONTROL_SEGMENT_LEVEL );
 
-        final Optional<PathRef> versions = dumpReader.getVersions( systemRepoId );
-        if ( versions.isPresent() )
-        {
-            processEntries( ( entryContent, entryName ) -> {
-                try
+        dumpReader.getVersions( systemRepoId ).ifPresent( ref -> processEntries( ( entryContent, entryName ) -> {
+            try
+            {
+                final Model8VersionsDumpEntryJson v8Entry = JsonDumpSerializer.readValue( entryContent, Model8VersionsDumpEntryJson.class );
+                for ( VersionDumpEntryJson version : v8Entry.getVersions() )
                 {
-                    final Model8VersionsDumpEntryJson v8Entry =
-                        JsonDumpSerializer.readValue( entryContent, Model8VersionsDumpEntryJson.class );
-                    for ( VersionDumpEntryJson version : v8Entry.getVersions() )
-                    {
-                        final NodeStoreVersion nv = readNodeVersion( version, nodeSegment, indexConfigSegment, accessControlSegment );
-                        extractProjectMetadata( nv );
-                    }
+                    final NodeStoreVersion nv = readNodeVersion( version, nodeSegment, indexConfigSegment, accessControlSegment );
+                    extractProjectMetadata( nv );
                 }
-                catch ( Exception e )
-                {
-                    result.error();
-                    LOG.error( "Error while pre-scanning system repo entry [{}] for project metadata", entryName, e );
-                }
-            }, versions.get() );
-            return;
-        }
+            }
+            catch ( Exception e )
+            {
+                result.error();
+                LOG.error( "Error while pre-scanning system repo entry [{}] for project metadata", entryName, e );
+            }
+        }, ref ) );
 
-        // Dump made without versions: the branch entries hold the only copy of the project config nodes
+        // Branch entries hold the current project config nodes. They take precedence over versions, and are the only copy when the
+        // dump was made without versions or a node's versions entry is missing.
         for ( Branch branch : dumpReader.getBranches( systemRepoId ) )
         {
             dumpReader.getBranchEntries( systemRepoId, branch ).ifPresent( ref -> processEntries( ( entryContent, entryName ) -> {
