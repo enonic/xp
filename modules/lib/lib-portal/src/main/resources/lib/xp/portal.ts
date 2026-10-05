@@ -705,8 +705,8 @@ export interface ProcessedHtmlMacro {
     ref: string;
     /** Key of the macro descriptor, such as `system:embed`. */
     descriptor: string;
-    /** Parameters of the macro, each with its values in the order written. A parameter matching an input of the descriptor's form, ignoring case, is named as that input. */
-    params: Record<string, string[]>;
+    /** Parameters of the macro. A parameter matching an input of the descriptor's form, ignoring case, is named as that input, and holds a list of its values in the order written when the input takes several, or its first value otherwise. */
+    config: Record<string, string | string[]>;
     /** Body of the macro as written; empty for a macro without one. */
     body: string;
 }
@@ -809,7 +809,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
         macros: (result.macros || []).map((macro) => ({
             ref: macro.ref,
             descriptor: macro.descriptor,
-            params: macro.params || {},
+            config: macro.config || {},
             body: macro.body,
         })),
     };

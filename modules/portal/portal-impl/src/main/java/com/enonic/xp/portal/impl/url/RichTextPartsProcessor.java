@@ -41,6 +41,7 @@ import com.enonic.xp.portal.url.ProcessedHtml;
 import com.enonic.xp.style.ImageStyle;
 import com.enonic.xp.style.StyleDescriptorService;
 import com.enonic.xp.style.StyleDescriptors;
+import com.enonic.xp.util.GenericValue;
 
 /**
  * Processes rich text for {@link PortalUrlService#processHtmlParts}: resolves every internal link from configuration,
@@ -129,18 +130,38 @@ final class RichTextPartsProcessor
             return macro.toString();
         }
 
-        final MacroParamNames paramNames = new MacroParamNames( descriptor );
-        final Map<String, List<String>> macroParams = new LinkedHashMap<>();
-        macro.getParameters()
-            .forEach( ( name, value ) -> macroParams.computeIfAbsent( paramNames.of( name ), key -> new ArrayList<>() ).add( value ) );
-
         final String ref = UUID.randomUUID().toString();
         final String body = Objects.requireNonNullElse( macro.getBody(), "" );
-        macros.add( new ProcessedHtml.Macro( ref, descriptor.getKey(), macroParams, body ) );
+        macros.add( new ProcessedHtml.Macro( ref, descriptor.getKey(), macroConfig( macro, descriptor ), body ) );
 
         return "<" + ProcessedHtml.MACRO_ELEMENT + " " + ProcessedHtml.MACRO_NAME_ATTRIBUTE + "=\"" + descriptor.getName() + "\" " +
             ProcessedHtml.MACRO_REF_ATTRIBUTE + "=\"" + ref + "\">" + body + "</" +
             ProcessedHtml.MACRO_ELEMENT + ">";
+    }
+
+    private static GenericValue macroConfig( final Macro macro, final MacroDescriptor descriptor )
+    {
+        final MacroParamNames paramNames = new MacroParamNames( descriptor );
+        final Map<String, List<String>> macroParams = new LinkedHashMap<>();
+        macro.getParameters().forEach( ( name, value ) -> {
+            if ( value != null )
+            {
+                macroParams.computeIfAbsent( paramNames.of( name ), key -> new ArrayList<>() ).add( value );
+            }
+        } );
+
+        final GenericValue.ObjectBuilder config = GenericValue.newObject();
+        macroParams.forEach( ( name, values ) -> {
+            if ( paramNames.isMultiple( name ) )
+            {
+                config.put( name, values.stream().map( GenericValue::stringValue ).collect( GenericValue.listCollector() ) );
+            }
+            else
+            {
+                config.put( name, values.getFirst() );
+            }
+        } );
+        return config.build();
     }
 
     private void processDocument( final HtmlDocument document, final HtmlElementPostProcessor postProcessor )

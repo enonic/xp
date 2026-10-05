@@ -1,7 +1,6 @@
 package com.enonic.xp.lib.portal.url;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
@@ -28,6 +27,7 @@ import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.testing.ScriptTestSupport;
+import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -74,7 +74,7 @@ class UrlPartsScriptTest
                 new ProcessedHtml.ContentLink( "ref", "content://123456", "123456", new PageUrlParts( null, "/posts/first-post", "" ),
                                                "" ) ), List.of(),
                                List.of( new ProcessedHtml.Macro( "macroref", MacroKey.from( "com.example.myapp:youtube" ),
-                                                                   Map.of( "videoId", List.of( "abc" ) ), "" ) ) ) );
+                                                                   GenericValue.newObject().put( "videoId", "abc" ).build(), "" ) ) ) );
 
         when( portalUrlService.imageUrlParts( any( ImageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
             final ImageUrlPartsParams params = invocation.getArgument( 0 );
