@@ -3,6 +3,7 @@ package com.enonic.xp.core.internal.parser;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
@@ -90,6 +91,30 @@ class HtmlDocumentInternalImpl
         public HtmlElementInternal removeAttribute( final String attributeName )
         {
             return map( element.removeAttr( attributeName ) );
+        }
+
+        @Override
+        public HtmlElementInternal setAttributeAfter( final String previousAttributeName, final String attributeName, final String value )
+        {
+            if ( !element.hasAttr( previousAttributeName ) )
+            {
+                return map( element.attr( attributeName, value ) );
+            }
+
+            final List<Attribute> attributes = element.attributes().asList();
+            element.clearAttributes();
+            for ( final Attribute attribute : attributes )
+            {
+                if ( !attribute.getKey().equals( attributeName ) )
+                {
+                    element.attributes().put( attribute.getKey(), attribute.getValue() );
+                }
+                if ( attribute.getKey().equals( previousAttributeName ) )
+                {
+                    element.attributes().put( attributeName, value );
+                }
+            }
+            return this;
         }
     }
 }

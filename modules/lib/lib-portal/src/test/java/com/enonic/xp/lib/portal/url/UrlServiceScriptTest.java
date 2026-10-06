@@ -400,7 +400,12 @@ class UrlServiceScriptTest
     void processHtmlTest_imageUrlProcessing()
     {
         assertTrue( execute( "processHtmlImageUrlProcessingTest" ) );
-        verifyProcessHtml();
+
+        final ArgumentCaptor<ProcessHtmlParams> captor = ArgumentCaptor.forClass( ProcessHtmlParams.class );
+        verify( portalUrlService ).processHtml( captor.capture() );
+        assertEquals( 1024, captor.getValue().getImageSrcWidth() );
+        assertEquals( List.of( 660, 1024 ), captor.getValue().getImageWidths() );
+        assertEquals( "(max-width: 960px) 600px", captor.getValue().getImageSizes() );
     }
 
     @Test

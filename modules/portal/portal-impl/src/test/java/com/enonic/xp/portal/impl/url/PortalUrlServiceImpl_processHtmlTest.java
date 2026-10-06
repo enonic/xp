@@ -589,7 +589,7 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
-                "block-768-324" + "/" + media.getName() + "\">Image</a>", processedHtml );
+                "block-768-329" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test
@@ -694,6 +694,58 @@ class PortalUrlServiceImpl_processHtmlTest
                 media.getId() +
                 ":0a350f43700951cdcca1574f448a7e22/width-1024/mycontent 1024w\"><figcaption>Caption text</figcaption></figure>",
             processedHtml );
+    }
+
+    @Test
+    void processHtml_image_imageSrcWidth()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        when( styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.from( StyleDescriptor.create()
+                                                                                                                 .application(
+                                                                                                                     ApplicationKey.from(
+                                                                                                                         "myapp" ) )
+                                                                                                                 .addStyleElement(
+                                                                                                                     ImageStyle.create()
+                                                                                                                         .name( "wide" )
+                                                                                                                         .aspectRatio(
+                                                                                                                             "2:1" )
+                                                                                                                         .build() )
+                                                                                                                 .build() ) );
+
+        final String processedHtml = this.service.processHtml( new ProcessHtmlParams().value(
+            "<img src=\"image://" + media.getId() + "\"><img src=\"image://" + media.getId() + "?style=wide\">" ).imageSrcWidth( 1200 ) );
+
+        // the height follows the aspect ratio of the style
+        assertThat( processedHtml ).contains( "/width-1200/mycontent\"" ).contains( "/block-1200-600/mycontent\"" );
+        assertThat( processedHtml ).doesNotContain( "768" );
+    }
+
+    @Test
+    void processHtml_image_srcsetComesRightAfterSrc()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final String processedHtml = this.service.processHtml(
+            new ProcessHtmlParams().value( "<img alt=\"Alt\" src=\"image://" + media.getId() + "\" style=\"width:50%\"/>" )
+                .imageWidths( List.of( 660 ) )
+                .imageSizes( "50vw" ) );
+
+        assertThat( processedHtml ).matches( "<img alt=\"Alt\" src=\"[^\"]+\" srcset=\"[^\"]+\" sizes=\"50vw\" style=\"width:50%\">" );
+    }
+
+    @Test
+    void processHtml_image_imageSrcWidth_ofImageServedAsStored()
+    {
+        final Media media = unscaledMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final String processedHtml =
+            this.service.processHtml( new ProcessHtmlParams().value( "<img src=\"image://" + media.getId() + "\"/>" ).imageSrcWidth( 1200 ) );
+
+        assertThat( processedHtml ).contains( "/full/mycontent\"" ).doesNotContain( "1200" );
     }
 
     @Test

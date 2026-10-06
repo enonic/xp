@@ -18,6 +18,7 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.html.HtmlElement;
 import com.enonic.xp.portal.impl.ImageScaling;
+import com.enonic.xp.portal.impl.html.HtmlParser;
 import com.enonic.xp.portal.url.PortalUrlGeneratorService;
 import com.enonic.xp.portal.url.ProcessHtmlParams;
 import com.enonic.xp.portal.url.UrlGeneratorParams;
@@ -83,7 +84,8 @@ final class DefaultImageLinkProcessor
             return queryParams.get();
         };
 
-        final String imageUrl = imageUrl( baseUrlSupplier, imageSupplier, projectNameSupplier, branchSupplier, queryParamsStrategy, null );
+        final String imageUrl =
+            imageUrl( baseUrlSupplier, imageSupplier, projectNameSupplier, branchSupplier, queryParamsStrategy, params.getImageSrcWidth() );
 
         element.setAttribute( element.hasAttribute( "href" ) ? "href" : "src", imageUrl );
 
@@ -100,12 +102,12 @@ final class DefaultImageLinkProcessor
                     return scaledImageUrl + " " + imageWidth + "w";
                 } ).collect( Collectors.joining( "," ) );
 
-                element.setAttribute( "srcset", srcsetValues );
+                HtmlParser.setAttributeAfter( element, "src", "srcset", srcsetValues );
 
                 final String imageSizes = params.getImageSizes();
                 if ( imageSizes != null && !imageSizes.trim().isEmpty() )
                 {
-                    element.setAttribute( "sizes", imageSizes );
+                    HtmlParser.setAttributeAfter( element, "srcset", "sizes", imageSizes );
                 }
             }
         }
@@ -168,7 +170,8 @@ final class DefaultImageLinkProcessor
             final String verticalProportion = matcher.group( "verticalProportion" );
 
             final int width = requireNonNullElse( expectedWidth, DEFAULT_WIDTH );
-            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
+            final int height =
+                (int) Math.round( (double) ( (long) width * Integer.parseInt( verticalProportion ) ) / Integer.parseInt( horizontalProportion ) );
 
             return "block(" + width + "," + height + ")";
         }

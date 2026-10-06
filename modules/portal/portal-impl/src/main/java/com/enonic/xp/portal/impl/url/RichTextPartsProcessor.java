@@ -282,7 +282,8 @@ final class RichTextPartsProcessor
             final String styleName = link.decodedParam( "style" );
             final ImageStyles.Resolved resolved = styleName == null ? null : imageStyles.get().get( styleName );
             final ImageStyle style = resolved == null ? null : resolved.style();
-            return ImageMediaPathSupplier.resolveScale( DefaultImageLinkProcessor.scale( style, link.decodedParam( "scale" ), null ) );
+            return ImageMediaPathSupplier.resolveScale(
+                DefaultImageLinkProcessor.scale( style, link.decodedParam( "scale" ), params.getImageSrcWidth() ) );
         }
         catch ( RuntimeException e )
         {
@@ -355,7 +356,8 @@ final class RichTextPartsProcessor
         final Supplier<Media> media =
             Suppliers.memoize( () -> MediaLookup.media( contentService, scope.projectName(), scope.branch(), id ) );
 
-        final ImageUrlParts src = imageParts( media, style, DefaultImageLinkProcessor.scale( style, scaleFromQueryString, null ) );
+        final ImageUrlParts src =
+            imageParts( media, style, DefaultImageLinkProcessor.scale( style, scaleFromQueryString, params.getImageSrcWidth() ) );
 
         final boolean responsive = "img".equals( element.getTagName() ) && ImageScaling.isScalable( media.get() );
         final List<ProcessedHtml.Source> srcset = new ArrayList<>();
@@ -373,13 +375,13 @@ final class RichTextPartsProcessor
         // sizes goes with the width descriptors of a srcset, so both are written, or neither
         if ( !srcset.isEmpty() )
         {
-            element.setAttribute( "srcset", srcset.stream()
+            HtmlParser.setAttributeAfter( element, link.attribute(), "srcset", srcset.stream()
                 .map( source -> source.url().path() + source.url().queryString() + " " + source.width() + "w" )
                 .collect( Collectors.joining( "," ) ) );
 
             if ( params.getImageSizes() != null && !params.getImageSizes().isBlank() )
             {
-                element.setAttribute( "sizes", params.getImageSizes() );
+                HtmlParser.setAttributeAfter( element, "srcset", "sizes", params.getImageSizes() );
             }
         }
 

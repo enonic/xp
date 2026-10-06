@@ -22,6 +22,8 @@ public final class ProcessHtmlPartsHandler
 
     private PortalScope scope;
 
+    private Integer imageSrcWidth;
+
     private List<Integer> imageWidths;
 
     private String imageSizes;
@@ -42,6 +44,11 @@ public final class ProcessHtmlPartsHandler
         this.scope = scope;
     }
 
+    public void setImageSrcWidth( final Integer imageSrcWidth )
+    {
+        this.imageSrcWidth = imageSrcWidth;
+    }
+
     public void setImageWidths( final List<Integer> imageWidths )
     {
         this.imageWidths = imageWidths;
@@ -58,6 +65,7 @@ public final class ProcessHtmlPartsHandler
                                             .processHtmlParts( ProcessHtmlPartsParams.create()
                                                                    .value( this.value )
                                                                    .scope( this.scope )
+                                                                   .imageSrcWidth( this.imageSrcWidth )
                                                                    .imageWidths( this.imageWidths )
                                                                    .imageSizes( this.imageSizes )
                                                                    .build() ) );

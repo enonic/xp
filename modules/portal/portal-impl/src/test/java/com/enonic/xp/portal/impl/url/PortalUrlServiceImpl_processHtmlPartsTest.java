@@ -443,11 +443,37 @@ class PortalUrlServiceImpl_processHtmlPartsTest
         assertEquals( "?download", attachment.attachment().queryString() );
 
         assertThat( result.html() ).startsWith(
-            "<img src=\"" + image + "/width-768/mycontent\" data-image-ref=\"" + img.ref() + "\" srcset=\"" + image +
-                "/width-660/mycontent 660w\">" );
+            "<img src=\"" + image + "/width-768/mycontent\" srcset=\"" + image + "/width-660/mycontent 660w\" data-image-ref=\"" +
+                img.ref() + "\">" );
         assertThat( result.html() ).contains(
             "<a href=\"" + attachment.attachment().path() + "?download\" data-link-ref=\"" + attachment.ref() + "\">Download</a>" );
         assertThat( result.html() ).startsWith( "<img src=\"/media:image/" ).doesNotContain( "/_/" ).doesNotContain( "/site/" );
+    }
+
+    @Test
+    void testImageSrcWidth()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
+                                                  .value( "<img src=\"image://" + media.getId() + "\"/><img src=\"image://missing\"/>" )
+                                                  .imageSrcWidth( 1200 )
+                                                  .imageWidths( List.of( 660 ) ) );
+
+        final ProcessedHtml.Image img = result.images().get( 0 );
+        assertThat( img.src().path() ).endsWith( "/width-1200/mycontent" );
+        assertThat( img.srcset().get( 0 ).url().path() ).endsWith( "/width-660/mycontent" );
+
+        // srcset and sizes come right after src, ahead of the other attributes
+        final ProcessedHtml ordered = process( ProcessHtmlPartsParams.create()
+                                                   .value( "<img alt=\"Alt\" src=\"image://" + media.getId() + "\" style=\"width:50%\"/>" )
+                                                   .imageWidths( List.of( 660 ) )
+                                                   .imageSizes( "50vw" ) );
+        assertThat( ordered.html() ).matches( "<img alt=\"Alt\" src=\"[^\"]+\" srcset=\"[^\"]+\" sizes=\"50vw\" style=\"width:50%\" data-image-ref=\"[^\"]+\">" );
+
+        // an image that does not resolve gets its 404 URL at the same width
+        assertThat( result.html() ).contains( "/media:image/_error/missing/width-1200/missing\"" );
     }
 
     @Test

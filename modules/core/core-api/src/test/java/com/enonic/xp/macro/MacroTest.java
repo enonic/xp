@@ -46,7 +46,18 @@ class MacroTest
             build();
 
         assertEquals( macro1, macro2 );
+        assertEquals( macro1.hashCode(), macro2.hashCode() );
         assertNotEquals( macro1, macro3 );
+    }
+
+    @Test
+    void testEqualsTakesParameterOrder()
+    {
+        final Macro interleaved = Macro.create().name( "macro" ).param( "a", "1" ).param( "b", "2" ).param( "a", "3" ).build();
+        final Macro grouped = Macro.create().name( "macro" ).param( "a", "1" ).param( "a", "3" ).param( "b", "2" ).build();
+
+        assertNotEquals( interleaved, grouped );
+        assertEquals( interleaved, Macro.copyOf( interleaved ).build() );
     }
 
     @Test

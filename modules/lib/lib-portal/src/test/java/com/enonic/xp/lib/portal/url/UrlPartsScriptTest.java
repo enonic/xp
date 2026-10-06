@@ -183,6 +183,8 @@ class UrlPartsScriptTest
         final ProcessHtmlPartsParams params = captor.getValue();
         assertEquals( "<a href=\"content://123456\">Post</a>[youtube videoid=\"abc\"/]", params.getValue() );
         assertScope( params.getScope() );
+        assertEquals( 1024, params.getImageSrcWidth() );
+        assertEquals( List.of( 480, 1024, 1600 ), params.getImageWidths() );
     }
 
     @Test
