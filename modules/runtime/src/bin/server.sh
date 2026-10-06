@@ -37,7 +37,7 @@ locateJava() {
 }
 
 setupDefaults() {
-    DEFAULT_JAVA_OPTS="-XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:+HeapDumpOnOutOfMemoryError -XX:+ExitOnOutOfMemoryError -Djava.net.preferIPv4Stack=true"
+    DEFAULT_JAVA_OPTS="-XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -Djava.net.preferIPv4Stack=true"
     DEFAULT_JAVA_DEBUG_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
     CONSTANT_XP_OPTS=(-Dfile.encoding=UTF8 -Dmapper.allow_dots_in_name=true --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --enable-native-access=ALL-UNNAMED --enable-native-access=org.graalvm.truffle)
 }
@@ -69,8 +69,7 @@ locateInstallDir() {
 setupTmpDir() {
   tmpdir=${XP_TMP:-${XP_HOME:+$XP_HOME/work}}
   tmpdir=${tmpdir:-$XP_INSTALL/home/work}
-  mkdir -p "$tmpdir"
-  JAVA_OPTS="-Djava.io.tmpdir=$tmpdir -XX:HeapDumpPath=$tmpdir $JAVA_OPTS"
+  JAVA_OPTS="-Djava.io.tmpdir=$tmpdir $JAVA_OPTS"
 }
 
 init() {
