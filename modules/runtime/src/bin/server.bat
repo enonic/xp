@@ -38,7 +38,7 @@ goto fail
 
 :init
 set XP_INSTALL=%DIRNAME%..
-set DEFAULT_JAVA_OPTS=-XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -Djava.net.preferIPv4Stack=true
+set DEFAULT_JAVA_OPTS=-XX:-OmitStackTraceInFastThrow -XX:+AlwaysPreTouch -XX:+HeapDumpOnOutOfMemoryError -XX:+ExitOnOutOfMemoryError -Djava.net.preferIPv4Stack=true
 set DEFAULT_JAVA_DEBUG_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 set CONSTANT_XP_OPTS=-Dfile.encoding=UTF8 -Dmapper.allow_dots_in_name=true --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED --enable-native-access=ALL-UNNAMED --enable-native-access=org.graalvm.truffle
 
@@ -54,7 +54,8 @@ if defined XP_TMP (
 ) else (
   set "TMPDIR=%XP_INSTALL%\home\work"
 )
-set "JAVA_OPTS=-Djava.io.tmpdir="%TMPDIR%." %JAVA_OPTS%"
+if not exist "%TMPDIR%" mkdir "%TMPDIR%"
+set "JAVA_OPTS=-Djava.io.tmpdir="%TMPDIR%." -XX:HeapDumpPath="%TMPDIR%." %JAVA_OPTS%"
 
 :execute
 "%JAVA_EXE%" %JAVA_OPTS% -Dxp.install="%XP_INSTALL%" %XP_OPTS% %CONSTANT_XP_OPTS% --module-path "%XP_INSTALL%\mods" -classpath "%XP_INSTALL%\lib\*" com.enonic.xp.launcher.LauncherMain %ARGS%
