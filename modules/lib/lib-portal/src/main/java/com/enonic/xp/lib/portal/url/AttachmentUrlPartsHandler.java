@@ -1,14 +1,11 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -29,14 +26,11 @@ public final class AttachmentUrlPartsHandler
 
     private String branch;
 
-
     private String name;
 
     private String label;
 
     private boolean download;
-
-    private Map<String, List<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
@@ -79,11 +73,6 @@ public final class AttachmentUrlPartsHandler
         this.download = Boolean.TRUE.equals( download );
     }
 
-    public void setQueryParams( final ScriptValue params )
-    {
-        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
-    }
-
     public MapSerializable createParts()
     {
         final AttachmentUrlPartsParams.Builder params = AttachmentUrlPartsParams.create()
@@ -102,10 +91,6 @@ public final class AttachmentUrlPartsHandler
         {
             final Branch branch = Branch.from( this.branch );
             params.setBranch( () -> branch );
-        }
-        if ( this.queryParams != null )
-        {
-            params.setQueryParams( this.queryParams );
         }
 
         return UrlPartsMapper.of( urlServiceSupplier.get().attachmentUrlParts( params.build() ) );

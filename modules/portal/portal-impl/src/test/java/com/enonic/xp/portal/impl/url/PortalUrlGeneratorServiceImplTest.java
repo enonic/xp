@@ -363,6 +363,20 @@ class PortalUrlGeneratorServiceImplTest
     }
 
     @Test
+    void imageUrlParts_fullWithoutScale()
+    {
+        final ImageUrlParts parts = this.urlService.imageUrlParts( ImageUrlPartsParams.create()
+                                                                    .setMedia( () -> mockMedia( "123456", "mycontent.png" ) )
+                                                                    .setProjectName( () -> ProjectName.from( "myproject" ) )
+                                                                    .setBranch( () -> Branch.from( "draft" ) )
+                                                                    .build() );
+
+        assertEquals( "full", parts.scale() );
+        assertEquals( "/media:image/myproject:draft/123456:0a350f43700951cdcca1574f448a7e22/full/mycontent.png", parts.path() );
+        assertEquals( "", parts.queryString() );
+    }
+
+    @Test
     void imageUrlParts_basic()
     {
         final ImageUrlPartsParams params = ImageUrlPartsParams.create()
@@ -395,7 +409,6 @@ class PortalUrlGeneratorServiceImplTest
                                                                     .setScale( "block(800,200)" )
                                                                     .setFilter( "blur(3)" )
                                                                     .setFormat( "webp" )
-                                                                    .setQueryParam( "a", "1" )
                                                                     .build() );
         final String url = this.service.imageUrl( ImageUrlGeneratorParams.create()
                                                       .setMedia( () -> mockMedia( "123456", "my content.png" ) )
@@ -404,7 +417,6 @@ class PortalUrlGeneratorServiceImplTest
                                                       .setScale( "block(800,200)" )
                                                       .setFilter( "blur(3)" )
                                                       .setFormat( "webp" )
-                                                      .setQueryParam( "a", "1" )
                                                       .setBaseUrl( "https://media.example.com" )
                                                       .build() );
 
@@ -484,14 +496,13 @@ class PortalUrlGeneratorServiceImplTest
             .setQuality( 85 )
             .setBackground( "ff0000" )
             .setFormat( "webp" )
-            .setQueryParam( "a", "1" )
             .build();
 
         // served as stored: one URL, whatever the processing asked for
         final ImageUrlParts parts = this.urlService.imageUrlParts( params );
         assertEquals( "/media:image/myproject/123456:0a350f43700951cdcca1574f448a7e22/full/logo.gif", parts.path() );
         assertEquals( "full", parts.scale() );
-        assertEquals( "?a=1", parts.queryString() );
+        assertEquals( "", parts.queryString() );
 
         final String url = this.service.imageUrl( ImageUrlGeneratorParams.create()
                                                       .setMedia( () -> media )
@@ -501,7 +512,6 @@ class PortalUrlGeneratorServiceImplTest
                                                       .setFilter( "blur(3)" )
                                                       .setQuality( 85 )
                                                       .setFormat( "webp" )
-                                                      .setQueryParam( "a", "1" )
                                                       .setBaseUrl( "https://media.example.com" )
                                                       .build() );
         assertEquals( "https://media.example.com/_" + parts.path() + parts.queryString(), url );
@@ -555,14 +565,12 @@ class PortalUrlGeneratorServiceImplTest
                                                                               .setProjectName( () -> ProjectName.from( "myproject" ) )
                                                                               .setBranch( () -> Branch.from( "draft" ) )
                                                                               .setDownload( true )
-                                                                              .setQueryParam( "a", "1" )
                                                                               .build() );
         final String url = this.service.attachmentUrl( AttachmentUrlGeneratorParams.create()
                                                            .setContent( () -> mockMedia( "123456", "mycontent.png" ) )
                                                            .setProjectName( () -> ProjectName.from( "myproject" ) )
                                                            .setBranch( () -> Branch.from( "draft" ) )
                                                            .setDownload( true )
-                                                           .setQueryParam( "a", "1" )
                                                            .setBaseUrl( "https://media.example.com" )
                                                            .build() );
 

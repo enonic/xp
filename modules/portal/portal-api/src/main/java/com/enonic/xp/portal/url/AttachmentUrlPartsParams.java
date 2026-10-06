@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import org.jspecify.annotations.NullMarked;
@@ -38,8 +35,6 @@ public final class AttachmentUrlPartsParams
 
     private final @Nullable String label;
 
-    private final Map<String, List<String>> queryParams;
-
     private AttachmentUrlPartsParams( final Builder builder )
     {
         if ( ( builder.contentSupplier == null ) == ( builder.id == null && builder.path == null ) )
@@ -54,7 +49,6 @@ public final class AttachmentUrlPartsParams
         this.download = builder.download;
         this.name = builder.name;
         this.label = builder.label;
-        this.queryParams = builder.queryParams.build();
     }
 
     /**
@@ -124,14 +118,6 @@ public final class AttachmentUrlPartsParams
     }
 
     /**
-     * @return additional query parameters, in the order they were set
-     */
-    public Map<String, List<String>> getQueryParams()
-    {
-        return queryParams;
-    }
-
-    /**
      * @return a new builder
      */
     public static Builder create()
@@ -159,8 +145,6 @@ public final class AttachmentUrlPartsParams
         private @Nullable String name;
 
         private @Nullable String label;
-
-        private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
         /**
          * @param contentSupplier supplier of the content the attachment belongs to
@@ -247,27 +231,6 @@ public final class AttachmentUrlPartsParams
         public Builder setLabel( final @Nullable String label )
         {
             this.label = label;
-            return this;
-        }
-
-        /**
-         * @param key   name of an additional query parameter
-         * @param value its value, replacing any earlier values
-         * @return this builder
-         */
-        public Builder setQueryParam( final String key, final String value )
-        {
-            this.queryParams.setQueryParam( key, value );
-            return this;
-        }
-
-        /**
-         * @param queryParams additional query parameters; each replaces any earlier values of its name
-         * @return this builder
-         */
-        public Builder setQueryParams( final Map<String, ? extends Collection<String>> queryParams )
-        {
-            this.queryParams.setQueryParams( queryParams );
             return this;
         }
 

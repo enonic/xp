@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.google.common.base.Suppliers;
@@ -56,7 +57,7 @@ final class MediaUrlParts
             .parts();
 
         final String queryString = queryString(
-            imageQueryParams( params.getQueryParams(), ImageScaling.isScalable( media.get() ), params.getQuality(), params.getBackground(),
+            imageQueryParams( Map.of(), ImageScaling.isScalable( media.get() ), params.getQuality(), params.getBackground(),
                               params.getFilter() ) );
 
         return new ImageUrlParts( parts.path( MEDIA_IMAGE_API_DESCRIPTOR_KEY ), queryString,
@@ -82,7 +83,7 @@ final class MediaUrlParts
             .parts();
 
         return new AttachmentUrlParts( parts.path( MEDIA_ATTACHMENT_API_DESCRIPTOR_KEY ),
-                                       queryString( attachmentQueryParams( params.getQueryParams(), params.isDownload() ) ),
+                                       queryString( attachmentQueryParams( Map.of(), params.isDownload() ) ),
                                        UrlBuilderHelper.urlEncodePathSegment( parts.context() ), parts.id(), parts.hash(),
                                        UrlBuilderHelper.urlEncodePathSegment( parts.name() ) );
     }

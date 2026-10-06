@@ -1,14 +1,11 @@
 package com.enonic.xp.lib.portal.url;
 
-import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.portal.url.ImageUrlPartsParams;
 import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.project.ProjectName;
-import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.script.serializer.MapSerializable;
@@ -29,7 +26,6 @@ public final class ImageUrlPartsHandler
 
     private String branch;
 
-
     private String scale;
 
     private Integer quality;
@@ -39,8 +35,6 @@ public final class ImageUrlPartsHandler
     private String format;
 
     private String filter;
-
-    private Map<String, List<String>> queryParams;
 
     @Override
     public void initialize( final BeanContext context )
@@ -93,11 +87,6 @@ public final class ImageUrlPartsHandler
         this.filter = filter;
     }
 
-    public void setQueryParams( final ScriptValue params )
-    {
-        this.queryParams = UrlHandlerHelper.resolveQueryParams( params );
-    }
-
     public MapSerializable createParts()
     {
         final ImageUrlPartsParams.Builder params = ImageUrlPartsParams.create()
@@ -118,10 +107,6 @@ public final class ImageUrlPartsHandler
         {
             final Branch branch = Branch.from( this.branch );
             params.setBranch( () -> branch );
-        }
-        if ( this.queryParams != null )
-        {
-            params.setQueryParams( this.queryParams );
         }
 
         return UrlPartsMapper.of( urlServiceSupplier.get().imageUrlParts( params.build() ) );
