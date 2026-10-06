@@ -375,13 +375,13 @@ final class RichTextPartsProcessor
         // sizes goes with the width descriptors of a srcset, so both are written, or neither
         if ( !srcset.isEmpty() )
         {
-            element.setAttribute( "srcset", srcset.stream()
+            HtmlParser.setAttributeAfter( element, link.attribute(), "srcset", srcset.stream()
                 .map( source -> source.url().path() + source.url().queryString() + " " + source.width() + "w" )
                 .collect( Collectors.joining( "," ) ) );
 
             if ( params.getImageSizes() != null && !params.getImageSizes().isBlank() )
             {
-                element.setAttribute( "sizes", params.getImageSizes() );
+                HtmlParser.setAttributeAfter( element, "srcset", "sizes", params.getImageSizes() );
             }
         }
 

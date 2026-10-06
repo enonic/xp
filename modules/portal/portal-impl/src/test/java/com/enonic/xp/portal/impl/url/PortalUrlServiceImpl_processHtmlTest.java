@@ -723,6 +723,20 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
+    void processHtml_image_srcsetComesRightAfterSrc()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final String processedHtml = this.service.processHtml(
+            new ProcessHtmlParams().value( "<img alt=\"Alt\" src=\"image://" + media.getId() + "\" style=\"width:50%\"/>" )
+                .imageWidths( List.of( 660 ) )
+                .imageSizes( "50vw" ) );
+
+        assertThat( processedHtml ).matches( "<img alt=\"Alt\" src=\"[^\"]+\" srcset=\"[^\"]+\" sizes=\"50vw\" style=\"width:50%\">" );
+    }
+
+    @Test
     void processHtml_image_imageSrcWidth_ofImageServedAsStored()
     {
         final Media media = unscaledMedia();

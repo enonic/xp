@@ -23,6 +23,23 @@ public class HtmlParser
         return new HtmlDocumentImpl( document );
     }
 
+    /**
+     * Sets an attribute of a parsed element right after another one, or last when the element does not have the other
+     * one.
+     */
+    public static void setAttributeAfter( final HtmlElement element, final String previousAttributeName, final String attributeName,
+                                          final String value )
+    {
+        if ( element instanceof HtmlDocumentImpl.HtmlElementImpl parsed )
+        {
+            parsed.element.setAttributeAfter( previousAttributeName, attributeName, value );
+        }
+        else
+        {
+            element.setAttribute( attributeName, value );
+        }
+    }
+
     private static class HtmlDocumentImpl
         implements HtmlDocument
     {
