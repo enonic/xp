@@ -1,10 +1,12 @@
 package com.enonic.xp.macro;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
 
 
 public final class Macro
@@ -13,13 +15,13 @@ public final class Macro
 
     private final String body;
 
-    private final ImmutableListMultimap<String, String> params;
+    private final ListMultimap<String, String> params;
 
     private Macro( final Builder builder )
     {
         this.name = builder.name;
         this.body = builder.body == null ? "" : builder.body;
-        this.params = builder.paramsBuilder.build();
+        this.params = Multimaps.unmodifiableListMultimap( LinkedListMultimap.create( builder.params ) );
     }
 
     public String getName()
@@ -74,14 +76,11 @@ public final class Macro
         }
         else
         {
-            for ( String paramName : params.keySet() )
+            for ( Map.Entry<String, String> param : params.entries() )
             {
-                for ( String value : params.get( paramName ) )
-                {
-                    result.append( " " ).append( paramName ).append( "=\"" );
-                    result.append( escapeParam( value ) );
-                    result.append( "\"" );
-                }
+                result.append( " " ).append( param.getKey() ).append( "=\"" );
+                result.append( escapeParam( param.getValue() ) );
+                result.append( "\"" );
             }
             if ( body.isEmpty() )
             {
@@ -117,19 +116,17 @@ public final class Macro
 
         private String body;
 
-        private final ImmutableListMultimap.Builder<String, String> paramsBuilder;
+        private final ListMultimap<String, String> params = LinkedListMultimap.create();
 
         private Builder()
         {
-            this.paramsBuilder = ImmutableListMultimap.builder();
         }
 
         private Builder( final Macro macro )
         {
             this.name = macro.name;
             this.body = macro.body;
-            this.paramsBuilder = ImmutableListMultimap.builder();
-            this.paramsBuilder.putAll( macro.params );
+            this.params.putAll( macro.params );
         }
 
         public Builder name( final String name )
@@ -146,7 +143,7 @@ public final class Macro
 
         public Builder param( final String key, final String value )
         {
-            this.paramsBuilder.put( key, value );
+            this.params.put( key, value );
             return this;
         }
 

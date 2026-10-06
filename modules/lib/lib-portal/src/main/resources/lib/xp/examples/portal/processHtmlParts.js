@@ -23,7 +23,7 @@ var href = link.type === 'content' && link.page ? origin + link.page.path + link
 
 // a macro of an application of the site, rendered by the frontend in place of its editor-macro element
 var macro = result.macros[0];
-var embedUrl = macro.descriptor === 'com.example.myapp:youtube' ? 'https://www.youtube.com/embed/' + macro.params.videoId[0] : null;
+var embedUrl = macro.descriptor === 'com.example.myapp:youtube' ? 'https://www.youtube.com/embed/' + macro.config.videoId : null;
 // END
 
 t.assertEquals('<a href="/posts/first-post" data-link-ref="ref">Post</a>' +
@@ -35,6 +35,6 @@ t.assertEquals('content', result.links[0].type);
 t.assertEquals('', link.fragment);
 t.assertEquals('https://www.example.com/posts/first-post', href);
 t.assertEquals('macroref', macro.ref);
-t.assertJsonEquals({videoId: ['abc']}, macro.params);
+t.assertJsonEquals({videoId: 'abc'}, macro.config);
 t.assertEquals('', macro.body);
 t.assertEquals('https://www.youtube.com/embed/abc', embedUrl);

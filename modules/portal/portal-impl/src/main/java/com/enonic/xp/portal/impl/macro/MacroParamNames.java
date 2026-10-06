@@ -4,9 +4,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
+import com.enonic.xp.form.FormItemSet;
+import com.enonic.xp.form.FormOptionSet;
+import com.enonic.xp.form.Input;
+import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.macro.MacroDescriptor;
 
 /**
@@ -22,9 +27,21 @@ public final class MacroParamNames
     public MacroParamNames( final MacroDescriptor descriptor )
     {
         this.form = descriptor.getForm();
-        for ( final FormItem formItem : form )
+        index( form );
+    }
+
+    private void index( final Iterable<FormItem> formItems )
+    {
+        for ( final FormItem formItem : formItems )
         {
-            namesIgnoringCase.put( formItem.getName().toLowerCase( Locale.ROOT ), formItem.getName() );
+            if ( formItem instanceof FieldSet fieldSet )
+            {
+                index( fieldSet );
+            }
+            else
+            {
+                namesIgnoringCase.put( formItem.getName().toLowerCase( Locale.ROOT ), formItem.getName() );
+            }
         }
     }
 
@@ -39,5 +56,22 @@ public final class MacroParamNames
             return name;
         }
         return namesIgnoringCase.getOrDefault( name.toLowerCase( Locale.ROOT ), name );
+    }
+
+    /**
+     * @param name name of an input of the form, as returned by {@link #of(String)}
+     * @return whether the input takes several values; {@code false} for a name no input has
+     */
+    public boolean isMultiple( final String name )
+    {
+        final FormItem formItem = form.getFormItem( FormItemPath.from( name ) );
+        final Occurrences occurrences = switch ( formItem )
+        {
+            case Input input -> input.getOccurrences();
+            case FormItemSet set -> set.getOccurrences();
+            case FormOptionSet optionSet -> optionSet.getOccurrences();
+            case null, default -> null;
+        };
+        return occurrences != null && occurrences.isMultiple();
     }
 }

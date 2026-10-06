@@ -1,7 +1,7 @@
 package com.enonic.xp.impl.macro;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
 
 import com.enonic.xp.core.internal.HtmlHelper;
 import com.enonic.xp.macro.Macro;
@@ -37,7 +37,7 @@ public final class MacroParser
 
     private String macroName;
 
-    private final Multimap<String, String> attributes = ArrayListMultimap.create();
+    private final ListMultimap<String, String> attributes = LinkedListMultimap.create();
 
     private String body;
 
@@ -77,13 +77,7 @@ public final class MacroParser
         }
 
         final Macro.Builder macro = Macro.create().name( macroName );
-        for ( String attribute : attributes.keySet() )
-        {
-            for ( String value : attributes.get( attribute ) )
-            {
-                macro.param( attribute, value );
-            }
-        }
+        attributes.entries().forEach( attribute -> macro.param( attribute.getKey(), attribute.getValue() ) );
         return macro.body( body ).build();
     }
 

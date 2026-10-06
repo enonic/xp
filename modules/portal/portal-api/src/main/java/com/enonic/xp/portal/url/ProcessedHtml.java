@@ -1,15 +1,13 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.macro.MacroKey;
+import com.enonic.xp.util.GenericValue;
 
 /**
  * Result of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the processed HTML, and the parts of
@@ -158,18 +156,13 @@ public record ProcessedHtml(String html, @Nullable String baseUrl, List<Link> li
      *
      * @param ref        value of the {@value #MACRO_REF_ATTRIBUTE} attribute of the element
      * @param descriptor the descriptor of the macro
-     * @param params     parameters of the macro, each with its values in the order written; a parameter matching an
-     *                   input of the descriptor's form, ignoring case, is named as that input
+     * @param config     parameters of the macro, as an object: a parameter matching an input of the descriptor's form,
+     *                   ignoring case, is named as that input, and holds a list of its values in the order written
+     *                   when the input takes several, or its first value otherwise
      * @param body       body of the macro as written; empty for a macro without one
      */
-    public record Macro(String ref, MacroKey descriptor, Map<String, List<String>> params, String body)
+    public record Macro(String ref, MacroKey descriptor, GenericValue config, String body)
     {
-        public Macro
-        {
-            final Map<String, List<String>> copy = new LinkedHashMap<>();
-            params.forEach( ( name, values ) -> copy.put( name, List.copyOf( values ) ) );
-            params = Collections.unmodifiableMap( copy );
-        }
     }
 
     /**

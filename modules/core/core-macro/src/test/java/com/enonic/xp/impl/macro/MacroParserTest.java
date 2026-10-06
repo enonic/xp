@@ -1,5 +1,7 @@
 package com.enonic.xp.impl.macro;
 
+import java.util.List;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collectors;
@@ -87,6 +89,16 @@ class MacroParserTest
         final Macro parsedMacro3 = macroParser3.parse( test3 );
 
         assertEquals( "[macroName par1=\"val1\"][macroInBody ]body body[/macroInBody][/macroName]", parsedMacro3.toString() );
+    }
+
+    @Test
+    void testParametersKeepTheirOrder()
+    {
+        final Macro parsedMacro = new MacroParser().parse( "[macroName zeta=\"1\" alpha=\"2\" mid=\"3\" alpha=\"4\" Zeta=\"5\"/]" );
+
+        assertEquals( List.of( "zeta", "alpha", "mid", "Zeta" ), List.copyOf( parsedMacro.getParameters().keySet() ) );
+        assertEquals( List.of( "2", "4" ), parsedMacro.getParameter( "alpha" ) );
+        assertEquals( "[macroName zeta=\"1\" alpha=\"2\" mid=\"3\" alpha=\"4\" Zeta=\"5\"/]", parsedMacro.toString() );
     }
 
     @Test
