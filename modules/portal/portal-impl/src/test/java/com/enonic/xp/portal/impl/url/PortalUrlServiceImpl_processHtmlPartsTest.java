@@ -1,11 +1,11 @@
 package com.enonic.xp.portal.impl.url;
 
+import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.Input;
 import com.enonic.xp.inputtype.InputTypeName;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.junit.jupiter.api.AfterEach;
@@ -320,24 +320,35 @@ class PortalUrlServiceImpl_processHtmlPartsTest
                                                                                                           .label( "Video" )
                                                                                                           .inputType( InputTypeName.TEXT_LINE )
                                                                                                           .build() )
+                                                                                        .addFormItem( FieldSet.create()
+                                                                                                          .label( "More" )
+                                                                                                          .addFormItem( Input.create()
+                                                                                                                            .name( "tags" )
+                                                                                                                            .label( "Tags" )
+                                                                                                                            .inputType( InputTypeName.TEXT_LINE )
+                                                                                                                            .occurrences( 0, 0 )
+                                                                                                                            .build() )
+                                                                                                          .build() )
                                                                                         .build() )
                                                                              .build() );
         when( this.macroDescriptorService.getByKey( MacroKey.from( "system:unknown" ) ) ).thenReturn( null );
 
         final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
-                                                  .value( "<p>[mymacro videoid=\"a\" other=\"b\" videoId=\"c\"]Some &lt;b&gt;body[/mymacro]</p>" +
+                                                  .value( "<p>[mymacro videoid=\"a\" other=\"b\" videoId=\"c\" tags=\"x\" TAGS=\"y\"]Some &lt;b&gt;body[/mymacro]</p>" +
                                                               "<p>[unknown/]</p><p>[mymacro/]</p>" ) );
 
         assertThat( result.macros() ).hasSize( 2 );
 
-        // the parameters are named as the inputs of the form
+        // the parameters are named as the inputs of the form, also inside a field set, with a list of values for an input taking several
         final ProcessedHtml.Macro first = result.macros().get( 0 );
         assertEquals( key, first.descriptor() );
-        assertEquals( Map.of( "videoId", List.of( "a", "c" ), "other", List.of( "b" ) ), first.params() );
+        assertEquals( "a", first.config().property( "videoId" ).asString() );
+        assertEquals( "b", first.config().property( "other" ).asString() );
+        assertThat( first.config().property( "tags" ).toStringList() ).containsExactly( "x", "y" );
         assertEquals( "Some &lt;b&gt;body", first.body() );
 
         final ProcessedHtml.Macro second = result.macros().get( 1 );
-        assertThat( second.params() ).isEmpty();
+        assertThat( second.config().properties() ).isEmpty();
         assertEquals( "", second.body() );
         assertThat( second.ref() ).isNotEqualTo( first.ref() );
 

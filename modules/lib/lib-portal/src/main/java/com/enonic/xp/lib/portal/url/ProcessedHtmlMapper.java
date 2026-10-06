@@ -1,11 +1,14 @@
 package com.enonic.xp.lib.portal.url;
 
+import java.util.Map;
+
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.ImageUrlParts;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.ProcessedHtml;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.util.GenericValue;
 
 /**
  * Serializes a {@link ProcessedHtml} to a script object, under the names of the record components.
@@ -90,12 +93,20 @@ final class ProcessedHtmlMapper
             gen.map();
             gen.value( "ref", macro.ref() );
             gen.value( "descriptor", macro.descriptor().toString() );
-            gen.map( "params" );
-            macro.params().forEach( ( name, values ) -> {
-                gen.array( name );
-                values.forEach( gen::value );
-                gen.end();
-            } );
+            gen.map( "config" );
+            for ( final Map.Entry<String, GenericValue> param : macro.config().properties() )
+            {
+                if ( param.getValue().getType() == GenericValue.Type.LIST )
+                {
+                    gen.array( param.getKey() );
+                    param.getValue().values().forEach( value -> gen.value( value.asString() ) );
+                    gen.end();
+                }
+                else
+                {
+                    gen.value( param.getKey(), param.getValue().asString() );
+                }
+            }
             gen.end();
             gen.value( "body", macro.body() );
             gen.end();
