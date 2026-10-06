@@ -152,7 +152,7 @@ public final class ImageUrlPartsParams
     }
 
     /**
-     * Builder of {@link ImageUrlPartsParams}. The scale is required, and either the media or its id/path, but not both.
+     * Builder of {@link ImageUrlPartsParams}. Either the media or its id/path is required, but not both; without a scale, the image is as stored.
      */
     public static class Builder
     {
