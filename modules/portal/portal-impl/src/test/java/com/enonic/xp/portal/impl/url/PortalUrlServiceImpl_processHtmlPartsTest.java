@@ -451,6 +451,25 @@ class PortalUrlServiceImpl_processHtmlPartsTest
     }
 
     @Test
+    void testImageSrcWidth()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final ProcessedHtml result = process( ProcessHtmlPartsParams.create()
+                                                  .value( "<img src=\"image://" + media.getId() + "\"/><img src=\"image://missing\"/>" )
+                                                  .imageSrcWidth( 1200 )
+                                                  .imageWidths( List.of( 660 ) ) );
+
+        final ProcessedHtml.Image img = result.images().get( 0 );
+        assertThat( img.src().path() ).endsWith( "/width-1200/mycontent" );
+        assertThat( img.srcset().get( 0 ).url().path() ).endsWith( "/width-660/mycontent" );
+
+        // an image that does not resolve gets its 404 URL at the same width
+        assertThat( result.html() ).contains( "/media:image/_error/missing/width-1200/missing\"" );
+    }
+
+    @Test
     void testImageServedAsAttachment()
     {
         final Media media = ContentFixtures.newMedia();

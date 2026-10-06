@@ -591,6 +591,7 @@ export function url(params: UrlParams): string {
 export interface ProcessHtmlParams {
     value: string;
     type?: 'server' | 'absolute';
+    imageSrcWidth?: number;
     imageWidths?: number[];
     imageSizes?: string;
 }
@@ -599,6 +600,8 @@ interface ProcessHtmlHandler {
     setValue(value: string): void;
 
     setUrlType(value: string | null): void;
+
+    setImageSrcWidth(value: number | null): void;
 
     setImageWidths(value: number[] | null): void;
 
@@ -620,6 +623,7 @@ interface ProcessHtmlHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} params.value Html value string to process.
  * @param {string} [params.type=server] URL type. Either `server` (server-relative URL) or `absolute`.
+ * @param {number} [params.imageSrcWidth=768] Width of the `src` of `img` tags, for images the image API scales. The height follows the aspect ratio of the image's style or scale.
  * @param {number[]} [params.imageWidths] List of image width. Allows to generate image URLs for given image widths and use them in the `srcset` attribute of a `img` tag, for images the image API scales.
  * @param {string} [params.imageSizes] Specifies the width for an image depending on browser dimensions. The value has the following format: (media-condition) width. Multiple sizes are comma-separated. Written along with the `srcset` that `imageWidths` adds.
  *
@@ -632,6 +636,7 @@ export function processHtml(params: ProcessHtmlParams): string {
 
     bean.setValue(value);
     bean.setUrlType(__.nullOrValue(params.type));
+    bean.setImageSrcWidth(__.nullOrValue(params.imageSrcWidth));
     bean.setImageWidths(__.nullOrValue(params.imageWidths));
     bean.setImageSizes(__.nullOrValue(params.imageSizes));
 
@@ -641,6 +646,7 @@ export function processHtml(params: ProcessHtmlParams): string {
 export interface ProcessHtmlPartsParams {
     value: string;
     scope?: PortalScope;
+    imageSrcWidth?: number;
     imageWidths?: number[];
     imageSizes?: string;
 }
@@ -732,6 +738,8 @@ interface ProcessHtmlPartsHandler {
 
     setScope(value: PortalScopeHandle | null): void;
 
+    setImageSrcWidth(value: number | null): void;
+
     setImageWidths(value: number[] | null): void;
 
     setImageSizes(value: string | null): void;
@@ -755,6 +763,7 @@ interface ProcessHtmlPartsHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} params.value Html value string to process.
  * @param {object} [params.scope] The site or project the HTML belongs to, resolved by {@link portalScope}. Defaults to the project of the current context.
+ * @param {number} [params.imageSrcWidth=768] Width of the `src` of `img` tags, for images the image API scales. The height follows the aspect ratio of the image's style or scale.
  * @param {number[]} [params.imageWidths] Image widths for the `srcset` attribute of `img` tags, for images the image API scales.
  * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags. Written along with the `srcset` that `imageWidths` adds.
  *
@@ -767,6 +776,7 @@ export function processHtmlParts(params: ProcessHtmlPartsParams): ProcessedHtml 
 
     bean.setValue(value);
     bean.setScope(portalScopeHandle(params.scope));
+    bean.setImageSrcWidth(__.nullOrValue(params.imageSrcWidth));
     bean.setImageWidths(__.nullOrValue(params.imageWidths));
     bean.setImageSizes(__.nullOrValue(params.imageSizes));
 

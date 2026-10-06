@@ -697,6 +697,44 @@ class PortalUrlServiceImpl_processHtmlTest
     }
 
     @Test
+    void processHtml_image_imageSrcWidth()
+    {
+        final Media media = ContentFixtures.newMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        when( styleDescriptorService.getByApplications( Mockito.any() ) ).thenReturn( StyleDescriptors.from( StyleDescriptor.create()
+                                                                                                                 .application(
+                                                                                                                     ApplicationKey.from(
+                                                                                                                         "myapp" ) )
+                                                                                                                 .addStyleElement(
+                                                                                                                     ImageStyle.create()
+                                                                                                                         .name( "wide" )
+                                                                                                                         .aspectRatio(
+                                                                                                                             "2:1" )
+                                                                                                                         .build() )
+                                                                                                                 .build() ) );
+
+        final String processedHtml = this.service.processHtml( new ProcessHtmlParams().value(
+            "<img src=\"image://" + media.getId() + "\"><img src=\"image://" + media.getId() + "?style=wide\">" ).imageSrcWidth( 1200 ) );
+
+        // the height follows the aspect ratio of the style
+        assertThat( processedHtml ).contains( "/width-1200/mycontent\"" ).contains( "/block-1200-600/mycontent\"" );
+        assertThat( processedHtml ).doesNotContain( "768" );
+    }
+
+    @Test
+    void processHtml_image_imageSrcWidth_ofImageServedAsStored()
+    {
+        final Media media = unscaledMedia();
+        when( this.contentService.getById( media.getId() ) ).thenReturn( media );
+
+        final String processedHtml =
+            this.service.processHtml( new ProcessHtmlParams().value( "<img src=\"image://" + media.getId() + "\"/>" ).imageSrcWidth( 1200 ) );
+
+        assertThat( processedHtml ).contains( "/full/mycontent\"" ).doesNotContain( "1200" );
+    }
+
+    @Test
     void processHtml_image_imageWidths_ofImageServedAsStored()
     {
         final Media media = unscaledMedia();

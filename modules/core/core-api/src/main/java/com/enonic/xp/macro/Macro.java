@@ -57,13 +57,14 @@ public final class Macro
         }
 
         final Macro that = (Macro) o;
-        return Objects.equals( this.name, that.name ) && Objects.equals( this.body, that.body ) && this.params.equals( that.params );
+        return Objects.equals( this.name, that.name ) && Objects.equals( this.body, that.body ) &&
+            List.copyOf( this.params.entries() ).equals( List.copyOf( that.params.entries() ) );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( name, body, params );
+        return Objects.hash( name, body, List.copyOf( params.entries() ) );
     }
 
     @Override

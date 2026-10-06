@@ -8,10 +8,7 @@ import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemPath;
-import com.enonic.xp.form.FormItemSet;
-import com.enonic.xp.form.FormOptionSet;
 import com.enonic.xp.form.Input;
-import com.enonic.xp.form.Occurrences;
 import com.enonic.xp.macro.MacroDescriptor;
 
 /**
@@ -64,14 +61,6 @@ public final class MacroParamNames
      */
     public boolean isMultiple( final String name )
     {
-        final FormItem formItem = form.getFormItem( FormItemPath.from( name ) );
-        final Occurrences occurrences = switch ( formItem )
-        {
-            case Input input -> input.getOccurrences();
-            case FormItemSet set -> set.getOccurrences();
-            case FormOptionSet optionSet -> optionSet.getOccurrences();
-            case null, default -> null;
-        };
-        return occurrences != null && occurrences.isMultiple();
+        return form.getFormItem( FormItemPath.from( name ) ) instanceof Input input && input.getOccurrences().isMultiple();
     }
 }

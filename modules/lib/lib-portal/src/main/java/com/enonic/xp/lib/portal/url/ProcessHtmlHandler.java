@@ -17,6 +17,8 @@ public final class ProcessHtmlHandler
 
     private String value;
 
+    private Integer imageSrcWidth;
+
     private List<Integer> imageWidths;
 
     private String imageSizes;
@@ -39,6 +41,12 @@ public final class ProcessHtmlHandler
         return this;
     }
 
+    public ProcessHtmlHandler setImageSrcWidth( final Integer imageSrcWidth )
+    {
+        this.imageSrcWidth = imageSrcWidth;
+        return this;
+    }
+
     public ProcessHtmlHandler setImageWidths( final List<Integer> imageWidths )
     {
         this.imageWidths = imageWidths;
@@ -53,8 +61,11 @@ public final class ProcessHtmlHandler
 
     public String createUrl()
     {
-        final ProcessHtmlParams params =
-            new ProcessHtmlParams().type( this.urlType ).value( this.value ).imageWidths( this.imageWidths ).imageSizes( this.imageSizes );
+        final ProcessHtmlParams params = new ProcessHtmlParams().type( this.urlType )
+            .value( this.value )
+            .imageSrcWidth( this.imageSrcWidth )
+            .imageWidths( this.imageWidths )
+            .imageSizes( this.imageSizes );
 
         return this.urlServiceSupplier.get().processHtml( params );
     }

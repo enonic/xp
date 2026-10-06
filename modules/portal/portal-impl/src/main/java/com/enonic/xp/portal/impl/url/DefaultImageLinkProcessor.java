@@ -83,7 +83,8 @@ final class DefaultImageLinkProcessor
             return queryParams.get();
         };
 
-        final String imageUrl = imageUrl( baseUrlSupplier, imageSupplier, projectNameSupplier, branchSupplier, queryParamsStrategy, null );
+        final String imageUrl =
+            imageUrl( baseUrlSupplier, imageSupplier, projectNameSupplier, branchSupplier, queryParamsStrategy, params.getImageSrcWidth() );
 
         element.setAttribute( element.hasAttribute( "href" ) ? "href" : "src", imageUrl );
 
