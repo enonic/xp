@@ -589,7 +589,7 @@ class PortalUrlServiceImpl_processHtmlTest
         final String processedHtml = this.service.processHtml( params );
         assertEquals(
             "<a href=\"/site/myproject/draft/_/media:image/myproject:draft/" + media.getId() + ":0a350f43700951cdcca1574f448a7e22/" +
-                "block-768-324" + "/" + media.getName() + "\">Image</a>", processedHtml );
+                "block-768-329" + "/" + media.getName() + "\">Image</a>", processedHtml );
     }
 
     @Test

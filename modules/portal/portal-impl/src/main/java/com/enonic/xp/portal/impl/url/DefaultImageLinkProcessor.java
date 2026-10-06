@@ -170,7 +170,8 @@ final class DefaultImageLinkProcessor
             final String verticalProportion = matcher.group( "verticalProportion" );
 
             final int width = requireNonNullElse( expectedWidth, DEFAULT_WIDTH );
-            final int height = width / Integer.parseInt( horizontalProportion ) * Integer.parseInt( verticalProportion );
+            final int height =
+                (int) Math.round( (double) ( (long) width * Integer.parseInt( verticalProportion ) ) / Integer.parseInt( horizontalProportion ) );
 
             return "block(" + width + "," + height + ")";
         }
