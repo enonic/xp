@@ -23,6 +23,8 @@ public final class ProcessHtmlParams
 {
     private @Nullable String value;
 
+    private @Nullable Integer imageSrcWidth;
+
     private @Nullable List<Integer> imageWidths;
 
     private @Nullable String imageSizes;
@@ -50,6 +52,28 @@ public final class ProcessHtmlParams
     public ProcessHtmlParams value( final @Nullable String value )
     {
         this.value = Strings.emptyToNull( value );
+        return this;
+    }
+
+    /**
+     * @return width of the {@code src} of images, or {@code null} for the default of 768 pixels
+     */
+    public @Nullable Integer getImageSrcWidth()
+    {
+        return imageSrcWidth;
+    }
+
+    /**
+     * Sets the width the {@code src} of every image the image API scales is scaled to. Its height follows the aspect
+     * ratio of the image's style, or of the {@code scale} the image carries. The other images, served as stored, keep
+     * their {@code src}.
+     *
+     * @param imageSrcWidth width in pixels; {@code null} for the default of 768 pixels
+     * @return these params
+     */
+    public ProcessHtmlParams imageSrcWidth( final @Nullable Integer imageSrcWidth )
+    {
+        this.imageSrcWidth = imageSrcWidth;
         return this;
     }
 
@@ -193,6 +217,7 @@ public final class ProcessHtmlParams
         helper.add( "type", this.getType() );
         helper.add( "params", this.getParams() );
         helper.add( "value", this.value );
+        helper.add( "imageSrcWidth", this.imageSrcWidth );
         helper.add( "imageWidths", this.imageWidths );
         helper.add( "imageSizes", this.imageSizes );
         return helper.toString();

@@ -15,4 +15,9 @@ public interface HtmlElementInternal
     HtmlElementInternal setAttribute( String attributeName, boolean value );
 
     HtmlElementInternal removeAttribute( String attributeName );
+
+    /**
+     * Sets an attribute right after another one, or last when the element does not have the other one.
+     */
+    HtmlElementInternal setAttributeAfter( String previousAttributeName, String attributeName, String value );
 }

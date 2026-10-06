@@ -12,7 +12,11 @@ var scope = portalLib.portalScope({
 // Process rich text of a site: each link and macro in the HTML is a placeholder, rendered from its entry
 var result = portalLib.processHtmlParts({
     value: '<a href="content://123456">Post</a>[youtube videoid="abc"/]',
-    scope: scope
+    scope: scope,
+    // the src of images, and their srcset
+    imageSrcWidth: 1024,
+    imageWidths: [480, 1024, 1600],
+    imageSizes: '(max-width: 768px) 100vw, 768px'
 });
 
 // The site's configured Base URL, or the origin the frontend serves the site from

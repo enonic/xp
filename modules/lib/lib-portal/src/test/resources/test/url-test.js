@@ -275,6 +275,7 @@ exports.processHtmlImageUrlProcessingTest = function() {
         value: '<p><figure class="editor-align-justify">' +
                        '<img alt="Alt text" src="image://3e266eea-9875-4cb7-b259-41ad152f8532"/>' +
                        '<figcaption>Caption text</figcaption></figure></p>',
+        imageSrcWidth: 1024,
         imageWidths: [660, 1024],
         imageSizes: '(max-width: 960px) 600px'
     });

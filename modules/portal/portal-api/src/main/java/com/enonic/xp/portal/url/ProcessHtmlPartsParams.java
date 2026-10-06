@@ -22,6 +22,8 @@ public final class ProcessHtmlPartsParams
 
     private final @Nullable PortalScope scope;
 
+    private final @Nullable Integer imageSrcWidth;
+
     private final @Nullable List<Integer> imageWidths;
 
     private final @Nullable String imageSizes;
@@ -36,6 +38,7 @@ public final class ProcessHtmlPartsParams
     {
         this.value = builder.value;
         this.scope = builder.scope;
+        this.imageSrcWidth = builder.imageSrcWidth;
         this.imageWidths = builder.imageWidths == null ? null : List.copyOf( builder.imageWidths );
         this.imageSizes = builder.imageSizes;
         this.customHtmlProcessor = builder.customHtmlProcessor;
@@ -58,6 +61,14 @@ public final class ProcessHtmlPartsParams
     public @Nullable PortalScope getScope()
     {
         return scope;
+    }
+
+    /**
+     * @return width of the {@code src} of images, or {@code null} for the default of 768 pixels
+     */
+    public @Nullable Integer getImageSrcWidth()
+    {
+        return imageSrcWidth;
     }
 
     /**
@@ -118,6 +129,8 @@ public final class ProcessHtmlPartsParams
 
         private @Nullable PortalScope scope;
 
+        private @Nullable Integer imageSrcWidth;
+
         private @Nullable List<Integer> imageWidths;
 
         private @Nullable String imageSizes;
@@ -155,6 +168,20 @@ public final class ProcessHtmlPartsParams
         public Builder scope( final @Nullable PortalScope scope )
         {
             this.scope = scope;
+            return this;
+        }
+
+        /**
+         * Sets the width the {@code src} of every image the image API scales is scaled to. Its height follows the
+         * aspect ratio of the image's style, or of the {@code scale} the image carries. The other images, served as
+         * stored, keep their {@code src}.
+         *
+         * @param imageSrcWidth width in pixels; {@code null} for the default of 768 pixels
+         * @return this builder
+         */
+        public Builder imageSrcWidth( final @Nullable Integer imageSrcWidth )
+        {
+            this.imageSrcWidth = imageSrcWidth;
             return this;
         }
 
