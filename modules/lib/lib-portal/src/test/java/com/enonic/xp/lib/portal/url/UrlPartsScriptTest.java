@@ -203,6 +203,16 @@ class UrlPartsScriptTest
     }
 
     @Test
+    void imageUrlPartsWithoutScale()
+    {
+        runFunction( "/test/image-url-parts-test.js", "withoutScale" );
+
+        final ArgumentCaptor<ImageUrlPartsParams> captor = ArgumentCaptor.forClass( ImageUrlPartsParams.class );
+        verify( portalUrlService ).imageUrlParts( captor.capture() );
+        assertEquals( "full", captor.getValue().getScale() );
+    }
+
+    @Test
     void testExample_attachmentUrlParts()
     {
         runScript( "/lib/xp/examples/portal/attachmentUrlParts.js" );

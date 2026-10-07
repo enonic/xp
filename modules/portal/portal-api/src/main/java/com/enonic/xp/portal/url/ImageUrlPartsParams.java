@@ -1,8 +1,5 @@
 package com.enonic.xp.portal.url;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 import org.jspecify.annotations.NullMarked;
@@ -14,7 +11,7 @@ import com.enonic.xp.project.ProjectName;
 
 import com.google.common.base.Strings;
 
-import static java.util.Objects.requireNonNull;
+import static java.util.Objects.requireNonNullElse;
 
 /**
  * Parameters of {@link PortalUrlService#imageUrlParts(ImageUrlPartsParams)}: the image, and how the image
@@ -42,9 +39,9 @@ public final class ImageUrlPartsParams
 
     private final @Nullable String format;
 
-    private final String scale;
+    private static final String FULL_SCALE = "full";
 
-    private final Map<String, List<String>> queryParams;
+    private final String scale;
 
     private ImageUrlPartsParams( final Builder builder )
     {
@@ -57,12 +54,11 @@ public final class ImageUrlPartsParams
         this.path = builder.path;
         this.projectNameSupplier = builder.projectNameSupplier;
         this.branchSupplier = builder.branchSupplier;
-        this.scale = requireNonNull( builder.scale );
+        this.scale = requireNonNullElse( builder.scale, FULL_SCALE );
         this.background = builder.background;
         this.quality = builder.quality;
         this.filter = builder.filter;
         this.format = builder.format;
-        this.queryParams = builder.queryParams.build();
     }
 
     /**
@@ -140,19 +136,11 @@ public final class ImageUrlPartsParams
     }
 
     /**
-     * @return the scaling function
+     * @return the scaling function; {@code full} for the image as stored when none is set
      */
     public String getScale()
     {
         return scale;
-    }
-
-    /**
-     * @return additional query parameters, in the order they were set
-     */
-    public Map<String, List<String>> getQueryParams()
-    {
-        return queryParams;
     }
 
     /**
@@ -164,7 +152,7 @@ public final class ImageUrlPartsParams
     }
 
     /**
-     * Builder of {@link ImageUrlPartsParams}. The scale is required, and either the media or its id/path, but not both.
+     * Builder of {@link ImageUrlPartsParams}. Either the media or its id/path is required, but not both; without a scale, the image is as stored.
      */
     public static class Builder
     {
@@ -187,8 +175,6 @@ public final class ImageUrlPartsParams
         private @Nullable String format;
 
         private @Nullable String scale;
-
-        private final QueryParamsBuilder queryParams = new QueryParamsBuilder();
 
         /**
          * @param mediaSupplier supplier of the image
@@ -290,39 +276,18 @@ public final class ImageUrlPartsParams
         }
 
         /**
-         * @param scale scaling function, such as {@code block(800,200)} or {@code width(768)}
+         * @param scale scaling function, such as {@code block(800,200)} or {@code width(768)}; {@code null} for {@code full},
+         *              the image as stored
          * @return this builder
          */
-        public Builder setScale( final String scale )
+        public Builder setScale( final @Nullable String scale )
         {
             this.scale = scale;
             return this;
         }
 
         /**
-         * @param queryParams additional query parameters; each replaces any earlier values of its name
-         * @return this builder
-         */
-        public Builder setQueryParams( final Map<String, ? extends Collection<String>> queryParams )
-        {
-            this.queryParams.setQueryParams( queryParams );
-            return this;
-        }
-
-        /**
-         * @param key   name of an additional query parameter
-         * @param value its value, replacing any earlier values
-         * @return this builder
-         */
-        public Builder setQueryParam( final String key, final String value )
-        {
-            this.queryParams.setQueryParam( key, value );
-            return this;
-        }
-
-        /**
          * @return the params
-         * @throws NullPointerException     if the scale is not set
          * @throws IllegalArgumentException if neither or both of the media and its id or path are set
          */
         public ImageUrlPartsParams build()

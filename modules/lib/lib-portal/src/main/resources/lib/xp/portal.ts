@@ -107,6 +107,9 @@ export type ImageUrlParams = IdXorPath & {
     background?: string;
     format?: string;
     filter?: string;
+    /**
+     * @deprecated The image API reads no query parameters but `quality`, `background` and `filter`, which have their own params.
+     */
     params?: object;
     type?: 'server' | 'absolute';
     scale:
@@ -170,7 +173,7 @@ interface ImageUrlHandler {
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
  * @param {string} [params.baseUrl] Deprecated. Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
- * @param {object} [params.params] Custom query parameters to append to the URL.
+ * @param {object} [params.params] Deprecated. Custom query parameters to append to the URL; the image API reads none but those of `quality`, `background` and `filter`.
  *
  * @returns {string} The generated URL; one the image API answers with 404 when the image does not resolve.
  */
@@ -250,6 +253,9 @@ export interface AttachmentUrlParams {
     label?: string;
     download?: boolean;
     type?: 'server' | 'absolute';
+    /**
+     * @deprecated The attachment API reads no query parameters but `download`, which has its own param.
+     */
     params?: object;
     project?: string;
     branch?: string;
@@ -298,7 +304,7 @@ interface AttachmentUrlHandler {
  * @param {string} [params.project] Name of the project.
  * @param {string} [params.branch] Name of the branch.
  * @param {string} [params.baseUrl] Deprecated. Configure `media.defaultBaseUrl` in `com.enonic.xp.portal.cfg`, or a Base URL on the site, instead.
- * @param {object} [params.params] Custom query parameters to append to the URL.
+ * @param {object} [params.params] Deprecated. Custom query parameters to append to the URL; the attachment API reads none but `download`.
  *
  * @returns {string} The generated URL; one the attachment API answers with 404 when the attachment does not resolve.
  */
@@ -1334,12 +1340,11 @@ export function pageUrlParts(params: PageUrlPartsParams): PageUrlParts {
 }
 
 export type ImageUrlPartsParams = IdXorPath & {
-    scale: ImageUrlParams['scale'];
+    scale?: ImageUrlParams['scale'];
     quality?: number;
     background?: string;
     format?: string;
     filter?: string;
-    params?: object;
     project?: string;
     branch?: string;
 };
@@ -1374,7 +1379,7 @@ interface ImageUrlPartsHandler {
 
     setBranch(value: string | null): void;
 
-    setScale(value: string): void;
+    setScale(value: string | null): void;
 
     setQuality(value: number | null): void;
 
@@ -1383,8 +1388,6 @@ interface ImageUrlPartsHandler {
     setFormat(value: string | null): void;
 
     setFilter(value: string | null): void;
-
-    setQueryParams(value: ScriptValue | null): void;
 
     createParts(): ImageUrlParts;
 }
@@ -1406,32 +1409,28 @@ interface ImageUrlPartsHandler {
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] ID of the image content. Either `id` or `path` is required.
  * @param {string} [params.path] Path of the image content within the project.
- * @param {string} params.scale Required. Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`.
+ * @param {string} [params.scale=full] Options are `width(px)`, `height(px)`, `block(width,height)`, `square(px)`, `max(px)`, `wide(width,height)` and `full`, the image as stored.
  * @param {number} [params.quality=85] Quality for JPEG images, ranges from 0 (max compression) to 100 (min compression).
  * @param {string} [params.background] Background color.
  * @param {string} [params.format] Format of the image.
  * @param {string} [params.filter] Filters to alter the image appearance, for example, blur(3), grayscale(), rounded(5), etc.
  * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
  * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
- * @param {object} [params.params] Custom query parameters of the URL.
  *
  * @returns {object} The parts: `path`, `queryString`, `context`, `id`, `fingerprint`, `scale` and `name`.
  */
 export function imageUrlParts(params: ImageUrlPartsParams): ImageUrlParts {
     const bean: ImageUrlPartsHandler = __.newBean<ImageUrlPartsHandler>('com.enonic.xp.lib.portal.url.ImageUrlPartsHandler');
 
-    const scale = checkRequired(params, 'scale');
-
     bean.setId(__.nullOrValue(params.id));
     bean.setPath(__.nullOrValue(params.path));
     bean.setProjectName(__.nullOrValue(params.project));
     bean.setBranch(__.nullOrValue(params.branch));
-    bean.setScale(scale);
+    bean.setScale(__.nullOrValue(params.scale));
     bean.setQuality(__.nullOrValue(params.quality));
     bean.setBackground(__.nullOrValue(params.background));
     bean.setFormat(__.nullOrValue(params.format));
     bean.setFilter(__.nullOrValue(params.filter));
-    bean.setQueryParams(__.toScriptValue(params.params));
 
     return toImageUrlParts(__.toNativeObject(bean.createParts()));
 }
@@ -1440,7 +1439,6 @@ export type AttachmentUrlPartsParams = IdXorPath & {
     name?: string;
     label?: string;
     download?: boolean;
-    params?: object;
     project?: string;
     branch?: string;
 };
@@ -1479,8 +1477,6 @@ interface AttachmentUrlPartsHandler {
 
     setDownload(value: boolean): void;
 
-    setQueryParams(value: ScriptValue | null): void;
-
     createParts(): AttachmentUrlParts;
 }
 
@@ -1503,7 +1499,6 @@ interface AttachmentUrlPartsHandler {
  * @param {boolean} [params.download=false] Set to true to ask for the attachment to be downloaded.
  * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
  * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
- * @param {object} [params.params] Custom query parameters of the URL.
  *
  * @returns {object} The parts: `path`, `queryString`, `context`, `id`, `fingerprint` and `name`.
  */
@@ -1517,7 +1512,6 @@ export function attachmentUrlParts(params: AttachmentUrlPartsParams): Attachment
     bean.setName(__.nullOrValue(params.name));
     bean.setLabel(__.nullOrValue(params.label));
     bean.setDownload(params.download || false);
-    bean.setQueryParams(__.toScriptValue(params.params));
 
     return toAttachmentUrlParts(__.toNativeObject(bean.createParts()));
 }
