@@ -1,0 +1,14 @@
+var schemaLib = require('/lib/xp/schema');
+var assert = require('/lib/xp/testing');
+
+// BEGIN
+// Fetch dynamic part icon.
+var result = schemaLib.getPartIcon({
+    key: 'myapp:mypart'
+});
+
+// END
+
+
+assert.assertEquals('image/svg+xml', result.mimeType);
+assert.assertNotNull(result.data);

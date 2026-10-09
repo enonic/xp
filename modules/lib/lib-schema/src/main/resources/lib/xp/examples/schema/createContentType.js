@@ -25,10 +25,9 @@ config:
 `;
 
 // BEGIN
-// Create virtual content type.
-var result = schemaLib.createSchema({
+// Create dynamic content type.
+var result = schemaLib.createContentType({
     name: 'myapp:mytype',
-    type: 'CONTENT_TYPE',
     resource
 
 });

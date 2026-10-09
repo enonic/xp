@@ -25,7 +25,7 @@ class CreateDynamicComponentHandlerTest
     @Test
     void testPart()
     {
-        when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( dynamicSchemaService.createPart( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
 
             final PartDescriptor.Builder builder =
@@ -48,7 +48,7 @@ class CreateDynamicComponentHandlerTest
     @Test
     void testLayout()
     {
-        when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( dynamicSchemaService.createLayout( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
 
             final LayoutDescriptor.Builder builder =
@@ -71,7 +71,7 @@ class CreateDynamicComponentHandlerTest
     @Test
     void testPage()
     {
-        when( dynamicSchemaService.createComponent( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
+        when( dynamicSchemaService.createPage( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer( params -> {
             final CreateDynamicComponentParams componentParams = params.getArgument( 0, CreateDynamicComponentParams.class );
 
             final DescriptorKey descriptorKey =
@@ -102,5 +102,17 @@ class CreateDynamicComponentHandlerTest
     void testInvalidSchema()
     {
         runFunction( "/test/CreateDynamicComponentHandlerTest.js", "createInvalidComponent" );
+    }
+
+    @Test
+    void testWithoutKey()
+    {
+        runFunction( "/test/CreateDynamicComponentHandlerTest.js", "createComponentWithoutKey" );
+    }
+
+    @Test
+    void testInvalidKey()
+    {
+        runFunction( "/test/CreateDynamicComponentHandlerTest.js", "createComponentWithInvalidKey" );
     }
 }

@@ -1,0 +1,76 @@
+var schemaLib = require('/lib/xp/schema');
+var assert = require('/lib/xp/testing');
+
+/* global log*/
+
+let resource = `kind: "CMS"
+mixins:
+- name: "myapp1:menu-item"
+  optional: false
+  allowContentTypes: "mycontent"
+- name: "myapp2:my-meta-fragment"
+  optional: false
+form:
+- type: "TextLine"
+  name: "some-name"
+  label: "Textline"
+  occurrences:
+    min: 0
+    max: 1`;
+
+
+// BEGIN
+// Update dynamic CMS.
+var result = schemaLib.updateCms({
+    application: 'myapp',
+    resource
+
+});
+
+log.info('Updated CMS: ' + result.application);
+
+// END
+
+
+assert.assertJsonEquals({
+    application: 'myapp',
+    resource: `kind: "CMS"
+mixins:
+- name: "myapp1:menu-item"
+  optional: false
+  allowContentTypes: "mycontent"
+- name: "myapp2:my-meta-fragment"
+  optional: false
+form:
+- type: "TextLine"
+  name: "some-name"
+  label: "Textline"
+  occurrences:
+    min: 0
+    max: 1`,
+    modifiedTime: '2021-09-25T10:00:00Z',
+    form: [
+        {
+            'formItemType': 'Input',
+            'name': 'some-name',
+            'label': 'Textline',
+            'inputType': 'TextLine',
+            'occurrences': {
+                'maximum': 1,
+                'minimum': 0
+            }
+        }
+    ],
+    mixinMappings: [
+        {
+            'name': 'myapp1:menu-item',
+            'optional': false,
+            'allowContentTypes': 'mycontent'
+        },
+        {
+            'name': 'myapp2:my-meta-fragment',
+            'optional': false
+        }
+    ]
+}, result);
+

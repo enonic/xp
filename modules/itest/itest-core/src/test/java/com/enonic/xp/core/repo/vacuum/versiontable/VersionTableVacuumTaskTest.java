@@ -85,7 +85,7 @@ class VersionTableVacuumTaskTest
                                                                                             .build() ) );
         refresh();
 
-        assertEquals( updates + 13, result.getProcessed() );
+        assertEquals( updates + 11, result.getProcessed() );
         assertEquals( expectedVersionCount, result.getDeleted() );
 
         assertVersions( node1.id(), 0 );
@@ -108,7 +108,7 @@ class VersionTableVacuumTaskTest
             VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).ageThreshold( NEGATIVE_AGE_THRESHOLD_MILLIS ).build() ) );
         refresh();
 
-        assertEquals( 13, result.getProcessed() );
+        assertEquals( 11, result.getProcessed() );
         assertEquals( 1, result.getDeleted() );
         assertVersions( node1.id(), 0 );
     }

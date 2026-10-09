@@ -18,7 +18,10 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
+import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_CAPABILITY;
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_SOURCE_PATHS;
@@ -26,9 +29,54 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ApplicationHelper
 {
+    private static final String LOCAL_BUNDLE_LOCATION_PREFIX = "local:";
+
     public static ApplicationKey getApplicationKey( final Bundle bundle )
     {
         return ApplicationKey.from( ApplicationBundleUtils.getApplicationName( bundle ) );
+    }
+
+    /**
+     * A schema application owns its schema ({@code cms/cms.yaml}), is installed globally (its schema is persisted in nodes)
+     * and is not built with gradle: the XP gradle plugin builds the manifest with Bnd, which always stamps it with
+     * {@code Bnd-LastModified} and {@code Tool}, while the manifest of a schema application (built by Enonic CLI) has neither.
+     */
+    static boolean isSchemaApplication( final Bundle bundle )
+    {
+        return hasCmsDescriptor( bundle ) && !isLocalApplication( bundle ) && !isBuiltWithBnd( bundle );
+    }
+
+    private static boolean isBuiltWithBnd( final Bundle bundle )
+    {
+        final String tool = bundle.getHeaders().get( ApplicationManifestConstants.TOOL );
+        return !isNullOrEmpty( bundle.getHeaders().get( ApplicationManifestConstants.BND_LAST_MODIFIED ) ) ||
+            ( tool != null && tool.startsWith( ApplicationManifestConstants.BND_TOOL_PREFIX ) );
+    }
+
+    /**
+     * {@code true} when the bundle ships a cms descriptor ({@code cms/cms.yaml}), i.e. the application owns its schema.
+     */
+    static boolean hasCmsDescriptor( final Bundle bundle )
+    {
+        return SchemaResourcePaths.CMS_DESCRIPTOR_PATHS.stream().anyMatch( path -> bundle.getEntry( path ) != null );
+    }
+
+    /**
+     * Location of an application bundle. Local applications are marked by a location prefix,
+     * the only channel that reaches the bundle tracker creating the application.
+     */
+    static String toBundleLocation( final ApplicationKey applicationKey, final boolean local )
+    {
+        return ( local ? LOCAL_BUNDLE_LOCATION_PREFIX : "" ) + applicationKey.getName();
+    }
+
+    /**
+     * {@code true} when the bundle was installed as a local application, see {@link #toBundleLocation(ApplicationKey, boolean)}.
+     */
+    static boolean isLocalApplication( final Bundle bundle )
+    {
+        final String location = bundle.getLocation();
+        return location != null && location.startsWith( LOCAL_BUNDLE_LOCATION_PREFIX );
     }
 
     static String getAttribute( final Manifest manifest, final String name, final String defValue )
@@ -95,6 +143,19 @@ public final class ApplicationHelper
         }
     }
 
+    /**
+     * Writing the persisted schema or descriptor of an application takes the {@code system.admin} or {@code system.schema.admin} role.
+     */
+    static void requireSchemaAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
+        if ( !hasAdminRole )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
+        }
+    }
+
     public static <T> T runAsAdmin( final Callable<T> callable )
     {
         return createAdminContext().callWith( callable );
@@ -105,7 +166,7 @@ public final class ApplicationHelper
         createAdminContext().runWith( runnable );
     }
 
-    private static Context createAdminContext()
+    static Context createAdminContext()
     {
         return ContextBuilder.create()
             .branch( SystemConstants.BRANCH_SYSTEM )

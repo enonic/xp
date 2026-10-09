@@ -21,4 +21,29 @@ exports.createInvalidContentSchemaType = function () {
     }));
 };
 
+// `name` is required: the TS layer rejects the call before the handler is reached.
+exports.createContentSchemaWithoutName = function () {
+    assert.assertThrows(() => schemaLib.createContentType({
+        resource: 'kind: "ContentType"'
+    }));
+    assert.assertThrows(() => schemaLib.createFormFragment({
+        resource: 'kind: "FormFragment"'
+    }));
+    assert.assertThrows(() => schemaLib.createMixin({
+        resource: 'kind: "Mixin"'
+    }));
+};
+
+// `name` must be `<application>:<localName>`: the handler fails to parse the schema name.
+exports.createContentSchemaWithInvalidName = function () {
+    assert.assertThrows(() => schemaLib.createContentType({
+        name: 'mydata',
+        resource: 'kind: "ContentType"'
+    }));
+    assert.assertThrows(() => schemaLib.createContentType({
+        name: 'myapp:my data',
+        resource: 'kind: "ContentType"'
+    }));
+};
+
 
