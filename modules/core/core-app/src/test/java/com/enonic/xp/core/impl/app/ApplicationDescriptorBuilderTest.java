@@ -100,8 +100,8 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorEnonicYamlTakesPriorityOverEnonicYml()
     {
-        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YML,
-                                                                                                           ENONIC_APP_DESCRIPTOR_PATH_YAML ) );
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YML, ENONIC_APP_DESCRIPTOR_PATH_YAML ) );
 
         assertEquals( "My app description YAML", appDescriptor.getDescription() );
     }
@@ -109,8 +109,8 @@ class ApplicationDescriptorBuilderTest
     @Test
     void buildApplicationDescriptorEnonicTakesPriorityOverApplication()
     {
-        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( APP_DESCRIPTOR_PATH_YAML,
-                                                                                                           ENONIC_APP_DESCRIPTOR_PATH_YAML ) );
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( APP_DESCRIPTOR_PATH_YAML, ENONIC_APP_DESCRIPTOR_PATH_YAML ) );
 
         assertEquals( "My app description YAML", appDescriptor.getDescription() );
     }
@@ -119,8 +119,9 @@ class ApplicationDescriptorBuilderTest
     void buildApplicationDescriptorEnonicIconTakesPriorityOverApplicationIcon()
         throws Exception
     {
-        final ApplicationDescriptor appDescriptor =
-            ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YAML, APP_ICON_FILENAME, ENONIC_APP_ICON_FILENAME ) );
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YAML,
+                                                                                                           APP_ICON_FILENAME,
+                                                                                                           ENONIC_APP_ICON_FILENAME ) );
 
         assertArrayEquals( resourceTestHelper.getTestResource( ENONIC_APP_ICON_FILENAME ).openStream().readAllBytes(),
                            appDescriptor.getIcon().toByteArray() );
@@ -144,9 +145,8 @@ class ApplicationDescriptorBuilderTest
         final Map<String, Resource> resources = Map.of( //
             "/enonic.yaml", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.yaml" ), ByteSource.wrap(
                 "kind: \"Application\"\ndescription: \"From node\"\n".getBytes( StandardCharsets.UTF_8 ) ), timestamp ), //
-            "/enonic.svg",
-            new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.svg" ), ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ),
-                                   timestamp ) );
+            "/enonic.svg", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.svg" ),
+                                                  ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ), timestamp ) );
 
         final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) );
 
@@ -156,13 +156,40 @@ class ApplicationDescriptorBuilderTest
     }
 
     @Test
+    void buildApplicationDescriptorFromNodeResourcePngIcon()
+    {
+        // the persisted icon is served as enonic.png when it is a png: the mime type follows the path
+        final Instant timestamp = Instant.parse( "2026-09-11T10:00:00Z" );
+        final Map<String, Resource> resources = Map.of( //
+            "/enonic.yaml", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.yaml" ),
+                                                   ByteSource.wrap( "kind: \"Application\"\n".getBytes( StandardCharsets.UTF_8 ) ),
+                                                   timestamp ), "/enonic.png",
+            new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.png" ), ByteSource.wrap( new byte[]{1, 2, 3} ), timestamp ) );
+
+        final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) );
+
+        assertArrayEquals( new byte[]{1, 2, 3}, appDescriptor.getIcon().toByteArray() );
+        assertEquals( SchemaResourcePaths.PNG_MIME_TYPE, appDescriptor.getIcon().getMimeType() );
+        assertEquals( timestamp, appDescriptor.getIcon().getModifiedTime() );
+    }
+
+    @Test
+    void buildApplicationDescriptorSvgMimeType()
+    {
+        final ApplicationDescriptor appDescriptor =
+            ApplicationDescriptorBuilder.build( APP_KEY, resolver( ENONIC_APP_DESCRIPTOR_PATH_YAML, ENONIC_APP_ICON_FILENAME ) );
+
+        assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, appDescriptor.getIcon().getMimeType() );
+    }
+
+    @Test
     void buildApplicationDescriptorNameMismatch()
     {
         final Map<String, Resource> resources = Map.of( "/enonic.yaml", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.yaml" ),
-                                                                                                ByteSource.wrap(
-                                                                                                    "kind: \"Application\"\nname: \"otherapp\"\n".getBytes(
-                                                                                                        StandardCharsets.UTF_8 ) ),
-                                                                                                Instant.EPOCH ) );
+                                                                                               ByteSource.wrap(
+                                                                                                   "kind: \"Application\"\nname: \"otherapp\"\n".getBytes(
+                                                                                                       StandardCharsets.UTF_8 ) ),
+                                                                                               Instant.EPOCH ) );
 
         assertThrows( RuntimeException.class, () -> ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) ) );
     }

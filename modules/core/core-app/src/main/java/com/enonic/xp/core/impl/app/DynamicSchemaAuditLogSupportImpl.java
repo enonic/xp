@@ -366,6 +366,53 @@ public class DynamicSchemaAuditLogSupportImpl
     }
 
     @Override
+    public void createApplicationDescriptor( final ApplicationKey key, final String resource, final String iconMimeType,
+                                             final long iconSize )
+    {
+        if ( isEnabledAuditLog )
+        {
+            log( "system.schema.application.create", applicationDescriptorData( key, resource, iconMimeType, iconSize, false ),
+                 applicationDescriptorUris( key ) );
+        }
+    }
+
+    @Override
+    public void updateApplicationDescriptor( final ApplicationKey key, final String resource, final String iconMimeType,
+                                             final long iconSize, final boolean iconRemoved )
+    {
+        if ( isEnabledAuditLog )
+        {
+            log( "system.schema.application.update", applicationDescriptorData( key, resource, iconMimeType, iconSize, iconRemoved ),
+                 applicationDescriptorUris( key ) );
+        }
+    }
+
+    private static PropertyTree applicationDescriptorData( final ApplicationKey key, final String resource, final String iconMimeType,
+                                                           final long iconSize, final boolean iconRemoved )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        paramsSet.addString( "application", key.toString() );
+        paramsSet.addString( "resource", resource );
+        if ( iconMimeType != null )
+        {
+            final PropertySet iconSet = paramsSet.addSet( "icon" );
+            iconSet.addString( "mimeType", iconMimeType );
+            iconSet.addLong( "size", iconSize );
+        }
+        if ( iconRemoved )
+        {
+            paramsSet.addBoolean( "iconRemoved", true );
+        }
+        return data;
+    }
+
+    private static AuditLogUris applicationDescriptorUris( final ApplicationKey key )
+    {
+        return AuditLogUris.from( key + ":/" + SchemaResourcePaths.APP_DESCRIPTOR_NAME );
+    }
+
+    @Override
     public void createPhrases( final CreateDynamicPhrasesParams params, final Resource result )
     {
         if ( isEnabledAuditLog )

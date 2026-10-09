@@ -230,6 +230,33 @@ class DynamicSchemaAuditLogSupportImplTest
     }
 
     @Test
+    void createApplicationDescriptor()
+    {
+        instance.createApplicationDescriptor( ApplicationKey.from( "myapp" ), RESOURCE, "image/svg+xml", 42 );
+
+        final LogAuditLogParams value = captureLog();
+        assertEquals( "system.schema.application.create", value.getType() );
+        assertEquals( "myapp:/enonic.yaml", firstUri( value ) );
+        assertEquals( "myapp", value.getData().getSet( "params" ).getString( "application" ) );
+        assertEquals( RESOURCE, value.getData().getSet( "params" ).getString( "resource" ) );
+        assertEquals( "image/svg+xml", value.getData().getSet( "params" ).getSet( "icon" ).getString( "mimeType" ) );
+        assertEquals( 42L, value.getData().getSet( "params" ).getSet( "icon" ).getLong( "size" ) );
+    }
+
+    @Test
+    void updateApplicationDescriptor()
+    {
+        instance.updateApplicationDescriptor( ApplicationKey.from( "myapp" ), RESOURCE, null, 0, true );
+
+        final LogAuditLogParams value = captureLog();
+        assertEquals( "system.schema.application.update", value.getType() );
+        assertEquals( "myapp:/enonic.yaml", firstUri( value ) );
+        assertEquals( RESOURCE, value.getData().getSet( "params" ).getString( "resource" ) );
+        assertEquals( null, value.getData().getSet( "params" ).getSet( "icon" ) );
+        assertEquals( Boolean.TRUE, value.getData().getSet( "params" ).getBoolean( "iconRemoved" ) );
+    }
+
+    @Test
     void deleteCms()
     {
         instance.deleteCms( ApplicationKey.from( "myapp" ) );

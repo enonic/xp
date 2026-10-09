@@ -1,6 +1,7 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -230,36 +231,34 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
         }
 
-        // an application shipping cms/cms.yaml owns its schema: the schema is persisted in nodes and served from there
+        // the application descriptor and icon of every application are persisted in nodes and served from there; an application
+        // shipping cms/cms.yaml owns its schema, which is persisted the same way
         final Map<String, ByteSource> schemaResources;
         try
         {
-            schemaResources = appInfo.hasCmsDescriptor ? AppSchemaResolver.resolve( byteSource ) : null;
+            schemaResources = new LinkedHashMap<>( AppSchemaResolver.resolve( byteSource ) );
         }
         catch ( Exception e )
         {
             throw new ApplicationBundleException( "Cannot install application", e );
         }
 
-        // a descriptor declaring another kind than its path reserves rejects the installation before anything is written
-        if ( schemaResources != null )
+        // without cms/cms.yaml the bundle does not own a schema: whatever it ships below cms/ is served from the bundle, not persisted
+        if ( !appInfo.hasCmsDescriptor )
         {
-            AppSchemaValidator.validate( schemaResources );
+            schemaResources.keySet().removeIf( path -> path.startsWith( SchemaResourceNames.CMS_ROOT_NAME + "/" ) );
         }
+
+        // a descriptor declaring another kind than its path reserves rejects the installation before anything is written
+        AppSchemaValidator.validate( schemaResources );
 
         repoService.upsertApplicationNode( appInfo, byteSource );
 
         // the schema is persisted before the bundle is installed: the application created for the bundle (and the
         // application descriptor built on bundle install) must see the persisted nodes from the start, on this
-        // cluster node as well as on the others receiving the install event
-        if ( schemaResources != null )
-        {
-            repoService.persistApplicationSchema( applicationKey, schemaResources );
-        }
-        else
-        {
-            repoService.deleteApplicationSchema( applicationKey );
-        }
+        // cluster node as well as on the others receiving the install event. Whatever an earlier version persisted
+        // (a schema the new version no longer ships, for instance) is replaced.
+        repoService.persistApplicationSchema( applicationKey, schemaResources );
 
         this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
 
@@ -298,6 +297,12 @@ public final class ApplicationServiceImpl
         if ( applicationNode == null )
         {
             throw new ApplicationBundleException( "Cannot install application [" + applicationKey + "], node not found" );
+        }
+
+        if ( !hasBundle( applicationNode ) )
+        {
+            LOG.debug( "Application [{}] has no bundle, nothing to install", applicationKey );
+            return;
         }
 
         final ByteSource byteSource = this.repoService.getApplicationSource( applicationNode.id() );
@@ -377,9 +382,23 @@ public final class ApplicationServiceImpl
         }
     }
 
+    /**
+     * An application node without the bundle binary holds nothing but a persisted descriptor (created through
+     * {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}): there is no application to install.
+     */
+    private static boolean hasBundle( final Node applicationNode )
+    {
+        return applicationNode.data().getBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) != null;
+    }
+
     private void doInstallAndStartStoredApplication( final Node applicationNode )
     {
         final ApplicationKey applicationKey = ApplicationKey.from( applicationNode.name().toString() );
+        if ( !hasBundle( applicationNode ) )
+        {
+            LOG.debug( "Application [{}] has no bundle, nothing to install", applicationKey );
+            return;
+        }
         doInstallStoredApplication( applicationKey );
         final Application application = registry.get( applicationKey );
         final boolean started = Boolean.TRUE.equals( applicationNode.data().getBoolean( ApplicationPropertyNames.STARTED ) ) ||

@@ -21,10 +21,12 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.schema.SchemaNodePropertyNames;
 
 /**
  * Serves application resources stored as nodes below the application node: the {@code cms} subtree and the persisted
- * application descriptor and icon ({@code enonic.yaml}, {@code enonic.svg}).
+ * application descriptor ({@code enonic.yaml}). The application icon is attached to the descriptor node and served as the
+ * virtual resource {@code enonic.svg} or {@code enonic.png}, by its mime type.
  * Resource paths are relative to the application node, e.g. {@code /cms/content-types/mytype/mytype.yaml}.
  */
 public final class NodeResourceApplicationUrlResolver
@@ -53,12 +55,23 @@ public final class NodeResourceApplicationUrlResolver
         final int appPathLength = appNodePath.toString().length();
 
         return contextSupplier.get().callWith( () -> {
-            return this.nodeService.list( ListNodesParams.create().parentPath( appNodePath ).build() )
+            final Set<String> files = this.nodeService.list( ListNodesParams.create().parentPath( appNodePath ).build() )
                 .map( NodeListEntry::nodePath )
                 .filter( NodeResourceApplicationUrlResolver::isResource )
                 .map( nodePath -> nodePath.toString().substring( appPathLength ) )
-                .filter( NodeResourceApplicationUrlResolver::isServedPath )
+                // the icon is not a node of its own: a node at its path is never served, the virtual icon is listed instead
+                .filter( path -> isServedPath( path ) && !SchemaResourcePaths.isAppIconPath( path ) )
                 .collect( Collectors.toCollection( LinkedHashSet::new ) );
+
+            if ( files.contains( "/" + SchemaResourcePaths.APP_DESCRIPTOR_NAME ) )
+            {
+                final String iconName = appIconName( descriptorNode() );
+                if ( iconName != null )
+                {
+                    files.add( "/" + iconName );
+                }
+            }
+            return files;
         } );
     }
 
@@ -87,6 +100,11 @@ public final class NodeResourceApplicationUrlResolver
             return null;
         }
 
+        if ( SchemaResourcePaths.isAppIconPath( path ) )
+        {
+            return contextSupplier.get().callWith( () -> findAppIcon( path ) );
+        }
+
         final NodePath.Builder builder = NodePath.create( appNodePath );
 
         Arrays.stream( path.split( "/" ) ).forEach( builder::addElement );
@@ -101,7 +119,9 @@ public final class NodeResourceApplicationUrlResolver
 
             final ResourceKey resourceKey = ResourceKey.from( applicationKey, path );
 
-            if ( resourceNode.getAttachedBinaries().getByBinaryReference( SchemaResourceNames.ICON_BINARY_REFERENCE ) != null )
+            // an icon node references its binary in the data; the binaries attached to a node are not consulted, a binary
+            // may remain attached after its reference is removed from the data
+            if ( SchemaResourceNames.ICON_BINARY_REFERENCE.equals( resourceNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) ) )
             {
                 final ByteSource binary = nodeService.getBinary( resourceNode.id(), SchemaResourceNames.ICON_BINARY_REFERENCE );
                 return new NodeValueResource( resourceKey, binary, resourceNode.getTimestamp() );
@@ -109,5 +129,36 @@ public final class NodeResourceApplicationUrlResolver
 
             return new NodeValueResource( resourceKey, resourceNode );
         } );
+    }
+
+    /**
+     * The application icon attached to the descriptor node, served at the virtual path matching its mime type only.
+     */
+    private Resource findAppIcon( final String path )
+    {
+        final Node descriptorNode = descriptorNode();
+        final String iconName = appIconName( descriptorNode );
+        if ( iconName == null || !path.equals( "/" + iconName ) )
+        {
+            return null;
+        }
+
+        final ByteSource binary = nodeService.getBinary( descriptorNode.id(), SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+        return new NodeValueResource( ResourceKey.from( applicationKey, path ), binary, descriptorNode.getTimestamp() );
+    }
+
+    private Node descriptorNode()
+    {
+        return nodeService.getByPath( new NodePath( appNodePath, NodeName.from( SchemaResourcePaths.APP_DESCRIPTOR_NAME ) ) );
+    }
+
+    private static String appIconName( final Node descriptorNode )
+    {
+        if ( descriptorNode == null ||
+            !SchemaResourceNames.APP_ICON_BINARY_REFERENCE.equals( descriptorNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) ) )
+        {
+            return null;
+        }
+        return SchemaResourcePaths.appIconName( descriptorNode.data().getString( SchemaNodePropertyNames.MIME_TYPE ) );
     }
 }

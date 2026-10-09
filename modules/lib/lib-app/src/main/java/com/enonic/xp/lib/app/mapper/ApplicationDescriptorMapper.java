@@ -4,6 +4,7 @@ import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.util.GenericValue;
 
 public class ApplicationDescriptorMapper
     implements MapSerializable
@@ -26,7 +27,15 @@ public class ApplicationDescriptorMapper
         gen.value( "vendorName", descriptor.getVendorName() );
         gen.value( "vendorUrl", descriptor.getVendorUrl() );
         gen.value( "url", descriptor.getUrl() );
+        serializeConfig( gen, descriptor.getSchemaConfig() );
         serializeIcon( gen, descriptor.getIcon() );
+    }
+
+    private void serializeConfig( final MapGenerator gen, final GenericValue config )
+    {
+        gen.map( "config" );
+        config.properties().forEach( e -> gen.value( e.getKey(), e.getValue().toRawJs() ) );
+        gen.end();
     }
 
     private void serializeIcon( final MapGenerator gen, final Icon icon )
@@ -35,12 +44,11 @@ public class ApplicationDescriptorMapper
         {
             return;
         }
-        gen.map( "icon" );
 
+        gen.map( "icon" );
         gen.value( "data", new IconByteSource( icon ) );
         gen.value( "mimeType", icon.getMimeType() );
         gen.value( "modifiedTime", icon.getModifiedTime() );
-
         gen.end();
     }
 }

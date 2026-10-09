@@ -13,9 +13,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
@@ -55,8 +53,6 @@ import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
-import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
@@ -1147,14 +1143,9 @@ public class DynamicSchemaServiceImpl
         }
     }
 
-    private void requireAdminRole()
+    private static void requireAdminRole()
     {
-        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
-        if ( !hasAdminRole )
-        {
-            throw new ForbiddenAccessException( authInfo.getUser() );
-        }
+        ApplicationHelper.requireSchemaAdminRole();
     }
 
     private ComponentDescriptor wrapDescriptor( final ComponentDescriptor componentDescriptor, final long modifiedTime, final Icon icon )

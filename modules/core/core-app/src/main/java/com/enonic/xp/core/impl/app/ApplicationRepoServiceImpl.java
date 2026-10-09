@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.io.ByteSource;
 
+import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -26,6 +28,7 @@ import com.enonic.xp.node.Nodes;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
+import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.util.BinaryReference;
 
 public class ApplicationRepoServiceImpl
@@ -53,12 +56,36 @@ public class ApplicationRepoServiceImpl
         }
     }
 
+    @Override
+    public Node createApplicationNode( final ApplicationKey applicationKey )
+    {
+        return ApplicationHelper.runAsAdmin( () -> {
+            final PropertyTree data = new PropertyTree();
+            data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
+            return this.nodeService.create( CreateNodeParams.create()
+                                                .parent( APPLICATION_PATH )
+                                                .name( applicationKey.getName() )
+                                                .data( data )
+                                                .inheritPermissions( true )
+                                                .refresh( RefreshMode.ALL )
+                                                .build() );
+        } );
+    }
+
     /**
      * Node of an application in system-repo, the parent of its persisted schema ({@code cms}).
      */
     static NodePath applicationNodePath( final ApplicationKey applicationKey )
     {
         return new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
+    }
+
+    /**
+     * Node of the persisted application descriptor ({@code enonic.yaml}), the icon is attached to it.
+     */
+    static NodePath applicationDescriptorNodePath( final ApplicationKey applicationKey )
+    {
+        return new NodePath( applicationNodePath( applicationKey ), NodeName.from( SchemaResourcePaths.APP_DESCRIPTOR_NAME ) );
     }
 
     @Override
@@ -73,7 +100,8 @@ public class ApplicationRepoServiceImpl
     /**
      * The previously persisted schema is replaced by the new one. A failure while writing leaves no schema at all
      * (the persisted nodes are removed again), never a mix of old and new: reinstalling a fixed version repairs it.
-     * The {@code cms} node always exists once a schema is persisted, it marks the application as node backed.
+     * The {@code cms} node exists once a cms schema is persisted, it marks the application as node backed; the descriptor node
+     * ({@code enonic.yaml}) exists once the application ships a descriptor or an icon, whether or not it owns a schema.
      */
     @Override
     public void persistApplicationSchema( final ApplicationKey applicationKey, final Map<String, ByteSource> resources )
@@ -85,12 +113,30 @@ public class ApplicationRepoServiceImpl
 
             try
             {
-                // the persisted tree was just removed: the folders created on the way to the resources are tracked here,
-                // the cms folder is always created as the marker of a persisted schema
-                final Set<NodePath> folders = new HashSet<>();
-                folders.add( createFolderNode( appPath, SchemaResourceNames.CMS_ROOT_NAME ) );
+                final Map<String, ByteSource> schemaResources = new LinkedHashMap<>( resources );
+                final ByteSource descriptor = schemaResources.remove( SchemaResourcePaths.APP_DESCRIPTOR_NAME );
+                final ByteSource icon = schemaResources.remove( SchemaResourcePaths.APP_ICON_NAME );
 
-                resources.forEach( ( path, content ) -> createResourceNode( appPath, path, content, folders ) );
+                if ( descriptor != null || icon != null )
+                {
+                    // an icon without a descriptor still needs the descriptor node to be attached to
+                    final String yaml = descriptor != null
+                        ? readString( descriptor )
+                        : YmlApplicationDescriptorSerializer.serialize( ApplicationDescriptor.create().key( applicationKey ).build() );
+                    final ApplicationIconUpdate iconUpdate =
+                        icon != null ? ApplicationIconUpdate.replace( icon, SchemaResourcePaths.SVG_MIME_TYPE ) : ApplicationIconUpdate.KEEP;
+                    createDescriptorNode( appPath, yaml, iconUpdate );
+                }
+
+                // the persisted tree was just removed: the folders created on the way to the resources are tracked here,
+                // the cms folder is created as the marker of a persisted schema as soon as the application ships one
+                final Set<NodePath> folders = new HashSet<>();
+                if ( schemaResources.keySet().stream().anyMatch( path -> path.startsWith( SchemaResourceNames.CMS_ROOT_NAME + "/" ) ) )
+                {
+                    folders.add( createFolderNode( appPath, SchemaResourceNames.CMS_ROOT_NAME ) );
+                }
+
+                schemaResources.forEach( ( path, content ) -> createResourceNode( appPath, path, content, folders ) );
             }
             catch ( RuntimeException e )
             {
@@ -113,6 +159,80 @@ public class ApplicationRepoServiceImpl
     public void deleteApplicationSchema( final ApplicationKey applicationKey )
     {
         ApplicationHelper.runAsAdmin( () -> deletePersistedSchema( applicationNodePath( applicationKey ) ) );
+    }
+
+    @Override
+    public Node getApplicationDescriptorNode( final ApplicationKey applicationKey )
+    {
+        return ApplicationHelper.runAsAdmin( () -> this.nodeService.getByPath( applicationDescriptorNodePath( applicationKey ) ) );
+    }
+
+    @Override
+    public Node upsertApplicationDescriptor( final ApplicationKey applicationKey, final String descriptor,
+                                             final ApplicationIconUpdate iconUpdate )
+    {
+        return ApplicationHelper.runAsAdmin( () -> {
+            final NodePath descriptorPath = applicationDescriptorNodePath( applicationKey );
+
+            final Node node;
+            if ( this.nodeService.nodeExists( descriptorPath ) )
+            {
+                final UpdateNodeParams.Builder params = UpdateNodeParams.create().path( descriptorPath ).editor( toBeEdited -> {
+                    toBeEdited.data.setString( SchemaNodePropertyNames.RESOURCE, descriptor );
+                    switch ( iconUpdate )
+                    {
+                        case ApplicationIconUpdate.Keep keep ->
+                        {
+                        }
+                        case ApplicationIconUpdate.Remove remove ->
+                        {
+                            toBeEdited.data.removeProperties( SchemaNodePropertyNames.MIME_TYPE );
+                            toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
+                        }
+                        case ApplicationIconUpdate.Replace replace -> setIconProperties( toBeEdited.data, replace.mimeType() );
+                    }
+                } ).refresh( RefreshMode.ALL );
+
+                if ( iconUpdate instanceof ApplicationIconUpdate.Replace replace )
+                {
+                    params.attachBinary( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, replace.data() );
+                }
+                node = this.nodeService.update( params.build() );
+            }
+            else
+            {
+                node = createDescriptorNode( applicationNodePath( applicationKey ), descriptor, iconUpdate );
+            }
+
+            this.nodeService.refresh( RefreshMode.ALL );
+            return node;
+        } );
+    }
+
+    private Node createDescriptorNode( final NodePath appPath, final String descriptor, final ApplicationIconUpdate iconUpdate )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( SchemaNodePropertyNames.RESOURCE, descriptor );
+
+        final CreateNodeParams.Builder params = CreateNodeParams.create()
+            .name( SchemaResourcePaths.APP_DESCRIPTOR_NAME )
+            .parent( appPath )
+            .inheritPermissions( true )
+            .refresh( RefreshMode.ALL );
+
+        if ( iconUpdate instanceof ApplicationIconUpdate.Replace replace )
+        {
+            setIconProperties( data, replace.mimeType() );
+            params.attachBinary( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, replace.data() );
+        }
+
+        return this.nodeService.create( params.data( data ).build() );
+    }
+
+    private static void setIconProperties( final PropertyTree data, final String mimeType )
+    {
+        data.setString( SchemaNodePropertyNames.MIME_TYPE, mimeType );
+        data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
     }
 
     private void deletePersistedSchema( final NodePath appPath )

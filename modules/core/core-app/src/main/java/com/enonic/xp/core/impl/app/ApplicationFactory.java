@@ -48,33 +48,31 @@ public final class ApplicationFactory
         final ApplicationKey appKey = ApplicationHelper.getApplicationKey( bundle );
         final ApplicationUrlResolver bundleUrlResolver = createBundleUrlResolver( bundle );
 
-        return hasNodeBackedSchema( bundle )
-            // schema resources are served from nodes below the application node in system-repo,
-            // the bundle's own schema resources are hidden as soon as the persisted schema exists.
+        return isPersisted( bundle )
+            // the application descriptor and icon, and the schema of an application owning one, are served from nodes below
+            // the application node in system-repo; the bundle's own copies are hidden as soon as the persisted nodes exist.
             ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey, nodeService ),
-                                               new FilteredApplicationUrlResolver( bundleUrlResolver, () -> schemaResourceFilter( appKey ) ) )
+                                               new FilteredApplicationUrlResolver( bundleUrlResolver, () -> persistedResourceFilter( appKey ) ) )
             : bundleUrlResolver;
     }
 
     /**
-     * The schema of an application lives in nodes when the bundle owns it (ships {@code cms/cms.yaml}) and is installed globally.
-     * A local application is never persisted and must not be shadowed by the schema persisted for a global installation
-     * of the same application, so its schema comes from the bundle only.
+     * The descriptor and schema of a globally installed application live in nodes. A local application is never persisted
+     * and must not be shadowed by what is persisted for a global installation of the same application, so everything
+     * comes from its bundle.
      */
-    private static boolean hasNodeBackedSchema( final Bundle bundle )
+    private static boolean isPersisted( final Bundle bundle )
     {
-        return ApplicationHelper.hasCmsDescriptor( bundle ) && !ApplicationHelper.isLocalApplication( bundle );
+        return !ApplicationHelper.isLocalApplication( bundle );
     }
 
     /**
-     * Resolver for an application whose bundle is not active: only the persisted schema is served,
+     * Resolver for an application whose bundle is not active: only the persisted descriptor and schema are served,
      * bundle resources (controllers, assets, ...) are not available until the application is started.
      */
     ApplicationUrlResolver createInactiveUrlResolver( final Bundle bundle )
     {
-        return hasNodeBackedSchema( bundle )
-            ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService )
-            : null;
+        return isPersisted( bundle ) ? createPersistedSchemaResolver( ApplicationHelper.getApplicationKey( bundle ), nodeService ) : null;
     }
 
     ApplicationUrlResolver createUrlResolverBySource( final Bundle bundle, final String source )
@@ -107,19 +105,29 @@ public final class ApplicationFactory
                                                        ApplicationHelper::createAdminContext );
     }
 
-    // Schema resources (application descriptor and icon, cms descriptors, schema icons and i18n phrases) must not be
-    // contributed by the bundle when the persisted schema (cms node below the application node) exists in system-repo
-    private Predicate<String> schemaResourceFilter( final ApplicationKey applicationKey )
+    // The application descriptor and icon must not be contributed by the bundle when the persisted descriptor (enonic.yaml node
+    // below the application node) exists in system-repo, and neither must the schema resources (cms descriptors, schema icons
+    // and i18n phrases) when the persisted schema (cms node) exists
+    private Predicate<String> persistedResourceFilter( final ApplicationKey applicationKey )
     {
-        final Supplier<Boolean> schemaNodeExists = Suppliers.memoize( () -> schemaNodeExists( applicationKey ) );
-        return path -> !( SchemaResourcePaths.isSchemaResourcePath( path ) && schemaNodeExists.get() );
+        final NodePath appPath = ApplicationRepoServiceImpl.applicationNodePath( applicationKey );
+        final Supplier<Boolean> descriptorNodeExists =
+            Suppliers.memoize( () -> nodeExists( new NodePath( appPath, NodeName.from( SchemaResourcePaths.APP_DESCRIPTOR_NAME ) ) ) );
+        final Supplier<Boolean> schemaNodeExists =
+            Suppliers.memoize( () -> nodeExists( new NodePath( appPath, NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) ) ) );
+
+        return path -> {
+            if ( SchemaResourcePaths.isAppRootResourcePath( path ) )
+            {
+                return !descriptorNodeExists.get();
+            }
+            return !( SchemaResourcePaths.isSchemaResourcePath( path ) && schemaNodeExists.get() );
+        };
     }
 
-    private boolean schemaNodeExists( final ApplicationKey applicationKey )
+    private boolean nodeExists( final NodePath nodePath )
     {
-        final NodePath cmsPath =
-            new NodePath( ApplicationRepoServiceImpl.applicationNodePath( applicationKey ), NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) );
-        return ApplicationHelper.runAsAdmin( () -> nodeService.nodeExists( cmsPath ) );
+        return ApplicationHelper.runAsAdmin( () -> nodeService.nodeExists( nodePath ) );
     }
 
     private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )

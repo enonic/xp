@@ -17,6 +17,7 @@ import org.osgi.framework.BundleContext;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
+import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 
@@ -92,14 +93,40 @@ class ApplicationFactoryServiceImplTest
 
         final Bundle bundle = deploy( appName, newBundle( appName, true ) );
 
-        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+        // installed but not started: a global application serves its persisted descriptor (and schema, if any)
+        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
 
         bundle.start();
         Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
         assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
+        assertThat( activeResolver.get() ).isInstanceOf( MultiApplicationUrlResolver.class );
 
         activeResolver = service.findResolver( applicationKey, "bundle" );
+        assertThat( activeResolver ).isNotEmpty();
+        assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
+
+        bundle.stop();
+        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+    }
+
+    @Test
+    void findActiveResolver_local()
+        throws Exception
+    {
+        final BundleContext bundleContext = getBundleContext();
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        final String appName = "app1";
+        final ApplicationKey applicationKey = ApplicationKey.from( appName );
+
+        // a local application is never persisted: nothing is served until it is started, then the bundle only
+        final Bundle bundle = deploy( "local:" + appName, newBundle( appName, true ) );
+
+        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+
+        bundle.start();
+        final Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
         assertThat( activeResolver ).isNotEmpty();
         assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
 

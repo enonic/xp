@@ -21,6 +21,11 @@ public final class IconByteSource
         this.icon = requireNonNull( icon );
     }
 
+    public Icon icon()
+    {
+        return icon;
+    }
+
     @Override
     public InputStream openStream()
     {

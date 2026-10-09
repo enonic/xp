@@ -17,6 +17,7 @@ log.info('Fetched app descriptor: ' + result.key);
 assert.assertJsonEquals({
     key: 'my_app',
     description: 'my app description',
+    config: {},
     icon: {
         data: {},
         mimeType: 'image/png',

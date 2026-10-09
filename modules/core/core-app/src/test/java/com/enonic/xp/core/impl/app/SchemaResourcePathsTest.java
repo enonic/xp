@@ -1,5 +1,8 @@
 package com.enonic.xp.core.impl.app;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -28,17 +31,61 @@ class SchemaResourcePathsTest
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"enonic.yaml", "/enonic.yaml", "enonic.svg", "/enonic.svg"})
+    @ValueSource(strings = {"enonic.yaml", "/enonic.yaml", "enonic.svg", "/enonic.svg", "enonic.png", "/enonic.png"})
     void persisted_root_resources( final String path )
     {
         assertTrue( SchemaResourcePaths.isPersistedRootResource( path ), path );
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"enonic.yml", "application.yaml", "cms/cms.yaml", "/cms/enonic.yaml", "enonic.png"})
+    @ValueSource(strings = {"enonic.yml", "application.yaml", "application.svg", "cms/cms.yaml", "/cms/enonic.yaml", "enonic.jpg"})
     void non_persisted_root_resources( final String path )
     {
         assertFalse( SchemaResourcePaths.isPersistedRootResource( path ), path );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"enonic.svg", "/enonic.svg", "enonic.png", "/enonic.png"})
+    void app_icon_paths( final String path )
+    {
+        assertTrue( SchemaResourcePaths.isAppIconPath( path ), path );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"enonic.yaml", "application.svg", "cms/enonic.svg", "enonic.jpg"})
+    void non_app_icon_paths( final String path )
+    {
+        assertFalse( SchemaResourcePaths.isAppIconPath( path ), path );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"enonic.yaml", "/enonic.yaml", "enonic.yml", "enonic.svg", "application.yaml", "application.yml",
+        "/application.svg"})
+    void app_root_resource_paths( final String path )
+    {
+        assertTrue( SchemaResourcePaths.isAppRootResourcePath( path ), path );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"enonic.png", "cms/cms.yaml", "cms/enonic.yaml", "assets/enonic.yaml", "lib/util.js"})
+    void non_app_root_resource_paths( final String path )
+    {
+        assertFalse( SchemaResourcePaths.isAppRootResourcePath( path ), path );
+    }
+
+    @Test
+    void app_icon_name_by_mime_type()
+    {
+        assertEquals( "enonic.svg", SchemaResourcePaths.appIconName( SchemaResourcePaths.SVG_MIME_TYPE ) );
+        assertEquals( "enonic.png", SchemaResourcePaths.appIconName( SchemaResourcePaths.PNG_MIME_TYPE ) );
+        assertNull( SchemaResourcePaths.appIconName( "image/jpeg" ) );
+        assertNull( SchemaResourcePaths.appIconName( null ) );
+    }
+
+    @Test
+    void persisted_root_names()
+    {
+        assertEquals( List.of( "cms", "enonic.yaml" ), SchemaResourcePaths.PERSISTED_ROOT_NAMES );
     }
 
     @ParameterizedTest

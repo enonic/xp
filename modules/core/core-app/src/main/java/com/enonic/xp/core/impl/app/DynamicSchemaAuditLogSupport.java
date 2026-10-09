@@ -66,6 +66,17 @@ public interface DynamicSchemaAuditLogSupport
 
     void deleteMacroIcon( MacroKey key );
 
+    /**
+     * @param iconMimeType mime type of the icon set along with the descriptor, {@code null} when no icon is set
+     */
+    void createApplicationDescriptor( ApplicationKey key, String resource, String iconMimeType, long iconSize );
+
+    /**
+     * @param iconMimeType mime type of the icon set along with the descriptor, {@code null} when the icon is left as is or removed
+     * @param iconRemoved  {@code true} when the icon is removed along with the update
+     */
+    void updateApplicationDescriptor( ApplicationKey key, String resource, String iconMimeType, long iconSize, boolean iconRemoved );
+
     void createPhrases( CreateDynamicPhrasesParams params, Resource result );
 
     void updatePhrases( UpdateDynamicPhrasesParams params, Resource result );

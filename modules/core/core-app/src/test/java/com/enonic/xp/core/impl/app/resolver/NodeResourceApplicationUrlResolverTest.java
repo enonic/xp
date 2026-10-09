@@ -57,13 +57,24 @@ class NodeResourceApplicationUrlResolverTest
     }
 
     @Test
-    void findFiles_lists_the_application_descriptor_and_icon_but_no_other_root_resources()
+    void findFiles_lists_the_application_descriptor_but_no_other_root_resources()
     {
         when( this.nodeService.list( any() ) ).thenAnswer(
             invocation -> result( "/applications/myapp/enonic.yaml", "/applications/myapp/enonic.svg", "/applications/myapp/other.yaml",
                                   "/applications/myapp/cms", "/applications/myapp/cms/cms.yaml" ) );
+        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( null ) );
 
-        assertEquals( Set.of( "/enonic.yaml", "/enonic.svg", "/cms/cms.yaml" ), staticAppResolver().findFiles() );
+        // no icon attached to the descriptor: no virtual icon resource, and no stray icon node is served either
+        assertEquals( Set.of( "/enonic.yaml", "/cms/cms.yaml" ), staticAppResolver().findFiles() );
+    }
+
+    @Test
+    void findFiles_lists_the_application_icon_attached_to_the_descriptor()
+    {
+        when( this.nodeService.list( any() ) ).thenAnswer( invocation -> result( "/applications/myapp/enonic.yaml" ) );
+        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( "image/png" ) );
+
+        assertEquals( Set.of( "/enonic.yaml", "/enonic.png" ), staticAppResolver().findFiles() );
     }
 
     @Test
@@ -112,18 +123,9 @@ class NodeResourceApplicationUrlResolverTest
     }
 
     @Test
-    void findResource_returns_the_persisted_application_descriptor_and_icon()
+    void findResource_returns_the_persisted_application_descriptor_without_icon()
     {
-        final PropertyTree data = new PropertyTree();
-        data.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"" );
-        final Node node = Node.create()
-            .id( new NodeId() )
-            .parentPath( new NodePath( "/applications/myapp" ) )
-            .name( "enonic.yaml" )
-            .data( data )
-            .timestamp( Instant.now() )
-            .build();
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( node );
+        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( null ) );
 
         final Resource resource = staticAppResolver().findResource( "/enonic.yaml" );
 
@@ -132,6 +134,71 @@ class NodeResourceApplicationUrlResolverTest
         assertEquals( "node", resource.getResolverName() );
 
         assertNull( staticAppResolver().findResource( "/enonic.svg" ) );
+        assertNull( staticAppResolver().findResource( "/enonic.png" ) );
+    }
+
+    @Test
+    void findResource_returns_the_application_icon_attached_to_the_descriptor()
+    {
+        final Node descriptorNode = descriptorNode( "image/svg+xml" );
+        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
+        when( this.nodeService.getBinary( descriptorNode.id(), SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) ).thenReturn(
+            ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
+
+        // the descriptor is always the text, even with the icon attached
+        assertEquals( "kind: \"Application\"", staticAppResolver().findResource( "/enonic.yaml" ).readString() );
+
+        final Resource icon = staticAppResolver().findResource( "/enonic.svg" );
+        assertEquals( "myapp:/enonic.svg", icon.getKey().toString() );
+        assertEquals( "<svg/>", icon.readString() );
+        assertEquals( "node", icon.getResolverName() );
+        assertEquals( descriptorNode.getTimestamp().toEpochMilli(), icon.getTimestamp() );
+
+        // served at the path of its mime type only
+        assertNull( staticAppResolver().findResource( "/enonic.png" ) );
+    }
+
+    @Test
+    void findResource_ignores_an_icon_binary_no_longer_referenced()
+    {
+        // the binary may remain attached after the icon is removed: the data decides
+        final Node descriptorNode = Node.create()
+            .id( new NodeId() )
+            .parentPath( new NodePath( "/applications/myapp" ) )
+            .name( "enonic.yaml" )
+            .data( descriptorData( null ) )
+            .timestamp( Instant.now() )
+            .attachedBinaries( AttachedBinaries.create()
+                                   .add( new AttachedBinary( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, "blobkey" ) )
+                                   .build() )
+            .build();
+        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
+
+        assertNull( staticAppResolver().findResource( "/enonic.svg" ) );
+        assertEquals( "kind: \"Application\"", staticAppResolver().findResource( "/enonic.yaml" ).readString() );
+    }
+
+    private static Node descriptorNode( final String iconMimeType )
+    {
+        return Node.create()
+            .id( new NodeId() )
+            .parentPath( new NodePath( "/applications/myapp" ) )
+            .name( "enonic.yaml" )
+            .data( descriptorData( iconMimeType ) )
+            .timestamp( Instant.now() )
+            .build();
+    }
+
+    private static PropertyTree descriptorData( final String iconMimeType )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"" );
+        if ( iconMimeType != null )
+        {
+            data.setString( SchemaNodePropertyNames.MIME_TYPE, iconMimeType );
+            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+        }
+        return data;
     }
 
     @Test
@@ -187,6 +254,8 @@ class NodeResourceApplicationUrlResolverTest
     void findResource_returns_null_for_a_missing_node()
     {
         assertNull( staticAppResolver().findResource( "/cms/content-types/missing/missing.yaml" ) );
+        assertNull( staticAppResolver().findResource( "/enonic.yaml" ) );
+        assertNull( staticAppResolver().findResource( "/enonic.svg" ) );
     }
 
     @Test

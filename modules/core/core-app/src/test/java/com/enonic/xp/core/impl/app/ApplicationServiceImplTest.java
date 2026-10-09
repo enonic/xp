@@ -31,6 +31,7 @@ import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
@@ -342,7 +343,7 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
 
         // stored as stopped: a schema application is started regardless
-        final PropertyTree data = new PropertyTree();
+        final PropertyTree data = bundleNodeData();
         data.setBoolean( ApplicationPropertyNames.STARTED, false );
         final Node node = Node.create()
             .id( NodeId.from( "mynodeid3" ) )
@@ -423,7 +424,33 @@ class ApplicationServiceImplTest
     }
 
     @Test
-    void install_global_without_cms_descriptor_removes_persisted_schema()
+    void install_global_without_cms_descriptor_persists_descriptor_and_icon_only()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // no cms/cms.yaml: the bundle does not own a schema, its descriptor and icon are persisted all the same (and whatever
+        // an earlier version persisted is replaced by them) while anything below cms/ stays in the bundle
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
+                                                         .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
+                                                         .addResource( "enonic.svg", stream( "<svg>app</svg>" ) )
+                                                         .addResource( "cms/content-types/mytype/mytype.yaml", stream( CONTENT_TYPE ) )
+                                                         .addResource( "lib/util.js", stream( "library" ) )
+                                                         .addResource( "assets/app.js", stream( "asset" ) )
+                                                         .build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 2 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
+                "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) ) );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+    }
+
+    @Test
+    void install_global_without_any_schema_resource_persists_nothing_but_replaces_the_old()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
         final String bundleName = "my.bundle";
@@ -431,14 +458,46 @@ class ApplicationServiceImplTest
         mockRepoCreateNode( node );
         mockRepoGetNode( node, bundleName );
 
-        // no cms/cms.yaml: the bundle ships logic only, nothing is persisted and a schema persisted by an earlier version is removed
-        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
-                                                         .addResource( "lib/util.js", stream( "library" ) )
-                                                         .addResource( "assets/app.js", stream( "asset" ) )
-                                                         .build() ) );
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true ).addResource( "lib/util.js", stream( "library" ) ).build() ) );
 
-        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
-        verify( this.repoService ).deleteApplicationSchema( ApplicationKey.from( bundleName ) );
+        // an empty set of resources: the repo service removes what an earlier version persisted
+        verify( this.repoService ).persistApplicationSchema( eq( ApplicationKey.from( bundleName ) ), argThat( Map::isEmpty ) );
+    }
+
+    @Test
+    void install_stored_application_without_bundle_is_skipped()
+    {
+        // an application node holding nothing but a persisted descriptor (created through the descriptor service): no bundle to install
+        final Node descriptorOnly = Node.create()
+            .id( NodeId.from( "descriptor-only" ) )
+            .name( "my.descriptor" )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .build();
+        final Node withBundle = Node.create()
+            .id( NodeId.from( "with-bundle" ) )
+            .name( "my.bundle" )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .data( bundleNodeData() )
+            .build();
+
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( descriptorOnly, withBundle ) );
+        when( this.repoService.getApplicationNode( ApplicationKey.from( "my.descriptor" ) ) ).thenReturn( descriptorOnly );
+        when( this.repoService.getApplicationNode( ApplicationKey.from( "my.bundle" ) ) ).thenReturn( withBundle );
+        when( this.repoService.getApplicationSource( withBundle.id() ) ).thenReturn( createBundleSource( "my.bundle" ) );
+
+        this.service.installAllStoredApplications();
+
+        verify( this.repoService, never() ).getApplicationSource( descriptorOnly.id() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.descriptor" ) ) );
+        assertNotNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
+    }
+
+    private static PropertyTree bundleNodeData()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF,
+                                 BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
+        return data;
     }
 
     @Test
@@ -703,12 +762,14 @@ class ApplicationServiceImplTest
             .id( NodeId.from( "mynodeid1" ) )
             .name( bundleName1 )
             .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .data( bundleNodeData() )
             .build();
 
         final Node node2 = Node.create()
             .id( NodeId.from( "mynodeid2" ) )
             .name( bundleName2 )
             .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .data( bundleNodeData() )
             .build();
 
         when( this.repoService.getApplications() ).thenReturn( Nodes.from( node1, node2 ) );

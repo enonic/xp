@@ -18,7 +18,10 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
+import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SystemConstants;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_CAPABILITY;
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_SOURCE_PATHS;
@@ -137,6 +140,19 @@ public final class ApplicationHelper
                 return;
             }
             throw new ApplicationInvalidVersionException( systemVersionRange, systemVersion );
+        }
+    }
+
+    /**
+     * Writing the persisted schema or descriptor of an application takes the {@code system.admin} or {@code system.schema.admin} role.
+     */
+    static void requireSchemaAdminRole()
+    {
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final boolean hasAdminRole = authInfo.hasRole( RoleKeys.ADMIN ) || authInfo.hasRole( RoleKeys.SCHEMA_ADMIN );
+        if ( !hasAdminRole )
+        {
+            throw new ForbiddenAccessException( authInfo.getUser() );
         }
     }
 

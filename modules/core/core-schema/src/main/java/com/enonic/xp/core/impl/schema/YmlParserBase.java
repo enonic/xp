@@ -4,9 +4,12 @@ import java.io.UncheckedIOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.google.common.base.Preconditions;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -46,6 +49,10 @@ public final class YmlParserBase
 {
     private final ObjectMapper mapper = new ObjectMapper( new YAMLFactory() );
 
+    // writes descriptors built as a tree, without the "---" document start marker so the output looks like a hand-written descriptor
+    private final ObjectMapper writer =
+        new ObjectMapper( YAMLFactory.builder().disable( YAMLGenerator.Feature.WRITE_DOC_START_MARKER ).build() );
+
     public YmlParserBase()
     {
         final SimpleModule module = new SimpleModule();
@@ -83,6 +90,30 @@ public final class YmlParserBase
     public void addMixIn( final Class<?> target, final Class<?> mixinSource )
     {
         mapper.addMixIn( target, mixinSource );
+    }
+
+    /**
+     * Empty object node to build a descriptor tree for {@link #toYaml(JsonNode)}.
+     */
+    public ObjectNode newObjectNode()
+    {
+        return writer.createObjectNode();
+    }
+
+    /**
+     * Serializes a descriptor tree to YAML, the inverse of {@link #parse(String, Class, ApplicationKey)} for descriptors
+     * built as a tree. Strings are quoted, so a string looking like a number or boolean survives a round trip.
+     */
+    public String toYaml( final JsonNode node )
+    {
+        try
+        {
+            return writer.writeValueAsString( node );
+        }
+        catch ( final JsonProcessingException e )
+        {
+            throw new UncheckedIOException( e );
+        }
     }
 
     public <T> T parse( final String resource, final Class<T> clazz, final ApplicationKey currentApplication )

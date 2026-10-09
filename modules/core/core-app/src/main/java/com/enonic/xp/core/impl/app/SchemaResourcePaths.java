@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
  * and descriptors, schema icons and i18n phrases located under {@code cms/}. Schemas are matched in the flat structure
  * ({@code cms/<kind>/<name>.yaml}) and in the legacy folder structure ({@code cms/<kind>/<name>/<name>.yaml}) of application bundles;
  * they are persisted in the flat structure only. The style descriptor keeps its folder: {@code cms/style/style.yaml}.
- * These are the resources persisted as nodes for applications that own their schema (shipping {@code cms/cms.yaml}).
+ * The application descriptor and icon are persisted as nodes for every globally installed application, the {@code cms} resources
+ * for applications that own their schema (shipping {@code cms/cms.yaml}).
  */
 public final class SchemaResourcePaths
 {
@@ -27,16 +28,6 @@ public final class SchemaResourcePaths
      */
     public static final String APP_DESCRIPTOR_NAME = "enonic.yaml";
 
-    /**
-     * Name of the node the application icon is persisted as.
-     */
-    public static final String APP_ICON_NAME = "enonic.svg";
-
-    /**
-     * Names of the nodes below the application node that make up the persisted schema. They are replaced as a whole.
-     */
-    public static final List<String> PERSISTED_ROOT_NAMES = List.of( SchemaResourceNames.CMS_ROOT_NAME, APP_DESCRIPTOR_NAME, APP_ICON_NAME );
-
     public static final String SVG_EXTENSION = "svg";
 
     public static final String PNG_EXTENSION = "png";
@@ -44,6 +35,22 @@ public final class SchemaResourcePaths
     public static final String SVG_MIME_TYPE = "image/svg+xml";
 
     public static final String PNG_MIME_TYPE = "image/png";
+
+    /**
+     * Path of the application icon shipped by a bundle ({@code enonic.svg}), and the key the icon is resolved as by
+     * {@link AppSchemaResolver}. The persisted icon is not a node of its own: it is attached to the descriptor node
+     * ({@link #APP_DESCRIPTOR_NAME}) and served as the virtual resource {@code enonic.svg} or {@code enonic.png} by its mime type.
+     */
+    public static final String APP_ICON_NAME = "enonic." + SVG_EXTENSION;
+
+    public static final String APP_ICON_PNG_NAME = "enonic." + PNG_EXTENSION;
+
+    /**
+     * Names of the nodes below the application node that make up the persisted schema. They are replaced as a whole.
+     */
+    public static final List<String> PERSISTED_ROOT_NAMES = List.of( SchemaResourceNames.CMS_ROOT_NAME, APP_DESCRIPTOR_NAME );
+
+    private static final List<String> APP_ICON_NAMES = List.of( APP_ICON_NAME, APP_ICON_PNG_NAME );
 
     // folder of a schema below the cms root: content-types, parts, ...
     public static final String KIND_GROUP = "kind";
@@ -136,6 +143,8 @@ public final class SchemaResourcePaths
 
     public static final Pattern SCHEMA_RESOURCE_PATTERN = Pattern.compile( "^(?:" + CMS_RESOURCES + "|" + ROOT_RESOURCES + ")$" );
 
+    private static final Pattern APP_ROOT_RESOURCE_PATTERN = Pattern.compile( "^(?:" + ROOT_RESOURCES + ")$" );
+
     // kind a descriptor must declare, by the folder it is persisted in
     private static final Map<String, String> KINDS_BY_ROOT =
         Map.of( SchemaResourceNames.CONTENT_TYPE_ROOT_NAME, "ContentType", SchemaResourceNames.FORM_FRAGMENTS_ROOT_NAME, "FormFragment",
@@ -181,13 +190,47 @@ public final class SchemaResourcePaths
     }
 
     /**
-     * {@code true} for the paths of the persisted application descriptor and icon ({@code enonic.yaml}, {@code enonic.svg}),
-     * the only persisted resources outside {@code cms/}.
+     * {@code true} for the paths of the persisted application descriptor and icon ({@code enonic.yaml}, {@code enonic.svg} or
+     * {@code enonic.png}), the only persisted resources outside {@code cms/}.
      */
     public static boolean isPersistedRootResource( final String path )
     {
         final String normalized = normalize( path );
-        return APP_DESCRIPTOR_NAME.equals( normalized ) || APP_ICON_NAME.equals( normalized );
+        return APP_DESCRIPTOR_NAME.equals( normalized ) || isAppIconPath( normalized );
+    }
+
+    /**
+     * {@code true} for the virtual paths of the persisted application icon ({@code enonic.svg}, {@code enonic.png}).
+     */
+    public static boolean isAppIconPath( final String path )
+    {
+        return APP_ICON_NAMES.contains( normalize( path ) );
+    }
+
+    /**
+     * {@code true} for the application descriptor and icon as shipped by a bundle ({@code enonic.yaml|yml}, {@code enonic.svg} and
+     * the legacy {@code application.*}), the bundle resources shadowed by the persisted descriptor.
+     */
+    public static boolean isAppRootResourcePath( final String path )
+    {
+        return APP_ROOT_RESOURCE_PATTERN.matcher( normalize( path ) ).matches();
+    }
+
+    /**
+     * Virtual path the persisted application icon is served at, by its mime type: {@code enonic.svg} or {@code enonic.png}.
+     * {@code null} for any other mime type.
+     */
+    public static String appIconName( final String mimeType )
+    {
+        if ( SVG_MIME_TYPE.equals( mimeType ) )
+        {
+            return APP_ICON_NAME;
+        }
+        if ( PNG_MIME_TYPE.equals( mimeType ) )
+        {
+            return APP_ICON_PNG_NAME;
+        }
+        return null;
     }
 
     /**

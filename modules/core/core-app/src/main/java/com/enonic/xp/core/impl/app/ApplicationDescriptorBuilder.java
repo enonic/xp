@@ -17,7 +17,8 @@ import com.enonic.xp.resource.Resource;
  */
 final class ApplicationDescriptorBuilder
 {
-    private static final List<String> APP_ICON_PATHS = List.of( SchemaResourcePaths.APP_ICON_NAME, "application.svg" );
+    private static final List<String> APP_ICON_PATHS =
+        List.of( SchemaResourcePaths.APP_ICON_NAME, SchemaResourcePaths.APP_ICON_PNG_NAME, "application.svg" );
 
     private ApplicationDescriptorBuilder()
     {
@@ -42,7 +43,7 @@ final class ApplicationDescriptorBuilder
         {
             try
             {
-                builder.icon( Icon.from( iconResource.readBytes(), SchemaResourcePaths.SVG_MIME_TYPE,
+                builder.icon( Icon.from( iconResource.readBytes(), SchemaResourcePaths.iconMimeType( iconResource.getKey().getPath() ),
                                          Instant.ofEpochMilli( Math.max( iconResource.getTimestamp(), 0 ) ) ) );
             }
             catch ( final Exception e )
