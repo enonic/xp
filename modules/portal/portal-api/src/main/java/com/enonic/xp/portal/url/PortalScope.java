@@ -27,23 +27,81 @@ import static java.util.Objects.requireNonNull;
  * Resolve it once for a selected content or project and pass it to every
  * {@link PageUrlPartsParams.Builder#setScope(PortalScope) page URL} and
  * {@link ProcessHtmlPartsParams.Builder#scope(PortalScope) rich text} resolved below it, so that they look it up only once.
- *
- * @param projectName the project contents are looked up in
- * @param branch      the branch contents are looked up in
- * @param path        path of the content that page paths are relative to, or the root path for the project
- * @param sitePath    path of the site at or above that content, or the root path for the project outside any site
- * @param siteConfigs the configuration of that site or project
  */
 @NullMarked
-public record PortalScope(ProjectName projectName, Branch branch, ContentPath path, ContentPath sitePath, SiteConfigs siteConfigs)
+public final class PortalScope
 {
-    public PortalScope
+    private final ProjectName projectName;
+
+    private final Branch branch;
+
+    private final ContentPath path;
+
+    private final ContentPath sitePath;
+
+    private final SiteConfigs siteConfigs;
+
+    private final @Nullable String baseUrl;
+
+    private final ApplicationKeys applications;
+
+    /**
+     * @param projectName the project contents are looked up in
+     * @param branch      the branch contents are looked up in
+     * @param path        path of the content that page paths are relative to, or the root path for the project
+     * @param sitePath    path of the site at or above that content, or the root path for the project outside any site
+     * @param siteConfigs the configuration of that site or project
+     */
+    public PortalScope( final ProjectName projectName, final Branch branch, final ContentPath path, final ContentPath sitePath,
+                        final SiteConfigs siteConfigs )
     {
-        requireNonNull( projectName );
-        requireNonNull( branch );
-        requireNonNull( path );
-        requireNonNull( sitePath );
-        requireNonNull( siteConfigs );
+        this.projectName = requireNonNull( projectName );
+        this.branch = requireNonNull( branch );
+        this.path = requireNonNull( path );
+        this.sitePath = requireNonNull( sitePath );
+        this.siteConfigs = requireNonNull( siteConfigs );
+        this.baseUrl = baseUrl( siteConfigs, path, sitePath );
+        this.applications = ApplicationKeys.from( siteConfigs.stream().map( SiteConfig::getApplicationKey ).toList() );
+    }
+
+    /**
+     * @return the project contents are looked up in
+     */
+    public ProjectName projectName()
+    {
+        return projectName;
+    }
+
+    /**
+     * @return the branch contents are looked up in
+     */
+    public Branch branch()
+    {
+        return branch;
+    }
+
+    /**
+     * @return path of the content that page paths are relative to, or the root path for the project
+     */
+    public ContentPath path()
+    {
+        return path;
+    }
+
+    /**
+     * @return path of the site at or above that content, or the root path for the project outside any site
+     */
+    public ContentPath sitePath()
+    {
+        return sitePath;
+    }
+
+    /**
+     * @return the configuration of the site or project
+     */
+    public SiteConfigs siteConfigs()
+    {
+        return siteConfigs;
     }
 
     /**
@@ -51,6 +109,19 @@ public record PortalScope(ProjectName projectName, Branch branch, ContentPath pa
      * trailing slash; {@code null} when none is configured
      */
     public @Nullable String baseUrl()
+    {
+        return baseUrl;
+    }
+
+    /**
+     * @return the applications configured on the site or project, in their order
+     */
+    public ApplicationKeys applications()
+    {
+        return applications;
+    }
+
+    private static @Nullable String baseUrl( final SiteConfigs siteConfigs, final ContentPath path, final ContentPath sitePath )
     {
         final SiteConfig portalConfig = siteConfigs.get( ApplicationKey.PORTAL );
         final String baseUrl = portalConfig != null ? portalConfig.getConfig().getString( "baseUrl" ) : null;
@@ -65,13 +136,5 @@ public record PortalScope(ProjectName projectName, Branch branch, ContentPath pa
             url.append( '/' ).append( UrlEscapers.urlPathSegmentEscaper().escape( path.getElement( i ).toString() ) );
         }
         return url.toString();
-    }
-
-    /**
-     * @return the applications configured on the site or project, in their order
-     */
-    public ApplicationKeys applications()
-    {
-        return ApplicationKeys.from( siteConfigs.stream().map( SiteConfig::getApplicationKey ).toList() );
     }
 }
