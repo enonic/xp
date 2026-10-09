@@ -62,11 +62,11 @@ public interface PortalUrlService
 
     /**
      * Resolves a {@link PortalScope}: an immutable, request-independent context for resolving page URLs and processing
-     * rich text for a selected site or project, from configuration alone. It provides
+     * rich text below a selected content or project, from configuration alone. It provides
      * {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)} what a site
      * request would, without one. Resolve it once and pass it to every call for the same site.
      *
-     * @param params the site or project, and the project and branch it is in
+     * @param params the content or project of the scope, and the project and branch it is in
      * @return the resolved scope
      * @throws com.enonic.xp.content.ContentNotFoundException if the content the params name does not exist
      */
@@ -78,13 +78,12 @@ public interface PortalUrlService
      * <p>
      * Resolution is from configuration alone. The URL belongs to the {@link PageUrlPartsParams#getScope() scope},
      * the project of the current context unless given, and the content is looked up in its project
-     * and branch. The base URL is the one configured there, {@code null} when none is; the path is
-     * the URL-escaped content path relative to it.
+     * and branch. The base URL is that of the scope, {@code null} when none is configured; the path is
+     * the URL-escaped content path relative to the content of the scope.
      *
-     * @param params the content and the site or project the URL belongs to
+     * @param params the content and the scope the URL belongs to
      * @return the parts of the URL
-     * @throws ContentOutOfScopeException if the content is outside the site or project the URL
-     *                                    belongs to
+     * @throws ContentOutOfScopeException if the content is outside the scope the URL belongs to
      */
     PageUrlParts pageUrlParts( PageUrlPartsParams params );
 
@@ -183,7 +182,7 @@ public interface PortalUrlService
      * {@value ProcessedHtml#IMAGE_REF_ATTRIBUTE} attribute of the element names, and each macro from its entry in
      * {@link ProcessedHtml#macros()}, which the {@value ProcessedHtml#MACRO_REF_ATTRIBUTE} attribute names.
      *
-     * @param params the HTML, the site or project it belongs to, and how to process it
+     * @param params the HTML, the scope it belongs to, and how to process it
      * @return the processed HTML and the parts of each link, image and macro in it
      */
     ProcessedHtml processHtmlParts( ProcessHtmlPartsParams params );

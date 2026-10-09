@@ -729,7 +729,7 @@ export interface ProcessedHtmlMacro {
 export interface ProcessedHtml {
     /** The processed HTML, with placeholders for its internal links, images and macros. */
     html: string;
-    /** Base URL configured for the site or project the HTML belongs to, without a trailing slash; `null` when none is configured. The `baseUrl` of the page parts of every content link. */
+    /** Base URL of the scope the HTML belongs to, without a trailing slash; `null` when none is configured. The `baseUrl` of the page parts of every content link. */
     baseUrl: string | null;
     /** Internal links to contents and attachments, in document order. */
     links: ProcessedHtmlLink[];
@@ -755,8 +755,8 @@ interface ProcessHtmlPartsHandler {
 
 /**
  * This function resolves the parts of the internal links of an HTML text - to contents, images and
- * attachments - from configuration alone, for the site or project `scope` stands for, and replaces
- * each link and macro with a placeholder.
+ * attachments - from configuration alone, for the `scope`, and replaces each link and macro with a
+ * placeholder.
  *
  * Each such element carries a `data-link-ref` or `data-image-ref` attribute naming its entry in
  * `links` or `images`; render the element from the parts of that entry. Each macro an application
@@ -768,7 +768,7 @@ interface ProcessHtmlPartsHandler {
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} params.value Html value string to process.
- * @param {object} [params.scope] The site or project the HTML belongs to, resolved by {@link portalScope}. Defaults to the project of the current context.
+ * @param {object} [params.scope] The scope the HTML belongs to, resolved by {@link portalScope}. Defaults to the project of the current context.
  * @param {number} [params.imageSrcWidth=768] Width of the `src` of `img` tags, for images the image API scales. The height follows the aspect ratio of the image's style or scale.
  * @param {number[]} [params.imageWidths] Image widths for the `srcset` attribute of `img` tags, for images the image API scales.
  * @param {string} [params.imageSizes] Value of the `sizes` attribute of `img` tags. Written along with the `srcset` that `imageWidths` adds.
@@ -1212,12 +1212,12 @@ export interface PortalScopeParams {
 }
 
 /**
- * An immutable, request-independent context for resolving page URLs and processing rich text for a
- * selected site or project, resolved by {@link portalScope}. It stands in for a site request: what
+ * An immutable, request-independent context for resolving page URLs and processing rich text below a
+ * selected content or project, resolved by {@link portalScope}. It stands in for a site request: what
  * request-following URLs take from the request, the URL parts take from the scope.
  */
 export interface PortalScope {
-    /** Base URL configured for the site or project, without a trailing slash; `null` when none is configured. */
+    /** Base URL configured for the site or project, followed by the path of the scope's content below it, without a trailing slash; `null` when none is configured. */
     readonly baseUrl: string | null;
 }
 
@@ -1251,19 +1251,22 @@ function portalScopeHandle(scope: PortalScope | null | undefined): PortalScopeHa
 
 /**
  * This function resolves a portal scope: an immutable, request-independent context for resolving page
- * URLs and processing rich text for a selected site or project, from configuration alone. It is for
+ * URLs and processing rich text below a selected content or project, from configuration alone. It is for
  * {@link pageUrlParts} and {@link processHtmlParts}: what a site request would provide them - the
  * project, the branch, the site and its configuration - without one. Resolve it once and pass it as
  * `scope` to every call for the same site.
  *
+ * Page paths are relative to the content `key` names, as they are to the content a virtual host
+ * mounts. The configuration is that of the nearest site at or above it, or of the project outside any site.
+ *
  * @example-ref examples/portal/portalScope.js
  *
  * @param {object} [params] Input parameters as JSON.
- * @param {string} [params.key=/] Id or path of the site, or of a content inside it; `/` selects the project.
+ * @param {string} [params.key=/] Id or path of the content page paths are relative to; `/` selects the project.
  * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
  * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
  *
- * @returns {object} The resolved scope, with the `baseUrl` configured there.
+ * @returns {object} The resolved scope, with its `baseUrl`.
  */
 export function portalScope(params?: PortalScopeParams): PortalScope {
     const bean: PortalScopeHandler = __.newBean<PortalScopeHandler>('com.enonic.xp.lib.portal.url.PortalScopeHandler');
@@ -1287,9 +1290,9 @@ export type PageUrlPartsParams = IdXorPath & {
  * Parts of a page URL: `url = baseUrl + path + queryString`.
  */
 export interface PageUrlParts {
-    /** Base URL configured for the site or project the URL belongs to, without a trailing slash; `null` when none is configured. */
+    /** Base URL of the scope the URL belongs to, without a trailing slash; `null` when none is configured. */
     baseUrl: string | null;
-    /** URL-escaped content path relative to that site or project, with a leading slash; empty for the site itself, so that `baseUrl + path` is the Base URL, without a trailing slash. */
+    /** URL-escaped content path relative to the scope's content, with a leading slash; empty for that content itself, so that `baseUrl + path` is the Base URL, without a trailing slash. */
     path: string;
     /** URL-escaped query string prefixed with `?`; empty when there are no parameters. */
     queryString: string;
@@ -1311,19 +1314,18 @@ interface PageUrlPartsHandler {
  * This function resolves the parts of a page URL, for building the URL from segments:
  * `url = baseUrl + path + queryString`.
  *
- * The parts are resolved from configuration alone, for the site or project `scope` stands for. The
- * base URL is the one configured there, or `null`, in which case the caller supplies the origin the
- * site is served from. The path is the content path relative to that site or project.
+ * The parts are resolved from configuration alone, for the `scope`. The base URL is that of the
+ * scope, or `null`, in which case the caller supplies the origin the site is served from. The path is
+ * the content path relative to the scope's content.
  *
- * The page has to be inside the site or project `scope` stands for, or be it; for a page elsewhere an
- * error is raised.
+ * The page has to be inside the scope's content, or be it; for a page elsewhere an error is raised.
  *
  * @example-ref examples/portal/pageUrlParts.js
  *
  * @param {object} params Input parameters as JSON.
  * @param {string} [params.id] Id of the page. Either `id` or `path` is required.
  * @param {string} [params.path] Path of the page within the project.
- * @param {object} [params.scope] The site or project the URL belongs to, resolved by {@link portalScope}; the page is looked up in its project and branch. Defaults to the project of the current context.
+ * @param {object} [params.scope] The scope the URL belongs to, resolved by {@link portalScope}; the page is looked up in its project and branch. Defaults to the project of the current context.
  * @param {object} [params.params] Custom query parameters of the URL.
  *
  * @returns {object} The parts: `baseUrl`, `path` and `queryString`.

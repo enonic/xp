@@ -12,6 +12,7 @@ import com.google.common.base.Suppliers;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
@@ -157,8 +158,33 @@ public final class PortalUrlServiceImpl
         return runWithAdminRole( () -> {
             final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params );
 
-            return new PortalScope( metadata.projectName(), metadata.branch(), metadata.anchorPath(), metadata.siteConfigs() );
+            // page paths start at the content the params name, as they do at the content a virtual host mounts,
+            // while the configuration is that of its site, or of the project outside any site
+            final ContentPath path = metadata.content() != null ? metadata.content().getPath() : ContentPath.ROOT;
+
+            return new PortalScope( metadata.projectName(), metadata.branch(), path, metadata.siteConfigs(),
+                                    scopeBaseUrl( metadata, path ) );
         } );
+    }
+
+    /**
+     * @return the Base URL configured for the site or project, followed by the path of the content below it, so that it
+     * addresses that content; {@code null} when none is configured
+     */
+    private static String scopeBaseUrl( final BaseUrlMetadata metadata, final ContentPath path )
+    {
+        final String baseUrl = metadata.baseUrl();
+        if ( baseUrl == null || baseUrl.isEmpty() )
+        {
+            return null;
+        }
+
+        final StringBuilder url = new StringBuilder( UrlGenerator.removeTrailingSlash( baseUrl ) );
+        if ( !path.isRoot() )
+        {
+            UrlBuilderHelper.appendAndEncodePathParts( url, ContentPathResolver.relativeToAnchor( path, metadata.anchorPath() ) );
+        }
+        return url.toString();
     }
 
     /**
