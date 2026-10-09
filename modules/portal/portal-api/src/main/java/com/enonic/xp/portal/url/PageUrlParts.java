@@ -7,7 +7,7 @@ import org.jspecify.annotations.Nullable;
  * Parts of a page URL, for building the full URL from segments:
  * {@code url = baseUrl + path + queryString}.
  *
- * @param baseUrl     the {@link PortalScope#baseUrl() Base URL of the scope} the URL belongs to, without a trailing
+ * @param baseUrl     the {@link PortalScope#getBaseUrl() Base URL of the scope} the URL belongs to, without a trailing
  *                    slash; {@code null} when none is configured, and the caller supplies the origin the site is served
  *                    from
  * @param path        URL-escaped path of the content relative to the content of the scope, with a leading slash;

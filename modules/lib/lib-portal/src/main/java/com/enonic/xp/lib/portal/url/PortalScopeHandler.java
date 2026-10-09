@@ -70,6 +70,6 @@ public final class PortalScopeHandler
 
     public String baseUrlOf( final PortalScope scope )
     {
-        return scope.baseUrl();
+        return scope.getBaseUrl();
     }
 }
