@@ -1,8 +1,11 @@
 package com.enonic.xp.portal.url;
 
+import java.util.function.Supplier;
+
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import com.google.common.base.Suppliers;
 import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -41,9 +44,9 @@ public final class PortalScope
 
     private final SiteConfigs siteConfigs;
 
-    private final @Nullable String baseUrl;
+    private final Supplier<@Nullable String> baseUrl;
 
-    private final ApplicationKeys applications;
+    private final Supplier<ApplicationKeys> applications;
 
     /**
      * @param projectName the project contents are looked up in
@@ -60,8 +63,9 @@ public final class PortalScope
         this.path = requireNonNull( path );
         this.sitePath = requireNonNull( sitePath );
         this.siteConfigs = requireNonNull( siteConfigs );
-        this.baseUrl = baseUrl( siteConfigs, path, sitePath );
-        this.applications = ApplicationKeys.from( siteConfigs.stream().map( SiteConfig::getApplicationKey ).toList() );
+        this.baseUrl = Suppliers.memoize( () -> baseUrlOf( siteConfigs, path, sitePath ) );
+        this.applications =
+            Suppliers.memoize( () -> ApplicationKeys.from( siteConfigs.stream().map( SiteConfig::getApplicationKey ).toList() ) );
     }
 
     /**
@@ -110,7 +114,7 @@ public final class PortalScope
      */
     public @Nullable String baseUrl()
     {
-        return baseUrl;
+        return baseUrl.get();
     }
 
     /**
@@ -118,10 +122,10 @@ public final class PortalScope
      */
     public ApplicationKeys applications()
     {
-        return applications;
+        return applications.get();
     }
 
-    private static @Nullable String baseUrl( final SiteConfigs siteConfigs, final ContentPath path, final ContentPath sitePath )
+    private static @Nullable String baseUrlOf( final SiteConfigs siteConfigs, final ContentPath path, final ContentPath sitePath )
     {
         final SiteConfig portalConfig = siteConfigs.get( ApplicationKey.PORTAL );
         final String baseUrl = portalConfig != null ? portalConfig.getConfig().getString( "baseUrl" ) : null;
