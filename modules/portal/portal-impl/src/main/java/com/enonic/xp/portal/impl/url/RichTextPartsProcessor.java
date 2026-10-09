@@ -124,7 +124,7 @@ final class RichTextPartsProcessor
 
     private String processMacro( final Macro macro )
     {
-        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( scope.getApplications(), macro.getName() );
+        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( scope.getSiteConfigs().getApplicationKeys(), macro.getName() );
         if ( descriptor == null )
         {
             return macro.toString();
@@ -413,6 +413,6 @@ final class RichTextPartsProcessor
     {
         return params.getCustomStyleDescriptorsCallback() != null
             ? params.getCustomStyleDescriptorsCallback().get()
-            : RichTextLinks.styleDescriptors( styleDescriptorService, scope.getApplications() );
+            : RichTextLinks.styleDescriptors( styleDescriptorService, scope.getSiteConfigs().getApplicationKeys() );
     }
 }

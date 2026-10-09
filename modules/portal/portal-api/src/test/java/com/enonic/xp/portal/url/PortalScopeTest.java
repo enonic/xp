@@ -24,7 +24,7 @@ class PortalScopeTest
         assertEquals( ContentPath.ROOT, scope.getPath() );
         assertEquals( ContentPath.ROOT, scope.getSitePath() );
         assertNull( scope.getBaseUrl() );
-        assertTrue( scope.getApplications().isEmpty() );
+        assertTrue( scope.getSiteConfigs().isEmpty() );
     }
 
     @Test

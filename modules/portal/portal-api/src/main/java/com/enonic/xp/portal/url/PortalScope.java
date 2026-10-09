@@ -9,7 +9,6 @@ import com.google.common.base.Suppliers;
 import com.google.common.net.UrlEscapers;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.project.ProjectName;
@@ -47,8 +46,6 @@ public final class PortalScope
 
     private final Supplier<@Nullable String> baseUrl;
 
-    private final Supplier<ApplicationKeys> applications;
-
     private PortalScope( final Builder builder )
     {
         this.projectName = requireNonNull( builder.projectName, "projectName is required" );
@@ -57,8 +54,6 @@ public final class PortalScope
         this.sitePath = requireNonNullElse( builder.sitePath, ContentPath.ROOT );
         this.siteConfigs = requireNonNullElse( builder.siteConfigs, SiteConfigs.empty() );
         this.baseUrl = Suppliers.memoize( this::resolveBaseUrl );
-        this.applications =
-            Suppliers.memoize( () -> ApplicationKeys.from( siteConfigs.stream().map( SiteConfig::getApplicationKey ).toList() ) );
     }
 
     /**
@@ -108,14 +103,6 @@ public final class PortalScope
     public @Nullable String getBaseUrl()
     {
         return baseUrl.get();
-    }
-
-    /**
-     * @return the applications configured on the site or project, in their order
-     */
-    public ApplicationKeys getApplications()
-    {
-        return applications.get();
     }
 
     private @Nullable String resolveBaseUrl()
