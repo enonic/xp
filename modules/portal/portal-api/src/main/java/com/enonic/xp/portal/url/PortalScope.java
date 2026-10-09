@@ -21,13 +21,13 @@ import static java.util.Objects.requireNonNull;
  * relative to its content, as those of a request are relative to the content its virtual host mounts. It is resolved by
  * {@link PortalUrlService#portalScope(PortalScopeParams)}, as a snapshot of the configuration at that time.
  * <p>
- * Resolve it once and pass it to every {@link PageUrlPartsParams.Builder#setScope(PortalScope) page URL} and
- * {@link ProcessHtmlPartsParams.Builder#scope(PortalScope) rich text} resolved for the same site, so that they look it up
- * only once.
+ * Resolve it once for a selected content or project and pass it to every
+ * {@link PageUrlPartsParams.Builder#setScope(PortalScope) page URL} and
+ * {@link ProcessHtmlPartsParams.Builder#scope(PortalScope) rich text} resolved below it, so that they look it up only once.
  *
  * @param projectName the project contents are looked up in
  * @param branch      the branch contents are looked up in
- * @param path        path of the content page paths are relative to, or the root path for the project
+ * @param path        path of the content that page paths are relative to, or the root path for the project
  * @param siteConfigs the configuration of the site at or above that content, or of the project outside any site
  * @param baseUrl     the Base URL configured there, followed by the path of the content below that site or project,
  *                    without a trailing slash; {@code null} when none is configured

@@ -1254,7 +1254,7 @@ function portalScopeHandle(scope: PortalScope | null | undefined): PortalScopeHa
  * URLs and processing rich text below a selected content or project, from configuration alone. It is for
  * {@link pageUrlParts} and {@link processHtmlParts}: what a site request would provide them - the
  * project, the branch, the site and its configuration - without one. Resolve it once and pass it as
- * `scope` to every call for the same site.
+ * `scope` to every call below the content `key` names.
  *
  * Page paths are relative to the content `key` names, as they are to the content a virtual host
  * mounts. The configuration is that of the nearest site at or above it, or of the project outside any site.
@@ -1262,7 +1262,7 @@ function portalScopeHandle(scope: PortalScope | null | undefined): PortalScopeHa
  * @example-ref examples/portal/portalScope.js
  *
  * @param {object} [params] Input parameters as JSON.
- * @param {string} [params.key=/] Id or path of the content page paths are relative to; `/` selects the project.
+ * @param {string} [params.key=/] Id or path of the content that page paths are relative to; `/` selects the project.
  * @param {string} [params.project] Name of the project. Defaults to the project of the current context.
  * @param {string} [params.branch] Name of the branch. Defaults to the branch of the current context.
  *

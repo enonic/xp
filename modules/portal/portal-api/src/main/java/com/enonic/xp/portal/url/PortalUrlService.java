@@ -64,7 +64,7 @@ public interface PortalUrlService
      * Resolves a {@link PortalScope}: an immutable, request-independent context for resolving page URLs and processing
      * rich text below a selected content or project, from configuration alone. It provides
      * {@link #pageUrlParts(PageUrlPartsParams)} and {@link #processHtmlParts(ProcessHtmlPartsParams)} what a site
-     * request would, without one. Resolve it once and pass it to every call for the same site.
+     * request would, without one. Resolve it once and pass it to every call below the selected content.
      *
      * @param params the content or project of the scope, and the project and branch it is in
      * @return the resolved scope
