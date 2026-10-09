@@ -3,6 +3,9 @@ package com.enonic.xp.portal.url;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import com.google.common.net.UrlEscapers;
+
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
@@ -28,19 +31,40 @@ import static java.util.Objects.requireNonNull;
  * @param projectName the project contents are looked up in
  * @param branch      the branch contents are looked up in
  * @param path        path of the content that page paths are relative to, or the root path for the project
- * @param siteConfigs the configuration of the site at or above that content, or of the project outside any site
- * @param baseUrl     the Base URL configured there, followed by the path of the content below that site or project,
- *                    without a trailing slash; {@code null} when none is configured
+ * @param sitePath    path of the site at or above that content, or the root path for the project outside any site
+ * @param siteConfigs the configuration of that site or project
  */
 @NullMarked
-public record PortalScope(ProjectName projectName, Branch branch, ContentPath path, SiteConfigs siteConfigs, @Nullable String baseUrl)
+public record PortalScope(ProjectName projectName, Branch branch, ContentPath path, ContentPath sitePath, SiteConfigs siteConfigs)
 {
     public PortalScope
     {
         requireNonNull( projectName );
         requireNonNull( branch );
         requireNonNull( path );
+        requireNonNull( sitePath );
         requireNonNull( siteConfigs );
+    }
+
+    /**
+     * @return the Base URL configured for the site or project, followed by the path of the content below it, without a
+     * trailing slash; {@code null} when none is configured
+     */
+    public @Nullable String baseUrl()
+    {
+        final SiteConfig portalConfig = siteConfigs.get( ApplicationKey.PORTAL );
+        final String baseUrl = portalConfig != null ? portalConfig.getConfig().getString( "baseUrl" ) : null;
+        if ( baseUrl == null || baseUrl.isEmpty() )
+        {
+            return null;
+        }
+
+        final StringBuilder url = new StringBuilder( baseUrl.endsWith( "/" ) ? baseUrl.substring( 0, baseUrl.length() - 1 ) : baseUrl );
+        for ( int i = sitePath.elementCount(); i < path.elementCount(); i++ )
+        {
+            url.append( '/' ).append( UrlEscapers.urlPathSegmentEscaper().escape( path.getElement( i ).toString() ) );
+        }
+        return url.toString();
     }
 
     /**

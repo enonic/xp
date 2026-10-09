@@ -162,29 +162,8 @@ public final class PortalUrlServiceImpl
             // while the configuration is that of its site, or of the project outside any site
             final ContentPath path = metadata.content() != null ? metadata.content().getPath() : ContentPath.ROOT;
 
-            return new PortalScope( metadata.projectName(), metadata.branch(), path, metadata.siteConfigs(),
-                                    scopeBaseUrl( metadata, path ) );
+            return new PortalScope( metadata.projectName(), metadata.branch(), path, metadata.anchorPath(), metadata.siteConfigs() );
         } );
-    }
-
-    /**
-     * @return the Base URL configured for the site or project, followed by the path of the content below it, so that it
-     * addresses that content; {@code null} when none is configured
-     */
-    private static String scopeBaseUrl( final BaseUrlMetadata metadata, final ContentPath path )
-    {
-        final String baseUrl = metadata.baseUrl();
-        if ( baseUrl == null || baseUrl.isEmpty() )
-        {
-            return null;
-        }
-
-        final StringBuilder url = new StringBuilder( UrlGenerator.removeTrailingSlash( baseUrl ) );
-        if ( !path.isRoot() )
-        {
-            UrlBuilderHelper.appendAndEncodePathParts( url, ContentPathResolver.relativeToAnchor( path, metadata.anchorPath() ) );
-        }
-        return url.toString();
     }
 
     /**

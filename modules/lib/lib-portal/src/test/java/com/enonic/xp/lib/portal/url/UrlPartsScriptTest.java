@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.portal.url.AttachmentUrlParts;
 import com.enonic.xp.portal.url.AttachmentUrlPartsParams;
@@ -22,6 +24,7 @@ import com.enonic.xp.portal.url.PortalUrlService;
 import com.enonic.xp.portal.url.ProcessHtmlPartsParams;
 import com.enonic.xp.portal.url.ProcessedHtml;
 import com.enonic.xp.project.ProjectName;
+import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
 import com.enonic.xp.testing.ScriptTestSupport;
 import com.enonic.xp.util.GenericValue;
@@ -51,8 +54,10 @@ class UrlPartsScriptTest
 
         when( portalUrlService.portalScope( any( PortalScopeParams.class ) ) ).thenAnswer( invocation -> {
             final PortalScopeParams params = invocation.getArgument( 0 );
-            final String baseUrl = ContentPath.from( "/configured" ).equals( params.getContentPath() ) ? "https://www.example.com" : null;
-            return new PortalScope( params.getProjectName(), params.getBranch(), params.getContentPath(), SiteConfigs.empty(), baseUrl );
+            final SiteConfigs siteConfigs = ContentPath.from( "/configured" ).equals( params.getContentPath() ) ? portalConfig(
+                "https://www.example.com" ) : SiteConfigs.empty();
+            return new PortalScope( params.getProjectName(), params.getBranch(), params.getContentPath(), params.getContentPath(),
+                                    siteConfigs );
         } );
 
         when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
@@ -89,6 +94,13 @@ class UrlPartsScriptTest
         } );
 
         addService( PortalUrlService.class, this.portalUrlService );
+    }
+
+    private static SiteConfigs portalConfig( final String baseUrl )
+    {
+        final PropertyTree config = new PropertyTree();
+        config.setString( "baseUrl", baseUrl );
+        return SiteConfigs.from( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() );
     }
 
     private static String context( final ProjectName projectName, final Branch branch )
