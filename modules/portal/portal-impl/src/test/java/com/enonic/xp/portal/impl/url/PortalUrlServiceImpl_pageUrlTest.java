@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.url;
 
+import java.time.Instant;
+
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
@@ -19,7 +21,10 @@ import com.enonic.xp.portal.url.PageUrlParams;
 import com.enonic.xp.portal.url.PageUrlParts;
 import com.enonic.xp.portal.url.PageUrlPartsParams;
 import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.project.Project;
+import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.acl.AccessControlEntry;
 import com.enonic.xp.security.acl.AccessControlList;
@@ -348,9 +353,10 @@ class PortalUrlServiceImpl_pageUrlTest
                 mockDataWithSiteConfig( SiteConfigs.empty(), site );
 
                 when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+                when( contentService.getByPath( eq( ContentPath.from( "/a" ) ) ) ).thenReturn( site );
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
-                final String scopePath = "/mycontent";
+                final String scopePath = "/a";
                 final PageUrlParts parts = this.service.pageUrlParts(
                     PageUrlPartsParams.create().setPath( "/mycontent" ).setQueryParam( "a", "1" ).setScope( scope( scopePath ) ).build() );
                 assertNull( parts.baseUrl() );
@@ -388,12 +394,13 @@ class PortalUrlServiceImpl_pageUrlTest
                     site );
 
                 when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( site );
+                when( contentService.getByPath( eq( ContentPath.from( "/a" ) ) ) ).thenReturn( site );
                 when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
 
                 final PageUrlParts parts = this.service.pageUrlParts( PageUrlPartsParams.create()
                                                                           .setPath( "/mycontent" )
                                                                           .setQueryParam( "a", "1" )
-                                                                          .setScope( scope( "/mycontent" ) )
+                                                                          .setScope( scope( "/a" ) )
                                                                           .build() );
                 assertEquals( "https://example.com", parts.baseUrl() );
                 assertEquals( "/b/mycontent", parts.path() );
@@ -426,7 +433,7 @@ class PortalUrlServiceImpl_pageUrlTest
     }
 
     @Test
-    void testPageUrlPartsWithoutNearestSite()
+    void testPageUrlPartsScopedAtContentOutsideAnySite()
     {
         ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.myproject" ) )
@@ -435,17 +442,37 @@ class PortalUrlServiceImpl_pageUrlTest
             .runWith( () -> {
                 PortalRequestAccessor.set( null );
 
-                final Content content = ContentFixtures.newContent();
+                final Content folder = Content.create()
+                    .id( ContentId.from( "folderid" ) )
+                    .name( "b" )
+                    .displayName( "b" )
+                    .parentPath( ContentPath.from( "/a" ) )
+                    .creator( PrincipalKey.from( "user:system:admin" ) )
+                    .createdTime( Instant.ofEpochSecond( 0 ) )
+                    .build();
 
-                when( contentService.getNearestSite( eq( content.getId() ) ) ).thenReturn( null );
-                when( contentService.getByPath( eq( ContentPath.from( "/mycontent" ) ) ) ).thenReturn( content );
+                when( contentService.getByPath( eq( ContentPath.from( "/a/b" ) ) ) ).thenReturn( folder );
+                when( contentService.getByPath( eq( ContentPath.from( "/a/b/mycontent" ) ) ) ).thenReturn( ContentFixtures.newContent() );
 
+                final PropertyTree config = new PropertyTree();
+                config.addString( "baseUrl", "https://project.com/" );
+                final Project project = Project.create()
+                    .name( ProjectName.from( "myproject" ) )
+                    .addSiteConfig( SiteConfig.create().application( ApplicationKey.from( "portal" ) ).config( config ).build() )
+                    .build();
+                when( projectService.get( eq( ProjectName.from( "myproject" ) ) ) ).thenReturn( project );
+
+                // paths start at the folder, and the Base URL of the project is followed by its path
                 final PageUrlParts parts = this.service.pageUrlParts(
-                    PageUrlPartsParams.create().setPath( "/mycontent" ).setScope( scope( "/mycontent" ) ).build() );
-                assertNull( parts.baseUrl() );
-                // no site to relativise against: the full content path
-                assertEquals( "/a/b/mycontent", parts.path() );
-                assertEquals( "", parts.queryString() );
+                    PageUrlPartsParams.create().setPath( "/a/b/mycontent" ).setScope( scope( "/a/b" ) ).build() );
+                assertEquals( "https://project.com/a/b", parts.baseUrl() );
+                assertEquals( "/mycontent", parts.path() );
+
+                // the URL is the one of the project: only where its path starts moves
+                final PageUrlParts projectParts = this.service.pageUrlParts(
+                    PageUrlPartsParams.create().setPath( "/a/b/mycontent" ).setScope( scope( "/" ) ).build() );
+                assertEquals( "/a/b/mycontent", projectParts.path() );
+                assertEquals( projectParts.baseUrl() + projectParts.path(), parts.baseUrl() + parts.path() );
             } );
     }
 

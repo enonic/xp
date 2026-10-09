@@ -7,11 +7,12 @@ import org.jspecify.annotations.Nullable;
  * Parts of a page URL, for building the full URL from segments:
  * {@code url = baseUrl + path + queryString}.
  *
- * @param baseUrl     the Base URL configured for the site or project the URL belongs to, without a trailing slash;
- *                    {@code null} when none is configured, and the caller supplies the origin the site is served from
- * @param path        URL-escaped path of the content relative to the site or project the URL belongs to, with a
- *                    leading slash; empty when the content is that site itself, so that {@code baseUrl + path} is the
- *                    Base URL, without a trailing slash
+ * @param baseUrl     the {@link PortalScope#getBaseUrl() Base URL of the scope} the URL belongs to, without a trailing
+ *                    slash; {@code null} when none is configured, and the caller supplies the origin the site is served
+ *                    from
+ * @param path        URL-escaped path of the content relative to the content of the scope, with a leading slash;
+ *                    empty for the content of the scope itself, so that {@code baseUrl + path} is the Base URL, without
+ *                    a trailing slash
  * @param queryString URL-escaped query string prefixed with {@code ?}; empty when there are no parameters
  */
 @NullMarked

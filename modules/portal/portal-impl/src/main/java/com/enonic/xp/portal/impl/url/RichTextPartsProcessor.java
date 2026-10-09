@@ -91,7 +91,7 @@ final class RichTextPartsProcessor
 
     ProcessedHtml process()
     {
-        final String baseUrl = scope.baseUrl();
+        final String baseUrl = scope.getBaseUrl();
 
         if ( params.getValue() == null )
         {
@@ -124,7 +124,7 @@ final class RichTextPartsProcessor
 
     private String processMacro( final Macro macro )
     {
-        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( scope.applications(), macro.getName() );
+        final MacroDescriptor descriptor = macroDescriptorResolver.resolve( scope.getSiteConfigs().getApplicationKeys(), macro.getName() );
         if ( descriptor == null )
         {
             return macro.toString();
@@ -331,8 +331,8 @@ final class RichTextPartsProcessor
         final AttachmentUrlParts parts = portalUrlService.attachmentUrlParts(
             AttachmentUrlPartsParams.create()
                 .setId( link.id() )
-                .setProjectName( scope::projectName )
-                .setBranch( scope::branch )
+                .setProjectName( scope::getProjectName )
+                .setBranch( scope::getBranch )
                 .setDownload( download )
                 .build() );
 
@@ -354,7 +354,7 @@ final class RichTextPartsProcessor
 
         // looked up once for the src and every srcset width
         final Supplier<Media> media =
-            Suppliers.memoize( () -> MediaLookup.media( contentService, scope.projectName(), scope.branch(), id ) );
+            Suppliers.memoize( () -> MediaLookup.media( contentService, scope.getProjectName(), scope.getBranch(), id ) );
 
         final ImageUrlParts src =
             imageParts( media, style, DefaultImageLinkProcessor.scale( style, scaleFromQueryString, params.getImageSrcWidth() ) );
@@ -398,8 +398,8 @@ final class RichTextPartsProcessor
     {
         return portalUrlService.imageUrlParts( ImageUrlPartsParams.create()
                                                    .setMedia( media )
-                                                   .setProjectName( scope::projectName )
-                                                   .setBranch( scope::branch )
+                                                   .setProjectName( scope::getProjectName )
+                                                   .setBranch( scope::getBranch )
                                                    .setScale( scale )
                                                    .setFilter( style == null ? null : style.getFilter() )
                                                    .build() );
@@ -413,6 +413,6 @@ final class RichTextPartsProcessor
     {
         return params.getCustomStyleDescriptorsCallback() != null
             ? params.getCustomStyleDescriptorsCallback().get()
-            : RichTextLinks.styleDescriptors( styleDescriptorService, scope.applications() );
+            : RichTextLinks.styleDescriptors( styleDescriptorService, scope.getSiteConfigs().getApplicationKeys() );
     }
 }

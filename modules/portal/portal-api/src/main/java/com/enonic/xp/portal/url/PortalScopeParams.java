@@ -9,8 +9,8 @@ import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.project.ProjectName;
 
 /**
- * Parameters of {@link PortalUrlService#portalScope(PortalScopeParams)}: the site or project of the scope, named by a
- * content at or below it, and the project and branch it is in.
+ * Parameters of {@link PortalUrlService#portalScope(PortalScopeParams)}: the content or project of the scope, and the
+ * project and branch it is in.
  */
 @NullMarked
 public final class PortalScopeParams
@@ -32,7 +32,7 @@ public final class PortalScopeParams
     }
 
     /**
-     * @return id of the content naming the site or project, or {@code null} when it is named by path or is the project
+     * @return id of the content of the scope, or {@code null} when it is named by path or the scope is the project
      */
     public @Nullable ContentId getContentId()
     {
@@ -40,7 +40,7 @@ public final class PortalScopeParams
     }
 
     /**
-     * @return path of the content naming the site or project, or {@code null} when it is named by id or is the project
+     * @return path of the content of the scope, or {@code null} when it is named by id or the scope is the project
      */
     public @Nullable ContentPath getContentPath()
     {
@@ -75,10 +75,10 @@ public final class PortalScopeParams
      * Builder of {@link PortalScopeParams}. Every parameter is optional: by default the scope is the project of the current
      * context.
      * <p>
-     * The site or project is the nearest one at or above the content named by {@link #setContentId(ContentId) id} or
-     * {@link #setContentPath(ContentPath) path}, the id taking precedence. A project contains sites and a site can
-     * contain further sites, so this picks a level of that containment: the root path names the project, a site, or a
-     * content inside it, names that site.
+     * Page paths are relative to the content named by {@link #setContentId(ContentId) id} or
+     * {@link #setContentPath(ContentPath) path}, the id taking precedence, as those of a request are relative to the
+     * content its virtual host mounts; the root path names the project. The configuration is that of the nearest site
+     * at or above the content, or of the project outside any site.
      */
     public static final class Builder
     {
@@ -95,7 +95,7 @@ public final class PortalScopeParams
         }
 
         /**
-         * Names the site, or a content inside it, by id; takes precedence over the path.
+         * Names the content of the scope by id; takes precedence over the path.
          *
          * @param contentId content id; {@code null} clears it
          * @return this builder
@@ -107,7 +107,7 @@ public final class PortalScopeParams
         }
 
         /**
-         * Names the site, or a content inside it, by path; the root path names the project.
+         * Names the content of the scope by path; the root path names the project.
          *
          * @param contentPath content path; {@code null} clears it
          * @return this builder

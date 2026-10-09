@@ -11,8 +11,8 @@ import com.google.common.base.Strings;
 
 /**
  * Parameters of {@link PortalUrlService#pageUrlParts(PageUrlPartsParams)}: the content a page URL addresses, by
- * {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, and the {@link PortalScope site or project}
- * the URL belongs to.
+ * {@link Builder#setId(String) id} or {@link Builder#setPath(String) path}, and the {@link PortalScope scope} the URL
+ * belongs to.
  */
 @NullMarked
 public final class PageUrlPartsParams
@@ -54,7 +54,7 @@ public final class PageUrlPartsParams
     }
 
     /**
-     * @return the site or project the URL belongs to, or {@code null} for the project of the current context
+     * @return the scope the URL belongs to, or {@code null} for the project of the current context
      * @see Builder#setScope(PortalScope)
      */
     public @Nullable PortalScope getScope()
@@ -120,11 +120,11 @@ public final class PageUrlPartsParams
         }
 
         /**
-         * Sets the site - or the project - the URL belongs to. The content is looked up in its project and branch.
+         * Sets the scope the URL belongs to. The content is looked up in its project and branch.
          * <p>
-         * Each level carries its own configuration, so the Base URL configured on the scope applies, and the path of
-         * the URL is relative to it. The content has to be inside the scope, or be the scope itself; for a content
-         * elsewhere {@link ContentOutOfScopeException} is thrown.
+         * The Base URL of the scope applies, and the path of the URL is relative to the content of the scope. The
+         * content has to be inside that content, or be it; for a content elsewhere {@link ContentOutOfScopeException}
+         * is thrown.
          *
          * @param scope the scope, resolved by {@link PortalUrlService#portalScope(PortalScopeParams)}; {@code null} for the
          *             project of the current context

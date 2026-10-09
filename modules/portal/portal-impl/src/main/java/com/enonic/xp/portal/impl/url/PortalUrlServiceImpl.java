@@ -12,6 +12,7 @@ import com.google.common.base.Suppliers;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.Content;
 import com.enonic.xp.content.ContentNotFoundException;
+import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.content.Media;
 import com.enonic.xp.context.Context;
@@ -156,8 +157,15 @@ public final class PortalUrlServiceImpl
     {
         return runWithAdminRole( () -> {
             final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params );
+            final ContentPath path = metadata.content() != null ? metadata.content().getPath() : ContentPath.ROOT;
 
-            return new PortalScope( metadata.projectName(), metadata.branch(), metadata.anchorPath(), metadata.siteConfigs() );
+            return PortalScope.create()
+                .projectName( metadata.projectName() )
+                .branch( metadata.branch() )
+                .path( path )
+                .sitePath( metadata.anchorPath() )
+                .siteConfigs( metadata.siteConfigs() )
+                .build();
         } );
     }
 
@@ -176,10 +184,10 @@ public final class PortalUrlServiceImpl
 
         return runWithAdminRole( () -> {
             final String path = ContextBuilder.copyOf( ContextAccessor.current() )
-                .repositoryId( scope.projectName().getRepoId() )
-                .branch( scope.branch() )
+                .repositoryId( scope.getProjectName().getRepoId() )
+                .branch( scope.getBranch() )
                 .build()
-                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ), scope.path() ) );
+                .callWith( () -> ContentPathResolver.relativeToAnchor( PageBase.contentPath( contentService, params ), scope.getPath() ) );
 
             final StringBuilder escapedPath = new StringBuilder();
             UrlBuilderHelper.appendAndEncodePathParts( escapedPath, path );
@@ -187,7 +195,7 @@ public final class PortalUrlServiceImpl
             final DefaultQueryParamsSupplier queryParamsStrategy = new DefaultQueryParamsSupplier();
             queryParamsStrategy.params( params.getQueryParams() );
 
-            return new PageUrlParts( scope.baseUrl(), escapedPath.toString(), queryParamsStrategy.get() );
+            return new PageUrlParts( scope.getBaseUrl(), escapedPath.toString(), queryParamsStrategy.get() );
         } );
     }
 
