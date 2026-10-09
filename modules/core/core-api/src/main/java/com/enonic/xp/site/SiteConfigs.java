@@ -35,7 +35,6 @@ public final class SiteConfigs
      */
     public ApplicationKeys getApplicationKeys()
     {
-        // computed on first use: the keys are immutable, so a race only computes them twice
         ApplicationKeys keys = this.applicationKeys;
         if ( keys == null )
         {

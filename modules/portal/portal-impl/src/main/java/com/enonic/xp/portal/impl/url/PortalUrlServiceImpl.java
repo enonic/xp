@@ -157,9 +157,6 @@ public final class PortalUrlServiceImpl
     {
         return runWithAdminRole( () -> {
             final BaseUrlMetadata metadata = new BaseUrlExtractor( contentService, projectService ).extractFromConfiguration( params );
-
-            // page paths start at the content the params name, as they do at the content a virtual host mounts,
-            // while the configuration is that of its site, or of the project outside any site
             final ContentPath path = metadata.content() != null ? metadata.content().getPath() : ContentPath.ROOT;
 
             return PortalScope.create()
