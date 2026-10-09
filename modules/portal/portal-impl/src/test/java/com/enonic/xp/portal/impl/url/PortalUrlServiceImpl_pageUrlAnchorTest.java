@@ -42,8 +42,8 @@ import static org.mockito.Mockito.when;
  * {@code /features/subsite}, which contains {@code /features/subsite/folder}.
  * <p>
  * Configuration of a site is never inherited from a parent site, so which of the two sites a URL
- * belongs to decides both its base URL and the path that follows: the site selected through
- * {@link PageUrlPartsParams.Builder#setBase} for the parts, and the site of the content for the page URL.
+ * belongs to decides both its base URL and the path that follows: the scope selected through
+ * {@link PageUrlPartsParams.Builder#setScope} for the parts, and the site of the content for the page URL.
  */
 class PortalUrlServiceImpl_pageUrlAnchorTest
     extends AbstractPortalUrlServiceImplTest
@@ -219,11 +219,25 @@ class PortalUrlServiceImpl_pageUrlAnchorTest
     {
         mockNestedSites( "https://features.com", "https://subsite.com" );
 
-        // selecting a content inside a site selects the site it belongs to
+        // paths start at the content, as at a content a virtual host mounts, and the Base URL of its site is
+        // followed by its path there
         final PageUrlParts parts = parts( FOLDER, this.folder.getId().toString() );
 
-        assertEquals( "https://subsite.com", parts.baseUrl() );
-        assertEquals( "/folder", parts.path() );
+        assertEquals( "https://subsite.com/folder", parts.baseUrl() );
+        assertEquals( "", parts.path() );
+
+        // the URL is the one of the site: only where its path starts moves
+        final PageUrlParts siteParts = parts( FOLDER, SUBSITE.toString() );
+        assertEquals( siteParts.baseUrl() + siteParts.path(), parts.baseUrl() + parts.path() );
+    }
+
+    @Test
+    void testContentAboveTheSelectedContent()
+    {
+        mockNestedSites( "https://features.com", "https://subsite.com" );
+
+        // the site of the selected folder lies above it, so outside the scope
+        assertThatThrownBy( () -> parts( SUBSITE, this.folder.getId().toString() ) ).isInstanceOf( ContentOutOfScopeException.class );
     }
 
     @Test

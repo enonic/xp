@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableList;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.support.AbstractImmutableEntityList;
 
 
@@ -15,6 +16,8 @@ public final class SiteConfigs
     extends AbstractImmutableEntityList<SiteConfig>
 {
     private static final SiteConfigs EMPTY = new SiteConfigs( ImmutableList.of() );
+
+    private @Nullable ApplicationKeys applicationKeys;
 
     private SiteConfigs( final ImmutableList<SiteConfig> list )
     {
@@ -25,6 +28,20 @@ public final class SiteConfigs
     public SiteConfig get( final ApplicationKey applicationKey )
     {
         return stream().filter( sc -> applicationKey.equals( sc.getApplicationKey() ) ).findFirst().orElse( null );
+    }
+
+    /**
+     * @return the keys of the configured applications, in their order
+     */
+    public ApplicationKeys getApplicationKeys()
+    {
+        ApplicationKeys keys = this.applicationKeys;
+        if ( keys == null )
+        {
+            keys = ApplicationKeys.from( stream().map( SiteConfig::getApplicationKey ).toList() );
+            this.applicationKeys = keys;
+        }
+        return keys;
     }
 
     public static SiteConfigs empty()

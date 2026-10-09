@@ -23,7 +23,7 @@ import com.enonic.xp.util.GenericValue;
  * attribute holding the {@code ref} of its entry in {@link #macros()}; the caller renders the macro from that entry.
  *
  * @param html    the processed HTML, with placeholders for its internal links and images
- * @param baseUrl the Base URL configured for the site or project the HTML belongs to, without a trailing slash;
+ * @param baseUrl the {@link PortalScope#getBaseUrl() Base URL of the scope} the HTML belongs to, without a trailing slash;
  *                {@code null} when none is configured. It is the {@link PageUrlParts#baseUrl() baseUrl} of the page
  *                parts of every content link
  * @param links   internal links to contents and attachments, in document order

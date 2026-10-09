@@ -12,8 +12,8 @@ import com.google.common.base.Strings;
 import com.enonic.xp.style.StyleDescriptors;
 
 /**
- * Parameters of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the HTML fragment, the site or
- * project it belongs to, and how its images and macros are processed.
+ * Parameters of {@link PortalUrlService#processHtmlParts(ProcessHtmlPartsParams)}: the HTML fragment, the scope it
+ * belongs to, and how its images and macros are processed.
  */
 @NullMarked
 public final class ProcessHtmlPartsParams
@@ -55,7 +55,7 @@ public final class ProcessHtmlPartsParams
     }
 
     /**
-     * @return the site or project the HTML belongs to, or {@code null} for the project of the current context
+     * @return the scope the HTML belongs to, or {@code null} for the project of the current context
      * @see Builder#scope(PortalScope)
      */
     public @Nullable PortalScope getScope()
@@ -156,8 +156,8 @@ public final class ProcessHtmlPartsParams
         }
 
         /**
-         * Sets the site - or the project - the HTML belongs to. Its configuration decides the Base URL, what content
-         * links are relative to, and the applications image styles come from; contents are looked up in its project
+         * Sets the scope the HTML belongs to. Content links carry its Base URL and are relative to its content, its
+         * configuration decides the applications image styles come from, and contents are looked up in its project
          * and branch.
          *
          * @param scope the scope, resolved by {@link PortalUrlService#portalScope(PortalScopeParams)}; {@code null} for the

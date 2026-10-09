@@ -56,7 +56,13 @@ class UrlPartsScriptTest
             final PortalScopeParams params = invocation.getArgument( 0 );
             final SiteConfigs siteConfigs = ContentPath.from( "/configured" ).equals( params.getContentPath() ) ? portalConfig(
                 "https://www.example.com" ) : SiteConfigs.empty();
-            return new PortalScope( params.getProjectName(), params.getBranch(), params.getContentPath(), siteConfigs );
+            return PortalScope.create()
+                .projectName( params.getProjectName() )
+                .branch( params.getBranch() )
+                .path( params.getContentPath() )
+                .sitePath( params.getContentPath() )
+                .siteConfigs( siteConfigs )
+                .build();
         } );
 
         when( portalUrlService.pageUrlParts( any( PageUrlPartsParams.class ) ) ).thenAnswer( invocation -> {
@@ -145,8 +151,8 @@ class UrlPartsScriptTest
         // the script reads the Base URL as a string, and hands the scope on as it was resolved
         final ArgumentCaptor<PageUrlPartsParams> captor = ArgumentCaptor.forClass( PageUrlPartsParams.class );
         verify( portalUrlService ).pageUrlParts( captor.capture() );
-        assertEquals( "https://www.example.com", captor.getValue().getScope().baseUrl() );
-        assertEquals( ContentPath.from( "/configured" ), captor.getValue().getScope().path() );
+        assertEquals( "https://www.example.com", captor.getValue().getScope().getBaseUrl() );
+        assertEquals( ContentPath.from( "/configured" ), captor.getValue().getScope().getPath() );
     }
 
     @Test
@@ -167,9 +173,9 @@ class UrlPartsScriptTest
      */
     private static void assertScope( final PortalScope scope )
     {
-        assertEquals( ProjectName.from( "myproject" ), scope.projectName() );
-        assertEquals( Branch.from( "master" ), scope.branch() );
-        assertEquals( ContentPath.from( "/my-site" ), scope.path() );
+        assertEquals( ProjectName.from( "myproject" ), scope.getProjectName() );
+        assertEquals( Branch.from( "master" ), scope.getBranch() );
+        assertEquals( ContentPath.from( "/my-site" ), scope.getPath() );
     }
 
     @Test
