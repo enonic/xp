@@ -5,7 +5,6 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -35,11 +34,15 @@ public abstract class ConnectorConfigurator
         }
     }
 
-    protected final void doConfigure( final HttpConnectionFactory factory )
+    protected final HttpConnectionFactory newConnectionFactory( final boolean forwarded )
     {
-        factory.getHttpConfiguration().addCustomizer( new ForwardedRequestCustomizer() );
-
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
         final HttpConfiguration config = factory.getHttpConfiguration();
+
+        if ( forwarded )
+        {
+            config.addCustomizer( TrustedProxyForwardedCustomizer.from( this.config.http_forwarded_trustedProxies() ) );
+        }
 
         // HTTP/1.1 requires Date header if possible
         config.setSendDateHeader( true );
@@ -47,6 +50,7 @@ public abstract class ConnectorConfigurator
         config.setSendXPoweredBy( this.config.sendServerHeader() );
         config.setRequestHeaderSize( this.config.http_requestHeaderSize() );
         config.setResponseHeaderSize( this.config.http_responseHeaderSize() );
+        return factory;
     }
 
     private List<String> resolveHosts( final String connectorHost )
