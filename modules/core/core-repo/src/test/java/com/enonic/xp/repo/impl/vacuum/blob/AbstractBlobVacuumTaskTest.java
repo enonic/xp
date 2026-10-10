@@ -11,6 +11,7 @@ import com.enonic.xp.blob.BlobKey;
 import com.enonic.xp.blob.BlobStore;
 import com.enonic.xp.blob.Segment;
 import com.enonic.xp.data.ValueFactory;
+import com.enonic.xp.internal.blobstore.MemoryBlobRecord;
 import com.enonic.xp.internal.blobstore.MemoryBlobStore;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.NodeVersionQuery;
@@ -22,6 +23,7 @@ import com.enonic.xp.vacuum.VacuumListener;
 import com.enonic.xp.vacuum.VacuumTaskResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 public abstract class AbstractBlobVacuumTaskTest
@@ -108,6 +110,25 @@ public abstract class AbstractBlobVacuumTaskTest
         assertEquals( 1, result.getInUse() );
 
         assertEquals( 3, blobReportCount.get() );
+    }
+
+    public void test_delete_empty_folder_without_version_lookup()
+        throws Exception
+    {
+        this.blobStore.addRecord( segment, ByteSource.wrap( "a-stuff".getBytes() ) );
+        // empty fan-out folders are listed by the file blobstore as records with a short key
+        this.blobStore.addRecord( segment, new MemoryBlobRecord( BlobKey.from( "aabbcc" ), ByteSource.empty() ) );
+
+        final VacuumTask task = createTask();
+
+        // folders are removed regardless of the age threshold
+        final VacuumTaskResult result = task.execute( VacuumTaskParams.create().vacuumStartedAt( Instant.now() ).build() );
+
+        assertEquals( 0, result.getProcessed() );
+        assertEquals( 1, result.getDeleted() );
+        assertEquals( 0, result.getInUse() );
+        assertNull( this.blobStore.getRecord( segment, BlobKey.from( "aabbcc" ) ) );
+        Mockito.verify( nodeService, Mockito.never() ).findVersions( Mockito.any( NodeVersionQuery.class ) );
     }
 
     public void age_threshold()

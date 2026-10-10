@@ -26,6 +26,10 @@ public abstract class AbstractBlobVacuumCommand
 {
     private static final Logger LOG = LoggerFactory.getLogger( AbstractBlobVacuumCommand.class );
 
+    // The file blobstore lists empty last level fan-out folders as records keyed by their 3 x 2 character path, e.g. "aabbcc".
+    // Blob keys are SHA-1 hex strings and never that short.
+    private static final int EMPTY_FOLDER_KEY_LENGTH = 6;
+
     private final BlobStore blobStore;
 
     private final NodeService nodeService;
@@ -74,6 +78,15 @@ public abstract class AbstractBlobVacuumCommand
 
     private boolean shouldDelete( final Segment segment, final BlobRecord blobRecord )
     {
+        final BlobKey blobKey = blobRecord.getKey();
+        if ( isEmptyFolder( blobKey ) )
+        {
+            // Nothing refers to an empty folder, no matter how old it is. Blobstore keeps it if it gets a blob in the meantime.
+            LOG.debug( "Empty folder [{}]", blobKey );
+            result.deleted();
+            return true;
+        }
+
         if ( isOldBlobRecord( blobRecord ) )
         {
             result.processed();
@@ -82,7 +95,6 @@ public abstract class AbstractBlobVacuumCommand
                 params.getListener().processed( 1L );
             }
 
-            final BlobKey blobKey = blobRecord.getKey();
             if ( !isUsedByVersion( segment, blobKey ) )
             {
                 LOG.debug( "No version found for {} [{}]", getFieldIndexPath(), blobKey );
@@ -94,6 +106,11 @@ public abstract class AbstractBlobVacuumCommand
         }
 
         return false;
+    }
+
+    private static boolean isEmptyFolder( final BlobKey blobKey )
+    {
+        return blobKey.toString().length() == EMPTY_FOLDER_KEY_LENGTH;
     }
 
     private boolean isOldBlobRecord( final BlobRecord blobRecord )

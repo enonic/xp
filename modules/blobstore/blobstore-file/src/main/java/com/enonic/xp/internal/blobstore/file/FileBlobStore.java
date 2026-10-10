@@ -1,11 +1,16 @@
 package com.enonic.xp.internal.blobstore.file;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,6 +32,8 @@ public final class FileBlobStore
     implements BlobStore
 {
     private static final Logger LOG = LoggerFactory.getLogger( FileBlobStore.class );
+
+    private static final int MAX_WRITE_ATTEMPTS = 3;
 
     private final Path baseDir;
 
@@ -93,6 +100,8 @@ public final class FileBlobStore
         try
         {
             Files.deleteIfExists( file );
+            // Only the last fan-out level is cleaned up: it is the one that explodes in numbers, higher levels are limited to 256 entries
+            deleteDirectoryIfEmpty( file.getParent() );
         }
         catch ( IOException e )
         {
@@ -106,13 +115,62 @@ public final class FileBlobStore
         final Path segmentPath = resolveSegmentPath( segment );
         try
         {
-            return Files.find( segmentPath, 4, ( path, attr ) -> attr.isRegularFile() && path.getFileName().toString().length() >= 6 )
-                .map( path -> new FileBlobRecord( BlobKey.from( path.getFileName().toString() ), path ) );
+            // Empty last level directories are listed as well, keyed by their path. Removing such a record removes the directory.
+            return Files.list( segmentPath )
+                .flatMap( FileBlobStore::listDirectory )
+                .flatMap( FileBlobStore::listDirectory )
+                .flatMap( FileBlobStore::listLastLevelDirectory );
         }
         catch ( IOException e )
         {
             throw new BlobStoreException( "Failed to list files", e );
         }
+    }
+
+    private static Stream<Path> listDirectory( final Path directory )
+    {
+        try
+        {
+            return Files.list( directory );
+        }
+        catch ( NoSuchFileException | NotDirectoryException e )
+        {
+            // removed concurrently, or not a directory at all
+            return Stream.empty();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private static Stream<BlobRecord> listLastLevelDirectory( final Path directory )
+    {
+        final List<Path> entries;
+        try (Stream<Path> stream = Files.list( directory ))
+        {
+            entries = stream.collect( Collectors.toList() );
+        }
+        catch ( NoSuchFileException | NotDirectoryException e )
+        {
+            // removed concurrently, or not a directory at all
+            return Stream.empty();
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+
+        if ( entries.isEmpty() )
+        {
+            final Path parent = directory.getParent();
+            final String key = parent.getParent().getFileName().toString() + parent.getFileName() + directory.getFileName();
+            return Stream.of( new FileBlobRecord( BlobKey.from( key ), directory ) );
+        }
+
+        return entries.stream()
+            .filter( path -> path.getFileName().toString().length() >= 6 && Files.isRegularFile( path ) )
+            .map( path -> new FileBlobRecord( BlobKey.from( path.getFileName().toString() ), path ) );
     }
 
     @Override
@@ -171,18 +229,70 @@ public final class FileBlobStore
 
         if ( !Files.exists( file ) )
         {
-            Files.createDirectories( file.getParent() );
-            try (var inStream = in.openStream())
-            {
-                Files.copy( inStream, file );
-            }
-            catch ( FileAlreadyExistsException e )
-            {
-                LOG.debug( "File already exists [{}]", file, e );
-            }
+            writeFile( file, in );
         }
 
         return new FileBlobRecord( key, file );
+    }
+
+    private static void writeFile( final Path file, final ByteSource in )
+        throws IOException
+    {
+        for ( int attempt = 1; ; attempt++ )
+        {
+            try
+            {
+                Files.createDirectories( file.getParent() );
+            }
+            catch ( FileAlreadyExistsException | NoSuchFileException e )
+            {
+                // Directory may be removed by concurrent cleanup while it is being checked. File creation below decides what it means.
+                LOG.debug( "Failed to create directory for [{}]", file, e );
+            }
+
+            try (var inStream = in.openStream())
+            {
+                final OutputStream outStream;
+                try
+                {
+                    outStream = Files.newOutputStream( file, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE );
+                }
+                catch ( FileAlreadyExistsException e )
+                {
+                    LOG.debug( "File already exists [{}]", file, e );
+                    return;
+                }
+                catch ( NoSuchFileException e )
+                {
+                    // Parent directory was removed by concurrent cleanup between its creation and the file creation
+                    if ( attempt >= MAX_WRITE_ATTEMPTS )
+                    {
+                        throw e;
+                    }
+                    LOG.debug( "Parent directory of [{}] is missing on attempt {} of {}. Retrying.", file, attempt, MAX_WRITE_ATTEMPTS, e );
+                    continue;
+                }
+
+                try (OutputStream out = outStream)
+                {
+                    inStream.transferTo( out );
+                }
+                return;
+            }
+        }
+    }
+
+    private static void deleteDirectoryIfEmpty( final Path directory )
+        throws IOException
+    {
+        try
+        {
+            Files.delete( directory );
+        }
+        catch ( DirectoryNotEmptyException | NoSuchFileException e )
+        {
+            // expected: directory is in use by blobs, or is already removed concurrently
+        }
     }
 
     private Path resolveBlobPath( final Segment segment, final BlobKey key )
