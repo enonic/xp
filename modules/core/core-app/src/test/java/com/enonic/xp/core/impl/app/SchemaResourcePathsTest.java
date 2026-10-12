@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.enonic.xp.util.BinaryReference;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -79,7 +81,26 @@ class SchemaResourcePathsTest
         assertEquals( "enonic.svg", SchemaResourcePaths.appIconName( SchemaResourcePaths.SVG_MIME_TYPE ) );
         assertEquals( "enonic.png", SchemaResourcePaths.appIconName( SchemaResourcePaths.PNG_MIME_TYPE ) );
         assertNull( SchemaResourcePaths.appIconName( "image/jpeg" ) );
-        assertNull( SchemaResourcePaths.appIconName( null ) );
+        assertNull( SchemaResourcePaths.appIconName( (String) null ) );
+    }
+
+    @Test
+    void app_icon_binary_reference_by_mime_type()
+    {
+        assertEquals( BinaryReference.from( "enonic.svg" ), SchemaResourcePaths.appIconBinaryReference( SchemaResourcePaths.SVG_MIME_TYPE ) );
+        assertEquals( BinaryReference.from( "enonic.png" ), SchemaResourcePaths.appIconBinaryReference( SchemaResourcePaths.PNG_MIME_TYPE ) );
+        assertNull( SchemaResourcePaths.appIconBinaryReference( "image/jpeg" ) );
+        assertNull( SchemaResourcePaths.appIconBinaryReference( null ) );
+    }
+
+    @Test
+    void app_icon_name_by_binary_reference()
+    {
+        assertEquals( "enonic.svg", SchemaResourcePaths.appIconName( BinaryReference.from( "enonic.svg" ) ) );
+        assertEquals( "enonic.png", SchemaResourcePaths.appIconName( BinaryReference.from( "enonic.png" ) ) );
+        // the reference of a schema icon node is not the application icon
+        assertNull( SchemaResourcePaths.appIconName( BinaryReference.from( "icon" ) ) );
+        assertNull( SchemaResourcePaths.appIconName( (BinaryReference) null ) );
     }
 
     @Test

@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.util.BinaryReference;
+
 /**
  * Defines which application resources are "schema resources": the application descriptor and icon in the root of the application
  * ({@code enonic.yaml|yml}, {@code enonic.svg}, or the legacy {@code application.yaml|yml}, {@code application.svg}),
@@ -39,7 +41,8 @@ public final class SchemaResourcePaths
     /**
      * Path of the application icon shipped by a bundle ({@code enonic.svg}), and the key the icon is resolved as by
      * {@link AppSchemaResolver}. The persisted icon is not a node of its own: it is attached to the descriptor node
-     * ({@link #APP_DESCRIPTOR_NAME}) and served as the virtual resource {@code enonic.svg} or {@code enonic.png} by its mime type.
+     * ({@link #APP_DESCRIPTOR_NAME}) as a binary named by its mime type, {@code enonic.svg} or {@code enonic.png}, and served as
+     * the virtual resource of the same name.
      */
     public static final String APP_ICON_NAME = "enonic." + SVG_EXTENSION;
 
@@ -231,6 +234,25 @@ public final class SchemaResourcePaths
             return APP_ICON_PNG_NAME;
         }
         return null;
+    }
+
+    /**
+     * Reference the persisted application icon is attached to the descriptor node under, by its mime type: {@code enonic.svg} or
+     * {@code enonic.png}, the same name it is served at. {@code null} for any other mime type.
+     */
+    public static BinaryReference appIconBinaryReference( final String mimeType )
+    {
+        final String name = appIconName( mimeType );
+        return name != null ? BinaryReference.from( name ) : null;
+    }
+
+    /**
+     * Virtual path the application icon attached under {@code reference} is served at: the reference itself when it is one of
+     * {@code enonic.svg} or {@code enonic.png}, {@code null} for any other reference.
+     */
+    public static String appIconName( final BinaryReference reference )
+    {
+        return reference != null && isAppIconPath( reference.toString() ) ? reference.toString() : null;
     }
 
     /**

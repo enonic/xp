@@ -29,6 +29,7 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.server.RunModeSupport;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -273,7 +274,7 @@ class ApplicationFactoryTest
         final PropertyTree descriptorData = new PropertyTree();
         descriptorData.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"\ndescription: \"From node\"\n" );
         descriptorData.setString( SchemaNodePropertyNames.MIME_TYPE, SchemaResourcePaths.PNG_MIME_TYPE );
-        descriptorData.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+        descriptorData.setBinaryReference( SchemaNodePropertyNames.ICON, BinaryReference.from( "enonic.png" ) );
         final NodeId descriptorId = NodeId.from( "descriptor" );
         when( nodeService.getByPath( new NodePath( "/applications/app1/enonic.yaml" ) ) ).thenReturn( Node.create()
                                                                                                           .id( descriptorId )
@@ -283,7 +284,7 @@ class ApplicationFactoryTest
                                                                                                           .data( descriptorData )
                                                                                                           .timestamp( Instant.EPOCH )
                                                                                                           .build() );
-        when( nodeService.getBinary( descriptorId, SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) ).thenReturn(
+        when( nodeService.getBinary( descriptorId, BinaryReference.from( "enonic.png" ) ) ).thenReturn(
             ByteSource.wrap( new byte[]{1, 2, 3} ) );
         RunModeSupport.set( RunMode.PROD );
 

@@ -189,13 +189,14 @@ public class ApplicationRepoServiceImpl
                             toBeEdited.data.removeProperties( SchemaNodePropertyNames.MIME_TYPE );
                             toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
                         }
-                        case ApplicationIconUpdate.Replace replace -> setIconProperties( toBeEdited.data, replace.mimeType() );
+                        case ApplicationIconUpdate.Replace replace -> setIconProperties( toBeEdited.data, replace );
                     }
                 } ).refresh( RefreshMode.ALL );
 
                 if ( iconUpdate instanceof ApplicationIconUpdate.Replace replace )
                 {
-                    params.attachBinary( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, replace.data() );
+                    // a binary attached under the previous name (svg replaced by png) is no longer referenced and dropped by the update
+                    params.attachBinary( replace.reference(), replace.data() );
                 }
                 node = this.nodeService.update( params.build() );
             }
@@ -222,17 +223,20 @@ public class ApplicationRepoServiceImpl
 
         if ( iconUpdate instanceof ApplicationIconUpdate.Replace replace )
         {
-            setIconProperties( data, replace.mimeType() );
-            params.attachBinary( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, replace.data() );
+            setIconProperties( data, replace );
+            params.attachBinary( replace.reference(), replace.data() );
         }
 
         return this.nodeService.create( params.data( data ).build() );
     }
 
-    private static void setIconProperties( final PropertyTree data, final String mimeType )
+    /**
+     * The icon binary is attached under its file name ({@code enonic.svg} or {@code enonic.png}), the name it is served at.
+     */
+    private static void setIconProperties( final PropertyTree data, final ApplicationIconUpdate.Replace replace )
     {
-        data.setString( SchemaNodePropertyNames.MIME_TYPE, mimeType );
-        data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+        data.setString( SchemaNodePropertyNames.MIME_TYPE, replace.mimeType() );
+        data.setBinaryReference( SchemaNodePropertyNames.ICON, replace.reference() );
     }
 
     private void deletePersistedSchema( final NodePath appPath )

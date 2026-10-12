@@ -183,11 +183,13 @@ class ApplicationServiceTest
                 "assets/app.js", "console.log()" ) ) );
 
             // the application descriptor is persisted as a direct child of the application node (.yml normalized to .yaml),
-            // the icon is attached to it rather than persisted as a node of its own
+            // the icon is attached to it under its file name rather than persisted as a node of its own
             final Node appDescriptorNode = appChildNode( "staticapp", "enonic.yaml" );
             assertEquals( APP_DESCRIPTOR, appDescriptorNode.data().getString( "resource" ) );
             assertEquals( "image/svg+xml", appDescriptorNode.data().getString( "mimeType" ) );
-            assertNotNull( appDescriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "appIcon" ) ) );
+            assertEquals( BinaryReference.from( "enonic.svg" ), appDescriptorNode.data().getBinaryReference( "icon" ) );
+            assertEquals( 1, appDescriptorNode.getAttachedBinaries().getSize() );
+            assertNotNull( appDescriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
             assertNull( appChildNode( "staticapp", "enonic.svg" ) );
 
             // and served from there, the bundle's copies are hidden
@@ -264,19 +266,23 @@ class ApplicationServiceTest
                 "application.svg", "<svg>legacy</svg>", //
                 "cms/cms.yaml", CMS_DESCRIPTOR ) ) );
 
-            // the legacy application descriptor and icon of an older bundle are persisted under the new names only
-            assertEquals( "kind: \"Application\"\ndescription: \"Legacy\"\n",
-                          appChildNode( "legacydescriptorapp", "enonic.yaml" ).data().getString( "resource" ) );
-            assertNotNull( appChildNode( "legacydescriptorapp", "enonic.yaml" )
-                               .getAttachedBinaries()
-                               .getByBinaryReference( BinaryReference.from( "appIcon" ) ) );
+            // the legacy application descriptor and icon of an older bundle are persisted under the new names only:
+            // the icon binary is attached as enonic.svg, never as application.svg
+            final Node legacyDescriptorNode = appChildNode( "legacydescriptorapp", "enonic.yaml" );
+            assertEquals( "kind: \"Application\"\ndescription: \"Legacy\"\n", legacyDescriptorNode.data().getString( "resource" ) );
+            assertEquals( BinaryReference.from( "enonic.svg" ), legacyDescriptorNode.data().getBinaryReference( "icon" ) );
+            assertEquals( 1, legacyDescriptorNode.getAttachedBinaries().getSize() );
+            assertNotNull( legacyDescriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
+            assertNull( legacyDescriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "application.svg" ) ) );
             assertNull( appChildNode( "legacydescriptorapp", "enonic.svg" ) );
             assertNull( appChildNode( "legacydescriptorapp", "application.yml" ) );
             assertNull( appChildNode( "legacydescriptorapp", "application.svg" ) );
 
             // served from the nodes, the bundle's legacy copies are hidden
             assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
-            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) ).getResolverName() );
+            final Resource legacyIcon = resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) );
+            assertEquals( "node", legacyIcon.getResolverName() );
+            assertEquals( "<svg>legacy</svg>", legacyIcon.readString() );
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/application.yml" ) ).exists() );
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/application.svg" ) ).exists() );
 
@@ -496,7 +502,8 @@ class ApplicationServiceTest
         assertNull( appChildNode( "nodeonlyapp", "cms" ) );
         final Node descriptorNode = appChildNode( "nodeonlyapp", "enonic.yaml" );
         assertEquals( "kind: \"Application\"\nname: \"nodeonlyapp\"\ntitle: \"Node only\"\n", descriptorNode.data().getString( "resource" ) );
-        assertNotNull( descriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "appIcon" ) ) );
+        assertEquals( BinaryReference.from( "enonic.svg" ), descriptorNode.data().getBinaryReference( "icon" ) );
+        assertNotNull( descriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
 
         assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
         assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );

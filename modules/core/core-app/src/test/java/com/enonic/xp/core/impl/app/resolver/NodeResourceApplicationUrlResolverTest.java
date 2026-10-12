@@ -16,6 +16,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.SchemaResourceNames;
+import com.enonic.xp.core.impl.app.SchemaResourcePaths;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.AttachedBinaries;
 import com.enonic.xp.node.AttachedBinary;
@@ -27,6 +28,7 @@ import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -142,7 +144,8 @@ class NodeResourceApplicationUrlResolverTest
     {
         final Node descriptorNode = descriptorNode( "image/svg+xml" );
         when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
-        when( this.nodeService.getBinary( descriptorNode.id(), SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) ).thenReturn(
+        // the binary is attached under the file name of the icon
+        when( this.nodeService.getBinary( descriptorNode.id(), BinaryReference.from( "enonic.svg" ) ) ).thenReturn(
             ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
 
         // the descriptor is always the text, even with the icon attached
@@ -154,8 +157,23 @@ class NodeResourceApplicationUrlResolverTest
         assertEquals( "node", icon.getResolverName() );
         assertEquals( descriptorNode.getTimestamp().toEpochMilli(), icon.getTimestamp() );
 
-        // served at the path of its mime type only
+        // served at the path of its binary name only
         assertNull( staticAppResolver().findResource( "/enonic.png" ) );
+    }
+
+    @Test
+    void findResource_returns_a_png_application_icon_at_its_own_path()
+    {
+        final Node descriptorNode = descriptorNode( "image/png" );
+        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
+        when( this.nodeService.getBinary( descriptorNode.id(), BinaryReference.from( "enonic.png" ) ) ).thenReturn(
+            ByteSource.wrap( new byte[]{1, 2, 3} ) );
+
+        final Resource icon = staticAppResolver().findResource( "/enonic.png" );
+        assertEquals( "myapp:/enonic.png", icon.getKey().toString() );
+        assertEquals( 3, icon.getSize() );
+
+        assertNull( staticAppResolver().findResource( "/enonic.svg" ) );
     }
 
     @Test
@@ -168,9 +186,7 @@ class NodeResourceApplicationUrlResolverTest
             .name( "enonic.yaml" )
             .data( descriptorData( null ) )
             .timestamp( Instant.now() )
-            .attachedBinaries( AttachedBinaries.create()
-                                   .add( new AttachedBinary( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, "blobkey" ) )
-                                   .build() )
+            .attachedBinaries( AttachedBinaries.create().add( new AttachedBinary( BinaryReference.from( "enonic.svg" ), "blobkey" ) ).build() )
             .build();
         when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
 
@@ -196,7 +212,7 @@ class NodeResourceApplicationUrlResolverTest
         if ( iconMimeType != null )
         {
             data.setString( SchemaNodePropertyNames.MIME_TYPE, iconMimeType );
-            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourcePaths.appIconBinaryReference( iconMimeType ) );
         }
         return data;
     }

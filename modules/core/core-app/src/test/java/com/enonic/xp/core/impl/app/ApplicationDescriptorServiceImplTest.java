@@ -40,6 +40,7 @@ import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.server.RunMode;
 import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.support.ResourceTestHelper;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -275,6 +276,7 @@ class ApplicationDescriptorServiceImplTest
         verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), captor.capture() );
         final ApplicationIconUpdate.Replace replace = (ApplicationIconUpdate.Replace) captor.getValue();
         assertEquals( "image/png", replace.mimeType() );
+        assertEquals( BinaryReference.from( "enonic.png" ), replace.reference() );
         assertEquals( List.of( (byte) 1, (byte) 2, (byte) 3 ), bytes( replace.data() ) );
 
         verify( auditLogSupport ).createApplicationDescriptor( MYAPP, persisted.get(), "image/png", 3 );
@@ -408,8 +410,11 @@ class ApplicationDescriptorServiceImplTest
             invocation -> yaml.get() != null ? descriptorNode( yaml.get(), iconMimeType.get() ) : null );
         when( nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenAnswer(
             invocation -> yaml.get() != null ? descriptorNode( yaml.get(), iconMimeType.get() ) : null );
-        when( nodeService.getBinary( any( NodeId.class ), eq( SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) ) ).thenReturn(
+        // the icon binary is attached under its file name
+        when( nodeService.getBinary( any( NodeId.class ), eq( BinaryReference.from( "enonic.svg" ) ) ) ).thenReturn(
             ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
+        when( nodeService.getBinary( any( NodeId.class ), eq( BinaryReference.from( "enonic.png" ) ) ) ).thenReturn(
+            ByteSource.wrap( new byte[]{1, 2, 3} ) );
     }
 
     private static Node descriptorNode( final String yaml, final String iconMimeType )
@@ -419,7 +424,7 @@ class ApplicationDescriptorServiceImplTest
         if ( iconMimeType != null )
         {
             data.setString( SchemaNodePropertyNames.MIME_TYPE, iconMimeType );
-            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourcePaths.appIconBinaryReference( iconMimeType ) );
         }
         return Node.create()
             .id( NodeId.from( "descriptor" ) )

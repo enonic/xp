@@ -29,15 +29,11 @@ public final class SchemaResourceNames
     public static final String STYLE_NAME = "style";
 
     /**
-     * Binary of a schema icon node (content type, part, macro, ...).
+     * Binary of a schema icon node (content type, part, macro, ...). The application icon is attached to the descriptor node under
+     * its file name instead ({@link SchemaResourcePaths#appIconBinaryReference(String)}), so the descriptor node is never mistaken
+     * for an icon node.
      */
     public static final BinaryReference ICON_BINARY_REFERENCE = BinaryReference.from( "icon" );
-
-    /**
-     * Binary of the application icon, attached to the application descriptor node ({@code enonic.yaml}). Named differently from
-     * {@link #ICON_BINARY_REFERENCE} so that the descriptor node is never mistaken for an icon node.
-     */
-    public static final BinaryReference APP_ICON_BINARY_REFERENCE = BinaryReference.from( "appIcon" );
 
     private SchemaResourceNames()
     {

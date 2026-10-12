@@ -26,6 +26,7 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.node.UpdateNodeParams;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,6 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ApplicationRepoServiceImplTest
 {
+    // the application icon is attached to the descriptor node under its file name, by mime type
+    private static final BinaryReference SVG_ICON = BinaryReference.from( "enonic.svg" );
+
+    private static final BinaryReference PNG_ICON = BinaryReference.from( "enonic.png" );
+
     private final NodeService nodeService = Mockito.mock( NodeService.class );
 
     private ApplicationRepoServiceImpl service;
@@ -174,9 +180,9 @@ class ApplicationRepoServiceImplTest
         assertEquals( new NodePath( "/applications/myBundle" ), descriptorParams.getParent() );
         assertEquals( "app-descriptor", descriptorParams.getData().getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, descriptorParams.getData().getString( SchemaNodePropertyNames.MIME_TYPE ) );
-        assertEquals( SchemaResourceNames.APP_ICON_BINARY_REFERENCE,
-                      descriptorParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
-        assertNotNull( descriptorParams.getBinaryAttachments().get( SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) );
+        assertEquals( SVG_ICON, descriptorParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
+        assertEquals( 1, descriptorParams.getBinaryAttachments().getSize() );
+        assertNotNull( descriptorParams.getBinaryAttachments().get( SVG_ICON ) );
     }
 
     @Test
@@ -209,7 +215,8 @@ class ApplicationRepoServiceImplTest
 
         assertEquals( "enonic.yaml", captor.getValue().getName().toString() );
         assertEquals( "kind: \"Application\"\nname: \"myBundle\"\n", captor.getValue().getData().getString( SchemaNodePropertyNames.RESOURCE ) );
-        assertNotNull( captor.getValue().getBinaryAttachments().get( SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) );
+        assertEquals( SVG_ICON, captor.getValue().getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
+        assertNotNull( captor.getValue().getBinaryAttachments().get( SVG_ICON ) );
     }
 
     @Test
@@ -297,8 +304,9 @@ class ApplicationRepoServiceImplTest
         assertEquals( new NodePath( "/applications/myapp" ), captor.getValue().getParent() );
         assertEquals( "yaml", captor.getValue().getData().getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( SchemaResourcePaths.PNG_MIME_TYPE, captor.getValue().getData().getString( SchemaNodePropertyNames.MIME_TYPE ) );
-        assertEquals( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, captor.getValue().getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
-        assertNotNull( captor.getValue().getBinaryAttachments().get( SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) );
+        assertEquals( PNG_ICON, captor.getValue().getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
+        assertNotNull( captor.getValue().getBinaryAttachments().get( PNG_ICON ) );
+        assertNull( captor.getValue().getBinaryAttachments().get( SVG_ICON ) );
         Mockito.verify( this.nodeService ).refresh( RefreshMode.ALL );
     }
 
@@ -331,7 +339,7 @@ class ApplicationRepoServiceImplTest
         assertEquals( new NodePath( "/applications/myapp/enonic.yaml" ), captor.getValue().getPath() );
         assertEquals( "new", edited.getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, edited.getString( SchemaNodePropertyNames.MIME_TYPE ) );
-        assertEquals( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
+        assertEquals( SVG_ICON, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
         assertEquals( 0, captor.getValue().getBinaryAttachments().getSize() );
     }
 
@@ -364,8 +372,33 @@ class ApplicationRepoServiceImplTest
 
         assertEquals( "new", edited.getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( SchemaResourcePaths.PNG_MIME_TYPE, edited.getString( SchemaNodePropertyNames.MIME_TYPE ) );
-        assertEquals( SchemaResourceNames.APP_ICON_BINARY_REFERENCE, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
-        assertNotNull( captor.getValue().getBinaryAttachments().get( SchemaResourceNames.APP_ICON_BINARY_REFERENCE ) );
+        assertEquals( PNG_ICON, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
+        assertNotNull( captor.getValue().getBinaryAttachments().get( PNG_ICON ) );
+    }
+
+    @Test
+    void upsert_descriptor_updates_replacing_an_svg_icon_by_a_png()
+    {
+        final PropertyTree edited = stubUpdate( descriptorData( "old", SchemaResourcePaths.SVG_MIME_TYPE ) );
+
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", ApplicationIconUpdate.replace(
+            ByteSource.wrap( new byte[]{1, 2, 3} ), SchemaResourcePaths.PNG_MIME_TYPE ) );
+
+        final ArgumentCaptor<UpdateNodeParams> captor = ArgumentCaptor.forClass( UpdateNodeParams.class );
+        Mockito.verify( this.nodeService ).update( captor.capture() );
+
+        // the reference moves to the new name; the binary under the old name is no longer referenced and dropped by the update
+        assertEquals( SchemaResourcePaths.PNG_MIME_TYPE, edited.getString( SchemaNodePropertyNames.MIME_TYPE ) );
+        assertEquals( PNG_ICON, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
+        assertEquals( 1, captor.getValue().getBinaryAttachments().getSize() );
+        assertNotNull( captor.getValue().getBinaryAttachments().get( PNG_ICON ) );
+    }
+
+    @Test
+    void replace_rejects_an_unsupported_mime_type()
+    {
+        assertThrows( IllegalArgumentException.class,
+                      () -> ApplicationIconUpdate.replace( ByteSource.wrap( new byte[]{1} ), "image/jpeg" ) );
     }
 
     private static CreateNodeParams created( final ArgumentCaptor<CreateNodeParams> captor, final String name )
@@ -380,7 +413,7 @@ class ApplicationRepoServiceImplTest
         if ( iconMimeType != null )
         {
             data.setString( SchemaNodePropertyNames.MIME_TYPE, iconMimeType );
-            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+            data.setBinaryReference( SchemaNodePropertyNames.ICON, SchemaResourcePaths.appIconBinaryReference( iconMimeType ) );
         }
         return data;
     }

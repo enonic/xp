@@ -22,11 +22,12 @@ import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
+import com.enonic.xp.util.BinaryReference;
 
 /**
  * Serves application resources stored as nodes below the application node: the {@code cms} subtree and the persisted
- * application descriptor ({@code enonic.yaml}). The application icon is attached to the descriptor node and served as the
- * virtual resource {@code enonic.svg} or {@code enonic.png}, by its mime type.
+ * application descriptor ({@code enonic.yaml}). The application icon is attached to the descriptor node as a binary named
+ * {@code enonic.svg} or {@code enonic.png} and served as the virtual resource of that name.
  * Resource paths are relative to the application node, e.g. {@code /cms/content-types/mytype/mytype.yaml}.
  */
 public final class NodeResourceApplicationUrlResolver
@@ -132,7 +133,7 @@ public final class NodeResourceApplicationUrlResolver
     }
 
     /**
-     * The application icon attached to the descriptor node, served at the virtual path matching its mime type only.
+     * The application icon attached to the descriptor node, served at the virtual path matching the name of its binary only.
      */
     private Resource findAppIcon( final String path )
     {
@@ -143,7 +144,7 @@ public final class NodeResourceApplicationUrlResolver
             return null;
         }
 
-        final ByteSource binary = nodeService.getBinary( descriptorNode.id(), SchemaResourceNames.APP_ICON_BINARY_REFERENCE );
+        final ByteSource binary = nodeService.getBinary( descriptorNode.id(), BinaryReference.from( iconName ) );
         return new NodeValueResource( ResourceKey.from( applicationKey, path ), binary, descriptorNode.getTimestamp() );
     }
 
@@ -154,11 +155,8 @@ public final class NodeResourceApplicationUrlResolver
 
     private static String appIconName( final Node descriptorNode )
     {
-        if ( descriptorNode == null ||
-            !SchemaResourceNames.APP_ICON_BINARY_REFERENCE.equals( descriptorNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) ) )
-        {
-            return null;
-        }
-        return SchemaResourcePaths.appIconName( descriptorNode.data().getString( SchemaNodePropertyNames.MIME_TYPE ) );
+        return descriptorNode == null
+            ? null
+            : SchemaResourcePaths.appIconName( descriptorNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) );
     }
 }
