@@ -39,6 +39,14 @@ public class NodeBlobVacuumTaskTest
 
     @Override
     @Test
+    public void test_delete_empty_folder_without_version_lookup()
+        throws Exception
+    {
+        super.test_delete_empty_folder_without_version_lookup();
+    }
+
+    @Override
+    @Test
     public void age_threshold()
         throws Exception
     {
