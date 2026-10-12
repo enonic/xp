@@ -27,11 +27,12 @@ import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.CreateOrUpdateApplicationDescriptorParams;
 import com.enonic.xp.app.EditableApplicationDescriptor;
+import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.icon.Icon;
-import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.SystemConstants;
 
@@ -64,15 +65,19 @@ public class ApplicationDescriptorServiceImpl
 
     private final ApplicationFactory factory;
 
+    private final EventPublisher eventPublisher;
+
     @Activate
     public ApplicationDescriptorServiceImpl( @Reference final NodeService nodeService, @Reference final ApplicationRepoService repoService,
-                                             @Reference final DynamicSchemaAuditLogSupport auditLogSupport )
+                                             @Reference final DynamicSchemaAuditLogSupport auditLogSupport,
+                                             @Reference final EventPublisher eventPublisher )
     {
         this.appDescriptorMap = new ConcurrentHashMap<>();
         this.bundles = new ConcurrentHashMap<>();
         this.nodeService = nodeService;
         this.repoService = repoService;
         this.auditLogSupport = auditLogSupport;
+        this.eventPublisher = eventPublisher;
         this.factory = new ApplicationFactory( nodeService );
     }
 
@@ -141,6 +146,7 @@ public class ApplicationDescriptorServiceImpl
         final long iconSize = iconMimeType != null ? edit.icon.getSize() : 0;
         if ( created || current == null )
         {
+            this.eventPublisher.publish( ApplicationEvents.installed( key ) );
             this.auditLogSupport.createApplicationDescriptor( key, yaml, iconMimeType, iconSize );
         }
         else

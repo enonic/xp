@@ -19,11 +19,13 @@ import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
+import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -182,6 +184,24 @@ class ApplicationFactoryServiceImplTest
         // a local application is never persisted: nothing is served once stopped
         bundle.stop();
         assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+    }
+
+    @Test
+    void findResolver_persistedOnlyApplication()
+    {
+        final BundleContext bundleContext = getBundleContext();
+        final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        service.activate();
+
+        // no bundle at all: an application created through the descriptor service serves its persisted descriptor and schema
+        final ApplicationKey applicationKey = ApplicationKey.from( "nodeonly" );
+        when( nodeService.nodeExists( new NodePath( "/applications/nodeonly/enonic.yaml" ) ) ).thenReturn( true );
+
+        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
+
+        // nothing persisted, nothing installed: nothing is served
+        assertThat( service.findResolver( ApplicationKey.from( "unknown" ), null ) ).isEmpty();
     }
 
     private static InputStream stream( final String content )

@@ -26,7 +26,9 @@ import com.enonic.xp.app.CreateOrUpdateApplicationDescriptorParams;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.node.Node;
@@ -74,6 +76,8 @@ class ApplicationDescriptorServiceImplTest
 
     private DynamicSchemaAuditLogSupport auditLogSupport;
 
+    private EventPublisher eventPublisher;
+
     @BeforeEach
     void setup()
     {
@@ -92,7 +96,8 @@ class ApplicationDescriptorServiceImplTest
         nodeService = Mockito.mock( NodeService.class );
         repoService = Mockito.mock( ApplicationRepoService.class );
         auditLogSupport = Mockito.mock( DynamicSchemaAuditLogSupport.class );
-        appDescriptorService = new ApplicationDescriptorServiceImpl( nodeService, repoService, auditLogSupport );
+        eventPublisher = Mockito.mock( EventPublisher.class );
+        appDescriptorService = new ApplicationDescriptorServiceImpl( nodeService, repoService, auditLogSupport, eventPublisher );
     }
 
     @Test
@@ -188,6 +193,13 @@ class ApplicationDescriptorServiceImplTest
 
         verify( auditLogSupport ).createApplicationDescriptor( MYAPP, persisted.get(), null, 0 );
         verify( auditLogSupport, never() ).updateApplicationDescriptor( any(), any(), any(), Mockito.anyLong(), Mockito.anyBoolean() );
+
+        // the application is listed from now on: the listeners of application events are told
+        final ArgumentCaptor<Event> event = ArgumentCaptor.forClass( Event.class );
+        verify( eventPublisher ).publish( event.capture() );
+        assertEquals( ApplicationEvents.EVENT_TYPE, event.getValue().getType() );
+        assertEquals( ApplicationEvents.INSTALLED, event.getValue().getData().get( ApplicationEvents.EVENT_TYPE_KEY ) );
+        assertEquals( MYAPP.toString(), String.valueOf( event.getValue().getData().get( ApplicationEvents.APPLICATION_KEY_KEY ) ) );
     }
 
     @Test
@@ -214,6 +226,8 @@ class ApplicationDescriptorServiceImplTest
         assertNull( result.getVendorUrl() );
 
         verify( auditLogSupport ).updateApplicationDescriptor( MYAPP, persisted.get(), null, 0, false );
+        // an update of an existing descriptor changes nothing about the application being listed
+        verify( eventPublisher, never() ).publish( any() );
     }
 
     @Test

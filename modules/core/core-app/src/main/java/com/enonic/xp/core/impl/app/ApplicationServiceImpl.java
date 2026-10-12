@@ -2,10 +2,13 @@ package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -79,25 +82,64 @@ public final class ApplicationServiceImpl
     @Override
     public Application getInstalledApplication( final ApplicationKey key )
     {
-        return this.registry.get( key );
+        return doGet( key );
     }
 
     @Override
     public Application get( final ApplicationKey key )
     {
-        return this.registry.get( key );
+        return doGet( key );
     }
 
     @Override
     public Applications getInstalledApplications()
     {
-        return Applications.from( this.registry.getAll() );
+        return doList();
     }
 
     @Override
     public Applications list()
     {
-        return Applications.from( this.registry.getAll() );
+        return doList();
+    }
+
+    /**
+     * The applications installed from a bundle, and the ones that exist as nodes only (created through the descriptor service).
+     */
+    private Applications doList()
+    {
+        final List<Application> installed = this.registry.getAll();
+        final Set<ApplicationKey> installedKeys = installed.stream().map( Application::getKey ).collect( Collectors.toSet() );
+
+        final Stream<Application> persisted = ApplicationHelper.runAsAdmin( this.repoService::getApplications )
+            .stream()
+            .filter( node -> !hasBundle( node ) )
+            .filter( node -> !installedKeys.contains( ApplicationKey.from( node.name().toString() ) ) )
+            .filter( this::hasPersistedDescriptor )
+            .map( PersistedApplication::new );
+
+        return Applications.from( Stream.concat( installed.stream(), persisted ).toList() );
+    }
+
+    private Application doGet( final ApplicationKey key )
+    {
+        final Application installed = this.registry.get( key );
+        return installed != null ? installed : findPersistedApplication( key );
+    }
+
+    /**
+     * The application existing as nodes only: an application node without a bundle, holding a persisted descriptor.
+     * The application nodes live in system-repo, whatever the context of the caller.
+     */
+    private Application findPersistedApplication( final ApplicationKey key )
+    {
+        final Node node = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) );
+        return node != null && !hasBundle( node ) && hasPersistedDescriptor( node ) ? new PersistedApplication( node ) : null;
+    }
+
+    private boolean hasPersistedDescriptor( final Node applicationNode )
+    {
+        return this.repoService.getApplicationDescriptorNode( ApplicationKey.from( applicationNode.name().toString() ) ) != null;
     }
 
     @Override
@@ -131,7 +173,7 @@ public final class ApplicationServiceImpl
     @Override
     public void stopApplication( final ApplicationKey key )
     {
-        final Application app = registry.get( key );
+        final Application app = doGet( key );
         if ( app != null && app.isSystem() )
         {
             throw new IllegalArgumentException( "Cannot stop system application: " + key );
@@ -186,13 +228,25 @@ public final class ApplicationServiceImpl
                 String.format( "Cannot uninstall application %s since it is installed as local application on this instance", key ) );
         }
         ApplicationHelper.runWithContext( () -> {
+            // an application existing as nodes only has no bundle to uninstall, its nodes are removed like any other's
+            final boolean installed = this.registry.get( key ) != null;
+            if ( !installed && findPersistedApplication( key ) == null )
+            {
+                throw new ApplicationNotFoundException( key );
+            }
 
             this.eventPublisher.publish( ApplicationClusterEvents.uninstall( key ) );
 
-            doUninstallApplication( key );
+            if ( installed )
+            {
+                this.registry.uninstall( key );
+            }
 
             this.repoService.deleteApplicationNode( key );
             this.applicationAuditLogSupport.uninstallApplication( key );
+
+            // published once the nodes are gone: a listener listing the applications on this event no longer finds it
+            this.eventPublisher.publish( ApplicationEvents.uninstalled( key ) );
             this.eventPublisher.publish( ApplicationClusterEvents.uninstalled( key ) );
         } );
     }
@@ -375,7 +429,7 @@ public final class ApplicationServiceImpl
     // a schema application is always started, whatever state was stored for it
     private void requireNotSchemaApplication( final ApplicationKey key, final String action )
     {
-        final Application app = registry.get( key );
+        final Application app = doGet( key );
         if ( app != null && app.isSchema() )
         {
             throw new IllegalArgumentException( "Cannot " + action + " schema application: " + key );
@@ -493,7 +547,14 @@ public final class ApplicationServiceImpl
                         handleEvent( event, this::doInstallStoredApplication );
                         break;
                     case ApplicationClusterEvents.UNINSTALL:
-                        handleEvent( event, this::doUninstallApplication );
+                        // an application existing as nodes only is in the registry of no cluster node, it leaves the list all the same
+                        handleEvent( event, applicationKey -> {
+                            if ( this.registry.get( applicationKey ) != null )
+                            {
+                                this.registry.uninstall( applicationKey );
+                            }
+                            this.eventPublisher.publish( ApplicationEvents.uninstalled( applicationKey ) );
+                        } );
                         break;
                     case ApplicationClusterEvents.START:
                         handleEvent( event, this::doStartApplication );

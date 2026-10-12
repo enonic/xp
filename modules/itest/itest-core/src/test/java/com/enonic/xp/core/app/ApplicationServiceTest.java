@@ -53,6 +53,7 @@ import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupport;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.resource.Resource;
@@ -116,7 +117,8 @@ class ApplicationServiceTest
         final ComponentContext componentContext = mock( ComponentContext.class );
         when( componentContext.getBundleContext() ).thenReturn( bundleContext );
         this.applicationDescriptorService =
-            new ApplicationDescriptorServiceImpl( nodeService, repoService, mock( DynamicSchemaAuditLogSupport.class ) );
+            new ApplicationDescriptorServiceImpl( nodeService, repoService, mock( DynamicSchemaAuditLogSupport.class ),
+                                                  mock( EventPublisher.class ) );
         this.applicationDescriptorService.start( componentContext );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -507,11 +509,23 @@ class ApplicationServiceTest
 
         assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
         assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
-        assertNull( applicationService.get( appKey ) );
 
-        // the stored applications are installed on startup: a node without a bundle is skipped
+        // without a bundle the application is still an application: a schema application, listed and always started
+        final Application nodeOnly = applicationService.get( appKey );
+        assertNotNull( nodeOnly );
+        assertTrue( nodeOnly.isSchema() );
+        assertTrue( nodeOnly.isStarted() );
+        assertNull( nodeOnly.getClassLoader() );
+        assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );
+        assertThrows( IllegalArgumentException.class, () -> applicationService.startApplication( appKey ) );
+        assertThrows( IllegalArgumentException.class, () -> applicationService.stopApplication( appKey ) );
+
+        // its persisted descriptor is served like the resources of any other application
+        assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
+
+        // the stored applications are installed on startup: a node without a bundle has nothing to install, and stays listed
         adminContext().runWith( () -> applicationService.installAllStoredApplications() );
-        assertNull( applicationService.get( appKey ) );
+        assertNotNull( applicationService.get( appKey ) );
 
         // the descriptor is updated in place
         adminContext().runWith( () -> applicationDescriptorService.createOrUpdate(

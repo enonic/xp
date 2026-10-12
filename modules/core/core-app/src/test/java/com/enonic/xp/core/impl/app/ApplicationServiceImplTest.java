@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
+import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.event.Event;
@@ -38,11 +40,13 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -84,6 +88,7 @@ class ApplicationServiceImplTest
         AuditLogService auditLogService = mock( AuditLogService.class );
 
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( true );
+        when( repoService.getApplications() ).thenReturn( Nodes.empty() );
 
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
         auditLogSupport.activate( appConfig );
@@ -147,6 +152,155 @@ class ApplicationServiceImplTest
         final Applications result = this.service.list();
         assertNotNull( result );
         assertEquals( 2, result.getSize() );
+    }
+
+    @Test
+    void list_includes_persisted_only_applications()
+    {
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.registerApplication( bundle );
+
+        // app1 is installed from its bundle, the persisted node of app1 must not be listed twice; app2 exists as nodes only
+        final Node app1Node = applicationNode( "app1", bundleNodeData() );
+        final Node app2Node = applicationNode( "app2", persistedNodeData() );
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( app1Node, app2Node ) );
+        when( this.repoService.getApplicationDescriptorNode( ApplicationKey.from( "app2" ) ) ).thenReturn( descriptorNode( "app2" ) );
+
+        final Applications result = this.service.list();
+        assertEquals( 2, result.getSize() );
+        assertSame( applicationRegistry.get( ApplicationKey.from( "app1" ) ), result.get( 0 ) );
+
+        final Application persisted = result.get( 1 );
+        assertInstanceOf( PersistedApplication.class, persisted );
+        assertEquals( ApplicationKey.from( "app2" ), persisted.getKey() );
+        assertTrue( persisted.isSchema() );
+        assertTrue( persisted.isStarted() );
+        assertFalse( persisted.isSystem() );
+        assertNull( persisted.getClassLoader() );
+        assertEquals( Version.emptyVersion, persisted.getVersion() );
+        assertNull( persisted.getSystemVersion() );
+        assertEquals( Instant.parse( "2026-10-12T10:00:00Z" ), persisted.getModifiedTime() );
+        assertTrue( persisted.getCapabilities().isEmpty() );
+        assertNotNull( persisted.getConfig() );
+        assertTrue( persisted.getConfig().asMap().isEmpty() );
+
+        assertEquals( result.getApplicationKeys(), this.service.getInstalledApplications().getApplicationKeys() );
+    }
+
+    @Test
+    void list_skips_a_node_without_bundle_and_without_descriptor()
+    {
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( applicationNode( "app1", new PropertyTree() ) ) );
+
+        assertEquals( 0, this.service.list().getSize() );
+    }
+
+    @Test
+    void get_persisted_only_application()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
+        when( this.repoService.getApplicationDescriptorNode( applicationKey ) ).thenReturn( descriptorNode( "app1" ) );
+
+        final Application result = this.service.get( applicationKey );
+        assertInstanceOf( PersistedApplication.class, result );
+        assertEquals( applicationKey, result.getKey() );
+        assertEquals( applicationKey, this.service.getInstalledApplication( applicationKey ).getKey() );
+    }
+
+    @Test
+    void get_prefers_the_installed_application_over_the_persisted_node()
+    {
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.registerApplication( bundle );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", bundleNodeData() ) );
+
+        assertSame( applicationRegistry.get( applicationKey ), this.service.get( applicationKey ) );
+    }
+
+    @Test
+    void start_and_stop_persisted_only_application_throw()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
+        when( this.repoService.getApplicationDescriptorNode( applicationKey ) ).thenReturn( descriptorNode( "app1" ) );
+
+        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+
+        verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
+        verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
+        verifyNoEvents( ApplicationClusterEvents.stop( applicationKey ) );
+    }
+
+    @Test
+    void uninstall_persisted_only_application_deletes_its_nodes()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
+        when( this.repoService.getApplicationDescriptorNode( applicationKey ) ).thenReturn( descriptorNode( "app1" ) );
+
+        this.service.uninstallApplication( applicationKey );
+
+        verify( this.repoService ).deleteApplicationNode( applicationKey );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( applicationKey ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( applicationKey ) ) ) );
+        // the local event the listeners of the application list react to is published after the nodes are deleted
+        final InOrder inOrder = Mockito.inOrder( this.repoService, this.eventPublisher );
+        inOrder.verify( this.repoService ).deleteApplicationNode( applicationKey );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( applicationKey ) ) ) );
+    }
+
+    @Test
+    void uninstall_event_for_persisted_only_application_publishes_the_local_event_only()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        // nothing in the registry of this cluster node, and nothing to throw about: the application leaves the list all the same
+        this.service.onEvent( remote( ApplicationClusterEvents.uninstall( applicationKey ) ) );
+
+        verify( this.eventPublisher, times( 1 ) ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( applicationKey ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish( any() );
+    }
+
+    // the event as received from another node of the cluster
+    private static Event remote( final Event event )
+    {
+        return Event.create( event ).localOrigin( false ).build();
+    }
+
+    private static Node applicationNode( final String name, final PropertyTree data )
+    {
+        return Node.create()
+            .id( NodeId.from( name + "-node" ) )
+            .name( name )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .data( data )
+            .timestamp( Instant.parse( "2026-10-12T12:00:00Z" ) )
+            .build();
+    }
+
+    private static Node descriptorNode( final String name )
+    {
+        return Node.create()
+            .id( NodeId.from( name + "-descriptor" ) )
+            .name( SchemaResourcePaths.APP_DESCRIPTOR_NAME )
+            .parentPath( ApplicationRepoServiceImpl.applicationNodePath( ApplicationKey.from( name ) ) )
+            .build();
+    }
+
+    // the node of an application created through the descriptor service: no bundle
+    private static PropertyTree persistedNodeData()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Instant.parse( "2026-10-12T10:00:00Z" ) );
+        return data;
     }
 
     @Test
@@ -804,6 +958,8 @@ class ApplicationServiceImplTest
 
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( application ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application ) ) ) );
     }

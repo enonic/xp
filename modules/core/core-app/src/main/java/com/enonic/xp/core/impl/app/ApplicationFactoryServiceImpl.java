@@ -31,9 +31,12 @@ public class ApplicationFactoryServiceImpl
 
     private final ApplicationFactory factory;
 
+    private final NodeService nodeService;
+
     @Activate
     public ApplicationFactoryServiceImpl( final BundleContext context, @Reference final NodeService nodeService )
     {
+        this.nodeService = nodeService;
         this.factory = new ApplicationFactory( nodeService );
 
         this.bundleTracker =
@@ -80,7 +83,8 @@ public class ApplicationFactoryServiceImpl
         {
             return adaptorEntry.map( Map.Entry::getValue )
                 .map( ApplicationAdaptor::getUrlResolver )
-                .or( () -> findInactiveResolver( applicationKey ) );
+                .or( () -> findInactiveResolver( applicationKey ) )
+                .or( () -> findPersistedResolver( applicationKey ) );
         }
 
         return adaptorEntry.map( Map.Entry::getKey ).map( bundle -> factory.createUrlResolver( bundle, source ) );
@@ -90,6 +94,14 @@ public class ApplicationFactoryServiceImpl
     private Optional<ApplicationUrlResolver> findInactiveResolver( final ApplicationKey applicationKey )
     {
         return entries( applicationKey ).findAny().map( Map.Entry::getKey ).map( factory::createInactiveUrlResolver );
+    }
+
+    // an application created through the descriptor service has no bundle at all: its persisted descriptor and schema are served
+    private Optional<ApplicationUrlResolver> findPersistedResolver( final ApplicationKey applicationKey )
+    {
+        final boolean persisted = ApplicationHelper.runAsAdmin(
+            () -> nodeService.nodeExists( ApplicationRepoServiceImpl.applicationDescriptorNodePath( applicationKey ) ) );
+        return persisted ? Optional.of( ApplicationFactory.createPersistedSchemaResolver( applicationKey, nodeService ) ) : Optional.empty();
     }
 
     private Optional<Map.Entry<Bundle, ApplicationAdaptor>> findActiveEntry( final ApplicationKey applicationKey )
