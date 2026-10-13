@@ -9,10 +9,12 @@ node {
 }
 
 def coreDir = layout.projectDirectory.dir( 'core' )
+def xpDir = layout.projectDirectory.dir( 'xp' )
 
 /* Clean */
 clean {
     delete coreDir.dir( 'build' )
+    delete xpDir.dir( 'build' )
 }
 
 /* Test */
@@ -43,6 +45,21 @@ tasks.register( 'testTypes', NpmTask ) {
 }
 
 check.dependsOn tasks.named( 'testTypes' )
+
+tasks.register( 'testPackages', NpmTask ) {
+    dependsOn tasks.named( 'npmInstall' )
+    dependsOn tasks.named( 'prepareAllToPublish' )
+    description = 'Type-check fixture apps that install the packed type packages with npm and pnpm'
+    args = ['run', 'test:packages']
+    inputs.dir 'test-packages'
+    inputs.files( 'scripts/test-packages.mjs', 'scripts/packages.mjs' )
+    inputs.dir layout.buildDirectory.dir( 'npm' )
+    inputs.dir coreDir.dir( 'build/npm' )
+    inputs.dir xpDir.dir( 'build/npm' )
+    inputs.files( subprojects.collect { it.layout.buildDirectory.dir( 'npm' ) } )
+}
+
+check.dependsOn tasks.named( 'testPackages' )
 
 /* Configure & Build */
 tasks.register( 'typescript', NpmTask ) {
@@ -137,12 +154,26 @@ tasks.register( 'prepareToPublish' ) {
     dependsOn tasks.named( 'prepareCoreToPublish' )
 }
 
+tasks.register( 'prepareXpToPublish', NodeTask ) {
+    dependsOn tasks.named( 'prepareToPublish' )
+    description = 'Stage the @enonic-types/xp meta package that depends on all other type packages.'
+    script = file( 'scripts/prepare-xp-package.mjs' )
+    inputs.files( 'scripts/prepare-xp-package.mjs', 'scripts/packages.mjs', 'package.template.json', 'xp/README.md' )
+    inputs.files( layout.buildDirectory.file( 'npm/package.json' ), coreDir.file( 'build/npm/package.json' ) )
+    inputs.files( subprojects.collect { it.layout.buildDirectory.file( 'npm/package.json' ) } )
+    outputs.dir( xpDir.dir( 'build/npm' ) )
+}
+
 tasks.register( 'prepareAllToPublish' ) {
     dependsOn tasks.named( 'prepareToPublish' )
+    dependsOn tasks.named( 'prepareXpToPublish' )
 }
 
 subprojects.each { sub ->
     sub.afterEvaluate {
+        tasks.named( 'prepareXpToPublish' ) {
+            dependsOn sub.tasks.named( 'prepareToPublish' )
+        }
         tasks.named( 'prepareAllToPublish' ) {
             dependsOn sub.tasks.named( 'prepareToPublish' )
         }

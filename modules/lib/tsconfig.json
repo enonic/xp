@@ -38,6 +38,7 @@
     "exclude": [
         "./**/build",
         "./**/out",
-        "./lib-*/*.d.ts"
+        "./lib-*/*.d.ts",
+        "./test-packages"
     ]
 }
