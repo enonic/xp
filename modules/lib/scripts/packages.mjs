@@ -18,7 +18,7 @@ export function memberPackageDirs() {
         .map(name => join(libDir, name, 'build', 'npm'));
     const dirs = [join(libDir, 'build', 'npm'), join(libDir, 'core', 'build', 'npm'), ...libDirs];
 
-    const missing = dirs.filter(dir => !existsSync(join(dir, 'package.json')));
+    const missing = dirs.filter(dir => !existsSync(dir));
     if (missing.length > 0) {
         throw new Error(`Packages are not staged, run prepareAllToPublish first:\n${missing.join('\n')}`);
     }

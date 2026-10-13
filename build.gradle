@@ -112,7 +112,7 @@ configure( jsTestProjects ) {
 
 tasks.register('ci') {
     description = 'Builds and generates coverage report.'
-    dependsOn = ['build', 'jacocoMergedReport']
+    dependsOn = ['build', 'jacocoMergedReport', ':lib:check']
 }
 
 tasks.register('jacocoMergedReport', JacocoReport) {

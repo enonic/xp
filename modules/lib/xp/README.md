@@ -57,5 +57,5 @@ import {get, query} from '/lib/xp/content';
 ```
 
 The mapping points at the top level of `node_modules`. npm and Yarn Classic hoist the libraries there, but pnpm does not, so with pnpm
-either install the imported libraries directly (`pnpm add -D @enonic-types/lib-content`), or hoist the scope with
-`public-hoist-pattern[]=@enonic-types/*` in `.npmrc`.
+either hoist the scope with `public-hoist-pattern[]=@enonic-types/*` in `.npmrc`, or install the imported libraries together with
+`@enonic-types/core` directly (`pnpm add -D @enonic-types/core @enonic-types/lib-content`).

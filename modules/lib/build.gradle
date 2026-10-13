@@ -24,6 +24,8 @@ tasks.register( 'lint', NpmTask ) {
     args = ['run', 'lint']
     inputs.file 'global.d.ts'
     inputs.file coreDir.file( 'index.d.ts' )
+    inputs.file 'eslint.config.mjs'
+    inputs.dir 'scripts'
     inputs.files( subprojects.collect {
         it.layout.projectDirectory.dir( 'src/main/resources/lib/xp' )
             .asFileTree.matching { include '**/*.ts', '**/*.js', '**/*.json' }
@@ -41,7 +43,7 @@ tasks.register( 'testTypes', NpmTask ) {
     inputs.file 'global.d.ts'
     inputs.file coreDir.file( 'index.d.ts' )
     inputs.dir 'test'
-    inputs.dir layout.buildDirectory.dir( 'npm' )
+    inputs.file layout.buildDirectory.file( 'npm/global.d.ts' )
 }
 
 check.dependsOn tasks.named( 'testTypes' )
@@ -52,11 +54,12 @@ tasks.register( 'testPackages', NpmTask ) {
     description = 'Type-check fixture apps that install the packed type packages with npm and pnpm'
     args = ['run', 'test:packages']
     inputs.dir 'test-packages'
-    inputs.files( 'scripts/test-packages.mjs', 'scripts/packages.mjs' )
+    inputs.files( 'scripts/test-packages.mjs', 'scripts/packages.mjs', 'package-lock.json' )
     inputs.dir layout.buildDirectory.dir( 'npm' )
     inputs.dir coreDir.dir( 'build/npm' )
     inputs.dir xpDir.dir( 'build/npm' )
     inputs.files( subprojects.collect { it.layout.buildDirectory.dir( 'npm' ) } )
+    outputs.file( layout.buildDirectory.file( 'test-packages/.ok' ) )
 }
 
 check.dependsOn tasks.named( 'testPackages' )
@@ -116,37 +119,12 @@ tasks.register( 'prepareGlobalToPublish', Copy ) {
     into layout.buildDirectory.dir( "npm" )
     from 'README.md'
     from 'global.d.ts'
-    def dependencyLines = ['    "dependencies": {',
-                           '        "@enonic-types/core": "' + version + '"',
-                           '    }']
-    from( 'package.template.json' ) {
-        filter { line ->
-            line
-                .replaceAll( '%VERSION%', version )
-                .replaceAll( '%FULL_NAME%|%FILE_NAME%', 'global' )
-                .replaceAll( '%SHORT_NAME%', 'common' )
-                .replaceAll( '%DESCRIPTION%', 'Global variables and functions type definition.' )
-                .replaceAll( /    "dependencies": \{\}/, dependencyLines.join( '\n' ) )
-        }
-        rename '.+', 'package.json'
-    }
 }
 
 tasks.register( 'prepareCoreToPublish', Copy ) {
     into "$coreDir/build/npm"
     from "$coreDir/README.md"
     from "$coreDir/index.d.ts"
-    from( 'package.template.json' ) {
-        filter { line ->
-            line
-                .replaceAll( '%VERSION%', version )
-                .replaceAll( '%SHORT_NAME%', 'shared' )
-                .replaceAll( '%FULL_NAME%', 'core' )
-                .replaceAll( '%FILE_NAME%', 'index' )
-                .replaceAll( '%DESCRIPTION%', 'Shared type definition for core libraries.' )
-        }
-        rename '.+', 'package.json'
-    }
 }
 
 tasks.register( 'prepareToPublish' ) {
@@ -154,24 +132,29 @@ tasks.register( 'prepareToPublish' ) {
     dependsOn tasks.named( 'prepareCoreToPublish' )
 }
 
-tasks.register( 'prepareXpToPublish', NodeTask ) {
+tasks.register( 'preparePackageManifests', NodeTask ) {
     dependsOn tasks.named( 'prepareToPublish' )
-    description = 'Stage the @enonic-types/xp meta package that depends on all other type packages.'
-    script = file( 'scripts/prepare-xp-package.mjs' )
-    inputs.files( 'scripts/prepare-xp-package.mjs', 'scripts/packages.mjs', 'package.template.json', 'xp/README.md' )
-    inputs.files( layout.buildDirectory.file( 'npm/package.json' ), coreDir.file( 'build/npm/package.json' ) )
-    inputs.files( subprojects.collect { it.layout.buildDirectory.file( 'npm/package.json' ) } )
+    description = 'Write package.json for every staged type package and stage the @enonic-types/xp meta package.'
+    script = file( 'scripts/prepare-packages.mjs' )
+    args = [version]
+    inputs.property( 'version', version )
+    inputs.files( 'scripts/prepare-packages.mjs', 'scripts/packages.mjs', 'xp/README.md' )
+    inputs.files( 'global.d.ts', coreDir.file( 'index.d.ts' ) )
+    inputs.files( subprojects.collect { it.layout.buildDirectory.dir( 'typescript/lib/xp' ) } )
+    outputs.file( layout.buildDirectory.file( 'npm/package.json' ) )
+    outputs.file( coreDir.file( 'build/npm/package.json' ) )
+    outputs.files( subprojects.collect { it.layout.buildDirectory.file( 'npm/package.json' ) } )
     outputs.dir( xpDir.dir( 'build/npm' ) )
 }
 
 tasks.register( 'prepareAllToPublish' ) {
     dependsOn tasks.named( 'prepareToPublish' )
-    dependsOn tasks.named( 'prepareXpToPublish' )
+    dependsOn tasks.named( 'preparePackageManifests' )
 }
 
 subprojects.each { sub ->
     sub.afterEvaluate {
-        tasks.named( 'prepareXpToPublish' ) {
+        tasks.named( 'preparePackageManifests' ) {
             dependsOn sub.tasks.named( 'prepareToPublish' )
         }
         tasks.named( 'prepareAllToPublish' ) {
@@ -220,32 +203,10 @@ subprojects { p ->
 
     tasks.register( 'prepareToPublish', Copy ) {
         dependsOn tasks.named( 'processResources' )
-
-        def fullName = p.name
-        def shortName = p.name.substring( 4 )
-        def ts = p.file( "src/main/resources/lib/xp/${shortName}.ts" )
-        def hasCore = ts.exists() && ts.getText( 'UTF-8' ).contains( '@enonic-types/core' )
-        def dependencies = hasCore ? ['@enonic-types/core'] : []
-        def depString = dependencies.collect { "        \"$it\": \"$p.version\"" }.join( ',\n' )
         into layout.buildDirectory.dir( "npm" )
         from( 'README.md' )
         from( layout.buildDirectory.dir( "typescript/lib/xp" ) ) {
             include '*.d.ts'
-        }
-        from( project( ':lib' ).file( 'package.template.json' ) ) {
-            filter { line ->
-                def newLine = line
-                    .replaceAll( '%VERSION%', p.version )
-                    .replaceAll( '%FULL_NAME%', fullName )
-                    .replaceAll( '%SHORT_NAME%|%FILE_NAME%', shortName )
-                    .replaceAll( '%DESCRIPTION%', "Type definitions for ${fullName}." )
-                if ( dependencies.size() > 0 )
-                {
-                    newLine = newLine.replaceAll( '"dependencies"\\: \\{\\}', "\"dependencies\": {\n$depString\n    }" )
-                }
-                return newLine
-            }
-            rename '.+', 'package.json'
         }
     }
 
@@ -255,7 +216,7 @@ subprojects { p ->
 
     plugins.withId( 'maven-publish' ) {
         tasks.named( 'publish' ).configure {
-            dependsOn tasks.named( 'prepareToPublish' )
+            dependsOn parent.tasks.named( 'prepareAllToPublish' )
         }
     }
 }

@@ -1,6 +1,6 @@
 import {execFileSync} from 'node:child_process';
 import {copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
-import {join} from 'node:path';
+import {dirname, join} from 'node:path';
 
 import {libDir, readJson, readMembers, xpPackageDir} from './packages.mjs';
 
@@ -68,20 +68,32 @@ const scenarios = [
             types: ['@enonic-types/global'],
             paths: {'/lib/xp/*': ['./node_modules/@enonic-types/lib-*']},
         },
+        files: ['assert.ts', 'import.ts', 'api/content.ts', 'api/context.ts', 'api/node.ts', 'api/portal.ts'],
+    },
+    {
+        // The setup the xp README documents: pnpm only exposes the members through the hoist pattern.
+        name: 'xp-import',
+        dependencies: ['@enonic-types/xp'],
+        compilerOptions: {
+            types: ['@enonic-types/xp'],
+            paths: {'/lib/xp/*': ['./node_modules/@enonic-types/lib-*']},
+        },
         files: ['assert.ts', 'import.ts'],
+        pnpmArgs: ['--config.public-hoist-pattern=@enonic-types/*'],
     },
 ];
 
 const installers = {
     npm: cwd => run(npmCli, ['install', '--offline', '--ignore-scripts', '--no-audit', '--no-fund'], cwd),
-    pnpm: cwd => run(pnpmCli, ['install', '--offline', '--ignore-scripts', '--no-frozen-lockfile',
-        '--store-dir', join(workDir, 'pnpm-store')], cwd),
+    // Without `hoist=false`, pnpm lets a package resolve siblings it never declared.
+    pnpm: (cwd, scenario) => run(pnpmCli, ['install', '--offline', '--ignore-scripts', '--no-frozen-lockfile',
+        '--config.hoist=false', '--store-dir', join(workDir, 'pnpm-store'), ...(scenario.pnpmArgs ?? [])], cwd),
 };
 
 const failures = [];
 
 // Overrides below pin every member to its tarball, so declared dependencies are checked here instead.
-const typePackageReference = /(?:from\s+|import\(\s*|reference\s+types=)['"](@enonic-types\/[^'"]+)['"]/g;
+const typePackageReference = /(?:from\s+|import\s*\(?\s*|require\(\s*|reference\s+types=)['"](@enonic-types\/[^'"/]+)/g;
 for (const {dir, pkg} of [...members, {dir: xpPackageDir, pkg: readJson(join(xpPackageDir, 'package.json'))}]) {
     const dependencies = pkg.dependencies ?? {};
     const used = readdirSync(dir)
@@ -119,11 +131,12 @@ for (const [manager, install] of Object.entries(installers)) {
         }, null, 4));
         writeFileSync(join(appDir, 'require-all.ts'), requireAll);
         for (const file of scenario.files.filter(file => file !== 'require-all.ts')) {
+            mkdirSync(dirname(join(appDir, file)), {recursive: true});
             copyFileSync(join(fixturesDir, file), join(appDir, file));
         }
 
         try {
-            install(appDir);
+            install(appDir, scenario);
             run(tscCli, ['--project', 'tsconfig.json'], appDir);
             console.log(`ok   ${label}`);
         } catch (error) {
@@ -136,4 +149,6 @@ for (const [manager, install] of Object.entries(installers)) {
 if (failures.length > 0) {
     console.error(`\n${failures.join('\n\n')}`);
     process.exitCode = 1;
+} else {
+    writeFileSync(join(workDir, '.ok'), '');
 }
