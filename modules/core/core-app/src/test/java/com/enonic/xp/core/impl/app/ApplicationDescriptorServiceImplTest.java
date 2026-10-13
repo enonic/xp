@@ -103,6 +103,19 @@ class ApplicationDescriptorServiceImplTest
     @Test
     void start()
     {
+        // the descriptor of a global application is read from its persisted node, never from the bundle
+        final PropertyTree data = new PropertyTree();
+        data.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"\ndescription: \"My app description\"\n" );
+        when( nodeService.getByPath( new NodePath( "/applications/com.enonic.myapp/enonic.yaml" ) ) ).thenReturn( Node.create()
+                                                                                                                       .id( NodeId.from(
+                                                                                                                           "descriptor" ) )
+                                                                                                                       .name( "enonic.yaml" )
+                                                                                                                       .parentPath(
+                                                                                                                           new NodePath(
+                                                                                                                               "/applications/com.enonic.myapp" ) )
+                                                                                                                       .data( data )
+                                                                                                                       .build() );
+
         appDescriptorService.start( componentContext );
 
         final ApplicationDescriptor descriptor = appDescriptorService.get( ApplicationKey.from( "com.enonic.myapp" ) );

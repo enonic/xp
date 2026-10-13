@@ -204,9 +204,41 @@ final class DynamicResourceManager
             .isNotEmpty();
     }
 
+    boolean nodeExists( final NodePath nodePath )
+    {
+        return ApplicationHelper.runAsAdmin( () -> nodeService.nodeExists( nodePath ) );
+    }
+
+    /**
+     * Creates a folder node below its parent, which must exist.
+     */
+    Node createFolder( final NodePath folderPath )
+    {
+        return ApplicationHelper.runAsAdmin( () -> nodeService.create( CreateNodeParams.create()
+                                                                           .name( folderPath.getName() )
+                                                                           .parent( folderPath.getParentPath() )
+                                                                           .inheritPermissions( true )
+                                                                           .refresh( RefreshMode.ALL )
+                                                                           .build() ) );
+    }
+
+    /**
+     * Deletes a folder node with everything below it.
+     *
+     * @return {@code false} when there is no such node
+     */
+    boolean deleteFolder( final NodePath folderPath )
+    {
+        return ApplicationHelper.runAsAdmin(
+            () -> nodeService.delete( DeleteNodeParams.create().nodePath( folderPath ).refresh( RefreshMode.ALL ).build() ) )
+            .getNodeIds()
+            .isNotEmpty();
+    }
+
     /**
      * The folders on the way to a resource are created as needed, but only below the {@code cms} node of the application:
-     * the application node and its {@code cms} node mark a node backed application and are never created here.
+     * the application node and its {@code cms} node mark a node backed application owning a schema, they are created on install,
+     * by the application descriptor service or with the cms descriptor, never here.
      */
     private Node ensureFolder( final NodePath folderPath )
     {
@@ -216,7 +248,7 @@ final class DynamicResourceManager
             return folder;
         }
 
-        final NodePath cmsPath = cmsPathFromNodePath( folderPath );
+        final NodePath cmsPath = ApplicationRepoServiceImpl.cmsNodePath( appKeyFromNodePath( folderPath ) );
         if ( !folderPath.toString().startsWith( cmsPath + "/" ) )
         {
             throw new NodeNotFoundException( String.format( "Node [%s] not found", folderPath ) );
@@ -260,12 +292,6 @@ final class DynamicResourceManager
         final String relativeToApplications = relativeToApplicationsFolder( path );
         final int endIndex = relativeToApplications.indexOf( '/' );
         return ApplicationKey.from( endIndex == -1 ? relativeToApplications : relativeToApplications.substring( 0, endIndex ) );
-    }
-
-    private static NodePath cmsPathFromNodePath( final NodePath path )
-    {
-        return new NodePath( ApplicationRepoServiceImpl.applicationNodePath( appKeyFromNodePath( path ) ),
-                             NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) );
     }
 
     /**

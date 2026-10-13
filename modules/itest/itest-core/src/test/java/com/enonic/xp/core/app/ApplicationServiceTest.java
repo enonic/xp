@@ -510,10 +510,11 @@ class ApplicationServiceTest
         assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
         assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
 
-        // without a bundle the application is still an application: a schema application, listed and always started
+        // without a bundle the application is still an application: listed, always started, nothing to start or stop; it is no
+        // schema application until it owns a schema, which takes the cms descriptor
         final Application nodeOnly = applicationService.get( appKey );
         assertNotNull( nodeOnly );
-        assertTrue( nodeOnly.isSchema() );
+        assertFalse( nodeOnly.isSchema() );
         assertTrue( nodeOnly.isStarted() );
         assertNull( nodeOnly.getClassLoader() );
         assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );
@@ -669,9 +670,9 @@ class ApplicationServiceTest
             assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
             assertEquals( APP_DESCRIPTOR, resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).readString() );
 
-            final Resource contentType = resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) );
-            assertTrue( contentType.exists() );
-            assertEquals( "bundle", contentType.getResolverName() );
+            // without cms/cms.yaml the application owns no schema: what the bundle ships below cms/ is not served either
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ).exists() );
         } );
     }
 

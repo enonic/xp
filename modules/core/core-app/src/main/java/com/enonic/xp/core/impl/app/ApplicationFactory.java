@@ -5,12 +5,8 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import org.osgi.framework.Bundle;
-
-import com.google.common.base.Suppliers;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
@@ -19,8 +15,6 @@ import com.enonic.xp.core.impl.app.resolver.ClassLoaderApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.FilteredApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
-import com.enonic.xp.node.NodeName;
-import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.server.RunMode;
 
@@ -50,9 +44,9 @@ public final class ApplicationFactory
 
         return isPersisted( bundle )
             // the application descriptor and icon, and the schema of an application owning one, are served from nodes below
-            // the application node in system-repo; the bundle's own copies are hidden as soon as the persisted nodes exist.
+            // the application node in system-repo; the bundle's own copies are never read.
             ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey, nodeService ),
-                                               new FilteredApplicationUrlResolver( bundleUrlResolver, () -> persistedResourceFilter( appKey ) ) )
+                                               new FilteredApplicationUrlResolver( bundleUrlResolver, () -> ApplicationFactory::servedFromBundle ) )
             : bundleUrlResolver;
     }
 
@@ -105,29 +99,15 @@ public final class ApplicationFactory
                                                        ApplicationHelper::createAdminContext );
     }
 
-    // The application descriptor and icon must not be contributed by the bundle when the persisted descriptor (enonic.yaml node
-    // below the application node) exists in system-repo, and neither must the schema resources (cms descriptors, schema icons
-    // and i18n phrases) when the persisted schema (cms node) exists
-    private Predicate<String> persistedResourceFilter( final ApplicationKey applicationKey )
+    /**
+     * The application descriptor and icon ({@code enonic.yaml|yml}, {@code enonic.svg} and the legacy {@code application.*}) and the
+     * schema resources (cms descriptors, schema icons and i18n phrases) of a global application are persisted on install, the
+     * descriptor and icon always, the schema when the application ships {@code cms/cms.yaml}. They are served from the nodes only:
+     * what the bundle ships at those paths is never read, whether or not anything is persisted.
+     */
+    private static boolean servedFromBundle( final String path )
     {
-        final NodePath appPath = ApplicationRepoServiceImpl.applicationNodePath( applicationKey );
-        final Supplier<Boolean> descriptorNodeExists =
-            Suppliers.memoize( () -> nodeExists( new NodePath( appPath, NodeName.from( SchemaResourcePaths.APP_DESCRIPTOR_NAME ) ) ) );
-        final Supplier<Boolean> schemaNodeExists =
-            Suppliers.memoize( () -> nodeExists( new NodePath( appPath, NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) ) ) );
-
-        return path -> {
-            if ( SchemaResourcePaths.isAppRootResourcePath( path ) )
-            {
-                return !descriptorNodeExists.get();
-            }
-            return !( SchemaResourcePaths.isSchemaResourcePath( path ) && schemaNodeExists.get() );
-        };
-    }
-
-    private boolean nodeExists( final NodePath nodePath )
-    {
-        return ApplicationHelper.runAsAdmin( () -> nodeService.nodeExists( nodePath ) );
+        return !SchemaResourcePaths.isSchemaResourcePath( path );
     }
 
     private ClassLoaderApplicationUrlResolver createClassLoaderUrlResolver( final Bundle bundle )

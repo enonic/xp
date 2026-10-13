@@ -433,6 +433,38 @@ export function createStyles(params: CreateStylesParams): StyleDescriptor {
     return __.toNativeObject(bean.execute());
 }
 
+export interface CreateCmsParams {
+    application: string;
+    resource: string;
+}
+
+interface CreateCmsHandler {
+    setApplication(value: string): void;
+
+    setResource(value: string): void;
+
+    execute(): CmsDescriptor;
+}
+
+/**
+ * Creates dynamic CMS schema resource.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ * @param {string} params.resource CMS schema resource value.
+ *
+ * @returns {CmsDescriptor} created resource.
+ */
+export function createCms(params: CreateCmsParams): CmsDescriptor {
+    const application = checkRequired(params, 'application');
+    const resource = checkRequired(params, 'resource');
+
+    const bean: CreateCmsHandler = __.newBean<CreateCmsHandler>('com.enonic.xp.lib.schema.CreateCmsHandler');
+    bean.setApplication(application);
+    bean.setResource(resource);
+    return __.toNativeObject(bean.execute());
+}
+
 export interface GetContentSchemaParams {
     name: string;
 }
@@ -959,6 +991,33 @@ export function deleteStyles(params: DeleteStylesParams): boolean {
     const application = checkRequired(params, 'application');
 
     const bean: DeleteDynamicStylesHandler = __.newBean<DeleteDynamicStylesHandler>('com.enonic.xp.lib.schema.DeleteDynamicStylesHandler');
+    bean.setApplication(application);
+    return __.toNativeObject(bean.execute());
+}
+
+export interface DeleteCmsParams {
+    application: string;
+}
+
+interface DeleteCmsHandler {
+    setApplication(value: string): void;
+
+    execute(): boolean;
+}
+
+/**
+ * Removes the dynamic CMS schema of the application: the CMS descriptor together with every schema, component, macro,
+ * style, phrases file and icon stored for the application.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ *
+ * @returns {boolean} true if succeeded, false otherwise.
+ */
+export function deleteCms(params: DeleteCmsParams): boolean {
+    const application = checkRequired(params, 'application');
+
+    const bean: DeleteCmsHandler = __.newBean<DeleteCmsHandler>('com.enonic.xp.lib.schema.DeleteCmsHandler');
     bean.setApplication(application);
     return __.toNativeObject(bean.execute());
 }

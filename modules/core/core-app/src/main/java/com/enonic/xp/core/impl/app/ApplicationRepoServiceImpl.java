@@ -88,6 +88,22 @@ public class ApplicationRepoServiceImpl
         return new NodePath( applicationNodePath( applicationKey ), NodeName.from( SchemaResourcePaths.APP_DESCRIPTOR_NAME ) );
     }
 
+    /**
+     * Root of the persisted schema ({@code cms}) below the application node.
+     */
+    static NodePath cmsNodePath( final ApplicationKey applicationKey )
+    {
+        return new NodePath( applicationNodePath( applicationKey ), NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) );
+    }
+
+    /**
+     * Node of the persisted cms descriptor ({@code cms/cms.yaml}), the marker of an application owning a schema.
+     */
+    static NodePath cmsDescriptorNodePath( final ApplicationKey applicationKey )
+    {
+        return new NodePath( cmsNodePath( applicationKey ), NodeName.from( SchemaResourceNames.CMS_ROOT_NAME + ".yaml" ) );
+    }
+
     @Override
     public void deleteApplicationNode( final ApplicationKey applicationKey )
     {
@@ -165,6 +181,12 @@ public class ApplicationRepoServiceImpl
     public Node getApplicationDescriptorNode( final ApplicationKey applicationKey )
     {
         return ApplicationHelper.runAsAdmin( () -> this.nodeService.getByPath( applicationDescriptorNodePath( applicationKey ) ) );
+    }
+
+    @Override
+    public boolean hasCmsDescriptor( final ApplicationKey applicationKey )
+    {
+        return ApplicationHelper.runAsAdmin( () -> this.nodeService.nodeExists( cmsDescriptorNodePath( applicationKey ) ) );
     }
 
     @Override

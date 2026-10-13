@@ -12,6 +12,7 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
+import com.enonic.xp.resource.CreateCmsParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
@@ -206,8 +207,8 @@ class DynamicSchemaAuditLogSupportImplTest
     @Test
     void createCms()
     {
-        final CreateDynamicCmsParams params =
-            CreateDynamicCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
+        final CreateCmsParams params =
+            CreateCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
 
         instance.createCms( params, resultWithKey( "myapp:/cms/cms.yaml" ) );
 

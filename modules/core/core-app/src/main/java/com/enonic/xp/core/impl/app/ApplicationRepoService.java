@@ -42,6 +42,12 @@ public interface ApplicationRepoService
     Node getApplicationDescriptorNode( ApplicationKey applicationKey );
 
     /**
+     * {@code true} when the cms descriptor ({@code cms/cms.yaml} below the application node) is persisted: the application owns
+     * a schema, and is a schema application unless its bundle ships business logic.
+     */
+    boolean hasCmsDescriptor( ApplicationKey applicationKey );
+
+    /**
      * Writes the application descriptor node ({@code enonic.yaml}): created below the application node, which must exist, or
      * updated in place. The icon attached to it is kept, removed or replaced as told by {@code iconUpdate}.
      *

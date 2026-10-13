@@ -116,9 +116,15 @@ public final class ApplicationServiceImpl
             .filter( node -> !hasBundle( node ) )
             .filter( node -> !installedKeys.contains( ApplicationKey.from( node.name().toString() ) ) )
             .filter( this::hasPersistedDescriptor )
-            .map( PersistedApplication::new );
+            .map( this::persistedApplication );
 
         return Applications.from( Stream.concat( installed.stream(), persisted ).toList() );
+    }
+
+    private PersistedApplication persistedApplication( final Node applicationNode )
+    {
+        final ApplicationKey key = ApplicationKey.from( applicationNode.name().toString() );
+        return new PersistedApplication( applicationNode, this.repoService.hasCmsDescriptor( key ) );
     }
 
     private Application doGet( final ApplicationKey key )
@@ -134,7 +140,7 @@ public final class ApplicationServiceImpl
     private Application findPersistedApplication( final ApplicationKey key )
     {
         final Node node = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) );
-        return node != null && !hasBundle( node ) && hasPersistedDescriptor( node ) ? new PersistedApplication( node ) : null;
+        return node != null && !hasBundle( node ) && hasPersistedDescriptor( node ) ? persistedApplication( node ) : null;
     }
 
     private boolean hasPersistedDescriptor( final Node applicationNode )
@@ -151,7 +157,7 @@ public final class ApplicationServiceImpl
     @Override
     public void startApplication( final ApplicationKey key )
     {
-        requireNotSchemaApplication( key, "start" );
+        requireStartableApplication( key, "start" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -178,7 +184,7 @@ public final class ApplicationServiceImpl
         {
             throw new IllegalArgumentException( "Cannot stop system application: " + key );
         }
-        requireNotSchemaApplication( key, "stop" );
+        requireStartableApplication( key, "stop" );
         final boolean global = !localApplicationSet.contains( key );
         ApplicationHelper.runWithContext( () -> {
             if ( global )
@@ -297,10 +303,14 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( "Cannot install application", e );
         }
 
-        // without cms/cms.yaml the bundle does not own a schema: whatever it ships below cms/ is served from the bundle, not persisted
+        // without cms/cms.yaml the bundle does not own a schema: whatever it ships below cms/ is neither persisted nor served
         if ( !appInfo.hasCmsDescriptor )
         {
-            schemaResources.keySet().removeIf( path -> path.startsWith( SchemaResourceNames.CMS_ROOT_NAME + "/" ) );
+            final boolean dropped = schemaResources.keySet().removeIf( path -> path.startsWith( SchemaResourceNames.CMS_ROOT_NAME + "/" ) );
+            if ( dropped )
+            {
+                LOG.warn( "Application [{}] ships schema resources below cms/ but no cms/cms.yaml: they are ignored", applicationKey );
+            }
         }
 
         // a descriptor declaring another kind than its path reserves rejects the installation before anything is written
@@ -426,13 +436,22 @@ public final class ApplicationServiceImpl
         return application;
     }
 
-    // a schema application is always started, whatever state was stored for it
-    private void requireNotSchemaApplication( final ApplicationKey key, final String action )
+    // a schema application is always started, whatever state was stored for it, and an application without a bundle has
+    // nothing to start or stop
+    private void requireStartableApplication( final ApplicationKey key, final String action )
     {
         final Application app = doGet( key );
-        if ( app != null && app.isSchema() )
+        if ( app == null )
+        {
+            return;
+        }
+        if ( app.isSchema() )
         {
             throw new IllegalArgumentException( "Cannot " + action + " schema application: " + key );
+        }
+        if ( app instanceof PersistedApplication )
+        {
+            throw new IllegalArgumentException( "Cannot " + action + " application without bundle: " + key );
         }
     }
 
@@ -557,10 +576,10 @@ public final class ApplicationServiceImpl
                         } );
                         break;
                     case ApplicationClusterEvents.START:
-                        handleEvent( event, this::doStartApplication );
+                        handleInstalledEvent( event, this::doStartApplication );
                         break;
                     case ApplicationClusterEvents.STOP:
-                        handleEvent( event, this::doStopApplication );
+                        handleInstalledEvent( event, this::doStopApplication );
                         break;
                     default:
                         LOG.debug( "Ignoring {} {}", ApplicationClusterEvents.EVENT_TYPE, eventSubType );
@@ -568,6 +587,17 @@ public final class ApplicationServiceImpl
                 }
             } );
         }
+    }
+
+    // an application existing as nodes only is in the registry of no cluster node: there is nothing to start or stop
+    private void handleInstalledEvent( final Event event, final Consumer<ApplicationKey> callback )
+    {
+        handleEvent( event, applicationKey -> {
+            if ( this.registry.get( applicationKey ) != null )
+            {
+                callback.accept( applicationKey );
+            }
+        } );
     }
 
     private void handleEvent( final Event event, final Consumer<ApplicationKey> callback )

@@ -131,75 +131,54 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void cms_descriptor_schema_from_bundle_when_cms_node_missing()
+    void cms_descriptor_schema_never_served_from_bundle()
     {
-        // cms/cms.yaml in the bundle: node backed, but the bundle serves the schema until it is persisted
+        // cms/cms.yaml in the bundle: the schema is persisted on install and served from nodes only, the bundle's copy is never
+        // read, whether or not anything is persisted. The logic of the bundle is served as usual.
         final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
 
-        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
         assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
-        assertNotNull( resolver.findResource( "/cms/cms.yaml" ) );
-        assertNotNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
-        assertNotNull( resolver.findResource( "/" + ICON_PATH ) );
-        assertNotNull( resolver.findResource( "/" + PHRASES_PATH ) );
-
-        final Set<String> files = resolver.findFiles();
-        assertTrue( files.contains( CONTENT_TYPE_PATH ) );
-        assertTrue( files.contains( ICON_PATH ) );
-        assertTrue( files.contains( PHRASES_PATH ) );
-    }
-
-    @Test
-    void cms_descriptor_schema_not_contributed_by_bundle_when_cms_node_exists()
-    {
-        final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
-
-        when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
-        when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
-        RunModeSupport.set( RunMode.PROD );
-
-        final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
-
-        // schema resources, icons included, are served from nodes only
+        assertNull( resolver.findResource( "/cms/cms.yaml" ) );
         assertNull( resolver.findResource( "/" + CONTENT_TYPE_PATH ) );
-        assertNull( resolver.findResource( "/" + PHRASES_PATH ) );
         assertNull( resolver.findResource( "/" + ICON_PATH ) );
+        assertNull( resolver.findResource( "/" + PHRASES_PATH ) );
+        assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
 
         final Set<String> files = resolver.findFiles();
+        assertFalse( files.contains( "cms/cms.yaml" ) );
         assertFalse( files.contains( CONTENT_TYPE_PATH ) );
-        assertFalse( files.contains( PHRASES_PATH ) );
         assertFalse( files.contains( ICON_PATH ) );
+        assertFalse( files.contains( PHRASES_PATH ) );
+        assertTrue( files.contains( LIB_PATH ) );
     }
 
     @Test
-    void cms_descriptor_app_descriptor_and_icon_from_bundle_when_cms_node_missing()
+    void app_descriptor_and_icon_never_served_from_bundle()
     {
+        // the descriptor and icon are persisted for every global application: the bundle's copies are never read
         final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
 
-        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
 
-        assertEquals( "bundle", resolver.findResource( "/enonic.yaml" ).getResolverName() );
-        assertEquals( "bundle", resolver.findResource( "/enonic.svg" ).getResolverName() );
-        assertTrue( resolver.findFiles().contains( "enonic.yaml" ) );
-        assertTrue( resolver.findFiles().contains( "enonic.svg" ) );
+        assertNull( resolver.findResource( "/enonic.yaml" ) );
+        assertNull( resolver.findResource( "/enonic.svg" ) );
+        assertFalse( resolver.findFiles().contains( "enonic.yaml" ) );
+        assertFalse( resolver.findFiles().contains( "enonic.svg" ) );
     }
 
     @Test
-    void cms_descriptor_app_descriptor_and_icon_from_nodes_when_cms_node_exists()
+    void cms_descriptor_app_descriptor_and_icon_from_nodes()
     {
         final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
 
-        when( nodeService.nodeExists( new NodePath( "/applications/app1/cms" ) ) ).thenReturn( true );
-        when( nodeService.nodeExists( new NodePath( "/applications/app1/enonic.yaml" ) ) ).thenReturn( true );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.of(
             new NodeListEntry( NodeId.from( "descriptor" ), new NodePath( "/applications/app1/enonic.yaml" ), Instant.EPOCH ),
             new NodeListEntry( NodeId.from( "cms" ), new NodePath( "/applications/app1/cms" ), Instant.EPOCH ),
@@ -236,15 +215,15 @@ class ApplicationFactoryTest
     }
 
     @Test
-    void bundle_app_without_schema_serves_bundle_until_descriptor_is_persisted()
+    void bundle_app_without_schema_serves_logic_only_until_descriptor_is_persisted()
     {
-        // no cms/cms.yaml in the bundle and nothing persisted yet: the bundle serves the logic and its own descriptor and icon
+        // no cms/cms.yaml in the bundle and nothing persisted yet: the bundle serves the logic, its own descriptor and icon are
+        // never read
         final Bundle bundle = deploy( "app1", newBundle( "app1", true )
             .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
             .addResource( "enonic.svg", stream( "<svg/>" ) )
             .addResource( LIB_PATH, stream( "library" ) ) );
 
-        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
@@ -252,9 +231,9 @@ class ApplicationFactoryTest
 
         assertInstanceOf( MultiApplicationUrlResolver.class, resolver );
         assertNotNull( resolver.findResource( "/" + LIB_PATH ) );
-        assertEquals( "bundle", resolver.findResource( "/enonic.yaml" ).getResolverName() );
-        assertEquals( "bundle", resolver.findResource( "/enonic.svg" ).getResolverName() );
-        assertTrue( resolver.findFiles().contains( "enonic.yaml" ) );
+        assertNull( resolver.findResource( "/enonic.yaml" ) );
+        assertNull( resolver.findResource( "/enonic.svg" ) );
+        assertFalse( resolver.findFiles().contains( "enonic.yaml" ) );
         assertTrue( resolver.findFiles().contains( LIB_PATH ) );
     }
 
@@ -267,7 +246,6 @@ class ApplicationFactoryTest
             .addResource( "enonic.svg", stream( "<svg/>" ) )
             .addResource( LIB_PATH, stream( "library" ) ) );
 
-        when( nodeService.nodeExists( new NodePath( "/applications/app1/enonic.yaml" ) ) ).thenReturn( true );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.of(
             new NodeListEntry( NodeId.from( "descriptor" ), new NodePath( "/applications/app1/enonic.yaml" ), Instant.EPOCH ) ) );
 
@@ -312,7 +290,6 @@ class ApplicationFactoryTest
         // and the bundle has no schema resources to hide anyway
         final Bundle bundle = deploy( "app1", newBundle( "app1", true ).addResource( LIB_PATH, stream( "library" ) ) );
 
-        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( false );
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.empty() );
         RunModeSupport.set( RunMode.PROD );
 
@@ -330,7 +307,6 @@ class ApplicationFactoryTest
         // a local application owning its schema is never shadowed by the schema persisted for the global installation
         final Bundle bundle = deploy( "local:app1", createBundleWithCmsDescriptor( "app1" ) );
 
-        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( true );
         RunModeSupport.set( RunMode.PROD );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );
@@ -347,7 +323,6 @@ class ApplicationFactoryTest
         // a local application is never node backed, whether or not a schema is persisted for the global installation
         final Bundle bundle = deploy( "local:app1", newBundle( "app1", true ).addResource( LIB_PATH, stream( "library" ) ) );
 
-        when( nodeService.nodeExists( any( NodePath.class ) ) ).thenReturn( true );
         RunModeSupport.set( RunMode.PROD );
 
         final ApplicationUrlResolver resolver = new ApplicationFactory( nodeService ).createUrlResolver( bundle, null );

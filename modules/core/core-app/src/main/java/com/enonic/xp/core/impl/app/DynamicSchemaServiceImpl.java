@@ -25,6 +25,7 @@ import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
+import com.enonic.xp.resource.CreateCmsParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
@@ -56,9 +57,9 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
-@Component(immediate = true, service = {DynamicSchemaService.class, DynamicSchemaServiceInternal.class})
+@Component(immediate = true)
 public class DynamicSchemaServiceImpl
-    implements DynamicSchemaService, DynamicSchemaServiceInternal
+    implements DynamicSchemaService
 {
     private static final long MAX_ICON_SIZE = 100 * 1024;
 
@@ -115,6 +116,7 @@ public class DynamicSchemaServiceImpl
     public Icon setPartIcon( final SetDynamicComponentIconParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey().getApplicationKey() );
 
         final Icon icon = doSetIcon( createComponentFolderPath( params.getKey(), DynamicComponentType.PART ), params.getKey().getName(),
                                      params.getData(), params.getMimeType(), params.getKey().toString() );
@@ -355,6 +357,7 @@ public class DynamicSchemaServiceImpl
                                                                                     final DynamicComponentType type )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey().getApplicationKey() );
 
         final ComponentDescriptor descriptor = dynamicResourceParser.parseComponent( params.getKey(), type, params.getResource() );
 
@@ -374,6 +377,7 @@ public class DynamicSchemaServiceImpl
                                                                                     final DynamicComponentType type )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey().getApplicationKey() );
 
         final ComponentDescriptor descriptor = dynamicResourceParser.parseComponent( params.getKey(), type, params.getResource() );
 
@@ -440,6 +444,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
         requireSchemaName( params.getName(), type );
+        requireCmsDescriptor( params.getName().getApplicationKey() );
 
         final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), type, params.getResource() );
 
@@ -459,6 +464,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
         requireSchemaName( params.getName(), type );
+        requireCmsDescriptor( params.getName().getApplicationKey() );
 
         final BaseSchema<?> schema = dynamicResourceParser.parseSchema( params.getName(), type, params.getResource() );
 
@@ -524,6 +530,7 @@ public class DynamicSchemaServiceImpl
     {
         requireAdminRole();
         requireSchemaName( params.getName(), type );
+        requireCmsDescriptor( params.getName().getApplicationKey() );
 
         final Icon icon = doSetIcon( createSchemaFolderPath( params.getName(), type ), params.getName().getLocalName(), params.getData(),
                                      params.getMimeType(), params.getName().toString() );
@@ -554,14 +561,23 @@ public class DynamicSchemaServiceImpl
         return deleted;
     }
 
+    /**
+     * The cms descriptor makes the application own a schema: the {@code cms} node is created with it, and the schemas can be
+     * written from then on.
+     */
     @Override
-    public DynamicSchemaResult<CmsDescriptor> createCms( final CreateDynamicCmsParams params )
+    public DynamicSchemaResult<CmsDescriptor> createCms( final CreateCmsParams params )
     {
         requireAdminRole();
+        requireApplicationNode( params.getKey() );
 
         final CmsDescriptor site = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
+        if ( !dynamicResourceManager.nodeExists( resourceFolderPath ) )
+        {
+            dynamicResourceManager.createFolder( resourceFolderPath );
+        }
         final Resource createdResource =
             dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
 
@@ -577,14 +593,13 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<CmsDescriptor> updateCms( final UpdateDynamicCmsParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey() );
 
         final CmsDescriptor cmsDescriptor = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
-
-        final Resource resource = dynamicResourceManager.resourceNodeExists( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME )
-            ? dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() )
-            : dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
+        final Resource resource =
+            dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
 
         final DynamicSchemaResult<CmsDescriptor> result = new DynamicSchemaResult<>(
             CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
@@ -598,6 +613,7 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<StyleDescriptor> createStyles( final CreateDynamicStylesParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey() );
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
@@ -617,6 +633,7 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<StyleDescriptor> updateStyles( final UpdateDynamicStylesParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey() );
 
         final StyleDescriptor styles = dynamicResourceParser.parseStyles( params.getKey(), params.getResource() );
 
@@ -667,13 +684,16 @@ public class DynamicSchemaServiceImpl
         return null;
     }
 
+    /**
+     * Removes the whole persisted schema of the application, the {@code cms} node with the schemas, styles, phrases and icons
+     * below it: without its cms descriptor the application owns no schema.
+     */
     @Override
     public boolean deleteCms( final ApplicationKey key )
     {
         requireAdminRole();
 
-        final NodePath resourceFolderPath = createCmsFolderPath( key );
-        final boolean deleted = dynamicResourceManager.deleteResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME );
+        final boolean deleted = dynamicResourceManager.deleteFolder( createCmsFolderPath( key ) );
 
         if ( deleted )
         {
@@ -703,6 +723,7 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<MacroDescriptor> createMacro( final CreateDynamicMacroParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey().getApplicationKey() );
 
         final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), params.getResource() );
 
@@ -722,6 +743,7 @@ public class DynamicSchemaServiceImpl
     public DynamicSchemaResult<MacroDescriptor> updateMacro( final UpdateDynamicMacroParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey().getApplicationKey() );
 
         final MacroDescriptor descriptor = dynamicResourceParser.parseMacro( params.getKey(), params.getResource() );
 
@@ -789,6 +811,7 @@ public class DynamicSchemaServiceImpl
     public Icon setMacroIcon( final SetDynamicMacroIconParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey().getApplicationKey() );
 
         final Icon icon = doSetIcon( createMacroFolderPath( params.getKey() ), params.getKey().getName(), params.getData(),
                                      params.getMimeType(), params.getKey().toString() );
@@ -825,6 +848,7 @@ public class DynamicSchemaServiceImpl
     public Resource createPhrases( final CreateDynamicPhrasesParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey() );
 
         final Resource resource =
             dynamicResourceManager.createResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
@@ -839,6 +863,7 @@ public class DynamicSchemaServiceImpl
     public Resource updatePhrases( final UpdateDynamicPhrasesParams params )
     {
         requireAdminRole();
+        requireCmsDescriptor( params.getKey() );
 
         final Resource resource =
             dynamicResourceManager.updateResourceFile( createPhrasesFolderPath( params.getKey() ), phrasesFileName( params.getName() ),
@@ -1146,6 +1171,31 @@ public class DynamicSchemaServiceImpl
     private static void requireAdminRole()
     {
         ApplicationHelper.requireSchemaAdminRole();
+    }
+
+    /**
+     * Schemas are written for an application owning a schema only, the one whose cms descriptor ({@code cms/cms.yaml}) is persisted:
+     * shipped by its bundle on install, or created through {@link #createCms}.
+     */
+    private void requireCmsDescriptor( final ApplicationKey key )
+    {
+        requireApplicationNode( key );
+        if ( !dynamicResourceManager.nodeExists( ApplicationRepoServiceImpl.cmsDescriptorNodePath( key ) ) )
+        {
+            throw new IllegalArgumentException( String.format( "Application [%s] has no CMS descriptor", key ) );
+        }
+    }
+
+    /**
+     * The application node exists for a global application and for one created through the application descriptor service,
+     * never for a local application.
+     */
+    private void requireApplicationNode( final ApplicationKey key )
+    {
+        if ( !dynamicResourceManager.nodeExists( ApplicationRepoServiceImpl.applicationNodePath( key ) ) )
+        {
+            throw new IllegalArgumentException( String.format( "Application [%s] is not installed", key ) );
+        }
     }
 
     private ComponentDescriptor wrapDescriptor( final ComponentDescriptor componentDescriptor, final long modifiedTime, final Icon icon )

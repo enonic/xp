@@ -165,6 +165,7 @@ class ApplicationServiceImplTest
         final Node app2Node = applicationNode( "app2", persistedNodeData() );
         when( this.repoService.getApplications() ).thenReturn( Nodes.from( app1Node, app2Node ) );
         when( this.repoService.getApplicationDescriptorNode( ApplicationKey.from( "app2" ) ) ).thenReturn( descriptorNode( "app2" ) );
+        when( this.repoService.hasCmsDescriptor( ApplicationKey.from( "app2" ) ) ).thenReturn( true );
 
         final Applications result = this.service.list();
         assertEquals( 2, result.getSize() );
@@ -206,6 +207,11 @@ class ApplicationServiceImplTest
         assertInstanceOf( PersistedApplication.class, result );
         assertEquals( applicationKey, result.getKey() );
         assertEquals( applicationKey, this.service.getInstalledApplication( applicationKey ).getKey() );
+
+        // a descriptor alone makes no schema application: the cms descriptor does
+        assertFalse( result.isSchema() );
+        when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
+        assertTrue( this.service.get( applicationKey ).isSchema() );
     }
 
     @Test
@@ -227,6 +233,14 @@ class ApplicationServiceImplTest
         when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
         when( this.repoService.getApplicationDescriptorNode( applicationKey ) ).thenReturn( descriptorNode( "app1" ) );
 
+        // nothing to start or stop without a bundle...
+        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "without bundle" );
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "without bundle" );
+
+        // ...and a schema application, owning a schema, is always started
+        when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
         assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
             .hasMessageContaining( "schema application" );
         assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
@@ -235,6 +249,18 @@ class ApplicationServiceImplTest
         verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
         verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
         verifyNoEvents( ApplicationClusterEvents.stop( applicationKey ) );
+    }
+
+    @Test
+    void start_and_stop_events_for_persisted_only_application_are_ignored()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        // nothing in the registry of this cluster node, and nothing to throw about
+        this.service.onEvent( remote( ApplicationClusterEvents.start( applicationKey ) ) );
+        this.service.onEvent( remote( ApplicationClusterEvents.stop( applicationKey ) ) );
+
+        verify( this.eventPublisher, never() ).publish( any() );
     }
 
     @Test

@@ -12,8 +12,8 @@ import com.enonic.xp.util.Version;
 
 /**
  * An application that exists as nodes only, created through {@link com.enonic.xp.app.ApplicationDescriptorService#createOrUpdate}:
- * it ships a persisted descriptor and schema but no bundle, hence no code, class loader or configuration. It is a schema application,
- * always started and never started or stopped by hand.
+ * it ships a persisted descriptor, and a schema once its cms descriptor is persisted, but no bundle, hence no code, class loader or
+ * configuration. It is a schema application as soon as it owns a schema. There is nothing to start or stop, it is always started.
  */
 final class PersistedApplication
     implements Application
@@ -24,11 +24,17 @@ final class PersistedApplication
 
     private final Instant modifiedTime;
 
-    PersistedApplication( final Node applicationNode )
+    private final boolean schema;
+
+    /**
+     * @param schema whether the cms descriptor ({@code cms/cms.yaml}) is persisted for the application
+     */
+    PersistedApplication( final Node applicationNode, final boolean schema )
     {
         this.key = ApplicationKey.from( applicationNode.name().toString() );
         final Instant modified = applicationNode.data().getInstant( ApplicationPropertyNames.MODIFIED_TIME );
         this.modifiedTime = modified != null ? modified : applicationNode.getTimestamp();
+        this.schema = schema;
     }
 
     @Override
@@ -100,6 +106,6 @@ final class PersistedApplication
     @Override
     public boolean isSchema()
     {
-        return true;
+        return this.schema;
     }
 }

@@ -105,9 +105,13 @@ public interface DynamicSchemaService
 
     boolean deleteMixinIcon( MixinName name );
 
+    DynamicSchemaResult<CmsDescriptor> createCms( CreateCmsParams params );
+
     DynamicSchemaResult<CmsDescriptor> updateCms( UpdateDynamicCmsParams params );
 
     DynamicSchemaResult<CmsDescriptor> getCmsDescriptor( ApplicationKey key );
+
+    boolean deleteCms( ApplicationKey key );
 
     DynamicSchemaResult<StyleDescriptor> createStyles( CreateDynamicStylesParams params );
 
