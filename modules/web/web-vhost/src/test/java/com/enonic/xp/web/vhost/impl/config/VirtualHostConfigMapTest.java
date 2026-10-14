@@ -194,9 +194,9 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProviderFlows_explicit()
     {
-        map.put( "mapping.myapp1.idProvider.system.default", "true" );
+        map.put( "mapping.myapp1.idProvider.system", "default" );
         map.put( "mapping.myapp1.idProvider.system.flows", "autologin" );
-        map.put( "mapping.myapp1.idProvider.myProvider.enabled", "true" );
+        map.put( "mapping.myapp1.idProvider.myProvider", "enabled" );
         map.put( "mapping.myapp1.idProvider.myProvider.flows", "login" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
@@ -209,7 +209,7 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProviderFlows_additionalFlowsKept()
     {
-        map.put( "mapping.myapp1.idProvider.system.enabled", "true" );
+        map.put( "mapping.myapp1.idProvider.system", "enabled" );
         map.put( "mapping.myapp1.idProvider.system.flows", "autologin,Device" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
@@ -221,7 +221,7 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProviderFlows_emptyListMeansNoRestriction()
     {
-        map.put( "mapping.myapp1.idProvider.system.enabled", "true" );
+        map.put( "mapping.myapp1.idProvider.system", "enabled" );
         map.put( "mapping.myapp1.idProvider.system.flows", "" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
@@ -231,23 +231,10 @@ class VirtualHostConfigMapTest
     }
 
     @Test
-    void testIdProvider_legacyAndNestedCombined()
-    {
-        map.put( "mapping.myapp1.idProvider.system", "default" );
-        map.put( "mapping.myapp1.idProvider.system.flows", "autologin" );
-
-        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
-
-        assertEquals( "system", virtualHost.getDefaultIdProviderKey().toString() );
-        assertEquals( Set.of( IdProviderFlow.AUTOLOGIN ), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
-    }
-
-    @Test
     void testIdProvider_notEnabledIsLeftOut()
     {
-        map.put( "mapping.myapp1.idProvider.system.enabled", "false" );
+        // settings alone do not enable an id provider
         map.put( "mapping.myapp1.idProvider.system.flows", "autologin" );
-        map.put( "mapping.myapp1.idProvider.other.flows", "login" );
 
         final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
 
@@ -261,10 +248,6 @@ class VirtualHostConfigMapTest
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
 
         map.clear();
-        map.put( "mapping.myapp1.idProvider.system.enabled", "yes" );
-        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
-
-        map.clear();
         map.put( "mapping.myapp1.idProvider.system.color", "red" );
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
     }
@@ -272,8 +255,8 @@ class VirtualHostConfigMapTest
     @Test
     void testIdProvider_multipleDefaults()
     {
-        map.put( "mapping.myapp1.idProvider.system.default", "true" );
-        map.put( "mapping.myapp1.idProvider.other.default", "true" );
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+        map.put( "mapping.myapp1.idProvider.other", "default" );
 
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
     }

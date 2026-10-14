@@ -116,8 +116,8 @@ final class VirtualHostConfigMap
 
         final Map<String, IdProviderSettings> idProviders = new TreeMap<>();
 
-        // Keys: "idProvider.<name> = default|enabled" (legacy) or "idProvider.<name>.<setting> = <value>".
-        // A dot cannot occur in an id provider name, so the first segment is always the name.
+        // Keys: "idProvider.<name> = default|enabled" enables the provider; "idProvider.<name>.<setting> = <value>"
+        // carries its settings. A dot cannot occur in an id provider name, so the first segment is always the name.
         getIdProviders( idProviderPrefix ).forEach( ( remainder, value ) -> {
             final int dot = remainder.indexOf( '.' );
             final String idProviderName = dot < 0 ? remainder : remainder.substring( 0, dot );
@@ -139,8 +139,6 @@ final class VirtualHostConfigMap
             final String setting = remainder.substring( dot + 1 );
             switch ( setting )
             {
-                case DEFAULT_ID_PROVIDER_VALUE -> settings.isDefault = parseBoolean( idProviderName, setting, value );
-                case ENABLED_ID_PROVIDER_VALUE -> settings.isEnabled = parseBoolean( idProviderName, setting, value );
                 case FLOWS_ID_PROVIDER_SETTING -> settings.flows = Stream.of( value.split( "," ) )
                     .map( String::trim )
                     .filter( flow -> !flow.isEmpty() )
@@ -179,18 +177,6 @@ final class VirtualHostConfigMap
         }
 
         return hostIdProvidersMapping.build();
-    }
-
-    private static boolean parseBoolean( final String idProviderName, final String setting, final String value )
-    {
-        final String trimmed = value.trim();
-        if ( "true".equalsIgnoreCase( trimmed ) || "false".equalsIgnoreCase( trimmed ) )
-        {
-            return Boolean.parseBoolean( trimmed );
-        }
-        throw new IllegalArgumentException(
-            "Invalid value [" + value + "] for setting [" + setting + "] of id provider [" + idProviderName +
-                "] in vhost mapping, must be [true] or [false]" );
     }
 
     private static final class IdProviderSettings
