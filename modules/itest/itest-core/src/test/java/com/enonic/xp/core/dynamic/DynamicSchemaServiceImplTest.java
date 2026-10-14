@@ -78,9 +78,17 @@ import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.CreateOrUpdateCmsParams;
+import com.enonic.xp.resource.DeleteDynamicComponentParams;
+import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
+import com.enonic.xp.resource.DynamicComponentType;
+import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
+import com.enonic.xp.resource.GetDynamicComponentParams;
+import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.GetDynamicPhrasesParams;
+import com.enonic.xp.resource.ListDynamicComponentsParams;
+import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.SetDynamicComponentIconParams;
 import com.enonic.xp.resource.SetDynamicContentSchemaIconParams;
@@ -1005,6 +1013,111 @@ class DynamicSchemaServiceImplTest
             () -> dynamicSchemaService.createStyles(
                 CreateDynamicStylesParams.create().key( ApplicationKey.from( "unknownapp" ) ).resource( "kind: \"Style\"\n" ).build() ) ) );
         assertEquals( "Application [unknownapp] is not installed", exception.getMessage() );
+    }
+
+    @Test
+    void deprecatedGenericComponentApi()
+        throws Exception
+    {
+        // the 8.1 generic methods dispatch by the type of the params to the method of the kind
+        final String resource = readResource( "_part.yaml" );
+        final DescriptorKey key = DescriptorKey.from( "myapp:mypart" );
+
+        final DynamicSchemaResult<PartDescriptor> created = createAdminContext().callWith(
+            () -> dynamicSchemaService.<PartDescriptor>createComponent(
+                CreateDynamicComponentParams.create().descriptorKey( key ).type( DynamicComponentType.PART ).resource( resource ).build() ) );
+        assertEquals( key, created.getSchema().getKey() );
+        assertEquals( "myapp:/cms/parts/mypart.yaml", created.getResource().getKey().toString() );
+
+        final DynamicSchemaResult<PartDescriptor> fetched = createAdminContext().callWith(
+            () -> dynamicSchemaService.<PartDescriptor>getComponent(
+                GetDynamicComponentParams.create().descriptorKey( key ).type( DynamicComponentType.PART ).build() ) );
+        assertEquals( resource, fetched.getResource().readString() );
+        // the kind is told by the type: there is no page of that key
+        assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getComponent(
+            GetDynamicComponentParams.create().descriptorKey( key ).type( DynamicComponentType.PAGE ).build() ) ) );
+
+        final List<DynamicSchemaResult<PartDescriptor>> listed = createAdminContext().callWith(
+            () -> dynamicSchemaService.<PartDescriptor>listComponents( ListDynamicComponentsParams.create()
+                                                                            .applicationKey( ApplicationKey.from( "myapp" ) )
+                                                                            .type( DynamicComponentType.PART )
+                                                                            .build() ) );
+        assertThat( listed ).hasSize( 1 );
+
+        final DynamicSchemaResult<PartDescriptor> updated = createAdminContext().callWith(
+            () -> dynamicSchemaService.<PartDescriptor>updateComponent(
+                UpdateDynamicComponentParams.create().descriptorKey( key ).type( DynamicComponentType.PART ).resource( resource ).build() ) );
+        assertEquals( "myapp:/cms/parts/mypart.yaml", updated.getResource().getKey().toString() );
+
+        assertTrue( createAdminContext().callWith( () -> dynamicSchemaService.deleteComponent(
+            DeleteDynamicComponentParams.create().descriptorKey( key ).type( DynamicComponentType.PART ).build() ) ) );
+        assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getPart( key ) ) );
+    }
+
+    @Test
+    void deprecatedGenericContentSchemaApi()
+        throws Exception
+    {
+        final String resource = readResource( "_contentType.yaml" );
+        final ContentTypeName name = ContentTypeName.from( "myapp:mytype" );
+
+        final DynamicSchemaResult<ContentType> created = createAdminContext().callWith(
+            () -> dynamicSchemaService.<ContentType>createContentSchema( CreateDynamicContentSchemaParams.create()
+                                                                              .name( name )
+                                                                              .type( DynamicContentSchemaType.CONTENT_TYPE )
+                                                                              .resource( resource )
+                                                                              .build() ) );
+        assertEquals( name, created.getSchema().getName() );
+        assertEquals( "myapp:/cms/content-types/mytype.yaml", created.getResource().getKey().toString() );
+
+        final DynamicSchemaResult<ContentType> fetched = createAdminContext().callWith(
+            () -> dynamicSchemaService.<ContentType>getContentSchema(
+                GetDynamicContentSchemaParams.create().name( name ).type( DynamicContentSchemaType.CONTENT_TYPE ).build() ) );
+        assertEquals( resource, fetched.getResource().readString() );
+
+        // the name must be of the kind the type tells
+        assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.getContentSchema(
+            GetDynamicContentSchemaParams.create().name( name ).type( DynamicContentSchemaType.MIXIN ).build() ) ) );
+
+        final List<DynamicSchemaResult<ContentType>> listed = createAdminContext().callWith(
+            () -> dynamicSchemaService.<ContentType>listContentSchemas( ListDynamicContentSchemasParams.create()
+                                                                             .applicationKey( ApplicationKey.from( "myapp" ) )
+                                                                             .type( DynamicContentSchemaType.CONTENT_TYPE )
+                                                                             .build() ) );
+        assertThat( listed ).hasSize( 1 );
+
+        final DynamicSchemaResult<ContentType> updated = createAdminContext().callWith(
+            () -> dynamicSchemaService.<ContentType>updateContentSchema( UpdateDynamicContentSchemaParams.create()
+                                                                              .name( name )
+                                                                              .type( DynamicContentSchemaType.CONTENT_TYPE )
+                                                                              .resource( resource )
+                                                                              .build() ) );
+        assertEquals( "myapp:/cms/content-types/mytype.yaml", updated.getResource().getKey().toString() );
+
+        assertTrue( createAdminContext().callWith( () -> dynamicSchemaService.deleteContentSchema(
+            DeleteDynamicContentSchemaParams.create().name( name ).type( DynamicContentSchemaType.CONTENT_TYPE ).build() ) ) );
+        assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getContentType( name ) ) );
+    }
+
+    @Test
+    void deprecatedGenericApiRequiresType()
+        throws Exception
+    {
+        // the type is optional for the methods of a kind, the generic methods cannot do without it
+        final String part = readResource( "_part.yaml" );
+        final String contentType = readResource( "_contentType.yaml" );
+
+        final IllegalArgumentException component = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createComponent(
+                CreateDynamicComponentParams.create().descriptorKey( DescriptorKey.from( "myapp:mypart" ) ).resource( part ).build() ) ) );
+        assertEquals( "type is required", component.getMessage() );
+
+        final IllegalArgumentException schema = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.updateContentSchema( UpdateDynamicContentSchemaParams.create()
+                                                                .name( ContentTypeName.from( "myapp:mytype" ) )
+                                                                .resource( contentType )
+                                                                .build() ) ) );
+        assertEquals( "type is required", schema.getMessage() );
     }
 
     @Test

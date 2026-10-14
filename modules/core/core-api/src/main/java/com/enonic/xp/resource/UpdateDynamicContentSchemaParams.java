@@ -9,11 +9,14 @@ public final class UpdateDynamicContentSchemaParams
 {
     private final BaseSchemaName name;
 
+    private final DynamicContentSchemaType type;
+
     private final String resource;
 
     private UpdateDynamicContentSchemaParams( final Builder builder )
     {
         this.name = builder.name;
+        this.type = builder.type;
         this.resource = builder.resource;
     }
 
@@ -32,9 +35,21 @@ public final class UpdateDynamicContentSchemaParams
         return resource;
     }
 
+    /**
+     * @deprecated the kind of the schema is told by the service method called, the type is only read by the deprecated generic
+     * methods of {@link DynamicSchemaService}
+     */
+    @Deprecated
+    public DynamicContentSchemaType getType()
+    {
+        return type;
+    }
+
     public static final class Builder
     {
         private BaseSchemaName name;
+
+        private DynamicContentSchemaType type;
 
         private String resource;
 
@@ -51,6 +66,16 @@ public final class UpdateDynamicContentSchemaParams
         public Builder resource( final String resource )
         {
             this.resource = resource;
+            return this;
+        }
+
+        /**
+         * @deprecated only the deprecated generic methods of {@link DynamicSchemaService} read it
+         */
+        @Deprecated
+        public Builder type( final DynamicContentSchemaType type )
+        {
+            this.type = type;
             return this;
         }
 

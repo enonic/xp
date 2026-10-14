@@ -30,10 +30,18 @@ import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.CreateOrUpdateCmsParams;
+import com.enonic.xp.resource.DeleteDynamicComponentParams;
+import com.enonic.xp.resource.DeleteDynamicContentSchemaParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
+import com.enonic.xp.resource.DynamicComponentType;
+import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
+import com.enonic.xp.resource.GetDynamicComponentParams;
+import com.enonic.xp.resource.GetDynamicContentSchemaParams;
 import com.enonic.xp.resource.GetDynamicPhrasesParams;
+import com.enonic.xp.resource.ListDynamicComponentsParams;
+import com.enonic.xp.resource.ListDynamicContentSchemasParams;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.SetDynamicComponentIconParams;
@@ -80,6 +88,89 @@ public class DynamicSchemaServiceImpl
         this.dynamicResourceManager = new DynamicResourceManager( nodeService );
         this.dynamicResourceParser = new DynamicResourceParser();
         this.auditLogSupport = auditLogSupport;
+    }
+
+    // the generic methods of the 8.1 API dispatch by the type of the params to the method of the kind
+
+    @Override
+    @Deprecated
+    public <T extends ComponentDescriptor> DynamicSchemaResult<T> createComponent( final CreateDynamicComponentParams params )
+    {
+        return doCreateComponent( params, requireType( params.getType() ) );
+    }
+
+    @Override
+    @Deprecated
+    public <T extends ComponentDescriptor> DynamicSchemaResult<T> updateComponent( final UpdateDynamicComponentParams params )
+    {
+        return doUpdateComponent( params, requireType( params.getType() ) );
+    }
+
+    @Override
+    @Deprecated
+    public <T extends ComponentDescriptor> DynamicSchemaResult<T> getComponent( final GetDynamicComponentParams params )
+    {
+        return doGetComponent( params.getKey(), params.getType() );
+    }
+
+    @Override
+    @Deprecated
+    public <T extends ComponentDescriptor> List<DynamicSchemaResult<T>> listComponents( final ListDynamicComponentsParams params )
+    {
+        return doListComponents( params.getKey(), params.getType() );
+    }
+
+    @Override
+    @Deprecated
+    public boolean deleteComponent( final DeleteDynamicComponentParams params )
+    {
+        return doDeleteComponent( params.getKey(), params.getType() );
+    }
+
+    @Override
+    @Deprecated
+    public <T extends BaseSchema<?>> DynamicSchemaResult<T> createContentSchema( final CreateDynamicContentSchemaParams params )
+    {
+        return doCreateSchema( params, requireType( params.getType() ) );
+    }
+
+    @Override
+    @Deprecated
+    public <T extends BaseSchema<?>> DynamicSchemaResult<T> updateContentSchema( final UpdateDynamicContentSchemaParams params )
+    {
+        return doUpdateSchema( params, requireType( params.getType() ) );
+    }
+
+    @Override
+    @Deprecated
+    public <T extends BaseSchema<?>> DynamicSchemaResult<T> getContentSchema( final GetDynamicContentSchemaParams params )
+    {
+        requireSchemaName( params.getName(), params.getType() );
+        return doGetSchema( params.getName(), params.getType() );
+    }
+
+    @Override
+    @Deprecated
+    public <T extends BaseSchema<?>> List<DynamicSchemaResult<T>> listContentSchemas( final ListDynamicContentSchemasParams params )
+    {
+        return doListSchemas( params.getKey(), params.getType() );
+    }
+
+    @Override
+    @Deprecated
+    public boolean deleteContentSchema( final DeleteDynamicContentSchemaParams params )
+    {
+        requireSchemaName( params.getName(), params.getType() );
+        return doDeleteSchema( params.getName(), params.getType() );
+    }
+
+    private static <E extends Enum<E>> E requireType( final E type )
+    {
+        if ( type == null )
+        {
+            throw new IllegalArgumentException( "type is required" );
+        }
+        return type;
     }
 
     @Override

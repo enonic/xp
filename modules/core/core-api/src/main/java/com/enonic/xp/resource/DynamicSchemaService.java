@@ -8,8 +8,10 @@ import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.page.PageDescriptor;
+import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
+import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
@@ -21,6 +23,68 @@ import com.enonic.xp.style.StyleDescriptor;
 
 public interface DynamicSchemaService
 {
+    /**
+     * @deprecated use the method of the kind of the component, {@link #createPart}, {@link #createLayout} or {@link #createPage},
+     * which this dispatches to by the {@code type} of the params
+     */
+    @Deprecated
+    <T extends ComponentDescriptor> DynamicSchemaResult<T> createComponent( CreateDynamicComponentParams params );
+
+    /**
+     * @deprecated use {@link #updatePart}, {@link #updateLayout} or {@link #updatePage}
+     */
+    @Deprecated
+    <T extends ComponentDescriptor> DynamicSchemaResult<T> updateComponent( UpdateDynamicComponentParams params );
+
+    /**
+     * @deprecated use {@link #getPart}, {@link #getLayout} or {@link #getPage}
+     */
+    @Deprecated
+    <T extends ComponentDescriptor> DynamicSchemaResult<T> getComponent( GetDynamicComponentParams params );
+
+    /**
+     * @deprecated use {@link #listParts}, {@link #listLayouts} or {@link #listPages}
+     */
+    @Deprecated
+    <T extends ComponentDescriptor> List<DynamicSchemaResult<T>> listComponents( ListDynamicComponentsParams params );
+
+    /**
+     * @deprecated use {@link #deletePart}, {@link #deleteLayout} or {@link #deletePage}
+     */
+    @Deprecated
+    boolean deleteComponent( DeleteDynamicComponentParams params );
+
+    /**
+     * @deprecated use the method of the kind of the schema, {@link #createContentType}, {@link #createFormFragment} or
+     * {@link #createMixin}, which this dispatches to by the {@code type} of the params
+     */
+    @Deprecated
+    <T extends BaseSchema<?>> DynamicSchemaResult<T> createContentSchema( CreateDynamicContentSchemaParams params );
+
+    /**
+     * @deprecated use {@link #updateContentType}, {@link #updateFormFragment} or {@link #updateMixin}
+     */
+    @Deprecated
+    <T extends BaseSchema<?>> DynamicSchemaResult<T> updateContentSchema( UpdateDynamicContentSchemaParams params );
+
+    /**
+     * @deprecated use {@link #getContentType}, {@link #getFormFragment} or {@link #getMixin}
+     */
+    @Deprecated
+    <T extends BaseSchema<?>> DynamicSchemaResult<T> getContentSchema( GetDynamicContentSchemaParams params );
+
+    /**
+     * @deprecated use {@link #listContentTypes}, {@link #listFormFragments} or {@link #listMixins}
+     */
+    @Deprecated
+    <T extends BaseSchema<?>> List<DynamicSchemaResult<T>> listContentSchemas( ListDynamicContentSchemasParams params );
+
+    /**
+     * @deprecated use {@link #deleteContentType}, {@link #deleteFormFragment} or {@link #deleteMixin}
+     */
+    @Deprecated
+    boolean deleteContentSchema( DeleteDynamicContentSchemaParams params );
+
     DynamicSchemaResult<PartDescriptor> createPart( CreateDynamicComponentParams params );
 
     DynamicSchemaResult<PartDescriptor> updatePart( UpdateDynamicComponentParams params );
