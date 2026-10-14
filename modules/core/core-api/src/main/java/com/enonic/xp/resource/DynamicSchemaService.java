@@ -105,8 +105,15 @@ public interface DynamicSchemaService
 
     boolean deleteMixinIcon( MixinName name );
 
-    DynamicSchemaResult<CmsDescriptor> createCms( CreateCmsParams params );
+    /**
+     * Creates the cms descriptor of the application, or updates it in place when there is one.
+     */
+    DynamicSchemaResult<CmsDescriptor> createOrUpdateCms( CreateOrUpdateCmsParams params );
 
+    /**
+     * @deprecated use {@link #createOrUpdateCms(CreateOrUpdateCmsParams)}, which this delegates to
+     */
+    @Deprecated
     DynamicSchemaResult<CmsDescriptor> updateCms( UpdateDynamicCmsParams params );
 
     DynamicSchemaResult<CmsDescriptor> getCmsDescriptor( ApplicationKey key );

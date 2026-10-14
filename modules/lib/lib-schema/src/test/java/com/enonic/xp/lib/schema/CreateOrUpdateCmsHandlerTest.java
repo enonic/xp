@@ -5,7 +5,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.core.impl.content.parser.YmlCmsDescriptorParser;
-import com.enonic.xp.resource.CreateCmsParams;
+import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.site.CmsDescriptor;
@@ -14,14 +14,14 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class CreateCmsHandlerTest
+class CreateOrUpdateCmsHandlerTest
     extends BaseSchemaHandlerTest
 {
     @Test
     void testCms()
     {
-        when( dynamicSchemaService.createCms( isA( CreateCmsParams.class ) ) ).thenAnswer( params -> {
-            final CreateCmsParams cmsParams = params.getArgument( 0, CreateCmsParams.class );
+        when( dynamicSchemaService.createOrUpdateCms( isA( CreateOrUpdateCmsParams.class ) ) ).thenAnswer( params -> {
+            final CreateOrUpdateCmsParams cmsParams = params.getArgument( 0, CreateOrUpdateCmsParams.class );
 
             final CmsDescriptor.Builder builder = YmlCmsDescriptorParser.parse( cmsParams.getResource(), cmsParams.getKey() );
 
@@ -34,12 +34,12 @@ class CreateCmsHandlerTest
             return new DynamicSchemaResult<>( builder.build(), resource );
         } );
 
-        runScript( "/lib/xp/examples/schema/createCms.js" );
+        runScript( "/lib/xp/examples/schema/createOrUpdateCms.js" );
     }
 
     @Test
     void testInvalidCms()
     {
-        runFunction( "/test/CreateCmsHandlerTest.js", "createInvalidCms" );
+        runFunction( "/test/CreateOrUpdateCmsHandlerTest.js", "createInvalidCms" );
     }
 }

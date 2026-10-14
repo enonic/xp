@@ -25,11 +25,11 @@ import com.enonic.xp.region.ComponentDescriptor;
 import com.enonic.xp.region.LayoutDescriptor;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateCmsParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
+import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
@@ -563,50 +563,53 @@ public class DynamicSchemaServiceImpl
 
     /**
      * The cms descriptor makes the application own a schema: the {@code cms} node is created with it, and the schemas can be
-     * written from then on.
+     * written from then on. An existing descriptor is updated in place.
      */
     @Override
-    public DynamicSchemaResult<CmsDescriptor> createCms( final CreateCmsParams params )
+    public DynamicSchemaResult<CmsDescriptor> createOrUpdateCms( final CreateOrUpdateCmsParams params )
     {
         requireAdminRole();
         requireApplicationNode( params.getKey() );
 
-        final CmsDescriptor site = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
+        final CmsDescriptor cmsDescriptor = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
 
         final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
-        if ( !dynamicResourceManager.nodeExists( resourceFolderPath ) )
+        final boolean update = dynamicResourceManager.resourceNodeExists( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME );
+
+        final Resource resource;
+        if ( update )
         {
-            dynamicResourceManager.createFolder( resourceFolderPath );
+            resource = dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
         }
-        final Resource createdResource =
-            dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
+        else
+        {
+            if ( !dynamicResourceManager.nodeExists( resourceFolderPath ) )
+            {
+                dynamicResourceManager.createFolder( resourceFolderPath );
+            }
+            resource = dynamicResourceManager.createResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
+        }
 
         final DynamicSchemaResult<CmsDescriptor> result = new DynamicSchemaResult<>(
-            CmsDescriptor.copyOf( site ).modifiedTime( Instant.ofEpochMilli( createdResource.getTimestamp() ) ).build(), createdResource );
+            CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
 
-        auditLogSupport.createCms( params, result );
+        if ( update )
+        {
+            auditLogSupport.updateCms( params, result );
+        }
+        else
+        {
+            auditLogSupport.createCms( params, result );
+        }
 
         return result;
     }
 
     @Override
+    @Deprecated
     public DynamicSchemaResult<CmsDescriptor> updateCms( final UpdateDynamicCmsParams params )
     {
-        requireAdminRole();
-        requireCmsDescriptor( params.getKey() );
-
-        final CmsDescriptor cmsDescriptor = dynamicResourceParser.parseCms( params.getKey(), params.getResource() );
-
-        final NodePath resourceFolderPath = createCmsFolderPath( params.getKey() );
-        final Resource resource =
-            dynamicResourceManager.updateResource( resourceFolderPath, SchemaResourceNames.CMS_ROOT_NAME, params.getResource() );
-
-        final DynamicSchemaResult<CmsDescriptor> result = new DynamicSchemaResult<>(
-            CmsDescriptor.copyOf( cmsDescriptor ).modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) ).build(), resource );
-
-        auditLogSupport.updateCms( params, result );
-
-        return result;
+        return createOrUpdateCms( CreateOrUpdateCmsParams.create().key( params.getKey() ).resource( params.getResource() ).build() );
     }
 
     @Override
@@ -1175,7 +1178,7 @@ public class DynamicSchemaServiceImpl
 
     /**
      * Schemas are written for an application owning a schema only, the one whose cms descriptor ({@code cms/cms.yaml}) is persisted:
-     * shipped by its bundle on install, or created through {@link #createCms}.
+     * shipped by its bundle on install, or created through {@link #createOrUpdateCms}.
      */
     private void requireCmsDescriptor( final ApplicationKey key )
     {

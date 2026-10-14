@@ -433,12 +433,12 @@ export function createStyles(params: CreateStylesParams): StyleDescriptor {
     return __.toNativeObject(bean.execute());
 }
 
-export interface CreateCmsParams {
+export interface CreateOrUpdateCmsParams {
     application: string;
     resource: string;
 }
 
-interface CreateCmsHandler {
+interface CreateOrUpdateCmsHandler {
     setApplication(value: string): void;
 
     setResource(value: string): void;
@@ -447,19 +447,23 @@ interface CreateCmsHandler {
 }
 
 /**
- * Creates dynamic CMS schema resource.
+ * Creates the dynamic CMS schema resource of the application, or updates it when there is one.
+ *
+ * The CMS descriptor marks the application as providing schemas for the CMS: content types, components, macros, styles and
+ * phrases can be stored for the application once it exists. The application must exist, installed or created through
+ * the App library.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  * @param {string} params.resource CMS schema resource value.
  *
- * @returns {CmsDescriptor} created resource.
+ * @returns {CmsDescriptor} created or updated resource.
  */
-export function createCms(params: CreateCmsParams): CmsDescriptor {
+export function createOrUpdateCms(params: CreateOrUpdateCmsParams): CmsDescriptor {
     const application = checkRequired(params, 'application');
     const resource = checkRequired(params, 'resource');
 
-    const bean: CreateCmsHandler = __.newBean<CreateCmsHandler>('com.enonic.xp.lib.schema.CreateCmsHandler');
+    const bean: CreateOrUpdateCmsHandler = __.newBean<CreateOrUpdateCmsHandler>('com.enonic.xp.lib.schema.CreateOrUpdateCmsHandler');
     bean.setApplication(application);
     bean.setResource(resource);
     return __.toNativeObject(bean.execute());
@@ -1253,56 +1257,44 @@ export function updateComponent(params: UpdateDynamicComponentParams): LayoutDes
     }
 }
 
-export interface UpdateCmsParams {
-    application: string;
-    resource: string;
-}
-
-interface UpdateDynamicCmsHandler {
-    setApplication(value: string): void;
-
-    setResource(value: string): void;
-
-    execute(): CmsDescriptor;
-}
+/**
+ * @deprecated Use {@link CreateOrUpdateCmsParams} instead.
+ */
+export type UpdateCmsParams = CreateOrUpdateCmsParams;
 
 /**
- * Updates dynamic CMS schema resource.
+ * Creates or updates dynamic CMS schema resource.
+ *
+ * @deprecated Use {@link createOrUpdateCms} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  * @param {string} params.resource CMS schema resource value.
  *
- * @returns {CmsDescriptor} updated resource.
+ * @returns {CmsDescriptor} created or updated resource.
  */
 export function updateCms(params: UpdateCmsParams): CmsDescriptor {
-    const application = checkRequired(params, 'application');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicCmsHandler = __.newBean<UpdateDynamicCmsHandler>('com.enonic.xp.lib.schema.UpdateDynamicCmsHandler');
-    bean.setApplication(application);
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
+    return createOrUpdateCms(params);
 }
 
 /**
- * @deprecated Use {@link UpdateCmsParams} instead.
+ * @deprecated Use {@link CreateOrUpdateCmsParams} instead.
  */
-export type UpdateDynamicSiteParams = UpdateCmsParams;
+export type UpdateDynamicSiteParams = CreateOrUpdateCmsParams;
 
 /**
- * Updates dynamic site schema resource.
+ * Creates or updates dynamic site schema resource.
  *
- * @deprecated Use {@link updateCms} instead.
+ * @deprecated Use {@link createOrUpdateCms} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  * @param {string} params.resource Site schema resource value.
  *
- * @returns {SiteDescriptor} updated resource.
+ * @returns {SiteDescriptor} created or updated resource.
  */
 export function updateSite(params: UpdateDynamicSiteParams): SiteDescriptor {
-    return updateCms(params);
+    return createOrUpdateCms(params);
 }
 
 export interface UpdateStylesParams {

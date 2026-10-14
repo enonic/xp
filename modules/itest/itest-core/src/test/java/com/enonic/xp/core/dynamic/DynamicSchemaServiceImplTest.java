@@ -73,11 +73,11 @@ import com.enonic.xp.repo.impl.storage.IndexDataServiceImpl;
 import com.enonic.xp.repo.impl.storage.NodeStorageServiceImpl;
 import com.enonic.xp.repo.impl.version.VersionServiceImpl;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateCmsParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
+import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.GetDynamicPhrasesParams;
@@ -170,8 +170,8 @@ class DynamicSchemaServiceImplTest
     private void createApplicationNodes( final ApplicationKey applicationKey )
     {
         createApplicationNode( applicationKey );
-        createAdminContext().runWith( () -> dynamicSchemaService.createCms(
-            CreateCmsParams.create().key( applicationKey ).resource( CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ) );
+        createAdminContext().runWith( () -> dynamicSchemaService.createOrUpdateCms(
+            CreateOrUpdateCmsParams.create().key( applicationKey ).resource( CMS_DESCRIPTOR_DEFAULT_VALUE ).build() ) );
     }
 
     // the node of an application created through the application descriptor service: nothing below it
@@ -931,7 +931,7 @@ class DynamicSchemaServiceImplTest
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNull();
 
         final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
-            () -> dynamicSchemaService.createCms( CreateCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
+            () -> dynamicSchemaService.createOrUpdateCms( CreateOrUpdateCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
 
         final CmsDescriptor cmsDescriptor = result.getSchema();
 
@@ -960,10 +960,10 @@ class DynamicSchemaServiceImplTest
     {
         // the application node itself is never created by the schema service
         final String resource = readResource( "_cms.yaml" );
-        final CreateCmsParams params = CreateCmsParams.create().key( ApplicationKey.from( "unknownapp" ) ).resource( resource ).build();
+        final CreateOrUpdateCmsParams params = CreateOrUpdateCmsParams.create().key( ApplicationKey.from( "unknownapp" ) ).resource( resource ).build();
 
         final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createCms( params ) ) );
+            () -> dynamicSchemaService.createOrUpdateCms( params ) ) );
         assertEquals( "Application [unknownapp] is not installed", exception.getMessage() );
 
         assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/unknownapp" ) ) ) );
@@ -1047,18 +1047,18 @@ class DynamicSchemaServiceImplTest
     void updateNotCreatedSite()
         throws Exception
     {
-        // the cms descriptor is created through createCms only, an update needs an existing one
+        // the deprecated updateCms creates the descriptor like createOrUpdateCms does, as it always did
         final ApplicationKey applicationKey = ApplicationKey.from( "nodeonly" );
         createApplicationNode( applicationKey );
-        final UpdateDynamicCmsParams params =
-            UpdateDynamicCmsParams.create().key( applicationKey ).resource( readResource( "_cms.yaml" ) ).build();
+        final String resource = readResource( "_cms.yaml" );
 
-        final IllegalArgumentException exception =
-            assertThrows( IllegalArgumentException.class, () -> createAdminContext().runWith( () -> dynamicSchemaService.updateCms( params ) ) );
-        assertEquals( "Application [nodeonly] has no CMS descriptor", exception.getMessage() );
+        final DynamicSchemaResult<CmsDescriptor> result = createAdminContext().callWith(
+            () -> dynamicSchemaService.updateCms( UpdateDynamicCmsParams.create().key( applicationKey ).resource( resource ).build() ) );
 
-        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNull();
-        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/nodeonly/cms" ) ) ) );
+        assertEquals( "nodeonly:/cms/cms.yaml", result.getResource().getKey().toString() );
+        assertEquals( resource, result.getResource().readString() );
+        assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
+        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/nodeonly/cms" ) ) ) );
     }
 
     @Test
@@ -1597,10 +1597,10 @@ class DynamicSchemaServiceImplTest
             unsupportedField: [ ]
             """;
 
-        final CreateCmsParams params =
-            CreateCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
+        final CreateOrUpdateCmsParams params =
+            CreateOrUpdateCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
 
-        assertThrows( Exception.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createCms( params ) ) );
+        assertThrows( Exception.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateCms( params ) ) );
     }
 
     @Test

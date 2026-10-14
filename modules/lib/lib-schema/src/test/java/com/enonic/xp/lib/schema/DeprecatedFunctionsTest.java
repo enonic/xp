@@ -11,9 +11,9 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.region.PartDescriptor;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
+import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.schema.content.ContentType;
@@ -62,8 +62,8 @@ class DeprecatedFunctionsTest
 
         when( dynamicSchemaService.getCmsDescriptor( isA( ApplicationKey.class ) ) ).thenAnswer(
             invocation -> cmsResult( invocation.getArgument( 0, ApplicationKey.class ) ) );
-        when( dynamicSchemaService.updateCms( isA( UpdateDynamicCmsParams.class ) ) ).thenAnswer(
-            invocation -> cmsResult( invocation.getArgument( 0, UpdateDynamicCmsParams.class ).getKey() ) );
+        when( dynamicSchemaService.createOrUpdateCms( isA( CreateOrUpdateCmsParams.class ) ) ).thenAnswer(
+            invocation -> cmsResult( invocation.getArgument( 0, CreateOrUpdateCmsParams.class ).getKey() ) );
     }
 
     @Test
@@ -148,6 +148,12 @@ class DeprecatedFunctionsTest
     void updateSite()
     {
         runFunction( "/test/DeprecatedFunctionsTest.js", "updateSite" );
+    }
+
+    @Test
+    void updateCms()
+    {
+        runFunction( "/test/DeprecatedFunctionsTest.js", "updateCms" );
     }
 
     private static DynamicSchemaResult<ContentType> contentTypeResult( final ContentTypeName name )

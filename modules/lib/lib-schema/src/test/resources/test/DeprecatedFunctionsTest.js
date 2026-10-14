@@ -131,3 +131,11 @@ exports.updateSite = function () {
     });
     assert.assertEquals('myapp', result.application);
 };
+
+exports.updateCms = function () {
+    var result = schemaLib.updateCms({
+        application: 'myapp',
+        resource: 'kind: "CMS"'
+    });
+    assert.assertEquals('myapp', result.application);
+};

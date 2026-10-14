@@ -12,16 +12,15 @@ import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateCmsParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
+import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.resource.UpdateDynamicMacroParams;
@@ -207,8 +206,8 @@ class DynamicSchemaAuditLogSupportImplTest
     @Test
     void createCms()
     {
-        final CreateCmsParams params =
-            CreateCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateCmsParams params =
+            CreateOrUpdateCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
 
         instance.createCms( params, resultWithKey( "myapp:/cms/cms.yaml" ) );
 
@@ -222,8 +221,8 @@ class DynamicSchemaAuditLogSupportImplTest
     @Test
     void updateCms()
     {
-        final UpdateDynamicCmsParams params =
-            UpdateDynamicCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateCmsParams params =
+            CreateOrUpdateCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
 
         instance.updateCms( params, resultWithKey( "myapp:/cms/cms.yaml" ) );
 

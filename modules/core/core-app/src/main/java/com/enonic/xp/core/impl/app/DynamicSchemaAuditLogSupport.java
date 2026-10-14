@@ -5,15 +5,14 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateCmsParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
+import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.resource.UpdateDynamicMacroParams;
@@ -45,9 +44,9 @@ public interface DynamicSchemaAuditLogSupport
 
     void deleteContentSchemaIcon( BaseSchemaName name, DynamicContentSchemaType type );
 
-    void createCms( CreateCmsParams params, DynamicSchemaResult<CmsDescriptor> result );
+    void createCms( CreateOrUpdateCmsParams params, DynamicSchemaResult<CmsDescriptor> result );
 
-    void updateCms( UpdateDynamicCmsParams params, DynamicSchemaResult<CmsDescriptor> result );
+    void updateCms( CreateOrUpdateCmsParams params, DynamicSchemaResult<CmsDescriptor> result );
 
     void deleteCms( ApplicationKey key );
 

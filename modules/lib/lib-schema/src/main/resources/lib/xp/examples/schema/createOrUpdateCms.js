@@ -20,14 +20,14 @@ form:
 
 
 // BEGIN
-// Create dynamic CMS.
-var result = schemaLib.createCms({
+// Create or update dynamic CMS.
+var result = schemaLib.createOrUpdateCms({
     application: 'myapp',
     resource
 
 });
 
-log.info('Created CMS: ' + result.application);
+log.info('Created or updated CMS: ' + result.application);
 
 // END
 

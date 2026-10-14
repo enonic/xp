@@ -5,13 +5,13 @@ import com.enonic.xp.app.ApplicationKey;
 import static java.util.Objects.requireNonNull;
 
 
-public final class CreateCmsParams
+public final class CreateOrUpdateCmsParams
 {
     private final ApplicationKey key;
 
     private final String resource;
 
-    private CreateCmsParams( final Builder builder )
+    private CreateOrUpdateCmsParams( final Builder builder )
     {
         this.key = builder.key;
         this.resource = builder.resource;
@@ -60,10 +60,10 @@ public final class CreateCmsParams
             requireNonNull( resource, "resource is required" );
         }
 
-        public CreateCmsParams build()
+        public CreateOrUpdateCmsParams build()
         {
             validate();
-            return new CreateCmsParams( this );
+            return new CreateOrUpdateCmsParams( this );
         }
     }
 }

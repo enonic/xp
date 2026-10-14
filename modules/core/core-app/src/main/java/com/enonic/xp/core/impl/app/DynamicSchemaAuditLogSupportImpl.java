@@ -18,15 +18,14 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateCmsParams;
 import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateDynamicMacroParams;
 import com.enonic.xp.resource.CreateDynamicPhrasesParams;
 import com.enonic.xp.resource.CreateDynamicStylesParams;
+import com.enonic.xp.resource.CreateOrUpdateCmsParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.UpdateDynamicCmsParams;
 import com.enonic.xp.resource.UpdateDynamicComponentParams;
 import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.resource.UpdateDynamicMacroParams;
@@ -216,7 +215,7 @@ public class DynamicSchemaAuditLogSupportImpl
     }
 
     @Override
-    public void createCms( final CreateCmsParams params, final DynamicSchemaResult<CmsDescriptor> result )
+    public void createCms( final CreateOrUpdateCmsParams params, final DynamicSchemaResult<CmsDescriptor> result )
     {
         if ( isEnabledAuditLog )
         {
@@ -230,7 +229,7 @@ public class DynamicSchemaAuditLogSupportImpl
     }
 
     @Override
-    public void updateCms( final UpdateDynamicCmsParams params, final DynamicSchemaResult<CmsDescriptor> result )
+    public void updateCms( final CreateOrUpdateCmsParams params, final DynamicSchemaResult<CmsDescriptor> result )
     {
         if ( isEnabledAuditLog )
         {
