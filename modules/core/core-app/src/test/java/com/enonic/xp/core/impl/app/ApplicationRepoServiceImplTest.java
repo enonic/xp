@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
 import com.enonic.xp.node.DeleteNodeParams;
@@ -293,7 +294,7 @@ class ApplicationRepoServiceImplTest
     {
         stubCreate();
 
-        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "yaml", ApplicationIconUpdate.replace(
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "yaml", IconUpdate.replace(
             ByteSource.wrap( new byte[]{1, 2, 3} ), SchemaResourcePaths.PNG_MIME_TYPE ) );
 
         final ArgumentCaptor<CreateNodeParams> captor = ArgumentCaptor.forClass( CreateNodeParams.class );
@@ -315,7 +316,7 @@ class ApplicationRepoServiceImplTest
     {
         stubCreate();
 
-        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "yaml", ApplicationIconUpdate.KEEP );
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "yaml", IconUpdate.KEEP );
 
         final ArgumentCaptor<CreateNodeParams> captor = ArgumentCaptor.forClass( CreateNodeParams.class );
         Mockito.verify( this.nodeService ).create( captor.capture() );
@@ -330,7 +331,7 @@ class ApplicationRepoServiceImplTest
     {
         final PropertyTree edited = stubUpdate( descriptorData( "old", SchemaResourcePaths.SVG_MIME_TYPE ) );
 
-        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", ApplicationIconUpdate.KEEP );
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", IconUpdate.KEEP );
 
         final ArgumentCaptor<UpdateNodeParams> captor = ArgumentCaptor.forClass( UpdateNodeParams.class );
         Mockito.verify( this.nodeService ).update( captor.capture() );
@@ -348,7 +349,7 @@ class ApplicationRepoServiceImplTest
     {
         final PropertyTree edited = stubUpdate( descriptorData( "old", SchemaResourcePaths.SVG_MIME_TYPE ) );
 
-        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", ApplicationIconUpdate.REMOVE );
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", IconUpdate.REMOVE );
 
         final ArgumentCaptor<UpdateNodeParams> captor = ArgumentCaptor.forClass( UpdateNodeParams.class );
         Mockito.verify( this.nodeService ).update( captor.capture() );
@@ -364,7 +365,7 @@ class ApplicationRepoServiceImplTest
     {
         final PropertyTree edited = stubUpdate( descriptorData( "old", null ) );
 
-        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", ApplicationIconUpdate.replace(
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", IconUpdate.replace(
             ByteSource.wrap( new byte[]{1, 2, 3} ), SchemaResourcePaths.PNG_MIME_TYPE ) );
 
         final ArgumentCaptor<UpdateNodeParams> captor = ArgumentCaptor.forClass( UpdateNodeParams.class );
@@ -381,7 +382,7 @@ class ApplicationRepoServiceImplTest
     {
         final PropertyTree edited = stubUpdate( descriptorData( "old", SchemaResourcePaths.SVG_MIME_TYPE ) );
 
-        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", ApplicationIconUpdate.replace(
+        this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "new", IconUpdate.replace(
             ByteSource.wrap( new byte[]{1, 2, 3} ), SchemaResourcePaths.PNG_MIME_TYPE ) );
 
         final ArgumentCaptor<UpdateNodeParams> captor = ArgumentCaptor.forClass( UpdateNodeParams.class );
@@ -394,11 +395,17 @@ class ApplicationRepoServiceImplTest
         assertNotNull( captor.getValue().getBinaryAttachments().get( PNG_ICON ) );
     }
 
+    // the mime type names the binary, so an icon of another type is rejected before anything is written
     @Test
-    void replace_rejects_an_unsupported_mime_type()
+    void upsert_rejects_an_unsupported_icon_mime_type()
     {
-        assertThrows( IllegalArgumentException.class,
-                      () -> ApplicationIconUpdate.replace( ByteSource.wrap( new byte[]{1} ), "image/jpeg" ) );
+        stubCreate();
+
+        final IconUpdate icon = IconUpdate.replace( ByteSource.wrap( new byte[]{1} ), "image/jpeg" );
+        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class,
+                                                                 () -> this.service.upsertApplicationDescriptor( ApplicationKey.from( "myapp" ), "yaml", icon ) );
+        assertEquals( "unsupported icon mime type: image/jpeg", exception.getMessage() );
+        Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
     }
 
     private static CreateNodeParams created( final ArgumentCaptor<CreateNodeParams> captor, final String name )

@@ -6,31 +6,30 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import com.google.common.io.ByteSource;
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
-import com.enonic.xp.resource.CreateDynamicMacroParams;
-import com.enonic.xp.resource.CreateDynamicPhrasesParams;
-import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.CreateOrUpdateCmsParams;
+import com.enonic.xp.resource.CreateOrUpdateComponentParams;
+import com.enonic.xp.resource.CreateOrUpdateContentSchemaParams;
+import com.enonic.xp.resource.CreateOrUpdateMacroParams;
+import com.enonic.xp.resource.CreateOrUpdatePhrasesParams;
+import com.enonic.xp.resource.CreateOrUpdateStylesParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.resource.UpdateDynamicComponentParams;
-import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
-import com.enonic.xp.resource.UpdateDynamicMacroParams;
-import com.enonic.xp.resource.UpdateDynamicPhrasesParams;
-import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -83,8 +82,8 @@ class DynamicSchemaAuditLogSupportImplTest
     @Test
     void createComponent()
     {
-        final CreateDynamicComponentParams params =
-            CreateDynamicComponentParams.create().descriptorKey( DescriptorKey.from( "myapp:mypart" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateComponentParams params =
+            CreateOrUpdateComponentParams.create().key( DescriptorKey.from( "myapp:mypart" ) ).resource( RESOURCE ).build();
 
         instance.createComponent( params, DynamicComponentType.PART, resultWithKey( "myapp:/cms/parts/mypart/mypart.yaml" ) );
 
@@ -95,19 +94,52 @@ class DynamicSchemaAuditLogSupportImplTest
         assertEquals( "myapp:mypart", value.getData().getSet( "params" ).getString( "key" ) );
         assertEquals( "PART", value.getData().getSet( "params" ).getString( "type" ) );
         assertEquals( RESOURCE, value.getData().getSet( "params" ).getString( "resource" ) );
+        assertNull( value.getData().getSet( "params" ).getSet( "icon" ) );
+        assertNull( value.getData().getSet( "params" ).getBoolean( "iconRemoved" ) );
     }
 
     @Test
     void updateComponent()
     {
-        final UpdateDynamicComponentParams params =
-            UpdateDynamicComponentParams.create().descriptorKey( DescriptorKey.from( "myapp:mypart" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateComponentParams params =
+            CreateOrUpdateComponentParams.create().key( DescriptorKey.from( "myapp:mypart" ) ).resource( RESOURCE ).build();
 
         instance.updateComponent( params, DynamicComponentType.PART, resultWithKey( "myapp:/cms/parts/mypart/mypart.yaml" ) );
 
         final LogAuditLogParams value = captureLog();
         assertEquals( "system.schema.component.update", value.getType() );
         assertEquals( "myapp:/cms/parts/mypart/mypart.yaml", firstUri( value ) );
+    }
+
+    // the icon set along with the descriptor is logged by its mime type and size; the resource is left out when only the icon changes
+    @Test
+    void updateComponentIcon()
+    {
+        final CreateOrUpdateComponentParams params = CreateOrUpdateComponentParams.create()
+            .key( DescriptorKey.from( "myapp:mypart" ) )
+            .icon( IconUpdate.replace( ByteSource.wrap( new byte[6] ), "image/png" ) )
+            .build();
+
+        instance.updateComponent( params, DynamicComponentType.PART, resultWithKey( "myapp:/cms/parts/mypart/mypart.yaml" ) );
+
+        final LogAuditLogParams value = captureLog();
+        assertEquals( "system.schema.component.update", value.getType() );
+        assertNull( value.getData().getSet( "params" ).getString( "resource" ) );
+        assertEquals( "image/png", value.getData().getSet( "params" ).getSet( "icon" ).getString( "mimeType" ) );
+        assertEquals( 6L, value.getData().getSet( "params" ).getSet( "icon" ).getLong( "size" ) );
+    }
+
+    @Test
+    void updateComponentRemovingIcon()
+    {
+        final CreateOrUpdateComponentParams params =
+            CreateOrUpdateComponentParams.create().key( DescriptorKey.from( "myapp:mypart" ) ).icon( IconUpdate.REMOVE ).build();
+
+        instance.updateComponent( params, DynamicComponentType.PART, resultWithKey( "myapp:/cms/parts/mypart/mypart.yaml" ) );
+
+        final LogAuditLogParams value = captureLog();
+        assertNull( value.getData().getSet( "params" ).getSet( "icon" ) );
+        assertEquals( Boolean.TRUE, value.getData().getSet( "params" ).getBoolean( "iconRemoved" ) );
     }
 
     @Test
@@ -122,32 +154,13 @@ class DynamicSchemaAuditLogSupportImplTest
     }
 
     @Test
-    void setComponentIcon()
-    {
-        instance.setComponentIcon( DescriptorKey.from( "myapp:mypart" ), DynamicComponentType.PART, "image/png", 6 );
-
-        final LogAuditLogParams value = captureLog();
-        assertEquals( "system.schema.component.icon.set", value.getType() );
-        assertEquals( "myapp:mypart", firstUri( value ) );
-        assertEquals( "image/png", value.getData().getSet( "params" ).getString( "mimeType" ) );
-        assertEquals( 6L, value.getData().getSet( "params" ).getLong( "size" ) );
-    }
-
-    @Test
-    void deleteComponentIcon()
-    {
-        instance.deleteComponentIcon( DescriptorKey.from( "myapp:mypart" ), DynamicComponentType.PART );
-
-        final LogAuditLogParams value = captureLog();
-        assertEquals( "system.schema.component.icon.delete", value.getType() );
-        assertEquals( "myapp:mypart", firstUri( value ) );
-    }
-
-    @Test
     void createContentSchema()
     {
-        final CreateDynamicContentSchemaParams params =
-            CreateDynamicContentSchemaParams.create().name( ContentTypeName.from( "myapp:mytype" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateContentSchemaParams params = CreateOrUpdateContentSchemaParams.create()
+            .name( ContentTypeName.from( "myapp:mytype" ) )
+            .resource( RESOURCE )
+            .icon( IconUpdate.replace( ByteSource.wrap( new byte[42] ), "image/svg+xml" ) )
+            .build();
 
         instance.createContentSchema( params, DynamicContentSchemaType.CONTENT_TYPE,
                                       resultWithKey( "myapp:/cms/content-types/mytype/mytype.yaml" ) );
@@ -158,13 +171,15 @@ class DynamicSchemaAuditLogSupportImplTest
         assertEquals( "myapp:mytype", value.getData().getSet( "params" ).getString( "name" ) );
         assertEquals( "CONTENT_TYPE", value.getData().getSet( "params" ).getString( "type" ) );
         assertEquals( RESOURCE, value.getData().getSet( "params" ).getString( "resource" ) );
+        assertEquals( "image/svg+xml", value.getData().getSet( "params" ).getSet( "icon" ).getString( "mimeType" ) );
+        assertEquals( 42L, value.getData().getSet( "params" ).getSet( "icon" ).getLong( "size" ) );
     }
 
     @Test
     void updateContentSchema()
     {
-        final UpdateDynamicContentSchemaParams params =
-            UpdateDynamicContentSchemaParams.create().name( ContentTypeName.from( "myapp:mytype" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateContentSchemaParams params =
+            CreateOrUpdateContentSchemaParams.create().name( ContentTypeName.from( "myapp:mytype" ) ).resource( RESOURCE ).build();
 
         instance.updateContentSchema( params, DynamicContentSchemaType.CONTENT_TYPE,
                                       resultWithKey( "myapp:/cms/content-types/mytype/mytype.yaml" ) );
@@ -179,29 +194,6 @@ class DynamicSchemaAuditLogSupportImplTest
 
         final LogAuditLogParams value = captureLog();
         assertEquals( "system.schema.contentSchema.delete", value.getType() );
-        assertEquals( "myapp:mytype", firstUri( value ) );
-    }
-
-    @Test
-    void setContentSchemaIcon()
-    {
-        instance.setContentSchemaIcon( ContentTypeName.from( "myapp:mytype" ), DynamicContentSchemaType.CONTENT_TYPE, "image/svg+xml", 42 );
-
-        final LogAuditLogParams value = captureLog();
-        assertEquals( "system.schema.contentSchema.icon.set", value.getType() );
-        assertEquals( "myapp:mytype", firstUri( value ) );
-        assertEquals( "CONTENT_TYPE", value.getData().getSet( "params" ).getString( "type" ) );
-        assertEquals( "image/svg+xml", value.getData().getSet( "params" ).getString( "mimeType" ) );
-        assertEquals( 42L, value.getData().getSet( "params" ).getLong( "size" ) );
-    }
-
-    @Test
-    void deleteContentSchemaIcon()
-    {
-        instance.deleteContentSchemaIcon( ContentTypeName.from( "myapp:mytype" ), DynamicContentSchemaType.CONTENT_TYPE );
-
-        final LogAuditLogParams value = captureLog();
-        assertEquals( "system.schema.contentSchema.icon.delete", value.getType() );
         assertEquals( "myapp:mytype", firstUri( value ) );
     }
 
@@ -254,7 +246,7 @@ class DynamicSchemaAuditLogSupportImplTest
         assertEquals( "system.schema.application.update", value.getType() );
         assertEquals( "myapp:/enonic.yaml", firstUri( value ) );
         assertEquals( RESOURCE, value.getData().getSet( "params" ).getString( "resource" ) );
-        assertEquals( null, value.getData().getSet( "params" ).getSet( "icon" ) );
+        assertNull( value.getData().getSet( "params" ).getSet( "icon" ) );
         assertEquals( Boolean.TRUE, value.getData().getSet( "params" ).getBoolean( "iconRemoved" ) );
     }
 
@@ -271,8 +263,8 @@ class DynamicSchemaAuditLogSupportImplTest
     @Test
     void createStyles()
     {
-        final CreateDynamicStylesParams params =
-            CreateDynamicStylesParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateStylesParams params =
+            CreateOrUpdateStylesParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
 
         instance.createStyles( params, resultWithKey( "myapp:/cms/styles/styles.yaml" ) );
 
@@ -280,13 +272,14 @@ class DynamicSchemaAuditLogSupportImplTest
         assertEquals( "system.schema.styles.create", value.getType() );
         assertEquals( "myapp:/cms/styles/styles.yaml", firstUri( value ) );
         assertEquals( "myapp", value.getData().getSet( "params" ).getString( "application" ) );
+        assertEquals( RESOURCE, value.getData().getSet( "params" ).getString( "resource" ) );
     }
 
     @Test
     void updateStyles()
     {
-        final UpdateDynamicStylesParams params =
-            UpdateDynamicStylesParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateStylesParams params =
+            CreateOrUpdateStylesParams.create().key( ApplicationKey.from( "myapp" ) ).resource( RESOURCE ).build();
 
         instance.updateStyles( params, resultWithKey( "myapp:/cms/styles/styles.yaml" ) );
 
@@ -306,8 +299,8 @@ class DynamicSchemaAuditLogSupportImplTest
     @Test
     void createMacro()
     {
-        final CreateDynamicMacroParams params =
-            CreateDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateMacroParams params =
+            CreateOrUpdateMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).resource( RESOURCE ).build();
 
         instance.createMacro( params, resultWithKey( "myapp:/cms/macros/mymacro/mymacro.yaml" ) );
 
@@ -315,17 +308,24 @@ class DynamicSchemaAuditLogSupportImplTest
         assertEquals( "system.schema.macro.create", value.getType() );
         assertEquals( "myapp:/cms/macros/mymacro/mymacro.yaml", firstUri( value ) );
         assertEquals( "myapp:mymacro", value.getData().getSet( "params" ).getString( "key" ) );
+        assertEquals( RESOURCE, value.getData().getSet( "params" ).getString( "resource" ) );
     }
 
     @Test
-    void updateMacro()
+    void updateMacroIcon()
     {
-        final UpdateDynamicMacroParams params =
-            UpdateDynamicMacroParams.create().key( MacroKey.from( "myapp:mymacro" ) ).resource( RESOURCE ).build();
+        final CreateOrUpdateMacroParams params = CreateOrUpdateMacroParams.create()
+            .key( MacroKey.from( "myapp:mymacro" ) )
+            .icon( IconUpdate.replace( ByteSource.wrap( new byte[6] ), "image/png" ) )
+            .build();
 
         instance.updateMacro( params, resultWithKey( "myapp:/cms/macros/mymacro/mymacro.yaml" ) );
 
-        assertEquals( "system.schema.macro.update", captureLog().getType() );
+        final LogAuditLogParams value = captureLog();
+        assertEquals( "system.schema.macro.update", value.getType() );
+        assertNull( value.getData().getSet( "params" ).getString( "resource" ) );
+        assertEquals( "image/png", value.getData().getSet( "params" ).getSet( "icon" ).getString( "mimeType" ) );
+        assertEquals( 6L, value.getData().getSet( "params" ).getSet( "icon" ).getLong( "size" ) );
     }
 
     @Test
@@ -339,32 +339,10 @@ class DynamicSchemaAuditLogSupportImplTest
     }
 
     @Test
-    void setMacroIcon()
-    {
-        instance.setMacroIcon( MacroKey.from( "myapp:mymacro" ), "image/png", 6 );
-
-        final LogAuditLogParams value = captureLog();
-        assertEquals( "system.schema.macro.icon.set", value.getType() );
-        assertEquals( "myapp:mymacro", firstUri( value ) );
-        assertEquals( "image/png", value.getData().getSet( "params" ).getString( "mimeType" ) );
-        assertEquals( 6L, value.getData().getSet( "params" ).getLong( "size" ) );
-    }
-
-    @Test
-    void deleteMacroIcon()
-    {
-        instance.deleteMacroIcon( MacroKey.from( "myapp:mymacro" ) );
-
-        final LogAuditLogParams value = captureLog();
-        assertEquals( "system.schema.macro.icon.delete", value.getType() );
-        assertEquals( "myapp:mymacro", firstUri( value ) );
-    }
-
-    @Test
     void createPhrases()
     {
-        final CreateDynamicPhrasesParams params =
-            CreateDynamicPhrasesParams.create().key( ApplicationKey.from( "myapp" ) ).name( "phrases_en" ).resource( RESOURCE ).build();
+        final CreateOrUpdatePhrasesParams params =
+            CreateOrUpdatePhrasesParams.create().key( ApplicationKey.from( "myapp" ) ).name( "phrases_en" ).resource( RESOURCE ).build();
 
         instance.createPhrases( params, resourceWithKey( "myapp:/cms/i18n/phrases/phrases_en.properties" ) );
 
@@ -379,8 +357,8 @@ class DynamicSchemaAuditLogSupportImplTest
     @Test
     void updatePhrases()
     {
-        final UpdateDynamicPhrasesParams params =
-            UpdateDynamicPhrasesParams.create().key( ApplicationKey.from( "myapp" ) ).name( "phrases_en" ).resource( RESOURCE ).build();
+        final CreateOrUpdatePhrasesParams params =
+            CreateOrUpdatePhrasesParams.create().key( ApplicationKey.from( "myapp" ) ).name( "phrases_en" ).resource( RESOURCE ).build();
 
         instance.updatePhrases( params, resourceWithKey( "myapp:/cms/i18n/phrases/phrases_en.properties" ) );
 

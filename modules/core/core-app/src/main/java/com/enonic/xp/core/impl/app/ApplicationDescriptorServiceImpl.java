@@ -33,6 +33,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.SystemConstants;
 
@@ -133,7 +134,7 @@ public class ApplicationDescriptorServiceImpl
         final EditableApplicationDescriptor edit = new EditableApplicationDescriptor( source );
         params.getEditor().edit( edit );
 
-        final ApplicationIconUpdate iconUpdate = iconUpdate( source.getIcon(), edit.icon );
+        final IconUpdate iconUpdate = iconUpdate( source.getIcon(), edit.icon );
         final String yaml = YmlApplicationDescriptorSerializer.serialize( edit.build() );
 
         this.repoService.upsertApplicationDescriptor( key, yaml, iconUpdate );
@@ -142,7 +143,7 @@ public class ApplicationDescriptorServiceImpl
         this.appDescriptorMap.remove( key );
         final ApplicationDescriptor result = Objects.requireNonNull( get( key ), "application descriptor not found after write" );
 
-        final String iconMimeType = iconUpdate instanceof ApplicationIconUpdate.Replace replace ? replace.mimeType() : null;
+        final String iconMimeType = iconUpdate instanceof IconUpdate.Replace replace ? replace.mimeType() : null;
         final long iconSize = iconMimeType != null ? edit.icon.getSize() : 0;
         if ( created || current == null )
         {
@@ -152,7 +153,7 @@ public class ApplicationDescriptorServiceImpl
         else
         {
             this.auditLogSupport.updateApplicationDescriptor( key, yaml, iconMimeType, iconSize,
-                                                              iconUpdate instanceof ApplicationIconUpdate.Remove );
+                                                              iconUpdate instanceof IconUpdate.Remove );
         }
         return result;
     }
@@ -160,15 +161,15 @@ public class ApplicationDescriptorServiceImpl
     /**
      * The icon as edited: the icon of the source left as is keeps the persisted icon, {@code null} removes it, anything else replaces it.
      */
-    private static ApplicationIconUpdate iconUpdate( final Icon sourceIcon, final Icon editedIcon )
+    private static IconUpdate iconUpdate( final Icon sourceIcon, final Icon editedIcon )
     {
         if ( Objects.equals( sourceIcon, editedIcon ) )
         {
-            return ApplicationIconUpdate.KEEP;
+            return IconUpdate.KEEP;
         }
         if ( editedIcon == null )
         {
-            return sourceIcon != null ? ApplicationIconUpdate.REMOVE : ApplicationIconUpdate.KEEP;
+            return sourceIcon != null ? IconUpdate.REMOVE : IconUpdate.KEEP;
         }
 
         final String mimeType = editedIcon.getMimeType();
@@ -185,7 +186,7 @@ public class ApplicationDescriptorServiceImpl
         {
             throw new IllegalArgumentException( String.format( "icon size %d exceeds the limit of %d bytes", size, MAX_ICON_SIZE ) );
         }
-        return ApplicationIconUpdate.replace( ByteSource.wrap( editedIcon.toByteArray() ), mimeType );
+        return IconUpdate.replace( ByteSource.wrap( editedIcon.toByteArray() ), mimeType );
     }
 
     @Activate

@@ -4,47 +4,38 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
-import com.enonic.xp.resource.CreateDynamicMacroParams;
-import com.enonic.xp.resource.CreateDynamicPhrasesParams;
-import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.CreateOrUpdateCmsParams;
+import com.enonic.xp.resource.CreateOrUpdateComponentParams;
+import com.enonic.xp.resource.CreateOrUpdateContentSchemaParams;
+import com.enonic.xp.resource.CreateOrUpdateMacroParams;
+import com.enonic.xp.resource.CreateOrUpdatePhrasesParams;
+import com.enonic.xp.resource.CreateOrUpdateStylesParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.UpdateDynamicComponentParams;
-import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
-import com.enonic.xp.resource.UpdateDynamicMacroParams;
-import com.enonic.xp.resource.UpdateDynamicPhrasesParams;
-import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
+/**
+ * One audit log entry per call of the dynamic schema service. A create or update entry carries the resource written, when one
+ * is given, and what became of the icon: the mime type and size of an icon set, or {@code iconRemoved} when it is removed.
+ */
 public interface DynamicSchemaAuditLogSupport
 {
-    void createComponent( CreateDynamicComponentParams params, DynamicComponentType type, DynamicSchemaResult<?> result );
+    void createComponent( CreateOrUpdateComponentParams params, DynamicComponentType type, DynamicSchemaResult<?> result );
 
-    void updateComponent( UpdateDynamicComponentParams params, DynamicComponentType type, DynamicSchemaResult<?> result );
+    void updateComponent( CreateOrUpdateComponentParams params, DynamicComponentType type, DynamicSchemaResult<?> result );
 
     void deleteComponent( DescriptorKey key, DynamicComponentType type );
 
-    void setComponentIcon( DescriptorKey key, DynamicComponentType type, String mimeType, long size );
+    void createContentSchema( CreateOrUpdateContentSchemaParams params, DynamicContentSchemaType type, DynamicSchemaResult<?> result );
 
-    void deleteComponentIcon( DescriptorKey key, DynamicComponentType type );
-
-    void createContentSchema( CreateDynamicContentSchemaParams params, DynamicContentSchemaType type, DynamicSchemaResult<?> result );
-
-    void updateContentSchema( UpdateDynamicContentSchemaParams params, DynamicContentSchemaType type, DynamicSchemaResult<?> result );
+    void updateContentSchema( CreateOrUpdateContentSchemaParams params, DynamicContentSchemaType type, DynamicSchemaResult<?> result );
 
     void deleteContentSchema( BaseSchemaName name, DynamicContentSchemaType type );
-
-    void setContentSchemaIcon( BaseSchemaName name, DynamicContentSchemaType type, String mimeType, long size );
-
-    void deleteContentSchemaIcon( BaseSchemaName name, DynamicContentSchemaType type );
 
     void createCms( CreateOrUpdateCmsParams params, DynamicSchemaResult<CmsDescriptor> result );
 
@@ -52,21 +43,17 @@ public interface DynamicSchemaAuditLogSupport
 
     void deleteCms( ApplicationKey key );
 
-    void createStyles( CreateDynamicStylesParams params, DynamicSchemaResult<StyleDescriptor> result );
+    void createStyles( CreateOrUpdateStylesParams params, DynamicSchemaResult<StyleDescriptor> result );
 
-    void updateStyles( UpdateDynamicStylesParams params, DynamicSchemaResult<StyleDescriptor> result );
+    void updateStyles( CreateOrUpdateStylesParams params, DynamicSchemaResult<StyleDescriptor> result );
 
     void deleteStyles( ApplicationKey key );
 
-    void createMacro( CreateDynamicMacroParams params, DynamicSchemaResult<MacroDescriptor> result );
+    void createMacro( CreateOrUpdateMacroParams params, DynamicSchemaResult<MacroDescriptor> result );
 
-    void updateMacro( UpdateDynamicMacroParams params, DynamicSchemaResult<MacroDescriptor> result );
+    void updateMacro( CreateOrUpdateMacroParams params, DynamicSchemaResult<MacroDescriptor> result );
 
     void deleteMacro( MacroKey key );
-
-    void setMacroIcon( MacroKey key, String mimeType, long size );
-
-    void deleteMacroIcon( MacroKey key );
 
     /**
      * @param iconMimeType mime type of the icon set along with the descriptor, {@code null} when no icon is set
@@ -79,9 +66,9 @@ public interface DynamicSchemaAuditLogSupport
      */
     void updateApplicationDescriptor( ApplicationKey key, String resource, String iconMimeType, long iconSize, boolean iconRemoved );
 
-    void createPhrases( CreateDynamicPhrasesParams params, Resource result );
+    void createPhrases( CreateOrUpdatePhrasesParams params, Resource result );
 
-    void updatePhrases( UpdateDynamicPhrasesParams params, Resource result );
+    void updatePhrases( CreateOrUpdatePhrasesParams params, Resource result );
 
     void deletePhrases( DeleteDynamicPhrasesParams params );
 }

@@ -54,14 +54,42 @@ export interface Icon {
     modifiedTime: string;
 }
 
-export type ContentSchemaType = 'CONTENT_TYPE' | 'FORM_FRAGMENT' | 'MIXIN';
-
-export interface CreateContentSchemaParams {
-    name: string;
-    resource: string;
+/**
+ * An icon to store along with a descriptor: `image/svg+xml` or `image/png`, at most 100 KB.
+ */
+export interface IconInput {
+    data: ByteSource;
+    mimeType: string;
 }
 
-interface CreateDynamicContentSchemaHandler<T extends Schema> {
+interface IconAwareHandler {
+    setIconData(value: ByteSource): void;
+
+    setIconMimeType(value: string): void;
+
+    setRemoveIcon(value: boolean): void;
+}
+
+// the icon left out keeps the stored one, `null` removes it, `{data, mimeType}` replaces it
+function applyIcon(bean: IconAwareHandler, icon: IconInput | null | undefined): void {
+    if (icon === null) {
+        bean.setRemoveIcon(true);
+    } else if (icon !== undefined) {
+        bean.setIconData(checkRequired(icon, 'data'));
+        bean.setIconMimeType(checkRequired(icon, 'mimeType'));
+    }
+}
+
+export type ContentSchemaType = 'CONTENT_TYPE' | 'FORM_FRAGMENT' | 'MIXIN';
+
+export interface CreateOrUpdateContentSchemaParams {
+    name: string;
+    resource?: string;
+    icon?: IconInput | null;
+}
+
+interface CreateOrUpdateContentSchemaHandler<T extends Schema>
+    extends IconAwareHandler {
     setName(value: string): void;
 
     setType(value: ContentSchemaType): void;
@@ -119,71 +147,76 @@ export interface MixinSchema
     config: Record<string, ConfigValue>;
 }
 
-/**
- * Creates dynamic content type resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Content type resource name.
- * @param {string} params.resource Content type resource value.
- *
- * @returns {ContentTypeSchema} created resource.
- */
-export function createContentType(params: CreateContentSchemaParams): ContentTypeSchema {
+function doCreateOrUpdateContentSchema<T extends Schema>(params: CreateOrUpdateContentSchemaParams, type: ContentSchemaType): T {
     const name = checkRequired(params, 'name');
-    const resource = checkRequired(params, 'resource');
 
-    const bean: CreateDynamicContentSchemaHandler<ContentTypeSchema> = __.newBean<CreateDynamicContentSchemaHandler<ContentTypeSchema>>(
-        'com.enonic.xp.lib.schema.CreateDynamicContentSchemaHandler');
+    const bean: CreateOrUpdateContentSchemaHandler<T> = __.newBean<CreateOrUpdateContentSchemaHandler<T>>(
+        'com.enonic.xp.lib.schema.CreateOrUpdateContentSchemaHandler');
     bean.setName(name);
-    bean.setType('CONTENT_TYPE');
-    bean.setResource(resource);
+    bean.setType(type);
+    if (params.resource != null) {
+        bean.setResource(params.resource);
+    }
+    applyIcon(bean, params.icon);
     return __.toNativeObject(bean.execute());
 }
 
 /**
- * Creates dynamic form fragment resource.
+ * Creates the dynamic content type, or updates it when there is one, with its icon.
+ *
+ * `resource` is required to create the content type; on update it may be left out to change only the icon.
+ * The icon is kept when `icon` is left out, removed when `null`, and replaced when `{data, mimeType}`
+ * (`image/svg+xml` or `image/png`, at most 100 KB).
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.name Form fragment resource name.
- * @param {string} params.resource Form fragment resource value.
+ * @param {string} params.name Content type name.
+ * @param {string} [params.resource] Content type resource value.
+ * @param {object|null} [params.icon] Icon to store, or `null` to remove the stored icon.
  *
- * @returns {FormFragmentSchema} created resource.
+ * @returns {ContentTypeSchema} the stored content type.
  */
-export function createFormFragment(params: CreateContentSchemaParams): FormFragmentSchema {
-    const name = checkRequired(params, 'name');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: CreateDynamicContentSchemaHandler<FormFragmentSchema> = __.newBean<CreateDynamicContentSchemaHandler<FormFragmentSchema>>(
-        'com.enonic.xp.lib.schema.CreateDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('FORM_FRAGMENT');
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
+export function createOrUpdateContentType(params: CreateOrUpdateContentSchemaParams): ContentTypeSchema {
+    return doCreateOrUpdateContentSchema(params, 'CONTENT_TYPE');
 }
 
 /**
- * Creates dynamic mixin resource.
+ * Creates the dynamic form fragment, or updates it when there is one, with its icon.
+ *
+ * `resource` is required to create the form fragment; on update it may be left out to change only the icon.
+ * The icon is kept when `icon` is left out, removed when `null`, and replaced when `{data, mimeType}`
+ * (`image/svg+xml` or `image/png`, at most 100 KB).
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.name Mixin resource name.
- * @param {string} params.resource Mixin resource value.
+ * @param {string} params.name Form fragment name.
+ * @param {string} [params.resource] Form fragment resource value.
+ * @param {object|null} [params.icon] Icon to store, or `null` to remove the stored icon.
  *
- * @returns {MixinSchema} created resource.
+ * @returns {FormFragmentSchema} the stored form fragment.
  */
-export function createMixin(params: CreateContentSchemaParams): MixinSchema {
-    const name = checkRequired(params, 'name');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: CreateDynamicContentSchemaHandler<MixinSchema> = __.newBean<CreateDynamicContentSchemaHandler<MixinSchema>>(
-        'com.enonic.xp.lib.schema.CreateDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('MIXIN');
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
+export function createOrUpdateFormFragment(params: CreateOrUpdateContentSchemaParams): FormFragmentSchema {
+    return doCreateOrUpdateContentSchema(params, 'FORM_FRAGMENT');
 }
 
 /**
- * @deprecated Use {@link CreateContentSchemaParams} instead.
+ * Creates the dynamic mixin, or updates it when there is one, with its icon.
+ *
+ * `resource` is required to create the mixin; on update it may be left out to change only the icon.
+ * The icon is kept when `icon` is left out, removed when `null`, and replaced when `{data, mimeType}`
+ * (`image/svg+xml` or `image/png`, at most 100 KB).
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.name Mixin name.
+ * @param {string} [params.resource] Mixin resource value.
+ * @param {object|null} [params.icon] Icon to store, or `null` to remove the stored icon.
+ *
+ * @returns {MixinSchema} the stored mixin.
+ */
+export function createOrUpdateMixin(params: CreateOrUpdateContentSchemaParams): MixinSchema {
+    return doCreateOrUpdateContentSchema(params, 'MIXIN');
+}
+
+/**
+ * @deprecated Use {@link CreateOrUpdateContentSchemaParams} instead.
  */
 export interface CreateDynamicContentSchemaParams {
     name: string;
@@ -191,41 +224,56 @@ export interface CreateDynamicContentSchemaParams {
     resource: string;
 }
 
+function dispatchContentSchema<T>(type: ContentSchemaType, contentType: () => T, formFragment: () => T, mixin: () => T): T {
+    switch (type) {
+    case 'CONTENT_TYPE':
+        return contentType();
+    case 'FORM_FRAGMENT':
+        return formFragment();
+    case 'MIXIN':
+        return mixin();
+    default:
+        throw new Error(`Unsupported schema type: ${String(type)}`);
+    }
+}
+
 /**
- * Creates dynamic content schema resource.
+ * Creates dynamic content schema resource, or updates it when there is one.
  *
- * @deprecated Use {@link createContentType}, {@link createFormFragment} or {@link createMixin} instead.
+ * @deprecated Use {@link createOrUpdateContentType}, {@link createOrUpdateFormFragment} or {@link createOrUpdateMixin} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Schema resource name.
  * @param {string} params.type Schema type.
  * @param {string} params.resource Schema resource value.
  *
- * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created resource.
+ * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} created or updated resource.
  */
 export function createSchema(params: CreateDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
     const type = checkRequired(params, 'type');
+    checkRequired(params, 'resource');
 
-    switch (type) {
-    case 'CONTENT_TYPE':
-        return createContentType(params);
-    case 'FORM_FRAGMENT':
-        return createFormFragment(params);
-    case 'MIXIN':
-        return createMixin(params);
-    default:
-        throw new Error(`Unsupported schema type: ${String(type)}`);
-    }
+    return dispatchContentSchema<ContentTypeSchema | FormFragmentSchema | MixinSchema>(type,
+        () => createOrUpdateContentType(params),
+        () => createOrUpdateFormFragment(params),
+        () => createOrUpdateMixin(params));
 }
 
 export type ComponentDescriptorType = 'PAGE' | 'LAYOUT' | 'PART';
 
-export interface CreateComponentParams {
+export interface CreateOrUpdateComponentParams {
     key: string;
     resource: string;
 }
 
-interface CreateDynamicComponentHandler<T extends ComponentDescriptor> {
+export interface CreateOrUpdatePartParams {
+    key: string;
+    resource?: string;
+    icon?: IconInput | null;
+}
+
+interface CreateOrUpdateComponentHandler<T extends ComponentDescriptor>
+    extends IconAwareHandler {
     setKey(value: string): void;
 
     setType(value: ComponentDescriptorType): void;
@@ -270,74 +318,68 @@ export interface PartDescriptor
     icon?: Icon | null;
 }
 
-/**
- * Creates dynamic part resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Part resource descriptor key.
- * @param {string} params.resource Part resource value.
- *
- * @returns {PartDescriptor} created resource.
- */
-export function createPart(params: CreateComponentParams): PartDescriptor {
+function doCreateOrUpdateComponent<T extends ComponentDescriptor>(params: CreateOrUpdatePartParams, type: ComponentDescriptorType): T {
     const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
 
-    const bean: CreateDynamicComponentHandler<PartDescriptor> = __.newBean<CreateDynamicComponentHandler<PartDescriptor>>(
-        'com.enonic.xp.lib.schema.CreateDynamicComponentHandler');
-
+    const bean: CreateOrUpdateComponentHandler<T> = __.newBean<CreateOrUpdateComponentHandler<T>>(
+        'com.enonic.xp.lib.schema.CreateOrUpdateComponentHandler');
     bean.setKey(key);
-    bean.setType('PART');
-    bean.setResource(resource);
+    bean.setType(type);
+    if (params.resource != null) {
+        bean.setResource(params.resource);
+    }
+    applyIcon(bean, params.icon);
     return __.toNativeObject(bean.execute());
 }
 
 /**
- * Creates dynamic layout resource.
+ * Creates the dynamic part, or updates it when there is one, with its icon.
+ *
+ * `resource` is required to create the part; on update it may be left out to change only the icon.
+ * The icon is kept when `icon` is left out, removed when `null`, and replaced when `{data, mimeType}`
+ * (`image/svg+xml` or `image/png`, at most 100 KB).
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Layout resource descriptor key.
+ * @param {string} params.key Part descriptor key.
+ * @param {string} [params.resource] Part resource value.
+ * @param {object|null} [params.icon] Icon to store, or `null` to remove the stored icon.
+ *
+ * @returns {PartDescriptor} the stored part.
+ */
+export function createOrUpdatePart(params: CreateOrUpdatePartParams): PartDescriptor {
+    return doCreateOrUpdateComponent(params, 'PART');
+}
+
+/**
+ * Creates the dynamic layout, or updates it when there is one.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.key Layout descriptor key.
  * @param {string} params.resource Layout resource value.
  *
- * @returns {LayoutDescriptor} created resource.
+ * @returns {LayoutDescriptor} the stored layout.
  */
-export function createLayout(params: CreateComponentParams): LayoutDescriptor {
-    const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: CreateDynamicComponentHandler<LayoutDescriptor> = __.newBean<CreateDynamicComponentHandler<LayoutDescriptor>>(
-        'com.enonic.xp.lib.schema.CreateDynamicComponentHandler');
-
-    bean.setKey(key);
-    bean.setType('LAYOUT');
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
+export function createOrUpdateLayout(params: CreateOrUpdateComponentParams): LayoutDescriptor {
+    checkRequired(params, 'resource');
+    return doCreateOrUpdateComponent(params, 'LAYOUT');
 }
 
 /**
- * Creates dynamic page resource.
+ * Creates the dynamic page, or updates it when there is one.
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Page resource descriptor key.
+ * @param {string} params.key Page descriptor key.
  * @param {string} params.resource Page resource value.
  *
- * @returns {PageDescriptor} created resource.
+ * @returns {PageDescriptor} the stored page.
  */
-export function createPage(params: CreateComponentParams): PageDescriptor {
-    const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: CreateDynamicComponentHandler<PageDescriptor> = __.newBean<CreateDynamicComponentHandler<PageDescriptor>>(
-        'com.enonic.xp.lib.schema.CreateDynamicComponentHandler');
-
-    bean.setKey(key);
-    bean.setType('PAGE');
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
+export function createOrUpdatePage(params: CreateOrUpdateComponentParams): PageDescriptor {
+    checkRequired(params, 'resource');
+    return doCreateOrUpdateComponent(params, 'PAGE');
 }
 
 /**
- * @deprecated Use {@link CreateComponentParams} instead.
+ * @deprecated Use {@link CreateOrUpdatePartParams} or {@link CreateOrUpdateComponentParams} instead.
  */
 export interface CreateDynamicComponentParams {
     key: string;
@@ -345,44 +387,52 @@ export interface CreateDynamicComponentParams {
     resource: string;
 }
 
+function dispatchComponent<T>(type: ComponentDescriptorType, part: () => T, layout: () => T, page: () => T): T {
+    switch (type) {
+    case 'PART':
+        return part();
+    case 'LAYOUT':
+        return layout();
+    case 'PAGE':
+        return page();
+    default:
+        throw new Error(`Unsupported component type: ${String(type)}`);
+    }
+}
+
 /**
- * Creates dynamic component resource.
+ * Creates dynamic component resource, or updates it when there is one.
  *
- * @deprecated Use {@link createPart}, {@link createLayout} or {@link createPage} instead.
+ * @deprecated Use {@link createOrUpdatePart}, {@link createOrUpdateLayout} or {@link createOrUpdatePage} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Component resource descriptor key.
  * @param {string} params.type Component type.
  * @param {string} params.resource Component resource value.
  *
- * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} created resource.
+ * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} created or updated resource.
  */
 export function createComponent(params: CreateDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
     const type = checkRequired(params, 'type');
+    checkRequired(params, 'resource');
 
-    switch (type) {
-    case 'PART':
-        return createPart(params);
-    case 'LAYOUT':
-        return createLayout(params);
-    case 'PAGE':
-        return createPage(params);
-    default:
-        throw new Error(`Unsupported component type: ${String(type)}`);
-    }
+    return dispatchComponent<LayoutDescriptor | PageDescriptor | PartDescriptor>(type,
+        () => createOrUpdatePart(params),
+        () => createOrUpdateLayout(params),
+        () => createOrUpdatePage(params));
 }
 
-export interface CreateStylesParams {
+export interface CreateOrUpdateStylesParams {
     application: string;
     resource: string;
 }
 
 /**
- * @deprecated Use {@link CreateStylesParams} instead.
+ * @deprecated Use {@link CreateOrUpdateStylesParams} instead.
  */
-export type CreateDynamicStylesParams = CreateStylesParams;
+export type CreateDynamicStylesParams = CreateOrUpdateStylesParams;
 
-interface CreateDynamicStylesHandler {
+interface CreateOrUpdateStylesHandler {
     setApplication(value: string): void;
 
     setResource(value: string): void;
@@ -415,22 +465,38 @@ export interface StyleDescriptor {
 }
 
 /**
- * Creates dynamic styles schema resource.
+ * Creates the dynamic styles schema resource of the application, or updates it when there is one.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  * @param {string} params.resource Styles resource value.
  *
- * @returns {StyleDescriptor} created resource.
+ * @returns {StyleDescriptor} the stored resource.
  */
-export function createStyles(params: CreateStylesParams): StyleDescriptor {
+export function createOrUpdateStyles(params: CreateOrUpdateStylesParams): StyleDescriptor {
     const application = checkRequired(params, 'application');
     const resource = checkRequired(params, 'resource');
 
-    const bean: CreateDynamicStylesHandler = __.newBean<CreateDynamicStylesHandler>('com.enonic.xp.lib.schema.CreateDynamicStylesHandler');
+    const bean: CreateOrUpdateStylesHandler = __.newBean<CreateOrUpdateStylesHandler>(
+        'com.enonic.xp.lib.schema.CreateOrUpdateStylesHandler');
     bean.setApplication(application);
     bean.setResource(resource);
     return __.toNativeObject(bean.execute());
+}
+
+/**
+ * Creates dynamic styles schema resource, or updates it when there is one.
+ *
+ * @deprecated Use {@link createOrUpdateStyles} instead.
+ *
+ * @param {object} params JSON with the parameters.
+ * @param {string} params.application Application key.
+ * @param {string} params.resource Styles resource value.
+ *
+ * @returns {StyleDescriptor} created or updated resource.
+ */
+export function createStyles(params: CreateDynamicStylesParams): StyleDescriptor {
+    return createOrUpdateStyles(params);
 }
 
 export interface CreateOrUpdateCmsParams {
@@ -481,6 +547,16 @@ interface GetDynamicContentSchemaHandler<T extends Schema> {
     execute(): T | null;
 }
 
+function doGetContentSchema<T extends Schema>(params: GetContentSchemaParams, type: ContentSchemaType): T | null {
+    const name = checkRequired(params, 'name');
+
+    const bean: GetDynamicContentSchemaHandler<T> = __.newBean<GetDynamicContentSchemaHandler<T>>(
+        'com.enonic.xp.lib.schema.GetDynamicContentSchemaHandler');
+    bean.setName(name);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
 /**
  * Fetches dynamic content type resource.
  *
@@ -490,13 +566,7 @@ interface GetDynamicContentSchemaHandler<T extends Schema> {
  * @returns {ContentTypeSchema | null} fetched resource, or `null` if not found.
  */
 export function getContentType(params: GetContentSchemaParams): ContentTypeSchema | null {
-    const name = checkRequired(params, 'name');
-
-    const bean: GetDynamicContentSchemaHandler<ContentTypeSchema> = __.newBean<GetDynamicContentSchemaHandler<ContentTypeSchema>>(
-        'com.enonic.xp.lib.schema.GetDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('CONTENT_TYPE');
-    return __.toNativeObject(bean.execute());
+    return doGetContentSchema(params, 'CONTENT_TYPE');
 }
 
 /**
@@ -508,13 +578,7 @@ export function getContentType(params: GetContentSchemaParams): ContentTypeSchem
  * @returns {FormFragmentSchema | null} fetched resource, or `null` if not found.
  */
 export function getFormFragment(params: GetContentSchemaParams): FormFragmentSchema | null {
-    const name = checkRequired(params, 'name');
-
-    const bean: GetDynamicContentSchemaHandler<FormFragmentSchema> = __.newBean<GetDynamicContentSchemaHandler<FormFragmentSchema>>(
-        'com.enonic.xp.lib.schema.GetDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('FORM_FRAGMENT');
-    return __.toNativeObject(bean.execute());
+    return doGetContentSchema(params, 'FORM_FRAGMENT');
 }
 
 /**
@@ -526,13 +590,7 @@ export function getFormFragment(params: GetContentSchemaParams): FormFragmentSch
  * @returns {MixinSchema | null} fetched resource, or `null` if not found.
  */
 export function getMixin(params: GetContentSchemaParams): MixinSchema | null {
-    const name = checkRequired(params, 'name');
-
-    const bean: GetDynamicContentSchemaHandler<MixinSchema> = __.newBean<GetDynamicContentSchemaHandler<MixinSchema>>(
-        'com.enonic.xp.lib.schema.GetDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('MIXIN');
-    return __.toNativeObject(bean.execute());
+    return doGetContentSchema(params, 'MIXIN');
 }
 
 /**
@@ -557,16 +615,10 @@ export interface GetDynamicContentSchemaParams {
 export function getSchema(params: GetDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema | null {
     const type = checkRequired(params, 'type');
 
-    switch (type) {
-    case 'CONTENT_TYPE':
-        return getContentType(params);
-    case 'FORM_FRAGMENT':
-        return getFormFragment(params);
-    case 'MIXIN':
-        return getMixin(params);
-    default:
-        throw new Error(`Unsupported schema type: ${String(type)}`);
-    }
+    return dispatchContentSchema<ContentTypeSchema | FormFragmentSchema | MixinSchema | null>(type,
+        () => getContentType(params),
+        () => getFormFragment(params),
+        () => getMixin(params));
 }
 
 export interface GetComponentParams {
@@ -581,6 +633,16 @@ interface GetDynamicComponentHandler<T extends ComponentDescriptor> {
     execute(): T | null;
 }
 
+function doGetComponent<T extends ComponentDescriptor>(params: GetComponentParams, type: ComponentDescriptorType): T | null {
+    const key = checkRequired(params, 'key');
+
+    const bean: GetDynamicComponentHandler<T> = __.newBean<GetDynamicComponentHandler<T>>(
+        'com.enonic.xp.lib.schema.GetDynamicComponentHandler');
+    bean.setKey(key);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
 /**
  * Fetches dynamic part resource.
  *
@@ -590,13 +652,7 @@ interface GetDynamicComponentHandler<T extends ComponentDescriptor> {
  * @returns {PartDescriptor | null} fetched resource, or `null` if not found.
  */
 export function getPart(params: GetComponentParams): PartDescriptor | null {
-    const key = checkRequired(params, 'key');
-
-    const bean: GetDynamicComponentHandler<PartDescriptor> = __.newBean<GetDynamicComponentHandler<PartDescriptor>>(
-        'com.enonic.xp.lib.schema.GetDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('PART');
-    return __.toNativeObject(bean.execute());
+    return doGetComponent(params, 'PART');
 }
 
 /**
@@ -608,13 +664,7 @@ export function getPart(params: GetComponentParams): PartDescriptor | null {
  * @returns {LayoutDescriptor | null} fetched resource, or `null` if not found.
  */
 export function getLayout(params: GetComponentParams): LayoutDescriptor | null {
-    const key = checkRequired(params, 'key');
-
-    const bean: GetDynamicComponentHandler<LayoutDescriptor> = __.newBean<GetDynamicComponentHandler<LayoutDescriptor>>(
-        'com.enonic.xp.lib.schema.GetDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('LAYOUT');
-    return __.toNativeObject(bean.execute());
+    return doGetComponent(params, 'LAYOUT');
 }
 
 /**
@@ -626,13 +676,7 @@ export function getLayout(params: GetComponentParams): LayoutDescriptor | null {
  * @returns {PageDescriptor | null} fetched resource, or `null` if not found.
  */
 export function getPage(params: GetComponentParams): PageDescriptor | null {
-    const key = checkRequired(params, 'key');
-
-    const bean: GetDynamicComponentHandler<PageDescriptor> = __.newBean<GetDynamicComponentHandler<PageDescriptor>>(
-        'com.enonic.xp.lib.schema.GetDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('PAGE');
-    return __.toNativeObject(bean.execute());
+    return doGetComponent(params, 'PAGE');
 }
 
 /**
@@ -657,16 +701,10 @@ export interface GetDynamicComponentParams {
 export function getComponent(params: GetDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
     const type = checkRequired(params, 'type');
 
-    switch (type) {
-    case 'PART':
-        return getPart(params) as PartDescriptor;
-    case 'LAYOUT':
-        return getLayout(params) as LayoutDescriptor;
-    case 'PAGE':
-        return getPage(params) as PageDescriptor;
-    default:
-        throw new Error(`Unsupported component type: ${String(type)}`);
-    }
+    return dispatchComponent<LayoutDescriptor | PageDescriptor | PartDescriptor>(type,
+        () => getPart(params) as PartDescriptor,
+        () => getLayout(params) as LayoutDescriptor,
+        () => getPage(params) as PageDescriptor);
 }
 
 export interface CmsDescriptor {
@@ -780,8 +818,18 @@ interface DeleteDynamicContentSchemaHandler {
     execute(): boolean;
 }
 
+function doDeleteContentSchema(params: DeleteContentSchemaParams, type: ContentSchemaType): boolean {
+    const name = checkRequired(params, 'name');
+
+    const bean: DeleteDynamicContentSchemaHandler = __.newBean<DeleteDynamicContentSchemaHandler>(
+        'com.enonic.xp.lib.schema.DeleteDynamicContentSchemaHandler');
+    bean.setName(name);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
 /**
- * Removes dynamic content type resource.
+ * Removes dynamic content type resource, with its icon.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Content type resource name.
@@ -789,17 +837,11 @@ interface DeleteDynamicContentSchemaHandler {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deleteContentType(params: DeleteContentSchemaParams): boolean {
-    const name = checkRequired(params, 'name');
-
-    const bean: DeleteDynamicContentSchemaHandler = __.newBean<DeleteDynamicContentSchemaHandler>(
-        'com.enonic.xp.lib.schema.DeleteDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('CONTENT_TYPE');
-    return __.toNativeObject(bean.execute());
+    return doDeleteContentSchema(params, 'CONTENT_TYPE');
 }
 
 /**
- * Removes dynamic form fragment resource.
+ * Removes dynamic form fragment resource, with its icon.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Form fragment resource name.
@@ -807,17 +849,11 @@ export function deleteContentType(params: DeleteContentSchemaParams): boolean {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deleteFormFragment(params: DeleteContentSchemaParams): boolean {
-    const name = checkRequired(params, 'name');
-
-    const bean: DeleteDynamicContentSchemaHandler = __.newBean<DeleteDynamicContentSchemaHandler>(
-        'com.enonic.xp.lib.schema.DeleteDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('FORM_FRAGMENT');
-    return __.toNativeObject(bean.execute());
+    return doDeleteContentSchema(params, 'FORM_FRAGMENT');
 }
 
 /**
- * Removes dynamic mixin resource.
+ * Removes dynamic mixin resource, with its icon.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Mixin resource name.
@@ -825,13 +861,7 @@ export function deleteFormFragment(params: DeleteContentSchemaParams): boolean {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deleteMixin(params: DeleteContentSchemaParams): boolean {
-    const name = checkRequired(params, 'name');
-
-    const bean: DeleteDynamicContentSchemaHandler = __.newBean<DeleteDynamicContentSchemaHandler>(
-        'com.enonic.xp.lib.schema.DeleteDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('MIXIN');
-    return __.toNativeObject(bean.execute());
+    return doDeleteContentSchema(params, 'MIXIN');
 }
 
 /**
@@ -856,16 +886,10 @@ export interface DeleteDynamicContentSchemaParams {
 export function deleteSchema(params: DeleteDynamicContentSchemaParams): boolean {
     const type = checkRequired(params, 'type');
 
-    switch (type) {
-    case 'CONTENT_TYPE':
-        return deleteContentType(params);
-    case 'FORM_FRAGMENT':
-        return deleteFormFragment(params);
-    case 'MIXIN':
-        return deleteMixin(params);
-    default:
-        throw new Error(`Unsupported schema type: ${String(type)}`);
-    }
+    return dispatchContentSchema<boolean>(type,
+        () => deleteContentType(params),
+        () => deleteFormFragment(params),
+        () => deleteMixin(params));
 }
 
 export interface DeleteComponentParams {
@@ -880,8 +904,18 @@ interface DeleteDynamicComponentHandler {
     execute(): boolean;
 }
 
+function doDeleteComponent(params: DeleteComponentParams, type: ComponentDescriptorType): boolean {
+    const key = checkRequired(params, 'key');
+
+    const bean: DeleteDynamicComponentHandler = __.newBean<DeleteDynamicComponentHandler>(
+        'com.enonic.xp.lib.schema.DeleteDynamicComponentHandler');
+    bean.setKey(key);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
 /**
- * Removes dynamic part resource.
+ * Removes dynamic part resource, with its icon.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Part resource descriptor key.
@@ -889,13 +923,7 @@ interface DeleteDynamicComponentHandler {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deletePart(params: DeleteComponentParams): boolean {
-    const key = checkRequired(params, 'key');
-
-    const bean: DeleteDynamicComponentHandler = __.newBean<DeleteDynamicComponentHandler>(
-        'com.enonic.xp.lib.schema.DeleteDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('PART');
-    return __.toNativeObject(bean.execute());
+    return doDeleteComponent(params, 'PART');
 }
 
 /**
@@ -907,13 +935,7 @@ export function deletePart(params: DeleteComponentParams): boolean {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deleteLayout(params: DeleteComponentParams): boolean {
-    const key = checkRequired(params, 'key');
-
-    const bean: DeleteDynamicComponentHandler = __.newBean<DeleteDynamicComponentHandler>(
-        'com.enonic.xp.lib.schema.DeleteDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('LAYOUT');
-    return __.toNativeObject(bean.execute());
+    return doDeleteComponent(params, 'LAYOUT');
 }
 
 /**
@@ -925,13 +947,7 @@ export function deleteLayout(params: DeleteComponentParams): boolean {
  * @returns {boolean} true if succeeded, false otherwise.
  */
 export function deletePage(params: DeleteComponentParams): boolean {
-    const key = checkRequired(params, 'key');
-
-    const bean: DeleteDynamicComponentHandler = __.newBean<DeleteDynamicComponentHandler>(
-        'com.enonic.xp.lib.schema.DeleteDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('PAGE');
-    return __.toNativeObject(bean.execute());
+    return doDeleteComponent(params, 'PAGE');
 }
 
 /**
@@ -956,16 +972,10 @@ export interface DeleteDynamicComponentParams {
 export function deleteComponent(params: DeleteDynamicComponentParams): boolean {
     const type = checkRequired(params, 'type');
 
-    switch (type) {
-    case 'PART':
-        return deletePart(params);
-    case 'LAYOUT':
-        return deleteLayout(params);
-    case 'PAGE':
-        return deletePage(params);
-    default:
-        throw new Error(`Unsupported component type: ${String(type)}`);
-    }
+    return dispatchComponent<boolean>(type,
+        () => deletePart(params),
+        () => deleteLayout(params),
+        () => deletePage(params));
 }
 
 export interface DeleteStylesParams {
@@ -1026,86 +1036,8 @@ export function deleteCms(params: DeleteCmsParams): boolean {
     return __.toNativeObject(bean.execute());
 }
 
-export interface UpdateContentSchemaParams {
-    name: string;
-    resource: string;
-}
-
-interface UpdateDynamicContentSchemaHandler<T extends Schema> {
-    setName(value: string): void;
-
-    setType(value: ContentSchemaType): void;
-
-    setResource(value: string): void;
-
-    execute(): T;
-}
-
 /**
- * Updates dynamic content type resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Content type resource name.
- * @param {string} params.resource Content type resource value.
- *
- * @returns {ContentTypeSchema} updated resource.
- */
-export function updateContentType(params: UpdateContentSchemaParams): ContentTypeSchema {
-    const name = checkRequired(params, 'name');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicContentSchemaHandler<ContentTypeSchema> = __.newBean<UpdateDynamicContentSchemaHandler<ContentTypeSchema>>(
-        'com.enonic.xp.lib.schema.UpdateDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('CONTENT_TYPE');
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
-}
-
-/**
- * Updates dynamic form fragment resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Form fragment resource name.
- * @param {string} params.resource Form fragment resource value.
- *
- * @returns {FormFragmentSchema} updated resource.
- */
-export function updateFormFragment(params: UpdateContentSchemaParams): FormFragmentSchema {
-    const name = checkRequired(params, 'name');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicContentSchemaHandler<FormFragmentSchema> = __.newBean<UpdateDynamicContentSchemaHandler<FormFragmentSchema>>(
-        'com.enonic.xp.lib.schema.UpdateDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('FORM_FRAGMENT');
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
-}
-
-/**
- * Updates dynamic mixin resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Mixin resource name.
- * @param {string} params.resource Mixin resource value.
- *
- * @returns {MixinSchema} updated resource.
- */
-export function updateMixin(params: UpdateContentSchemaParams): MixinSchema {
-    const name = checkRequired(params, 'name');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicContentSchemaHandler<MixinSchema> = __.newBean<UpdateDynamicContentSchemaHandler<MixinSchema>>(
-        'com.enonic.xp.lib.schema.UpdateDynamicContentSchemaHandler');
-    bean.setName(name);
-    bean.setType('MIXIN');
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
-}
-
-/**
- * @deprecated Use {@link UpdateContentSchemaParams} instead.
+ * @deprecated Use {@link CreateOrUpdateContentSchemaParams} instead.
  */
 export interface UpdateDynamicContentSchemaParams {
     name: string;
@@ -1114,115 +1046,23 @@ export interface UpdateDynamicContentSchemaParams {
 }
 
 /**
- * Updates dynamic content schema resource.
+ * Updates dynamic content schema resource, or creates it when there is none.
  *
- * @deprecated Use {@link updateContentType}, {@link updateFormFragment} or {@link updateMixin} instead.
+ * @deprecated Use {@link createOrUpdateContentType}, {@link createOrUpdateFormFragment} or {@link createOrUpdateMixin} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.name Content schema resource name.
  * @param {string} params.type Content schema type.
  * @param {string} params.resource Schema resource value.
  *
- * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} updated resource.
+ * @returns {ContentTypeSchema | FormFragmentSchema | MixinSchema} updated or created resource.
  */
 export function updateSchema(params: UpdateDynamicContentSchemaParams): ContentTypeSchema | FormFragmentSchema | MixinSchema {
-    const type = checkRequired(params, 'type');
-
-    switch (type) {
-    case 'CONTENT_TYPE':
-        return updateContentType(params);
-    case 'FORM_FRAGMENT':
-        return updateFormFragment(params);
-    case 'MIXIN':
-        return updateMixin(params);
-    default:
-        throw new Error(`Unsupported schema type: ${String(type)}`);
-    }
-}
-
-export interface UpdateComponentParams {
-    key: string;
-    resource: string;
-}
-
-interface UpdateDynamicComponentHandler<T extends ComponentDescriptor> {
-    setKey(key: string): void;
-
-    setType(key: ComponentDescriptorType): void;
-
-    setResource(key: string): void;
-
-    execute(): T;
+    return createSchema(params);
 }
 
 /**
- * Updates dynamic part resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Part resource descriptor key.
- * @param {string} params.resource Part resource value.
- *
- * @returns {PartDescriptor} updated resource.
- */
-export function updatePart(params: UpdateComponentParams): PartDescriptor {
-    const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicComponentHandler<PartDescriptor> = __.newBean<UpdateDynamicComponentHandler<PartDescriptor>>(
-        'com.enonic.xp.lib.schema.UpdateDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('PART');
-    bean.setResource(resource);
-
-    return __.toNativeObject(bean.execute());
-}
-
-/**
- * Updates dynamic layout resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Layout resource descriptor key.
- * @param {string} params.resource Layout resource value.
- *
- * @returns {LayoutDescriptor} updated resource.
- */
-export function updateLayout(params: UpdateComponentParams): LayoutDescriptor {
-    const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicComponentHandler<LayoutDescriptor> = __.newBean<UpdateDynamicComponentHandler<LayoutDescriptor>>(
-        'com.enonic.xp.lib.schema.UpdateDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('LAYOUT');
-    bean.setResource(resource);
-
-    return __.toNativeObject(bean.execute());
-}
-
-/**
- * Updates dynamic page resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Page resource descriptor key.
- * @param {string} params.resource Page resource value.
- *
- * @returns {PageDescriptor} updated resource.
- */
-export function updatePage(params: UpdateComponentParams): PageDescriptor {
-    const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicComponentHandler<PageDescriptor> = __.newBean<UpdateDynamicComponentHandler<PageDescriptor>>(
-        'com.enonic.xp.lib.schema.UpdateDynamicComponentHandler');
-    bean.setKey(key);
-    bean.setType('PAGE');
-    bean.setResource(resource);
-
-    return __.toNativeObject(bean.execute());
-}
-
-/**
- * @deprecated Use {@link UpdateComponentParams} instead.
+ * @deprecated Use {@link CreateOrUpdatePartParams} or {@link CreateOrUpdateComponentParams} instead.
  */
 export interface UpdateDynamicComponentParams {
     key: string;
@@ -1231,30 +1071,19 @@ export interface UpdateDynamicComponentParams {
 }
 
 /**
- * Updates dynamic component resource.
+ * Updates dynamic component resource, or creates it when there is none.
  *
- * @deprecated Use {@link updatePart}, {@link updateLayout} or {@link updatePage} instead.
+ * @deprecated Use {@link createOrUpdatePart}, {@link createOrUpdateLayout} or {@link createOrUpdatePage} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Component resource descriptor key.
  * @param {string} params.type Component type.
  * @param {string} params.resource Component resource value.
  *
- * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} updated resource.
+ * @returns {LayoutDescriptor | PageDescriptor | PartDescriptor} updated or created resource.
  */
 export function updateComponent(params: UpdateDynamicComponentParams): LayoutDescriptor | PageDescriptor | PartDescriptor {
-    const type = checkRequired(params, 'type');
-
-    switch (type) {
-    case 'PART':
-        return updatePart(params);
-    case 'LAYOUT':
-        return updateLayout(params);
-    case 'PAGE':
-        return updatePage(params);
-    default:
-        throw new Error(`Unsupported component type: ${String(type)}`);
-    }
+    return createComponent(params);
 }
 
 /**
@@ -1297,41 +1126,24 @@ export function updateSite(params: UpdateDynamicSiteParams): SiteDescriptor {
     return createOrUpdateCms(params);
 }
 
-export interface UpdateStylesParams {
-    application: string;
-    resource: string;
-}
-
 /**
- * @deprecated Use {@link UpdateStylesParams} instead.
+ * @deprecated Use {@link CreateOrUpdateStylesParams} instead.
  */
-export type UpdateDynamicStylesParams = UpdateStylesParams;
-
-interface UpdateDynamicStylesHandler {
-    setApplication(value: string): void;
-
-    setResource(value: string): void;
-
-    execute(): StyleDescriptor;
-}
+export type UpdateDynamicStylesParams = CreateOrUpdateStylesParams;
 
 /**
- * Updates dynamic styles schema resource.
+ * Updates dynamic styles schema resource, or creates it when there is none.
+ *
+ * @deprecated Use {@link createOrUpdateStyles} instead.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  * @param {string} params.resource Styles schema resource value.
  *
- * @returns {StyleDescriptor} updated resource.
+ * @returns {StyleDescriptor} updated or created resource.
  */
-export function updateStyles(params: UpdateStylesParams): StyleDescriptor {
-    const application = checkRequired(params, 'application');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicStylesHandler = __.newBean<UpdateDynamicStylesHandler>('com.enonic.xp.lib.schema.UpdateDynamicStylesHandler');
-    bean.setApplication(application);
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
+export function updateStyles(params: UpdateDynamicStylesParams): StyleDescriptor {
+    return createOrUpdateStyles(params);
 }
 
 export interface Phrases {
@@ -1341,13 +1153,13 @@ export interface Phrases {
     resource: string;
 }
 
-export interface CreatePhrasesParams {
+export interface CreateOrUpdatePhrasesParams {
     application: string;
     name: string;
     resource: string;
 }
 
-interface CreateDynamicPhrasesHandler {
+interface CreateOrUpdatePhrasesHandler {
     setApplication(value: string): void;
 
     setName(value: string): void;
@@ -1358,61 +1170,22 @@ interface CreateDynamicPhrasesHandler {
 }
 
 /**
- * Creates dynamic i18n phrases resource.
+ * Creates the dynamic i18n phrases resource, or updates it when there is one.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.application Application key.
  * @param {string} params.name Phrases file name without the `.properties` extension, e.g. `phrases` or `phrases_en`.
  * @param {string} params.resource Phrases resource value in the Java properties format.
  *
- * @returns {Phrases} created resource.
+ * @returns {Phrases} the stored resource.
  */
-export function createPhrases(params: CreatePhrasesParams): Phrases {
+export function createOrUpdatePhrases(params: CreateOrUpdatePhrasesParams): Phrases {
     const application = checkRequired(params, 'application');
     const name = checkRequired(params, 'name');
     const resource = checkRequired(params, 'resource');
 
-    const bean: CreateDynamicPhrasesHandler = __.newBean<CreateDynamicPhrasesHandler>(
-        'com.enonic.xp.lib.schema.CreateDynamicPhrasesHandler');
-    bean.setApplication(application);
-    bean.setName(name);
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
-}
-
-export interface UpdatePhrasesParams {
-    application: string;
-    name: string;
-    resource: string;
-}
-
-interface UpdateDynamicPhrasesHandler {
-    setApplication(value: string): void;
-
-    setName(value: string): void;
-
-    setResource(value: string): void;
-
-    execute(): Phrases;
-}
-
-/**
- * Updates dynamic i18n phrases resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.application Application key.
- * @param {string} params.name Phrases file name without the `.properties` extension, e.g. `phrases` or `phrases_en`.
- * @param {string} params.resource Phrases resource value in the Java properties format.
- *
- * @returns {Phrases} updated resource.
- */
-export function updatePhrases(params: UpdatePhrasesParams): Phrases {
-    const application = checkRequired(params, 'application');
-    const name = checkRequired(params, 'name');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicPhrasesHandler = __.newBean<UpdateDynamicPhrasesHandler>(
-        'com.enonic.xp.lib.schema.UpdateDynamicPhrasesHandler');
+    const bean: CreateOrUpdatePhrasesHandler = __.newBean<CreateOrUpdatePhrasesHandler>(
+        'com.enonic.xp.lib.schema.CreateOrUpdatePhrasesHandler');
     bean.setApplication(application);
     bean.setName(name);
     bean.setResource(resource);
@@ -1522,6 +1295,16 @@ interface ListDynamicComponentsHandler<T extends ComponentDescriptor> {
     execute(): T[];
 }
 
+function doListComponents<T extends ComponentDescriptor>(params: ListComponentsParams, type: ComponentDescriptorType): T[] {
+    const application = checkRequired(params, 'application');
+
+    const bean: ListDynamicComponentsHandler<T> = __.newBean<ListDynamicComponentsHandler<T>>(
+        'com.enonic.xp.lib.schema.ListDynamicComponentsHandler');
+    bean.setApplication(application);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
 /**
  * Fetches dynamic part resources.
  *
@@ -1531,13 +1314,7 @@ interface ListDynamicComponentsHandler<T extends ComponentDescriptor> {
  * @returns {PartDescriptor[]} fetched resources.
  */
 export function listParts(params: ListComponentsParams): PartDescriptor[] {
-    const application = checkRequired(params, 'application');
-
-    const bean: ListDynamicComponentsHandler<PartDescriptor> = __.newBean<ListDynamicComponentsHandler<PartDescriptor>>(
-        'com.enonic.xp.lib.schema.ListDynamicComponentsHandler');
-    bean.setApplication(application);
-    bean.setType('PART');
-    return __.toNativeObject(bean.execute());
+    return doListComponents(params, 'PART');
 }
 
 /**
@@ -1549,13 +1326,7 @@ export function listParts(params: ListComponentsParams): PartDescriptor[] {
  * @returns {LayoutDescriptor[]} fetched resources.
  */
 export function listLayouts(params: ListComponentsParams): LayoutDescriptor[] {
-    const application = checkRequired(params, 'application');
-
-    const bean: ListDynamicComponentsHandler<LayoutDescriptor> = __.newBean<ListDynamicComponentsHandler<LayoutDescriptor>>(
-        'com.enonic.xp.lib.schema.ListDynamicComponentsHandler');
-    bean.setApplication(application);
-    bean.setType('LAYOUT');
-    return __.toNativeObject(bean.execute());
+    return doListComponents(params, 'LAYOUT');
 }
 
 /**
@@ -1567,13 +1338,7 @@ export function listLayouts(params: ListComponentsParams): LayoutDescriptor[] {
  * @returns {PageDescriptor[]} fetched resources.
  */
 export function listPages(params: ListComponentsParams): PageDescriptor[] {
-    const application = checkRequired(params, 'application');
-
-    const bean: ListDynamicComponentsHandler<PageDescriptor> = __.newBean<ListDynamicComponentsHandler<PageDescriptor>>(
-        'com.enonic.xp.lib.schema.ListDynamicComponentsHandler');
-    bean.setApplication(application);
-    bean.setType('PAGE');
-    return __.toNativeObject(bean.execute());
+    return doListComponents(params, 'PAGE');
 }
 
 /**
@@ -1598,16 +1363,10 @@ export interface ListDynamicComponentsParams {
 export function listComponents(params: ListDynamicComponentsParams): PartDescriptor[] | LayoutDescriptor[] | PageDescriptor[] {
     const type = checkRequired(params, 'type');
 
-    switch (type) {
-    case 'PART':
-        return listParts(params);
-    case 'LAYOUT':
-        return listLayouts(params);
-    case 'PAGE':
-        return listPages(params);
-    default:
-        throw new Error(`Unsupported component type: ${String(type)}`);
-    }
+    return dispatchComponent<PartDescriptor[] | LayoutDescriptor[] | PageDescriptor[]>(type,
+        () => listParts(params),
+        () => listLayouts(params),
+        () => listPages(params));
 }
 
 export interface ListSchemasParams {
@@ -1622,6 +1381,16 @@ interface ListDynamicSchemasHandler<T extends Schema> {
     execute(): T[];
 }
 
+function doListContentSchemas<T extends Schema>(params: ListSchemasParams, type: ContentSchemaType): T[] {
+    const application = checkRequired(params, 'application');
+
+    const bean: ListDynamicSchemasHandler<T> = __.newBean<ListDynamicSchemasHandler<T>>(
+        'com.enonic.xp.lib.schema.ListDynamicSchemasHandler');
+    bean.setApplication(application);
+    bean.setType(type);
+    return __.toNativeObject(bean.execute());
+}
+
 /**
  * Fetches dynamic content type resources.
  *
@@ -1631,13 +1400,7 @@ interface ListDynamicSchemasHandler<T extends Schema> {
  * @returns {ContentTypeSchema[]} fetched resources.
  */
 export function listContentTypes(params: ListSchemasParams): ContentTypeSchema[] {
-    const application = checkRequired(params, 'application');
-
-    const bean: ListDynamicSchemasHandler<ContentTypeSchema> = __.newBean<ListDynamicSchemasHandler<ContentTypeSchema>>(
-        'com.enonic.xp.lib.schema.ListDynamicSchemasHandler');
-    bean.setApplication(application);
-    bean.setType('CONTENT_TYPE');
-    return __.toNativeObject(bean.execute());
+    return doListContentSchemas(params, 'CONTENT_TYPE');
 }
 
 /**
@@ -1649,13 +1412,7 @@ export function listContentTypes(params: ListSchemasParams): ContentTypeSchema[]
  * @returns {FormFragmentSchema[]} fetched resources.
  */
 export function listFormFragments(params: ListSchemasParams): FormFragmentSchema[] {
-    const application = checkRequired(params, 'application');
-
-    const bean: ListDynamicSchemasHandler<FormFragmentSchema> = __.newBean<ListDynamicSchemasHandler<FormFragmentSchema>>(
-        'com.enonic.xp.lib.schema.ListDynamicSchemasHandler');
-    bean.setApplication(application);
-    bean.setType('FORM_FRAGMENT');
-    return __.toNativeObject(bean.execute());
+    return doListContentSchemas(params, 'FORM_FRAGMENT');
 }
 
 /**
@@ -1667,13 +1424,7 @@ export function listFormFragments(params: ListSchemasParams): FormFragmentSchema
  * @returns {MixinSchema[]} fetched resources.
  */
 export function listMixins(params: ListSchemasParams): MixinSchema[] {
-    const application = checkRequired(params, 'application');
-
-    const bean: ListDynamicSchemasHandler<MixinSchema> = __.newBean<ListDynamicSchemasHandler<MixinSchema>>(
-        'com.enonic.xp.lib.schema.ListDynamicSchemasHandler');
-    bean.setApplication(application);
-    bean.setType('MIXIN');
-    return __.toNativeObject(bean.execute());
+    return doListContentSchemas(params, 'MIXIN');
 }
 
 /**
@@ -1698,16 +1449,10 @@ export interface ListDynamicSchemasParams {
 export function listSchemas(params: ListDynamicSchemasParams): ContentTypeSchema[] | FormFragmentSchema[] | MixinSchema[] {
     const type = checkRequired(params, 'type');
 
-    switch (type) {
-    case 'CONTENT_TYPE':
-        return listContentTypes(params);
-    case 'FORM_FRAGMENT':
-        return listFormFragments(params);
-    case 'MIXIN':
-        return listMixins(params);
-    default:
-        throw new Error(`Unsupported schema type: ${String(type)}`);
-    }
+    return dispatchContentSchema<ContentTypeSchema[] | FormFragmentSchema[] | MixinSchema[]>(type,
+        () => listContentTypes(params),
+        () => listFormFragments(params),
+        () => listMixins(params));
 }
 
 export interface MacroDescriptor {
@@ -1730,12 +1475,14 @@ export interface MacroDescriptor {
     icon?: Icon;
 }
 
-export interface CreateMacroParams {
+export interface CreateOrUpdateMacroParams {
     key: string;
-    resource: string;
+    resource?: string;
+    icon?: IconInput | null;
 }
 
-interface CreateDynamicMacroHandler {
+interface CreateOrUpdateMacroHandler
+    extends IconAwareHandler {
     setKey(value: string): void;
 
     setResource(value: string): void;
@@ -1744,53 +1491,28 @@ interface CreateDynamicMacroHandler {
 }
 
 /**
- * Creates dynamic macro resource.
+ * Creates the dynamic macro, or updates it when there is one, with its icon.
+ *
+ * `resource` is required to create the macro; on update it may be left out to change only the icon.
+ * The icon is kept when `icon` is left out, removed when `null`, and replaced when `{data, mimeType}`
+ * (`image/svg+xml` or `image/png`, at most 100 KB).
  *
  * @param {object} params JSON with the parameters.
- * @param {string} params.key Macro resource descriptor key.
- * @param {string} params.resource Macro resource value.
+ * @param {string} params.key Macro key.
+ * @param {string} [params.resource] Macro resource value.
+ * @param {object|null} [params.icon] Icon to store, or `null` to remove the stored icon.
  *
- * @returns {MacroDescriptor} created resource.
+ * @returns {MacroDescriptor} the stored macro.
  */
-export function createMacro(params: CreateMacroParams): MacroDescriptor {
+export function createOrUpdateMacro(params: CreateOrUpdateMacroParams): MacroDescriptor {
     const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
 
-    const bean: CreateDynamicMacroHandler = __.newBean<CreateDynamicMacroHandler>('com.enonic.xp.lib.schema.CreateDynamicMacroHandler');
+    const bean: CreateOrUpdateMacroHandler = __.newBean<CreateOrUpdateMacroHandler>('com.enonic.xp.lib.schema.CreateOrUpdateMacroHandler');
     bean.setKey(key);
-    bean.setResource(resource);
-    return __.toNativeObject(bean.execute());
-}
-
-export interface UpdateMacroParams {
-    key: string;
-    resource: string;
-}
-
-interface UpdateDynamicMacroHandler {
-    setKey(value: string): void;
-
-    setResource(value: string): void;
-
-    execute(): MacroDescriptor;
-}
-
-/**
- * Updates dynamic macro resource.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Macro resource descriptor key.
- * @param {string} params.resource Macro resource value.
- *
- * @returns {MacroDescriptor} updated resource.
- */
-export function updateMacro(params: UpdateMacroParams): MacroDescriptor {
-    const key = checkRequired(params, 'key');
-    const resource = checkRequired(params, 'resource');
-
-    const bean: UpdateDynamicMacroHandler = __.newBean<UpdateDynamicMacroHandler>('com.enonic.xp.lib.schema.UpdateDynamicMacroHandler');
-    bean.setKey(key);
-    bean.setResource(resource);
+    if (params.resource != null) {
+        bean.setResource(params.resource);
+    }
+    applyIcon(bean, params.icon);
     return __.toNativeObject(bean.execute());
 }
 
@@ -1857,7 +1579,7 @@ interface DeleteDynamicMacroHandler {
 }
 
 /**
- * Removes dynamic macro resource.
+ * Removes dynamic macro resource, with its icon.
  *
  * @param {object} params JSON with the parameters.
  * @param {string} params.key Macro resource descriptor key.
@@ -1870,277 +1592,4 @@ export function deleteMacro(params: DeleteMacroParams): boolean {
     const bean: DeleteDynamicMacroHandler = __.newBean<DeleteDynamicMacroHandler>('com.enonic.xp.lib.schema.DeleteDynamicMacroHandler');
     bean.setKey(key);
     return __.toNativeObject(bean.execute());
-}
-
-type IconType = ContentSchemaType | 'PART' | 'MACRO';
-
-export interface SetSchemaIconParams {
-    name: string;
-    data: ByteSource;
-    mimeType: string;
-}
-
-export interface SetComponentIconParams {
-    key: string;
-    data: ByteSource;
-    mimeType: string;
-}
-
-export interface SetMacroIconParams {
-    key: string;
-    data: ByteSource;
-    mimeType: string;
-}
-
-export interface SchemaIconParams {
-    name: string;
-}
-
-export interface ComponentIconParams {
-    key: string;
-}
-
-export interface MacroIconParams {
-    key: string;
-}
-
-interface SetDynamicIconHandler {
-    setName(value: string): void;
-
-    setType(value: IconType): void;
-
-    setData(value: ByteSource): void;
-
-    setMimeType(value: string): void;
-
-    execute(): Icon;
-}
-
-interface GetDynamicIconHandler {
-    setName(value: string): void;
-
-    setType(value: IconType): void;
-
-    execute(): Icon | null;
-}
-
-interface DeleteDynamicIconHandler {
-    setName(value: string): void;
-
-    setType(value: IconType): void;
-
-    execute(): boolean;
-}
-
-function doSetIcon(name: string, type: IconType, data: ByteSource, mimeType: string): Icon {
-    const bean: SetDynamicIconHandler = __.newBean<SetDynamicIconHandler>('com.enonic.xp.lib.schema.SetDynamicIconHandler');
-    bean.setName(name);
-    bean.setType(type);
-    bean.setData(data);
-    bean.setMimeType(mimeType);
-    return __.toNativeObject(bean.execute());
-}
-
-function doGetIcon(name: string, type: IconType): Icon | null {
-    const bean: GetDynamicIconHandler = __.newBean<GetDynamicIconHandler>('com.enonic.xp.lib.schema.GetDynamicIconHandler');
-    bean.setName(name);
-    bean.setType(type);
-    return __.toNativeObject(bean.execute());
-}
-
-function doDeleteIcon(name: string, type: IconType): boolean {
-    const bean: DeleteDynamicIconHandler = __.newBean<DeleteDynamicIconHandler>('com.enonic.xp.lib.schema.DeleteDynamicIconHandler');
-    bean.setName(name);
-    bean.setType(type);
-    return __.toNativeObject(bean.execute());
-}
-
-/**
- * Sets an icon for a dynamic content type. Replaces the existing icon, if any.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Content type name.
- * @param {object} params.data Icon image data stream. SVG or PNG.
- * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
- *
- * @returns {Icon} stored icon.
- */
-export function setContentTypeIcon(params: SetSchemaIconParams): Icon {
-    return doSetIcon(checkRequired(params, 'name'), 'CONTENT_TYPE', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
-}
-
-/**
- * Fetches an icon of a dynamic content type.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Content type name.
- *
- * @returns {Icon | null} icon, or null if not found.
- */
-export function getContentTypeIcon(params: SchemaIconParams): Icon | null {
-    return doGetIcon(checkRequired(params, 'name'), 'CONTENT_TYPE');
-}
-
-/**
- * Deletes an icon of a dynamic content type.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Content type name.
- *
- * @returns {boolean} true if succeeded, false otherwise.
- */
-export function deleteContentTypeIcon(params: SchemaIconParams): boolean {
-    return doDeleteIcon(checkRequired(params, 'name'), 'CONTENT_TYPE');
-}
-
-/**
- * Sets an icon for a dynamic form fragment. Replaces the existing icon, if any.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Form fragment name.
- * @param {object} params.data Icon image data stream. SVG or PNG.
- * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
- *
- * @returns {Icon} stored icon.
- */
-export function setFormFragmentIcon(params: SetSchemaIconParams): Icon {
-    return doSetIcon(checkRequired(params, 'name'), 'FORM_FRAGMENT', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
-}
-
-/**
- * Fetches an icon of a dynamic form fragment.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Form fragment name.
- *
- * @returns {Icon | null} icon, or null if not found.
- */
-export function getFormFragmentIcon(params: SchemaIconParams): Icon | null {
-    return doGetIcon(checkRequired(params, 'name'), 'FORM_FRAGMENT');
-}
-
-/**
- * Deletes an icon of a dynamic form fragment.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Form fragment name.
- *
- * @returns {boolean} true if succeeded, false otherwise.
- */
-export function deleteFormFragmentIcon(params: SchemaIconParams): boolean {
-    return doDeleteIcon(checkRequired(params, 'name'), 'FORM_FRAGMENT');
-}
-
-/**
- * Sets an icon for a dynamic mixin. Replaces the existing icon, if any.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Mixin name.
- * @param {object} params.data Icon image data stream. SVG or PNG.
- * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
- *
- * @returns {Icon} stored icon.
- */
-export function setMixinIcon(params: SetSchemaIconParams): Icon {
-    return doSetIcon(checkRequired(params, 'name'), 'MIXIN', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
-}
-
-/**
- * Fetches an icon of a dynamic mixin.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Mixin name.
- *
- * @returns {Icon | null} icon, or null if not found.
- */
-export function getMixinIcon(params: SchemaIconParams): Icon | null {
-    return doGetIcon(checkRequired(params, 'name'), 'MIXIN');
-}
-
-/**
- * Deletes an icon of a dynamic mixin.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.name Mixin name.
- *
- * @returns {boolean} true if succeeded, false otherwise.
- */
-export function deleteMixinIcon(params: SchemaIconParams): boolean {
-    return doDeleteIcon(checkRequired(params, 'name'), 'MIXIN');
-}
-
-/**
- * Sets an icon for a dynamic part. Replaces the existing icon, if any.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Part descriptor key.
- * @param {object} params.data Icon image data stream. SVG or PNG.
- * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
- *
- * @returns {Icon} stored icon.
- */
-export function setPartIcon(params: SetComponentIconParams): Icon {
-    return doSetIcon(checkRequired(params, 'key'), 'PART', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
-}
-
-/**
- * Fetches an icon of a dynamic part.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Part descriptor key.
- *
- * @returns {Icon | null} icon, or null if not found.
- */
-export function getPartIcon(params: ComponentIconParams): Icon | null {
-    return doGetIcon(checkRequired(params, 'key'), 'PART');
-}
-
-/**
- * Deletes an icon of a dynamic part.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Part descriptor key.
- *
- * @returns {boolean} true if succeeded, false otherwise.
- */
-export function deletePartIcon(params: ComponentIconParams): boolean {
-    return doDeleteIcon(checkRequired(params, 'key'), 'PART');
-}
-
-/**
- * Sets an icon for a dynamic macro. Replaces the existing icon, if any.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Macro key.
- * @param {object} params.data Icon image data stream. SVG or PNG.
- * @param {string} params.mimeType Icon mime type: `image/svg+xml` or `image/png`.
- *
- * @returns {Icon} stored icon.
- */
-export function setMacroIcon(params: SetMacroIconParams): Icon {
-    return doSetIcon(checkRequired(params, 'key'), 'MACRO', checkRequired(params, 'data'), checkRequired(params, 'mimeType'));
-}
-
-/**
- * Fetches an icon of a dynamic macro.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Macro key.
- *
- * @returns {Icon | null} icon, or null if not found.
- */
-export function getMacroIcon(params: MacroIconParams): Icon | null {
-    return doGetIcon(checkRequired(params, 'key'), 'MACRO');
-}
-
-/**
- * Deletes an icon of a dynamic macro.
- *
- * @param {object} params JSON with the parameters.
- * @param {string} params.key Macro key.
- *
- * @returns {boolean} true if succeeded, false otherwise.
- */
-export function deleteMacroIcon(params: MacroIconParams): boolean {
-    return doDeleteIcon(checkRequired(params, 'key'), 'MACRO');
 }

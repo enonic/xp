@@ -11,6 +11,7 @@ import java.util.Set;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationDescriptor;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.node.CreateNodeParams;
@@ -139,8 +140,8 @@ public class ApplicationRepoServiceImpl
                     final String yaml = descriptor != null
                         ? readString( descriptor )
                         : YmlApplicationDescriptorSerializer.serialize( ApplicationDescriptor.create().key( applicationKey ).build() );
-                    final ApplicationIconUpdate iconUpdate =
-                        icon != null ? ApplicationIconUpdate.replace( icon, SchemaResourcePaths.SVG_MIME_TYPE ) : ApplicationIconUpdate.KEEP;
+                    final IconUpdate iconUpdate =
+                        icon != null ? IconUpdate.replace( icon, SchemaResourcePaths.SVG_MIME_TYPE ) : IconUpdate.KEEP;
                     createDescriptorNode( appPath, yaml, iconUpdate );
                 }
 
@@ -191,7 +192,7 @@ public class ApplicationRepoServiceImpl
 
     @Override
     public Node upsertApplicationDescriptor( final ApplicationKey applicationKey, final String descriptor,
-                                             final ApplicationIconUpdate iconUpdate )
+                                             final IconUpdate iconUpdate )
     {
         return ApplicationHelper.runAsAdmin( () -> {
             final NodePath descriptorPath = applicationDescriptorNodePath( applicationKey );
@@ -203,22 +204,22 @@ public class ApplicationRepoServiceImpl
                     toBeEdited.data.setString( SchemaNodePropertyNames.RESOURCE, descriptor );
                     switch ( iconUpdate )
                     {
-                        case ApplicationIconUpdate.Keep keep ->
+                        case IconUpdate.Keep keep ->
                         {
                         }
-                        case ApplicationIconUpdate.Remove remove ->
+                        case IconUpdate.Remove remove ->
                         {
                             toBeEdited.data.removeProperties( SchemaNodePropertyNames.MIME_TYPE );
                             toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
                         }
-                        case ApplicationIconUpdate.Replace replace -> setIconProperties( toBeEdited.data, replace );
+                        case IconUpdate.Replace replace -> setIconProperties( toBeEdited.data, replace );
                     }
                 } ).refresh( RefreshMode.ALL );
 
-                if ( iconUpdate instanceof ApplicationIconUpdate.Replace replace )
+                if ( iconUpdate instanceof IconUpdate.Replace replace )
                 {
                     // a binary attached under the previous name (svg replaced by png) is no longer referenced and dropped by the update
-                    params.attachBinary( replace.reference(), replace.data() );
+                    params.attachBinary( appIconReference( replace ), replace.data() );
                 }
                 node = this.nodeService.update( params.build() );
             }
@@ -232,7 +233,7 @@ public class ApplicationRepoServiceImpl
         } );
     }
 
-    private Node createDescriptorNode( final NodePath appPath, final String descriptor, final ApplicationIconUpdate iconUpdate )
+    private Node createDescriptorNode( final NodePath appPath, final String descriptor, final IconUpdate iconUpdate )
     {
         final PropertyTree data = new PropertyTree();
         data.setString( SchemaNodePropertyNames.RESOURCE, descriptor );
@@ -243,22 +244,35 @@ public class ApplicationRepoServiceImpl
             .inheritPermissions( true )
             .refresh( RefreshMode.ALL );
 
-        if ( iconUpdate instanceof ApplicationIconUpdate.Replace replace )
+        if ( iconUpdate instanceof IconUpdate.Replace replace )
         {
             setIconProperties( data, replace );
-            params.attachBinary( replace.reference(), replace.data() );
+            params.attachBinary( appIconReference( replace ), replace.data() );
         }
 
         return this.nodeService.create( params.data( data ).build() );
     }
 
     /**
+     * The binary is named by its mime type ({@code enonic.svg} or {@code enonic.png}), whatever the bundle shipped it as.
+     */
+    private static BinaryReference appIconReference( final IconUpdate.Replace replace )
+    {
+        final BinaryReference reference = SchemaResourcePaths.appIconBinaryReference( replace.mimeType() );
+        if ( reference == null )
+        {
+            throw new IllegalArgumentException( "unsupported icon mime type: " + replace.mimeType() );
+        }
+        return reference;
+    }
+
+    /**
      * The icon binary is attached under its file name ({@code enonic.svg} or {@code enonic.png}), the name it is served at.
      */
-    private static void setIconProperties( final PropertyTree data, final ApplicationIconUpdate.Replace replace )
+    private static void setIconProperties( final PropertyTree data, final IconUpdate.Replace replace )
     {
         data.setString( SchemaNodePropertyNames.MIME_TYPE, replace.mimeType() );
-        data.setBinaryReference( SchemaNodePropertyNames.ICON, replace.reference() );
+        data.setBinaryReference( SchemaNodePropertyNames.ICON, appIconReference( replace ) );
     }
 
     private void deletePersistedSchema( final NodePath appPath )

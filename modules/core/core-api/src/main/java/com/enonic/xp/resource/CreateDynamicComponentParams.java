@@ -5,6 +5,10 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import static java.util.Objects.requireNonNull;
 
 
+/**
+ * @deprecated the parameters of the deprecated {@link DynamicSchemaService#createComponent}; use {@link CreateOrUpdateComponentParams}
+ */
+@Deprecated
 public final class CreateDynamicComponentParams
 {
     private final DescriptorKey key;
@@ -35,11 +39,6 @@ public final class CreateDynamicComponentParams
         return resource;
     }
 
-    /**
-     * @deprecated the kind of the schema is told by the service method called, the type is only read by the deprecated generic
-     * methods of {@link DynamicSchemaService}
-     */
-    @Deprecated
     public DynamicComponentType getType()
     {
         return type;
@@ -69,10 +68,6 @@ public final class CreateDynamicComponentParams
             return this;
         }
 
-        /**
-         * @deprecated only the deprecated generic methods of {@link DynamicSchemaService} read it
-         */
-        @Deprecated
         public Builder type( final DynamicComponentType type )
         {
             this.type = type;
@@ -82,6 +77,7 @@ public final class CreateDynamicComponentParams
         private void validate()
         {
             requireNonNull( key, "key is required" );
+            requireNonNull( type, "type is required" );
         }
 
         public CreateDynamicComponentParams build()

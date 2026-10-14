@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
 
-import static com.enonic.xp.lib.schema.CreateDynamicPhrasesHandlerTest.mockPhrasesResource;
+import static com.enonic.xp.lib.schema.CreateOrUpdatePhrasesHandlerTest.mockPhrasesResource;
 import static org.mockito.Mockito.when;
 
 class ListDynamicPhrasesHandlerTest

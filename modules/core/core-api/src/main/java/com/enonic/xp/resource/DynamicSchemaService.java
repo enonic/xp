@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.icon.Icon;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
 import com.enonic.xp.page.PageDescriptor;
@@ -21,17 +20,25 @@ import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
 import com.enonic.xp.style.StyleDescriptor;
 
+/**
+ * The schema of an application persisted in system-repo: content types, form fragments, mixins, parts, layouts, pages, the cms
+ * descriptor, styles, macros and i18n phrases. Each kind is created or updated by a single method, which stores the descriptor
+ * together with its icon for the kinds that have one.
+ * <p>
+ * Apart from the cms descriptor, a schema is written for an application owning a schema only, the one whose cms descriptor is
+ * persisted: shipped by its bundle on install, or created through {@link #createOrUpdateCms}.
+ */
 public interface DynamicSchemaService
 {
     /**
-     * @deprecated use the method of the kind of the component, {@link #createPart}, {@link #createLayout} or {@link #createPage},
-     * which this dispatches to by the {@code type} of the params
+     * @deprecated use the method of the kind of the component, {@link #createOrUpdatePart}, {@link #createOrUpdateLayout} or
+     * {@link #createOrUpdatePage}, which this dispatches to by the {@code type} of the params
      */
     @Deprecated
     <T extends ComponentDescriptor> DynamicSchemaResult<T> createComponent( CreateDynamicComponentParams params );
 
     /**
-     * @deprecated use {@link #updatePart}, {@link #updateLayout} or {@link #updatePage}
+     * @deprecated use {@link #createOrUpdatePart}, {@link #createOrUpdateLayout} or {@link #createOrUpdatePage}
      */
     @Deprecated
     <T extends ComponentDescriptor> DynamicSchemaResult<T> updateComponent( UpdateDynamicComponentParams params );
@@ -55,14 +62,14 @@ public interface DynamicSchemaService
     boolean deleteComponent( DeleteDynamicComponentParams params );
 
     /**
-     * @deprecated use the method of the kind of the schema, {@link #createContentType}, {@link #createFormFragment} or
-     * {@link #createMixin}, which this dispatches to by the {@code type} of the params
+     * @deprecated use the method of the kind of the schema, {@link #createOrUpdateContentType}, {@link #createOrUpdateFormFragment}
+     * or {@link #createOrUpdateMixin}, which this dispatches to by the {@code type} of the params
      */
     @Deprecated
     <T extends BaseSchema<?>> DynamicSchemaResult<T> createContentSchema( CreateDynamicContentSchemaParams params );
 
     /**
-     * @deprecated use {@link #updateContentType}, {@link #updateFormFragment} or {@link #updateMixin}
+     * @deprecated use {@link #createOrUpdateContentType}, {@link #createOrUpdateFormFragment} or {@link #createOrUpdateMixin}
      */
     @Deprecated
     <T extends BaseSchema<?>> DynamicSchemaResult<T> updateContentSchema( UpdateDynamicContentSchemaParams params );
@@ -85,9 +92,10 @@ public interface DynamicSchemaService
     @Deprecated
     boolean deleteContentSchema( DeleteDynamicContentSchemaParams params );
 
-    DynamicSchemaResult<PartDescriptor> createPart( CreateDynamicComponentParams params );
-
-    DynamicSchemaResult<PartDescriptor> updatePart( UpdateDynamicComponentParams params );
+    /**
+     * Creates the part, or updates it when there is one, with its icon.
+     */
+    DynamicSchemaResult<PartDescriptor> createOrUpdatePart( CreateOrUpdateComponentParams params );
 
     DynamicSchemaResult<PartDescriptor> getPart( DescriptorKey key );
 
@@ -95,15 +103,10 @@ public interface DynamicSchemaService
 
     boolean deletePart( DescriptorKey key );
 
-    Icon setPartIcon( SetDynamicComponentIconParams params );
-
-    Icon getPartIcon( DescriptorKey key );
-
-    boolean deletePartIcon( DescriptorKey key );
-
-    DynamicSchemaResult<LayoutDescriptor> createLayout( CreateDynamicComponentParams params );
-
-    DynamicSchemaResult<LayoutDescriptor> updateLayout( UpdateDynamicComponentParams params );
+    /**
+     * Creates the layout, or updates it when there is one. A layout has no icon.
+     */
+    DynamicSchemaResult<LayoutDescriptor> createOrUpdateLayout( CreateOrUpdateComponentParams params );
 
     DynamicSchemaResult<LayoutDescriptor> getLayout( DescriptorKey key );
 
@@ -111,9 +114,10 @@ public interface DynamicSchemaService
 
     boolean deleteLayout( DescriptorKey key );
 
-    DynamicSchemaResult<PageDescriptor> createPage( CreateDynamicComponentParams params );
-
-    DynamicSchemaResult<PageDescriptor> updatePage( UpdateDynamicComponentParams params );
+    /**
+     * Creates the page, or updates it when there is one. A page has no icon.
+     */
+    DynamicSchemaResult<PageDescriptor> createOrUpdatePage( CreateOrUpdateComponentParams params );
 
     DynamicSchemaResult<PageDescriptor> getPage( DescriptorKey key );
 
@@ -121,9 +125,10 @@ public interface DynamicSchemaService
 
     boolean deletePage( DescriptorKey key );
 
-    DynamicSchemaResult<ContentType> createContentType( CreateDynamicContentSchemaParams params );
-
-    DynamicSchemaResult<ContentType> updateContentType( UpdateDynamicContentSchemaParams params );
+    /**
+     * Creates the content type, or updates it when there is one, with its icon.
+     */
+    DynamicSchemaResult<ContentType> createOrUpdateContentType( CreateOrUpdateContentSchemaParams params );
 
     DynamicSchemaResult<ContentType> getContentType( ContentTypeName name );
 
@@ -131,15 +136,10 @@ public interface DynamicSchemaService
 
     boolean deleteContentType( ContentTypeName name );
 
-    Icon setContentTypeIcon( SetDynamicContentSchemaIconParams params );
-
-    Icon getContentTypeIcon( ContentTypeName name );
-
-    boolean deleteContentTypeIcon( ContentTypeName name );
-
-    DynamicSchemaResult<FormFragmentDescriptor> createFormFragment( CreateDynamicContentSchemaParams params );
-
-    DynamicSchemaResult<FormFragmentDescriptor> updateFormFragment( UpdateDynamicContentSchemaParams params );
+    /**
+     * Creates the form fragment, or updates it when there is one, with its icon.
+     */
+    DynamicSchemaResult<FormFragmentDescriptor> createOrUpdateFormFragment( CreateOrUpdateContentSchemaParams params );
 
     DynamicSchemaResult<FormFragmentDescriptor> getFormFragment( FormFragmentName name );
 
@@ -147,27 +147,16 @@ public interface DynamicSchemaService
 
     boolean deleteFormFragment( FormFragmentName name );
 
-    Icon setFormFragmentIcon( SetDynamicContentSchemaIconParams params );
-
-    Icon getFormFragmentIcon( FormFragmentName name );
-
-    boolean deleteFormFragmentIcon( FormFragmentName name );
-
-    DynamicSchemaResult<MixinDescriptor> createMixin( CreateDynamicContentSchemaParams params );
-
-    DynamicSchemaResult<MixinDescriptor> updateMixin( UpdateDynamicContentSchemaParams params );
+    /**
+     * Creates the mixin, or updates it when there is one, with its icon.
+     */
+    DynamicSchemaResult<MixinDescriptor> createOrUpdateMixin( CreateOrUpdateContentSchemaParams params );
 
     DynamicSchemaResult<MixinDescriptor> getMixin( MixinName name );
 
     List<DynamicSchemaResult<MixinDescriptor>> listMixins( ApplicationKey key );
 
     boolean deleteMixin( MixinName name );
-
-    Icon setMixinIcon( SetDynamicContentSchemaIconParams params );
-
-    Icon getMixinIcon( MixinName name );
-
-    boolean deleteMixinIcon( MixinName name );
 
     /**
      * Creates the cms descriptor of the application, or updates it in place when there is one.
@@ -184,17 +173,31 @@ public interface DynamicSchemaService
 
     boolean deleteCms( ApplicationKey key );
 
+    /**
+     * Creates the style descriptor of the application, or updates it when there is one.
+     */
+    DynamicSchemaResult<StyleDescriptor> createOrUpdateStyles( CreateOrUpdateStylesParams params );
+
+    /**
+     * @deprecated use {@link #createOrUpdateStyles(CreateOrUpdateStylesParams)}, which this delegates to
+     */
+    @Deprecated
     DynamicSchemaResult<StyleDescriptor> createStyles( CreateDynamicStylesParams params );
 
+    /**
+     * @deprecated use {@link #createOrUpdateStyles(CreateOrUpdateStylesParams)}, which this delegates to
+     */
+    @Deprecated
     DynamicSchemaResult<StyleDescriptor> updateStyles( UpdateDynamicStylesParams params );
 
     DynamicSchemaResult<StyleDescriptor> getStyles( ApplicationKey key );
 
     boolean deleteStyles( ApplicationKey key );
 
-    DynamicSchemaResult<MacroDescriptor> createMacro( CreateDynamicMacroParams params );
-
-    DynamicSchemaResult<MacroDescriptor> updateMacro( UpdateDynamicMacroParams params );
+    /**
+     * Creates the macro, or updates it when there is one, with its icon.
+     */
+    DynamicSchemaResult<MacroDescriptor> createOrUpdateMacro( CreateOrUpdateMacroParams params );
 
     DynamicSchemaResult<MacroDescriptor> getMacro( MacroKey key );
 
@@ -202,15 +205,10 @@ public interface DynamicSchemaService
 
     boolean deleteMacro( MacroKey key );
 
-    Icon setMacroIcon( SetDynamicMacroIconParams params );
-
-    Icon getMacroIcon( MacroKey key );
-
-    boolean deleteMacroIcon( MacroKey key );
-
-    Resource createPhrases( CreateDynamicPhrasesParams params );
-
-    Resource updatePhrases( UpdateDynamicPhrasesParams params );
+    /**
+     * Creates the phrases resource, or updates it when there is one.
+     */
+    Resource createOrUpdatePhrases( CreateOrUpdatePhrasesParams params );
 
     Resource getPhrases( GetDynamicPhrasesParams params );
 

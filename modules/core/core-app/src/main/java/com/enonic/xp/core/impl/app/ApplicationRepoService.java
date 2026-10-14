@@ -5,6 +5,7 @@ import java.util.Map;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.Nodes;
@@ -53,7 +54,7 @@ public interface ApplicationRepoService
      *
      * @return the written node
      */
-    Node upsertApplicationDescriptor( ApplicationKey applicationKey, String descriptor, ApplicationIconUpdate iconUpdate );
+    Node upsertApplicationDescriptor( ApplicationKey applicationKey, String descriptor, IconUpdate iconUpdate );
 
     Node getApplicationNode( ApplicationKey applicationKey );
 

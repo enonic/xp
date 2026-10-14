@@ -9,13 +9,12 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.region.PartDescriptor;
-import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
 import com.enonic.xp.resource.CreateOrUpdateCmsParams;
+import com.enonic.xp.resource.CreateOrUpdateComponentParams;
+import com.enonic.xp.resource.CreateOrUpdateContentSchemaParams;
+import com.enonic.xp.resource.CreateOrUpdateStylesParams;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.UpdateDynamicComponentParams;
-import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
@@ -23,6 +22,7 @@ import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.site.CmsDescriptor;
+import com.enonic.xp.style.StyleDescriptor;
 
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -38,22 +38,20 @@ class DeprecatedFunctionsTest
     @BeforeEach
     void setUpMocks()
     {
-        when( dynamicSchemaService.createContentType( isA( CreateDynamicContentSchemaParams.class ) ) ).thenAnswer(
+        when( dynamicSchemaService.createOrUpdateContentType( isA( CreateOrUpdateContentSchemaParams.class ) ) ).thenAnswer(
             invocation -> contentTypeResult(
-                (ContentTypeName) invocation.getArgument( 0, CreateDynamicContentSchemaParams.class ).getName() ) );
-        when( dynamicSchemaService.updateFormFragment( isA( UpdateDynamicContentSchemaParams.class ) ) ).thenAnswer(
+                (ContentTypeName) invocation.getArgument( 0, CreateOrUpdateContentSchemaParams.class ).getName() ) );
+        when( dynamicSchemaService.createOrUpdateFormFragment( isA( CreateOrUpdateContentSchemaParams.class ) ) ).thenAnswer(
             invocation -> formFragmentResult(
-                (FormFragmentName) invocation.getArgument( 0, UpdateDynamicContentSchemaParams.class ).getName() ) );
+                (FormFragmentName) invocation.getArgument( 0, CreateOrUpdateContentSchemaParams.class ).getName() ) );
         when( dynamicSchemaService.getMixin( isA( MixinName.class ) ) ).thenAnswer(
             invocation -> mixinResult( invocation.getArgument( 0, MixinName.class ) ) );
         when( dynamicSchemaService.listContentTypes( isA( ApplicationKey.class ) ) ).thenAnswer(
             invocation -> List.of( contentTypeResult( ContentTypeName.from( "myapp:mytype" ) ) ) );
         when( dynamicSchemaService.deleteContentType( isA( ContentTypeName.class ) ) ).thenReturn( true );
 
-        when( dynamicSchemaService.createPart( isA( CreateDynamicComponentParams.class ) ) ).thenAnswer(
-            invocation -> partResult( invocation.getArgument( 0, CreateDynamicComponentParams.class ).getKey() ) );
-        when( dynamicSchemaService.updatePart( isA( UpdateDynamicComponentParams.class ) ) ).thenAnswer(
-            invocation -> partResult( invocation.getArgument( 0, UpdateDynamicComponentParams.class ).getKey() ) );
+        when( dynamicSchemaService.createOrUpdatePart( isA( CreateOrUpdateComponentParams.class ) ) ).thenAnswer(
+            invocation -> partResult( invocation.getArgument( 0, CreateOrUpdateComponentParams.class ).getKey() ) );
         when( dynamicSchemaService.getPart( isA( DescriptorKey.class ) ) ).thenAnswer(
             invocation -> partResult( invocation.getArgument( 0, DescriptorKey.class ) ) );
         when( dynamicSchemaService.listParts( isA( ApplicationKey.class ) ) ).thenAnswer(
@@ -64,6 +62,8 @@ class DeprecatedFunctionsTest
             invocation -> cmsResult( invocation.getArgument( 0, ApplicationKey.class ) ) );
         when( dynamicSchemaService.createOrUpdateCms( isA( CreateOrUpdateCmsParams.class ) ) ).thenAnswer(
             invocation -> cmsResult( invocation.getArgument( 0, CreateOrUpdateCmsParams.class ).getKey() ) );
+        when( dynamicSchemaService.createOrUpdateStyles( isA( CreateOrUpdateStylesParams.class ) ) ).thenAnswer(
+            invocation -> stylesResult( invocation.getArgument( 0, CreateOrUpdateStylesParams.class ).getKey() ) );
     }
 
     @Test
@@ -154,6 +154,23 @@ class DeprecatedFunctionsTest
     void updateCms()
     {
         runFunction( "/test/DeprecatedFunctionsTest.js", "updateCms" );
+    }
+
+    @Test
+    void createStyles()
+    {
+        runFunction( "/test/DeprecatedFunctionsTest.js", "createStyles" );
+    }
+
+    @Test
+    void updateStyles()
+    {
+        runFunction( "/test/DeprecatedFunctionsTest.js", "updateStyles" );
+    }
+
+    private static DynamicSchemaResult<StyleDescriptor> stylesResult( final ApplicationKey key )
+    {
+        return new DynamicSchemaResult<>( StyleDescriptor.create().application( key ).build(), resource() );
     }
 
     private static DynamicSchemaResult<ContentType> contentTypeResult( final ContentTypeName name )

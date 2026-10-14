@@ -1,9 +1,14 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
+
+import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.audit.AuditLogService;
@@ -15,24 +20,20 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.macro.MacroDescriptor;
 import com.enonic.xp.macro.MacroKey;
-import com.enonic.xp.resource.CreateDynamicComponentParams;
-import com.enonic.xp.resource.CreateDynamicContentSchemaParams;
-import com.enonic.xp.resource.CreateDynamicMacroParams;
-import com.enonic.xp.resource.CreateDynamicPhrasesParams;
-import com.enonic.xp.resource.CreateDynamicStylesParams;
 import com.enonic.xp.resource.CreateOrUpdateCmsParams;
+import com.enonic.xp.resource.CreateOrUpdateComponentParams;
+import com.enonic.xp.resource.CreateOrUpdateContentSchemaParams;
+import com.enonic.xp.resource.CreateOrUpdateMacroParams;
+import com.enonic.xp.resource.CreateOrUpdatePhrasesParams;
+import com.enonic.xp.resource.CreateOrUpdateStylesParams;
 import com.enonic.xp.resource.DeleteDynamicPhrasesParams;
 import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.Resource;
-import com.enonic.xp.resource.UpdateDynamicComponentParams;
-import com.enonic.xp.resource.UpdateDynamicContentSchemaParams;
-import com.enonic.xp.resource.UpdateDynamicMacroParams;
-import com.enonic.xp.resource.UpdateDynamicPhrasesParams;
-import com.enonic.xp.resource.UpdateDynamicStylesParams;
 import com.enonic.xp.schema.BaseSchemaName;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.RoleKeys;
@@ -64,35 +65,34 @@ public class DynamicSchemaAuditLogSupportImpl
     }
 
     @Override
-    public void createComponent( final CreateDynamicComponentParams params, final DynamicComponentType type,
+    public void createComponent( final CreateOrUpdateComponentParams params, final DynamicComponentType type,
                                  final DynamicSchemaResult<?> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", params.getKey().toString() );
-            paramsSet.addString( "type", type.toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.component.create", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.component.create", componentData( params, type ), resultUris( result ) );
         }
     }
 
     @Override
-    public void updateComponent( final UpdateDynamicComponentParams params, final DynamicComponentType type,
+    public void updateComponent( final CreateOrUpdateComponentParams params, final DynamicComponentType type,
                                  final DynamicSchemaResult<?> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", params.getKey().toString() );
-            paramsSet.addString( "type", type.toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.component.update", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.component.update", componentData( params, type ), resultUris( result ) );
         }
+    }
+
+    private static PropertyTree componentData( final CreateOrUpdateComponentParams params, final DynamicComponentType type )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        paramsSet.addString( "key", params.getKey().toString() );
+        paramsSet.addString( "type", type.toString() );
+        addResource( paramsSet, params.getResource() );
+        addIcon( paramsSet, params.getIcon() );
+        return data;
     }
 
     @Override
@@ -110,65 +110,34 @@ public class DynamicSchemaAuditLogSupportImpl
     }
 
     @Override
-    public void setComponentIcon( final DescriptorKey key, final DynamicComponentType type, final String mimeType, final long size )
-    {
-        if ( isEnabledAuditLog )
-        {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", key.toString() );
-            paramsSet.addString( "type", type.toString() );
-            paramsSet.addString( "mimeType", mimeType );
-            paramsSet.addLong( "size", size );
-
-            log( "system.schema.component.icon.set", data, AuditLogUris.from( key.toString() ) );
-        }
-    }
-
-    @Override
-    public void deleteComponentIcon( final DescriptorKey key, final DynamicComponentType type )
-    {
-        if ( isEnabledAuditLog )
-        {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", key.toString() );
-            paramsSet.addString( "type", type.toString() );
-
-            log( "system.schema.component.icon.delete", data, AuditLogUris.from( key.toString() ) );
-        }
-    }
-
-    @Override
-    public void createContentSchema( final CreateDynamicContentSchemaParams params, final DynamicContentSchemaType type,
+    public void createContentSchema( final CreateOrUpdateContentSchemaParams params, final DynamicContentSchemaType type,
                                      final DynamicSchemaResult<?> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "name", params.getName().toString() );
-            paramsSet.addString( "type", type.toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.contentSchema.create", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.contentSchema.create", contentSchemaData( params, type ), resultUris( result ) );
         }
     }
 
     @Override
-    public void updateContentSchema( final UpdateDynamicContentSchemaParams params, final DynamicContentSchemaType type,
+    public void updateContentSchema( final CreateOrUpdateContentSchemaParams params, final DynamicContentSchemaType type,
                                      final DynamicSchemaResult<?> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "name", params.getName().toString() );
-            paramsSet.addString( "type", type.toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.contentSchema.update", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.contentSchema.update", contentSchemaData( params, type ), resultUris( result ) );
         }
+    }
+
+    private static PropertyTree contentSchemaData( final CreateOrUpdateContentSchemaParams params, final DynamicContentSchemaType type )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        paramsSet.addString( "name", params.getName().toString() );
+        paramsSet.addString( "type", type.toString() );
+        addResource( paramsSet, params.getResource() );
+        addIcon( paramsSet, params.getIcon() );
+        return data;
     }
 
     @Override
@@ -186,47 +155,11 @@ public class DynamicSchemaAuditLogSupportImpl
     }
 
     @Override
-    public void setContentSchemaIcon( final BaseSchemaName name, final DynamicContentSchemaType type, final String mimeType,
-                                      final long size )
-    {
-        if ( isEnabledAuditLog )
-        {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "name", name.toString() );
-            paramsSet.addString( "type", type.toString() );
-            paramsSet.addString( "mimeType", mimeType );
-            paramsSet.addLong( "size", size );
-
-            log( "system.schema.contentSchema.icon.set", data, AuditLogUris.from( name.toString() ) );
-        }
-    }
-
-    @Override
-    public void deleteContentSchemaIcon( final BaseSchemaName name, final DynamicContentSchemaType type )
-    {
-        if ( isEnabledAuditLog )
-        {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "name", name.toString() );
-            paramsSet.addString( "type", type.toString() );
-
-            log( "system.schema.contentSchema.icon.delete", data, AuditLogUris.from( name.toString() ) );
-        }
-    }
-
-    @Override
     public void createCms( final CreateOrUpdateCmsParams params, final DynamicSchemaResult<CmsDescriptor> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", params.getKey().toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.cms.create", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.cms.create", applicationData( params.getKey(), params.getResource() ), resultUris( result ) );
         }
     }
 
@@ -235,12 +168,7 @@ public class DynamicSchemaAuditLogSupportImpl
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", params.getKey().toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.cms.update", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.cms.update", applicationData( params.getKey(), params.getResource() ), resultUris( result ) );
         }
     }
 
@@ -249,39 +177,25 @@ public class DynamicSchemaAuditLogSupportImpl
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", key.toString() );
-
-            log( "system.schema.cms.delete", data, AuditLogUris.from( key.toString() ) );
+            log( "system.schema.cms.delete", applicationData( key, null ), AuditLogUris.from( key.toString() ) );
         }
     }
 
     @Override
-    public void createStyles( final CreateDynamicStylesParams params, final DynamicSchemaResult<StyleDescriptor> result )
+    public void createStyles( final CreateOrUpdateStylesParams params, final DynamicSchemaResult<StyleDescriptor> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", params.getKey().toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.styles.create", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.styles.create", applicationData( params.getKey(), params.getResource() ), resultUris( result ) );
         }
     }
 
     @Override
-    public void updateStyles( final UpdateDynamicStylesParams params, final DynamicSchemaResult<StyleDescriptor> result )
+    public void updateStyles( final CreateOrUpdateStylesParams params, final DynamicSchemaResult<StyleDescriptor> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", params.getKey().toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.styles.update", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.styles.update", applicationData( params.getKey(), params.getResource() ), resultUris( result ) );
         }
     }
 
@@ -290,40 +204,45 @@ public class DynamicSchemaAuditLogSupportImpl
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", key.toString() );
+            log( "system.schema.styles.delete", applicationData( key, null ), AuditLogUris.from( key.toString() ) );
+        }
+    }
 
-            log( "system.schema.styles.delete", data, AuditLogUris.from( key.toString() ) );
+    private static PropertyTree applicationData( final ApplicationKey key, final String resource )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        paramsSet.addString( "application", key.toString() );
+        addResource( paramsSet, resource );
+        return data;
+    }
+
+    @Override
+    public void createMacro( final CreateOrUpdateMacroParams params, final DynamicSchemaResult<MacroDescriptor> result )
+    {
+        if ( isEnabledAuditLog )
+        {
+            log( "system.schema.macro.create", macroData( params ), resultUris( result ) );
         }
     }
 
     @Override
-    public void createMacro( final CreateDynamicMacroParams params, final DynamicSchemaResult<MacroDescriptor> result )
+    public void updateMacro( final CreateOrUpdateMacroParams params, final DynamicSchemaResult<MacroDescriptor> result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", params.getKey().toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.macro.create", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
+            log( "system.schema.macro.update", macroData( params ), resultUris( result ) );
         }
     }
 
-    @Override
-    public void updateMacro( final UpdateDynamicMacroParams params, final DynamicSchemaResult<MacroDescriptor> result )
+    private static PropertyTree macroData( final CreateOrUpdateMacroParams params )
     {
-        if ( isEnabledAuditLog )
-        {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", params.getKey().toString() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.macro.update", data, AuditLogUris.from( result.getResource().getKey().toString() ) );
-        }
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        paramsSet.addString( "key", params.getKey().toString() );
+        addResource( paramsSet, params.getResource() );
+        addIcon( paramsSet, params.getIcon() );
+        return data;
     }
 
     @Override
@@ -336,34 +255,6 @@ public class DynamicSchemaAuditLogSupportImpl
             paramsSet.addString( "key", key.toString() );
 
             log( "system.schema.macro.delete", data, AuditLogUris.from( key.toString() ) );
-        }
-    }
-
-    @Override
-    public void setMacroIcon( final MacroKey key, final String mimeType, final long size )
-    {
-        if ( isEnabledAuditLog )
-        {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", key.toString() );
-            paramsSet.addString( "mimeType", mimeType );
-            paramsSet.addLong( "size", size );
-
-            log( "system.schema.macro.icon.set", data, AuditLogUris.from( key.toString() ) );
-        }
-    }
-
-    @Override
-    public void deleteMacroIcon( final MacroKey key )
-    {
-        if ( isEnabledAuditLog )
-        {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "key", key.toString() );
-
-            log( "system.schema.macro.icon.delete", data, AuditLogUris.from( key.toString() ) );
         }
     }
 
@@ -398,9 +289,7 @@ public class DynamicSchemaAuditLogSupportImpl
         paramsSet.addString( "resource", resource );
         if ( iconMimeType != null )
         {
-            final PropertySet iconSet = paramsSet.addSet( "icon" );
-            iconSet.addString( "mimeType", iconMimeType );
-            iconSet.addLong( "size", iconSize );
+            addIcon( paramsSet, iconMimeType, iconSize );
         }
         if ( iconRemoved )
         {
@@ -415,33 +304,31 @@ public class DynamicSchemaAuditLogSupportImpl
     }
 
     @Override
-    public void createPhrases( final CreateDynamicPhrasesParams params, final Resource result )
+    public void createPhrases( final CreateOrUpdatePhrasesParams params, final Resource result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", params.getKey().toString() );
-            paramsSet.addString( "name", params.getName() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.phrases.create", data, AuditLogUris.from( result.getKey().toString() ) );
+            log( "system.schema.phrases.create", phrasesData( params ), AuditLogUris.from( result.getKey().toString() ) );
         }
     }
 
     @Override
-    public void updatePhrases( final UpdateDynamicPhrasesParams params, final Resource result )
+    public void updatePhrases( final CreateOrUpdatePhrasesParams params, final Resource result )
     {
         if ( isEnabledAuditLog )
         {
-            final PropertyTree data = new PropertyTree();
-            final PropertySet paramsSet = data.addSet( "params" );
-            paramsSet.addString( "application", params.getKey().toString() );
-            paramsSet.addString( "name", params.getName() );
-            paramsSet.addString( "resource", params.getResource() );
-
-            log( "system.schema.phrases.update", data, AuditLogUris.from( result.getKey().toString() ) );
+            log( "system.schema.phrases.update", phrasesData( params ), AuditLogUris.from( result.getKey().toString() ) );
         }
+    }
+
+    private static PropertyTree phrasesData( final CreateOrUpdatePhrasesParams params )
+    {
+        final PropertyTree data = new PropertyTree();
+        final PropertySet paramsSet = data.addSet( "params" );
+        paramsSet.addString( "application", params.getKey().toString() );
+        paramsSet.addString( "name", params.getName() );
+        paramsSet.addString( "resource", params.getResource() );
+        return data;
     }
 
     @Override
@@ -456,6 +343,51 @@ public class DynamicSchemaAuditLogSupportImpl
 
             log( "system.schema.phrases.delete", data, AuditLogUris.from( params.getKey().toString() ) );
         }
+    }
+
+    // the resource is left out when the descriptor is kept and only the icon changes
+    private static void addResource( final PropertySet paramsSet, final String resource )
+    {
+        if ( resource != null )
+        {
+            paramsSet.addString( "resource", resource );
+        }
+    }
+
+    private static void addIcon( final PropertySet paramsSet, final IconUpdate iconUpdate )
+    {
+        switch ( iconUpdate )
+        {
+            case IconUpdate.Replace replace -> addIcon( paramsSet, replace.mimeType(), size( replace.data() ) );
+            case IconUpdate.Remove remove -> paramsSet.addBoolean( "iconRemoved", true );
+            case IconUpdate.Keep keep ->
+            {
+            }
+        }
+    }
+
+    private static void addIcon( final PropertySet paramsSet, final String mimeType, final long size )
+    {
+        final PropertySet iconSet = paramsSet.addSet( "icon" );
+        iconSet.addString( "mimeType", mimeType );
+        iconSet.addLong( "size", size );
+    }
+
+    private static long size( final ByteSource data )
+    {
+        try
+        {
+            return data.size();
+        }
+        catch ( final IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private static AuditLogUris resultUris( final DynamicSchemaResult<?> result )
+    {
+        return AuditLogUris.from( result.getResource().getKey().toString() );
     }
 
     private void log( final String type, final PropertyTree data, final AuditLogUris uris )

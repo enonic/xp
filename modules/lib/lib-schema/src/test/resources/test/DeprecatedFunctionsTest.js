@@ -139,3 +139,19 @@ exports.updateCms = function () {
     });
     assert.assertEquals('myapp', result.application);
 };
+
+exports.createStyles = function () {
+    var result = schemaLib.createStyles({
+        application: 'myapp',
+        resource: 'kind: "Style"'
+    });
+    assert.assertEquals('myapp', result.application);
+};
+
+exports.updateStyles = function () {
+    var result = schemaLib.updateStyles({
+        application: 'myapp',
+        resource: 'kind: "Style"'
+    });
+    assert.assertEquals('myapp', result.application);
+};

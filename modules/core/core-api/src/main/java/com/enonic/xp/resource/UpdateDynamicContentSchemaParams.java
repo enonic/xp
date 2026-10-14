@@ -5,6 +5,10 @@ import com.enonic.xp.schema.BaseSchemaName;
 import static java.util.Objects.requireNonNull;
 
 
+/**
+ * @deprecated the parameters of the deprecated {@link DynamicSchemaService#updateContentSchema}; use {@link CreateOrUpdateContentSchemaParams}
+ */
+@Deprecated
 public final class UpdateDynamicContentSchemaParams
 {
     private final BaseSchemaName name;
@@ -35,11 +39,6 @@ public final class UpdateDynamicContentSchemaParams
         return resource;
     }
 
-    /**
-     * @deprecated the kind of the schema is told by the service method called, the type is only read by the deprecated generic
-     * methods of {@link DynamicSchemaService}
-     */
-    @Deprecated
     public DynamicContentSchemaType getType()
     {
         return type;
@@ -69,10 +68,6 @@ public final class UpdateDynamicContentSchemaParams
             return this;
         }
 
-        /**
-         * @deprecated only the deprecated generic methods of {@link DynamicSchemaService} read it
-         */
-        @Deprecated
         public Builder type( final DynamicContentSchemaType type )
         {
             this.type = type;
@@ -82,6 +77,7 @@ public final class UpdateDynamicContentSchemaParams
         private void validate()
         {
             requireNonNull( name, "name is required" );
+            requireNonNull( type, "type is required" );
         }
 
         public UpdateDynamicContentSchemaParams build()

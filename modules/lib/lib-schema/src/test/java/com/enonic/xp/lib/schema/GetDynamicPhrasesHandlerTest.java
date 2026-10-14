@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.resource.GetDynamicPhrasesParams;
 
-import static com.enonic.xp.lib.schema.CreateDynamicPhrasesHandlerTest.mockPhrasesResource;
+import static com.enonic.xp.lib.schema.CreateOrUpdatePhrasesHandlerTest.mockPhrasesResource;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.when;
 

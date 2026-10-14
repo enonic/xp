@@ -31,6 +31,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.icon.Icon;
+import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
 import com.enonic.xp.node.NodePath;
@@ -195,7 +196,7 @@ class ApplicationDescriptorServiceImplTest
         } ) ) );
 
         verify( repoService ).createApplicationNode( MYAPP );
-        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( ApplicationIconUpdate.KEEP ) );
+        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( IconUpdate.KEEP ) );
         assertEquals( "kind: \"Application\"\nname: \"myapp\"\ntitle: \"My App\"\nvendorName: \"Enonic\"\nconfig:\n  flag: true\n",
                       persisted.get() );
 
@@ -256,7 +257,7 @@ class ApplicationDescriptorServiceImplTest
             edit.title = "Titled";
         } ) ) );
 
-        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( ApplicationIconUpdate.KEEP ) );
+        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( IconUpdate.KEEP ) );
         assertEquals( "image/svg+xml", result.getIcon().getMimeType() );
         verify( auditLogSupport ).updateApplicationDescriptor( MYAPP, persisted.get(), null, 0, false );
     }
@@ -271,7 +272,7 @@ class ApplicationDescriptorServiceImplTest
 
         final ApplicationDescriptor result = asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.icon = null ) ) );
 
-        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( ApplicationIconUpdate.REMOVE ) );
+        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( IconUpdate.REMOVE ) );
         verify( auditLogSupport ).updateApplicationDescriptor( MYAPP, persisted.get(), null, 0, true );
         assertNull( result.getIcon() );
         assertNull( appDescriptorService.get( MYAPP ).getIcon() );
@@ -287,7 +288,7 @@ class ApplicationDescriptorServiceImplTest
 
         asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.icon = null ) ) );
 
-        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( ApplicationIconUpdate.KEEP ) );
+        verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), eq( IconUpdate.KEEP ) );
     }
 
     @Test
@@ -299,11 +300,10 @@ class ApplicationDescriptorServiceImplTest
         final byte[] png = {1, 2, 3};
         asAdmin( () -> appDescriptorService.createOrUpdate( params( edit -> edit.icon = Icon.from( png, "image/png", Instant.now() ) ) ) );
 
-        final ArgumentCaptor<ApplicationIconUpdate> captor = ArgumentCaptor.forClass( ApplicationIconUpdate.class );
+        final ArgumentCaptor<IconUpdate> captor = ArgumentCaptor.forClass( IconUpdate.class );
         verify( repoService ).upsertApplicationDescriptor( eq( MYAPP ), anyString(), captor.capture() );
-        final ApplicationIconUpdate.Replace replace = (ApplicationIconUpdate.Replace) captor.getValue();
+        final IconUpdate.Replace replace = (IconUpdate.Replace) captor.getValue();
         assertEquals( "image/png", replace.mimeType() );
-        assertEquals( BinaryReference.from( "enonic.png" ), replace.reference() );
         assertEquals( List.of( (byte) 1, (byte) 2, (byte) 3 ), bytes( replace.data() ) );
 
         verify( auditLogSupport ).createApplicationDescriptor( MYAPP, persisted.get(), "image/png", 3 );
@@ -408,12 +408,12 @@ class ApplicationDescriptorServiceImplTest
         final AtomicReference<String> persisted = new AtomicReference<>();
         when( repoService.upsertApplicationDescriptor( eq( MYAPP ), anyString(), any() ) ).thenAnswer( invocation -> {
             persisted.set( invocation.getArgument( 1 ) );
-            final ApplicationIconUpdate iconUpdate = invocation.getArgument( 2 );
-            if ( iconUpdate instanceof ApplicationIconUpdate.Remove )
+            final IconUpdate iconUpdate = invocation.getArgument( 2 );
+            if ( iconUpdate instanceof IconUpdate.Remove )
             {
                 iconMimeType.set( null );
             }
-            else if ( iconUpdate instanceof ApplicationIconUpdate.Replace replace )
+            else if ( iconUpdate instanceof IconUpdate.Replace replace )
             {
                 iconMimeType.set( replace.mimeType() );
             }
