@@ -6,6 +6,8 @@ import java.util.Properties;
 
 public final class ServerInfo
 {
+    public static final String DEFAULT_NAME = "xp";
+
     private final Properties props;
 
     public ServerInfo( final Properties props )
@@ -13,9 +15,12 @@ public final class ServerInfo
         this.props = props;
     }
 
+    /**
+     * The installation's name ({@code xp.name}), {@value #DEFAULT_NAME} when none is set.
+     */
     public String getName()
     {
-        return this.props.getProperty( "xp.name" );
+        return this.props.getProperty( "xp.name", DEFAULT_NAME );
     }
 
     public File getHomeDir()
