@@ -3,6 +3,7 @@ package com.enonic.xp.web.vhost.impl.mapping;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 
@@ -37,6 +38,8 @@ public final class VirtualHostMapping
 
     private final PrincipalKeys allowedPrincipals;
 
+    private final Set<String> audience;
+
     public VirtualHostMapping( final String name, final String host, final String source, final String target,
                                final VirtualHostIdProvidersMapping idProvidersMapping, final int order )
     {
@@ -61,6 +64,14 @@ public final class VirtualHostMapping
                                @Nullable final Map<String, String> context, @Nullable final String connector,
                                @Nullable final PrincipalKeys allowedPrincipals )
     {
+        this( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals, Set.of() );
+    }
+
+    public VirtualHostMapping( final String name, final String host, final String source, final String target,
+                               final VirtualHostIdProvidersMapping idProvidersMapping, final int order,
+                               @Nullable final Map<String, String> context, @Nullable final String connector,
+                               @Nullable final PrincipalKeys allowedPrincipals, @Nullable final Set<String> audience )
+    {
         requireNonNull( name, "name must be set" );
         requireNonNull( host, "host must be set" );
         requireNonNull( source, "source must be set" );
@@ -76,6 +87,7 @@ public final class VirtualHostMapping
         this.context = Collections.unmodifiableMap( requireNonNullElse( context, Map.of() ) );
         this.connector = requireNonNullElse( connector, DispatchConstants.WEB_CONNECTOR );
         this.allowedPrincipals = requireNonNullElse( allowedPrincipals, PrincipalKeys.empty() );
+        this.audience = Set.copyOf( requireNonNullElse( audience, Set.of() ) );
     }
 
     @Override
@@ -126,6 +138,12 @@ public final class VirtualHostMapping
     public String getConnector()
     {
         return connector;
+    }
+
+    @Override
+    public Set<String> getAudience()
+    {
+        return audience;
     }
 
     @Override

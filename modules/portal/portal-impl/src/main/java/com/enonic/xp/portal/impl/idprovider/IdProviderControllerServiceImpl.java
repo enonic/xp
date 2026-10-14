@@ -89,6 +89,14 @@ public class IdProviderControllerServiceImpl
         return null;
     }
 
+    @Override
+    public boolean hasFunction( final IdProviderKey idProviderKey, final String functionName )
+    {
+        final IdProviderDescriptor descriptor = retrieveIdProviderDescriptor( retrieveIdProvider( idProviderKey ) );
+        return descriptor != null &&
+            idProviderControllerScriptFactory.fromScript( getScriptResourceKey( descriptor.getKey() ) ).hasMethod( functionName );
+    }
+
     private static String resolveFunctionName( final String exact, final IdProviderControllerScript idProviderControllerScript,
                                                final PortalRequest portalRequest )
     {
