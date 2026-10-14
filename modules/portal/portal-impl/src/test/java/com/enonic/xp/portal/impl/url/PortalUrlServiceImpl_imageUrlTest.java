@@ -336,6 +336,7 @@ class PortalUrlServiceImpl_imageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/api/app:api" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -372,6 +373,7 @@ class PortalUrlServiceImpl_imageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/webapp/myapp" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -405,6 +407,7 @@ class PortalUrlServiceImpl_imageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -464,6 +467,7 @@ class PortalUrlServiceImpl_imageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/webapp/myapp" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -497,6 +501,7 @@ class PortalUrlServiceImpl_imageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/jax-rs" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -724,6 +729,7 @@ class PortalUrlServiceImpl_imageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/site/request-project/request-branch/mysite" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );

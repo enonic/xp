@@ -66,6 +66,7 @@ class PortalUrlServiceImpl_generateUrlTest
         //Mocks a virtual host and the HTTP request
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
         when( req.getServerPort() ).thenReturn( 80 );

@@ -12,6 +12,7 @@ import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
+import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class RequestSerializer
 {
@@ -25,6 +26,7 @@ public final class RequestSerializer
     public void serialize( final HttpServletRequest request )
     {
         webRequest.setRawRequest( request );
+        webRequest.setVirtualHost( VirtualHostHelper.getVirtualHost( request ) );
         webRequest.setMethod( parseMethod( request.getMethod() ) );
         webRequest.setScheme( request.getScheme() );
         webRequest.setHost( request.getServerName() );

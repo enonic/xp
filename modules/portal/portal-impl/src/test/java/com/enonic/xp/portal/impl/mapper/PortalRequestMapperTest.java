@@ -23,6 +23,8 @@ import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.RoleKeys;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.web.HttpMethod;
@@ -78,41 +80,52 @@ class PortalRequestMapperTest
     }
 
     @Test
-    void testIdProviderFlows()
+    void testIdProviderSettings()
     {
-        setIdProviderWithFlows( IdProvider.create().key( IdProviderKey.system() ).build(), Set.of( "basic", "autologin" ) );
+        final VirtualHostIdProvider settings = VirtualHostIdProvider.create()
+            .flows( Set.of( "basic", "autologin" ) )
+            .scopes( Map.of( "profile", VirtualHostIdProvider.Scope.of( PrincipalKeys.empty() ), "content:read",
+                             new VirtualHostIdProvider.Scope(
+                                 PrincipalKeys.from( PrincipalKey.ofRole( "cms.project.site.viewer" ), RoleKeys.CONTENT_MANAGER_APP ), true ) ) )
+            .build();
+        setIdProviderSettings( IdProvider.create().key( IdProviderKey.system() ).build(), settings, Set.of( "api" ) );
 
-        // the flow list is serialized sorted
-        assertHelper.assertJson( "request-idprovider-flows.json", new PortalRequestMapper( this.portalRequest ) );
+        // every list is serialized sorted
+        assertHelper.assertJson( "request-idprovider-settings.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
-    void testIdProviderFlows_noRestriction()
+    void testIdProviderSettings_noRestriction()
     {
-        setIdProviderWithFlows( IdProvider.create().key( IdProviderKey.system() ).build(), Set.of() );
+        setIdProviderSettings( IdProvider.create().key( IdProviderKey.system() ).build(), VirtualHostIdProvider.create().build(), Set.of() );
 
-        // no flow restriction: the property is absent and the id provider app applies its own defaults
-        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
+        // mapped with nothing set: empty flows mean no restriction, and the id provider app applies its own defaults
+        assertHelper.assertJson( "request-idprovider-settings-empty.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
-    void testIdProviderFlows_idProviderWithoutKey()
+    void testIdProviderSettings_notMapped()
     {
-        setIdProviderWithFlows( IdProvider.create().build(), Set.of( "basic" ) );
+        setIdProviderSettings( IdProvider.create().key( IdProviderKey.from( "other" ) ).build(), VirtualHostIdProvider.create().build(),
+                               Set.of() );
+        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
 
+        setIdProviderSettings( IdProvider.create().build(), VirtualHostIdProvider.create().build(), Set.of() );
+        assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
+
+        this.portalRequest.setIdProvider( IdProvider.create().key( IdProviderKey.system() ).build() );
+        this.portalRequest.setVirtualHost( null );
         assertHelper.assertJson( "request-simple.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
-    private void setIdProviderWithFlows( final IdProvider idProvider, final Set<String> flows )
+    private void setIdProviderSettings( final IdProvider idProvider, final VirtualHostIdProvider settings, final Set<String> audience )
     {
         this.portalRequest.setIdProvider( idProvider );
 
         final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
-        Mockito.when( virtualHost.getIdProviders() )
-            .thenReturn( Map.of( IdProviderKey.system(), VirtualHostIdProvider.create().flows( flows ).build() ) );
-        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
-        this.portalRequest.setRawRequest( rawRequest );
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.system(), settings ) );
+        Mockito.when( virtualHost.getAudience() ).thenReturn( audience );
+        this.portalRequest.setVirtualHost( virtualHost );
     }
 
     @Test

@@ -28,7 +28,6 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
@@ -74,7 +73,7 @@ public class IdentityHandler
 
         final IdProviderKey idProviderKey = parseIdProviderKey( matcher.group( "idp" ) );
 
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( webRequest.getRawRequest() );
+        final VirtualHost virtualHost = webRequest.getVirtualHost();
 
         final VirtualHostIdProvider idProvider = virtualHost.getIdProviders().get( idProviderKey );
         if ( idProvider == null )
@@ -110,7 +109,7 @@ public class IdentityHandler
                     String.format( "No token-issuing flow %s is enabled for '%s' id provider", DeviceLoginEndpoints.ISSUING_FLOWS,
                                    idProviderKey ) );
             }
-            return doHandleDevice( idProviderKey, idProviderFunction, createPortalRequest( webRequest, idProviderKey, null ), flows );
+            return doHandleDevice( idProviderKey, idProviderFunction, createPortalRequest( webRequest, idProviderKey, null ), idProvider );
         }
 
         if ( idProviderFunction != null )
@@ -133,14 +132,14 @@ public class IdentityHandler
 
     @Traced("portalRequest")
     private PortalResponse doHandleDevice( final IdProviderKey idProviderKey, final String endpoint, final PortalRequest portalRequest,
-                                           final Set<String> flows )
+                                           final VirtualHostIdProvider settings )
     {
         Tracer.withCurrent( trace -> {
             trace.attribute( "path", portalRequest.getPath() );
             trace.attribute( "method", portalRequest.getMethod().toString() );
             trace.attribute( "host", portalRequest.getHost() );
         } );
-        final PortalResponse portalResponse = deviceLoginHandler.handle( portalRequest, idProviderKey, endpoint, flows );
+        final PortalResponse portalResponse = deviceLoginHandler.handle( portalRequest, idProviderKey, endpoint, settings );
         Tracer.withCurrent( trace -> {
             trace.attribute( "status", portalResponse.getStatus().value() );
             trace.attribute( "type", portalResponse.getContentType().toString() );

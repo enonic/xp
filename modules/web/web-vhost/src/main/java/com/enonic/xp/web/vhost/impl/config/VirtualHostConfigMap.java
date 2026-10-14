@@ -12,12 +12,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.token.Scopes;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostMapping;
 
@@ -30,6 +33,12 @@ final class VirtualHostConfigMap
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
 
     private static final String FLOWS_ID_PROVIDER_SETTING = "flows";
+
+    private static final String SCOPE_ID_PROVIDER_SETTING_PREFIX = "scope.";
+
+    private static final String SCOPE_ROLES_PROPERTY = "roles";
+
+    private static final String SCOPE_REQUIRED_PROPERTY = "required";
 
     private static final String API_CONTEXT_PREFIX = "api.";
 
@@ -91,7 +100,7 @@ final class VirtualHostConfigMap
         {
             return Set.of();
         }
-        return Stream.of( value.split( "," ) ).map( String::trim ).filter( s -> !s.isEmpty() ).collect( Collectors.toUnmodifiableSet() );
+        return list( value ).collect( Collectors.toUnmodifiableSet() );
     }
 
     private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )
@@ -152,13 +161,34 @@ final class VirtualHostConfigMap
             }
 
             final String setting = remainder.substring( dot + 1 );
+            if ( setting.startsWith( SCOPE_ID_PROVIDER_SETTING_PREFIX ) )
+            {
+                // scope.<id>.<property>: the property is the last segment, the id everything before it, dots included
+                final String scopeSetting = setting.substring( SCOPE_ID_PROVIDER_SETTING_PREFIX.length() );
+                final int lastDot = scopeSetting.lastIndexOf( '.' );
+                final String scopeId = lastDot < 0 ? scopeSetting : scopeSetting.substring( 0, lastDot );
+                final String property = lastDot < 0 ? "" : scopeSetting.substring( lastDot + 1 );
+                if ( !Scopes.isScope( scopeId ) )
+                {
+                    throw new IllegalArgumentException(
+                        "Scope [" + scopeId + "] of id provider [" + idProviderName + "] in vhost mapping is not a scope name: " +
+                            "printable ASCII without spaces, quotes or backslashes" );
+                }
+                final ScopeSettings scope = settings.scopes.computeIfAbsent( scopeId, id -> new ScopeSettings() );
+                switch ( property )
+                {
+                    case SCOPE_ROLES_PROPERTY -> scope.roles = getScopeRoles( idProviderName, scopeId, value );
+                    case SCOPE_REQUIRED_PROPERTY -> scope.required = getScopeRequired( idProviderName, scopeId, value );
+                    default -> throw new IllegalArgumentException(
+                        "Unknown property [" + property + "] of scope [" + scopeId + "] of id provider [" + idProviderName +
+                            "] in vhost mapping, must be [" + SCOPE_ROLES_PROPERTY + "] or [" + SCOPE_REQUIRED_PROPERTY + "]" );
+                }
+                return;
+            }
             switch ( setting )
             {
-                case FLOWS_ID_PROVIDER_SETTING -> settings.flows = Stream.of( value.split( "," ) )
-                    .map( String::trim )
-                    .filter( flow -> !flow.isEmpty() )
-                    .map( flow -> flow.toLowerCase( Locale.ROOT ) )
-                    .collect( Collectors.toUnmodifiableSet() );
+                case FLOWS_ID_PROVIDER_SETTING -> settings.flows =
+                    list( value ).map( flow -> flow.toLowerCase( Locale.ROOT ) ).collect( Collectors.toUnmodifiableSet() );
                 default -> throw new IllegalArgumentException(
                     "Unknown setting [" + setting + "] for id provider [" + idProviderName + "] in vhost mapping" +
                         " (an id provider whose name contains a dot cannot be configured in a vhost mapping)" );
@@ -184,7 +214,7 @@ final class VirtualHostConfigMap
             if ( settings.isDefault || settings.isEnabled )
             {
                 final IdProviderKey idProviderKey = IdProviderKey.from( entry.getKey() );
-                hostIdProvidersMapping.addIdProvider( idProviderKey, settings.flows );
+                hostIdProvidersMapping.addIdProviderWithSettings( idProviderKey, settings.build() );
                 if ( settings.isDefault )
                 {
                     hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
@@ -195,6 +225,46 @@ final class VirtualHostConfigMap
         return hostIdProvidersMapping.build();
     }
 
+    /**
+     * The roles a scope implies; only roles. A group here would keep the group key while dropping
+     * every role the group confers, and a user key is always the token's subject. Empty means a
+     * label-only scope.
+     */
+    /**
+     * The items of a comma-separated setting, trimmed, blanks dropped.
+     */
+    private static Stream<String> list( final String value )
+    {
+        return Stream.of( value.split( "," ) ).map( String::trim ).filter( s -> !s.isEmpty() );
+    }
+
+    private static boolean getScopeRequired( final String idProviderName, final String scopeId, final String value )
+    {
+        return switch ( value.trim().toLowerCase( Locale.ROOT ) )
+        {
+            case "true" -> true;
+            case "false" -> false;
+            default -> throw new IllegalArgumentException(
+                "Invalid value [" + value + "] for required of scope [" + scopeId + "] of id provider [" + idProviderName +
+                    "] in vhost mapping, must be [true] or [false]" );
+        };
+    }
+
+    private static PrincipalKeys getScopeRoles( final String idProviderName, final String scopeId, final String value )
+    {
+        final PrincipalKeys roles = list( value ).map( PrincipalKey::from ).collect( PrincipalKeys.collector() );
+        for ( final PrincipalKey role : roles )
+        {
+            if ( !role.isRole() )
+            {
+                throw new IllegalArgumentException(
+                    "Scope [" + scopeId + "] of id provider [" + idProviderName + "] in vhost mapping may only imply roles, not [" + role +
+                        "]" );
+            }
+        }
+        return roles;
+    }
+
     private static final class IdProviderSettings
     {
         boolean isDefault;
@@ -202,6 +272,28 @@ final class VirtualHostConfigMap
         boolean isEnabled;
 
         Set<String> flows;
+
+        final Map<String, ScopeSettings> scopes = new TreeMap<>();
+
+        VirtualHostIdProvider build()
+        {
+            final VirtualHostIdProvider.Builder builder = VirtualHostIdProvider.create();
+            if ( flows != null )
+            {
+                builder.flows( flows );
+            }
+            final Map<String, VirtualHostIdProvider.Scope> catalogue = new TreeMap<>();
+            scopes.forEach( ( id, scope ) -> catalogue.put( id, new VirtualHostIdProvider.Scope( scope.roles, scope.required ) ) );
+            builder.scopes( catalogue );
+            return builder.build();
+        }
+    }
+
+    private static final class ScopeSettings
+    {
+        PrincipalKeys roles = PrincipalKeys.empty();
+
+        boolean required;
     }
 
     private Map<String, String> getVirtualHostContext( final String mappingPrefix )

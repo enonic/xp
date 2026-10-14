@@ -13,10 +13,28 @@
   "repositoryId": "com.enonic.cms.myproject",
   "branch": "draft",
   "contextPath": "/site/live/master/a",
-  "idProviderFlows": [
-    "autologin",
-    "basic"
-  ],
+  "idProviderSettings": {
+    "flows": [
+      "autologin",
+      "basic"
+    ],
+    "audience": [
+      "api"
+    ],
+    "scopes": {
+      "content:read": {
+        "roles": [
+          "role:cms.cm.app",
+          "role:cms.project.site.viewer"
+        ],
+        "required": true
+      },
+      "profile": {
+        "roles": [],
+        "required": false
+      }
+    }
+  },
   "params": {
     "param1": "value1",
     "param2": "value2",

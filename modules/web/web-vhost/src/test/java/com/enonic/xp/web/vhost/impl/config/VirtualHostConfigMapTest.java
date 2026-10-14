@@ -13,6 +13,7 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -228,6 +229,100 @@ class VirtualHostConfigMapTest
 
         assertEquals( Set.of( IdProviderKey.system() ), virtualHost.getIdProviders().keySet() );
         assertEquals( Set.of(), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows() );
+    }
+
+    @Test
+    void testIdProviderScopes()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:read.roles", " role:cms.cm.app , role:cms.project.site.viewer " );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:write.roles", "role:cms.cm.app,role:cms.project.site.editor" );
+        map.put( "mapping.myapp1.idProvider.system.scope.profile.roles", "" );
+        map.put( "mapping.myapp1.idProvider.system.scope.with.dots.roles", "role:x" );
+        map.put( "mapping.myapp1.idProvider.other", "enabled" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        final Map<String, VirtualHostIdProvider.Scope> scopes = virtualHost.getIdProviders().get( IdProviderKey.system() ).getScopes();
+        assertEquals( Set.of( "content:read", "content:write", "profile", "with.dots" ), scopes.keySet() );
+        assertEquals( PrincipalKeys.from( "role:cms.cm.app", "role:cms.project.site.viewer" ), scopes.get( "content:read" ).roles() );
+        assertEquals( PrincipalKeys.from( "role:cms.cm.app", "role:cms.project.site.editor" ), scopes.get( "content:write" ).roles() );
+        assertEquals( PrincipalKeys.empty(), scopes.get( "profile" ).roles(), "a label-only scope" );
+        assertEquals( PrincipalKeys.from( "role:x" ), scopes.get( "with.dots" ).roles(), "the property is the last segment" );
+        assertTrue( scopes.values().stream().noneMatch( VirtualHostIdProvider.Scope::required ), "not required unless said" );
+        assertEquals( Map.of(), virtualHost.getIdProviders().get( IdProviderKey.from( "other" ) ).getScopes(), "no catalogue" );
+        assertEquals( Set.of(), virtualHost.getIdProviders().get( IdProviderKey.system() ).getFlows(), "flows unaffected" );
+    }
+
+    @Test
+    void testIdProviderScopes_required()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:read.roles", "role:cms.cm.app" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:read.required", " TRUE " );
+        map.put( "mapping.myapp1.idProvider.system.scope.profile.required", "true" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:write.roles", "role:cms.cm.app" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:write.required", "false" );
+
+        final Map<String, VirtualHostIdProvider.Scope> scopes =
+            new VirtualHostConfigMap( map ).buildMappings().get( 0 ).getIdProviders().get( IdProviderKey.system() ).getScopes();
+        assertEquals( new VirtualHostIdProvider.Scope( PrincipalKeys.from( "role:cms.cm.app" ), true ), scopes.get( "content:read" ) );
+        assertEquals( new VirtualHostIdProvider.Scope( PrincipalKeys.empty(), true ), scopes.get( "profile" ),
+                      "required alone declares a label-only scope" );
+        assertEquals( new VirtualHostIdProvider.Scope( PrincipalKeys.from( "role:cms.cm.app" ), false ), scopes.get( "content:write" ) );
+
+        map.put( "mapping.myapp1.idProvider.system.scope.content:write.required", "yes" );
+        IllegalArgumentException ex = assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertEquals( "Invalid value [yes] for required of scope [content:write] of id provider [system] in vhost mapping, " +
+                          "must be [true] or [false]", ex.getMessage() );
+
+        map.remove( "mapping.myapp1.idProvider.system.scope.content:write.required" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:write.title", "Write content" );
+        ex = assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertEquals( "Unknown property [title] of scope [content:write] of id provider [system] in vhost mapping, " +
+                          "must be [roles] or [required]", ex.getMessage() );
+
+        map.remove( "mapping.myapp1.idProvider.system.scope.content:write.title" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:write", "role:cms.cm.app" );
+        ex = assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertEquals( "Unknown property [] of scope [content:write] of id provider [system] in vhost mapping, " +
+                          "must be [roles] or [required]", ex.getMessage(), "a scope line needs a property" );
+    }
+
+    @Test
+    void testIdProviderScopes_scopeNames()
+    {
+        final Map<String, String> map = new HashMap<>();
+        map.put( "mapping.myapp1.host", "localhost" );
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content read.roles", "role:cms.cm.app" );
+        final IllegalArgumentException e =
+            assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertTrue( e.getMessage().contains( "is not a scope name" ), e.getMessage() );
+    }
+
+    @Test
+    void testIdProviderScopes_rolesOnly()
+    {
+        map.put( "mapping.myapp1.idProvider.system", "default" );
+        map.put( "mapping.myapp1.idProvider.system.scope.content:read.roles", "role:cms.cm.app, group:system:editors" );
+        IllegalArgumentException ex =
+            assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertEquals( "Scope [content:read] of id provider [system] in vhost mapping may only imply roles, not [group:system:editors]",
+                      ex.getMessage() );
+
+        map.put( "mapping.myapp1.idProvider.system.scope.content:read.roles", "user:system:su" );
+        ex = assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertEquals( "Scope [content:read] of id provider [system] in vhost mapping may only imply roles, not [user:system:su]",
+                      ex.getMessage() );
+
+        map.put( "mapping.myapp1.idProvider.system.scope.content:read.roles", "bogus" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+
+        map.remove( "mapping.myapp1.idProvider.system.scope.content:read.roles" );
+        map.put( "mapping.myapp1.idProvider.system.scope..roles", "role:x" );
+        ex = assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+        assertTrue( ex.getMessage().startsWith( "Scope [] of id provider [system] in vhost mapping is not a scope name" ), ex.getMessage() );
     }
 
     @Test

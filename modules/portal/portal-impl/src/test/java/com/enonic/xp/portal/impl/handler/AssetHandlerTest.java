@@ -225,6 +225,7 @@ class AssetHandlerTest
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/master/mysite" );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        this.request.setVirtualHost( virtualHost );
 
         addResource( "demo:/assets/css/main.css" );
         this.request.setRawPath( "/anyPrefix/_/asset/demo:0000000000000001/css/main.css" );

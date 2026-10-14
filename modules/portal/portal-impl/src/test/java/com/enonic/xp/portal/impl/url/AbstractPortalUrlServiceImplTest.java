@@ -110,6 +110,7 @@ public abstract class AbstractPortalUrlServiceImplTest
 
         this.virtualHost = mock( VirtualHost.class );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        this.portalRequest.setVirtualHost( virtualHost );
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
     }

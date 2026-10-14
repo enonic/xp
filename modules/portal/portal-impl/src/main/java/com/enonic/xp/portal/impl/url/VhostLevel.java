@@ -7,13 +7,11 @@ import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.web.vhost.VirtualHost;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 /**
- * A virtual host mapping states which part of the content tree an address stands for: a target of
- * {@code /site/myproject/master/features} says that its source is the address of {@code /features}.
- * That is the same statement a caller makes by selecting a site, so it decides which level URLs
- * following the current request belong to.
+ * A virtual host mapping says which part of the content tree an address stands for: a target of
+ * {@code /site/myproject/master/features} means its source is the address of {@code /features}.
+ * That decides which level URLs built from the current request belong to.
  */
 final class VhostLevel
 {
@@ -22,10 +20,9 @@ final class VhostLevel
     }
 
     /**
-     * @return the level the current site request mounts: the content path of the matched virtual
-     * host target, and the root of the project when no virtual host narrows the request - the
-     * site engine then serves the project as a whole. {@code null} when there is no site request,
-     * so that the content decides its level itself
+     * @return the level the current site request is mounted at: the content path of the matched
+     * virtual host target, or the project root when no virtual host narrows the request; {@code null}
+     * when there is no site request, so the content decides its level itself
      */
     static ContentPath resolve( final ProjectName projectName, final Branch branch )
     {
@@ -36,12 +33,7 @@ final class VhostLevel
             return null;
         }
 
-        if ( portalRequest.getRawRequest() == null )
-        {
-            return ContentPath.ROOT;
-        }
-
-        final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( portalRequest.getRawRequest() );
+        final VirtualHost virtualHost = portalRequest.getVirtualHost();
         if ( virtualHost == null )
         {
             return ContentPath.ROOT;
