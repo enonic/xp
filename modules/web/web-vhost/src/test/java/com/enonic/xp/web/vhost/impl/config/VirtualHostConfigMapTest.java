@@ -321,6 +321,27 @@ class VirtualHostConfigMapTest
     }
 
     @Test
+    void testAudience()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+        map.put( "mapping.myapp1.audience", " api, management ,, " );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of( "api", "management" ), virtualHost.getAudience() );
+    }
+
+    @Test
+    void testAudience_absentMeansNone()
+    {
+        map.put( "mapping.myapp1.host", "example.com" );
+
+        final VirtualHost virtualHost = new VirtualHostConfigMap( map ).buildMappings().get( 0 );
+
+        assertEquals( Set.of(), virtualHost.getAudience() );
+    }
+
+    @Test
     void testEndpoint_default()
     {
         map.put( "mapping.myapp1.host", "example.com" );

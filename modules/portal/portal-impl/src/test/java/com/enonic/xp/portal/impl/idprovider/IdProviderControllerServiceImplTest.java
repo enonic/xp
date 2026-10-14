@@ -43,8 +43,10 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -160,6 +162,15 @@ class IdProviderControllerServiceImplTest
             .build();
         final PortalResponse portalResponse = idProviderControllerService.execute( executionParams );
         assertNull( portalResponse );
+    }
+
+    @Test
+    void hasFunction()
+    {
+        assertTrue( idProviderControllerService.hasFunction( IdProviderKey.from( "myidprovider" ), "myfunction" ) );
+        assertFalse( idProviderControllerService.hasFunction( IdProviderKey.from( "myidprovider" ), "missingfunction" ) );
+        assertFalse( idProviderControllerService.hasFunction( IdProviderKey.from( "myemptyidprovider" ), "myfunction" ) );
+        assertFalse( idProviderControllerService.hasFunction( IdProviderKey.from( "missingidprovider" ), "myfunction" ) );
     }
 
     @Test
