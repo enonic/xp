@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.mapper;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.idprovider.AccessTokenFilter;
+import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.script.serializer.MapGenerator;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.token.AccessTokenClaims;
@@ -89,6 +91,14 @@ public final class PortalRequestMapper
             gen.value( "scope", accessToken.getScope().stream().sorted().toList() );
             gen.value( "audience", accessToken.getAudience().stream().sorted().toList() );
             gen.end();
+        }
+
+        @SuppressWarnings("unchecked") final Map<String, Object> deviceLogin = this.request.getRawRequest() == null
+            ? null
+            : (Map<String, Object>) this.request.getRawRequest().getAttribute( DeviceLoginHandler.CONTEXT_ATTRIBUTE );
+        if ( deviceLogin != null )
+        {
+            gen.value( "deviceLogin", deviceLogin );
         }
 
         serializeBody( gen );

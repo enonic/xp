@@ -18,6 +18,7 @@ import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
 import com.enonic.xp.portal.impl.idprovider.AccessTokenFilter;
+import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.IdProvider;
@@ -133,6 +134,25 @@ class PortalRequestMapperTest
         this.portalRequest.setRawRequest( rawRequest );
 
         assertHelper.assertJson( "request-access-token.json", new PortalRequestMapper( this.portalRequest ) );
+    }
+
+    @Test
+    void testDeviceLogin()
+    {
+        final Map<String, Object> context = new java.util.LinkedHashMap<>();
+        context.put( "idProvider", "system" );
+        context.put( "action", "confirm" );
+        context.put( "userCode", "ABCD-EFGH" );
+        final Map<String, Object> scope = new java.util.LinkedHashMap<>();
+        scope.put( "id", "content:read" );
+        scope.put( "roles", java.util.List.of( "role:cms.cm.app" ) );
+        scope.put( "required", true );
+        context.put( "scope", java.util.List.of( scope ) );
+        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( rawRequest.getAttribute( DeviceLoginHandler.CONTEXT_ATTRIBUTE ) ).thenReturn( context );
+        this.portalRequest.setRawRequest( rawRequest );
+
+        assertHelper.assertJson( "request-device-login.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test

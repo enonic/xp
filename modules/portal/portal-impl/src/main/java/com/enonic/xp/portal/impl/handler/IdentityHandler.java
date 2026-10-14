@@ -109,7 +109,7 @@ public class IdentityHandler
                     String.format( "No token-issuing flow %s is enabled for '%s' id provider", DeviceLoginHandler.ISSUING_FLOWS,
                                    idProviderKey ) );
             }
-            return doHandleDevice( idProviderKey, idProviderFunction, createPortalRequest( webRequest, idProviderKey, null ), flows );
+            return doHandleDevice( idProviderKey, idProviderFunction, createPortalRequest( webRequest, idProviderKey, null ), idProvider );
         }
 
         if ( idProviderFunction != null )
@@ -132,14 +132,14 @@ public class IdentityHandler
 
     @Traced("portalRequest")
     private PortalResponse doHandleDevice( final IdProviderKey idProviderKey, final String endpoint, final PortalRequest portalRequest,
-                                           final Set<String> flows )
+                                           final VirtualHostIdProvider settings )
     {
         Tracer.withCurrent( trace -> {
             trace.attribute( "path", portalRequest.getPath() );
             trace.attribute( "method", portalRequest.getMethod().toString() );
             trace.attribute( "host", portalRequest.getHost() );
         } );
-        final PortalResponse portalResponse = deviceLoginHandler.handle( portalRequest, idProviderKey, endpoint, flows );
+        final PortalResponse portalResponse = deviceLoginHandler.handle( portalRequest, idProviderKey, endpoint, settings );
         Tracer.withCurrent( trace -> {
             trace.attribute( "status", portalResponse.getStatus().value() );
             trace.attribute( "type", portalResponse.getContentType().toString() );
