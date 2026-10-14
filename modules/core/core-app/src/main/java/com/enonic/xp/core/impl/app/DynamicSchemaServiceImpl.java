@@ -811,7 +811,7 @@ public class DynamicSchemaServiceImpl
                 icon = doSetIcon( folderPath, name, replace.data(), replace.mimeType() );
                 resource = dynamicResourceManager.getResource( folderPath, name );
             }
-            case IconUpdate.Remove remove ->
+            case IconUpdate.Remove _ ->
             {
                 if ( doDeleteIcon( folderPath, name ) )
                 {
@@ -819,7 +819,7 @@ public class DynamicSchemaServiceImpl
                 }
                 icon = null;
             }
-            case IconUpdate.Keep keep -> icon = hasIcon ? loadIcon( folderPath, name ) : null;
+            case IconUpdate.Keep _ -> icon = hasIcon ? loadIcon( folderPath, name ) : null;
         }
 
         return new Stored<>( descriptor, resource, icon, !exists );

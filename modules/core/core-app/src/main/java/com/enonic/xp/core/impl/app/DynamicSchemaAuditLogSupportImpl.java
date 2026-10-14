@@ -359,8 +359,8 @@ public class DynamicSchemaAuditLogSupportImpl
         switch ( iconUpdate )
         {
             case IconUpdate.Replace replace -> addIcon( paramsSet, replace.mimeType(), size( replace.data() ) );
-            case IconUpdate.Remove remove -> paramsSet.addBoolean( "iconRemoved", true );
-            case IconUpdate.Keep keep ->
+            case IconUpdate.Remove _ -> paramsSet.addBoolean( "iconRemoved", true );
+            case IconUpdate.Keep _ ->
             {
             }
         }

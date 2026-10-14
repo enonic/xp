@@ -204,10 +204,10 @@ public class ApplicationRepoServiceImpl
                     toBeEdited.data.setString( SchemaNodePropertyNames.RESOURCE, descriptor );
                     switch ( iconUpdate )
                     {
-                        case IconUpdate.Keep keep ->
+                        case IconUpdate.Keep _ ->
                         {
                         }
-                        case IconUpdate.Remove remove ->
+                        case IconUpdate.Remove _ ->
                         {
                             toBeEdited.data.removeProperties( SchemaNodePropertyNames.MIME_TYPE );
                             toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
