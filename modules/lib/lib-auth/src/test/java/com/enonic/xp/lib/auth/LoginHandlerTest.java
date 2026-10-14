@@ -2,6 +2,7 @@ package com.enonic.xp.lib.auth;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
@@ -10,6 +11,8 @@ import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -88,6 +91,54 @@ class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         assertEquals( authInfo, sessionAuthInfo );
+    }
+
+    @Test
+    void testLoginWithPrincipals()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithPrincipals" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( PrincipalRestriction.to( PrincipalKeys.from( "role:cms.cm.app", "role:system.admin" ) ), token.getValue().getRestriction() );
+        assertEquals( IdProviderKey.from( "enonic" ), token.getValue().getIdProvider() );
+        assertEquals( authInfo, ContextAccessor.current().getAuthInfo() );
+        assertNull( ContextAccessor.current().getLocalScope().getSession().getAttribute( AuthenticationInfo.class ) );
+    }
+
+    @Test
+    void testLoginWithEmptyPrincipalsRestrictsToNothing()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithEmptyPrincipals" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( PrincipalRestriction.to(), token.getValue().getRestriction() );
+        assertEquals( authInfo, ContextAccessor.current().getAuthInfo() );
+    }
+
+    @Test
+    void testLoginWithoutPrincipalsLeavesNoRestriction()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithSkipAuth" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( PrincipalRestriction.none(), token.getValue().getRestriction() );
     }
 
     @Test

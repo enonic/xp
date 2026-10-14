@@ -11,6 +11,8 @@ import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalRestriction;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
@@ -35,6 +37,7 @@ public final class LoginHandler
 
     private Scope scope;
 
+    private PrincipalRestriction restriction = PrincipalRestriction.none();
 
     private PrincipalKey actor;
 
@@ -72,6 +75,11 @@ public final class LoginHandler
     public void setScope( final String scope )
     {
         this.scope = Scope.valueOf( scope );
+    }
+
+    public void setPrincipals( final String[] principals )
+    {
+        this.restriction = principals == null ? PrincipalRestriction.none() : PrincipalRestriction.to( PrincipalKeys.from( principals ) );
     }
 
     public void setActor( final String actor )
@@ -144,8 +152,9 @@ public final class LoginHandler
 
         if ( isValidEmail( this.user ) )
         {
-            final AuthenticationToken authToken =
-                this.skipAuth ? new VerifiedEmailAuthToken( idp, this.user ) : new EmailPasswordAuthToken( idp, this.user, this.password );
+            final AuthenticationToken authToken = this.skipAuth
+                ? new VerifiedEmailAuthToken( idp, this.user, this.restriction )
+                : new EmailPasswordAuthToken( idp, this.user, this.password, this.restriction );
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }
 
@@ -154,11 +163,11 @@ public final class LoginHandler
             final AuthenticationToken authToken;
             if ( this.skipAuth )
             {
-                authToken = new VerifiedUsernameAuthToken( idp, this.user );
+                authToken = new VerifiedUsernameAuthToken( idp, this.user, this.restriction );
             }
             else
             {
-                authToken = new UsernamePasswordAuthToken( idp, this.user, this.password );
+                authToken = new UsernamePasswordAuthToken( idp, this.user, this.password, this.restriction );
             }
             authInfo = this.securityServiceSupplier.get().authenticate( authToken );
         }

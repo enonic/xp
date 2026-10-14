@@ -177,6 +177,18 @@ exports.loginWithSkipAuth = function () {
 
 };
 
+exports.loginWithPrincipals = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        principals: ['role:cms.cm.app', 'role:system.admin']
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
 exports.loginWithActor = function () {
     var result = auth.login({
         user: 'user1',
@@ -184,6 +196,18 @@ exports.loginWithActor = function () {
         skipAuth: true,
         scope: 'REQUEST',
         actor: 'user:enonic:automation'
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithEmptyPrincipals = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        principals: []
     });
 
     t.assertTrue(result.authenticated);

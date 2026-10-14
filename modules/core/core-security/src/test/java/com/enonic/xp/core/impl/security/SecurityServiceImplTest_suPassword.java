@@ -13,6 +13,7 @@ import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
@@ -46,6 +47,26 @@ class SecurityServiceImplTest_suPassword
         assertThat( authInfo.getUser().getKey() ).isEqualTo( PrincipalKey.ofSuperUser() );
         assertThat( authInfo.getPrincipals() ).containsExactlyInAnyOrder( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN, RoleKeys.AUTHENTICATED,
                                                                           RoleKeys.EVERYONE );
+        verifyNoInteractions( nodeService );
+    }
+
+    @Test
+    void authenticate_su_restricted_principals()
+    {
+        final String password = "superSecret123";
+        final SecurityServiceImpl securityService = createSecurityService( password );
+
+        final AuthenticationInfo none = securityService.authenticate(
+            new UsernamePasswordAuthToken( IdProviderKey.system(), PrincipalKey.ofSuperUser().getId(), password, PrincipalRestriction.to() ) );
+        assertThat( none.isAuthenticated() ).isTrue();
+        assertThat( none.getPrincipals() ).containsExactlyInAnyOrder( PrincipalKey.ofSuperUser(), RoleKeys.AUTHENTICATED,
+                                                                      RoleKeys.EVERYONE );
+
+        final AuthenticationInfo admin = securityService.authenticate(
+            new UsernamePasswordAuthToken( IdProviderKey.system(), PrincipalKey.ofSuperUser().getId(), password,
+                                           PrincipalRestriction.to( RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN ) ) );
+        assertThat( admin.getPrincipals() ).containsExactlyInAnyOrder( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN, RoleKeys.AUTHENTICATED,
+                                                                       RoleKeys.EVERYONE );
         verifyNoInteractions( nodeService );
     }
 
