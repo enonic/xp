@@ -29,6 +29,8 @@ final class VirtualHostConfigMap
 
     private static final String ENABLED_ID_PROVIDER_VALUE = "enabled";
 
+    private static final String FLOWS_ID_PROVIDER_SETTING = "flows";
+
     private static final String API_CONTEXT_PREFIX = "api.";
 
     private static final String API_REST_ENABLED = "rest.enabled";
@@ -112,54 +114,92 @@ final class VirtualHostConfigMap
     {
         final String idProviderPrefix = mappingPrefix + "idProvider" + ".";
 
-        final VirtualHostIdProvidersMapping.Builder hostIdProvidersMapping = VirtualHostIdProvidersMapping.create();
+        final Map<String, IdProviderSettings> idProviders = new TreeMap<>();
 
-        getIdProviders( idProviderPrefix ).forEach( ( idProviderName, idProviderStatus ) -> {
+        // Keys: "idProvider.<name> = default|enabled" (legacy) or "idProvider.<name>.<setting> = <value>".
+        // A dot cannot occur in an id provider name, so the first segment is always the name.
+        getIdProviders( idProviderPrefix ).forEach( ( remainder, value ) -> {
+            final int dot = remainder.indexOf( '.' );
+            final String idProviderName = dot < 0 ? remainder : remainder.substring( 0, dot );
+            final IdProviderSettings settings = idProviders.computeIfAbsent( idProviderName, name -> new IdProviderSettings() );
 
-            final IdProviderKey idProviderKey = IdProviderKey.from( idProviderName );
-
-            // Value grammar: "default" and/or "enabled[=flow,flow...]".
-            boolean isDefault = false;
-            boolean isEnabled = false;
-            Set<String> flows = null;
-
-            for ( final String token : idProviderStatus.split( "&" ) )
+            if ( dot < 0 )
             {
-                final String trimmed = token.trim();
-                final int eq = trimmed.indexOf( '=' );
-                final String name = eq < 0 ? trimmed : trimmed.substring( 0, eq );
-                final String value = eq < 0 ? null : trimmed.substring( eq + 1 );
-
-                if ( DEFAULT_ID_PROVIDER_VALUE.equals( name ) )
+                switch ( value.trim() )
                 {
-                    isDefault = true;
+                    case DEFAULT_ID_PROVIDER_VALUE -> settings.isDefault = true;
+                    case ENABLED_ID_PROVIDER_VALUE -> settings.isEnabled = true;
+                    default -> throw new IllegalArgumentException(
+                        "Invalid value [" + value + "] for id provider [" + idProviderName + "] in vhost mapping, must be [" +
+                            DEFAULT_ID_PROVIDER_VALUE + "] or [" + ENABLED_ID_PROVIDER_VALUE + "]" );
                 }
-                else if ( ENABLED_ID_PROVIDER_VALUE.equals( name ) )
-                {
-                    isEnabled = true;
-                    if ( value != null && !value.isBlank() )
-                    {
-                        flows = Stream.of( value.split( "," ) )
-                            .map( String::trim )
-                            .filter( flow -> !flow.isEmpty() )
-                            .map( flow -> flow.toLowerCase( Locale.ROOT ) )
-                            .collect( Collectors.toUnmodifiableSet() );
-                    }
-                }
+                return;
             }
 
-            if ( isDefault || isEnabled )
+            final String setting = remainder.substring( dot + 1 );
+            switch ( setting )
             {
-                hostIdProvidersMapping.addIdProvider( idProviderKey, flows );
-                if ( isDefault )
+                case DEFAULT_ID_PROVIDER_VALUE -> settings.isDefault = parseBoolean( idProviderName, setting, value );
+                case ENABLED_ID_PROVIDER_VALUE -> settings.isEnabled = parseBoolean( idProviderName, setting, value );
+                case FLOWS_ID_PROVIDER_SETTING -> settings.flows = Stream.of( value.split( "," ) )
+                    .map( String::trim )
+                    .filter( flow -> !flow.isEmpty() )
+                    .map( flow -> flow.toLowerCase( Locale.ROOT ) )
+                    .collect( Collectors.toUnmodifiableSet() );
+                default -> throw new IllegalArgumentException(
+                    "Unknown setting [" + setting + "] for id provider [" + idProviderName + "] in vhost mapping" );
+            }
+        } );
+
+        final VirtualHostIdProvidersMapping.Builder hostIdProvidersMapping = VirtualHostIdProvidersMapping.create();
+
+        String defaultIdProvider = null;
+        for ( final Map.Entry<String, IdProviderSettings> entry : idProviders.entrySet() )
+        {
+            final IdProviderSettings settings = entry.getValue();
+            if ( settings.isDefault )
+            {
+                if ( defaultIdProvider != null )
+                {
+                    throw new IllegalArgumentException(
+                        "Multiple default id providers in vhost mapping: [" + defaultIdProvider + "] and [" + entry.getKey() + "]" );
+                }
+                defaultIdProvider = entry.getKey();
+            }
+            // Both default and enabled turn the id provider on; absent means off.
+            if ( settings.isDefault || settings.isEnabled )
+            {
+                final IdProviderKey idProviderKey = IdProviderKey.from( entry.getKey() );
+                hostIdProvidersMapping.addIdProvider( idProviderKey, settings.flows );
+                if ( settings.isDefault )
                 {
                     hostIdProvidersMapping.setDefaultIdProvider( idProviderKey );
                 }
             }
-
-        } );
+        }
 
         return hostIdProvidersMapping.build();
+    }
+
+    private static boolean parseBoolean( final String idProviderName, final String setting, final String value )
+    {
+        final String trimmed = value.trim();
+        if ( "true".equalsIgnoreCase( trimmed ) || "false".equalsIgnoreCase( trimmed ) )
+        {
+            return Boolean.parseBoolean( trimmed );
+        }
+        throw new IllegalArgumentException(
+            "Invalid value [" + value + "] for setting [" + setting + "] of id provider [" + idProviderName +
+                "] in vhost mapping, must be [true] or [false]" );
+    }
+
+    private static final class IdProviderSettings
+    {
+        boolean isDefault;
+
+        boolean isEnabled;
+
+        Set<String> flows;
     }
 
     private Map<String, String> getVirtualHostContext( final String mappingPrefix )
