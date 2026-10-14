@@ -1,0 +1,121 @@
+package com.enonic.xp.core.impl.security.token;
+
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.enonic.xp.shared.SharedMap;
+import com.enonic.xp.shared.SharedMapService;
+
+/**
+ * The default key source when no key is configured: a key generated once and kept in a map shared
+ * across the cluster, so every node signs and verifies with the same secret without any setup.
+ * <p>
+ * The map holds one entry per key id with the base64 secret, plus a {@value #SIGNING_ENTRY} entry
+ * naming the signing key. Creation goes through the map's atomic modify, so two nodes starting
+ * together agree on one key: the loser's generated secret is discarded. Nodes cache keys locally;
+ * a key id they have not seen is looked up in the map, so a key generated elsewhere verifies here.
+ * <p>
+ * The key lives as long as the cluster: a full restart (or a single node restart without a
+ * cluster) generates a new one, and tokens signed before it stop verifying. Operators who need
+ * tokens to survive that, or to be shared across clusters, configure their own keys instead.
+ */
+final class SharedMapTokenSigningKeys
+    implements TokenSigningKeys
+{
+    static final String MAP_NAME = "com.enonic.xp.security.token.keys";
+
+    static final String SIGNING_ENTRY = "$signing";
+
+    private static final int SECRET_BYTES = 64;
+
+    private static final Logger LOG = LoggerFactory.getLogger( SharedMapTokenSigningKeys.class );
+
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    private final SharedMap<String, String> map;
+
+    private final Map<String, SigningKey> cache = new ConcurrentHashMap<>();
+
+    private volatile SigningKey signingKey;
+
+    SharedMapTokenSigningKeys( final SharedMapService sharedMapService )
+    {
+        this.map = sharedMapService.getSharedMap( MAP_NAME );
+    }
+
+    @Override
+    public SigningKey signingKey()
+    {
+        SigningKey key = this.signingKey;
+        if ( key == null )
+        {
+            key = resolveSigningKey();
+            this.signingKey = key;
+        }
+        return key;
+    }
+
+    @Override
+    public Optional<SigningKey> verificationKey( final String kid )
+    {
+        if ( SIGNING_ENTRY.equals( kid ) )
+        {
+            return Optional.empty();
+        }
+        final SigningKey cached = cache.get( kid );
+        if ( cached != null )
+        {
+            return Optional.of( cached );
+        }
+        final String secret = map.get( kid );
+        if ( secret == null )
+        {
+            return Optional.empty();
+        }
+        final SigningKey key = new SigningKey( kid, Base64.getDecoder().decode( secret ) );
+        cache.put( kid, key );
+        return Optional.of( key );
+    }
+
+    private SigningKey resolveSigningKey()
+    {
+        final String existing = map.get( SIGNING_ENTRY );
+        if ( existing != null )
+        {
+            final Optional<SigningKey> key = verificationKey( existing );
+            if ( key.isPresent() )
+            {
+                return key.get();
+            }
+        }
+
+        final byte[] secret = new byte[SECRET_BYTES];
+        RANDOM.nextBytes( secret );
+        final String kid = newKid();
+        map.modify( kid, value -> value == null ? Base64.getEncoder().encodeToString( secret ) : value );
+        final String winner = map.modify( SIGNING_ENTRY, value -> value == null || map.get( value ) == null ? kid : value );
+        if ( !kid.equals( winner ) )
+        {
+            map.delete( kid );
+        }
+        else
+        {
+            LOG.info( "Generated token signing key [{}]: tokens will not survive a full cluster restart. " +
+                          "Configure token.keys.<kid> in com.enonic.xp.security.cfg to use a persistent key.", kid );
+        }
+        return verificationKey( winner ).orElseThrow( () -> new IllegalStateException( "Token signing key [" + winner + "] vanished" ) );
+    }
+
+    private static String newKid()
+    {
+        final byte[] bytes = new byte[6];
+        RANDOM.nextBytes( bytes );
+        return "g" + Base64.getUrlEncoder().withoutPadding().encodeToString( bytes );
+    }
+}
