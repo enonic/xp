@@ -44,9 +44,21 @@ final class SharedMapTokenSigningKeys
 
     private volatile SigningKey signingKey;
 
+    private final String generatedMessage;
+
     SharedMapTokenSigningKeys( final SharedMapService sharedMapService )
     {
-        this.map = sharedMapService.getSharedMap( MAP_NAME );
+        this( sharedMapService, MAP_NAME, "Generated token signing key [{}]: tokens will not survive a full cluster restart. " +
+            "Configure token.keys.<kid> in com.enonic.xp.security.cfg to use a persistent key." );
+    }
+
+    /**
+     * A key set in the named map, for a purpose with its own message when a key is generated.
+     */
+    SharedMapTokenSigningKeys( final SharedMapService sharedMapService, final String mapName, final String generatedMessage )
+    {
+        this.map = sharedMapService.getSharedMap( mapName );
+        this.generatedMessage = generatedMessage;
     }
 
     @Override
@@ -106,8 +118,7 @@ final class SharedMapTokenSigningKeys
         }
         else
         {
-            LOG.info( "Generated token signing key [{}]: tokens will not survive a full cluster restart. " +
-                          "Configure token.keys.<kid> in com.enonic.xp.security.cfg to use a persistent key.", kid );
+            LOG.info( generatedMessage, kid );
         }
         return verificationKey( winner ).orElseThrow( () -> new IllegalStateException( "Token signing key [" + winner + "] vanished" ) );
     }
