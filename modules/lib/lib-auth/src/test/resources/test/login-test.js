@@ -177,6 +177,18 @@ exports.loginWithSkipAuth = function () {
 
 };
 
+exports.loginWithRoles = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        roles: ['role:cms.project.site.viewer', 'role:system.admin']
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
 exports.loginWithActor = function () {
     var result = auth.login({
         user: 'user1',
@@ -184,6 +196,27 @@ exports.loginWithActor = function () {
         skipAuth: true,
         scope: 'REQUEST',
         actor: 'user:enonic:automation'
+    });
+
+    t.assertTrue(result.authenticated);
+};
+
+exports.loginWithGroupInRoles = function () {
+    auth.login({
+        user: 'user1',
+        password: 'password',
+        idProvider: 'enonic',
+        roles: ['role:cms.project.site.viewer', 'group:system:editors']
+    });
+};
+
+exports.loginWithEmptyRoles = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        roles: []
     });
 
     t.assertTrue(result.authenticated);

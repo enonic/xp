@@ -52,6 +52,16 @@ var result5 = authLib.login({
 // END
 
 // BEGIN
+var result6 = authLib.login({
+    user: 'user1@enonic.com',
+    idProvider: 'enonic',
+    skipAuth: true,
+    scope: 'REQUEST',
+    roles: ['role:cms.project.myproject.viewer']
+});
+// END
+
+// BEGIN
 // Result of a successful login operation.
 var expected = {
     'authenticated': true,
@@ -74,3 +84,4 @@ t.assertJsonEquals(expected, result2);
 t.assertJsonEquals(expected, result3);
 t.assertJsonEquals(expected, result4);
 t.assertJsonEquals(expected, result5);
+t.assertJsonEquals(expected, result6);

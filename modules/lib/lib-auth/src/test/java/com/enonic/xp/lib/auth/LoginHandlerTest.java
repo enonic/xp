@@ -2,6 +2,7 @@ package com.enonic.xp.lib.auth;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
@@ -10,6 +11,8 @@ import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviders;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -20,9 +23,12 @@ import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 class LoginHandlerTest
     extends ScriptTestSupport
@@ -88,6 +94,62 @@ class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         assertEquals( authInfo, sessionAuthInfo );
+    }
+
+    @Test
+    void testLoginWithRoles()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithRoles" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.to( PrincipalKeys.from( "role:cms.project.site.viewer", "role:system.admin" ) ), token.getValue().getRestriction() );
+        assertEquals( IdProviderKey.from( "enonic" ), token.getValue().getIdProvider() );
+        assertEquals( authInfo, ContextAccessor.current().getAuthInfo() );
+        assertNull( ContextAccessor.current().getLocalScope().getSession().getAttribute( AuthenticationInfo.class ) );
+    }
+
+    @Test
+    void testLoginWithGroupInRolesIsRefused()
+    {
+        final RuntimeException e = assertThrows( RuntimeException.class, () -> runFunction( "/test/login-test.js", "loginWithGroupInRoles" ) );
+        assertTrue( e.getMessage().contains( "group:system:editors" ), e.getMessage() );
+        verifyNoInteractions( this.securityService );
+    }
+
+    @Test
+    void testLoginWithEmptyRolesRestrictsToNothing()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithEmptyRoles" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.to(), token.getValue().getRestriction() );
+        assertEquals( authInfo, ContextAccessor.current().getAuthInfo() );
+    }
+
+    @Test
+    void testLoginWithoutRolesLeavesNoRestriction()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithSkipAuth" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
     }
 
     @Test

@@ -9,11 +9,14 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
+import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.support.SerializableUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AuthenticationInfoTest
@@ -99,6 +102,30 @@ class AuthenticationInfoTest
         assertEquals( service, roundTripped.getActor() );
 
         assertEquals( null, AuthenticationInfo.unAuthenticated().getActor() );
+    }
+
+    @Test
+    void testRestriction()
+    {
+        final User user = User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "alice" ) ).login( "alice" ).build();
+        final AuthenticationInfo plain = AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        assertEquals( RoleRestriction.none(), plain.getRestriction() );
+        assertEquals( RoleRestriction.none(), AuthenticationInfo.unAuthenticated().getRestriction() );
+
+        final RoleRestriction limit = RoleRestriction.to( RoleKeys.ADMIN_LOGIN, RoleKeys.ADMIN );
+        final AuthenticationInfo limited =
+            AuthenticationInfo.create().user( user ).principals( RoleKeys.ADMIN_LOGIN ).restriction( limit ).build();
+        assertEquals( limit, limited.getRestriction() );
+        assertEquals( limit, AuthenticationInfo.copyOf( limited ).build().getRestriction() );
+        assertNotEquals( plain, limited );
+
+        for ( AuthenticationInfo info : new AuthenticationInfo[]{plain, limited,
+            AuthenticationInfo.create().user( user ).restriction( RoleRestriction.to() ).build()} )
+        {
+            final AuthenticationInfo roundTripped = (AuthenticationInfo) SerializableUtils.deserialize( SerializableUtils.serialize( info ) );
+            assertEquals( info.getRestriction(), roundTripped.getRestriction() );
+            assertEquals( info, roundTripped );
+        }
     }
 
     @Test
