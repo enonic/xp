@@ -14,7 +14,9 @@ import org.osgi.service.component.annotations.Reference;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.macro.MacroDescriptor;
@@ -80,13 +82,17 @@ public class DynamicSchemaServiceImpl
 
     private final DynamicSchemaAuditLogSupport auditLogSupport;
 
+    private final EventPublisher eventPublisher;
+
     @Activate
     public DynamicSchemaServiceImpl( @Reference final NodeService nodeService,
-                                     @Reference final DynamicSchemaAuditLogSupport auditLogSupport )
+                                     @Reference final DynamicSchemaAuditLogSupport auditLogSupport,
+                                     @Reference final EventPublisher eventPublisher )
     {
         this.dynamicResourceManager = new DynamicResourceManager( nodeService );
         this.dynamicResourceParser = new DynamicResourceParser();
         this.auditLogSupport = auditLogSupport;
+        this.eventPublisher = eventPublisher;
     }
 
     // the generic methods of the 8.1 API dispatch by the type of the params to the method of the kind
@@ -337,6 +343,7 @@ public class DynamicSchemaServiceImpl
         {
             auditLogSupport.updateComponent( params, type, result );
         }
+        publishUpdated( params.getKey().getApplicationKey(), kind( type ), params.getKey().toString(), stored.created() );
 
         return result;
     }
@@ -380,6 +387,7 @@ public class DynamicSchemaServiceImpl
         if ( deleted )
         {
             auditLogSupport.deleteComponent( key, type );
+            publishDeleted( key.getApplicationKey(), kind( type ), key.toString() );
         }
 
         return deleted;
@@ -407,6 +415,7 @@ public class DynamicSchemaServiceImpl
         {
             auditLogSupport.updateContentSchema( params, type, result );
         }
+        publishUpdated( params.getName().getApplicationKey(), kind( type ), params.getName().toString(), stored.created() );
 
         return result;
     }
@@ -451,6 +460,7 @@ public class DynamicSchemaServiceImpl
         if ( deleted )
         {
             auditLogSupport.deleteContentSchema( name, type );
+            publishDeleted( name.getApplicationKey(), kind( type ), name.toString() );
         }
 
         return deleted;
@@ -496,6 +506,7 @@ public class DynamicSchemaServiceImpl
         {
             auditLogSupport.createCms( params, result );
         }
+        publishUpdated( params.getKey(), ApplicationEvents.KIND_CMS, null, !update );
 
         return result;
     }
@@ -539,6 +550,7 @@ public class DynamicSchemaServiceImpl
         if ( deleted )
         {
             auditLogSupport.deleteCms( key );
+            publishDeleted( key, ApplicationEvents.KIND_CMS, null );
         }
 
         return deleted;
@@ -570,6 +582,7 @@ public class DynamicSchemaServiceImpl
         {
             auditLogSupport.createStyles( params, result );
         }
+        publishUpdated( params.getKey(), ApplicationEvents.KIND_STYLE, null, !update );
 
         return result;
     }
@@ -616,6 +629,7 @@ public class DynamicSchemaServiceImpl
         if ( deleted )
         {
             auditLogSupport.deleteStyles( key );
+            publishDeleted( key, ApplicationEvents.KIND_STYLE, null );
         }
 
         return deleted;
@@ -642,6 +656,7 @@ public class DynamicSchemaServiceImpl
         {
             auditLogSupport.updateMacro( params, result );
         }
+        publishUpdated( params.getKey().getApplicationKey(), ApplicationEvents.KIND_MACRO, params.getKey().toString(), stored.created() );
 
         return result;
     }
@@ -687,6 +702,7 @@ public class DynamicSchemaServiceImpl
         if ( deleted )
         {
             auditLogSupport.deleteMacro( key );
+            publishDeleted( key.getApplicationKey(), ApplicationEvents.KIND_MACRO, key.toString() );
         }
 
         return deleted;
@@ -714,6 +730,7 @@ public class DynamicSchemaServiceImpl
         {
             auditLogSupport.createPhrases( params, resource );
         }
+        publishUpdated( params.getKey(), ApplicationEvents.KIND_PHRASES, params.getName(), !update );
 
         return resource;
     }
@@ -751,9 +768,42 @@ public class DynamicSchemaServiceImpl
         if ( deleted )
         {
             auditLogSupport.deletePhrases( params );
+            publishDeleted( params.getKey(), ApplicationEvents.KIND_PHRASES, params.getName() );
         }
 
         return deleted;
+    }
+
+    // the definition of the application changed: told to the whole cluster once per call, after the change is written
+    private void publishUpdated( final ApplicationKey applicationKey, final String kind, final String name, final boolean created )
+    {
+        eventPublisher.publish( ApplicationEvents.updated( applicationKey, kind, name,
+                                                           created ? ApplicationEvents.ACTION_CREATED : ApplicationEvents.ACTION_UPDATED ) );
+    }
+
+    private void publishDeleted( final ApplicationKey applicationKey, final String kind, final String name )
+    {
+        eventPublisher.publish( ApplicationEvents.updated( applicationKey, kind, name, ApplicationEvents.ACTION_DELETED ) );
+    }
+
+    private static String kind( final DynamicComponentType type )
+    {
+        return switch ( type )
+        {
+            case PART -> ApplicationEvents.KIND_PART;
+            case LAYOUT -> ApplicationEvents.KIND_LAYOUT;
+            case PAGE -> ApplicationEvents.KIND_PAGE;
+        };
+    }
+
+    private static String kind( final DynamicContentSchemaType type )
+    {
+        return switch ( type )
+        {
+            case CONTENT_TYPE -> ApplicationEvents.KIND_CONTENT_TYPE;
+            case FORM_FRAGMENT -> ApplicationEvents.KIND_FORM_FRAGMENT;
+            case MIXIN -> ApplicationEvents.KIND_MIXIN;
+        };
     }
 
     // a descriptor as stored, with the icon it has after the call

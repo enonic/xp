@@ -4,6 +4,7 @@ import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -30,6 +31,7 @@ import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupportImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
 import com.enonic.xp.core.impl.app.SchemaConfig;
+import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
 import com.enonic.xp.core.impl.project.ProjectConfig;
 import com.enonic.xp.core.impl.project.ProjectServiceImpl;
@@ -40,6 +42,8 @@ import com.enonic.xp.core.impl.security.SecurityInitializer;
 import com.enonic.xp.core.impl.security.SecurityServiceImpl;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.event.Event;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.icon.IconUpdate;
@@ -120,6 +124,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -134,6 +140,9 @@ class DynamicSchemaServiceImplTest
     private DynamicSchemaServiceImpl dynamicSchemaService;
 
     private ProjectServiceImpl projectService;
+
+    // the application events published by the service: one per change, see ApplicationEvents.updated
+    private final List<Event> applicationEvents = new ArrayList<>();
 
     private static final String CMS_DESCRIPTOR_DEFAULT_VALUE = """
         kind: "CMS"
@@ -263,7 +272,11 @@ class DynamicSchemaServiceImplTest
         final DynamicSchemaAuditLogSupportImpl schemaAuditLogSupport = new DynamicSchemaAuditLogSupportImpl( mock( AuditLogService.class ) );
         schemaAuditLogSupport.activate( schemaConfig );
 
-        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport );
+        this.applicationEvents.clear();
+        final EventPublisher applicationEventPublisher = mock( EventPublisher.class );
+        doAnswer( invocation -> applicationEvents.add( invocation.getArgument( 0 ) ) ).when( applicationEventPublisher ).publish( any() );
+
+        this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, applicationEventPublisher );
 
         final SecurityConfig securityConfig = mock( SecurityConfig.class, withSettings().stubOnly()
             .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
@@ -2266,6 +2279,52 @@ class DynamicSchemaServiceImplTest
                 CreateOrUpdateContentSchemaParams.create().name( name ).icon( IconUpdate.REMOVE ).build() ) );
         assertNull( removed.getSchema().getIcon() );
         assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getFormFragment( name ) ).getSchema().getIcon() );
+    }
+
+    // every change of the schema is told to the cluster as an UPDATED application event naming what changed
+    @Test
+    void applicationEventsOnSchemaChanges()
+        throws Exception
+    {
+        final String contentType = readResource( "_contentType.yaml" );
+        final String part = readResource( "_part.yaml" );
+        final String styles = readResource( "_styles.yaml" );
+        final ApplicationKey applicationKey = ApplicationKey.from( "myapp" );
+        applicationEvents.clear();
+
+        createAdminContext().runWith( () -> {
+            dynamicSchemaService.createOrUpdateContentType( contentTypeParams( "myapp:mytype", contentType, IconUpdate.KEEP ) );
+            dynamicSchemaService.createOrUpdateContentType( contentTypeParams( "myapp:mytype", null, svgIcon( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) ) );
+            dynamicSchemaService.deleteContentType( ContentTypeName.from( "myapp:mytype" ) );
+            dynamicSchemaService.deleteContentType( ContentTypeName.from( "myapp:mytype" ) );
+            dynamicSchemaService.createOrUpdatePart(
+                CreateOrUpdateComponentParams.create().key( DescriptorKey.from( "myapp:mypart" ) ).resource( part ).build() );
+            dynamicSchemaService.createOrUpdateStyles( CreateOrUpdateStylesParams.create().key( applicationKey ).resource( styles ).build() );
+            dynamicSchemaService.createOrUpdatePhrases(
+                CreateOrUpdatePhrasesParams.create().key( applicationKey ).name( "phrases_en" ).resource( "a=b" ).build() );
+            dynamicSchemaService.deleteCms( applicationKey );
+        } );
+
+        // the kind is the one the descriptor declares, Phrases for the i18n phrases, which declare none
+        assertEquals( List.of( "ContentType myapp:mytype created", //
+                               "ContentType myapp:mytype updated", //
+                               "ContentType myapp:mytype deleted", //
+                               "Part myapp:mypart created", //
+                               "Style null created", //
+                               "Phrases phrases_en created", //
+                               "CMS null deleted" ), applicationEvents.stream().map( DynamicSchemaServiceImplTest::describe ).toList() );
+
+        final Event event = applicationEvents.get( 0 );
+        assertEquals( ApplicationEvents.EVENT_TYPE, event.getType() );
+        assertTrue( event.isDistributed() );
+        assertEquals( ApplicationEvents.UPDATED, event.getData().get( ApplicationEvents.EVENT_TYPE_KEY ) );
+        assertEquals( "myapp", String.valueOf( event.getData().get( ApplicationEvents.APPLICATION_KEY_KEY ) ) );
+    }
+
+    private static String describe( final Event event )
+    {
+        return event.getData().get( ApplicationEvents.KIND_KEY ) + " " + event.getData().get( ApplicationEvents.NAME_KEY ) + " " +
+            event.getData().get( ApplicationEvents.ACTION_KEY );
     }
 
     private static IconUpdate svgIcon( final byte[] data )

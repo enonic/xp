@@ -238,8 +238,14 @@ class ApplicationDescriptorServiceImplTest
         assertNull( result.getVendorUrl() );
 
         verify( auditLogSupport ).updateApplicationDescriptor( MYAPP, persisted.get(), null, 0, false );
-        // an update of an existing descriptor changes nothing about the application being listed
-        verify( eventPublisher, never() ).publish( any() );
+        // the application stays listed, whoever caches its descriptor is told that it changed
+        final ArgumentCaptor<Event> event = ArgumentCaptor.forClass( Event.class );
+        verify( eventPublisher ).publish( event.capture() );
+        assertEquals( ApplicationEvents.UPDATED, event.getValue().getData().get( ApplicationEvents.EVENT_TYPE_KEY ) );
+        assertEquals( ApplicationEvents.KIND_APPLICATION, event.getValue().getData().get( ApplicationEvents.KIND_KEY ) );
+        assertEquals( ApplicationEvents.ACTION_UPDATED, event.getValue().getData().get( ApplicationEvents.ACTION_KEY ) );
+        assertNull( event.getValue().getData().get( ApplicationEvents.NAME_KEY ) );
+        assertTrue( event.getValue().isDistributed() );
     }
 
     @Test

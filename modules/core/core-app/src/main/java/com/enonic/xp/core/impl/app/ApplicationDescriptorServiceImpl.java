@@ -154,6 +154,8 @@ public class ApplicationDescriptorServiceImpl
         {
             this.auditLogSupport.updateApplicationDescriptor( key, yaml, iconMimeType, iconSize,
                                                               iconUpdate instanceof IconUpdate.Remove );
+            this.eventPublisher.publish(
+                ApplicationEvents.updated( key, ApplicationEvents.KIND_APPLICATION, null, ApplicationEvents.ACTION_UPDATED ) );
         }
         return result;
     }
