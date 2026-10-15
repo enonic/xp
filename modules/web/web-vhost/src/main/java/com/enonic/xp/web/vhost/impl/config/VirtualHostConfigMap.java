@@ -117,11 +117,14 @@ final class VirtualHostConfigMap
         final Map<String, IdProviderSettings> idProviders = new TreeMap<>();
 
         // Keys: "idProvider.<name> = default|enabled" enables the provider; "idProvider.<name>.<setting> = <value>"
-        // carries its settings. A dot cannot occur in an id provider name, so the first segment is always the name.
+        // carries its settings. The first segment is the name: an id provider named with a dot cannot be configured.
         getIdProviders( idProviderPrefix ).forEach( ( remainder, value ) -> {
             final int dot = remainder.indexOf( '.' );
             final String idProviderName = dot < 0 ? remainder : remainder.substring( 0, dot );
-            final IdProviderSettings settings = idProviders.computeIfAbsent( idProviderName, name -> new IdProviderSettings() );
+            final IdProviderSettings settings = idProviders.computeIfAbsent( idProviderName, name -> {
+                IdProviderKey.from( name );
+                return new IdProviderSettings();
+            } );
 
             if ( dot < 0 )
             {
@@ -145,7 +148,8 @@ final class VirtualHostConfigMap
                     .map( flow -> flow.toLowerCase( Locale.ROOT ) )
                     .collect( Collectors.toUnmodifiableSet() );
                 default -> throw new IllegalArgumentException(
-                    "Unknown setting [" + setting + "] for id provider [" + idProviderName + "] in vhost mapping" );
+                    "Unknown setting [" + setting + "] for id provider [" + idProviderName + "] in vhost mapping" +
+                        " (an id provider whose name contains a dot cannot be configured in a vhost mapping)" );
             }
         } );
 

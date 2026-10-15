@@ -19,10 +19,4 @@ class IdProviderKeyTest
     {
         assertThatThrownBy( () -> IdProviderKey.from( "my provider" ) ).isInstanceOf( IllegalArgumentException.class );
     }
-
-    @Test
-    void dot_in_name_not_allowed()
-    {
-        assertThatThrownBy( () -> IdProviderKey.from( "my.provider" ) ).isInstanceOf( IllegalArgumentException.class );
-    }
 }

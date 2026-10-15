@@ -250,6 +250,22 @@ class VirtualHostConfigMapTest
         map.clear();
         map.put( "mapping.myapp1.idProvider.system.color", "red" );
         assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+
+        // a dotted id provider name reads as a name and a setting, and is reported as such
+        map.clear();
+        map.put( "mapping.myapp1.idProvider.my.provider", "default" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+    }
+
+    @Test
+    void testIdProvider_settingsOnlyNameIsValidated()
+    {
+        map.put( "mapping.myapp1.idProvider.roles.flows", "autologin" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
+
+        map.clear();
+        map.put( "mapping.myapp1.idProvider..flows", "autologin" );
+        assertThrows( IllegalArgumentException.class, () -> new VirtualHostConfigMap( map ).buildMappings() );
     }
 
     @Test
