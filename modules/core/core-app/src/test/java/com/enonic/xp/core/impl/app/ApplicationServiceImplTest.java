@@ -1,15 +1,17 @@
 package com.enonic.xp.core.impl.app;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.stream.Stream;
-import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.mockito.verification.VerificationMode;
 import org.osgi.framework.Bundle;
@@ -23,37 +25,28 @@ import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationInvalidationLevel;
 import com.enonic.xp.app.ApplicationInvalidator;
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.app.ApplicationMode;
 import com.enonic.xp.app.ApplicationNotFoundException;
 import com.enonic.xp.app.Applications;
-import com.enonic.xp.app.CreateVirtualApplicationParams;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.config.ConfigBuilder;
 import com.enonic.xp.config.Configuration;
 import com.enonic.xp.core.impl.app.event.ApplicationClusterEvents;
+import com.enonic.xp.core.impl.app.event.ApplicationEvents;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventPublisher;
-import com.enonic.xp.exception.ForbiddenAccessException;
-import com.enonic.xp.node.CreateNodeParams;
-import com.enonic.xp.node.DeleteNodeResult;
-import com.enonic.xp.node.FindNodesByQueryResult;
-import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeId;
-import com.enonic.xp.node.NodeIds;
-import com.enonic.xp.node.NodeListEntry;
-import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
-import com.enonic.xp.node.NodeQuery;
-import com.enonic.xp.node.NodeService;
-import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
+import com.enonic.xp.util.Version;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -62,7 +55,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -82,10 +74,6 @@ class ApplicationServiceImplTest
 
     private AppFilterService appFilterService;
 
-    private NodeService nodeService;
-
-    private VirtualAppService virtualAppService;
-
     @BeforeEach
     void initService()
     {
@@ -100,16 +88,12 @@ class ApplicationServiceImplTest
         AuditLogService auditLogService = mock( AuditLogService.class );
 
         when( appFilterService.accept( any( ApplicationKey.class ) ) ).thenReturn( true );
+        when( repoService.getApplications() ).thenReturn( Nodes.empty() );
 
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
         auditLogSupport.activate( appConfig );
 
-        nodeService = mock( NodeService.class );
-
-        virtualAppService = new VirtualAppService( nodeService );
-
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, virtualAppService,
-                                                   auditLogSupport );
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, auditLogSupport );
     }
 
     @Test
@@ -132,71 +116,6 @@ class ApplicationServiceImplTest
         final ApplicationAdaptor result = (ApplicationAdaptor) this.service.get( ApplicationKey.from( "app1" ) );
         assertNotNull( result );
         assertSame( bundle, result.getBundle() );
-    }
-
-    @Test
-    void get_virtual_application()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-        when( nodeService.nodeExists(
-            new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn( true );
-
-        final Application virtualApp = this.service.get( applicationKey );
-
-        assertEquals( applicationKey, virtualApp.getKey() );
-        assertTrue( virtualApp.getModifiedTime().compareTo( Instant.now() ) <= 0 );
-    }
-
-    @Test
-    void create_virtual_application()
-    {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).name( "app-node" ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
-
-        final Application result = VirtualAppContext.createAdminContext()
-            .callWith( () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
-
-        assertEquals( appKey, result.getKey() );
-    }
-
-    @Test
-    void create_virtual_application_without_admin()
-    {
-        final Node appNode = Node.create().id( NodeId.from( "app-node" ) ).parentPath( NodePath.ROOT ).build();
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenReturn( appNode );
-
-        assertThrows( ForbiddenAccessException.class,
-                      () -> this.service.createVirtualApplication( CreateVirtualApplicationParams.create().key( appKey ).build() ) );
-    }
-
-    @Test
-    void delete_virtual_application()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertTrue( VirtualAppContext.createAdminContext().callWith( () -> this.service.deleteVirtualApplication( appKey ) ) );
-    }
-
-    @Test
-    void delete_virtual_application_without_admin()
-    {
-        final ApplicationKey appKey = ApplicationKey.from( "app1" );
-
-        final DeleteNodeResult result = DeleteNodeResult.create()
-            .add( new DeleteNodeResult.Result( NodeId.from( "nodeid" ), NodeVersionId.from( "nodeversionid" ) ) )
-            .build();
-        when( nodeService.delete( argThat( argument -> new NodePath( "/app1" ).equals( argument.getNodePath() ) ) ) ).thenReturn( result );
-
-        assertThrows( ForbiddenAccessException.class, () -> this.service.deleteVirtualApplication( appKey ) );
     }
 
     @Test
@@ -230,22 +149,184 @@ class ApplicationServiceImplTest
         applicationRegistry.registerApplication( bundle1 );
         applicationRegistry.registerApplication( bundle2 );
 
-        NodeId virtualAppNodeId = NodeId.from( "virtual-app-id" );
-
-        final NodeIds ids = NodeIds.from( virtualAppNodeId );
-
-        when( nodeService.list( isA( ListNodesParams.class ) ) ).thenAnswer( invocation -> Stream.of(
-            new NodeListEntry( virtualAppNodeId, new NodePath( "/app3" ), Instant.EPOCH ),
-            new NodeListEntry( NodeId.from( "resource-folder-id" ), new NodePath( "/app3/cms" ), Instant.EPOCH ),
-            new NodeListEntry( NodeId.from( "resource-id" ), new NodePath( "/app3/cms/mytype.yaml" ), Instant.EPOCH ) ) );
-
-        when( nodeService.getByIds( ids ) ).thenReturn(
-            Nodes.from( Node.create().id( new NodeId() ).name( "app3" ).parentPath( NodePath.ROOT ).build() ) );
-
         final Applications result = this.service.list();
         assertNotNull( result );
-        assertEquals( 3, result.getSize() );
-        assertEquals( "app3", result.get( 2 ).getKey().toString() );
+        assertEquals( 2, result.getSize() );
+    }
+
+    @Test
+    void list_includes_persisted_only_applications()
+    {
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.registerApplication( bundle );
+
+        // app1 is installed from its bundle, the persisted node of app1 must not be listed twice; app2 exists as nodes only
+        final Node app1Node = applicationNode( "app1", bundleNodeData() );
+        final Node app2Node = applicationNode( "app2", persistedNodeData() );
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( app1Node, app2Node ) );
+        when( this.repoService.getApplicationDescriptorNode( ApplicationKey.from( "app2" ) ) ).thenReturn( descriptorNode( "app2" ) );
+        when( this.repoService.hasCmsDescriptor( ApplicationKey.from( "app2" ) ) ).thenReturn( true );
+
+        final Applications result = this.service.list();
+        assertEquals( 2, result.getSize() );
+        assertSame( applicationRegistry.get( ApplicationKey.from( "app1" ) ), result.get( 0 ) );
+
+        final Application persisted = result.get( 1 );
+        assertInstanceOf( PersistedApplication.class, persisted );
+        assertEquals( ApplicationKey.from( "app2" ), persisted.getKey() );
+        assertTrue( persisted.isSchema() );
+        assertTrue( persisted.isStarted() );
+        assertFalse( persisted.isSystem() );
+        assertNull( persisted.getClassLoader() );
+        assertEquals( Version.emptyVersion, persisted.getVersion() );
+        assertNull( persisted.getSystemVersion() );
+        assertEquals( Instant.parse( "2026-10-12T10:00:00Z" ), persisted.getModifiedTime() );
+        assertTrue( persisted.getCapabilities().isEmpty() );
+        assertNotNull( persisted.getConfig() );
+        assertTrue( persisted.getConfig().asMap().isEmpty() );
+
+        assertEquals( result.getApplicationKeys(), this.service.getInstalledApplications().getApplicationKeys() );
+    }
+
+    @Test
+    void list_skips_a_node_without_bundle_and_without_descriptor()
+    {
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( applicationNode( "app1", new PropertyTree() ) ) );
+
+        assertEquals( 0, this.service.list().getSize() );
+    }
+
+    @Test
+    void get_persisted_only_application()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
+        when( this.repoService.getApplicationDescriptorNode( applicationKey ) ).thenReturn( descriptorNode( "app1" ) );
+
+        final Application result = this.service.get( applicationKey );
+        assertInstanceOf( PersistedApplication.class, result );
+        assertEquals( applicationKey, result.getKey() );
+        assertEquals( applicationKey, this.service.getInstalledApplication( applicationKey ).getKey() );
+
+        // a descriptor alone makes no schema application: the cms descriptor does
+        assertFalse( result.isSchema() );
+        when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
+        assertTrue( this.service.get( applicationKey ).isSchema() );
+    }
+
+    @Test
+    void get_prefers_the_installed_application_over_the_persisted_node()
+    {
+        final Bundle bundle = deployAppBundle( "app1" );
+        applicationRegistry.registerApplication( bundle );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", bundleNodeData() ) );
+
+        assertSame( applicationRegistry.get( applicationKey ), this.service.get( applicationKey ) );
+    }
+
+    @Test
+    void start_and_stop_persisted_only_application_throw()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
+        when( this.repoService.getApplicationDescriptorNode( applicationKey ) ).thenReturn( descriptorNode( "app1" ) );
+
+        // nothing to start or stop without a bundle...
+        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "without bundle" );
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "without bundle" );
+
+        // ...and a schema application, owning a schema, is always started
+        when( this.repoService.hasCmsDescriptor( applicationKey ) ).thenReturn( true );
+        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+
+        verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
+        verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
+        verifyNoEvents( ApplicationClusterEvents.stop( applicationKey ) );
+    }
+
+    @Test
+    void start_and_stop_events_for_persisted_only_application_are_ignored()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        // nothing in the registry of this cluster node, and nothing to throw about
+        this.service.onEvent( remote( ApplicationClusterEvents.start( applicationKey ) ) );
+        this.service.onEvent( remote( ApplicationClusterEvents.stop( applicationKey ) ) );
+
+        verify( this.eventPublisher, never() ).publish( any() );
+    }
+
+    @Test
+    void uninstall_persisted_only_application_deletes_its_nodes()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( applicationNode( "app1", persistedNodeData() ) );
+        when( this.repoService.getApplicationDescriptorNode( applicationKey ) ).thenReturn( descriptorNode( "app1" ) );
+
+        this.service.uninstallApplication( applicationKey );
+
+        verify( this.repoService ).deleteApplicationNode( applicationKey );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( applicationKey ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( applicationKey ) ) ) );
+        // the local event the listeners of the application list react to is published after the nodes are deleted
+        final InOrder inOrder = Mockito.inOrder( this.repoService, this.eventPublisher );
+        inOrder.verify( this.repoService ).deleteApplicationNode( applicationKey );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( applicationKey ) ) ) );
+    }
+
+    @Test
+    void uninstall_event_for_persisted_only_application_publishes_the_local_event_only()
+    {
+        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
+
+        // nothing in the registry of this cluster node, and nothing to throw about: the application leaves the list all the same
+        this.service.onEvent( remote( ApplicationClusterEvents.uninstall( applicationKey ) ) );
+
+        verify( this.eventPublisher, times( 1 ) ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( applicationKey ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish( any() );
+    }
+
+    // the event as received from another node of the cluster
+    private static Event remote( final Event event )
+    {
+        return Event.create( event ).localOrigin( false ).build();
+    }
+
+    private static Node applicationNode( final String name, final PropertyTree data )
+    {
+        return Node.create()
+            .id( NodeId.from( name + "-node" ) )
+            .name( name )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
+            .data( data )
+            .timestamp( Instant.parse( "2026-10-12T12:00:00Z" ) )
+            .build();
+    }
+
+    private static Node descriptorNode( final String name )
+    {
+        return Node.create()
+            .id( NodeId.from( name + "-descriptor" ) )
+            .name( SchemaResourcePaths.APP_DESCRIPTOR_NAME )
+            .parentPath( ApplicationRepoServiceImpl.applicationNodePath( ApplicationKey.from( name ) ) )
+            .build();
+    }
+
+    // the node of an application created through the descriptor service: no bundle
+    private static PropertyTree persistedNodeData()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Instant.parse( "2026-10-12T10:00:00Z" ) );
+        return data;
     }
 
     @Test
@@ -382,6 +463,89 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void stopApplication_schemaApp_throws()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "schemaApp",
+                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
+
+        applicationRegistry.registerApplication( bundle );
+
+        bundle.start();
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
+
+        assertThatThrownBy( () -> this.service.stopApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+
+        assertEquals( Bundle.ACTIVE, bundle.getState() );
+        verify( this.repoService, never() ).updateStartedState( any(), Mockito.anyBoolean() );
+        verifyNoEvents( ApplicationClusterEvents.stop( applicationKey ) );
+    }
+
+    @Test
+    void startApplication_schemaApp_throws()
+    {
+        final Bundle bundle = deploy( "schemaApp",
+                                      buildWithoutBnd( newBundle( "schemaApp", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
+
+        applicationRegistry.registerApplication( bundle );
+
+        final ApplicationKey applicationKey = ApplicationKey.from( "schemaApp" );
+
+        assertThatThrownBy( () -> this.service.startApplication( applicationKey ) ).isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "schema application" );
+
+        assertEquals( Bundle.INSTALLED, bundle.getState() );
+        verifyNoEvents( ApplicationClusterEvents.start( applicationKey ) );
+    }
+
+    @Test
+    void stopApplication_gradleBuiltAppWithCmsDescriptor_stops()
+        throws Exception
+    {
+        final Bundle bundle = deploy( "gradleApp", buildWithoutBnd( newBundle( "gradleApp", true ).setHeader( "Bnd-LastModified", "1783360499694" )
+                                                                    .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) );
+
+        applicationRegistry.registerApplication( bundle );
+
+        bundle.start();
+
+        this.service.stopApplication( ApplicationKey.from( "gradleApp" ) );
+
+        assertEquals( Bundle.RESOLVED, bundle.getState() );
+    }
+
+    @Test
+    void install_stored_schema_application_is_started()
+    {
+        final String bundleName = "schemaApp";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        // stored as stopped: a schema application is started regardless
+        final PropertyTree data = bundleNodeData();
+        data.setBoolean( ApplicationPropertyNames.STARTED, false );
+        final Node node = Node.create()
+            .id( NodeId.from( "mynodeid3" ) )
+            .name( bundleName )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
+            .data( data )
+            .build();
+
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( node ) );
+        when( this.repoService.getApplicationNode( applicationKey ) ).thenReturn( node );
+        when( this.repoService.getApplicationSource( node.id() ) ).thenReturn(
+            wrap( buildWithoutBnd( newBundle( bundleName, true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) ) ) ) );
+
+        this.service.installAllStoredApplications();
+
+        final Application application = this.service.getInstalledApplication( applicationKey );
+        assertNotNull( application );
+        assertTrue( application.isSchema() );
+        assertTrue( application.isStarted() );
+    }
+
+    @Test
     void install_global()
     {
         final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
@@ -406,6 +570,225 @@ class ApplicationServiceImplTest
     }
 
     @Test
+    void install_global_with_cms_descriptor_persists_schema()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        final ByteSource byteSource = createSchemaBundleSource( bundleName );
+
+        final Application application = this.service.installGlobalApplication( byteSource );
+
+        assertNotNull( application );
+        assertFalse( this.service.isLocalApplication( applicationKey ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 7 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
+                "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) &&
+                CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                CONTENT_TYPE.equals( readResource( resources, "cms/content-types/mytype.yaml" ) ) &&
+                "<svg/>".equals( readResource( resources, "cms/content-types/mytype.svg" ) ) &&
+                MACRO.equals( readResource( resources, "cms/macros/mymacro.yaml" ) ) &&
+                "phrases".equals( readResource( resources, "cms/i18n/phrases/phrases_en.properties" ) ) ) );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+
+        // the schema is persisted before the bundle is installed (install event published, bundle tracked)
+        final InOrder inOrder = Mockito.inOrder( this.repoService, this.eventPublisher );
+        inOrder.verify( this.repoService ).upsertApplicationNode( any(), any() );
+        inOrder.verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), any() );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationClusterEvents.install( applicationKey ) ) ) );
+    }
+
+    @Test
+    void install_global_without_cms_descriptor_persists_descriptor_and_icon_only()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // no cms/cms.yaml: the bundle does not own a schema, its descriptor and icon are persisted all the same (and whatever
+        // an earlier version persisted is replaced by them) while anything below cms/ stays in the bundle
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
+                                                         .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
+                                                         .addResource( "enonic.svg", stream( "<svg>app</svg>" ) )
+                                                         .addResource( "cms/content-types/mytype/mytype.yaml", stream( CONTENT_TYPE ) )
+                                                         .addResource( "lib/util.js", stream( "library" ) )
+                                                         .addResource( "assets/app.js", stream( "asset" ) )
+                                                         .build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 2 && "kind: \"Application\"\n".equals( readResource( resources, "enonic.yaml" ) ) &&
+                "<svg>app</svg>".equals( readResource( resources, "enonic.svg" ) ) ) );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+    }
+
+    @Test
+    void install_global_without_any_schema_resource_persists_nothing_but_replaces_the_old()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true ).addResource( "lib/util.js", stream( "library" ) ).build() ) );
+
+        // an empty set of resources: the repo service removes what an earlier version persisted
+        verify( this.repoService ).persistApplicationSchema( eq( ApplicationKey.from( bundleName ) ), argThat( Map::isEmpty ) );
+    }
+
+    @Test
+    void install_stored_application_without_bundle_is_skipped()
+    {
+        // an application node holding nothing but a persisted descriptor (created through the descriptor service): no bundle to install
+        final Node descriptorOnly = Node.create()
+            .id( NodeId.from( "descriptor-only" ) )
+            .name( "my.descriptor" )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
+            .build();
+        final Node withBundle = Node.create()
+            .id( NodeId.from( "with-bundle" ) )
+            .name( "my.bundle" )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
+            .data( bundleNodeData() )
+            .build();
+
+        when( this.repoService.getApplications() ).thenReturn( Nodes.from( descriptorOnly, withBundle ) );
+        when( this.repoService.getApplicationNode( ApplicationKey.from( "my.descriptor" ) ) ).thenReturn( descriptorOnly );
+        when( this.repoService.getApplicationNode( ApplicationKey.from( "my.bundle" ) ) ).thenReturn( withBundle );
+        when( this.repoService.getApplicationSource( withBundle.id() ) ).thenReturn( createBundleSource( "my.bundle" ) );
+
+        this.service.installAllStoredApplications();
+
+        verify( this.repoService, never() ).getApplicationSource( descriptorOnly.id() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.descriptor" ) ) );
+        assertNotNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
+    }
+
+    private static PropertyTree bundleNodeData()
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF,
+                                 BinaryReference.from( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
+        return data;
+    }
+
+    @Test
+    void install_global_with_cms_yml_descriptor_persists_schema()
+    {
+        final Node node = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "my.bundle" ).build();
+        final String bundleName = "my.bundle";
+        final ApplicationKey applicationKey = ApplicationKey.from( bundleName );
+
+        mockRepoCreateNode( node );
+        mockRepoGetNode( node, bundleName );
+
+        // no application descriptor at all, cms/cms.yml variant: still owns the schema
+        this.service.installGlobalApplication( wrap( newBundle( bundleName, true )
+                                                         .addResource( "cms/cms.yml", stream( CMS_DESCRIPTOR ) )
+                                                         .addResource( "cms/parts/mypart/mypart.yaml", stream( PART ) )
+                                                         .addResource( "cms/parts/mypart/mypart.js", stream( "controller" ) )
+                                                         .build() ) );
+
+        verify( this.repoService ).persistApplicationSchema( eq( applicationKey ), argThat(
+            resources -> resources.size() == 2 && CMS_DESCRIPTOR.equals( readResource( resources, "cms/cms.yaml" ) ) &&
+                PART.equals( readResource( resources, "cms/parts/mypart.yaml" ) ) ) );
+    }
+
+    @Test
+    void install_global_with_wrong_kind_changes_nothing()
+    {
+        // cms/style/style.yaml is reserved for the Style descriptor, a schema declares the kind of its folder
+        final ByteSource byteSource = wrap( newBundle( "my.bundle", true ).addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
+                                                .addResource( "cms/style/style.yaml", stream( CMS_DESCRIPTOR ) )
+                                                .addResource( "cms/content-types/mytype/mytype.yaml", stream( PART ) )
+                                                .addResource( "cms/parts/mypart.yaml", stream( PART ) )
+                                                .build() );
+
+        assertThatThrownBy( () -> this.service.installGlobalApplication( byteSource ) ).isInstanceOf( ApplicationBundleException.class )
+            .hasMessageContaining( "cms/style/style.yaml: invalid kind \"CMS\", expected \"Style\"" )
+            .hasMessageContaining( "cms/content-types/mytype.yaml: invalid kind \"Part\", expected \"ContentType\"" )
+            .hasMessageNotContaining( "cms/parts/mypart.yaml" );
+
+        // nothing of the application is persisted: no node writes, no events, no bundle
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
+    }
+
+    @Test
+    void install_global_with_missing_kind_changes_nothing()
+    {
+        final ByteSource byteSource = wrap( newBundle( "my.bundle", true ).addResource( "cms/cms.yaml", stream( "title: \"no kind\"" ) )
+                                                .build() );
+
+        assertThatThrownBy( () -> this.service.installGlobalApplication( byteSource ) ).isInstanceOf( ApplicationBundleException.class )
+            .hasMessageContaining( "cms/cms.yaml: missing kind" );
+
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+    }
+
+    @Test
+    void install_global_unreadable_schema_changes_nothing()
+    {
+        final ByteSource bundleSource = wrap( newBundle( "my.bundle", true )
+                                                  .addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
+                                                  .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
+                                                  .build() );
+
+        // readable while AppInfo is resolved (first open), unreadable when the schema is extracted
+        final ByteSource failingSource = new ByteSource()
+        {
+            private int opens;
+
+            @Override
+            public InputStream openStream()
+                throws IOException
+            {
+                if ( ++opens > 1 )
+                {
+                    throw new IOException( "unreadable jar" );
+                }
+                return bundleSource.openStream();
+            }
+        };
+
+        assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( failingSource ) );
+
+        // schema extraction fails before anything is changed: no node writes, no events, no bundle
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+        verify( this.eventPublisher, never() ).publish( any() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
+    }
+
+    @Test
+    void install_local_with_cms_descriptor_does_not_persist_schema()
+    {
+        final String bundleName = "my.bundle";
+
+        final Application application = this.service.installLocalApplication( createSchemaBundleSource( bundleName ) );
+
+        assertNotNull( application );
+        assertTrue( this.service.isLocalApplication( application.getKey() ) );
+
+        verify( this.repoService, never() ).persistApplicationSchema( any(), any() );
+        verify( this.repoService, never() ).deleteApplicationSchema( any() );
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+    }
+
+    @Test
     void install_global_invalid()
     {
         final Node applicationNode = Node.create().id( NodeId.from( "mynode" ) ).parentPath( NodePath.ROOT ).name( "myNode" ).build();
@@ -418,6 +801,20 @@ class ApplicationServiceImplTest
         final ByteSource byteSource = createBundleSource( bundleName, false );
 
         assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( byteSource ) );
+    }
+
+    @Test
+    void install_global_descriptor_name_mismatch()
+    {
+        // "name" in enonic.yaml must denote the bundle itself
+        final ByteSource byteSource = wrap( newBundle( "my.bundle", true )
+                                                .addResource( "enonic.yaml", stream( "kind: \"Application\"\nname: \"other.bundle\"\n" ) )
+                                                .build() );
+
+        assertThrows( ApplicationBundleException.class, () -> this.service.installGlobalApplication( byteSource ) );
+
+        verify( this.repoService, never() ).upsertApplicationNode( any(), any() );
+        assertNull( this.service.getInstalledApplication( ApplicationKey.from( "my.bundle" ) ) );
     }
 
     @Test
@@ -544,13 +941,15 @@ class ApplicationServiceImplTest
         final Node node1 = Node.create()
             .id( NodeId.from( "mynodeid1" ) )
             .name( bundleName1 )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
+            .data( bundleNodeData() )
             .build();
 
         final Node node2 = Node.create()
             .id( NodeId.from( "mynodeid2" ) )
             .name( bundleName2 )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
+            .data( bundleNodeData() )
             .build();
 
         when( this.repoService.getApplications() ).thenReturn( Nodes.from( node1, node2 ) );
@@ -585,6 +984,8 @@ class ApplicationServiceImplTest
 
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( application ) ) ) );
+        verify( this.eventPublisher, times( 1 ) ).publish(
+            argThat( new ApplicationEventMatcher( ApplicationEvents.uninstalled( application ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstalled( application ) ) ) );
     }
@@ -819,74 +1220,6 @@ class ApplicationServiceImplTest
     }
 
 
-    @Test
-    void get_application_mode()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        final List<String> appNodeNames =
-            List.of( "cms", "content-types", "form-fragments", "mixins", "parts", "layouts", "pages", "styles" );
-
-        when( nodeService.create( isA( CreateNodeParams.class ) ) ).thenAnswer( params -> {
-            final CreateNodeParams createNodeParams = params.getArgument( 0 );
-
-            if ( applicationKey.toString().equals( createNodeParams.getName().toString() ) )
-            {
-
-                when( nodeService.nodeExists(
-                    new NodePath( VirtualAppConstants.VIRTUAL_APP_ROOT_PARENT, NodeName.from( applicationKey.getName() ) ) ) ).thenReturn(
-                    true );
-
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( NodePath.ROOT )
-                    .build();
-
-            }
-            if ( appNodeNames.contains( createNodeParams.getName().toString() ) )
-            {
-                return Node.create()
-                    .id( NodeId.from( createNodeParams.getName() ) )
-                    .name( createNodeParams.getName() )
-                    .parentPath( new NodePath( "/app1" ) )
-                    .build();
-            }
-
-            return null;
-        } );
-
-        VirtualAppContext.createAdminContext()
-            .runWith( () -> virtualAppService.create( CreateVirtualApplicationParams.create().key( applicationKey ).build() ) );
-
-        assertThrows( ForbiddenAccessException.class, () -> service.getApplicationMode( applicationKey ) );
-        assertEquals( ApplicationMode.VIRTUAL,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.AUGMENTED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-    }
-
-    @Test
-    void get_application_mode_bundled()
-    {
-        final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
-
-        when( nodeService.findByQuery( isA( NodeQuery.class ) ) ).thenAnswer( searchParams -> FindNodesByQueryResult.create().build() );
-
-        assertNull( VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-
-        final Bundle bundle = deployAppBundle( "app1" );
-        applicationRegistry.registerApplication( bundle );
-
-        assertEquals( ApplicationMode.BUNDLED,
-                      VirtualAppContext.createAdminContext().callWith( () -> service.getApplicationMode( applicationKey ) ) );
-    }
-
     private void verifyInstalledEvents( final ApplicationKey applicationKey, final NodeId nodeId, final VerificationMode times )
     {
         verify( this.eventPublisher, times ).publish(
@@ -907,6 +1240,11 @@ class ApplicationServiceImplTest
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.started( applicationKey ) ) ) );
     }
 
+    private void verifyNoEvents( final Event event )
+    {
+        verify( this.eventPublisher, never() ).publish( argThat( new ApplicationEventMatcher( event ) ) );
+    }
+
     private void mockRepoCreateNode( final Node node )
     {
         when( this.repoService.upsertApplicationNode( Mockito.isA( AppInfo.class ), Mockito.isA( ByteSource.class ) ) ).thenReturn( node );
@@ -924,11 +1262,57 @@ class ApplicationServiceImplTest
 
     private ByteSource createBundleSource( final String bundleName, final boolean isApp )
     {
-        final InputStream in = newBundle( bundleName, isApp ).build();
+        return wrap( newBundle( bundleName, isApp ).build() );
+    }
 
+    private static final String CMS_DESCRIPTOR = "kind: \"CMS\"\n";
+
+    private static final String CONTENT_TYPE = "kind: \"ContentType\"\nsuperType: \"base:structured\"\n";
+
+    private static final String MACRO = "kind: \"Macro\"\n";
+
+    private static final String PART = "kind: \"Part\"\n";
+
+    private ByteSource createSchemaBundleSource( final String bundleName )
+    {
+        return wrap( newBundle( bundleName, true ).addResource( "enonic.yaml", stream( "kind: \"Application\"\n" ) )
+                         .addResource( "enonic.svg", stream( "<svg>app</svg>" ) )
+                         .addResource( "cms/cms.yaml", stream( CMS_DESCRIPTOR ) )
+                         .addResource( "cms/content-types/mytype/mytype.yml", stream( CONTENT_TYPE ) )
+                         .addResource( "cms/content-types/mytype/mytype.svg", stream( "<svg/>" ) )
+                         .addResource( "cms/macros/mymacro/mymacro.yaml", stream( MACRO ) )
+                         .addResource( "cms/i18n/phrases/phrases_en.properties", stream( "phrases" ) )
+                         .addResource( "i18n/phrases_en.properties", stream( "root-phrases" ) )
+                         .build() );
+    }
+
+    private static ByteSource wrap( final InputStream in )
+    {
         try
         {
             return ByteSource.wrap( ByteStreams.toByteArray( in ) );
+        }
+        catch ( IOException e )
+        {
+            throw new UncheckedIOException( e );
+        }
+    }
+
+    private static InputStream stream( final String content )
+    {
+        return new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) );
+    }
+
+    private static String readResource( final Map<String, ByteSource> resources, final String path )
+    {
+        final ByteSource byteSource = resources.get( path );
+        if ( byteSource == null )
+        {
+            return null;
+        }
+        try
+        {
+            return byteSource.asCharSource( StandardCharsets.UTF_8 ).read();
         }
         catch ( IOException e )
         {

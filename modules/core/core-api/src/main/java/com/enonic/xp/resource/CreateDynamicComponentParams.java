@@ -5,6 +5,10 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import static java.util.Objects.requireNonNull;
 
 
+/**
+ * @deprecated the parameters of the deprecated {@link DynamicSchemaService#createComponent}; use {@link CreateOrUpdateComponentParams}
+ */
+@Deprecated
 public final class CreateDynamicComponentParams
 {
     private final DescriptorKey key;

@@ -4,6 +4,8 @@ public class AppInfo
 {
     public String name;
 
+    public boolean hasCmsDescriptor;
+
     public String title;
 
     public String vendorName;

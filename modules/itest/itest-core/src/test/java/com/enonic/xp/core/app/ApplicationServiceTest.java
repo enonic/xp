@@ -1,11 +1,18 @@
 package com.enonic.xp.core.app;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 import org.apache.felix.framework.Felix;
 import org.junit.jupiter.api.AfterEach;
@@ -15,13 +22,20 @@ import org.junit.jupiter.api.io.TempDir;
 import org.ops4j.pax.tinybundles.TinyBundles;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.service.component.ComponentContext;
 
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.app.CreateOrUpdateApplicationDescriptorParams;
 import com.enonic.xp.audit.AuditLogService;
+import com.enonic.xp.exception.ForbiddenAccessException;
+import com.enonic.xp.icon.Icon;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
@@ -29,32 +43,51 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
+import com.enonic.xp.core.impl.app.ApplicationBundleException;
+import com.enonic.xp.core.impl.app.ApplicationDescriptorServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
-import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
-import com.enonic.xp.core.impl.app.VirtualAppService;
+import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupport;
+import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
+import com.enonic.xp.resource.Resource;
+import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ApplicationServiceTest
     extends AbstractNodeTest
 {
+    private static final String APP_DESCRIPTOR = "kind: \"Application\"\n";
+
+    private static final String CMS_DESCRIPTOR = "kind: \"CMS\"";
+
     @TempDir
     public Path felixTempFolder;
 
     private ApplicationService applicationService;
+
+    private ResourceService resourceService;
+
+    private ApplicationDescriptorServiceImpl applicationDescriptorService;
 
     private Felix felix;
 
@@ -70,13 +103,21 @@ class ApplicationServiceTest
         AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
         ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
-        ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
 
         BundleContext bundleContext = felix.getBundleContext();
 
         ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService, appConfig );
+            new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
+
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
+
+        final ComponentContext componentContext = mock( ComponentContext.class );
+        when( componentContext.getBundleContext() ).thenReturn( bundleContext );
+        this.applicationDescriptorService =
+            new ApplicationDescriptorServiceImpl( nodeService, repoService, mock( DynamicSchemaAuditLogSupport.class ),
+                                                  mock( EventPublisher.class ) );
+        this.applicationDescriptorService.start( componentContext );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         applicationAuditLogSupport.activate( appConfig );
@@ -84,7 +125,7 @@ class ApplicationServiceTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
-            new VirtualAppService( nodeService ), applicationAuditLogSupport );
+            applicationAuditLogSupport );
     }
 
     @AfterEach
@@ -103,9 +144,9 @@ class ApplicationServiceTest
             Application application = applicationService.installGlobalApplication( createByteSource( "7.8.0" ) );
             assertEquals( "7.8.0", application.getVersion().toString() );
 
-            systemRepoContext().callWith( () -> {
+            appRepoContext().callWith( () -> {
                 Node applicationNode = nodeService.getByPath(
-                    NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( applicationName ).build() );
+                    NodePath.create( NodePath.ROOT ).addElement( applicationName ).build() );
                 assertNotNull( applicationNode );
                 assertEquals( "7.8.0", applicationNode.data().getString( "version" ) );
                 return null;
@@ -114,15 +155,607 @@ class ApplicationServiceTest
             application = applicationService.installGlobalApplication( createByteSource( "7.8.1" ) );
             assertEquals( "7.8.1", application.getVersion().toString() );
 
-            systemRepoContext().callWith( () -> {
+            appRepoContext().callWith( () -> {
                 Node applicationNode = nodeService.getByPath(
-                    NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( applicationName ).build() );
+                    NodePath.create( NodePath.ROOT ).addElement( applicationName ).build() );
                 assertNotNull( applicationNode );
                 assertEquals( "7.8.1", applicationNode.data().getString( "version" ) );
                 return null;
             } );
             return null;
         } );
+    }
+
+    @Test
+    void installGlobalApplicationWithCmsDescriptorPersistsSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yml", APP_DESCRIPTOR, //
+                "enonic.svg", "<svg>app</svg>", //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yml", "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"", //
+                "cms/content-types/mytype/mytype.svg", "<svg/>", //
+                "cms/i18n/phrases/phrases_en.properties", "key=value", //
+                "i18n/phrases_en.properties", "root=value", //
+                "assets/app.js", "console.log()" ) ) );
+
+            // the application descriptor is persisted as a direct child of the application node (.yml normalized to .yaml),
+            // the icon is attached to it under its file name rather than persisted as a node of its own
+            final Node appDescriptorNode = appChildNode( "staticapp", "enonic.yaml" );
+            assertEquals( APP_DESCRIPTOR, appDescriptorNode.data().getString( "resource" ) );
+            assertEquals( "image/svg+xml", appDescriptorNode.data().getString( "mimeType" ) );
+            assertEquals( BinaryReference.from( "enonic.svg" ), appDescriptorNode.data().getBinaryReference( "icon" ) );
+            assertEquals( 1, appDescriptorNode.getAttachedBinaries().getSize() );
+            assertNotNull( appDescriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
+            assertNull( appChildNode( "staticapp", "enonic.svg" ) );
+
+            // and served from there, the bundle's copies are hidden
+            final Resource appDescriptor = resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) );
+            assertEquals( "node", appDescriptor.getResolverName() );
+            assertEquals( APP_DESCRIPTOR, appDescriptor.readString() );
+            final Resource appIcon = resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) );
+            assertEquals( "node", appIcon.getResolverName() );
+            assertEquals( "<svg>app</svg>", appIcon.readString() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.yml" ) ).exists() );
+
+            // schema resources are persisted below the application node in the application repository
+            assertEquals( "kind: \"CMS\"", schemaNode( "staticapp", "cms.yaml" ).data().getString( "resource" ) );
+            assertEquals( "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"",
+                          schemaNode( "staticapp", "content-types/mytype.yaml" ).data().getString( "resource" ) );
+            assertEquals( "key=value", schemaNode( "staticapp", "i18n/phrases/phrases_en.properties" ).data().getString( "resource" ) );
+            // icons are persisted as node binaries
+            final Node iconNode = schemaNode( "staticapp", "content-types/mytype.svg" );
+            assertEquals( "image/svg+xml", iconNode.data().getString( "mimeType" ) );
+            assertNotNull( iconNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "icon" ) ) );
+            // resources outside cms are not persisted
+            assertNull( appChildNode( "staticapp", "i18n" ) );
+            assertNull( appChildNode( "staticapp", "assets" ) );
+
+            // descriptors are served from nodes (the bundle contained .yml, node is normalized to .yaml)
+            final Resource contentType = resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) );
+            assertTrue( contentType.exists() );
+            assertEquals( "node", contentType.getResolverName() );
+            assertEquals( "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"", contentType.readString() );
+
+            final Resource cms = resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) );
+            assertEquals( "node", cms.getResolverName() );
+
+            final Resource phrases = resourceService.getResource( ResourceKey.from( appKey, "/cms/i18n/phrases/phrases_en.properties" ) );
+            assertEquals( "node", phrases.getResolverName() );
+            assertEquals( "key=value", phrases.readString() );
+
+            // the bundle's own schema descriptor is hidden
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yml" ) ).exists() );
+
+            // the icon is served from the node as well
+            final Resource icon = resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.svg" ) );
+            assertEquals( "node", icon.getResolverName() );
+            assertEquals( "<svg/>", icon.readString() );
+
+            // non-schema resources are still served from the bundle
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/assets/app.js" ) ).getResolverName() );
+            assertEquals( "bundle",
+                          resourceService.getResource( ResourceKey.from( appKey, "/i18n/phrases_en.properties" ) ).getResolverName() );
+
+            assertTrue( resourceService.findFiles( appKey, "^/cms/.*\\.yaml$" )
+                            .contains( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ) );
+            assertFalse( resourceService.findFiles( appKey, "^/cms/.*\\.yml$" )
+                             .contains( ResourceKey.from( appKey, "/cms/content-types/mytype.yml" ) ) );
+        } );
+
+        // persisted schema is readable without any privileges (e.g. portal rendering)
+        final Resource anonymous = ContextBuilder.from( ContextAccessor.current() )
+            .authInfo( AuthenticationInfo.unAuthenticated() )
+            .build()
+            .callWith( () -> resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ) );
+        assertEquals( "node", anonymous.getResolverName() );
+        assertTrue( anonymous.exists() );
+    }
+
+    @Test
+    void installGlobalApplicationWithLegacyAppDescriptorPersistsEnonicNames()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "legacydescriptorapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "legacydescriptorapp", "1.0.0", Map.of( //
+                "application.yml", "kind: \"Application\"\ndescription: \"Legacy\"\n", //
+                "application.svg", "<svg>legacy</svg>", //
+                "cms/cms.yaml", CMS_DESCRIPTOR ) ) );
+
+            // the legacy application descriptor and icon of an older bundle are persisted under the new names only:
+            // the icon binary is attached as enonic.svg, never as application.svg
+            final Node legacyDescriptorNode = appChildNode( "legacydescriptorapp", "enonic.yaml" );
+            assertEquals( "kind: \"Application\"\ndescription: \"Legacy\"\n", legacyDescriptorNode.data().getString( "resource" ) );
+            assertEquals( BinaryReference.from( "enonic.svg" ), legacyDescriptorNode.data().getBinaryReference( "icon" ) );
+            assertEquals( 1, legacyDescriptorNode.getAttachedBinaries().getSize() );
+            assertNotNull( legacyDescriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
+            assertNull( legacyDescriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "application.svg" ) ) );
+            assertNull( appChildNode( "legacydescriptorapp", "enonic.svg" ) );
+            assertNull( appChildNode( "legacydescriptorapp", "application.yml" ) );
+            assertNull( appChildNode( "legacydescriptorapp", "application.svg" ) );
+
+            // served from the nodes, the bundle's legacy copies are hidden
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
+            final Resource legacyIcon = resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) );
+            assertEquals( "node", legacyIcon.getResolverName() );
+            assertEquals( "<svg>legacy</svg>", legacyIcon.readString() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/application.yml" ) ).exists() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/application.svg" ) ).exists() );
+
+            final ApplicationDescriptor descriptor = applicationDescriptorService.get( appKey );
+            assertEquals( "Legacy", descriptor.getDescription() );
+            assertEquals( "<svg>legacy</svg>", new String( descriptor.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+        } );
+    }
+
+    @Test
+    void reinstallApplicationWithCmsDescriptorResetsSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"", //
+                "cms/i18n/phrases/phrases_en.properties", "key=value" ) ) );
+
+            final Node appNode = appNode( "staticapp" );
+            assertNotNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
+
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertEquals( appNode.id(), appNode( "staticapp" ).id() );
+            assertNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
+            assertNull( schemaNode( "staticapp", "i18n/phrases/phrases_en.properties" ) );
+            assertNotNull( schemaNode( "staticapp", "content-types/newtype.yaml" ) );
+
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ).exists() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/newtype.yaml" ) )
+                .getResolverName() );
+        } );
+    }
+
+    @Test
+    void reinstallWithCodeAndCmsDescriptorReplacesSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertNotNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
+
+            // the new version ships code as well as cms/cms.yaml: it still owns the schema, the persisted one is replaced
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"", //
+                "cms/parts/mypart/mypart.yaml", "kind: \"Part\"", //
+                "cms/parts/mypart/mypart.js", "exports.get = function() {}" ) ) );
+
+            assertNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
+            assertNotNull( schemaNode( "staticapp", "cms.yaml" ) );
+            assertNotNull( schemaNode( "staticapp", "content-types/newtype.yaml" ) );
+            assertNotNull( schemaNode( "staticapp", "parts/mypart.yaml" ) );
+            assertNull( schemaNode( "staticapp", "parts/mypart/mypart.js" ) );
+
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ).exists() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/newtype.yaml" ) )
+                .getResolverName() );
+            assertEquals( "node",
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart.yaml" ) ).getResolverName() );
+            assertEquals( "bundle",
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
+        } );
+    }
+
+    @Test
+    void reinstallWithoutCmsDescriptorRemovesSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertNotNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
+
+            // the new version ships logic only (no cms/cms.yaml, hence no schema): the persisted schema is removed while the
+            // descriptor is persisted as for any application; controllers, apis, assets and the like are served from the bundle as always
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "lib/util.js", "exports.util = function() {}", //
+                "assets/app.js", "console.log()" ) ) );
+
+            assertNotNull( appNode( "staticapp" ) );
+            assertNull( appChildNode( "staticapp", "cms" ) );
+            assertNotNull( appChildNode( "staticapp", "enonic.yaml" ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
+
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ).exists() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/lib/util.js" ) ).getResolverName() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/assets/app.js" ) ).getResolverName() );
+        } );
+    }
+
+    @Test
+    void applicationDescriptorIsReadFromPersistedSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ndescription: \"Persisted\"\n", //
+                "enonic.svg", "<svg>app</svg>", //
+                "cms/cms.yaml", CMS_DESCRIPTOR ) ) );
+
+            // the descriptor service picks the descriptor and icon up from the nodes persisted before the bundle is installed
+            final ApplicationDescriptor descriptor = applicationDescriptorService.get( appKey );
+            assertNotNull( descriptor );
+            assertEquals( "Persisted", descriptor.getDescription() );
+            assertNotNull( descriptor.getIcon() );
+            assertEquals( "<svg>app</svg>", new String( descriptor.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+
+            // a new version replaces the persisted descriptor and the service follows
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ndescription: \"Updated\"\n", //
+                "cms/cms.yaml", CMS_DESCRIPTOR ) ) );
+
+            final ApplicationDescriptor updated = applicationDescriptorService.get( appKey );
+            assertEquals( "Updated", updated.getDescription() );
+            assertNull( updated.getIcon() );
+
+            // without cms/cms.yaml the schema is gone but the descriptor and icon are persisted all the same
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.2", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ndescription: \"Bundled\"\n", //
+                "enonic.svg", "<svg>bundled</svg>" ) ) );
+
+            final ApplicationDescriptor bundled = applicationDescriptorService.get( appKey );
+            assertEquals( "Bundled", bundled.getDescription() );
+            assertEquals( "<svg>bundled</svg>", new String( bundled.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+            assertNull( appChildNode( "staticapp", "cms" ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) ).getResolverName() );
+
+            applicationService.uninstallApplication( appKey );
+            assertNull( applicationDescriptorService.get( appKey ) );
+        } );
+    }
+
+    @Test
+    void createOrUpdateApplicationDescriptorOfInstalledApplication()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\ndescription: \"Persisted\"\n", //
+                "enonic.svg", "<svg>app</svg>", //
+                "lib/util.js", "exports.util = function() {}" ) ) );
+
+            // the title alone is changed, the description and icon stay
+            final ApplicationDescriptor edited = applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Edited" ).build() );
+            assertEquals( "Edited", edited.getTitle() );
+            assertEquals( "Persisted", edited.getDescription() );
+            assertEquals( "<svg>app</svg>", new String( edited.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+
+            // visible at once through the service and the resources
+            assertEquals( "Edited", applicationDescriptorService.get( appKey ).getTitle() );
+            assertTrue( resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).readString().contains( "Edited" ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) ).getResolverName() );
+
+            // the icon is replaced by a png, served at enonic.png from now on
+            applicationDescriptorService.createOrUpdate( CreateOrUpdateApplicationDescriptorParams.create()
+                                                             .key( appKey )
+                                                             .editor( edit -> edit.icon =
+                                                                 Icon.from( new byte[]{1, 2, 3}, "image/png", Instant.now() ) )
+                                                             .build() );
+            assertEquals( "image/png", applicationDescriptorService.get( appKey ).getIcon().getMimeType() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.png" ) ).getResolverName() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) ).exists() );
+            assertEquals( "image/png", appChildNode( "staticapp", "enonic.yaml" ).data().getString( "mimeType" ) );
+
+            // the icon is removed
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.icon = null ).build() );
+            assertNull( applicationDescriptorService.get( appKey ).getIcon() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.png" ) ).exists() );
+            assertNull( appChildNode( "staticapp", "enonic.yaml" ).data().getString( "mimeType" ) );
+
+            // a new version of the bundle persists its own descriptor over the edited one
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped again\"\n", //
+                "enonic.svg", "<svg>again</svg>" ) ) );
+            assertEquals( "Shipped again", applicationDescriptorService.get( appKey ).getTitle() );
+            assertEquals( "<svg>again</svg>",
+                          new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+        } );
+    }
+
+    @Test
+    void createOrUpdateApplicationDescriptorWithoutBundle()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "nodeonlyapp" );
+
+        // the application node and its descriptor are created, nothing is installed
+        final ApplicationDescriptor created = adminContext().callWith( () -> applicationDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> {
+                edit.title = "Node only";
+                edit.icon = Icon.from( "<svg>node</svg>".getBytes( StandardCharsets.UTF_8 ), "image/svg+xml", Instant.now() );
+            } ).build() ) );
+
+        assertEquals( "Node only", created.getTitle() );
+        assertNotNull( appNode( "nodeonlyapp" ) );
+        assertNull( appChildNode( "nodeonlyapp", "cms" ) );
+        final Node descriptorNode = appChildNode( "nodeonlyapp", "enonic.yaml" );
+        assertEquals( "kind: \"Application\"\nname: \"nodeonlyapp\"\ntitle: \"Node only\"\n", descriptorNode.data().getString( "resource" ) );
+        assertEquals( BinaryReference.from( "enonic.svg" ), descriptorNode.data().getBinaryReference( "icon" ) );
+        assertNotNull( descriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
+
+        assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
+        assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+
+        // without a bundle the application is still an application: listed, always started, nothing to start or stop; it is no
+        // schema application until it owns a schema, which takes the cms descriptor
+        final Application nodeOnly = applicationService.get( appKey );
+        assertNotNull( nodeOnly );
+        assertFalse( nodeOnly.isSchema() );
+        assertTrue( nodeOnly.isStarted() );
+        assertNull( nodeOnly.getClassLoader() );
+        assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );
+        assertThrows( IllegalArgumentException.class, () -> applicationService.startApplication( appKey ) );
+        assertThrows( IllegalArgumentException.class, () -> applicationService.stopApplication( appKey ) );
+
+        // its persisted descriptor is served like the resources of any other application
+        assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
+
+        // the stored applications are installed on startup: a node without a bundle has nothing to install, and stays listed
+        adminContext().runWith( () -> applicationService.installAllStoredApplications() );
+        assertNotNull( applicationService.get( appKey ) );
+
+        // the descriptor is updated in place
+        adminContext().runWith( () -> applicationDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.vendorName = "Enonic" ).build() ) );
+        assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
+        assertEquals( "Enonic", applicationDescriptorService.get( appKey ).getVendorName() );
+
+        // writing takes the admin role
+        assertThrows( ForbiddenAccessException.class, () -> applicationDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Denied" ).build() ) );
+    }
+
+    @Test
+    void reinstallWithWrongKindKeepsInstalledSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "wrongkindapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "wrongkindapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            // cms/style/style.yaml is reserved for the Style descriptor: the whole new version is rejected
+            final ApplicationBundleException exception = assertThrows( ApplicationBundleException.class,
+                                                                        () -> applicationService.installGlobalApplication(
+                                                                            createAppSource( "wrongkindapp", "1.0.1", Map.of( //
+                                                                                "enonic.yaml", APP_DESCRIPTOR, //
+                                                                                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                                                                                "cms/style/style.yaml", CMS_DESCRIPTOR, //
+                                                                                "cms/content-types/newtype.yaml",
+                                                                                "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) );
+            assertTrue( exception.getMessage().contains( "cms/style/style.yaml: invalid kind \"CMS\", expected \"Style\"" ) );
+
+            // nothing of the rejected version is persisted, the installed version and its schema are untouched
+            assertEquals( "1.0.0", applicationService.getInstalledApplication( appKey ).getVersion().toString() );
+            assertNotNull( schemaNode( "wrongkindapp", "content-types/mytype.yaml" ) );
+            assertNull( schemaNode( "wrongkindapp", "content-types/newtype.yaml" ) );
+            assertNull( schemaNode( "wrongkindapp", "style/style.yaml" ) );
+        } );
+    }
+
+    @Test
+    void reinstallWithInvalidSchemaNameKeepsInstalledSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "brokenschemaapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "brokenschemaapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype.yaml" ) );
+
+            // "my?type" passes the schema resource pattern but is not a valid schema name: the new version is rejected before
+            // anything is written, the installed version and its schema are untouched
+            final ApplicationBundleException exception = assertThrows( ApplicationBundleException.class,
+                                                                        () -> applicationService.installGlobalApplication(
+                                                                            createAppSource( "brokenschemaapp", "1.0.1", Map.of( //
+                                                                                "enonic.yaml", APP_DESCRIPTOR, //
+                                                                                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                                                                                "cms/content-types/my?type/my?type.yaml",
+                                                                                "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) );
+            assertTrue( exception.getMessage().contains( "cms/content-types/my?type.yaml: " ), exception.getMessage() );
+
+            assertEquals( "1.0.0", applicationService.getInstalledApplication( appKey ).getVersion().toString() );
+            assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype.yaml" ) );
+
+            // a fixed version replaces the schema
+            applicationService.installGlobalApplication( createAppSource( "brokenschemaapp", "1.0.2", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertNull( schemaNode( "brokenschemaapp", "content-types/mytype.yaml" ) );
+            assertNotNull( schemaNode( "brokenschemaapp", "content-types/newtype.yaml" ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/newtype.yaml" ) )
+                .getResolverName() );
+        } );
+    }
+
+    @Test
+    void installGlobalApplicationWithCodeAndCmsDescriptorPersistsSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "schemabundleapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "schemabundleapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"", //
+                "cms/parts/mypart/mypart.yaml", "kind: \"Part\"", //
+                "cms/parts/mypart/mypart.js", "exports.get = function() {}" ) ) );
+
+            assertNotNull( appNode( "schemabundleapp" ) );
+            assertNotNull( schemaNode( "schemabundleapp", "cms.yaml" ) );
+            assertNotNull( schemaNode( "schemabundleapp", "content-types/mytype.yaml" ) );
+            assertNotNull( schemaNode( "schemabundleapp", "parts/mypart.yaml" ) );
+            // controllers are not schema resources
+            assertNull( schemaNode( "schemabundleapp", "parts/mypart/mypart.js" ) );
+
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) ).getResolverName() );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) )
+                .getResolverName() );
+            assertEquals( "node",
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart.yaml" ) ).getResolverName() );
+            assertEquals( "bundle",
+                          resourceService.getResource( ResourceKey.from( appKey, "/cms/parts/mypart/mypart.js" ) ).getResolverName() );
+        } );
+    }
+
+    @Test
+    void uninstallApplicationRemovesPersistedSchema()
+    {
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertNotNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
+
+            applicationService.uninstallApplication( ApplicationKey.from( "staticapp" ) );
+
+            assertNull( appNode( "staticapp" ) );
+            assertNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
+        } );
+    }
+
+    @Test
+    void installGlobalApplicationWithoutCmsDescriptorDoesNotPersistSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "bundleapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "bundleapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertNotNull( appNode( "bundleapp" ) );
+            assertNull( appChildNode( "bundleapp", "cms" ) );
+            // the descriptor is persisted for every application
+            assertEquals( APP_DESCRIPTOR, appChildNode( "bundleapp", "enonic.yaml" ).data().getString( "resource" ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
+            assertEquals( APP_DESCRIPTOR, resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).readString() );
+
+            // without cms/cms.yaml the application owns no schema: what the bundle ships below cms/ is not served either
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) ).exists() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ).exists() );
+        } );
+    }
+
+    @Test
+    void localApplicationWithCmsDescriptorOverridesPersistedSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "overriddenapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "overriddenapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertNotNull( schemaNode( "overriddenapp", "content-types/mytype.yaml" ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) )
+                .getResolverName() );
+
+            // a local build of the same application, shipping its own schema, is deployed on top of the global one
+            applicationService.installLocalApplication( createAppSource( "overriddenapp", "1.0.1-SNAPSHOT", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/othertype/othertype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            assertTrue( applicationService.isLocalApplication( appKey ) );
+
+            // the persisted schema is untouched...
+            assertNotNull( schemaNode( "overriddenapp", "content-types/mytype.yaml" ) );
+            // ...but ignored: the local bundle is the only schema source
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) ).getResolverName() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/othertype/othertype.yaml" ) )
+                .getResolverName() );
+            assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) ).exists() );
+
+            // removing the local application brings the stored one, and its persisted schema, back
+            applicationService.uninstallLocalApplication( appKey );
+
+            assertFalse( applicationService.isLocalApplication( appKey ) );
+            assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) )
+                .getResolverName() );
+            assertFalse(
+                resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/othertype/othertype.yaml" ) ).exists() );
+        } );
+    }
+
+    @Test
+    void installLocalApplicationWithCmsDescriptorDoesNotPersistSchema()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "localbundleapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installLocalApplication( createAppSource( "localbundleapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
+
+            // local applications are never stored: no application node, no persisted schema
+            assertNull( appNode( "localbundleapp" ) );
+
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) ).getResolverName() );
+            assertEquals( "bundle", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype/mytype.yaml" ) )
+                .getResolverName() );
+        } );
+    }
+
+    private Node appNode( final String appName )
+    {
+        return appRepoContext().callWith(
+            () -> nodeService.getByPath( NodePath.create( NodePath.ROOT ).addElement( appName ).build() ) );
+    }
+
+    private Node appChildNode( final String appName, final String childName )
+    {
+        return appRepoContext().callWith( () -> nodeService.getByPath(
+            NodePath.create( NodePath.ROOT ).addElement( appName ).addElement( childName ).build() ) );
+    }
+
+    private Node schemaNode( final String appName, final String cmsRelativePath )
+    {
+        return appRepoContext().callWith(
+            () -> nodeService.getByPath( new NodePath( "/" + appName + "/cms/" + cmsRelativePath ) ) );
     }
 
     private Felix createFelixInstance( final Path cacheDir )
@@ -141,12 +774,13 @@ class ApplicationServiceTest
             .build();
     }
 
-    private Context systemRepoContext()
+    // the application repository is readable by admins only
+    private Context appRepoContext()
     {
         return ContextBuilder.create()
-            .branch( SystemConstants.BRANCH_SYSTEM )
-            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
-            .authInfo( ContextAccessor.current().getAuthInfo() )
+            .branch( ApplicationRepoConstants.APP_REPO_BRANCH )
+            .repositoryId( ApplicationRepoConstants.APP_REPO_ID )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
             .build();
     }
 
@@ -157,9 +791,32 @@ class ApplicationServiceTest
                                                              .setHeader( Constants.BUNDLE_SYMBOLICNAME, "appName" )
                                                              .setHeader( Constants.BUNDLE_VERSION, appVersion )
                                                              .setHeader( "X-Bundle-Type", "application" )
-                                                             .addResource( "cms/site.yml",
-                                                                           getClass().getResource( "/myapp/cms/site.yml" ) )
+                                                             .addResource( "cms/site.yml", getClass().getResource( "/myapp/cms/site.yml" ) )
                                                              .build() ) );
     }
 
+    private static ByteSource createAppSource( final String name, final String version, final Map<String, String> resources )
+    {
+        final Manifest manifest = new Manifest();
+        manifest.getMainAttributes().put( Attributes.Name.MANIFEST_VERSION, "1.0" );
+        manifest.getMainAttributes().putValue( Constants.BUNDLE_SYMBOLICNAME, name );
+        manifest.getMainAttributes().putValue( Constants.BUNDLE_VERSION, version );
+        manifest.getMainAttributes().putValue( "X-Bundle-Type", "application" );
+
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (JarOutputStream jar = new JarOutputStream( out, manifest ))
+        {
+            for ( final Map.Entry<String, String> entry : resources.entrySet() )
+            {
+                jar.putNextEntry( new JarEntry( entry.getKey() ) );
+                jar.write( entry.getValue().getBytes( StandardCharsets.UTF_8 ) );
+                jar.closeEntry();
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new IllegalStateException( e );
+        }
+        return ByteSource.wrap( out.toByteArray() );
+    }
 }

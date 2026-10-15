@@ -8,8 +8,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
+import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.index.IndexService;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.repository.internal.InternalRepositoryService;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -32,17 +34,24 @@ class ApplicationRepoServiceActivatorTest
     @Mock(stubOnly = true)
     private IndexService indexService;
 
+    @Mock(stubOnly = true)
+    private InternalRepositoryService repositoryService;
+
+    @Mock(stubOnly = true)
+    private EventPublisher eventPublisher;
+
     @BeforeEach
     void setUp()
     {
-        when( indexService.isMaster() ).thenReturn( true );
         when( indexService.waitForYellowStatus() ).thenReturn( true );
+        when( indexService.isMaster() ).thenReturn( true );
+        when( repositoryService.isInitialized( any() ) ).thenReturn( true );
     }
 
     @Test
     void lifecycle()
     {
-        final ApplicationRepoServiceActivator activator = new ApplicationRepoServiceActivator( nodeService, indexService );
+        final ApplicationRepoServiceActivator activator = new ApplicationRepoServiceActivator( nodeService, indexService, repositoryService, eventPublisher );
 
         when( bundleContext.registerService( same( ApplicationRepoService.class ), any( ApplicationRepoService.class ), isNull() ) ).
             thenReturn( service );

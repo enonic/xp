@@ -21,7 +21,7 @@ class ApplicationNodeTransformer
         final PropertyTree data = createApplicationProperties( app );
 
         return CreateNodeParams.create()
-            .parent( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parent( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .name( app.name )
             .data( data )
             .attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source )
@@ -45,7 +45,7 @@ class ApplicationNodeTransformer
     static UpdateNodeParams toUpdateNodeParams( final AppInfo app, final ByteSource source )
     {
         return UpdateNodeParams.create()
-            .path( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( app.name ) ) )
+            .path( new NodePath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT, NodeName.from( app.name ) ) )
             .attachBinary( BinaryReference.from( APPLICATION_BINARY_REF ), source )
             .editor( node -> node.data = createApplicationProperties( app ) )
             .refresh( RefreshMode.ALL )
