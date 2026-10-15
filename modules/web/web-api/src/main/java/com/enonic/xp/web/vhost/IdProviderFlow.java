@@ -4,8 +4,8 @@ import org.jspecify.annotations.NullMarked;
 
 /**
  * The authentication flows an id provider may expose on a virtual host, configured per id provider
- * in the vhost mapping value, e.g. {@code enabled=login,autologin}. Without an explicit flow list
- * no restriction applies and the id provider serves whatever flows it supports.
+ * in the vhost mapping, e.g. {@code idProvider.<name>.flows = login,autologin}. Without an explicit
+ * flow list no restriction applies and the id provider serves whatever flows it supports.
  * <p>
  * XP manages the flows with known functions: {@link #LOGIN}, {@link #AUTOLOGIN} and
  * {@link #LOGOUT}. Any other name in the list is an additional flow of the id provider app, which
