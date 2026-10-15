@@ -34,10 +34,10 @@ import com.enonic.xp.core.AbstractNodeTest;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
+import com.enonic.xp.core.impl.app.ApplicationBundleException;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
-import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
@@ -53,6 +53,8 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -94,7 +96,6 @@ class PersistedSchemaLookupTest
         final AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
         final ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
-        ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
 
         final BundleContext bundleContext = felix.getBundleContext();
 
@@ -143,29 +144,27 @@ class PersistedSchemaLookupTest
         } );
     }
 
+    // a descriptor that would not load is rejected before anything is written, the application is not installed
     @Test
-    void getByApplication_skips_content_types_that_fail_to_parse()
+    void install_rejects_content_type_that_fails_to_parse()
     {
         final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
 
         adminContext().runWith( () -> {
-            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+            final ByteSource source = createAppSource( "staticapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", "kind: \"CMS\"", //
                 "cms/content-types/mytype/mytype.yaml", CONTENT_TYPE, //
-                "cms/content-types/broken/broken.yaml", INVALID_CONTENT_TYPE ) ) );
+                "cms/content-types/broken/broken.yaml", INVALID_CONTENT_TYPE ) );
 
-            // the descriptor is discovered, but loading it fails and ContentTypeRegistry logs the error and drops the type
-            // the persisted schema is flat: cms/content-types/<name>.yaml
-            assertEquals( List.of( "staticapp:broken", "staticapp:mytype" ),
-                          resourceService.findFiles( appKey, "^/cms/content-types/[^/]+\\.(?:yaml|yml)$" )
-                .stream()
-                .map( key -> key.getApplicationKey() + ":" + key.getName().substring( 0, key.getName().lastIndexOf( '.' ) ) )
-                .sorted()
-                .toList() );
+            final ApplicationBundleException exception =
+                assertThrows( ApplicationBundleException.class, () -> applicationService.installGlobalApplication( source ) );
+            assertTrue( exception.getMessage().contains( "cms/content-types/broken.yaml: " ), exception.getMessage() );
+            assertTrue( exception.getMessage().contains( "displayName" ), exception.getMessage() );
 
-            assertEquals( List.of( "staticapp:mytype" ),
-                          contentTypeService.getByApplication( appKey ).stream().map( type -> type.getName().toString() ).toList() );
+            assertNull( applicationService.get( appKey ) );
+            assertTrue( resourceService.findFiles( appKey, "^/cms/.*$" ).isEmpty() );
+            assertTrue( contentTypeService.getByApplication( appKey ).isEmpty() );
         } );
     }
 

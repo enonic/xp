@@ -35,7 +35,7 @@ import com.enonic.xp.util.BinaryReference;
 public class ApplicationRepoServiceImpl
     implements ApplicationRepoService
 {
-    static final NodePath APPLICATION_PATH = new NodePath( NodePath.ROOT, NodeName.from( "applications" ) );
+    static final NodePath APPLICATIONS_ROOT = NodePath.ROOT;
 
     private final NodeService nodeService;
 
@@ -64,7 +64,7 @@ public class ApplicationRepoServiceImpl
             final PropertyTree data = new PropertyTree();
             data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
             return this.nodeService.create( CreateNodeParams.create()
-                                                .parent( APPLICATION_PATH )
+                                                .parent( APPLICATIONS_ROOT )
                                                 .name( applicationKey.getName() )
                                                 .data( data )
                                                 .inheritPermissions( true )
@@ -74,11 +74,11 @@ public class ApplicationRepoServiceImpl
     }
 
     /**
-     * Node of an application in system-repo, the parent of its persisted schema ({@code cms}).
+     * Node of an application in the application repository, the parent of its persisted schema ({@code cms}).
      */
     static NodePath applicationNodePath( final ApplicationKey applicationKey )
     {
-        return new NodePath( APPLICATION_PATH, NodeName.from( applicationKey.getName() ) );
+        return new NodePath( APPLICATIONS_ROOT, NodeName.from( applicationKey.getName() ) );
     }
 
     /**
@@ -372,8 +372,8 @@ public class ApplicationRepoServiceImpl
     public Nodes getApplications()
     {
         final NodeIds applicationIds = ApplicationHelper.runAsAdmin(
-            () -> this.nodeService.list( ListNodesParams.create().parentPath( APPLICATION_PATH ).build() )
-                .filter( entry -> APPLICATION_PATH.equals( entry.nodePath().getParentPath() ) )
+            () -> this.nodeService.list( ListNodesParams.create().parentPath( APPLICATIONS_ROOT ).build() )
+                .filter( entry -> APPLICATIONS_ROOT.equals( entry.nodePath().getParentPath() ) )
                 .map( NodeListEntry::nodeId )
                 .collect( NodeIds.collector() ) );
 
@@ -401,6 +401,6 @@ public class ApplicationRepoServiceImpl
 
     private Node doGetNodeByName( final String applicationName )
     {
-        return this.nodeService.getByPath( new NodePath( APPLICATION_PATH, NodeName.from( applicationName ) ) );
+        return this.nodeService.getByPath( new NodePath( APPLICATIONS_ROOT, NodeName.from( applicationName ) ) );
     }
 }

@@ -20,6 +20,7 @@ import org.mockito.quality.Strictness;
 import com.google.common.io.ByteSource;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
@@ -105,7 +106,6 @@ import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.schema.mixin.MixinDescriptor;
 import com.enonic.xp.schema.mixin.MixinName;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.site.CmsDescriptor;
@@ -161,17 +161,17 @@ class DynamicSchemaServiceImplTest
             .build();
     }
 
-    // admin context of system-repo, where the schema of an application is persisted below /applications/<app>/cms
+    // admin context of the application repository, where the schema of an application is persisted below /<app>/cms
     private static Context appRepoAdminContext()
     {
         return ContextBuilder.copyOf( createAdminContext() )
-            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
-            .branch( SystemConstants.BRANCH_SYSTEM )
+            .repositoryId( ApplicationRepoConstants.APP_REPO_ID )
+            .branch( ApplicationRepoConstants.APP_REPO_BRANCH )
             .build();
     }
 
     // an application owning a schema: its node, as created on install or by the application descriptor service, and the cms
-    // descriptor below it, as created through the schema service. The schemas are written below /applications/<app>/cms/<kind>,
+    // descriptor below it, as created through the schema service. The schemas are written below /<app>/cms/<kind>,
     // the folders on the way are created as the schema service goes.
     private void createApplicationNodes( final ApplicationKey applicationKey )
     {
@@ -184,7 +184,7 @@ class DynamicSchemaServiceImplTest
     private void createApplicationNode( final ApplicationKey applicationKey )
     {
         ApplicationHelper.runAsAdmin( () -> {
-            createFolderNode( new NodePath( "/applications" ), applicationKey.toString() );
+            createFolderNode( NodePath.ROOT, applicationKey.toString() );
             nodeService.refresh( RefreshMode.ALL );
         } );
     }
@@ -255,7 +255,7 @@ class DynamicSchemaServiceImplTest
 
         nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
 
-        ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
+        ApplicationRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
         final SchemaConfig schemaConfig = mock( SchemaConfig.class, withSettings().stubOnly()
             .defaultAnswer( invocationOnMock -> invocationOnMock.getMethod().getDefaultValue() ) );
@@ -331,7 +331,7 @@ class DynamicSchemaServiceImplTest
         assertTrue( result.getResource().getSize() > 0 );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -379,7 +379,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/content-types/mytype.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -416,7 +416,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/form-fragments/my-fragment.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/form-fragments/my-fragment.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -497,7 +497,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/form-fragments/my-fragment.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/form-fragments/my-fragment.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/form-fragments/my-fragment.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -589,7 +589,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/mixins/mymixin.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/mixins/mymixin.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -637,7 +637,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/mixins/mymixin.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/mixins/mymixin.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/mixins/mymixin.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -679,7 +679,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/parts/mypart.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/parts/mypart.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -733,7 +733,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/parts/mypart.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/parts/mypart.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/parts/mypart.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -773,7 +773,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/layouts/mylayout.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/layouts/mylayout.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -826,7 +826,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/layouts/mylayout.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/layouts/mylayout.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/layouts/mylayout.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -866,7 +866,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/pages/mypage.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/pages/mypage.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -919,7 +919,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/pages/mypage.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/pages/mypage.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/pages/mypage.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -953,9 +953,9 @@ class DynamicSchemaServiceImplTest
         assertNotNull( cmsDescriptor.getModifiedTime() );
 
         // the cms folder is created with the descriptor
-        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/nodeonly/cms" ) ) ) );
+        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/nodeonly/cms" ) ) ) );
         final Node resourceNode =
-            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/nodeonly/cms/cms.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/nodeonly/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -972,7 +972,7 @@ class DynamicSchemaServiceImplTest
             () -> dynamicSchemaService.createOrUpdateCms( params ) ) );
         assertEquals( "Application [unknownapp] is not installed", exception.getMessage() );
 
-        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/unknownapp" ) ) ) );
+        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/unknownapp" ) ) ) );
     }
 
     @Test
@@ -1004,7 +1004,7 @@ class DynamicSchemaServiceImplTest
         }
 
         // nothing is written on the way, the cms folder included
-        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/nodeonly/cms" ) ) ) );
+        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/nodeonly/cms" ) ) ) );
 
         // an unknown application is told apart
         final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().runWith(
@@ -1167,7 +1167,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/cms.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/cms.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/cms.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1187,7 +1187,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "nodeonly:/cms/cms.yaml", result.getResource().getKey().toString() );
         assertEquals( resource, result.getResource().readString() );
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getCmsDescriptor( applicationKey ) ) ).isNotNull();
-        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/nodeonly/cms" ) ) ) );
+        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/nodeonly/cms" ) ) ) );
     }
 
     @Test
@@ -1215,8 +1215,8 @@ class DynamicSchemaServiceImplTest
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.listContentTypes( applicationKey ) ) ).isEmpty();
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.getContentType( ContentTypeName.from( "myapp:mytype" ) ) ) )
             .isNull();
-        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/myapp/cms" ) ) ) );
-        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/applications/myapp" ) ) ) );
+        assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/myapp/cms" ) ) ) );
+        assertTrue( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/myapp" ) ) ) );
 
         // nothing left to delete, and no schema can be written until the descriptor is created again
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.deleteCms( applicationKey ) ) ).isFalse();
@@ -1249,7 +1249,7 @@ class DynamicSchemaServiceImplTest
         assertNotNull( styleDescriptor.getModifiedTime() );
 
         final Node resourceNode =
-            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/style/style.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1279,7 +1279,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/style/style.yaml", result.getResource().getKey().toString() );
 
         final Node resourceNode =
-            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/style/style.yaml" ) ) );
+            appRepoAdminContext().callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/style/style.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1766,7 +1766,7 @@ class DynamicSchemaServiceImplTest
 
         // the macros folder did not exist for the application, it is created on the way
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/macros/mymacro.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/macros/mymacro.yaml" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1884,7 +1884,7 @@ class DynamicSchemaServiceImplTest
 
         // both the i18n and the phrases folders are created on the way
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/i18n/phrases/phrases_en.properties" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/i18n/phrases/phrases_en.properties" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1915,7 +1915,7 @@ class DynamicSchemaServiceImplTest
         assertEquals( "myapp:/cms/i18n/phrases/phrases_en.properties", result.getKey().toString() );
 
         final Node resourceNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/i18n/phrases/phrases_en.properties" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/i18n/phrases/phrases_en.properties" ) ) );
 
         assertEquals( resource, resourceNode.data().getString( "resource" ) );
     }
@@ -1980,7 +1980,7 @@ class DynamicSchemaServiceImplTest
 
         // stored like the icons persisted on application install: mime type in the data, the content as the icon binary
         final Node iconNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.svg" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.svg" ) ) );
 
         assertEquals( "image/svg+xml", iconNode.data().getString( "mimeType" ) );
         assertNull( iconNode.data().getString( "resource" ) );
@@ -1991,7 +1991,7 @@ class DynamicSchemaServiceImplTest
 
         // the descriptor node is touched, so that the content type is re-read with its new icon
         final Node yamlNode = appRepoAdminContext()
-            .callWith( () -> nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.yaml" ) ) );
+            .callWith( () -> nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.yaml" ) ) );
         assertNotNull( yamlNode.data().getInstant( "iconModifiedTime" ) );
 
         final ContentType contentType = createAdminContext().callWith(
@@ -2031,8 +2031,8 @@ class DynamicSchemaServiceImplTest
         assertArrayEquals( pngData, withPng.getSchema().getIcon().toByteArray() );
 
         appRepoAdminContext().runWith( () -> {
-            assertNull( nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.svg" ) ) );
-            assertNotNull( nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.png" ) ) );
+            assertNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.svg" ) ) );
+            assertNotNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.png" ) ) );
         } );
 
         final DynamicSchemaResult<ContentType> resourceOnly = createAdminContext().callWith(
@@ -2044,7 +2044,7 @@ class DynamicSchemaServiceImplTest
         assertNull( removed.getSchema().getIcon() );
         assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getContentType( name ) ).getSchema().getIcon() );
         appRepoAdminContext().runWith(
-            () -> assertNull( nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.png" ) ) ) );
+            () -> assertNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.png" ) ) ) );
 
         // nothing to remove: the schema is left as it is
         final DynamicSchemaResult<ContentType> removedAgain = createAdminContext().callWith(
@@ -2146,8 +2146,8 @@ class DynamicSchemaServiceImplTest
         assertTrue( createAdminContext().callWith( () -> dynamicSchemaService.deleteContentType( ContentTypeName.from( "myapp:mytype" ) ) ) );
 
         appRepoAdminContext().runWith( () -> {
-            assertNull( nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.svg" ) ) );
-            assertNull( nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype.yaml" ) ) );
+            assertNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.svg" ) ) );
+            assertNull( nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype.yaml" ) ) );
         } );
     }
 

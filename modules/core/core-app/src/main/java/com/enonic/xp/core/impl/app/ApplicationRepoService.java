@@ -23,7 +23,7 @@ public interface ApplicationRepoService
     void deleteApplicationNode( ApplicationKey application );
 
     /**
-     * Stores schema resources of the application as nodes below the application node ({@code /applications/<name>}):
+     * Stores schema resources of the application as nodes below the application node ({@code /<name>} in the application repository):
      * the application descriptor ({@code enonic.yaml}, with the icon {@code enonic.svg} attached to it) and the {@code cms} subtree.
      * A previously persisted schema is replaced.
      *

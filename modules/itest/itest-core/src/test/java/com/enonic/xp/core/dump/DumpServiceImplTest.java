@@ -20,6 +20,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.dump.BranchDumpResult;
@@ -133,7 +134,7 @@ class DumpServiceImplTest
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
         assertEquals( RepositoryIds.from( testRepoId, RepositoryId.from( "system-repo" ), RepositoryId.from( "system.auditlog" ),
-                                          RepositoryId.from( "system.scheduler" ) ), newRepos.getIds() );
+                                          RepositoryId.from( "system.scheduler" ), RepositoryId.from( "system.app" ) ), newRepos.getIds() );
     }
 
     @Test
@@ -219,8 +220,8 @@ class DumpServiceImplTest
 
         final Repositories newRepos = NodeHelper.runAsAdmin( this::doListRepositories );
 
-        assertEquals( 6, oldRepos.getIds().getSize() );
-        assertEquals( 5, newRepos.getIds().getSize() );
+        assertEquals( 7, oldRepos.getIds().getSize() );
+        assertEquals( 6, newRepos.getIds().getSize() );
 
         assertThat( newRepos ).map( Repository::getId ).contains( newRepoInsideDump.getId() ).doesNotContain( newRepoOutsideDump.getId() );
     }
@@ -672,8 +673,9 @@ class DumpServiceImplTest
         Mockito.verify( systemDumpListener ).dumpingBranch( testRepoId, WS_OTHER, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( AuditLogConstants.AUDIT_LOG_REPO_ID, AUDIT_LOG_BRANCH, 1 );
         Mockito.verify( systemDumpListener ).dumpingBranch( SchedulerConstants.SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1 );
-        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 6 );
-        Mockito.verify( systemDumpListener, Mockito.times( 11 ) ).nodeDumped();
+        Mockito.verify( systemDumpListener ).dumpingBranch( ApplicationRepoConstants.APP_REPO_ID, ApplicationRepoConstants.APP_REPO_BRANCH, 1 );
+        Mockito.verify( systemDumpListener ).dumpingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 7 );
+        Mockito.verify( systemDumpListener, Mockito.times( 13 ) ).nodeDumped();
 
         final SystemLoadListener systemLoadListener = mock( SystemLoadListener.class );
         NodeHelper.runAsAdmin( () -> this.dumpService.load(
@@ -687,9 +689,11 @@ class DumpServiceImplTest
         Mockito.verify( systemLoadListener ).loadingBranch( SchedulerConstants.SCHEDULER_REPO_ID, SCHEDULER_BRANCH, 1L );
         Mockito.verify( systemLoadListener ).loadingVersions( AuditLogConstants.AUDIT_LOG_REPO_ID );
         Mockito.verify( systemLoadListener ).loadingVersions( SchedulerConstants.SCHEDULER_REPO_ID );
-        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 6L );
+        Mockito.verify( systemLoadListener ).loadingBranch( ApplicationRepoConstants.APP_REPO_ID, ApplicationRepoConstants.APP_REPO_BRANCH, 1L );
+        Mockito.verify( systemLoadListener ).loadingVersions( ApplicationRepoConstants.APP_REPO_ID );
+        Mockito.verify( systemLoadListener ).loadingBranch( SystemConstants.SYSTEM_REPO_ID, SystemConstants.BRANCH_SYSTEM, 7L );
         Mockito.verify( systemLoadListener ).loadingVersions( SystemConstants.SYSTEM_REPO_ID );
-        Mockito.verify( systemLoadListener, Mockito.times( 10 ) ).entryLoaded();
+        Mockito.verify( systemLoadListener, Mockito.times( 12 ) ).entryLoaded();
     }
 
     @Test
@@ -819,6 +823,7 @@ class DumpServiceImplTest
             .filter( Predicate.isEqual( SystemConstants.SYSTEM_REPO_ID )
                          .or( Predicate.isEqual( AuditLogConstants.AUDIT_LOG_REPO_ID ) )
                          .or( Predicate.isEqual( SchedulerConstants.SCHEDULER_REPO_ID ) )
+                         .or( Predicate.isEqual( ApplicationRepoConstants.APP_REPO_ID ) )
                          .negate() )
             .forEach( this::doDeleteRepository );
 

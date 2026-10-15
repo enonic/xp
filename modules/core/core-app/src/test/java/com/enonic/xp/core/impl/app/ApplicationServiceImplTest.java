@@ -306,7 +306,7 @@ class ApplicationServiceImplTest
         return Node.create()
             .id( NodeId.from( name + "-node" ) )
             .name( name )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .data( data )
             .timestamp( Instant.parse( "2026-10-12T12:00:00Z" ) )
             .build();
@@ -528,7 +528,7 @@ class ApplicationServiceImplTest
         final Node node = Node.create()
             .id( NodeId.from( "mynodeid3" ) )
             .name( bundleName )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .data( data )
             .build();
 
@@ -651,12 +651,12 @@ class ApplicationServiceImplTest
         final Node descriptorOnly = Node.create()
             .id( NodeId.from( "descriptor-only" ) )
             .name( "my.descriptor" )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .build();
         final Node withBundle = Node.create()
             .id( NodeId.from( "with-bundle" ) )
             .name( "my.bundle" )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .data( bundleNodeData() )
             .build();
 
@@ -941,14 +941,14 @@ class ApplicationServiceImplTest
         final Node node1 = Node.create()
             .id( NodeId.from( "mynodeid1" ) )
             .name( bundleName1 )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .data( bundleNodeData() )
             .build();
 
         final Node node2 = Node.create()
             .id( NodeId.from( "mynodeid2" ) )
             .name( bundleName2 )
-            .parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH )
+            .parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT )
             .data( bundleNodeData() )
             .build();
 
@@ -1267,7 +1267,7 @@ class ApplicationServiceImplTest
 
     private static final String CMS_DESCRIPTOR = "kind: \"CMS\"\n";
 
-    private static final String CONTENT_TYPE = "kind: \"ContentType\"\n";
+    private static final String CONTENT_TYPE = "kind: \"ContentType\"\nsuperType: \"base:structured\"\n";
 
     private static final String MACRO = "kind: \"Macro\"\n";
 

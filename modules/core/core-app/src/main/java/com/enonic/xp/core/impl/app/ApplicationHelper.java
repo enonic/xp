@@ -14,13 +14,13 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.internal.ApplicationBundleUtils;
 import com.enonic.xp.exception.ForbiddenAccessException;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static com.enonic.xp.core.impl.app.ApplicationManifestConstants.X_CAPABILITY;
@@ -169,8 +169,8 @@ public final class ApplicationHelper
     static Context createAdminContext()
     {
         return ContextBuilder.create()
-            .branch( SystemConstants.BRANCH_SYSTEM )
-            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( ApplicationRepoConstants.APP_REPO_BRANCH )
+            .repositoryId( ApplicationRepoConstants.APP_REPO_ID )
             .authInfo( ApplicationConstants.APPLICATION_SU_AUTH_INFO )
             .build();
     }
@@ -188,8 +188,8 @@ public final class ApplicationHelper
     private static Context createContext()
     {
         return ContextBuilder.create()
-            .branch( SystemConstants.BRANCH_SYSTEM )
-            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
+            .branch( ApplicationRepoConstants.APP_REPO_BRANCH )
+            .repositoryId( ApplicationRepoConstants.APP_REPO_ID )
             .authInfo( ContextAccessor.current().getAuthInfo() )
             .build();
     }

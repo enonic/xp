@@ -62,9 +62,9 @@ class NodeResourceApplicationUrlResolverTest
     void findFiles_lists_the_application_descriptor_but_no_other_root_resources()
     {
         when( this.nodeService.list( any() ) ).thenAnswer(
-            invocation -> result( "/applications/myapp/enonic.yaml", "/applications/myapp/enonic.svg", "/applications/myapp/other.yaml",
-                                  "/applications/myapp/cms", "/applications/myapp/cms/cms.yaml" ) );
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( null ) );
+            invocation -> result( "/myapp/enonic.yaml", "/myapp/enonic.svg", "/myapp/other.yaml",
+                                  "/myapp/cms", "/myapp/cms/cms.yaml" ) );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( null ) );
 
         // no icon attached to the descriptor: no virtual icon resource, and no stray icon node is served either
         assertEquals( Set.of( "/enonic.yaml", "/cms/cms.yaml" ), staticAppResolver().findFiles() );
@@ -73,8 +73,8 @@ class NodeResourceApplicationUrlResolverTest
     @Test
     void findFiles_lists_the_application_icon_attached_to_the_descriptor()
     {
-        when( this.nodeService.list( any() ) ).thenAnswer( invocation -> result( "/applications/myapp/enonic.yaml" ) );
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( "image/png" ) );
+        when( this.nodeService.list( any() ) ).thenAnswer( invocation -> result( "/myapp/enonic.yaml" ) );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( "image/png" ) );
 
         assertEquals( Set.of( "/enonic.yaml", "/enonic.png" ), staticAppResolver().findFiles() );
     }
@@ -113,7 +113,7 @@ class NodeResourceApplicationUrlResolverTest
     void findFiles_relative_to_a_nested_application_node()
     {
         when( this.nodeService.list( any() ) ).thenAnswer(
-            invocation -> result( "/applications/myapp/cms/content-types/mytype/mytype.yaml" ) );
+            invocation -> result( "/myapp/cms/content-types/mytype/mytype.yaml" ) );
 
         final NodeResourceApplicationUrlResolver resolver = staticAppResolver();
 
@@ -121,13 +121,13 @@ class NodeResourceApplicationUrlResolverTest
 
         final ArgumentCaptor<ListNodesParams> params = ArgumentCaptor.forClass( ListNodesParams.class );
         verify( this.nodeService ).list( params.capture() );
-        assertEquals( new NodePath( "/applications/myapp" ), params.getValue().getParentPath() );
+        assertEquals( new NodePath( "/myapp" ), params.getValue().getParentPath() );
     }
 
     @Test
     void findResource_returns_the_persisted_application_descriptor_without_icon()
     {
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( null ) );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode( null ) );
 
         final Resource resource = staticAppResolver().findResource( "/enonic.yaml" );
 
@@ -143,7 +143,7 @@ class NodeResourceApplicationUrlResolverTest
     void findResource_returns_the_application_icon_attached_to_the_descriptor()
     {
         final Node descriptorNode = descriptorNode( "image/svg+xml" );
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
         // the binary is attached under the file name of the icon
         when( this.nodeService.getBinary( descriptorNode.id(), BinaryReference.from( "enonic.svg" ) ) ).thenReturn(
             ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
@@ -165,7 +165,7 @@ class NodeResourceApplicationUrlResolverTest
     void findResource_returns_a_png_application_icon_at_its_own_path()
     {
         final Node descriptorNode = descriptorNode( "image/png" );
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
         when( this.nodeService.getBinary( descriptorNode.id(), BinaryReference.from( "enonic.png" ) ) ).thenReturn(
             ByteSource.wrap( new byte[]{1, 2, 3} ) );
 
@@ -182,13 +182,13 @@ class NodeResourceApplicationUrlResolverTest
         // the binary may remain attached after the icon is removed: the data decides
         final Node descriptorNode = Node.create()
             .id( new NodeId() )
-            .parentPath( new NodePath( "/applications/myapp" ) )
+            .parentPath( new NodePath( "/myapp" ) )
             .name( "enonic.yaml" )
             .data( descriptorData( null ) )
             .timestamp( Instant.now() )
             .attachedBinaries( AttachedBinaries.create().add( new AttachedBinary( BinaryReference.from( "enonic.svg" ), "blobkey" ) ).build() )
             .build();
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenReturn( descriptorNode );
 
         assertNull( staticAppResolver().findResource( "/enonic.svg" ) );
         assertEquals( "kind: \"Application\"", staticAppResolver().findResource( "/enonic.yaml" ).readString() );
@@ -198,7 +198,7 @@ class NodeResourceApplicationUrlResolverTest
     {
         return Node.create()
             .id( new NodeId() )
-            .parentPath( new NodePath( "/applications/myapp" ) )
+            .parentPath( new NodePath( "/myapp" ) )
             .name( "enonic.yaml" )
             .data( descriptorData( iconMimeType ) )
             .timestamp( Instant.now() )
@@ -224,12 +224,12 @@ class NodeResourceApplicationUrlResolverTest
         data.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"ContentType\"" );
         final Node node = Node.create()
             .id( new NodeId() )
-            .parentPath( new NodePath( "/applications/myapp/cms/content-types/mytype" ) )
+            .parentPath( new NodePath( "/myapp/cms/content-types/mytype" ) )
             .name( "mytype.yaml" )
             .data( data )
             .timestamp( Instant.now() )
             .build();
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype/mytype.yaml" ) ) ).thenReturn( node );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.yaml" ) ) ).thenReturn( node );
 
         final Resource resource = staticAppResolver().findResource( "/cms/content-types/mytype/mytype.yaml" );
 
@@ -248,7 +248,7 @@ class NodeResourceApplicationUrlResolverTest
         final NodeId nodeId = new NodeId();
         final Node node = Node.create()
             .id( nodeId )
-            .parentPath( new NodePath( "/applications/myapp/cms/content-types/mytype" ) )
+            .parentPath( new NodePath( "/myapp/cms/content-types/mytype" ) )
             .name( "mytype.svg" )
             .data( data )
             .timestamp( Instant.now() )
@@ -256,7 +256,7 @@ class NodeResourceApplicationUrlResolverTest
                                    .add( new AttachedBinary( SchemaResourceNames.ICON_BINARY_REFERENCE, "blobkey" ) )
                                    .build() )
             .build();
-        when( this.nodeService.getByPath( new NodePath( "/applications/myapp/cms/content-types/mytype/mytype.svg" ) ) ).thenReturn( node );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/cms/content-types/mytype/mytype.svg" ) ) ).thenReturn( node );
         when( this.nodeService.getBinary( nodeId, SchemaResourceNames.ICON_BINARY_REFERENCE ) ).thenReturn(
             ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
 
@@ -292,7 +292,7 @@ class NodeResourceApplicationUrlResolverTest
 
     private NodeResourceApplicationUrlResolver staticAppResolver()
     {
-        return new NodeResourceApplicationUrlResolver( APP_KEY, this.nodeService, new NodePath( "/applications/myapp" ),
+        return new NodeResourceApplicationUrlResolver( APP_KEY, this.nodeService, new NodePath( "/myapp" ),
                                                        () -> ContextBuilder.create().build() );
     }
 

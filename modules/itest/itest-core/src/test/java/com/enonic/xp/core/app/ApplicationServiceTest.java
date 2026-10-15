@@ -30,6 +30,7 @@ import com.google.common.io.ByteStreams;
 import com.enonic.xp.app.Application;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.CreateOrUpdateApplicationDescriptorParams;
 import com.enonic.xp.audit.AuditLogService;
@@ -47,7 +48,6 @@ import com.enonic.xp.core.impl.app.ApplicationDescriptorServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationFactoryServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
-import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
 import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupport;
@@ -60,7 +60,6 @@ import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
-import com.enonic.xp.security.SystemConstants;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
@@ -104,7 +103,6 @@ class ApplicationServiceTest
         AppConfig appConfig = mock( AppConfig.class, invocation -> invocation.getMethod().getDefaultValue() );
 
         ApplicationRepoServiceImpl repoService = new ApplicationRepoServiceImpl( nodeService );
-        ApplicationRepoInitializer.create().setIndexService( indexService ).setNodeService( nodeService ).build().initialize();
 
         BundleContext bundleContext = felix.getBundleContext();
 
@@ -146,9 +144,9 @@ class ApplicationServiceTest
             Application application = applicationService.installGlobalApplication( createByteSource( "7.8.0" ) );
             assertEquals( "7.8.0", application.getVersion().toString() );
 
-            systemRepoContext().callWith( () -> {
+            appRepoContext().callWith( () -> {
                 Node applicationNode = nodeService.getByPath(
-                    NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( applicationName ).build() );
+                    NodePath.create( NodePath.ROOT ).addElement( applicationName ).build() );
                 assertNotNull( applicationNode );
                 assertEquals( "7.8.0", applicationNode.data().getString( "version" ) );
                 return null;
@@ -157,9 +155,9 @@ class ApplicationServiceTest
             application = applicationService.installGlobalApplication( createByteSource( "7.8.1" ) );
             assertEquals( "7.8.1", application.getVersion().toString() );
 
-            systemRepoContext().callWith( () -> {
+            appRepoContext().callWith( () -> {
                 Node applicationNode = nodeService.getByPath(
-                    NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( applicationName ).build() );
+                    NodePath.create( NodePath.ROOT ).addElement( applicationName ).build() );
                 assertNotNull( applicationNode );
                 assertEquals( "7.8.1", applicationNode.data().getString( "version" ) );
                 return null;
@@ -178,7 +176,7 @@ class ApplicationServiceTest
                 "enonic.yml", APP_DESCRIPTOR, //
                 "enonic.svg", "<svg>app</svg>", //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yml", "kind: \"ContentType\"\ndisplayName: \"My type\"", //
+                "cms/content-types/mytype/mytype.yml", "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"", //
                 "cms/content-types/mytype/mytype.svg", "<svg/>", //
                 "cms/i18n/phrases/phrases_en.properties", "key=value", //
                 "i18n/phrases_en.properties", "root=value", //
@@ -203,9 +201,9 @@ class ApplicationServiceTest
             assertEquals( "<svg>app</svg>", appIcon.readString() );
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.yml" ) ).exists() );
 
-            // schema resources are persisted below the application node in system-repo
+            // schema resources are persisted below the application node in the application repository
             assertEquals( "kind: \"CMS\"", schemaNode( "staticapp", "cms.yaml" ).data().getString( "resource" ) );
-            assertEquals( "kind: \"ContentType\"\ndisplayName: \"My type\"",
+            assertEquals( "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"",
                           schemaNode( "staticapp", "content-types/mytype.yaml" ).data().getString( "resource" ) );
             assertEquals( "key=value", schemaNode( "staticapp", "i18n/phrases/phrases_en.properties" ).data().getString( "resource" ) );
             // icons are persisted as node binaries
@@ -220,7 +218,7 @@ class ApplicationServiceTest
             final Resource contentType = resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) );
             assertTrue( contentType.exists() );
             assertEquals( "node", contentType.getResolverName() );
-            assertEquals( "kind: \"ContentType\"\ndisplayName: \"My type\"", contentType.readString() );
+            assertEquals( "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle: \"My type\"", contentType.readString() );
 
             final Resource cms = resourceService.getResource( ResourceKey.from( appKey, "/cms/cms.yaml" ) );
             assertEquals( "node", cms.getResolverName() );
@@ -303,7 +301,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"", //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"", //
                 "cms/i18n/phrases/phrases_en.properties", "key=value" ) ) );
 
             final Node appNode = appNode( "staticapp" );
@@ -312,7 +310,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertEquals( appNode.id(), appNode( "staticapp" ).id() );
             assertNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
@@ -334,7 +332,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertNotNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
 
@@ -342,7 +340,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"", //
+                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"", //
                 "cms/parts/mypart/mypart.yaml", "kind: \"Part\"", //
                 "cms/parts/mypart/mypart.js", "exports.get = function() {}" ) ) );
 
@@ -371,7 +369,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertNotNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
 
@@ -548,7 +546,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "wrongkindapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             // cms/style/style.yaml is reserved for the Style descriptor: the whole new version is rejected
             final ApplicationBundleException exception = assertThrows( ApplicationBundleException.class,
@@ -558,7 +556,7 @@ class ApplicationServiceTest
                                                                                 "cms/cms.yaml", CMS_DESCRIPTOR, //
                                                                                 "cms/style/style.yaml", CMS_DESCRIPTOR, //
                                                                                 "cms/content-types/newtype.yaml",
-                                                                                "kind: \"ContentType\"" ) ) ) );
+                                                                                "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) );
             assertTrue( exception.getMessage().contains( "cms/style/style.yaml: invalid kind \"CMS\", expected \"Style\"" ) );
 
             // nothing of the rejected version is persisted, the installed version and its schema are untouched
@@ -570,7 +568,7 @@ class ApplicationServiceTest
     }
 
     @Test
-    void reinstallWithBrokenSchemaLeavesNoSchema()
+    void reinstallWithInvalidSchemaNameKeepsInstalledSchema()
     {
         final ApplicationKey appKey = ApplicationKey.from( "brokenschemaapp" );
 
@@ -578,25 +576,29 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "brokenschemaapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype.yaml" ) );
 
-            // "my?type" passes the schema resource pattern but is not a valid node name: persisting the new schema fails halfway,
-            // the old schema is already gone and the half-written new one is removed, so no schema is left behind
-            assertThrows( RuntimeException.class, () -> applicationService.installGlobalApplication(
-                createAppSource( "brokenschemaapp", "1.0.1", Map.of( //
-                    "enonic.yaml", APP_DESCRIPTOR, //
-                    "cms/cms.yaml", CMS_DESCRIPTOR, //
-                    "cms/content-types/my?type/my?type.yaml", "kind: \"ContentType\"" ) ) ) );
+            // "my?type" passes the schema resource pattern but is not a valid schema name: the new version is rejected before
+            // anything is written, the installed version and its schema are untouched
+            final ApplicationBundleException exception = assertThrows( ApplicationBundleException.class,
+                                                                        () -> applicationService.installGlobalApplication(
+                                                                            createAppSource( "brokenschemaapp", "1.0.1", Map.of( //
+                                                                                "enonic.yaml", APP_DESCRIPTOR, //
+                                                                                "cms/cms.yaml", CMS_DESCRIPTOR, //
+                                                                                "cms/content-types/my?type/my?type.yaml",
+                                                                                "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) );
+            assertTrue( exception.getMessage().contains( "cms/content-types/my?type.yaml: " ), exception.getMessage() );
 
-            assertNull( appChildNode( "brokenschemaapp", "cms" ) );
+            assertEquals( "1.0.0", applicationService.getInstalledApplication( appKey ).getVersion().toString() );
+            assertNotNull( schemaNode( "brokenschemaapp", "content-types/mytype.yaml" ) );
 
-            // reinstalling a fixed version repairs the application: the schema is persisted and served
+            // a fixed version replaces the schema
             applicationService.installGlobalApplication( createAppSource( "brokenschemaapp", "1.0.2", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/newtype/newtype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertNull( schemaNode( "brokenschemaapp", "content-types/mytype.yaml" ) );
             assertNotNull( schemaNode( "brokenschemaapp", "content-types/newtype.yaml" ) );
@@ -614,7 +616,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "schemabundleapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"", //
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"", //
                 "cms/parts/mypart/mypart.yaml", "kind: \"Part\"", //
                 "cms/parts/mypart/mypart.js", "exports.get = function() {}" ) ) );
 
@@ -642,7 +644,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertNotNull( schemaNode( "staticapp", "content-types/mytype.yaml" ) );
 
@@ -661,7 +663,7 @@ class ApplicationServiceTest
         adminContext().runWith( () -> {
             applicationService.installGlobalApplication( createAppSource( "bundleapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertNotNull( appNode( "bundleapp" ) );
             assertNull( appChildNode( "bundleapp", "cms" ) );
@@ -685,7 +687,7 @@ class ApplicationServiceTest
             applicationService.installGlobalApplication( createAppSource( "overriddenapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertNotNull( schemaNode( "overriddenapp", "content-types/mytype.yaml" ) );
             assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/cms/content-types/mytype.yaml" ) )
@@ -695,7 +697,7 @@ class ApplicationServiceTest
             applicationService.installLocalApplication( createAppSource( "overriddenapp", "1.0.1-SNAPSHOT", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/othertype/othertype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/othertype/othertype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             assertTrue( applicationService.isLocalApplication( appKey ) );
 
@@ -727,7 +729,7 @@ class ApplicationServiceTest
             applicationService.installLocalApplication( createAppSource( "localbundleapp", "1.0.0", Map.of( //
                 "enonic.yaml", APP_DESCRIPTOR, //
                 "cms/cms.yaml", CMS_DESCRIPTOR, //
-                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"" ) ) );
+                "cms/content-types/mytype/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             // local applications are never stored: no application node, no persisted schema
             assertNull( appNode( "localbundleapp" ) );
@@ -740,20 +742,20 @@ class ApplicationServiceTest
 
     private Node appNode( final String appName )
     {
-        return systemRepoContext().callWith(
-            () -> nodeService.getByPath( NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( appName ).build() ) );
+        return appRepoContext().callWith(
+            () -> nodeService.getByPath( NodePath.create( NodePath.ROOT ).addElement( appName ).build() ) );
     }
 
     private Node appChildNode( final String appName, final String childName )
     {
-        return systemRepoContext().callWith( () -> nodeService.getByPath(
-            NodePath.create( NodePath.ROOT ).addElement( "applications" ).addElement( appName ).addElement( childName ).build() ) );
+        return appRepoContext().callWith( () -> nodeService.getByPath(
+            NodePath.create( NodePath.ROOT ).addElement( appName ).addElement( childName ).build() ) );
     }
 
     private Node schemaNode( final String appName, final String cmsRelativePath )
     {
-        return systemRepoContext().callWith(
-            () -> nodeService.getByPath( new NodePath( "/applications/" + appName + "/cms/" + cmsRelativePath ) ) );
+        return appRepoContext().callWith(
+            () -> nodeService.getByPath( new NodePath( "/" + appName + "/cms/" + cmsRelativePath ) ) );
     }
 
     private Felix createFelixInstance( final Path cacheDir )
@@ -772,12 +774,13 @@ class ApplicationServiceTest
             .build();
     }
 
-    private Context systemRepoContext()
+    // the application repository is readable by admins only
+    private Context appRepoContext()
     {
         return ContextBuilder.create()
-            .branch( SystemConstants.BRANCH_SYSTEM )
-            .repositoryId( SystemConstants.SYSTEM_REPO_ID )
-            .authInfo( ContextAccessor.current().getAuthInfo() )
+            .branch( ApplicationRepoConstants.APP_REPO_BRANCH )
+            .repositoryId( ApplicationRepoConstants.APP_REPO_ID )
+            .authInfo( AuthenticationInfo.create().principals( RoleKeys.ADMIN ).user( User.anonymous() ).build() )
             .build();
     }
 

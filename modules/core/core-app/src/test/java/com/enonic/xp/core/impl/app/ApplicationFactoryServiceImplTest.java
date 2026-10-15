@@ -195,7 +195,7 @@ class ApplicationFactoryServiceImplTest
 
         // no bundle at all: an application created through the descriptor service serves its persisted descriptor and schema
         final ApplicationKey applicationKey = ApplicationKey.from( "nodeonly" );
-        when( nodeService.nodeExists( new NodePath( "/applications/nodeonly/enonic.yaml" ) ) ).thenReturn( true );
+        when( nodeService.nodeExists( new NodePath( "/nodeonly/enonic.yaml" ) ) ).thenReturn( true );
 
         assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
         assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();

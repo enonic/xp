@@ -25,6 +25,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.app.ApplicationRepoConstants;
 import com.enonic.xp.app.CreateOrUpdateApplicationDescriptorParams;
 import com.enonic.xp.app.EditableApplicationDescriptor;
 import com.enonic.xp.core.impl.app.event.ApplicationEvents;
@@ -35,7 +36,6 @@ import com.enonic.xp.event.EventPublisher;
 import com.enonic.xp.icon.Icon;
 import com.enonic.xp.icon.IconUpdate;
 import com.enonic.xp.node.NodeService;
-import com.enonic.xp.security.SystemConstants;
 
 @Component(immediate = true)
 public class ApplicationDescriptorServiceImpl
@@ -49,7 +49,7 @@ public class ApplicationDescriptorServiceImpl
 
     // the application node or its descriptor node: a change to either changes the descriptor read for the application
     private static final Pattern DESCRIPTOR_NODE_PATH = Pattern.compile(
-        "^" + ApplicationRepoServiceImpl.APPLICATION_PATH + "/(?<name>[^/]+)(?:/" +
+        "^" + ApplicationRepoServiceImpl.APPLICATIONS_ROOT + "(?<name>[^/]+)(?:/" +
             Pattern.quote( SchemaResourcePaths.APP_DESCRIPTOR_NAME ) + ")?$" );
 
     private final ConcurrentMap<ApplicationKey, ApplicationDescriptor> appDescriptorMap;
@@ -121,7 +121,7 @@ public class ApplicationDescriptorServiceImpl
 
         final ApplicationKey key = params.getKey();
 
-        // the application nodes live in system-repo, whatever the context of the caller
+        // the application nodes live in the application repository, whatever the context of the caller
         final boolean created = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) ) == null;
         if ( created )
         {
@@ -234,7 +234,7 @@ public class ApplicationDescriptorServiceImpl
     }
 
     /**
-     * The persisted descriptor is written below the application node in system-repo: a change to it, here or on another node
+     * The persisted descriptor is written below the application node in the application repository: a change to it, here or on another node
      * of the cluster, invalidates the descriptor read for the application.
      */
     @Override
@@ -268,8 +268,8 @@ public class ApplicationDescriptorServiceImpl
 
     private static Optional<ApplicationKey> descriptorNodeApplicationKey( final Map<?, ?> node )
     {
-        if ( !SystemConstants.SYSTEM_REPO_ID.toString().equals( node.get( "repo" ) ) ||
-            !SystemConstants.BRANCH_SYSTEM.getValue().equals( node.get( "branch" ) ) )
+        if ( !ApplicationRepoConstants.APP_REPO_ID.toString().equals( node.get( "repo" ) ) ||
+            !ApplicationRepoConstants.APP_REPO_BRANCH.getValue().equals( node.get( "branch" ) ) )
         {
             return Optional.empty();
         }

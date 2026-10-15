@@ -26,9 +26,9 @@ import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 
 /**
- * Reads and writes schema resources stored as nodes below the application node in system-repo,
+ * Reads and writes schema resources stored as nodes below the application node in the application repository,
  * see {@link ApplicationRepoServiceImpl#applicationNodePath(ApplicationKey)}. Folder paths passed in are absolute node paths
- * below that application node, e.g. {@code /applications/myapp/cms/content-types/mytype}.
+ * below that application node, e.g. {@code /myapp/cms/content-types/mytype}.
  * <p>
  * Descriptors and phrases are stored as text in the {@code resource} property, icons as a node binary.
  */
@@ -285,7 +285,7 @@ final class DynamicResourceManager
     }
 
     /**
-     * The application key is the name of the node right below the applications folder.
+     * The application key is the name of the node right below the root of the application repository.
      */
     static ApplicationKey appKeyFromNodePath( final NodePath path )
     {
@@ -306,12 +306,10 @@ final class DynamicResourceManager
 
     private static String relativeToApplicationsFolder( final NodePath path )
     {
-        final String prefix = ApplicationRepoServiceImpl.APPLICATION_PATH + "/";
-        final String pathString = path.toString();
-        if ( !pathString.startsWith( prefix ) )
+        if ( path.isRoot() )
         {
             throw new IllegalArgumentException( "Not an application resource path: " + path );
         }
-        return pathString.substring( prefix.length() );
+        return path.toString().substring( ApplicationRepoServiceImpl.APPLICATIONS_ROOT.toString().length() );
     }
 }

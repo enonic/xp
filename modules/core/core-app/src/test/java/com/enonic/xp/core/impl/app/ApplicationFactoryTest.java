@@ -180,17 +180,17 @@ class ApplicationFactoryTest
         final Bundle bundle = deploy( "app1", createBundleWithCmsDescriptor( "app1" ) );
 
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.of(
-            new NodeListEntry( NodeId.from( "descriptor" ), new NodePath( "/applications/app1/enonic.yaml" ), Instant.EPOCH ),
-            new NodeListEntry( NodeId.from( "cms" ), new NodePath( "/applications/app1/cms" ), Instant.EPOCH ),
-            new NodeListEntry( NodeId.from( "cms-descriptor" ), new NodePath( "/applications/app1/cms/cms.yaml" ), Instant.EPOCH ) ) );
+            new NodeListEntry( NodeId.from( "descriptor" ), new NodePath( "/app1/enonic.yaml" ), Instant.EPOCH ),
+            new NodeListEntry( NodeId.from( "cms" ), new NodePath( "/app1/cms" ), Instant.EPOCH ),
+            new NodeListEntry( NodeId.from( "cms-descriptor" ), new NodePath( "/app1/cms/cms.yaml" ), Instant.EPOCH ) ) );
 
         final PropertyTree descriptorData = new PropertyTree();
         descriptorData.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"\ndescription: \"From node\"\n" );
-        when( nodeService.getByPath( new NodePath( "/applications/app1/enonic.yaml" ) ) ).thenReturn( Node.create()
+        when( nodeService.getByPath( new NodePath( "/app1/enonic.yaml" ) ) ).thenReturn( Node.create()
                                                                                                           .id( NodeId.from( "descriptor" ) )
                                                                                                           .name( "enonic.yaml" )
                                                                                                           .parentPath( new NodePath(
-                                                                                                              "/applications/app1" ) )
+                                                                                                              "/app1" ) )
                                                                                                           .data( descriptorData )
                                                                                                           .timestamp( Instant.EPOCH )
                                                                                                           .build() );
@@ -247,18 +247,18 @@ class ApplicationFactoryTest
             .addResource( LIB_PATH, stream( "library" ) ) );
 
         when( nodeService.list( any() ) ).thenAnswer( invocation -> Stream.of(
-            new NodeListEntry( NodeId.from( "descriptor" ), new NodePath( "/applications/app1/enonic.yaml" ), Instant.EPOCH ) ) );
+            new NodeListEntry( NodeId.from( "descriptor" ), new NodePath( "/app1/enonic.yaml" ), Instant.EPOCH ) ) );
 
         final PropertyTree descriptorData = new PropertyTree();
         descriptorData.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"\ndescription: \"From node\"\n" );
         descriptorData.setString( SchemaNodePropertyNames.MIME_TYPE, SchemaResourcePaths.PNG_MIME_TYPE );
         descriptorData.setBinaryReference( SchemaNodePropertyNames.ICON, BinaryReference.from( "enonic.png" ) );
         final NodeId descriptorId = NodeId.from( "descriptor" );
-        when( nodeService.getByPath( new NodePath( "/applications/app1/enonic.yaml" ) ) ).thenReturn( Node.create()
+        when( nodeService.getByPath( new NodePath( "/app1/enonic.yaml" ) ) ).thenReturn( Node.create()
                                                                                                           .id( descriptorId )
                                                                                                           .name( "enonic.yaml" )
                                                                                                           .parentPath( new NodePath(
-                                                                                                              "/applications/app1" ) )
+                                                                                                              "/app1" ) )
                                                                                                           .data( descriptorData )
                                                                                                           .timestamp( Instant.EPOCH )
                                                                                                           .build() );

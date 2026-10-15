@@ -1042,7 +1042,7 @@ public class DynamicSchemaServiceImpl
         return new NodePath( createCmsFolderPath( key ), NodeName.from( SchemaResourceNames.STYLE_ROOT_NAME ) );
     }
 
-    // the persisted schema of an application lives below its node in system-repo
+    // the persisted schema of an application lives below its node in the application repository
     private NodePath createCmsFolderPath( final ApplicationKey key )
     {
         return new NodePath( ApplicationRepoServiceImpl.applicationNodePath( key ), NodeName.from( SchemaResourceNames.CMS_ROOT_NAME ) );

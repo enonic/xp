@@ -44,7 +44,7 @@ public final class ApplicationFactory
 
         return isPersisted( bundle )
             // the application descriptor and icon, and the schema of an application owning one, are served from nodes below
-            // the application node in system-repo; the bundle's own copies are never read.
+            // the application node in the application repository; the bundle's own copies are never read.
             ? new MultiApplicationUrlResolver( createPersistedSchemaResolver( appKey, nodeService ),
                                                new FilteredApplicationUrlResolver( bundleUrlResolver, () -> ApplicationFactory::servedFromBundle ) )
             : bundleUrlResolver;
@@ -89,7 +89,7 @@ public final class ApplicationFactory
     }
 
     /**
-     * Resolver serving the schema persisted below the application node in system-repo.
+     * Resolver serving the schema persisted below the application node in the application repository.
      */
     static NodeResourceApplicationUrlResolver createPersistedSchemaResolver( final ApplicationKey applicationKey,
                                                                             final NodeService nodeService )

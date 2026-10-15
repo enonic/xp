@@ -107,15 +107,13 @@ class ApplicationDescriptorServiceImplTest
         // the descriptor of a global application is read from its persisted node, never from the bundle
         final PropertyTree data = new PropertyTree();
         data.setString( SchemaNodePropertyNames.RESOURCE, "kind: \"Application\"\ndescription: \"My app description\"\n" );
-        when( nodeService.getByPath( new NodePath( "/applications/com.enonic.myapp/enonic.yaml" ) ) ).thenReturn( Node.create()
-                                                                                                                       .id( NodeId.from(
-                                                                                                                           "descriptor" ) )
-                                                                                                                       .name( "enonic.yaml" )
-                                                                                                                       .parentPath(
-                                                                                                                           new NodePath(
-                                                                                                                               "/applications/com.enonic.myapp" ) )
-                                                                                                                       .data( data )
-                                                                                                                       .build() );
+        when( nodeService.getByPath( new NodePath( "/com.enonic.myapp/enonic.yaml" ) ) ).thenReturn( Node.create()
+                                                                                                         .id( NodeId.from( "descriptor" ) )
+                                                                                                         .name( "enonic.yaml" )
+                                                                                                         .parentPath( new NodePath(
+                                                                                                             "/com.enonic.myapp" ) )
+                                                                                                         .data( data )
+                                                                                                         .build() );
 
         appDescriptorService.start( componentContext );
 
@@ -349,18 +347,18 @@ class ApplicationDescriptorServiceImplTest
         assertEquals( "First", appDescriptorService.get( MYAPP ).getDescription() );
 
         // an event for another application, another repo or an unrelated node changes nothing
-        appDescriptorService.onEvent( nodeEvent( "node.updated", "system-repo", "master", "/applications/other/enonic.yaml" ) );
-        appDescriptorService.onEvent( nodeEvent( "node.updated", "com.enonic.cms.default", "master", "/applications/myapp/enonic.yaml" ) );
-        appDescriptorService.onEvent( nodeEvent( "node.updated", "system-repo", "master", "/applications/myapp/cms/cms.yaml" ) );
-        appDescriptorService.onEvent( nodeEvent( "node.pushed", "system-repo", "master", "/applications/myapp/enonic.yaml" ) );
+        appDescriptorService.onEvent( nodeEvent( "node.updated", "system.app", "master", "/other/enonic.yaml" ) );
+        appDescriptorService.onEvent( nodeEvent( "node.updated", "com.enonic.cms.default", "master", "/myapp/enonic.yaml" ) );
+        appDescriptorService.onEvent( nodeEvent( "node.updated", "system.app", "master", "/myapp/cms/cms.yaml" ) );
+        appDescriptorService.onEvent( nodeEvent( "node.pushed", "system.app", "master", "/myapp/enonic.yaml" ) );
         assertEquals( "First", appDescriptorService.get( MYAPP ).getDescription() );
 
         // the descriptor node of the application, local or from another cluster node
-        appDescriptorService.onEvent( nodeEvent( "node.updated", "system-repo", "master", "/applications/myapp/enonic.yaml" ) );
+        appDescriptorService.onEvent( nodeEvent( "node.updated", "system.app", "master", "/myapp/enonic.yaml" ) );
         assertEquals( "Second", appDescriptorService.get( MYAPP ).getDescription() );
 
         persisted.set( "kind: \"Application\"\ndescription: \"Third\"\n" );
-        appDescriptorService.onEvent( Event.create( nodeEvent( "node.deleted", "system-repo", "master", "/applications/myapp" ) )
+        appDescriptorService.onEvent( Event.create( nodeEvent( "node.deleted", "system.app", "master", "/myapp" ) )
                                           .localOrigin( false )
                                           .build() );
         assertEquals( "Third", appDescriptorService.get( MYAPP ).getDescription() );
@@ -394,7 +392,7 @@ class ApplicationDescriptorServiceImplTest
     private void stubApplicationNode()
     {
         when( repoService.getApplicationNode( MYAPP ) ).thenReturn(
-            Node.create().id( new NodeId() ).name( "myapp" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
+            Node.create().id( new NodeId() ).name( "myapp" ).parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT ).build() );
     }
 
     // the mime type of the icon attached to the stubbed descriptor node, followed by the stubbed upsert
@@ -435,7 +433,7 @@ class ApplicationDescriptorServiceImplTest
         this.iconMimeType.set( initialIconMimeType );
         when( repoService.getApplicationDescriptorNode( MYAPP ) ).thenAnswer(
             invocation -> yaml.get() != null ? descriptorNode( yaml.get(), iconMimeType.get() ) : null );
-        when( nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenAnswer(
+        when( nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenAnswer(
             invocation -> yaml.get() != null ? descriptorNode( yaml.get(), iconMimeType.get() ) : null );
         // the icon binary is attached under its file name
         when( nodeService.getBinary( any( NodeId.class ), eq( BinaryReference.from( "enonic.svg" ) ) ) ).thenReturn(
@@ -456,7 +454,7 @@ class ApplicationDescriptorServiceImplTest
         return Node.create()
             .id( NodeId.from( "descriptor" ) )
             .name( "enonic.yaml" )
-            .parentPath( new NodePath( "/applications/myapp" ) )
+            .parentPath( new NodePath( "/myapp" ) )
             .data( data )
             .timestamp( Instant.parse( "2026-10-08T10:00:00Z" ) )
             .build();

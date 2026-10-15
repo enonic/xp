@@ -67,9 +67,9 @@ class ApplicationRepoServiceImplTest
         final AppInfo app = createApp();
 
         Mockito.when(
-                this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ) ) )
+                this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT, NodeName.from( "myBundle" ) ) ) )
             .thenReturn(
-                Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
+                Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT ).build() );
 
         this.service.upsertApplicationNode( app, ByteSource.wrap( "myBinary".getBytes() ) );
 
@@ -81,15 +81,15 @@ class ApplicationRepoServiceImplTest
     {
         final AppInfo app = createApp();
 
-        Mockito.when( this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ) ) )
+        Mockito.when( this.nodeService.getByPath( new NodePath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT, NodeName.from( "myBundle" ) ) ) )
             .thenReturn(
-                Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATION_PATH ).build() );
+                Node.create().id( new NodeId() ).name( "myBundle" ).parentPath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT ).build() );
 
         this.service.deleteApplicationNode( ApplicationKey.from( app.name ) );
 
         ArgumentCaptor<DeleteNodeParams> argCaptor = ArgumentCaptor.forClass( DeleteNodeParams.class );
         Mockito.verify( this.nodeService, Mockito.times( 1 ) ).delete( argCaptor.capture() );
-        assertEquals( new NodePath( ApplicationRepoServiceImpl.APPLICATION_PATH, NodeName.from( "myBundle" ) ),
+        assertEquals( new NodePath( ApplicationRepoServiceImpl.APPLICATIONS_ROOT, NodeName.from( "myBundle" ) ),
                       argCaptor.getValue().getNodePath() );
     }
 
@@ -112,10 +112,10 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService, Mockito.times( 9 ) ).create( captor.capture() );
 
         final List<CreateNodeParams> created = captor.getAllValues();
-        assertEquals( List.of( "/applications/myBundle/enonic.yaml", "/applications/myBundle/cms", "/applications/myBundle/cms/cms.yaml",
-                               "/applications/myBundle/cms/content-types", "/applications/myBundle/cms/content-types/mytype",
-                               "/applications/myBundle/cms/content-types/mytype/mytype.yaml", "/applications/myBundle/cms/i18n",
-                               "/applications/myBundle/cms/i18n/phrases", "/applications/myBundle/cms/i18n/phrases/phrases_en.properties" ),
+        assertEquals( List.of( "/myBundle/enonic.yaml", "/myBundle/cms", "/myBundle/cms/cms.yaml",
+                               "/myBundle/cms/content-types", "/myBundle/cms/content-types/mytype",
+                               "/myBundle/cms/content-types/mytype/mytype.yaml", "/myBundle/cms/i18n",
+                               "/myBundle/cms/i18n/phrases", "/myBundle/cms/i18n/phrases/phrases_en.properties" ),
                       created.stream().map( params -> new NodePath( params.getParent(), params.getName() ).toString() ).toList() );
 
         assertEquals( "app-descriptor", created.stream()
@@ -178,7 +178,7 @@ class ApplicationRepoServiceImplTest
         // the descriptor is the only node written: no icon node, no cms marker for an application without a schema
         final CreateNodeParams descriptorParams = captor.getValue();
         assertEquals( "enonic.yaml", descriptorParams.getName().toString() );
-        assertEquals( new NodePath( "/applications/myBundle" ), descriptorParams.getParent() );
+        assertEquals( new NodePath( "/myBundle" ), descriptorParams.getParent() );
         assertEquals( "app-descriptor", descriptorParams.getData().getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, descriptorParams.getData().getString( SchemaNodePropertyNames.MIME_TYPE ) );
         assertEquals( SVG_ICON, descriptorParams.getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
@@ -223,8 +223,8 @@ class ApplicationRepoServiceImplTest
     @Test
     void persist_schema_replaces_existing_schema()
     {
-        final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
-        final NodePath descriptorPath = new NodePath( "/applications/myBundle/enonic.yaml" );
+        final NodePath cmsPath = new NodePath( "/myBundle/cms" );
+        final NodePath descriptorPath = new NodePath( "/myBundle/enonic.yaml" );
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
         Mockito.when( this.nodeService.nodeExists( descriptorPath ) ).thenReturn( true );
 
@@ -243,14 +243,14 @@ class ApplicationRepoServiceImplTest
         final ArgumentCaptor<CreateNodeParams> createCaptor = ArgumentCaptor.forClass( CreateNodeParams.class );
         inOrder.verify( this.nodeService, Mockito.times( 2 ) ).create( createCaptor.capture() );
         assertEquals( SchemaResourceNames.CMS_ROOT_NAME, createCaptor.getAllValues().get( 0 ).getName().toString() );
-        assertEquals( new NodePath( "/applications/myBundle" ), createCaptor.getAllValues().get( 0 ).getParent() );
+        assertEquals( new NodePath( "/myBundle" ), createCaptor.getAllValues().get( 0 ).getParent() );
         assertEquals( "cms.yaml", createCaptor.getAllValues().get( 1 ).getName().toString() );
     }
 
     @Test
     void persist_schema_without_resources_removes_the_persisted_schema()
     {
-        final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
+        final NodePath cmsPath = new NodePath( "/myBundle/cms" );
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
 
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), Map.of() );
@@ -273,7 +273,7 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService ).create( captor.capture() );
 
         assertEquals( "myapp", captor.getValue().getName().toString() );
-        assertEquals( ApplicationRepoServiceImpl.APPLICATION_PATH, captor.getValue().getParent() );
+        assertEquals( ApplicationRepoServiceImpl.APPLICATIONS_ROOT, captor.getValue().getParent() );
         assertNotNull( captor.getValue().getData().getInstant( "modifiedTime" ) );
         assertNull( captor.getValue().getData().getBinaryReference( ApplicationNodeTransformer.APPLICATION_BINARY_REF ) );
         assertEquals( 0, captor.getValue().getBinaryAttachments().getSize() );
@@ -282,8 +282,8 @@ class ApplicationRepoServiceImplTest
     @Test
     void get_application_descriptor_node()
     {
-        final Node node = Node.create().id( new NodeId() ).name( "enonic.yaml" ).parentPath( new NodePath( "/applications/myapp" ) ).build();
-        Mockito.when( this.nodeService.getByPath( new NodePath( "/applications/myapp/enonic.yaml" ) ) ).thenReturn( node );
+        final Node node = Node.create().id( new NodeId() ).name( "enonic.yaml" ).parentPath( new NodePath( "/myapp" ) ).build();
+        Mockito.when( this.nodeService.getByPath( new NodePath( "/myapp/enonic.yaml" ) ) ).thenReturn( node );
 
         assertEquals( node, this.service.getApplicationDescriptorNode( ApplicationKey.from( "myapp" ) ) );
         assertNull( this.service.getApplicationDescriptorNode( ApplicationKey.from( "other" ) ) );
@@ -302,7 +302,7 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService, Mockito.never() ).update( Mockito.any( UpdateNodeParams.class ) );
 
         assertEquals( "enonic.yaml", captor.getValue().getName().toString() );
-        assertEquals( new NodePath( "/applications/myapp" ), captor.getValue().getParent() );
+        assertEquals( new NodePath( "/myapp" ), captor.getValue().getParent() );
         assertEquals( "yaml", captor.getValue().getData().getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( SchemaResourcePaths.PNG_MIME_TYPE, captor.getValue().getData().getString( SchemaNodePropertyNames.MIME_TYPE ) );
         assertEquals( PNG_ICON, captor.getValue().getData().getBinaryReference( SchemaNodePropertyNames.ICON ) );
@@ -337,7 +337,7 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService ).update( captor.capture() );
         Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
 
-        assertEquals( new NodePath( "/applications/myapp/enonic.yaml" ), captor.getValue().getPath() );
+        assertEquals( new NodePath( "/myapp/enonic.yaml" ), captor.getValue().getPath() );
         assertEquals( "new", edited.getString( SchemaNodePropertyNames.RESOURCE ) );
         assertEquals( SchemaResourcePaths.SVG_MIME_TYPE, edited.getString( SchemaNodePropertyNames.MIME_TYPE ) );
         assertEquals( SVG_ICON, edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
@@ -432,7 +432,7 @@ class ApplicationRepoServiceImplTest
      */
     private PropertyTree stubUpdate( final PropertyTree data )
     {
-        final NodePath descriptorPath = new NodePath( "/applications/myapp/enonic.yaml" );
+        final NodePath descriptorPath = new NodePath( "/myapp/enonic.yaml" );
         Mockito.when( this.nodeService.nodeExists( descriptorPath ) ).thenReturn( true );
 
         final Node node = Node.create().id( new NodeId() ).name( "enonic.yaml" ).parentPath( descriptorPath.getParentPath() ).data( data ).build();
@@ -447,8 +447,8 @@ class ApplicationRepoServiceImplTest
     @Test
     void persist_schema_failure_leaves_no_schema()
     {
-        final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
-        final NodePath descriptorPath = new NodePath( "/applications/myBundle/enonic.yaml" );
+        final NodePath cmsPath = new NodePath( "/myBundle/cms" );
+        final NodePath descriptorPath = new NodePath( "/myBundle/enonic.yaml" );
         // the old schema exists before the call; the freshly created cms and enonic.yaml nodes exist at cleanup time
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
         Mockito.when( this.nodeService.nodeExists( descriptorPath ) ).thenReturn( true );
@@ -481,8 +481,8 @@ class ApplicationRepoServiceImplTest
     @Test
     void delete_schema_removes_persisted_nodes()
     {
-        final NodePath cmsPath = new NodePath( "/applications/myBundle/cms" );
-        final NodePath descriptorPath = new NodePath( "/applications/myBundle/enonic.yaml" );
+        final NodePath cmsPath = new NodePath( "/myBundle/cms" );
+        final NodePath descriptorPath = new NodePath( "/myBundle/enonic.yaml" );
         Mockito.when( this.nodeService.nodeExists( cmsPath ) ).thenReturn( true );
         Mockito.when( this.nodeService.nodeExists( descriptorPath ) ).thenReturn( true );
 
@@ -514,7 +514,7 @@ class ApplicationRepoServiceImplTest
         return Node.create()
             .id( new NodeId() )
             .name( SchemaResourceNames.CMS_ROOT_NAME )
-            .parentPath( new NodePath( "/applications/myBundle" ) )
+            .parentPath( new NodePath( "/myBundle" ) )
             .build();
     }
 

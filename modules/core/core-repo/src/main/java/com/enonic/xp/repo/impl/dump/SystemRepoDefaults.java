@@ -31,9 +31,14 @@ public class SystemRepoDefaults
     public static final AccessControlList SCHEDULER_REPO_DEFAULT_ACL =
         AccessControlList.create().add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ).build();
 
+    public static final RepositoryId APP_REPO_ID = RepositoryId.from( "system.app" );
+
+    public static final AccessControlList APP_REPO_DEFAULT_ACL =
+        AccessControlList.create().add( AccessControlEntry.create().allowAll().principal( RoleKeys.ADMIN ).build() ).build();
+
     public static final Map<RepositoryId, Data> SYSTEM_REPO_DEFAULTS =
         Map.of( AUDIT_LOG_REPO_ID, new Data( AUDIT_LOG_REPO_DEFAULT_ACL, AUDIT_LOG_REPO_DEFAULT_CHILD_ORDER ), SCHEDULER_REPO_ID,
-                new Data( SCHEDULER_REPO_DEFAULT_ACL ) );
+                new Data( SCHEDULER_REPO_DEFAULT_ACL ), APP_REPO_ID, new Data( APP_REPO_DEFAULT_ACL ) );
 
     public record Data(AccessControlList acl, ChildOrder childOrder)
     {

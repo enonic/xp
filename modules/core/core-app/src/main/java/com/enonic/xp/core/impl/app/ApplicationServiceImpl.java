@@ -1,7 +1,6 @@
 package com.enonic.xp.core.impl.app;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -135,7 +134,7 @@ public final class ApplicationServiceImpl
 
     /**
      * The application existing as nodes only: an application node without a bundle, holding a persisted descriptor.
-     * The application nodes live in system-repo, whatever the context of the caller.
+     * The application nodes live in the application repository, whatever the context of the caller.
      */
     private Application findPersistedApplication( final ApplicationKey key )
     {
@@ -271,14 +270,8 @@ public final class ApplicationServiceImpl
 
     private Application doInstallGlobalApplication( final ByteSource byteSource )
     {
-        final AppInfo appInfo = getAppInfo( byteSource );
-
-        if ( appInfo.system )
-        {
-            throw new ApplicationBundleException( "Cannot install system application globally" );
-        }
-
-        final ApplicationKey applicationKey = ApplicationKey.from( appInfo.name );
+        final PreparedApplication prepared = PreparedApplication.prepare( byteSource );
+        final ApplicationKey applicationKey = prepared.key();
 
         final Application localApp = findLocal( applicationKey );
         if ( localApp != null )
@@ -291,38 +284,13 @@ public final class ApplicationServiceImpl
             throw new ApplicationBundleException( String.format( "Application %s is not permitted on this instance", applicationKey ) );
         }
 
-        // the application descriptor and icon of every application are persisted in nodes and served from there; an application
-        // shipping cms/cms.yaml owns its schema, which is persisted the same way
-        final Map<String, ByteSource> schemaResources;
-        try
-        {
-            schemaResources = new LinkedHashMap<>( AppSchemaResolver.resolve( byteSource ) );
-        }
-        catch ( Exception e )
-        {
-            throw new ApplicationBundleException( "Cannot install application", e );
-        }
-
-        // without cms/cms.yaml the bundle does not own a schema: whatever it ships below cms/ is neither persisted nor served
-        if ( !appInfo.hasCmsDescriptor )
-        {
-            final boolean dropped = schemaResources.keySet().removeIf( path -> path.startsWith( SchemaResourceNames.CMS_ROOT_NAME + "/" ) );
-            if ( dropped )
-            {
-                LOG.warn( "Application [{}] ships schema resources below cms/ but no cms/cms.yaml: they are ignored", applicationKey );
-            }
-        }
-
-        // a descriptor declaring another kind than its path reserves rejects the installation before anything is written
-        AppSchemaValidator.validate( schemaResources );
-
-        repoService.upsertApplicationNode( appInfo, byteSource );
+        repoService.upsertApplicationNode( prepared.appInfo(), byteSource );
 
         // the schema is persisted before the bundle is installed: the application created for the bundle (and the
         // application descriptor built on bundle install) must see the persisted nodes from the start, on this
         // cluster node as well as on the others receiving the install event. Whatever an earlier version persisted
         // (a schema the new version no longer ships, for instance) is replaced.
-        repoService.persistApplicationSchema( applicationKey, schemaResources );
+        repoService.persistApplicationSchema( applicationKey, prepared.schemaResources() );
 
         this.eventPublisher.publish( ApplicationClusterEvents.install( applicationKey ) );
 
