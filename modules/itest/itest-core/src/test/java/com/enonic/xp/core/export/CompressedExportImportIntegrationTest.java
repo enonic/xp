@@ -326,6 +326,7 @@ class CompressedExportImportIntegrationTest
 
             assertEquals( 2, exportResult.size() ); // root + node
             assertEquals( 0, exportResult.getExportErrors().size() );
+            writer.complete();
         }
 
         // Delete node
@@ -380,13 +381,15 @@ class CompressedExportImportIntegrationTest
     {
         try (final ZipExportWriter writer = ZipExportWriter.create( exportDir, exportName ))
         {
-            return NodeHelper.runAsAdmin( NodeExporter.create()
+            final NodeExportResult result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( writer )
                 .sourceNodePath( sourcePath )
                 .targetDirectory( exportDir.resolve( exportName ) )
                 .xpVersion( "1.1.0" )
                 .build()::execute );
+            writer.complete();
+            return result;
         }
     }
 

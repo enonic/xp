@@ -174,6 +174,7 @@ class NodeExportIntegrationTest
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()::execute );
+            exportWriter.complete();
         }
 
         assertEquals( 2, result.size() );
@@ -208,6 +209,7 @@ class NodeExportIntegrationTest
                 .xpVersion( "1.0.0" )
                 .nodeExportListener( nodeExportListener )
                 .build()::execute );
+            exportWriter.complete();
         }
 
         assertEquals( 9, result.size() );
@@ -252,6 +254,7 @@ class NodeExportIntegrationTest
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()::execute );
+            exportWriter.complete();
         }
 
         assertEquals( 8, result.size() );
@@ -283,6 +286,7 @@ class NodeExportIntegrationTest
                 .xpVersion( "1.0.0" )
                 .build()
                 .execute() );
+            exportWriter.complete();
         }
 
         assertEquals( List.of( "first", "middle", "last" ), readZipEntryLines( EXPORT_NAME + "/root/_/manualChildOrder.txt" ) );
@@ -309,6 +313,7 @@ class NodeExportIntegrationTest
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()::execute );
+            exportWriter.complete();
         }
 
         assertEquals( 3, result.getExportedNodes().getSize() );
@@ -339,6 +344,7 @@ class NodeExportIntegrationTest
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()::execute );
+            exportWriter.complete();
         }
 
         assertEquals( 4, result.getExportedNodes().getSize() );
@@ -377,6 +383,7 @@ class NodeExportIntegrationTest
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()::execute );
+            exportWriter.complete();
         }
 
         assertEquals( 2, result.getExportedNodes().getSize() );
@@ -402,6 +409,7 @@ class NodeExportIntegrationTest
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .build()
                 .execute() );
+            exportWriter.complete();
         }
 
         assertZipEntryExists( EXPORT_NAME + "/export.properties" );
@@ -450,6 +458,7 @@ class NodeExportIntegrationTest
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()::execute );
+            exportWriter.complete();
         }
 
         assertEquals( 0, result.size() );
@@ -464,13 +473,15 @@ class NodeExportIntegrationTest
     {
         try (ZipExportWriter exportWriter = ZipExportWriter.create( this.temporaryFolder, EXPORT_NAME ))
         {
-            return NodeHelper.runAsAdmin( NodeExporter.create()
+            final NodeExportResult result = NodeHelper.runAsAdmin( NodeExporter.create()
                 .nodeService( this.nodeService )
                 .nodeExportWriter( exportWriter )
                 .sourceNodePath( NodePath.ROOT )
                 .targetDirectory( this.temporaryFolder.resolve( EXPORT_NAME ) )
                 .xpVersion( "1.0.0" )
                 .build()::execute );
+            exportWriter.complete();
+            return result;
         }
     }
 
