@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.export.writer;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -20,31 +21,56 @@ public class ZipExportWriter
 {
     private static final String ZIP_FILE_EXTENSION = ".zip";
 
+    private static final String PARTIAL_FILE_EXTENSION = ".partial";
+
     private final ZipArchiveOutputStream zipArchiveOutputStream;
 
     private final String exportName;
 
     private final Path baseDirectory;
 
-    private ZipExportWriter( final String exportName, final Path baseDirectory, final ZipArchiveOutputStream zipArchiveOutputStream )
+    private final Path partialFile;
+
+    private final Path targetFile;
+
+    private boolean completed;
+
+    private boolean closed;
+
+    private ZipExportWriter( final String exportName, final Path baseDirectory, final ZipArchiveOutputStream zipArchiveOutputStream,
+                             final Path partialFile, final Path targetFile )
     {
         this.exportName = exportName;
         this.baseDirectory = baseDirectory.normalize();
         this.zipArchiveOutputStream = zipArchiveOutputStream;
+        this.partialFile = partialFile;
+        this.targetFile = targetFile;
     }
 
     public static ZipExportWriter create( final Path basePath, final String exportName )
     {
         Preconditions.checkArgument( FileNames.isSafeFileName( exportName ) );
+        final Path targetFile = basePath.resolve( exportName + ZIP_FILE_EXTENSION );
+        final Path partialFile = basePath.resolve( exportName + ZIP_FILE_EXTENSION + PARTIAL_FILE_EXTENSION );
+
+        if ( Files.exists( targetFile ) )
+        {
+            throw new ExportNodeException( "Export '" + exportName + "' already exists" );
+        }
+
         try
         {
             Files.createDirectories( basePath );
             final Path baseDirectory = basePath.resolve( exportName );
             final ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(
-                Files.newOutputStream( basePath.resolve( exportName + ZIP_FILE_EXTENSION ), StandardOpenOption.CREATE,
-                                       StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING ) );
+                Files.newOutputStream( partialFile, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE ) );
 
-            return new ZipExportWriter( exportName, baseDirectory, zipArchiveOutputStream );
+            return new ZipExportWriter( exportName, baseDirectory, zipArchiveOutputStream, partialFile, targetFile );
+        }
+        catch ( FileAlreadyExistsException e )
+        {
+            throw new ExportNodeException( "Export '" + exportName + "' is already in progress or a previous one was interrupted: " +
+                                               partialFile.getFileName() + " exists", e );
         }
         catch ( IOException e )
         {
@@ -120,10 +146,48 @@ public class ZipExportWriter
         return sb.toString();
     }
 
+    /**
+     * Marks the export as complete. On {@link #close()} a completed export is published under its final name,
+     * otherwise the partially written archive is deleted.
+     */
+    public void complete()
+    {
+        this.completed = true;
+    }
+
     @Override
     public void close()
         throws IOException
     {
-        zipArchiveOutputStream.close();
+        if ( closed )
+        {
+            return;
+        }
+        closed = true;
+
+        try
+        {
+            zipArchiveOutputStream.close();
+            if ( completed )
+            {
+                Files.move( partialFile, targetFile );
+            }
+            else
+            {
+                Files.deleteIfExists( partialFile );
+            }
+        }
+        catch ( IOException | RuntimeException e )
+        {
+            try
+            {
+                Files.deleteIfExists( partialFile );
+            }
+            catch ( IOException suppressed )
+            {
+                e.addSuppressed( suppressed );
+            }
+            throw e;
+        }
     }
 }

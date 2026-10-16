@@ -19,6 +19,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.export.ExportNodeException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -74,6 +75,7 @@ class ZipExportWriterTest
             writer.writeElement( baseDir.resolve( "node.xml" ), "<node/>" );
             writer.writeSource( baseDir.resolve( "bin" ).resolve( "blob.dat" ),
                                 ByteSource.wrap( "payload".getBytes( StandardCharsets.UTF_8 ) ) );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -97,6 +99,7 @@ class ZipExportWriterTest
         {
             writer.writeElement( baseDir.resolve( "a.xml" ), "first" );
             writer.writeSource( baseDir.resolve( "b.bin" ), ByteSource.wrap( "second".getBytes( StandardCharsets.UTF_8 ) ) );
+            writer.complete();
         }
 
         assertAllLocalHeadersUseDataDescriptor( tempDir.resolve( exportName + ".zip" ) );
@@ -128,7 +131,65 @@ class ZipExportWriterTest
         final String exportName = "closeable-export";
         final ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName );
         writer.writeElement( tempDir.resolve( exportName ).resolve( "x.xml" ), "x" );
+        writer.complete();
         writer.close();
         writer.close();
+        assertTrue( Files.exists( tempDir.resolve( exportName + ".zip" ) ) );
+    }
+
+    @Test
+    void writesToPartialFileUntilClosed()
+        throws IOException
+    {
+        final String exportName = "partial-export";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( tempDir.resolve( exportName ).resolve( "x.xml" ), "x" );
+            assertTrue( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+            assertFalse( Files.exists( tempDir.resolve( exportName + ".zip" ) ) );
+            writer.complete();
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+        assertTrue( Files.exists( tempDir.resolve( exportName + ".zip" ) ) );
+    }
+
+    @Test
+    void incompleteExportIsDeleted()
+        throws IOException
+    {
+        final String exportName = "incomplete-export";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( tempDir.resolve( exportName ).resolve( "x.xml" ), "x" );
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip" ) ) );
+    }
+
+    @Test
+    void failsIfExportExists()
+        throws IOException
+    {
+        final String exportName = "existing-export";
+        final Path existing = Files.writeString( tempDir.resolve( exportName + ".zip" ), "old" );
+
+        assertThrows( ExportNodeException.class, () -> ZipExportWriter.create( tempDir, exportName ) );
+        assertEquals( "old", Files.readString( existing ) );
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+    }
+
+    @Test
+    void failsIfPartialExportExists()
+        throws IOException
+    {
+        final String exportName = "running-export";
+        final Path partial = Files.writeString( tempDir.resolve( exportName + ".zip.partial" ), "running" );
+
+        assertThrows( ExportNodeException.class, () -> ZipExportWriter.create( tempDir, exportName ) );
+        assertEquals( "running", Files.readString( partial ) );
     }
 }

@@ -35,6 +35,7 @@ class ExportReaderTest
             writer.writeElement( baseDir.resolve( "_" ).resolve( "node.xml" ), "<root/>" );
             writer.writeElement( baseDir.resolve( "my content" ).resolve( "_" ).resolve( "node.xml" ), "<child/>" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );

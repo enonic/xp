@@ -3,6 +3,7 @@ package com.enonic.xp.repo.impl.dump.writer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Enumeration;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -10,9 +11,15 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.enonic.xp.dump.SystemDumpResult;
+import com.enonic.xp.repo.impl.dump.DumpConstants;
+import com.enonic.xp.repo.impl.dump.RepoDumpException;
+import com.enonic.xp.repo.impl.dump.model.DumpMeta;
 import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ZipDumpWriterTest
@@ -68,8 +75,72 @@ class ZipDumpWriterTest
             // BlobStore is never touched.
             writer.openVersionsMeta( RepositoryId.from( "test-repo" ) );
             writer.closeMeta();
+            writer.writeDumpMetaData( dumpMeta() );
         }
 
         assertAllLocalHeadersUseDataDescriptor( tempDir.resolve( dumpName + ".zip" ) );
+    }
+
+    @Test
+    void writesToPartialFileUntilMetaDataWrittenAndClosed()
+        throws IOException
+    {
+        final String dumpName = "partial-dump";
+
+        try (ZipDumpWriter writer = ZipDumpWriter.create( tempDir, dumpName, null ))
+        {
+            writer.writeDumpMetaData( dumpMeta() );
+            assertTrue( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+            assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip" ) ) );
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+        assertTrue( Files.exists( tempDir.resolve( dumpName + ".zip" ) ) );
+    }
+
+    @Test
+    void incompleteDumpIsDeleted()
+        throws IOException
+    {
+        final String dumpName = "incomplete-dump";
+
+        try (ZipDumpWriter writer = ZipDumpWriter.create( tempDir, dumpName, null ))
+        {
+            writer.openVersionsMeta( RepositoryId.from( "test-repo" ) );
+            writer.closeMeta();
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip" ) ) );
+    }
+
+    @Test
+    void failsIfDumpExists()
+        throws IOException
+    {
+        final String dumpName = "existing-dump";
+        final Path existing = Files.writeString( tempDir.resolve( dumpName + ".zip" ), "old" );
+
+        assertThrows( RepoDumpException.class, () -> ZipDumpWriter.create( tempDir, dumpName, null ) );
+        assertEquals( "old", Files.readString( existing ) );
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+    }
+
+    @Test
+    void failsIfPartialDumpExists()
+        throws IOException
+    {
+        final String dumpName = "running-dump";
+        final Path partial = Files.writeString( tempDir.resolve( dumpName + ".zip.partial" ), "running" );
+
+        assertThrows( RepoDumpException.class, () -> ZipDumpWriter.create( tempDir, dumpName, null ) );
+        assertEquals( "running", Files.readString( partial ) );
+    }
+
+    private static DumpMeta dumpMeta()
+    {
+        return DumpMeta.create().xpVersion( "7.16.0" ).modelVersion( DumpConstants.MODEL_VERSION ).timestamp( Instant.now() )
+            .systemDumpResult( SystemDumpResult.create().build() )
+            .build();
     }
 }

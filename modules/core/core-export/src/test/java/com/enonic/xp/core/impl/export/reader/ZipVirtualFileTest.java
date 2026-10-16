@@ -40,6 +40,7 @@ class ZipVirtualFileTest
             writer.writeElement( baseDir.resolve( "_" ).resolve( "node.xml" ), "<root/>" );
             writer.writeElement( baseDir.resolve( "mynode" ).resolve( "_" ).resolve( "node.xml" ), "<mynode/>" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -96,6 +97,7 @@ class ZipVirtualFileTest
         {
             writer.writeElement( baseDir.resolve( "a" ).resolve( "b" ).resolve( "c.txt" ), "content" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -128,6 +130,7 @@ class ZipVirtualFileTest
             writer.writeElement( baseDir.resolve( "_" ).resolve( "node.xml" ), "<root/>" );
             writer.writeElement( baseDir.resolve( "myNode" ).resolve( "_" ).resolve( "node.xml" ), "<myNode/>" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -269,6 +272,7 @@ class ZipVirtualFileTest
         {
             writer.writeElement( baseDir.resolve( "file.txt" ), "content" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -296,6 +300,7 @@ class ZipVirtualFileTest
         {
             writer.writeElement( baseDir.resolve( longPath.toString() ), "deep content" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -325,6 +330,7 @@ class ZipVirtualFileTest
         {
             writer.writeElement( baseDir.resolve( "mynode" ).resolve( "_" ).resolve( "bin" ).resolve( "my photo.jpg" ), "binary" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = subDir.resolve( exportName + ".zip" );
@@ -354,6 +360,7 @@ class ZipVirtualFileTest
         {
             writer.writeElement( baseDir.resolve( "mynode" ).resolve( "_" ).resolve( "bin" ).resolve( fileName ), "binary" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -383,6 +390,7 @@ class ZipVirtualFileTest
         {
             writer.writeElement( baseDir.resolve( "_" ).resolve( "node.xml" ), "<root/>" );
             writer.writeElement( baseDir.resolve( "export.properties" ), "xp.version=1.0" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
