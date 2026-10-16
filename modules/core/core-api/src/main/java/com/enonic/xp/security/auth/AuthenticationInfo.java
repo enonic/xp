@@ -1,5 +1,6 @@
 package com.enonic.xp.security.auth;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -8,6 +9,8 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -32,6 +35,8 @@ public final class AuthenticationInfo
 
     private transient boolean authenticated;
 
+    private transient PrincipalKey actor;
+
     private AuthenticationInfo( final Builder builder )
     {
         this.authenticated = builder.authenticated;
@@ -39,10 +44,12 @@ public final class AuthenticationInfo
         {
             this.user = requireNonNull( builder.user, "user is required" );
             builder.principals.add( user.getKey() );
+            this.actor = builder.actor;
         }
         else
         {
             this.user = null;
+            this.actor = null;
         }
         this.principals = PrincipalKeys.from( builder.principals.build() );
     }
@@ -60,6 +67,16 @@ public final class AuthenticationInfo
     public PrincipalKeys getPrincipals()
     {
         return principals;
+    }
+
+    /**
+     * Returns the principal acting through this authentication when it is not the user: a service
+     * making the call on the user's behalf, named so the audit log records both. Null when the user
+     * acts for themselves, which every login is unless it says otherwise.
+     */
+    public @Nullable PrincipalKey getActor()
+    {
+        return actor;
     }
 
     public boolean hasRole( final String role )
@@ -99,6 +116,7 @@ public final class AuthenticationInfo
         this.principals = PrincipalKeys.from( ois.readUTF().split( "," ) );
         final User deserializedUser = deserializeUser( ois );
         this.user = this.authenticated ? deserializedUser : null;
+        this.actor = this.authenticated ? deserializeActor( ois ) : null;
     }
 
     @Serial
@@ -109,6 +127,26 @@ public final class AuthenticationInfo
         String principalKeys = principals.stream().map( PrincipalKey::toString ).collect( Collectors.joining( "," ) );
         oos.writeUTF( principalKeys );
         serializeUser( oos, authenticated ? this.user : User.anonymous() );
+        oos.writeUTF( actor == null ? "" : actor.toString() );
+    }
+
+    /**
+     * The actor was added after the rest: a stream written before it ends with the user, and reads
+     * as one without an actor.
+     */
+    private static PrincipalKey deserializeActor( final ObjectInputStream ois )
+        throws IOException
+    {
+        final String actor;
+        try
+        {
+            actor = ois.readUTF();
+        }
+        catch ( EOFException e )
+        {
+            return null;
+        }
+        return actor.isEmpty() ? null : PrincipalKey.from( actor );
     }
 
     private void serializeUser( final ObjectOutputStream oos, final User user )
@@ -149,13 +187,14 @@ public final class AuthenticationInfo
             return false;
         }
         final AuthenticationInfo that = (AuthenticationInfo) o;
-        return authenticated == that.authenticated && Objects.equals( user, that.user ) && Objects.equals( principals, that.principals );
+        return authenticated == that.authenticated && Objects.equals( user, that.user ) && Objects.equals( principals, that.principals ) &&
+            Objects.equals( actor, that.actor );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( user, principals, authenticated );
+        return Objects.hash( user, principals, authenticated, actor );
     }
 
     public static final class Builder
@@ -165,6 +204,8 @@ public final class AuthenticationInfo
         private final ImmutableSet.Builder<PrincipalKey> principals;
 
         private final boolean authenticated;
+
+        private PrincipalKey actor;
 
         private Builder( final boolean authenticated )
         {
@@ -178,6 +219,7 @@ public final class AuthenticationInfo
             this.user = authInfo.getUser();
             this.authenticated = authInfo.isAuthenticated();
             this.principals.addAll( authInfo.getPrincipals() );
+            this.actor = authInfo.getActor();
         }
 
         public Builder user( final User user )
@@ -198,6 +240,15 @@ public final class AuthenticationInfo
             {
                 this.principals.add( principal );
             }
+            return this;
+        }
+
+        /**
+         * The principal acting on the user's behalf, or null when the user acts for themselves.
+         */
+        public Builder actor( final @Nullable PrincipalKey actor )
+        {
+            this.actor = actor;
             return this;
         }
 

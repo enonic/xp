@@ -177,3 +177,14 @@ exports.loginWithSkipAuth = function () {
 
 };
 
+exports.loginWithActor = function () {
+    var result = auth.login({
+        user: 'user1',
+        idProvider: 'enonic',
+        skipAuth: true,
+        scope: 'REQUEST',
+        actor: 'user:enonic:automation'
+    });
+
+    t.assertTrue(result.authenticated);
+};

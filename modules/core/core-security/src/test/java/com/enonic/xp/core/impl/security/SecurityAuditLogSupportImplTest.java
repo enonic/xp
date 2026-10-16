@@ -8,6 +8,8 @@ import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.audit.AuditLogService;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.security.CreateGroupParams;
 import com.enonic.xp.security.CreateIdProviderParams;
 import com.enonic.xp.security.CreateRoleParams;
@@ -19,8 +21,11 @@ import com.enonic.xp.security.UpdateGroupParams;
 import com.enonic.xp.security.UpdateIdProviderParams;
 import com.enonic.xp.security.UpdateRoleParams;
 import com.enonic.xp.security.UpdateUserParams;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,6 +47,29 @@ class SecurityAuditLogSupportImplTest
 
         instance = new SecurityAuditLogSupportImpl( auditLogService );
         instance.activate( config );
+    }
+
+    @Test
+    void actorOfTheCallerReachesTheLog()
+    {
+        final PrincipalKey alice = PrincipalKey.from( "user:system:alice" );
+        final PrincipalKey service = PrincipalKey.from( "user:system:automation" );
+        final AuthenticationInfo acted =
+            AuthenticationInfo.create().user( User.create().key( alice ).login( "alice" ).build() ).actor( service ).build();
+        final AuthenticationInfo[] atLogTime = new AuthenticationInfo[1];
+        when( auditLogService.log( any() ) ).thenAnswer( i -> {
+            atLogTime[0] = ContextAccessor.current().getAuthInfo();
+            return null;
+        } );
+
+        ContextBuilder.create().authInfo( acted ).build().runWith( () -> instance.createUser(
+            CreateUserParams.create().userKey( PrincipalKey.from( "user:system:testUser" ) ).displayName( "d" ).login( "testUser" ).build() ) );
+
+        final ArgumentCaptor<LogAuditLogParams> argumentCaptor = ArgumentCaptor.forClass( LogAuditLogParams.class );
+        verify( auditLogService, times( 1 ) ).log( argumentCaptor.capture() );
+        assertEquals( alice, argumentCaptor.getValue().getUser() );
+        assertEquals( null, argumentCaptor.getValue().getActor() );
+        assertEquals( service, atLogTime[0].getActor(), "the serializer takes the actor from the context the writer logs under" );
     }
 
     @Test
