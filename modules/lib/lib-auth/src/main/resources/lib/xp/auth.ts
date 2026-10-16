@@ -110,7 +110,7 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
 
     const {
         idProvider,
-        scope = 'SESSION' as LoginScopeType,
+        scope = 'SESSION',
         sessionTimeout,
         actor,
     } = params ?? {};
@@ -982,7 +982,7 @@ export function createIdProvider(
     bean.setIdProviderConfig(params.idProviderConfig == null ? null : __.toScriptValue(params.idProviderConfig));
     bean.setPermissions(params.permissions == null ? null : __.toScriptValue(params.permissions));
 
-    return __.toNativeObject(bean.createIdProvider()) as IdProvider;
+    return __.toNativeObject(bean.createIdProvider());
 }
 
 interface GetIdProvidersHandler {

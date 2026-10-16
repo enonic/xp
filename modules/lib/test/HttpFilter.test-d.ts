@@ -50,7 +50,7 @@ const httpFilterController2 = {
         }
         response.headers['X-Response-Logging'] = 'true';
         log.info('Response:%s', JSON.stringify(response, null, 2));
-        return response as unknown as Response;
+        return response;
     },
 };
 expectAssignable<HttpFilterController<Request, Response, Response>>(httpFilterController2);
@@ -99,7 +99,7 @@ const httpFilterController5 = {
             // contentPath is settable: the site service re-resolves content from it
             req.contentPath = `${req.contentPath}/variant-b`;
         }
-        return next(req) as unknown as Response;
+        return next(req);
     },
 };
 expectAssignable<HttpFilterController<Request, Response, Response>>(httpFilterController5);

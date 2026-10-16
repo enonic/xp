@@ -73,6 +73,9 @@ jobs:
         if: steps.publish_vars.outputs.release != 'true'
         run: exit 1
 
+      - name: Test npm packages
+        run: ./gradlew :lib:testPackages
+
       - name: Publish to Maven and Stage npm packages
         run: ./gradlew publish -PrepoKey=${{ steps.publish_vars.outputs.repo }} -PrepoUser=ci -PrepoPassword=${{ secrets.ARTIFACTORY_PASSWORD }}
 
@@ -88,7 +91,9 @@ jobs:
             names+=("$short")
           done
           packages=$(printf '%s\n' "${names[@]}" | jq -R . | jq -s -c .)
-          echo "packages=$packages" >> $GITHUB_OUTPUT
+          echo "packages=$packages" >> "$GITHUB_OUTPUT"
+          # Published by npm_publish_xp once every package it depends on is on the registry
+          cp -r modules/lib/xp/build/npm npm-staging/xp
 
       - uses: actions/upload-artifact@v7
         with:
@@ -102,6 +107,7 @@ jobs:
     needs: build
 
     permissions:
+      contents: read
       id-token: write  # required for npm provenance
 
     strategy:
@@ -110,6 +116,10 @@ jobs:
         package: ${{ fromJSON(needs.build.outputs.packages) }}
 
     steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
+
       - uses: actions/setup-node@v7
         with:
           node-version: 24
@@ -121,15 +131,34 @@ jobs:
           path: npm-staging
 
       - name: Publish @enonic-types/${{ matrix.package }}
-        run: |
-          DIR="./npm-staging/${{ matrix.package }}"
-          VERSION="${{ needs.build.outputs.version }}"
-          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            NPM_TAG=latest
-          else
-            NPM_TAG=beta
-          fi
-          npm publish "$DIR" --provenance --access public --tag "$NPM_TAG"
+        run: .github/scripts/npm-publish.sh "npm-staging/${{ matrix.package }}" "${{ needs.build.outputs.version }}"
+
+  npm_publish_xp:
+    runs-on: ubuntu-latest
+
+    needs: [ build, npm_publish ]
+
+    permissions:
+      contents: read
+      id-token: write  # required for npm provenance
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/scripts
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: npm-packages
+          path: npm-staging
+
+      - name: Publish @enonic-types/xp
+        run: .github/scripts/npm-publish.sh npm-staging/xp "${{ needs.build.outputs.version }}" --require-dependencies
 
   release:
     runs-on: ubuntu-latest
