@@ -58,6 +58,7 @@ public class DumpUpgraderRunner
             {
                 LOG.info( "Running upgrade step [{}]...", dumpUpgrader.getName() );
                 final DumpUpgradeStepResult stepResult = dumpUpgrader.upgrade( dumpWriter );
+                dumpWriter.complete();
                 result.stepResult( stepResult );
                 if ( stepResult.getErrors() > 0 )
                 {
