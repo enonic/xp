@@ -11,8 +11,6 @@
  *
  * `onLoss` reports how many messages were missed, or null when that cannot be known. The topics a
  * connection did not subscribe to are not delivered to it, whatever else the worker carries.
- * `onSessionEnd` reports that the HTTP session behind the socket has ended (logout or idle timeout):
- * the socket then stays closed, as the page must be reloaded to sign in again.
  */
 
 const WS_PROTOCOL = 'json';
@@ -26,7 +24,6 @@ const PONG_TIMEOUT = 15000;
 const MAX_RECONNECT_DELAY = 30000;
 const MAX_SUBSCRIBE_RETRY_DELAY = 30000;
 
-// the close code XP uses for a socket whose HTTP session has ended
 const SESSION_END_CLOSE_CODE = 1008;
 
 /**
@@ -113,7 +110,6 @@ export class AdminEventsSocket {
                 return;
             }
             if (event.code === SESSION_END_CLOSE_CODE) {
-                // reconnecting would only be refused until the page signs in again
                 this.sessionEnded = true;
                 this.handlers.onSessionEnd();
                 return;
@@ -394,7 +390,6 @@ function startSharedWorker() {
         const port = event.ports[0];
         ports.add(port);
 
-        // a page loads only while signed in, so a page arriving after the session ended has a new one
         if (socket.sessionEnded) {
             socket.connect();
         }
