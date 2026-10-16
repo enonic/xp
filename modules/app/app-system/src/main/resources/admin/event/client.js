@@ -7,7 +7,7 @@
  * every other admin page of the browser, while a copy of its own would not.
  *
  *     const {connect} = await import(`${eventsUrl}/client.js`);
- *     connect({onEvent: e => ..., onLoss: l => ...}).subscribe(topic);
+ *     connect({onEvent: e => ..., onLoss: l => ..., onSessionEnd: () => ...}).subscribe(topic);
  *
  * `onLoss` reports how many messages were missed, or null when that cannot be known. The topics a
  * connection did not subscribe to are not delivered to it, whatever else the worker carries.
@@ -24,6 +24,8 @@ const PONG_TIMEOUT = 15000;
 const MAX_RECONNECT_DELAY = 30000;
 const MAX_SUBSCRIBE_RETRY_DELAY = 30000;
 
+const SESSION_END_CLOSE_CODE = 1008;
+
 /**
  * Holds the wanted-subscription set and resubscribes it on every reconnect. A subscription denied
  * as `unknown` is retried with backoff; `forbidden` ends retries until the next reconnect. Loss is
@@ -38,6 +40,7 @@ export class AdminEventsSocket {
         this.ws = null;
         this.reconnectAttempts = 0;
         this.closed = false;
+        this.sessionEnded = false;
     }
 
     subscribe(topic) {
@@ -71,6 +74,7 @@ export class AdminEventsSocket {
 
     connect() {
         this.closed = false;
+        this.sessionEnded = false;
 
         if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
             return;
@@ -99,12 +103,18 @@ export class AdminEventsSocket {
 
         ws.onmessage = e => this.handleMessage(e);
 
-        ws.onclose = () => {
+        ws.onclose = event => {
             clearTimeout(this.connectionTimeout);
             this.teardownTimers();
-            if (!this.closed) {
-                this.scheduleReconnect();
+            if (this.closed) {
+                return;
             }
+            if (event.code === SESSION_END_CLOSE_CODE) {
+                this.sessionEnded = true;
+                this.handlers.onSessionEnd();
+                return;
+            }
+            this.scheduleReconnect();
         };
 
         ws.onerror = () => {
@@ -272,13 +282,20 @@ export function socketUrl() {
  * Subscribes to topics of the hub, through a shared worker when the browser has them and over a
  * socket of this page's own when it does not.
  *
- * @param handlers `{onEvent, onLoss}`, called only for the topics this connection subscribed to
+ * @param handlers `{onEvent, onLoss}`, called only for the topics this connection subscribed to,
+ * and an optional `onSessionEnd`
  * @returns `{subscribe(topic)}`
  */
 export function connect(handlers) {
     const topics = new Set();
 
     const deliver = message => {
+        if (message.type === 'session-end') {
+            if (handlers.onSessionEnd) {
+                handlers.onSessionEnd();
+            }
+            return;
+        }
         if (!topics.has(message.topic)) {
             return;
         }
@@ -299,6 +316,7 @@ export function connect(handlers) {
         socket = new AdminEventsSocket(socketUrl(), {
             onEvent: event => deliver({type: 'event', topic: event.topic, data: event.data}),
             onLoss: loss => deliver({type: 'loss', topic: loss.topic, count: loss.count}),
+            onSessionEnd: () => deliver({type: 'session-end'}),
         });
         socket.connect();
         topics.forEach(topic => socket.subscribe(topic));
@@ -313,7 +331,7 @@ export function connect(handlers) {
                 startSocket();
             };
             worker.port.onmessage = e => {
-                if (e.data && typeof e.data.topic === 'string') {
+                if (e.data && (typeof e.data.topic === 'string' || e.data.type === 'session-end')) {
                     deliver(e.data);
                 }
             };
@@ -354,6 +372,7 @@ function startSharedWorker() {
     const socket = new AdminEventsSocket(socketUrl(), {
         onEvent: event => broadcast({type: 'event', topic: event.topic, data: event.data}),
         onLoss: loss => broadcast({type: 'loss', topic: loss.topic, count: loss.count}),
+        onSessionEnd: () => broadcast({type: 'session-end'}),
     });
     socket.connect();
 
@@ -370,6 +389,10 @@ function startSharedWorker() {
     self.onconnect = event => {
         const port = event.ports[0];
         ports.add(port);
+
+        if (socket.sessionEnded) {
+            socket.connect();
+        }
 
         port.onmessage = e => {
             const message = e.data;
