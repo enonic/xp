@@ -75,6 +75,33 @@ class AuthenticationInfoTest
     }
 
     @Test
+    void testActor()
+    {
+        final User user = User.create().
+            login( "userlogin" ).
+            displayName( "my user" ).
+            key( PrincipalKey.ofUser( IdProviderKey.from( "myidprovider" ), "userid" ) ).
+            modifiedTime( Instant.ofEpochSecond( 0 ) ).
+            build();
+        final PrincipalKey service = PrincipalKey.from( "user:myidprovider:automation" );
+
+        final AuthenticationInfo plain = AuthenticationInfo.create().user( user ).build();
+        assertEquals( null, plain.getActor(), "a user acts for themselves unless said otherwise" );
+
+        final AuthenticationInfo acted = AuthenticationInfo.create().user( user ).actor( service ).build();
+        assertEquals( service, acted.getActor() );
+        assertFalse( acted.getPrincipals().contains( service ), "the actor is not a principal of the authentication" );
+        assertEquals( acted, AuthenticationInfo.copyOf( acted ).build(), "a copy keeps the actor" );
+        assertFalse( acted.equals( plain ) );
+
+        final AuthenticationInfo roundTripped = (AuthenticationInfo) SerializableUtils.deserialize( SerializableUtils.serialize( acted ) );
+        assertEquals( acted, roundTripped );
+        assertEquals( service, roundTripped.getActor() );
+
+        assertEquals( null, AuthenticationInfo.unAuthenticated().getActor() );
+    }
+
+    @Test
     void testCopy()
     {
         final User user = User.create().

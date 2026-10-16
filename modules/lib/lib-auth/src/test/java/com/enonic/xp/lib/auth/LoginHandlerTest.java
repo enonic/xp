@@ -9,6 +9,8 @@ import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.IdProviders;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -87,6 +89,21 @@ class LoginHandlerTest
         final Session session = ContextAccessor.current().getLocalScope().getSession();
         final AuthenticationInfo sessionAuthInfo = session.getAttribute( AuthenticationInfo.class );
         assertEquals( authInfo, sessionAuthInfo );
+    }
+
+    @Test
+    void testLoginWithActor()
+    {
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithActor" );
+
+        final AuthenticationInfo loggedIn = ContextAccessor.current().getAuthInfo();
+        assertEquals( TestDataFixtures.getTestUser().getKey(), loggedIn.getUser().getKey() );
+        assertEquals( PrincipalKey.from( "user:enonic:automation" ), loggedIn.getActor() );
     }
 
     @Test
