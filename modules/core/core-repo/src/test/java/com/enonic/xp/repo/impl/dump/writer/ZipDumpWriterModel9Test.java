@@ -11,9 +11,12 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import com.enonic.xp.repo.impl.dump.RepoDumpException;
 import com.enonic.xp.repository.RepositoryId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ZipDumpWriterModel9Test
@@ -68,8 +71,69 @@ class ZipDumpWriterModel9Test
             writer.writeRawEntry( "entry-1.json", "{\"a\":1}".getBytes( StandardCharsets.UTF_8 ) );
             writer.writeRawEntry( "entry-2.json", "{\"b\":2}".getBytes( StandardCharsets.UTF_8 ) );
             writer.closeMeta();
+            writer.complete();
         }
 
         assertAllLocalHeadersUseDataDescriptor( tempDir.resolve( dumpName + ".zip" ) );
+    }
+
+    @Test
+    void writesToPartialFileUntilCompletedAndClosed()
+        throws IOException
+    {
+        final String dumpName = "partial-dump";
+
+        try (ZipDumpWriterModel9 writer = ZipDumpWriterModel9.create( tempDir, dumpName ))
+        {
+            writer.openVersionsMeta( RepositoryId.from( "test-repo" ) );
+            writer.writeRawEntry( "entry.json", "{}".getBytes( StandardCharsets.UTF_8 ) );
+            writer.closeMeta();
+            writer.complete();
+            assertTrue( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+            assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip" ) ) );
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+        assertTrue( Files.exists( tempDir.resolve( dumpName + ".zip" ) ) );
+    }
+
+    @Test
+    void incompleteDumpIsDeleted()
+        throws IOException
+    {
+        final String dumpName = "incomplete-dump";
+
+        try (ZipDumpWriterModel9 writer = ZipDumpWriterModel9.create( tempDir, dumpName ))
+        {
+            writer.openVersionsMeta( RepositoryId.from( "test-repo" ) );
+            writer.writeRawEntry( "entry.json", "{}".getBytes( StandardCharsets.UTF_8 ) );
+            writer.closeMeta();
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip" ) ) );
+    }
+
+    @Test
+    void failsIfDumpExists()
+        throws IOException
+    {
+        final String dumpName = "existing-dump";
+        final Path existing = Files.writeString( tempDir.resolve( dumpName + ".zip" ), "old" );
+
+        assertThrows( RepoDumpException.class, () -> ZipDumpWriterModel9.create( tempDir, dumpName ) );
+        assertEquals( "old", Files.readString( existing ) );
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
+    }
+
+    @Test
+    void failsIfPartialDumpExists()
+        throws IOException
+    {
+        final String dumpName = "running-dump";
+        final Path partial = Files.writeString( tempDir.resolve( dumpName + ".zip.partial" ), "running" );
+
+        assertThrows( RepoDumpException.class, () -> ZipDumpWriterModel9.create( tempDir, dumpName ) );
+        assertEquals( "running", Files.readString( partial ) );
     }
 }

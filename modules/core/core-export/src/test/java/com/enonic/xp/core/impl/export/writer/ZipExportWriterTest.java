@@ -21,6 +21,7 @@ import com.google.common.io.ByteSource;
 import com.enonic.xp.export.ExportNodeException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -40,6 +41,7 @@ class ZipExportWriterTest
         {
             writer.writeElement( baseDir.resolve( "test.txt" ), "Hello, World!" );
             writer.writeSource( baseDir.resolve( "data.bin" ), ByteSource.wrap( "Binary data".getBytes( StandardCharsets.UTF_8 ) ) );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -65,6 +67,7 @@ class ZipExportWriterTest
         try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
         {
             writer.writeElement( baseDir.resolve( "a" ).resolve( "b" ).resolve( "node.xml" ), "data" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -83,6 +86,7 @@ class ZipExportWriterTest
 
         final ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName );
         writer.writeElement( baseDir.resolve( "test.txt" ), "Hello, World!" );
+        writer.complete();
         writer.close();
         writer.close(); // Should not throw exception
 
@@ -106,6 +110,7 @@ class ZipExportWriterTest
                 deepPath = deepPath.resolve( segment );
             }
             writer.writeElement( deepPath.resolve( "file.xml" ), "deep content" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -128,6 +133,7 @@ class ZipExportWriterTest
             writer.writeElement( baseDir.resolve( "dir" ).resolve( "file1.txt" ), "content1" );
             writer.writeElement( baseDir.resolve( "dir" ).resolve( "file2.txt" ), "content2" );
             writer.writeElement( baseDir.resolve( "dir" ).resolve( "file3.txt" ), "content3" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -151,6 +157,7 @@ class ZipExportWriterTest
             // Paths with spaces and unicode characters
             writer.writeElement( baseDir.resolve( "folder with spaces" ).resolve( "file.txt" ), "spaces" );
             writer.writeElement( baseDir.resolve( "unicode-файл" ).resolve( "данные.xml" ), "unicode content" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -172,6 +179,7 @@ class ZipExportWriterTest
         {
             // Use absolute path explicitly
             writer.writeElement( baseDir.resolve( "subdir" ).resolve( "file.txt" ), "absolute" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -230,6 +238,7 @@ class ZipExportWriterTest
         try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
         {
             writer.writeSource( baseDir.resolve( "large.bin" ), ByteSource.wrap( largeData ) );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -254,6 +263,7 @@ class ZipExportWriterTest
         try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
         {
             writer.writeElement( baseDir.resolve( "a" ).resolve( "b" ).resolve( "c.txt" ), "content" );
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -485,6 +495,7 @@ class ZipExportWriterTest
         {
             writer.writeElement( baseDir.resolve( "small.txt" ), "hello" );
             writer.writeSource( baseDir.resolve( "binary.bin" ), ByteSource.wrap( "binary data".getBytes( StandardCharsets.UTF_8 ) ) );
+            writer.complete();
         }
 
         assertAllLocalHeadersUseDataDescriptor( tempDir.resolve( exportName + ".zip" ) );
@@ -504,6 +515,7 @@ class ZipExportWriterTest
             {
                 writer.writeElement( baseDir.resolve( "file" + i + ".txt" ), "content" + i );
             }
+            writer.complete();
         }
 
         final Path zipFile = tempDir.resolve( exportName + ".zip" );
@@ -517,5 +529,61 @@ class ZipExportWriterTest
                 assertTrue( Files.exists( fs.getPath( "/" + exportName + "/file" + i + ".txt" ) ) );
             }
         }
+    }
+
+    @Test
+    void writesToPartialFileUntilClosed()
+        throws IOException
+    {
+        final String exportName = "partial-export";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( tempDir.resolve( exportName ).resolve( "x.xml" ), "x" );
+            assertTrue( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+            assertFalse( Files.exists( tempDir.resolve( exportName + ".zip" ) ) );
+            writer.complete();
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+        assertTrue( Files.exists( tempDir.resolve( exportName + ".zip" ) ) );
+    }
+
+    @Test
+    void incompleteExportIsDeleted()
+        throws IOException
+    {
+        final String exportName = "incomplete-export";
+
+        try (ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName ))
+        {
+            writer.writeElement( tempDir.resolve( exportName ).resolve( "x.xml" ), "x" );
+        }
+
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip" ) ) );
+    }
+
+    @Test
+    void failsIfExportExists()
+        throws IOException
+    {
+        final String exportName = "existing-export";
+        final Path existing = Files.writeString( tempDir.resolve( exportName + ".zip" ), "old" );
+
+        assertThrows( ExportNodeException.class, () -> ZipExportWriter.create( tempDir, exportName ) );
+        assertEquals( "old", Files.readString( existing ) );
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
+    }
+
+    @Test
+    void failsIfPartialExportExists()
+        throws IOException
+    {
+        final String exportName = "running-export";
+        final Path partial = Files.writeString( tempDir.resolve( exportName + ".zip.partial" ), "running" );
+
+        assertThrows( ExportNodeException.class, () -> ZipExportWriter.create( tempDir, exportName ) );
+        assertEquals( "running", Files.readString( partial ) );
     }
 }

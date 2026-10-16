@@ -51,4 +51,10 @@ public interface DumpWriter
     void writeBinaryBlob( RepositoryId repositoryId, BlobKey key );
 
     BlobKey addBlobRecord( Segment segment, ByteSource data );
+
+    /**
+     * Marks the dump as complete. On {@link #close()} a completed dump is published under its final name,
+     * otherwise the partially written dump is deleted.
+     */
+    void complete();
 }

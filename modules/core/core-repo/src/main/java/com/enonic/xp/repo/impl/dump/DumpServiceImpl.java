@@ -222,6 +222,7 @@ public class DumpServiceImpl
                                           .timestamp( Millis.now() )
                                           .systemDumpResult( systemDumpResult )
                                           .build() );
+            writer.complete();
 
             LOG.info( "Dump completed" );
             return systemDumpResult;

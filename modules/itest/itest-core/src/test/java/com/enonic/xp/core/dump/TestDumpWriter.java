@@ -108,6 +108,11 @@ class TestDumpWriter
         binaries.add( key );
     }
 
+    @Override
+    public void complete()
+    {
+    }
+
     public Set<BlobKey> getBinaries()
     {
         return binaries;
