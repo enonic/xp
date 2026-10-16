@@ -14,6 +14,8 @@
       "sourceMap": false,
       // Nashorn lacks most ES2015 built-ins, so they must not type-check in shipped code.
       "lib": ["es5"],
+      "target": "es5",
+      "moduleResolution": "node",
       "types": []
     }
 }

@@ -5,6 +5,7 @@ plugins {
 
 node {
     version = '24.11.1'
+    pnpmVersion = ( new groovy.json.JsonSlurper().parse( file( 'package.json' ) ).packageManager as String ) - 'pnpm@'
     download = true
 }
 
@@ -18,29 +19,31 @@ clean {
 }
 
 /* Test */
-tasks.register( 'lint', NpmTask ) {
-    dependsOn tasks.named( 'npmInstall' )
-    description = 'Lint TS, JS, and JSON'
+tasks.register( 'lint', PnpmTask ) {
+    dependsOn tasks.named( 'pnpmInstall' )
+    description = 'Lint TS and scripts with oxlint'
     args = ['run', 'lint']
-    inputs.file 'global.d.ts'
+    inputs.files( '.oxlintrc.json', 'tsconfig.json', 'pnpm-lock.yaml', 'global.d.ts' )
     inputs.file coreDir.file( 'index.d.ts' )
-    inputs.file 'eslint.config.mjs'
-    inputs.dir 'scripts'
+    inputs.dir 'test'
+    inputs.files( fileTree( 'scripts' ) { include '*.mjs' } )
     inputs.files( subprojects.collect {
         it.layout.projectDirectory.dir( 'src/main/resources/lib/xp' )
-            .asFileTree.matching { include '**/*.ts', '**/*.js', '**/*.json' }
+            .asFileTree.matching { include '**/*.ts' }
     } )
-    outputs.file( layout.buildDirectory.file( '.eslintcache' ) )
+    def marker = layout.buildDirectory.file( 'lint.done' )
+    outputs.file( marker )
+    doLast { marker.get().asFile.text = '' }
 }
 
 check.dependsOn tasks.named( 'lint' )
 
-tasks.register( 'testTypes', NpmTask ) {
-    dependsOn tasks.named( 'npmInstall' )
+tasks.register( 'testTypes', PnpmTask ) {
+    dependsOn tasks.named( 'pnpmInstall' )
     dependsOn tasks.named( 'prepareGlobalToPublish' )
     description = 'Type-test the public type definitions (tsd)'
     args = ['run', 'test:types']
-    inputs.file 'global.d.ts'
+    inputs.files( 'package.json', 'tsconfig.json', 'global.d.ts' )
     inputs.file coreDir.file( 'index.d.ts' )
     inputs.dir 'test'
     inputs.file layout.buildDirectory.file( 'npm/global.d.ts' )
@@ -48,13 +51,13 @@ tasks.register( 'testTypes', NpmTask ) {
 
 check.dependsOn tasks.named( 'testTypes' )
 
-tasks.register( 'testPackages', NpmTask ) {
-    dependsOn tasks.named( 'npmInstall' )
+tasks.register( 'testPackages', PnpmTask ) {
+    dependsOn tasks.named( 'pnpmInstall' )
     dependsOn tasks.named( 'prepareAllToPublish' )
     description = 'Type-check fixture apps that install the packed type packages with npm and pnpm'
     args = ['run', 'test:packages']
     inputs.dir 'test-packages'
-    inputs.files( 'scripts/test-packages.mjs', 'scripts/packages.mjs', 'package-lock.json' )
+    inputs.files( 'scripts/test-packages.mjs', 'scripts/packages.mjs', 'pnpm-lock.yaml' )
     inputs.dir layout.buildDirectory.dir( 'npm' )
     inputs.dir coreDir.dir( 'build/npm' )
     inputs.dir xpDir.dir( 'build/npm' )
@@ -65,8 +68,8 @@ tasks.register( 'testPackages', NpmTask ) {
 check.dependsOn tasks.named( 'testPackages' )
 
 /* Configure & Build */
-tasks.register( 'typescript', NpmTask ) {
-    dependsOn tasks.named( 'npmInstall' )
+tasks.register( 'typescript', PnpmTask ) {
+    dependsOn tasks.named( 'pnpmInstall' )
     dependsOn tasks.named( 'prepareToPublish' )
     description = 'Create JS and DTS files from TS'
     args = ['run', 'build']
@@ -100,7 +103,7 @@ tasks.register( 'prepareToJsdoc', Copy ) {
     includeEmptyDirs = false
 }
 
-tasks.register( 'jsdoc', NpmTask ) {
+tasks.register( 'jsdoc', PnpmTask ) {
     description = 'Build JSDoc for libraries.'
     args = ['run', 'jsdoc']
     doLast {
