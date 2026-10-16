@@ -1,6 +1,7 @@
 package com.enonic.xp.repo.impl.dump.writer;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -135,6 +136,33 @@ class ZipDumpWriterTest
 
         assertThrows( RepoDumpException.class, () -> ZipDumpWriter.create( tempDir, dumpName, null ) );
         assertEquals( "running", Files.readString( partial ) );
+    }
+
+    @Test
+    void closeIsIdempotent()
+        throws IOException
+    {
+        final String dumpName = "closeable-dump";
+        final ZipDumpWriter writer = ZipDumpWriter.create( tempDir, dumpName, null );
+        writer.writeDumpMetaData( dumpMeta() );
+        writer.close();
+        writer.close();
+
+        assertTrue( Files.exists( tempDir.resolve( dumpName + ".zip" ) ) );
+    }
+
+    @Test
+    void closeFailsIfDumpAppearedWhileWriting()
+        throws IOException
+    {
+        final String dumpName = "racing-dump";
+        final ZipDumpWriter writer = ZipDumpWriter.create( tempDir, dumpName, null );
+        writer.writeDumpMetaData( dumpMeta() );
+        final Path existing = Files.writeString( tempDir.resolve( dumpName + ".zip" ), "other" );
+
+        assertThrows( FileAlreadyExistsException.class, writer::close );
+        assertEquals( "other", Files.readString( existing ) );
+        assertFalse( Files.exists( tempDir.resolve( dumpName + ".zip.partial" ) ) );
     }
 
     private static DumpMeta dumpMeta()
