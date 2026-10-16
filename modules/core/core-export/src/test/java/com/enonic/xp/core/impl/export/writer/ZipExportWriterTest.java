@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.export.writer;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -585,5 +586,20 @@ class ZipExportWriterTest
 
         assertThrows( ExportNodeException.class, () -> ZipExportWriter.create( tempDir, exportName ) );
         assertEquals( "running", Files.readString( partial ) );
+    }
+
+    @Test
+    void closeFailsIfExportAppearedWhileWriting()
+        throws IOException
+    {
+        final String exportName = "racing-export";
+        final ZipExportWriter writer = ZipExportWriter.create( tempDir, exportName );
+        writer.writeElement( tempDir.resolve( exportName ).resolve( "x.xml" ), "x" );
+        writer.complete();
+        final Path existing = Files.writeString( tempDir.resolve( exportName + ".zip" ), "other" );
+
+        assertThrows( FileAlreadyExistsException.class, writer::close );
+        assertEquals( "other", Files.readString( existing ) );
+        assertFalse( Files.exists( tempDir.resolve( exportName + ".zip.partial" ) ) );
     }
 }
