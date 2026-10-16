@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/vhost": ["node_modules/@enonic-types/lib-vhost"]
+      "/lib/xp/vhost": ["./node_modules/@enonic-types/lib-vhost"]
     }
   }
 }
@@ -62,4 +61,4 @@ types mapping to your configuration.
 import {isEnabled, list} from '/lib/xp/vhost';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.

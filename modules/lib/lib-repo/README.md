@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/repo": ["node_modules/@enonic-types/lib-repo"]
+      "/lib/xp/repo": ["./node_modules/@enonic-types/lib-repo"]
     }
   }
 }
@@ -59,7 +58,10 @@ types mapping to your configuration.
 `example.ts`
 
 ```ts
-import {refresh, create, modify, delete as deleteRepo, createBranch, deleteBranch, modify, getBinary} from '/lib/xp/repo';
+import {refresh, create, modify, delete as deleteRepo, createBranch, deleteBranch, getBinary} from '/lib/xp/repo';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
+
+With pnpm, also install `@enonic-types/core` directly, at the same version as `@enonic-types/lib-repo`. The types imported through
+`paths` resolve their `@enonic-types/core` import from the top level of `node_modules`, and pnpm does not put it there.

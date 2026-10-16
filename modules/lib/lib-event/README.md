@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/event": ["node_modules/@enonic-types/lib-event"]
+      "/lib/xp/event": ["./node_modules/@enonic-types/lib-event"]
     }
   }
 }
@@ -62,4 +61,4 @@ types mapping to your configuration.
 import {listener, EnonicEvent} from '/lib/xp/event';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.

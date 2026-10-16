@@ -32,7 +32,7 @@ return a typed object. To add the types of all XP libraries at once, use `@enoni
 `example.ts`
 
 ```ts
-const {getPoint, localDate, localTime, binary, instant} = require('/lib/xp/value');
+const {geoPoint, localDate, localTime, binary, instant} = require('/lib/xp/value');
 ```
 
 More detailed explanation on how it works and how to type custom import function can be
@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/value": ["node_modules/@enonic-types/lib-value"]
+      "/lib/xp/value": ["./node_modules/@enonic-types/lib-value"]
     }
   }
 }
@@ -59,7 +58,10 @@ types mapping to your configuration.
 `example.ts`
 
 ```ts
-import {getPoint, localDate, localTime, binary, instant} from '/lib/xp/value';
+import {geoPoint, localDate, localTime, binary, instant} from '/lib/xp/value';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
+
+With pnpm, also install `@enonic-types/core` directly, at the same version as `@enonic-types/lib-value`. The types imported through
+`paths` resolve their `@enonic-types/core` import from the top level of `node_modules`, and pnpm does not put it there.

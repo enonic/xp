@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/cluster": ["node_modules/@enonic-types/lib-cluster"]
+      "/lib/xp/cluster": ["./node_modules/@enonic-types/lib-cluster"]
     }
   }
 }
@@ -62,4 +61,4 @@ types mapping to your configuration.
 import {isMaster} from '/lib/xp/cluster';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.

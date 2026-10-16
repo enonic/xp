@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/websocket": ["node_modules/@enonic-types/lib-websocket"]
+      "/lib/xp/websocket": ["./node_modules/@enonic-types/lib-websocket"]
     }
   }
 }
@@ -62,4 +61,4 @@ types mapping to your configuration.
 import {addToGroup, removeFromGroup, send, sendToGroup, getGroupSize} from '/lib/xp/websocket';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.

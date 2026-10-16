@@ -10,20 +10,6 @@ npm i --save-dev @enonic-types/lib-app
 
 ## Use
 
-Add the corresponding types to your `tsconfig.json` file that is used for application's server-side TypeScript code.
-
-`tsconfig.json`
-
-```json
-{
-  "compilerOptions": {
-    "types": [
-      "@enonic-types/lib-app"
-    ]
-  }
-}
-```
-
 ### Require and custom imports
 
 To make `require` work out of the box, install `@enonic-types/global` and add it to `types` together with `@enonic-types/lib-app`.
@@ -69,9 +55,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/app": ["node_modules/@enonic-types/lib-app"]
+      "/lib/xp/app": ["./node_modules/@enonic-types/lib-app"]
     }
   }
 }
@@ -90,4 +75,7 @@ import {
 } from '/lib/xp/app';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
+
+With pnpm, also install `@enonic-types/core` directly, at the same version as `@enonic-types/lib-app`. The types imported through
+`paths` resolve their `@enonic-types/core` import from the top level of `node_modules`, and pnpm does not put it there.

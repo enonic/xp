@@ -53,13 +53,11 @@ types mapping to your configuration.
 
 `tsconfig.json`
 
-
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/sse": ["node_modules/@enonic-types/lib-sse"]
+      "/lib/xp/sse": ["./node_modules/@enonic-types/lib-sse"]
     }
   }
 }
@@ -79,4 +77,4 @@ import {
 } from '/lib/xp/sse';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.

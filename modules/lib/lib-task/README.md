@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/task": ["node_modules/@enonic-types/lib-task"]
+      "/lib/xp/task": ["./node_modules/@enonic-types/lib-task"]
     }
   }
 }
@@ -62,4 +61,7 @@ types mapping to your configuration.
 import {executeFunction, submitTask, list, get, sleep, progress, isRunning} from '/lib/xp/task';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
+
+With pnpm, also install `@enonic-types/core` directly, at the same version as `@enonic-types/lib-task`. The types imported through
+`paths` resolve their `@enonic-types/core` import from the top level of `node_modules`, and pnpm does not put it there.

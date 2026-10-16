@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/i18n": ["node_modules/@enonic-types/lib-i18n"]
+      "/lib/xp/i18n": ["./node_modules/@enonic-types/lib-i18n"]
     }
   }
 }
@@ -62,4 +61,7 @@ types mapping to your configuration.
 import {localize, getPhrases, getSupportedLocales} from '/lib/xp/i18n';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
+
+With pnpm, also install `@enonic-types/core` directly, at the same version as `@enonic-types/lib-i18n`. The types imported through
+`paths` resolve their `@enonic-types/core` import from the top level of `node_modules`, and pnpm does not put it there.

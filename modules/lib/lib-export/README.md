@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/export": ["node_modules/@enonic-types/lib-export"]
+      "/lib/xp/export": ["./node_modules/@enonic-types/lib-export"]
     }
   }
 }
@@ -62,4 +61,7 @@ types mapping to your configuration.
 import {importNodes, exportNodes} from '/lib/xp/export';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
+
+With pnpm, also install `@enonic-types/core` directly, at the same version as `@enonic-types/lib-export`. The types imported through
+`paths` resolve their `@enonic-types/core` import from the top level of `node_modules`, and pnpm does not put it there.

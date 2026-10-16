@@ -32,7 +32,7 @@ return a typed object. To add the types of all XP libraries at once, use `@enoni
 `example.ts`
 
 ```ts
-const {getBaseUri, getHomeToolUrl, HomeToolUrlType} = require('/lib/xp/admin');
+const {getHomeToolUrl, getToolUrl} = require('/lib/xp/admin');
 ```
 
 More detailed explanation on how it works and how to type custom import function can be
@@ -48,9 +48,8 @@ types mapping to your configuration.
 ```json
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "/lib/xp/admin": ["node_modules/@enonic-types/lib-admin"]
+      "/lib/xp/admin": ["./node_modules/@enonic-types/lib-admin"]
     }
   }
 }
@@ -59,7 +58,7 @@ types mapping to your configuration.
 `example.ts`
 
 ```ts
-import {getBaseUri, getHomeToolUrl, HomeToolUrlType} from '/lib/xp/admin';
+import {getHomeToolUrl, getToolUrl, HomeToolUrlType} from '/lib/xp/admin';
 ```
 
-Setting `baseUrl` and `paths` will allow the `tsc` to keep the valid paths in the resulting JavaScript files.
+Setting `paths` will allow the `tsc` to resolve the types and keep the valid paths in the resulting JavaScript files.
