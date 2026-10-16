@@ -3,6 +3,8 @@ package com.enonic.xp.audit;
 import java.time.Instant;
 import java.util.Objects;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.core.internal.Millis;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
@@ -20,6 +22,8 @@ public final class LogAuditLogParams
 
     private final PrincipalKey user;
 
+    private final PrincipalKey actor;
+
     private final AuditLogUris objectUris;
 
     private final PropertyTree data;
@@ -30,6 +34,7 @@ public final class LogAuditLogParams
         time = Millis.fromOrElseNow( builder.time );
         source = requireNonNullElse( builder.source, "" );
         user = builder.user;
+        actor = builder.actor;
         objectUris = requireNonNullElse( builder.objectUris, AuditLogUris.empty() );
         data = requireNonNullElse( builder.data, new PropertyTree() );
     }
@@ -52,6 +57,15 @@ public final class LogAuditLogParams
     public PrincipalKey getUser()
     {
         return user;
+    }
+
+    /**
+     * Returns the principal that acted on the user's behalf; null takes the actor of the current
+     * context when the user does too, and none otherwise.
+     */
+    public @Nullable PrincipalKey getActor()
+    {
+        return actor;
     }
 
     public AuditLogUris getObjectUris()
@@ -101,6 +115,8 @@ public final class LogAuditLogParams
 
         private PrincipalKey user;
 
+        private PrincipalKey actor;
+
         private AuditLogUris objectUris;
 
         private PropertyTree data;
@@ -130,6 +146,12 @@ public final class LogAuditLogParams
         public Builder user( final PrincipalKey val )
         {
             user = val;
+            return this;
+        }
+
+        public Builder actor( final @Nullable PrincipalKey val )
+        {
+            actor = val;
             return this;
         }
 

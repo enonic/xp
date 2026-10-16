@@ -10,6 +10,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
@@ -33,6 +34,9 @@ public final class LoginHandler
     private Integer sessionTimeout;
 
     private Scope scope;
+
+
+    private PrincipalKey actor;
 
     private Supplier<SecurityService> securityServiceSupplier;
 
@@ -70,12 +74,21 @@ public final class LoginHandler
         this.scope = Scope.valueOf( scope );
     }
 
+    public void setActor( final String actor )
+    {
+        this.actor = actor == null ? null : PrincipalKey.from( actor );
+    }
+
     public LoginResultMapper login()
     {
         AuthenticationInfo authInfo = authenticate();
 
         if ( authInfo.isAuthenticated() )
         {
+            if ( actor != null )
+            {
+                authInfo = AuthenticationInfo.copyOf( authInfo ).actor( actor ).build();
+            }
             switch ( this.scope )
             {
                 case NONE:

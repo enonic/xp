@@ -48,6 +48,7 @@ export interface LoginParams {
     idProvider?: string;
     scope?: LoginScopeType;
     sessionTimeout?: number;
+    actor?: PrincipalKey;
 }
 
 export interface LoginWithoutPasswordParams {
@@ -55,6 +56,7 @@ export interface LoginWithoutPasswordParams {
     idProvider?: string;
     scope?: LoginScopeType;
     sessionTimeout?: number;
+    actor?: PrincipalKey;
 }
 
 export interface LoginResult {
@@ -75,6 +77,9 @@ interface LoginHandler {
     setScope(value: LoginScopeType): void;
 
     setSessionTimeout(value: number | null): void;
+
+
+    setActor(value: PrincipalKey | null): void;
 
     login(): LoginResult;
 }
@@ -97,6 +102,7 @@ const isLoginParams = (params: unknown): params is LoginParams =>
  * @param {('SESSION'|'REQUEST'|'NONE')} [params.scope=SESSION] The scope of this login. Two values are valid. SESSION logs the user in and creates a session in XP for use in future requests. REQUEST logs the user in but only for this particular request and thus does not create a session.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
+ * @param {string} [params.actor] The principal acting on the user's behalf, such as a service logging a user in for a call it makes for them. Recorded next to the user in the audit log. Omit when the user acts for themselves.
  * @returns {LoginResult} Information for logged-in user.
  */
 export function login(params: LoginParams | LoginWithoutPasswordParams): LoginResult {
@@ -106,6 +112,7 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
         idProvider,
         scope = 'SESSION' as LoginScopeType,
         sessionTimeout,
+        actor,
     } = params ?? {};
 
     const bean: LoginHandler = __.newBean<LoginHandler>('com.enonic.xp.lib.auth.LoginHandler');
@@ -125,7 +132,7 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
         }
     }
     bean.setIdProvider(__.nullOrValue(idProvider));
-
+    bean.setActor(__.nullOrValue(actor));
 
     return __.toNativeObject(bean.login());
 }

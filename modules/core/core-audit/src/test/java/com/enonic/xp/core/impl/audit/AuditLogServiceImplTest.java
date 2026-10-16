@@ -17,6 +17,9 @@ import com.enonic.xp.audit.CleanUpAuditLogResult;
 import com.enonic.xp.audit.FindAuditLogParams;
 import com.enonic.xp.audit.FindAuditLogResult;
 import com.enonic.xp.audit.LogAuditLogParams;
+import com.enonic.xp.security.auth.AuthenticationInfo;
+import com.enonic.xp.security.User;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.audit.config.AuditLogConfig;
 import com.enonic.xp.core.impl.audit.serializer.AuditLogSerializer;
 import com.enonic.xp.data.PropertyTree;
@@ -99,6 +102,34 @@ class AuditLogServiceImplTest
 
         auditLogService = new AuditLogServiceImpl( config, nodeService );
         AuditLogRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
+    }
+
+    @Test
+    void log_with_actor()
+    {
+        final PrincipalKey alice = PrincipalKey.from( "user:system:alice" );
+        final PrincipalKey service = PrincipalKey.from( "user:system:automation" );
+
+        final CreateNodeParams named = AuditLogSerializer.toCreateNodeParams(
+            LogAuditLogParams.create().type( "t" ).user( alice ).actor( service ).build() ).setNodeId( new NodeId() ).build();
+        assertEquals( "user:system:alice", named.getData().getString( AuditLogPropertyNames.USER ) );
+        assertEquals( "user:system:automation", named.getData().getString( AuditLogPropertyNames.ACTOR ) );
+        final AuditLog read = AuditLogSerializer.fromNode( Node.create().id( named.getNodeId() ).data( named.getData() ).build() );
+        assertEquals( service, read.getActor() );
+
+        final User user = User.create().key( alice ).login( "alice" ).build();
+        final AuthenticationInfo acted = AuthenticationInfo.create().user( user ).actor( service ).build();
+        final CreateNodeParams fromContext = ContextBuilder.create().authInfo( acted ).build().callWith(
+            () -> AuditLogSerializer.toCreateNodeParams( LogAuditLogParams.create().type( "t" ).build() ).setNodeId( new NodeId() ).build() );
+        assertEquals( "user:system:alice", fromContext.getData().getString( AuditLogPropertyNames.USER ) );
+        assertEquals( "user:system:automation", fromContext.getData().getString( AuditLogPropertyNames.ACTOR ) );
+
+        final CreateNodeParams otherUser = ContextBuilder.create().authInfo( acted ).build().callWith(
+            () -> AuditLogSerializer.toCreateNodeParams( LogAuditLogParams.create().type( "t" ).user( PrincipalKey.ofAnonymous() ).build() )
+                .setNodeId( new NodeId() )
+                .build() );
+        assertEquals( null, otherUser.getData().getString( AuditLogPropertyNames.ACTOR ) );
+        assertEquals( null, AuditLogSerializer.fromNode( Node.create().id( otherUser.getNodeId() ).data( otherUser.getData() ).build() ).getActor() );
     }
 
     @Test

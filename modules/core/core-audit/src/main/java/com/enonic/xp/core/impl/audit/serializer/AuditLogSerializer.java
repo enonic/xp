@@ -10,6 +10,7 @@ import com.enonic.xp.audit.AuditLogUri;
 import com.enonic.xp.audit.AuditLogUris;
 import com.enonic.xp.audit.LogAuditLogParams;
 import com.enonic.xp.context.ContextAccessor;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.core.impl.audit.AuditLogConstants;
 import com.enonic.xp.core.impl.audit.AuditLogPropertyNames;
 import com.enonic.xp.data.PropertySet;
@@ -37,12 +38,19 @@ public class AuditLogSerializer
         data.addInstant( AuditLogPropertyNames.TIME, auditLogParams.getTime() );
         data.addString( AuditLogPropertyNames.SOURCE, auditLogParams.getSource() );
 
-        final PrincipalKey userKey = requireNonNullElseGet( auditLogParams.getUser(),
-                                                                    () -> ContextAccessor.current().getAuthInfo().getUser() != null
-                                                                        ? ContextAccessor.current().getAuthInfo().getUser().getKey()
-                                                                        : PrincipalKey.ofAnonymous() );
+        final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
+        final PrincipalKey userKey = requireNonNullElseGet( auditLogParams.getUser(), () -> authInfo.getUser() != null
+            ? authInfo.getUser().getKey()
+            : PrincipalKey.ofAnonymous() );
+        final PrincipalKey actor = auditLogParams.getActor() != null
+            ? auditLogParams.getActor()
+            : auditLogParams.getUser() == null ? authInfo.getActor() : null;
 
         data.addString( AuditLogPropertyNames.USER, userKey.toString() );
+        if ( actor != null )
+        {
+            data.addString( AuditLogPropertyNames.ACTOR, actor.toString() );
+        }
         data.addStrings( AuditLogPropertyNames.OBJECTURIS, objectUris );
         data.addSet( AuditLogPropertyNames.DATA, auditLogParams.getData().getRoot().copy( data.getTree() ) );
 
@@ -68,6 +76,7 @@ public class AuditLogSerializer
             time( data.getInstant( AuditLogPropertyNames.TIME ) ).
             source( data.getString( AuditLogPropertyNames.SOURCE ) ).
             user( PrincipalKey.from( data.getString( AuditLogPropertyNames.USER ) ) ).
+            actor( data.getString( AuditLogPropertyNames.ACTOR ) == null ? null : PrincipalKey.from( data.getString( AuditLogPropertyNames.ACTOR ) ) ).
             objectUris( objectUris.build() ).
             data( data.getSet( AuditLogPropertyNames.DATA ).toTree() ).
             build();

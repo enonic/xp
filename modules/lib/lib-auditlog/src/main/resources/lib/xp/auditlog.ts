@@ -13,7 +13,7 @@ declare global {
     }
 }
 
-import type {ScriptValue, UserKey} from '@enonic-types/core';
+import type {PrincipalKey, ScriptValue, UserKey} from '@enonic-types/core';
 
 export type {ScriptValue, UserKey} from '@enonic-types/core';
 
@@ -32,6 +32,7 @@ export interface AuditLogParams<Data extends Record<string, unknown>> {
     time?: string | null;
     source?: string | null;
     user?: UserKey | null;
+    actor?: PrincipalKey | null;
     objects?: string[];
     data?: Data;
 }
@@ -42,6 +43,7 @@ export interface AuditLog<Data extends Record<string, unknown> = Record<string, 
     time: string;
     source: string;
     user: UserKey;
+    actor?: PrincipalKey;
     objects: string[];
     data: Data;
 }
@@ -54,6 +56,8 @@ interface CreateAuditLogHandler<Data extends Record<string, unknown>> {
     setSource(source: string): void;
 
     setUser(user: string | null): void;
+
+    setActor(actor: string | null): void;
 
     setObjectUris(objectUris: ScriptValue | null): void;
 
@@ -74,6 +78,7 @@ interface CreateAuditLogHandler<Data extends Record<string, unknown>> {
  * @param {string} [params.time] Log entry timestamp. Defaults to now.
  * @param {string} [params.source] Log entry source. Defaults to the application ID.
  * @param {string} [params.user] Log entry user. Defaults to the user of current context.
+ * @param {string} [params.actor] The principal that acted on the user's behalf, such as a service calling for them. Defaults to the actor of the current context when the user does too, and none otherwise.
  * @param {array}  [params.objects] URIs to objects that relate to this log entry. Defaults to empty array.
  * @param {object} [params.data] Custom extra data for this log entry. Defaults to empty object.
  *
@@ -87,6 +92,7 @@ export function log<Data extends Record<string, unknown> = Record<string, unknow
     bean.setTime(__.nullOrValue(params.time));
     bean.setSource(params.source ?? app.name);
     bean.setUser(__.nullOrValue(params.user));
+    bean.setActor(__.nullOrValue(params.actor));
     bean.setObjectUris(__.toScriptValue(params.objects));
     bean.setData(__.toScriptValue(params.data));
 
