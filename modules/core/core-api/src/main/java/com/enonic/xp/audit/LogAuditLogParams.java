@@ -61,7 +61,7 @@ public final class LogAuditLogParams
 
     /**
      * Returns the principal that acted on the user's behalf; null takes the actor of the current
-     * context when the user does too, and none otherwise.
+     * context when the user is left to the context or names the context's user, and none otherwise.
      */
     public @Nullable PrincipalKey getActor()
     {
@@ -96,13 +96,14 @@ public final class LogAuditLogParams
         }
         final LogAuditLogParams that = (LogAuditLogParams) o;
         return Objects.equals( type, that.type ) && Objects.equals( time, that.time ) && Objects.equals( source, that.source ) &&
-            Objects.equals( user, that.user ) && Objects.equals( objectUris, that.objectUris ) && Objects.equals( data, that.data );
+            Objects.equals( user, that.user ) && Objects.equals( actor, that.actor ) && Objects.equals( objectUris, that.objectUris ) &&
+            Objects.equals( data, that.data );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( type, time, source, user, objectUris, data );
+        return Objects.hash( type, time, source, user, actor, objectUris, data );
     }
 
     public static final class Builder

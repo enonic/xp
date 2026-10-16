@@ -39,12 +39,12 @@ public class AuditLogSerializer
         data.addString( AuditLogPropertyNames.SOURCE, auditLogParams.getSource() );
 
         final AuthenticationInfo authInfo = ContextAccessor.current().getAuthInfo();
-        final PrincipalKey userKey = requireNonNullElseGet( auditLogParams.getUser(), () -> authInfo.getUser() != null
-            ? authInfo.getUser().getKey()
-            : PrincipalKey.ofAnonymous() );
+        final PrincipalKey contextUser = authInfo.getUser() != null ? authInfo.getUser().getKey() : null;
+        final PrincipalKey userKey = requireNonNullElseGet( auditLogParams.getUser(), () -> requireNonNullElseGet( contextUser,
+                                                                                                                   PrincipalKey::ofAnonymous ) );
         final PrincipalKey actor = auditLogParams.getActor() != null
             ? auditLogParams.getActor()
-            : auditLogParams.getUser() == null ? authInfo.getActor() : null;
+            : auditLogParams.getUser() == null || auditLogParams.getUser().equals( contextUser ) ? authInfo.getActor() : null;
 
         data.addString( AuditLogPropertyNames.USER, userKey.toString() );
         if ( actor != null )

@@ -124,6 +124,13 @@ class AuditLogServiceImplTest
         assertEquals( "user:system:alice", fromContext.getData().getString( AuditLogPropertyNames.USER ) );
         assertEquals( "user:system:automation", fromContext.getData().getString( AuditLogPropertyNames.ACTOR ) );
 
+        final CreateNodeParams sameUser = ContextBuilder.create().authInfo( acted ).build().callWith(
+            () -> AuditLogSerializer.toCreateNodeParams( LogAuditLogParams.create().type( "t" ).user( alice ).build() )
+                .setNodeId( new NodeId() )
+                .build() );
+        assertEquals( "user:system:automation", sameUser.getData().getString( AuditLogPropertyNames.ACTOR ),
+                      "a writer naming the context's user, as the built-in ones do, keeps the context's actor" );
+
         final CreateNodeParams otherUser = ContextBuilder.create().authInfo( acted ).build().callWith(
             () -> AuditLogSerializer.toCreateNodeParams( LogAuditLogParams.create().type( "t" ).user( PrincipalKey.ofAnonymous() ).build() )
                 .setNodeId( new NodeId() )
