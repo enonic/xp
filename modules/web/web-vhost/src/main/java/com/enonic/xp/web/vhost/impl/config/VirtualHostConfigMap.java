@@ -78,8 +78,20 @@ final class VirtualHostConfigMap
         final Map<String, String> context = getVirtualHostContext( prefix );
         final String connector = getConnector( prefix );
         final PrincipalKeys allowedPrincipals = getAllowedPrincipals( prefix );
+        final Set<String> audience = getAudience( prefix );
 
-        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals );
+        return new VirtualHostMapping( name, host, source, target, idProvidersMapping, order, context, connector, allowedPrincipals,
+                                       audience );
+    }
+
+    private Set<String> getAudience( final String mappingPrefix )
+    {
+        final String value = getString( mappingPrefix + "audience" );
+        if ( value == null )
+        {
+            return Set.of();
+        }
+        return Stream.of( value.split( "," ) ).map( String::trim ).filter( s -> !s.isEmpty() ).collect( Collectors.toUnmodifiableSet() );
     }
 
     private PrincipalKeys getAllowedPrincipals( final String mappingPrefix )

@@ -1,6 +1,7 @@
 package com.enonic.xp.portal.impl.handler;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +15,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
@@ -21,6 +23,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebRequest;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -29,18 +32,22 @@ import com.enonic.xp.web.vhost.VirtualHostHelper;
 @Component(service = IdentityHandler.class, configurationPid = "com.enonic.xp.portal")
 public class IdentityHandler
 {
-    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout))?" );
+    private static final Pattern PATTERN = Pattern.compile( "^(?<idp>[^/]+)(?:/(?<fun>login|logout|device/code|device|token))?" );
 
     private final IdProviderControllerService idProviderControllerService;
 
     private final RedirectChecksumService redirectChecksumService;
 
+    private final DeviceLoginHandler deviceLoginHandler;
+
     @Activate
     public IdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
-                            @Reference final RedirectChecksumService redirectChecksumService )
+                            @Reference final RedirectChecksumService redirectChecksumService,
+                            @Reference final DeviceLoginHandler deviceLoginHandler )
     {
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
+        this.deviceLoginHandler = deviceLoginHandler;
     }
 
     public PortalResponse handle( final WebRequest webRequest )
@@ -84,17 +91,60 @@ public class IdentityHandler
 
         // Custom endpoints are always dispatched: the id provider app gates them itself, guided by
         // the vhost's flow list on the request.
-        final String requiredFlow = idProviderFunction == null ? null
-            : "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN;
         final Set<String> flows = idProvider.getFlows();
-        if ( requiredFlow != null && !flows.isEmpty() && !flows.contains( requiredFlow ) )
+        if ( DeviceLoginHandler.isEndpoint( idProviderFunction ) )
         {
-            throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
+            if ( !DispatchConstants.WEB_CONNECTOR.equals( webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
+            {
+                throw WebException.notFound( "Device login is served on the web endpoint only" );
+            }
+            final String requiredFlow = DeviceLoginHandler.requiredFlow( idProviderFunction );
+            if ( requiredFlow != null )
+            {
+                requireFlow( flows, requiredFlow, idProviderKey );
+            }
+            else if ( !flows.isEmpty() && Collections.disjoint( flows, DeviceLoginHandler.ISSUING_FLOWS ) )
+            {
+                throw WebException.forbidden(
+                    String.format( "No token-issuing flow %s is enabled for '%s' id provider", DeviceLoginHandler.ISSUING_FLOWS,
+                                   idProviderKey ) );
+            }
+            return doHandleDevice( idProviderKey, idProviderFunction, createPortalRequest( webRequest, idProviderKey, null ), flows );
+        }
+
+        if ( idProviderFunction != null )
+        {
+            requireFlow( flows, "logout".equals( idProviderFunction ) ? IdProviderFlow.LOGOUT : IdProviderFlow.LOGIN, idProviderKey );
         }
 
         final PortalRequest portalRequest = createPortalRequest( webRequest, idProviderKey, idProviderFunction );
 
         return doHandle( idProviderKey, idProviderFunction, portalRequest );
+    }
+
+    private static void requireFlow( final Set<String> flows, final String requiredFlow, final IdProviderKey idProviderKey )
+    {
+        if ( !flows.isEmpty() && !flows.contains( requiredFlow ) )
+        {
+            throw WebException.forbidden( String.format( "'%s' flow is disabled for '%s' id provider", requiredFlow, idProviderKey ) );
+        }
+    }
+
+    @Traced("portalRequest")
+    private PortalResponse doHandleDevice( final IdProviderKey idProviderKey, final String endpoint, final PortalRequest portalRequest,
+                                           final Set<String> flows )
+    {
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "path", portalRequest.getPath() );
+            trace.attribute( "method", portalRequest.getMethod().toString() );
+            trace.attribute( "host", portalRequest.getHost() );
+        } );
+        final PortalResponse portalResponse = deviceLoginHandler.handle( portalRequest, idProviderKey, endpoint, flows );
+        Tracer.withCurrent( trace -> {
+            trace.attribute( "status", portalResponse.getStatus().value() );
+            trace.attribute( "type", portalResponse.getContentType().toString() );
+        } );
+        return portalResponse;
     }
 
     @Traced("portalRequest")

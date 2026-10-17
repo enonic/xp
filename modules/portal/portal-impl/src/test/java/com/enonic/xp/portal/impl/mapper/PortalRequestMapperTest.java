@@ -1,5 +1,6 @@
 package com.enonic.xp.portal.impl.mapper;
 
+import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,10 +17,13 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
+import com.enonic.xp.portal.impl.idprovider.AccessTokenFilter;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.IdProvider;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -108,6 +112,27 @@ class PortalRequestMapperTest
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
         Mockito.when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
         this.portalRequest.setRawRequest( rawRequest );
+    }
+
+    @Test
+    void testAccessToken()
+    {
+        final AccessTokenClaims claims = AccessTokenClaims.create()
+            .issuer( "xp" )
+            .subject( PrincipalKey.ofUser( IdProviderKey.system(), "alice" ) )
+            .audience( Set.of( "api" ) )
+            .scope( Set.of( "content:write", "content:read" ) )
+            .clientId( "my-cli" )
+            .grantId( "grant-1" )
+            .issuedAt( Instant.parse( "2026-10-14T12:00:00Z" ) )
+            .expiresAt( Instant.parse( "2026-10-14T13:00:00Z" ) )
+            .tokenId( "jti" )
+            .build();
+        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( rawRequest.getAttribute( AccessTokenFilter.CLAIMS_ATTRIBUTE ) ).thenReturn( claims );
+        this.portalRequest.setRawRequest( rawRequest );
+
+        assertHelper.assertJson( "request-access-token.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test
