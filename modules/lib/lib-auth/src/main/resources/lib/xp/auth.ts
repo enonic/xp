@@ -48,6 +48,7 @@ export interface LoginParams {
     idProvider?: string;
     scope?: LoginScopeType;
     sessionTimeout?: number;
+    principals?: PrincipalKey[];
     actor?: PrincipalKey;
 }
 
@@ -56,6 +57,7 @@ export interface LoginWithoutPasswordParams {
     idProvider?: string;
     scope?: LoginScopeType;
     sessionTimeout?: number;
+    principals?: PrincipalKey[];
     actor?: PrincipalKey;
 }
 
@@ -78,6 +80,7 @@ interface LoginHandler {
 
     setSessionTimeout(value: number | null): void;
 
+    setPrincipals(value: PrincipalKey[] | null): void;
 
     setActor(value: PrincipalKey | null): void;
 
@@ -102,6 +105,7 @@ const isLoginParams = (params: unknown): params is LoginParams =>
  * @param {('SESSION'|'REQUEST'|'NONE')} [params.scope=SESSION] The scope of this login. Two values are valid. SESSION logs the user in and creates a session in XP for use in future requests. REQUEST logs the user in but only for this particular request and thus does not create a session.
  * @param {boolean} [params.skipAuth=false] Skip authentication.
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
+ * @param {string[]} [params.principals] Principals to restrict the login to. The logged-in user gets only the memberships listed here that they actually hold: a role they are not a member of is not gained, and an empty list leaves only the user's own key and the roles every authenticated user has. Omit for the user's full memberships. Memberships are read when the login runs; a SESSION login keeps the result for the session's lifetime.
  * @param {string} [params.actor] The principal acting on the user's behalf, such as a service logging a user in for a call it makes for them. Recorded next to the user in the audit log. Omit when the user acts for themselves.
  * @returns {LoginResult} Information for logged-in user.
  */
@@ -112,6 +116,7 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
         idProvider,
         scope = 'SESSION' as LoginScopeType,
         sessionTimeout,
+        principals,
         actor,
     } = params ?? {};
 
@@ -132,6 +137,7 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
         }
     }
     bean.setIdProvider(__.nullOrValue(idProvider));
+    bean.setPrincipals(__.nullOrValue(principals));
     bean.setActor(__.nullOrValue(actor));
 
     return __.toNativeObject(bean.login());

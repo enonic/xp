@@ -58,6 +58,7 @@ import com.enonic.xp.security.Principal;
 import com.enonic.xp.security.PrincipalAlreadyExistsException;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalRestriction;
 import com.enonic.xp.security.PrincipalNotFoundException;
 import com.enonic.xp.security.PrincipalQuery;
 import com.enonic.xp.security.PrincipalQueryResult;
@@ -84,6 +85,7 @@ import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.security.auth.PasswordAuthToken;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
 import com.enonic.xp.security.auth.VerifiedEmailAuthToken;
+import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.auth.VerifiedUsernameAuthToken;
 
 import static java.util.Objects.requireNonNull;
@@ -298,7 +300,8 @@ public final class SecurityServiceImpl
                 .displayName( "Super User" )
                 .build();
             return AuthenticationInfo.create()
-                .principals( RoleKeys.ADMIN, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
+                .principals( authToken.getRestriction().apply( PrincipalKeys.from( RoleKeys.ADMIN ) ) )
+                .principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
                 .user( admin )
                 .build();
         }
@@ -316,6 +319,14 @@ public final class SecurityServiceImpl
             final Predicate<User> credentialsVerifier;
             switch ( token )
             {
+                case VerifiedUserKeyAuthToken authToken ->
+                {
+                    final Node node = this.nodeService.getByPath( authToken.getUserKey().toPath() );
+                    final User user = node == null ? null : PrincipalNodeTranslator.userFromNode( node );
+                    return user != null && !user.isDisabled()
+                        ? createAuthInfo( user, token.getRestriction() )
+                        : AuthenticationInfo.unAuthenticated();
+                }
                 case PasswordAuthToken authToken ->
                 {
                     if ( authToken.getPassword().isEmpty() )
@@ -356,7 +367,7 @@ public final class SecurityServiceImpl
             // Order matters. First verify the password, then check for non-existing/disabled user to avoid timing attacks
             if ( credentialsVerifier.test( user ) && user != null && !user.isDisabled() )
             {
-                return createAuthInfo( user );
+                return createAuthInfo( user, token.getRestriction() );
             }
             else
             {
@@ -371,11 +382,11 @@ public final class SecurityServiceImpl
             .validate( password.toCharArray() );
     }
 
-    private AuthenticationInfo createAuthInfo( final User user )
+    private AuthenticationInfo createAuthInfo( final User user, final PrincipalRestriction restriction )
     {
-        final PrincipalKeys principals = resolveMemberships( user.getKey() );
+        final PrincipalKeys memberships = resolveMemberships( user.getKey() );
         return AuthenticationInfo.create()
-            .principals( principals )
+            .principals( restriction.apply( memberships ) )
             .principals( RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE )
             .user( user )
             .build();
