@@ -402,8 +402,9 @@ class IdentityHandlerTest
         when( deviceLoginHandler.handle( Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any() ) )
             .thenReturn( PortalResponse.create().build() );
         assertNotNull( this.handler.handle( this.request ) );
-        Mockito.verify( deviceLoginHandler ).handle( Mockito.any(), Mockito.eq( myIdProvider ), Mockito.eq( "token" ),
-                                                     Mockito.eq( Set.of( IdProviderFlow.DEVICE ) ) );
+        final ArgumentCaptor<VirtualHostIdProvider> settings = ArgumentCaptor.forClass( VirtualHostIdProvider.class );
+        Mockito.verify( deviceLoginHandler ).handle( Mockito.any(), Mockito.eq( myIdProvider ), Mockito.eq( "token" ), settings.capture() );
+        assertEquals( Set.of( IdProviderFlow.DEVICE ), settings.getValue().getFlows() );
     }
 
     @Test

@@ -311,8 +311,10 @@ export interface DeviceLoginUser {
 
 export interface DeviceLoginScope {
     id: string;
-    description: string | null;
-    principals: string[];
+    /** The roles the scope implies; empty for a scope that is only a label. */
+    roles: string[];
+    /** Whether the user may not drop it: a required scope is granted whenever the request is approved. */
+    required: boolean;
 }
 
 interface DeviceLoginBase {
@@ -331,6 +333,8 @@ export interface DeviceLoginConfirm extends DeviceLoginBase {
     userCode: string;
     clientId: string | null;
     scope: DeviceLoginScope[];
+    /** Whether the vhost has no scope catalogue, so an approved token carries the user's full memberships. */
+    unrestricted: boolean;
     audience: string[];
     /** The form must post it back as _csrf. */
     csrf: string;

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.PrincipalRestriction;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,8 +64,8 @@ class DeviceCodeStoreTest
         now = now.plusSeconds( DeviceCodeStore.POLL_INTERVAL_SECONDS );
         assertThat( store.poll( IDP, pending.deviceCode() ) ).isInstanceOf( DeviceCodeStore.Outcome.Waiting.class );
 
-        assertThat( store.resolve( IDP, typed, true, ALICE ) ).isTrue();
-        assertThat( store.resolve( IDP, typed, false, ALICE ) ).as( "already resolved" ).isFalse();
+        assertThat( store.resolve( IDP, typed, true, ALICE, Set.of( "content:read" ), PrincipalRestriction.to( PrincipalKeys.from( "role:cms.cm.app" ) ) ) ).isTrue();
+        assertThat( store.resolve( IDP, typed, false, ALICE, Set.of(), PrincipalRestriction.none() ) ).as( "already resolved" ).isFalse();
         assertThat( store.findByUserCode( IDP, typed ) ).map( DeviceCodeStore.Pending::status ).contains( DeviceCodeStore.Status.APPROVED );
 
         final DeviceCodeStore.Pending approved = switch ( store.poll( IDP, pending.deviceCode() ) )
@@ -74,6 +76,8 @@ class DeviceCodeStoreTest
         assertThat( approved.subject() ).isEqualTo( ALICE );
         assertThat( approved.clientId() ).isEqualTo( "cli" );
         assertThat( approved.scope() ).containsExactly( "content:read" );
+        assertThat( approved.approvedScope() ).containsExactly( "content:read" );
+        assertThat( approved.approvedRestriction() ).isEqualTo( PrincipalRestriction.to( PrincipalKeys.from( "role:cms.cm.app" ) ) );
         assertThat( approved.audience() ).containsExactly( "api" );
 
         assertThat( store.poll( IDP, pending.deviceCode() ) ).isInstanceOf( DeviceCodeStore.Outcome.Expired.class );
@@ -84,7 +88,7 @@ class DeviceCodeStoreTest
     void deny_is_consumed_too()
     {
         final DeviceCodeStore.Pending pending = store.create( IDP, "cli", Set.of(), Set.of() );
-        assertThat( store.resolve( IDP, pending.userCode(), false, ALICE ) ).isTrue();
+        assertThat( store.resolve( IDP, pending.userCode(), false, ALICE, Set.of(), PrincipalRestriction.none() ) ).isTrue();
         assertThat( store.poll( IDP, pending.deviceCode() ) ).isInstanceOf( DeviceCodeStore.Outcome.Denied.class );
         assertThat( store.poll( IDP, pending.deviceCode() ) ).isInstanceOf( DeviceCodeStore.Outcome.Expired.class );
     }
@@ -93,7 +97,7 @@ class DeviceCodeStoreTest
     void unknown_codes()
     {
         assertThat( store.poll( IDP, "nope" ) ).isInstanceOf( DeviceCodeStore.Outcome.Expired.class );
-        assertThat( store.resolve( IDP, "NOPE", true, ALICE ) ).isFalse();
+        assertThat( store.resolve( IDP, "NOPE", true, ALICE, Set.of(), PrincipalRestriction.none() ) ).isFalse();
         assertThat( store.findByUserCode( IDP, null ) ).isEmpty();
         final Optional<DeviceCodeStore.Pending> none = store.findByUserCode( IDP, "" );
         assertThat( none ).isEmpty();

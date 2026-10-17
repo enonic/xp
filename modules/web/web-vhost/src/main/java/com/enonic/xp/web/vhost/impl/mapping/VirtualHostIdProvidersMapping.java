@@ -71,6 +71,12 @@ public class VirtualHostIdProvidersMapping
             return this;
         }
 
+        public Builder addIdProviderWithSettings( final IdProviderKey idProviderKey, final VirtualHostIdProvider settings )
+        {
+            this.idProviders.put( idProviderKey, settings );
+            return this;
+        }
+
         public VirtualHostIdProvidersMapping build()
         {
             return new VirtualHostIdProvidersMapping( this );
