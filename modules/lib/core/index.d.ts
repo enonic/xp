@@ -295,11 +295,15 @@ export interface DefaultRequestHeaders
  * The access token the request was authenticated with.
  */
 export interface RequestAccessToken {
+    /** Who issued the token: XP's issuer name, or the upstream issuer of a promoted token. */
+    issuer: string;
     /** The client that obtained the token, as it named itself, or null. */
     clientId: string | null;
     /** The grant the token was issued under, or null. */
     grantId: string | null;
+    /** The scopes the request was granted, sorted. */
     scope: string[];
+    /** The audiences the token names, sorted. */
     audience: string[];
 }
 

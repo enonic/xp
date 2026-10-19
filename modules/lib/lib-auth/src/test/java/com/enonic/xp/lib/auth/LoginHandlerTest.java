@@ -1,5 +1,8 @@
 package com.enonic.xp.lib.auth;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,12 +18,16 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
+import com.enonic.xp.security.token.AccessTokenService;
 import com.enonic.xp.security.auth.EmailPasswordAuthToken;
 import com.enonic.xp.session.Session;
 import com.enonic.xp.session.SessionMock;
 import com.enonic.xp.testing.ScriptTestSupport;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,6 +49,9 @@ class LoginHandlerTest
         super.initialize();
         this.securityService = Mockito.mock( SecurityService.class );
         addService( SecurityService.class, this.securityService );
+        final AccessTokenService accessTokenService = Mockito.mock( AccessTokenService.class );
+        Mockito.when( accessTokenService.getIssuer() ).thenReturn( "xp" );
+        addService( AccessTokenService.class, accessTokenService );
 
         ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
     }
@@ -165,6 +175,133 @@ class LoginHandlerTest
         final AuthenticationInfo loggedIn = ContextAccessor.current().getAuthInfo();
         assertEquals( TestDataFixtures.getTestUser().getKey(), loggedIn.getUser().getKey() );
         assertEquals( PrincipalKey.from( "user:enonic:automation" ), loggedIn.getActor() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenDerivesRolesFromTheCatalogue()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), catalogue() );
+        final AuthenticationInfo authInfo =
+            AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).principals( RoleKeys.ADMIN_LOGIN ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessToken" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.to( PrincipalKeys.from( "role:cms.project.site.viewer", "role:cms.project.site.editor" ) ),
+                      token.getValue().getRestriction() );
+
+        final AuthenticationInfo loggedIn = ContextAccessor.current().getAuthInfo();
+        assertEquals( TestDataFixtures.getTestUser().getKey(), loggedIn.getUser().getKey() );
+        assertEquals( AccessTokenInfo.create()
+                          .issuer( "https://issuer.example" )
+                          .clientId( "cli" )
+                          .scope( Set.of( "content:read", "profile", "unknown" ) )
+                          .audience( Set.of( "xp-api" ) )
+                          .build(), loggedIn.getAccessToken() );
+        assertNull( loggedIn.getAccessToken().getGrantId() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenAndRolesNarrowsFurther()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), catalogue() );
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenAndRoles" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.to( PrincipalKeys.from( "role:cms.project.site.viewer" ) ), token.getValue().getRestriction() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenWithoutCatalogueLeavesNoRestriction()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), null );
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessToken" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+        assertEquals( "https://issuer.example", ContextAccessor.current().getAuthInfo().getAccessToken().getIssuer() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenForAnotherAudienceIsRefused()
+    {
+        serveVirtualHost( Set.of( "xp-api" ), catalogue() );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
+
+        verifyNoInteractions( this.securityService );
+        assertNull( ContextAccessor.current().getLocalScope().getAttribute( AuthenticationInfo.class ) );
+    }
+
+    @Test
+    void testLoginWithAccessTokenNamingAnAudienceOutsideAVirtualHostIsRefused()
+    {
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
+
+        verifyNoInteractions( this.securityService );
+    }
+
+    @Test
+    void testLoginWithAccessTokenForXpItselfOutsideAVirtualHost()
+    {
+        final AuthenticationInfo authInfo = AuthenticationInfo.create().user( TestDataFixtures.getTestUser() ).build();
+        Mockito.when( this.securityService.authenticate( Mockito.any() ) ).thenReturn( authInfo );
+
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForXp" );
+
+        final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
+        verify( this.securityService ).authenticate( token.capture() );
+        assertEquals( RoleRestriction.none(), token.getValue().getRestriction() );
+        assertEquals( Set.of( "xp" ), ContextAccessor.current().getAuthInfo().getAccessToken().getAudience() );
+    }
+
+    @Test
+    void testLoginWithAccessTokenIsRefusedWhereItsAudienceIsNotDeclared()
+    {
+        runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutAudience" );
+        verifyNoInteractions( this.securityService );
+
+        serveVirtualHost( Set.of(), catalogue() );
+        runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutAudience" );
+        runFunction( "/test/login-test.js", "loginWithAccessTokenForAnotherAudience" );
+        verifyNoInteractions( this.securityService );
+    }
+
+    @Test
+    void testLoginWithAccessTokenRequiresAnIssuer()
+    {
+        final RuntimeException e =
+            assertThrows( RuntimeException.class, () -> runFunction( "/test/login-test.js", "loginWithAccessTokenWithoutIssuer" ) );
+        assertTrue( e.getMessage().contains( "issuer" ), e.getMessage() );
+        verifyNoInteractions( this.securityService );
+    }
+
+    private static VirtualHostIdProvider catalogue()
+    {
+        return VirtualHostIdProvider.create()
+            .scopes( Map.of( "content:read", VirtualHostIdProvider.Scope.of(
+                                 PrincipalKeys.from( "role:cms.project.site.viewer", "role:cms.project.site.editor" ) ), "profile",
+                             new VirtualHostIdProvider.Scope( PrincipalKeys.empty(), true ) ) )
+            .build();
+    }
+
+    private void serveVirtualHost( final Set<String> audience, final VirtualHostIdProvider enonic )
+    {
+        final VirtualHost virtualHost = Mockito.mock( VirtualHost.class );
+        Mockito.when( virtualHost.getAudience() ).thenReturn( audience );
+        Mockito.when( virtualHost.acceptsAudience( Mockito.any(), Mockito.any() ) ).thenCallRealMethod();
+        Mockito.when( virtualHost.getIdProviders() ).thenReturn( enonic == null ? Map.of() : Map.of( IdProviderKey.from( "enonic" ), enonic ) );
+        this.portalRequest.setVirtualHost( virtualHost );
     }
 
     @Test

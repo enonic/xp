@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,8 @@ public final class AuthenticationInfo
 
     private transient RoleRestriction restriction;
 
+    private transient @Nullable AccessTokenInfo accessToken;
+
     private AuthenticationInfo( final Builder builder )
     {
         this.authenticated = builder.authenticated;
@@ -49,12 +52,14 @@ public final class AuthenticationInfo
             builder.principals.add( user.getKey() );
             this.actor = builder.actor;
             this.restriction = builder.restriction;
+            this.accessToken = builder.accessToken;
         }
         else
         {
             this.user = null;
             this.actor = null;
             this.restriction = RoleRestriction.none();
+            this.accessToken = null;
         }
         this.principals = PrincipalKeys.from( builder.principals.build() );
     }
@@ -90,6 +95,14 @@ public final class AuthenticationInfo
     public @Nullable PrincipalKey getActor()
     {
         return actor;
+    }
+
+    /**
+     * The access token used for authentication, or null if none was used.
+     */
+    public @Nullable AccessTokenInfo getAccessToken()
+    {
+        return accessToken;
     }
 
     public boolean hasRole( final String role )
@@ -131,6 +144,7 @@ public final class AuthenticationInfo
         this.user = this.authenticated ? deserializedUser : null;
         this.actor = this.authenticated ? deserializeActor( ois ) : null;
         this.restriction = this.authenticated ? deserializeRestriction( ois ) : RoleRestriction.none();
+        this.accessToken = this.authenticated ? deserializeAccessToken( ois ) : null;
     }
 
     @Serial
@@ -146,11 +160,20 @@ public final class AuthenticationInfo
         oos.writeUTF( restriction instanceof RoleRestriction.To( PrincipalKeys keys )
                           ? keys.stream().map( PrincipalKey::toString ).collect( Collectors.joining( "," ) )
                           : "" );
+        oos.writeBoolean( accessToken != null );
+        if ( accessToken != null )
+        {
+            oos.writeUTF( accessToken.getIssuer() );
+            oos.writeObject( accessToken.getClientId() );
+            oos.writeObject( accessToken.getGrantId() );
+            oos.writeObject( accessToken.getScope().toArray( String[]::new ) );
+            oos.writeObject( accessToken.getAudience().toArray( String[]::new ) );
+        }
     }
 
     /**
-     * The actor and the restriction were added later, in that order. A stream written before them
-     * ends early and reads without them.
+     * The actor, the restriction and the access token were added later, in that order. A stream
+     * written before any of them ends early and reads without them.
      */
     private static PrincipalKey deserializeActor( final ObjectInputStream ois )
         throws IOException
@@ -184,6 +207,31 @@ public final class AuthenticationInfo
         return restricted
             ? RoleRestriction.to( keys.isEmpty() ? PrincipalKeys.empty() : PrincipalKeys.from( keys.split( "," ) ) )
             : RoleRestriction.none();
+    }
+
+    private static @Nullable AccessTokenInfo deserializeAccessToken( final ObjectInputStream ois )
+        throws IOException, ClassNotFoundException
+    {
+        final boolean present;
+        try
+        {
+            present = ois.readBoolean();
+        }
+        catch ( EOFException e )
+        {
+            return null;
+        }
+        if ( !present )
+        {
+            return null;
+        }
+        return AccessTokenInfo.create()
+            .issuer( ois.readUTF() )
+            .clientId( (String) ois.readObject() )
+            .grantId( (String) ois.readObject() )
+            .scope( List.of( (String[]) ois.readObject() ) )
+            .audience( List.of( (String[]) ois.readObject() ) )
+            .build();
     }
 
     private void serializeUser( final ObjectOutputStream oos, final User user )
@@ -225,13 +273,14 @@ public final class AuthenticationInfo
         }
         final AuthenticationInfo that = (AuthenticationInfo) o;
         return authenticated == that.authenticated && Objects.equals( user, that.user ) && Objects.equals( principals, that.principals ) &&
-            Objects.equals( actor, that.actor ) && Objects.equals( restriction, that.restriction );
+            Objects.equals( actor, that.actor ) && Objects.equals( restriction, that.restriction ) &&
+            Objects.equals( accessToken, that.accessToken );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( user, principals, authenticated, actor, restriction );
+        return Objects.hash( user, principals, authenticated, actor, restriction, accessToken );
     }
 
     public static final class Builder
@@ -245,6 +294,8 @@ public final class AuthenticationInfo
         private PrincipalKey actor;
 
         private RoleRestriction restriction = RoleRestriction.none();
+
+        private @Nullable AccessTokenInfo accessToken;
 
         private Builder( final boolean authenticated )
         {
@@ -260,6 +311,7 @@ public final class AuthenticationInfo
             this.principals.addAll( authInfo.getPrincipals() );
             this.actor = authInfo.getActor();
             this.restriction = authInfo.getRestriction();
+            this.accessToken = authInfo.getAccessToken();
         }
 
         public Builder user( final User user )
@@ -299,6 +351,15 @@ public final class AuthenticationInfo
         public Builder restriction( final RoleRestriction restriction )
         {
             this.restriction = requireNonNull( restriction );
+            return this;
+        }
+
+        /**
+         * The access token used for authentication, if any.
+         */
+        public Builder accessToken( final @Nullable AccessTokenInfo accessToken )
+        {
+            this.accessToken = accessToken;
             return this;
         }
 

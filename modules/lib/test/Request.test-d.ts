@@ -903,9 +903,10 @@ const tokenRequest: Request = new RequestImplementation({
     scheme: 'https',
     webSocket: false,
     locales: ['en'],
-    accessToken: {clientId: 'my-cli', grantId: null, scope: ['content:read'], audience: ['api']},
+    accessToken: {issuer: 'xp', clientId: 'my-cli', grantId: null, scope: ['content:read'], audience: ['api']},
 }).toObject();
 expectAssignable<Request>(tokenRequest);
 expectAssignable<string[] | undefined>(tokenRequest.accessToken?.scope);
 expectNotAssignable<Request>({...tokenRequest, accessToken: {scope: 'content:read'}});
+expectNotAssignable<Request>({...tokenRequest, accessToken: {clientId: null, grantId: null, scope: [], audience: []}});
 

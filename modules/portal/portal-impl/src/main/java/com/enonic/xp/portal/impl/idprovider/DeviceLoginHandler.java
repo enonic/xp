@@ -27,7 +27,6 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
-import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -316,7 +315,7 @@ public class DeviceLoginHandler
         } );
         kept.retainAll( pending.get().scope() );
         final RoleRestriction restriction =
-            restriction( settings.getScopes(), kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
+            settings.restrictionFor( kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
         if ( !store.resolve( idProvider, userCode, approve, user.get().getKey(), kept, restriction ) )
         {
             return render( request, idProvider,
@@ -474,7 +473,7 @@ public class DeviceLoginHandler
      */
     private static void requireInteractiveSignIn( final PortalRequest request )
     {
-        if ( request.getRawRequest() != null && request.getRawRequest().getAttribute( AccessTokenFilter.CLAIMS_ATTRIBUTE ) != null )
+        if ( ContextAccessor.current().getAuthInfo().getAccessToken() != null )
         {
             throw WebException.forbidden( "Device sign-in must be approved from a signed-in browser, not with an access token" );
         }
@@ -541,23 +540,6 @@ public class DeviceLoginHandler
             }
         }
         return scopes;
-    }
-
-    /**
-     * The restriction for a grant of the given scopes: the roles the catalogue says they imply, or
-     * none if there is no catalogue. The caller narrows it by the approver's own restriction.
-     */
-    private static RoleRestriction restriction( final Map<String, VirtualHostIdProvider.Scope> catalogue, final Set<String> scope )
-    {
-        if ( catalogue.isEmpty() )
-        {
-            return RoleRestriction.none();
-        }
-        return RoleRestriction.to( scope.stream()
-                                            .map( catalogue::get )
-                                            .filter( java.util.Objects::nonNull )
-                                            .flatMap( s -> s.roles().stream() )
-                                            .collect( PrincipalKeys.collector() ) );
     }
 
     /**
