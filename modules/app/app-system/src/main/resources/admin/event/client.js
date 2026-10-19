@@ -7,7 +7,8 @@
  * every other admin page of the browser, while a copy of its own would not.
  *
  *     const {connect} = await import(`${eventsUrl}/client.js`);
- *     connect({onEvent: e => ..., onLoss: l => ..., onSessionEnd: () => ...}).subscribe(topic);
+ *     connect({onEvent: e => ..., onLoss: l => ..., onConnectionChange: c => ..., onSessionEnd: () => ...})
+ *         .subscribe(topic);
  *
  * `onLoss` reports how many messages were missed, or null when that cannot be known. The topics a
  * connection did not subscribe to are not delivered to it, whatever else the worker carries.
@@ -33,14 +34,16 @@ const SESSION_END_CLOSE_CODE = 1008;
  */
 export class AdminEventsSocket {
 
-    constructor(url, handlers) {
+    constructor(url, handlers, probeUrl) {
         this.url = url;
         this.handlers = handlers;
+        this.probeUrl = probeUrl;
         this.subscriptions = new Map();
         this.ws = null;
         this.reconnectAttempts = 0;
         this.closed = false;
         this.sessionEnded = false;
+        this.connected = null;
     }
 
     subscribe(topic) {
@@ -82,6 +85,7 @@ export class AdminEventsSocket {
 
         const ws = new WebSocket(this.url, [WS_PROTOCOL]);
         this.ws = ws;
+        let opened = false;
 
         this.connectionTimeout = setTimeout(() => {
             if (ws.readyState === WebSocket.CONNECTING) {
@@ -90,8 +94,10 @@ export class AdminEventsSocket {
         }, CONNECTION_TIMEOUT);
 
         ws.onopen = () => {
+            opened = true;
             clearTimeout(this.connectionTimeout);
             this.reconnectAttempts = 0;
+            this.setConnected(true);
             this.resubscribeAll();
 
             this.pingInterval = setInterval(() => {
@@ -109,9 +115,13 @@ export class AdminEventsSocket {
             if (this.closed) {
                 return;
             }
+            this.setConnected(false);
             if (event.code === SESSION_END_CLOSE_CODE) {
-                this.sessionEnded = true;
-                this.handlers.onSessionEnd();
+                this.endSession();
+                return;
+            }
+            if (!opened && this.probeUrl) {
+                this.probeSession();
                 return;
             }
             this.scheduleReconnect();
@@ -245,6 +255,42 @@ export class AdminEventsSocket {
         this.handlers.onEvent({topic, data: message.data});
     }
 
+    setConnected(connected) {
+        if (connected === this.connected || (this.connected === null && !connected)) {
+            return;
+        }
+        this.connected = connected;
+        if (this.handlers.onConnectionChange) {
+            this.handlers.onConnectionChange(connected);
+        }
+    }
+
+    endSession() {
+        this.sessionEnded = true;
+        if (this.handlers.onSessionEnd) {
+            this.handlers.onSessionEnd();
+        }
+    }
+
+    probeSession() {
+        fetch(this.probeUrl, {cache: 'no-store', redirect: 'manual'})
+            .then(response => {
+                if (this.closed) {
+                    return;
+                }
+                if (response.type === 'opaqueredirect' || response.status === 401 || response.status === 403) {
+                    this.endSession();
+                } else {
+                    this.scheduleReconnect();
+                }
+            })
+            .catch(() => {
+                if (!this.closed) {
+                    this.scheduleReconnect();
+                }
+            });
+    }
+
     reconnect() {
         if (this.ws) {
             this.ws.close();
@@ -283,7 +329,7 @@ export function socketUrl() {
  * socket of this page's own when it does not.
  *
  * @param handlers `{onEvent, onLoss}`, called only for the topics this connection subscribed to,
- * and an optional `onSessionEnd`
+ * and optional `onConnectionChange` and `onSessionEnd`
  * @returns `{subscribe(topic)}`
  */
 export function connect(handlers) {
@@ -293,6 +339,12 @@ export function connect(handlers) {
         if (message.type === 'session-end') {
             if (handlers.onSessionEnd) {
                 handlers.onSessionEnd();
+            }
+            return;
+        }
+        if (message.type === 'connection') {
+            if (handlers.onConnectionChange) {
+                handlers.onConnectionChange(message.connected);
             }
             return;
         }
@@ -316,8 +368,9 @@ export function connect(handlers) {
         socket = new AdminEventsSocket(socketUrl(), {
             onEvent: event => deliver({type: 'event', topic: event.topic, data: event.data}),
             onLoss: loss => deliver({type: 'loss', topic: loss.topic, count: loss.count}),
+            onConnectionChange: connected => deliver({type: 'connection', connected}),
             onSessionEnd: () => deliver({type: 'session-end'}),
-        });
+        }, import.meta.url);
         socket.connect();
         topics.forEach(topic => socket.subscribe(topic));
     };
@@ -331,7 +384,8 @@ export function connect(handlers) {
                 startSocket();
             };
             worker.port.onmessage = e => {
-                if (e.data && (typeof e.data.topic === 'string' || e.data.type === 'session-end')) {
+                if (e.data && (typeof e.data.topic === 'string' || e.data.type === 'session-end' ||
+                               e.data.type === 'connection')) {
                     deliver(e.data);
                 }
             };
@@ -372,8 +426,9 @@ function startSharedWorker() {
     const socket = new AdminEventsSocket(socketUrl(), {
         onEvent: event => broadcast({type: 'event', topic: event.topic, data: event.data}),
         onLoss: loss => broadcast({type: 'loss', topic: loss.topic, count: loss.count}),
+        onConnectionChange: connected => broadcast({type: 'connection', connected}),
         onSessionEnd: () => broadcast({type: 'session-end'}),
-    });
+    }, import.meta.url);
     socket.connect();
 
     function broadcast(message) {
@@ -392,6 +447,8 @@ function startSharedWorker() {
 
         if (socket.sessionEnded) {
             socket.connect();
+        } else if (socket.connected === false) {
+            port.postMessage({type: 'connection', connected: false});
         }
 
         port.onmessage = e => {
