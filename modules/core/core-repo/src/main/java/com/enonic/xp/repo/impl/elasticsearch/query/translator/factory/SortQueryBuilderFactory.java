@@ -2,8 +2,10 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.factory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -31,19 +33,19 @@ public class SortQueryBuilderFactory
         super( fieldNameResolver );
     }
 
-    public List<SortBuilder> create( final Collection<OrderExpr> orderExpressions )
+    /**
+     * The sorts for the order expressions, and the positions of the sorts added on top of what was asked for: the numeric sort in front
+     * of a field and the fallback behind a language sort. Hits leave the values of those positions out, so their sort values still hold
+     * one value per order expression.
+     */
+    public record Sorts(List<SortBuilder> sortBuilders, Set<Integer> hiddenPositions)
     {
-        return doCreate( orderExpressions );
     }
 
-    private List<SortBuilder> doCreate( final Collection<OrderExpr> orderExpressions )
+    public Sorts createSorts( final Collection<OrderExpr> orderExpressions )
     {
-        if ( orderExpressions.isEmpty() )
-        {
-            return new ArrayList<>();
-        }
-
-        List<SortBuilder> sortBuilders = new ArrayList<>();
+        final List<SortBuilder> sortBuilders = new ArrayList<>();
+        final Set<Integer> hiddenPositions = new HashSet<>();
 
         for ( final OrderExpr orderExpr : orderExpressions )
         {
@@ -51,11 +53,12 @@ public class SortQueryBuilderFactory
             {
                 final FieldOrderExpr fieldOrderExpr = (FieldOrderExpr) orderExpr;
                 final IndexPath field = fieldOrderExpr.getField().getIndexPath();
-                addIfNotNull( sortBuilders, createNumberSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection() ) );
+                addHidden( sortBuilders, hiddenPositions,
+                           createNumberSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection() ) );
                 sortBuilders.add(
                     createFieldSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(), fieldOrderExpr.getLanguage() ) );
-                addIfNotNull( sortBuilders, createFallbackSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(),
-                                                                       fieldOrderExpr.getLanguage() ) );
+                addHidden( sortBuilders, hiddenPositions,
+                           createFallbackSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(), fieldOrderExpr.getLanguage() ) );
             }
             else if ( orderExpr instanceof DynamicOrderExpr )
             {
@@ -64,13 +67,13 @@ public class SortQueryBuilderFactory
             else if ( orderExpr instanceof DslOrderExpr )
             {
                 final DslSortBuilderFactory dslSortBuilderFactory = new DslSortBuilderFactory( fieldNameResolver );
-                addIfNotNull( sortBuilders, dslSortBuilderFactory.createNumberSort( (DslOrderExpr) orderExpr ) );
+                addHidden( sortBuilders, hiddenPositions, dslSortBuilderFactory.createNumberSort( (DslOrderExpr) orderExpr ) );
                 sortBuilders.add( dslSortBuilderFactory.create( (DslOrderExpr) orderExpr ) );
-                addIfNotNull( sortBuilders, dslSortBuilderFactory.createFallback( (DslOrderExpr) orderExpr ) );
+                addHidden( sortBuilders, hiddenPositions, dslSortBuilderFactory.createFallback( (DslOrderExpr) orderExpr ) );
             }
         }
 
-        return sortBuilders;
+        return new Sorts( sortBuilders, Set.copyOf( hiddenPositions ) );
     }
 
     /**
@@ -135,10 +138,12 @@ public class SortQueryBuilderFactory
         return fieldSortBuilder;
     }
 
-    private static void addIfNotNull( final List<SortBuilder> sortBuilders, final @Nullable SortBuilder sortBuilder )
+    private static void addHidden( final List<SortBuilder> sortBuilders, final Set<Integer> hiddenPositions,
+                                   final @Nullable SortBuilder sortBuilder )
     {
         if ( sortBuilder != null )
         {
+            hiddenPositions.add( sortBuilders.size() );
             sortBuilders.add( sortBuilder );
         }
     }

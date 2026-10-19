@@ -13,6 +13,7 @@ import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.index.ChildOrder;
 import com.enonic.xp.index.IndexPath;
 import com.enonic.xp.node.CreateNodeParams;
+import com.enonic.xp.node.FindNodesByQueryResult;
 import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodePath;
@@ -21,6 +22,7 @@ import com.enonic.xp.node.RefreshMode;
 import com.enonic.xp.query.expr.DslOrderExpr;
 import com.enonic.xp.query.expr.FieldOrderExpr;
 import com.enonic.xp.query.expr.OrderExpr;
+import com.enonic.xp.util.GeoPoint;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -158,6 +160,43 @@ class FindNodesByQueryCommandTest_order_numeric
             FieldOrderExpr.create( IndexPath.from( "price" ), OrderExpr.Direction.ASC, Locale.forLanguageTag( "no" ) );
 
         assertThat( query( orderExpr ) ).containsExactly( "l-5", "d-1.5", "d2.5", "l3", "l100", "d100.5" );
+    }
+
+    @Test
+    void sort_values_hold_one_value_per_order_expression()
+    {
+        child( "l3", d -> {
+            d.setString( "title", "apple" );
+            d.setLong( "price", 3L );
+            d.setGeoPoint( "location", GeoPoint.from( "1,1" ) );
+        } );
+        nodeService.refresh( RefreshMode.ALL );
+
+        final List<Object> values =
+            sortValues( doQuery( "_parentPath = '/parent' ORDER BY title ASC, price DESC, geoDistance('location', '0,0')" ) );
+
+        assertThat( values ).hasSize( 3 );
+        assertThat( values.get( 0 ) ).hasToString( "apple" );
+        assertThat( values.get( 2 ) ).isInstanceOf( Double.class );
+        assertThat( values ).noneMatch( value -> value instanceof Double number && number.isInfinite() );
+    }
+
+    @Test
+    void language_sort_values_hold_one_value()
+    {
+        child( "a", d -> d.setString( "title", "apple" ) );
+        nodeService.refresh( RefreshMode.ALL );
+
+        final FieldOrderExpr orderExpr =
+            FieldOrderExpr.create( IndexPath.from( "title" ), OrderExpr.Direction.ASC, Locale.forLanguageTag( "no" ) );
+
+        assertThat( sortValues( doFindByQuery( NodeQuery.create().parent( parent.path() ).addOrderBy( orderExpr ).build() ) ) ).hasSize(
+            1 );
+    }
+
+    private List<Object> sortValues( final FindNodesByQueryResult result )
+    {
+        return result.getNodeHits().iterator().next().getSort().getValues();
     }
 
     private void createMixedPrices()
