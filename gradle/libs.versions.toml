@@ -58,7 +58,7 @@ felix-eventadmin = { module = "org.apache.felix:org.apache.felix.eventadmin", ve
 felix-configadmin = { module = "org.apache.felix:org.apache.felix.configadmin", version = "1.9.26" }
 felix-scr = { module = "org.apache.felix:org.apache.felix.scr", version = "2.2.18" }
 felix-framework = { module = "org.apache.felix:org.apache.felix.framework", version = "7.0.5" }
-felix-utils = { module = "org.apache.felix:org.apache.felix.utils", version = "1.11.8" }
+felix-utils = { module = "org.apache.felix:org.apache.felix.utils", version = "1.11.10" }
 felix-log = { module = "org.apache.felix:org.apache.felix.log", version = "1.3.2" }
 
 bcprov-jdk18on = { module = "org.bouncycastle:bcprov-jdk18on", version = "1.86" }
