@@ -3,8 +3,11 @@ package com.enonic.xp.repo.impl.elasticsearch.query.translator.resolver;
 import java.util.Locale;
 import java.util.Set;
 
+import org.jspecify.annotations.Nullable;
+
 import com.enonic.xp.data.Value;
 import com.enonic.xp.index.IndexPath;
+import com.enonic.xp.node.NodeIndexPath;
 import com.enonic.xp.repo.impl.index.IndexLanguageController;
 import com.enonic.xp.repo.impl.index.IndexValueType;
 import com.enonic.xp.repo.impl.index.StaticIndexValueType;
@@ -14,6 +17,10 @@ abstract class AbstractQueryFieldNameResolver
 {
     private static final Set<IndexPath> BUILT_IN_FIELDS =
         Set.of( IndexPath.from( "_score" ), IndexPath.from( "_id" ), IndexPath.from( "_doc" ) );
+
+    private static final Set<IndexPath> SINGLE_TYPE_SYSTEM_FIELDS =
+        Set.of( NodeIndexPath.TIMESTAMP, NodeIndexPath.VERSION, NodeIndexPath.NODE_TYPE, NodeIndexPath.MANUAL_ORDER_VALUE,
+                NodeIndexPath.PATH, NodeIndexPath.NAME, NodeIndexPath.PARENT_PATH );
 
     public String resolve( final IndexPath queryFieldName, final IndexValueType indexValueType )
     {
@@ -65,5 +72,15 @@ abstract class AbstractQueryFieldNameResolver
         return resolve( queryFieldName, language == null
             ? StaticIndexValueType.ORDERBY
             : IndexLanguageController.resolveOrderByIndexValueType( language ) );
+    }
+
+    @Override
+    public @Nullable String resolveNumberOrderByFieldName( final IndexPath queryFieldName )
+    {
+        if ( BUILT_IN_FIELDS.contains( queryFieldName ) || SINGLE_TYPE_SYSTEM_FIELDS.contains( queryFieldName ) )
+        {
+            return null;
+        }
+        return resolve( queryFieldName, StaticIndexValueType.NUMBER );
     }
 }

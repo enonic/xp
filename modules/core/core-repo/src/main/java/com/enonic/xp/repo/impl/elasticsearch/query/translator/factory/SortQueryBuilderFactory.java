@@ -24,6 +24,8 @@ public class SortQueryBuilderFactory
 {
     private static final String UNMAPPED_TYPE = "long";
 
+    private static final String NUMBER_UNMAPPED_TYPE = "double";
+
     public SortQueryBuilderFactory( final QueryFieldNameResolver fieldNameResolver )
     {
         super( fieldNameResolver );
@@ -49,6 +51,7 @@ public class SortQueryBuilderFactory
             {
                 final FieldOrderExpr fieldOrderExpr = (FieldOrderExpr) orderExpr;
                 final IndexPath field = fieldOrderExpr.getField().getIndexPath();
+                addIfNotNull( sortBuilders, createNumberSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection() ) );
                 sortBuilders.add(
                     createFieldSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(), fieldOrderExpr.getLanguage() ) );
                 addIfNotNull( sortBuilders, createFallbackSortBuilder( fieldNameResolver, field, fieldOrderExpr.getDirection(),
@@ -61,6 +64,7 @@ public class SortQueryBuilderFactory
             else if ( orderExpr instanceof DslOrderExpr )
             {
                 final DslSortBuilderFactory dslSortBuilderFactory = new DslSortBuilderFactory( fieldNameResolver );
+                addIfNotNull( sortBuilders, dslSortBuilderFactory.createNumberSort( (DslOrderExpr) orderExpr ) );
                 sortBuilders.add( dslSortBuilderFactory.create( (DslOrderExpr) orderExpr ) );
                 addIfNotNull( sortBuilders, dslSortBuilderFactory.createFallback( (DslOrderExpr) orderExpr ) );
             }
@@ -97,6 +101,27 @@ public class SortQueryBuilderFactory
         final String fieldName = fieldNameResolver.resolveOrderByFieldName( field, language );
         final String fallbackFieldName = fieldNameResolver.resolveOrderByFieldName( field, null );
         return fallbackFieldName.equals( fieldName ) ? null : createFieldSortBuilder( fallbackFieldName, direction );
+    }
+
+    /**
+     * Creates the numeric sort that goes before the order-by value of a field. The order-by value encodes the type before the value,
+     * which puts every Double before every Long; the numeric field holds both as a double. Documents without a number there, such as
+     * strings, sort after the numbers and are then ordered by the order-by value.
+     */
+    public static @Nullable SortBuilder createNumberSortBuilder( final QueryFieldNameResolver fieldNameResolver, final IndexPath field,
+                                                                 final OrderExpr.@Nullable Direction direction )
+    {
+        final String fieldName = fieldNameResolver.resolveNumberOrderByFieldName( field );
+        if ( fieldName == null )
+        {
+            return null;
+        }
+        final FieldSortBuilder fieldSortBuilder = new FieldSortBuilder( fieldName );
+        if ( direction != null )
+        {
+            fieldSortBuilder.order( SortOrder.valueOf( direction.name() ) );
+        }
+        return fieldSortBuilder.missing( "_last" ).unmappedType( NUMBER_UNMAPPED_TYPE );
     }
 
     private static FieldSortBuilder createFieldSortBuilder( final String fieldName, final OrderExpr.@Nullable Direction direction )
