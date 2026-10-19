@@ -17,7 +17,7 @@
 const WS_PROTOCOL = 'json';
 
 // a shared worker is shared by script url and name, so both are part of what admin tools agree on
-const WORKER_NAME = 'xp-admin-events-socket';
+const WORKER_NAME = 'xp-admin-events-socket-2';
 
 const CONNECTION_TIMEOUT = 60000;
 const PING_INTERVAL = 50000;
