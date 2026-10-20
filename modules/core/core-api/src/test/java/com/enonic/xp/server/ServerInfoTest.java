@@ -34,4 +34,11 @@ class ServerInfoTest
         assertEquals( installDir, info.getInstallDir() );
         assertNotNull( info.getBuildInfo() );
     }
+
+    @Test
+    void nameDefaults()
+    {
+        assertEquals( ServerInfo.DEFAULT_NAME, new ServerInfo( new Properties() ).getName() );
+        assertEquals( "xp", ServerInfo.DEFAULT_NAME );
+    }
 }

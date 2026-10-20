@@ -13,7 +13,15 @@ public final class UuidHelper
 
     public static UUID newUUIDv7()
     {
-        final long timestamp = System.currentTimeMillis();
+        return newUUIDv7( System.currentTimeMillis() );
+    }
+
+    /**
+     * A version 7 UUID whose time part is the given instant, in milliseconds since the epoch.
+     */
+    public static UUID newUUIDv7( final long epochMilli )
+    {
+        final long timestamp = epochMilli;
 
         final byte[] random = new byte[10];
         RANDOM.nextBytes( random );
