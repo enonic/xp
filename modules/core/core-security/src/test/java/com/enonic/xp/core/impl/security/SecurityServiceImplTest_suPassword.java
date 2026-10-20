@@ -13,6 +13,7 @@ import com.enonic.xp.core.internal.security.MessageDigests;
 import com.enonic.xp.node.NodeService;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.UsernamePasswordAuthToken;
@@ -46,6 +47,35 @@ class SecurityServiceImplTest_suPassword
         assertThat( authInfo.getUser().getKey() ).isEqualTo( PrincipalKey.ofSuperUser() );
         assertThat( authInfo.getPrincipals() ).containsExactlyInAnyOrder( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN, RoleKeys.AUTHENTICATED,
                                                                           RoleKeys.EVERYONE );
+        verifyNoInteractions( nodeService );
+    }
+
+    @Test
+    void authenticate_su_restricted_principals()
+    {
+        final String password = "superSecret123";
+        final SecurityServiceImpl securityService = createSecurityService( password );
+
+        final AuthenticationInfo none = securityService.authenticate(
+            new UsernamePasswordAuthToken( IdProviderKey.system(), PrincipalKey.ofSuperUser().getId(), password, RoleRestriction.to() ) );
+        assertThat( none.isAuthenticated() ).isTrue();
+        assertThat( none.getPrincipals() ).containsExactlyInAnyOrder( PrincipalKey.ofSuperUser(), RoleKeys.AUTHENTICATED,
+                                                                      RoleKeys.EVERYONE );
+        assertThat( none.getRestriction() ).isEqualTo( RoleRestriction.to() );
+
+        final AuthenticationInfo admin = securityService.authenticate(
+            new UsernamePasswordAuthToken( IdProviderKey.system(), PrincipalKey.ofSuperUser().getId(), password,
+                                           RoleRestriction.to( RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN ) ) );
+        assertThat( admin.getPrincipals() ).as( "su is an administrator, so it gains every named role" )
+            .containsExactlyInAnyOrder( PrincipalKey.ofSuperUser(), RoleKeys.ADMIN, RoleKeys.ADMIN_LOGIN, RoleKeys.AUTHENTICATED,
+                                        RoleKeys.EVERYONE );
+
+        final PrincipalKey market = PrincipalKey.ofRole( "cms.project.market.editor" );
+        final AuthenticationInfo scoped = securityService.authenticate(
+            new UsernamePasswordAuthToken( IdProviderKey.system(), PrincipalKey.ofSuperUser().getId(), password,
+                                           RoleRestriction.to( market ) ) );
+        assertThat( scoped.getPrincipals() ).as( "and loses system.admin when it is not named" )
+            .containsExactlyInAnyOrder( PrincipalKey.ofSuperUser(), market, RoleKeys.AUTHENTICATED, RoleKeys.EVERYONE );
         verifyNoInteractions( nodeService );
     }
 

@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.security.PrincipalKey;
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 
@@ -37,6 +38,8 @@ public final class AuthenticationInfo
 
     private transient PrincipalKey actor;
 
+    private transient RoleRestriction restriction;
+
     private AuthenticationInfo( final Builder builder )
     {
         this.authenticated = builder.authenticated;
@@ -45,11 +48,13 @@ public final class AuthenticationInfo
             this.user = requireNonNull( builder.user, "user is required" );
             builder.principals.add( user.getKey() );
             this.actor = builder.actor;
+            this.restriction = builder.restriction;
         }
         else
         {
             this.user = null;
             this.actor = null;
+            this.restriction = RoleRestriction.none();
         }
         this.principals = PrincipalKeys.from( builder.principals.build() );
     }
@@ -70,9 +75,17 @@ public final class AuthenticationInfo
     }
 
     /**
-     * Returns the principal acting through this authentication when it is not the user: a service
-     * making the call on the user's behalf, named so the audit log records both. Null when the user
-     * acts for themselves, which every login is unless it says otherwise.
+     * The restriction this authentication was established under, or none. The principals already
+     * have it applied.
+     */
+    public RoleRestriction getRestriction()
+    {
+        return restriction;
+    }
+
+    /**
+     * The principal acting on the user's behalf, such as a service making a call for them, or null
+     * if the user acts for themselves. Recorded in the audit log next to the user.
      */
     public @Nullable PrincipalKey getActor()
     {
@@ -117,6 +130,7 @@ public final class AuthenticationInfo
         final User deserializedUser = deserializeUser( ois );
         this.user = this.authenticated ? deserializedUser : null;
         this.actor = this.authenticated ? deserializeActor( ois ) : null;
+        this.restriction = this.authenticated ? deserializeRestriction( ois ) : RoleRestriction.none();
     }
 
     @Serial
@@ -128,11 +142,15 @@ public final class AuthenticationInfo
         oos.writeUTF( principalKeys );
         serializeUser( oos, authenticated ? this.user : User.anonymous() );
         oos.writeUTF( actor == null ? "" : actor.toString() );
+        oos.writeBoolean( restriction.isRestricted() );
+        oos.writeUTF( restriction instanceof RoleRestriction.To( PrincipalKeys keys )
+                          ? keys.stream().map( PrincipalKey::toString ).collect( Collectors.joining( "," ) )
+                          : "" );
     }
 
     /**
-     * The actor was added after the rest: a stream written before it ends with the user, and reads
-     * as one without an actor.
+     * The actor and the restriction were added later, in that order. A stream written before them
+     * ends early and reads without them.
      */
     private static PrincipalKey deserializeActor( final ObjectInputStream ois )
         throws IOException
@@ -147,6 +165,25 @@ public final class AuthenticationInfo
             return null;
         }
         return actor.isEmpty() ? null : PrincipalKey.from( actor );
+    }
+
+    private static RoleRestriction deserializeRestriction( final ObjectInputStream ois )
+        throws IOException
+    {
+        final boolean restricted;
+        final String keys;
+        try
+        {
+            restricted = ois.readBoolean();
+            keys = ois.readUTF();
+        }
+        catch ( EOFException e )
+        {
+            return RoleRestriction.none();
+        }
+        return restricted
+            ? RoleRestriction.to( keys.isEmpty() ? PrincipalKeys.empty() : PrincipalKeys.from( keys.split( "," ) ) )
+            : RoleRestriction.none();
     }
 
     private void serializeUser( final ObjectOutputStream oos, final User user )
@@ -188,13 +225,13 @@ public final class AuthenticationInfo
         }
         final AuthenticationInfo that = (AuthenticationInfo) o;
         return authenticated == that.authenticated && Objects.equals( user, that.user ) && Objects.equals( principals, that.principals ) &&
-            Objects.equals( actor, that.actor );
+            Objects.equals( actor, that.actor ) && Objects.equals( restriction, that.restriction );
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash( user, principals, authenticated, actor );
+        return Objects.hash( user, principals, authenticated, actor, restriction );
     }
 
     public static final class Builder
@@ -206,6 +243,8 @@ public final class AuthenticationInfo
         private final boolean authenticated;
 
         private PrincipalKey actor;
+
+        private RoleRestriction restriction = RoleRestriction.none();
 
         private Builder( final boolean authenticated )
         {
@@ -220,6 +259,7 @@ public final class AuthenticationInfo
             this.authenticated = authInfo.isAuthenticated();
             this.principals.addAll( authInfo.getPrincipals() );
             this.actor = authInfo.getActor();
+            this.restriction = authInfo.getRestriction();
         }
 
         public Builder user( final User user )
@@ -249,6 +289,16 @@ public final class AuthenticationInfo
         public Builder actor( final @Nullable PrincipalKey actor )
         {
             this.actor = actor;
+            return this;
+        }
+
+        /**
+         * The restriction the authentication is established under; none by default. It is recorded,
+         * not applied: the principals are stored as given.
+         */
+        public Builder restriction( final RoleRestriction restriction )
+        {
+            this.restriction = requireNonNull( restriction );
             return this;
         }
 
