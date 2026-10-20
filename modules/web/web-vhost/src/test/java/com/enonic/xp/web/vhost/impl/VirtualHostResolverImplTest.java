@@ -4,13 +4,17 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 import com.enonic.xp.web.vhost.VirtualHostResolver;
 import com.enonic.xp.web.vhost.VirtualHostService;
 import com.enonic.xp.web.vhost.impl.mapping.VirtualHostIdProvidersMapping;
@@ -335,6 +339,28 @@ class VirtualHostResolverImplTest
         when( statusReq.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.STATISTICS_CONNECTOR );
 
         assertNull( virtualHostResolver.resolveVirtualHost( statusReq ) );
+    }
+
+    @Test
+    void resolved_host_keeps_the_id_providers_settings()
+    {
+        final VirtualHostIdProvider settings = VirtualHostIdProvider.create()
+            .flows( Set.of( "login", "device" ) )
+            .scopes( Map.of( "content:read", new VirtualHostIdProvider.Scope( PrincipalKeys.from( "role:cms.project.site.viewer" ), true ) ) )
+            .build();
+        final VirtualHostIdProvidersMapping idProviders =
+            VirtualHostIdProvidersMapping.create().addIdProviderWithSettings( IdProviderKey.system(), settings ).build();
+        when( virtualHostService.getVirtualHosts() ).thenReturn(
+            List.of( new VirtualHostMapping( "admin", "domain.com", "/admin", "/admin", idProviders, 1 ) ) );
+
+        final HttpServletRequest req = mock( HttpServletRequest.class );
+        when( req.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        when( req.getServerName() ).thenReturn( "domain.com" );
+        when( req.getPathInfo() ).thenReturn( "/admin" );
+
+        final VirtualHost resolved = new VirtualHostResolverImpl( virtualHostService ).resolveVirtualHost( req );
+        assertNotNull( resolved );
+        assertEquals( settings, resolved.getIdProviders().get( IdProviderKey.system() ) );
     }
 
     private VirtualHostMapping createVirtualHostMapping( String name, String host, String source, String target, Integer order,

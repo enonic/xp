@@ -3,7 +3,6 @@ package com.enonic.xp.portal.impl.mapper;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -11,12 +10,9 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.impl.idprovider.AccessTokenFilter;
 import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.script.serializer.MapSerializable;
-import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 public final class PortalRequestMapper
     implements MapSerializable
@@ -67,17 +63,12 @@ public final class PortalRequestMapper
             gen.value( "contextPath", this.request.getContextPath() );
         }
 
-        final IdProviderKey idProviderKey = this.request.getIdProvider() == null ? null : this.request.getIdProvider().getKey();
-        if ( idProviderKey != null && this.request.getRawRequest() != null )
+        final VirtualHostIdProvider idProviderSettings = this.request.getIdProviderSettings();
+        if ( idProviderSettings != null )
         {
-            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( this.request.getRawRequest() );
-            final VirtualHostIdProvider idProvider = virtualHost.getIdProviders().get( idProviderKey );
-            final Set<String> flows = idProvider == null ? Set.of() : idProvider.getFlows();
-            // An absent list means no flow restriction: the id provider app applies its own defaults.
-            if ( !flows.isEmpty() )
-            {
-                gen.value( "idProviderFlows", flows.stream().sorted().toList() );
-            }
+            gen.map( "idProviderSettings" );
+            new IdProviderSettingsMapper( idProviderSettings, this.request.getVirtualHost().getAudience() ).serialize( gen );
+            gen.end();
         }
 
         final AccessTokenClaims accessToken = this.request.getRawRequest() == null

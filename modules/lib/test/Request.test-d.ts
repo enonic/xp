@@ -847,7 +847,8 @@ const deviceVerificationRequest: Request = new RequestImplementation({
         user: {key: 'user:system:alice', login: 'alice', displayName: 'Alice'},
         userCode: 'BCDF-GHJK',
         clientId: 'my-cli',
-        scope: [],
+        scope: [{id: 'content:read', roles: ['role:cms.project.site.viewer'], required: true}],
+        unrestricted: false,
         audience: ['api'],
         csrf: 'token',
     },
@@ -856,6 +857,35 @@ expectAssignable<Request>(deviceVerificationRequest);
 if (deviceVerificationRequest.deviceLogin?.action === 'confirm') {
     expectAssignable<string>(deviceVerificationRequest.deviceLogin.csrf);
 }
+
+// Scenario: An id provider function sees the host's settings for its id provider
+const idProviderRequest: Request = new RequestImplementation({
+    cookies: {},
+    headers: {} as Record<string, string>,
+    host: 'localhost',
+    method: 'GET',
+    mode: 'live',
+    params: {},
+    path: '/_/idprovider/system/login',
+    port: 8080,
+    rawPath: '/_/idprovider/system/login',
+    remoteAddress: '127.0.0.1',
+    url: 'http://localhost:8080/_/idprovider/system/login',
+    scheme: 'http',
+    webSocket: false,
+    locales: ['en'],
+    idProviderSettings: {
+        flows: ['device', 'login', 'logout'],
+        audience: ['api'],
+        scopes: {
+            'content:read': {roles: ['role:cms.project.site.viewer'], required: true},
+            profile: {roles: [], required: false},
+        },
+    },
+}).toObject();
+expectAssignable<Request>(idProviderRequest);
+expectAssignable<string[] | undefined>(idProviderRequest.idProviderSettings?.flows);
+expectAssignable<boolean | undefined>(idProviderRequest.idProviderSettings?.scopes['content:read']?.required);
 
 // Scenario: A request authenticated with an access token XP issued carries what the token was granted
 const tokenRequest: Request = new RequestImplementation({

@@ -311,9 +311,10 @@ export interface DeviceLoginUser {
 
 export interface DeviceLoginScope {
     id: string;
-    description: string | null;
     /** The roles the scope implies; empty for a scope that is only a label. */
     roles: string[];
+    /** Whether the user may not drop it. */
+    required: boolean;
 }
 
 interface DeviceLoginBase {
@@ -333,6 +334,8 @@ export interface DeviceLoginConfirm extends DeviceLoginBase {
     /** How the client named itself; not a verified name. */
     clientId: string;
     scope: DeviceLoginScope[];
+    /** Whether the vhost has no scope catalogue, so an approved token carries the user's full memberships. */
+    unrestricted: boolean;
     audience: string[];
     /** The form must post it back as _csrf. */
     csrf: string;
@@ -352,6 +355,27 @@ export interface DeviceLoginWrongAccount extends DeviceLoginBase {
  * function as request.deviceLogin.
  */
 export type DeviceLogin = DeviceLoginEnter | DeviceLoginConfirm | DeviceLoginDone | DeviceLoginWrongAccount;
+
+/**
+ * An ID provider's settings on the virtual host serving the request (`mapping.<name>.idProvider.<idp>.*`
+ * and the mapping's audience): what the host serves for it and what may be granted there.
+ */
+export interface IdProviderSettings {
+    /** The flows the host serves for the ID provider, sorted. Empty means no restriction. */
+    flows: string[];
+    /** The audiences the host serves, sorted. Empty means it accepts only tokens naming XP's issuer. */
+    audience: string[];
+    /** The scope catalogue: each scope id with what it means. */
+    scopes: Record<string, IdProviderScope>;
+}
+
+/** A scope of the host's catalogue. */
+export interface IdProviderScope {
+    /** The roles the scope implies, sorted. Empty for a label-only scope. */
+    roles: string[];
+    /** Whether the user may not drop it at consent. */
+    required: boolean;
+}
 
 export interface RequestConstructorParams {
     body?: string;
@@ -383,6 +407,11 @@ export interface RequestConstructorParams {
     locales: string[];
     /** Present on a request authenticated with an access token. */
     accessToken?: RequestAccessToken;
+    /**
+     * The virtual host's settings for the request's ID provider, on the ID provider's own function
+     * calls when the host maps that provider.
+     */
+    idProviderSettings?: IdProviderSettings;
     /** Present when an id provider's deviceVerification function is called. */
     deviceLogin?: DeviceLogin;
 }

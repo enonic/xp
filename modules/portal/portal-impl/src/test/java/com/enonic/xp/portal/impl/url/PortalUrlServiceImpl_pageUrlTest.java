@@ -554,6 +554,7 @@ class PortalUrlServiceImpl_pageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/site/request-project/request-branch/a" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -591,6 +592,7 @@ class PortalUrlServiceImpl_pageUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/site/context-project/context-branch/a" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         final String url = ContextBuilder.create()
             .repositoryId( RepositoryId.from( "com.enonic.cms.context-project" ) )

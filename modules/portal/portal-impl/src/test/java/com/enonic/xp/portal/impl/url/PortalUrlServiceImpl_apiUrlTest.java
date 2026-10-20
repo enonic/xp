@@ -267,6 +267,7 @@ class PortalUrlServiceImpl_apiUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/site/request-project/request-branch" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -424,6 +425,7 @@ class PortalUrlServiceImpl_apiUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/webapp/app" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         final ApiUrlParams params = ApiUrlParams.create().setApi( DescriptorKey.from( "app:api" ) ).build();
 
@@ -455,6 +457,7 @@ class PortalUrlServiceImpl_apiUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/webapp/app" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );
@@ -478,6 +481,7 @@ class PortalUrlServiceImpl_apiUrlTest
         when( virtualHost.getSource() ).thenReturn( "/source" );
         when( virtualHost.getTarget() ).thenReturn( "/webapp/app" );
         when( portalRequest.getRawRequest().getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         when( req.getServerName() ).thenReturn( "localhost" );
         when( req.getScheme() ).thenReturn( "http" );

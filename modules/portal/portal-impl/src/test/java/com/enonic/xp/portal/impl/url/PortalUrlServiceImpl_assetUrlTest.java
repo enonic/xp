@@ -79,6 +79,8 @@ class PortalUrlServiceImpl_assetUrlTest
 
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
+        portalRequest.setVirtualHost( virtualHost );
+
         //Calls the method with a virtual mapping /main -> /
         when( virtualHost.getSource() ).thenReturn( "/main" );
         when( virtualHost.getTarget() ).thenReturn( "/" );
@@ -160,6 +162,7 @@ class PortalUrlServiceImpl_assetUrlTest
         when( virtualHost.getSource() ).thenReturn( "/" );
         when( virtualHost.getTarget() ).thenReturn( "/site/myproject/draft" );
         when( req.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        portalRequest.setVirtualHost( virtualHost );
 
         final String url = this.service.assetUrl( params );
         assertEquals( "http://localhost/_/asset/myapplication:0000000000000001/css/my.css", url );

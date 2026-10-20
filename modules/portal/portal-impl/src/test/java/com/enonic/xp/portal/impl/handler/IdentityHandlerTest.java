@@ -27,7 +27,6 @@ import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
-import com.enonic.xp.web.vhost.VirtualHostHelper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -89,6 +88,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider() ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        this.request.setVirtualHost( virtualHost );
     }
 
     @Test
@@ -203,7 +203,7 @@ class IdentityHandlerTest
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.from( "otherEnabledIdProvider" ), idProvider() ) );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
+        this.request.setVirtualHost( initVirtualHost( rawRequest, virtualHost ) );
 
         try
         {
@@ -222,10 +222,12 @@ class IdentityHandlerTest
         final HttpServletRequest rawRequest = this.request.getRawRequest();
 
         final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviders() ).thenReturn(
             Map.of( IdProviderKey.from( "otherEnabledIdProvider" ), idProvider(), IdProviderKey.from( "myidprovider" ), idProvider() ) );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
+        this.request.setVirtualHost( initVirtualHost( rawRequest, virtualHost ) );
 
         final WebResponse portalResponse = this.handler.handle( this.request );
 
@@ -235,19 +237,15 @@ class IdentityHandlerTest
 
     @Test
     void testHandleWithEmptyVirtualHostIdProviderConfig()
-        throws Exception
     {
-        final HttpServletRequest rawRequest = this.request.getRawRequest();
-
         final VirtualHost virtualHost = mock( VirtualHost.class );
         when( virtualHost.getIdProviders() ).thenReturn( Map.of() );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, virtualHost );
+        this.request.setVirtualHost( virtualHost );
 
-        final WebResponse portalResponse = this.handler.handle( this.request );
-
-        assertEquals( HttpStatus.OK, portalResponse.getStatus() );
-        assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
+        // a host that enables no id provider serves none of them
+        final WebException e = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( "'myidprovider' id provider is forbidden", e.getMessage() );
     }
 
     @Test
@@ -263,6 +261,7 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviders() )
             .thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.AUTOLOGIN, IdProviderFlow.LOGOUT ) ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
 
         // the custom endpoints are always dispatched - the id provider app governs them itself
         final WebResponse portalResponse = this.handler.handle( this.request );
@@ -294,6 +293,7 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviders() )
             .thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
 
         // the interactive surface still works
         final WebResponse portalResponse = this.handler.handle( this.request );
@@ -330,7 +330,7 @@ class IdentityHandlerTest
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider() ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
 
-        VirtualHostHelper.setVirtualHost( rawRequest, initVirtualHost( rawRequest, virtualHost ) );
+        this.request.setVirtualHost( initVirtualHost( rawRequest, virtualHost ) );
 
         this.request.setRawPath( "/_/idprovider/myidprovider/login" );
 
@@ -387,6 +387,7 @@ class IdentityHandlerTest
         when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
         when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
         when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
         this.request.setMethod( HttpMethod.POST );
 
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
@@ -402,8 +403,9 @@ class IdentityHandlerTest
         when( deviceLoginHandler.handle( Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any() ) )
             .thenReturn( PortalResponse.create().build() );
         assertNotNull( this.handler.handle( this.request ) );
-        Mockito.verify( deviceLoginHandler ).handle( Mockito.any(), Mockito.eq( myIdProvider ), Mockito.eq( "token" ),
-                                                     Mockito.eq( Set.of( IdProviderFlow.DEVICE ) ) );
+        final ArgumentCaptor<VirtualHostIdProvider> settings = ArgumentCaptor.forClass( VirtualHostIdProvider.class );
+        Mockito.verify( deviceLoginHandler ).handle( Mockito.any(), Mockito.eq( myIdProvider ), Mockito.eq( "token" ), settings.capture() );
+        assertEquals( Set.of( IdProviderFlow.DEVICE ), settings.getValue().getFlows() );
     }
 
     @Test

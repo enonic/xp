@@ -27,6 +27,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.security.IdProviderKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.token.AccessToken;
@@ -43,6 +45,9 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.vhost.IdProviderFlow;
+import com.enonic.xp.web.vhost.VirtualHost;
+import com.enonic.xp.web.vhost.VirtualHostIdProvider;
+import com.enonic.xp.web.vhost.VirtualHostService;
 
 /**
  * The device login endpoints (RFC 8628) under {@code /_/idprovider/<idp>/}, served by XP for any
@@ -61,6 +66,12 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
  * Every client is a public client: XP has no client registry yet, so {@code client_id} is whatever
  * the client calls itself. It is still required on every request, and a device code or refresh
  * token is honoured only for the client id it was issued to.
+ * <p>
+ * The vhost's id provider settings ({@link VirtualHostIdProvider}) decide what may be asked for.
+ * With a scope catalogue a client must name known scopes, the user may keep or drop each one on
+ * the page (required ones are kept), and the grant is restricted to the roles the kept scopes
+ * imply, fixed at consent. Without a catalogue a client must ask for no scope, and the token
+ * carries the user's full memberships. Audiences are what XP's vhosts serve.
  * <p>
  * XP serves no page of its own. The id provider renders the verification page in
  * {@code deviceVerification(req)} from {@code req.deviceLogin} (see {@link DeviceLoginContext}). An
@@ -92,24 +103,28 @@ public class DeviceLoginHandler
 
     private final AccessTokenService accessTokenService;
 
+    private final VirtualHostService virtualHostService;
+
     private final IdProviderControllerService idProviderControllerService;
 
     private final DeviceCodeStore store;
 
     @Activate
     public DeviceLoginHandler( @Reference final GrantService grantService, @Reference final AccessTokenService accessTokenService,
+                               @Reference final VirtualHostService virtualHostService,
                                @Reference final IdProviderControllerService idProviderControllerService,
                                @Reference final SharedMapService sharedMapService )
     {
-        this( grantService, accessTokenService, idProviderControllerService, sharedMapService, Clock.systemUTC() );
+        this( grantService, accessTokenService, virtualHostService, idProviderControllerService, sharedMapService, Clock.systemUTC() );
     }
 
     DeviceLoginHandler( final GrantService grantService, final AccessTokenService accessTokenService,
-                        final IdProviderControllerService idProviderControllerService, final SharedMapService sharedMapService,
-                        final Clock clock )
+                        final VirtualHostService virtualHostService, final IdProviderControllerService idProviderControllerService,
+                        final SharedMapService sharedMapService, final Clock clock )
     {
         this.grantService = grantService;
         this.accessTokenService = accessTokenService;
+        this.virtualHostService = virtualHostService;
         this.idProviderControllerService = idProviderControllerService;
         this.store = new DeviceCodeStore( sharedMapService, clock );
     }
@@ -123,30 +138,30 @@ public class DeviceLoginHandler
     }
 
     /**
-     * @param flows the id provider's flows on the vhost; empty means no restriction
+     * @param settings the id provider's settings on the vhost: its flows (empty means no restriction) and its scope catalogue
      */
     public PortalResponse handle( final PortalRequest request, final IdProviderKey idProvider, final String endpoint,
-                                  final Set<String> flows )
+                                  final VirtualHostIdProvider settings )
     {
         final HttpMethod method = request.getMethod();
         return switch ( endpoint )
         {
             case DeviceLoginEndpoints.DEVICE_CODE -> requirePost( method, () -> {
                 requireSupport( idProvider );
-                return deviceAuthorization( request, idProvider );
+                return deviceAuthorization( request, idProvider, settings.getScopes() );
             } );
-            case DeviceLoginEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, flows ) );
+            case DeviceLoginEndpoints.TOKEN -> requirePost( method, () -> token( request, idProvider, settings.getFlows() ) );
             case DeviceLoginEndpoints.DEVICE -> switch ( method )
             {
                 case GET, HEAD ->
                 {
                     requireSupport( idProvider );
-                    yield verificationPage( request, idProvider );
+                    yield verificationPage( request, idProvider, settings );
                 }
                 case POST ->
                 {
                     requireSupport( idProvider );
-                    yield verificationSubmit( request, idProvider );
+                    yield verificationSubmit( request, idProvider, settings );
                 }
                 default -> throw methodNotAllowed( method );
             };
@@ -176,7 +191,8 @@ public class DeviceLoginHandler
         return new WebException( HttpStatus.METHOD_NOT_ALLOWED, String.format( "Method %s not allowed", method ) );
     }
 
-    private PortalResponse deviceAuthorization( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse deviceAuthorization( final PortalRequest request, final IdProviderKey idProvider,
+                                                final Map<String, VirtualHostIdProvider.Scope> catalogue )
     {
         final String clientId = clientId( request );
         if ( clientId == null )
@@ -184,7 +200,49 @@ public class DeviceLoginHandler
             return oauthError( HttpStatus.BAD_REQUEST, "invalid_request", "Missing client_id" );
         }
         final Set<String> scope = scopes( param( request, "scope" ) );
-        final Set<String> audience = audience( request );
+        if ( catalogue.isEmpty() )
+        {
+            if ( !scope.isEmpty() )
+            {
+                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope",
+                                   "No scopes are configured for this id provider here; ask for none" );
+            }
+        }
+        else
+        {
+            if ( scope.isEmpty() )
+            {
+                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope", "scope is required; configured scopes: " + catalogue.keySet() );
+            }
+            final Set<String> unknown = new LinkedHashSet<>( scope );
+            unknown.removeAll( catalogue.keySet() );
+            if ( !unknown.isEmpty() )
+            {
+                return oauthError( HttpStatus.BAD_REQUEST, "invalid_scope",
+                                   "Unknown scope " + unknown + "; configured scopes: " + catalogue.keySet() );
+            }
+        }
+        final Set<String> allowedAudience = servedAudiences();
+        final Set<String> requestedAudience = audience( request );
+        final Set<String> audience;
+        if ( requestedAudience.isEmpty() )
+        {
+            // RFC 8707: no resource named, so the token is for XP itself, by its issuer name,
+            // which a vhost declaring no audience accepts, and for everything XP serves.
+            audience = new LinkedHashSet<>();
+            audience.add( accessTokenService.getIssuer() );
+            audience.addAll( allowedAudience );
+        }
+        else if ( allowedAudience.containsAll( requestedAudience ) )
+        {
+            audience = requestedAudience;
+        }
+        else
+        {
+            final Set<String> unknown = new LinkedHashSet<>( requestedAudience );
+            unknown.removeAll( allowedAudience );
+            return oauthError( HttpStatus.BAD_REQUEST, "invalid_target", "Unknown resource " + unknown );
+        }
         final DeviceCodeStore.Pending pending = store.create( idProvider, clientId, scope, audience );
 
         final String url = request.getUrl();
@@ -203,7 +261,8 @@ public class DeviceLoginHandler
         return json( HttpStatus.OK, body );
     }
 
-    private PortalResponse verificationPage( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse verificationPage( final PortalRequest request, final IdProviderKey idProvider,
+                                             final VirtualHostIdProvider settings )
     {
         requireInteractiveSignIn( request );
         final Optional<User> user = signedInUserOf( idProvider );
@@ -219,16 +278,16 @@ public class DeviceLoginHandler
         final Optional<DeviceCodeStore.Pending> pending = store.findByUserCode( idProvider, userCode );
         if ( pending.isEmpty() || pending.get().status() != DeviceCodeStore.Status.PENDING )
         {
-            return render( request, idProvider, new DeviceLoginContext.Enter( idProvider, user.get(),
-                                                                                "The code " + userCode.trim() + " is invalid or has expired." ) );
+            return render( request, idProvider, new DeviceLoginContext.Enter( idProvider, user.get(), DeviceLoginContext.INVALID_CODE ) );
         }
         final DeviceCodeStore.Pending p = pending.get();
         return render( request, idProvider,
                        DeviceLoginContext.Confirm.of( idProvider, user.get(), DeviceCodeStore.formatUserCode( p.userCode() ), p.clientId(),
-                                                      p.scope(), p.audience(), csrfToken() ) );
+                                                      p.scope(), p.audience(), settings, csrfToken() ) );
     }
 
-    private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider )
+    private PortalResponse verificationSubmit( final PortalRequest request, final IdProviderKey idProvider,
+                                               final VirtualHostIdProvider settings )
     {
         requireInteractiveSignIn( request );
         final Optional<User> user = signedInUserOf( idProvider );
@@ -242,10 +301,26 @@ public class DeviceLoginHandler
         }
         final String userCode = param( request, "user_code" );
         final boolean approve = "true".equals( param( request, "approve" ) );
-        if ( userCode == null || !store.resolve( idProvider, userCode, approve, user.get().getKey() ) )
+        final Optional<DeviceCodeStore.Pending> pending = userCode == null ? Optional.empty() : store.findByUserCode( idProvider, userCode );
+        if ( pending.isEmpty() )
         {
             return render( request, idProvider,
-                           new DeviceLoginContext.Enter( idProvider, user.get(), "This code is invalid or has expired." ) );
+                           new DeviceLoginContext.Enter( idProvider, user.get(), DeviceLoginContext.INVALID_CODE ) );
+        }
+        final Set<String> kept = new LinkedHashSet<>( request.getParams().get( "scope" ) );
+        settings.getScopes().forEach( ( id, scope ) -> {
+            if ( scope.required() )
+            {
+                kept.add( id );
+            }
+        } );
+        kept.retainAll( pending.get().scope() );
+        final RoleRestriction restriction =
+            restriction( settings.getScopes(), kept ).narrow( ContextAccessor.current().getAuthInfo().getRestriction() );
+        if ( !store.resolve( idProvider, userCode, approve, user.get().getKey(), kept, restriction ) )
+        {
+            return render( request, idProvider,
+                           new DeviceLoginContext.Enter( idProvider, user.get(), DeviceLoginContext.INVALID_CODE ) );
         }
         return render( request, idProvider, new DeviceLoginContext.Done( idProvider, user.get(), approve ) );
     }
@@ -323,8 +398,9 @@ public class DeviceLoginHandler
                 final GrantWithRefreshToken grant = grantService.create( CreateGrantParams.create()
                                                                              .subject( pending.subject() )
                                                                              .clientId( pending.clientId() )
-                                                                             .scope( pending.scope() )
-                                                                             .audience( tokenAudience( pending ) )
+                                                                             .scope( pending.approvedScope() )
+                                                                             .audience( pending.audience() )
+                                                                             .restriction( pending.approvedRestriction() )
                                                                              .build() );
                 yield tokenResponse( grant );
             }
@@ -468,12 +544,33 @@ public class DeviceLoginHandler
     }
 
     /**
-     * The audience the grant's tokens name: the resources the client asked for, or XP's issuer name
-     * if it asked for none.
+     * The restriction for a grant of the given scopes: the roles the catalogue says they imply, or
+     * none if there is no catalogue. The caller narrows it by the approver's own restriction.
      */
-    private Set<String> tokenAudience( final DeviceCodeStore.Pending pending )
+    private static RoleRestriction restriction( final Map<String, VirtualHostIdProvider.Scope> catalogue, final Set<String> scope )
     {
-        return pending.audience().isEmpty() ? Set.of( accessTokenService.getIssuer() ) : pending.audience();
+        if ( catalogue.isEmpty() )
+        {
+            return RoleRestriction.none();
+        }
+        return RoleRestriction.to( scope.stream()
+                                            .map( catalogue::get )
+                                            .filter( java.util.Objects::nonNull )
+                                            .flatMap( s -> s.roles().stream() )
+                                            .collect( PrincipalKeys.collector() ) );
+    }
+
+    /**
+     * The audiences XP serves: the {@code audience} lists of all vhost mappings (RFC 8707).
+     */
+    private Set<String> servedAudiences()
+    {
+        final Set<String> audiences = new LinkedHashSet<>();
+        for ( final VirtualHost virtualHost : virtualHostService.getVirtualHosts() )
+        {
+            audiences.addAll( virtualHost.getAudience() );
+        }
+        return audiences;
     }
 
     /**

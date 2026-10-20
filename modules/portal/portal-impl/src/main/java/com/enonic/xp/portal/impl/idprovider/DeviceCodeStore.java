@@ -10,11 +10,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+
 import com.google.common.collect.ImmutableSet;
 
 
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.PrincipalKey;
+import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.shared.SharedMap;
 import com.enonic.xp.shared.SharedMapService;
 
@@ -61,7 +64,8 @@ final class DeviceCodeStore
      * A device authorization request, as created and as resolved.
      */
     record Pending(IdProviderKey idProvider, String deviceCode, String userCode, String clientId, Set<String> scope, Set<String> audience,
-                   Status status, PrincipalKey subject, long createdAt, long lastPolledAt)
+                   Status status, PrincipalKey subject, Set<String> approvedScope, RoleRestriction approvedRestriction,
+                   long createdAt, long lastPolledAt)
     {
         /**
          * The deadline advertised to the client. Fixed at creation; nothing extends it.
@@ -88,6 +92,7 @@ final class DeviceCodeStore
         {
             scope = ImmutableSet.copyOf( scope );
             audience = ImmutableSet.copyOf( audience );
+            approvedScope = ImmutableSet.copyOf( approvedScope );
         }
 
         private Map<String, Object> toMap()
@@ -101,6 +106,12 @@ final class DeviceCodeStore
             value.put( "audience", new ArrayList<>( audience ) );
             value.put( "status", status.name() );
             value.put( "subject", subject == null ? null : subject.toString() );
+            value.put( "approvedScope", new ArrayList<>( approvedScope ) );
+            value.put( "approvedPrincipals", switch ( approvedRestriction )
+            {
+                case RoleRestriction.None _ -> null;
+                case RoleRestriction.To( PrincipalKeys principals ) -> principals.stream().map( PrincipalKey::toString ).toList();
+            } );
             value.put( "createdAt", createdAt );
             value.put( "lastPolledAt", lastPolledAt );
             return value;
@@ -110,12 +121,17 @@ final class DeviceCodeStore
         private static Pending fromMap( final Map<String, Object> value )
         {
             final String subject = (String) value.get( "subject" );
+            final List<String> approvedPrincipals = (List<String>) value.get( "approvedPrincipals" );
             return new Pending( IdProviderKey.from( (String) value.get( "idProvider" ) ), (String) value.get( "deviceCode" ),
                                 (String) value.get( "userCode" ), (String) value.get( "clientId" ),
                                 ImmutableSet.copyOf( (List<String>) value.get( "scope" ) ),
                                 ImmutableSet.copyOf( (List<String>) value.get( "audience" ) ), Status.valueOf( (String) value.get( "status" ) ),
-                                subject == null ? null : PrincipalKey.from( subject ), (Long) value.get( "createdAt" ),
-                                (Long) value.get( "lastPolledAt" ) );
+                                subject == null ? null : PrincipalKey.from( subject ),
+                                ImmutableSet.copyOf( (List<String>) value.get( "approvedScope" ) ), approvedPrincipals == null
+                                    ? RoleRestriction.none()
+                                    : RoleRestriction.to(
+                                        approvedPrincipals.stream().map( PrincipalKey::from ).collect( PrincipalKeys.collector() ) ),
+                                (Long) value.get( "createdAt" ), (Long) value.get( "lastPolledAt" ) );
         }
     }
 
@@ -181,7 +197,7 @@ final class DeviceCodeStore
         final String deviceCode = newDeviceCode();
         final String userCode = newUserCode();
         final Pending pending =
-            new Pending( idProvider, deviceCode, userCode, clientId, scope, audience, Status.PENDING, null, now, 0 );
+            new Pending( idProvider, deviceCode, userCode, clientId, scope, audience, Status.PENDING, null, Set.of(), RoleRestriction.none(), now, 0 );
         map.set( key( idProvider, deviceCode ), pending.toMap(), CODE_TTL_SECONDS );
         final Map<String, Object> ref = new HashMap<>();
         ref.put( "deviceCode", deviceCode );
@@ -203,9 +219,11 @@ final class DeviceCodeStore
     }
 
     /**
-     * Records the user's decision; false if no request is pending for the user code.
+     * Records the user's decision, with the scopes kept and the restriction they imply; false if
+     * no request is pending for the user code. The restriction is fixed here, at consent.
      */
-    boolean resolve( final IdProviderKey idProvider, final String userCode, final boolean approved, final PrincipalKey subject )
+    boolean resolve( final IdProviderKey idProvider, final String userCode, final boolean approved, final PrincipalKey subject,
+                     final Set<String> approvedScope, final RoleRestriction approvedRestriction )
     {
         final Optional<Pending> found = findByUserCode( idProvider, userCode );
         if ( found.isEmpty() )
@@ -230,7 +248,9 @@ final class DeviceCodeStore
             resolved[0] = true;
             return new Pending( pending.idProvider(), pending.deviceCode(), pending.userCode(), pending.clientId(), pending.scope(),
                                 pending.audience(), approved ? Status.APPROVED : Status.DENIED, approved ? subject : null,
-                                pending.createdAt(), pending.lastPolledAt() ).toMap();
+                                approved ? approvedScope : Set.of(), approved ? approvedRestriction : RoleRestriction.none(),
+                                pending.createdAt(),
+                                pending.lastPolledAt() ).toMap();
         }, found.get().remainingSeconds( clock.millis() ) );
         return resolved[0];
     }

@@ -8,7 +8,6 @@ import java.util.concurrent.Callable;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import jakarta.servlet.http.HttpServletRequest;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.Context;
@@ -122,10 +121,9 @@ public class IdProviderControllerServiceImpl
         IdProviderKey idProviderKey = params.getIdProviderKey();
         if ( idProviderKey == null )
         {
-            final HttpServletRequest servletRequest;
             final PortalRequest portalRequest = params.getPortalRequest();
-            servletRequest = portalRequest == null ? params.getServletRequest() : portalRequest.getRawRequest();
-            final VirtualHost virtualHost = VirtualHostHelper.getVirtualHost( servletRequest );
+            final VirtualHost virtualHost =
+                portalRequest == null ? VirtualHostHelper.getVirtualHost( params.getServletRequest() ) : portalRequest.getVirtualHost();
             if ( virtualHost != null )
             {
                 idProviderKey = virtualHost.getDefaultIdProviderKey();
