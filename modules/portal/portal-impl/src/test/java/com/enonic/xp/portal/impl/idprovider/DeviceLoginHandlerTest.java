@@ -403,6 +403,35 @@ class DeviceLoginHandlerTest
     }
 
     @Test
+    void the_choice_is_the_forms_not_the_links()
+        throws Exception
+    {
+        final VirtualHostIdProvider settings = withScopes( Map.of( "content:read", PrincipalKeys.from( "role:cms.cm.app" ) ) );
+        final JsonNode issued = body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli", "scope", "content:read" ) ), IDP,
+                                                      "device/code", settings ) );
+        final String userCode = issued.get( "user_code" ).asText();
+        asAlice( () -> {
+            handler.handle( request( HttpMethod.GET, "device", Map.of( "user_code", userCode ) ), IDP, "device", settings );
+            final String csrf = (String) lastContext.get( "csrf" );
+            for ( String query : new String[]{"approve=true", "user_code=" + userCode + "&scope=content:read", "scope"} )
+            {
+                // The merged parameter map puts the query first, so the form's own values would lose.
+                final PortalRequest viaLink = request( HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "false", "_csrf", csrf ) );
+                when( viaLink.getRawRequest().getQueryString() ).thenReturn( query );
+                assertThatThrownBy( () -> handler.handle( viaLink, IDP, "device", settings ) ).as( query )
+                    .isInstanceOf( WebException.class )
+                    .hasMessageContaining( "form fields" );
+            }
+            final PortalRequest fromLink = request( HttpMethod.POST, "device", Map.of( "user_code", userCode, "approve", "false", "_csrf", csrf ) );
+            when( fromLink.getRawRequest().getQueryString() ).thenReturn( "user_code=" + userCode );
+            assertThat( handler.handle( fromLink, IDP, "device", settings ).getBody() ).as( "the code in the link is fine" ).isEqualTo( "page:done" );
+            assertThat( lastContext ).containsEntry( "approved", false );
+            return null;
+        } );
+        verifyNoInteractions( grantService );
+    }
+
+    @Test
     void verification_page_without_or_with_bad_code()
     {
         asAlice( () -> {
