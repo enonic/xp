@@ -1,6 +1,5 @@
 package com.enonic.xp.portal.impl.mapper;
 
-import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,11 +12,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentConstants;
 import com.enonic.xp.content.ContentPath;
+import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
-import com.enonic.xp.portal.impl.idprovider.AccessTokenFilter;
 import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
@@ -26,7 +25,9 @@ import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.PrincipalKey;
-import com.enonic.xp.security.token.AccessTokenClaims;
+import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AccessTokenInfo;
+import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -131,22 +132,20 @@ class PortalRequestMapperTest
     @Test
     void testAccessToken()
     {
-        final AccessTokenClaims claims = AccessTokenClaims.create()
-            .issuer( "xp" )
-            .subject( PrincipalKey.ofUser( IdProviderKey.system(), "alice" ) )
-            .audience( Set.of( "api" ) )
-            .scope( Set.of( "content:write", "content:read" ) )
-            .clientId( "my-cli" )
-            .grantId( "grant-1" )
-            .issuedAt( Instant.parse( "2026-10-14T12:00:00Z" ) )
-            .expiresAt( Instant.parse( "2026-10-14T13:00:00Z" ) )
-            .tokenId( "jti" )
+        final User alice = User.create().key( PrincipalKey.ofUser( IdProviderKey.system(), "alice" ) ).login( "alice" ).build();
+        final AuthenticationInfo authInfo = AuthenticationInfo.create()
+            .user( alice )
+            .accessToken( AccessTokenInfo.create()
+                              .issuer( "xp" )
+                              .clientId( "my-cli" )
+                              .grantId( "grant-1" )
+                              .scope( Set.of( "content:write", "content:read" ) )
+                              .audience( Set.of( "api" ) )
+                              .build() )
             .build();
-        final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( rawRequest.getAttribute( AccessTokenFilter.CLAIMS_ATTRIBUTE ) ).thenReturn( claims );
-        this.portalRequest.setRawRequest( rawRequest );
 
-        assertHelper.assertJson( "request-access-token.json", new PortalRequestMapper( this.portalRequest ) );
+        ContextBuilder.create().authInfo( authInfo ).build().runWith(
+            () -> assertHelper.assertJson( "request-access-token.json", new PortalRequestMapper( this.portalRequest ) ) );
     }
 
     @Test

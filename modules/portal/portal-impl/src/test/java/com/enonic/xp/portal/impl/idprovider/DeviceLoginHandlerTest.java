@@ -35,6 +35,7 @@ import com.enonic.xp.security.PrincipalKeys;
 import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.token.AccessToken;
 import com.enonic.xp.security.token.AccessTokenClaims;
@@ -349,21 +350,17 @@ class DeviceLoginHandlerTest
         final JsonNode issued = body( handler.handle( request( HttpMethod.POST, "device/code", Map.of( "client_id", "cli" ) ), IDP,
                                                       "device/code", UNRESTRICTED ) );
         final String userCode = issued.get( "user_code" ).asText();
-        final AccessTokenClaims bearer = AccessTokenClaims.create()
-            .issuer( "xp" )
-            .subject( ALICE )
-            .audience( Set.of( "xp" ) )
-            .clientId( "cli" )
-            .grantId( "grant-0" )
-            .issuedAt( now )
-            .expiresAt( now.plus( Duration.ofHours( 1 ) ) )
-            .tokenId( "jti-bearer" )
+        final User alice = User.create().key( ALICE ).login( "alice" ).displayName( "Alice" ).build();
+        final AuthenticationInfo viaBearer = AuthenticationInfo.create()
+            .user( alice )
+            .principals( RoleKeys.ADMIN_LOGIN )
+            .accessToken( AccessTokenInfo.create().issuer( "xp" ).build() )
             .build();
-        asAlice( () -> {
+        ContextBuilder.create().authInfo( viaBearer ).build().callWith( () -> {
+            ContextAccessor.current().getLocalScope().setSession( new SessionMock() );
             for ( HttpMethod method : new HttpMethod[]{HttpMethod.GET, HttpMethod.POST} )
             {
                 final PortalRequest viaToken = request( method, "device", Map.of( "user_code", userCode, "approve", "true" ) );
-                viaToken.getRawRequest().setAttribute( AccessTokenFilter.CLAIMS_ATTRIBUTE, bearer );
                 assertThatThrownBy( () -> handler.handle( viaToken, IDP, "device", UNRESTRICTED ) ).as( method.toString() )
                     .isInstanceOf( WebException.class )
                     .hasMessageContaining( "access token" );

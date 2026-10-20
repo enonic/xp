@@ -19,6 +19,7 @@ import com.enonic.xp.annotation.Order;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.security.SecurityService;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
 import com.enonic.xp.security.token.AccessTokenClaims;
@@ -52,10 +53,6 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 public final class AccessTokenFilter
     extends OncePerRequestFilter
 {
-    /**
-     * The request attribute holding the verified {@link AccessTokenClaims} of a token-authenticated request.
-     */
-    public static final String CLAIMS_ATTRIBUTE = AccessTokenClaims.class.getName();
 
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -131,9 +128,16 @@ public final class AccessTokenFilter
             return;
         }
 
-        ContextAccessor.current().getLocalScope().setAttribute(
-            claims.getActor() == null ? authInfo : AuthenticationInfo.copyOf( authInfo ).actor( claims.getActor() ).build() );
-        req.setAttribute( CLAIMS_ATTRIBUTE, claims );
+        ContextAccessor.current().getLocalScope().setAttribute( AuthenticationInfo.copyOf( authInfo )
+                                                                    .actor( claims.getActor() )
+                                                                    .accessToken( AccessTokenInfo.create()
+                                                                                      .issuer( claims.getIssuer() )
+                                                                                      .clientId( claims.getClientId() )
+                                                                                      .grantId( claims.getGrantId() )
+                                                                                      .scope( grant.get().getScope() )
+                                                                                      .audience( claims.getAudience() )
+                                                                                      .build() )
+                                                                    .build() );
         chain.doFilter( req, res );
     }
 

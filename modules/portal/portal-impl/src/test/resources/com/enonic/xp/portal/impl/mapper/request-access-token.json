@@ -14,6 +14,7 @@
   "branch": "draft",
   "contextPath": "/site/live/master/a",
   "accessToken": {
+    "issuer": "xp",
     "clientId": "my-cli",
     "grantId": "grant-1",
     "scope": [

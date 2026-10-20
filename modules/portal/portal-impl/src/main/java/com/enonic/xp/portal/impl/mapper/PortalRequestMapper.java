@@ -6,12 +6,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.impl.idprovider.AccessTokenFilter;
 import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.script.serializer.MapGenerator;
-import com.enonic.xp.security.token.AccessTokenClaims;
 import com.enonic.xp.script.serializer.MapSerializable;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 public final class PortalRequestMapper
@@ -71,12 +71,11 @@ public final class PortalRequestMapper
             gen.end();
         }
 
-        final AccessTokenClaims accessToken = this.request.getRawRequest() == null
-            ? null
-            : (AccessTokenClaims) this.request.getRawRequest().getAttribute( AccessTokenFilter.CLAIMS_ATTRIBUTE );
+        final AccessTokenInfo accessToken = ContextAccessor.current().getAuthInfo().getAccessToken();
         if ( accessToken != null )
         {
             gen.map( "accessToken" );
+            gen.value( "issuer", accessToken.getIssuer() );
             gen.value( "clientId", accessToken.getClientId() );
             gen.value( "grantId", accessToken.getGrantId() );
             gen.value( "scope", accessToken.getScope().stream().sorted().toList() );

@@ -41,6 +41,13 @@ export interface UserWithProfile<Profile extends Record<string, unknown> = Recor
     profile?: Profile;
 }
 
+export interface LoginAccessToken {
+    issuer: string;
+    clientId?: string;
+    scope?: string[];
+    audience?: string[];
+}
+
 export interface LoginParams {
     user: string;
     skipAuth?: boolean;
@@ -50,6 +57,7 @@ export interface LoginParams {
     sessionTimeout?: number;
     roles?: RoleKey[];
     actor?: PrincipalKey;
+    accessToken?: LoginAccessToken;
 }
 
 export interface LoginWithoutPasswordParams {
@@ -59,6 +67,7 @@ export interface LoginWithoutPasswordParams {
     sessionTimeout?: number;
     roles?: RoleKey[];
     actor?: PrincipalKey;
+    accessToken?: LoginAccessToken;
 }
 
 export interface LoginResult {
@@ -84,6 +93,14 @@ interface LoginHandler {
 
     setActor(value: PrincipalKey | null): void;
 
+    setTokenIssuer(value: string | null): void;
+
+    setTokenClientId(value: string | null): void;
+
+    setTokenScope(value: string[] | null): void;
+
+    setTokenAudience(value: string[] | null): void;
+
     login(): LoginResult;
 }
 
@@ -107,6 +124,11 @@ const isLoginParams = (params: unknown): params is LoginParams =>
  * @param {number} [params.sessionTimeout] Session timeout (in seconds). By default, the value of session.timeout from com.enonic.xp.web.jetty.cfg
  * @param {string[]} [params.roles] Restricts the login to these roles: the user gets only those of them they hold, directly or through a group. Groups are never kept. An empty list leaves only the user's own key and the roles every authenticated user has. Omit for no restriction. A SESSION login keeps the result for the session's lifetime.
  * @param {string} [params.actor] The principal acting on the user's behalf, such as a service logging a user in for a call it makes for them. Recorded next to the user in the audit log.
+ * @param {object} [params.accessToken] An access token from another issuer, already verified by the caller. XP checks its audience against the virtual host, maps its scopes to roles through the host's scope catalogue, and exposes it as `request.accessToken`.
+ * @param {string} params.accessToken.issuer The token's issuer.
+ * @param {string} [params.accessToken.clientId] The client the token was issued to.
+ * @param {string[]} [params.accessToken.scope] The token's scopes. Scopes unknown to the host's catalogue give no roles.
+ * @param {string[]} [params.accessToken.audience] The token's audiences. One of them must be declared by the virtual host, or the login is refused.
  * @returns {LoginResult} Information for logged-in user.
  */
 export function login(params: LoginParams | LoginWithoutPasswordParams): LoginResult {
@@ -118,6 +140,7 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
         sessionTimeout,
         roles,
         actor,
+        accessToken,
     } = params ?? {};
 
     const bean: LoginHandler = __.newBean<LoginHandler>('com.enonic.xp.lib.auth.LoginHandler');
@@ -139,6 +162,12 @@ export function login(params: LoginParams | LoginWithoutPasswordParams): LoginRe
     bean.setIdProvider(__.nullOrValue(idProvider));
     bean.setRoles(__.nullOrValue(roles));
     bean.setActor(__.nullOrValue(actor));
+    if (accessToken) {
+        bean.setTokenIssuer(checkRequired(accessToken, 'issuer'));
+        bean.setTokenClientId(__.nullOrValue(accessToken.clientId));
+        bean.setTokenScope(__.nullOrValue(accessToken.scope));
+        bean.setTokenAudience(__.nullOrValue(accessToken.audience));
+    }
 
     return __.toNativeObject(bean.login());
 }

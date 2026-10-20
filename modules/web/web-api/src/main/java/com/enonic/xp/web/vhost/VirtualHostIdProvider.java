@@ -1,11 +1,14 @@
 package com.enonic.xp.web.vhost;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 
 import com.enonic.xp.security.PrincipalKeys;
+import com.enonic.xp.security.RoleRestriction;
 
 import static java.util.Objects.requireNonNull;
 
@@ -53,6 +56,23 @@ public final class VirtualHostIdProvider
     public Map<String, Scope> getScopes()
     {
         return scopes;
+    }
+
+    /**
+     * The restriction the given scopes imply on this vhost: the roles of the scopes the catalogue
+     * knows, or none if there is no catalogue. Unknown scopes imply nothing.
+     */
+    public RoleRestriction restrictionFor( final Collection<String> scope )
+    {
+        if ( scopes.isEmpty() )
+        {
+            return RoleRestriction.none();
+        }
+        return RoleRestriction.to( scope.stream()
+                                       .map( scopes::get )
+                                       .filter( Objects::nonNull )
+                                       .flatMap( s -> s.roles().stream() )
+                                       .collect( PrincipalKeys.collector() ) );
     }
 
     /**

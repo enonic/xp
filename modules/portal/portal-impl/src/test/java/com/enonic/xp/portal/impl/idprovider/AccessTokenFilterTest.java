@@ -22,6 +22,7 @@ import com.enonic.xp.security.RoleRestriction;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.SecurityService;
 import com.enonic.xp.security.User;
+import com.enonic.xp.security.auth.AccessTokenInfo;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.security.auth.AuthenticationToken;
 import com.enonic.xp.security.auth.VerifiedUserKeyAuthToken;
@@ -141,7 +142,8 @@ class AccessTokenFilterTest
         verify( chain ).doFilter( request, response );
         assertThat( seen[0].isAuthenticated() ).isTrue();
         assertThat( seen[0].getUser().getKey() ).isEqualTo( ALICE );
-        verify( request ).setAttribute( AccessTokenFilter.CLAIMS_ATTRIBUTE, claims );
+        assertThat( seen[0].getAccessToken() ).isEqualTo(
+            AccessTokenInfo.create().issuer( "xp" ).clientId( "my-cli" ).grantId( "grant-1" ).scope( Set.of( "content:read" ) ).audience( Set.of( "api" ) ).build() );
 
         final ArgumentCaptor<AuthenticationToken> token = ArgumentCaptor.forClass( AuthenticationToken.class );
         verify( securityService ).authenticate( token.capture() );
