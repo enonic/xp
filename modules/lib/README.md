@@ -27,6 +27,8 @@ After that, all the global XP variables will be typed.
 Import functions, such as `require`, will return typed objects if the corresponding types for imported libraries are also added to
 your `tsconfig.json`.
 
+To get the global and all XP library types in one package, use `@enonic-types/xp` instead of this package and the individual libraries.
+
 ## Configuration
 
 ### Require
