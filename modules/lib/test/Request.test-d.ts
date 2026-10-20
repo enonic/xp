@@ -824,3 +824,58 @@ expectNotAssignable<Request>({
 //     ...requiredProperties,
 //     custom: 'whatever', // Typed custom property allowed
 // });
+
+// Scenario: When implementing an idprovider deviceVerification function the Request has a deviceLogin property
+const deviceVerificationRequest: Request = new RequestImplementation({
+    cookies: {},
+    headers: {} as Record<string, string>,
+    host: 'localhost',
+    method: 'GET',
+    mode: 'live',
+    params: {user_code: 'BCDFGHJK'},
+    path: '/_/idprovider/system/device',
+    port: 8080,
+    rawPath: '/_/idprovider/system/device',
+    remoteAddress: '127.0.0.1',
+    url: 'http://localhost:8080/_/idprovider/system/device?user_code=BCDFGHJK',
+    scheme: 'http',
+    webSocket: false,
+    locales: ['en'],
+    deviceLogin: {
+        idProvider: 'system',
+        action: 'confirm',
+        user: {key: 'user:system:alice', login: 'alice', displayName: 'Alice'},
+        userCode: 'BCDF-GHJK',
+        clientId: 'my-cli',
+        scope: [],
+        audience: ['api'],
+        csrf: 'token',
+    },
+}).toObject();
+expectAssignable<Request>(deviceVerificationRequest);
+if (deviceVerificationRequest.deviceLogin?.action === 'confirm') {
+    expectAssignable<string>(deviceVerificationRequest.deviceLogin.csrf);
+}
+
+// Scenario: A request authenticated with an access token XP issued carries what the token was granted
+const tokenRequest: Request = new RequestImplementation({
+    cookies: {},
+    headers: {Authorization: 'Bearer xp-token'} as Record<string, string>,
+    host: 'api.example.com',
+    method: 'GET',
+    mode: 'live',
+    params: {},
+    path: '/api/content',
+    port: 443,
+    rawPath: '/api/content',
+    remoteAddress: '127.0.0.1',
+    url: 'https://api.example.com/api/content',
+    scheme: 'https',
+    webSocket: false,
+    locales: ['en'],
+    accessToken: {clientId: 'my-cli', grantId: null, scope: ['content:read'], audience: ['api']},
+}).toObject();
+expectAssignable<Request>(tokenRequest);
+expectAssignable<string[] | undefined>(tokenRequest.accessToken?.scope);
+expectNotAssignable<Request>({...tokenRequest, accessToken: {scope: 'content:read'}});
+

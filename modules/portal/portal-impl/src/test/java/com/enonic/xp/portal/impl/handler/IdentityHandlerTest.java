@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
+import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.TestTrace;
 import com.enonic.xp.trace.Tracer;
@@ -21,6 +23,7 @@ import com.enonic.xp.web.HttpMethod;
 import com.enonic.xp.web.HttpStatus;
 import com.enonic.xp.web.WebException;
 import com.enonic.xp.web.WebResponse;
+import com.enonic.xp.web.dispatch.DispatchConstants;
 import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
@@ -44,6 +47,8 @@ class IdentityHandlerTest
     String virtualHostKey;
 
     RedirectChecksumService redirectChecksumService;
+
+    DeviceLoginHandler deviceLoginHandler;
 
     @BeforeEach
     public final void setup()
@@ -70,8 +75,9 @@ class IdentityHandlerTest
         } );
 
         redirectChecksumService = mock( RedirectChecksumService.class );
+        deviceLoginHandler = mock( DeviceLoginHandler.class );
 
-        this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService );
+        this.handler = new IdentityHandler( idProviderControllerService, redirectChecksumService, deviceLoginHandler );
 
         this.request.setMethod( HttpMethod.GET );
         this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider" );
@@ -92,7 +98,7 @@ class IdentityHandlerTest
         final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
         final PortalResponse response = PortalResponse.create().status( HttpStatus.METHOD_NOT_ALLOWED ).build();
         when( idProviderControllerService.execute( Mockito.any() ) ).thenReturn( response );
-        this.handler = new IdentityHandler( idProviderControllerService, mock() );
+        this.handler = new IdentityHandler( idProviderControllerService, mock(), mock() );
 
         this.request.setMethod( HttpMethod.OPTIONS );
 
@@ -346,6 +352,72 @@ class IdentityHandlerTest
 
         return virtualHost;
     }
+    @Test
+    void testDeviceEndpoints_routedToDeviceLoginHandler()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final PortalResponse deviceResponse = PortalResponse.create().status( HttpStatus.OK ).build();
+        when( deviceLoginHandler.handle( Mockito.any(), Mockito.eq( IdProviderKey.from( "myidprovider" ) ), Mockito.anyString(),
+                                         Mockito.any() ) ).thenReturn( deviceResponse );
+
+        for ( String endpoint : new String[]{"device/code", "device", "token"} )
+        {
+            this.request.setMethod( HttpMethod.POST );
+            this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/" + endpoint );
+            assertEquals( deviceResponse, this.handler.handle( this.request ) );
+            assertEquals( "/site/project/branch/_/idprovider/myidprovider", this.request.getContextPath() );
+        }
+        final ArgumentCaptor<String> endpoints = ArgumentCaptor.forClass( String.class );
+        Mockito.verify( deviceLoginHandler, Mockito.times( 3 ) ).handle( Mockito.any(), Mockito.any(), endpoints.capture(), Mockito.any() );
+        assertEquals( java.util.List.of( "device/code", "device", "token" ), endpoints.getAllValues() );
+        Mockito.verify( redirectChecksumService, Mockito.never() ).verifyChecksum( Mockito.any(), Mockito.any() );
+    }
+
+    @Test
+    void testDeviceEndpoints_gatedByFlows()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final IdProviderKey myIdProvider = IdProviderKey.from( "myidprovider" );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.LOGIN, IdProviderFlow.AUTOLOGIN ) ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        this.request.setMethod( HttpMethod.POST );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( "'device' flow is disabled for 'myidprovider' id provider", ex.getMessage() );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/token" );
+        ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( "No token-issuing flow [device] is enabled for 'myidprovider' id provider", ex.getMessage() );
+        Mockito.verifyNoInteractions( deviceLoginHandler );
+
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( myIdProvider, idProvider( IdProviderFlow.DEVICE ) ) );
+        when( deviceLoginHandler.handle( Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any() ) )
+            .thenReturn( PortalResponse.create().build() );
+        assertNotNull( this.handler.handle( this.request ) );
+        Mockito.verify( deviceLoginHandler ).handle( Mockito.any(), Mockito.eq( myIdProvider ), Mockito.eq( "token" ),
+                                                     Mockito.eq( Set.of( IdProviderFlow.DEVICE ) ) );
+    }
+
+    @Test
+    void testDeviceEndpoints_webConnectorOnly()
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.MANAGEMENT_CONNECTOR );
+        this.request.setMethod( HttpMethod.POST );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        final WebException ex = assertThrows( WebException.class, () -> this.handler.handle( this.request ) );
+        assertEquals( HttpStatus.NOT_FOUND, ex.getStatus() );
+        Mockito.verifyNoInteractions( deviceLoginHandler );
+    }
+
     private static VirtualHostIdProvider idProvider( final String... flows )
     {
         return VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();

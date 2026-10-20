@@ -1,6 +1,7 @@
 package com.enonic.xp.web.vhost;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -72,6 +73,25 @@ public interface VirtualHost
      * Returns the mapping's order: mappings with lower values are matched first.
      */
     int getOrder();
+
+    /**
+     * The audiences this vhost serves (the mapping's {@code audience} list); empty if none is
+     * declared. See {@link #acceptsAudience(Set, String)}.
+     */
+    default Set<String> getAudience()
+    {
+        return Set.of();
+    }
+
+    /**
+     * Whether a token with the given audiences is accepted here: it names a declared audience, or,
+     * if none is declared, {@code self}, XP's issuer name.
+     */
+    default boolean acceptsAudience( final Set<String> audience, final String self )
+    {
+        final Set<String> served = getAudience();
+        return served.isEmpty() ? audience.contains( self ) : audience.stream().anyMatch( served::contains );
+    }
 
     /**
      * Returns the mapping's context attributes ({@code mapping.<name>.context.*}), copied into the

@@ -291,6 +291,68 @@ export interface DefaultRequestHeaders
     'X-Forwarded-Server'?: string;
 }
 
+/**
+ * The access token the request was authenticated with.
+ */
+export interface RequestAccessToken {
+    /** The client that obtained the token, as it named itself, or null. */
+    clientId: string | null;
+    /** The grant the token was issued under, or null. */
+    grantId: string | null;
+    scope: string[];
+    audience: string[];
+}
+
+export interface DeviceLoginUser {
+    key: string;
+    login: string;
+    displayName: string;
+}
+
+export interface DeviceLoginScope {
+    id: string;
+    description: string | null;
+    /** The roles the scope implies; empty for a scope that is only a label. */
+    roles: string[];
+}
+
+interface DeviceLoginBase {
+    idProvider: string;
+    user: DeviceLoginUser;
+}
+
+export interface DeviceLoginEnter extends DeviceLoginBase {
+    action: 'enter';
+    /** Why the previous code was refused, when one was. */
+    error?: string;
+}
+
+export interface DeviceLoginConfirm extends DeviceLoginBase {
+    action: 'confirm';
+    userCode: string;
+    /** How the client named itself; not a verified name. */
+    clientId: string;
+    scope: DeviceLoginScope[];
+    audience: string[];
+    /** The form must post it back as _csrf. */
+    csrf: string;
+}
+
+export interface DeviceLoginDone extends DeviceLoginBase {
+    action: 'done';
+    approved: boolean;
+}
+
+export interface DeviceLoginWrongAccount extends DeviceLoginBase {
+    action: 'wrongAccount';
+}
+
+/**
+ * The data a device verification page renders, handed to an id provider's deviceVerification
+ * function as request.deviceLogin.
+ */
+export type DeviceLogin = DeviceLoginEnter | DeviceLoginConfirm | DeviceLoginDone | DeviceLoginWrongAccount;
+
 export interface RequestConstructorParams {
     body?: string;
     branch?: LiteralUnion<RequestBranch>;
@@ -319,6 +381,10 @@ export interface RequestConstructorParams {
     validTicket?: boolean;
     webSocket: boolean;
     locales: string[];
+    /** Present on a request authenticated with an access token. */
+    accessToken?: RequestAccessToken;
+    /** Present when an id provider's deviceVerification function is called. */
+    deviceLogin?: DeviceLogin;
 }
 
 export interface RequestInterface
