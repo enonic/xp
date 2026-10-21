@@ -23,6 +23,7 @@ import com.enonic.xp.event.Event;
 import com.enonic.xp.event.EventListener;
 import com.enonic.xp.script.event.ScriptEventListener;
 import com.enonic.xp.script.event.ScriptEventManager;
+import com.enonic.xp.script.graal.executor.BoundSlot;
 import com.enonic.xp.script.impl.async.ScriptAsyncService;
 
 // the services this component provides, spelled out: tracking applications is how it maintains
@@ -60,6 +61,11 @@ public final class ScriptEventManagerImpl
     @Override
     public void add( final ScriptEventListener listener )
     {
+        if ( BoundSlot.isOutsideMainContext() )
+        {
+            LOG.warn( "Event listener in application [{}] is registered outside main.js. " +
+                          "This will stop working in the next version", listener.getApplication() );
+        }
         final ScriptEventListenerWrapper wrapper = new ScriptEventListenerWrapper( listener );
         listeners.add( wrapper );
         LOG.debug( "Added Script Event Listener for {}", wrapper.applicationKey );
