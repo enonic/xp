@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +30,7 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.graal.executor.BoundSlot;
 import com.enonic.xp.script.graal.executor.GraalContextBudget;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
@@ -817,6 +819,39 @@ class GraalContextPoolTest
         ( (Closeable) local ).close();
 
         assertEquals( 0, runs.get() );
+    }
+
+    @Test
+    @Timeout(60)
+    void outsideMainContext()
+        throws Exception
+    {
+        final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
+        final List<Boolean> outside = new CopyOnWriteArrayList<>();
+        local.registerMock( "/test/probe", new Probe( outside ) );
+
+        // bootstrap runs on the main context, executeMain on a pool slot
+        local.bootstrap( ResourceKey.from( "graaljs:/context-probe-test.js" ) );
+        local.executeMain( ResourceKey.from( "graaljs:/context-probe-test.js" ) );
+        ( (Closeable) local ).close();
+
+        assertEquals( List.of( false, true ), outside );
+        assertFalse( BoundSlot.isOutsideMainContext() );
+    }
+
+    public static class Probe
+    {
+        private final List<Boolean> outside;
+
+        Probe( final List<Boolean> outside )
+        {
+            this.outside = outside;
+        }
+
+        public void record()
+        {
+            outside.add( BoundSlot.isOutsideMainContext() );
+        }
     }
 
     private static int intValue( final ScriptValue value )
