@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.core.impl.content.parser.YmlPartDescriptorParser;
 import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.descriptor.DescriptorKey;
@@ -72,16 +73,20 @@ public class PartDescriptorLoader
             .build();
     }
 
+    // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node.
+    // A failure of the expansion is the caller's to see, unlike a descriptor that fails to parse
+    @Override
+    public PartDescriptor postProcess( final PartDescriptor descriptor )
+    {
+        return PartDescriptor.copyOf( descriptor )
+            .config( FormFragmentInlining.inline( this.formFragmentService, descriptor.getConfig(), "part [" + descriptor.getKey() + "]" ) )
+            .build();
+    }
+
     @Override
     public PartDescriptor createDefault( final DescriptorKey key )
     {
         return PartDescriptor.create().key( key ).title( key.getName() ).config( Form.empty() ).build();
-    }
-
-    @Override
-    public PartDescriptor postProcess( final PartDescriptor descriptor )
-    {
-        return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
     // the icon is next to the descriptor

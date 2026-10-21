@@ -120,6 +120,7 @@ import com.enonic.xp.style.StyleDescriptor;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -988,9 +989,10 @@ class DynamicSchemaServiceImplTest
         final String resource = readResource( "_cms.yaml" );
         final CreateOrUpdateCmsParams params = CreateOrUpdateCmsParams.create().key( ApplicationKey.from( "unknownapp" ) ).resource( resource ).build();
 
-        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createOrUpdateCms( params ) ) );
-        assertEquals( "Application [unknownapp] is not installed", exception.getMessage() );
+        assertThatThrownBy( () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createOrUpdateCms( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Application [unknownapp] is not installed" );
 
         assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/unknownapp" ) ) ) );
     }
@@ -1038,13 +1040,13 @@ class DynamicSchemaServiceImplTest
                                                    () -> dynamicSchemaService.deleteCms( key ) );
             for ( final Runnable write : writes )
             {
-                final IllegalArgumentException exception =
-                    assertThrows( IllegalArgumentException.class, () -> createAdminContext().runWith( write ) );
-                assertEquals( "Cannot modify system application: " + key, exception.getMessage() );
+                assertThatThrownBy( () -> createAdminContext().runWith( write ) )
+                    .isInstanceOf( IllegalArgumentException.class )
+                    .hasMessage( "Cannot modify system application: " + key );
             }
 
             // the system check comes after the role check
-            assertThrows( ForbiddenAccessException.class, () -> ctxDefault().runWith( writes.get( 0 ) ) );
+            assertThatThrownBy( () -> ctxDefault().runWith( writes.get( 0 ) ) ).isInstanceOf( ForbiddenAccessException.class );
         }
 
         assertTrue( applicationEvents.isEmpty() );
@@ -1076,19 +1078,20 @@ class DynamicSchemaServiceImplTest
                                                         () -> dynamicSchemaService.createOrUpdatePart( partParams ),
                                                         () -> dynamicSchemaService.createOrUpdateStyles( stylesParams ) ) )
         {
-            final IllegalArgumentException exception =
-                assertThrows( IllegalArgumentException.class, () -> createAdminContext().runWith( write ) );
-            assertEquals( "Application [nodeonly] has no CMS descriptor", exception.getMessage() );
+            assertThatThrownBy( () -> createAdminContext().runWith( write ) )
+                .isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "Application [nodeonly] has no CMS descriptor" );
         }
 
         // nothing is written on the way, the cms folder included
         assertFalse( appRepoAdminContext().callWith( () -> nodeService.nodeExists( new NodePath( "/nodeonly/cms" ) ) ) );
 
         // an unknown application is told apart
-        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().runWith(
+        assertThatThrownBy( () -> createAdminContext().runWith(
             () -> dynamicSchemaService.createOrUpdateStyles(
-                CreateOrUpdateStylesParams.create().key( ApplicationKey.from( "unknownapp" ) ).resource( "kind: \"Style\"\n" ).build() ) ) );
-        assertEquals( "Application [unknownapp] is not installed", exception.getMessage() );
+                CreateOrUpdateStylesParams.create().key( ApplicationKey.from( "unknownapp" ) ).resource( "kind: \"Style\"\n" ).build() ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "Application [unknownapp] is not installed" );
     }
 
     @Test
@@ -1152,8 +1155,9 @@ class DynamicSchemaServiceImplTest
         assertEquals( resource, fetched.getResource().readString() );
 
         // the name must be of the kind the type tells
-        assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.getContentSchema(
-            GetDynamicContentSchemaParams.create().name( name ).type( DynamicContentSchemaType.MIXIN ).build() ) ) );
+        assertThatThrownBy( () -> createAdminContext().callWith( () -> dynamicSchemaService.getContentSchema(
+            GetDynamicContentSchemaParams.create().name( name ).type( DynamicContentSchemaType.MIXIN ).build() ) ) )
+            .isInstanceOf( IllegalArgumentException.class );
 
         final List<DynamicSchemaResult<ContentType>> listed = createAdminContext().callWith(
             () -> dynamicSchemaService.<ContentType>listContentSchemas( ListDynamicContentSchemasParams.create()
@@ -1183,17 +1187,19 @@ class DynamicSchemaServiceImplTest
         final String part = readResource( "_part.yaml" );
         final String contentType = readResource( "_contentType.yaml" );
 
-        final NullPointerException component = assertThrows( NullPointerException.class, () -> CreateDynamicComponentParams.create()
+        assertThatThrownBy( () -> CreateDynamicComponentParams.create()
             .descriptorKey( DescriptorKey.from( "myapp:mypart" ) )
             .resource( part )
-            .build() );
-        assertEquals( "type is required", component.getMessage() );
+            .build() )
+            .isInstanceOf( NullPointerException.class )
+            .hasMessage( "type is required" );
 
-        final NullPointerException schema = assertThrows( NullPointerException.class, () -> UpdateDynamicContentSchemaParams.create()
+        assertThatThrownBy( () -> UpdateDynamicContentSchemaParams.create()
             .name( ContentTypeName.from( "myapp:mytype" ) )
             .resource( contentType )
-            .build() );
-        assertEquals( "type is required", schema.getMessage() );
+            .build() )
+            .isInstanceOf( NullPointerException.class )
+            .hasMessage( "type is required" );
     }
 
     // the deprecated create and update of the styles both create or update, like the generic methods
@@ -1298,8 +1304,9 @@ class DynamicSchemaServiceImplTest
 
         // nothing left to delete, and no schema can be written until the descriptor is created again
         assertThat( createAdminContext().callWith( () -> dynamicSchemaService.deleteCms( applicationKey ) ) ).isFalse();
-        assertThrows( IllegalArgumentException.class, () -> createAdminContext().runWith( () -> dynamicSchemaService.createOrUpdateStyles(
-            CreateOrUpdateStylesParams.create().key( applicationKey ).resource( "kind: \"Style\"\n" ).build() ) ) );
+        assertThatThrownBy( () -> createAdminContext().runWith( () -> dynamicSchemaService.createOrUpdateStyles(
+            CreateOrUpdateStylesParams.create().key( applicationKey ).resource( "kind: \"Style\"\n" ).build() ) ) )
+            .isInstanceOf( IllegalArgumentException.class );
     }
 
     @Test
@@ -1552,8 +1559,9 @@ class DynamicSchemaServiceImplTest
                                                                                            .resource( readResource( "_formFragment.yaml" ) )
                                                                                            .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () -> ctxDefault()
-            .callWith( () -> dynamicSchemaService.listFormFragments( applicationKey  ) ) );
+        assertThatThrownBy( () -> ctxDefault()
+            .callWith( () -> dynamicSchemaService.listFormFragments( applicationKey  ) ) )
+            .isInstanceOf( ForbiddenAccessException.class );
     }
 
     @Test
@@ -1637,8 +1645,9 @@ class DynamicSchemaServiceImplTest
                 .resource( readResource( "_contentType.yaml" ) )
                 .build() ) );
 
-        assertThrows( ForbiddenAccessException.class, () -> ctxDefault()
-            .callWith( () -> dynamicSchemaService.deleteContentType( contentType.getSchema().getName() ) ) );
+        assertThatThrownBy( () -> ctxDefault()
+            .callWith( () -> dynamicSchemaService.deleteContentType( contentType.getSchema().getName() ) ) )
+            .isInstanceOf( ForbiddenAccessException.class );
 
     }
 
@@ -1691,10 +1700,10 @@ class DynamicSchemaServiceImplTest
             .resource( "kind: \"ContentType\"" )
             .build();
 
-        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) );
-
-        assertEquals( "expected ContentTypeName but got MixinName: myapp:mytype", exception.getMessage() );
+        assertThatThrownBy( () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "expected ContentTypeName but got MixinName: myapp:mytype" );
     }
 
     @Test
@@ -1793,7 +1802,8 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdateStylesParams params =
             CreateOrUpdateStylesParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
 
-        assertThrows( Exception.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateStyles( params ) ) );
+        assertThatThrownBy( () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateStyles( params ) ) )
+            .isInstanceOf( Exception.class );
     }
 
     @Test
@@ -1807,7 +1817,8 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdateCmsParams params =
             CreateOrUpdateCmsParams.create().key( ApplicationKey.from( "myapp" ) ).resource( resource ).build();
 
-        assertThrows( Exception.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateCms( params ) ) );
+        assertThatThrownBy( () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateCms( params ) ) )
+            .isInstanceOf( Exception.class );
     }
 
     @Test
@@ -1857,7 +1868,8 @@ class DynamicSchemaServiceImplTest
             .resource( "kind: \"Macro\"\ntitle: \"MyMacro\"\n" )
             .build();
 
-        assertThrows( ForbiddenAccessException.class, () -> ctxDefault().callWith( () -> dynamicSchemaService.createOrUpdateMacro( params ) ) );
+        assertThatThrownBy( () -> ctxDefault().callWith( () -> dynamicSchemaService.createOrUpdateMacro( params ) ) )
+            .isInstanceOf( ForbiddenAccessException.class );
     }
 
     @Test
@@ -1934,7 +1946,8 @@ class DynamicSchemaServiceImplTest
                            """ )
             .build();
 
-        assertThrows( Exception.class, () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateMacro( params ) ) );
+        assertThatThrownBy( () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateMacro( params ) ) )
+            .isInstanceOf( Exception.class );
     }
 
     @Test
@@ -1973,7 +1986,8 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdatePhrasesParams params =
             CreateOrUpdatePhrasesParams.create().key( ApplicationKey.from( "myapp" ) ).name( "phrases_en" ).resource( "a=b\n" ).build();
 
-        assertThrows( ForbiddenAccessException.class, () -> ctxDefault().callWith( () -> dynamicSchemaService.createOrUpdatePhrases( params ) ) );
+        assertThatThrownBy( () -> ctxDefault().callWith( () -> dynamicSchemaService.createOrUpdatePhrases( params ) ) )
+            .isInstanceOf( ForbiddenAccessException.class );
     }
 
     @Test
@@ -2134,9 +2148,10 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdateContentSchemaParams params =
             contentTypeParams( "myapp:mytype", null, svgIcon( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
 
-        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) );
-        assertEquals( "resource is required to create [myapp:mytype]", exception.getMessage() );
+        assertThatThrownBy( () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "resource is required to create [myapp:mytype]" );
     }
 
     @Test
@@ -2149,9 +2164,10 @@ class DynamicSchemaServiceImplTest
 
         final CreateOrUpdateContentSchemaParams params = contentTypeParams( "myapp:mytype", null, IconUpdate.KEEP );
 
-        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) );
-        assertEquals( "resource or icon is required to update [myapp:mytype]", exception.getMessage() );
+        assertThatThrownBy( () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "resource or icon is required to update [myapp:mytype]" );
     }
 
     // the icon is validated before anything is written
@@ -2163,10 +2179,10 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdateContentSchemaParams params = contentTypeParams( "myapp:mytype", resource, IconUpdate.replace(
             ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ), "text/plain" ) );
 
-        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) );
-
-        assertEquals( "unsupported icon mime type: text/plain", exception.getMessage() );
+        assertThatThrownBy( () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "unsupported icon mime type: text/plain" );
         assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getContentType( ContentTypeName.from( "myapp:mytype" ) ) ) );
     }
 
@@ -2178,10 +2194,10 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdateContentSchemaParams params =
             contentTypeParams( "myapp:mytype", resource, IconUpdate.replace( ByteSource.empty(), "image/svg+xml" ) );
 
-        final IllegalArgumentException exception = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) );
-
-        assertEquals( "icon data is required", exception.getMessage() );
+        assertThatThrownBy( () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createOrUpdateContentType( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "icon data is required" );
         assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getContentType( ContentTypeName.from( "myapp:mytype" ) ) ) );
     }
 
@@ -2193,8 +2209,8 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdateContentSchemaParams params =
             contentTypeParams( "myapp:mytype", resource, svgIcon( new byte[100 * 1024 + 1] ) );
 
-        assertThrows( IllegalArgumentException.class,
-                      () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateContentType( params ) ) );
+        assertThatThrownBy( () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdateContentType( params ) ) )
+            .isInstanceOf( IllegalArgumentException.class );
         assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getContentType( ContentTypeName.from( "myapp:mytype" ) ) ) );
     }
 
@@ -2206,8 +2222,8 @@ class DynamicSchemaServiceImplTest
         final CreateOrUpdateContentSchemaParams params =
             contentTypeParams( "myapp:mytype", resource, svgIcon( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ) );
 
-        assertThrows( ForbiddenAccessException.class,
-                      () -> ctxDefault().callWith( () -> dynamicSchemaService.createOrUpdateContentType( params ) ) );
+        assertThatThrownBy( () -> ctxDefault().callWith( () -> dynamicSchemaService.createOrUpdateContentType( params ) ) )
+            .isInstanceOf( ForbiddenAccessException.class );
     }
 
     @Test
@@ -2257,14 +2273,15 @@ class DynamicSchemaServiceImplTest
 
         final CreateOrUpdateComponentParams layoutParams =
             CreateOrUpdateComponentParams.create().key( DescriptorKey.from( "myapp:mylayout" ) ).resource( layout ).icon( icon ).build();
-        final IllegalArgumentException layoutException = assertThrows( IllegalArgumentException.class, () -> createAdminContext().callWith(
-            () -> dynamicSchemaService.createOrUpdateLayout( layoutParams ) ) );
-        assertEquals( "icon is not supported for LAYOUT [myapp:mylayout]", layoutException.getMessage() );
+        assertThatThrownBy( () -> createAdminContext().callWith(
+            () -> dynamicSchemaService.createOrUpdateLayout( layoutParams ) ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessage( "icon is not supported for LAYOUT [myapp:mylayout]" );
 
         final CreateOrUpdateComponentParams pageParams =
             CreateOrUpdateComponentParams.create().key( DescriptorKey.from( "myapp:mypage" ) ).resource( page ).icon( IconUpdate.REMOVE ).build();
-        assertThrows( IllegalArgumentException.class,
-                      () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdatePage( pageParams ) ) );
+        assertThatThrownBy( () -> createAdminContext().callWith( () -> dynamicSchemaService.createOrUpdatePage( pageParams ) ) )
+            .isInstanceOf( IllegalArgumentException.class );
 
         assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getLayout( DescriptorKey.from( "myapp:mylayout" ) ) ) );
         assertNull( createAdminContext().callWith( () -> dynamicSchemaService.getPage( DescriptorKey.from( "myapp:mypage" ) ) ) );

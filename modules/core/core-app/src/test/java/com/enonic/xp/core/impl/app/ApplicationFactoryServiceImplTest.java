@@ -3,7 +3,6 @@ package com.enonic.xp.core.impl.app;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.MultiApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
@@ -86,8 +84,10 @@ class ApplicationFactoryServiceImplTest
         assertThat( service.findActiveApplication( applicationKey ) ).isEmpty();
     }
 
+    // the bundle and the resolver come of one lookup: the active bundle with the resolver of the running application, none with
+    // the resolver of a stopped one
     @Test
-    void findActiveResolver()
+    void findResourceSource()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
@@ -100,23 +100,27 @@ class ApplicationFactoryServiceImplTest
         final Bundle bundle = deploy( appName, newBundle( appName, true ) );
 
         // installed but not started: a global application serves its persisted descriptor (and schema, if any)
-        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+        ResourceSource source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isNull();
+        assertThat( source.resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
 
         bundle.start();
-        Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
-        assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( MultiApplicationUrlResolver.class );
+        source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isEqualTo( bundle );
+        assertThat( source.resolver() ).isInstanceOf( MultiApplicationUrlResolver.class );
 
-        activeResolver = service.findResolver( applicationKey, "bundle" );
-        assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
+        source = service.findResourceSource( applicationKey, "bundle" );
+        assertThat( source.bundle() ).isEqualTo( bundle );
+        assertThat( source.resolver() ).isInstanceOf( BundleApplicationUrlResolver.class );
 
         bundle.stop();
-        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
+        source = service.findResourceSource( applicationKey, null );
+        assertThat( source.bundle() ).isNull();
+        assertThat( source.resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
     }
 
     @Test
-    void findActiveResolver_local()
+    void findResourceSource_local()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
@@ -129,19 +133,17 @@ class ApplicationFactoryServiceImplTest
         // a local application is never persisted: nothing is served until it is started, then the bundle only
         final Bundle bundle = deploy( "local:" + appName, newBundle( appName, true ) );
 
-        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
 
         bundle.start();
-        final Optional<ApplicationUrlResolver> activeResolver = service.findResolver( applicationKey, null );
-        assertThat( activeResolver ).isNotEmpty();
-        assertThat( activeResolver.get() ).isInstanceOf( BundleApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( BundleApplicationUrlResolver.class );
 
         bundle.stop();
-        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
     }
 
     @Test
-    void findResolver_inactiveWithPersistedSchema()
+    void findResourceSource_inactiveWithPersistedSchema()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
@@ -154,22 +156,20 @@ class ApplicationFactoryServiceImplTest
         final Bundle bundle = deploy( appName, newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
 
         // installed but not started: the persisted schema is served
-        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
-        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, "bundle" ).resolver() ).isNull();
 
         bundle.start();
-        assertThat( service.findResolver( applicationKey, null ) ).isNotEmpty()
-            .get()
-            .isNotInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNotNull().isNotInstanceOf( NodeResourceApplicationUrlResolver.class );
 
         // stopped: the persisted schema is still served, bundle resources are not
         bundle.stop();
-        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
-        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, "bundle" ).resolver() ).isNull();
     }
 
     @Test
-    void findResolver_inactiveLocalWithCmsDescriptor()
+    void findResourceSource_inactiveLocalWithCmsDescriptor()
         throws Exception
     {
         final BundleContext bundleContext = getBundleContext();
@@ -183,15 +183,15 @@ class ApplicationFactoryServiceImplTest
                                       newBundle( appName, true ).addResource( "cms/cms.yaml", stream( "kind: \"CMS\"" ) ) );
 
         bundle.start();
-        assertThat( service.findResolver( applicationKey, null ) ).isNotEmpty();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNotNull();
 
         // a local application is never persisted: nothing is served once stopped
         bundle.stop();
-        assertThat( service.findResolver( applicationKey, null ) ).isEmpty();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isNull();
     }
 
     @Test
-    void findResolver_persistedOnlyApplication()
+    void findResourceSource_persistedOnlyApplication()
     {
         final BundleContext bundleContext = getBundleContext();
         final ApplicationFactoryServiceImpl service = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
@@ -204,11 +204,11 @@ class ApplicationFactoryServiceImplTest
         when( nodeService.getByPath( new NodePath( "/nodeonly" ) ) ).thenReturn(
             Node.create().id( new NodeId() ).name( "nodeonly" ).parentPath( NodePath.ROOT ).data( data ).build() );
 
-        assertThat( service.findResolver( applicationKey, null ) ).containsInstanceOf( NodeResourceApplicationUrlResolver.class );
-        assertThat( service.findResolver( applicationKey, "bundle" ) ).isEmpty();
+        assertThat( service.findResourceSource( applicationKey, null ).resolver() ).isInstanceOf( NodeResourceApplicationUrlResolver.class );
+        assertThat( service.findResourceSource( applicationKey, "bundle" ).resolver() ).isNull();
 
         // nothing persisted, nothing installed: nothing is served
-        assertThat( service.findResolver( ApplicationKey.from( "unknown" ), null ) ).isEmpty();
+        assertThat( service.findResourceSource( ApplicationKey.from( "unknown" ), null ).resolver() ).isNull();
     }
 
     private static InputStream stream( final String content )

@@ -9,6 +9,7 @@ import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormFragment;
 import com.enonic.xp.schema.formfragment.FormFragmentName;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -59,6 +60,20 @@ class CmsFormFragmentServiceImplTest
 
         assertNotNull( inlinedForm.getInput( "text3" ) );
         assertNotNull( inlinedForm.getInput( "text4" ) );
+    }
+
+    // two fragments, each valid, that both contribute an item of the same name: the expanded form is invalid, and that is reported
+    @Test
+    void inlineFormItemsReportsInvalidExpandedForm()
+    {
+        final Form form = Form.create()
+            .addFormItem( FormFragment.create().formFragment( FormFragmentName.from( "myapp2:address" ) ).build() )
+            .addFormItem( FormFragment.create().formFragment( FormFragmentName.from( "myapp2:address2" ) ).build() )
+            .build();
+
+        assertThatThrownBy( () -> service.inlineFormItems( form ) )
+            .isInstanceOf( IllegalArgumentException.class )
+            .hasMessageContaining( "Multiple entries with same key: address=address" );
     }
 
     @Test

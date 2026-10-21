@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.framework.Bundle;
 
 import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.node.NodeService;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,19 +40,13 @@ public class ApplicationFactoryServiceMock
     }
 
     @Override
-    public Optional<Bundle> findActiveBundle( final ApplicationKey applicationKey )
-    {
-        return map.keySet().stream().filter( bundle -> ApplicationHelper.getApplicationKey( bundle ).equals( applicationKey ) ).findAny();
-    }
-
-    @Override
-    public Optional<ApplicationUrlResolver> findResolver( final ApplicationKey applicationKey, final String resolverName )
+    public ResourceSource findResourceSource( final ApplicationKey applicationKey, final String resolverName )
     {
         return map.entrySet()
             .stream()
             .filter( e -> ApplicationHelper.getApplicationKey( e.getKey() ).equals( applicationKey ) )
-            .map( Map.Entry::getValue )
-            .map( ApplicationAdaptor::getUrlResolver )
-            .findAny();
+            .findAny()
+            .map( e -> new ResourceSource( e.getKey(), e.getValue().getUrlResolver() ) )
+            .orElse( ResourceSource.NONE );
     }
 }

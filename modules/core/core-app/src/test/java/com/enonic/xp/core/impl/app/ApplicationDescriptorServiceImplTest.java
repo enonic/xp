@@ -46,11 +46,11 @@ import com.enonic.xp.support.ResourceTestHelper;
 import com.enonic.xp.util.BinaryReference;
 import com.enonic.xp.util.GenericValue;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -227,12 +227,12 @@ class ApplicationDescriptorServiceImplTest
         {
             final CreateOrUpdateApplicationDescriptorParams params =
                 CreateOrUpdateApplicationDescriptorParams.create().key( key ).editor( edit -> edit.title = "Hijacked" ).build();
-            final IllegalArgumentException exception =
-                assertThrows( IllegalArgumentException.class, () -> asAdmin( () -> appDescriptorService.createOrUpdate( params ) ) );
-            assertEquals( "Cannot modify system application: " + key, exception.getMessage() );
+            assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate( params ) ) )
+                .isInstanceOf( IllegalArgumentException.class )
+                .hasMessage( "Cannot modify system application: " + key );
 
             // the system check comes after the role check
-            assertThrows( ForbiddenAccessException.class, () -> appDescriptorService.createOrUpdate( params ) );
+            assertThatThrownBy( () -> appDescriptorService.createOrUpdate( params ) ).isInstanceOf( ForbiddenAccessException.class );
         }
 
         // nothing is created or written for any of them
@@ -345,13 +345,16 @@ class ApplicationDescriptorServiceImplTest
     {
         stubUpsert();
 
-        assertThrows( IllegalArgumentException.class, () -> asAdmin( () -> appDescriptorService.createOrUpdate(
-            params( edit -> edit.icon = Icon.from( new byte[]{1}, "image/jpeg", Instant.now() ) ) ) ) );
-        assertThrows( IllegalArgumentException.class, () -> asAdmin( () -> appDescriptorService.createOrUpdate(
-            params( edit -> edit.icon = Icon.from( new byte[0], "image/png", Instant.now() ) ) ) ) );
-        assertThrows( IllegalArgumentException.class, () -> asAdmin( () -> appDescriptorService.createOrUpdate(
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate(
+            params( edit -> edit.icon = Icon.from( new byte[]{1}, "image/jpeg", Instant.now() ) ) ) ) )
+            .isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate(
+            params( edit -> edit.icon = Icon.from( new byte[0], "image/png", Instant.now() ) ) ) ) )
+            .isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> asAdmin( () -> appDescriptorService.createOrUpdate(
             params( edit -> edit.icon = Icon.from( new byte[ApplicationDescriptorServiceImpl.MAX_ICON_SIZE + 1], "image/png",
-                                                   Instant.now() ) ) ) ) );
+                                                   Instant.now() ) ) ) ) )
+            .isInstanceOf( IllegalArgumentException.class );
 
         verify( repoService, never() ).upsertApplicationDescriptor( any(), any(), any() );
     }
@@ -363,8 +366,8 @@ class ApplicationDescriptorServiceImplTest
             .authInfo( AuthenticationInfo.create().principals( RoleKeys.EVERYONE ).user( User.anonymous() ).build() )
             .build();
 
-        assertThrows( ForbiddenAccessException.class,
-                      () -> context.runWith( () -> appDescriptorService.createOrUpdate( params( edit -> edit.title = "x" ) ) ) );
+        assertThatThrownBy( () -> context.runWith( () -> appDescriptorService.createOrUpdate( params( edit -> edit.title = "x" ) ) ) )
+            .isInstanceOf( ForbiddenAccessException.class );
 
         verify( repoService, never() ).createApplicationNode( any() );
     }

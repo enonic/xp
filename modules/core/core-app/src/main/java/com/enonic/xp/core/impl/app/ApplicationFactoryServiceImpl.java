@@ -71,25 +71,23 @@ public class ApplicationFactoryServiceImpl
     }
 
     @Override
-    public Optional<Bundle> findActiveBundle( final ApplicationKey applicationKey )
+    public ResourceSource findResourceSource( final ApplicationKey applicationKey, final String source )
     {
-        return findActiveEntry( applicationKey ).map( Map.Entry::getKey );
-    }
+        // the bundle and the resolver of one entry: a bundle stopping after the lookup leaves what is derived stamped with it
+        final Optional<Map.Entry<Bundle, ApplicationAdaptor>> active = findActiveEntry( applicationKey );
+        final Bundle bundle = active.map( Map.Entry::getKey ).orElse( null );
 
-    @Override
-    public Optional<ApplicationUrlResolver> findResolver( final ApplicationKey applicationKey, final String source )
-    {
-        final Optional<Map.Entry<Bundle, ApplicationAdaptor>> adaptorEntry = findActiveEntry( applicationKey );
-
-        if ( source == null )
+        if ( source != null )
         {
-            return adaptorEntry.map( Map.Entry::getValue )
-                .map( ApplicationAdaptor::getUrlResolver )
-                .or( () -> findInactiveResolver( applicationKey ) )
-                .or( () -> findPersistedResolver( applicationKey ) );
+            return new ResourceSource( bundle, bundle == null ? null : factory.createUrlResolver( bundle, source ) );
         }
 
-        return adaptorEntry.map( Map.Entry::getKey ).map( bundle -> factory.createUrlResolver( bundle, source ) );
+        final ApplicationUrlResolver resolver = active.map( Map.Entry::getValue )
+            .map( ApplicationAdaptor::getUrlResolver )
+            .or( () -> findInactiveResolver( applicationKey ) )
+            .or( () -> findPersistedResolver( applicationKey ) )
+            .orElse( null );
+        return new ResourceSource( bundle, resolver );
     }
 
     // a stopped application still serves its persisted schema, the schema belongs to the installation, not to the running bundle
