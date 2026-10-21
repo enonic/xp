@@ -73,11 +73,14 @@ class ApplicationServiceImplTest
 
     private EventPublisher eventPublisher;
 
+    private ApplicationGeneration applicationGeneration;
+
     private AppFilterService appFilterService;
 
     @BeforeEach
     void initService()
     {
+        this.applicationGeneration = mock( ApplicationGeneration.class );
         final BundleContext bundleContext = getBundleContext();
 
         this.applicationRegistry =
@@ -94,7 +97,8 @@ class ApplicationServiceImplTest
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( auditLogService );
         auditLogSupport.activate( appConfig );
 
-        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, auditLogSupport );
+        this.service = new ApplicationServiceImpl( applicationRegistry, repoService, eventPublisher, appFilterService, auditLogSupport,
+                                                   applicationGeneration );
     }
 
     @Test
@@ -270,6 +274,7 @@ class ApplicationServiceImplTest
         this.service.uninstallApplication( applicationKey );
 
         verify( this.repoService ).deleteApplicationNode( applicationKey );
+        verify( this.applicationGeneration ).bump( applicationKey );
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.uninstall( applicationKey ) ) ) );
         verify( this.eventPublisher, times( 1 ) ).publish(
@@ -330,6 +335,11 @@ class ApplicationServiceImplTest
         assertEquals( Bundle.INSTALLED, bundle.getState() );
         this.service.startApplication( applicationKey );
         assertEquals( Bundle.ACTIVE, bundle.getState() );
+
+        // what was cached for the stopped application is stale: the generation moves before the event is published
+        final InOrder inOrder = Mockito.inOrder( this.applicationGeneration, this.eventPublisher );
+        inOrder.verify( this.applicationGeneration ).bump( applicationKey );
+        inOrder.verify( this.eventPublisher ).publish( argThat( new ApplicationEventMatcher( ApplicationEvents.started( applicationKey ) ) ) );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.start( applicationKey ) ) ) );
@@ -425,6 +435,8 @@ class ApplicationServiceImplTest
         final ApplicationKey applicationKey = ApplicationKey.from( "app1" );
         this.service.stopApplication( applicationKey );
         assertEquals( Bundle.RESOLVED, bundle.getState() );
+
+        verify( this.applicationGeneration ).bump( applicationKey );
 
         verify( this.eventPublisher, times( 1 ) ).publish(
             argThat( new ApplicationEventMatcher( ApplicationClusterEvents.stop( applicationKey ) ) ) );
@@ -556,6 +568,9 @@ class ApplicationServiceImplTest
         verifyInstallEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyInstalledEvents( ApplicationKey.from( "my.bundle" ), node.id(), times( 1 ) );
         verifyStartedEvent( application.getKey(), times( 1 ) );
+
+        // once the schema is persisted, once the bundle is installed, once it is started
+        verify( this.applicationGeneration, times( 3 ) ).bump( application.getKey() );
     }
 
     @Test

@@ -126,11 +126,12 @@ public class ApplicationRepoServiceImpl
         ApplicationHelper.runAsAdmin( () -> {
             final NodePath appPath = applicationNodePath( applicationKey );
 
-            deletePersistedSchema( appPath );
+            final boolean cmsDeleted = deletePersistedSchema( appPath );
+            final Map<NodePath, PersistedNode> nodes;
 
             try
             {
-                final Map<NodePath, PersistedNode> nodes = groupByNode( resources );
+                nodes = groupByNode( resources );
 
                 final PersistedNode application = nodes.remove( NodePath.ROOT );
                 if ( application != null )
@@ -161,6 +162,7 @@ public class ApplicationRepoServiceImpl
                 try
                 {
                     deletePersistedSchema( appPath );
+                    markSchemaChanged( this.nodeService, applicationKey );
                 }
                 catch ( Exception cleanupFailure )
                 {
@@ -169,6 +171,11 @@ public class ApplicationRepoServiceImpl
                 throw e;
             }
 
+            // a write of the descriptor alone moves the version of the application node by itself
+            if ( cmsDeleted || !nodes.isEmpty() )
+            {
+                markSchemaChanged( this.nodeService, applicationKey );
+            }
             this.nodeService.refresh( RefreshMode.ALL );
         } );
     }
@@ -241,7 +248,31 @@ public class ApplicationRepoServiceImpl
     @Override
     public void deleteApplicationSchema( final ApplicationKey applicationKey )
     {
-        ApplicationHelper.runAsAdmin( () -> deletePersistedSchema( applicationNodePath( applicationKey ) ) );
+        ApplicationHelper.runAsAdmin( () -> {
+            if ( deletePersistedSchema( applicationNodePath( applicationKey ) ) )
+            {
+                markSchemaChanged( this.nodeService, applicationKey );
+            }
+        } );
+    }
+
+    /**
+     * Moves the version of the application node once its persisted schema has been written: the version is what the other nodes of
+     * the cluster check their cached schema against when the event telling about the change does not reach them, see
+     * {@link ApplicationGeneration}. Called after the write, never before: a node seeing the new version reads the new schema.
+     * Must run in the context of the application repository.
+     */
+    static void markSchemaChanged( final NodeService nodeService, final ApplicationKey applicationKey )
+    {
+        final NodePath appPath = applicationNodePath( applicationKey );
+        if ( !nodeService.nodeExists( appPath ) )
+        {
+            return;
+        }
+        nodeService.update( UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
+            final Long revision = toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION );
+            toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, revision == null ? 1 : revision + 1 );
+        } ).build() );
     }
 
     @Override
@@ -312,11 +343,14 @@ public class ApplicationRepoServiceImpl
 
     /**
      * Removes the {@code cms} subtree and the descriptor and icon from the application node, whichever of them exist.
+     *
+     * @return whether there was a {@code cms} subtree to remove
      */
-    private void deletePersistedSchema( final NodePath appPath )
+    private boolean deletePersistedSchema( final NodePath appPath )
     {
         final NodePath cmsPath = new NodePath( appPath, SchemaNodeLayout.CMS_NODE_PATH.getName() );
-        if ( this.nodeService.nodeExists( cmsPath ) )
+        final boolean cmsExists = this.nodeService.nodeExists( cmsPath );
+        if ( cmsExists )
         {
             this.nodeService.delete( DeleteNodeParams.create().nodePath( cmsPath ).refresh( RefreshMode.ALL ).build() );
         }
@@ -330,6 +364,7 @@ public class ApplicationRepoServiceImpl
                 toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
             } ).refresh( RefreshMode.ALL ).build() );
         }
+        return cmsExists;
     }
 
     private static String readString( final ByteSource content )

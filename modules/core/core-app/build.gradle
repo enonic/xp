@@ -4,6 +4,7 @@ dependencies {
     implementation project( ':core:core-schema' )
     implementation project( ':core:core-content' )
     implementation libs.osgi.service.cm
+    implementation libs.caffeine
 
     testFixturesApi project( ':core:core-api' )
     testFixturesApi libs.tinybundles

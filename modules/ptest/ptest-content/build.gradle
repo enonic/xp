@@ -18,6 +18,9 @@ dependencies {
     implementation project( ':core:core-app' )
     implementation project( ':core:core-security' )
 
+    // the schema benchmark resolves applications through the application factory, which tracks bundles of a framework
+    implementation libs.felix.framework
+
     implementation( testFixtures( project( ':core:core-api' ) ) )
     implementation( testFixtures( project( ':core:core-blobstore' ) ) )
     implementation( testFixtures( project( ':core:core-internal' ) ) )

@@ -144,9 +144,9 @@ class ApplicationDescriptorBuilderTest
         final Instant timestamp = Instant.parse( "2026-09-11T10:00:00Z" );
         final Map<String, Resource> resources = Map.of( //
             "/enonic.yaml", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.yaml" ), ByteSource.wrap(
-                "kind: \"Application\"\ndescription: \"From node\"\n".getBytes( StandardCharsets.UTF_8 ) ), timestamp ), //
+                "kind: \"Application\"\ndescription: \"From node\"\n".getBytes( StandardCharsets.UTF_8 ) ), timestamp, null ), //
             "/enonic.svg", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.svg" ),
-                                                  ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ), timestamp ) );
+                                                  ByteSource.wrap( "<svg/>".getBytes( StandardCharsets.UTF_8 ) ), timestamp, null ) );
 
         final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) );
 
@@ -163,8 +163,8 @@ class ApplicationDescriptorBuilderTest
         final Map<String, Resource> resources = Map.of( //
             "/enonic.yaml", new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.yaml" ),
                                                    ByteSource.wrap( "kind: \"Application\"\n".getBytes( StandardCharsets.UTF_8 ) ),
-                                                   timestamp ), "/enonic.png",
-            new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.png" ), ByteSource.wrap( new byte[]{1, 2, 3} ), timestamp ) );
+                                                   timestamp, null ), "/enonic.png",
+            new NodeValueResource( ResourceKey.from( APP_KEY, "/enonic.png" ), ByteSource.wrap( new byte[]{1, 2, 3} ), timestamp, null ) );
 
         final ApplicationDescriptor appDescriptor = ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) );
 
@@ -189,7 +189,7 @@ class ApplicationDescriptorBuilderTest
                                                                                                ByteSource.wrap(
                                                                                                    "kind: \"Application\"\nname: \"otherapp\"\n".getBytes(
                                                                                                        StandardCharsets.UTF_8 ) ),
-                                                                                               Instant.EPOCH ) );
+                                                                                               Instant.EPOCH, null ) );
 
         assertThrows( RuntimeException.class, () -> ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) ) );
     }
@@ -222,6 +222,12 @@ class ApplicationDescriptorBuilderTest
             public Resource findResource( final String path )
             {
                 return resources.get( path );
+            }
+
+            @Override
+            public boolean isStable()
+            {
+                return true;
             }
         };
     }

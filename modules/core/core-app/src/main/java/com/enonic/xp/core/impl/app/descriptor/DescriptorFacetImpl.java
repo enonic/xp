@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
+import com.enonic.xp.core.internal.form.FormFragmentException;
 import com.enonic.xp.descriptor.Descriptor;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
@@ -102,6 +103,11 @@ final class DescriptorFacetImpl<T extends Descriptor>
         try
         {
             return this.loader.load( key, resource );
+        }
+        catch ( final FormFragmentException e )
+        {
+            // a fragment missing or cyclic is the caller's to see, the descriptor itself is sound
+            throw e;
         }
         catch ( final Exception e )
         {

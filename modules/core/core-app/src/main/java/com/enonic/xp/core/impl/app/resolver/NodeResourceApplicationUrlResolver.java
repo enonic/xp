@@ -127,12 +127,14 @@ public final class NodeResourceApplicationUrlResolver
             {
                 return null;
             }
-            return new NodeValueResource( resourceKey, nodeService.getBinary( appNode.id(), reference ), appNode.getTimestamp() );
+            return new NodeValueResource( resourceKey, nodeService.getBinary( appNode.id(), reference ), appNode.getTimestamp(),
+                                          appNode.getNodeVersionId() );
         }
         final String descriptor = appNode.data().getString( SchemaNodePropertyNames.DESCRIPTOR );
         return descriptor == null
             ? null
-            : new NodeValueResource( resourceKey, ByteSource.wrap( descriptor.getBytes( StandardCharsets.UTF_8 ) ), appNode.getTimestamp() );
+            : new NodeValueResource( resourceKey, ByteSource.wrap( descriptor.getBytes( StandardCharsets.UTF_8 ) ), appNode.getTimestamp(),
+                                     appNode.getNodeVersionId() );
     }
 
     private Resource findSchemaResource( final String path, final SchemaNodeLayout.Location location )
@@ -150,7 +152,8 @@ public final class NodeResourceApplicationUrlResolver
             {
                 return null;
             }
-            return new NodeValueResource( resourceKey, nodeService.getBinary( schemaNode.id(), reference ), schemaNode.getTimestamp() );
+            return new NodeValueResource( resourceKey, nodeService.getBinary( schemaNode.id(), reference ), schemaNode.getTimestamp(),
+                                          schemaNode.getNodeVersionId() );
         }
         return new NodeValueResource( resourceKey, schemaNode );
     }
@@ -158,5 +161,12 @@ public final class NodeResourceApplicationUrlResolver
     private NodePath cmsNodePath()
     {
         return new NodePath( appNodePath, SchemaNodeLayout.CMS_NODE_PATH.getName() );
+    }
+
+    @Override
+    public boolean isStable()
+    {
+        // every write of the persisted resources bumps the generation of the application
+        return true;
     }
 }

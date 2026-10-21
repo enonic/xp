@@ -251,7 +251,7 @@ class ApplicationRepoServiceImplTest
     void persist_schema_without_resources_removes_the_persisted_schema()
     {
         Mockito.when( this.nodeService.nodeExists( CMS_PATH ) ).thenReturn( true );
-        stubApplicationNode( new PropertyTree() );
+        final PropertyTree edited = stubApplicationNode( new PropertyTree() );
 
         this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), Map.of() );
 
@@ -259,8 +259,9 @@ class ApplicationRepoServiceImplTest
         Mockito.verify( this.nodeService ).delete( deleteCaptor.capture() );
         assertEquals( CMS_PATH, deleteCaptor.getValue().getNodePath() );
         Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
-        // nothing on the application node to remove
-        Mockito.verify( this.nodeService, Mockito.never() ).update( Mockito.any( UpdateNodeParams.class ) );
+        // nothing on the application node to remove: its only update marks the schema changed
+        Mockito.verify( this.nodeService ).update( Mockito.any( UpdateNodeParams.class ) );
+        assertEquals( 1, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
         Mockito.verify( this.nodeService ).refresh( RefreshMode.ALL );
     }
 
@@ -309,6 +310,24 @@ class ApplicationRepoServiceImplTest
         assertNull( edited.getString( SchemaNodePropertyNames.DESCRIPTOR ) );
         assertNull( edited.getBinaryReference( SchemaNodePropertyNames.ICON ) );
         Mockito.verify( this.nodeService, Mockito.never() ).create( Mockito.any( CreateNodeParams.class ) );
+    }
+
+    @Test
+    void schema_written_after_the_descriptor_moves_the_application_node()
+    {
+        final PropertyTree edited = stubApplicationNode( new PropertyTree() );
+        Mockito.when( this.nodeService.create( Mockito.any( CreateNodeParams.class ) ) ).thenReturn( cmsNode() );
+
+        final Map<String, ByteSource> resources = new LinkedHashMap<>();
+        resources.put( "enonic.yaml", ByteSource.wrap( "app-descriptor".getBytes( StandardCharsets.UTF_8 ) ) );
+        resources.put( "cms/cms.yaml", ByteSource.wrap( "cms".getBytes( StandardCharsets.UTF_8 ) ) );
+
+        this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), resources );
+        this.service.persistApplicationSchema( ApplicationKey.from( "myBundle" ), resources );
+
+        // the descriptor, then the revision, once per persist
+        Mockito.verify( this.nodeService, Mockito.times( 4 ) ).update( Mockito.any( UpdateNodeParams.class ) );
+        assertEquals( 2, edited.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) );
     }
 
     @Test

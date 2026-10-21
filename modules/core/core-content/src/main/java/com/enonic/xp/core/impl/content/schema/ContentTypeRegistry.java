@@ -10,6 +10,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationKeys;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.core.impl.schema.SchemaHelper;
+import com.enonic.xp.core.internal.form.FormFragmentException;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 import com.enonic.xp.schema.content.ContentTypes;
@@ -68,6 +69,11 @@ final class ContentTypeRegistry
         try
         {
             return contentTypeLoader.get( name );
+        }
+        catch ( final FormFragmentException e )
+        {
+            // a fragment missing or cyclic is the caller's to see, the content type itself is sound
+            throw e;
         }
         catch ( final Exception e )
         {

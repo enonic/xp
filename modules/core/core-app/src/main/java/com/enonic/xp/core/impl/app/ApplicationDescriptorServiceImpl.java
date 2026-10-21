@@ -67,11 +67,15 @@ public class ApplicationDescriptorServiceImpl
 
     private final EventPublisher eventPublisher;
 
+    private final ApplicationGeneration applicationGeneration;
+
     @Activate
     public ApplicationDescriptorServiceImpl( @Reference final NodeService nodeService, @Reference final ApplicationRepoService repoService,
                                              @Reference final DynamicSchemaAuditLogSupport auditLogSupport,
-                                             @Reference final EventPublisher eventPublisher )
+                                             @Reference final EventPublisher eventPublisher,
+                                             @Reference final ApplicationGeneration applicationGeneration )
     {
+        this.applicationGeneration = applicationGeneration;
         this.appDescriptorMap = new ConcurrentHashMap<>();
         this.bundles = new ConcurrentHashMap<>();
         this.nodeService = nodeService;
@@ -140,7 +144,8 @@ public class ApplicationDescriptorServiceImpl
 
         this.repoService.upsertApplicationDescriptor( key, yaml, iconUpdate );
 
-        // the descriptor is read back the way every reader sees it, from this point on
+        // the descriptor is read back the way every reader sees it, from this point on: nothing cached before the write is served
+        this.applicationGeneration.bump( key );
         this.appDescriptorMap.remove( key );
         final ApplicationDescriptor result = Objects.requireNonNull( get( key ), "application descriptor not found after write" );
 

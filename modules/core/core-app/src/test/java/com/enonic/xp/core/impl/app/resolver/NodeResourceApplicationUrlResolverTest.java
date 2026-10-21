@@ -27,12 +27,14 @@ import com.enonic.xp.node.NodeIds;
 import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
 import com.enonic.xp.node.Nodes;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.schema.SchemaNodePropertyNames;
 import com.enonic.xp.util.BinaryReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -237,6 +239,29 @@ class NodeResourceApplicationUrlResolverTest
         verify( this.nodeService, never() ).getByPath( any() );
     }
 
+    // the version of the node is the revision of every resource served from it: the descriptor and icon of the application node,
+    // the descriptor and icon of a schema node
+    @Test
+    void findResource_reports_the_version_of_the_node_as_revision()
+    {
+        final Node appNode = applicationNode( "kind: \"Application\"", "image/svg+xml" );
+        when( this.nodeService.getByPath( APP_PATH ) ).thenReturn( appNode );
+        when( this.nodeService.getBinary( appNode.id(), BinaryReference.from( "enonic.svg" ) ) ).thenReturn( ByteSource.empty() );
+        final Node schemaNode = schemaNode( "contenttype:mytype", "icon.svg" );
+        when( this.nodeService.getByPath( new NodePath( "/myapp/cms/contenttype:mytype" ) ) ).thenReturn( schemaNode );
+        when( this.nodeService.getBinary( schemaNode.id(), BinaryReference.from( "icon.svg" ) ) ).thenReturn( ByteSource.empty() );
+
+        assertEquals( appNode.getNodeVersionId(), revision( "/enonic.yaml" ) );
+        assertEquals( appNode.getNodeVersionId(), revision( "/enonic.svg" ) );
+        assertEquals( schemaNode.getNodeVersionId(), revision( "/cms/content-types/mytype.yaml" ) );
+        assertEquals( schemaNode.getNodeVersionId(), revision( "/cms/content-types/mytype.svg" ) );
+    }
+
+    private Object revision( final String path )
+    {
+        return assertInstanceOf( RevisionedResource.class, resolver().findResource( path ) ).revision();
+    }
+
     private NodeResourceApplicationUrlResolver resolver()
     {
         return new NodeResourceApplicationUrlResolver( APP_KEY, this.nodeService, APP_PATH, () -> ContextBuilder.create().build() );
@@ -250,6 +275,7 @@ class NodeResourceApplicationUrlResolverTest
             .name( "myapp" )
             .data( applicationData( descriptor, iconMimeType ) )
             .timestamp( Instant.now() )
+            .nodeVersionId( new NodeVersionId() )
             .build();
     }
 
@@ -282,6 +308,7 @@ class NodeResourceApplicationUrlResolverTest
             .name( name )
             .data( data )
             .timestamp( Instant.now() )
+            .nodeVersionId( new NodeVersionId() )
             .build();
     }
 
