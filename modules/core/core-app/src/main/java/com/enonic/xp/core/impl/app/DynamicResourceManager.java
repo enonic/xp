@@ -75,15 +75,23 @@ final class DynamicResourceManager
                 }
                 try
                 {
-                    return new Stored( create( path, resource, iconUpdate ), true );
+                    return changed( applicationKey, new Stored( create( path, resource, iconUpdate ), true ) );
                 }
                 catch ( NodeAlreadyExistAtPathException e )
                 {
                     // created by a racing call: updated instead
                 }
             }
-            return new Stored( update( path, resource, iconUpdate ), false );
+            return changed( applicationKey, new Stored( update( path, resource, iconUpdate ), false ) );
         } );
+    }
+
+    // the schema of the application was written: the version of the application node moves, what every read of the schema cached
+    // on any node of the cluster is checked against, see ApplicationRepoServiceImpl.markSchemaChanged
+    private <T> T changed( final ApplicationKey applicationKey, final T result )
+    {
+        ApplicationRepoServiceImpl.markSchemaChanged( nodeService, applicationKey );
+        return result;
     }
 
     private Node create( final NodePath path, final String resource, final IconUpdate iconUpdate )
@@ -151,8 +159,9 @@ final class DynamicResourceManager
     {
         return ApplicationHelper.runAsAdmin( () -> {
             final NodePath path = nodePath( applicationKey, kind, name );
-            return nodeService.nodeExists( path ) &&
+            final boolean deleted = nodeService.nodeExists( path ) &&
                 nodeService.delete( DeleteNodeParams.create().nodePath( path ).refresh( RefreshMode.ALL ).build() ).getNodeIds().isNotEmpty();
+            return deleted ? changed( applicationKey, true ) : false;
         } );
     }
 
@@ -194,7 +203,7 @@ final class DynamicResourceManager
                                         .refresh( RefreshMode.ALL )
                                         .build() );
             }
-            return create( nodePath( applicationKey, Kind.CMS, null ), resource, IconUpdate.KEEP );
+            return changed( applicationKey, create( nodePath( applicationKey, Kind.CMS, null ), resource, IconUpdate.KEEP ) );
         } );
     }
 
@@ -207,8 +216,9 @@ final class DynamicResourceManager
     {
         return ApplicationHelper.runAsAdmin( () -> {
             final NodePath cmsPath = ApplicationRepoServiceImpl.cmsNodePath( applicationKey );
-            return nodeService.nodeExists( cmsPath ) &&
+            final boolean deleted = nodeService.nodeExists( cmsPath ) &&
                 nodeService.delete( DeleteNodeParams.create().nodePath( cmsPath ).refresh( RefreshMode.ALL ).build() ).getNodeIds().isNotEmpty();
+            return deleted ? changed( applicationKey, true ) : false;
         } );
     }
 

@@ -19,11 +19,11 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.support.ResourceTestHelper;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ApplicationDescriptorBuilderTest
 {
@@ -191,7 +191,8 @@ class ApplicationDescriptorBuilderTest
                                                                                                        StandardCharsets.UTF_8 ) ),
                                                                                                Instant.EPOCH ) );
 
-        assertThrows( RuntimeException.class, () -> ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) ) );
+        assertThatThrownBy( () -> ApplicationDescriptorBuilder.build( APP_KEY, resolver( resources ) ) )
+            .isInstanceOf( RuntimeException.class );
     }
 
     /**
@@ -222,6 +223,18 @@ class ApplicationDescriptorBuilderTest
             public Resource findResource( final String path )
             {
                 return resources.get( path );
+            }
+
+            @Override
+            public boolean isStable()
+            {
+                return true;
+            }
+
+            @Override
+            public Object revision()
+            {
+                return null;
             }
         };
     }

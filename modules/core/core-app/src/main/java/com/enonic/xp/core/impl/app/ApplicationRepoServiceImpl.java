@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.google.common.io.ByteSource;
 
@@ -62,6 +63,7 @@ public class ApplicationRepoServiceImpl
         return ApplicationHelper.runAsAdmin( () -> {
             final PropertyTree data = new PropertyTree();
             data.setInstant( ApplicationPropertyNames.MODIFIED_TIME, Millis.now() );
+            data.setLong( ApplicationPropertyNames.SCHEMA_REVISION, 0L );
             return this.nodeService.create( CreateNodeParams.create()
                                                 .parent( APPLICATIONS_ROOT )
                                                 .name( applicationKey.getName() )
@@ -126,11 +128,13 @@ public class ApplicationRepoServiceImpl
         ApplicationHelper.runAsAdmin( () -> {
             final NodePath appPath = applicationNodePath( applicationKey );
 
+            // the old schema goes with its revision: the revision written last is new to the node, whatever the old one was
             deletePersistedSchema( appPath );
+            final Map<NodePath, PersistedNode> nodes;
 
             try
             {
-                final Map<NodePath, PersistedNode> nodes = groupByNode( resources );
+                nodes = groupByNode( resources );
 
                 final PersistedNode application = nodes.remove( NodePath.ROOT );
                 if ( application != null )
@@ -141,7 +145,8 @@ public class ApplicationRepoServiceImpl
                         : YmlApplicationDescriptorSerializer.serialize( ApplicationDescriptor.create().key( applicationKey ).build() );
                     final IconUpdate iconUpdate =
                         application.icon != null ? IconUpdate.replace( application.icon, application.iconMimeType ) : IconUpdate.KEEP;
-                    writeApplicationDescriptor( appPath, yaml, iconUpdate );
+                    // the descriptor as shipped: written to a node the old one was removed from, nothing to count
+                    writeApplicationDescriptor( appPath, yaml, iconUpdate, false );
                 }
 
                 if ( !nodes.isEmpty() )
@@ -161,6 +166,7 @@ public class ApplicationRepoServiceImpl
                 try
                 {
                     deletePersistedSchema( appPath );
+                    markSchemaPersisted( applicationKey );
                 }
                 catch ( Exception cleanupFailure )
                 {
@@ -169,6 +175,7 @@ public class ApplicationRepoServiceImpl
                 throw e;
             }
 
+            markSchemaPersisted( applicationKey );
             this.nodeService.refresh( RefreshMode.ALL );
         } );
     }
@@ -238,10 +245,47 @@ public class ApplicationRepoServiceImpl
         this.nodeService.create( params.data( data ).build() );
     }
 
-    @Override
-    public void deleteApplicationSchema( final ApplicationKey applicationKey )
+    /**
+     * The persisted schema of the application was changed through the schema API: one more revision since the install, and the
+     * version of the application node moves. The schema lives in nodes below the application node, which a write of does not move
+     * it, and the version is what every node of the cluster checks its cached schema against on every read (the revision of
+     * {@code NodeResourceApplicationUrlResolver}). Called after the write, never before: a node seeing the new version reads the
+     * new schema. Must run in the context of the application repository.
+     */
+    static void markSchemaChanged( final NodeService nodeService, final ApplicationKey applicationKey )
     {
-        ApplicationHelper.runAsAdmin( () -> deletePersistedSchema( applicationNodePath( applicationKey ) ) );
+        writeSchemaRevision( nodeService, applicationKey, ApplicationRepoServiceImpl::nextRevision );
+    }
+
+    // one more change since the install or creation; a node without a revision counts from zero
+    private static long nextRevision( final Long revision )
+    {
+        return revision == null ? 1 : revision + 1;
+    }
+
+    /**
+     * The persisted schema of the application is the one its bundle ships, written on install: no revision since. The version of
+     * the application node moves as {@link #markSchemaChanged} moves it, after the schema is written: the old revision was removed
+     * with the old schema up front, so the node does not hold a revision at this point and zero is new to it. A node edited to
+     * what it already holds would keep its version.
+     */
+    private void markSchemaPersisted( final ApplicationKey applicationKey )
+    {
+        writeSchemaRevision( this.nodeService, applicationKey, revision -> 0L );
+    }
+
+    private static void writeSchemaRevision( final NodeService nodeService, final ApplicationKey applicationKey,
+                                             final Function<Long, Long> revision )
+    {
+        final NodePath appPath = applicationNodePath( applicationKey );
+        if ( !nodeService.nodeExists( appPath ) )
+        {
+            return;
+        }
+        nodeService.update( UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
+            toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION,
+                                     revision.apply( toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
+        } ).build() );
     }
 
     @Override
@@ -266,7 +310,7 @@ public class ApplicationRepoServiceImpl
             {
                 throw new NodeNotFoundException( String.format( "Application node [%s] not found", appPath ) );
             }
-            final Node node = writeApplicationDescriptor( appPath, descriptor, iconUpdate );
+            final Node node = writeApplicationDescriptor( appPath, descriptor, iconUpdate, true );
             this.nodeService.refresh( RefreshMode.ALL );
             return node;
         } );
@@ -276,12 +320,21 @@ public class ApplicationRepoServiceImpl
      * The descriptor is a property of the application node, the icon a binary of it named by its format ({@code enonic.svg} or
      * {@code enonic.png}), whatever the bundle shipped it as. A binary attached under the previous name (svg replaced by png) is no
      * longer referenced and dropped by the update.
+     *
+     * @param change whether a descriptor written over one the node holds is a change of the application, counted in its schema
+     *               revision in the same write; the first descriptor of a node never is, it is part of its creation
      */
-    private Node writeApplicationDescriptor( final NodePath appPath, final String descriptor, final IconUpdate iconUpdate )
+    private Node writeApplicationDescriptor( final NodePath appPath, final String descriptor, final IconUpdate iconUpdate,
+                                             final boolean change )
     {
         final BinaryReference iconReference = iconUpdate instanceof IconUpdate.Replace replace ? appIconReference( replace ) : null;
 
         final UpdateNodeParams.Builder params = UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
+            if ( change && toBeEdited.data.getString( SchemaNodePropertyNames.DESCRIPTOR ) != null )
+            {
+                toBeEdited.data.setLong( ApplicationPropertyNames.SCHEMA_REVISION,
+                                         nextRevision( toBeEdited.data.getLong( ApplicationPropertyNames.SCHEMA_REVISION ) ) );
+            }
             toBeEdited.data.setString( SchemaNodePropertyNames.DESCRIPTOR, descriptor );
             switch ( iconUpdate )
             {
@@ -311,7 +364,8 @@ public class ApplicationRepoServiceImpl
     }
 
     /**
-     * Removes the {@code cms} subtree and the descriptor and icon from the application node, whichever of them exist.
+     * Removes the persisted schema for one to be persisted anew: the {@code cms} subtree, and the descriptor, icon and schema
+     * revision from the application node, whichever of them exist.
      */
     private void deletePersistedSchema( final NodePath appPath )
     {
@@ -323,11 +377,13 @@ public class ApplicationRepoServiceImpl
 
         final Node appNode = this.nodeService.getByPath( appPath );
         if ( appNode != null && ( appNode.data().getString( SchemaNodePropertyNames.DESCRIPTOR ) != null ||
-            appNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) != null ) )
+            appNode.data().getBinaryReference( SchemaNodePropertyNames.ICON ) != null ||
+            appNode.data().getLong( ApplicationPropertyNames.SCHEMA_REVISION ) != null ) )
         {
             this.nodeService.update( UpdateNodeParams.create().path( appPath ).editor( toBeEdited -> {
                 toBeEdited.data.removeProperties( SchemaNodePropertyNames.DESCRIPTOR );
                 toBeEdited.data.removeProperties( SchemaNodePropertyNames.ICON );
+                toBeEdited.data.removeProperties( ApplicationPropertyNames.SCHEMA_REVISION );
             } ).refresh( RefreshMode.ALL ).build() );
         }
     }

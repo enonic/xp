@@ -58,17 +58,18 @@ import com.enonic.xp.node.Node;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
+import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -89,6 +90,8 @@ class ApplicationServiceTest
 
     private ApplicationDescriptorServiceImpl applicationDescriptorService;
 
+    private ApplicationFactoryServiceImpl applicationFactoryService;
+
     private Felix felix;
 
     @BeforeEach
@@ -106,8 +109,7 @@ class ApplicationServiceTest
 
         BundleContext bundleContext = felix.getBundleContext();
 
-        ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( bundleContext, nodeService );
+        this.applicationFactoryService = new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
         this.resourceService = new ResourceServiceImpl( applicationFactoryService );
@@ -187,6 +189,8 @@ class ApplicationServiceTest
             final Node applicationNode = appNode( "staticapp" );
             assertEquals( APP_DESCRIPTOR, applicationNode.data().getString( "descriptor" ) );
             assertEquals( BinaryReference.from( "enonic.svg" ), applicationNode.data().getBinaryReference( "icon" ) );
+            // the schema is the shipped one: nothing changed through the schema API since the install
+            assertEquals( 0, applicationNode.data().getLong( "schemaRevision" ) );
             assertNotNull( applicationNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
             assertNull( appChildNode( "staticapp", "enonic.yaml" ) );
             assertNull( appChildNode( "staticapp", "enonic.svg" ) );
@@ -444,12 +448,16 @@ class ApplicationServiceTest
                 "enonic.svg", "<svg>app</svg>", //
                 "lib/util.js", "exports.util = function() {}" ) ) );
 
+            assertEquals( 0, schemaRevision( "staticapp" ) );
+
             // the title alone is changed, the description and icon stay
             final ApplicationDescriptor edited = applicationDescriptorService.createOrUpdate(
                 CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Edited" ).build() );
             assertEquals( "Edited", edited.getTitle() );
             assertEquals( "Persisted", edited.getDescription() );
             assertEquals( "<svg>app</svg>", new String( edited.getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+            // a change of the application since its install
+            assertEquals( 1, schemaRevision( "staticapp" ) );
 
             // visible at once through the service and the resources
             assertEquals( "Edited", applicationDescriptorService.get( appKey ).getTitle() );
@@ -466,6 +474,7 @@ class ApplicationServiceTest
             assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.png" ) ).getResolverName() );
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.svg" ) ).exists() );
             assertEquals( BinaryReference.from( "enonic.png" ), appNode( "staticapp" ).data().getBinaryReference( "icon" ) );
+            assertEquals( 2, schemaRevision( "staticapp" ) );
 
             // the icon is removed
             applicationDescriptorService.createOrUpdate(
@@ -473,6 +482,7 @@ class ApplicationServiceTest
             assertNull( applicationDescriptorService.get( appKey ).getIcon() );
             assertFalse( resourceService.getResource( ResourceKey.from( appKey, "/enonic.png" ) ).exists() );
             assertNull( appNode( "staticapp" ).data().getBinaryReference( "icon" ) );
+            assertEquals( 3, schemaRevision( "staticapp" ) );
 
             // a new version of the bundle persists its own descriptor over the edited one
             applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.1", Map.of( //
@@ -481,7 +491,59 @@ class ApplicationServiceTest
             assertEquals( "Shipped again", applicationDescriptorService.get( appKey ).getTitle() );
             assertEquals( "<svg>again</svg>",
                           new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
+            // as shipped again: nothing changed since
+            assertEquals( 0, schemaRevision( "staticapp" ) );
         } );
+    }
+
+    // how many times the application was changed through the descriptor and schema APIs since its install or creation
+    private long schemaRevision( final String appName )
+    {
+        return appNode( appName ).data().getLong( "schemaRevision" );
+    }
+
+    // the descriptor and icon live on the application node: a write of either moves its version, what every value cached from
+    // them on any node of the cluster is checked against on every read, no event needed
+    @Test
+    void editedApplicationDescriptorAndIconReachTheCacheOfAnotherNode()
+    {
+        final ApplicationKey appKey = ApplicationKey.from( "staticapp" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", "kind: \"Application\"\ntitle: \"Shipped\"\n", //
+                "enonic.svg", "<svg>app</svg>" ) ) );
+
+            final ResourceService otherNode = new ResourceServiceImpl( applicationFactoryService );
+            assertTrue( processed( otherNode, appKey, "/enonic.yaml" ).contains( "Shipped" ) );
+            assertEquals( "<svg>app</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+            assertEquals( "<svg>app</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Edited" ).build() );
+            assertTrue( processed( otherNode, appKey, "/enonic.yaml" ).contains( "Edited" ) );
+
+            applicationDescriptorService.createOrUpdate( CreateOrUpdateApplicationDescriptorParams.create()
+                                                             .key( appKey )
+                                                             .editor( edit -> edit.icon = Icon.from( "<svg>edited</svg>".getBytes(
+                                                                 StandardCharsets.UTF_8 ), "image/svg+xml", Instant.now() ) )
+                                                             .build() );
+            assertEquals( "<svg>edited</svg>", processed( otherNode, appKey, "/enonic.svg" ) );
+
+            applicationDescriptorService.createOrUpdate(
+                CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.icon = null ).build() );
+            assertNull( processed( otherNode, appKey, "/enonic.svg" ) );
+        } );
+    }
+
+    // the content of the resource as the service caches it, null when the resource does not exist
+    private static String processed( final ResourceService resourceService, final ApplicationKey appKey, final String path )
+    {
+        return resourceService.processResource( new ResourceProcessor.Builder<String, String>().key( path )
+                                                    .segment( "test" )
+                                                    .keyTranslator( p -> ResourceKey.from( appKey, p ) )
+                                                    .processor( resource -> resource.exists() ? resource.readString() : null )
+                                                    .build() );
     }
 
     @Test
@@ -503,6 +565,8 @@ class ApplicationServiceTest
         assertEquals( "kind: \"Application\"\nname: \"nodeonlyapp\"\ntitle: \"Node only\"\n", descriptorNode.data().getString( "descriptor" ) );
         assertEquals( BinaryReference.from( "enonic.svg" ), descriptorNode.data().getBinaryReference( "icon" ) );
         assertNotNull( descriptorNode.getAttachedBinaries().getByBinaryReference( BinaryReference.from( "enonic.svg" ) ) );
+        // the descriptor and icon written on creation are the application as created, not a change of it
+        assertEquals( 0, schemaRevision( "nodeonlyapp" ) );
 
         assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
         assertEquals( "<svg>node</svg>", new String( applicationDescriptorService.get( appKey ).getIcon().toByteArray(), StandardCharsets.UTF_8 ) );
@@ -515,8 +579,8 @@ class ApplicationServiceTest
         assertTrue( nodeOnly.isStarted() );
         assertNull( nodeOnly.getClassLoader() );
         assertTrue( applicationService.list().getApplicationKeys().contains( appKey ) );
-        assertThrows( IllegalArgumentException.class, () -> applicationService.startApplication( appKey ) );
-        assertThrows( IllegalArgumentException.class, () -> applicationService.stopApplication( appKey ) );
+        assertThatThrownBy( () -> applicationService.startApplication( appKey ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> applicationService.stopApplication( appKey ) ).isInstanceOf( IllegalArgumentException.class );
 
         // its persisted descriptor is served like the resources of any other application
         assertEquals( "node", resourceService.getResource( ResourceKey.from( appKey, "/enonic.yaml" ) ).getResolverName() );
@@ -530,10 +594,12 @@ class ApplicationServiceTest
             CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.vendorName = "Enonic" ).build() ) );
         assertEquals( "Node only", applicationDescriptorService.get( appKey ).getTitle() );
         assertEquals( "Enonic", applicationDescriptorService.get( appKey ).getVendorName() );
+        assertEquals( 1, schemaRevision( "nodeonlyapp" ) );
 
         // writing takes the admin role
-        assertThrows( ForbiddenAccessException.class, () -> applicationDescriptorService.createOrUpdate(
-            CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Denied" ).build() ) );
+        assertThatThrownBy( () -> applicationDescriptorService.createOrUpdate(
+            CreateOrUpdateApplicationDescriptorParams.create().key( appKey ).editor( edit -> edit.title = "Denied" ).build() ) )
+            .isInstanceOf( ForbiddenAccessException.class );
     }
 
     @Test
@@ -548,15 +614,15 @@ class ApplicationServiceTest
                 "cms/content-types/mytype.yaml", "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) );
 
             // cms/style/style.yaml is reserved for the Style descriptor: the whole new version is rejected
-            final ApplicationBundleException exception = assertThrows( ApplicationBundleException.class,
-                                                                        () -> applicationService.installGlobalApplication(
-                                                                            createAppSource( "wrongkindapp", "1.0.1", Map.of( //
-                                                                                "enonic.yaml", APP_DESCRIPTOR, //
-                                                                                "cms/cms.yaml", CMS_DESCRIPTOR, //
-                                                                                "cms/style/style.yaml", CMS_DESCRIPTOR, //
-                                                                                "cms/content-types/newtype.yaml",
-                                                                                "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) );
-            assertTrue( exception.getMessage().contains( "cms/style/style.yaml: invalid kind \"CMS\", expected \"Style\"" ) );
+            assertThatThrownBy( () -> applicationService.installGlobalApplication(
+                                    createAppSource( "wrongkindapp", "1.0.1", Map.of( //
+                                        "enonic.yaml", APP_DESCRIPTOR, //
+                                        "cms/cms.yaml", CMS_DESCRIPTOR, //
+                                        "cms/style/style.yaml", CMS_DESCRIPTOR, //
+                                        "cms/content-types/newtype.yaml",
+                                        "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) )
+                .isInstanceOf( ApplicationBundleException.class )
+                .hasMessageContaining( "cms/style/style.yaml: invalid kind \"CMS\", expected \"Style\"" );
 
             // nothing of the rejected version is persisted, the installed version and its schema are untouched
             assertEquals( "1.0.0", applicationService.getInstalledApplication( appKey ).getVersion().toString() );
@@ -581,14 +647,14 @@ class ApplicationServiceTest
 
             // "my?type" passes the schema resource pattern but is not a valid schema name: the new version is rejected before
             // anything is written, the installed version and its schema are untouched
-            final ApplicationBundleException exception = assertThrows( ApplicationBundleException.class,
-                                                                        () -> applicationService.installGlobalApplication(
-                                                                            createAppSource( "brokenschemaapp", "1.0.1", Map.of( //
-                                                                                "enonic.yaml", APP_DESCRIPTOR, //
-                                                                                "cms/cms.yaml", CMS_DESCRIPTOR, //
-                                                                                "cms/content-types/my?type/my?type.yaml",
-                                                                                "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) );
-            assertTrue( exception.getMessage().contains( "cms/content-types/my?type.yaml: " ), exception.getMessage() );
+            assertThatThrownBy( () -> applicationService.installGlobalApplication(
+                                    createAppSource( "brokenschemaapp", "1.0.1", Map.of( //
+                                        "enonic.yaml", APP_DESCRIPTOR, //
+                                        "cms/cms.yaml", CMS_DESCRIPTOR, //
+                                        "cms/content-types/my?type/my?type.yaml",
+                                        "kind: \"ContentType\"\nsuperType: \"base:structured\"" ) ) ) )
+                .isInstanceOf( ApplicationBundleException.class )
+                .hasMessageContaining( "cms/content-types/my?type.yaml: " );
 
             assertEquals( "1.0.0", applicationService.getInstalledApplication( appKey ).getVersion().toString() );
             assertNotNull( schemaNode( "brokenschemaapp", "contenttype:mytype" ) );

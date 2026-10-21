@@ -33,12 +33,12 @@ import com.enonic.xp.server.RunMode;
 import com.enonic.xp.server.RunModeSupport;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -119,7 +119,8 @@ class ApplicationFactoryTest
         final ApplicationFactory applicationFactory = new ApplicationFactory( nodeService );
         assertInstanceOf( MultiApplicationUrlResolver.class, applicationFactory.createUrlResolver( bundle, "bundle" ) );
 
-        assertThrows( IllegalArgumentException.class, () -> applicationFactory.createUrlResolver( bundle, "unknown" ) );
+        assertThatThrownBy( () -> applicationFactory.createUrlResolver( bundle, "unknown" ) )
+            .isInstanceOf( IllegalArgumentException.class );
     }
 
     @Test

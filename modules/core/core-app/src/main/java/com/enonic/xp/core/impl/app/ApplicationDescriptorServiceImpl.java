@@ -140,7 +140,8 @@ public class ApplicationDescriptorServiceImpl
 
         this.repoService.upsertApplicationDescriptor( key, yaml, iconUpdate );
 
-        // the descriptor is read back the way every reader sees it, from this point on
+        // the descriptor is read back the way every reader sees it, from this point on: nothing cached before the write is served
+        // (the write moved the version of the application node, what the resource service checks its cache against)
         this.appDescriptorMap.remove( key );
         final ApplicationDescriptor result = Objects.requireNonNull( get( key ), "application descriptor not found after write" );
 
