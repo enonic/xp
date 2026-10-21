@@ -111,7 +111,6 @@ class RepositoryAuditLogSupportImplTest
         instance.createRepository( CreateRepositoryParams.create().repositoryId( SystemConstants.SYSTEM_REPO_ID ).build() );
         instance.createRepository( CreateRepositoryParams.create().repositoryId( RepositoryId.from( "system.auditlog" ) ).build() );
         instance.createRepository( CreateRepositoryParams.create().repositoryId( RepositoryId.from( "system.scheduler" ) ).build() );
-        instance.createRepository( CreateRepositoryParams.create().repositoryId( RepositoryId.from( "system.app" ) ).build() );
 
         verifyNoInteractions( auditLogService );
     }

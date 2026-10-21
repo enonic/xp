@@ -1,6 +1,5 @@
 package com.enonic.xp.lib.schema.mapper;
 
-import com.enonic.xp.resource.DynamicContentSchemaType;
 import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.schema.formfragment.FormFragmentDescriptor;
 import com.enonic.xp.script.serializer.MapGenerator;
@@ -22,6 +21,6 @@ public final class FormFragmentMapper
     @Override
     protected String getType()
     {
-        return DynamicContentSchemaType.FORM_FRAGMENT.name();
+        return "FORM_FRAGMENT";
     }
 }

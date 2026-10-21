@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.schema.mapper.SchemaConverter;
 import com.enonic.xp.lib.schema.mapper.SchemaMapper;
-import com.enonic.xp.resource.DynamicContentSchemaType;
+import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.ListDynamicContentSchemasParams;
+import com.enonic.xp.schema.BaseSchema;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -34,16 +34,18 @@ public final class ListDynamicSchemasHandler
 
     public List<SchemaMapper> execute()
     {
-        final ListDynamicContentSchemasParams params = ListDynamicContentSchemasParams.create()
-            .applicationKey( ApplicationKey.from( application ) )
-            .type( DynamicContentSchemaType.valueOf( type ) )
-            .build();
+        final DynamicSchemaService service = dynamicSchemaServiceSupplier.get();
+        final ApplicationKey applicationKey = ApplicationKey.from( application );
 
-        return dynamicSchemaServiceSupplier.get()
-            .listContentSchemas( params )
-            .stream()
-            .map( SchemaConverter::convert )
-            .collect( Collectors.toList() );
+        final List<? extends DynamicSchemaResult<? extends BaseSchema<?>>> results = switch ( type )
+        {
+            case "CONTENT_TYPE" -> service.listContentTypes( applicationKey );
+            case "FORM_FRAGMENT" -> service.listFormFragments( applicationKey );
+            case "MIXIN" -> service.listMixins( applicationKey );
+            default -> throw new IllegalArgumentException( "illegal schema type: " + type );
+        };
+
+        return results.stream().map( SchemaConverter::convert ).collect( Collectors.toList() );
     }
 
     @Override

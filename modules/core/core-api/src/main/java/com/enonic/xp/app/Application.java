@@ -30,4 +30,6 @@ public interface Application
     Configuration getConfig();
 
     boolean isSystem();
+
+    boolean isSchema();
 }

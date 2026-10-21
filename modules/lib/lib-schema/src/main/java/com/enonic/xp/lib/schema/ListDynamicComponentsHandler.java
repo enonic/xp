@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.lib.schema.mapper.DescriptorConverter;
 import com.enonic.xp.lib.schema.mapper.DescriptorMapper;
-import com.enonic.xp.resource.DynamicComponentType;
+import com.enonic.xp.region.ComponentDescriptor;
+import com.enonic.xp.resource.DynamicSchemaResult;
 import com.enonic.xp.resource.DynamicSchemaService;
-import com.enonic.xp.resource.ListDynamicComponentsParams;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 
@@ -34,17 +34,18 @@ public final class ListDynamicComponentsHandler
 
     public List<DescriptorMapper> execute()
     {
-        final ListDynamicComponentsParams params = ListDynamicComponentsParams.create()
-            .applicationKey( ApplicationKey.from( application ) )
-            .type( DynamicComponentType.valueOf( type ) )
-            .build();
+        final DynamicSchemaService service = dynamicSchemaServiceSupplier.get();
+        final ApplicationKey applicationKey = ApplicationKey.from( application );
 
-        return dynamicSchemaServiceSupplier.get()
-            .listComponents( params )
-            .stream()
-            .map( DescriptorConverter::convert )
-            .map( o -> o )
-            .collect( Collectors.toList() );
+        final List<? extends DynamicSchemaResult<? extends ComponentDescriptor>> results = switch ( type )
+        {
+            case "PART" -> service.listParts( applicationKey );
+            case "LAYOUT" -> service.listLayouts( applicationKey );
+            case "PAGE" -> service.listPages( applicationKey );
+            default -> throw new IllegalArgumentException( "illegal component type: " + type );
+        };
+
+        return results.stream().map( DescriptorConverter::convert ).collect( Collectors.toList() );
     }
 
     @Override
