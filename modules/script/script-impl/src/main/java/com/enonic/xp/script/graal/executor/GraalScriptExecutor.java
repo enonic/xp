@@ -141,12 +141,6 @@ public class GraalScriptExecutor
 
     private final AtomicInteger roundRobin = new AtomicInteger();
 
-    /**
-     * The slot bound to the current execution scope (nested executions must stay on it). Shared
-     * across executors, so reads check slot ownership — a nested cross-app call must not adopt
-     * the outer app's slot.
-     */
-    private static final ScopedValue<ContextSlot> BOUND_SLOT = ScopedValue.newInstance();
 
     public GraalScriptExecutor( final GraalJSContextFactory contextFactory, final ClassLoader classLoader,
                                 final ScriptSettings scriptSettings, final ServiceRegistry serviceRegistry,
@@ -419,10 +413,14 @@ public class GraalScriptExecutor
         return withAnySlot( work );
     }
 
+    boolean isMainSlot( final ContextSlot slot )
+    {
+        return slot == this.mainSlot;
+    }
+
     private static ContextSlot boundSlot()
     {
-        // not orElse(null): ScopedValue.orElse rejects null by spec
-        return BOUND_SLOT.isBound() ? BOUND_SLOT.get() : null;
+        return BoundSlot.get();
     }
 
     private ContextSlot heldSlot()
@@ -603,7 +601,7 @@ public class GraalScriptExecutor
     {
         // scoped rebinding nests naturally: an isolated execution inside a slot-bound one
         // shadows the binding for its scope and the outer binding is restored on exit
-        return ScopedValue.where( BOUND_SLOT, slot ).call( () -> work.apply( slot ) );
+        return ScopedValue.where( BoundSlot.SLOT, slot ).call( () -> work.apply( slot ) );
     }
 
     /**
