@@ -7,6 +7,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.content.schema.FormFragmentInlining;
 import com.enonic.xp.core.impl.content.parser.YmlPageDescriptorParser;
 import com.enonic.xp.core.impl.schema.CmsResourceKeys;
 import com.enonic.xp.core.internal.Millis;
@@ -70,6 +71,16 @@ public class PageDescriptorLoader
             .build();
     }
 
+    // the form fragments are inlined into the value cached: a change of a fragment moves the version of the application node.
+    // A failure of the expansion is the caller's to see, unlike a descriptor that fails to parse
+    @Override
+    public PageDescriptor postProcess( final PageDescriptor descriptor )
+    {
+        return PageDescriptor.copyOf( descriptor )
+            .config( FormFragmentInlining.inline( this.formFragmentService, descriptor.getConfig(), "page [" + descriptor.getKey() + "]" ) )
+            .build();
+    }
+
     @Override
     public PageDescriptor createDefault( final DescriptorKey key )
     {
@@ -80,11 +91,5 @@ public class PageDescriptorLoader
             .regions( RegionDescriptors.create().build() )
             .modifiedTime( Millis.now() )
             .build();
-    }
-
-    @Override
-    public PageDescriptor postProcess( final PageDescriptor descriptor )
-    {
-        return PageDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 }

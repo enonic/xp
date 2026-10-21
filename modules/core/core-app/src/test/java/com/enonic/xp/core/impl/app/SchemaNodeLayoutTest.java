@@ -10,10 +10,10 @@ import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.util.BinaryReference;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -129,15 +129,15 @@ class SchemaNodeLayoutTest
     void kinds_without_icon( final Kind kind )
     {
         assertFalse( kind.hasIcon() );
-        assertThrows( IllegalArgumentException.class, () -> kind.iconPath( "x", "svg" ) );
+        assertThatThrownBy( () -> kind.iconPath( "x", "svg" ) ).isInstanceOf( IllegalArgumentException.class );
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"CONTENT_TYPE", "PART", "MACRO"})
     void name_is_required( final Kind kind )
     {
-        assertThrows( IllegalArgumentException.class, () -> kind.nodeName( null ) );
-        assertThrows( IllegalArgumentException.class, () -> kind.nodeName( "" ) );
+        assertThatThrownBy( () -> kind.nodeName( null ) ).isInstanceOf( IllegalArgumentException.class );
+        assertThatThrownBy( () -> kind.nodeName( "" ) ).isInstanceOf( IllegalArgumentException.class );
     }
 
     // the kind name stays the one the descriptors declare, the node name is its lower case form

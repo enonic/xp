@@ -12,6 +12,7 @@ import org.osgi.framework.Constants;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -117,8 +118,9 @@ class AppInfoResolverTest
         final ByteSource source = wrapBundle(
             newBundle( "myBundle", true ).addResource( "enonic.yaml", content( "kind: \"Application\"\nname: \"otherBundle\"\n" ) ) );
 
-        final Exception ex = assertThrows( Exception.class, () -> AppInfoResolver.resolve( source ) );
-        assertTrue( ex.getMessage().contains( "does not match application \"myBundle\"" ), ex.getMessage() );
+        assertThatThrownBy( () -> AppInfoResolver.resolve( source ) )
+            .isInstanceOf( Exception.class )
+            .hasMessageContaining( "does not match application \"myBundle\"" );
     }
 
     @Test

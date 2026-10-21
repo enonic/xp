@@ -10,10 +10,9 @@ import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.util.GenericValue;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class YmlApplicationDescriptorParserTest
 {
@@ -46,23 +45,25 @@ public class YmlApplicationDescriptorParserTest
     @Test
     void name_not_matching_application()
     {
-        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\nname: \"otherapp\"\n" ) );
-        assertTrue( ex.getMessage().contains( "Application name \"otherapp\" in descriptor does not match application \"myapp\"" ),
-                    ex.getMessage() );
+        assertThatThrownBy( () -> parse( "kind: \"Application\"\nname: \"otherapp\"\n" ) )
+            .isInstanceOf( Exception.class )
+            .hasMessageContaining( "Application name \"otherapp\" in descriptor does not match application \"myapp\"" );
     }
 
     @Test
     void name_invalid()
     {
-        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\nname: \"my-app\"\n" ) );
-        assertTrue( ex.getMessage().contains( "ApplicationKey is invalid: my-app" ), ex.getMessage() );
+        assertThatThrownBy( () -> parse( "kind: \"Application\"\nname: \"my-app\"\n" ) )
+            .isInstanceOf( Exception.class )
+            .hasMessageContaining( "ApplicationKey is invalid: my-app" );
     }
 
     @Test
     void type_is_not_supported()
     {
-        final Exception ex = assertThrows( Exception.class, () -> parse( "kind: \"Application\"\ntype: \"Static\"\n" ) );
-        assertTrue( ex.getMessage().contains( "\"type\"" ), ex.getMessage() );
+        assertThatThrownBy( () -> parse( "kind: \"Application\"\ntype: \"Static\"\n" ) )
+            .isInstanceOf( Exception.class )
+            .hasMessageContaining( "\"type\"" );
     }
 
     private static ApplicationDescriptor parse( final String yml )

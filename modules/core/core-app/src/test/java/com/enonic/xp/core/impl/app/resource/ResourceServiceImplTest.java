@@ -5,10 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,19 +21,27 @@ import org.osgi.framework.Bundle;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
+import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
+import com.enonic.xp.core.impl.app.ResourceSource;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.NodeVersionId;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -44,8 +55,13 @@ import com.enonic.xp.resource.ResourceProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ResourceServiceImplTest
@@ -82,8 +98,8 @@ class ResourceServiceImplTest
         app.setResourcePath( appDir );
 
         when( applicationFactoryService.findActiveApplication( appKey ) ).thenReturn( Optional.of( app ) );
-        when( applicationFactoryService.findResolver( appKey, null ) ).thenReturn( Optional.of( app.getUrlResolver() ) );
-        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( bundle ) );
+        when( applicationFactoryService.findResourceSource( any(), any() ) ).thenReturn( ResourceSource.NONE );
+        when( applicationFactoryService.findResourceSource( appKey, null ) ).thenReturn( new ResourceSource( bundle, app.getUrlResolver() ) );
 
         resourceService = new ResourceServiceImpl( applicationFactoryService );
     }
@@ -137,6 +153,9 @@ class ResourceServiceImplTest
         throws Exception
     {
         newFile( "a.txt" );
+        when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final String value1 = processResource( "segment1", "a.txt", "1" );
         assertEquals( "myapp:/a.txt->1", value1 );
@@ -146,7 +165,8 @@ class ResourceServiceImplTest
 
         // a new bundle incarnation of the application invalidates cached entries
         final Bundle newBundle = newBundle( 42 );
-        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
+        doReturn( new ResourceSource( newBundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final String value3 = processResource( "segment1", "a.txt", "3" );
         assertEquals( "myapp:/a.txt->3", value3 );
@@ -158,14 +178,48 @@ class ResourceServiceImplTest
         assertEquals( "myapp:/a.txt->5", value5 );
     }
 
+    // the application node is read on every use of a persisted application, hit or miss: its version is the stamp of the value
+    @Test
+    void applicationNode_readOnEveryUse()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( new ResourceSource( bundle, nodeResolver( nodeService ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+
+        processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp" ) );
+
+        processResource( "segment1", "cms/parts/my-part.yaml", "2" );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp" ) );
+    }
+
+    // an application served from its bundle alone (a local one, a system one) has no node to read: the resolver knows its source
+    @Test
+    void applicationNode_notReadForBundleResolver()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        final NodeService nodeService = mock( NodeService.class );
+        when( bundle.findEntries( "/", "*", true ) ).thenReturn( Collections.emptyEnumeration() );
+        when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+
+        assertEquals( "myapp:/a.txt->1", processResource( "segment1", "a.txt", "1" ) );
+        assertEquals( "myapp:/a.txt->1", processResource( "segment1", "a.txt", "2" ) );
+        this.resourceService.findFiles( this.appKey, ".+" );
+
+        verify( nodeService, never() ).getByPath( any() );
+    }
+
     @Test
     void testProcessResource_bundleResolverIgnoresTimestamps()
         throws Exception
     {
         newFile( "a.txt" );
         when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
-        doReturn( Optional.of( new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
-            .findResolver( appKey, null );
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final String value1 = processResource( "segment1", "a.txt", "1" );
         assertEquals( "myapp:/a.txt->1", value1 );
@@ -179,7 +233,8 @@ class ResourceServiceImplTest
 
         // a new bundle is the only signal that files may be new
         final Bundle newBundle = newBundle( 42 );
-        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
+        doReturn( new ResourceSource( newBundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final String value3 = processResource( "segment1", "a.txt", "3" );
         assertEquals( "myapp:/a.txt->3", value3 );
@@ -191,8 +246,8 @@ class ResourceServiceImplTest
     {
         newFile( "a.txt" );
         when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
-        doReturn( Optional.of( new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
-            .findResolver( appKey, null );
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final List<String> names = List.of( "a.txt", "b.txt" );
 
@@ -205,7 +260,8 @@ class ResourceServiceImplTest
         assertEquals( value1, value2 );
 
         final Bundle newBundle = newBundle( 42 );
-        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
+        doReturn( new ResourceSource( newBundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final String value3 = processResources( "segment1", "bundle", names, "3" );
         assertEquals( "myapp:/a.txt->3", value3 );
@@ -238,12 +294,45 @@ class ResourceServiceImplTest
 
                 final ApplicationUrlResolver applicationUrlResolver = nodeResolver( nodeService );
 
-                doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
-                    .findResolver( ApplicationKey.from( "myapp" ), "node" );
+                doReturn( new ResourceSource( bundle, applicationUrlResolver ) ).when( applicationFactoryService )
+                    .findResourceSource( ApplicationKey.from( "myapp" ), "node" );
 
                 final String value1 = processResource( "segment1", "/cms/parts/a.yaml", "1" );
                 assertEquals( "myapp:/cms/parts/a.yaml->1", value1 );
             } );
+    }
+
+    // a read asking for the bundle alone, by the attribute of its context, is a value of its own: what was read from the persisted
+    // schema is neither served for it nor evicted by it
+    @Test
+    void resolverSource_isPartOfTheCacheIdentity()
+        throws Exception
+    {
+        newFile( "cms/parts/my-part.yaml" );
+        when( bundle.getResource( "/cms/parts/my-part.yaml" ) ).thenReturn( appDir.resolve( "cms/parts/my-part.yaml" ).toUri().toURL() );
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( new ResourceSource( bundle, nodeResolver( nodeService ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, "bundle" );
+
+        final AtomicInteger computed = new AtomicInteger();
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( "my-part" )
+            .segment( "segment1" )
+            .keyTranslator( name -> ResourceKey.from( "myapp:/cms/parts/my-part.yaml" ) )
+            .processor( res -> {
+                computed.incrementAndGet();
+                return res.getResolverName();
+            } )
+            .build();
+        final Context bundleSource =
+            ContextBuilder.copyOf( ContextAccessor.current() ).attribute( ResourceConstants.RESOURCE_SOURCE_ATTRIBUTE, "bundle" ).build();
+
+        assertEquals( "node", this.resourceService.processResource( processor ) );
+        assertEquals( "bundle", bundleSource.callWith( () -> this.resourceService.processResource( processor ) ) );
+        assertEquals( "node", this.resourceService.processResource( processor ) );
+        assertEquals( "bundle", bundleSource.callWith( () -> this.resourceService.processResource( processor ) ) );
+        assertEquals( 2, computed.get() );
     }
 
     @Test
@@ -278,8 +367,8 @@ class ResourceServiceImplTest
 
         final ApplicationUrlResolver applicationUrlResolver = nodeResolver( nodeService );
 
-        doReturn( Optional.of( applicationUrlResolver ) ).when( applicationFactoryService )
-            .findResolver( ApplicationKey.from( "myapp" ), null );
+        doReturn( new ResourceSource( bundle, applicationUrlResolver ) ).when( applicationFactoryService )
+            .findResourceSource( ApplicationKey.from( "myapp" ), null );
 
         final Resource resource =
             resourceService.getResource( ResourceKey.from( ApplicationKey.from( "myapp" ), "/cms/parts/my-part.yaml" ) );
@@ -329,6 +418,9 @@ class ResourceServiceImplTest
         throws Exception
     {
         newFile( "a.txt" );
+        when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final List<String> names = List.of( "a.txt", "b.txt" );
 
@@ -338,27 +430,18 @@ class ResourceServiceImplTest
         final String value2 = processResources( "segment1", "bundle", names, "2" );
         assertEquals( value1, value2 );
 
-        // a resource appearing invalidates the cached value
+        // a new bundle incarnation of the application invalidates the cached value: a resource that appeared with it is seen
         newFile( "b.txt" );
+        when( bundle.getResource( "/b.txt" ) ).thenReturn( appDir.resolve( "b.txt" ).toUri().toURL() );
+        final Bundle newBundle = newBundle( 42 );
+        doReturn( new ResourceSource( newBundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final String value3 = processResources( "segment1", "bundle", names, "3" );
         assertEquals( "myapp:/a.txt,myapp:/b.txt->3", value3 );
 
         final String value4 = processResources( "segment1", "bundle", names, "4" );
         assertEquals( value3, value4 );
-
-        // a resource modification invalidates the cached value
-        Files.setLastModifiedTime( appDir.resolve( "b.txt" ), FileTime.fromMillis( System.currentTimeMillis() + 10_000 ) );
-
-        final String value5 = processResources( "segment1", "bundle", names, "5" );
-        assertEquals( "myapp:/a.txt,myapp:/b.txt->5", value5 );
-
-        // a new bundle incarnation of the application invalidates the cached value
-        final Bundle newBundle = newBundle( 42 );
-        when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( newBundle ) );
-
-        final String value6 = processResources( "segment1", "bundle", names, "6" );
-        assertEquals( "myapp:/a.txt,myapp:/b.txt->6", value6 );
     }
 
     @Test
@@ -366,6 +449,9 @@ class ResourceServiceImplTest
         throws Exception
     {
         newFile( "a.txt" );
+        when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final MultiResourceProcessor<String, String> processor = new MultiResourceProcessor.Builder<String, String>().key( "bundle" )
             .segment( "segment1" )
@@ -378,9 +464,11 @@ class ResourceServiceImplTest
     }
 
     @Test
-    void testProcessResources_allMissingCachedUntilResourceAppears()
+    void testProcessResources_allMissingCachedUnderTheStamp()
         throws Exception
     {
+        doReturn( new ResourceSource( bundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
         final List<String> names = List.of( "a.txt" );
 
         final String value1 = processResources( "segment1", "bundle", names, "1" );
@@ -389,14 +477,222 @@ class ResourceServiceImplTest
         final String value2 = processResources( "segment1", "bundle", names, "2" );
         assertEquals( value1, value2 );
 
+        // the resource appears with a new bundle
         newFile( "a.txt" );
+        when( bundle.getResource( "/a.txt" ) ).thenReturn( appDir.resolve( "a.txt" ).toUri().toURL() );
+        final Bundle newBundle = newBundle( 42 );
+        doReturn( new ResourceSource( newBundle, new BundleApplicationUrlResolver( bundle ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
 
         final String value3 = processResources( "segment1", "bundle", names, "3" );
         assertEquals( "myapp:/a.txt->3", value3 );
     }
 
+    @Test
+    void nodeResolver_hitCostsNoNodeRead()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( new ResourceSource( bundle, nodeResolver( nodeService ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+
+        final AtomicInteger translations = new AtomicInteger();
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1", translations );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->1", value1 );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // the persisted resources are stable under the generation: neither the key translation nor the node is looked at again
+        final String value2 = processResource( "segment1", "cms/parts/my-part.yaml", "2", translations );
+        assertEquals( value1, value2 );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+        assertEquals( 1, translations.get() );
+    }
+
+    @Test
+    void nodeResolver_newApplicationNodeVersionRecomputes()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( new ResourceSource( bundle, nodeResolver( nodeService ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->1", value1 );
+
+        // a write of the schema moves the version of the application node, whatever the timestamps of the nodes
+        stubPartNode( nodeService, Instant.parse( "2021-12-03T10:15:30.00Z" ), NodeVersionId.from( "v2" ) );
+
+        final String value2 = processResource( "segment1", "cms/parts/my-part.yaml", "2" );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->2", value2 );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // the same version again is a hit
+        assertEquals( value2, processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+    }
+
+    @Test
+    void nodeResolver_timestampChangeAloneIsNoSignal()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( new ResourceSource( bundle, nodeResolver( nodeService ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+
+        // a node rewritten under the same version of the application node is not seen until the version moves: writers move it
+        stubPartNode( nodeService, Instant.parse( "2022-01-01T00:00:00.00Z" ) );
+        assertEquals( value1, processResource( "segment1", "cms/parts/my-part.yaml", "2" ) );
+
+        stubPartNode( nodeService, Instant.parse( "2022-01-01T00:00:00.00Z" ), NodeVersionId.from( "v2" ) );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->3", processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
+    }
+
+    // the application in development is served by its classloader: files change without any signal, so nothing derived from them
+    // is cached
+    @Test
+    void classLoaderResolver_notCached()
+        throws Exception
+    {
+        newFile( "a.txt" );
+
+        assertEquals( "myapp:/a.txt->1", processResource( "segment1", "a.txt", "1" ) );
+        assertEquals( "myapp:/a.txt->2", processResource( "segment1", "a.txt", "2" ) );
+
+        final List<String> names = List.of( "a.txt", "b.txt" );
+        assertEquals( "myapp:/a.txt->1", processResources( "segment1", "multi", names, "1" ) );
+        newFile( "b.txt" );
+        assertEquals( "myapp:/a.txt,myapp:/b.txt->2", processResources( "segment1", "multi", names, "2" ) );
+    }
+
+    // the key translation of a schema prefers .yaml to .yml: in development, a .yaml appearing beside the .yml is seen
+    @Test
+    void classLoaderResolver_descriptorAppearingWhereTheTranslationLooksFirstIsSeen()
+        throws Exception
+    {
+        newFile( "a.yml" );
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( "a" )
+            .segment( "segment1" )
+            .keyTranslator( name -> {
+                final ResourceKey yaml = ResourceKey.from( "myapp:/" + name + ".yaml" );
+                return this.resourceService.getResource( yaml ).exists() ? yaml : ResourceKey.from( "myapp:/" + name + ".yml" );
+            } )
+            .processor( res -> res.getKey().toString() )
+            .build();
+
+        assertEquals( "myapp:/a.yml", this.resourceService.processResource( processor ) );
+
+        newFile( "a.yaml" );
+
+        assertEquals( "myapp:/a.yaml", this.resourceService.processResource( processor ) );
+    }
+
+    @Test
+    void processor_readsOtherResourcesThroughTheService()
+    {
+        // a content type inlining its form fragments reads them through this service while being computed itself
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( new ResourceSource( bundle, nodeResolver( nodeService ) ) ).when( applicationFactoryService )
+            .findResourceSource( appKey, null );
+
+        final ResourceProcessor<String, String> outer = new ResourceProcessor.Builder<String, String>().key( "outer" )
+            .segment( "segment1" )
+            .keyTranslator( name -> ResourceKey.from( "myapp:/cms/parts/my-part.yaml" ) )
+            .processor( res -> "outer(" + processResource( "segment1", "cms/parts/my-part.yaml", "inner" ) + ")" )
+            .build();
+
+        // computed: both values read the node, the outer and the inner one
+        assertEquals( "outer(myapp:/cms/parts/my-part.yaml->inner)", this.resourceService.processResource( outer ) );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // stable: what the outer value read is not looked at again on a hit
+        assertEquals( "outer(myapp:/cms/parts/my-part.yaml->inner)", this.resourceService.processResource( outer ) );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+    }
+
+    @Test
+    void findFiles_nodeResolverListedOncePerApplicationNodeVersion()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        final ApplicationUrlResolver resolver = spy( nodeResolver( nodeService ) );
+        doReturn( new ResourceSource( bundle, resolver ) ).when( applicationFactoryService ).findResourceSource( appKey, null );
+
+        assertThat( this.resourceService.findFiles( appKey, "\\.yaml$" ) ).map( Objects::toString )
+            .containsExactly( "myapp:/cms/parts/my-part.yaml" );
+        assertThat( this.resourceService.findFiles( appKey, "parts" ) ).map( Objects::toString )
+            .containsExactly( "myapp:/cms/parts/my-part.yaml" );
+        verify( resolver, times( 1 ) ).findFiles();
+
+        stubPartNode( nodeService, Instant.parse( "2021-12-03T10:15:30.00Z" ), NodeVersionId.from( "v2" ) );
+        this.resourceService.findFiles( appKey, ".+" );
+        verify( resolver, times( 2 ) ).findFiles();
+    }
+
+    @Test
+    void findFiles_classLoaderResolverListedEveryTime()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        assertThat( this.resourceService.findFiles( appKey, ".+" ) ).map( Objects::toString ).containsExactly( "myapp:/a.txt" );
+
+        newFile( "b.txt" );
+        assertThat( this.resourceService.findFiles( appKey, ".+" ) ).map( Objects::toString )
+            .containsExactlyInAnyOrder( "myapp:/a.txt", "myapp:/b.txt" );
+    }
+
+    private String processResource( final String segment, final String key, final String suffix, final AtomicInteger translations )
+    {
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( key )
+            .segment( segment )
+            .keyTranslator( name -> {
+                translations.incrementAndGet();
+                return ResourceKey.from( "myapp:/" + name );
+            } )
+            .processor( res -> res.getKey().toString() + "->" + suffix )
+            .build();
+        return this.resourceService.processResource( processor );
+    }
+
+    // "myapp" stored as nodes: the application node and one part below cms
+    private NodeService stubPartNode( final Instant timestamp )
+    {
+        final NodeService nodeService = mock( NodeService.class );
+        stubPartNode( nodeService, timestamp );
+        return nodeService;
+    }
+
+    private void stubPartNode( final NodeService nodeService, final Instant timestamp )
+    {
+        stubPartNode( nodeService, timestamp, NodeVersionId.from( "v1" ) );
+    }
+
+    // the version is that of the application node, the revision of the resolver
+    private void stubPartNode( final NodeService nodeService, final Instant timestamp, final NodeVersionId version )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "resource", "kind: Part" );
+        final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree(), version );
+        final Node partSchemaNode = createNode( "part:my-part", new NodePath( "/myapp/cms" ), timestamp, data, version );
+        when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
+        when( nodeService.getByPath( new NodePath( "/myapp/cms/part:my-part" ) ) ).thenReturn( partSchemaNode );
+        when( nodeService.list( any( ListNodesParams.class ) ) ).thenAnswer(
+            invocation -> Stream.of( new NodeListEntry( partSchemaNode.id(), partSchemaNode.path(), timestamp ) ) );
+        when( nodeService.getByIds( any( NodeIds.class ) ) ).thenReturn( Nodes.from( partSchemaNode ) );
+    }
+
     private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data )
     {
-        return Node.create().name( NodeName.from( name ) ).parentPath( root ).timestamp( timestamp ).data( data ).build();
+        return createNode( name, root, timestamp, data, null );
+    }
+
+    private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data,
+                             final NodeVersionId version )
+    {
+        return Node.create()
+            .id( NodeId.from( name ) )
+            .name( NodeName.from( name ) )
+            .parentPath( root )
+            .timestamp( timestamp )
+            .data( data )
+            .nodeVersionId( version )
+            .build();
     }
 }
