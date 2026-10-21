@@ -10,6 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
@@ -97,6 +100,11 @@ public class DeviceLoginHandler
     private static final ObjectMapper MAPPER = ObjectMapperHelper.create();
 
     private static final SecureRandom RANDOM = new SecureRandom();
+
+    /**
+     * What only the posted form may say on the verification submit.
+     */
+    private static final Set<String> FORM_ONLY = Set.of( "approve", "scope" );
 
     private final GrantService grantService;
 
@@ -297,6 +305,12 @@ public class DeviceLoginHandler
         if ( !csrfToken().equals( param( request, "_csrf" ) ) )
         {
             throw WebException.forbidden( "Invalid or missing form token" );
+        }
+        // The decision is the form's alone. Query and form parameters arrive merged, query first, so a
+        // link that opened the page could otherwise carry the choice.
+        if ( queryNames( request.getRawRequest().getQueryString() ).stream().anyMatch( FORM_ONLY::contains ) )
+        {
+            throw WebException.badRequest( "approve and scope are form fields, not query parameters" );
         }
         final String userCode = param( request, "user_code" );
         final boolean approve = "true".equals( param( request, "approve" ) );
@@ -509,6 +523,21 @@ public class DeviceLoginHandler
             session.setAttribute( CSRF_SESSION_ATTRIBUTE, token );
         }
         return token;
+    }
+
+    static Set<String> queryNames( final String query )
+    {
+        if ( query == null || query.isEmpty() )
+        {
+            return Set.of();
+        }
+        final Set<String> names = new HashSet<>();
+        for ( String pair : query.split( "&" ) )
+        {
+            final int eq = pair.indexOf( '=' );
+            names.add( URLDecoder.decode( eq < 0 ? pair : pair.substring( 0, eq ), StandardCharsets.UTF_8 ) );
+        }
+        return names;
     }
 
     private static String param( final PortalRequest request, final String name )
