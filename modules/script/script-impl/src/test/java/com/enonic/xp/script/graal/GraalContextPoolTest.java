@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.StreamSupport;
 
 import org.graalvm.polyglot.Engine;
 import org.junit.jupiter.api.AfterEach;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.mockito.Mockito;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.config.ConfigBuilder;
@@ -30,9 +32,12 @@ import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.resource.UrlResource;
 import com.enonic.xp.script.ScriptExports;
 import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.event.ScriptEventListener;
 import com.enonic.xp.script.graal.executor.BoundSlot;
 import com.enonic.xp.script.graal.executor.GraalContextBudget;
 import com.enonic.xp.script.graal.executor.GraalScriptExecutor;
+import com.enonic.xp.script.impl.async.ScriptAsyncService;
+import com.enonic.xp.script.impl.event.ScriptEventManagerImpl;
 import com.enonic.xp.script.impl.executor.ScriptExecutor;
 import com.enonic.xp.script.impl.function.ApplicationInfoBuilder;
 import com.enonic.xp.script.impl.service.ServiceRegistryImpl;
@@ -828,7 +833,8 @@ class GraalContextPoolTest
     {
         final ScriptExecutor local = newExecutor( 1, GraalContextBudget.unlimited() );
         final List<Boolean> outside = new CopyOnWriteArrayList<>();
-        local.registerMock( "/test/probe", new Probe( outside ) );
+        final ScriptEventManagerImpl events = newEventManager();
+        local.registerMock( "/test/probe", new Probe( outside, events ) );
 
         // bootstrap runs on the main context, executeMain on a pool slot
         local.bootstrap( ResourceKey.from( "graaljs:/context-probe-test.js" ) );
@@ -837,20 +843,40 @@ class GraalContextPoolTest
 
         assertEquals( List.of( false, true ), outside );
         assertFalse( BoundSlot.isOutsideMainContext() );
+        // a listener registered outside the main context is only warned about, still added
+        assertEquals( 2, StreamSupport.stream( events.spliterator(), false ).count() );
+    }
+
+    private static ScriptEventManagerImpl newEventManager()
+        throws Exception
+    {
+        final BundleContext bundleContext = Mockito.mock( BundleContext.class );
+        Mockito.lenient()
+            .when( bundleContext.createFilter( Mockito.anyString() ) )
+            .thenAnswer( invocation -> FrameworkUtil.createFilter( invocation.getArgument( 0 ) ) );
+        final ScriptAsyncService asyncService = Mockito.mock( ScriptAsyncService.class );
+        Mockito.when( asyncService.getAsyncExecutor( Mockito.any() ) ).thenReturn( Runnable::run );
+        return new ScriptEventManagerImpl( bundleContext, asyncService );
     }
 
     public static class Probe
     {
         private final List<Boolean> outside;
 
-        Probe( final List<Boolean> outside )
+        private final ScriptEventManagerImpl events;
+
+        Probe( final List<Boolean> outside, final ScriptEventManagerImpl events )
         {
             this.outside = outside;
+            this.events = events;
         }
 
         public void record()
         {
             outside.add( BoundSlot.isOutsideMainContext() );
+            final ScriptEventListener listener = Mockito.mock( ScriptEventListener.class );
+            Mockito.when( listener.getApplication() ).thenReturn( ApplicationKey.from( "myapplication" ) );
+            events.add( listener );
         }
     }
 
