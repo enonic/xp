@@ -7,15 +7,19 @@ import com.enonic.xp.core.impl.schema.SchemaLoader;
 import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceService;
+import com.enonic.xp.schema.content.CmsFormFragmentService;
 import com.enonic.xp.schema.content.ContentType;
 import com.enonic.xp.schema.content.ContentTypeName;
 
 final class ContentTypeLoader
     extends SchemaLoader<ContentTypeName, ContentType>
 {
-    ContentTypeLoader( final ResourceService resourceService )
+    private final CmsFormFragmentService formFragmentService;
+
+    ContentTypeLoader( final ResourceService resourceService, final CmsFormFragmentService formFragmentService )
     {
         super( resourceService, "/cms/content-types" );
+        this.formFragmentService = formFragmentService;
     }
 
     @Override
@@ -30,7 +34,10 @@ final class ContentTypeLoader
         builder.modifiedTime( modifiedTime );
         builder.createdTime( modifiedTime );
 
-        return builder.build();
+        // the form fragments are inlined here, into the value cached: a change of a fragment moves the generation of the
+        // application, which recomputes the content type
+        final ContentType contentType = builder.build();
+        return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
     }
 
     @Override

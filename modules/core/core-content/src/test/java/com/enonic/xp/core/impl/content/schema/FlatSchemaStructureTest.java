@@ -37,7 +37,7 @@ class FlatSchemaStructureTest
         addApplication( "flatapp", "/apps/flatapp" );
         addApplication( "myapp1", "/apps/myapp1" );
 
-        this.contentTypeLoader = new ContentTypeLoader( this.resourceService );
+        this.contentTypeLoader = new ContentTypeLoader( this.resourceService, new CmsFormFragmentServiceImpl( this.resourceService ) );
         this.mixinLoader = new MixinDescriptorLoader( this.resourceService );
         this.formFragmentLoader = new CmsFormFragmentLoader( this.resourceService );
     }

@@ -64,10 +64,12 @@ public class PageDescriptorLoader
     @Override
     public PageDescriptor load( final DescriptorKey key, final Resource resource )
     {
-        return YmlPageDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+        final PageDescriptor descriptor = YmlPageDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .key( key )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
+        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        return PageDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
     @Override
@@ -80,11 +82,5 @@ public class PageDescriptorLoader
             .regions( RegionDescriptors.create().build() )
             .modifiedTime( Millis.now() )
             .build();
-    }
-
-    @Override
-    public PageDescriptor postProcess( final PageDescriptor descriptor )
-    {
-        return PageDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 }

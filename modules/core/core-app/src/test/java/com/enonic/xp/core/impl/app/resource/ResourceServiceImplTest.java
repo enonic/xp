@@ -8,7 +8,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,17 +22,24 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.branch.Branches;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
+import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
+import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.BundleApplicationUrlResolver;
 import com.enonic.xp.core.impl.app.resolver.NodeResourceApplicationUrlResolver;
 import com.enonic.xp.core.internal.Dictionaries;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.node.ListNodesParams;
 import com.enonic.xp.node.Node;
+import com.enonic.xp.node.NodeId;
+import com.enonic.xp.node.NodeIds;
+import com.enonic.xp.node.NodeListEntry;
 import com.enonic.xp.node.NodeName;
 import com.enonic.xp.node.NodePath;
 import com.enonic.xp.node.NodeService;
+import com.enonic.xp.node.Nodes;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.Repository;
 import com.enonic.xp.repository.RepositoryId;
@@ -44,8 +53,12 @@ import com.enonic.xp.resource.ResourceProcessor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ResourceServiceImplTest
@@ -58,6 +71,8 @@ class ResourceServiceImplTest
     ResourceServiceImpl resourceService;
 
     ApplicationFactoryService applicationFactoryService;
+
+    ApplicationGeneration applicationGeneration;
 
     Bundle bundle;
 
@@ -85,7 +100,8 @@ class ResourceServiceImplTest
         when( applicationFactoryService.findResolver( appKey, null ) ).thenReturn( Optional.of( app.getUrlResolver() ) );
         when( applicationFactoryService.findActiveBundle( appKey ) ).thenReturn( Optional.of( bundle ) );
 
-        resourceService = new ResourceServiceImpl( applicationFactoryService );
+        applicationGeneration = new ApplicationGeneration();
+        resourceService = new ResourceServiceImpl( applicationFactoryService, applicationGeneration );
     }
 
     private Bundle newBundle( final long bundleId )
@@ -395,8 +411,163 @@ class ResourceServiceImplTest
         assertEquals( "myapp:/a.txt->3", value3 );
     }
 
+    @Test
+    void nodeResolver_hitCostsNoNodeRead()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final AtomicInteger translations = new AtomicInteger();
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1", translations );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->1", value1 );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // the persisted resources are stable under the generation: neither the key translation nor the node is looked at again
+        final String value2 = processResource( "segment1", "cms/parts/my-part.yaml", "2", translations );
+        assertEquals( value1, value2 );
+        verify( nodeService, times( 1 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+        assertEquals( 1, translations.get() );
+    }
+
+    @Test
+    void nodeResolver_generationBumpRecomputes()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->1", value1 );
+
+        // a write of the schema moves the generation, whatever the timestamp of the node
+        applicationGeneration.bump( appKey );
+
+        final String value2 = processResource( "segment1", "cms/parts/my-part.yaml", "2" );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->2", value2 );
+        verify( nodeService, times( 2 ) ).getByPath( new NodePath( "/myapp/cms/part:my-part" ) );
+
+        // another application is untouched
+        applicationGeneration.bump( ApplicationKey.from( "other" ) );
+        assertEquals( value2, processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
+    }
+
+    @Test
+    void nodeResolver_timestampChangeAloneIsNoSignal()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final String value1 = processResource( "segment1", "cms/parts/my-part.yaml", "1" );
+
+        // a node rewritten under the same generation is not seen until the generation moves: writers always bump
+        stubPartNode( nodeService, Instant.parse( "2022-01-01T00:00:00.00Z" ) );
+        assertEquals( value1, processResource( "segment1", "cms/parts/my-part.yaml", "2" ) );
+
+        applicationGeneration.bump( appKey );
+        assertEquals( "myapp:/cms/parts/my-part.yaml->3", processResource( "segment1", "cms/parts/my-part.yaml", "3" ) );
+    }
+
+    @Test
+    void classLoaderResolver_staysChecked()
+        throws Exception
+    {
+        // the application in development is served by its classloader: files change without any signal
+        newFile( "a.txt" );
+
+        final String value1 = processResource( "segment1", "a.txt", "1" );
+        assertEquals( "myapp:/a.txt->1", value1 );
+        assertEquals( value1, processResource( "segment1", "a.txt", "2" ) );
+
+        Files.setLastModifiedTime( appDir.resolve( "a.txt" ), FileTime.fromMillis( System.currentTimeMillis() + 10_000 ) );
+        assertEquals( "myapp:/a.txt->3", processResource( "segment1", "a.txt", "3" ) );
+
+        // and the generation moves it as well
+        applicationGeneration.bump( appKey );
+        assertEquals( "myapp:/a.txt->4", processResource( "segment1", "a.txt", "4" ) );
+    }
+
+    @Test
+    void processor_readsOtherResourcesThroughTheService()
+    {
+        // a content type inlining its form fragments reads them through this service while being computed itself
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        doReturn( Optional.of( nodeResolver( nodeService ) ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        final ResourceProcessor<String, String> outer = new ResourceProcessor.Builder<String, String>().key( "outer" )
+            .segment( "segment1" )
+            .keyTranslator( name -> ResourceKey.from( "myapp:/cms/parts/my-part.yaml" ) )
+            .processor( res -> "outer(" + processResource( "segment1", "cms/parts/my-part.yaml", "inner" ) + ")" )
+            .build();
+
+        assertEquals( "outer(myapp:/cms/parts/my-part.yaml->inner)", this.resourceService.processResource( outer ) );
+        assertEquals( "outer(myapp:/cms/parts/my-part.yaml->inner)", this.resourceService.processResource( outer ) );
+    }
+
+    @Test
+    void findFiles_nodeResolverListedOncePerGeneration()
+    {
+        final NodeService nodeService = stubPartNode( Instant.parse( "2021-12-03T10:15:30.00Z" ) );
+        final ApplicationUrlResolver resolver = spy( nodeResolver( nodeService ) );
+        doReturn( Optional.of( resolver ) ).when( applicationFactoryService ).findResolver( appKey, null );
+
+        assertThat( this.resourceService.findFiles( appKey, "\\.yaml$" ) ).map( Objects::toString )
+            .containsExactly( "myapp:/cms/parts/my-part.yaml" );
+        assertThat( this.resourceService.findFiles( appKey, "parts" ) ).map( Objects::toString )
+            .containsExactly( "myapp:/cms/parts/my-part.yaml" );
+        verify( resolver, times( 1 ) ).findFiles();
+
+        applicationGeneration.bump( appKey );
+        this.resourceService.findFiles( appKey, ".+" );
+        verify( resolver, times( 2 ) ).findFiles();
+    }
+
+    @Test
+    void findFiles_classLoaderResolverListedEveryTime()
+        throws Exception
+    {
+        newFile( "a.txt" );
+        assertThat( this.resourceService.findFiles( appKey, ".+" ) ).map( Objects::toString ).containsExactly( "myapp:/a.txt" );
+
+        newFile( "b.txt" );
+        assertThat( this.resourceService.findFiles( appKey, ".+" ) ).map( Objects::toString )
+            .containsExactlyInAnyOrder( "myapp:/a.txt", "myapp:/b.txt" );
+    }
+
+    private String processResource( final String segment, final String key, final String suffix, final AtomicInteger translations )
+    {
+        final ResourceProcessor<String, String> processor = new ResourceProcessor.Builder<String, String>().key( key )
+            .segment( segment )
+            .keyTranslator( name -> {
+                translations.incrementAndGet();
+                return ResourceKey.from( "myapp:/" + name );
+            } )
+            .processor( res -> res.getKey().toString() + "->" + suffix )
+            .build();
+        return this.resourceService.processResource( processor );
+    }
+
+    // "myapp" stored as nodes: the application node and one part below cms
+    private NodeService stubPartNode( final Instant timestamp )
+    {
+        final NodeService nodeService = mock( NodeService.class );
+        stubPartNode( nodeService, timestamp );
+        return nodeService;
+    }
+
+    private void stubPartNode( final NodeService nodeService, final Instant timestamp )
+    {
+        final PropertyTree data = new PropertyTree();
+        data.setString( "resource", "kind: Part" );
+        final Node appNode = createNode( "myapp", new NodePath( "/myapp" ), timestamp, new PropertyTree() );
+        final Node partSchemaNode = createNode( "part:my-part", new NodePath( "/myapp/cms" ), timestamp, data );
+        when( nodeService.getByPath( new NodePath( "/myapp" ) ) ).thenReturn( appNode );
+        when( nodeService.getByPath( new NodePath( "/myapp/cms/part:my-part" ) ) ).thenReturn( partSchemaNode );
+        when( nodeService.list( any( ListNodesParams.class ) ) ).thenAnswer(
+            invocation -> Stream.of( new NodeListEntry( partSchemaNode.id(), partSchemaNode.path(), timestamp ) ) );
+        when( nodeService.getByIds( any( NodeIds.class ) ) ).thenReturn( Nodes.from( partSchemaNode ) );
+    }
+
     private Node createNode( final String name, final NodePath root, final Instant timestamp, final PropertyTree data )
     {
-        return Node.create().name( NodeName.from( name ) ).parentPath( root ).timestamp( timestamp ).data( data ).build();
+        return Node.create().id( NodeId.from( name ) ).name( NodeName.from( name ) ).parentPath( root ).timestamp( timestamp ).data( data ).build();
     }
 }

@@ -25,40 +25,30 @@ public final class ContentTypeServiceImpl
 {
     private final ContentTypeRegistry registry;
 
-    private final CmsFormFragmentService formFragmentService;
-
     @Activate
     public ContentTypeServiceImpl( final @Reference ResourceService resourceService, @Reference final ApplicationService applicationService,
                                    final @Reference CmsFormFragmentService formFragmentService )
     {
-        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService ), applicationService );
-        this.formFragmentService = formFragmentService;
+        this.registry = new ContentTypeRegistry( new ContentTypeLoader( resourceService, formFragmentService ), applicationService );
     }
 
     @Override
     public ContentType getByName( final GetContentTypeParams params )
     {
         params.validate();
-        final ContentTypeName contentTypeName = params.getContentTypeName();
-        ContentType contentType = this.registry.get( contentTypeName );
-        if ( contentType == null )
-        {
-            return null;
-        }
-
-        return transformFormFragments( contentType );
+        return this.registry.get( params.getContentTypeName() );
     }
 
     @Override
     public ContentTypes getByApplication( final ApplicationKey applicationKey )
     {
-        return transformFormFragments( this.registry.getByApplication( applicationKey ) );
+        return this.registry.getByApplication( applicationKey );
     }
 
     @Override
     public ContentTypes getAll()
     {
-        return transformFormFragments( this.registry.getAll() );
+        return this.registry.getAll();
     }
 
     @Override
@@ -74,15 +64,5 @@ public final class ContentTypeServiceImpl
 
         validator.validate( type.getName(), type.getSuperType() );
         return validator.getResult();
-    }
-
-    private ContentType transformFormFragments( final ContentType contentType )
-    {
-        return ContentType.create( contentType ).form( formFragmentService.inlineFormItems( contentType.getForm() ) ).build();
-    }
-
-    private ContentTypes transformFormFragments( final ContentTypes contentTypes )
-    {
-        return contentTypes.stream().map( this::transformFormFragments ).collect( ContentTypes.collector() );
     }
 }

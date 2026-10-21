@@ -223,6 +223,12 @@ class ApplicationDescriptorBuilderTest
             {
                 return resources.get( path );
             }
+
+            @Override
+            public boolean isStable()
+            {
+                return true;
+            }
         };
     }
 }

@@ -14,6 +14,7 @@ import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.descriptor.DescriptorKeys;
 import com.enonic.xp.descriptor.DescriptorLoader;
 import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.form.FormFragmentException;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceProcessor;
 import com.enonic.xp.resource.ResourceService;
@@ -102,6 +103,11 @@ final class DescriptorFacetImpl<T extends Descriptor>
         try
         {
             return this.loader.load( key, resource );
+        }
+        catch ( final FormFragmentException e )
+        {
+            // a fragment missing or cyclic is the caller's to see, the descriptor itself is sound
+            throw e;
         }
         catch ( final Exception e )
         {

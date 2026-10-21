@@ -159,4 +159,11 @@ public final class NodeResourceApplicationUrlResolver
     {
         return new NodePath( appNodePath, SchemaNodeLayout.CMS_NODE_PATH.getName() );
     }
+
+    @Override
+    public boolean isStable()
+    {
+        // every write of the persisted resources bumps the generation of the application
+        return true;
+    }
 }

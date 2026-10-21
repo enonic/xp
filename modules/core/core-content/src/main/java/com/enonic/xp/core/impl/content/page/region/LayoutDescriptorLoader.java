@@ -64,10 +64,12 @@ public class LayoutDescriptorLoader
     public LayoutDescriptor load( final DescriptorKey key, final Resource resource )
         throws Exception
     {
-        return YmlLayoutDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+        final LayoutDescriptor descriptor = YmlLayoutDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .key( key )
             .build();
+        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        return LayoutDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
     @Override
@@ -79,11 +81,5 @@ public class LayoutDescriptorLoader
             .config( Form.empty() )
             .regions( RegionDescriptors.create().build() )
             .build();
-    }
-
-    @Override
-    public LayoutDescriptor postProcess( final LayoutDescriptor descriptor )
-    {
-        return LayoutDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 }

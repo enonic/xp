@@ -13,6 +13,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.stream.StreamSupport;
 
 import org.apache.felix.framework.Felix;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +32,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
@@ -40,14 +42,25 @@ import com.enonic.xp.core.impl.app.ApplicationListenerHub;
 import com.enonic.xp.core.impl.app.ApplicationRegistryImpl;
 import com.enonic.xp.core.impl.app.ApplicationRepoServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationServiceImpl;
+import com.enonic.xp.core.impl.app.DynamicSchemaAuditLogSupportImpl;
+import com.enonic.xp.core.impl.app.DynamicSchemaServiceImpl;
+import com.enonic.xp.core.impl.app.SchemaConfig;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
 import com.enonic.xp.core.impl.content.schema.CmsFormFragmentServiceImpl;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.event.EventPublisherImpl;
+import com.enonic.xp.event.EventPublisher;
+import com.enonic.xp.form.FormFragmentException;
+import com.enonic.xp.form.FormItem;
+import com.enonic.xp.resource.CreateOrUpdateContentSchemaParams;
+import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.resource.ResourceService;
 import com.enonic.xp.schema.content.ContentType;
+import com.enonic.xp.schema.content.ContentTypeName;
+import com.enonic.xp.schema.content.GetContentTypeParams;
 import com.enonic.xp.schema.content.ContentTypeService;
 import com.enonic.xp.schema.content.ContentTypes;
+import com.enonic.xp.schema.formfragment.FormFragmentName;
 import com.enonic.xp.security.RoleKeys;
 import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
@@ -70,6 +83,15 @@ class PersistedSchemaLookupTest
 
     private static final String INVALID_CONTENT_TYPE = "kind: \"ContentType\"\ndisplayName: \"Unknown property\"\n";
 
+    private static final String CONTENT_TYPE_WITH_FRAGMENT =
+        "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"With fragment\"\nform:\n  - include: \"address\"\n";
+
+    private static final String FRAGMENT_V1 = "kind: \"FormFragment\"\ntitle: \"Address\"\nform:\n  - type: \"TextLine\"\n    name: \"street\"\n    label: \"Street\"\n";
+
+    private static final String FRAGMENT_V2 =
+        "kind: \"FormFragment\"\ntitle: \"Address\"\nform:\n  - type: \"TextLine\"\n    name: \"street\"\n    label: \"Street\"\n" +
+            "  - type: \"TextLine\"\n    name: \"city\"\n    label: \"City\"\n";
+
     @TempDir
     public Path felixTempFolder;
 
@@ -79,12 +101,15 @@ class PersistedSchemaLookupTest
 
     private ContentTypeService contentTypeService;
 
+    private DynamicSchemaService dynamicSchemaService;
+
     private Felix felix;
 
     @BeforeEach
     void setUp()
         throws Exception
     {
+        final ApplicationGeneration applicationGeneration = new ApplicationGeneration();
         final Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
         final Map<String, Object> config = new HashMap<>();
@@ -103,17 +128,23 @@ class PersistedSchemaLookupTest
             new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
-        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService, applicationGeneration );
 
         final ApplicationAuditLogSupportImpl auditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
         auditLogSupport.activate( appConfig );
 
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
-            new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ), auditLogSupport );
+            new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ), auditLogSupport,
+            applicationGeneration );
 
         this.contentTypeService =
             new ContentTypeServiceImpl( resourceService, applicationService, new CmsFormFragmentServiceImpl( resourceService ) );
+
+        final DynamicSchemaAuditLogSupportImpl schemaAuditLogSupport = new DynamicSchemaAuditLogSupportImpl( mock( AuditLogService.class ) );
+        schemaAuditLogSupport.activate( mock( SchemaConfig.class, invocation -> invocation.getMethod().getDefaultValue() ) );
+        this.dynamicSchemaService =
+            new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, mock( EventPublisher.class ), applicationGeneration );
     }
 
     @AfterEach
@@ -142,6 +173,74 @@ class PersistedSchemaLookupTest
                           byApplication.stream().map( type -> type.getName().toString() ).sorted().toList() );
             assertTrue( byApplication.stream().map( ContentType::getTitle ).allMatch( "My type"::equals ) );
         } );
+    }
+
+    // the content type is cached with its form fragments inlined: a write of a fragment is seen by the next read of the content
+    // type, the generation of the application having moved with the write
+    @Test
+    void content_type_follows_a_form_fragment_written_through_the_schema_service()
+    {
+        final ContentTypeName typeName = ContentTypeName.from( "staticapp:withfragment" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", "kind: \"CMS\"", //
+                "cms/form-fragments/address.yaml", FRAGMENT_V1, //
+                "cms/content-types/withfragment.yaml", CONTENT_TYPE_WITH_FRAGMENT ) ) );
+
+            final ContentType before = contentTypeService.getByName( GetContentTypeParams.from( typeName ) );
+            assertEquals( List.of( "street" ), inputNames( before ) );
+            // served from the cache from now on
+            assertEquals( List.of( "street" ), inputNames( contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) ) );
+
+            dynamicSchemaService.createOrUpdateFormFragment( CreateOrUpdateContentSchemaParams.create()
+                                                                 .name( FormFragmentName.from( "staticapp:address" ) )
+                                                                 .resource( FRAGMENT_V2 )
+                                                                 .build() );
+
+            final ContentType after = contentTypeService.getByName( GetContentTypeParams.from( typeName ) );
+            assertEquals( List.of( "street", "city" ), inputNames( after ) );
+
+            // and the content type itself, written through the schema service, replaces the one shipped by the bundle
+            dynamicSchemaService.createOrUpdateContentType( CreateOrUpdateContentSchemaParams.create()
+                                                                .name( typeName )
+                                                                .resource( CONTENT_TYPE.replace( "My type", "Rewritten" ) )
+                                                                .build() );
+            assertEquals( "Rewritten", contentTypeService.getByName( GetContentTypeParams.from( typeName ) ).getTitle() );
+            assertTrue( inputNames( contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) ).isEmpty() );
+        } );
+    }
+
+    // a fragment the form includes but which the application does not have: the content type installs, reading it reports the
+    // fragment, as it did before the fragments were inlined into the cached value
+    @Test
+    void missing_form_fragment_is_reported_on_read()
+    {
+        final ContentTypeName typeName = ContentTypeName.from( "staticapp:withfragment" );
+
+        adminContext().runWith( () -> {
+            applicationService.installGlobalApplication( createAppSource( "staticapp", "1.0.0", Map.of( //
+                "enonic.yaml", APP_DESCRIPTOR, //
+                "cms/cms.yaml", "kind: \"CMS\"", //
+                "cms/content-types/withfragment.yaml", CONTENT_TYPE_WITH_FRAGMENT ) ) );
+
+            final FormFragmentException e = assertThrows( FormFragmentException.class,
+                                                          () -> contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) );
+            assertEquals( "Form fragment [staticapp:address] not found", e.getMessage() );
+
+            // written afterwards, the fragment makes the content type readable: nothing of the failed read was cached
+            dynamicSchemaService.createOrUpdateFormFragment( CreateOrUpdateContentSchemaParams.create()
+                                                                 .name( FormFragmentName.from( "staticapp:address" ) )
+                                                                 .resource( FRAGMENT_V1 )
+                                                                 .build() );
+            assertEquals( List.of( "street" ), inputNames( contentTypeService.getByName( GetContentTypeParams.from( typeName ) ) ) );
+        } );
+    }
+
+    private static List<String> inputNames( final ContentType contentType )
+    {
+        return StreamSupport.stream( contentType.getForm().spliterator(), false ).map( FormItem::getName ).toList();
     }
 
     // a descriptor that would not load is rejected before anything is written, the application is not installed

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.enonic.xp.form.FieldSet;
 import com.enonic.xp.form.Form;
 import com.enonic.xp.form.FormFragment;
+import com.enonic.xp.form.FormFragmentException;
 import com.enonic.xp.form.FormItem;
 import com.enonic.xp.form.FormItemSet;
 import com.enonic.xp.form.FormOptionSet;
@@ -74,7 +75,7 @@ public final class CmsFormFragmentServiceImpl
                         final String error = "Cycle detected in form fragment [" + fragmentDescriptor.getName() +
                             "]. It contains a form fragment that references itself.";
                         LOG.error( error );
-                        throw new IllegalArgumentException( error );
+                        throw new FormFragmentException( error );
                     }
 
                     inlineFragmentStack.add( formFragmentName );
@@ -88,7 +89,7 @@ public final class CmsFormFragmentServiceImpl
                 }
                 else
                 {
-                    throw new IllegalArgumentException( "Form fragment [" + formFragmentName + "] not found" );
+                    throw new FormFragmentException( "Form fragment [" + formFragmentName + "] not found" );
                 }
             }
             else if ( formItem instanceof FormItemSet )
