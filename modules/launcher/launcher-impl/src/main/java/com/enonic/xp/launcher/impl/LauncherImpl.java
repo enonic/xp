@@ -1,6 +1,7 @@
 package com.enonic.xp.launcher.impl;
 
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +18,7 @@ import com.enonic.xp.launcher.impl.framework.FrameworkLifecycleService;
 import com.enonic.xp.launcher.impl.framework.FrameworkService;
 import com.enonic.xp.launcher.impl.provision.ProvisionActivator;
 import com.enonic.xp.launcher.impl.util.BannerPrinter;
+import com.enonic.xp.launcher.impl.util.Heartbeat;
 
 public final class LauncherImpl
     implements Launcher
@@ -34,6 +36,8 @@ public final class LauncherImpl
     private FrameworkService framework;
 
     private ExecutorService frameworkLifecycleExecutor;
+
+    private Heartbeat heartbeat;
 
     public LauncherImpl( final String... args )
     {
@@ -84,6 +88,13 @@ public final class LauncherImpl
         setupLifecycleService();
     }
 
+    private void startHeartbeat()
+    {
+        // must be created after configuration is applied: its logger initializes Logback, which needs logback.configurationFile
+        this.heartbeat = new Heartbeat( this.version.getVersion() );
+        this.heartbeat.start( Duration.ofHours( 1 ) );
+    }
+
     private void addProvisionActivator()
     {
         final Path systemDir = this.env.getInstallDir().resolve( "system" );
@@ -117,6 +128,7 @@ public final class LauncherImpl
         printBanner();
         loadConfiguration();
         applyConfigToSystemProperties();
+        startHeartbeat();
         createFramework();
 
         this.framework.start();
@@ -127,6 +139,10 @@ public final class LauncherImpl
     {
         this.framework.stop();
         this.frameworkLifecycleExecutor.shutdownNow();
+        if ( this.heartbeat != null )
+        {
+            this.heartbeat.stop();
+        }
     }
 
     private void applySystemPropertyArgs()
