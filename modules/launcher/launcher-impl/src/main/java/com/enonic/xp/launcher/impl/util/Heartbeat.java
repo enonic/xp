@@ -37,7 +37,11 @@ public final class Heartbeat
 
     public void start( final Duration interval )
     {
-        this.executor = Executors.newSingleThreadScheduledExecutor( r -> Thread.ofPlatform().name( "Heartbeat" ).daemon().unstarted( r ) );
+        this.executor = Executors.newSingleThreadScheduledExecutor( r -> {
+            final Thread thread = new Thread( r, "Heartbeat" );
+            thread.setDaemon( true );
+            return thread;
+        } );
         this.executor.scheduleAtFixedRate( this::beat, interval.toMillis(), interval.toMillis(), TimeUnit.MILLISECONDS );
     }
 
