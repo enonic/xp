@@ -2,6 +2,7 @@ package com.enonic.xp.repo.impl.elasticsearch.executor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.ElasticsearchTimeoutException;
@@ -69,7 +70,7 @@ public class SearchExecutor
         {
             final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet( SEARCH_TIMEOUT );
 
-            return createSearchResult( searchResponse, query.getReturnFields() );
+            return createSearchResult( searchResponse, query.getReturnFields(), query.getHiddenSortPositions() );
         }
         catch ( ElasticsearchException e )
         {
@@ -95,7 +96,8 @@ public class SearchExecutor
         {
             LOG.debug( "Scrolling, got {} hits", scrollResp.getHits().hits().length );
 
-            searchHitsBuilder.addAll( SearchHitsFactory.create( scrollResp.getHits(), query.getReturnFields() ) );
+            searchHitsBuilder.addAll(
+                SearchHitsFactory.create( scrollResp.getHits(), query.getReturnFields(), query.getHiddenSortPositions() ) );
 
             scrollResp = client.prepareSearchScroll( scrollResp.getScrollId() ).setScroll( DEFAULT_SCROLL_TIME ).execute().actionGet();
 
@@ -113,10 +115,11 @@ public class SearchExecutor
             build();
     }
 
-    public static SearchResult createSearchResult( final SearchResponse searchResponse, final ReturnFields returnFields )
+    public static SearchResult createSearchResult( final SearchResponse searchResponse, final ReturnFields returnFields,
+                                                   final Set<Integer> hiddenSortPositions )
     {
         return SearchResult.create().
-            hits( SearchHitsFactory.create( searchResponse.getHits(), returnFields ) ).
+            hits( SearchHitsFactory.create( searchResponse.getHits(), returnFields, hiddenSortPositions ) ).
             totalHits( searchResponse.getHits().getTotalHits() ).
             maxScore( searchResponse.getHits().maxScore() ).
             aggregations( AggregationsFactory.create( searchResponse.getAggregations() ) ).
