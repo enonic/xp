@@ -81,7 +81,7 @@ public final class Heartbeat
     private static String heap()
     {
         final MemoryUsage heap = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-        return heap.getUsed() / MB + "/" + heap.getMax() / MB + "MB";
+        return heap.getUsed() / MB + "/" + heap.getMax() / MB + "M";
     }
 
     private static String gc()
