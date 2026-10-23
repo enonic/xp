@@ -45,10 +45,11 @@ public final class LauncherImpl
         applySystemPropertyArgs();
         this.systemProperties = SystemProperties.getDefault();
         this.version = VersionInfo.get();
-        this.heartbeat = new Heartbeat( this.version.getVersion() );
         this.env = new EnvironmentResolver( this.systemProperties ).resolve();
         System.getProperties().putAll( this.env.getAsMap() );
         this.config = loadConfiguration();
+        // must be created after configuration is loaded: its logger initializes Logback, which needs logback.configurationFile
+        this.heartbeat = new Heartbeat( this.version.getVersion() );
     }
 
     public void start()
