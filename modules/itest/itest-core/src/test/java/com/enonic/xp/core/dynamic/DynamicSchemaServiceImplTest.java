@@ -275,7 +275,7 @@ class DynamicSchemaServiceImplTest
 
         this.applicationEvents.clear();
         final EventPublisher applicationEventPublisher = mock( EventPublisher.class );
-        final ApplicationGeneration applicationGeneration = new ApplicationGeneration();
+        final ApplicationGeneration applicationGeneration = new ApplicationGeneration( nodeService );
         doAnswer( invocation -> applicationEvents.add( invocation.getArgument( 0 ) ) ).when( applicationEventPublisher ).publish( any() );
 
         this.dynamicSchemaService = new DynamicSchemaServiceImpl( nodeService, schemaAuditLogSupport, applicationEventPublisher, applicationGeneration );

@@ -133,7 +133,7 @@ class ApplicationRepoMigratorTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ), auditLogSupport,
-            new ApplicationGeneration() );
+            new ApplicationGeneration( nodeService ) );
 
         final EventPublisher eventPublisher = mock( EventPublisher.class );
         doAnswer( invocation -> publishedEvents.add( invocation.getArgument( 0 ) ) ).when( eventPublisher ).publish( any() );

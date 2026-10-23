@@ -11,6 +11,7 @@ import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.app.ApplicationService;
 import com.enonic.xp.app.Applications;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
+import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.ResourceService;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -50,7 +51,7 @@ public abstract class ApplicationTestSupport
             return Optional.ofNullable( apps.get( argument ) ).map( MockApplication::getUrlResolver );
         } );
 
-        this.resourceService = new ResourceServiceImpl( applicationFactoryService, new ApplicationGeneration() );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService, new ApplicationGeneration( mock( NodeService.class ) ) );
 
         initialize();
     }
@@ -60,11 +61,19 @@ public abstract class ApplicationTestSupport
 
     protected final MockApplication addApplication( final String key, final String prefix )
     {
+        return addApplication( key, Path.of( ROOT_TEST_PATH + prefix ) );
+    }
+
+    /**
+     * An application served from the files of a directory through its classloader, as an application in development is.
+     */
+    protected final MockApplication addApplication( final String key, final Path resourcePath )
+    {
         final MockApplication app = new MockApplication();
         app.setKey( ApplicationKey.from( key ) );
         app.setStarted( true );
 
-        app.setResourcePath( Path.of( ROOT_TEST_PATH + prefix ) );
+        app.setResourcePath( resourcePath );
 
         this.apps.put( app.getKey(), app );
         return app;

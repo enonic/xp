@@ -1,6 +1,8 @@
 package com.enonic.xp.core.impl.app.resource;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,8 +10,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import org.osgi.framework.Bundle;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -17,6 +21,7 @@ import org.osgi.service.component.annotations.Reference;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.core.impl.app.ApplicationAdaptor;
+import com.enonic.xp.core.impl.app.ApplicationFactory;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
@@ -39,7 +44,10 @@ import com.enonic.xp.vfs.VirtualFile;
  * resource checked on every use, as the files change under it without any signal.
  * <p>
  * The caches are plain maps and a value is computed outside of any lock: a processor may itself read other resources through this
- * service (a content type inlining its form fragments), and two threads computing the same value at once just agree on it.
+ * service (a content type inlining its form fragments), and two threads computing the same value at once just agree on it. What a
+ * processor reads that way is recorded with the value as its {@link Dependency dependencies}: for an unstable resolver they are
+ * checked on every use as the resource of the value itself is, so an edit of a fragment alone reaches the content types inlining it.
+ * A stable resolver needs no such record: a value only reads resources of its own application, all guarded by the same stamp.
  */
 @Component(immediate = true)
 public final class ResourceServiceImpl
@@ -52,6 +60,10 @@ public final class ResourceServiceImpl
     private final ConcurrentMap<ProcessingKey, MultiProcessingEntry> multiCache = new ConcurrentHashMap<>();
 
     private final ConcurrentMap<FilesKey, FilesEntry> filesCache = new ConcurrentHashMap<>();
+
+    // the dependencies of the values being computed on this thread, innermost last; none set while nothing is computed, so a hit
+    // outside of any computation costs a single lookup
+    private final ThreadLocal<Deque<List<Dependency>>> computing = new ThreadLocal<>();
 
     private final ApplicationFactoryService applicationFactoryService;
 
@@ -139,8 +151,12 @@ public final class ResourceServiceImpl
     private CacheStamp stamp( final ApplicationKey key )
     {
         final ApplicationKey effectiveKey = effectiveKey( key );
-        final BundleStamp bundleStamp = applicationFactoryService.findActiveBundle( effectiveKey ).map( BundleStamp::from ).orElse( null );
-        return new CacheStamp( bundleStamp, applicationGeneration.of( effectiveKey ) );
+        final Bundle bundle = applicationFactoryService.findActiveBundle( effectiveKey ).orElse( null );
+        // the application node is checked only for an application served from it: a local application is served from its bundle alone
+        final long generation = bundle == null || ApplicationFactory.isPersisted( bundle )
+            ? applicationGeneration.of( effectiveKey )
+            : applicationGeneration.current( effectiveKey );
+        return new CacheStamp( bundle == null ? null : BundleStamp.from( bundle ), generation );
     }
 
     @Override
@@ -151,6 +167,12 @@ public final class ResourceServiceImpl
         final ProcessingEntry cached = this.cache.get( cacheKey );
         if ( cached != null && isCurrent( cached ) )
         {
+            final List<Dependency> outer = outerDependencies();
+            if ( outer != null )
+            {
+                outer.add( cached.resource() );
+                outer.addAll( cached.dependencies() );
+            }
             return (V) cached.value();
         }
 
@@ -160,19 +182,28 @@ public final class ResourceServiceImpl
         final Optional<ApplicationUrlResolver> urlResolver = findApplicationUrlResolver( resourceKey.getApplicationKey() );
         final Resource resource = findResource( urlResolver, resourceKey );
 
-        final V value = processor.process( resource );
+        final List<Dependency> dependencies = new ArrayList<>();
+        final V value = compute( dependencies, () -> processor.process( resource ) );
+        final Dependency self = Dependency.of( resource );
+        final List<Dependency> outer = outerDependencies();
+        if ( outer != null )
+        {
+            outer.add( self );
+            outer.addAll( dependencies );
+        }
         if ( value == null )
         {
             this.cache.remove( cacheKey );
             return null;
         }
-        this.cache.put( cacheKey, new ProcessingEntry( value, resourceKey, resource.getTimestamp(), stamp, isStable( urlResolver ) ) );
+        final boolean stable = isStable( urlResolver );
+        this.cache.put( cacheKey, new ProcessingEntry( value, self, stable ? List.of() : List.copyOf( dependencies ), stamp, stable ) );
         return value;
     }
 
     private boolean isCurrent( final ProcessingEntry entry )
     {
-        final ApplicationKey applicationKey = entry.resourceKey().getApplicationKey();
+        final ApplicationKey applicationKey = entry.resource().resourceKey().getApplicationKey();
         if ( !entry.stamp().equals( stamp( applicationKey ) ) )
         {
             return false;
@@ -183,8 +214,8 @@ public final class ResourceServiceImpl
             // the stamp is the only signal that they may be new - timestamps prove nothing (constant with reproducible builds)
             return true;
         }
-        final Resource resource = findResource( findApplicationUrlResolver( applicationKey ), entry.resourceKey() );
-        return resource.exists() && resource.getTimestamp() == entry.timestamp();
+        final Resource resource = findResource( findApplicationUrlResolver( applicationKey ), entry.resource().resourceKey() );
+        return resource.exists() && entry.resource().isCurrent( resource ) && dependenciesCurrent( entry.dependencies() );
     }
 
     @Override
@@ -195,6 +226,12 @@ public final class ResourceServiceImpl
         final MultiProcessingEntry cached = this.multiCache.get( cacheKey );
         if ( cached != null && isCurrent( cached ) )
         {
+            final List<Dependency> outer = outerDependencies();
+            if ( outer != null )
+            {
+                outer.addAll( cached.resources() );
+                outer.addAll( cached.dependencies() );
+            }
             return (V) cached.value();
         }
 
@@ -212,29 +249,33 @@ public final class ResourceServiceImpl
             stable = stable && isStable( urlResolver );
         }
 
-        final List<Resource> resources = new ArrayList<>( resourceKeys.size() );
-        final long[] timestamps = new long[resourceKeys.size()];
-        for ( int i = 0; i < resourceKeys.size(); i++ )
-        {
-            final ResourceKey resourceKey = resourceKeys.get( i );
-            final Resource resource = findResource( urlResolvers.get( resourceKey.getApplicationKey() ), resourceKey );
-            resources.add( resource );
-            timestamps[i] = resource.getTimestamp();
-        }
+        final List<Resource> resources = resourceKeys.stream()
+            .map( resourceKey -> findResource( urlResolvers.get( resourceKey.getApplicationKey() ), resourceKey ) )
+            .toList();
 
-        final V value = processor.process( resources );
+        final List<Dependency> dependencies = new ArrayList<>();
+        final V value = compute( dependencies, () -> processor.process( resources ) );
+        final List<Dependency> selves = resources.stream().map( Dependency::of ).toList();
+        final List<Dependency> outer = outerDependencies();
+        if ( outer != null )
+        {
+            outer.addAll( selves );
+            outer.addAll( dependencies );
+        }
         if ( value == null )
         {
             this.multiCache.remove( cacheKey );
             return null;
         }
-        this.multiCache.put( cacheKey, new MultiProcessingEntry( value, resourceKeys, timestamps, stamps, stable ) );
+        this.multiCache.put( cacheKey,
+                             new MultiProcessingEntry( value, selves, stable ? List.of() : List.copyOf( dependencies ), stamps, stable ) );
         return value;
     }
 
     private boolean isCurrent( final MultiProcessingEntry entry )
     {
-        final List<ApplicationKey> applicationKeys = applicationKeys( entry.resourceKeys() );
+        final List<ApplicationKey> applicationKeys =
+            applicationKeys( entry.resources().stream().map( Dependency::resourceKey ).toList() );
         if ( !entry.stamps().equals( applicationKeys.stream().map( this::stamp ).toList() ) )
         {
             return false;
@@ -244,16 +285,65 @@ public final class ResourceServiceImpl
             return true;
         }
         final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
-        for ( final ApplicationKey applicationKey : applicationKeys )
+        for ( final Dependency resource : entry.resources() )
         {
-            urlResolvers.put( applicationKey, findApplicationUrlResolver( applicationKey ) );
+            final ResourceKey resourceKey = resource.resourceKey();
+            final Optional<ApplicationUrlResolver> urlResolver =
+                urlResolvers.computeIfAbsent( resourceKey.getApplicationKey(), this::findApplicationUrlResolver );
+            // missing resources are part of the value as well: one appearing changes its timestamp
+            if ( findResource( urlResolver, resourceKey ).getTimestamp() != resource.timestamp() )
+            {
+                return false;
+            }
         }
-        final List<ResourceKey> resourceKeys = entry.resourceKeys();
-        for ( int i = 0; i < resourceKeys.size(); i++ )
+        return dependenciesCurrent( entry.dependencies() );
+    }
+
+    // computes a value collecting what it reads through this service
+    private <V> V compute( final List<Dependency> dependencies, final Supplier<V> processing )
+    {
+        Deque<List<Dependency>> stack = computing.get();
+        if ( stack == null )
         {
-            final ResourceKey resourceKey = resourceKeys.get( i );
-            final Resource resource = findResource( urlResolvers.get( resourceKey.getApplicationKey() ), resourceKey );
-            if ( resource.getTimestamp() != entry.timestamps()[i] )
+            stack = new ArrayDeque<>();
+            computing.set( stack );
+        }
+        stack.addLast( dependencies );
+        try
+        {
+            return processing.get();
+        }
+        finally
+        {
+            stack.removeLast();
+            if ( stack.isEmpty() )
+            {
+                computing.remove();
+            }
+        }
+    }
+
+    // where a value read while another one is computed goes, as a dependency of it together with everything it depends on itself;
+    // null outside of any computation
+    private List<Dependency> outerDependencies()
+    {
+        final Deque<List<Dependency>> stack = computing.get();
+        return stack == null ? null : stack.peekLast();
+    }
+
+    // the resources a value was computed from besides its own are as they were then
+    private boolean dependenciesCurrent( final List<Dependency> dependencies )
+    {
+        if ( dependencies.isEmpty() )
+        {
+            return true;
+        }
+        final Map<ApplicationKey, Optional<ApplicationUrlResolver>> urlResolvers = new HashMap<>();
+        for ( final Dependency dependency : dependencies )
+        {
+            final Optional<ApplicationUrlResolver> urlResolver =
+                urlResolvers.computeIfAbsent( dependency.resourceKey().getApplicationKey(), this::findApplicationUrlResolver );
+            if ( !dependency.isCurrent( findResource( urlResolver, dependency.resourceKey() ) ) )
             {
                 return false;
             }

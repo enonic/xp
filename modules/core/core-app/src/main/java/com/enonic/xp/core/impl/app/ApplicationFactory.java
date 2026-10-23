@@ -55,7 +55,7 @@ public final class ApplicationFactory
      * and must not be shadowed by what is persisted for a global installation of the same application, so everything
      * comes from its bundle.
      */
-    private static boolean isPersisted( final Bundle bundle )
+    public static boolean isPersisted( final Bundle bundle )
     {
         return !ApplicationHelper.isLocalApplication( bundle );
     }

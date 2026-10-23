@@ -1,15 +1,24 @@
 package com.enonic.xp.perftest.content;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 import org.apache.felix.framework.Felix;
 import org.osgi.framework.Constants;
@@ -45,9 +54,13 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.security.auth.AuthenticationInfo;
 
 /**
- * An application persisted as nodes, with the services reading and writing its schema, shared by the schema benchmarks:
- * 3 form fragments, {@code contentTypes} content types half of which include two fragments, and a part per five content types,
- * half of which include a fragment. The resolvers read through a node service counting the reads.
+ * An application with the services reading and writing its schema, shared by the schema benchmarks: 3 form fragments,
+ * {@code contentTypes} content types half of which include two fragments, and a part per five content types, half of which include
+ * a fragment. The resolvers read through a node service counting the reads, the check of the application node by the generation
+ * through one counting them apart ({@code check:*}).
+ * <p>
+ * The application is persisted as nodes, as a globally installed one is, or, {@code local}, shipped by a local application bundle
+ * only: no node of it exists, it is served from the bundle alone and its schema is not written.
  */
 final class SchemaFixture
 {
@@ -73,6 +86,13 @@ final class SchemaFixture
 
     private final LongAdder fragmentWrites = new LongAdder();
 
+    private boolean local;
+
+    private SchemaServices services;
+
+    // the schema as written, by the path a bundle ships it at
+    private final Map<String, String> bundleResources = new LinkedHashMap<>();
+
     private Bootstrap bs;
 
     private Felix felix;
@@ -80,6 +100,13 @@ final class SchemaFixture
     void start( final int contentTypes )
         throws Exception
     {
+        start( contentTypes, false );
+    }
+
+    void start( final int contentTypes, final boolean local )
+        throws Exception
+    {
+        this.local = local;
         bs = new Bootstrap();
         bs.start();
 
@@ -90,13 +117,15 @@ final class SchemaFixture
 
         // the resolvers read through a node service counting the reads, the schema is written through the plain one
         final ApplicationFactoryServiceImpl applicationFactoryService =
-            new ApplicationFactoryServiceImpl( felix.getBundleContext(), counting( bs.nodeService ) );
+            new ApplicationFactoryServiceImpl( felix.getBundleContext(), counting( bs.nodeService, "" ) );
         applicationFactoryService.activate();
 
         final DynamicSchemaAuditLogSupportImpl auditLogSupport = new DynamicSchemaAuditLogSupportImpl( Bootstrap.noOp( AuditLogService.class ) );
         auditLogSupport.activate( Bootstrap.annotationDefaults( SchemaConfig.class ) );
 
-        final SchemaServices services = new SchemaServices( applicationFactoryService, bs.nodeService, auditLogSupport, bs.eventPublisher );
+        services =
+            new SchemaServices( applicationFactoryService, bs.nodeService, counting( bs.nodeService, "check:" ), auditLogSupport,
+                                bs.eventPublisher );
         resourceService = services.resourceService;
         dynamicSchemaService = services.dynamicSchemaService;
 
@@ -109,13 +138,56 @@ final class SchemaFixture
 
         adminContext().runWith( () -> createApplication( contentTypes, new ApplicationRepoServiceImpl( bs.nodeService ) ) );
         bs.refresh();
+
+        if ( local )
+        {
+            felix.getBundleContext().installBundle( "local:" + APP, new ByteArrayInputStream( localBundle() ) ).start();
+        }
+    }
+
+    /**
+     * Makes everything cached for the application stale, as a change of its definition does, without changing anything.
+     */
+    void invalidate()
+    {
+        services.invalidate( APP );
+    }
+
+    private byte[] localBundle()
+        throws IOException
+    {
+        final Manifest manifest = new Manifest();
+        manifest.getMainAttributes().put( Attributes.Name.MANIFEST_VERSION, "1.0" );
+        manifest.getMainAttributes().putValue( Constants.BUNDLE_MANIFESTVERSION, "2" );
+        manifest.getMainAttributes().putValue( Constants.BUNDLE_SYMBOLICNAME, APP.getName() );
+        manifest.getMainAttributes().putValue( Constants.BUNDLE_VERSION, "1.0.0" );
+        manifest.getMainAttributes().putValue( "X-Bundle-Type", "application" );
+
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (JarOutputStream jar = new JarOutputStream( out, manifest ))
+        {
+            jar.putNextEntry( new JarEntry( "enonic.yaml" ) );
+            jar.write( "kind: \"Application\"\ntitle: \"Bench\"\n".getBytes( StandardCharsets.UTF_8 ) );
+            jar.closeEntry();
+            for ( final Map.Entry<String, String> entry : bundleResources.entrySet() )
+            {
+                jar.putNextEntry( new JarEntry( entry.getKey() ) );
+                jar.write( entry.getValue().getBytes( StandardCharsets.UTF_8 ) );
+                jar.closeEntry();
+            }
+        }
+        return out.toByteArray();
     }
 
     private void createApplication( final int contentTypes, final ApplicationRepoServiceImpl repoService )
     {
-        repoService.createApplicationNode( APP );
-        repoService.upsertApplicationDescriptor( APP, "kind: \"Application\"\ntitle: \"Bench\"\n", IconUpdate.KEEP );
-        dynamicSchemaService.createOrUpdateCms( CreateOrUpdateCmsParams.create().key( APP ).resource( "kind: \"CMS\"\n" ).build() );
+        if ( !local )
+        {
+            repoService.createApplicationNode( APP );
+            repoService.upsertApplicationDescriptor( APP, "kind: \"Application\"\ntitle: \"Bench\"\n", IconUpdate.KEEP );
+            dynamicSchemaService.createOrUpdateCms( CreateOrUpdateCmsParams.create().key( APP ).resource( "kind: \"CMS\"\n" ).build() );
+        }
+        bundleResources.put( "cms/cms.yaml", "kind: \"CMS\"\n" );
 
         for ( int i = 0; i < FRAGMENTS; i++ )
         {
@@ -129,11 +201,13 @@ final class SchemaFixture
             final String form = inputs( "field", 10, "Label" ) + ( withFragments
                 ? "  - include: \"fragment" + ( i % FRAGMENTS ) + "\"\n  - include: \"fragment" + ( ( i + 1 ) % FRAGMENTS ) + "\"\n"
                 : "" );
-            dynamicSchemaService.createOrUpdateContentType( CreateOrUpdateContentSchemaParams.create()
-                                                                .name( name )
-                                                                .resource( "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"Type " +
-                                                                               i + "\"\nform:\n" + form )
-                                                                .build() );
+            final String resource = "kind: \"ContentType\"\nsuperType: \"base:structured\"\ntitle:\n  text: \"Type " + i + "\"\nform:\n" + form;
+            if ( !local )
+            {
+                dynamicSchemaService.createOrUpdateContentType(
+                    CreateOrUpdateContentSchemaParams.create().name( name ).resource( resource ).build() );
+            }
+            bundleResources.put( "cms/content-types/" + name.getLocalName() + "/" + name.getLocalName() + ".yaml", resource );
             ( withFragments ? typesWithFragments : plainTypes ).add( name );
         }
 
@@ -141,10 +215,12 @@ final class SchemaFixture
         {
             final DescriptorKey key = DescriptorKey.from( APP, "part" + i );
             final String form = inputs( "field", 5, "Label" ) + ( i % 2 == 0 ? "  - include: \"fragment" + ( i % FRAGMENTS ) + "\"\n" : "" );
-            dynamicSchemaService.createOrUpdatePart( CreateOrUpdateComponentParams.create()
-                                                         .key( key )
-                                                         .resource( "kind: \"Part\"\ntitle:\n  text: \"Part " + i + "\"\nform:\n" + form )
-                                                         .build() );
+            final String resource = "kind: \"Part\"\ntitle:\n  text: \"Part " + i + "\"\nform:\n" + form;
+            if ( !local )
+            {
+                dynamicSchemaService.createOrUpdatePart( CreateOrUpdateComponentParams.create().key( key ).resource( resource ).build() );
+            }
+            bundleResources.put( "cms/parts/" + key.getName() + "/" + key.getName() + ".yaml", resource );
             parts.add( key );
         }
     }
@@ -154,17 +230,25 @@ final class SchemaFixture
      */
     void writeFragment( final int fragment )
     {
+        if ( local )
+        {
+            throw new IllegalStateException( "the schema of a local application is not written" );
+        }
         fragmentWrites.increment();
         adminContext().runWith( () -> writeFragment( fragment, "Label " + fragmentWrites.sum() ) );
     }
 
     private void writeFragment( final int fragment, final String label )
     {
-        dynamicSchemaService.createOrUpdateFormFragment( CreateOrUpdateContentSchemaParams.create()
-                                                             .name( FormFragmentName.from( APP, "fragment" + fragment ) )
-                                                             .resource( "kind: \"FormFragment\"\ntitle: \"Fragment\"\nform:\n" +
-                                                                            inputs( "f" + fragment, 5, label ) )
-                                                             .build() );
+        final String resource = "kind: \"FormFragment\"\ntitle: \"Fragment\"\nform:\n" + inputs( "f" + fragment, 5, label );
+        if ( !local )
+        {
+            dynamicSchemaService.createOrUpdateFormFragment( CreateOrUpdateContentSchemaParams.create()
+                                                                 .name( FormFragmentName.from( APP, "fragment" + fragment ) )
+                                                                 .resource( resource )
+                                                                 .build() );
+        }
+        bundleResources.putIfAbsent( "cms/form-fragments/fragment" + fragment + "/fragment" + fragment + ".yaml", resource );
     }
 
     private static String inputs( final String prefix, final int count, final String label )
@@ -193,7 +277,7 @@ final class SchemaFixture
         for ( final Map.Entry<String, LongAdder> entry : nodeReads.entrySet() )
         {
             total += entry.getValue().sum();
-            perOp.put( entry.getKey(), String.format( "%.2f", entry.getValue().sum() / (double) count ) );
+            perOp.put( entry.getKey(), String.format( "%.2f (%d)", entry.getValue().sum() / (double) count, entry.getValue().sum() ) );
         }
         System.out.printf( "%n[node reads/op] %s %s: total=%.2f %s (ops=%d, fragment writes=%d)%n", benchmark, params, total / (double) count,
                            perOp, count, fragmentWrites.sum() );
@@ -214,7 +298,7 @@ final class SchemaFixture
             .build();
     }
 
-    private NodeService counting( final NodeService delegate )
+    private NodeService counting( final NodeService delegate, final String prefix )
     {
         return (NodeService) Proxy.newProxyInstance( NodeService.class.getClassLoader(), new Class<?>[]{NodeService.class},
                                                      ( proxy, method, args ) -> {
@@ -222,7 +306,7 @@ final class SchemaFixture
                                                          if ( name.startsWith( "get" ) || name.equals( "list" ) ||
                                                              name.equals( "nodeExists" ) || name.startsWith( "find" ) )
                                                          {
-                                                             nodeReads.computeIfAbsent( name, k -> new LongAdder() ).increment();
+                                                             nodeReads.computeIfAbsent( prefix + name, k -> new LongAdder() ).increment();
                                                          }
                                                          try
                                                          {

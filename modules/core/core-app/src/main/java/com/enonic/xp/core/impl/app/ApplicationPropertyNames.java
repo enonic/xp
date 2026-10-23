@@ -13,4 +13,6 @@ class ApplicationPropertyNames
     static final String VERSION = "version";
 
     static final String STARTED = "started";
+
+    static final String SCHEMA_REVISION = "schemaRevision";
 }

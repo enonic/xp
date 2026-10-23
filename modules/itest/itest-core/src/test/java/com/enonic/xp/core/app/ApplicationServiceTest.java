@@ -96,7 +96,7 @@ class ApplicationServiceTest
     void setUp()
         throws Exception
     {
-        final ApplicationGeneration applicationGeneration = new ApplicationGeneration();
+        final ApplicationGeneration applicationGeneration = new ApplicationGeneration( nodeService );
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
         this.felix = createFelixInstance( cacheDir );
