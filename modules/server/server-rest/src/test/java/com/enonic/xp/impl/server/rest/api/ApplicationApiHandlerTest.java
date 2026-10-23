@@ -368,6 +368,22 @@ class ApplicationApiHandlerTest
     }
 
     @Test
+    void handleListReportsSystemApplications()
+    {
+        final Application system = createApplication();
+        when( system.isSystem() ).thenReturn( true );
+        final List<ApplicationInfoJson> infos =
+            List.of( ApplicationInfoJson.create( system, null, false ), ApplicationInfoJson.create( createApplication(), null, false ) );
+        when( applicationResourceService.getInstalledApplications() ).thenReturn( infos );
+
+        final WebResponse response = handler.handle( ManagementApiTestSupport.request( HttpMethod.GET, "/server:app" ) );
+
+        final String body = String.valueOf( response.getBody() );
+        assertTrue( body.contains( "\"system\":true" ), body );
+        assertTrue( body.contains( "\"system\":false" ), body );
+    }
+
+    @Test
     void handleWatchAndEventsAlias()
     {
         assertNotNull( handler.handle( ManagementApiTestSupport.request( HttpMethod.GET, "/server:app/watch" ) ).getSse() );
