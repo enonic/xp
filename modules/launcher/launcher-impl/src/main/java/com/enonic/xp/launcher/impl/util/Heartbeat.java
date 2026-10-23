@@ -55,16 +55,16 @@ public final class Heartbeat
         {
             LOG.info( buildMessage() );
         }
-        catch ( Exception e )
+        catch ( Throwable t )
         {
-            // never let an exception cancel future heartbeats
+            // never let anything thrown cancel future heartbeats
         }
     }
 
     String buildMessage()
     {
-        return "Heartbeat seq=" + seq.incrementAndGet() + " uptime=" + safe( Heartbeat::uptime ) + " version=" + version + " heap=" +
-            safe( Heartbeat::heap ) + " gc=" + safe( Heartbeat::gc ) + " threads=" +
+        return "XP Heartbeat seq=" + seq.incrementAndGet() + " uptime=" + safe( Heartbeat::uptime ) + " version=" + version +
+            " heap=" + safe( Heartbeat::heap ) + " gc=" + safe( Heartbeat::gc ) + " threads=" +
             safe( () -> ManagementFactory.getThreadMXBean().getThreadCount() );
     }
 
@@ -98,7 +98,7 @@ public final class Heartbeat
         {
             return String.valueOf( supplier.get() );
         }
-        catch ( Exception e )
+        catch ( Throwable t )
         {
             return "n/a";
         }
