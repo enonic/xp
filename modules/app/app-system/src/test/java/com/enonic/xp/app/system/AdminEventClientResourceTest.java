@@ -9,9 +9,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 import com.enonic.xp.core.impl.app.MockApplication;
 import com.enonic.xp.core.impl.app.resource.ResourceServiceImpl;
+import com.enonic.xp.node.NodeService;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -59,7 +61,7 @@ class AdminEventClientResourceTest
         when( applicationFactoryService.findResolver( SYSTEM_APPLICATION_KEY, null ) ).thenReturn(
             Optional.of( application.getUrlResolver() ) );
 
-        return new ResourceServiceImpl( applicationFactoryService );
+        return new ResourceServiceImpl( applicationFactoryService, new ApplicationGeneration( mock( NodeService.class ) ) );
     }
 
     /**

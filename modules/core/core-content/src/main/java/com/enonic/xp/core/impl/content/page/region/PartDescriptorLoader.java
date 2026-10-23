@@ -65,23 +65,19 @@ public class PartDescriptorLoader
     public PartDescriptor load( final DescriptorKey key, final Resource resource )
         throws Exception
     {
-        return YmlPartDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
+        final PartDescriptor descriptor = YmlPartDescriptorParser.parse( resource.readString(), key.getApplicationKey() )
             .key( key )
             .icon( loadIcon( key, resource ) )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
+        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
     @Override
     public PartDescriptor createDefault( final DescriptorKey key )
     {
         return PartDescriptor.create().key( key ).title( key.getName() ).config( Form.empty() ).build();
-    }
-
-    @Override
-    public PartDescriptor postProcess( final PartDescriptor descriptor )
-    {
-        return PartDescriptor.copyOf( descriptor ).config( this.formFragmentService.inlineFormItems( descriptor.getConfig() ) ).build();
     }
 
     // the icon is next to the descriptor

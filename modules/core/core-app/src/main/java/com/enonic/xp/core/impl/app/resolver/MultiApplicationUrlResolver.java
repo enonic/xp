@@ -33,4 +33,10 @@ public final class MultiApplicationUrlResolver
             .findFirst()
             .orElse( null );
     }
+
+    @Override
+    public boolean isStable()
+    {
+        return Arrays.stream( this.list ).allMatch( ApplicationUrlResolver::isStable );
+    }
 }

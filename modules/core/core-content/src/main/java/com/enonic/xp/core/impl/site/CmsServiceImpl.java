@@ -89,10 +89,7 @@ public class CmsServiceImpl
             return null;
         }
 
-        return CmsDescriptor.copyOf( descriptor )
-            .applicationKey( applicationKey )
-            .form( formFragmentService.inlineFormItems( descriptor.getForm() ) )
-            .build();
+        return CmsDescriptor.copyOf( descriptor ).applicationKey( applicationKey ).build();
     }
 
     private ResourceProcessor<ApplicationKey, CmsDescriptor> newDescriptorProcessor( final ApplicationKey applicationKey )
@@ -106,9 +103,11 @@ public class CmsServiceImpl
 
     private CmsDescriptor loadDescriptor( final Resource resource )
     {
-        return YmlCmsDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() )
+        final CmsDescriptor descriptor = YmlCmsDescriptorParser.parse( resource.readString(), resource.getKey().getApplicationKey() )
             .modifiedTime( Instant.ofEpochMilli( resource.getTimestamp() ) )
             .build();
+        // the form fragments are inlined into the value cached: a change of a fragment moves the generation of the application
+        return CmsDescriptor.copyOf( descriptor ).form( formFragmentService.inlineFormItems( descriptor.getForm() ) ).build();
     }
 
     private ResourceKey toResourceKey( final ApplicationKey applicationKey )

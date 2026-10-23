@@ -33,4 +33,10 @@ public final class FilteredApplicationUrlResolver
     {
         return includeSupplier.get().test( path ) ? delegate.findResource( path ) : null;
     }
+
+    @Override
+    public boolean isStable()
+    {
+        return delegate.isStable();
+    }
 }

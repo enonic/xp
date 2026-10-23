@@ -40,6 +40,7 @@ import com.enonic.xp.context.Context;
 import com.enonic.xp.context.ContextAccessor;
 import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.core.AbstractNodeTest;
+import com.enonic.xp.core.impl.app.ApplicationGeneration;
 import com.enonic.xp.core.impl.app.AppConfig;
 import com.enonic.xp.core.impl.app.AppFilterServiceImpl;
 import com.enonic.xp.core.impl.app.ApplicationAuditLogSupportImpl;
@@ -95,6 +96,7 @@ class ApplicationServiceTest
     void setUp()
         throws Exception
     {
+        final ApplicationGeneration applicationGeneration = new ApplicationGeneration( nodeService );
         Path cacheDir = Files.createDirectory( this.felixTempFolder.resolve( "cache" ) ).toAbsolutePath();
 
         this.felix = createFelixInstance( cacheDir );
@@ -110,13 +112,13 @@ class ApplicationServiceTest
             new ApplicationFactoryServiceImpl( bundleContext, nodeService );
         applicationFactoryService.activate();
 
-        this.resourceService = new ResourceServiceImpl( applicationFactoryService );
+        this.resourceService = new ResourceServiceImpl( applicationFactoryService, applicationGeneration );
 
         final ComponentContext componentContext = mock( ComponentContext.class );
         when( componentContext.getBundleContext() ).thenReturn( bundleContext );
         this.applicationDescriptorService =
             new ApplicationDescriptorServiceImpl( nodeService, repoService, mock( DynamicSchemaAuditLogSupport.class ),
-                                                  mock( EventPublisher.class ) );
+                                                  mock( EventPublisher.class ), applicationGeneration );
         this.applicationDescriptorService.start( componentContext );
 
         ApplicationAuditLogSupportImpl applicationAuditLogSupport = new ApplicationAuditLogSupportImpl( mock( AuditLogService.class ) );
@@ -125,7 +127,7 @@ class ApplicationServiceTest
         this.applicationService = new ApplicationServiceImpl(
             new ApplicationRegistryImpl( bundleContext, new ApplicationListenerHub(), applicationFactoryService ), repoService,
             new EventPublisherImpl( Executors.newSingleThreadExecutor() ), new AppFilterServiceImpl( appConfig ),
-            applicationAuditLogSupport );
+            applicationAuditLogSupport, applicationGeneration );
     }
 
     @AfterEach

@@ -30,6 +30,7 @@ import com.enonic.xp.core.impl.content.ContentConfig;
 import com.enonic.xp.core.impl.content.ContentServiceImpl;
 import com.enonic.xp.core.impl.content.MixinMappingServiceImpl;
 import com.enonic.xp.core.impl.content.SiteConfigServiceImpl;
+import com.enonic.xp.core.impl.app.ApplicationRepoInitializer;
 import com.enonic.xp.core.impl.content.schema.ContentTypeServiceImpl;
 import com.enonic.xp.core.impl.content.validate.CmsConfigsValidator;
 import com.enonic.xp.core.impl.content.validate.ContentNameValidator;
@@ -117,6 +118,8 @@ public final class Bootstrap
 
     public NodeServiceImpl nodeService;
 
+    public EventPublisherImpl eventPublisher;
+
     public ProjectName projectName;
 
     public Context draftContext()
@@ -155,7 +158,7 @@ public final class Bootstrap
         final StorageDaoImpl storageDao = new StorageDaoImpl( client );
         final SearchDaoImpl searchDao = new SearchDaoImpl( client );
 
-        final EventPublisherImpl eventPublisher = new EventPublisherImpl( executorService );
+        eventPublisher = new EventPublisherImpl( executorService );
 
         final BranchServiceImpl branchService = new BranchServiceImpl( storageDao, searchDao );
         final VersionServiceImpl versionService = new VersionServiceImpl( storageDao );
@@ -191,6 +194,9 @@ public final class Bootstrap
             .initialize();
 
         nodeService = new NodeServiceImpl( indexServiceInternal, storageService, searchService, eventPublisher, binaryService );
+
+        // the application repository, where the applications and their schema live
+        ApplicationRepoInitializer.create().setIndexService( indexService ).setRepositoryService( repositoryService ).build().initialize();
 
         final CmsFormFragmentService formFragmentService = noOp( CmsFormFragmentService.class,
             ( method, args ) -> "inlineFormItems".equals( method.getName() ) && args.length == 1 && args[0] instanceof Form
@@ -338,6 +344,16 @@ public final class Bootstrap
     }
 
     // --- proxy-based no-op mocks (replaces Mockito) ---------------------------
+
+    static <T> T noOp( final Class<T> iface )
+    {
+        return noOp( iface, NONE );
+    }
+
+    static <T> T annotationDefaults( final Class<T> annotation )
+    {
+        return annotationDefaults( annotation, NONE );
+    }
 
     private static <T> T noOp( final Class<T> iface, final BiFunction<Method, Object[], Object> override )
     {
