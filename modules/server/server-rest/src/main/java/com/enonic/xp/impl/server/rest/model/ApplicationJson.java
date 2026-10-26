@@ -65,9 +65,4 @@ public class ApplicationJson
     {
         return info.getLocal();
     }
-
-    public boolean getSystem()
-    {
-        return info.getSystem();
-    }
 }

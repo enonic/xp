@@ -1,5 +1,6 @@
 package com.enonic.xp.impl.server.rest.api;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.osgi.service.component.annotations.Activate;
@@ -20,10 +21,8 @@ import com.enonic.xp.impl.server.rest.ApplicationResourceService;
 import com.enonic.xp.impl.server.rest.model.ApplicationActionResultJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInfoJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationInstallParams;
-import com.enonic.xp.impl.server.rest.model.ApplicationJson;
 import com.enonic.xp.impl.server.rest.model.ApplicationParams;
 import com.enonic.xp.impl.server.rest.model.ApplicationUninstalledJson;
-import com.enonic.xp.impl.server.rest.model.ListApplicationJson;
 import com.enonic.xp.portal.sse.SseManager;
 import com.enonic.xp.portal.universalapi.UniversalApiHandler;
 import com.enonic.xp.web.HttpMethod;
@@ -102,7 +101,7 @@ public class ApplicationApiHandler
     private WebResponse handleList()
         throws JsonProcessingException
     {
-        return json( new ListApplicationJson( applicationResourceService.getInstalledApplications().stream().map( ApplicationJson::new ).toList() ) );
+        return json( new ApplicationsJson( applicationResourceService.getInstalledApplications() ) );
     }
 
     @Override
@@ -115,8 +114,7 @@ public class ApplicationApiHandler
 
             try
             {
-                final ListApplicationJson list = new ListApplicationJson(
-                    applicationResourceService.getInstalledApplications().stream().map( ApplicationJson::new ).toList() );
+                final ApplicationsJson list = new ApplicationsJson( applicationResourceService.getInstalledApplications() );
                 sseManager.send( id, SseMessage.create()
                     .id( UuidHelper.newUUIDv7().toString() )
                     .event( "list" )
@@ -171,7 +169,7 @@ public class ApplicationApiHandler
                         LOG.warn( "Application {} not found", applicationKey );
                         return;
                     }
-                    data = OBJECT_MAPPER.writeValueAsString( new ApplicationJson( applicationInfo ) );
+                    data = OBJECT_MAPPER.writeValueAsString( applicationInfo );
                 }
                 sseManager.sendToGroup( SSE_GROUP, SseMessage.create()
                     .id( UuidHelper.newUUIDv7().toString() )
@@ -248,5 +246,9 @@ public class ApplicationApiHandler
             .contentType( MediaType.JSON_UTF_8 )
             .body( OBJECT_MAPPER.writeValueAsString( result ) )
             .build();
+    }
+
+    public record ApplicationsJson(List<ApplicationInfoJson> applications)
+    {
     }
 }
