@@ -18,8 +18,13 @@ public final class ScriptLogger
 
     public ScriptLogger( final ResourceKey source, final ObjectConverter converter )
     {
+        this( source, converter, LoggerFactory.getLogger( source.getApplicationKey().toString() ) );
+    }
+
+    ScriptLogger( final ResourceKey source, final ObjectConverter converter, final Logger log )
+    {
         this.source = source;
-        this.log = LoggerFactory.getLogger( this.source.getApplicationKey().toString() );
+        this.log = log;
         this.converter = new LogArgConverter( converter );
     }
 
@@ -27,11 +32,11 @@ public final class ScriptLogger
     {
         if ( arg instanceof Throwable )
         {
-            this.log.debug( message, (Throwable) arg );
+            this.log.debug( format( message ), (Throwable) arg );
         }
         else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
         {
-            this.log.debug( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+            this.log.debug( format( message ), (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
         else
         {
@@ -48,11 +53,11 @@ public final class ScriptLogger
     {
         if ( arg instanceof Throwable )
         {
-            this.log.info( message, (Throwable) arg );
+            this.log.info( format( message ), (Throwable) arg );
         }
         else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
         {
-            this.log.info( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+            this.log.info( format( message ), (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
         else
         {
@@ -69,11 +74,11 @@ public final class ScriptLogger
     {
         if ( arg instanceof Throwable )
         {
-            this.log.warn( message, (Throwable) arg );
+            this.log.warn( format( message ), (Throwable) arg );
         }
         else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
         {
-            this.log.warn( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+            this.log.warn( format( message ), (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
         else
         {
@@ -90,11 +95,11 @@ public final class ScriptLogger
     {
         if ( arg instanceof Throwable )
         {
-            this.log.error( message, (Throwable) arg );
+            this.log.error( format( message ), (Throwable) arg );
         }
         else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
         {
-            this.log.error( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
+            this.log.error( format( message ), (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
         else
         {
