@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -137,6 +138,17 @@ class JsFunctionHandleTest
 
         final JsFunctionHandle nested = assertInstanceOf( JsFunctionHandle.class, map.get( "nested" ) );
         assertEquals( "x", executor.submit( () -> nested.execute() ).get() );
+    }
+
+    @Test
+    @Timeout(30)
+    void cyclicResultIsRejected()
+        throws Exception
+    {
+        final JsFunctionHandle handle = new JsFunctionHandle( context, context.eval( "js", "(function () { var o = {}; o.self = o; return o; })" ) );
+
+        final ExecutionException e = assertThrows( ExecutionException.class, () -> executor.submit( () -> handle.execute() ).get() );
+        assertInstanceOf( IllegalArgumentException.class, e.getCause() );
     }
 
     @Test

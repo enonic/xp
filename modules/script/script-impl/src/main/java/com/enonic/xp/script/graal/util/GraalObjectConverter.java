@@ -3,9 +3,11 @@ package com.enonic.xp.script.graal.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.graalvm.polyglot.Context;
@@ -106,13 +108,13 @@ public final class GraalObjectConverter
     {
         if ( source instanceof Value )
         {
-            return toObject( (Value) source );
+            return toObject( (Value) source, new HashSet<>() );
         }
 
         return source;
     }
 
-    private Object toObject( final Value source )
+    private Object toObject( final Value source, final Set<Value> path )
     {
         if ( source.isNull() )
         {
@@ -124,7 +126,7 @@ public final class GraalObjectConverter
         }
         else if ( source.hasArrayElements() )
         {
-            return toList( source );
+            return toList( source, path );
         }
         else if ( source.canExecute() )
         {
@@ -148,21 +150,23 @@ public final class GraalObjectConverter
         }
         else
         {
-            return toMap( source );
+            return toMap( source, path );
         }
     }
 
-    private List<Object> toList( final Value source )
+    private List<Object> toList( final Value source, final Set<Value> path )
     {
+        enter( source, path );
         final List<Object> result = new ArrayList<>();
         for ( int i = 0; i < source.getArraySize(); i++ )
         {
-            Object converted = toObject( source.getArrayElement( i ) );
+            Object converted = toObject( source.getArrayElement( i ), path );
             if ( converted != null )
             {
                 result.add( converted );
             }
         }
+        path.remove( source );
         return result;
     }
 
@@ -171,18 +175,28 @@ public final class GraalObjectConverter
     {
         if ( source instanceof Value )
         {
-            return toMap( (Value) source );
+            return toMap( (Value) source, new HashSet<>() );
         }
         return new HashMap<>();
     }
 
-    private Map<String, Object> toMap( final Value source )
+    private Map<String, Object> toMap( final Value source, final Set<Value> path )
     {
+        enter( source, path );
         Map<String, Object> result = new LinkedHashMap<>();
         // parity with the Nashorn converter: a null-valued key stays in the map — dropping it
         // would make {key: null} indistinguishable from {}
-        source.getMemberKeys().forEach( key -> result.put( key, toObject( source.getMember( key ) ) ) );
+        source.getMemberKeys().forEach( key -> result.put( key, toObject( source.getMember( key ), path ) ) );
+        path.remove( source );
         return result;
+    }
+
+    static void enter( final Value source, final Set<Value> path )
+    {
+        if ( !path.add( source ) )
+        {
+            throw new IllegalArgumentException( "Cyclic object cannot be converted" );
+        }
     }
 
     private Function<Object[], Object> toFunction( final Value source )

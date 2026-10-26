@@ -2,9 +2,11 @@ package com.enonic.xp.script.graal.util;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -150,6 +152,11 @@ public final class JsFunctionHandle
 
     private Object convert( final Value value )
     {
+        return convert( value, new HashSet<>() );
+    }
+
+    private Object convert( final Value value, final Set<Value> path )
+    {
         if ( value == null || value.isNull() )
         {
             return null;
@@ -180,10 +187,11 @@ public final class JsFunctionHandle
         }
         else if ( value.hasArrayElements() )
         {
+            GraalObjectConverter.enter( value, path );
             final List<Object> result = new ArrayList<>();
             for ( int i = 0; i < value.getArraySize(); i++ )
             {
-                final Object converted = convert( value.getArrayElement( i ) );
+                final Object converted = convert( value.getArrayElement( i ), path );
                 // null elements are dropped, matching GraalObjectConverter: the same JS value must
                 // convert identically whether it crosses via fromJs or a handle's return value
                 if ( converted != null )
@@ -191,17 +199,20 @@ public final class JsFunctionHandle
                     result.add( converted );
                 }
             }
+            path.remove( value );
             return result;
         }
         else
         {
+            GraalObjectConverter.enter( value, path );
             final Map<String, Object> result = new LinkedHashMap<>();
             for ( final String key : value.getMemberKeys() )
             {
                 // null-valued keys stay, matching GraalObjectConverter (and Nashorn):
                 // {key: null} is not {}
-                result.put( key, convert( value.getMember( key ) ) );
+                result.put( key, convert( value.getMember( key ), path ) );
             }
+            path.remove( value );
             return result;
         }
     }

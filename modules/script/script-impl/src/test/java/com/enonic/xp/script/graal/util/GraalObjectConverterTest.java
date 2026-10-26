@@ -16,6 +16,7 @@ import com.enonic.xp.script.serializer.MapSerializable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GraalObjectConverterTest
@@ -37,6 +38,31 @@ class GraalObjectConverterTest
     void destroy()
     {
         this.context.close();
+    }
+
+    @Test
+    void testFromJs_cyclicObject()
+    {
+        final Value value = context.eval( "js", "var o = {a: {}}; o.a.parent = o; o" );
+
+        assertThrows( IllegalArgumentException.class, () -> instance.fromJs( value ) );
+        assertThrows( IllegalArgumentException.class, () -> instance.toMap( value ) );
+    }
+
+    @Test
+    void testFromJs_cyclicArray()
+    {
+        final Value value = context.eval( "js", "var a = [1]; a.push([a]); a" );
+
+        assertThrows( IllegalArgumentException.class, () -> instance.fromJs( value ) );
+    }
+
+    @Test
+    void testFromJs_sharedReference()
+    {
+        final Value value = context.eval( "js", "var x = {v: 1}; ({a: x, b: [x, x]})" );
+
+        assertEquals( Map.of( "a", Map.of( "v", 1 ), "b", List.of( Map.of( "v", 1 ), Map.of( "v", 1 ) ) ), instance.fromJs( value ) );
     }
 
     @Test
