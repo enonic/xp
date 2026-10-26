@@ -101,6 +101,24 @@ class GraalScriptLoggerTest
         verify( log ).error( eq( "(/test.js) failed" ), any( PolyglotException.class ) );
     }
 
+    @Test
+    void logsExceptionPassedAlone()
+    {
+        eval( "log.error(new Error('boom'))" );
+
+        verify( log ).error( eq( "(/test.js) Error: boom" ), any( PolyglotException.class ) );
+    }
+
+    @Test
+    void logsTrailingException()
+    {
+        eval( "log.error('failed %s %s', 'a', 1, new Error('boom'))" );
+        eval( "try { java.lang.Integer.parseInt('x') } catch (e) { log.warning('failed %s', 'b', e) }" );
+
+        verify( log ).error( eq( "(/test.js) failed a 1" ), any( PolyglotException.class ) );
+        verify( log ).warn( eq( "(/test.js) failed b" ), any( PolyglotException.class ) );
+    }
+
     private String eval( final String script )
     {
         return this.context.eval( "js", script ).toString();
