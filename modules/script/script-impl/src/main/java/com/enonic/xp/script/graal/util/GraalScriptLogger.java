@@ -2,6 +2,7 @@ package com.enonic.xp.script.graal.util;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.IllegalFormatException;
 import java.util.Map;
 
 import org.graalvm.polyglot.Context;
@@ -28,9 +29,14 @@ public final class GraalScriptLogger
 
     public GraalScriptLogger( final Context context, final ResourceKey source, final ObjectConverter objectConverter )
     {
+        this( context, source, objectConverter, LoggerFactory.getLogger( source.getApplicationKey().toString() ) );
+    }
+
+    GraalScriptLogger( final Context context, final ResourceKey source, final ObjectConverter objectConverter, final Logger log )
+    {
         this.context = context;
         this.source = source;
-        this.log = LoggerFactory.getLogger( this.source.getApplicationKey().toString() );
+        this.log = log;
         this.converter = new LogArgConverter( objectConverter );
     }
 
@@ -38,10 +44,10 @@ public final class GraalScriptLogger
     {
         final Map<String, Object> proxyAsMap = new HashMap<>();
 
-        proxyAsMap.put( "info", new LogProxyExecutable( context, source, log, converter, LogLevelType.INFO ) );
-        proxyAsMap.put( "warning", new LogProxyExecutable( context, source, log, converter, LogLevelType.WARN ) );
-        proxyAsMap.put( "debug", new LogProxyExecutable( context, source, log, converter, LogLevelType.DEBUG ) );
-        proxyAsMap.put( "error", new LogProxyExecutable( context, source, log, converter, LogLevelType.ERROR ) );
+        proxyAsMap.put( "info", new LogProxyExecutable( LogLevelType.INFO ) );
+        proxyAsMap.put( "warning", new LogProxyExecutable( LogLevelType.WARN ) );
+        proxyAsMap.put( "debug", new LogProxyExecutable( LogLevelType.DEBUG ) );
+        proxyAsMap.put( "error", new LogProxyExecutable( LogLevelType.ERROR ) );
         // the other engine exposes the logger bean itself, format() included
         proxyAsMap.put( "format", (ProxyExecutable) arguments -> {
             synchronized ( context )
@@ -62,12 +68,25 @@ public final class GraalScriptLogger
 
         final Value message = arguments[0];
         final String text = message.isString() ? message.asString() : message.toString();
+        return format( text, Arrays.stream( arguments ).skip( 1 ).toArray() );
+    }
+
+    private String format( final String message, final Object[] args )
+    {
         final String prefix = "(" + source.getPath() + ") ";
-        if ( arguments.length == 1 )
+        if ( args.length == 0 )
         {
-            return prefix + text;
+            return prefix + message;
         }
-        return prefix + String.format( text, converter.convertArgs( Arrays.stream( arguments ).skip( 1 ).toArray() ) );
+        final Object[] converted = converter.convertArgs( args );
+        try
+        {
+            return prefix + String.format( message, converted );
+        }
+        catch ( IllegalFormatException e )
+        {
+            return prefix + message + " " + Arrays.toString( converted );
+        }
     }
 
     private enum LogLevelType
@@ -82,26 +101,13 @@ public final class GraalScriptLogger
         }
     }
 
-    private static class LogProxyExecutable
+    private final class LogProxyExecutable
         implements ProxyExecutable
     {
-        private final Context context;
-
-        private final ResourceKey source;
-
-        private final Logger log;
-
-        private final LogArgConverter converter;
-
         private final LogLevelType logLevel;
 
-        private LogProxyExecutable( final Context context, final ResourceKey source, final Logger log, final LogArgConverter converter,
-                                    final LogLevelType logLevel )
+        private LogProxyExecutable( final LogLevelType logLevel )
         {
-            this.context = context;
-            this.source = source;
-            this.log = log;
-            this.converter = converter;
             this.logLevel = logLevel;
         }
 
@@ -170,21 +176,6 @@ public final class GraalScriptLogger
                     break;
                 default:
                     log.error( format( message, arguments ) );
-            }
-        }
-
-        String format( final String message, final Object... arguments )
-        {
-            String prefix = "(" + source.getPath() + ") ";
-
-            if ( arguments.length == 1 )
-            {
-                return prefix + message;
-            }
-            else
-            {
-                Object[] convertedArgs = this.converter.convertArgs( arguments );
-                return prefix + String.format( message, convertedArgs );
             }
         }
     }
