@@ -20,7 +20,6 @@ import com.enonic.xp.web.WebRequest;
 import com.enonic.xp.web.WebResponse;
 import com.enonic.xp.web.exception.ExceptionRenderer;
 import com.enonic.xp.web.handler.WebHandler;
-import com.enonic.xp.web.impl.serializer.RequestBodyReader;
 import com.enonic.xp.web.serializer.WebSerializerService;
 import com.enonic.xp.web.sse.SseConfig;
 import com.enonic.xp.web.websocket.WebSocketContext;
@@ -62,7 +61,7 @@ public final class WebDispatcherServlet
             webRequest = webSerializerService.request( req );
             final WebSocketContext webSocketContext = this.webSocketContextFactory.newContext( req, res );
             webRequest.setWebSocketContext( webSocketContext );
-            webRequest.setBody( RequestBodyReader.readBody( req ) );
+            webRequest.setBody( webSerializerService.readBody( req ) );
 
             webResponse = exceptionRenderer.maybeThrow( webRequest, webDispatcher.dispatch( webRequest, WebResponse.create().build() ) );
         }
