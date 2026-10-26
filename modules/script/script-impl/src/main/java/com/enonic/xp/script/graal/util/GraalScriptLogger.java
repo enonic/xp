@@ -127,25 +127,23 @@ public final class GraalScriptLogger
             {
                 throw new IllegalArgumentException( "log." + logLevel.level + "(...) must have at least one parameter" );
             }
+            final Value argument = arguments[0];
+            final String message = argument.isString() ? argument.asString() : argument.toString();
+            final Value last = arguments[arguments.length - 1];
+            if ( last.isException() )
+            {
+                doLog( message, Arrays.copyOfRange( arguments, 1, Math.max( 1, arguments.length - 1 ), Object[].class ),
+                       last.as( PolyglotException.class ) );
+            }
             else
             {
-                final Value argument = arguments[0];
-                if ( arguments.length == 2 && arguments[1].isException() )
-                {
-                    PolyglotException ex = arguments[1].as( PolyglotException.class );
-                    doLog( argument.isString() ? argument.asString() : argument.toString(), ex );
-                }
-                else
-                {
-                    doLog( argument.isString() ? argument.asString() : argument.toString(),
-                           Arrays.stream( arguments ).skip( 1 ).toArray() );
-                }
+                doLog( message, Arrays.copyOfRange( arguments, 1, arguments.length, Object[].class ) );
             }
         }
 
-        void doLog( final String message, final PolyglotException ex )
+        void doLog( final String message, final Object[] arguments, final PolyglotException ex )
         {
-            final String text = format( message, new Object[0] );
+            final String text = format( message, arguments );
             switch ( logLevel )
             {
                 case INFO:
