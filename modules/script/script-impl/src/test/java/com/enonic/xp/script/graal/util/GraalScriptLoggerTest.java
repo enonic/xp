@@ -5,6 +5,7 @@ import org.graalvm.polyglot.PolyglotException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 
@@ -12,6 +13,7 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -117,6 +119,75 @@ class GraalScriptLoggerTest
 
         verify( log ).error( eq( "(/test.js) failed a 1" ), any( PolyglotException.class ) );
         verify( log ).warn( eq( "(/test.js) failed b" ), any( PolyglotException.class ) );
+    }
+
+    @Test
+    void logsErrorCause()
+    {
+        final Throwable logged = logError( "new Error('outer', {cause: new Error('middle', {cause: new TypeError('inner')})})" );
+
+        assertEquals( "Error: middle", logged.getCause().getMessage() );
+        assertEquals( "TypeError: inner", logged.getCause().getCause().getMessage() );
+        assertNull( logged.getCause().getCause().getCause() );
+    }
+
+    @Test
+    void logsJavaExceptionCause()
+    {
+        final Throwable logged =
+            logError( "new Error('outer', {cause: (() => { try { java.lang.Integer.parseInt('x') } catch (e) { return e } })()})" );
+
+        assertEquals( "For input string: \"x\"", logged.getCause().getMessage() );
+    }
+
+    @Test
+    void limitsCauseDepth()
+    {
+        Throwable logged = logError( "var e = new Error('0'); for (var i = 1; i < 100; i++) { e = new Error(String(i), {cause: e}) } e" );
+        int depth = 0;
+        while ( logged.getCause() != null )
+        {
+            logged = logged.getCause();
+            depth++;
+        }
+
+        assertEquals( 16, depth );
+    }
+
+    @Test
+    void ignoresCauseThatIsNotError()
+    {
+        assertNull( logError( "new Error('outer', {cause: 'text'})" ).getCause() );
+    }
+
+    @Test
+    void ignoresCauseThatThrows()
+    {
+        assertNull( logError( "Object.defineProperty(new Error('outer'), 'cause', {get() { throw new Error('getter') }})" ).getCause() );
+    }
+
+    @Test
+    void stopsAtCyclicCause()
+    {
+        final Throwable logged = logError( "var a = new Error('a'); a.cause = new Error('b', {cause: a}); a" );
+
+        assertEquals( "Error: b", logged.getCause().getMessage() );
+        assertNull( logged.getCause().getCause() );
+    }
+
+    @Test
+    void stopsAtSelfCause()
+    {
+        assertNull( logError( "var a = new Error('a'); a.cause = a; a" ).getCause() );
+    }
+
+    private Throwable logError( final String error )
+    {
+        context.getBindings( "js" ).putMember( "error", context.eval( "js", error ) );
+        eval( "log.error('failed', error)" );
+        final ArgumentCaptor<Throwable> captor = ArgumentCaptor.forClass( Throwable.class );
+        verify( log ).error( eq( "(/test.js) failed" ), captor.capture() );
+        return captor.getValue();
     }
 
     private String eval( final String script )

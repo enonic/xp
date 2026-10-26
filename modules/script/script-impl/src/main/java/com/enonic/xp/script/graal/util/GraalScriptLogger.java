@@ -1,8 +1,10 @@
 package com.enonic.xp.script.graal.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
+import java.util.List;
 import java.util.Map;
 
 import org.graalvm.polyglot.Context;
@@ -19,6 +21,8 @@ import com.enonic.xp.script.impl.util.ObjectConverter;
 
 public final class GraalScriptLogger
 {
+    private static final int MAX_CAUSE_DEPTH = 16;
+
     private final Context context;
 
     private final LogArgConverter converter;
@@ -89,6 +93,36 @@ public final class GraalScriptLogger
         }
     }
 
+    private static PolyglotException toException( final Value error )
+    {
+        final PolyglotException exception = error.as( PolyglotException.class );
+        final List<Value> visited = new ArrayList<>( List.of( error ) );
+        PolyglotException current = exception;
+        Value cause = causeOf( error );
+        while ( cause != null && !visited.contains( cause ) && visited.size() <= MAX_CAUSE_DEPTH && current.getCause() == null )
+        {
+            final PolyglotException next = cause.as( PolyglotException.class );
+            current.initCause( next );
+            visited.add( cause );
+            current = next;
+            cause = causeOf( cause );
+        }
+        return exception;
+    }
+
+    private static Value causeOf( final Value error )
+    {
+        try
+        {
+            final Value cause = error.hasMember( "cause" ) ? error.getMember( "cause" ) : null;
+            return cause != null && cause.isException() ? cause : null;
+        }
+        catch ( PolyglotException e )
+        {
+            return null;
+        }
+    }
+
     private enum LogLevelType
     {
         INFO( "info" ), WARN( "warning" ), DEBUG( "debug" ), ERROR( "error" );
@@ -133,7 +167,7 @@ public final class GraalScriptLogger
             if ( last.isException() )
             {
                 doLog( message, Arrays.copyOfRange( arguments, 1, Math.max( 1, arguments.length - 1 ), Object[].class ),
-                       last.as( PolyglotException.class ) );
+                       toException( last ) );
             }
             else
             {

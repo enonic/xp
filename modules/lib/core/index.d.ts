@@ -95,7 +95,7 @@ export interface DoubleUnderscore {
  *
  * The message may contain `%s` placeholders, filled by the arguments that follow it.
  * Objects and arrays are written as JSON.
- * An exception passed as the last argument is logged with its stack trace.
+ * An exception passed as the last argument is logged with its stack trace and causes.
  */
 export interface Log {
     /**
