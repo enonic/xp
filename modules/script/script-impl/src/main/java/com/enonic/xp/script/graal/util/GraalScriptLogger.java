@@ -145,19 +145,20 @@ public final class GraalScriptLogger
 
         void doLog( final String message, final PolyglotException ex )
         {
+            final String text = format( message, new Object[0] );
             switch ( logLevel )
             {
                 case INFO:
-                    log.info( message, ex );
+                    log.info( text, ex );
                     break;
                 case WARN:
-                    log.warn( message, ex );
+                    log.warn( text, ex );
                     break;
                 case DEBUG:
-                    log.debug( message, ex );
+                    log.debug( text, ex );
                     break;
                 default:
-                    log.error( message, ex );
+                    log.error( text, ex );
             }
         }
 
