@@ -29,7 +29,7 @@ public final class ScriptLogger
         {
             this.log.debug( message, (Throwable) arg );
         }
-        else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        else if ( arg instanceof JSObject && ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) instanceof Exception )
         {
             this.log.debug( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
@@ -50,7 +50,7 @@ public final class ScriptLogger
         {
             this.log.info( message, (Throwable) arg );
         }
-        else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        else if ( arg instanceof JSObject && ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) instanceof Exception )
         {
             this.log.info( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
@@ -71,7 +71,7 @@ public final class ScriptLogger
         {
             this.log.warn( message, (Throwable) arg );
         }
-        else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        else if ( arg instanceof JSObject && ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) instanceof Exception )
         {
             this.log.warn( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
@@ -92,7 +92,7 @@ public final class ScriptLogger
         {
             this.log.error( message, (Throwable) arg );
         }
-        else if ( arg instanceof JSObject && ( (JSObject) arg ).hasMember( NASHORN_EXCEPTION_MEMBER ) )
+        else if ( arg instanceof JSObject && ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) instanceof Exception )
         {
             this.log.error( message, (Exception) ( (JSObject) arg ).getMember( NASHORN_EXCEPTION_MEMBER ) );
         }
