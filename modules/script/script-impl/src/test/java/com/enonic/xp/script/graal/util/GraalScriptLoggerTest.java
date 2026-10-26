@@ -1,6 +1,7 @@
 package com.enonic.xp.script.graal.util;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.PolyglotException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.script.graal.GraalJSContextFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 class GraalScriptLoggerTest
@@ -82,6 +85,20 @@ class GraalScriptLoggerTest
 
         verify( log ).info( "(/test.js) 50% done %s [x]" );
         verify( log ).info( "(/test.js) %s and %s [x]" );
+    }
+
+    @Test
+    void prefixesMessageWithException()
+    {
+        eval( "log.debug('failed', new Error('boom'))" );
+        eval( "log.info('failed', new Error('boom'))" );
+        eval( "log.warning('failed', new Error('boom'))" );
+        eval( "try { null.x } catch (e) { log.error('failed', e) }" );
+
+        verify( log ).debug( eq( "(/test.js) failed" ), any( PolyglotException.class ) );
+        verify( log ).info( eq( "(/test.js) failed" ), any( PolyglotException.class ) );
+        verify( log ).warn( eq( "(/test.js) failed" ), any( PolyglotException.class ) );
+        verify( log ).error( eq( "(/test.js) failed" ), any( PolyglotException.class ) );
     }
 
     private String eval( final String script )
