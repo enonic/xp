@@ -90,6 +90,12 @@ export interface DoubleUnderscore {
     registerMock: (name: string, value: object) => void
 }
 
+/**
+ * Logger of the current application.
+ *
+ * The message may contain `%s` placeholders, filled by the arguments that follow it.
+ * Objects and arrays are written as JSON.
+ */
 export interface Log {
     /**
      * Log debug message.
