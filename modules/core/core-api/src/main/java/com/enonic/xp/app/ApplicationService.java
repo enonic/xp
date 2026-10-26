@@ -28,10 +28,4 @@ public interface ApplicationService
     void uninstallLocalApplication( ApplicationKey key );
 
     void installAllStoredApplications();
-
-    Application createVirtualApplication( CreateVirtualApplicationParams params );
-
-    boolean deleteVirtualApplication( ApplicationKey key );
-
-    ApplicationMode getApplicationMode( ApplicationKey applicationKey );
 }

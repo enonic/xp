@@ -3,8 +3,6 @@ package com.enonic.xp.lib.schema;
 import java.util.function.Supplier;
 
 import com.enonic.xp.descriptor.DescriptorKey;
-import com.enonic.xp.resource.DeleteDynamicComponentParams;
-import com.enonic.xp.resource.DynamicComponentType;
 import com.enonic.xp.resource.DynamicSchemaService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
@@ -30,13 +28,16 @@ public final class DeleteDynamicComponentHandler
 
     public boolean execute()
     {
-        final DynamicComponentType dynamicComponentType = DynamicComponentType.valueOf( type );
+        final DynamicSchemaService service = dynamicSchemaServiceSupplier.get();
         final DescriptorKey descriptorKey = DescriptorKey.from( key );
 
-        final DeleteDynamicComponentParams params =
-            DeleteDynamicComponentParams.create().descriptorKey( descriptorKey ).type( dynamicComponentType ).build();
-
-        return dynamicSchemaServiceSupplier.get().deleteComponent( params );
+        return switch ( type )
+        {
+            case "PART" -> service.deletePart( descriptorKey );
+            case "LAYOUT" -> service.deleteLayout( descriptorKey );
+            case "PAGE" -> service.deletePage( descriptorKey );
+            default -> throw new IllegalArgumentException( "illegal component type: " + type );
+        };
     }
 
     @Override

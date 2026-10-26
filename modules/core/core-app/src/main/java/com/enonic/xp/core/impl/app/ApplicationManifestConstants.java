@@ -10,6 +10,12 @@ public final class ApplicationManifestConstants
 
     public static final String X_BUNDLE_TYPE = "X-Bundle-Type";
 
+    public static final String BND_LAST_MODIFIED = "Bnd-LastModified";
+
+    public static final String TOOL = "Tool";
+
+    public static final String BND_TOOL_PREFIX = "Bnd-";
+
     public static final String APPLICATION_BUNDLE_TYPE = "application";
 
     public static final String SYSTEM_BUNDLE_TYPE = "system";
