@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.enonic.xp.app.Application;
+import com.enonic.xp.app.ApplicationDescriptor;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.event.Event;
 import com.enonic.xp.impl.server.rest.ApplicationResourceService;
@@ -30,6 +31,7 @@ import com.enonic.xp.web.sse.SseEventType;
 import com.enonic.xp.web.sse.SseMessage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -365,6 +367,26 @@ class ApplicationApiHandlerTest
 
         assertEquals( HttpStatus.OK, response.getStatus() );
         assertTrue( String.valueOf( response.getBody() ).startsWith( "{\"applications\":[" ) );
+    }
+
+    @Test
+    void handleListReportsTitleAndSystem()
+    {
+        final Application system = createApplication();
+        when( system.isSystem() ).thenReturn( true );
+        final ApplicationDescriptor descriptor = mock( ApplicationDescriptor.class );
+        when( descriptor.getTitle() ).thenReturn( "Test application" );
+        final List<ApplicationInfoJson> infos =
+            List.of( ApplicationInfoJson.create( system, descriptor, false ), ApplicationInfoJson.create( createApplication(), null, false ) );
+        when( applicationResourceService.getInstalledApplications() ).thenReturn( infos );
+
+        final WebResponse response = handler.handle( ManagementApiTestSupport.request( HttpMethod.GET, "/server:app" ) );
+
+        final String body = String.valueOf( response.getBody() );
+        assertTrue( body.contains( "\"title\":\"Test application\"" ), body );
+        assertFalse( body.contains( "displayName" ), body );
+        assertTrue( body.contains( "\"system\":true" ), body );
+        assertTrue( body.contains( "\"system\":false" ), body );
     }
 
     @Test
