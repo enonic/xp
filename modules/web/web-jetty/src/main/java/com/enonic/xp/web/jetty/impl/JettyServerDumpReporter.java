@@ -32,6 +32,12 @@ public final class JettyServerDumpReporter
     }
 
     @Override
+    public boolean isSensitive()
+    {
+        return true;
+    }
+
+    @Override
     public MediaType getMediaType()
     {
         return MediaType.PLAIN_TEXT_UTF_8;

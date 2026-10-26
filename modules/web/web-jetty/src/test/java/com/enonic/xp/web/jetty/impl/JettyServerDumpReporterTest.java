@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.google.common.net.MediaType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
@@ -31,6 +32,14 @@ class JettyServerDumpReporterTest
 
         final JettyServerDumpReporter reporter = new JettyServerDumpReporter( server );
         assertEquals( MediaType.PLAIN_TEXT_UTF_8, reporter.getMediaType() );
+    }
+
+    @Test
+    void isSensitive()
+    {
+        final Server server = mock( Server.class, withSettings().stubOnly() );
+
+        assertTrue( new JettyServerDumpReporter( server ).isSensitive() );
     }
 
     @Test
