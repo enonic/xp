@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.util.Iterator;
-import java.util.Set;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
@@ -166,8 +165,7 @@ public class IdProviderResponseWrapper
         {
             return false;
         }
-        final Set<String> flows = idProviders.next().getFlows();
-        return flows.isEmpty() || flows.contains( IdProviderFlow.LOGIN );
+        return idProviders.next().serves( IdProviderFlow.LOGIN );
     }
 
     private boolean isErrorAlreadyHandled()

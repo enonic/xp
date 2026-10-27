@@ -22,11 +22,14 @@ public final class VirtualHostIdProvider
 {
     private final Set<String> flows;
 
+    private final boolean allFlows;
+
     private final Map<String, Scope> scopes;
 
     private VirtualHostIdProvider( final Builder builder )
     {
         this.flows = Set.copyOf( builder.flows );
+        this.allFlows = builder.allFlows;
         this.scopes = Map.copyOf( builder.scopes );
     }
 
@@ -45,6 +48,20 @@ public final class VirtualHostIdProvider
     public Set<String> getFlows()
     {
         return flows;
+    }
+
+    /**
+     * Whether the id provider serves a flow here. One of {@link IdProviderFlow#TOKEN_FLOWS} is served
+     * when the flow list names it; any other flow is served unless the list leaves it out. The default
+     * virtual host serves every flow.
+     */
+    public boolean serves( final String flow )
+    {
+        if ( allFlows )
+        {
+            return true;
+        }
+        return IdProviderFlow.TOKEN_FLOWS.contains( flow ) ? flows.contains( flow ) : flows.isEmpty() || flows.contains( flow );
     }
 
     /**
@@ -104,6 +121,8 @@ public final class VirtualHostIdProvider
     {
         private Set<String> flows = Set.of();
 
+        private boolean allFlows;
+
         private Map<String, Scope> scopes = Map.of();
 
         private Builder()
@@ -125,6 +144,16 @@ public final class VirtualHostIdProvider
         public Builder scopes( final Map<String, Scope> scopes )
         {
             this.scopes = scopes;
+            return this;
+        }
+
+        /**
+         * Serves every flow, {@link IdProviderFlow#TOKEN_FLOWS} included, as the default virtual host
+         * does.
+         */
+        public Builder allFlows()
+        {
+            this.allFlows = true;
             return this;
         }
 

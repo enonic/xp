@@ -152,8 +152,7 @@ public final class AccessTokenFilter
         {
             return "id provider [" + idProvider + "] is not enabled";
         }
-        final Set<String> flows = vhostIdProvider.getFlows();
-        if ( !flows.isEmpty() && !flows.contains( IdProviderFlow.AUTOLOGIN ) )
+        if ( !vhostIdProvider.serves( IdProviderFlow.AUTOLOGIN ) )
         {
             return "the autologin flow is disabled for id provider [" + idProvider + "]";
         }

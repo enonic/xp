@@ -1,7 +1,6 @@
 package com.enonic.xp.portal.impl.idprovider;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -58,8 +57,7 @@ public final class IdProviderFilter
         {
             for ( final Map.Entry<IdProviderKey, VirtualHostIdProvider> idProvider : virtualHost.getIdProviders().entrySet() )
             {
-                final Set<String> flows = idProvider.getValue().getFlows();
-                if ( !flows.isEmpty() && !flows.contains( IdProviderFlow.AUTOLOGIN ) )
+                if ( !idProvider.getValue().serves( IdProviderFlow.AUTOLOGIN ) )
                 {
                     continue;
                 }

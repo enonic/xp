@@ -85,7 +85,7 @@ class OAuthHandlerTest
     private final VirtualHostService virtualHostService = mock( VirtualHostService.class );
 
     /** No flow restriction and no scope catalogue. */
-    private static final VirtualHostIdProvider UNRESTRICTED = VirtualHostIdProvider.create().build();
+    private static final VirtualHostIdProvider UNRESTRICTED = VirtualHostIdProvider.create().allFlows().build();
 
     private final IdProviderControllerService idProviderControllerService = mock( IdProviderControllerService.class );
 
@@ -238,7 +238,7 @@ class OAuthHandlerTest
     {
         final Map<String, VirtualHostIdProvider.Scope> catalogue = new LinkedHashMap<>();
         scopes.forEach( ( id, roles ) -> catalogue.put( id, VirtualHostIdProvider.Scope.of( roles ) ) );
-        return VirtualHostIdProvider.create().scopes( catalogue ).build();
+        return VirtualHostIdProvider.create().allFlows().scopes( catalogue ).build();
     }
 
     private String approve( final String userCode, final String... keptScopes )
@@ -724,7 +724,7 @@ class OAuthHandlerTest
     void required_scopes_cannot_be_dropped()
         throws Exception
     {
-        final VirtualHostIdProvider settings = VirtualHostIdProvider.create()
+        final VirtualHostIdProvider settings = VirtualHostIdProvider.create().allFlows()
             .scopes( Map.of( "content:read", new VirtualHostIdProvider.Scope( PrincipalKeys.from( "role:cms.cm.app" ), true ), "content:write",
                              VirtualHostIdProvider.Scope.of( PrincipalKeys.from( "role:cms.project.site.editor" ) ) ) )
             .build();

@@ -28,6 +28,7 @@ import com.enonic.xp.web.vhost.IdProviderFlow;
 import com.enonic.xp.web.vhost.VirtualHost;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -422,7 +423,36 @@ class IdentityHandlerTest
 
     private static VirtualHostIdProvider idProvider( final String... flows )
     {
-        return VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();
+        return flows.length == 0 ? VirtualHostIdProvider.create().allFlows().build() : VirtualHostIdProvider.create().flows( Set.of( flows ) ).build();
+    }
+
+    @Test
+    void testDeviceEndpoints_offWithoutAFlowList()
+        throws Exception
+    {
+        final HttpServletRequest rawRequest = this.request.getRawRequest();
+        when( rawRequest.getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ).thenReturn( DispatchConstants.WEB_CONNECTOR );
+        final VirtualHost virtualHost = mock( VirtualHost.class );
+        when( virtualHost.getSource() ).thenReturn( "/" );
+        when( virtualHost.getTarget() ).thenReturn( "/site/project/branch" );
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.from( "myidprovider" ), VirtualHostIdProvider.create().build() ) );
+        when( rawRequest.getAttribute( VirtualHost.class.getName() ) ).thenReturn( virtualHost );
+        request.setVirtualHost( virtualHost );
+        this.request.setMethod( HttpMethod.POST );
+
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessage( "'device' flow is disabled for 'myidprovider' id provider" );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/token" );
+        assertThatThrownBy( () -> this.handler.handle( this.request ) ).isInstanceOf( WebException.class )
+            .hasMessageStartingWith( "No token-issuing flow [" );
+        Mockito.verifyNoInteractions( oauthHandler );
+
+        when( virtualHost.getIdProviders() ).thenReturn( Map.of( IdProviderKey.from( "myidprovider" ), idProvider() ) );
+        when( oauthHandler.handle( Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any() ) ).thenReturn( PortalResponse.create().build() );
+        this.request.setRawPath( "/site/project/branch/_/idprovider/myidprovider/device/code" );
+        this.handler.handle( this.request );
+        Mockito.verify( oauthHandler ).handle( Mockito.any(), Mockito.any(), Mockito.eq( "device/code" ), Mockito.any() );
     }
 
 }
