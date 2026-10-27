@@ -9,3 +9,10 @@ exports.createInvalidCms = function () {
         resource: `unsupportedField: "value"`
     }));
 };
+
+exports.createSystemCms = function () {
+    assert.assertThrows(() => schemaLib.createOrUpdateCms({
+        application: 'base',
+        resource: `kind: "CMS"`
+    }));
+};

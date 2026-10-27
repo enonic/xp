@@ -119,6 +119,8 @@ public class ApplicationDescriptorServiceImpl
         ApplicationHelper.requireSchemaAdminRole();
 
         final ApplicationKey key = params.getKey();
+        final Bundle bundle = this.bundles.get( key );
+        ApplicationHelper.requireNonSystemApplication( key, bundle != null && ApplicationBundleUtils.isSystemApplication( bundle ) );
 
         // the application nodes live in the application repository, whatever the context of the caller
         final boolean created = ApplicationHelper.runAsAdmin( () -> this.repoService.getApplicationNode( key ) ) == null;
