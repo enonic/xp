@@ -12,6 +12,7 @@ import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.page.Page;
 import com.enonic.xp.page.PageDescriptorService;
 import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.impl.PortalRequestHelper;
 import com.enonic.xp.portal.impl.rendering.RendererDelegate;
@@ -86,7 +87,7 @@ final class PageHandlerWorker
         params.putAll( this.request.getParams() );
         params.putAll( getShortcutParameters( content ) );
 
-        final String targetUrl = this.portalUrlService.pageUrl( pageUrlParams );
+        final String targetUrl = PortalRequestAccessor.callWith( this.request, () -> this.portalUrlService.pageUrl( pageUrlParams ) );
 
         return PortalResponse.create().status( HttpStatus.TEMPORARY_REDIRECT ).header( HttpHeaders.LOCATION, targetUrl ).build();
     }
