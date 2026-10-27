@@ -489,35 +489,31 @@ public final class SecurityServiceImpl
     @Override
     public User updateUser( final UpdateUserParams updateUserParams )
     {
-        final User existingUser = getExistingUser( updateUserParams.getKey() );
-        final String email = updateUserParams.update( existingUser ).getEmail();
-        if ( email == null || email.equals( existingUser.getEmail() ) )
+        if ( updateUserParams.getEmail() == null && updateUserParams.getEditor() == null )
         {
             return doUpdateUser( updateUserParams );
         }
-        return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> {
-            final User userToUpdate = updateUserParams.update( getExistingUser( updateUserParams.getKey() ) );
-            duplicateEmailValidation( userToUpdate.getKey(), userToUpdate.getEmail() );
-            return doUpdateUser( updateUserParams );
-        } );
-    }
-
-    private User getExistingUser( final PrincipalKey key )
-    {
-        final Node node = callWithContext( () -> this.nodeService.getByPath( key.toPath() ) );
-        if ( node == null )
-        {
-            throw new PrincipalNotFoundException( key );
-        }
-        return PrincipalNodeTranslator.userFromNode( node );
+        return withLock( idProviderLocks, updateUserParams.getKey().getIdProviderKey().toString(), () -> doUpdateUser( updateUserParams ) );
     }
 
     private User doUpdateUser( final UpdateUserParams updateUserParams )
     {
         return callWithContext( () -> {
-            final Node updatedNode = nodeService.update(
-                PrincipalNodeTranslator.toUpdateNodeParams( updateUserParams.getKey(), PrincipalNodeTranslator::userFromNode,
-                                                            updateUserParams::update ) );
+            final PrincipalKey key = updateUserParams.getKey();
+            if ( this.nodeService.getByPath( key.toPath() ) == null )
+            {
+                throw new PrincipalNotFoundException( key );
+            }
+
+            final Node updatedNode =
+                nodeService.update( PrincipalNodeTranslator.toUpdateNodeParams( key, PrincipalNodeTranslator::userFromNode, current -> {
+                    final User changed = updateUserParams.update( current );
+                    if ( changed.getEmail() != null && !changed.getEmail().equals( current.getEmail() ) )
+                    {
+                        duplicateEmailValidation( key, changed.getEmail() );
+                    }
+                    return changed;
+                } ) );
             final User updatedUser = PrincipalNodeTranslator.userFromNode( updatedNode );
 
             securityAuditLogSupport.updateUser( UpdateUserParams.create( updatedUser ).build() );

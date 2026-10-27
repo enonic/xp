@@ -3,6 +3,7 @@ package com.enonic.xp.core.impl.security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,9 @@ import static org.mockito.Mockito.withSettings;
 /**
  * The email uniqueness check and the user write that follows it must happen under the id provider's lock,
  * so that two writers in the same id provider cannot both pass the check for the same email. A write that
- * does not set an email needs neither. The shared map records whether its lock is held when the node store is called.
+ * cannot set an email needs neither, and a write that leaves the email as it is needs no check. The editor
+ * runs once, on the node as it is at the write. The shared map records whether its lock is held when the
+ * node store is called.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -99,9 +102,9 @@ class SecurityServiceImplTest_idProviderLock
             return Node.create().id( NodeId.from( "alice" ) ).parentPath( params.getParent() ).name( params.getName() ).data( params.getData() ).build();
         } );
         when( nodeService.update( any( UpdateNodeParams.class ) ) ).thenAnswer( invocation -> {
-            calls.add( "update " + ( locked.get() ? "locked" : "unlocked" ) );
             final EditableNode editable = new EditableNode( alice );
             invocation.<UpdateNodeParams>getArgument( 0 ).getEditor().edit( editable );
+            calls.add( "update " + ( locked.get() ? "locked" : "unlocked" ) );
             return editable.build();
         } );
     }
@@ -136,22 +139,35 @@ class SecurityServiceImplTest_idProviderLock
     }
 
     @Test
-    void update_through_an_editor_that_sets_another_email_takes_the_lock()
+    void update_through_an_editor_runs_it_once_under_the_lock_and_checks_an_email_it_changes()
     {
-        securityService.updateUser( UpdateUserParams.create().userKey( USER ).editor( editable -> editable.email = "alice@new.example" ).build() );
+        final AtomicInteger runs = new AtomicInteger();
+        securityService.updateUser( UpdateUserParams.create().userKey( USER ).editor( editable -> {
+            runs.incrementAndGet();
+            editable.email = "alice@new.example";
+        } ).build() );
 
+        assertThat( runs ).hasValue( 1 );
         assertThat( calls ).containsExactly( "email check locked", "update locked" );
         assertThat( lockedKeys ).containsExactly( IDP.toString() );
     }
 
     @Test
-    void update_that_leaves_the_email_takes_no_lock()
+    void update_that_cannot_set_an_email_takes_no_lock()
     {
         securityService.updateUser( UpdateUserParams.create().userKey( USER ).displayName( "Alice Smith" ).build() );
-        securityService.updateUser( UpdateUserParams.create().userKey( USER ).email( "alice@example.com" ).build() );
 
-        assertThat( calls ).containsExactly( "update unlocked", "update unlocked" );
+        assertThat( calls ).containsExactly( "update unlocked" );
         assertThat( lockedKeys ).isEmpty();
+    }
+
+    @Test
+    void update_that_leaves_the_email_as_it_is_checks_nothing()
+    {
+        securityService.updateUser( UpdateUserParams.create().userKey( USER ).email( "alice@example.com" ).build() );
+        securityService.updateUser( UpdateUserParams.create().userKey( USER ).editor( editable -> editable.displayName = "Alice Smith" ).build() );
+
+        assertThat( calls ).containsExactly( "update locked", "update locked" );
     }
 
     /**
