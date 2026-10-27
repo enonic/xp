@@ -2,6 +2,7 @@ package com.enonic.xp.core.impl.security.token;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +54,7 @@ class GrantServiceImplTest
         assertThatThrownBy( () -> service.activate( Map.of( "token.grant.ttl", "PT0S" ) ) ).isInstanceOf( IllegalArgumentException.class );
         assertThatThrownBy( () -> service.activate( Map.of( "token.grant.maxPerUser", "0" ) ) ).isInstanceOf( IllegalArgumentException.class );
         assertThatThrownBy( () -> service.activate( Map.of( "token.grant.rotateAfter", "-PT1S" ) ) ).isInstanceOf( IllegalArgumentException.class );
-        assertThatThrownBy( () -> service.activate( Map.of( "token.grant.reuseGrace", "soon" ) ) ).isInstanceOf( java.time.format.DateTimeParseException.class );
+        assertThatThrownBy( () -> service.activate( Map.of( "token.grant.reuseGrace", "soon" ) ) ).isInstanceOf( DateTimeParseException.class );
         assertThatThrownBy( () -> service.activate( Map.of( "token.grant.maxPerClient", "x" ) ) ).isInstanceOf( NumberFormatException.class );
     }
 
