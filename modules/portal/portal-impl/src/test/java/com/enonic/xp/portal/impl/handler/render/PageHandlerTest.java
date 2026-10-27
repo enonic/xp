@@ -1,5 +1,7 @@
 package com.enonic.xp.portal.impl.handler.render;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,8 @@ import com.enonic.xp.context.ContextBuilder;
 import com.enonic.xp.data.PropertySet;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.page.PageTemplateKey;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.PortalRequestAccessor;
 import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.url.PageUrlParams;
@@ -37,6 +41,8 @@ import com.enonic.xp.web.WebResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -297,6 +303,42 @@ class PageHandlerTest
         assertNotNull( res );
         assertEquals( HttpStatus.TEMPORARY_REDIRECT, res.getStatus() );
         assertEquals( "/master/site/otherpath", res.getHeaders().get( "Location" ) );
+    }
+
+    @Test
+    void getContentShortcut_bindsRequestForUrlGeneration()
+        throws Exception
+    {
+        final PropertyTree rootDataSet = new PropertyTree();
+        rootDataSet.addReference( "target", Reference.from( "ref" ) );
+
+        final Content content = Content.create()
+            .id( ContentId.from( "id" ) )
+            .path( ContentPath.from( "site/somepath/shortcut" ) )
+            .owner( PrincipalKey.from( "user:myStore:me" ) )
+            .displayName( "My Content" )
+            .modifier( PrincipalKey.from( "user:system:admin" ) )
+            .type( ContentTypeName.shortcut() )
+            .data( rootDataSet )
+            .permissions( AccessControlList.create()
+                              .add( AccessControlEntry.create().allow( Permission.READ ).principal( RoleKeys.EVERYONE ).build() )
+                              .build() )
+            .build();
+
+        final AtomicReference<PortalRequest> boundRequest = new AtomicReference<>();
+        when( this.portalUrlService.pageUrl( any( PageUrlParams.class ) ) ).thenAnswer( invocation -> {
+            boundRequest.set( PortalRequestAccessor.get() );
+            return "/search";
+        } );
+
+        this.request.setContent( content );
+        this.request.setContentPath( content.getPath() );
+
+        final WebResponse res = this.handler.handle( this.request, PortalResponse.create().build(), null );
+        assertEquals( HttpStatus.TEMPORARY_REDIRECT, res.getStatus() );
+        assertEquals( "/search", res.getHeaders().get( "Location" ) );
+        assertSame( this.request, boundRequest.get() );
+        assertNull( PortalRequestAccessor.get() );
     }
 
     @Test
