@@ -15,12 +15,12 @@ class TestWebHandler
 
     private final int order;
 
-    public TestWebHandler()
+    TestWebHandler()
     {
         this( 0 );
     }
 
-    public TestWebHandler( final int order )
+    TestWebHandler( final int order )
     {
         this.order = order;
     }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CheckBoxTypeTest
     extends BaseInputTypeTest
 {
-    public CheckBoxTypeTest()
+    CheckBoxTypeTest()
     {
         super( CheckBoxType.INSTANCE );
     }

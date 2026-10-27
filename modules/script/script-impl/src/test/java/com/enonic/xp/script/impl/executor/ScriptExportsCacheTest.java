@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
-import com.enonic.xp.server.RunMode;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertSame;

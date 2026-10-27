@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ImageSelectorTypeTest
     extends BaseInputTypeTest
 {
-    public ImageSelectorTypeTest()
+    ImageSelectorTypeTest()
     {
         super( ImageSelectorType.INSTANCE );
     }

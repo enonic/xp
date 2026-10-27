@@ -94,7 +94,7 @@ class DumpServiceImplTest
 
     private DumpServiceImpl dumpService;
 
-    public DumpServiceImplTest()
+    DumpServiceImplTest()
     {
         super( true );
     }

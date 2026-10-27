@@ -13,14 +13,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class AggregationsTest
 {
 
-    private static final ArrayList<Aggregation> list = new ArrayList();
+    private static final ArrayList<Aggregation> LIST = new ArrayList();
 
     @BeforeAll
     public static void initApplicationKeys()
     {
-        AggregationsTest.list.add( Aggregation.bucketAggregation( "aaa" ).build() );
-        AggregationsTest.list.add( Aggregation.bucketAggregation( "bbb" ).build() );
-        AggregationsTest.list.add( Aggregation.bucketAggregation( "ccc" ).build() );
+        AggregationsTest.LIST.add( Aggregation.bucketAggregation( "aaa" ).build() );
+        AggregationsTest.LIST.add( Aggregation.bucketAggregation( "bbb" ).build() );
+        AggregationsTest.LIST.add( Aggregation.bucketAggregation( "ccc" ).build() );
     }
 
     @Test
@@ -33,7 +33,7 @@ class AggregationsTest
     @Test
     void fromIterable()
     {
-        Aggregations aggregations = Aggregations.from( AggregationsTest.list );
+        Aggregations aggregations = Aggregations.from( AggregationsTest.LIST );
 
         assertEquals( 3, aggregations.getSize() );
         assertEquals( "aaa", aggregations.first().getName() );
@@ -46,7 +46,7 @@ class AggregationsTest
     void fromArrayList()
     {
         Aggregations aggregations =
-            Aggregations.from( AggregationsTest.list.get( 0 ), AggregationsTest.list.get( 1 ), AggregationsTest.list.get( 2 ) );
+            Aggregations.from( AggregationsTest.LIST.get( 0 ), AggregationsTest.LIST.get( 1 ), AggregationsTest.LIST.get( 2 ) );
 
         assertEquals( 3, aggregations.getSize() );
         assertEquals( "aaa", aggregations.first().getName() );

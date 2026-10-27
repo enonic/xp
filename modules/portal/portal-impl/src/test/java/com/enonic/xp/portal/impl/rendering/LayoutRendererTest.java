@@ -23,7 +23,6 @@ import com.enonic.xp.region.LayoutDescriptorService;
 import com.enonic.xp.region.RegionDescriptor;
 import com.enonic.xp.region.RegionDescriptors;
 import com.enonic.xp.web.HttpStatus;
-import com.enonic.xp.web.websocket.WebSocketEvent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;

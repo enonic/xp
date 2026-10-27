@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class JvmGCReporterTest
     extends BaseReporterTest<JvmGCReporter>
 {
-    public JvmGCReporterTest()
+    JvmGCReporterTest()
     {
         super( "jvm.gc", MediaType.JSON_UTF_8 );
     }

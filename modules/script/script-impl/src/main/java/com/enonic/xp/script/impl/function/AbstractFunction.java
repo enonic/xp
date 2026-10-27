@@ -9,7 +9,7 @@ abstract class AbstractFunction
 {
     private final String name;
 
-    public AbstractFunction( final String name )
+    AbstractFunction( final String name )
     {
         this.name = name;
     }
