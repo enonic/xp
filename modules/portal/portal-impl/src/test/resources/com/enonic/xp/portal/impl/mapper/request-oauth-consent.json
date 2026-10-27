@@ -13,7 +13,7 @@
   "repositoryId": "com.enonic.cms.myproject",
   "branch": "draft",
   "contextPath": "/site/live/master/a",
-  "deviceLogin": {
+  "oauthConsent": {
     "idProvider": "system",
     "action": "confirm",
     "userCode": "BCDF-GHJK",

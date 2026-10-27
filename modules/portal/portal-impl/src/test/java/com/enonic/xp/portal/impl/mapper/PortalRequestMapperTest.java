@@ -17,7 +17,7 @@ import com.enonic.xp.portal.PortalRequest;
 import com.enonic.xp.portal.RenderMode;
 import com.enonic.xp.portal.impl.ContentFixtures;
 import com.enonic.xp.portal.impl.MapSerializableAssert;
-import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
+import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
 import com.enonic.xp.repository.RepositoryId;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.security.IdProvider;
@@ -149,7 +149,7 @@ class PortalRequestMapperTest
     }
 
     @Test
-    void testDeviceLogin()
+    void testOauthConsent()
     {
         final Map<String, Object> context = new java.util.LinkedHashMap<>();
         context.put( "idProvider", "system" );
@@ -161,10 +161,10 @@ class PortalRequestMapperTest
         scope.put( "required", true );
         context.put( "scope", java.util.List.of( scope ) );
         final HttpServletRequest rawRequest = Mockito.mock( HttpServletRequest.class );
-        Mockito.when( rawRequest.getAttribute( DeviceLoginHandler.CONTEXT_ATTRIBUTE ) ).thenReturn( context );
+        Mockito.when( rawRequest.getAttribute( OAuthHandler.CONTEXT_ATTRIBUTE ) ).thenReturn( context );
         this.portalRequest.setRawRequest( rawRequest );
 
-        assertHelper.assertJson( "request-device-login.json", new PortalRequestMapper( this.portalRequest ) );
+        assertHelper.assertJson( "request-oauth-consent.json", new PortalRequestMapper( this.portalRequest ) );
     }
 
     @Test

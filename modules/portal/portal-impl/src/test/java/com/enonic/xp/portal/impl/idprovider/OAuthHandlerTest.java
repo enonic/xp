@@ -66,11 +66,11 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 /**
- * The id provider's {@code deviceVerification} function is stubbed to echo the action it was asked
+ * The id provider's {@code oauthConsent} function is stubbed to echo the action it was asked
  * to render and to keep the context it received, so the tests assert on the data handed to the
  * page rather than on markup, which is the id provider's.
  */
-class DeviceLoginHandlerTest
+class OAuthHandlerTest
 {
     private static final IdProviderKey IDP = IdProviderKey.system();
 
@@ -95,18 +95,18 @@ class DeviceLoginHandlerTest
 
     private Map<String, Object> lastContextOfConfirm;
 
-    private DeviceLoginHandler handler;
+    private OAuthHandler handler;
 
     @BeforeEach
     void setUp()
         throws Exception
     {
         when( virtualHostService.getVirtualHosts() ).thenReturn( List.of() );
-        when( idProviderControllerService.hasFunction( any(), eq( DeviceLoginHandler.VERIFICATION_FUNCTION ) ) ).thenReturn( true );
+        when( idProviderControllerService.hasFunction( any(), eq( OAuthHandler.CONSENT_FUNCTION ) ) ).thenReturn( true );
         when( idProviderControllerService.execute( any() ) ).thenAnswer( i -> {
             final IdProviderControllerExecutionParams params = i.getArgument( 0 );
             @SuppressWarnings("unchecked") final Map<String, Object> context =
-                (Map<String, Object>) params.getPortalRequest().getRawRequest().getAttribute( DeviceLoginHandler.CONTEXT_ATTRIBUTE );
+                (Map<String, Object>) params.getPortalRequest().getRawRequest().getAttribute( OAuthHandler.CONTEXT_ATTRIBUTE );
             lastContext = context;
             return PortalResponse.create()
                 .status( HttpStatus.OK )
@@ -114,7 +114,7 @@ class DeviceLoginHandlerTest
                 .body( "page:" + context.get( "action" ) )
                 .build();
         } );
-        handler = new DeviceLoginHandler( grantService, accessTokenService, virtualHostService, idProviderControllerService,
+        handler = new OAuthHandler( grantService, accessTokenService, virtualHostService, idProviderControllerService,
                                           new InMemorySharedMapService(), new Clock()
         {
             @Override
@@ -281,7 +281,7 @@ class DeviceLoginHandlerTest
         assertThat( issued.get( "interval" ).asInt() ).isEqualTo( 5 );
 
         final PortalRequest poll = request( HttpMethod.POST, "token",
-                                            Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", deviceCode,
+                                            Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", deviceCode,
                                                     "client_id", "my-cli" ) );
         final PortalResponse pending = handler.handle( poll, IDP, "token", UNRESTRICTED );
         assertThat( pending.getStatus() ).isEqualTo( HttpStatus.BAD_REQUEST );
@@ -368,7 +368,7 @@ class DeviceLoginHandlerTest
             return null;
         } );
         verify( grantService, never() ).create( any() );
-        assertThat( body( handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code",
+        assertThat( body( handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                                                      issued.get( "device_code" ).asText(), "client_id",
                                                                                      "cli" ) ), IDP, "token", UNRESTRICTED ) ).get( "error" )
                         .asText() ).as( "still pending" ).isEqualTo( "authorization_pending" );
@@ -392,7 +392,7 @@ class DeviceLoginHandlerTest
             return null;
         } );
         final PortalResponse polled = handler.handle( request( HttpMethod.POST, "token",
-                                                               Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code",
+                                                               Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                                        issued.get( "device_code" ).asText(), "client_id", "cli" ) ), IDP,
                                                       "token", UNRESTRICTED );
         assertThat( body( polled ).get( "error" ).asText() ).isEqualTo( "access_denied" );
@@ -468,7 +468,7 @@ class DeviceLoginHandlerTest
             return null;
         } );
         assertThatThrownBy( () -> handler.handle(
-            request( HttpMethod.POST, "token", Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", "x" ) ), IDP,
+            request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", "x" ) ), IDP,
             "token", UNRESTRICTED ) ).isInstanceOf( WebException.class );
 
         when( grantService.redeem( any() ) ).thenReturn( Optional.empty() );
@@ -489,7 +489,7 @@ class DeviceLoginHandlerTest
             final ArgumentCaptor<IdProviderControllerExecutionParams> params =
                 ArgumentCaptor.forClass( IdProviderControllerExecutionParams.class );
             verify( idProviderControllerService ).execute( params.capture() );
-            assertThat( params.getValue().getFunctionName() ).isEqualTo( "deviceVerification" );
+            assertThat( params.getValue().getFunctionName() ).isEqualTo( "oauthConsent" );
             assertThat( params.getValue().getIdProviderKey() ).isEqualTo( IDP );
             assertThat( params.getValue().getPortalRequest() ).isSameAs( page );
             return null;
@@ -504,14 +504,14 @@ class DeviceLoginHandlerTest
                                                       "device/code", UNRESTRICTED ) );
         approve( issued.get( "user_code" ).asText() );
         final PortalResponse polled = handler.handle( request( HttpMethod.POST, "token",
-                                                               Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code",
+                                                               Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                                        issued.get( "device_code" ).asText(), "client_id", "other" ) ),
                                                       IDP, "token", UNRESTRICTED );
         assertThat( body( polled ).get( "error" ).asText() ).isEqualTo( "invalid_grant" );
         verify( grantService, never() ).create( any() );
 
         final PortalResponse retried = handler.handle( request( HttpMethod.POST, "token",
-                                                                Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code",
+                                                                Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                                         issued.get( "device_code" ).asText(), "client_id", "cli" ) ),
                                                        IDP, "token", UNRESTRICTED );
         assertThat( retried.getStatus() ).as( "the wrong client's attempt did not consume the approval" ).isEqualTo( HttpStatus.OK );
@@ -527,9 +527,9 @@ class DeviceLoginHandlerTest
                                                       "device/code", UNRESTRICTED ) );
         approve( issued.get( "user_code" ).asText() );
 
-        for ( Map<String, String> params : List.of( Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code",
+        for ( Map<String, String> params : List.of( Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                             issued.get( "device_code" ).asText() ),
-                                                    Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code",
+                                                    Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                             issued.get( "device_code" ).asText(), "client_id", " " ),
                                                     Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1" ),
                                                     Map.of( "grant_type", "refresh_token", "refresh_token", "refresh-1", "client_id", "" ),
@@ -545,7 +545,7 @@ class DeviceLoginHandlerTest
         verify( grantService, never() ).create( any() );
 
         final PortalResponse polled = handler.handle( request( HttpMethod.POST, "token",
-                                                               Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code",
+                                                               Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code",
                                                                        issued.get( "device_code" ).asText(), "client_id", odd ) ), IDP,
                                                       "token", UNRESTRICTED );
         assertThat( polled.getStatus() ).as( "the refused polls left the approval for the client" ).isEqualTo( HttpStatus.OK );
@@ -607,7 +607,7 @@ class DeviceLoginHandlerTest
         throws Exception
     {
         final PortalResponse refused = handler.handle(
-            request( HttpMethod.POST, "token", Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", "x" ) ), IDP,
+            request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", "x" ) ), IDP,
             "token", withFlows( "native" ) );
         assertThat( body( refused ).get( "error" ).asText() ).isEqualTo( "unauthorized_client" );
 
@@ -664,7 +664,7 @@ class DeviceLoginHandlerTest
         assertThat( shown.get( 1 ) ).containsEntry( "id", "profile" ).containsEntry( "roles", List.of() );
 
         handler.handle( request( HttpMethod.POST, "token",
-                                 Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
+                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
                                          "client_id", "cli" ) ), IDP, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
@@ -690,7 +690,7 @@ class DeviceLoginHandlerTest
                                                     (String) lastContext.get( "csrf" ) ) ), IDP, "device", settings );
         } );
         handler.handle( request( HttpMethod.POST, "token",
-                                 Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
+                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
                                          "client_id", "cli" ) ), IDP, "token", settings );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
@@ -713,7 +713,7 @@ class DeviceLoginHandlerTest
                                    UNRESTRICTED );
         } );
         handler.handle( request( HttpMethod.POST, "token",
-                                 Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
+                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
                                          "client_id", "cli" ) ), IDP, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
@@ -738,7 +738,7 @@ class DeviceLoginHandlerTest
                               org.assertj.core.groups.Tuple.tuple( "content:read", true ) );
 
         handler.handle( request( HttpMethod.POST, "token",
-                                 Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
+                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
                                          "client_id", "cli" ) ), IDP, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
@@ -756,7 +756,7 @@ class DeviceLoginHandlerTest
             settings ) );
         approve( settings, issued.get( "user_code" ).asText() );
         handler.handle( request( HttpMethod.POST, "token",
-                                 Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
+                                 Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", issued.get( "device_code" ).asText(),
                                          "client_id", "cli" ) ), IDP, "token", UNRESTRICTED );
         final ArgumentCaptor<CreateGrantParams> grant = ArgumentCaptor.forClass( CreateGrantParams.class );
         verify( grantService ).create( grant.capture() );
@@ -809,10 +809,10 @@ class DeviceLoginHandlerTest
         assertThat( body( handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", "password" ) ), IDP, "token", UNRESTRICTED ) )
                         .get( "error" )
                         .asText() ).isEqualTo( "unsupported_grant_type" );
-        assertThat( body( handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT ) ),
+        assertThat( body( handler.handle( request( HttpMethod.POST, "token", Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT ) ),
                                           IDP, "token", UNRESTRICTED ) ).get( "error" ).asText() ).isEqualTo( "invalid_request" );
         assertThat( body( handler.handle( request( HttpMethod.POST, "token",
-                                                   Map.of( "grant_type", DeviceLoginHandler.DEVICE_CODE_GRANT, "device_code", "nope",
+                                                   Map.of( "grant_type", OAuthHandler.DEVICE_CODE_GRANT, "device_code", "nope",
                                                            "client_id", "cli" ) ), IDP, "token", UNRESTRICTED ) ).get( "error" ).asText() )
             .isEqualTo( "expired_token" );
 

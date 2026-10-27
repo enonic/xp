@@ -13,8 +13,8 @@ import com.enonic.xp.security.User;
 import com.enonic.xp.web.vhost.VirtualHostIdProvider;
 
 /**
- * What the verification page shows. The id provider's {@code deviceVerification(req)} function
- * receives it as {@code req.deviceLogin}, as plain data:
+ * What the consent page shows. The id provider's {@code oauthConsent(req)} function
+ * receives it as {@code req.oauthConsent}, as plain data:
  * <pre>
  * {
  *   idProvider: "system",
@@ -36,8 +36,8 @@ import com.enonic.xp.web.vhost.VirtualHostIdProvider;
  * except a required one, which is granted whenever the request is approved. The page owns the
  * wording of each scope.
  */
-sealed interface DeviceLoginContext
-    permits DeviceLoginContext.Enter, DeviceLoginContext.Confirm, DeviceLoginContext.Done, DeviceLoginContext.WrongAccount
+sealed interface OAuthConsentContext
+    permits OAuthConsentContext.Enter, OAuthConsentContext.Confirm, OAuthConsentContext.Done, OAuthConsentContext.WrongAccount
 {
     /**
      * The code entered was unknown, used or expired. Given as a code, not a sentence, so the page can
@@ -53,7 +53,7 @@ sealed interface DeviceLoginContext
      * Enter the code the device shows; {@code error} is the code of why the previous one was refused.
      */
     record Enter(IdProviderKey idProvider, User user, @Nullable String error)
-        implements DeviceLoginContext
+        implements OAuthConsentContext
     {
     }
 
@@ -63,7 +63,7 @@ sealed interface DeviceLoginContext
      */
     record Confirm(IdProviderKey idProvider, User user, String userCode, String clientId, List<Scope> scope,
                    List<String> audience, boolean unrestricted, String csrf)
-        implements DeviceLoginContext
+        implements OAuthConsentContext
     {
         public Confirm
         {
@@ -97,7 +97,7 @@ sealed interface DeviceLoginContext
      * The decision was recorded.
      */
     record Done(IdProviderKey idProvider, User user, boolean approved)
-        implements DeviceLoginContext
+        implements OAuthConsentContext
     {
     }
 
@@ -105,7 +105,7 @@ sealed interface DeviceLoginContext
      * The signed-in user belongs to another id provider than the one the request is for.
      */
     record WrongAccount(IdProviderKey idProvider, User user)
-        implements DeviceLoginContext
+        implements OAuthConsentContext
     {
     }
 

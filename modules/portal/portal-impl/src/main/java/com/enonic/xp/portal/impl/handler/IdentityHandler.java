@@ -15,8 +15,8 @@ import com.enonic.xp.portal.PortalResponse;
 import com.enonic.xp.portal.idprovider.IdProviderControllerExecutionParams;
 import com.enonic.xp.portal.idprovider.IdProviderControllerService;
 import com.enonic.xp.portal.impl.RedirectChecksumService;
-import com.enonic.xp.portal.impl.idprovider.DeviceLoginEndpoints;
-import com.enonic.xp.portal.impl.idprovider.DeviceLoginHandler;
+import com.enonic.xp.portal.impl.idprovider.OAuthEndpoints;
+import com.enonic.xp.portal.impl.idprovider.OAuthHandler;
 import com.enonic.xp.security.IdProviderKey;
 import com.enonic.xp.trace.Traced;
 import com.enonic.xp.trace.Tracer;
@@ -38,16 +38,16 @@ public class IdentityHandler
 
     private final RedirectChecksumService redirectChecksumService;
 
-    private final DeviceLoginHandler deviceLoginHandler;
+    private final OAuthHandler oauthHandler;
 
     @Activate
     public IdentityHandler( @Reference final IdProviderControllerService idProviderControllerService,
                             @Reference final RedirectChecksumService redirectChecksumService,
-                            @Reference final DeviceLoginHandler deviceLoginHandler )
+                            @Reference final OAuthHandler oauthHandler )
     {
         this.idProviderControllerService = idProviderControllerService;
         this.redirectChecksumService = redirectChecksumService;
-        this.deviceLoginHandler = deviceLoginHandler;
+        this.oauthHandler = oauthHandler;
     }
 
     public PortalResponse handle( final WebRequest webRequest )
@@ -92,21 +92,21 @@ public class IdentityHandler
         // Custom endpoints are always dispatched: the id provider app gates them itself, guided by
         // the vhost's flow list on the request.
         final Set<String> flows = idProvider.getFlows();
-        if ( DeviceLoginEndpoints.isEndpoint( idProviderFunction ) )
+        if ( OAuthEndpoints.isEndpoint( idProviderFunction ) )
         {
             if ( !DispatchConstants.WEB_CONNECTOR.equals( webRequest.getRawRequest().getAttribute( DispatchConstants.CONNECTOR_ATTRIBUTE ) ) )
             {
                 throw WebException.notFound( "Device login is served on the web endpoint only" );
             }
-            final String requiredFlow = DeviceLoginEndpoints.requiredFlow( idProviderFunction );
+            final String requiredFlow = OAuthEndpoints.requiredFlow( idProviderFunction );
             if ( requiredFlow != null )
             {
                 requireFlow( flows, requiredFlow, idProviderKey );
             }
-            else if ( !flows.isEmpty() && Collections.disjoint( flows, DeviceLoginEndpoints.ISSUING_FLOWS ) )
+            else if ( !flows.isEmpty() && Collections.disjoint( flows, OAuthEndpoints.ISSUING_FLOWS ) )
             {
                 throw WebException.forbidden(
-                    String.format( "No token-issuing flow %s is enabled for '%s' id provider", DeviceLoginEndpoints.ISSUING_FLOWS,
+                    String.format( "No token-issuing flow %s is enabled for '%s' id provider", OAuthEndpoints.ISSUING_FLOWS,
                                    idProviderKey ) );
             }
             return doHandleDevice( idProviderKey, idProviderFunction, createPortalRequest( webRequest, idProviderKey, null ), idProvider );
@@ -139,7 +139,7 @@ public class IdentityHandler
             trace.attribute( "method", portalRequest.getMethod().toString() );
             trace.attribute( "host", portalRequest.getHost() );
         } );
-        final PortalResponse portalResponse = deviceLoginHandler.handle( portalRequest, idProviderKey, endpoint, settings );
+        final PortalResponse portalResponse = oauthHandler.handle( portalRequest, idProviderKey, endpoint, settings );
         Tracer.withCurrent( trace -> {
             trace.attribute( "status", portalResponse.getStatus().value() );
             trace.attribute( "type", portalResponse.getContentType().toString() );
